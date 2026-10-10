@@ -39,6 +39,22 @@ describe('13 哥食材兑换券页的排序数据（问题记录 491）', () => 
   });
 });
 
+describe('只有 13 哥的页才查本街需求（backlog 1010）', () => {
+  it('镇长、卡门的页不带我有几个、本街要几个；13 哥的页和不说哪页的（旧网页）照样带', async () => {
+    const grape = fid('葡萄');
+    const a = await newRestaurant(t, { foods: { [grape]: 3 } });
+    for (const part of ['goods', 'mystery'] as const) {
+      const v = await t.game.town.exchangeView(a, part);
+      expect(v.foodHave).toEqual({});
+      expect(v.streetNeed).toEqual({});
+      expect(v.items.length).toBeGreaterThan(0);
+    }
+    const lv = await t.game.town.exchangeView(a, 'level');
+    expect(lv.foodHave).toEqual({ [grape]: 3 });
+    expect(lv.streetNeed[grape]).toBeGreaterThan(0);
+  });
+});
+
 describe('镇长兑换（设计文档 §3.6）', () => {
   it('兑换页：37 项 (2026-10-08 下架一批后)、持有数、已兑次数、两种券和可换食材', async () => {
     const a = await newRestaurant(t, {

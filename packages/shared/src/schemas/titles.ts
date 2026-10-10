@@ -54,6 +54,12 @@ export function graphemeLen(s: string): number {
   return n;
 }
 
+/**
+ * 超长：按字素数超过 max，或者总长（UTF-16 码元）超过 max × 16（backlog 1010）——
+ * 一个字后面叠上千个组合附加符号按字素只算 1 个；正常的复合表情一个也就十来个码元
+ */
+const tooLong = (c: string, max: number) => graphemeLen(c) > max || c.length > max * 16;
+
 /** 称号文字：有换行报 newline，清理后为空报 empty（可空的变 undefined），超长 too_long；输出清理后的文字 */
 export function titleText(max: number): z.ZodType<string, z.ZodTypeDef, unknown>;
 export function titleText(
@@ -72,7 +78,7 @@ export function titleText(max: number, opts?: { optional?: boolean }): z.ZodType
       if (NEWLINE.test(s)) ctx.addIssue({ code: 'custom', message: 'newline' });
       const c = cleanTitleText(s);
       if (!c && !opts?.optional) ctx.addIssue({ code: 'custom', message: 'empty' });
-      if (graphemeLen(c) > max) ctx.addIssue({ code: 'custom', message: 'too_long' });
+      if (tooLong(c, max)) ctx.addIssue({ code: 'custom', message: 'too_long' });
     })
     .transform((s) => {
       const c = s === undefined ? '' : cleanTitleText(s);
@@ -115,7 +121,7 @@ const clearable = (max: number) =>
     .superRefine((s, ctx) => {
       if (s === undefined) return;
       if (NEWLINE.test(s)) ctx.addIssue({ code: 'custom', message: 'newline' });
-      if (graphemeLen(cleanTitleText(s)) > max) ctx.addIssue({ code: 'custom', message: 'too_long' });
+      if (tooLong(cleanTitleText(s), max)) ctx.addIssue({ code: 'custom', message: 'too_long' });
     })
     .transform((s) => (s === undefined ? undefined : cleanTitleText(s) || null));
 export const updateTitleBody = z.object({

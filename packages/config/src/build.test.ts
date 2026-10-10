@@ -475,6 +475,12 @@ describe('商店整理（问题记录 483）：game/shop.json 盖在道具表上
     expect(good(b, RED).diamond).toBe(9);
   });
 
+  it('上了银币商店却没有银币价：拦下（backlog 1010：原来不报错，实际又不会上架）', () => {
+    const b = withShop({ goods: [{ id: RED, onSale: true, coin: 0 }] });
+    expect(b.bundle).toBeNull();
+    expect(b.errors).toContain(`shop puts goods ${RED} on sale with no coin price`);
+  });
+
   it('特价池、黑市池写了就整份替换', () => {
     const b = withShop({ goods: [], pools: { special: [MISSILE] } });
     expect(b.bundle!.shopPools.special).toEqual([MISSILE]);
@@ -733,6 +739,14 @@ describe('酒吧配置（子项目 4C-1）', () => {
     tuning.bar.slotFloorAwardId = 555;
     const { errors } = buildBundle({ ...src, 'game/tuning': tuning });
     expect(errors).toContain('tuning.bar.slotFloorAwardId 555 not in slot awards');
+  });
+
+  it('保底奖项要是稀有的（“平均每几次出一次稀有”把保底都算成稀有，backlog 1010）', () => {
+    const src = source();
+    const tuning = structuredClone(src['game/tuning']) as { bar: { slotFloorAwardId: number } };
+    tuning.bar.slotFloorAwardId = 99;
+    const { errors } = buildBundle({ ...src, 'game/tuning': tuning });
+    expect(errors).toContain('tuning.bar.slotFloorAwardId 99 is not a rare award');
   });
 });
 
@@ -1764,6 +1778,29 @@ describe('豪华一番赏（240-2）', () => {
         ],
       }),
     ).toMatch(/devil.*payouts/);
+    // 押注档位不能重复；押得多的那行每一格都不比押得少的少（backlog 1010）
+    expect(withDevil({ stakes: [1, 5, 5, 20] })).toMatch(/devil.*stakes/);
+    expect(
+      withDevil({
+        payouts: [
+          [1, 2, 3],
+          [7, 9, 12],
+          [14, 8, 25],
+          [27, 36, 49],
+        ],
+      }),
+    ).toMatch(/devil.*payouts/);
+    expect(
+      withDevil({
+        stakes: [20, 10, 5, 1],
+        payouts: [
+          [27, 36, 49],
+          [14, 18, 25],
+          [7, 9, 12],
+          [1, 2, 3],
+        ],
+      }),
+    ).toBe('');
   });
 
   it('送一番赏券的活跃度档不在活跃奖励里时报错（质量期 ②）', () => {

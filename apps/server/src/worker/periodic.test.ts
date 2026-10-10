@@ -167,7 +167,8 @@ describe('重抢时就记下第几次（稳健性批终审：原来失败时才�
     await runDueJobs(deps(), [j], { shardIds: [shardId] });
     t.clock.set(new Date(start.getTime() + 11 * 60_000));
     await runDueJobs(deps(), [j], { shardIds: [shardId] });
-    expect(seen).toEqual([{ error: 'boom', attempts: 2 }]);
+    // 上一次的错误同时清掉（backlog 1010）：这次中途被杀时按“没出错也没完成”30 分钟后再抢，不是 10 分钟
+    expect(seen).toEqual([{ attempts: 2 }]);
     t.clock.set(start);
   });
 });

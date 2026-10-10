@@ -33,8 +33,13 @@ const live = computed(() => titles.list.value.filter((t) => !t.retired));
 const shown = computed(() => {
   const s = q.value.trim().toLowerCase();
   if (!s) return live.value;
+  // 选中的那个总留在下拉里：被搜索滤掉时下拉会显示空白（backlog 1010）
   return live.value.filter(
-    (t) => t.title.toLowerCase().includes(s) || (t.note ?? '').toLowerCase().includes(s) || t.key === s,
+    (t) =>
+      t.key === key.value ||
+      t.title.toLowerCase().includes(s) ||
+      (t.note ?? '').toLowerCase().includes(s) ||
+      t.key === s,
   );
 });
 const custom = computed(() => shown.value.filter((t) => t.source === 'custom'));
@@ -42,7 +47,11 @@ const config = computed(() => shown.value.filter((t) => t.source !== 'custom'));
 const titleOf = (k: string) => titles.list.value.find((t) => t.key === k)?.title ?? '';
 
 function emitNow() {
-  if (!key.value) return;
+  // 改回“选择称号”：外层也清掉（backlog 1010），不留着之前选的
+  if (!key.value) {
+    emit('update:modelValue', { key: '', title: '' });
+    return;
+  }
   const out: Picked = { key: key.value, title: titleOf(key.value) };
   // 选了限时却没填：天数给 0、时间给空串，外层据此提示没填完
   if (mode.value === 'days') out.days = days.value === '' ? 0 : Number(days.value);

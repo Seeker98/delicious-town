@@ -59,10 +59,11 @@ export async function runDueJobs(
       if (!claimed && job.retry) {
         const again = await d.db
           .updateTable('job_run')
-          // 抢到时就把次数加 1（终审：原来失败时才写，重跑中途进程崩了会按同一个次数一直重抢）
+          // 抢到时就把次数加 1（终审：原来失败时才写，重跑中途进程崩了会按同一个次数一直重抢）；
+          // 上一次的错误同时清掉：这次中途被杀时按“没出错也没完成”30 分钟后再抢（backlog 1010）
           .set({
             started_at: now,
-            stats: sql`jsonb_set(stats, '{attempts}', to_jsonb(coalesce((stats->>'attempts')::int, 1) + 1))`,
+            stats: sql`jsonb_set(stats - 'error', '{attempts}', to_jsonb(coalesce((stats->>'attempts')::int, 1) + 1))`,
           })
           .where('shard_id', '=', shardId)
           .where('job', '=', job.name)

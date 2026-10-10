@@ -3,6 +3,7 @@ import type { Game } from '../../game';
 import { AppError } from '../../http/errors';
 import { iconDefs } from '../icons/defs';
 import { expiryOf, grantIcon } from '../icons/grant';
+import { lockRewardIcons } from '../mail/reward';
 import type { AdminActor } from './access';
 import { writeAudit } from './audit';
 
@@ -49,9 +50,16 @@ export function createAdminIcons(game: Game) {
       const now = game.deps.now();
       const expiresAt = expiryOf(b, now);
       if (expiresAt === 'expired') throw invalid('until', 'past');
-      const r = await db.selectFrom('restaurant').select('id').where('id', '=', restId).executeTakeFirst();
-      if (!r) throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404);
       await db.transaction().execute(async (tx) => {
+        // 锁店（backlog 1010）：和玩家领邮件里的称号串行，展示中的不会数多；定制称号和删除互斥
+        const r = await tx
+          .selectFrom('restaurant')
+          .select('id')
+          .where('id', '=', restId)
+          .forNoKeyUpdate()
+          .executeTakeFirst();
+        if (!r) throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404);
+        await lockRewardIcons(tx, { icons: [{ key: b.key }] });
         await grantIcon(tx, { restId, key: b.key, expiresAt, now, grantedBy: actor.accountId });
         await writeAudit(tx, {
           actor,

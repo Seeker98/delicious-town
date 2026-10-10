@@ -241,6 +241,21 @@ describe('EquipView', () => {
     expect(w.find('[data-testid="allocate"]').attributes('disabled')).toBeUndefined();
   });
 
+  it('加点请求还没回来时“全加”也点不了（backlog 1010）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      attrLeft: 10,
+      attrs: { cook: 0, cutting: 0, fire: 0, season: 0, creatives: 0 },
+    } as never);
+    let finish!: () => void;
+    vi.mocked(endpoints.allocate).mockReturnValue(new Promise((r) => (finish = () => r({} as never))));
+    const w = await mountView();
+    await w.find('[data-testid="add-cook"]').setValue('2');
+    await w.find('[data-testid="allocate"]').trigger('click');
+    expect(w.find('[data-testid="all-fire"]').attributes('disabled')).toBeDefined();
+    finish();
+    await flushPromises();
+  });
+
   it('没有剩余点数时不显示加点输入', async () => {
     vi.mocked(endpoints.overview).mockResolvedValue({
       attrLeft: 0,

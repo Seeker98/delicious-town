@@ -78,7 +78,7 @@ const guide: Messages['guide'] = {
     },
     {
       to: '/tower',
-      text: 'Tour des chefs\u202f: défiez les gardiens de la tour pour de la renommée, à dépenser dans la boutique de renommée',
+      text: 'Tour des chefs\u202f: défiez les veilleurs de la tour pour de la renommée, à dépenser dans la boutique de renommée',
     },
     {
       to: '/takeaway',

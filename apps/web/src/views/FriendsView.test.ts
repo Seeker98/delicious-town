@@ -18,6 +18,7 @@ vi.mock('../api/endpoints', () => ({
     friendFeed: vi.fn(),
     thumbsToday: vi.fn(),
     thumbsReturnAll: vi.fn(),
+    overview: vi.fn(),
   },
 }));
 
@@ -151,6 +152,26 @@ describe('FriendsView', () => {
     expect(w.text()).toContain('「丙」花 5,000 银币收购了你的餐厅');
     expect(w.find('a[href="/forum/8"]').text()).toContain('丁 回复了你的帖子「攻略」');
     expect(feedSeenAt(5)).toBe('2026-10-09T05:00:00.000Z');
+    localStorage.clear();
+  });
+
+  it('刷新页面直接打开动态卡（还没读过餐厅）：先读餐厅再记看过（backlog 1010）', async () => {
+    vi.mocked(endpoints.friendFeed).mockResolvedValue({
+      items: [
+        { type: 'acquire.taken', params: { byName: '丙', price: 5000 }, at: '2026-10-09T06:00:00.000Z' },
+      ],
+    } as never);
+    vi.mocked(endpoints.thumbsToday).mockResolvedValue([]);
+    vi.mocked(endpoints.overview).mockResolvedValue({ id: 6 } as never);
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/:p(.*)*', component: FriendsView }],
+    });
+    await router.push('/friends?tab=feed');
+    mount(FriendsView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(endpoints.overview).toHaveBeenCalled();
+    expect(feedSeenAt(6)).toBe('2026-10-09T06:00:00.000Z');
     localStorage.clear();
   });
 

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { grantIconBody } from './admin';
 import { activityBody } from './activity';
 import { rewardItems, rewardItemsNoIcons, sendMailBody } from './mail';
-import { cleanTitleText, graphemeLen, titleText } from './titles';
+import { cleanTitleText, graphemeLen, titleText, updateTitleBody } from './titles';
 
 const cp = (...xs: number[]) => String.fromCodePoint(...xs);
 const CHEF = cp(0x1f468, 0x200d, 0x1f373);
@@ -29,6 +29,14 @@ describe('称号文字规则（定制称号设计 二）', () => {
     expect(issues(t.safeParse(`${cp(0x200b)}${cp(0x2066)} `))).toContain('empty');
     expect(issues(t.safeParse('a\nb'))).toContain('newline');
     expect(t.parse(` ${cp(0x202e)}好`)).toBe('好');
+  });
+
+  it('总长度也有上限：一个字后面叠上千个组合附加符号也算超长（backlog 1010）', () => {
+    const zalgo = `a${cp(0x0301).repeat(1000)}`;
+    expect(issues(titleText(10).safeParse(zalgo))).toContain('too_long');
+    expect(issues(updateTitleBody.safeParse({ desc: zalgo }))).toContain('too_long');
+    // 正常的复合表情不受影响
+    expect(titleText(10).parse(CHEF.repeat(10))).toBe(CHEF.repeat(10));
   });
 
   it('可空的说明：空串变成 undefined', () => {
@@ -91,6 +99,14 @@ describe('邮件发给几家店、后台直接发称号', () => {
     expect(
       sendMailBody.safeParse({ ...mail, restIds: Array.from({ length: 51 }, (_, i) => i + 1) }).success,
     ).toBe(false);
+  });
+
+  it('店 id、区服 id 超出数据库整数范围时校验失败，不再 500（backlog 1010）', () => {
+    const big = 2 ** 31;
+    expect(sendMailBody.safeParse({ ...mail, restIds: [1, big] }).success).toBe(false);
+    expect(sendMailBody.safeParse({ ...mail, restId: big }).success).toBe(false);
+    expect(sendMailBody.safeParse({ ...mail, restId: 1, shardId: big }).success).toBe(false);
+    expect(sendMailBody.safeParse({ ...mail, restIds: [big - 1] }).success).toBe(true);
   });
 
   it('后台直接发：定制称号的 key、有效期二选一', () => {

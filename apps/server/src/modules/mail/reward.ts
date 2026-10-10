@@ -8,7 +8,7 @@ import { AppError } from '../../http/errors';
 import { addFoods } from '../cupboard/foods';
 import { grantHatOp } from '../equip/hats';
 import { grantGoodsOp } from '../store/goods';
-import { iconDefs } from '../icons/defs';
+import { customId, iconDefs } from '../icons/defs';
 import { expiryOf, grantIcon } from '../icons/grant';
 
 /** 后台填的奖励里一项道具或食材的问题：不存在 unknown；已下架 retired（问题记录 367：活动、兑换码、邮件不能再发） */
@@ -89,6 +89,28 @@ export async function checkRewardIcons(
   });
   if (bad.length > 0) throw new AppError(ErrorCode.VALIDATION_FAILED, 400, { issues: bad });
   return { ...items, icons };
+}
+
+/**
+ * 在发邮件、建兑换码的事务里锁住附件里的定制称号（for share），和删称号互斥（backlog 1010）：
+ * 删除先提交时这里查不到，整个拒绝；这里先锁住时删除等提交后再查引用
+ */
+export async function lockRewardIcons(
+  tx: Kysely<DB>,
+  items: { icons?: Array<{ key: string }> } | null,
+): Promise<void> {
+  const ids = (items?.icons ?? []).map((i) => customId(i.key));
+  const want = [...new Set(ids.filter((x): x is number => x !== null))];
+  if (want.length === 0) return;
+  const found = new Set(
+    (await tx.selectFrom('custom_icon').select('id').where('id', 'in', want).forShare().execute()).map(
+      (r) => r.id,
+    ),
+  );
+  const bad = ids.flatMap((id, n) =>
+    id !== null && !found.has(id) ? [{ path: `items.icons.${n}.key`, message: 'unknown' }] : [],
+  );
+  if (bad.length > 0) throw new AppError(ErrorCode.VALIDATION_FAILED, 400, { issues: bad });
 }
 
 /** 一批附件里出现的称号，哪些还有定义（判断附件失效用；一次查完，不要每封查一次） */

@@ -49,7 +49,7 @@ async function run(fn: () => Promise<void>, fallback: string) {
 
 async function loadRequests() {
   requests.value = await endpoints.friendRequests();
-  friendsStore.pending = requests.value.length;
+  friendsStore.setPending(requests.value.length);
 }
 /**
  * 切标签读取：不走 run 的忙碌拦截（以前列表还在读时点别的标签，标签切过去了却不读，好友 e2e 偶发失败就是这个）；
@@ -68,7 +68,7 @@ async function show(next: Tab) {
       const v = await endpoints.friendRequests();
       if (mine === seq) {
         requests.value = v;
-        friendsStore.pending = v.length;
+        friendsStore.setPending(v.length);
       }
     }
     if (next === 'find') {
@@ -80,8 +80,9 @@ async function show(next: Tab) {
       if (mine === seq) {
         feed.value = f.items;
         thumbs.value = th;
-        // 首页餐厅动态的小圆点按这个算（问题记录 553）
-        if (restStore.rest) markFeedSeen(restStore.rest.id, f.items);
+        // 首页餐厅动态的小圆点按这个算（问题记录 553）；刷新页面直接进来时还没读过餐厅，先读（backlog 1010）
+        const rest = restStore.rest ?? (await restStore.refresh().catch(() => null));
+        if (rest && mine === seq) markFeedSeen(rest.id, f.items);
       }
     }
   } catch (e) {

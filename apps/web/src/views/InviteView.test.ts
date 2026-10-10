@@ -14,6 +14,7 @@ describe('InviteView', () => {
       code: 'ABCD2345',
       monthCount: 3,
       monthlyCap: 20,
+      levels: { lv10: 10, lv30: 30 },
       invitees: [
         { restName: '小明的店', shardName: '一服', level: 12, verified: true, lv10: 'sent', lv30: null },
         { restName: null, shardName: null, level: null, verified: false, lv10: null, lv30: null },
@@ -38,5 +39,21 @@ describe('InviteView', () => {
     await flushPromises();
     expect(w.text()).toContain('好友验证邮箱后, 店铺升到 10 级、再升到 30 级时, 你各得一份奖励');
     expect(w.text()).toContain('每月最多计 20 人');
+  });
+
+  it('两档等级按接口给的写（区服改了等级时说明跟着变，backlog 1010）', async () => {
+    vi.mocked(endpoints.invite).mockResolvedValue({
+      code: 'ABCD2345',
+      monthCount: 0,
+      monthlyCap: 20,
+      levels: { lv10: 8, lv30: 25 },
+      invitees: [
+        { restName: '小明的店', shardName: '一服', level: 9, verified: true, lv10: 'sent', lv30: null },
+      ],
+    });
+    const w = mount(InviteView);
+    await flushPromises();
+    expect(w.text()).toContain('店铺升到 8 级、再升到 25 级时');
+    expect(w.text()).toContain('8 级奖励已发');
   });
 });

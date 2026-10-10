@@ -51,6 +51,8 @@ describe('有蟑螂的楼层标出来（问题记录 561）', () => {
     const r = w.get('[data-testid="floor-roach-2"]');
     expect(r.find('i.bi-bug').exists()).toBe(true);
     expect(r.text()).toContain('2');
+    // 读屏读“蟑螂 2”，不只在 title 里（backlog 1010）
+    expect(r.get('.visually-hidden').text()).toBe('蟑螂 2');
   });
 });
 
@@ -77,6 +79,22 @@ describe('每桌点的菜（问题记录 559）', () => {
     expect(w.get('[data-testid="table-dish-1"]').text()).toBe('宫保鸡丁');
     expect(w.get('[data-testid="table-dish-2"]').text()).toBe('佛跳墙');
     expect(w.find('[data-testid="table-dish-3"]').exists()).toBe(false);
+  });
+
+  it('目录里查不到菜名时用各语言的占位名，不显示 #id（backlog 1010）', () => {
+    const w = mount(TableGrid, {
+      props: {
+        tables: [
+          {
+            no: 1,
+            floor: 1,
+            customer: 2,
+            last: { type: 2, coin: 1, exp: 1, oil: 1, req: 3, grade: 2, cookbookId: 99 },
+          },
+        ],
+      },
+    });
+    expect(w.get('[data-testid="table-dish-1"]').text()).toBe('菜谱99');
   });
 });
 

@@ -25,7 +25,7 @@ const busy = ref(false);
 
 async function load() {
   try {
-    data.value = await endpoints.townExchange();
+    data.value = await endpoints.townExchange(props.part);
   } catch (e) {
     toast.push(errorMessage(e, t.value.town.exchange.loadFailed), 'danger');
   }

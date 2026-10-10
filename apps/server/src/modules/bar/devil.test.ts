@@ -6,6 +6,7 @@ import { getDaily } from '../counter/dailyCounter';
 import { getEffectAgg, listActiveEffects } from '../effects/service';
 import { listNews } from '../news/news';
 import { GOODS } from '@dt/config';
+import { createShard } from '../../../test/fixtures';
 
 /** 每次操作取下一个随机数：开局那个定特辣酒（⌊v×6⌋），之后每次"喝"定调酒师选第几杯（⌊v×剩余杯数⌋） */
 let script: number[] = [];
@@ -49,11 +50,40 @@ describe('魔鬼辣杯（4C-3 设计文档 §2.1）', () => {
     expect(r).toMatchObject({ result: 'win', spiked: 5, survived: 1, payout: 14, lastBartender: 5 });
     expect(r.cups).toEqual(['me', null, null, null, null, 'bartender']);
     expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(90 + 14);
-    // 排行“本周赢得礼券”（问题记录 569）
-    expect(await getDaily(t.db, a.restaurantId, 'bar.devil.payout', gameDay(t.clock.now))).toBe(14);
+    // 排行“本周赢得礼券”（问题记录 569）记净赚：拿回 14 减押注 10（backlog 1010）
+    expect(await getDaily(t.db, a.restaurantId, 'bar.devil.payout', gameDay(t.clock.now))).toBe(4);
     // 局结束后可以再开
     script = [0];
     await start(a, 1);
+  });
+
+  it('局进行中后台改了赔付表：这一局按开局时的那一行赔（backlog 1010）', async () => {
+    const shardId = await createShard(t.db);
+    const a = await newRestaurant(t, { shardId, goods: { [GOODS.mysteryTicket]: 100 } });
+    script = [0.9, 0.9];
+    await start(a, 10);
+    await t.db
+      .insertInto('shard_config')
+      .values({
+        shard_id: shardId,
+        override: JSON.stringify({
+          tuning: {
+            bar: {
+              devil: {
+                payouts: [
+                  [1, 2, 3],
+                  [7, 9, 12],
+                  [20, 30, 40],
+                  [27, 36, 49],
+                ],
+              },
+            },
+          },
+        }),
+      })
+      .execute();
+    t.game.shards.invalidate(shardId);
+    expect((await drink(a, 0)).data).toMatchObject({ result: 'win', payout: 14 });
   });
 
   it('玩家活过 3 杯：押 10 按赔付表拿回 25 张（2026-10-09 改成 1.35 倍取整）并写新闻', async () => {

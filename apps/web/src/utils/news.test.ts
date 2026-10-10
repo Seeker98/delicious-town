@@ -228,6 +228,12 @@ describe('小镇新闻里的店名能点（问题记录 567）', () => {
     );
   });
 
+  it('喇叭内容、店名里本身含占位字符时去掉它们，不会变成链接（backlog 1010）', () => {
+    const pua = String.fromCharCode(0xe000) + String.fromCharCode(0xe001);
+    const parts = newsParts(n('town.broadcast', { text: `喊${pua}一声` }, `小${pua}王`), names);
+    expect(parts).toEqual([{ text: '小王', restId: 7 }, { text: ': 喊一声' }]);
+  });
+
   it('店已经不在、系统新闻：没有链接，文字和原来一样', () => {
     expect(newsParts(n('star.up', { star: 2, name: '旧名' }, null), names)).toEqual([
       { text: newsText(n('star.up', { star: 2, name: '旧名' }, null), names) },

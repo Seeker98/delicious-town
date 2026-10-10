@@ -4,7 +4,7 @@ import type { Game } from '../../game';
 import { AppError } from '../../http/errors';
 import type { AdminActor } from '../admin/access';
 import { writeAudit } from '../admin/audit';
-import { checkRewardIcons, checkRewardItems } from './reward';
+import { checkRewardIcons, checkRewardItems, lockRewardIcons } from './reward';
 import { sendMail } from './send';
 
 /** 后台邮件（设计 §6、裁定 8、27）：发送、列表、撤回；写操作都写审计 */
@@ -78,6 +78,7 @@ export function createAdminMail(game: Game) {
         if (missing.length > 0) throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404, { ids: missing });
       }
       const ids = await db.transaction().execute(async (tx) => {
+        await lockRewardIcons(tx, items);
         const mailIds: number[] = [];
         for (const restId of restIds)
           mailIds.push(

@@ -3,6 +3,7 @@ import { userWithRole } from '../../../test/admin';
 import { createShard } from '../../../test/fixtures';
 import { call, createTestApp, type TestContext } from '../../../test/helpers';
 import { playerIn } from '../../../test/players';
+import { grantIcon } from '../icons/grant';
 
 let ctx: TestContext;
 beforeAll(async () => {
@@ -67,5 +68,40 @@ describe('后台发个性图标', () => {
     expect(g.json.data).toEqual([expect.objectContaining({ key: `c${ok!.id}`, title: '老王的红烧肉' })]);
     const bad = await call(ctx.app, 'POST', url, { cookie: admin.cookie, body: { key: `c${off!.id}` } });
     expect(bad.json.code).toBe('VALIDATION_FAILED');
+  });
+
+  it('直接发称号锁店：玩家同时领邮件里的称号时，展示中的不会超过 5 个（backlog 1010）', async () => {
+    const admin = await userWithRole(ctx, 'admin');
+    const p = await playerIn(ctx, await createShard(ctx.deps.db));
+    const now = new Date();
+    for (const key of ['founder', 'helper', 'tester', 'champion'])
+      await grantIcon(ctx.deps.db, { restId: p.restId, key, expiresAt: null, now });
+    // 模拟领邮件的事务：锁住店、发一个称号（第 5 个展示），还没提交
+    let release!: () => void;
+    const gate = new Promise<void>((r) => (release = r));
+    let ready!: () => void;
+    const started = new Promise<void>((r) => (ready = r));
+    const claim = ctx.deps.db.transaction().execute(async (tx) => {
+      await tx.selectFrom('restaurant').select('id').where('id', '=', p.restId).forNoKeyUpdate().execute();
+      await grantIcon(tx, { restId: p.restId, key: 'artist', expiresAt: null, now });
+      ready();
+      await gate;
+    });
+    await started;
+    const g = call(ctx.app, 'POST', `/api/v1/admin/restaurants/${p.restId}/icons`, {
+      cookie: admin.cookie,
+      body: { key: 'chef' },
+    });
+    await new Promise((r) => setTimeout(r, 300));
+    release();
+    await claim;
+    expect((await g).status).toBe(200);
+    const shown = await ctx.deps.db
+      .selectFrom('rest_icon')
+      .select('icon_key')
+      .where('rest_id', '=', p.restId)
+      .where('shown', '=', true)
+      .execute();
+    expect(shown).toHaveLength(5);
   });
 });

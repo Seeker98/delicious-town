@@ -143,10 +143,31 @@ describe('帖子被回复的动态（问题记录 553）', () => {
     later();
     await reply(b, id, '回一楼', { replyTo: 1 });
     expect(await feedOf(a)).toHaveLength(1);
+    // 这一条带上回的是哪一层（backlog 1010）
+    expect((await feedOf(a))[0]!.params).toMatchObject({ floor: 2, toFloor: 1 });
     later();
     await reply(b, id, '回自己', { replyTo: 2 });
     expect(await feedOf(b)).toHaveLength(0);
     expect(await feedOf(a)).toHaveLength(2);
+  });
+
+  it('回复已删除的楼层：那层的作者不再收到；楼主照常收到（backlog 1010）', async () => {
+    const { a, b, c, id } = await setup();
+    const r1 = (await reply(b, id, '二楼')).data;
+    await f().deleteReply(b, r1.id);
+    later();
+    await reply(c, id, '回删掉的二楼', { replyTo: 1 });
+    expect(await feedOf(b)).toHaveLength(0);
+    expect((await feedOf(a)).map((x) => x.params.floor)).toEqual([2, 1]);
+  });
+
+  it('匿名回复某一层：那层的作者收到的也不带回复者（backlog 1010 补测）', async () => {
+    const { b, c, id } = await setup();
+    await reply(b, id, '一楼');
+    later();
+    await reply(c, id, '匿名回一楼', { replyTo: 1, anonymous: true });
+    const [x] = await feedOf(b);
+    expect(x!.params).toEqual({ postId: id, title: 't', floor: 2, toFloor: 1 });
   });
 
   it('匿名回复不带回复者', async () => {

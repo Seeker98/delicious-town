@@ -439,6 +439,7 @@ export default {
     goods: (id: number) => `道具${id}`,
     food: (id: number) => `食材${id}`,
     mc: (id: number) => `特色菜${id}`,
+    cookbook: (id: number) => `菜谱${id}`,
     seed: (id: number) => `种子${id}`,
     /** 某种食材的种子 */
     seedOf: (food: string) => `${food}种子`,

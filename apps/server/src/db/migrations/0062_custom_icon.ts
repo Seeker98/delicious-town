@@ -19,9 +19,12 @@ export async function up(db: Kysely<any>): Promise<void> {
     )`.execute(db);
 }
 
+/** 定制称号的 key，和 CUSTOM_ICON_KEY 一致：不含 c0、c01（backlog 1010） */
+export const CUSTOM_KEY_PATTERN = '^c[1-9][0-9]{0,9}$';
+
 /** 回退：定制称号的拥有记录一起删掉（没有定义就显示不出来） */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function down(db: Kysely<any>): Promise<void> {
-  await sql`delete from rest_icon where icon_key ~ '^c[0-9]+$'`.execute(db);
+  await sql`delete from rest_icon where icon_key ~ ${CUSTOM_KEY_PATTERN}`.execute(db);
   await sql`drop table custom_icon`.execute(db);
 }

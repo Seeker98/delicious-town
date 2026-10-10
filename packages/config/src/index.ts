@@ -39,6 +39,7 @@ export {
 export { takesStoreSlot } from './souvenir';
 export { kujiErrors, KUJI_MAX_TICKETS } from './kuji';
 export { fundErrors } from './fund';
+export { slotFloorErrors } from './slot';
 export {
   itemRefs,
   retiredErrors,

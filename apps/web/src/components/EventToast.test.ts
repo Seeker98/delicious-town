@@ -90,4 +90,12 @@ describe('backlog 测试不稳定：得失提示按显示时的道具名', () =>
     await nextTick();
     expect(w.get('[data-testid="toast"]').text()).toBe('获得 每日签到礼包×1');
   });
+
+  it('没有底栏的页面（登录、指引、后台）提示贴近底部，不空出底栏的高度（backlog 1010）', () => {
+    vi.useRealTimers();
+    expect(mount(EventToast).get('.dt-toasts').classes()).toContain('dt-toasts-bottom');
+    const low = mount(EventToast, { props: { nav: false } }).get('.dt-toasts');
+    expect(low.classes()).toContain('dt-toasts-low');
+    expect(low.classes()).not.toContain('dt-toasts-bottom');
+  });
 });

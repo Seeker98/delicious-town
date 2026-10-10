@@ -371,3 +371,44 @@ describe('流水名称按语言（fix/batch-1008 遗留：道具流水只测了�
     expect(recordLabel({ kind: 'remnant', itemId: 7 }, en)).toContain('Dish 7');
   });
 });
+
+describe('餐厅动态的外文文案（backlog 1010）', () => {
+  const names = { goodsName: () => 'Voucher', foodName: () => 'Rice' };
+  const at = '2026-10-09T00:00:00Z';
+  const text = (type: string, params: Record<string, unknown>) => logText({ type, params, at }, names);
+  afterEach(async () => {
+    await useLocaleStore().set('zh-CN');
+  });
+
+  it('英文：手动进货分成 1 枚用单数；回复某一层写 your reply #N', async () => {
+    setActivePinia(createPinia());
+    await useLocaleStore().set('en');
+    expect(text('market.share', { foodsId: 1, num: 1, byName: 'A', coin: 1 })).toMatch(/you got 1 coin$/);
+    expect(text('market.share', { foodsId: 1, num: 1, byName: 'A', coin: 2 })).toContain('you got 2 coins');
+    expect(text('forum.replied', { byName: 'A', postId: 5, title: 'Help', floor: 3, toFloor: 2 })).toBe(
+      'A replied to your reply #2 in "Help"',
+    );
+  });
+
+  it('西语、法语：手动进货分成 1 枚用单数', async () => {
+    setActivePinia(createPinia());
+    await useLocaleStore().set('es');
+    expect(text('market.share', { foodsId: 1, num: 1, byName: 'A', coin: 1 })).toMatch(/recibiste 1 moneda$/);
+    await useLocaleStore().set('fr');
+    expect(text('market.share', { foodsId: 1, num: 1, byName: 'A', coin: 1 })).toContain('1 pièce');
+    expect(text('market.share', { foodsId: 1, num: 1, byName: 'A', coin: 1 })).not.toContain('pièces');
+  });
+
+  it('法语：白食者走后店主得到的东西用过去时', async () => {
+    setActivePinia(createPinia());
+    await useLocaleStore().set('fr');
+    const s = text('dine.left', {
+      byName: 'A',
+      table: 3,
+      coin: 120,
+      award: { kind: 'goods', id: 1, num: 2 },
+    });
+    expect(s).toContain('vous avez reçu Voucher');
+    expect(s).not.toContain('vous recevez');
+  });
+});

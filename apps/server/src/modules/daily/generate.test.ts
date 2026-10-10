@@ -4,7 +4,7 @@ import { resolveShardSettings } from '@dt/config';
 import { testConfig } from '../../../test/config';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import { createShard } from '../../../test/fixtures';
-import { scriptedWriter, type Writer } from '../../infra/writer';
+import { scriptedWriter, WriterError, type Writer } from '../../infra/writer';
 import { postNews } from '../news/news';
 import { dailyJobs, generateDaily, KEEP_DAYS } from './generate';
 
@@ -85,9 +85,56 @@ describe('小镇日报：生成一天', () => {
     let x = (await row(shardId))!;
     expect(x).toMatchObject({ status: 'pending', attempts: 1, tokens_in: 200, content: null });
     expect(x.error).toContain('tokens');
-    await generateDaily(t.game.deps, scriptedWriter([zhReply(r), enReply(r)]), shardId, DAY, o);
+    // 简中已经合格：再来一次只调翻译，不重写、不重付（backlog 1010）
+    const again = scriptedWriter([enReply(r)]);
+    await generateDaily(t.game.deps, again, shardId, DAY, o);
+    expect(again.calls).toHaveLength(1);
     x = (await row(shardId))!;
-    expect(x).toMatchObject({ status: 'draft', attempts: 2, tokens_in: 400, error: null });
+    expect(x).toMatchObject({ status: 'draft', attempts: 2, tokens_in: 300, error: null });
+    expect((x.content as { 'zh-CN': { title: string } })['zh-CN'].title).toBe('小镇又热闹了');
+  });
+
+  it('合格的简中只复用一次：翻译连着两次过不了，第三次从头写（终审：免得一篇简中卡死一整天）', async () => {
+    const { shardId, r } = await shardWithNews();
+    await expect(
+      generateDaily(t.game.deps, scriptedWriter([zhReply(r), enReply('{r:999}')]), shardId, DAY, o),
+    ).rejects.toThrow();
+    const second = scriptedWriter([enReply('{r:999}')]);
+    await expect(generateDaily(t.game.deps, second, shardId, DAY, o)).rejects.toThrow();
+    expect(second.calls).toHaveLength(1);
+    const third = scriptedWriter([zhReply(r), enReply(r)]);
+    await generateDaily(t.game.deps, third, shardId, DAY, o);
+    expect(third.calls).toHaveLength(2);
+  });
+
+  it('简中不合格时下次从头写（backlog 1010）', async () => {
+    const { shardId, r } = await shardWithNews();
+    await expect(
+      generateDaily(t.game.deps, scriptedWriter([zhReply('{r:999}')]), shardId, DAY, o),
+    ).rejects.toThrow();
+    const again = scriptedWriter([zhReply(r), enReply(r)]);
+    await generateDaily(t.game.deps, again, shardId, DAY, o);
+    expect(again.calls).toHaveLength(2);
+  });
+
+  it('写稿器回空内容时那次的 token 也记上（backlog 1010）', async () => {
+    const { shardId } = await shardWithNews();
+    const empty: Writer = {
+      async chat() {
+        throw new WriterError('writer empty reply', { tokensIn: 70, tokensOut: 3, model: 'm2' });
+      },
+    };
+    await expect(generateDaily(t.game.deps, empty, shardId, DAY, o)).rejects.toThrow('empty');
+    expect((await row(shardId))!).toMatchObject({ tokens_in: 70, tokens_out: 3, model: 'm2', attempts: 1 });
+  });
+
+  it('已有草稿时重新生成失败：草稿那一行不记过时的错误（backlog 1010）', async () => {
+    const { shardId, r } = await shardWithNews();
+    await generateDaily(t.game.deps, scriptedWriter([zhReply(r), enReply(r)]), shardId, DAY, o);
+    await expect(
+      generateDaily(t.game.deps, scriptedWriter([new Error('boom')]), shardId, DAY, { ...o, force: true }),
+    ).rejects.toThrow('boom');
+    expect((await row(shardId))!).toMatchObject({ status: 'draft', error: null, attempts: 2 });
   });
 
   it('已有草稿时不再生成；重新生成（force）可以，次数 +1；已发布的不能重新生成', async () => {
@@ -152,6 +199,18 @@ describe('小镇日报：生成一天', () => {
     const x = (await row(shardId))!;
     expect((x.content as { 'zh-CN': { title: string } })['zh-CN'].title).toBe('手改的');
     expect(x.tokens_in).toBe(400);
+  });
+
+  it('重新生成期间后台撤下了（内容没变）：不改回草稿，报内容已变（backlog 1010）', async () => {
+    const { shardId, r } = await shardWithNews();
+    await generateDaily(t.game.deps, scriptedWriter([zhReply(r), enReply(r)]), shardId, DAY, o);
+    const w = racingWriter([zhReply(r), enReply(r)], () =>
+      t.db.updateTable('town_daily').set({ status: 'hidden' }).where('shard_id', '=', shardId).execute(),
+    );
+    await expect(generateDaily(t.game.deps, w, shardId, DAY, { ...o, force: true })).rejects.toMatchObject({
+      params: { reason: 'daily_changed' },
+    });
+    expect((await row(shardId))!.status).toBe('hidden');
   });
 
   it('周期任务写的时候后台已经发布了：不盖掉，返回现在的状态；token 照样记上（backlog）', async () => {

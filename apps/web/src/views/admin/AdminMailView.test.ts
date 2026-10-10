@@ -124,6 +124,34 @@ describe('AdminMailView', () => {
     expect(vi.mocked(adminApi.sendMail).mock.calls[0]![0]).not.toHaveProperty('restId');
   });
 
+  it('改了店 id、新店名还没查回来时不能发，确认框里不会是旧店名（backlog 1010）', async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((r) => (release = r));
+    vi.mocked(adminApi.restaurant).mockImplementation(async (id: number) => {
+      if (id === 4) await gate;
+      return {
+        overview: { name: `店${id}`, shardId: 1 },
+        owner: { username: `u${id}` },
+        shardName: '一服',
+      } as never;
+    });
+    const w = mount(AdminMailView);
+    await flushPromises();
+    await w.find('[data-testid="mail-scope"]').setValue('rest');
+    await w.find('[data-testid="mail-title"]').setValue('t');
+    await w.find('[data-testid="mail-body"]').setValue('b');
+    await w.find('[data-testid="mail-rest"]').setValue('3');
+    await flushPromises();
+    expect(w.find('[data-testid="mail-send"]').attributes('disabled')).toBeUndefined();
+    await w.find('[data-testid="mail-rest"]').setValue('4');
+    await flushPromises();
+    expect(w.find('[data-testid="mail-send"]').attributes('disabled')).toBeDefined();
+    release();
+    await flushPromises();
+    expect(w.find('[data-testid="mail-send"]').attributes('disabled')).toBeUndefined();
+    expect(w.find('[data-testid="mail-rest-who-4"]').text()).toContain('店4');
+  });
+
   it('邮件附件可以加称号', async () => {
     const w = mount(AdminMailView);
     await flushPromises();

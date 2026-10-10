@@ -9,7 +9,7 @@ const goods = new Set(['神秘礼券', '小体力卡', '体力卡'].map(gid));
 const foods = new Set([10]);
 const run = (codes: unknown[]) => {
   const errors: string[] = [];
-  checkNewbieCodes({ codes } as never, goods, foods, errors);
+  checkNewbieCodes({ codes } as never, goods, foods, new Set(['founder']), errors);
   return errors;
 };
 const ok = { code: 'XINSHOU', minLevel: 1, items: { coin: 100 }, note: '' };
@@ -24,6 +24,16 @@ describe('新手码配置（设计 §4.1）', () => {
   it('码格式不对、重复', () => {
     expect(run([{ ...ok, code: 'ab' }])).toContain('newbie_codes ab: bad code');
     expect(run([ok, ok])).toContain('newbie_codes XINSHOU: duplicate');
+  });
+
+  it('送的称号要是配置里有的称号（backlog 1010：原来兑换时才报 code_broken）', () => {
+    expect(run([{ ...ok, items: { icons: [{ key: 'founder' }] } }])).toEqual([]);
+    expect(run([{ ...ok, items: { icons: [{ key: 'nope' }] } }])).toContain(
+      'newbie_codes XINSHOU: unknown icon nope',
+    );
+    expect(run([{ ...ok, items: { icons: [{ key: 'c12' }] } }])).toContain(
+      'newbie_codes XINSHOU: unknown icon c12',
+    );
   });
 
   it('奖励为空、道具或食材不存在（Review Focus 4）', () => {

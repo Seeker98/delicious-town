@@ -65,6 +65,24 @@ describe('TitlePicker（定制称号设计 三）', () => {
     expect(last(w)).toEqual({ key: 'c2', title: '面霸', until: '2026-10-31T15:59:00.000Z' });
   });
 
+  it('改回“选择称号”时外层也清掉（backlog 1010）', async () => {
+    const w = await mountPicker();
+    await w.find(sel('select')).setValue('founder');
+    expect(last(w)).toMatchObject({ key: 'founder' });
+    await w.find(sel('select')).setValue('');
+    expect(last(w)).toEqual({ key: '', title: '' });
+  });
+
+  it('搜索把选中的那个滤掉时它还留在下拉里，不显示空白（backlog 1010）', async () => {
+    const w = await mountPicker();
+    await w.find(sel('select')).setValue('founder');
+    await w.find(sel('q')).setValue('群主');
+    const opts = w.findAll(`${sel('select')} option`).map((o) => o.attributes('value'));
+    expect(opts).toContain('founder');
+    expect(opts).toContain('c2');
+    expect((w.find(sel('select')).element as HTMLSelectElement).value).toBe('founder');
+  });
+
   it('不开新建时没有新建按钮', async () => {
     const w = await mountPicker();
     expect(w.find(sel('new')).exists()).toBe(false);

@@ -352,6 +352,20 @@ describe('冷门食材的参考价不在锁店事务里补算（质量期 ③）
     expect(saved.length).toBe(9);
   });
 
+  it('挂单方的星级和等级一次读完：两家挂单方、每家几个计数也只查一次（backlog 1010）', async () => {
+    const shardId = await createShard(qt.db);
+    const f = rare();
+    const s1 = await trader(qt, { shardId, foods: { [f.id]: 5 } });
+    const s2 = await trader(qt, { shardId, foods: { [f.id]: 5 } });
+    await qt.game.exchange.place(s1, { foodsId: f.id, side: 'sell', price: f.coin, qty: 1 });
+    await qt.game.exchange.place(s2, { foodsId: f.id, side: 'sell', price: f.coin, qty: 1 });
+    const b = await trader(qt, { shardId, coin: 1_000_000 });
+    const { sqls } = await q.count(() =>
+      qt.game.exchange.place(b, { foodsId: f.id, side: 'buy', price: f.coin, qty: 2 }),
+    );
+    expect(sqls.filter((x) => /select .*"star_level", "level" from "restaurant"/.test(x))).toHaveLength(1);
+  });
+
   it('交易所关着、等级不够时下单被拒，也不在锁外补算参考价（终审 Important 2）', async () => {
     const f = rare();
     const refs = (shardId: number) =>

@@ -88,7 +88,7 @@ export async function barView(
       emailVerified: acc.email_verified_at !== null,
       lamp: have(GOODS.magicLamp) > 0,
       floorLeft: slotFloorLeft(s?.slot_fail ?? 0, t),
-      rareEvery: Math.round(slotRareEvery(config.bundle.slotAwards, t, have(GOODS.magicLamp) > 0)),
+      rareEvery: Math.round(slotRareEvery(config.slotPool.items, t, have(GOODS.magicLamp) > 0)),
       pool: config.slotPool.items.map((a) => ({
         id: a.id,
         kind: a.kind,

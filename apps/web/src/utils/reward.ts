@@ -1,4 +1,4 @@
-import { HAT_PREFIX, type RewardItems } from '@dt/shared';
+import { HAT_PREFIX, type AwardDto, type RewardItems } from '@dt/shared';
 import { activeMessages } from '../i18n';
 import { formatNum, gameDateTime } from './format';
 
@@ -43,4 +43,21 @@ export function rewardSummary(
     else parts.push(r.icon(title));
   }
   return parts.join(activeMessages().events.sep);
+}
+
+/** 任务、活跃奖励的文字："银币 100, 经验 500, 神秘礼券 ×3"（任务页、活跃按钮共用） */
+export function awardText(
+  a: AwardDto,
+  names: { goodsName(id: number): string; foodName(id: number): string },
+): string {
+  const m = activeMessages();
+  const r = m.util.reward;
+  const parts: string[] = [];
+  if (a.coin) parts.push(r.coin(formatNum(a.coin)));
+  if (a.exp) parts.push(r.exp(formatNum(a.exp)));
+  if (a.diamond) parts.push(r.diamond(formatNum(a.diamond)));
+  if (a.renown) parts.push(r.renown(formatNum(a.renown)));
+  for (const g of a.goods ?? []) parts.push(m.common.qty(names.goodsName(g.id), g.num));
+  for (const f of a.foods ?? []) parts.push(m.common.qty(names.foodName(f.id), f.num));
+  return parts.join(m.events.sep);
 }

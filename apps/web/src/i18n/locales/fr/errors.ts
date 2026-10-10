@@ -450,6 +450,7 @@ const errors: Messages['errors'] = {
     goods: (id) => `Objet ${id}`,
     food: (id) => `Ingrédient ${id}`,
     mc: (id) => `Plat signature ${id}`,
+    cookbook: (id) => `Recette ${id}`,
     seed: (id) => `Graine ${id}`,
     seedOf: (food) => `Graine de ${food}`,
     weather: (id) => `Météo ${id}`,

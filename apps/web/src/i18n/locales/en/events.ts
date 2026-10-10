@@ -59,7 +59,7 @@ function describeFeed(item: RestLogDto, foodName: (id: number) => string): strin
       return `${who} ${p.type === 2 ? 'snuck a lesson' : 'learned a signature dish'} in your class`;
     case 'forum.replied':
       return p.toFloor
-        ? `${who} replied to your #${String(p.toFloor)} in "${String(p.title ?? '')}"`
+        ? `${who} replied to your reply #${String(p.toFloor)} in "${String(p.title ?? '')}"`
         : `${who} replied to your post "${String(p.title ?? '')}"`;
     case 'thumb':
       return `${who} gave you a thumbs-up`;
@@ -218,7 +218,7 @@ const events: Messages['events'] = {
       `Restocked at the market manually for ${formatNum(n(p, 'cost'))} ${plEn(formatNum(n(p, 'cost')), 'coin', 'coins')}`,
     'market.share': (p, names) =>
       p.byName
-        ? `${String(p.byName)} bought ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} from your manual restock; you got ${formatNum(n(p, 'coin'))} coins`
+        ? `${String(p.byName)} bought ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} from your manual restock; you got ${formatNum(n(p, 'coin'))} ${plEn(String(n(p, 'coin')), 'coin', 'coins')}`
         : `Your manually restocked ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} was bought`,
     'takeaway.open': () => 'Opened takeaway service',
     'takeaway.refresh': (p) =>

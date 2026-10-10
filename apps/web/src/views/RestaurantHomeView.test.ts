@@ -669,6 +669,9 @@ describe('RestaurantHomeView', () => {
     const icon = w.get('[data-testid="home-floor-roach"]');
     expect(icon.classes()).toContain('bi-bug');
     expect(icon.element.closest('a')!.getAttribute('href')).toBe('/rest/floor');
+    // 读屏听得出有蟑螂（backlog 1010）
+    expect(icon.attributes('aria-hidden')).toBe('true');
+    expect(icon.element.closest('a')!.querySelector('.visually-hidden')!.textContent).toBe('店里有蟑螂');
   });
 
   it('小镇新闻：最新广播 + 3 条新闻，点"更多"去小镇页', async () => {

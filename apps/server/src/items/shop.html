@@ -243,7 +243,7 @@
       function rowHtml(r) {
         const v = valueOf(r);
         const box = (f) =>
-          `<td data-c="${f}"><input type="checkbox" data-id="${r.id}" data-f="${f}" ${v[f] ? 'checked' : ''} ${r.retired && f === 'onSale' ? 'disabled' : ''}/><span class="muted hint"></span></td>`;
+          `<td data-c="${f}"><input type="checkbox" data-id="${r.id}" data-f="${f}" ${v[f] ? 'checked' : ''} ${r.retired ? 'disabled' : ''}/><span class="muted hint"></span></td>`;
         return `<tr data-row="${r.id}" class="${r.retired ? 'retired' : ''}">
               <td>${r.id}</td><td>${esc(r.name)}</td><td>${esc(r.category)}</td><td>${r.level}</td>
               <td class="num" data-c="coin"><input type="number" min="0" data-id="${r.id}" data-f="coin" value="${v.coin}"/> <span class="muted hint" title="原版"></span></td>
@@ -322,6 +322,8 @@
         };
         saving = true;
         updateButtons();
+        // 保存中不能再改（backlog 1010：成功后会清掉没发出去的改动，页面却说已保存）；结束后 render() 重画恢复
+        for (const el of $('rows').querySelectorAll('input')) el.disabled = true;
         $('msg').textContent = '保存中…';
         let out;
         try {
@@ -342,13 +344,13 @@
           // 失败也要恢复按钮、说清原因，不能一直停在“保存中…”（商店整理终审）
           saving = false;
           showErrors([]);
-          updateButtons();
+          render();
           $('msg').textContent = `保存失败：${e.message}`;
           return;
         }
         saving = false;
         if (out.errors.length) {
-          updateButtons();
+          render();
           showErrors(out.errors);
           $('msg').textContent = '没保存：构建不过，见上面';
           return;

@@ -1,10 +1,4 @@
 import type { RestLogDto } from '@dt/shared';
-import { activeMessages } from '../i18n';
-
-/** 好友动态的一行文案（服务端只存结构化参数；文案按语言，问题记录 272） */
-export function describeFeed(item: RestLogDto, foodName: (id: number) => string): string {
-  return activeMessages().events.feed(item, foodName);
-}
 
 /**
  * 餐厅动态"看过"到哪一条（问题记录 553）：好友页动态卡读出来时记下最新一条的时间，首页比它新的加小圆点。

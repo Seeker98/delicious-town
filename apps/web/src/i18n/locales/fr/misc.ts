@@ -26,8 +26,8 @@ const misc: Messages['misc'] = {
     myCode: "Mon code d'invitation",
     copy: 'Copier',
     copyLink: 'Copier le lien',
-    rules: (cap) =>
-      `Vos amis reçoivent un pack de départ en ouvrant leur restaurant. Une fois leur e-mail vérifié, vous recevez une récompense quand leur restaurant atteint le niveau 10, puis le niveau 30. ${cap} ${plFr(cap, 'ami au plus compte', 'amis au plus comptent')} par mois.`,
+    rules: (cap, lv1, lv2) =>
+      `Vos amis reçoivent un pack de départ en ouvrant leur restaurant. Une fois leur e-mail vérifié, vous recevez une récompense quand leur restaurant atteint le niveau ${lv1}, puis le niveau ${lv2}. ${cap} ${plFr(cap, 'ami au plus compte', 'amis au plus comptent')} par mois.`,
     month: (n, cap) => `Comptés ce mois-ci\u202f: ${n} / ${cap}`,
     empty: "Vous n'avez encore invité personne",
     level: (n) => `Niveau ${n}`,

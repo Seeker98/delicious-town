@@ -28,6 +28,7 @@ const home: Messages['home'] = {
   noGuests: 'Sin clientes',
   income: 'Registro de ingresos',
   floor: 'Plantas y mesas',
+  hasRoach: 'Hay cucarachas en el restaurante',
   noRound: 'Sin rondas recientes',
   cookbooks: (learned, total) => `Recetas ${learned}/${total}`,
   special: (name) => `Especialidad: ${name}`,

@@ -17,6 +17,7 @@ import { foodWeights } from './foodSupply';
 import { FUND_MEDALS, GOODS, GOODS_TYPE, NEWBIE, NON_SUIT_IDS } from './ids';
 import { tuningSchema } from './tuning';
 import { checkNewbieCodes } from './newbieCodes';
+import { slotFloorErrors } from './slot';
 import { checkSettingDocs } from './settingDocs';
 import { applyStressTables } from './stressTable';
 import { isNewId, type IdKind } from './renumber';
@@ -401,6 +402,11 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     if (s.coin !== undefined) g.coin = s.coin;
     if (s.diamond !== undefined) g.diamond = s.diamond;
     if (s.onSale !== undefined && !g.retired) g.onSale = s.onSale;
+  }
+  // 上了银币商店却没有银币价：商店不列出来（shop/service.ts 要 coin > 0），整理工具里看着却像上架了（backlog 1010）
+  for (const s of shopRaw.goods) {
+    const g = goods.find((x) => x.id === s.id);
+    if (g?.onSale && !(g.coin > 0)) errors.push(`shop puts goods ${s.id} on sale with no coin price`);
   }
 
   for (const g of goods) {
@@ -989,8 +995,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   for (const level of new Set(tuning.bar.deal.prizes.filter((p) => p.kind === 'food').map((p) => p.level)))
     if (!foods.some((f) => f.level === level && f.odds === 100 && !f.retired))
       errors.push(`tuning.bar.deal.prizes: no common level-${level} food to draw`);
-  if (!slotAwards.some((a) => a.id === tuning.bar.slotFloorAwardId && a.kind !== 'empty'))
-    errors.push(`tuning.bar.slotFloorAwardId ${tuning.bar.slotFloorAwardId} not in slot awards`);
+  errors.push(...slotFloorErrors(tuning.bar.slotFloorAwardId, slotAwards));
   // 神秘礼券、蟹币、神灯（GOODS.mysteryTicket / krabCoin / magicLamp）
   for (const id of [GOODS.mysteryTicket, GOODS.krabCoin, GOODS.magicLamp])
     if (!goodsIds.has(id)) errors.push(`bar references unknown goods ${id}`);
@@ -1215,7 +1220,13 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   }
 
   // ---------- 新手兑换码（问题记录 150） ----------
-  const newbieCodes = checkNewbieCodes(newbieCodesRaw, goodsIds, foodIds, errors);
+  const newbieCodes = checkNewbieCodes(
+    newbieCodesRaw,
+    goodsIds,
+    foodIds,
+    new Set(looks.icons.map((i) => i.key)),
+    errors,
+  );
 
   // ---------- 区服数值说明（问题记录 126） ----------
   checkSettingDocs(

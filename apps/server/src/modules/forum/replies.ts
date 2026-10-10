@@ -25,7 +25,12 @@ async function notifyReplied(
     floor,
   };
   const rows: Array<{ rest_id: number; params: Record<string, unknown> }> = [];
-  if (post.rest_id !== o.rest.id) rows.push({ rest_id: post.rest_id, params: base });
+  // 回的是楼主自己那层：楼主只收一条，带上楼层号（backlog 1010）
+  if (post.rest_id !== o.rest.id)
+    rows.push({
+      rest_id: post.rest_id,
+      params: toRest === post.rest_id ? { ...base, toFloor: b.replyTo } : base,
+    });
   if (toRest !== null && toRest !== o.rest.id && toRest !== post.rest_id)
     rows.push({ rest_id: toRest, params: { ...base, toFloor: b.replyTo } });
   if (rows.length === 0) return;
@@ -58,11 +63,11 @@ export async function createReply(
   if (!textOk(content, t.replyMax)) throw invalidState('reply_text', { max: t.replyMax });
   await assertReady(o, 'forum_reply', t.replyCooldownSec, 'forum_reply');
   const post = await loadPost(o, postId, { forUpdate: true });
-  let target: { rest_id: number } | undefined;
+  let target: { rest_id: number; deleted_at: Date | null } | undefined;
   if (b.replyTo !== undefined) {
     target = await o.tx
       .selectFrom('forum_reply')
-      .select('rest_id')
+      .select(['rest_id', 'deleted_at'])
       .where('post_id', '=', postId)
       .where('floor', '=', b.replyTo)
       .executeTakeFirst();
@@ -88,7 +93,8 @@ export async function createReply(
     .where('id', '=', postId)
     .execute();
   restLog(o, 'forum.reply', { postId, floor, anonymous: b.anonymous });
-  await notifyReplied(o, post, floor, b, target?.rest_id ?? null);
+  // 回复已删除的楼层（包括被管理员删的）不通知那层的作者（backlog 1010）
+  await notifyReplied(o, post, floor, b, target && target.deleted_at === null ? target.rest_id : null);
   // 任务和活跃"论坛发帖或回复"（问题记录 318）
   await emitAction(o, 'post.reply');
   return {

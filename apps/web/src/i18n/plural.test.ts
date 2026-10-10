@@ -45,9 +45,9 @@ describe('英法西的单复数（质量期 ④，backlog #116）', () => {
   });
 
   it('配置值正好是 1 时动词也跟着变：好友加成人数上限（backlog #116）', () => {
-    expect(en.misc.invite.rules(1)).toContain('Up to 1 friend counts per month');
-    expect(en.misc.invite.rules(5)).toContain('Up to 5 friends count per month');
-    expect(fr.misc.invite.rules(1)).toContain('1 ami au plus compte par mois');
-    expect(es.misc.invite.rules(1)).toContain('Cuenta como máximo 1 amigo al mes');
+    expect(en.misc.invite.rules(1, 10, 30)).toContain('Up to 1 friend counts per month');
+    expect(en.misc.invite.rules(5, 10, 30)).toContain('Up to 5 friends count per month');
+    expect(fr.misc.invite.rules(1, 10, 30)).toContain('1 ami au plus compte par mois');
+    expect(es.misc.invite.rules(1, 10, 30)).toContain('Cuenta como máximo 1 amigo al mes');
   });
 });

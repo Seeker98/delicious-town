@@ -64,6 +64,18 @@ describe('小镇日报写稿器（OpenAI 兼容接口）', () => {
       fetch: fakeFetch(200, { choices: [] }).f,
     });
     await expect(empty.chat('s', 'u')).rejects.toThrow('writer empty reply');
+    // 回空内容也照样带上用量（backlog 1010：那次的 token 要记上）
+    const emptyPaid = openAiWriter({
+      baseUrl: 'https://x',
+      key: 'k',
+      model: 'm',
+      fetch: fakeFetch(200, { model: 'm2', choices: [], usage: { prompt_tokens: 70, completion_tokens: 3 } })
+        .f,
+    });
+    await expect(emptyPaid.chat('s', 'u')).rejects.toMatchObject({
+      message: 'writer empty reply',
+      usage: { tokensIn: 70, tokensOut: 3, model: 'm2' },
+    });
     const noUsage = openAiWriter({
       baseUrl: 'https://x',
       key: 'k',

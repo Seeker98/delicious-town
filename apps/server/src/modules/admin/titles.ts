@@ -152,33 +152,43 @@ export function createAdminTitles(game: Game) {
       return one(id);
     },
 
-    /** 只有没人拥有（含已过期的）、没有邮件和兑换码引用时才能删；否则只能停用 */
+    /**
+     * 只有没人拥有（含已过期的）、没有邮件和兑换码引用时才能删；否则只能停用。
+     * 先锁住这一行再查引用，和发邮件、建兑换码（lockRewardIcons）互斥（backlog 1010）
+     */
     async remove(actor: AdminActor, id: number): Promise<void> {
       const t = await one(id);
       const ref = JSON.stringify([{ key: t.key }]);
-      const used = await db
-        .selectNoFrom((eb) => [
-          eb.exists(eb.selectFrom('rest_icon').select('id').where('icon_key', '=', t.key)).as('owned'),
-          eb
-            .exists(
-              eb
-                .selectFrom('mail')
-                .select('id')
-                .where(sql<boolean>`items -> 'icons' @> ${ref}::jsonb`),
-            )
-            .as('mailed'),
-          eb
-            .exists(
-              eb
-                .selectFrom('redeem_code')
-                .select('id')
-                .where(sql<boolean>`items -> 'icons' @> ${ref}::jsonb`),
-            )
-            .as('coded'),
-        ])
-        .executeTakeFirstOrThrow();
-      if (used.owned || used.mailed || used.coded) throw invalidState('title_in_use');
       await db.transaction().execute(async (tx) => {
+        const row = await tx
+          .selectFrom('custom_icon')
+          .select('id')
+          .where('id', '=', id)
+          .forUpdate()
+          .executeTakeFirst();
+        if (!row) throw new AppError(ErrorCode.NOT_FOUND, 404, { what: 'title', id });
+        const used = await tx
+          .selectNoFrom((eb) => [
+            eb.exists(eb.selectFrom('rest_icon').select('id').where('icon_key', '=', t.key)).as('owned'),
+            eb
+              .exists(
+                eb
+                  .selectFrom('mail')
+                  .select('id')
+                  .where(sql<boolean>`items -> 'icons' @> ${ref}::jsonb`),
+              )
+              .as('mailed'),
+            eb
+              .exists(
+                eb
+                  .selectFrom('redeem_code')
+                  .select('id')
+                  .where(sql<boolean>`items -> 'icons' @> ${ref}::jsonb`),
+              )
+              .as('coded'),
+          ])
+          .executeTakeFirstOrThrow();
+        if (used.owned || used.mailed || used.coded) throw invalidState('title_in_use');
         await tx.deleteFrom('custom_icon').where('id', '=', id).execute();
         await writeAudit(tx, {
           actor,

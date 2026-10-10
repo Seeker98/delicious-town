@@ -78,7 +78,7 @@ const guide: Messages['guide'] = {
     },
     {
       to: '/tower',
-      text: 'Torre de chefs: desafía a los guardianes de la torre para ganar renombre y gástalo en la tienda de renombre',
+      text: 'Torre de chefs: desafía a los vigías de la torre para ganar renombre y gástalo en la tienda de renombre',
     },
     {
       to: '/takeaway',

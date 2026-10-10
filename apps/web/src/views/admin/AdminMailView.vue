@@ -33,7 +33,9 @@ const restsOk = computed(
     restIds.value.length > 0 &&
     restIds.value.length <= MAIL_RESTS_MAX &&
     restWho.value.every((r) => r.ok) &&
-    restWho.value.length === restIds.value.length,
+    // 查出来的要正好是现在填的这几家：改了 id、新店名还没回来时不能发（backlog 1010）
+    restWho.value.length === restIds.value.length &&
+    restWho.value.every((r, i) => r.id === restIds.value[i]),
 );
 const minLevel = ref<number | ''>('');
 const title = ref('');

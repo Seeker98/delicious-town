@@ -24,7 +24,7 @@ export interface RandomAwardOptions {
   /** 厨具档：物品池里放进奖励等级 ≤ 它的厨具；经验、银币 × (厨具档 + 1) */
   equipFlag?: number;
   onlyGoods?: boolean;
-  /** 酒吧的奖励不出神秘礼券 */
+  /** 不出神秘礼券（酒吧的奖励、白食店主的道具） */
   noTicket?: boolean;
   /** 酒吧小游戏（问题记录 352）：类型比例用 bar.prize.rates，食材按奖励档次出更高级、更稀有的 */
   bar?: boolean;

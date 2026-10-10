@@ -8,7 +8,7 @@ const rest: Messages['rest'] = {
     toEquip: 'Ustensiles et points',
     capacity: 'Capacité',
     tableNum: 'Tables max',
-    thumbs: (n: string) => `Pouces levés reçus\u202f: ${n}`,
+    thumbs: (n: string) => `Pouces levés reçus ${n}`,
     cupboardNum: 'Cases du garde-manger',
     foodsMaxNum: 'Max par ingrédient',
     foodsLockNum: 'Cases verrouillées',

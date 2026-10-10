@@ -103,6 +103,19 @@ describe('区服数值（HTTP）', () => {
     expect(r.json.params.issues[0].path).toBe('tuning.settlement.expMultiplier');
   });
 
+  it('老虎机保底奖改成不存在或不是稀有的奖项：400（backlog 1010，和配置构建同一套检查）', async () => {
+    const shardId = await createShard(ctx.deps.db);
+    for (const id of [99, 555]) {
+      const r = await call(ctx.app, 'POST', `${S}/${shardId}/override`, {
+        cookie: admin.cookie,
+        body: { override: { tuning: { bar: { slotFloorAwardId: id } } }, note: 'x', version: 0 },
+      });
+      expect(r.status).toBe(400);
+      expect(r.json.code).toBe('INVALID_CONFIG');
+      expect(r.json.params.issues[0].path).toBe('tuning.bar.slotFloorAwardId');
+    }
+  });
+
   it('配置结构以外的键（拼错的路径、不存在的功能）400 并指出路径', async () => {
     const shardId = await createShard(ctx.deps.db);
     const save = (override: unknown) =>

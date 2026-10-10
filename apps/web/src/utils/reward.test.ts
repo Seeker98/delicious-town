@@ -1,7 +1,7 @@
 import { createPinia, setActivePinia } from 'pinia';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { useLocaleStore } from '../stores/locale';
-import { rewardSummary } from './reward';
+import { awardText, rewardSummary } from './reward';
 
 /** 附件摘要里的称号（定制称号设计 四） */
 const names = {
@@ -50,5 +50,29 @@ describe('附件摘要里的称号', () => {
       expect(s.replace(/🍜面霸|一天|到月底|过期了/g, '')).not.toMatch(/[一-鿿]/);
       expect(rewardSummary(expired, names)).toContain('过期了');
     }
+  });
+});
+
+describe('任务、活跃奖励的文字 awardText（backlog B6：活跃按钮写出这一档送什么）', () => {
+  beforeEach(() => setActivePinia(createPinia()));
+  afterEach(async () => {
+    await useLocaleStore().set('zh-CN');
+  });
+
+  it('银币、经验、钻石、声望、道具、食材依次写出；没有的不写', () => {
+    expect(
+      awardText(
+        {
+          coin: 1200,
+          exp: 5000,
+          diamond: 2,
+          renown: 3,
+          goods: [{ id: 7, num: 2 }],
+          foods: [{ id: 9, num: 1 }],
+        },
+        names,
+      ),
+    ).toBe('银币 1,200、经验 5,000、钻石 2、声望 3、G7×2、F9×1');
+    expect(awardText({ diamond: 5 }, names)).toBe('钻石 5');
   });
 });

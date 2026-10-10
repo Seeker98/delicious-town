@@ -17,10 +17,6 @@ const session = useSessionStore();
 const toast = useToastStore();
 const t = useT();
 const catalog = useCatalogStore();
-const dishNames = {
-  cookbookName: (id: number) => catalog.data('cookbooks', id)?.name ?? `#${id}`,
-  mcName: (id: number) => catalog.mcName(id),
-};
 const tables = ref<TableDto[]>([]);
 const picked = ref<TableDto | null>(null);
 const error = ref('');
@@ -67,7 +63,7 @@ onMounted(load);
     </div>
     <!-- 点了什么、要几品、你的几品、满不满意；吃了特色菜再写一行（问题记录 559） -->
     <div
-      v-for="(line, i) in tableOrderLines(picked.last, dishNames)"
+      v-for="(line, i) in tableOrderLines(picked.last, catalog)"
       :key="i"
       class="mb-1"
       data-testid="table-order"

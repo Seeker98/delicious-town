@@ -445,7 +445,7 @@ export function createTaskService(d: GameDeps) {
       }),
       rewards: d.config.bundle.activationRewards.map((r) => ({
         points: r.points,
-        award: r.award,
+        award: scaled(r.award, rest.level),
         claimed: (byKey.get(claimKey(r.points)) ?? 0) > 0,
         multiplier,
       })),
