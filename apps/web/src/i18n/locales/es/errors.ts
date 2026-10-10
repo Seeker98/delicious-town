@@ -110,6 +110,7 @@ const errors: Messages['errors'] = {
     wealth_count: (p) => `Como máximo ${s(p.max)} depósitos a la vez`,
     wealth_total: (p) =>
       `Los depósitos tienen un límite de ${formatNum(Number(p.max))} monedas en total; puedes añadir ${formatNum(Number(p.left))} más`,
+    bulk_cap: (p) => `Como máximo ${s(p.max)} por jugador`,
     exchange_qty: (p) => `Como máximo ${s(p.max)} por orden`,
     exchange_system_qty: (p) => `Hoy el sistema puede comprarte como máximo ${s(p.max)} más`,
     predict_trade: (p) =>
@@ -309,6 +310,12 @@ const errors: Messages['errors'] = {
     wealth_none: 'No existe ese depósito',
     wealth_not_mature: 'Todavía no ha vencido',
     wealth_mature: 'Ya venció: cóbralo',
+    bulk_not_open: 'Este lote ya terminó o se canceló',
+    bulk_closed: 'El lote ya cerró; esta puja no cuenta',
+    bulk_cooldown: 'Demasiado rápido; espera unos segundos y vuelve a intentarlo',
+    bulk_raise: 'La subida no basta; puja al menos el precio que indica la página',
+    bulk_shrink: 'Las pujas solo pueden subir: no se puede bajar el precio ni la cantidad',
+    bulk_reserve: 'El precio no puede ser menor que el de salida',
     bad_tier: 'No existe esa clase',
     guardian_down: 'Hoy ya derrotaste al guardián. Vuelve mañana.',
     trial_ready: 'Tu medalla de prueba sigue siendo válida; puedes empezar la prueba',

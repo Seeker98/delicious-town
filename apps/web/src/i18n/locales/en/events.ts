@@ -300,6 +300,16 @@ const events: Messages['events'] = {
     'wealth.claim': (p, names) =>
       `Claimed a deposit: ${formatNum(n(p, 'coin'))} coins back plus ${names.goodsName(n(p, 'goodsId'))} ×${n(p, 'packs')}`,
     'wealth.withdraw': (p) => `Withdrew a deposit early: got back ${formatNum(n(p, 'coin'))} coins`,
+    'bulk.bid': (p, names) =>
+      `Bulk subscription bid: ${names.foodName(n(p, 'foodsId'))} at ${formatNum(n(p, 'price'))} × ${n(p, 'qty')}, ${formatNum(n(p, 'frozen'))} coins frozen in total`,
+    'bulk.won': (p, names) =>
+      `Bulk subscription: got ${names.foodName(n(p, 'foodsId'))} ×${n(p, 'won')} (bid ${n(p, 'qty')}) at ${formatNum(n(p, 'price'))}, paid ${formatNum(n(p, 'paid'))}, refunded ${formatNum(n(p, 'refunded'))}${n(p, 'toWallet') > 0 ? `; ${n(p, 'toWallet')} went to the exchange account` : ''}`,
+    'bulk.lost': (p, names) =>
+      `Bulk subscription: no ${names.foodName(n(p, 'foodsId'))}, refunded ${formatNum(n(p, 'refunded'))} coins${p.consolation ? ', got a consolation prize' : ''}`,
+    'bulk.failed': (p, names) =>
+      `Bulk subscription failed: not enough bids for ${names.foodName(n(p, 'foodsId'))}, refunded ${formatNum(n(p, 'refunded'))} coins`,
+    'bulk.cancelled': (p, names) =>
+      `Bulk subscription cancelled: ${names.foodName(n(p, 'foodsId'))}, refunded ${formatNum(n(p, 'refunded'))} coins`,
     'activity.claim': (p) => `Claimed rewards from the event "${String(p.title ?? '')}"`,
     'activity.unlock': (p) => `Unlocked premium rewards for the event "${String(p.title ?? '')}"`,
     'activity.exchange': (p) =>

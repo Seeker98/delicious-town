@@ -127,6 +127,8 @@ export default {
     'icon.buy': (w, p, x) => `${w}买下了限定称号「${x.icon?.(str(p.key))?.title ?? str(p.title)}」`,
     'town.exchange': (w, p, x) => `${w}在镇长大胃锅处兑换了 ${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
     'predict.result': (_w, p) => predictResult(p),
+    'bulk.deal': (_w, p, x) =>
+      `特许大宗认购: ${x.foodName(num(p.foodsId))}×${num(p.sold)} 以 ${formatNum(num(p.price))} 银币成交, 认购 ${Math.round((num(p.demand) / Math.max(1, num(p.qty))) * 10) / 10} 倍`,
   }),
   /** 没有文案的新闻类型 */
   unknown: '小镇发生了一件事',

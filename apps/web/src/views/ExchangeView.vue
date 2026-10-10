@@ -12,18 +12,33 @@ import { formatNum, formatPct } from '../utils/format';
 import { matchText } from '../utils/match';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import FuturesPanel from '../components/exchange/FuturesPanel.vue';
+import BulkPanel from '../components/exchange/BulkPanel.vue';
 import { useRestaurantStore } from '../stores/restaurant';
 import { serverNowMs } from '../utils/serverNow';
 
 /** 交易所（问题记录 156，156-1 设计 §8）：选食材 → 盘口 → 下单；我的挂单、账户、成交 */
 const catalog = useCatalogStore();
 const restStore = useRestaurantStore();
-/** 现货、期货两个标签（期货设计 §10）；地址带 ?tab=futures 直接打开期货。测试里没有路由时按现货 */
+/**
+ * 现货、期货、大宗认购三个标签（期货设计 §10、大宗认购设计 §3.3）；地址带 ?tab=futures / ?tab=bulk 直接打开。
+ * 测试里没有路由时按现货
+ */
 const route = inject(routeLocationKey, null);
-const tab = ref<'spot' | 'futures'>(route?.query.tab === 'futures' ? 'futures' : 'spot');
+type Tab = 'spot' | 'futures' | 'bulk';
+const q = route?.query.tab;
+const tab = ref<Tab>(q === 'futures' || q === 'bulk' ? q : 'spot');
 /** 本区服关了期货时，有进行中的单才显示期货标签（只看我的期货单） */
 const futuresOpen = ref(false);
 const showFutures = computed(() => restStore.featureOn('futures') || futuresOpen.value);
+const showBulk = computed(() => restStore.featureOn('bulk'));
+/** 只有现货一个时不显示标签栏 */
+const tabs = computed<Tab[]>(() => [
+  'spot',
+  ...(showFutures.value ? (['futures'] as const) : []),
+  ...(showBulk.value ? (['bulk'] as const) : []),
+]);
+const tabName = (k: Tab) =>
+  k === 'spot' ? t.value.futures.tabSpot : k === 'futures' ? t.value.futures.tabFutures : t.value.bulk.tab;
 onMounted(() => {
   if (restStore.featureOn('futures')) return;
   endpoints
@@ -267,19 +282,20 @@ onMounted(async () => {
 <template>
   <h5>{{ t.exchange.title }}</h5>
   <HiphopCard :place="10" />
-  <ul v-if="showFutures" class="nav nav-tabs mb-2 small">
-    <li v-for="k in ['spot', 'futures'] as const" :key="k" class="nav-item">
+  <ul v-if="tabs.length > 1" class="nav nav-tabs mb-2 small">
+    <li v-for="k in tabs" :key="k" class="nav-item">
       <button
         type="button"
         :class="['nav-link', { active: tab === k }]"
         :data-testid="`ex-tab-${k}`"
         @click="tab = k"
       >
-        {{ k === 'spot' ? t.futures.tabSpot : t.futures.tabFutures }}
+        {{ tabName(k) }}
       </button>
     </li>
   </ul>
   <FuturesPanel v-if="tab === 'futures' && showFutures" />
+  <BulkPanel v-else-if="tab === 'bulk' && showBulk" />
   <template v-else>
     <div v-if="me?.frozen" class="alert alert-danger py-1 small" data-testid="ex-frozen">
       {{ t.exchange.frozenNotice(me.frozen.reason) }}

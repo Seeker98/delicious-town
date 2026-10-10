@@ -276,6 +276,17 @@ export default {
     'wealth.claim': (p, names) =>
       `领取理财: 拿回 ${formatNum(n(p, 'coin'))} 银币和${names.goodsName(n(p, 'goodsId'))}×${n(p, 'packs')}`,
     'wealth.withdraw': (p) => `提前取出理财, 拿回 ${formatNum(n(p, 'coin'))} 银币`,
+    // 特许大宗认购（大宗认购设计 2026-10-10）
+    'bulk.bid': (p, names) =>
+      `大宗认购出价: ${names.foodName(n(p, 'foodsId'))} 单价 ${formatNum(n(p, 'price'))} × ${n(p, 'qty')} 份, 共冻结 ${formatNum(n(p, 'frozen'))} 银币`,
+    'bulk.won': (p, names) =>
+      `大宗认购成交: ${names.foodName(n(p, 'foodsId'))}×${n(p, 'won')} (认购 ${n(p, 'qty')} 份), 成交价 ${formatNum(n(p, 'price'))}, 付 ${formatNum(n(p, 'paid'))} 银币, 退回 ${formatNum(n(p, 'refunded'))}${n(p, 'toWallet') > 0 ? `, 其中 ${n(p, 'toWallet')} 份进了交易所账户` : ''}`,
+    'bulk.lost': (p, names) =>
+      `大宗认购没中: ${names.foodName(n(p, 'foodsId'))}, 退回 ${formatNum(n(p, 'refunded'))} 银币${p.consolation ? ', 得到安慰奖' : ''}`,
+    'bulk.failed': (p, names) =>
+      `大宗认购流拍: ${names.foodName(n(p, 'foodsId'))} 认购不足, 退回 ${formatNum(n(p, 'refunded'))} 银币`,
+    'bulk.cancelled': (p, names) =>
+      `大宗认购取消: ${names.foodName(n(p, 'foodsId'))}, 退回 ${formatNum(n(p, 'refunded'))} 银币`,
     'activity.claim': (p) => `领取了活动「${String(p.title ?? '')}」的奖励`,
     'activity.unlock': (p) => `解锁了活动「${String(p.title ?? '')}」的进阶奖励`,
     'activity.exchange': (p) => `在活动「${String(p.title ?? '')}」兑换了 ${String(p.times ?? 1)} 次`,

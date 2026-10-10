@@ -20,6 +20,8 @@ vi.mock('../api/endpoints', () => ({
     tradeSellSystem: vi.fn(),
     futures: vi.fn(),
     cupboard: vi.fn(),
+    bulk: vi.fn(),
+    bulkBid: vi.fn(),
   },
 }));
 
@@ -611,6 +613,68 @@ describe('终审 I2：冷静期已过的所得能取出', () => {
       w = mount(ExchangeView);
       await flushPromises();
       expect(w.find('[data-testid="ex-tab-futures"]').exists()).toBe(true);
+    });
+  });
+
+  describe('大宗认购标签（大宗认购设计 §3.3）', () => {
+    const bulkData = {
+      enabled: true,
+      blocked: null,
+      needLevel: 20,
+      needDays: 7,
+      cooldownSec: 5,
+      minRaise: 0.01,
+      closeWindowMin: 5,
+      openHour: 20,
+      coin: 0,
+      lot: null,
+      mine: null,
+      recent: [],
+    };
+    beforeEach(() => {
+      vi.mocked(endpoints.bulk).mockResolvedValue(bulkData);
+      vi.mocked(endpoints.futures).mockResolvedValue({
+        enabled: false,
+        blocked: null,
+        needLevel: 20,
+        needDays: 7,
+        foods: [],
+        personDaily: 50,
+        personLeft: 50,
+        deliverHours: 72,
+        depositRate: 0.3,
+        contracts: [],
+      });
+    });
+
+    it('开着时有大宗认购标签，点了切过去；地址带 ?tab=bulk 直接打开', async () => {
+      const w = mount(ExchangeView);
+      await flushPromises();
+      await w.get('[data-testid="ex-tab-bulk"]').trigger('click');
+      await flushPromises();
+      expect(endpoints.bulk).toHaveBeenCalled();
+      expect(w.find('[data-testid="ex-search"]').exists()).toBe(false);
+      const router = createRouter({
+        history: createMemoryHistory(),
+        routes: [{ path: '/:p(.*)*', component: ExchangeView }],
+      });
+      await router.push('/exchange?tab=bulk');
+      const w2 = mount(ExchangeView, { global: { plugins: [router] } });
+      await flushPromises();
+      expect(w2.get('[data-testid="ex-tab-bulk"]').classes()).toContain('active');
+    });
+
+    it('区服关了大宗认购：没有这个标签；期货关了、认购开着时照样有标签栏', async () => {
+      useRestaurantStore().rest = { id: 1, disabledFeatures: ['bulk'] } as never;
+      const w = mount(ExchangeView);
+      await flushPromises();
+      expect(w.find('[data-testid="ex-tab-bulk"]').exists()).toBe(false);
+      useRestaurantStore().rest = { id: 1, disabledFeatures: ['futures'] } as never;
+      const w2 = mount(ExchangeView);
+      await flushPromises();
+      expect(w2.find('[data-testid="ex-tab-futures"]').exists()).toBe(false);
+      expect(w2.find('[data-testid="ex-tab-bulk"]').exists()).toBe(true);
+      expect(w2.find('[data-testid="ex-tab-spot"]').exists()).toBe(true);
     });
   });
 });

@@ -75,6 +75,8 @@ export interface BulkDto {
   minRaise: number;
   closeWindowMin: number;
   openHour: number;
+  /** 当前银币：出价框判断冻结差额够不够 */
+  coin: number;
   lot: BulkLotDto | null;
   mine: BulkMineDto | null;
   /** 最近 7 批已结束的，新的在前 */

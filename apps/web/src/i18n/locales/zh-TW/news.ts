@@ -128,6 +128,8 @@ export default {
     'icon.buy': (w, p, x) => `${w}買下了限定稱號「${x.icon?.(str(p.key))?.title ?? str(p.title)}」`,
     'town.exchange': (w, p, x) => `${w}在鎮長大胃鍋處兌換了 ${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
     'predict.result': (_w, p) => predictResult(p),
+    'bulk.deal': (_w, p, x) =>
+      `特許大宗認購: ${x.foodName(num(p.foodsId))}×${num(p.sold)} 以 ${formatNum(num(p.price))} 銀幣成交, 認購 ${Math.round((num(p.demand) / Math.max(1, num(p.qty))) * 10) / 10} 倍`,
   }),
   /** 沒有文案的新聞類型 */
   unknown: '小鎮發生了一件事',

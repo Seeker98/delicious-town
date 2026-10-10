@@ -23,6 +23,7 @@ async function viewOf(
   shardId: number,
   restId: number,
   blocked: Blocked,
+  coin: number,
   now: Date,
 ): Promise<BulkDto> {
   const t = s.tuning.bulk;
@@ -134,6 +135,7 @@ async function viewOf(
     minRaise: t.minRaise,
     closeWindowMin: t.closeWindowMin,
     openHour: t.openHour,
+    coin,
     lot: lotDto,
     mine,
     recent,
@@ -218,7 +220,7 @@ export function createBulkService(d: GameDeps) {
       qty: b.qty,
       frozen: frozenNow,
     });
-    return viewOf(o.tx, o.settings, o.shardId, o.rest.id, null, o.now);
+    return viewOf(o.tx, o.settings, o.shardId, o.rest.id, null, o.rest.coin, o.now);
   }
 
   /** 大宗认购标签：开关关着也能看自己的结果 */
@@ -227,7 +229,7 @@ export function createBulkService(d: GameDeps) {
     const now = d.now();
     const rest = await d.db
       .selectFrom('restaurant')
-      .select('level')
+      .select(['level', 'coin'])
       .where('id', '=', ctx.restaurantId)
       .executeTakeFirstOrThrow();
     const blocked: Blocked =
@@ -240,7 +242,7 @@ export function createBulkService(d: GameDeps) {
             now,
             t: s.tuning.exchange,
           });
-    return viewOf(d.db, s, ctx.shardId, ctx.restaurantId, blocked, now);
+    return viewOf(d.db, s, ctx.shardId, ctx.restaurantId, blocked, Number(rest.coin), now);
   }
 
   return {

@@ -65,6 +65,8 @@ describe('出价（大宗认购设计 §1.2）', () => {
       won: 3,
       estimate: 180_000,
     });
+    expect(res.data.coin).toBe(20 * M - 180_000);
+    expect((await svc().view(r)).coin).toBe(20 * M - 180_000);
   });
 
   it('改出价只补冻差额；降价、减份数、没改报 bulk_shrink；加价不到 1% 报 bulk_raise；超上限、低于起拍价报错', async () => {
