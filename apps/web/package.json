@@ -11,7 +11,8 @@
     "typecheck": "vue-tsc --noEmit",
     "e2e": "playwright test",
     "i18n:tw": "node scripts/gen-zh-tw.mjs",
-    "icons": "node scripts/gen-icons.mjs"
+    "icons": "node scripts/gen-icons.mjs",
+    "art": "node scripts/gen-art.mjs"
   },
   "dependencies": {
     "@dt/shared": "workspace:*",

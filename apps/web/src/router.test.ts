@@ -88,3 +88,10 @@ describe('切页面时的滚动位置', () => {
     top.mockRestore();
   });
 });
+
+describe('开发用图库（界面改版 P1）', () => {
+  it('测试环境（DEV）注册了 /dev/art，不用登录', () => {
+    const r = routes.find((x) => x.path === '/dev/art');
+    expect(r?.meta).toEqual({ public: true });
+  });
+});

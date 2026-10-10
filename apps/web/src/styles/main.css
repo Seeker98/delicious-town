@@ -962,3 +962,50 @@ details.dt-card > summary {
     overflow-x: visible;
   }
 }
+/* ---------- 图形（界面改版设计 §3） ---------- */
+.dt-art {
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+/* 界面图标：描边是文字色，填充是同色的浅调；选中时（父元素 .active / aria-current）加深 */
+.dt-art-ui {
+  color: var(--dt-primary-ink);
+  fill-opacity: 0.18;
+}
+.active > .dt-art-ui,
+[aria-current='page'] > .dt-art-ui {
+  fill-opacity: 0.4;
+}
+/* 开发用图库 /dev/art：浅色、深色并排 */
+.dt-gallery {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.dt-gallery-pane {
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  padding: 8px;
+  border-radius: var(--dt-radius-md);
+}
+.dt-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 6px;
+}
+.dt-gallery-item {
+  margin: 0;
+  text-align: center;
+  font-size: 11px;
+  color: var(--dt-muted);
+  overflow-wrap: anywhere;
+}
+.dt-gallery-active > .dt-art-ui {
+  fill-opacity: 0.4;
+}
+.dt-gallery-tile {
+  display: inline-flex;
+  padding: 6px;
+  border-radius: var(--dt-radius-sm);
+  background: var(--dt-surface-2);
+}
