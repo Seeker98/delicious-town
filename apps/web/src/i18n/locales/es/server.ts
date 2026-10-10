@@ -42,6 +42,11 @@ const server: Messages['server'] = {
       body: (p) =>
         `El contenido que denunciaste (${str(p.targetName)}) se ha revisado y no incumple las normas.`,
     },
+    'wishtree.win': {
+      title: () => 'Árbol de los deseos: tu deseo se cumplió',
+      body: (p) =>
+        `¡Tu deseo en el Árbol de los deseos se cumplió! Adjuntos van el objeto del árbol y un título, válido ${n(p, 'titleDays')} días tras recogerlo.`,
+    },
     'report.penalty': {
       title: () => 'Aviso de infracción',
       body: (p) => {

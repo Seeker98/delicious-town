@@ -139,6 +139,8 @@ const news: Messages['news'] = {
     'predict.result': (_w, p) => predictResult(p),
     'bulk.deal': (_w, p, x) =>
       `Suscripción mayorista: ${x.foodName(num(p.foodsId))} ×${num(p.sold)} vendido a ${formatNum(num(p.price))} monedas, suscrito ${Math.round((num(p.demand) / Math.max(1, num(p.qty))) * 10) / 10} veces`,
+    'wishtree.win': (w, p, x) =>
+      `¡El deseo de ${w} en el Árbol de los deseos se cumplió: ${x.goodsName(num(p.goodsId))} ×${num(p.num)}! (${num(p.entries)} ${num(p.entries) === 1 ? 'deseo' : 'deseos'})`,
   },
   unknown: 'Pasó algo en el pueblo',
   someone: 'Un restaurante',

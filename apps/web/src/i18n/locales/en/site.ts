@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    wishtree1011:
+      'The square has a new Wishing Tree: the draw is at 20:00 every day, and the tree bears a new item at the same time. Restaurants at level 10 or above can make 1 free wish per round; at the draw one wishing restaurant is picked to get the item plus the 3-day title “Wish Come True” (sent by mail). Everyone else who wished gets a random reward',
     ui1011:
       "Restaurant activity entries about what friends did to you (dining and dashing, planting roaches, swapping ingredients and so on) now link straight to their restaurant, and ingredient swaps say exactly which ingredient of which level was traded for which. Today's to-do list on the home page gets an Exchange row once you meet the exchange requirements, showing the current bulk subscription and how much has been bid. Bulk subscriptions now go dark for the last hour: the expected price, cutoff and units bid freeze at that moment, and who gets in is revealed at the close",
     bulk1010:

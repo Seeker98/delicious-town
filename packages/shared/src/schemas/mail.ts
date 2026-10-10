@@ -85,7 +85,8 @@ export type MailTplKey =
   | 'hat.upgrade'
   | 'report.handled'
   | 'report.rejected'
-  | 'report.penalty';
+  | 'report.penalty'
+  | 'wishtree.win';
 export interface MailTpl {
   key: MailTplKey;
   params: Record<string, unknown>;

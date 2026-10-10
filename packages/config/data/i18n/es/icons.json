@@ -90,5 +90,9 @@
   "fund_a": {
     "title": "Inversor Ancla",
     "desc": "Fondo de Desarrollo, A · Inversor Ancla (temporal, vence con la medalla)"
+  },
+  "wish_tree": {
+    "title": "Deseo cumplido",
+    "desc": "Ganó el sorteo del Árbol de los deseos (temporal)"
   }
 }

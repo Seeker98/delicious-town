@@ -29,3 +29,17 @@ export const plEn = (x: unknown, one: string, many: string): string =>
   Math.abs(Number(x)) === 1 ? one : many;
 export const plEs = plEn;
 export const plFr = (x: unknown, one: string, many: string): string => (Math.abs(Number(x)) < 2 ? one : many);
+
+/** 日志参数里的一份随机奖励（kind / id / num，许愿树安慰奖等）写成文字；没有时为空串 */
+export function awardWords(
+  x: unknown,
+  names: { goodsName(id: number): string; foodName(id: number): string },
+  w: { coin: (n: string) => string; exp: (n: string) => string; qty: (name: string, n: number) => string },
+  fmt: (n: number) => string,
+): string {
+  const a = (x ?? null) as { kind?: string; id?: number | null; num?: number } | null;
+  if (!a?.num) return '';
+  if (a.kind === 'goods') return w.qty(names.goodsName(Number(a.id)), a.num);
+  if (a.kind === 'foods') return w.qty(names.foodName(Number(a.id)), a.num);
+  return a.kind === 'exp' ? w.exp(fmt(a.num)) : w.coin(fmt(a.num));
+}

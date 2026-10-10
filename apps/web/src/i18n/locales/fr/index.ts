@@ -18,6 +18,7 @@ import site from './site';
 import fund from './fund';
 import wealth from './wealth';
 import bulk from './bulk';
+import wishtree from './wishtree';
 import futures from './futures';
 import equip from './equip';
 import guide from './guide';
@@ -78,6 +79,7 @@ const messages: Messages = {
   fund,
   wealth,
   bulk,
+  wishtree,
   futures,
   equip,
   rest,

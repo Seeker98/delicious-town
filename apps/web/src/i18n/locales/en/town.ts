@@ -8,6 +8,7 @@ const town: Messages['town'] = {
     news: 'News',
     town: 'Townsfolk',
     rank: 'Rankings',
+    wishtree: 'Wishing Tree',
   },
   loadFailed: "Couldn't load the square",
   restFailed: 'Couldn’t load your restaurant.',

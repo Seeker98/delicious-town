@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    wishtree1011:
+      'La plaza tiene un nuevo Árbol de los deseos: el sorteo es cada día a las 20:00 y a la vez el árbol da un objeto nuevo. Desde el nivel 10, cada restaurante puede pedir 1 deseo gratis por ronda; en el sorteo se elige un restaurante que pidió deseo y recibe el objeto y el título «Deseo cumplido» durante 3 días (por correo). Los demás reciben una recompensa aleatoria',
     ui1011:
       'Las entradas de actividad sobre lo que te hacen tus amigos (comer sin pagar, dejar cucarachas, intercambiar ingredientes, etc.) ahora llevan directamente a su restaurante, y los intercambios indican qué ingrediente de qué nivel se cambió por cuál. La lista de pendientes de la portada suma una fila de la bolsa cuando cumples sus requisitos, con la suscripción mayorista en curso y cuánto se ha pujado. La suscripción mayorista se oculta en la última hora: el precio previsto, el umbral y las unidades pujadas se congelan en ese momento, y quién entra se sabe al cierre',
     bulk1010:

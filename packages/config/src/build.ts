@@ -15,6 +15,7 @@ import { kujiErrors } from './kuji';
 import { fundErrors } from './fund';
 import { wealthErrors } from './wealth';
 import { bulkErrors } from './bulk';
+import { wishTreeErrors } from './wishtree';
 import { foodWeights } from './foodSupply';
 import { FUND_MEDALS, GOODS, GOODS_TYPE, NEWBIE, NON_SUIT_IDS, WEALTH } from './ids';
 import { tuningSchema } from './tuning';
@@ -1307,6 +1308,8 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   errors.push(...wealthErrors(tuning.wealth, { packIds }));
   // 特许大宗认购（大宗认购设计 §2.1）：同一套检查后台保存区服数值时也跑
   errors.push(...bulkErrors(tuning.bulk, { goodsIds: new Set(goods.map((g) => g.id)) }));
+  // 许愿树（许愿树设计 §2）：同一套检查后台保存区服数值时也跑
+  errors.push(...wishTreeErrors(tuning.wishTree, { goodsIds: new Set(goods.map((g) => g.id)), iconKeys }));
   for (const m of fundRaw.medals)
     if (!iconKeys.has(m.icon)) errors.push(`fund medal ${m.id} icon ${m.icon} not in looks.icons`);
 

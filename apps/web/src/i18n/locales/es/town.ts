@@ -8,6 +8,7 @@ const town: Messages['town'] = {
     news: 'Noticias',
     town: 'Vecinos',
     rank: 'Clasificaciones',
+    wishtree: 'Árbol de los deseos',
   },
   loadFailed: 'No se pudo cargar la plaza',
   restFailed: 'No se pudo cargar tu restaurante.',

@@ -65,6 +65,7 @@ import * as m0063 from './0063_futures';
 import * as m0064 from './0064_wealth';
 import * as m0065 from './0065_bulk';
 import * as m0066 from './0066_bulk_blind';
+import * as m0067 from './0067_wishtree';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -134,4 +135,5 @@ export const migrations: Record<string, Migration> = {
   '0064_wealth': m0064,
   '0065_bulk': m0065,
   '0066_bulk_blind': m0066,
+  '0067_wishtree': m0067,
 };

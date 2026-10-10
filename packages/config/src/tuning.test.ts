@@ -183,3 +183,23 @@ describe('bulk（特许大宗认购，大宗认购设计 §2.1）', () => {
     expect(withB((x) => (x.blindMin = -1))).toBe(false);
   });
 });
+
+describe('wishTree（许愿树设计 §2）', () => {
+  type W = Record<string, unknown>;
+  const withW = (f: (x: W) => void) => {
+    const t = structuredClone(tuningJson) as unknown as { wishTree: W };
+    f(t.wishTree);
+    return tuningSchema.safeParse(t).success;
+  };
+  it('默认值合法；hour 0~23、等级和天数至少 1、清单至少一项、数量至少 1、权重大于 0', () => {
+    expect(withW(() => undefined)).toBe(true);
+    expect(withW((x) => (x.hour = 24))).toBe(false);
+    expect(withW((x) => (x.hour = -1))).toBe(false);
+    expect(withW((x) => (x.minLevel = 0))).toBe(false);
+    expect(withW((x) => (x.titleDays = 0))).toBe(false);
+    expect(withW((x) => (x.consolationLevel = 0))).toBe(false);
+    expect(withW((x) => (x.prizes = []))).toBe(false);
+    expect(withW((x) => ((x.prizes as W[])[0]!.num = 0))).toBe(false);
+    expect(withW((x) => ((x.prizes as W[])[0]!.weight = 0))).toBe(false);
+  });
+});

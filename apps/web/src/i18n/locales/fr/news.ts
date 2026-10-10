@@ -139,6 +139,8 @@ const news: Messages['news'] = {
     'predict.result': (_w, p) => predictResult(p),
     'bulk.deal': (_w, p, x) =>
       `Souscription en gros\u202f: ${x.foodName(num(p.foodsId))}\u202f×\u202f${num(p.sold)} vendu à ${formatNum(num(p.price))} pièces, souscrit ${Math.round((num(p.demand) / Math.max(1, num(p.qty))) * 10) / 10} fois`,
+    'wishtree.win': (w, p, x) =>
+      `Le vœu de ${w} à l’Arbre à vœux s’est réalisé\u202f: ${x.goodsName(num(p.goodsId))}\u202f×\u202f${num(p.num)}\u202f! (${num(p.entries)} ${num(p.entries) < 2 ? 'vœu' : 'vœux'})`,
   },
   unknown: "Il s'est passé quelque chose en ville",
   someone: 'Un restaurant',

@@ -41,6 +41,7 @@ export { kujiErrors, KUJI_MAX_TICKETS } from './kuji';
 export { fundErrors } from './fund';
 export { wealthErrors } from './wealth';
 export { bulkErrors } from './bulk';
+export { wishTreeErrors, WISH_TREE_ICON } from './wishtree';
 export { slotFloorErrors } from './slot';
 export {
   itemRefs,
