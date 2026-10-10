@@ -21,6 +21,13 @@ describe('图形（界面改版 P1，设计 §3）', () => {
     }
   });
 
+  it('每个图形和生成的雪碧图都是合法的 XML（一处写错，雪碧图里后面的图形全部不显示）', () => {
+    const bad = (src: string) =>
+      new DOMParser().parseFromString(src, 'image/svg+xml').getElementsByTagName('parsererror').length > 0;
+    for (const { name, src } of [...UI, ...CONTENT]) expect(bad(src), name).toBe(false);
+    for (const f of ['ui', 'content']) expect(bad(readFileSync(join(ROOT, `generated/${f}.svg`), 'utf8')), f).toBe(false);
+  });
+
   it('界面图标只用 currentColor，不写色值、不写 fill-opacity（跟主题和深色自动变）', () => {
     for (const { name, src } of UI) {
       expect(name).toMatch(/^(nav|place|me|fac|slot|sec)-/);
