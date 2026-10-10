@@ -43,6 +43,8 @@ const PAIRS: [string, string][] = [
   ['--dt-on-primary', '--dt-primary-hover'],
   ['--dt-on-danger', '--dt-danger'],
   ['--dt-disabled-text', '--dt-disabled-bg'],
+  // 首页经验条：数字压在填充部分上（终审：深色下只有 3.19）
+  ['--dt-text', '--dt-fill-primary'],
   ...['primary', 'success', 'danger', 'warning', 'info', 'secondary'].map(
     (t) => [`--dt-ink-${t}`, `--dt-soft-${t}`] as [string, string],
   ),

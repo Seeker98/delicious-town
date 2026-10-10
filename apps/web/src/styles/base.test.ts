@@ -98,3 +98,28 @@ describe('控件（界面改版 P1，设计 §2.6、§2.7）', () => {
     expect(base).toMatch(/:focus-visible\s*\{[^}]*outline:\s*2px solid var\(--dt-primary\)/);
   });
 });
+
+describe('终审修正（界面改版 P1）', () => {
+  it('描边版和实心版看得出区别：买卖、是否、选中的食材（C2）', () => {
+    expect(rule('.btn-outline-success')).toMatch(/--bs-btn-bg:\s*transparent/);
+    expect(rule('.btn-outline-success')).toMatch(/--bs-btn-border-color:\s*var\(--dt-success\)/);
+    expect(rule('.btn-outline-warning')).toMatch(/--bs-btn-bg:\s*transparent/);
+    expect(rule('.btn-outline-warning')).toMatch(/--bs-btn-border-color:\s*var\(--dt-warning\)/);
+    expect(rule('.btn-success')).toMatch(/--bs-btn-bg:\s*var\(--dt-soft-success\)/);
+    expect(rule('.btn-warning')).toMatch(/--bs-btn-bg:\s*var\(--dt-warning\)/);
+  });
+
+  it('标签页的键盘焦点是紫色内圈，盖掉 Bootstrap 的蓝色光圈（I3）', () => {
+    const r = rule('.nav-tabs .nav-link:focus-visible');
+    expect(r).toMatch(/outline:\s*2px solid var\(--dt-primary\)/);
+    expect(r).toMatch(/outline-offset:\s*-2px/);
+    expect(r).toMatch(/box-shadow:\s*none/);
+  });
+
+  it('切换按钮（.active，如论坛点赞）选中时看得出来（I4）', () => {
+    expect(rule('.btn-outline-primary.active')).toMatch(/--bs-btn-active-bg:\s*var\(--dt-primary\)/);
+    expect(rule('.btn-outline-primary.active')).toMatch(/--bs-btn-active-color:\s*var\(--dt-on-primary\)/);
+    expect(rule('.btn-outline-secondary.active')).toMatch(/--bs-btn-active-bg:\s*var\(--dt-text\)/);
+    expect(rule('.btn-outline-secondary.active')).toMatch(/--bs-btn-active-color:\s*var\(--dt-surface\)/);
+  });
+});

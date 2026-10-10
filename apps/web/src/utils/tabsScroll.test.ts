@@ -61,3 +61,20 @@ describe('选中下划线（界面改版 P1）', () => {
     expect(c.style.getPropertyValue('--dt-tab-w')).toBe('0');
   });
 });
+
+describe('下划线不会自己触发自己（终审 C1）', () => {
+  it('位置没变时再定位一次：不改任何属性，不惊动 MutationObserver（以前每帧循环）', async () => {
+    const { placeIndicator } = await import('./tabsScroll');
+    document.body.innerHTML = '<ul class="nav nav-tabs"><li><a class="nav-link active">A</a></li></ul>';
+    const c = document.querySelector<HTMLElement>('.nav-tabs')!;
+    placeIndicator(c);
+    placeIndicator(c);
+    const records: MutationRecord[] = [];
+    const mo = new MutationObserver((r) => records.push(...r));
+    mo.observe(c, { attributes: true });
+    placeIndicator(c);
+    records.push(...mo.takeRecords());
+    mo.disconnect();
+    expect(records).toEqual([]);
+  });
+});

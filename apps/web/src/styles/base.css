@@ -306,36 +306,76 @@ body {
   --bs-btn-disabled-bg: var(--dt-disabled-bg);
   --bs-btn-disabled-border-color: var(--dt-disabled-bg);
 }
-/* 绿色、黄色按钮不在按钮四种里：按语义浅底（用的地方 P3~P8 逐个改掉） */
-.btn-success,
-.btn-outline-success {
+/*
+ * 绿色、黄色按钮不在按钮四种里（用的地方 P3~P8 逐个改掉）。实心版和描边版要看得出区别：
+ * 交易所买卖、竞猜是否用 success ↔ outline-success 标出选中的一边，菜场、橱柜用 warning 标选中（终审 C2）
+ */
+.btn-success {
   --bs-btn-color: var(--dt-ink-success);
   --bs-btn-bg: var(--dt-soft-success);
-  --bs-btn-border-color: var(--dt-soft-success);
+  --bs-btn-border-color: var(--dt-success);
   --bs-btn-hover-color: var(--dt-ink-success);
   --bs-btn-hover-bg: var(--dt-soft-success);
-  --bs-btn-hover-border-color: var(--dt-fill-success);
+  --bs-btn-hover-border-color: var(--dt-success);
   --bs-btn-active-color: var(--dt-ink-success);
   --bs-btn-active-bg: var(--dt-soft-success);
-  --bs-btn-active-border-color: var(--dt-fill-success);
+  --bs-btn-active-border-color: var(--dt-success);
   --bs-btn-disabled-color: var(--dt-disabled-text);
   --bs-btn-disabled-bg: var(--dt-disabled-bg);
   --bs-btn-disabled-border-color: var(--dt-disabled-bg);
 }
-.btn-warning,
-.btn-outline-warning {
-  --bs-btn-color: var(--dt-ink-warning);
-  --bs-btn-bg: var(--dt-soft-warning);
-  --bs-btn-border-color: var(--dt-soft-warning);
-  --bs-btn-hover-color: var(--dt-ink-warning);
-  --bs-btn-hover-bg: var(--dt-soft-warning);
-  --bs-btn-hover-border-color: var(--dt-fill-warning);
-  --bs-btn-active-color: var(--dt-ink-warning);
-  --bs-btn-active-bg: var(--dt-soft-warning);
-  --bs-btn-active-border-color: var(--dt-fill-warning);
+.btn-outline-success {
+  --bs-btn-color: var(--dt-success);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--dt-success);
+  --bs-btn-hover-color: var(--dt-ink-success);
+  --bs-btn-hover-bg: var(--dt-soft-success);
+  --bs-btn-hover-border-color: var(--dt-success);
+  --bs-btn-active-color: var(--dt-ink-success);
+  --bs-btn-active-bg: var(--dt-soft-success);
+  --bs-btn-active-border-color: var(--dt-success);
+  --bs-btn-disabled-color: var(--dt-disabled-text);
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--dt-disabled-bg);
+}
+.btn-warning {
+  --bs-btn-color: var(--dt-surface);
+  --bs-btn-bg: var(--dt-warning);
+  --bs-btn-border-color: var(--dt-warning);
+  --bs-btn-hover-color: var(--dt-surface);
+  --bs-btn-hover-bg: var(--dt-warning);
+  --bs-btn-hover-border-color: var(--dt-warning);
+  --bs-btn-active-color: var(--dt-surface);
+  --bs-btn-active-bg: var(--dt-warning);
+  --bs-btn-active-border-color: var(--dt-warning);
   --bs-btn-disabled-color: var(--dt-disabled-text);
   --bs-btn-disabled-bg: var(--dt-disabled-bg);
   --bs-btn-disabled-border-color: var(--dt-disabled-bg);
+}
+.btn-outline-warning {
+  --bs-btn-color: var(--dt-warning);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--dt-warning);
+  --bs-btn-hover-color: var(--dt-ink-warning);
+  --bs-btn-hover-bg: var(--dt-soft-warning);
+  --bs-btn-hover-border-color: var(--dt-warning);
+  --bs-btn-active-color: var(--dt-ink-warning);
+  --bs-btn-active-bg: var(--dt-soft-warning);
+  --bs-btn-active-border-color: var(--dt-warning);
+  --bs-btn-disabled-color: var(--dt-disabled-text);
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--dt-disabled-bg);
+}
+/* 切换按钮（.active，如论坛点赞、点踩）：选中时明显变实（终审 I4）；只改 .active，按下的反馈不变 */
+.btn-outline-primary.active {
+  --bs-btn-active-color: var(--dt-on-primary);
+  --bs-btn-active-bg: var(--dt-primary);
+  --bs-btn-active-border-color: var(--dt-primary);
+}
+.btn-outline-secondary.active {
+  --bs-btn-active-color: var(--dt-surface);
+  --bs-btn-active-bg: var(--dt-text);
+  --bs-btn-active-border-color: var(--dt-text);
 }
 /* 输入框、下拉框 */
 .form-control,
@@ -416,7 +456,10 @@ body {
 }
 /* 键盘焦点画在标签里面：画在外面会被横向滑动的容器裁掉（backlog #116 的规则沿用） */
 .nav-tabs .nav-link:focus-visible {
+  /* Bootstrap 的 .nav-link:focus-visible 把 outline 清零、画蓝色光圈，这里盖回来（终审 I3） */
+  outline: 2px solid var(--dt-primary);
   outline-offset: -2px;
+  box-shadow: none;
 }
 .nav-tabs::after {
   content: '';
