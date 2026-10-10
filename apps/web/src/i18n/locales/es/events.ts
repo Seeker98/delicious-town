@@ -3,7 +3,7 @@ import type { Messages } from '../..';
 import type { Names } from '../../../utils/events';
 import { formatNum } from '../../../utils/format';
 import fund from './fund';
-import { n, type P, plEs } from '../../helpers';
+import { awardWords, n, type P, plEs } from '../../helpers';
 
 const mcNameOf = (names: Names, id: number) => names.mcName?.(id) ?? `Plato estrella ${id}`;
 const seedNameOf = (names: Names, id: number) => names.seedName?.(id) ?? `Semilla ${id}`;
@@ -332,7 +332,7 @@ const events: Messages['events'] = {
     'wishtree.wish': (p, names) =>
       `Pediste un deseo en el Árbol de los deseos (el árbol da ${names.goodsName(n(p, 'goodsId'))} ×${n(p, 'num')})`,
     'wishtree.lost': (p, names) =>
-      `No ganaste el sorteo del Árbol de los deseos (el árbol daba ${names.goodsName(n(p, 'goodsId'))} ×${n(p, 'num')}); recibiste un premio de consolación`,
+      `No ganaste el sorteo del Árbol de los deseos (el árbol daba ${names.goodsName(n(p, 'goodsId'))} ×${n(p, 'num')}); premio de consolación: ${awardWords(p.award, names, { coin: (s) => `${s} monedas`, exp: (s) => `${s} EXP`, qty: (a, b) => `${a} ×${b}` }, formatNum)}`,
     'activity.claim': (p) => `Reclamaste las recompensas del evento «${String(p.title ?? '')}»`,
     'activity.unlock': (p) => `Desbloqueaste las recompensas premium del evento «${String(p.title ?? '')}»`,
     'activity.exchange': (p) =>

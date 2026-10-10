@@ -3,7 +3,7 @@ import type { RestLogDto } from '@dt/shared';
 import type { Names } from '../../../utils/events';
 import { formatNum } from '../../../utils/format';
 import fund from './fund';
-import { n, table, type P } from '../../helpers';
+import { awardWords, n, table, type P } from '../../helpers';
 
 /** 得失提示、個人日誌、好友動態的文案（問題記錄 272） */
 type LogFn = (p: P, names: Names) => string;
@@ -309,7 +309,7 @@ export default {
     'wishtree.wish': (p, names) =>
       `在許願樹下許願 (樹上結的是 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')})`,
     'wishtree.lost': (p, names) =>
-      `許願樹開獎沒中 (樹上結的是 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}), 得到安慰獎`,
+      `許願樹開獎沒中 (樹上結的是 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}), 得到安慰獎: ${awardWords(p.award, names, { coin: (s) => `${s} 銀幣`, exp: (s) => `${s} 經驗`, qty: (a, b) => `${a}×${b}` }, formatNum)}`,
     'activity.claim': (p) => `領取了活動「${String(p.title ?? '')}」的獎勵`,
     'activity.unlock': (p) => `解鎖了活動「${String(p.title ?? '')}」的進階獎勵`,
     'activity.exchange': (p) => `在活動「${String(p.title ?? '')}」兌換了 ${String(p.times ?? 1)} 次`,
