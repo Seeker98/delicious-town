@@ -160,3 +160,23 @@ describe('wealth（食材理财，理财设计 §3.1）', () => {
     expect(withW((x) => (x.unit = 0))).toBe(false);
   });
 });
+
+describe('bulk（特许大宗认购，大宗认购设计 §2.1）', () => {
+  type B = Record<string, unknown>;
+  const withB = (f: (x: B) => void) => {
+    const t = structuredClone(tuningJson) as unknown as { bulk: B };
+    f(t.bulk);
+    return tuningSchema.safeParse(t).success;
+  };
+  it('默认值合法；openHour 0~23、qty 和 levelWeights 各 5 项、比例在范围内', () => {
+    expect(withB(() => undefined)).toBe(true);
+    expect(withB((x) => (x.openHour = 24))).toBe(false);
+    expect(withB((x) => (x.qty = [1, 2, 3, 4]))).toBe(false);
+    expect(withB((x) => (x.qty = [0, 1, 1, 1, 1]))).toBe(false);
+    expect(withB((x) => (x.levelWeights = [0, 0, 0, 0, 0]))).toBe(false);
+    expect(withB((x) => (x.reserveRate = 0.9))).toBe(false);
+    expect(withB((x) => (x.capRate = 0))).toBe(false);
+    expect(withB((x) => (x.minRaise = 0))).toBe(false);
+    expect(withB((x) => (x.consolationRate = 1.1))).toBe(false);
+  });
+});

@@ -2,6 +2,7 @@ import { ZodError } from 'zod';
 import {
   fundErrors,
   wealthErrors,
+  bulkErrors,
   GOODS_TYPE,
   isFeatureEnabled,
   kujiErrors,
@@ -106,6 +107,12 @@ export function createAdminShards(game: Game, log?: WarnLog) {
     if (wealth.length > 0)
       throw new AppError(ErrorCode.INVALID_CONFIG, 400, {
         issues: wealth.map((message) => ({ path: 'tuning.wealth', message })),
+      });
+    // 特许大宗认购（大宗认购设计 §2.1）：和配置构建同一套检查
+    const bulk = bulkErrors(resolved.tuning.bulk, { goodsIds: new Set(config.goods.keys()) });
+    if (bulk.length > 0)
+      throw new AppError(ErrorCode.INVALID_CONFIG, 400, {
+        issues: bulk.map((message) => ({ path: 'tuning.bulk', message })),
       });
     // 老虎机保底奖（backlog 1010）：和配置构建同一套检查
     const slot = slotFloorErrors(resolved.tuning.bar.slotFloorAwardId, config.bundle.slotAwards);

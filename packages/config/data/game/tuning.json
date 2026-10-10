@@ -451,6 +451,20 @@
       { "days": 14, "goods": 10215, "perUnit": 1 }
     ]
   },
+  "bulk": {
+    "openHour": 20,
+    "hours": 24,
+    "closeWindowMin": 5,
+    "qty": [150, 110, 80, 60, 45],
+    "levelWeights": [1, 1, 1, 1, 1],
+    "reserveRate": 1.1,
+    "capRate": 0.25,
+    "groupRate": 0.3,
+    "minRaise": 0.01,
+    "cooldownSec": 5,
+    "consolationRate": 0.9,
+    "consolation": { "goods": 10202, "num": 1 }
+  },
   "acquire": {
     "priceDays": 7, "priceMultiple": 5, "minPrice": 100000,
     "heatStep": 0.2, "heatListDrop": 0.1, "heatMax": 3, "heatDecay": 0.1,

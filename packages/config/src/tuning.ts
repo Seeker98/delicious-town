@@ -986,6 +986,24 @@ export const tuningSchema = z.object({
     earlyRate: num.gt(0).max(1),
     terms: z.array(z.object({ days: int.min(1), goods: int.min(1), perUnit: int.min(1) })).min(1),
   }),
+  /** 特许大宗认购（大宗认购设计 2026-10-10）：每天一批 n 份，统一价竞价，随机收盘 */
+  bulk: z.object({
+    openHour: int.min(0).max(23),
+    hours: int.min(1),
+    closeWindowMin: int.min(1),
+    qty: z.array(int.min(1)).length(5),
+    levelWeights: z
+      .array(num.min(0))
+      .length(5)
+      .refine((w) => w.some((x) => x > 0), 'at least one level weight must be > 0'),
+    reserveRate: num.min(1),
+    capRate: num.gt(0).max(1),
+    groupRate: num.gt(0).max(1),
+    minRaise: num.gt(0).max(1),
+    cooldownSec: int.min(0),
+    consolationRate: num.min(0).max(1),
+    consolation: z.object({ goods: int.min(1), num: int.min(1) }),
+  }),
 });
 
 export type Tuning = z.infer<typeof tuningSchema>;
