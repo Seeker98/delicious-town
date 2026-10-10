@@ -259,6 +259,16 @@ const events: Messages['events'] = {
         : `Orden de compra ejecutada: ${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')} a ${formatNum(n(p, 'price'))} cada uno${p.held ? heldNote(p) : ' (ingredientes en tu cuenta de la bolsa)'}`,
     'exchange.cancel': (p, names) =>
       `Cancelaste una orden ${side(p)}: ${names.foodName(n(p, 'foodsId'))}, se devolvieron ${n(p, 'left')}`,
+    'futures.order': (p, names) =>
+      `Encargaste un futuro: ${names.foodName(n(p, 'foodsId'))}×${n(p, 'qty')}, depósito de ${formatNum(n(p, 'deposit'))} monedas`,
+    'futures.cancel': (p, names) =>
+      `Cancelaste un futuro: ${names.foodName(n(p, 'foodsId'))}×${n(p, 'qty')}, perdiste el depósito de ${formatNum(n(p, 'deposit'))} monedas`,
+    'futures.delivered': (p, names) =>
+      `Futuro entregado: ${names.foodName(n(p, 'foodsId'))}×${n(p, 'qty')}${n(p, 'toWallet') > 0 ? `, ${n(p, 'toWallet')} a tu cuenta de la bolsa` : ''}`,
+    'futures.defaulted': (p, names) =>
+      `Futuro impagado: no tenías monedas para el resto, ${names.foodName(n(p, 'foodsId'))}×${n(p, 'qty')} no se entregó, perdiste el depósito de ${formatNum(n(p, 'deposit'))} monedas`,
+    'futures.refunded': (p, names) =>
+      `Futuro cancelado: ${names.foodName(n(p, 'foodsId'))} ya no existe, se devolvió el depósito de ${formatNum(n(p, 'deposit'))} monedas`,
     'exchange.expire': (p, names) =>
       `Venció una orden ${side(p)}: ${names.foodName(n(p, 'foodsId'))}, los ${n(p, 'left')} restantes volvieron a tu cuenta de la bolsa`,
     'exchange.withdraw': (p, names) =>

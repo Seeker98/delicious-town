@@ -38,6 +38,7 @@ import { createExchangeService, type ExchangeService } from './modules/exchange/
 import { createPredictService, type PredictService } from './modules/predict/service';
 import { createKujiService, type KujiService } from './modules/kuji/service';
 import { createFundService, type FundService } from './modules/fund/service';
+import { createFuturesService, type FuturesService } from './modules/futures/service';
 import { createAcquireService, type AcquireService } from './modules/acquire/service';
 import { createMailService, type MailService } from './modules/mail/service';
 import { createRedeemService, type RedeemService } from './modules/redeem/service';
@@ -52,6 +53,7 @@ import { createStoreService, type StoreService } from './modules/store/service';
 import { registerActivityHandlers } from './modules/activity/handler';
 import { activityJobs } from './modules/activity/settle';
 import { exchangeJobs } from './modules/exchange/jobs';
+import { futuresJobs } from './modules/futures/deliver';
 import { predictJobs } from './modules/predict/jobs';
 import { dailyJobs } from './modules/daily/generate';
 import { registerTaskHandlers } from './modules/task/handler';
@@ -97,6 +99,7 @@ export interface Game {
   predict: PredictService;
   kuji: KujiService;
   fund: FundService;
+  futures: FuturesService;
   acquire: AcquireService;
   jobs: PeriodicJob[];
 }
@@ -137,6 +140,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...hiphopJobs(deps));
   jobs.push(...activityJobs(deps));
   jobs.push(...exchangeJobs(deps));
+  jobs.push(...futuresJobs(deps));
   jobs.push(...predictJobs(deps));
   jobs.push(...dailyJobs(deps, app.writer));
   return {
@@ -171,6 +175,7 @@ export function createGame(app: AppDeps): Game {
     predict: createPredictService(deps),
     kuji: createKujiService(deps),
     fund: createFundService(deps),
+    futures: createFuturesService(deps),
     acquire: createAcquireService(deps),
     shop,
     market,

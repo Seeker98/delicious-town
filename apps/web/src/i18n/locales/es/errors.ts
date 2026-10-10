@@ -105,6 +105,8 @@ const errors: Messages['errors'] = {
   limit: {
     exchange_orders: (p) =>
       `Puedes tener como máximo ${s(p.max)} ${plEs(s(p.max), 'orden abierta', 'órdenes abiertas')}`,
+    futures_person: (p) => `Hoy solo puedes encargar ${s(p.left)} más (${s(p.max)} al día)`,
+    futures_quota: (p) => `Hoy solo quedan ${s(p.left)} de este ingrediente en el servidor`,
     exchange_qty: (p) => `Como máximo ${s(p.max)} por orden`,
     exchange_system_qty: (p) => `Hoy el sistema puede comprarte como máximo ${s(p.max)} más`,
     predict_trade: (p) =>
@@ -169,6 +171,9 @@ const errors: Messages['errors'] = {
     order_closed: 'Esta orden ya se completó, se canceló o caducó',
     exchange_frozen: 'Tu cuenta de bolsa está congelada. Contacta con un administrador si tienes dudas.',
     exchange_no_system_bid: 'Ahora el sistema no compra este ingrediente',
+    futures_not_listed: 'Este ingrediente no se puede encargar como futuro ahora',
+    futures_price_moved: 'El precio del futuro cambió. Se actualizó, revísalo y vuelve a encargar',
+    futures_not_open: 'Este futuro ya se entregó, quedó impagado o se canceló',
     exchange_price_moved:
       'El precio del sistema cambió. Se actualizó el libro de órdenes; confirma antes de vender.',
     predict_closed: 'Las operaciones de este evento han terminado',

@@ -109,6 +109,8 @@ export default {
   /** 達到上限（LIMIT_REACHED 的 what） */
   limit: fns({
     exchange_orders: (p) => `最多同時掛 ${String(p.max)} 張單`,
+    futures_person: (p) => `今天最多還能訂 ${String(p.left)} 份 (每天 ${String(p.max)} 份)`,
+    futures_quota: (p) => `這種食材今天全區服只剩 ${String(p.left)} 份`,
     exchange_qty: (p) => `每張單最多 ${String(p.max)} 個`,
     exchange_system_qty: (p) => `系統今天最多還能收你 ${String(p.max)} 個`,
     predict_trade: (p) => `每筆最多 ${String(p.max)} 份`,
@@ -165,6 +167,9 @@ export default {
     order_closed: '這張單已經成交、撤銷或過期了',
     exchange_frozen: '交易所已被凍結, 有疑問請聯絡管理員',
     exchange_no_system_bid: '系統現在不收這種食材',
+    futures_not_listed: '這種食材現在不能下期貨單',
+    futures_price_moved: '期貨價格變了, 已重新整理, 請確認後再下單',
+    futures_not_open: '這張期貨單已經交割、違約或撤銷了',
     exchange_price_moved: '系統收購價變了, 已重新整理盤口, 請確認後再賣',
     predict_closed: '這個事件已經停止交易',
     predict_own: '這道題是你出的, 不能交易',

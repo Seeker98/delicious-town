@@ -105,6 +105,8 @@ const errors: Messages['errors'] = {
   },
   limit: {
     exchange_orders: (p) => `You can have at most ${s(p.max)} open orders`,
+    futures_person: (p) => `You can order only ${s(p.left)} more today (${s(p.max)} per day)`,
+    futures_quota: (p) => `Only ${s(p.left)} of this ingredient left on the server today`,
     exchange_qty: (p) => `At most ${s(p.max)} per order`,
     exchange_system_qty: (p) => `The system can buy at most ${s(p.max)} more from you today`,
     predict_trade: (p) => `At most ${s(p.max)} ${plEn(s(p.max), 'share', 'shares')} per trade`,
@@ -167,6 +169,9 @@ const errors: Messages['errors'] = {
     order_closed: 'This order has already been filled, cancelled or expired',
     exchange_frozen: 'Your exchange account is frozen. Contact an admin if you have questions.',
     exchange_no_system_bid: "The system isn't buying this ingredient right now",
+    futures_not_listed: "This ingredient can't be ordered as futures right now",
+    futures_price_moved: 'The futures price changed. Refreshed, please check and order again',
+    futures_not_open: 'This futures order was already delivered, defaulted or cancelled',
     exchange_price_moved:
       'The system price changed. The order book has been refreshed; please confirm before selling.',
     predict_closed: 'Trading on this event has stopped',

@@ -158,6 +158,9 @@ import type {
   ExchangeOrderDto,
   ExchangePlaceDto,
   ExchangeWithdrawDto,
+  FuturesContractDto,
+  FuturesDto,
+  FuturesOrderInput,
   PredictDetailDto,
   KujiDrawDto,
   KujiLine,
@@ -548,6 +551,10 @@ export const endpoints = {
   /** 卖给系统（问题记录 244）：price 是看到的系统收购价 */
   tradeSellSystem: (b: { foodsId: number; price: number; qty: number }) =>
     api.post<ExchangePlaceDto>('/api/v1/exchange/sell-system', b),
+  /** 食材期货（期货设计 §9） */
+  futures: () => api.get<FuturesDto>('/api/v1/futures'),
+  futuresOrder: (b: FuturesOrderInput) => api.post<FuturesContractDto>('/api/v1/futures/order', b),
+  futuresCancel: (id: number) => api.post<FuturesContractDto>(`/api/v1/futures/${id}/cancel`, {}),
   tradeCancel: (id: number) => api.post<ExchangeOrderDto>(`/api/v1/exchange/orders/${id}/cancel`, {}),
   tradeWithdraw: () => api.post<ExchangeWithdrawDto>('/api/v1/exchange/withdraw', {}),
   /** line 不传是普通池；豪华一番赏传 'deluxe'（240-2） */

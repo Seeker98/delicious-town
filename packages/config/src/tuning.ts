@@ -968,6 +968,15 @@ export const tuningSchema = z.object({
     readsMax: int.min(1),
     featureReward: z.object({ goods: z.array(z.tuple([int, int.min(1)])), diamond: int.min(0) }),
   }),
+  /** 食材期货（期货设计 2026-10-10）：点名订食材，付定金，deliverHours 小时后扣尾款交货 */
+  futures: z.object({
+    deliverHours: int.min(1),
+    premium: num.min(1),
+    capRate: num.min(1),
+    depositRate: num.gt(0).max(1),
+    dailyQuota: z.array(int.min(0)).length(5),
+    personDaily: int.min(1),
+  }),
 });
 
 export type Tuning = z.infer<typeof tuningSchema>;

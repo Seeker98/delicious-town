@@ -18,6 +18,7 @@ import home from './home';
 import kuji from './kuji';
 import site from './site';
 import fund from './fund';
+import futures from './futures';
 import labels from './labels';
 import mail from './mail';
 import market from './market';
@@ -73,6 +74,7 @@ const zhCN = {
   acquire,
   site,
   fund,
+  futures,
   equip,
   rest,
   guide,

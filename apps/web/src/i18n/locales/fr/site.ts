@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    futures1010:
+      'La bourse a un nouvel onglet Contrats à terme\u202f: commandez un ingrédient précis, payez un acompte de 30\u202f% pour fixer le prix, et il est livré automatiquement 3 jours plus tard, le solde étant prélevé à ce moment-là (ce qui ne rentre pas au garde-manger va sur votre compte de la bourse). Si vous ne pouvez pas payer le solde à l’échéance, ou si vous annulez avant, le contrat est en défaut et l’acompte n’est pas rendu. Chaque ingrédient a un quota quotidien pour tout le serveur, et chaque joueur peut commander jusqu’à 50 unités par jour au total',
     backlog1010:
       'Chaque bouton de récompense d’activité indique maintenant ce que donne ce palier. Quand quelqu’un finit de manger gratis et s’en va, un patron banni ne reçoit plus d’objet, et l’objet du patron n’est jamais un Bon mystère. Le classement des bons gagnés au Piment du Diable compte désormais le gain net (gain moins la mise), et la table des gains ne change plus en cours de partie. Quand quelqu’un répond à une réponse de l’auteur du sujet, le journal précise laquelle, et répondre à un message supprimé ne prévient plus son auteur. La page d’invitation affiche les niveaux de récompense de votre serveur. Les gardiens de la tour s’appellent désormais Veilleurs de la tour, pour ne plus les confondre avec le Gardien. Quelques textes, libellés pour lecteurs d’écran et l’emplacement des messages ont aussi été corrigés',
     fix1010:

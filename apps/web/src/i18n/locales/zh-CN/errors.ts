@@ -108,6 +108,8 @@ export default {
   /** 达到上限（LIMIT_REACHED 的 what） */
   limit: fns({
     exchange_orders: (p) => `最多同时挂 ${String(p.max)} 张单`,
+    futures_person: (p) => `今天最多还能订 ${String(p.left)} 份 (每天 ${String(p.max)} 份)`,
+    futures_quota: (p) => `这种食材今天全区服只剩 ${String(p.left)} 份`,
     exchange_qty: (p) => `每张单最多 ${String(p.max)} 个`,
     exchange_system_qty: (p) => `系统今天最多还能收你 ${String(p.max)} 个`,
     predict_trade: (p) => `每笔最多 ${String(p.max)} 份`,
@@ -164,6 +166,9 @@ export default {
     order_closed: '这张单已经成交、撤销或过期了',
     exchange_frozen: '交易所已被冻结, 有疑问请联系管理员',
     exchange_no_system_bid: '系统现在不收这种食材',
+    futures_not_listed: '这种食材现在不能下期货单',
+    futures_price_moved: '期货价格变了, 已刷新, 请确认后再下单',
+    futures_not_open: '这张期货单已经交割、违约或撤销了',
     exchange_price_moved: '系统收购价变了, 已刷新盘口, 请确认后再卖',
     predict_closed: '这个事件已经停止交易',
     predict_own: '这道题是你出的, 不能交易',

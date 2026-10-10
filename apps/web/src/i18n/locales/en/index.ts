@@ -16,6 +16,7 @@ import home from './home';
 import kuji from './kuji';
 import site from './site';
 import fund from './fund';
+import futures from './futures';
 import equip from './equip';
 import guide from './guide';
 import wiki from './wiki';
@@ -73,6 +74,7 @@ const messages: Messages = {
   acquire,
   site,
   fund,
+  futures,
   equip,
   rest,
   guide,

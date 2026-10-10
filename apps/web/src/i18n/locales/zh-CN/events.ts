@@ -231,6 +231,16 @@ export default {
         : `交易所买单成交: ${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}, 单价 ${formatNum(n(p, 'price'))}${p.held ? heldNote(p) : ' (食材在交易所账户)'}`,
     'exchange.cancel': (p, names) =>
       `撤销交易所${p.side === 'buy' ? '买' : '卖'}单: ${names.foodName(n(p, 'foodsId'))}, 退回 ${n(p, 'left')} 个`,
+    'futures.order': (p, names) =>
+      `下了期货单: ${names.foodName(n(p, 'foodsId'))}×${n(p, 'qty')}, 付定金 ${formatNum(n(p, 'deposit'))} 银币`,
+    'futures.cancel': (p, names) =>
+      `撤销期货单: ${names.foodName(n(p, 'foodsId'))}×${n(p, 'qty')}, 定金 ${formatNum(n(p, 'deposit'))} 银币没收`,
+    'futures.delivered': (p, names) =>
+      `期货到货: ${names.foodName(n(p, 'foodsId'))}×${n(p, 'qty')}${n(p, 'toWallet') > 0 ? `, 其中 ${n(p, 'toWallet')} 份进了交易所账户` : ''}`,
+    'futures.defaulted': (p, names) =>
+      `期货违约: 银币不够付尾款, ${names.foodName(n(p, 'foodsId'))}×${n(p, 'qty')} 没有交货, 定金 ${formatNum(n(p, 'deposit'))} 银币没收`,
+    'futures.refunded': (p, names) =>
+      `期货单撤销: ${names.foodName(n(p, 'foodsId'))} 已经没有了, 退回定金 ${formatNum(n(p, 'deposit'))} 银币`,
     'exchange.expire': (p, names) =>
       `交易所${p.side === 'buy' ? '买' : '卖'}单过期: ${names.foodName(n(p, 'foodsId'))}, 剩余 ${n(p, 'left')} 个的冻结退回交易所账户`,
     'exchange.withdraw': (p, names) => `从交易所账户取出: ${coinFoods(p, names, (c) => `银币 ${c}`, '、')}`,

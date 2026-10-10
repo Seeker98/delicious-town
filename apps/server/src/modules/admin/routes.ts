@@ -1,5 +1,7 @@
 import type { FastifyPluginAsync } from 'fastify';
 import {
+  adminFuturesQuery,
+  adminFuturesUpdateBody,
   ErrorCode,
   adminLedgerQuery,
   adminRenameBody,
@@ -55,6 +57,7 @@ import { auditPage } from './audit';
 import { createAdminGrants } from './grants';
 import { createAdminIcons } from './icons';
 import { createAdminTitles } from './titles';
+import { createAdminFutures } from '../futures/admin';
 import { createLaunchCheck } from './launch';
 import { createAdminPlayers } from './players';
 import { createAdminShards } from './shards';
@@ -157,6 +160,18 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     r.post('/titles/:id/delete', async (req) => {
       const a = await requireRole(db, req, 'admin');
       await titles.remove(a, id(req));
+      return ok(null);
+    });
+
+    // 期货食材（期货设计 §5.3）
+    const futures = createAdminFutures(game);
+    r.get('/futures/foods', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await futures.list(parse(adminFuturesQuery, req.query).shardId));
+    });
+    r.post('/futures/foods', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      await futures.update(a, parse(adminFuturesUpdateBody, req.body).items);
       return ok(null);
     });
 

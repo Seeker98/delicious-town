@@ -223,6 +223,8 @@ export const FEED_TYPES = [
   'mouse.steal',
   'market.share',
   'fridge.drop',
+  'futures.delivered',
+  'futures.defaulted',
 ] as const;
 const FEED_DAYS = 3;
 

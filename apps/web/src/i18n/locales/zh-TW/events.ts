@@ -232,6 +232,16 @@ export default {
         : `交易所買單成交: ${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}, 單價 ${formatNum(n(p, 'price'))}${p.held ? heldNote(p) : ' (食材在交易所賬戶)'}`,
     'exchange.cancel': (p, names) =>
       `撤銷交易所${p.side === 'buy' ? '買' : '賣'}單: ${names.foodName(n(p, 'foodsId'))}, 退回 ${n(p, 'left')} 個`,
+    'futures.order': (p, names) =>
+      `下了期貨單: ${names.foodName(n(p, 'foodsId'))}×${n(p, 'qty')}, 付定金 ${formatNum(n(p, 'deposit'))} 銀幣`,
+    'futures.cancel': (p, names) =>
+      `撤銷期貨單: ${names.foodName(n(p, 'foodsId'))}×${n(p, 'qty')}, 定金 ${formatNum(n(p, 'deposit'))} 銀幣沒收`,
+    'futures.delivered': (p, names) =>
+      `期貨到貨: ${names.foodName(n(p, 'foodsId'))}×${n(p, 'qty')}${n(p, 'toWallet') > 0 ? `, 其中 ${n(p, 'toWallet')} 份進了交易所賬戶` : ''}`,
+    'futures.defaulted': (p, names) =>
+      `期貨違約: 銀幣不夠付尾款, ${names.foodName(n(p, 'foodsId'))}×${n(p, 'qty')} 沒有交貨, 定金 ${formatNum(n(p, 'deposit'))} 銀幣沒收`,
+    'futures.refunded': (p, names) =>
+      `期貨單撤銷: ${names.foodName(n(p, 'foodsId'))} 已經沒有了, 退回定金 ${formatNum(n(p, 'deposit'))} 銀幣`,
     'exchange.expire': (p, names) =>
       `交易所${p.side === 'buy' ? '買' : '賣'}單過期: ${names.foodName(n(p, 'foodsId'))}, 剩餘 ${n(p, 'left')} 個的凍結退回交易所賬戶`,
     'exchange.withdraw': (p, names) => `從交易所賬戶取出: ${coinFoods(p, names, (c) => `銀幣 ${c}`, '、')}`,

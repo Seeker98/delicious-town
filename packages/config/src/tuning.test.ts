@@ -125,3 +125,20 @@ describe('bar.deal（一掷千金，问题记录 427-3）', () => {
     expect(withDeal((d) => (d.prizes = d.prizes.slice(0, 2)))).toBe(false);
   });
 });
+
+describe('futures（食材期货，期货设计 §8）', () => {
+  type F = Record<string, unknown>;
+  const withF = (f: (x: F) => void) => {
+    const t = structuredClone(tuningJson) as unknown as { futures: F };
+    f(t.futures);
+    return tuningSchema.safeParse(t).success;
+  };
+  it('默认值合法；premium、capRate 不小于 1，定金比例在 (0, 1]，额度正好 5 个', () => {
+    expect(withF(() => undefined)).toBe(true);
+    expect(withF((x) => (x.premium = 0.9))).toBe(false);
+    expect(withF((x) => (x.capRate = 0.5))).toBe(false);
+    expect(withF((x) => (x.depositRate = 0))).toBe(false);
+    expect(withF((x) => (x.depositRate = 1.1))).toBe(false);
+    expect(withF((x) => (x.dailyQuota = [1, 2, 3, 4]))).toBe(false);
+  });
+});

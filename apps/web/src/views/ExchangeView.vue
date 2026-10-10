@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, inject, onMounted, ref } from 'vue';
+import { routeLocationKey } from 'vue-router';
 import type { ExchangeBookDto, ExchangeFoodDto, ExchangeMeDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
@@ -10,10 +11,26 @@ import { timeLeft } from '../utils/activity';
 import { formatNum, formatPct } from '../utils/format';
 import { matchText } from '../utils/match';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
+import FuturesPanel from '../components/exchange/FuturesPanel.vue';
+import { useRestaurantStore } from '../stores/restaurant';
 import { serverNowMs } from '../utils/serverNow';
 
 /** 交易所（问题记录 156，156-1 设计 §8）：选食材 → 盘口 → 下单；我的挂单、账户、成交 */
 const catalog = useCatalogStore();
+const restStore = useRestaurantStore();
+/** 现货、期货两个标签（期货设计 §10）；地址带 ?tab=futures 直接打开期货。测试里没有路由时按现货 */
+const route = inject(routeLocationKey, null);
+const tab = ref<'spot' | 'futures'>(route?.query.tab === 'futures' ? 'futures' : 'spot');
+/** 本区服关了期货时，有进行中的单才显示期货标签（只看我的期货单） */
+const futuresOpen = ref(false);
+const showFutures = computed(() => restStore.featureOn('futures') || futuresOpen.value);
+onMounted(() => {
+  if (restStore.featureOn('futures')) return;
+  endpoints
+    .futures()
+    .then((v) => (futuresOpen.value = v.contracts.some((c) => c.status === 'open')))
+    .catch(() => undefined);
+});
 const toast = useToastStore();
 const t = useT();
 const foods = ref<ExchangeFoodDto[]>([]);
@@ -250,253 +267,272 @@ onMounted(async () => {
 <template>
   <h5>{{ t.exchange.title }}</h5>
   <HiphopCard :place="10" />
-  <div v-if="me?.frozen" class="alert alert-danger py-1 small" data-testid="ex-frozen">
-    {{ t.exchange.frozenNotice(me.frozen.reason) }}
-  </div>
-  <div class="small text-muted mb-2">
-    {{ t.exchange.intro }}
-  </div>
-  <details class="small text-muted mb-2" data-testid="ex-sys-help">
-    <summary>{{ t.exchange.sysHelp }}</summary>
-    <ul class="mb-0 ps-3">
-      <li v-for="(x, i) in t.exchange.sysHelpItems" :key="i">{{ x }}</li>
-    </ul>
-  </details>
-  <input
-    v-model="search"
-    class="form-control form-control-sm mb-2"
-    :placeholder="t.exchange.search"
-    data-testid="ex-search"
-  />
-  <div class="d-flex flex-wrap align-items-center gap-2 mb-2 small">
-    <div class="dt-pills mb-0">
+  <ul v-if="showFutures" class="nav nav-tabs mb-2 small">
+    <li v-for="k in ['spot', 'futures'] as const" :key="k" class="nav-item">
       <button
-        v-for="x in FILTERS"
-        :key="x"
         type="button"
-        :class="{ active: filter === x }"
-        :aria-pressed="filter === x"
-        :data-testid="`ex-filter-${x}`"
-        @click="setFilter(x)"
+        :class="['nav-link', { active: tab === k }]"
+        :data-testid="`ex-tab-${k}`"
+        @click="tab = k"
       >
-        {{ t.exchange.filters[x] }}
+        {{ k === 'spot' ? t.futures.tabSpot : t.futures.tabFutures }}
       </button>
+    </li>
+  </ul>
+  <FuturesPanel v-if="tab === 'futures' && showFutures" />
+  <template v-else>
+    <div v-if="me?.frozen" class="alert alert-danger py-1 small" data-testid="ex-frozen">
+      {{ t.exchange.frozenNotice(me.frozen.reason) }}
     </div>
-    <span class="dt-meta" data-testid="ex-legend"
-      ><span class="dt-sale-tag">{{ t.exchange.legendSale }}</span
-      >{{ t.exchange.legendSaleText }}<span class="dt-buy-tag">{{ t.exchange.legendBuy }}</span
-      >{{ t.exchange.legendBuyText }}</span
-    >
-  </div>
-  <div class="dt-card mb-3" style="max-height: 14rem; overflow-y: auto">
-    <div v-for="[lv, list] in groups" :key="lv" class="mb-1">
-      <div class="dt-group-label">{{ t.exchange.level(lv) }}</div>
-      <button
-        v-for="f in list"
-        :key="f.foodsId"
-        type="button"
-        :class="[
-          'btn btn-sm me-1 mb-1',
-          f.foodsId === selected ? 'btn-primary' : 'btn-outline-secondary',
-          { 'dt-on-sale': saleNum(f) > 0 },
-        ]"
-        :data-testid="`ex-food-${f.foodsId}`"
-        @click="pick(f.foodsId)"
+    <div class="small text-muted mb-2">
+      {{ t.exchange.intro }}
+    </div>
+    <details class="small text-muted mb-2" data-testid="ex-sys-help">
+      <summary>{{ t.exchange.sysHelp }}</summary>
+      <ul class="mb-0 ps-3">
+        <li v-for="(x, i) in t.exchange.sysHelpItems" :key="i">{{ x }}</li>
+      </ul>
+    </details>
+    <input
+      v-model="search"
+      class="form-control form-control-sm mb-2"
+      :placeholder="t.exchange.search"
+      data-testid="ex-search"
+    />
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-2 small">
+      <div class="dt-pills mb-0">
+        <button
+          v-for="x in FILTERS"
+          :key="x"
+          type="button"
+          :class="{ active: filter === x }"
+          :aria-pressed="filter === x"
+          :data-testid="`ex-filter-${x}`"
+          @click="setFilter(x)"
+        >
+          {{ t.exchange.filters[x] }}
+        </button>
+      </div>
+      <span class="dt-meta" data-testid="ex-legend"
+        ><span class="dt-sale-tag">{{ t.exchange.legendSale }}</span
+        >{{ t.exchange.legendSaleText }}<span class="dt-buy-tag">{{ t.exchange.legendBuy }}</span
+        >{{ t.exchange.legendBuyText }}</span
       >
-        {{ catalog.foodName(f.foodsId) }}
-        <span class="small opacity-75">{{ formatNum(f.last ?? f.ref) }} {{ pct(f.changePct) }}</span>
-        <span v-if="saleNum(f) > 0" class="dt-sale-tag ms-1">{{ t.exchange.saleTag(saleNum(f)) }}</span>
-        <span v-if="f.buying > 0" class="dt-buy-tag ms-1">{{ t.exchange.buyTag(f.buying) }}</span>
-      </button>
     </div>
-  </div>
+    <div class="dt-card mb-3" style="max-height: 14rem; overflow-y: auto">
+      <div v-for="[lv, list] in groups" :key="lv" class="mb-1">
+        <div class="dt-group-label">{{ t.exchange.level(lv) }}</div>
+        <button
+          v-for="f in list"
+          :key="f.foodsId"
+          type="button"
+          :class="[
+            'btn btn-sm me-1 mb-1',
+            f.foodsId === selected ? 'btn-primary' : 'btn-outline-secondary',
+            { 'dt-on-sale': saleNum(f) > 0 },
+          ]"
+          :data-testid="`ex-food-${f.foodsId}`"
+          @click="pick(f.foodsId)"
+        >
+          {{ catalog.foodName(f.foodsId) }}
+          <span class="small opacity-75">{{ formatNum(f.last ?? f.ref) }} {{ pct(f.changePct) }}</span>
+          <span v-if="saleNum(f) > 0" class="dt-sale-tag ms-1">{{ t.exchange.saleTag(saleNum(f)) }}</span>
+          <span v-if="f.buying > 0" class="dt-buy-tag ms-1">{{ t.exchange.buyTag(f.buying) }}</span>
+        </button>
+      </div>
+    </div>
 
-  <div v-if="book" class="dt-card mb-3" data-testid="ex-book">
-    <div class="d-flex flex-wrap gap-2 small mb-1">
-      <b>{{ catalog.foodName(book.foodsId) }}</b>
-      <span>{{ t.exchange.ref(formatNum(book.ref)) }}</span>
-      <span>{{ t.exchange.volume(formatNum(book.volume)) }}</span>
-      <span class="text-muted" data-testid="ex-band">{{
-        t.exchange.band(formatNum(book.min), formatNum(book.max))
-      }}</span>
-    </div>
-    <table class="table table-sm small mb-2">
-      <tbody>
-        <tr
-          v-for="a in [...book.asks].reverse()"
-          :key="`a${a.system ? 's' : ''}${a.price}`"
-          :class="a.system ? 'text-primary' : 'text-danger'"
-          role="button"
-          :data-testid="`ex-ask-${a.system ? 'sys-' : ''}${a.price}`"
-          @click="price = a.price"
+    <div v-if="book" class="dt-card mb-3" data-testid="ex-book">
+      <div class="d-flex flex-wrap gap-2 small mb-1">
+        <b>{{ catalog.foodName(book.foodsId) }}</b>
+        <span>{{ t.exchange.ref(formatNum(book.ref)) }}</span>
+        <span>{{ t.exchange.volume(formatNum(book.volume)) }}</span>
+        <span class="text-muted" data-testid="ex-band">{{
+          t.exchange.band(formatNum(book.min), formatNum(book.max))
+        }}</span>
+      </div>
+      <table class="table table-sm small mb-2">
+        <tbody>
+          <tr
+            v-for="a in [...book.asks].reverse()"
+            :key="`a${a.system ? 's' : ''}${a.price}`"
+            :class="a.system ? 'text-primary' : 'text-danger'"
+            role="button"
+            :data-testid="`ex-ask-${a.system ? 'sys-' : ''}${a.price}`"
+            @click="price = a.price"
+          >
+            <td>{{ a.system ? t.exchange.askSys : t.exchange.ask }}</td>
+            <td>{{ formatNum(a.price) }}</td>
+            <td class="text-end">{{ formatNum(a.qty) }}</td>
+          </tr>
+          <!-- 最新成交价放在卖档和买档中间（156-1 设计 §8，backlog 156-1） -->
+          <tr data-testid="ex-last">
+            <td colspan="3" class="text-center fw-semibold" :class="{ 'text-muted': book.last === null }">
+              {{ book.last === null ? t.exchange.noTrade : t.exchange.last(formatNum(book.last)) }}
+            </td>
+          </tr>
+          <tr
+            v-for="b in book.bids"
+            :key="`b${b.system ? 's' : ''}${b.price}`"
+            :class="b.system ? 'text-primary' : 'text-success'"
+            role="button"
+            :data-testid="`ex-bid-${b.system ? 'sys-' : ''}${b.price}`"
+            @click="if (!b.floor) price = b.price;"
+          >
+            <td>{{ b.system ? (b.floor ? t.exchange.bidFloor : t.exchange.bidSys) : t.exchange.bid }}</td>
+            <td>{{ formatNum(b.price) }}</td>
+            <td class="text-end">{{ formatNum(b.qty) }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div v-if="sysBid" class="mb-2 small">
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-primary"
+          :disabled="busy || !!blocked"
+          data-testid="ex-sell-sys"
+          :aria-expanded="sysOpen"
+          @click="sysOpen = !sysOpen"
         >
-          <td>{{ a.system ? t.exchange.askSys : t.exchange.ask }}</td>
-          <td>{{ formatNum(a.price) }}</td>
-          <td class="text-end">{{ formatNum(a.qty) }}</td>
-        </tr>
-        <!-- 最新成交价放在卖档和买档中间（156-1 设计 §8，backlog 156-1） -->
-        <tr data-testid="ex-last">
-          <td colspan="3" class="text-center fw-semibold" :class="{ 'text-muted': book.last === null }">
-            {{ book.last === null ? t.exchange.noTrade : t.exchange.last(formatNum(book.last)) }}
-          </td>
-        </tr>
-        <tr
-          v-for="b in book.bids"
-          :key="`b${b.system ? 's' : ''}${b.price}`"
-          :class="b.system ? 'text-primary' : 'text-success'"
-          role="button"
-          :data-testid="`ex-bid-${b.system ? 'sys-' : ''}${b.price}`"
-          @click="if (!b.floor) price = b.price;"
+          {{ t.exchange.sellSys(formatNum(sysBid.price), !!sysBid.floor) }}
+        </button>
+        <div v-if="sysOpen" class="d-flex flex-wrap gap-2 align-items-center mt-1">
+          {{ t.exchange.qty }}
+          <input
+            v-model.number="sysQty"
+            type="number"
+            min="1"
+            :max="sysBid.qty"
+            class="form-control form-control-sm"
+            style="width: 5rem"
+            data-testid="ex-sys-qty"
+          />
+          <span class="text-muted">{{ t.exchange.max(sysBid.qty) }}</span>
+          <button
+            type="button"
+            class="btn btn-sm btn-primary"
+            :disabled="busy || !sysValid || !!blocked"
+            data-testid="ex-sys-submit"
+            @click="sellToSystem"
+          >
+            {{ t.exchange.confirmSell }}
+          </button>
+          <div class="w-100 text-muted" data-testid="ex-sys-estimate">{{ sysEstimate }}</div>
+        </div>
+      </div>
+      <div class="btn-group btn-group-sm mb-2">
+        <button
+          type="button"
+          :class="['btn', side === 'buy' ? 'btn-success' : 'btn-outline-success']"
+          data-testid="ex-side-buy"
+          @click="side = 'buy'"
         >
-          <td>{{ b.system ? (b.floor ? t.exchange.bidFloor : t.exchange.bidSys) : t.exchange.bid }}</td>
-          <td>{{ formatNum(b.price) }}</td>
-          <td class="text-end">{{ formatNum(b.qty) }}</td>
-        </tr>
-      </tbody>
-    </table>
-    <div v-if="sysBid" class="mb-2 small">
-      <button
-        type="button"
-        class="btn btn-sm btn-outline-primary"
-        :disabled="busy || !!blocked"
-        data-testid="ex-sell-sys"
-        :aria-expanded="sysOpen"
-        @click="sysOpen = !sysOpen"
-      >
-        {{ t.exchange.sellSys(formatNum(sysBid.price), !!sysBid.floor) }}
-      </button>
-      <div v-if="sysOpen" class="d-flex flex-wrap gap-2 align-items-center mt-1">
+          {{ t.exchange.buy }}
+        </button>
+        <button
+          type="button"
+          :class="['btn', side === 'sell' ? 'btn-danger' : 'btn-outline-danger']"
+          data-testid="ex-side-sell"
+          @click="side = 'sell'"
+        >
+          {{ t.exchange.sell }}
+        </button>
+      </div>
+      <div class="d-flex flex-wrap gap-2 align-items-center small">
+        {{ t.exchange.price }}
+        <input
+          v-model.number="price"
+          type="number"
+          :min="book.min"
+          :max="book.max"
+          class="form-control form-control-sm"
+          style="width: 7rem"
+          data-testid="ex-price"
+        />
         {{ t.exchange.qty }}
         <input
-          v-model.number="sysQty"
+          v-model.number="qty"
           type="number"
           min="1"
-          :max="sysBid.qty"
+          :max="me?.maxQty ?? 999"
           class="form-control form-control-sm"
           style="width: 5rem"
-          data-testid="ex-sys-qty"
+          data-testid="ex-qty"
         />
-        <span class="text-muted">{{ t.exchange.max(sysBid.qty) }}</span>
         <button
           type="button"
           class="btn btn-sm btn-primary"
-          :disabled="busy || !sysValid || !!blocked"
-          data-testid="ex-sys-submit"
-          @click="sellToSystem"
+          :disabled="busy || !valid || !!blocked"
+          data-testid="ex-submit"
+          @click="submit"
         >
-          {{ t.exchange.confirmSell }}
+          {{ side === 'buy' ? t.exchange.placeBuy : t.exchange.placeSell }}
         </button>
-        <div class="w-100 text-muted" data-testid="ex-sys-estimate">{{ sysEstimate }}</div>
       </div>
+      <div class="small text-muted mt-1" data-testid="ex-estimate">{{ estimate }}</div>
+      <div v-if="overSystem !== null" class="small text-warning mt-1" data-testid="ex-over-sys">
+        {{ t.exchange.overSystem(overSystem) }}
+      </div>
+      <div v-if="blocked" class="small text-danger mt-1">{{ blocked }}</div>
     </div>
-    <div class="btn-group btn-group-sm mb-2">
-      <button
-        type="button"
-        :class="['btn', side === 'buy' ? 'btn-success' : 'btn-outline-success']"
-        data-testid="ex-side-buy"
-        @click="side = 'buy'"
-      >
-        {{ t.exchange.buy }}
-      </button>
-      <button
-        type="button"
-        :class="['btn', side === 'sell' ? 'btn-danger' : 'btn-outline-danger']"
-        data-testid="ex-side-sell"
-        @click="side = 'sell'"
-      >
-        {{ t.exchange.sell }}
-      </button>
-    </div>
-    <div class="d-flex flex-wrap gap-2 align-items-center small">
-      {{ t.exchange.price }}
-      <input
-        v-model.number="price"
-        type="number"
-        :min="book.min"
-        :max="book.max"
-        class="form-control form-control-sm"
-        style="width: 7rem"
-        data-testid="ex-price"
-      />
-      {{ t.exchange.qty }}
-      <input
-        v-model.number="qty"
-        type="number"
-        min="1"
-        :max="me?.maxQty ?? 999"
-        class="form-control form-control-sm"
-        style="width: 5rem"
-        data-testid="ex-qty"
-      />
-      <button
-        type="button"
-        class="btn btn-sm btn-primary"
-        :disabled="busy || !valid || !!blocked"
-        data-testid="ex-submit"
-        @click="submit"
-      >
-        {{ side === 'buy' ? t.exchange.placeBuy : t.exchange.placeSell }}
-      </button>
-    </div>
-    <div class="small text-muted mt-1" data-testid="ex-estimate">{{ estimate }}</div>
-    <div v-if="overSystem !== null" class="small text-warning mt-1" data-testid="ex-over-sys">
-      {{ t.exchange.overSystem(overSystem) }}
-    </div>
-    <div v-if="blocked" class="small text-danger mt-1">{{ blocked }}</div>
-  </div>
 
-  <template v-if="me">
-    <h6 class="dt-section">{{ t.exchange.account }}</h6>
-    <div class="dt-card mb-3 d-flex flex-wrap align-items-center gap-2 small" data-testid="ex-wallet">
-      <span>{{ t.exchange.coin(formatNum(me.wallet.coin)) }}</span>
-      <span v-for="f in me.wallet.foods" :key="f.foodsId">{{
-        t.common.qty(catalog.foodName(f.foodsId), f.num)
-      }}</span>
-      <button
-        type="button"
-        class="btn btn-sm btn-outline-primary ms-auto"
-        :disabled="
-          busy ||
-          !!me.frozen ||
-          (me.wallet.coin === 0 && me.wallet.foods.length === 0 && readyHolds.length === 0)
-        "
-        data-testid="ex-withdraw"
-        @click="withdraw"
+    <template v-if="me">
+      <h6 class="dt-section">{{ t.exchange.account }}</h6>
+      <div class="dt-card mb-3 d-flex flex-wrap align-items-center gap-2 small" data-testid="ex-wallet">
+        <span>{{ t.exchange.coin(formatNum(me.wallet.coin)) }}</span>
+        <span v-for="f in me.wallet.foods" :key="f.foodsId">{{
+          t.common.qty(catalog.foodName(f.foodsId), f.num)
+        }}</span>
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-primary ms-auto"
+          :disabled="
+            busy ||
+            !!me.frozen ||
+            (me.wallet.coin === 0 && me.wallet.foods.length === 0 && readyHolds.length === 0)
+          "
+          data-testid="ex-withdraw"
+          @click="withdraw"
+        >
+          {{ t.exchange.withdraw }}
+        </button>
+      </div>
+      <div v-if="readyHolds.length > 0" class="small text-success mb-1" data-testid="ex-holds-ready">
+        {{ t.exchange.holdsReady(holdText(readyHolds)) }}
+      </div>
+      <div v-if="pendingHolds.length > 0" class="small text-muted mb-3" data-testid="ex-holds">
+        {{ t.exchange.holdsPending(holdText(pendingHolds), timeLeft(pendingHolds[0]!.releaseAt)) }}
+      </div>
+      <h6 class="dt-section">{{ t.exchange.myOrders }}</h6>
+      <div v-if="me.orders.length === 0" class="small text-muted mb-3">{{ t.exchange.noOrders }}</div>
+      <div
+        v-for="o in me.orders"
+        :key="o.id"
+        class="d-flex align-items-center gap-2 small border-bottom py-1"
       >
-        {{ t.exchange.withdraw }}
-      </button>
-    </div>
-    <div v-if="readyHolds.length > 0" class="small text-success mb-1" data-testid="ex-holds-ready">
-      {{ t.exchange.holdsReady(holdText(readyHolds)) }}
-    </div>
-    <div v-if="pendingHolds.length > 0" class="small text-muted mb-3" data-testid="ex-holds">
-      {{ t.exchange.holdsPending(holdText(pendingHolds), timeLeft(pendingHolds[0]!.releaseAt)) }}
-    </div>
-    <h6 class="dt-section">{{ t.exchange.myOrders }}</h6>
-    <div v-if="me.orders.length === 0" class="small text-muted mb-3">{{ t.exchange.noOrders }}</div>
-    <div v-for="o in me.orders" :key="o.id" class="d-flex align-items-center gap-2 small border-bottom py-1">
-      <span :class="o.side === 'buy' ? 'text-success' : 'text-danger'">{{
-        o.side === 'buy' ? t.exchange.bid : t.exchange.ask
-      }}</span>
-      <span class="flex-fill">{{
-        t.exchange.orderLine(catalog.foodName(o.foodsId), formatNum(o.price), o.qty, o.filled)
-      }}</span>
-      <button
-        type="button"
-        class="dt-link-btn text-danger"
-        :disabled="busy"
-        :data-testid="`ex-cancel-${o.id}`"
-        @click="cancel(o.id)"
-      >
-        {{ t.exchange.cancel }}
-      </button>
-    </div>
-    <h6 class="dt-section mt-3">{{ t.exchange.trades }}</h6>
-    <div v-if="me.trades.length === 0" class="small text-muted">{{ t.exchange.noTrades }}</div>
-    <div v-for="(x, i) in me.trades" :key="i" class="small border-bottom py-1">
-      {{ t.exchange.tradeLine(x.side === 'buy', catalog.foodName(x.foodsId), formatNum(x.price), x.qty) }}
-      <span v-if="x.system" class="text-primary">{{ t.exchange.system }}</span>
-      <span v-if="x.fee > 0" class="text-muted">{{ t.exchange.fee(formatNum(x.fee)) }}</span>
-    </div>
+        <span :class="o.side === 'buy' ? 'text-success' : 'text-danger'">{{
+          o.side === 'buy' ? t.exchange.bid : t.exchange.ask
+        }}</span>
+        <span class="flex-fill">{{
+          t.exchange.orderLine(catalog.foodName(o.foodsId), formatNum(o.price), o.qty, o.filled)
+        }}</span>
+        <button
+          type="button"
+          class="dt-link-btn text-danger"
+          :disabled="busy"
+          :data-testid="`ex-cancel-${o.id}`"
+          @click="cancel(o.id)"
+        >
+          {{ t.exchange.cancel }}
+        </button>
+      </div>
+      <h6 class="dt-section mt-3">{{ t.exchange.trades }}</h6>
+      <div v-if="me.trades.length === 0" class="small text-muted">{{ t.exchange.noTrades }}</div>
+      <div v-for="(x, i) in me.trades" :key="i" class="small border-bottom py-1">
+        {{ t.exchange.tradeLine(x.side === 'buy', catalog.foodName(x.foodsId), formatNum(x.price), x.qty) }}
+        <span v-if="x.system" class="text-primary">{{ t.exchange.system }}</span>
+        <span v-if="x.fee > 0" class="text-muted">{{ t.exchange.fee(formatNum(x.fee)) }}</span>
+      </div>
+    </template>
   </template>
 </template>

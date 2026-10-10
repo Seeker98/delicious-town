@@ -105,6 +105,8 @@ const errors: Messages['errors'] = {
   limit: {
     exchange_orders: (p) =>
       `Vous pouvez avoir au plus ${s(p.max)} ${plFr(s(p.max), 'ordre ouvert', 'ordres ouverts')}`,
+    futures_person: (p) => `Encore ${s(p.left)} au plus aujourd’hui (${s(p.max)} par jour)`,
+    futures_quota: (p) => `Plus que ${s(p.left)} de cet ingrédient sur le serveur aujourd’hui`,
     exchange_qty: (p) => `Au plus ${s(p.max)} par ordre`,
     exchange_system_qty: (p) => `Le système peut encore vous acheter au plus ${s(p.max)} aujourd'hui`,
     predict_trade: (p) => `Au plus ${s(p.max)} ${plFr(s(p.max), 'part', 'parts')} par transaction`,
@@ -168,6 +170,9 @@ const errors: Messages['errors'] = {
     order_closed: 'Cet ordre a déjà été exécuté, annulé ou a expiré',
     exchange_frozen: 'Votre compte de bourse est gelé. Contactez un administrateur pour toute question.',
     exchange_no_system_bid: "Le système n'achète pas cet ingrédient pour le moment",
+    futures_not_listed: 'Cet ingrédient ne peut pas être commandé à terme pour le moment',
+    futures_price_moved: 'Le prix du contrat a changé. Actualisé, vérifiez puis recommandez',
+    futures_not_open: 'Ce contrat a déjà été livré, mis en défaut ou annulé',
     exchange_price_moved:
       "Le prix du système a changé. Le carnet d'ordres a été actualisé\u202f; confirmez avant de vendre.",
     predict_closed: 'Les transactions sur cet événement sont terminées',
