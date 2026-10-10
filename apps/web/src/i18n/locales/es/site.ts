@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    futures1010:
+      'La bolsa tiene una nueva pestaña de Futuros: encarga un ingrediente concreto, paga un depósito del 30\u00a0% para fijar el precio y se entrega solo a los 3 días, cuando se cobra el resto (lo que no quepa en la despensa va a tu cuenta de la bolsa). Si al vencer no puedes pagar el resto, o cancelas antes, el pedido queda impagado y el depósito no se devuelve. Cada ingrediente tiene un cupo diario para todo el servidor y cada jugador puede encargar hasta 50 al día en total',
     backlog1010:
       'Cada botón de premio de actividad muestra ahora qué da ese nivel. Cuando alguien termina de comer gratis y se va, el dueño baneado ya no recibe objeto y el objeto del dueño nunca es un Vale misterioso. La clasificación de vales ganados del Chile del Diablo cuenta ahora la ganancia neta (lo cobrado menos la apuesta) y la tabla de pagos ya no cambia a mitad de partida. Si alguien responde a una respuesta del autor del tema, el registro dice cuál, y responder a mensajes borrados ya no avisa a su autor. La página de invitaciones muestra los niveles de premio del servidor. Los guardianes de la torre se llaman ahora Vigías de la torre, para no confundirlos con el Guardián. También se corrigieron algunos textos, etiquetas para lectores de pantalla y la posición de los avisos',
     fix1010:

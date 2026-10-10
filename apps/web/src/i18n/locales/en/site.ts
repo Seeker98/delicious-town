@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    futures1010:
+      'The exchange has a new Futures tab: order a specific ingredient, pay a 30% deposit to lock the unit price, and it is delivered automatically 3 days later with the balance charged then (anything that does not fit your pantry goes to your exchange account). If you cannot pay the balance when it is due, or you cancel early, the order defaults and the deposit is not refunded. Each ingredient has a server-wide daily quota, and each player can order up to 50 in total per day',
     backlog1010:
       "Each daily activity reward button now shows what that tier gives. When a free diner finishes and leaves, a banned owner no longer gets an item, and the owner's item is never a Mystery Voucher. The Devil's Chili board for vouchers won now counts net winnings (payout minus stake), and the payout table no longer changes in the middle of a game. When someone replies to the original poster's own reply, the feed says which one, and replies to deleted posts no longer notify their author. The invite page shows the reward levels set for your server. Also fixed some wording, screen reader labels and where messages pop up",
     fix1010:
