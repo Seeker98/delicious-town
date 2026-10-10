@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    bulk1010:
+      "La bourse a un nouvel onglet Souscription en gros\u202f: chaque jour à 20\u202fh, un lot d'un ingrédient (niveaux 1 à 5) est proposé. Proposez un prix unitaire et une quantité\u202f; le prix de la dernière unité retenue est le prix unique payé par tous, et le surplus gelé est rendu. Chaque joueur peut prendre jusqu'à 25\u202f%\u202f; s'il y a moins de 30\u202f% de demandes au total, le lot échoue et tout est remboursé. Le lot clôture à un moment aléatoire dans les 5 dernières minutes, et il faut attendre 5 secondes entre deux offres. Ceux qui ratent de peu reçoivent un ticket d'ingrédient aléatoire de niveau 2",
     wealth1010:
       "L'Association propose désormais des placements\u202f: placez des pièces 3, 7 ou 14 jours et récupérez tout le capital à l'échéance, plus un colis de ravitaillement du marché de niveau 3, 4 ou 5 par tranche de 1\u202f000\u202f000 pièces. À l'ouverture, le colis donne un ingrédient de son niveau qui manque à la rue où vous êtes. Jusqu'à 3 placements et 10\u202f000\u202f000 pièces au total, dès le niveau 20\u202f; un retrait anticipé rend 95\u202f%, sans colis",
     futures1010:

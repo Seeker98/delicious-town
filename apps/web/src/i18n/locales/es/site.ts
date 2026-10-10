@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    bulk1010:
+      'La bolsa tiene una nueva pestaña de Suscripción mayorista: cada día a las 20:00 sale un lote de un ingrediente (niveles 1 a 5). Puja un precio por unidad y una cantidad; el precio de la última unidad que entra es el precio único que pagan todos, y lo congelado de más se devuelve. Cada jugador puede llevarse hasta el 25\u00a0%; si en total se puja menos del 30\u00a0%, el lote fracasa y se devuelve todo. El lote cierra en un momento al azar de los últimos 5 minutos y entre pujas hay que esperar 5 segundos. Quien se queda justo fuera recibe un vale de ingrediente al azar de nivel 2',
     wealth1010:
       'La Asociación tiene una nueva página de Depósitos: deposita monedas 3, 7 o 14 días y al vencer recuperas todo el capital, además de un paquete de suministros del mercado de nivel 3, 4 o 5 por cada 1.000.000 de monedas. Al abrir el paquete recibes un ingrediente de su nivel que le falte a la calle donde estés. Hasta 3 depósitos y 10.000.000 de monedas en total, desde el nivel 20; retirar antes devuelve el 95\u00a0% y sin paquetes',
     futures1010:

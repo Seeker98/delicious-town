@@ -91,13 +91,11 @@ export function createAdminBulk(game: Game) {
             .insertInto('bulk_food')
             .values({ foods_id: x.foodsId, enabled: x.enabled, updated_by: actor.accountId })
             .onConflict((oc) =>
-              oc
-                .column('foods_id')
-                .doUpdateSet({
-                  enabled: x.enabled,
-                  updated_at: sql<Date>`now()`,
-                  updated_by: actor.accountId,
-                }),
+              oc.column('foods_id').doUpdateSet({
+                enabled: x.enabled,
+                updated_at: sql<Date>`now()`,
+                updated_by: actor.accountId,
+              }),
             )
             .execute();
         await writeAudit(tx, { actor, action: 'bulk.foods', target: 'bulk', detail: { before, items } });

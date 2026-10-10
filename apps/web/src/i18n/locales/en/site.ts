@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    bulk1010:
+      'The exchange has a new Bulk Subscription tab: a lot of one ingredient (levels 1 to 5) opens every day at 20:00. Bid a unit price and a quantity; the price of the last unit that makes it in is the single price everyone pays, and any extra you froze is refunded. Each player can take up to 25%; if less than 30% is bid in total, the lot fails and everyone is refunded. The lot closes at a random moment in the last 5 minutes, and you must wait 5 seconds between bids. Bidders who just miss out get a level 2 random ingredient ticket',
     wealth1010:
       'The Association has a new Deposits page: lock away coins for 3, 7 or 14 days and get the full principal back at maturity, plus one level 3, 4 or 5 Market Supply Pack per 1,000,000 coins. When you open a pack, it gives an ingredient of its level that your current street is short of. Up to 3 deposits and 10,000,000 coins in total, from restaurant level 20; withdrawing early returns 95% and no packs',
     futures1010:
