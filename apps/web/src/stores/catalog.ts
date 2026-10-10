@@ -136,6 +136,10 @@ export const useCatalogStore = defineStore('catalog', {
     food(id: number): CatalogFoodDto | undefined {
       return this.foodsMap.get(id);
     },
+    /** 食材等级（动态里写明几级，问题记录 587）；目录里没有时 undefined */
+    foodLevel(id: number): number | undefined {
+      return this.foodsMap.get(id)?.level;
+    },
     /** fallback：目录里没有时用的名字（通常是服务端给的），不传时写"天气 id" */
     weatherName(id: number, fallback?: string): string {
       return this.weatherMap.get(id) ?? fallback ?? activeMessages().errors.fallbackName.weather(id);

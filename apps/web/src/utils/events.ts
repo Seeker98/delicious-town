@@ -7,6 +7,8 @@ import { restName } from './npcName';
 export interface Names {
   goodsName(id: number): string;
   foodName(id: number): string;
+  /** 食材等级（交换食材的动态写明几级，问题记录 587）；没有时不写等级 */
+  foodLevel?(id: number): number | undefined;
   mcName?(id: number): string;
   seedName?(id: number): string;
 }
@@ -77,7 +79,13 @@ export function logText(l: RestLogDto, names: Names): string {
         typeof l.params.host === 'number' && typeof l.params.hostName === 'string'
         ? { ...l.params, hostName: restName(l.params.host, l.params.hostName) }
         : l.params;
-  return f ? f(params, names) : m.feed(l, (id) => names.foodName(id));
+  return f
+    ? f(params, names)
+    : m.feed(
+        l,
+        (id) => names.foodName(id),
+        (id) => names.foodLevel?.(id),
+      );
 }
 
 /** 流水（道具流水页）的名称 */
