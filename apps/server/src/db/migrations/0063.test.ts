@@ -8,14 +8,14 @@ const db = testDb();
 afterAll(() => db.destroy());
 
 describe('迁移 0063：食材期货（期货设计 §5、§6）', () => {
-  it('初始列表 185 种：1~5 级菜谱用得到的稀有食材加 2 级普通食材，全部上架、额度按默认', async () => {
+  // 上架、额度这些会被别的测试文件临时改（futures_food 全服一份，并行跑，终审 I1），这里只看种数和分布
+  it('初始列表 185 种：1~5 级菜谱用得到的稀有食材加 2 级普通食材', async () => {
     const rows = await db
       .selectFrom('futures_food')
       .selectAll()
       .where('foods_id', 'in', [...FUTURES_INITIAL])
       .execute();
     expect(rows).toHaveLength(185);
-    expect(rows.every((r) => r.enabled && r.daily_quota === null)).toBe(true);
     const foods = testConfig().foods;
     const count = (lv: number, rare: boolean) =>
       FUTURES_INITIAL.filter((id) => foods.get(id)!.level === lv && foods.get(id)!.odds < 100 === rare)

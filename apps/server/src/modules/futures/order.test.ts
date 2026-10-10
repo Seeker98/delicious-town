@@ -112,9 +112,10 @@ describe('期货下单（期货设计 §2、§4）', () => {
   it('不在列表、下架、6 级以上的食材：futures_not_listed', async () => {
     const shardId = await createShard(t.db);
     const r = await trader(t, { shardId });
-    const notListed = [...config.foods.values()].find(
-      (f) => f.level === 1 && f.odds === 100 && !FUTURES_INITIAL.includes(f.id),
-    )!;
+    // 取最后一种：后台测试拿第一种临时加进表（futures_food 全服一份，测试文件并行跑，终审 I1）
+    const notListed = [...config.foods.values()]
+      .filter((f) => f.level === 1 && f.odds === 100 && !FUTURES_INITIAL.includes(f.id))
+      .at(-1)!;
     const lv6 = [...config.foods.values()].find((f) => f.level === 6)!;
     for (const id of [notListed.id, lv6.id])
       await expect(svc().order(r, { foodsId: id, qty: 1, unitPrice: 1 })).rejects.toMatchObject({
@@ -271,9 +272,9 @@ describe('我的期货（GET /futures）', () => {
       deliverHours: 72,
       depositRate: 0.3,
     });
-    expect(v.foods.map((f) => f.foodsId).sort((a, b) => a - b)).toEqual(
-      [...FUTURES_INITIAL].sort((a, b) => a - b),
-    );
+    // 只看局部：futures_food 全服一份，别的测试文件会临时上下架（终审 I1）
+    expect(v.foods.length).toBeGreaterThan(100);
+    expect(v.foods.every((f) => f.level >= 1 && f.level <= 5)).toBe(true);
     expect(v.foods.find((f) => f.foodsId === RARE3)).toMatchObject({
       level: 3,
       rare: true,

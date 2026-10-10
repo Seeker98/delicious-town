@@ -67,7 +67,11 @@ const groups = computed(() => {
 });
 const pick = computed(() => data.value?.foods.find((f) => f.foodsId === selected.value) ?? null);
 const maxQty = computed(() => Math.max(0, Math.min(pick.value?.left ?? 0, data.value?.personLeft ?? 0)));
-const n = computed(() => Math.max(1, Math.floor(Number(qty.value) || 1)));
+/** 份数：输入框里的整数；填 0、清空、不是整数时为 0，下单按钮不能点（终审：原来按 1 份下单） */
+const n = computed(() => {
+  const v = Number(qty.value);
+  return qty.value !== '' && Number.isInteger(v) && v >= 1 ? v : 0;
+});
 const total = computed(() => (pick.value ? pick.value.unitPrice * n.value : 0));
 const deposit = computed(() =>
   Math.ceil(Math.round(total.value * (data.value?.depositRate ?? 0) * 1e6) / 1e6),
@@ -209,7 +213,7 @@ function result(c: FuturesContractDto): string {
         <button
           type="button"
           class="btn btn-sm btn-primary"
-          :disabled="busy || !canOrder || n > maxQty"
+          :disabled="busy || !canOrder || n < 1 || n > maxQty"
           data-testid="fu-order"
           @click="order"
         >

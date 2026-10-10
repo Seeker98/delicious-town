@@ -87,6 +87,26 @@ export function createAdminFutures(game: Game) {
       );
       if (bad.length > 0) throw new AppError(ErrorCode.VALIDATION_FAILED, 400, { issues: bad });
       await db.transaction().execute(async (tx) => {
+        // 审计写改前的样子（期货设计 §5.3，终审 I2）：不在表里的记 null，批量改错了能照着恢复
+        const cur = new Map(
+          (
+            await tx
+              .selectFrom('futures_food')
+              .select(['foods_id', 'enabled', 'daily_quota'])
+              .where(
+                'foods_id',
+                'in',
+                items.map((x) => x.foodsId),
+              )
+              .forUpdate()
+              .execute()
+          ).map((r) => [r.foods_id, r]),
+        );
+        const before = items.map((x) => ({
+          foodsId: x.foodsId,
+          enabled: cur.get(x.foodsId)?.enabled ?? null,
+          dailyQuota: cur.get(x.foodsId)?.daily_quota ?? null,
+        }));
         for (const x of items)
           await tx
             .insertInto('futures_food')
@@ -105,7 +125,12 @@ export function createAdminFutures(game: Game) {
               }),
             )
             .execute();
-        await writeAudit(tx, { actor, action: 'futures.foods', target: 'futures', detail: { items } });
+        await writeAudit(tx, {
+          actor,
+          action: 'futures.foods',
+          target: 'futures',
+          detail: { before, items },
+        });
       });
     },
   };

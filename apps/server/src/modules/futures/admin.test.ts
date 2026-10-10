@@ -75,10 +75,21 @@ describe('后台期货食材', () => {
       expect(rows.find((r) => r.foodsId === OUTSIDE)).toMatchObject({ enabled: true, dailyQuota: null });
       const audit = await ctx.deps.db
         .selectFrom('audit_log')
-        .select('action')
+        .select(['action', 'detail'])
         .where('action', '=', 'futures.foods')
+        .orderBy('id', 'desc')
+        .limit(2)
         .execute();
-      expect(audit.length).toBeGreaterThanOrEqual(2);
+      // 审计带改前的样子（终审 I2）：批量下架以后能照着恢复；不在表里的记 null
+      expect(audit[1]!.detail).toMatchObject({
+        before: [
+          { foodsId: IN, enabled: true, dailyQuota: null },
+          { foodsId: OUTSIDE, enabled: null, dailyQuota: null },
+        ],
+      });
+      expect(audit[0]!.detail).toMatchObject({
+        before: [{ foodsId: OUTSIDE, enabled: true, dailyQuota: 3 }],
+      });
     } finally {
       await ctx.deps.db
         .updateTable('futures_food')

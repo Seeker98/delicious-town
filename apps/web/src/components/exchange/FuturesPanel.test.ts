@@ -116,6 +116,17 @@ describe('FuturesPanel（期货设计 §10）', () => {
     expect(endpoints.futures).toHaveBeenCalledTimes(2);
   });
 
+  it('数量填 0、清空或超过上限：下单按钮不能点（终审：原来按 1 份下单）', async () => {
+    const w = await mountPanel();
+    await w.get('[data-testid="fu-food-31"]').trigger('click');
+    for (const v of ['0', '', '49']) {
+      await w.get('[data-testid="fu-qty"]').setValue(v);
+      expect(w.get('[data-testid="fu-order"]').attributes('disabled')).toBeDefined();
+    }
+    await w.get('[data-testid="fu-qty"]').setValue('48');
+    expect(w.get('[data-testid="fu-order"]').attributes('disabled')).toBeUndefined();
+  });
+
   it('价格变了：提示并刷新', async () => {
     vi.mocked(endpoints.futuresOrder).mockRejectedValue(
       new ApiError('INVALID_STATE', { reason: 'futures_price_moved', price: 11000 }),
