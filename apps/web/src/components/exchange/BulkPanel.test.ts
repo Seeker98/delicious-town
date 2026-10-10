@@ -160,7 +160,7 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
     const w = mount(BulkPanel);
     await flushPromises();
     const t = el(w, 'bk-mine').text();
-    expect(t).toContain('2 / 4');
+    expect(t).toContain('入围 2 / 4 份, 再加价可以多入围');
     expect(t).toContain('再加价');
     expect(t).toContain('220,000');
     expect(t).toContain('110,000');

@@ -77,6 +77,14 @@ const minRaise = computed(() =>
 );
 const total = computed(() => p.value * q.value);
 const extra = computed(() => total.value - (mine.value?.frozen ?? 0));
+/** 我的入围情况；没全中时接一句“再加价可以多入围”（拼成一句，免得模板换行带出空格） */
+const mineStatus = computed(() => {
+  const m = mine.value;
+  if (!m) return '';
+  const b = t.value.bulk;
+  if (m.won === m.qty) return b.inAll(m.won);
+  return (m.won > 0 ? b.inPart(m.won, m.qty) : b.out) + b.raiseMore;
+});
 const ratio = (demand: number, n: number) => (Math.round((demand / n) * 10) / 10).toString();
 
 /** 不能提交的原因；能提交为空（服务端同样检查，这里只是提前提示） */
@@ -181,14 +189,7 @@ function myResult(r: BulkResultDto): string {
         <div class="fw-bold mb-1">{{ t.bulk.mineTitle }}</div>
         <div>{{ t.bulk.mineLine(formatNum(mine.price), mine.qty, formatNum(mine.frozen)) }}</div>
         <div :class="mine.won === mine.qty ? 'text-success' : 'text-danger'">
-          {{
-            mine.won === mine.qty
-              ? t.bulk.inAll(mine.won)
-              : mine.won > 0
-                ? t.bulk.inPart(mine.won, mine.qty)
-                : t.bulk.out
-          }}
-          <span v-if="mine.won < mine.qty">{{ t.bulk.raiseMore }}</span>
+          {{ mineStatus }}
         </div>
         <div class="text-muted">{{ t.bulk.estimate(formatNum(mine.estimate)) }}</div>
       </div>
