@@ -71,6 +71,7 @@ export function tuningRefs(t: Tuning): ItemRef[] {
     award('一番赏', k.last.award);
   }
   for (const tier of t.fund.tiers) add('goods', tier.medal, 'gives', '小镇发展基金');
+  for (const x of t.wealth.terms) add('goods', x.goods, 'gives', '食材理财');
   for (const [id] of t.temple.missileAttack) add('goods', id, 'uses', '神殿飞弹');
   add('goods', t.mysterious.championGoodsId, 'gives', '特色菜冠军');
   for (const id of t.town.mysteryExclude) add('foods', id, 'uses', '神秘食材兑换');

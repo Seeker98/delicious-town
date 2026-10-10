@@ -27,6 +27,8 @@ const KNOWN: Record<string, string[]> = {
   'modules/hiphop/weekly.ts': ['goodsId', 'wages.get(h.goods_id)!'],
   // 发展基金勋章：FUND 常量（CODE_GOODS）
   'modules/fund/service.ts': ['a.medal'],
+  // 食材理财的街市补给包：区服数值 wealth.terms（tuningRefs）
+  'modules/wealth/service.ts': ['a.goods_id'],
   // 搬家发新街道的勋章：itemRefs 的“搬家（街道勋章）”
   'modules/growth/service.ts': ['o.config.streetMedalId(streetId)'],
   // 延长勋章（extendHonor，由调用方传入，调用处都是 GOODS 常量）
