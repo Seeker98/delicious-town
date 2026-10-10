@@ -315,78 +315,6 @@ html {
   text-overflow: ellipsis;
 }
 
-/* ---------- 视觉规范（docs/design/视觉规范.md） ---------- */
-.btn-primary {
-  --bs-btn-bg: var(--dt-primary-ink);
-  --bs-btn-border-color: var(--dt-primary-ink);
-  --bs-btn-focus-shadow-rgb: var(--dt-primary-rgb);
-  --bs-btn-hover-bg: var(--dt-primary-dark);
-  --bs-btn-hover-border-color: var(--dt-primary-dark);
-  --bs-btn-active-bg: var(--dt-primary-dark);
-  --bs-btn-active-border-color: var(--dt-primary-dark);
-  /* 禁用时浅灰底深灰字：一眼看出点不了，字仍然读得清（PR27 遗留、终审） */
-  --bs-btn-disabled-bg: #f1f3f5;
-  --bs-btn-disabled-border-color: #dee2e6;
-  --bs-btn-disabled-color: #6c757d;
-}
-/* 禁用按钮不再叠加 Bootstrap 的 0.65 透明度，颜色已经表明不可点 */
-.btn {
-  --bs-btn-disabled-opacity: 1;
-}
-/* 实心危险、成功按钮也按视觉规范的颜色（终审） */
-.btn-danger {
-  --bs-btn-bg: #c92a2a;
-  --bs-btn-border-color: #c92a2a;
-  --bs-btn-hover-bg: #a51111;
-  --bs-btn-hover-border-color: #a51111;
-  --bs-btn-active-bg: #a51111;
-  --bs-btn-active-border-color: #a51111;
-}
-.btn-success {
-  --bs-btn-bg: #2b8a3e;
-  --bs-btn-border-color: #2b8a3e;
-  --bs-btn-hover-bg: #237032;
-  --bs-btn-hover-border-color: #237032;
-  --bs-btn-active-bg: #237032;
-  --bs-btn-active-border-color: #237032;
-}
-.btn-outline-primary {
-  --bs-btn-color: var(--dt-primary-ink);
-  --bs-btn-border-color: var(--dt-primary-ink);
-  --bs-btn-hover-bg: var(--dt-primary-ink);
-  --bs-btn-hover-border-color: var(--dt-primary-ink);
-  --bs-btn-focus-shadow-rgb: var(--dt-primary-rgb);
-  --bs-btn-active-bg: var(--dt-primary-dark);
-  --bs-btn-active-border-color: var(--dt-primary-dark);
-  --bs-btn-disabled-color: #adb5bd;
-  --bs-btn-disabled-border-color: #dee2e6;
-}
-/* 危险操作（丢弃、删除）：按视觉规范的红，比 Bootstrap 默认红更沉，和品牌橙拉开（PR27 遗留） */
-.btn-outline-danger {
-  --bs-btn-color: #c92a2a;
-  --bs-btn-border-color: #c92a2a;
-  --bs-btn-hover-bg: #c92a2a;
-  --bs-btn-hover-border-color: #c92a2a;
-  --bs-btn-active-bg: #a51111;
-  --bs-btn-active-border-color: #a51111;
-  --bs-btn-disabled-color: #adb5bd;
-  --bs-btn-disabled-border-color: #dee2e6;
-}
-.nav-tabs .nav-link {
-  color: #495057;
-  /* 标签不换行，放不下时整排横向滑动（问题记录 100） */
-  white-space: nowrap;
-  margin-bottom: 0;
-}
-.nav-tabs .nav-link.active {
-  color: var(--dt-primary-ink);
-  font-weight: 600;
-}
-/* 键盘焦点光圈画在标签里面：画在外面会被横向滑动的容器裁掉一截（backlog #116） */
-.nav-tabs .nav-link:focus-visible {
-  outline: 0;
-  box-shadow: inset 0 0 0 2px rgba(var(--dt-primary-rgb), 0.5);
-}
 /* 手机宽度标签左右留白收窄：广场 6 个标签（简中）一屏放得下，不用先滑才看到第一个（backlog 基金） */
 @media (max-width: 420px) {
   .nav-tabs .nav-link {
@@ -400,11 +328,6 @@ html {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
   }
-}
-.form-control:focus,
-.form-select:focus {
-  border-color: rgba(var(--dt-primary-rgb), 0.5);
-  box-shadow: 0 0 0 0.2rem rgba(var(--dt-primary-rgb), 0.15);
 }
 /* 页面标题：18px 粗体，右侧可放一行次要信息 */
 .dt-page-title {
@@ -504,10 +427,6 @@ a:not([class]):focus-visible {
 /* 红字的（撤单、删除）请求进行中也变灰：text-danger 带 !important，要单独盖过（#194 遗留） */
 .dt-link-btn.text-danger:disabled {
   color: var(--dt-muted) !important;
-}
-.dt-link-btn:focus-visible {
-  outline: 2px solid var(--dt-primary);
-  outline-offset: 1px;
 }
 /* 首页折叠的"生效的加成" */
 details.dt-card > summary {
@@ -657,43 +576,6 @@ details.dt-card > summary {
   gap: 4px;
   margin-bottom: 8px;
 }
-/* 胶囊里放 .btn 时按 .btn 的样式走，不被这里盖掉 */
-.dt-pills a:not(.btn),
-.dt-pills button:not(.btn) {
-  font-size: 13px;
-  padding: 2px 10px;
-  border: 0;
-  border-radius: 999px;
-  color: #495057;
-  background: var(--dt-line);
-  text-decoration: none;
-}
-.dt-pills a:not(.btn):focus-visible,
-.dt-pills button:not(.btn):focus-visible {
-  outline: 2px solid var(--dt-primary);
-  outline-offset: 1px;
-}
-.dt-pills button:not(.btn):disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-.dt-pills a.active:not(.btn),
-.dt-pills button.active:not(.btn) {
-  color: #fff;
-  background: var(--dt-primary-ink);
-}
-/* 一级标签页不换行：英法西文标签多、放不下时横向滑动（问题记录 100 视觉自检） */
-.nav-tabs {
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: none;
-  /* 滑动容器会裁掉标签往下伸的 1px：底线改画在容器里面，选中标签的白色下边框照样盖住它 */
-  border-bottom: 0;
-  box-shadow: inset 0 -1px 0 var(--bs-nav-tabs-border-color, #dee2e6);
-  /* 给聚焦光圈留出上方空间 */
-  padding-top: 4px;
-}
 /* 右边还有没露出来的标签：右侧渐隐（utils/tabsScroll.ts 加类） */
 .nav-tabs.dt-tabs-more {
   -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
@@ -731,41 +613,6 @@ details.dt-card > summary {
   font-size: 13px;
   padding: 12px 0;
 }
-/* 微交互：按下时轻微缩小；系统要求减少动态效果时不做 */
-@media (prefers-reduced-motion: no-preference) {
-  .btn,
-  .dt-tap {
-    transition:
-      transform 80ms ease-out,
-      background-color 0.15s,
-      color 0.15s,
-      border-color 0.15s;
-  }
-  .btn:not(:disabled):active,
-  .dt-tap:active {
-    transform: scale(0.97);
-  }
-  /* 胶囊和按钮一样按下缩一下（backlog #116） */
-  .dt-pills a:not(.btn),
-  .dt-pills button:not(.btn) {
-    transition:
-      transform 80ms ease-out,
-      background-color 0.15s;
-  }
-  .dt-pills a:not(.btn):active,
-  .dt-pills button:not(.btn):not(:disabled):active {
-    transform: scale(0.97);
-  }
-}
-@media (hover: hover) {
-  .dt-tap:hover {
-    background: var(--dt-primary-soft);
-  }
-  .dt-pills a:not(.btn):not(.active):hover,
-  .dt-pills button:not(.btn):not(.active):not(:disabled):hover {
-    background: #e9ecef;
-  }
-}
 /* 两列按钮网格（雷神锤的四个天气类型） */
 .dt-grid2 {
   display: grid;
@@ -790,18 +637,6 @@ details.dt-card > summary {
 }
 .dt-span2 {
   grid-column: span 2;
-}
-/* 勾选框、开关、聚焦光圈：Bootstrap 写死了蓝色，统一成品牌色（终审 I5） */
-.form-check-input:checked {
-  background-color: var(--dt-primary-ink);
-  border-color: var(--dt-primary-ink);
-}
-.form-check-input:focus {
-  border-color: rgba(var(--dt-primary-rgb), 0.5);
-  box-shadow: 0 0 0 0.2rem rgba(var(--dt-primary-rgb), 0.15);
-}
-.form-switch .form-check-input:focus:not(:checked) {
-  --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23e8936b'/%3e%3c/svg%3e");
 }
 /* ---------- 酒吧扩展（子项目 4C-3） ---------- */
 /* 一掷千金（问题记录 427-3）：10 个箱子每行 5 个；名字长时折行，不撑出屏幕 */

@@ -35,3 +35,29 @@ describe('标签页横向滑动（问题记录 100 终审）', () => {
     expect(c.classList.contains('dt-tabs-more')).toBe(false);
   });
 });
+
+describe('选中下划线（界面改版 P1）', () => {
+  it('写出选中标签的位置和宽度，首次定位后才开动画', async () => {
+    const { placeIndicator } = await import('./tabsScroll');
+    document.body.innerHTML =
+      '<ul class="nav nav-tabs"><li><a class="nav-link">A</a></li><li><a class="nav-link active">B</a></li></ul>';
+    const c = document.querySelector<HTMLElement>('.nav-tabs')!;
+    const a = c.querySelector<HTMLElement>('.nav-link.active')!;
+    Object.defineProperty(a, 'offsetLeft', { value: 64 });
+    Object.defineProperty(a, 'offsetWidth', { value: 48 });
+    placeIndicator(c);
+    expect(c.style.getPropertyValue('--dt-tab-x')).toBe('64px');
+    expect(c.style.getPropertyValue('--dt-tab-w')).toBe('48');
+    expect(c.classList.contains('dt-tabs-ready')).toBe(false);
+    placeIndicator(c);
+    expect(c.classList.contains('dt-tabs-ready')).toBe(true);
+  });
+
+  it('没有选中的标签：宽度 0', async () => {
+    const { placeIndicator } = await import('./tabsScroll');
+    document.body.innerHTML = '<ul class="nav nav-tabs"><li><a class="nav-link">A</a></li></ul>';
+    const c = document.querySelector<HTMLElement>('.nav-tabs')!;
+    placeIndicator(c);
+    expect(c.style.getPropertyValue('--dt-tab-w')).toBe('0');
+  });
+});

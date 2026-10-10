@@ -53,3 +53,48 @@ describe('Bootstrap 接管（界面改版 P1，设计 §2.8）', () => {
     expect(base).not.toMatch(/#0dcaf0|#cff4fc/i);
   });
 });
+
+describe('控件（界面改版 P1，设计 §2.6、§2.7）', () => {
+  it('按钮：圆角固定 16px（长文案折两行时不变大椭圆）；禁用灰底深灰字、不叠透明度', () => {
+    const btn = rule('.btn');
+    expect(btn).toMatch(/--bs-btn-border-radius:\s*var\(--dt-radius-pill\)/);
+    expect(btn).toMatch(/--bs-btn-disabled-opacity:\s*1/);
+    expect(rule('.btn-primary')).toMatch(/--bs-btn-disabled-bg:\s*var\(--dt-disabled-bg\)/);
+    expect(rule('.btn-primary')).toMatch(/--bs-btn-disabled-color:\s*var\(--dt-disabled-text\)/);
+    expect(rule('.btn-primary')).toMatch(/--bs-btn-color:\s*var\(--dt-on-primary\)/);
+  });
+
+  it('次要按钮是浅紫底（btn-outline-primary），中性按钮和写死的 btn-light 读令牌，危险是红描边', () => {
+    expect(rule('.btn-outline-primary')).toMatch(/--bs-btn-bg:\s*var\(--dt-primary-soft\)/);
+    expect(rule('.btn-outline-primary')).toMatch(/--bs-btn-color:\s*var\(--dt-primary-ink\)/);
+    expect(rule('.btn-light')).toMatch(/--bs-btn-bg:\s*var\(--dt-surface-2\)/);
+    expect(rule('.btn-outline-danger')).toMatch(/--bs-btn-color:\s*var\(--dt-danger\)/);
+    expect(rule('.btn-outline-danger')).toMatch(/--bs-btn-bg:\s*transparent/);
+  });
+
+  it('筛选胶囊选中是深色实心，不用紫色（和“操作”分开）', () => {
+    const on = rule('.dt-pills a.active:not(.btn),\n.dt-pills button.active:not(.btn)');
+    expect(on).toMatch(/background:\s*var\(--dt-text\)/);
+    expect(on).toMatch(/color:\s*var\(--dt-surface\)/);
+  });
+
+  it('标签页：下划线式，选中下划线只用 transform 移动', () => {
+    const ind = rule('.nav-tabs::after');
+    expect(ind).toMatch(/transform:\s*translateX\(var\(--dt-tab-x, 0px\)\) scaleX\(var\(--dt-tab-w, 0\)\)/);
+    expect(base).toMatch(
+      /\.nav-tabs\.dt-tabs-ready::after\s*\{[^}]*transition:\s*transform var\(--dt-dur-base\)/,
+    );
+  });
+
+  it('动效：按下缩到 97%，只在不要求减少动态时；悬停只给鼠标', () => {
+    const motion = base.slice(base.indexOf('@media (prefers-reduced-motion: no-preference)'));
+    expect(motion).toMatch(/:active[^{]*\{[^}]*transform:\s*scale\(0\.97\)/);
+    expect(base).not.toMatch(/transition:\s*all/);
+    expect(base).toMatch(/@media \(hover: hover\) and \(pointer: fine\)/);
+    expect(base).not.toMatch(/@media \(hover: hover\)\s*\{/);
+  });
+
+  it('键盘焦点：紫色外圈', () => {
+    expect(base).toMatch(/:focus-visible\s*\{[^}]*outline:\s*2px solid var\(--dt-primary\)/);
+  });
+});
