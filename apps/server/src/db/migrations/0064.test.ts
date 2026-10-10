@@ -1,4 +1,5 @@
 import { afterAll, describe, expect, it } from 'vitest';
+import { WEALTH } from '@dt/config';
 import { testDb } from '../../../test/db';
 import { createAccountRow, createRestaurantFull, createShard } from '../../../test/fixtures';
 
@@ -14,7 +15,7 @@ describe('迁移 0064：食材理财', () => {
       rest_id: restId,
       coin: 1000000,
       days: 3,
-      goods_id: 10213,
+      goods_id: WEALTH.packBase + 3,
       packs: 1,
       started_at: new Date(),
       matures_at: new Date(),
