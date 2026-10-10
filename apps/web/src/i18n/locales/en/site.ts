@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    ui1011:
+      "Restaurant activity entries about what friends did to you (dining and dashing, planting roaches, swapping ingredients and so on) now link straight to their restaurant, and ingredient swaps say exactly which ingredient of which level was traded for which. Today's to-do list on the home page gets an Exchange row once you meet the exchange requirements, showing the current bulk subscription and how much has been bid. Bulk subscriptions now go dark for the last hour: the expected price, cutoff and units bid freeze at that moment, and who gets in is revealed at the close",
     bulk1010:
       'The exchange has a new Bulk Subscription tab: a lot of one ingredient (levels 1 to 5) opens every day at 20:00. Bid a unit price and a quantity; the price of the last unit that makes it in is the single price everyone pays, and any extra you froze is refunded. Each player can take up to 25%; if less than 30% is bid in total, the lot fails and everyone is refunded. The lot closes at a random moment in the last 5 minutes, and you must wait 5 seconds between bids. Bidders who just miss out get a level 2 random ingredient ticket',
     wealth1010:
