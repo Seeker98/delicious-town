@@ -305,6 +305,16 @@ const events: Messages['events'] = {
       `Cobraste un depósito: ${formatNum(n(p, 'coin'))} monedas de vuelta y ${names.goodsName(n(p, 'goodsId'))} ×${n(p, 'packs')}`,
     'wealth.withdraw': (p) =>
       `Retiraste un depósito antes de tiempo: recuperaste ${formatNum(n(p, 'coin'))} monedas`,
+    'bulk.bid': (p, names) =>
+      `Puja de suscripción mayorista: ${names.foodName(n(p, 'foodsId'))} a ${formatNum(n(p, 'price'))} × ${n(p, 'qty')}, ${formatNum(n(p, 'frozen'))} monedas congeladas en total`,
+    'bulk.won': (p, names) =>
+      `Suscripción mayorista: conseguiste ${names.foodName(n(p, 'foodsId'))} ×${n(p, 'won')} (de ${n(p, 'qty')}) a ${formatNum(n(p, 'price'))}, pagaste ${formatNum(n(p, 'paid'))} y se devolvieron ${formatNum(n(p, 'refunded'))}${n(p, 'toWallet') > 0 ? `; ${n(p, 'toWallet')} fueron a la cuenta de la bolsa` : ''}`,
+    'bulk.lost': (p, names) =>
+      `Suscripción mayorista: sin ${names.foodName(n(p, 'foodsId'))}, se devolvieron ${formatNum(n(p, 'refunded'))} monedas${p.consolation ? ', con premio de consolación' : ''}`,
+    'bulk.failed': (p, names) =>
+      `Suscripción mayorista fallida: pujas insuficientes para ${names.foodName(n(p, 'foodsId'))}, se devolvieron ${formatNum(n(p, 'refunded'))} monedas`,
+    'bulk.cancelled': (p, names) =>
+      `Suscripción mayorista cancelada: ${names.foodName(n(p, 'foodsId'))}, se devolvieron ${formatNum(n(p, 'refunded'))} monedas`,
     'activity.claim': (p) => `Reclamaste las recompensas del evento «${String(p.title ?? '')}»`,
     'activity.unlock': (p) => `Desbloqueaste las recompensas premium del evento «${String(p.title ?? '')}»`,
     'activity.exchange': (p) =>

@@ -29,6 +29,8 @@ const KNOWN: Record<string, string[]> = {
   'modules/fund/service.ts': ['a.medal'],
   // 食材理财的街市补给包：区服数值 wealth.terms（tuningRefs）
   'modules/wealth/service.ts': ['a.goods_id'],
+  // 大宗认购的安慰奖：区服数值 bulk.consolation（tuningRefs）
+  'modules/bulk/settle.ts': ['c.goods'],
   // 搬家发新街道的勋章：itemRefs 的“搬家（街道勋章）”
   'modules/growth/service.ts': ['o.config.streetMedalId(streetId)'],
   // 延长勋章（extendHonor，由调用方传入，调用处都是 GOODS 常量）

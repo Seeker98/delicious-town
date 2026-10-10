@@ -40,6 +40,8 @@ import { createKujiService, type KujiService } from './modules/kuji/service';
 import { createFundService, type FundService } from './modules/fund/service';
 import { createFuturesService, type FuturesService } from './modules/futures/service';
 import { createWealthService, type WealthService } from './modules/wealth/service';
+import { createBulkService, type BulkService } from './modules/bulk/service';
+import { bulkJobs } from './modules/bulk/jobs';
 import { createAcquireService, type AcquireService } from './modules/acquire/service';
 import { createMailService, type MailService } from './modules/mail/service';
 import { createRedeemService, type RedeemService } from './modules/redeem/service';
@@ -102,6 +104,7 @@ export interface Game {
   fund: FundService;
   futures: FuturesService;
   wealth: WealthService;
+  bulk: BulkService;
   acquire: AcquireService;
   jobs: PeriodicJob[];
 }
@@ -143,6 +146,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...activityJobs(deps));
   jobs.push(...exchangeJobs(deps));
   jobs.push(...futuresJobs(deps));
+  jobs.push(...bulkJobs(deps));
   jobs.push(...predictJobs(deps));
   jobs.push(...dailyJobs(deps, app.writer));
   return {
@@ -179,6 +183,7 @@ export function createGame(app: AppDeps): Game {
     fund: createFundService(deps),
     futures: createFuturesService(deps),
     wealth: createWealthService(deps),
+    bulk: createBulkService(deps),
     acquire: createAcquireService(deps),
     shop,
     market,

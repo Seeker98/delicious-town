@@ -17,6 +17,7 @@ import kuji from './kuji';
 import site from './site';
 import fund from './fund';
 import wealth from './wealth';
+import bulk from './bulk';
 import futures from './futures';
 import equip from './equip';
 import guide from './guide';
@@ -76,6 +77,7 @@ const messages: Messages = {
   site,
   fund,
   wealth,
+  bulk,
   futures,
   equip,
   rest,

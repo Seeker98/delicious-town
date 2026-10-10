@@ -18,6 +18,7 @@ const links = computed(() => [
   { to: '/admin/mail', label: '邮件' },
   { to: '/admin/titles', label: '称号' },
   { to: '/admin/futures', label: '期货' },
+  { to: '/admin/bulk', label: '大宗认购' },
   { to: '/admin/announce', label: '公告' },
   // 小镇日报只有管理员能看、能审
   ...(admin.me?.role === 'admin' ? [{ to: '/admin/daily', label: '日报' }] : []),

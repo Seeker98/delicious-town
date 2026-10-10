@@ -1,6 +1,8 @@
 import type { FastifyPluginAsync } from 'fastify';
 import {
   adminFuturesQuery,
+  adminBulkQuery,
+  adminBulkUpdateBody,
   adminFuturesUpdateBody,
   ErrorCode,
   adminLedgerQuery,
@@ -58,6 +60,7 @@ import { createAdminGrants } from './grants';
 import { createAdminIcons } from './icons';
 import { createAdminTitles } from './titles';
 import { createAdminFutures } from '../futures/admin';
+import { createAdminBulk } from '../bulk/admin';
 import { createLaunchCheck } from './launch';
 import { createAdminPlayers } from './players';
 import { createAdminShards } from './shards';
@@ -172,6 +175,32 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     r.post('/futures/foods', async (req) => {
       const a = await requireRole(db, req, 'admin');
       await futures.update(a, parse(adminFuturesUpdateBody, req.body).items);
+      return ok(null);
+    });
+
+    // 特许大宗认购（大宗认购设计 §3.2）
+    const bulk = createAdminBulk(game);
+    r.get('/bulk/foods', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await bulk.list(parse(adminBulkQuery, req.query).shardId));
+    });
+    r.post('/bulk/foods', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      await bulk.update(a, parse(adminBulkUpdateBody, req.body).items);
+      return ok(null);
+    });
+    r.post('/bulk/foods/sync', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      await bulk.sync(a);
+      return ok(null);
+    });
+    r.get('/bulk/lots', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await bulk.lots(parse(adminBulkQuery, req.query).shardId));
+    });
+    r.post('/bulk/lots/:id/cancel', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      await bulk.cancel(a, id(req));
       return ok(null);
     });
 

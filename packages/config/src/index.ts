@@ -40,6 +40,7 @@ export { takesStoreSlot } from './souvenir';
 export { kujiErrors, KUJI_MAX_TICKETS } from './kuji';
 export { fundErrors } from './fund';
 export { wealthErrors } from './wealth';
+export { bulkErrors } from './bulk';
 export { slotFloorErrors } from './slot';
 export {
   itemRefs,

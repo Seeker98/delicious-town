@@ -62,5 +62,6 @@ export const NEWS_TYPES: readonly string[] = [
   'fund.big',
   'fund.deposit',
   'predict.result',
+  'bulk.deal',
   'icon.buy',
 ];

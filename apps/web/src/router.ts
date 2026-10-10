@@ -438,6 +438,7 @@ export const routes: RouteRecordRaw[] = [
       { path: 'mail', component: () => import('./views/admin/AdminMailView.vue') },
       { path: 'titles', component: () => import('./views/admin/AdminTitlesView.vue') },
       { path: 'futures', component: () => import('./views/admin/AdminFuturesView.vue') },
+      { path: 'bulk', component: () => import('./views/admin/AdminBulkView.vue') },
       { path: 'announce', component: () => import('./views/admin/AdminAnnounceView.vue') },
       { path: 'daily', component: () => import('./views/admin/AdminDailyView.vue') },
       { path: 'links', component: () => import('./views/admin/AdminLinksView.vue') },

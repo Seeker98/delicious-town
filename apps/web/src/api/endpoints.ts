@@ -169,6 +169,8 @@ import type {
   ServerTimeDto,
   FundViewDto,
   WealthViewDto,
+  BulkBidInput,
+  BulkDto,
   PredictListDto,
   PredictTradeDto,
   ActivitySummaryDto,
@@ -582,6 +584,8 @@ export const endpoints = {
   fundDeposit: (tier: string) => api.post<FundViewDto>('/api/v1/fund/deposit', { tier }),
   fundClaim: () => api.post<FundViewDto>('/api/v1/fund/claim', {}),
   fundWithdraw: () => api.post<FundViewDto>('/api/v1/fund/withdraw', {}),
+  bulk: () => api.get<BulkDto>('/api/v1/bulk'),
+  bulkBid: (body: BulkBidInput) => api.post<BulkDto>('/api/v1/bulk/bid', body),
   wealth: () => api.get<WealthViewDto>('/api/v1/wealth'),
   wealthDeposit: (days: number, coin: number) =>
     api.post<WealthViewDto>('/api/v1/wealth/deposit', { days, coin }),

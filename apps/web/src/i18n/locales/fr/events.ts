@@ -306,6 +306,16 @@ const events: Messages['events'] = {
       `A récupéré un placement\u202f: ${formatNum(n(p, 'coin'))} pièces rendues et ${names.goodsName(n(p, 'goodsId'))}\u202f×\u202f${n(p, 'packs')}`,
     'wealth.withdraw': (p) =>
       `A retiré un placement avant l'échéance\u202f: ${formatNum(n(p, 'coin'))} pièces récupérées`,
+    'bulk.bid': (p, names) =>
+      `Offre en souscription en gros\u202f: ${names.foodName(n(p, 'foodsId'))} à ${formatNum(n(p, 'price'))}\u202f×\u202f${n(p, 'qty')}, ${formatNum(n(p, 'frozen'))} pièces gelées au total`,
+    'bulk.won': (p, names) =>
+      `Souscription en gros\u202f: ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'won')} obtenues (sur ${n(p, 'qty')}) à ${formatNum(n(p, 'price'))}, payé ${formatNum(n(p, 'paid'))}, remboursé ${formatNum(n(p, 'refunded'))}${n(p, 'toWallet') > 0 ? `\u202f; ${n(p, 'toWallet')} sur le compte de la bourse` : ''}`,
+    'bulk.lost': (p, names) =>
+      `Souscription en gros\u202f: aucune unité de ${names.foodName(n(p, 'foodsId'))}, ${formatNum(n(p, 'refunded'))} pièces remboursées${p.consolation ? ', avec un lot de consolation' : ''}`,
+    'bulk.failed': (p, names) =>
+      `Souscription en gros annulée faute de demandes\u202f: ${names.foodName(n(p, 'foodsId'))}, ${formatNum(n(p, 'refunded'))} pièces remboursées`,
+    'bulk.cancelled': (p, names) =>
+      `Souscription en gros annulée\u202f: ${names.foodName(n(p, 'foodsId'))}, ${formatNum(n(p, 'refunded'))} pièces remboursées`,
     'activity.claim': (p) =>
       `A récupéré les récompenses de l'événement «\u202f${String(p.title ?? '')}\u202f»`,
     'activity.unlock': (p) =>

@@ -1424,6 +1424,50 @@ export interface WealthDepositTable {
   returned: Nullable<number>;
 }
 
+/** 特许大宗认购的食材清单（大宗认购设计 §3.1）：全服一份 */
+export interface BulkFoodTable {
+  foods_id: number;
+  enabled: Default<boolean>;
+  updated_at: TsDefault;
+  updated_by: Nullable<number>;
+}
+/** 大宗认购的批次：收盘时刻 close_at 保密，只在服务端和后台用 */
+export interface BulkLotTable {
+  id: Generated<string>;
+  shard_id: number;
+  /** YYYY-MM-DD（开批的游戏日），同区服每天一批 */
+  day: string;
+  foods_id: number;
+  level: number;
+  qty: number;
+  reserve: number;
+  cap: number;
+  group_qty: number;
+  opens_at: Ts;
+  ends_at: Ts;
+  close_at: Ts;
+  status: Default<'open' | 'settled' | 'failed' | 'cancelled'>;
+  price: Nullable<number>;
+  sold: Nullable<number>;
+  settled_at: TsNullable;
+}
+/** 大宗认购的出价：每店每批一条，改出价就是更新这一条；结算第二段写 paid / refunded / settled_at */
+export interface BulkBidTable {
+  lot_id: string;
+  rest_id: number;
+  shard_id: number;
+  price: number;
+  qty: number;
+  frozen: number;
+  ranked_at: Ts;
+  last_bid_at: Ts;
+  won: Nullable<number>;
+  paid: Nullable<number>;
+  refunded: Nullable<number>;
+  consolation: Default<boolean>;
+  settled_at: TsNullable;
+}
+
 export interface KujiPoolTable {
   id: Generated<string>;
   shard_id: number;
@@ -1569,6 +1613,9 @@ export interface DB {
   kuji_pool: KujiPoolTable;
   fund_deposit: FundDepositTable;
   wealth_deposit: WealthDepositTable;
+  bulk_food: BulkFoodTable;
+  bulk_lot: BulkLotTable;
+  bulk_bid: BulkBidTable;
   rest_income_day: RestIncomeDayTable;
   rest_income_best: RestIncomeBestTable;
   town_daily: TownDailyTable;

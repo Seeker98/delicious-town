@@ -277,6 +277,17 @@ export default {
     'wealth.claim': (p, names) =>
       `領取理財: 拿回 ${formatNum(n(p, 'coin'))} 銀幣和${names.goodsName(n(p, 'goodsId'))}×${n(p, 'packs')}`,
     'wealth.withdraw': (p) => `提前取出理財, 拿回 ${formatNum(n(p, 'coin'))} 銀幣`,
+    // 特許大宗認購（大宗認購設計 2026-10-10）
+    'bulk.bid': (p, names) =>
+      `大宗認購出價: ${names.foodName(n(p, 'foodsId'))} 單價 ${formatNum(n(p, 'price'))} × ${n(p, 'qty')} 份, 共凍結 ${formatNum(n(p, 'frozen'))} 銀幣`,
+    'bulk.won': (p, names) =>
+      `大宗認購成交: ${names.foodName(n(p, 'foodsId'))}×${n(p, 'won')} (認購 ${n(p, 'qty')} 份), 成交價 ${formatNum(n(p, 'price'))}, 付 ${formatNum(n(p, 'paid'))} 銀幣, 退回 ${formatNum(n(p, 'refunded'))}${n(p, 'toWallet') > 0 ? `, 其中 ${n(p, 'toWallet')} 份進了交易所賬戶` : ''}`,
+    'bulk.lost': (p, names) =>
+      `大宗認購沒中: ${names.foodName(n(p, 'foodsId'))}, 退回 ${formatNum(n(p, 'refunded'))} 銀幣${p.consolation ? ', 得到安慰獎' : ''}`,
+    'bulk.failed': (p, names) =>
+      `大宗認購流拍: ${names.foodName(n(p, 'foodsId'))} 認購不足, 退回 ${formatNum(n(p, 'refunded'))} 銀幣`,
+    'bulk.cancelled': (p, names) =>
+      `大宗認購取消: ${names.foodName(n(p, 'foodsId'))}, 退回 ${formatNum(n(p, 'refunded'))} 銀幣`,
     'activity.claim': (p) => `領取了活動「${String(p.title ?? '')}」的獎勵`,
     'activity.unlock': (p) => `解鎖了活動「${String(p.title ?? '')}」的進階獎勵`,
     'activity.exchange': (p) => `在活動「${String(p.title ?? '')}」兌換了 ${String(p.times ?? 1)} 次`,

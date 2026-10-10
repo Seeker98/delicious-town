@@ -137,6 +137,8 @@ const news: Messages['news'] = {
     'town.exchange': (w, p, x) =>
       `${w} canjeó ${x.goodsName(num(p.goodsId))}×${num(p.num)} con el Alcalde Gran Olla`,
     'predict.result': (_w, p) => predictResult(p),
+    'bulk.deal': (_w, p, x) =>
+      `Suscripción mayorista: ${x.foodName(num(p.foodsId))} ×${num(p.sold)} vendido a ${formatNum(num(p.price))} monedas, suscrito ${Math.round((num(p.demand) / Math.max(1, num(p.qty))) * 10) / 10} veces`,
   },
   unknown: 'Pasó algo en el pueblo',
   someone: 'Un restaurante',
