@@ -42,6 +42,7 @@ const bulk: Messages['bulk'] = {
   settleNote: 'At the close you pay the single final price, never more than your bid; the rest is refunded.',
   estimateAll: (price, total) =>
     `At the expected price of ${price}, getting all of them would cost about ${total}.`,
+  estimateOut: "At this price you wouldn't get in right now; bid above the threshold to get in.",
   partialHint:
     'If your price is right at the cutoff you may get only some of the units: earlier bids win ties, and units you miss are fully refunded.',
   reasons: {

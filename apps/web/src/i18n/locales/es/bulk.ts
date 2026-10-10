@@ -43,6 +43,7 @@ const bulk: Messages['bulk'] = {
       : `Congela ${total} monedas (precio × cantidad).`,
   settleNote: 'Al cierre pagas el precio final único, nunca más que tu puja; se devuelve el resto.',
   estimateAll: (price, total) => `Al precio previsto de ${price}, conseguirlas todas costaría unas ${total}.`,
+  estimateOut: 'Con este precio ahora no entrarías; puja por encima del umbral para entrar.',
   partialHint:
     'Si tu precio queda justo en el corte puede que solo consigas parte de las unidades: a igual precio gana la puja anterior, y las que no entren se devuelven íntegras.',
   reasons: {

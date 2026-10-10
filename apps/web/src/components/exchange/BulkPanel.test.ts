@@ -123,6 +123,22 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
     expect(el(w, 'bk-freeze').text()).toContain('2,200');
   });
 
+  it('预计付款不超过自己的出价；批次已满、出价低于入围门槛时写照现在不入围（终审 I2）', async () => {
+    vi.mocked(endpoints.bulk).mockResolvedValue(
+      data({ lot: lot({ qty: 10, demand: 2, price: 2_000, threshold: 1_000, reserve: 1_000 }) }),
+    );
+    const w = mount(BulkPanel);
+    await flushPromises();
+    await setBid(w, '1500', '2');
+    expect(el(w, 'bk-freeze').text()).toContain('约付 3,000');
+    expect(el(w, 'bk-freeze').text()).not.toContain('4,000');
+    vi.mocked(endpoints.bulk).mockResolvedValue(data());
+    const full = mount(BulkPanel);
+    await flushPromises();
+    await setBid(full, '52000', '2');
+    expect(el(full, 'bk-freeze').text()).toContain('照现在的出价不入围');
+  });
+
   it('输入为空、0、小数、超上限、低于起拍价、冻结差额超过银币时不能提交，写原因', async () => {
     vi.mocked(endpoints.bulk).mockResolvedValue(data({ coin: 100_000 }));
     const w = mount(BulkPanel);

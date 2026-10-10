@@ -45,6 +45,7 @@ export default {
     again ? `共凍結 ${total} 銀幣, 這次補凍 ${extra}。` : `凍結 ${total} 銀幣 (單價 × 份數)。`,
   settleNote: '收盤時按統一成交價扣, 不會超過你的出價, 多凍結的退回。',
   estimateAll: (price: string, total: string) => `照現在的預計成交價 ${price}, 全部入圍約付 ${total}。`,
+  estimateOut: '照現在的出價不入圍, 要入圍請出到入圍門檻以上。',
   partialHint: '卡在成交價那一檔時可能只入圍一部分份數: 同價先出價的先分, 沒入圍的份數全額退回。',
   reasons: {
     invalid: '請填正整數的單價和份數',

@@ -16,7 +16,7 @@ export async function openLot(
   d: GameDeps,
   shardId: number,
   now: Date,
-): Promise<'opened' | 'exists' | 'early' | 'empty'> {
+): Promise<'opened' | 'exists' | 'early' | 'empty' | 'busy' | 'late'> {
   const s = await d.shards.settings(shardId);
   const t = s.tuning.bulk;
   const day = gameDay(now);
@@ -29,6 +29,18 @@ export async function openLot(
     .where('day', '=', day)
     .executeTakeFirst();
   if (has) return 'exists';
+  // 不会两批同时开着（设计 §4，终审 I1）：运营把开批时间往前调、或者竞价时长超过一天时，等上一批收盘再开
+  const busy = await d.db
+    .selectFrom('bulk_lot')
+    .select('id')
+    .where('shard_id', '=', shardId)
+    .where('status', '=', 'open')
+    .where('close_at', '>', now)
+    .executeTakeFirst();
+  if (busy) return 'busy';
+  // 任务停了很久、到点时已经进了收盘窗口：今天不开（开了也马上收盘）
+  const endsAt = new Date(opensAt.getTime() + t.hours * HOUR_MS);
+  if (now.getTime() >= endsAt.getTime() - t.closeWindowMin * 60_000) return 'late';
   const last = await d.db
     .selectFrom('bulk_lot')
     .select('foods_id')
@@ -62,7 +74,6 @@ export async function openLot(
   );
   const reserve = bulkReserve(futuresUnitPrice(foodPrice(food, s.tuning.market), ref, s.tuning.futures), t);
   const qty = t.qty[level - 1]!;
-  const endsAt = new Date(opensAt.getTime() + t.hours * HOUR_MS);
   const r = await d.db
     .insertInto('bulk_lot')
     .values({

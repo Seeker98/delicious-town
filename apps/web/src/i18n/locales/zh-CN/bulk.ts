@@ -44,6 +44,7 @@ export default {
     again ? `共冻结 ${total} 银币, 这次补冻 ${extra}。` : `冻结 ${total} 银币 (单价 × 份数)。`,
   settleNote: '收盘时按统一成交价扣, 不会超过你的出价, 多冻结的退回。',
   estimateAll: (price: string, total: string) => `照现在的预计成交价 ${price}, 全部入围约付 ${total}。`,
+  estimateOut: '照现在的出价不入围, 要入围请出到入围门槛以上。',
   partialHint: '卡在成交价那一档时可能只入围一部分份数: 同价先出价的先分, 没入围的份数全额退回。',
   reasons: {
     invalid: '请填正整数的单价和份数',

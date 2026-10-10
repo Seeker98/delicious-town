@@ -44,6 +44,8 @@ const bulk: Messages['bulk'] = {
   settleNote:
     'À la clôture vous payez le prix final unique, jamais plus que votre offre\u202f; le reste vous est rendu.',
   estimateAll: (price, total) => `Au prix prévu de ${price}, tout obtenir coûterait environ ${total}.`,
+  estimateOut:
+    "À ce prix, vous ne seriez pas retenu pour l'instant\u202f; proposez au-dessus du seuil pour entrer.",
   partialHint:
     "Si votre prix tombe pile à la limite, vous n'obtiendrez peut-être qu'une partie des unités\u202f: à prix égal l'offre la plus ancienne passe devant, et les unités manquées sont intégralement remboursées.",
   reasons: {

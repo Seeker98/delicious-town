@@ -85,6 +85,18 @@ const mineStatus = computed(() => {
   if (m.won === m.qty) return b.inAll(m.won);
   return (m.won > 0 ? b.inPart(m.won, m.qty) : b.out) + b.raiseMore;
 });
+/**
+ * 出价框里的预计付款（终审 I2）：成交价不会高于自己的出价，按 min(出价, 预计成交价) × 份数算；
+ * 已满 n 份、出价又低于入围门槛时照现在不入围
+ */
+const estimateText = computed(() => {
+  const l = lot.value;
+  if (!l || p.value < 1 || q.value < 1) return '';
+  const b = t.value.bulk;
+  if (l.demand >= l.qty && p.value < l.threshold) return b.estimateOut;
+  const unit = Math.min(p.value, l.price);
+  return b.estimateAll(formatNum(unit), formatNum(unit * q.value));
+});
 const ratio = (demand: number, n: number) => (Math.round((demand / n) * 10) / 10).toString();
 
 /** 不能提交的原因；能提交为空（服务端同样检查，这里只是提前提示） */
@@ -227,7 +239,7 @@ function myResult(r: BulkResultDto): string {
         <div data-testid="bk-freeze">
           {{ t.bulk.freeze(formatNum(total), formatNum(Math.max(0, extra)), !!mine) }}
           {{ t.bulk.settleNote }}
-          {{ t.bulk.estimateAll(formatNum(lot.price), formatNum(lot.price * q)) }}
+          {{ estimateText }}
         </div>
         <div class="text-muted" data-testid="bk-partial-hint">{{ t.bulk.partialHint }}</div>
         <div v-if="reason" class="text-danger" data-testid="bk-reason">{{ reason }}</div>

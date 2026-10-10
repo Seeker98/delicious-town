@@ -71,3 +71,21 @@ describe('开批次（大宗认购设计 §1.1）', () => {
     for (let i = 1; i < lots.length; i++) expect(lots[i]!.foods_id).not.toBe(lots[i - 1]!.foods_id);
   });
 });
+
+describe('不会两批同时开着（终审 I1）', () => {
+  it('上一批还没收盘时不开新批（运营把开批时间往前调）；离名义结束只剩收盘窗口时也不开', async () => {
+    const shardId = await createShard(t.db);
+    t.clock.set(gameTime('2026-10-12', 20, 1));
+    expect(await openLot(t.game.deps, shardId, t.clock.now)).toBe('opened');
+    await setTuning(t, shardId, { bulk: { ...t.game.deps.config.tuning.bulk, openHour: 10 } });
+    t.clock.set(gameTime('2026-10-13', 10, 1));
+    expect(await openLot(t.game.deps, shardId, t.clock.now)).toBe('busy');
+    expect(await lotsOf(shardId)).toHaveLength(1);
+
+    const late = await createShard(t.db);
+    await setTuning(t, late, { bulk: { ...t.game.deps.config.tuning.bulk, hours: 1 } });
+    t.clock.set(gameTime('2026-10-12', 20, 56));
+    expect(await openLot(t.game.deps, late, t.clock.now)).toBe('late');
+    expect(await lotsOf(late)).toEqual([]);
+  });
+});
