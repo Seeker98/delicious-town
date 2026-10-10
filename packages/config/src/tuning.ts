@@ -1006,6 +1006,14 @@ export const tuningSchema = z.object({
     /** 名义结束前多少分钟起看板停更（问题记录 595）：0 = 全程实时 */
     blindMin: int.min(0),
   }),
+  /** 许愿树（许愿树设计 2026-10-11）：每天一轮，许愿的店里抽 1 家得树上的道具 */
+  wishTree: z.object({
+    hour: int.min(0).max(23),
+    minLevel: int.min(1),
+    titleDays: int.min(1),
+    consolationLevel: int.min(1),
+    prizes: z.array(z.object({ goods: int.min(1), num: int.min(1), weight: num.gt(0) })).min(1),
+  }),
 });
 
 export type Tuning = z.infer<typeof tuningSchema>;
