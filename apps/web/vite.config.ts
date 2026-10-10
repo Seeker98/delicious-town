@@ -1,5 +1,6 @@
 import vue from '@vitejs/plugin-vue';
 import { defineConfig, loadEnv } from 'vite';
+import { inlineLimit } from './src/build/artAssets';
 import { preconnectTags } from './src/build/preconnect';
 
 export default defineConfig(({ mode }) => {
@@ -9,5 +10,7 @@ export default defineConfig(({ mode }) => {
     plugins: [vue(), { name: 'dt-preconnect-api', transformIndexHtml: () => preconnectTags(apiBase) }],
     // 开发时把 /api 代理到本地服务端，前后端同源，不用处理 CORS
     server: { port: 5173, proxy: { '/api': 'http://localhost:3000' } },
+    // 图形雪碧图单独成文件（<use> 不能引用 data: 地址）
+    build: { assetsInlineLimit: inlineLimit },
   };
 });

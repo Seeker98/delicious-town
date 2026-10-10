@@ -16,6 +16,18 @@ export function markOverflow(c: HTMLElement): void {
   c.classList.toggle('dt-tabs-more', c.scrollLeft + c.clientWidth < c.scrollWidth - 1);
 }
 
+/** 选中下划线（界面改版 P1）：写出选中标签相对标签栏的位置；第二次起才开过渡，免得首次从左边滑进来 */
+export function placeIndicator(c: HTMLElement): void {
+  // 只在真变了的时候写：写属性会惊动 installTabsScroll 的 MutationObserver，没变也写就会每帧循环（终审 C1）
+  const a = c.querySelector<HTMLElement>('.nav-link.active');
+  const x = `${a ? a.offsetLeft : 0}px`;
+  const w = `${a ? a.offsetWidth : 0}`;
+  if (c.style.getPropertyValue('--dt-tab-x') !== x) c.style.setProperty('--dt-tab-x', x);
+  if (c.style.getPropertyValue('--dt-tab-w') !== w) c.style.setProperty('--dt-tab-w', w);
+  if (!c.dataset.dtTabPlaced) c.dataset.dtTabPlaced = '1';
+  else if (!c.classList.contains('dt-tabs-ready')) c.classList.add('dt-tabs-ready');
+}
+
 export function installTabsScroll(root: HTMLElement = document.body): () => void {
   const lastActive = new WeakMap<HTMLElement, Element | null>();
   let pending = 0;
@@ -27,6 +39,7 @@ export function installTabsScroll(root: HTMLElement = document.body): () => void
         lastActive.set(c, active);
         revealActive(c);
       }
+      placeIndicator(c);
       markOverflow(c);
     }
   };

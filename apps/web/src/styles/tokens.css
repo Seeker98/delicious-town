@@ -1,0 +1,142 @@
+/*
+ * 令牌（界面改版设计 §2）：颜色只在这里写色值，其他样式只读变量。
+ * 第一块不随深浅色变；第二块浅色（没有 data-theme 时也是浅色）；第三块深色。
+ * 子元素上写 data-theme 也生效（开发用图库并排预览两种模式）。
+ */
+:root {
+  --dt-font-sans:
+    system-ui, -apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --dt-font-serif: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', STSong, SimSun, serif;
+  --dt-space-1: 4px;
+  --dt-space-2: 8px;
+  --dt-space-3: 12px;
+  --dt-space-4: 16px;
+  --dt-space-5: 20px;
+  --dt-space-6: 24px;
+  --dt-radius-xs: 4px;
+  --dt-radius-sm: 10px;
+  --dt-radius-md: 14px;
+  /* 按钮、胶囊：一行时是胶囊，英法西长文案折成两行时是圆角矩形（不用 999px，会变大椭圆） */
+  --dt-radius-pill: 16px;
+  --dt-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --dt-ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --dt-dur-press: 120ms;
+  --dt-dur-fast: 150ms;
+  --dt-dur-base: 200ms;
+  --dt-dur-panel: 280ms;
+  --dt-amethyst-50: #f7f2fd;
+  --dt-amethyst-100: #eee4fb;
+  --dt-amethyst-200: #dcc8f6;
+  --dt-amethyst-300: #c3a3ee;
+  --dt-amethyst-400: #a57be2;
+  --dt-amethyst-500: #8b5cd0;
+  --dt-amethyst-600: #7442b8;
+  --dt-amethyst-700: #5f3499;
+  --dt-amethyst-800: #4a2878;
+  --dt-amethyst-900: #2e1a4a;
+}
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+  --dt-bg: #f4f1f8;
+  --dt-surface: #ffffff;
+  --dt-surface-2: #faf8fc;
+  --dt-line: #e8e2f0;
+  --dt-line-strong: #d6cde2;
+  --dt-text: #221a2e;
+  --dt-muted: #6e6680;
+  --dt-primary: #7442b8;
+  --dt-primary-rgb: 116, 66, 184;
+  --dt-primary-hover: #643a9f;
+  --dt-primary-ink: #6b3bae;
+  --dt-primary-ink-rgb: 107, 59, 174;
+  --dt-primary-ink-hover: #5f3499;
+  --dt-primary-soft: #eee4fb;
+  --dt-on-primary: #ffffff;
+  --dt-success: #2f7a3a;
+  --dt-success-rgb: 47, 122, 58;
+  --dt-danger: #b42d2d;
+  --dt-danger-rgb: 180, 45, 45;
+  --dt-on-danger: #ffffff;
+  --dt-warning: #8a5a00;
+  --dt-warning-rgb: 138, 90, 0;
+  --dt-disabled-bg: #e8e2f0;
+  --dt-disabled-text: #5e5670;
+  --dt-scrim: rgba(23, 19, 29, 0.4);
+  --dt-shadow-float: 0 6px 20px rgba(46, 26, 74, 0.14), 0 1px 4px rgba(46, 26, 74, 0.08);
+  --dt-header-bg: #ffffff;
+  --dt-soft-primary: #eee4fb;
+  --dt-ink-primary: #5f3499;
+  --dt-fill-primary: #a57be2;
+  --dt-soft-success: #e6f4e8;
+  --dt-ink-success: #2f7a3a;
+  --dt-fill-success: #7cc488;
+  --dt-soft-danger: #fbeaea;
+  --dt-ink-danger: #b42d2d;
+  --dt-fill-danger: #e88a8a;
+  --dt-soft-warning: #fbf0d6;
+  --dt-ink-warning: #8a5a00;
+  --dt-fill-warning: #f0be5a;
+  --dt-soft-info: #efebf5;
+  --dt-ink-info: #4e4660;
+  --dt-fill-info: #b7aec6;
+  --dt-soft-secondary: #eeecf1;
+  --dt-ink-secondary: #5a5466;
+  --dt-fill-secondary: #bdb7c6;
+  --dt-primary-dark: var(--dt-primary-hover);
+  --dt-success-soft: var(--dt-soft-success);
+  --dt-danger-soft: var(--dt-soft-danger);
+  --dt-warning-soft: var(--dt-soft-warning);
+}
+[data-theme='dark'] {
+  color-scheme: dark;
+  --dt-bg: #17131d;
+  --dt-surface: #211b2a;
+  --dt-surface-2: #2a2335;
+  --dt-line: #342c40;
+  --dt-line-strong: #463c55;
+  --dt-text: #efeaf6;
+  --dt-muted: #a99fba;
+  --dt-primary: #b48bea;
+  --dt-primary-rgb: 180, 139, 234;
+  --dt-primary-hover: #c3a0f2;
+  --dt-primary-ink: #c3a0f2;
+  --dt-primary-ink-rgb: 195, 160, 242;
+  --dt-primary-ink-hover: #d2b4f5;
+  --dt-primary-soft: #382a50;
+  --dt-on-primary: #1d1430;
+  --dt-success: #7fcf8a;
+  --dt-success-rgb: 127, 207, 138;
+  --dt-danger: #f29191;
+  --dt-danger-rgb: 242, 145, 145;
+  --dt-on-danger: #1d1430;
+  --dt-warning: #f0c060;
+  --dt-warning-rgb: 240, 192, 96;
+  --dt-disabled-bg: #342c40;
+  --dt-disabled-text: #a99fba;
+  --dt-scrim: rgba(0, 0, 0, 0.55);
+  --dt-shadow-float: 0 6px 20px rgba(0, 0, 0, 0.45);
+  --dt-header-bg: #211b2a;
+  --dt-soft-primary: #382a50;
+  --dt-ink-primary: #d2b4f5;
+  --dt-fill-primary: #734cb0;
+  --dt-soft-success: #1f3324;
+  --dt-ink-success: #7fcf8a;
+  --dt-fill-success: #4e9a5a;
+  --dt-soft-danger: #3a2024;
+  --dt-ink-danger: #f29191;
+  --dt-fill-danger: #c25a5a;
+  --dt-soft-warning: #3a2e14;
+  --dt-ink-warning: #f0c060;
+  --dt-fill-warning: #b8862a;
+  --dt-soft-info: #2c2638;
+  --dt-ink-info: #cfc6dd;
+  --dt-fill-info: #6f6585;
+  --dt-soft-secondary: #2a2731;
+  --dt-ink-secondary: #c4bfcc;
+  --dt-fill-secondary: #6b6575;
+  --dt-primary-dark: var(--dt-primary-hover);
+  --dt-success-soft: var(--dt-soft-success);
+  --dt-danger-soft: var(--dt-soft-danger);
+  --dt-warning-soft: var(--dt-soft-warning);
+}

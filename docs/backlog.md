@@ -356,3 +356,14 @@
 - 某家安慰奖一直失败时每分钟重试、每分钟记一条错误日志；500 家这样的会挡住后面的轮
 - 共享类型 WishTreeAwardDto 和 BarAwardDto 一模一样，可以合并
 - 首次上线如果在 20 点前，当天到 20 点才有第一轮
+
+## 界面改版 P1 地基（#260）终审遗留
+
+- 标签栏只在标签增减、选中变化时重新定位下划线；标签文字变了（未读数、切语言）宽度变化时下划线不跟（可以给选中的标签挂 ResizeObserver），P2 做 `DtTabs` 时一起处理
+- `base.css` 开关聚焦圆点的内联图里写了色值（`%23a57be2`），“不写裸色值”的测试查不到；可以改成 mask 或放进令牌
+- 深色的 `--dt-shadow-float` 还有阴影，和设计 §2.2“深色不用阴影”不一致；P2 做底部面板时定
+- 后台 `BarChart.vue`、`LineChart.vue` 的 SVG 文字没设颜色，深色下发黑，线条还是 Bootstrap 的蓝等颜色（P9 后台批次）
+- `is-invalid` 表单报错、`list-group-item.active` 还是 Bootstrap 的红和蓝（`--bs-form-invalid-*`、`--bs-list-group-active-*` 没接令牌）
+- 开发用图库 `/dev/art` 在手机宽度横向溢出（两栏用了 `1fr`，应为 `minmax(0, 1fr)`）
+- `RestaurantHomeView.vue` 经验条旁的注释还写着“橙色”
+- 法文底部导航文字挤在一起（改前就这样），P2 重做底部导航时解决

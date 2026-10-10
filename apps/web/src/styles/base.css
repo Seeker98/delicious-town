@@ -1,0 +1,532 @@
+/*
+ * Bootstrap 接管（界面改版设计 §2.8）：Bootstrap 只提供排版和工具类，长相全部读我们的令牌。
+ * 选择器带 [data-theme]：子元素切换模式时这些映射也跟着重新解析（变量引用在声明处就算好，不随继承更新）。
+ */
+:root,
+[data-theme] {
+  --bs-font-sans-serif: var(--dt-font-sans);
+  --bs-body-font-family: var(--dt-font-sans);
+  --bs-body-bg: var(--dt-surface);
+  --bs-body-color: var(--dt-text);
+  --bs-emphasis-color: var(--dt-text);
+  --bs-heading-color: var(--dt-text);
+  --bs-secondary-color: var(--dt-muted);
+  --bs-secondary-bg: var(--dt-surface-2);
+  --bs-tertiary-color: var(--dt-muted);
+  --bs-tertiary-bg: var(--dt-surface-2);
+  --bs-border-color: var(--dt-line);
+  --bs-border-color-translucent: var(--dt-line);
+  --bs-primary: var(--dt-primary);
+  --bs-primary-rgb: var(--dt-primary-rgb);
+  --bs-success: var(--dt-success);
+  --bs-success-rgb: var(--dt-success-rgb);
+  --bs-danger: var(--dt-danger);
+  --bs-danger-rgb: var(--dt-danger-rgb);
+  --bs-warning: var(--dt-warning);
+  --bs-warning-rgb: var(--dt-warning-rgb);
+  --bs-primary-bg-subtle: var(--dt-soft-primary);
+  --bs-success-bg-subtle: var(--dt-soft-success);
+  --bs-danger-bg-subtle: var(--dt-soft-danger);
+  --bs-warning-bg-subtle: var(--dt-soft-warning);
+  --bs-primary-border-subtle: var(--dt-line-strong);
+  --bs-success-border-subtle: var(--dt-fill-success);
+  --bs-danger-border-subtle: var(--dt-fill-danger);
+  --bs-warning-border-subtle: var(--dt-fill-warning);
+  --bs-link-color: var(--dt-primary-ink);
+  --bs-link-color-rgb: var(--dt-primary-ink-rgb);
+  --bs-link-hover-color: var(--dt-primary-ink-hover);
+  --bs-link-hover-color-rgb: var(--dt-primary-ink-rgb);
+  --bs-focus-ring-color: rgba(var(--dt-primary-rgb), 0.35);
+}
+/* 模板里写死的浅色类：深色模式下 Bootstrap 不会自动换，这里接到令牌上 */
+.bg-white {
+  background-color: var(--dt-surface) !important;
+}
+.bg-light {
+  background-color: var(--dt-surface-2) !important;
+}
+.text-dark {
+  color: var(--dt-text) !important;
+}
+.text-muted {
+  color: var(--dt-muted) !important;
+}
+.text-bg-light {
+  color: var(--dt-ink-secondary) !important;
+  background-color: var(--dt-soft-secondary) !important;
+}
+/* 强调色文字和链接、按钮同一种紫（问题记录 575 的规则沿用） */
+.text-primary {
+  color: rgba(var(--dt-primary-ink-rgb), var(--bs-text-opacity, 1)) !important;
+}
+/* 徽章：浅底深字（问题记录 216 的规则沿用）；未读数圆点（rounded-pill）保持实心 */
+.badge {
+  --bs-badge-font-weight: 500;
+  --bs-badge-border-radius: var(--dt-radius-xs);
+}
+.badge.text-bg-primary,
+.badge:not(.rounded-pill).bg-primary {
+  background-color: var(--dt-soft-primary) !important;
+  color: var(--dt-ink-primary) !important;
+}
+.badge.text-bg-success,
+.badge:not(.rounded-pill).bg-success {
+  background-color: var(--dt-soft-success) !important;
+  color: var(--dt-ink-success) !important;
+}
+.badge.text-bg-danger,
+.badge:not(.rounded-pill).bg-danger {
+  background-color: var(--dt-soft-danger) !important;
+  color: var(--dt-ink-danger) !important;
+}
+.badge.text-bg-warning,
+.badge:not(.rounded-pill).bg-warning {
+  background-color: var(--dt-soft-warning) !important;
+  color: var(--dt-ink-warning) !important;
+}
+.badge.text-bg-info,
+.badge:not(.rounded-pill).bg-info {
+  background-color: var(--dt-soft-info) !important;
+  color: var(--dt-ink-info) !important;
+}
+.badge.text-bg-secondary,
+.badge:not(.rounded-pill).bg-secondary {
+  background-color: var(--dt-soft-secondary) !important;
+  color: var(--dt-ink-secondary) !important;
+}
+.badge.rounded-pill {
+  border-radius: 999px;
+}
+.badge.rounded-pill.bg-danger {
+  color: var(--dt-on-danger);
+}
+.badge.rounded-pill.bg-primary {
+  color: var(--dt-on-primary);
+}
+/* 提示块：浅底深字、无边框；info 不用青色（设计 §2.1） */
+.alert {
+  --bs-alert-border-radius: var(--dt-radius-sm);
+  --bs-alert-padding-x: 12px;
+  --bs-alert-padding-y: 6px;
+  --bs-alert-border-color: transparent;
+}
+.alert-danger {
+  --bs-alert-bg: var(--dt-soft-danger);
+  --bs-alert-color: var(--dt-ink-danger);
+  --bs-alert-link-color: var(--dt-ink-danger);
+}
+.alert-warning {
+  --bs-alert-bg: var(--dt-soft-warning);
+  --bs-alert-color: var(--dt-ink-warning);
+  --bs-alert-link-color: var(--dt-ink-warning);
+}
+.alert-success {
+  --bs-alert-bg: var(--dt-soft-success);
+  --bs-alert-color: var(--dt-ink-success);
+  --bs-alert-link-color: var(--dt-ink-success);
+}
+.alert-info {
+  --bs-alert-bg: var(--dt-soft-primary);
+  --bs-alert-color: var(--dt-ink-primary);
+  --bs-alert-link-color: var(--dt-ink-primary);
+}
+.alert-secondary {
+  --bs-alert-bg: var(--dt-soft-secondary);
+  --bs-alert-color: var(--dt-ink-secondary);
+  --bs-alert-link-color: var(--dt-ink-secondary);
+}
+/* 进度条：轨道浅紫、填充中等亮度（问题记录 212 的规则沿用） */
+.progress {
+  --bs-progress-bg: var(--dt-primary-soft);
+  --bs-progress-border-radius: 999px;
+  --bs-progress-bar-bg: var(--dt-primary);
+}
+.progress-bar.bg-primary {
+  background-color: var(--dt-fill-primary) !important;
+}
+.progress-bar.bg-success {
+  background-color: var(--dt-fill-success) !important;
+}
+.progress-bar.bg-danger {
+  background-color: var(--dt-fill-danger) !important;
+}
+.progress-bar.bg-warning {
+  background-color: var(--dt-fill-warning) !important;
+}
+.progress-bar.bg-info {
+  background-color: var(--dt-fill-info) !important;
+}
+.progress-bar.bg-secondary {
+  background-color: var(--dt-fill-secondary) !important;
+}
+/* 表格：细线、表头小号次要色 */
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--dt-text);
+  --bs-table-border-color: var(--dt-line);
+  --bs-table-striped-bg: var(--dt-surface-2);
+  --bs-table-hover-bg: var(--dt-surface-2);
+  --bs-table-active-bg: var(--dt-primary-soft);
+}
+.table > thead th {
+  color: var(--dt-muted);
+  font-weight: 500;
+  font-size: 12px;
+}
+.table-success {
+  --bs-table-bg: var(--dt-soft-success);
+  --bs-table-color: var(--dt-ink-success);
+}
+.table-danger {
+  --bs-table-bg: var(--dt-soft-danger);
+  --bs-table-color: var(--dt-ink-danger);
+}
+/* 卡片、列表组、弹窗 */
+.card {
+  --bs-card-bg: var(--dt-surface);
+  --bs-card-border-color: var(--dt-line);
+  --bs-card-border-radius: var(--dt-radius-md);
+}
+.list-group {
+  --bs-list-group-bg: var(--dt-surface);
+  --bs-list-group-color: var(--dt-text);
+  --bs-list-group-border-color: var(--dt-line);
+  --bs-list-group-action-hover-bg: var(--dt-surface-2);
+  --bs-list-group-action-color: var(--dt-text);
+}
+.modal {
+  --bs-modal-bg: var(--dt-surface);
+  --bs-modal-border-color: var(--dt-line);
+  --bs-modal-border-radius: var(--dt-radius-md);
+  --bs-modal-box-shadow: var(--dt-shadow-float);
+}
+.modal-backdrop {
+  --bs-backdrop-bg: var(--dt-scrim);
+  --bs-backdrop-opacity: 1;
+}
+body {
+  background: var(--dt-bg);
+  min-width: 360px;
+  font-family: var(--dt-font-sans);
+  /* 数字等宽：数量、价格、排行上下对齐（设计 §2.3） */
+  font-variant-numeric: tabular-nums;
+}
+/* ---------- 控件（设计 §2.6、§2.7） ---------- */
+:focus-visible {
+  outline: 2px solid var(--dt-primary);
+  outline-offset: 2px;
+}
+/* 按钮四种：实心紫（主操作）、浅紫（次要，沿用 btn-outline-primary）、纯文字、红描边（危险） */
+.btn {
+  --bs-btn-border-radius: var(--dt-radius-pill);
+  --bs-btn-font-weight: 500;
+  --bs-btn-disabled-opacity: 1;
+  --bs-btn-focus-box-shadow: 0 0 0 2px var(--dt-surface), 0 0 0 4px var(--dt-primary);
+}
+.btn-sm {
+  --bs-btn-border-radius: var(--dt-radius-pill);
+}
+.btn-primary {
+  --bs-btn-color: var(--dt-on-primary);
+  --bs-btn-bg: var(--dt-primary);
+  --bs-btn-border-color: var(--dt-primary);
+  --bs-btn-hover-color: var(--dt-on-primary);
+  --bs-btn-hover-bg: var(--dt-primary-hover);
+  --bs-btn-hover-border-color: var(--dt-primary-hover);
+  --bs-btn-active-color: var(--dt-on-primary);
+  --bs-btn-active-bg: var(--dt-primary-hover);
+  --bs-btn-active-border-color: var(--dt-primary-hover);
+  --bs-btn-disabled-color: var(--dt-disabled-text);
+  --bs-btn-disabled-bg: var(--dt-disabled-bg);
+  --bs-btn-disabled-border-color: var(--dt-disabled-bg);
+}
+.btn-outline-primary {
+  --bs-btn-color: var(--dt-primary-ink);
+  --bs-btn-bg: var(--dt-primary-soft);
+  --bs-btn-border-color: var(--dt-primary-soft);
+  --bs-btn-hover-color: var(--dt-primary-ink-hover);
+  --bs-btn-hover-bg: var(--dt-primary-soft);
+  --bs-btn-hover-border-color: var(--dt-line-strong);
+  --bs-btn-active-color: var(--dt-primary-ink-hover);
+  --bs-btn-active-bg: var(--dt-primary-soft);
+  --bs-btn-active-border-color: var(--dt-line-strong);
+  --bs-btn-disabled-color: var(--dt-disabled-text);
+  /* 禁用：透明底灰边灰字，和可点的浅底分得开（截图自查） */
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--dt-line-strong);
+}
+/* 中性按钮（切换区服、全部卸下等）：细边、正文色 */
+.btn-outline-secondary,
+.btn-outline-dark,
+.btn-light {
+  --bs-btn-color: var(--dt-text);
+  --bs-btn-bg: var(--dt-surface-2);
+  --bs-btn-border-color: var(--dt-line);
+  --bs-btn-hover-color: var(--dt-text);
+  --bs-btn-hover-bg: var(--dt-surface-2);
+  --bs-btn-hover-border-color: var(--dt-line-strong);
+  --bs-btn-active-color: var(--dt-text);
+  --bs-btn-active-bg: var(--dt-line);
+  --bs-btn-active-border-color: var(--dt-line-strong);
+  --bs-btn-disabled-color: var(--dt-disabled-text);
+  /* 禁用：透明底灰边灰字，和可点的浅底分得开（截图自查） */
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--dt-line-strong);
+}
+.btn-link {
+  --bs-btn-color: var(--dt-primary-ink);
+  --bs-btn-hover-color: var(--dt-primary-ink-hover);
+  --bs-btn-active-color: var(--dt-primary-ink-hover);
+  --bs-btn-disabled-color: var(--dt-disabled-text);
+  text-decoration: none;
+}
+.btn-outline-danger {
+  --bs-btn-color: var(--dt-danger);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--dt-danger);
+  --bs-btn-hover-color: var(--dt-danger);
+  --bs-btn-hover-bg: var(--dt-soft-danger);
+  --bs-btn-hover-border-color: var(--dt-danger);
+  --bs-btn-active-color: var(--dt-danger);
+  --bs-btn-active-bg: var(--dt-soft-danger);
+  --bs-btn-active-border-color: var(--dt-danger);
+  --bs-btn-disabled-color: var(--dt-disabled-text);
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--dt-disabled-bg);
+}
+.btn-danger {
+  --bs-btn-color: var(--dt-on-danger);
+  --bs-btn-bg: var(--dt-danger);
+  --bs-btn-border-color: var(--dt-danger);
+  --bs-btn-hover-color: var(--dt-on-danger);
+  --bs-btn-hover-bg: var(--dt-danger);
+  --bs-btn-hover-border-color: var(--dt-danger);
+  --bs-btn-active-color: var(--dt-on-danger);
+  --bs-btn-active-bg: var(--dt-danger);
+  --bs-btn-active-border-color: var(--dt-danger);
+  --bs-btn-disabled-color: var(--dt-disabled-text);
+  --bs-btn-disabled-bg: var(--dt-disabled-bg);
+  --bs-btn-disabled-border-color: var(--dt-disabled-bg);
+}
+/*
+ * 绿色、黄色按钮不在按钮四种里（用的地方 P3~P8 逐个改掉）。实心版和描边版要看得出区别：
+ * 交易所买卖、竞猜是否用 success ↔ outline-success 标出选中的一边，菜场、橱柜用 warning 标选中（终审 C2）
+ */
+.btn-success {
+  --bs-btn-color: var(--dt-ink-success);
+  --bs-btn-bg: var(--dt-soft-success);
+  --bs-btn-border-color: var(--dt-success);
+  --bs-btn-hover-color: var(--dt-ink-success);
+  --bs-btn-hover-bg: var(--dt-soft-success);
+  --bs-btn-hover-border-color: var(--dt-success);
+  --bs-btn-active-color: var(--dt-ink-success);
+  --bs-btn-active-bg: var(--dt-soft-success);
+  --bs-btn-active-border-color: var(--dt-success);
+  --bs-btn-disabled-color: var(--dt-disabled-text);
+  --bs-btn-disabled-bg: var(--dt-disabled-bg);
+  --bs-btn-disabled-border-color: var(--dt-disabled-bg);
+}
+.btn-outline-success {
+  --bs-btn-color: var(--dt-success);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--dt-success);
+  --bs-btn-hover-color: var(--dt-ink-success);
+  --bs-btn-hover-bg: var(--dt-soft-success);
+  --bs-btn-hover-border-color: var(--dt-success);
+  --bs-btn-active-color: var(--dt-ink-success);
+  --bs-btn-active-bg: var(--dt-soft-success);
+  --bs-btn-active-border-color: var(--dt-success);
+  --bs-btn-disabled-color: var(--dt-disabled-text);
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--dt-disabled-bg);
+}
+.btn-warning {
+  --bs-btn-color: var(--dt-surface);
+  --bs-btn-bg: var(--dt-warning);
+  --bs-btn-border-color: var(--dt-warning);
+  --bs-btn-hover-color: var(--dt-surface);
+  --bs-btn-hover-bg: var(--dt-warning);
+  --bs-btn-hover-border-color: var(--dt-warning);
+  --bs-btn-active-color: var(--dt-surface);
+  --bs-btn-active-bg: var(--dt-warning);
+  --bs-btn-active-border-color: var(--dt-warning);
+  --bs-btn-disabled-color: var(--dt-disabled-text);
+  --bs-btn-disabled-bg: var(--dt-disabled-bg);
+  --bs-btn-disabled-border-color: var(--dt-disabled-bg);
+}
+.btn-outline-warning {
+  --bs-btn-color: var(--dt-warning);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--dt-warning);
+  --bs-btn-hover-color: var(--dt-ink-warning);
+  --bs-btn-hover-bg: var(--dt-soft-warning);
+  --bs-btn-hover-border-color: var(--dt-warning);
+  --bs-btn-active-color: var(--dt-ink-warning);
+  --bs-btn-active-bg: var(--dt-soft-warning);
+  --bs-btn-active-border-color: var(--dt-warning);
+  --bs-btn-disabled-color: var(--dt-disabled-text);
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--dt-disabled-bg);
+}
+/* 切换按钮（.active，如论坛点赞、点踩）：选中时明显变实（终审 I4）；只改 .active，按下的反馈不变 */
+.btn-outline-primary.active {
+  --bs-btn-active-color: var(--dt-on-primary);
+  --bs-btn-active-bg: var(--dt-primary);
+  --bs-btn-active-border-color: var(--dt-primary);
+}
+.btn-outline-secondary.active {
+  --bs-btn-active-color: var(--dt-surface);
+  --bs-btn-active-bg: var(--dt-text);
+  --bs-btn-active-border-color: var(--dt-text);
+}
+/* 输入框、下拉框 */
+.form-control,
+.form-select {
+  color: var(--dt-text);
+  background-color: var(--dt-surface-2);
+  border-color: var(--dt-line);
+  border-radius: var(--dt-radius-sm);
+}
+.form-control-sm,
+.form-select-sm {
+  border-radius: var(--dt-radius-sm);
+}
+.form-control::placeholder {
+  color: var(--dt-muted);
+}
+.form-control:focus,
+.form-select:focus {
+  color: var(--dt-text);
+  background-color: var(--dt-surface);
+  border-color: var(--dt-primary);
+  box-shadow: 0 0 0 3px rgba(var(--dt-primary-rgb), 0.2);
+}
+.form-control:disabled,
+.form-select:disabled {
+  color: var(--dt-disabled-text);
+  background-color: var(--dt-disabled-bg);
+}
+/* 勾选框、开关 */
+.form-check-input {
+  background-color: var(--dt-surface-2);
+  border-color: var(--dt-line-strong);
+}
+.form-check-input:checked {
+  background-color: var(--dt-primary);
+  border-color: var(--dt-primary);
+}
+.form-check-input:focus {
+  border-color: var(--dt-primary);
+  box-shadow: 0 0 0 3px rgba(var(--dt-primary-rgb), 0.2);
+}
+/* 开关聚焦时的圆点：Bootstrap 写死浅蓝，换成紫水晶 400 */
+.form-switch .form-check-input:focus:not(:checked) {
+  --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23a57be2'/%3e%3c/svg%3e");
+}
+/*
+ * 一级标签页：下划线式，不换行、放不下时横向滑动（问题记录 100）；
+ * 选中的下划线是标签栏的 ::after，位置由 utils/tabsScroll.ts 写进变量
+ */
+.nav-tabs {
+  --bs-nav-tabs-border-color: var(--dt-line);
+  --bs-nav-tabs-link-active-bg: transparent;
+  --bs-nav-tabs-link-active-color: var(--dt-text);
+  --bs-nav-tabs-link-active-border-color: transparent;
+  --bs-nav-tabs-link-hover-border-color: transparent;
+  position: relative;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  /* 滑动容器会裁掉往下伸的 1px：底线画在容器里面 */
+  border-bottom: 0;
+  box-shadow: inset 0 -1px 0 var(--dt-line);
+  /* 给聚焦框留出上方空间 */
+  padding-top: 4px;
+}
+.nav-tabs .nav-link {
+  border: 0;
+  background: none;
+  color: var(--dt-muted);
+  font-weight: 500;
+  white-space: nowrap;
+  margin-bottom: 0;
+}
+.nav-tabs .nav-link.active {
+  color: var(--dt-text);
+  font-weight: 600;
+}
+/* 键盘焦点画在标签里面：画在外面会被横向滑动的容器裁掉（backlog #116 的规则沿用） */
+.nav-tabs .nav-link:focus-visible {
+  /* Bootstrap 的 .nav-link:focus-visible 把 outline 清零、画蓝色光圈，这里盖回来（终审 I3） */
+  outline: 2px solid var(--dt-primary);
+  outline-offset: -2px;
+  box-shadow: none;
+}
+.nav-tabs::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 1px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--dt-primary);
+  transform-origin: left;
+  transform: translateX(var(--dt-tab-x, 0px)) scaleX(var(--dt-tab-w, 0));
+}
+/* 筛选胶囊：选中深色实心（设计 §2.6），不用紫色；胶囊里放 .btn 时按 .btn 走 */
+.dt-pills a:not(.btn),
+.dt-pills button:not(.btn) {
+  font-size: 13px;
+  padding: 2px 10px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-pill);
+  color: var(--dt-muted);
+  background: transparent;
+  text-decoration: none;
+}
+.dt-pills a.active:not(.btn),
+.dt-pills button.active:not(.btn) {
+  color: var(--dt-surface);
+  background: var(--dt-text);
+  border-color: var(--dt-text);
+}
+.dt-pills button:not(.btn):disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+/* 动效（设计 §2.5）：只动 transform、颜色；系统要求减少动态时不缩放、下划线不滑 */
+@media (prefers-reduced-motion: no-preference) {
+  .btn,
+  .dt-tap,
+  .dt-pills a:not(.btn),
+  .dt-pills button:not(.btn) {
+    transition:
+      transform var(--dt-dur-press) var(--dt-ease-out),
+      background-color var(--dt-dur-fast) ease,
+      color var(--dt-dur-fast) ease,
+      border-color var(--dt-dur-fast) ease;
+  }
+  .btn:not(:disabled):active,
+  .dt-tap:active,
+  .dt-pills a:not(.btn):active,
+  .dt-pills button:not(.btn):not(:disabled):active {
+    transform: scale(0.97);
+  }
+  .nav-tabs.dt-tabs-ready::after {
+    transition: transform var(--dt-dur-base) var(--dt-ease-out);
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .dt-tap:hover {
+    background: var(--dt-primary-soft);
+  }
+  .dt-pills a:not(.btn):not(.active):hover,
+  .dt-pills button:not(.btn):not(.active):not(:disabled):hover {
+    background: var(--dt-surface-2);
+  }
+  .nav-tabs .nav-link:not(.active):hover {
+    color: var(--dt-text);
+  }
+}

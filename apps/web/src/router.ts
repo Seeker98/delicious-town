@@ -453,6 +453,17 @@ export const routes: RouteRecordRaw[] = [
       { path: 'audit', component: () => import('./views/admin/AdminAuditView.vue') },
     ],
   },
+  // 开发用图库（界面改版 P1）：只在开发环境注册，生产构建里连页面文件都不打包
+  ...(import.meta.env.DEV
+    ? [
+        {
+          path: '/dev/art',
+          name: 'dev-art',
+          component: () => import('./views/dev/ArtGalleryView.vue'),
+          meta: { public: true },
+        } satisfies RouteRecordRaw,
+      ]
+    : []),
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ];
 

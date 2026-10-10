@@ -1,8 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { allCss, readCss, stripComments } from './cssSource';
 
-const css = readFileSync(join(__dirname, 'main.css'), 'utf8');
+const css = allCss();
 
 /** 顶层（不在 @media 里）的选择器 */
 function topLevelSelectors(src: string): string[] {
@@ -34,7 +35,8 @@ describe('main.css', () => {
   it('同一个类不在顶层定义两次，免得后写的悄悄覆盖前面的（问题记录 212：.dt-chip 撞名）', () => {
     const seen = new Map<string, number>();
     for (const s of topLevelSelectors(css)) seen.set(s, (seen.get(s) ?? 0) + 1);
-    const dup = [...seen].filter(([, n]) => n > 1).map(([s]) => s);
+    // 令牌块（:root、[data-theme]）按层分开写是故意的：不随模式变的、浅色、深色、Bootstrap 映射（界面改版 P1）
+    const dup = [...seen].filter(([s, n]) => n > 1 && !/^(:root|\[data-theme)/.test(s)).map(([s]) => s);
     expect(dup).toEqual([]);
   });
 
@@ -63,5 +65,19 @@ describe('触屏小号输入框和 btn-sm 等高（质量期 ①a）', () => {
     expect(rule).toMatch(/position:\s*absolute/);
     expect(rule).toMatch(/inset:\s*-8px -6px/);
     expect(css).toMatch(/\.dt-link-btn\s*\{[^}]*position:\s*relative/);
+  });
+});
+
+describe('颜色只读令牌（界面改版 P1）', () => {
+  it('base.css、main.css 不写裸色值（色值只在 tokens.css）', () => {
+    for (const name of ['base', 'main'] as const) {
+      const src = stripComments(readCss(name)).replace(/url\("data:[^"]*"\)/g, '');
+      expect(src.match(/#[0-9a-fA-F]{3,8}\b|rgba?\(\s*\d/g) ?? [], name).toEqual([]);
+    }
+  });
+
+  it('最小字号 11px（不再有 9px 的未读数）', () => {
+    const sizes = [...stripComments(allCss()).matchAll(/font-size:\s*(\d+)px/g)].map((m) => Number(m[1]));
+    expect(Math.min(...sizes)).toBeGreaterThanOrEqual(11);
   });
 });

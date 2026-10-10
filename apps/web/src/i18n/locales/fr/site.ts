@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    theme1011:
+      'Nouvelles couleurs améthyste, avec des boutons, des champs et des onglets redessinés. Le mode sombre arrive\u202f: choisissez Comme le système, Clair ou Sombre dans Apparence, sous Mon compte',
     wishtree1011:
       "La place a un nouvel Arbre à vœux\u202f: tirage chaque jour à 20\u202fh, et l'arbre donne un nouvel objet au même moment. À partir du niveau 10, chaque restaurant peut faire 1 vœu gratuit par tour\u202f; au tirage, un restaurant qui a fait un vœu remporte l'objet et le titre «\u202fVœu exaucé\u202f» pendant 3 jours (envoyés par courrier). Les autres reçoivent une récompense aléatoire",
     ui1011:

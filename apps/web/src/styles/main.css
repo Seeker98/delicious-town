@@ -1,53 +1,3 @@
-:root {
-  --dt-primary: #d9480f;
-  --dt-primary-rgb: 217, 72, 15;
-  --dt-primary-dark: #b33c0c;
-  /* 文字、按钮用的品牌色：白底对比度 5.18（终审：#d9480f 只有 4.30，只用于色条、顶栏等装饰） */
-  --dt-primary-ink: #c2410c;
-  --dt-primary-ink-rgb: 194, 65, 12;
-  --dt-primary-soft: #fff4e6;
-  --dt-bg: #fff4e6;
-  --dt-header-bg: #ffe8cc;
-  /* 次要文字：白底对比度 4.69（终审：#868e96 只有 3.32） */
-  --dt-muted: #6c757d;
-  --dt-line: #f1f3f5;
-  /* 成功、危险色按视觉规范覆盖 Bootstrap（PR27 遗留） */
-  --bs-danger: #c92a2a;
-  --bs-danger-rgb: 201, 42, 42;
-  --bs-success: #2b8a3e;
-  --bs-success-rgb: 43, 138, 62;
-  /* Bootstrap 的 primary 统一成品牌色（视觉规范 §2） */
-  --bs-primary: var(--dt-primary);
-  --bs-primary-rgb: var(--dt-primary-rgb);
-  --bs-link-color: var(--dt-primary-ink);
-  --bs-link-color-rgb: var(--dt-primary-ink-rgb);
-  --bs-focus-ring-color: rgba(var(--dt-primary-rgb), 0.25);
-  --bs-link-hover-color: var(--dt-primary-dark);
-  --bs-link-hover-color-rgb: 179, 60, 12;
-
-  /*
-   * 浅底深字（问题记录 216）：同一色相和饱和度，只拉高亮度 L 做底色、压低 L 做字色；
-   * 只用在徽章、标签、进度条这类不可点的展示元素上，按钮保持实心
-   */
-  --dt-soft-primary: hsl(17, 87%, 92%);
-  --dt-ink-primary: hsl(17, 87%, 37%);
-  --dt-fill-primary: hsl(17, 87%, 68%);
-  --dt-soft-success: hsl(132, 52%, 92%);
-  --dt-ink-success: hsl(132, 52%, 31%);
-  --dt-fill-success: hsl(132, 52%, 68%);
-  --dt-soft-danger: hsl(0, 65%, 92%);
-  --dt-ink-danger: hsl(0, 65%, 40%);
-  --dt-fill-danger: hsl(0, 65%, 68%);
-  --dt-soft-warning: hsl(39, 100%, 92%);
-  --dt-ink-warning: hsl(39, 100%, 28%);
-  --dt-fill-warning: hsl(39, 100%, 68%);
-  --dt-soft-info: hsl(188, 83%, 92%);
-  --dt-ink-info: hsl(188, 83%, 28%);
-  --dt-fill-info: hsl(188, 83%, 68%);
-  --dt-soft-secondary: hsl(208, 7%, 92%);
-  --dt-ink-secondary: hsl(208, 7%, 40%);
-  --dt-fill-secondary: hsl(208, 7%, 68%);
-}
 /* 手机上防误触放大（问题记录 329）：双击不再放大，保留双指缩放；字号不随横竖屏自动调整 */
 html {
   touch-action: manipulation;
@@ -73,15 +23,11 @@ html {
     min-height: calc(1.3125em + 0.5rem + 2px);
   }
 }
-body {
-  background: var(--dt-bg);
-  min-width: 360px;
-}
 .dt-app {
   max-width: 720px;
   margin: 0 auto;
   min-height: 100vh;
-  background: #fff;
+  background: var(--dt-surface);
 }
 
 .dt-app-wide {
@@ -90,7 +36,8 @@ body {
 .dt-header {
   height: 44px;
   background: var(--dt-header-bg);
-  color: var(--dt-primary);
+  border-bottom: 1px solid var(--dt-line);
+  color: var(--dt-primary-ink);
 }
 .dt-main {
   padding: 8px;
@@ -110,12 +57,12 @@ body {
   bottom: 0;
   width: 100%;
   max-width: 720px;
-  background: #fff;
-  border-top: 1px solid #eee;
+  background: var(--dt-surface);
+  border-top: 1px solid var(--dt-line);
   z-index: 1030;
 }
 .dt-bottom-nav a {
-  color: #666;
+  color: var(--dt-muted);
   text-decoration: none;
 }
 .dt-bottom-nav a.router-link-exact-active {
@@ -129,8 +76,8 @@ body {
   z-index: 1045;
   padding: 4px 8px;
   border-radius: 6px;
-  background: #fff;
-  color: #333;
+  background: var(--dt-surface);
+  color: var(--dt-text);
   font-size: 12px;
   white-space: nowrap;
 }
@@ -155,6 +102,7 @@ body {
   bottom: calc(16px + env(safe-area-inset-bottom, 0px));
 }
 .dt-toast-pill {
+  box-shadow: var(--dt-shadow-float);
   max-width: 100%;
   text-align: center;
   /* 固定圆角：一行时是胶囊，英法西的得失汇总折成几行时是圆角矩形（rounded-pill 会变成大椭圆，终审） */
@@ -168,7 +116,7 @@ body {
   display: inline-block;
   padding: 0 8px;
   border-radius: 8px;
-  background: #f1f3f5;
+  background: var(--dt-surface-2);
   font-size: 12px;
 }
 /* 放在大一号文字前的标签（问题记录 388：街道类型和加成说明）：按基线对齐时小字整体偏下约 1px，
@@ -207,13 +155,13 @@ body {
 }
 .dt-more-link {
   font-size: 11px;
-  color: #495057;
+  color: var(--dt-muted);
   padding: 4px 0;
   border-radius: 6px;
   line-height: 1.2;
 }
 .dt-more-link:hover {
-  background: #f1f3f5;
+  background: var(--dt-surface-2);
 }
 .dt-more-link i {
   font-size: 18px;
@@ -222,7 +170,7 @@ body {
 .dt-more-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--dt-scrim);
   /* 在底部导航之下：面板打开时仍能直接点别的标签 */
   z-index: 1028;
 }
@@ -235,7 +183,7 @@ body {
   max-width: 720px;
   max-height: 70vh;
   overflow-y: auto;
-  background: #fff;
+  background: var(--dt-surface);
   border-radius: 12px 12px 0 0;
   /* 底部留出导航栏的高度 */
   padding: 12px 16px 64px;
@@ -265,15 +213,15 @@ body {
   gap: 4px;
 }
 .dt-act {
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--dt-line);
   border-radius: 6px;
   padding: 4px 8px;
-  background: #fff;
+  background: var(--dt-surface);
   min-width: 0;
 }
 .dt-act-bar {
   height: 4px;
-  background: #f1f3f5;
+  background: var(--dt-surface-2);
   border-radius: 2px;
   margin: 3px 0 2px;
   overflow: hidden;
@@ -284,18 +232,18 @@ body {
 }
 .dt-act-pts {
   font-size: 11px;
-  color: #868e96;
+  color: var(--dt-muted);
 }
 .dt-act-done {
-  background: #ebfbee;
-  border-color: #b2f2bb;
+  background: var(--dt-soft-success);
+  border-color: var(--dt-fill-success);
 }
 .dt-act-done .dt-act-bar > div {
   background: var(--dt-fill-success);
 }
 .dt-act-locked {
-  background: #f1f3f5;
-  color: #868e96;
+  background: var(--dt-surface-2);
+  color: var(--dt-muted);
 }
 /* 锁定原因（注册天数、邮箱、没有限时活动）在英法西文里很长：单独一行，放在进度条的位置 */
 .dt-act-lock {
@@ -309,7 +257,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--dt-line);
   border-radius: 6px;
   padding: 4px 8px;
   margin-bottom: 3px;
@@ -356,12 +304,12 @@ body {
   border-radius: 8px;
 }
 .dt-chip-good {
-  background: #ebfbee;
-  color: #2b8a3e;
+  background: var(--dt-soft-success);
+  color: var(--dt-ink-success);
 }
 .dt-chip-bad {
-  background: #fff5f5;
-  color: #c92a2a;
+  background: var(--dt-soft-danger);
+  color: var(--dt-ink-danger);
 }
 .dt-clamp1 {
   white-space: nowrap;
@@ -369,82 +317,6 @@ body {
   text-overflow: ellipsis;
 }
 
-/* ---------- 视觉规范（docs/design/视觉规范.md） ---------- */
-/* 强调色文字和链接、按钮同一个深橙色（问题记录 575：原来广播是亮橙 #d9480f、日报链接是深橙，看着不一样；深橙在白底上也更清楚） */
-.text-primary {
-  color: rgba(var(--dt-primary-ink-rgb), var(--bs-text-opacity, 1)) !important;
-}
-.btn-primary {
-  --bs-btn-bg: var(--dt-primary-ink);
-  --bs-btn-border-color: var(--dt-primary-ink);
-  --bs-btn-focus-shadow-rgb: var(--dt-primary-rgb);
-  --bs-btn-hover-bg: var(--dt-primary-dark);
-  --bs-btn-hover-border-color: var(--dt-primary-dark);
-  --bs-btn-active-bg: var(--dt-primary-dark);
-  --bs-btn-active-border-color: var(--dt-primary-dark);
-  /* 禁用时浅灰底深灰字：一眼看出点不了，字仍然读得清（PR27 遗留、终审） */
-  --bs-btn-disabled-bg: #f1f3f5;
-  --bs-btn-disabled-border-color: #dee2e6;
-  --bs-btn-disabled-color: #6c757d;
-}
-/* 禁用按钮不再叠加 Bootstrap 的 0.65 透明度，颜色已经表明不可点 */
-.btn {
-  --bs-btn-disabled-opacity: 1;
-}
-/* 实心危险、成功按钮也按视觉规范的颜色（终审） */
-.btn-danger {
-  --bs-btn-bg: #c92a2a;
-  --bs-btn-border-color: #c92a2a;
-  --bs-btn-hover-bg: #a51111;
-  --bs-btn-hover-border-color: #a51111;
-  --bs-btn-active-bg: #a51111;
-  --bs-btn-active-border-color: #a51111;
-}
-.btn-success {
-  --bs-btn-bg: #2b8a3e;
-  --bs-btn-border-color: #2b8a3e;
-  --bs-btn-hover-bg: #237032;
-  --bs-btn-hover-border-color: #237032;
-  --bs-btn-active-bg: #237032;
-  --bs-btn-active-border-color: #237032;
-}
-.btn-outline-primary {
-  --bs-btn-color: var(--dt-primary-ink);
-  --bs-btn-border-color: var(--dt-primary-ink);
-  --bs-btn-hover-bg: var(--dt-primary-ink);
-  --bs-btn-hover-border-color: var(--dt-primary-ink);
-  --bs-btn-focus-shadow-rgb: var(--dt-primary-rgb);
-  --bs-btn-active-bg: var(--dt-primary-dark);
-  --bs-btn-active-border-color: var(--dt-primary-dark);
-  --bs-btn-disabled-color: #adb5bd;
-  --bs-btn-disabled-border-color: #dee2e6;
-}
-/* 危险操作（丢弃、删除）：按视觉规范的红，比 Bootstrap 默认红更沉，和品牌橙拉开（PR27 遗留） */
-.btn-outline-danger {
-  --bs-btn-color: #c92a2a;
-  --bs-btn-border-color: #c92a2a;
-  --bs-btn-hover-bg: #c92a2a;
-  --bs-btn-hover-border-color: #c92a2a;
-  --bs-btn-active-bg: #a51111;
-  --bs-btn-active-border-color: #a51111;
-  --bs-btn-disabled-color: #adb5bd;
-  --bs-btn-disabled-border-color: #dee2e6;
-}
-.nav-tabs .nav-link {
-  color: #495057;
-  /* 标签不换行，放不下时整排横向滑动（问题记录 100） */
-  white-space: nowrap;
-  margin-bottom: 0;
-}
-.nav-tabs .nav-link.active {
-  color: var(--dt-primary-ink);
-  font-weight: 600;
-}
-/* 键盘焦点光圈画在标签里面：画在外面会被横向滑动的容器裁掉一截（backlog #116） */
-.nav-tabs .nav-link:focus-visible {
-  outline: 0;
-  box-shadow: inset 0 0 0 2px rgba(var(--dt-primary-rgb), 0.5);
-}
 /* 手机宽度标签左右留白收窄：广场 6 个标签（简中）一屏放得下，不用先滑才看到第一个（backlog 基金） */
 @media (max-width: 420px) {
   .nav-tabs .nav-link {
@@ -458,11 +330,6 @@ body {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
   }
-}
-.form-control:focus,
-.form-select:focus {
-  border-color: rgba(var(--dt-primary-rgb), 0.5);
-  box-shadow: 0 0 0 0.2rem rgba(var(--dt-primary-rgb), 0.15);
 }
 /* 页面标题：18px 粗体，右侧可放一行次要信息 */
 .dt-page-title {
@@ -489,7 +356,7 @@ h5 {
   gap: 8px;
   min-height: 32px;
   padding: 2px 0;
-  border-top: 1px solid #f1e6da;
+  border-top: 1px solid var(--dt-line);
 }
 /*
  * 文字链接统一（问题记录 445）：都是品牌色、没有下划线。
@@ -563,17 +430,13 @@ a:not([class]):focus-visible {
 .dt-link-btn.text-danger:disabled {
   color: var(--dt-muted) !important;
 }
-.dt-link-btn:focus-visible {
-  outline: 2px solid var(--dt-primary);
-  outline-offset: 1px;
-}
 /* 首页折叠的"生效的加成" */
 details.dt-card > summary {
   cursor: pointer;
 }
 /* 交易所食材列表：有人在卖的绿框；卖 N / 收 N 小标（问题记录 282） */
 .btn.dt-on-sale:not(.btn-primary) {
-  border-color: #2b8a3e;
+  border-color: var(--dt-success);
 }
 .dt-sale-tag {
   display: inline-block;
@@ -581,8 +444,8 @@ details.dt-card > summary {
   border-radius: 4px;
   font-size: 11px;
   line-height: 16px;
-  background: #ebfbee;
-  color: #2b8a3e;
+  background: var(--dt-soft-success);
+  color: var(--dt-ink-success);
 }
 .dt-buy-tag {
   display: inline-block;
@@ -590,8 +453,8 @@ details.dt-card > summary {
   border-radius: 4px;
   font-size: 11px;
   line-height: 16px;
-  background: #e7f5ff;
-  color: #1864ab;
+  background: var(--dt-soft-primary);
+  color: var(--dt-ink-primary);
 }
 /* 卡片标题：和正文同字号、粗 600（问题记录 278：卡片里的 <b> 继承 16px 显得粗大） */
 .dt-card-title {
@@ -685,9 +548,9 @@ details.dt-card > summary {
 /* 卡片 */
 /* 内边距 8/12 → 6/10、卡片间距 8 → 6（问题记录 439） */
 .dt-card {
-  background: #fff;
-  border: 1px solid #f1e6da;
-  border-radius: 8px;
+  background: var(--dt-surface);
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-md);
   padding: 6px 10px;
 }
 .dt-card + .dt-card {
@@ -715,47 +578,10 @@ details.dt-card > summary {
   gap: 4px;
   margin-bottom: 8px;
 }
-/* 胶囊里放 .btn 时按 .btn 的样式走，不被这里盖掉 */
-.dt-pills a:not(.btn),
-.dt-pills button:not(.btn) {
-  font-size: 13px;
-  padding: 2px 10px;
-  border: 0;
-  border-radius: 999px;
-  color: #495057;
-  background: var(--dt-line);
-  text-decoration: none;
-}
-.dt-pills a:not(.btn):focus-visible,
-.dt-pills button:not(.btn):focus-visible {
-  outline: 2px solid var(--dt-primary);
-  outline-offset: 1px;
-}
-.dt-pills button:not(.btn):disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-.dt-pills a.active:not(.btn),
-.dt-pills button.active:not(.btn) {
-  color: #fff;
-  background: var(--dt-primary-ink);
-}
-/* 一级标签页不换行：英法西文标签多、放不下时横向滑动（问题记录 100 视觉自检） */
-.nav-tabs {
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: none;
-  /* 滑动容器会裁掉标签往下伸的 1px：底线改画在容器里面，选中标签的白色下边框照样盖住它 */
-  border-bottom: 0;
-  box-shadow: inset 0 -1px 0 var(--bs-nav-tabs-border-color, #dee2e6);
-  /* 给聚焦光圈留出上方空间 */
-  padding-top: 4px;
-}
 /* 右边还有没露出来的标签：右侧渐隐（utils/tabsScroll.ts 加类） */
 .nav-tabs.dt-tabs-more {
-  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
-  mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+  -webkit-mask-image: linear-gradient(to right, black calc(100% - 24px), transparent);
+  mask-image: linear-gradient(to right, black calc(100% - 24px), transparent);
 }
 .nav-tabs::-webkit-scrollbar {
   display: none;
@@ -779,8 +605,8 @@ details.dt-card > summary {
 /* 品牌浅底的提示块（一番赏月度主题等），代替 Bootstrap 的青色 alert-info */
 .dt-note {
   background: var(--dt-primary-soft);
-  border: 1px solid #f1e6da;
-  border-radius: 8px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-sm);
   padding: 4px 12px;
 }
 .dt-empty {
@@ -788,41 +614,6 @@ details.dt-card > summary {
   color: var(--dt-muted);
   font-size: 13px;
   padding: 12px 0;
-}
-/* 微交互：按下时轻微缩小；系统要求减少动态效果时不做 */
-@media (prefers-reduced-motion: no-preference) {
-  .btn,
-  .dt-tap {
-    transition:
-      transform 80ms ease-out,
-      background-color 0.15s,
-      color 0.15s,
-      border-color 0.15s;
-  }
-  .btn:not(:disabled):active,
-  .dt-tap:active {
-    transform: scale(0.97);
-  }
-  /* 胶囊和按钮一样按下缩一下（backlog #116） */
-  .dt-pills a:not(.btn),
-  .dt-pills button:not(.btn) {
-    transition:
-      transform 80ms ease-out,
-      background-color 0.15s;
-  }
-  .dt-pills a:not(.btn):active,
-  .dt-pills button:not(.btn):not(:disabled):active {
-    transform: scale(0.97);
-  }
-}
-@media (hover: hover) {
-  .dt-tap:hover {
-    background: var(--dt-primary-soft);
-  }
-  .dt-pills a:not(.btn):not(.active):hover,
-  .dt-pills button:not(.btn):not(.active):not(:disabled):hover {
-    background: #e9ecef;
-  }
 }
 /* 两列按钮网格（雷神锤的四个天气类型） */
 .dt-grid2 {
@@ -837,7 +628,7 @@ details.dt-card > summary {
   gap: 4px;
 }
 .dt-pick {
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--dt-line);
   border-radius: 6px;
   padding: 4px 6px;
   font-size: 12px;
@@ -848,18 +639,6 @@ details.dt-card > summary {
 }
 .dt-span2 {
   grid-column: span 2;
-}
-/* 勾选框、开关、聚焦光圈：Bootstrap 写死了蓝色，统一成品牌色（终审 I5） */
-.form-check-input:checked {
-  background-color: var(--dt-primary-ink);
-  border-color: var(--dt-primary-ink);
-}
-.form-check-input:focus {
-  border-color: rgba(var(--dt-primary-rgb), 0.5);
-  box-shadow: 0 0 0 0.2rem rgba(var(--dt-primary-rgb), 0.15);
-}
-.form-switch .form-check-input:focus:not(:checked) {
-  --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23e8936b'/%3e%3c/svg%3e");
 }
 /* ---------- 酒吧扩展（子项目 4C-3） ---------- */
 /* 一掷千金（问题记录 427-3）：10 个箱子每行 5 个；名字长时折行，不撑出屏幕 */
@@ -893,7 +672,7 @@ details.dt-card > summary {
   border-width: 2px;
 }
 .dt-deal-opened {
-  background: #fff;
+  background: var(--dt-surface);
   color: var(--dt-muted);
 }
 .dt-deal-box-text {
@@ -957,7 +736,7 @@ details.dt-card > summary {
   min-height: 32px;
   border: 1px dashed var(--dt-line);
   border-radius: 6px;
-  background: #fff;
+  background: var(--dt-surface);
   font: inherit;
   color: inherit;
 }
@@ -1003,7 +782,7 @@ details.dt-card > summary {
   padding: 8px 4px;
   border: 1px solid var(--dt-line);
   border-radius: 8px;
-  background: #fff;
+  background: var(--dt-surface);
   font-size: 12px;
   color: var(--dt-muted);
 }
@@ -1015,8 +794,8 @@ details.dt-card > summary {
   opacity: 1;
 }
 .dt-cup-me {
-  background: #ebfbee;
-  border-color: #b2f2bb;
+  background: var(--dt-soft-success);
+  border-color: var(--dt-fill-success);
 }
 .dt-cup-bar {
   background: var(--dt-line);
@@ -1026,9 +805,9 @@ details.dt-card > summary {
   opacity: 0.45;
 }
 .dt-cup-spiked {
-  background: #fff5f5;
-  border-color: #ffa8a8;
-  color: #c92a2a;
+  background: var(--dt-soft-danger);
+  border-color: var(--dt-fill-danger);
+  color: var(--dt-ink-danger);
 }
 /* 记忆调酒：8 种配料两行 */
 .dt-mixes {
@@ -1042,7 +821,7 @@ details.dt-card > summary {
   padding: 8px 0;
   border: 1px solid var(--dt-line);
   border-radius: 8px;
-  background: #fff;
+  background: var(--dt-surface);
   font-size: 13px;
   color: var(--dt-muted);
 }
@@ -1050,16 +829,16 @@ details.dt-card > summary {
   opacity: 1;
 }
 .dt-mix-on {
-  background: var(--dt-primary-ink);
-  border-color: var(--dt-primary-ink);
-  color: #fff;
+  background: var(--dt-primary);
+  border-color: var(--dt-primary);
+  color: var(--dt-on-primary);
 }
 /* 飞镖：横向靶条，中间三圈，准星是一条竖线（宽度按 tuning 的 0.3 / 0.15 / 0.05 半径） */
 .dt-board {
   position: relative;
   height: 44px;
   border-radius: 8px;
-  background: #f1f3f5;
+  background: var(--dt-surface-2);
   overflow: hidden;
 }
 .dt-board-ring {
@@ -1071,15 +850,15 @@ details.dt-card > summary {
 }
 .dt-board-r5 {
   width: 50%;
-  background: #fff4e6;
+  background: var(--dt-primary-soft);
 }
 .dt-board-r10 {
   width: 30%;
-  background: #ffe8cc;
+  background: color-mix(in srgb, var(--dt-primary) 30%, var(--dt-surface));
 }
 .dt-board-r25 {
   width: 15%;
-  background: #ffc078;
+  background: color-mix(in srgb, var(--dt-primary) 60%, var(--dt-surface));
 }
 .dt-board-r50 {
   width: 5%;
@@ -1091,7 +870,7 @@ details.dt-card > summary {
   bottom: 2px;
   width: 3px;
   margin-left: -1px;
-  background: #212529;
+  background: var(--dt-text);
   border-radius: 2px;
 }
 
@@ -1103,7 +882,7 @@ details.dt-card > summary {
   width: 8rem;
 }
 .dt-item-me {
-  background: #fff4e6;
+  background: var(--dt-primary-soft);
   border-radius: 6px;
 }
 .dt-rank-no {
@@ -1124,7 +903,7 @@ details.dt-card > summary {
 /* 顶栏邮箱未读数（子项目 6A） */
 /* 首页经验条（问题记录 212）：柔和的橙色，不再是亮黄色大块 */
 .dt-exp-bar {
-  background-color: #ffc078;
+  background-color: var(--dt-fill-primary);
 }
 /* 顶栏邮箱（问题记录 200）：图标放大，未读数缩小贴在右上角 */
 .dt-mail-icon {
@@ -1132,7 +911,7 @@ details.dt-card > summary {
   line-height: 1;
 }
 .dt-mail-badge {
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1;
   min-width: 14px;
   padding: 2px 4px;
@@ -1160,57 +939,6 @@ details.dt-card > summary {
   border-color: var(--bs-success-border-subtle);
 }
 
-/* 徽章、标签：浅底深字（问题记录 216）；未读数圆点（rounded-pill）保持实心醒目 */
-.badge.text-bg-primary,
-.badge:not(.rounded-pill).bg-primary {
-  background-color: var(--dt-soft-primary) !important;
-  color: var(--dt-ink-primary) !important;
-}
-.badge.text-bg-success,
-.badge:not(.rounded-pill).bg-success {
-  background-color: var(--dt-soft-success) !important;
-  color: var(--dt-ink-success) !important;
-}
-.badge.text-bg-danger,
-.badge:not(.rounded-pill).bg-danger {
-  background-color: var(--dt-soft-danger) !important;
-  color: var(--dt-ink-danger) !important;
-}
-.badge.text-bg-warning,
-.badge:not(.rounded-pill).bg-warning {
-  background-color: var(--dt-soft-warning) !important;
-  color: var(--dt-ink-warning) !important;
-}
-.badge.text-bg-info,
-.badge:not(.rounded-pill).bg-info {
-  background-color: var(--dt-soft-info) !important;
-  color: var(--dt-ink-info) !important;
-}
-.badge.text-bg-secondary,
-.badge:not(.rounded-pill).bg-secondary {
-  background-color: var(--dt-soft-secondary) !important;
-  color: var(--dt-ink-secondary) !important;
-}
-/* 进度条填充：中等亮度，不再是饱和色块 */
-.progress-bar.bg-primary {
-  background-color: var(--dt-fill-primary) !important;
-}
-.progress-bar.bg-success {
-  background-color: var(--dt-fill-success) !important;
-}
-.progress-bar.bg-danger {
-  background-color: var(--dt-fill-danger) !important;
-}
-.progress-bar.bg-warning {
-  background-color: var(--dt-fill-warning) !important;
-}
-.progress-bar.bg-info {
-  background-color: var(--dt-fill-info) !important;
-}
-.progress-bar.bg-secondary {
-  background-color: var(--dt-fill-secondary) !important;
-}
-
 /* 活动条（问题记录 226）：手机上横向滑动，宽屏自动换行 */
 .dt-act-strip {
   display: flex;
@@ -1233,4 +961,51 @@ details.dt-card > summary {
     flex-wrap: wrap;
     overflow-x: visible;
   }
+}
+/* ---------- 图形（界面改版设计 §3） ---------- */
+.dt-art {
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+/* 界面图标：描边是文字色，填充是同色的浅调；选中时（父元素 .active / aria-current）加深 */
+.dt-art-ui {
+  color: var(--dt-primary-ink);
+  fill-opacity: 0.18;
+}
+.active > .dt-art-ui,
+[aria-current='page'] > .dt-art-ui {
+  fill-opacity: 0.4;
+}
+/* 开发用图库 /dev/art：浅色、深色并排 */
+.dt-gallery {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.dt-gallery-pane {
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  padding: 8px;
+  border-radius: var(--dt-radius-md);
+}
+.dt-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 6px;
+}
+.dt-gallery-item {
+  margin: 0;
+  text-align: center;
+  font-size: 11px;
+  color: var(--dt-muted);
+  overflow-wrap: anywhere;
+}
+.dt-gallery-active > .dt-art-ui {
+  fill-opacity: 0.4;
+}
+.dt-gallery-tile {
+  display: inline-flex;
+  padding: 6px;
+  border-radius: var(--dt-radius-sm);
+  background: var(--dt-surface-2);
 }

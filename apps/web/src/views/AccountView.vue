@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import LangSelect from '../components/LangSelect.vue';
+import ThemeSelect from '../components/ThemeSelect.vue';
 import { gameDate } from '../utils/format';
 import { onMounted, ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
@@ -90,6 +91,8 @@ async function logout() {
     <dl class="dt-kv small mb-3" data-testid="acc-info">
       <dt>{{ t.common.language }}</dt>
       <dd data-testid="acc-lang"><LangSelect /></dd>
+      <dt>{{ t.common.appearance }}</dt>
+      <dd data-testid="acc-theme"><ThemeSelect /></dd>
       <dt>{{ t.account.username }}</dt>
       <dd>
         <b>{{ p.username }}</b

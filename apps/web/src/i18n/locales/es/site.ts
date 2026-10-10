@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    theme1011:
+      'Nuevos colores amatista, con botones, campos y pestañas renovados. Llega el modo oscuro: elige Según el sistema, Claro u Oscuro en Apariencia, dentro de Mi cuenta',
     wishtree1011:
       'La plaza tiene un nuevo Árbol de los deseos: el sorteo es cada día a las 20:00 y a la vez el árbol da un objeto nuevo. Desde el nivel 10, cada restaurante puede pedir 1 deseo gratis por ronda; en el sorteo se elige un restaurante que pidió deseo y recibe el objeto y el título «Deseo cumplido» durante 3 días (por correo). Los demás reciben una recompensa aleatoria',
     ui1011:
