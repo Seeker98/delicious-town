@@ -59,6 +59,8 @@ export const TUNING_ID_PATHS: readonly PathRule[] = [
   [['wealth', 'terms', '*', 'goods'], 'goods'],
   // 大宗认购的安慰奖（大宗认购设计 §2.1）：键名 goods 但值是单个编号
   [['bulk', 'consolation', 'goods'], 'goods'],
+  // 许愿树的道具清单（许愿树设计 §2）：键名 goods 但值是单个编号
+  [['wishTree', 'prizes', '*', 'goods'], 'goods'],
   [['hiphop', 'wages', '*', 0], 'goods'],
   [['hiphop', 'wages', '*', 1], 'goods'],
   [['temple', 'missileAttack', '*', 0], 'goods'],

@@ -1473,6 +1473,33 @@ export interface BulkBidTable {
   consolation: Default<boolean>;
   settled_at: TsNullable;
 }
+/** 许愿树的一轮（许愿树设计 §3.1）：每区服每个游戏日一轮 */
+export interface WishRoundTable {
+  id: Generated<string>;
+  shard_id: number;
+  /** YYYY-MM-DD（开这一轮的游戏日） */
+  day: string;
+  goods_id: number;
+  num: number;
+  opens_at: Ts;
+  ends_at: Ts;
+  status: Default<'open' | 'drawn' | 'empty'>;
+  winner_rest_id: Nullable<number>;
+  /** 许愿人数，开奖时写 */
+  entries: Nullable<number>;
+  drawn_at: TsNullable;
+}
+/** 一家店在一轮里的许愿；开奖后写 won，安慰奖发完写 award / settled_at */
+export interface WishEntryTable {
+  round_id: string;
+  rest_id: number;
+  shard_id: number;
+  created_at: Ts;
+  won: Default<boolean>;
+  /** 安慰奖（RandomAward）；jsonb，读出为对象，写入传 JSON 字符串；没发的为空 */
+  award: ColumnType<unknown, string | null | undefined, string | null>;
+  settled_at: TsNullable;
+}
 
 export interface KujiPoolTable {
   id: Generated<string>;
@@ -1622,6 +1649,8 @@ export interface DB {
   bulk_food: BulkFoodTable;
   bulk_lot: BulkLotTable;
   bulk_bid: BulkBidTable;
+  wish_round: WishRoundTable;
+  wish_entry: WishEntryTable;
   rest_income_day: RestIncomeDayTable;
   rest_income_best: RestIncomeBestTable;
   town_daily: TownDailyTable;

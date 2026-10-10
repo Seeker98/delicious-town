@@ -90,5 +90,9 @@
   "fund_a": {
     "title": "Cornerstone Lead",
     "desc": "Town Development Fund, A · Cornerstone Lead (limited time, expires with the medal)"
+  },
+  "wish_tree": {
+    "title": "Wish Come True",
+    "desc": "Won the Wishing Tree draw (limited time)"
   }
 }

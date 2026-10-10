@@ -7,6 +7,7 @@ export const BROADCAST_STYLE_NEWS: readonly string[] = [
   'kuji.big',
   'fund.big',
   'bar.cup.big',
+  'wishtree.win',
 ];
 export const isBroadcastStyle = (type: string): boolean => BROADCAST_STYLE_NEWS.includes(type);
 
@@ -63,5 +64,6 @@ export const NEWS_TYPES: readonly string[] = [
   'fund.deposit',
   'predict.result',
   'bulk.deal',
+  'wishtree.win',
   'icon.buy',
 ];

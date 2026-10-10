@@ -48,6 +48,7 @@ export * from './schemas/exchange';
 export * from './schemas/futures';
 export * from './schemas/wealth';
 export * from './schemas/bulk';
+export * from './schemas/wishtree';
 export * from './predict';
 export * from './schemas/predict';
 export * from './schemas/kuji';

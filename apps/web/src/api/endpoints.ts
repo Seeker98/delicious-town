@@ -171,6 +171,7 @@ import type {
   WealthViewDto,
   BulkBidInput,
   BulkDto,
+  WishTreeDto,
   PredictListDto,
   PredictTradeDto,
   ActivitySummaryDto,
@@ -586,6 +587,8 @@ export const endpoints = {
   fundWithdraw: () => api.post<FundViewDto>('/api/v1/fund/withdraw', {}),
   bulk: () => api.get<BulkDto>('/api/v1/bulk'),
   bulkBid: (body: BulkBidInput) => api.post<BulkDto>('/api/v1/bulk/bid', body),
+  wishTree: () => api.get<WishTreeDto>('/api/v1/wishtree'),
+  wishTreeWish: () => api.post<WishTreeDto>('/api/v1/wishtree/wish', {}),
   wealth: () => api.get<WealthViewDto>('/api/v1/wealth'),
   wealthDeposit: (days: number, coin: number) =>
     api.post<WealthViewDto>('/api/v1/wealth/deposit', { days, coin }),

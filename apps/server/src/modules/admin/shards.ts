@@ -3,6 +3,7 @@ import {
   fundErrors,
   wealthErrors,
   bulkErrors,
+  wishTreeErrors,
   GOODS_TYPE,
   isFeatureEnabled,
   kujiErrors,
@@ -113,6 +114,15 @@ export function createAdminShards(game: Game, log?: WarnLog) {
     if (bulk.length > 0)
       throw new AppError(ErrorCode.INVALID_CONFIG, 400, {
         issues: bulk.map((message) => ({ path: 'tuning.bulk', message })),
+      });
+    // 许愿树（许愿树设计 §2）：和配置构建同一套检查
+    const wish = wishTreeErrors(resolved.tuning.wishTree, {
+      goodsIds: new Set(config.goods.keys()),
+      iconKeys: new Set(config.bundle.looks.icons.map((i) => i.key)),
+    });
+    if (wish.length > 0)
+      throw new AppError(ErrorCode.INVALID_CONFIG, 400, {
+        issues: wish.map((message) => ({ path: 'tuning.wishTree', message })),
       });
     // 老虎机保底奖（backlog 1010）：和配置构建同一套检查
     const slot = slotFloorErrors(resolved.tuning.bar.slotFloorAwardId, config.bundle.slotAwards);

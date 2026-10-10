@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    wishtree1011:
+      "La place a un nouvel Arbre à vœux\u202f: tirage chaque jour à 20\u202fh, et l'arbre donne un nouvel objet au même moment. À partir du niveau 10, chaque restaurant peut faire 1 vœu gratuit par tour\u202f; au tirage, un restaurant qui a fait un vœu remporte l'objet et le titre «\u202fVœu exaucé\u202f» pendant 3 jours (envoyés par courrier). Les autres reçoivent une récompense aléatoire",
     ui1011:
       "Les entrées d'activité sur ce que vos amis vous ont fait (repas non payé, cafards, échanges d'ingrédients, etc.) mènent maintenant directement à leur restaurant, et les échanges précisent quel ingrédient de quel niveau a été échangé contre lequel. La liste du jour sur l'accueil gagne une ligne Bourse dès que vous remplissez ses conditions, avec la souscription en gros en cours et la quantité déjà demandée. La souscription en gros passe à l'aveugle pendant la dernière heure\u202f: prix prévu, limite et quantités demandées sont figés à ce moment-là, et les résultats sont révélés à la clôture",
     bulk1010:

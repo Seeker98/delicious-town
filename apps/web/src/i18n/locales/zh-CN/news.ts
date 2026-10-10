@@ -129,6 +129,8 @@ export default {
     'predict.result': (_w, p) => predictResult(p),
     'bulk.deal': (_w, p, x) =>
       `特许大宗认购: ${x.foodName(num(p.foodsId))}×${num(p.sold)} 以 ${formatNum(num(p.price))} 银币成交, 认购 ${Math.round((num(p.demand) / Math.max(1, num(p.qty))) * 10) / 10} 倍`,
+    'wishtree.win': (w, p, x) =>
+      `${w}在许愿树下许愿成真, 得到了 ${x.goodsName(num(p.goodsId))}×${num(p.num)}！(${num(p.entries)} 人许愿)`,
   }),
   /** 没有文案的新闻类型 */
   unknown: '小镇发生了一件事',

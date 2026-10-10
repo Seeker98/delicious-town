@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { TownDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -7,17 +7,19 @@ import { useT } from '../composables/useT';
 import NewsPanel from '../components/town/NewsPanel.vue';
 import RankPanel from '../components/town/RankPanel.vue';
 import TownPanel from '../components/town/TownPanel.vue';
+import WishTreePanel from '../components/town/WishTreePanel.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
+import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
 
 /** 'town' 是"居民"标签，键名沿用旧的，免得已存的上次标签和旧链接失效 */
-type Tab = 'news' | 'town' | 'rank';
+type Tab = 'news' | 'town' | 'rank' | 'wishtree';
 const KEY = 'dt_town_tab';
 /** 页面叫"广场"，避免和游戏名"美味小镇"混淆；教室、兑换、发展基金搬到了协会（问题记录 441） */
-const TABS: readonly Tab[] = ['news', 'town', 'rank'];
-const isTab = (v: unknown): v is Tab => TABS.includes(v as Tab);
+const ALL_TABS: readonly Tab[] = ['news', 'town', 'rank', 'wishtree'];
+const isTab = (v: unknown): v is Tab => ALL_TABS.includes(v as Tab);
 /** 搬走的标签：旧链接、书签转到协会对应的页 */
 const MOVED: Record<string, string> = {
   exchange: '/society/mayor',
@@ -35,11 +37,15 @@ function initialTab(query: unknown): Tab {
   }
 }
 const toast = useToastStore();
+const restStore = useRestaurantStore();
+/** 许愿树（许愿树设计 §3.3）：区服关了时不显示这个标签 */
+const TABS = computed(() => ALL_TABS.filter((x) => x !== 'wishtree' || restStore.featureOn('wishtree')));
 const t = useT();
 const catalog = useCatalogStore();
 const route = useRoute();
 const router = useRouter();
-const tab = ref<Tab>(initialTab(route.query.tab));
+const first = initialTab(route.query.tab);
+const tab = ref<Tab>(TABS.value.includes(first) ? first : 'news');
 const moved = typeof route.query.tab === 'string' ? MOVED[route.query.tab] : undefined;
 if (moved) void router.replace(moved);
 const data = ref<TownDto | null>(null);
@@ -93,6 +99,7 @@ onMounted(() => {
     </li>
   </ul>
   <RankPanel v-if="tab === 'rank'" />
+  <WishTreePanel v-else-if="tab === 'wishtree'" />
   <template v-else-if="data">
     <NewsPanel v-if="tab === 'news'" :data="data" @reload="load" />
     <TownPanel v-else-if="tab === 'town'" :data="data" @reload="load" />

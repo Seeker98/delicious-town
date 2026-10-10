@@ -1,0 +1,30 @@
+// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
+/** 許願樹（許願樹設計 2026-10-11） */
+export default {
+  loadFailed: '讀取許願樹失敗',
+  wishFailed: '許願失敗',
+  intro: '每天樹上結出一種道具, 許過願的餐廳裡抽 1 家拿走它。',
+  helpTitle: '許願樹怎麼玩',
+  help: (hour: number, minLevel: number, titleDays: number, titleName: string) => [
+    `每天 ${hour}:00 開獎, 同時樹上結出新的道具, 全服都一樣`,
+    `餐廳 ${minLevel} 級以上每輪可以許 1 次願, 不花任何東西`,
+    `開獎時從許過願的餐廳裡隨機抽 1 家, 得到樹上的道具和稱號「${titleName}」(領取後 ${titleDays} 天有效), 通過郵件發放`,
+    '沒中的每家得一份隨機獎勵, 直接發到身上',
+  ],
+  off: '本區服暫未開放許願樹',
+  today: '今天樹上結了',
+  entries: (n: number) => `已有 ${n} 人許願`,
+  drawAt: (time: string) => `${time} 開獎`,
+  wish: '許願',
+  wished: '已許願, 等待開獎',
+  need: (level: number) => `餐廳 ${level} 級才能許願`,
+  done: '許好了, 開獎時見分曉',
+  none: (hour: number) => `現在沒有進行中的一輪, 每天 ${hour}:00 結出新的道具`,
+  recentTitle: '最近幾輪',
+  noRecent: '還沒有開過獎',
+  empty: '沒人許願',
+  winner: (name: string, n: number) => `${name} 中獎 (${n} 人許願)`,
+  mine: '你中了！獎品在郵箱裡',
+  lost: (award: string) => `你沒中, 得到 ${award}`,
+  pending: '你沒中, 安慰獎馬上發放',
+};

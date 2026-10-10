@@ -3,7 +3,7 @@
 export default {
   title: '廣場',
   forum: '論壇',
-  tabs: { news: '新聞', town: '居民', rank: '排行' },
+  tabs: { news: '新聞', town: '居民', rank: '排行', wishtree: '許願樹' },
   loadFailed: '讀取廣場失敗',
   restFailed: '讀取餐廳資料失敗。',
   retry: '重試',

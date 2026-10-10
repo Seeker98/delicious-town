@@ -90,5 +90,9 @@
   "fund_a": {
     "title": "Investisseur pilier",
     "desc": "Fonds de développement, A · Investisseur pilier (temporaire, expire avec la médaille)"
+  },
+  "wish_tree": {
+    "title": "Vœu exaucé",
+    "desc": "Gagnant du tirage de l’Arbre à vœux (temporaire)"
   }
 }

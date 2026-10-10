@@ -302,6 +302,7 @@ export default {
     wealth_not_mature: '還沒到期',
     wealth_mature: '已經到期了, 請直接領取',
     bulk_not_open: '這一批已經結束或取消了',
+    wishtree_closed: '這一輪已經到開獎時間了, 等新的一輪',
     bulk_closed: '已經收盤了, 這次出價無效',
     bulk_cooldown: '出價太快了, 等幾秒再試',
     bulk_raise: '加價不夠, 每次至少要加到頁面上寫的價格',
@@ -423,6 +424,7 @@ export default {
     cup_taken: '這杯已經有人喝過了',
     shake: '蟹老闆握緊了他的錢袋 (今天已經搖過了)',
     wish: '今天已經有人許過願了',
+    wishtree: '這一輪你已經許過願了',
     feast: '今天已經共饗過了',
   },
   /** 帶引數的特殊文案 */

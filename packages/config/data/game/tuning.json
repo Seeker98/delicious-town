@@ -466,6 +466,18 @@
     "consolation": { "goods": 10202, "num": 1 },
     "blindMin": 60
   },
+  "wishTree": {
+    "hour": 20, "minLevel": 10, "titleDays": 3, "consolationLevel": 1,
+    "prizes": [
+      { "goods": 10110, "num": 1, "weight": 10 },
+      { "goods": 10006, "num": 1, "weight": 10 },
+      { "goods": 10707, "num": 1, "weight": 15 },
+      { "goods": 10005, "num": 1, "weight": 15 },
+      { "goods": 10403, "num": 1, "weight": 15 },
+      { "goods": 10416, "num": 1, "weight": 15 },
+      { "goods": 10205, "num": 5, "weight": 20 }
+    ]
+  },
   "acquire": {
     "priceDays": 7, "priceMultiple": 5, "minPrice": 100000,
     "heatStep": 0.2, "heatListDrop": 0.1, "heatMax": 3, "heatDecay": 0.1,
