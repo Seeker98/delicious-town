@@ -8,7 +8,6 @@ const nav: Messages['nav'] = {
     market: 'Marché',
     friends: 'Amis',
     map: 'Ville',
-    more: 'Plus',
   },
   /** 顶栏标题：没有现成标题键的页面（界面改版 P2a） */
   titles: {
@@ -33,7 +32,6 @@ const nav: Messages['nav'] = {
     forumPost: 'Message',
     wikiItem: 'Données du jeu',
   },
-  groups: { manage: 'Gestion', play: 'Jeux', other: 'Autres' },
   links: {
     activities: 'Événements',
     exchange: 'Bourse',

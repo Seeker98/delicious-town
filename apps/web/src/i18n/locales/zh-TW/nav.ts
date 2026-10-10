@@ -1,5 +1,5 @@
 // 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
-/** 底部導航、"更多"面板、公告和活動橫幅、首頁新聞卡（問題記錄 272） */
+/** 底部導航、頂欄、小鎮、我、幫助中心、公告和活動橫幅、首頁新聞卡（問題記錄 272、介面改版 P2a） */
 export default {
   tabs: {
     rest: '餐廳',
@@ -8,7 +8,6 @@ export default {
     market: '菜場',
     friends: '好友',
     map: '小鎮',
-    more: '更多',
   },
   /** 頂欄標題：沒有現成標題鍵的頁面（介面改版 P2a） */
   titles: {
@@ -33,7 +32,6 @@ export default {
     forumPost: '帖子',
     wikiItem: '遊戲資料',
   },
-  groups: { manage: '經營', play: '玩法', other: '其他' },
   links: {
     activities: '限時活動',
     exchange: '交易所',

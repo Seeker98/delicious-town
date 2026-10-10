@@ -113,25 +113,57 @@ html {
   object-fit: contain;
 }
 .dt-main-nav {
-  padding-bottom: 72px;
+  padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
 }
+/* ---------- 底部导航（界面改版 P2a，设计 §4.1）：6 个入口，按所属入口高亮 ---------- */
 .dt-bottom-nav {
   position: fixed;
   left: 50%;
-  transform: translateX(-50%);
   bottom: 0;
+  transform: translateX(-50%);
+  z-index: 1030;
+  display: flex;
   width: 100%;
   max-width: 720px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   background: var(--dt-surface);
   border-top: 1px solid var(--dt-line);
-  z-index: 1030;
 }
-.dt-bottom-nav a {
+.dt-tab {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 6px 2px 4px;
   color: var(--dt-muted);
   text-decoration: none;
+  font-size: 11px;
 }
-.dt-bottom-nav a.router-link-exact-active {
-  color: var(--dt-primary);
+/* 法文、西文的入口名长：一行截断，不和隔壁连在一起（P1 截图里 Restaurant Recettes Garde-manger） */
+.dt-tab-label {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dt-tab .dt-art-ui {
+  color: var(--dt-muted);
+}
+.dt-tab.active {
+  color: var(--dt-primary-ink);
+  font-weight: 600;
+}
+.dt-tab.active .dt-art-ui {
+  color: var(--dt-primary-ink);
+  fill-opacity: 0.4;
+}
+.dt-tab-dot {
+  position: absolute;
+  top: 2px;
+  left: 55%;
 }
 /* 顶栏时间点开的小卡片（问题记录 348） */
 .dt-clock-detail {
@@ -211,51 +243,6 @@ html {
 }
 .dt-feature {
   min-width: 0;
-}
-/* "更多"的分组小图标（底部弹出面板和 /more 页共用） */
-.dt-more-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 4px;
-}
-.dt-more-link {
-  font-size: 11px;
-  color: var(--dt-muted);
-  padding: 4px 0;
-  border-radius: 6px;
-  line-height: 1.2;
-}
-.dt-more-link:hover {
-  background: var(--dt-surface-2);
-}
-.dt-more-link i {
-  font-size: 18px;
-  color: var(--dt-primary);
-}
-.dt-more-backdrop {
-  position: fixed;
-  inset: 0;
-  background: var(--dt-scrim);
-  /* 在底部导航之下：面板打开时仍能直接点别的标签 */
-  z-index: 1028;
-}
-.dt-more-sheet {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 0;
-  width: 100%;
-  max-width: 720px;
-  max-height: 70vh;
-  overflow-y: auto;
-  background: var(--dt-surface);
-  border-radius: 12px 12px 0 0;
-  /* 底部留出导航栏的高度 */
-  padding: 12px 16px 64px;
-  z-index: 1029;
-}
-.dt-bottom-nav a.dt-more-on {
-  color: var(--dt-primary);
 }
 /* 任务页的活跃项：进行中白底橙条、做满浅绿、星级不够灰底（问题记录：灰色黑色分不清） */
 /* 店铺页的厨具：部位一列按最长的部位名定宽，名字一列占满、没有空格的长名字也折行，强化等级靠右（问题记录 323） */
@@ -1069,4 +1056,13 @@ details.dt-card > summary {
   padding: 6px;
   border-radius: var(--dt-radius-sm);
   background: var(--dt-surface-2);
+}
+/* 底部导航按下：图标轻轻缩一下（不要求减少动态时） */
+@media (prefers-reduced-motion: no-preference) {
+  .dt-tab .dt-art {
+    transition: transform var(--dt-dur-press) var(--dt-ease-out);
+  }
+  .dt-tab:active .dt-art {
+    transform: scale(0.92);
+  }
 }

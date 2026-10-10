@@ -1,68 +1,53 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
+import { useT } from '../composables/useT';
+import { SECTIONS, type Section } from '../nav/sections';
 import { useFriendsStore } from '../stores/friends';
 import { useRestaurantStore } from '../stores/restaurant';
-import { useT } from '../composables/useT';
-import MoreLinks from './MoreLinks.vue';
+import DtArt from './DtArt.vue';
 
-const TABS = [
-  { to: '/', icon: 'bi-shop', key: 'rest' },
-  { to: '/cookbooks', icon: 'bi-journal-text', key: 'cookbooks', feature: 'cookbook' },
-  { to: '/cupboard', icon: 'bi-box-seam', key: 'cupboard', feature: 'cupboard' },
-  { to: '/market', icon: 'bi-basket', key: 'market', feature: 'market' },
-  { to: '/friends', icon: 'bi-people', key: 'friends', feature: 'friend' },
-] as const;
+/** 底部导航（界面改版设计 §4.1）：6 个入口，按页面所属的入口高亮（详情页也亮）；“更多”换成了小镇 */
 const t = useT();
-const restStore = useRestaurantStore();
-/** 区服关掉的功能不显示标签（问题记录 248） */
-const tabs = computed(() => TABS.filter((x) => !('feature' in x) || restStore.featureOn(x.feature)));
-const friends = useFriendsStore();
 const route = useRoute();
-/** "更多"不跳页，从底部弹出面板（问题记录：更多里的功能放到全局） */
-const moreOpen = ref(false);
+const restStore = useRestaurantStore();
+const friends = useFriendsStore();
+/** 区服关掉的功能不显示入口（问题记录 248） */
+const tabs = computed(() => SECTIONS.filter((s) => !s.feature || restStore.featureOn(s.feature)));
+const current = computed(() => route.meta.section ?? null);
+const LABEL: Record<Section, 'rest' | 'cookbooks' | 'cupboard' | 'market' | 'friends' | 'map'> = {
+  home: 'rest',
+  cookbooks: 'cookbooks',
+  cupboard: 'cupboard',
+  market: 'market',
+  friends: 'friends',
+  map: 'map',
+};
 onMounted(() => friends.refreshPending());
 watch(
   () => route.path,
-  () => {
-    moreOpen.value = false;
-    void friends.refreshPending();
-  },
+  () => void friends.refreshPending(),
 );
 </script>
 
 <template>
-  <template v-if="moreOpen">
-    <div class="dt-more-backdrop" data-testid="more-backdrop" @click="moreOpen = false"></div>
-    <div class="dt-more-sheet" data-testid="more-sheet">
-      <MoreLinks @pick="moreOpen = false" />
-    </div>
-  </template>
-  <nav class="dt-bottom-nav d-flex">
+  <nav class="dt-bottom-nav">
     <RouterLink
-      v-for="x in tabs"
-      :key="x.to"
-      :to="x.to"
-      class="flex-fill text-center small py-1 position-relative"
-      @click="moreOpen = false"
+      v-for="s in tabs"
+      :key="s.key"
+      :to="s.to"
+      :class="['dt-tab', { active: current === s.key }]"
+      :aria-current="current === s.key ? 'page' : undefined"
+      :data-testid="`tab-${s.key}`"
     >
-      <i :class="['bi', x.icon, 'd-block', 'fs-5']"></i>{{ t.nav.tabs[x.key] }}
+      <DtArt :name="s.art" :size="24" />
+      <span class="dt-tab-label">{{ t.nav.tabs[LABEL[s.key]] }}</span>
       <span
-        v-if="x.to === '/friends' && friends.pending > 0"
-        class="position-absolute top-0 start-50 badge rounded-pill bg-danger"
+        v-if="s.key === 'friends' && friends.pending > 0"
+        class="badge rounded-pill bg-danger dt-tab-dot"
         data-testid="friend-dot"
         >{{ friends.pending }}</span
       >
     </RouterLink>
-    <a
-      href="#"
-      :class="['flex-fill text-center small py-1', { 'dt-more-on': moreOpen }]"
-      data-testid="tab-more"
-      role="button"
-      :aria-expanded="moreOpen"
-      @click.prevent="moreOpen = !moreOpen"
-    >
-      <i class="bi bi-grid d-block fs-5"></i>{{ t.nav.tabs.more }}
-    </a>
   </nav>
 </template>

@@ -1,4 +1,4 @@
-/** 底部导航、"更多"面板、公告和活动横幅、首页新闻卡（问题记录 272） */
+/** 底部导航、顶栏、小镇、我、帮助中心、公告和活动横幅、首页新闻卡（问题记录 272、界面改版 P2a） */
 export default {
   tabs: {
     rest: '餐厅',
@@ -7,7 +7,6 @@ export default {
     market: '菜场',
     friends: '好友',
     map: '小镇',
-    more: '更多',
   },
   /** 顶栏标题：没有现成标题键的页面（界面改版 P2a） */
   titles: {
@@ -32,7 +31,6 @@ export default {
     forumPost: '帖子',
     wikiItem: '游戏资料',
   },
-  groups: { manage: '经营', play: '玩法', other: '其他' },
   links: {
     activities: '限时活动',
     exchange: '交易所',
