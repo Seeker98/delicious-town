@@ -1,6 +1,7 @@
 import type { GameDeps } from '../../core/deps';
 import type { PeriodicJob } from '../../core/jobs';
 import { openLot } from './open';
+import { freezeDue } from './service';
 import { closeDue, payOut } from './settle';
 
 /**
@@ -20,6 +21,8 @@ export function bulkJobs(d: GameDeps): PeriodicJob[] {
       feature: 'restaurant',
       period: (now) => now.toISOString().slice(0, 16),
       run: async ({ shardId, now, log }) => ({
+        // 先写停更快照（问题记录 595），再收盘、结算
+        frozen: await freezeDue(d, shardId, now),
         closed: await closeDue(d, shardId, now),
         ...(await payOut(d, shardId, now, log)),
       }),

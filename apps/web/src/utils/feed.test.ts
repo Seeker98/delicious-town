@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { RestLogDto } from '@dt/shared';
 import { logText } from './events';
+import { feedLink } from './feed';
 
 const at = '2026-09-30T00:00:00.000Z';
 /** 动态的文案走 logText（backlog 1010：原来的 describeFeed 只剩测试在用，删了） */
@@ -48,5 +49,36 @@ describe('特色菜动态', () => {
         () => '',
       ),
     ).toBe('甲 在你的课上没学会');
+  });
+});
+
+describe('动态的链接（问题记录 587）', () => {
+  const item = (type: string, params: Record<string, unknown>) =>
+    ({ type, params, at: '2026-10-11T00:00:00Z' }) as RestLogDto;
+  it('带对方餐厅编号的好友互动点了去对方餐厅；帖子被回复照旧去帖子；没有对方的不链接', () => {
+    expect(feedLink(item('roach.laid', { by: 42, byName: '老王', table: 3 }))).toBe('/friends/42');
+    expect(feedLink(item('exchange', { by: 7, give: 3069, take: 3046, result: 'ok' }))).toBe('/friends/7');
+    expect(feedLink(item('forum.replied', { by: 42, postId: 9 }))).toBe('/forum/9');
+    expect(feedLink(item('mouse.steal', { foodsId: 1, num: 2 }))).toBeNull();
+    expect(feedLink(item('thumb', { by: '42' }))).toBeNull();
+  });
+});
+
+describe('交换食材的动态写明用什么换走了什么（问题记录 587）', () => {
+  const names = {
+    foodName: (id: number) => (id === 1 ? '肉粉' : '火腿'),
+    goodsName: (id: number) => `道具${id}`,
+    foodLevel: () => 3,
+  };
+  it('成功和被抓都写明双方食材和等级；旧日志没有 give / take 时照旧', () => {
+    expect(
+      logText({ type: 'exchange', params: { byName: '甲', give: 1, take: 2, result: 'ok' }, at }, names),
+    ).toBe('甲 用 1 个肉粉 (3 级) 换走了你的 1 个火腿 (3 级)');
+    expect(
+      logText({ type: 'exchange', params: { byName: '甲', give: 1, take: 2, result: 'caught' }, at }, names),
+    ).toBe('甲 想用肉粉 (3 级) 偷换你锁定的火腿 (3 级), 被抓住了, 赔给你 2 个肉粉');
+    expect(logText({ type: 'exchange', params: { byName: '甲', result: 'ok' }, at }, names)).toBe(
+      '甲 和你交换了食材',
+    );
   });
 });

@@ -24,6 +24,7 @@ const t = {
   cooldownSec: 5,
   consolationRate: 0.9,
   consolation: { goods: 10202, num: 1 },
+  blindMin: 60,
 };
 const at = (s: number) => new Date(1_000_000 + s * 1000);
 const bid = (restId: number, price: number, qty: number, s = restId) => ({

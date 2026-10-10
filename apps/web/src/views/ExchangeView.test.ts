@@ -625,6 +625,7 @@ describe('终审 I2：冷静期已过的所得能取出', () => {
       cooldownSec: 5,
       minRaise: 0.01,
       closeWindowMin: 5,
+      blindMin: 60,
       openHour: 20,
       coin: 0,
       lot: null,

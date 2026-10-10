@@ -1003,6 +1003,8 @@ export const tuningSchema = z.object({
     cooldownSec: int.min(0),
     consolationRate: num.min(0).max(1),
     consolation: z.object({ goods: int.min(1), num: int.min(1) }),
+    /** 名义结束前多少分钟起看板停更（问题记录 595）：0 = 全程实时 */
+    blindMin: int.min(0),
   }),
 });
 

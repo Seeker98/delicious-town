@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    ui1011:
+      "Les entrées d'activité sur ce que vos amis vous ont fait (repas non payé, cafards, échanges d'ingrédients, etc.) mènent maintenant directement à leur restaurant, et les échanges précisent quel ingrédient de quel niveau a été échangé contre lequel. La liste du jour sur l'accueil gagne une ligne Bourse dès que vous remplissez ses conditions, avec la souscription en gros en cours et la quantité déjà demandée. La souscription en gros passe à l'aveugle pendant la dernière heure\u202f: prix prévu, limite et quantités demandées sont figés à ce moment-là, et les résultats sont révélés à la clôture",
     bulk1010:
       "La bourse a un nouvel onglet Souscription en gros\u202f: chaque jour à 20\u202fh, un lot d'un ingrédient (niveaux 1 à 5) est proposé. Proposez un prix unitaire et une quantité\u202f; le prix de la dernière unité retenue est le prix unique payé par tous, et le surplus gelé est rendu. Chaque joueur peut prendre jusqu'à 25\u202f%\u202f; s'il y a moins de 30\u202f% de demandes au total, le lot échoue et tout est remboursé. Le lot clôture à un moment aléatoire dans les 5 dernières minutes, et il faut attendre 5 secondes entre deux offres. Ceux qui ratent de peu reçoivent un ticket d'ingrédient aléatoire de niveau 2",
     wealth1010:

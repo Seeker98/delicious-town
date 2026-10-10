@@ -6,7 +6,7 @@ const bulk: Messages['bulk'] = {
   intro:
     "Un lot d'un ingrédient ouvre chaque jour. Proposez un prix unitaire et une quantité\u202f; à la clôture, le prix de la dernière unité retenue est le prix unique que tout le monde paie, et le surplus gelé vous est rendu.",
   helpTitle: 'Comment marche la souscription en gros',
-  help: (cap, group, raisePct, cooldown, windowMin, openHour) => [
+  help: (cap, group, raisePct, cooldown, windowMin, openHour, blindMin) => [
     `Un nouveau lot ouvre chaque jour à ${openHour}\u202fh et dure une journée`,
     "Les unités vont aux prix les plus hauts d'abord (à prix égal, l'offre la plus ancienne passe devant)\u202f; l'offre de la dernière unité attribuée est le prix unique payé par tous",
     `Au plus ${cap} ${plFr(cap, 'unité', 'unités')} par joueur dans ce lot\u202f; s'il y a moins de ${group} unités demandées au total, le lot échoue et tout est remboursé`,
@@ -15,6 +15,11 @@ const bulk: Messages['bulk'] = {
     `Le lot peut clôturer à tout moment dans les ${windowMin} dernières minutes, et les offres après la clôture ne comptent pas\u202f; après chaque offre il faut attendre ${cooldown}\u202fs`,
     "Si vous n'obtenez aucune unité mais que votre offre était proche du prix final, vous recevez un ticket d'ingrédient aléatoire",
     'Mêmes conditions que la bourse',
+    ...(blindMin > 0
+      ? [
+          `À partir de ${blindMin} minutes avant la fin, le prix prévu, la limite et les quantités demandées sont figés à ce moment-là\u202f; qui est retenu n'est révélé qu'à la clôture`,
+        ]
+      : []),
   ],
   off: "La souscription en gros n'est pas encore ouverte sur ce serveur",
   none: (openHour) => `Aucun lot en ce moment\u202f; un nouveau ouvre chaque jour à ${openHour}\u202fh`,
@@ -46,6 +51,11 @@ const bulk: Messages['bulk'] = {
   estimateAll: (price, total) => `Au prix prévu de ${price}, tout obtenir coûterait environ ${total}.`,
   estimateOut:
     "À ce prix, vous ne seriez pas retenu pour l'instant\u202f; proposez au-dessus du seuil pour entrer.",
+  blindNote: (time) =>
+    `Dernière ligne droite\u202f: les chiffres ci-dessus sont figés à ${time}\u202f; les offres suivantes seront révélées à la clôture`,
+  blindMine: "Pendant la dernière ligne droite, qui est retenu n'est pas affiché\u202f; révélé à la clôture",
+  estimateBlind:
+    'Dernière ligne droite\u202f: votre résultat et le montant payé seront révélés à la clôture.',
   partialHint:
     "Si votre prix tombe pile à la limite, vous n'obtiendrez peut-être qu'une partie des unités\u202f: à prix égal l'offre la plus ancienne passe devant, et les unités manquées sont intégralement remboursées.",
   reasons: {

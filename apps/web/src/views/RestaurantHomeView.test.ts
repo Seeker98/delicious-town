@@ -209,6 +209,30 @@ describe('RestaurantHomeView', () => {
     expect((await mountView()).find('[data-testid="guide-hint"]').exists()).toBe(false);
   });
 
+  it('够交易所门槛时待办里多一行交易所；有大宗认购时写批次和已认购份数，链到大宗认购标签（问题记录 591）', async () => {
+    vi.mocked(endpoints.guideCodes).mockResolvedValue([]);
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, exchangeHint: { bulk: null } });
+    const plain = (await mountView()).get('[data-testid="home-exchange-row"]');
+    expect(plain.text()).toContain('交易所');
+    expect(plain.attributes('href')).toBe('/exchange');
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      ...dto,
+      exchangeHint: { bulk: { foodsId: 11, level: 5, qty: 45, demand: 38 } },
+    });
+    const bulk = (await mountView()).get('[data-testid="home-exchange-row"]');
+    expect(bulk.text()).toContain('共 45 份, 已认购 38 份');
+    expect(bulk.attributes('href')).toBe('/exchange?tab=bulk');
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      ...dto,
+      exchangeHint: { bulk: { foodsId: 11, level: 5, qty: 45, demand: null } },
+    });
+    expect((await mountView()).get('[data-testid="home-exchange-row"]').text()).toContain('停更');
+    for (const exchangeHint of [null, undefined]) {
+      vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, exchangeHint });
+      expect((await mountView()).find('[data-testid="home-exchange-row"]').exists()).toBe(false);
+    }
+  });
+
   it('有到期没领的理财时待办里多一行，链到理财页；没有或旧服务端没有这个字段时不显示（理财设计 §3.4）', async () => {
     vi.mocked(endpoints.guideCodes).mockResolvedValue([]);
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, wealthDue: 2 });

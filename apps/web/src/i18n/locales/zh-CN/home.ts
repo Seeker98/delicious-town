@@ -57,6 +57,10 @@ export default {
   guideCodes: '有可以领的新手兑换码',
   /** 到期没领的理财（理财设计 §3.4） */
   wealthDue: (n: number) => `理财到期 ${n} 笔, 去领取`,
+  /** 首页待办的交易所一行（问题记录 591） */
+  exchangeRow: '交易所: 买卖稀有食材, 期货点名订货',
+  bulkRow: (name: string, level: number, qty: number, demand: number | null) =>
+    `大宗认购: ${name} (${level} 级) 共 ${qty} 份, ${demand === null ? '最后阶段停更中' : `已认购 ${demand} 份`}`,
   devices: '设施',
   notOpened: '未开通',
   starOpen: (n: number) => `${n} 星开放`,

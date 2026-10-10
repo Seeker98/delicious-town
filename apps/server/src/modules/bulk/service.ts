@@ -1,12 +1,13 @@
-import type { Kysely } from 'kysely';
+import type { Kysely, Selectable } from 'kysely';
 import type { BulkBidInput, BulkDto, BulkResultDto } from '@dt/shared';
 import type { ShardSettings } from '@dt/config';
 import type { GameDeps, RestCtx } from '../../core/deps';
+import type { BidIn } from './rules';
 import { invalidState, limitReached, requirement } from '../../core/errors';
 import { featureAvailable } from '../../core/features';
 import { restLog, runOp, type Op } from '../../core/op';
 import { spendCoin } from '../../core/resources';
-import type { DB } from '../../db/schema';
+import type { BulkLotTable, DB } from '../../db/schema';
 import { eligibility } from '../exchange/eligibility';
 import { frozenReason } from '../exchange/guard';
 import { minRaisePrice, standing } from './rules';
@@ -15,6 +16,100 @@ import { minRaisePrice, standing } from './rules';
 const RECENT = 7;
 
 type Blocked = BulkDto['blocked'];
+type LotRow = Selectable<BulkLotTable>;
+type Snapshot = { at: Date; price: number; threshold: number; demand: number; bidders: number };
+const MIN_MS = 60_000;
+
+/**
+ * 最后一段停更（问题记录 595）：名义结束前 blindMin 分钟起，看板停在进入停更那一刻。
+ * 已经写下快照就用它；进入停更了还没写就按现在的出价算出来，persist 时写进批次（只写一次）。
+ * 出价的事务里对批次拿着共享锁，那里只算不写（persist = false），写快照放在出价之前的短事务里
+ * blindMin 为 0（或还没到停更）时返回 null：实时显示
+ */
+async function blindOf(
+  db: Kysely<DB>,
+  lot: LotRow,
+  blindMin: number,
+  now: Date,
+  bids: readonly BidIn[],
+  persist: boolean,
+): Promise<Snapshot | null> {
+  if (blindMin <= 0) return null;
+  const at = new Date(lot.ends_at.getTime() - blindMin * MIN_MS);
+  if (now < at) return null;
+  if (lot.blind_at !== null)
+    return {
+      at: lot.blind_at,
+      price: Number(lot.blind_price),
+      threshold: Number(lot.blind_threshold),
+      demand: lot.blind_demand ?? 0,
+      bidders: lot.blind_bidders ?? 0,
+    };
+  const st = standing(lot.qty, Number(lot.reserve), bids);
+  const snap = { at, price: st.price, threshold: st.threshold, demand: st.demand, bidders: st.bidders };
+  if (!persist) return snap;
+  const w = await db
+    .updateTable('bulk_lot')
+    .set({
+      blind_at: at,
+      blind_price: snap.price,
+      blind_threshold: snap.threshold,
+      blind_demand: snap.demand,
+      blind_bidders: snap.bidders,
+    })
+    .where('id', '=', lot.id)
+    .where('blind_at', 'is', null)
+    .executeTakeFirst();
+  if (Number(w.numUpdatedRows) > 0) return snap;
+  // 别处先写了：用写下的那份
+  const again = await db
+    .selectFrom('bulk_lot')
+    .selectAll()
+    .where('id', '=', lot.id)
+    .executeTakeFirstOrThrow();
+  return blindOf(db, again, blindMin, now, bids, persist);
+}
+
+const bidsOf = async (db: Kysely<DB>, lotId: string): Promise<BidIn[]> =>
+  (await db.selectFrom('bulk_bid').selectAll().where('lot_id', '=', lotId).execute()).map((b) => ({
+    restId: b.rest_id,
+    price: Number(b.price),
+    qty: b.qty,
+    rankedAt: b.ranked_at,
+  }));
+
+/** 每分钟的任务：进入停更的进行中批次写下快照，保证看板停在进入停更那一刻（问题记录 595）。返回新写了几批 */
+export async function freezeDue(d: GameDeps, shardId: number, now: Date): Promise<number> {
+  const t = (await d.shards.settings(shardId)).tuning.bulk;
+  if (t.blindMin <= 0) return 0;
+  const lots = await d.db
+    .selectFrom('bulk_lot')
+    .selectAll()
+    .where('shard_id', '=', shardId)
+    .where('status', '=', 'open')
+    .where('blind_at', 'is', null)
+    .where('ends_at', '<=', new Date(now.getTime() + t.blindMin * MIN_MS))
+    .execute();
+  let n = 0;
+  for (const lot of lots)
+    if (await blindOf(d.db, lot, t.blindMin, now, await bidsOf(d.db, lot.id), true)) n++;
+  return n;
+}
+
+/** 出价之前：这一批已经进入停更、还没写快照时先写（问题记录 595），保证快照里没有这笔出价 */
+async function freezeLot(d: GameDeps, shardId: number, lotId: number, now: Date): Promise<void> {
+  const t = (await d.shards.settings(shardId)).tuning.bulk;
+  if (t.blindMin <= 0) return;
+  const lot = await d.db
+    .selectFrom('bulk_lot')
+    .selectAll()
+    .where('id', '=', String(lotId))
+    .where('shard_id', '=', shardId)
+    .where('status', '=', 'open')
+    .executeTakeFirst();
+  if (lot && lot.blind_at === null)
+    await blindOf(d.db, lot, t.blindMin, now, await bidsOf(d.db, lot.id), true);
+}
 
 /** 看板（大宗认购设计 §1.3）：进行中的批次、公开数据、我的出价、最近结果。不返回真正的收盘时刻 */
 async function viewOf(
@@ -25,6 +120,8 @@ async function viewOf(
   blocked: Blocked,
   coin: number,
   now: Date,
+  /** 停更快照要不要写进批次：出价的事务里不写（见 blindOf） */
+  persist = true,
 ): Promise<BulkDto> {
   const t = s.tuning.bulk;
   const et = s.tuning.exchange;
@@ -40,11 +137,16 @@ async function viewOf(
   let mine: BulkDto['mine'] = null;
   if (lot) {
     const bids = await db.selectFrom('bulk_bid').selectAll().where('lot_id', '=', lot.id).execute();
-    const st = standing(
-      lot.qty,
-      Number(lot.reserve),
-      bids.map((b) => ({ restId: b.rest_id, price: Number(b.price), qty: b.qty, rankedAt: b.ranked_at })),
-    );
+    const ins = bids.map((b) => ({
+      restId: b.rest_id,
+      price: Number(b.price),
+      qty: b.qty,
+      rankedAt: b.ranked_at,
+    }));
+    const st = standing(lot.qty, Number(lot.reserve), ins);
+    // 停更期间公开的数停在进入停更那一刻，入围情况不公布（问题记录 595）
+    const blind = await blindOf(db, lot, t.blindMin, now, ins, persist);
+    const shown = blind ?? st;
     lotDto = {
       id: Number(lot.id),
       foodsId: lot.foods_id,
@@ -55,11 +157,12 @@ async function viewOf(
       groupQty: lot.group_qty,
       opensAt: lot.opens_at.toISOString(),
       endsAt: lot.ends_at.toISOString(),
-      price: st.price,
-      threshold: st.threshold,
-      demand: st.demand,
-      bidders: st.bidders,
-      grouped: st.demand >= lot.group_qty,
+      price: shown.price,
+      threshold: shown.threshold,
+      demand: shown.demand,
+      bidders: shown.bidders,
+      grouped: shown.demand >= lot.group_qty,
+      blindAt: blind ? blind.at.toISOString() : null,
     };
     const b = bids.find((x) => x.rest_id === restId);
     if (b) {
@@ -69,8 +172,8 @@ async function viewOf(
         price: Number(b.price),
         qty: b.qty,
         frozen: Number(b.frozen),
-        won,
-        estimate: st.price * won,
+        won: blind ? null : won,
+        estimate: blind ? null : st.price * won,
         cooldownLeft: wait > 0 ? Math.ceil(wait / 1000) : 0,
       };
     }
@@ -134,6 +237,7 @@ async function viewOf(
     cooldownSec: t.cooldownSec,
     minRaise: t.minRaise,
     closeWindowMin: t.closeWindowMin,
+    blindMin: t.blindMin,
     openHour: t.openHour,
     coin,
     lot: lotDto,
@@ -220,7 +324,7 @@ export function createBulkService(d: GameDeps) {
       qty: b.qty,
       frozen: frozenNow,
     });
-    return viewOf(o.tx, o.settings, o.shardId, o.rest.id, null, o.rest.coin, o.now);
+    return viewOf(o.tx, o.settings, o.shardId, o.rest.id, null, o.rest.coin, o.now, false);
   }
 
   /** 大宗认购标签：开关关着也能看自己的结果 */
@@ -250,6 +354,7 @@ export function createBulkService(d: GameDeps) {
     bid: async (ctx: RestCtx, b: BulkBidInput) => {
       // 交易所关着也不能出价（设计 §3.2）
       await d.shards.ensureFeature(ctx.shardId, 'exchange');
+      await freezeLot(d, ctx.shardId, b.lotId, d.now());
       return runOp(d, ctx, { feature: 'bulk', source: 'bulk' }, (o) => bid(o, b));
     },
   };

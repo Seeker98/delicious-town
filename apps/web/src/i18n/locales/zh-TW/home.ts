@@ -58,6 +58,10 @@ export default {
   guideCodes: '有可以領的新手兌換碼',
   /** 到期沒領的理財（理財設計 §3.4） */
   wealthDue: (n: number) => `理財到期 ${n} 筆, 去領取`,
+  /** 首頁待辦的交易所一行（問題記錄 591） */
+  exchangeRow: '交易所: 買賣稀有食材, 期貨點名訂貨',
+  bulkRow: (name: string, level: number, qty: number, demand: number | null) =>
+    `大宗認購: ${name} (${level} 級) 共 ${qty} 份, ${demand === null ? '最後階段停更中' : `已認購 ${demand} 份`}`,
   devices: '設施',
   notOpened: '未開通',
   starOpen: (n: number) => `${n} 星開放`,

@@ -55,6 +55,9 @@ const home: Messages['home'] = {
   guideHint: '¿Eres nuevo? Hay un código de bienvenida',
   guideCodes: 'Tienes un código de bienvenida por canjear',
   wealthDue: (n) => `Tienes ${n} ${plEs(n, 'depósito vencido', 'depósitos vencidos')} por cobrar`,
+  exchangeRow: 'Bolsa: compra y vende ingredientes raros, encarga futuros',
+  bulkRow: (name, level, qty, demand) =>
+    `Suscripción mayorista: ${name} (nv. ${level}), ${qty} unidades, ${demand === null ? 'cifras congeladas en el tramo final' : `${demand} pujadas por ahora`}`,
   devices: 'Instalaciones',
   notOpened: 'Sin desbloquear',
   starOpen: (n) => `Se abre con ${n}★`,

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    ui1011:
+      'Las entradas de actividad sobre lo que te hacen tus amigos (comer sin pagar, dejar cucarachas, intercambiar ingredientes, etc.) ahora llevan directamente a su restaurante, y los intercambios indican qué ingrediente de qué nivel se cambió por cuál. La lista de pendientes de la portada suma una fila de la bolsa cuando cumples sus requisitos, con la suscripción mayorista en curso y cuánto se ha pujado. La suscripción mayorista se oculta en la última hora: el precio previsto, el umbral y las unidades pujadas se congelan en ese momento, y quién entra se sabe al cierre',
     bulk1010:
       'La bolsa tiene una nueva pestaña de Suscripción mayorista: cada día a las 20:00 sale un lote de un ingrediente (niveles 1 a 5). Puja un precio por unidad y una cantidad; el precio de la última unidad que entra es el precio único que pagan todos, y lo congelado de más se devuelve. Cada jugador puede llevarse hasta el 25\u00a0%; si en total se puja menos del 30\u00a0%, el lote fracasa y se devuelve todo. El lote cierra en un momento al azar de los últimos 5 minutos y entre pujas hay que esperar 5 segundos. Quien se queda justo fuera recibe un vale de ingrediente al azar de nivel 2',
     wealth1010:

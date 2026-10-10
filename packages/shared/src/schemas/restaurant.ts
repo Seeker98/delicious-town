@@ -101,6 +101,13 @@ export interface RestaurantDto {
   assets: number | null;
   /** 到期没领的理财笔数（首页待办，理财设计 §3.4）；区服关了理财为 0，旧服务端没有 */
   wealthDue?: number;
+  /**
+   * 首页待办的交易所一行（问题记录 591）：区服开着交易所、这家店够门槛才有，否则为 null；旧服务端没有。
+   * bulk 是本区服进行中的大宗认购，没有为 null；demand 是已认购份数，最后阶段停更、还没快照时为 null
+   */
+  exchangeHint?: {
+    bulk: { foodsId: number; level: number; qty: number; demand: number | null } | null;
+  } | null;
   /** 首页的食谱数：学会几道 / 全部几道（问题记录 447） */
   cookbooks: { learned: number; total: number };
   /** 在售的特色菜：哪道、几级；没有、卖完为 null（问题记录 447） */

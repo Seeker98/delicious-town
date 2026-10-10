@@ -12,6 +12,8 @@ export function bulkErrors(t: Tuning['bulk'], ref: { goodsIds: ReadonlySet<numbe
   });
   if (t.closeWindowMin >= t.hours * 60)
     errors.push(`tuning.bulk closeWindowMin ${t.closeWindowMin} must be shorter than hours ${t.hours}`);
+  if (t.blindMin >= t.hours * 60)
+    errors.push(`tuning.bulk blindMin ${t.blindMin} must be shorter than hours ${t.hours}`);
   if (!ref.goodsIds.has(t.consolation.goods))
     errors.push(`tuning.bulk consolation goods ${t.consolation.goods} does not exist`);
   return errors;

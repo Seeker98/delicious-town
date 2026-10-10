@@ -10,6 +10,7 @@ export default {
     cooldown: number,
     windowMin: number,
     openHour: number,
+    blindMin: number,
   ) => [
     `每天 ${openHour} 点开新的一批, 竞价一天`,
     '按单价从高到低分份数, 同价先出价的先分；最后分出去的那一份的出价就是统一成交价, 大家都按这个价付',
@@ -19,6 +20,9 @@ export default {
     `最后 ${windowMin} 分钟内随时可能收盘, 收盘后的出价无效；每次出价后要等 ${cooldown} 秒才能再出`,
     '一份都没中、但出价离成交价很近的, 送一张食材随机券',
     '门槛和交易所一样',
+    ...(blindMin > 0
+      ? [`最后 ${blindMin} 分钟起停更: 预计成交价、入围门槛、认购份数停在那一刻, 入围情况收盘后公布`]
+      : []),
   ],
   off: '本区服暂未开放大宗认购',
   none: (openHour: number) => `现在没有进行中的批次, 每天 ${openHour} 点开新的一批`,
@@ -45,6 +49,9 @@ export default {
   settleNote: '收盘时按统一成交价扣, 不会超过你的出价, 多冻结的退回。',
   estimateAll: (price: string, total: string) => `照现在的预计成交价 ${price}, 全部入围约付 ${total}。`,
   estimateOut: '照现在的出价不入围, 要入围请出到入围门槛以上。',
+  blindNote: (time: string) => `最后阶段停更: 上面的数停在 ${time}, 之后的出价收盘后公布`,
+  blindMine: '最后阶段不公布入围情况, 收盘后公布',
+  estimateBlind: '最后阶段停更中, 能不能入围、付多少收盘后公布。',
   partialHint: '卡在成交价那一档时可能只入围一部分份数: 同价先出价的先分, 没入围的份数全额退回。',
   reasons: {
     invalid: '请填正整数的单价和份数',

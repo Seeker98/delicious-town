@@ -82,6 +82,8 @@ const mineStatus = computed(() => {
   const m = mine.value;
   if (!m) return '';
   const b = t.value.bulk;
+  // 停更期间不公布入围情况（问题记录 595）
+  if (m.won === null) return b.blindMine;
   if (m.won === m.qty) return b.inAll(m.won);
   return (m.won > 0 ? b.inPart(m.won, m.qty) : b.out) + b.raiseMore;
 });
@@ -93,6 +95,8 @@ const estimateText = computed(() => {
   const l = lot.value;
   if (!l || p.value < 1 || q.value < 1) return '';
   const b = t.value.bulk;
+  // 停更期间看到的是停更那一刻的数，照它算付款不准（问题记录 595）
+  if (l.blindAt) return b.estimateBlind;
   if (l.demand >= l.qty && p.value < l.threshold) return b.estimateOut;
   const unit = Math.min(p.value, l.price);
   return b.estimateAll(formatNum(unit), formatNum(unit * q.value));
@@ -173,6 +177,7 @@ function myResult(r: BulkResultDto): string {
             data.cooldownSec,
             data.closeWindowMin,
             data.openHour,
+            data.blindMin,
           )"
           :key="i"
         >
@@ -195,15 +200,24 @@ function myResult(r: BulkResultDto): string {
           {{ t.bulk.grouped(lot.grouped, lot.groupQty) }}
         </div>
         <div class="text-muted">{{ t.bulk.ends(newsTime(lot.endsAt), data.closeWindowMin) }}</div>
+        <div v-if="lot.blindAt" class="text-warning-emphasis" data-testid="bk-blind">
+          {{ t.bulk.blindNote(newsTime(lot.blindAt)) }}
+        </div>
       </div>
 
       <div v-if="mine" class="dt-card mb-2 small" data-testid="bk-mine">
         <div class="fw-bold mb-1">{{ t.bulk.mineTitle }}</div>
         <div>{{ t.bulk.mineLine(formatNum(mine.price), mine.qty, formatNum(mine.frozen)) }}</div>
-        <div :class="mine.won === mine.qty ? 'text-success' : 'text-danger'">
+        <!-- 停更期间不公布入围情况（won 为 null）：灰字，免得看着像没入围 -->
+        <div
+          :class="mine.won === null ? 'text-muted' : mine.won === mine.qty ? 'text-success' : 'text-danger'"
+          data-testid="bk-mine-status"
+        >
           {{ mineStatus }}
         </div>
-        <div class="text-muted">{{ t.bulk.estimate(formatNum(mine.estimate)) }}</div>
+        <div v-if="mine.estimate !== null" class="text-muted">
+          {{ t.bulk.estimate(formatNum(mine.estimate)) }}
+        </div>
       </div>
 
       <div v-if="blockedText" class="alert alert-warning py-1 small" data-testid="bk-blocked">

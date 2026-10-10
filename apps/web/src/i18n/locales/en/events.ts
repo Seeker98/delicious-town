@@ -26,7 +26,14 @@ function predictNet(p: P): string {
 }
 const side = (p: P) => (p.side === 'buy' ? 'buy' : 'sell');
 
-function describeFeed(item: RestLogDto, foodName: (id: number) => string): string {
+/** 食材等级的写法（交换食材的动态，问题记录 587） */
+const lvText = (lv: number | undefined) => (lv === undefined ? '' : ` (level ${lv})`);
+
+function describeFeed(
+  item: RestLogDto,
+  foodName: (id: number) => string,
+  foodLevel?: (id: number) => number | undefined,
+): string {
   const p = item.params;
   const who = String(p.byName ?? 'Someone');
   switch (item.type) {
@@ -47,10 +54,17 @@ function describeFeed(item: RestLogDto, foodName: (id: number) => string): strin
       if (p.outcome === 'caught')
         return `${who} got caught in a mousetrap raiding your pantry and dropped ${String(p.coin)} ${plEn(String(p.coin), 'coin', 'coins')} for you`;
       return `${who} raided your pantry but found nothing`;
-    case 'exchange':
+    case 'exchange': {
+      if (typeof p.give !== 'number' || typeof p.take !== 'number')
+        return p.result === 'caught'
+          ? `${who} was caught trying to swap your locked ingredients`
+          : `${who} swapped ingredients with you`;
+      const give = `${foodName(p.give)}${lvText(foodLevel?.(p.give))}`;
+      const take = `${foodName(p.take)}${lvText(foodLevel?.(p.take))}`;
       return p.result === 'caught'
-        ? `${who} was caught trying to swap your locked ingredients`
-        : `${who} swapped ingredients with you`;
+        ? `${who} tried to swap ${give} for your locked ${take} and got caught, leaving you 2 ${foodName(p.give)}`
+        : `${who} traded 1 ${give} for your 1 ${take}`;
+    }
     case 'mc.eaten':
       return `${who} tasted your signature dish`;
     case 'lesson.taught':

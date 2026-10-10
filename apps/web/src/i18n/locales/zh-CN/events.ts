@@ -29,7 +29,14 @@ function predictNet(p: P): string {
 }
 
 /** 好友动态的一行文案（服务端只存结构化参数） */
-function describeFeed(item: RestLogDto, foodName: (id: number) => string): string {
+/** 食材等级的写法（交换食材的动态，问题记录 587） */
+const lvText = (lv: number | undefined) => (lv === undefined ? '' : ` (${lv} 级)`);
+
+function describeFeed(
+  item: RestLogDto,
+  foodName: (id: number) => string,
+  foodLevel?: (id: number) => number | undefined,
+): string {
   const p = item.params;
   const who = String(p.byName ?? '有人');
   switch (item.type) {
@@ -49,8 +56,18 @@ function describeFeed(item: RestLogDto, foodName: (id: number) => string): strin
       if (p.outcome === 'food') return `${who} 翻了你的橱柜, 拿走了 ${foodName(Number(p.foodsId))}`;
       if (p.outcome === 'caught') return `${who} 翻你的橱柜被老鼠夹夹住, 掉了 ${String(p.coin)} 银币给你`;
       return `${who} 翻了你的橱柜, 什么也没拿到`;
-    case 'exchange':
-      return p.result === 'caught' ? `${who} 偷换你锁定的食材被抓住了` : `${who} 和你交换了食材`;
+    case 'exchange': {
+      // 写明用几级的什么换走了几级的什么（问题记录 587）；旧日志没有 give / take 时照旧
+      if (typeof p.give !== 'number' || typeof p.take !== 'number')
+        return p.result === 'caught' ? `${who} 偷换你锁定的食材被抓住了` : `${who} 和你交换了食材`;
+      const giveLv = lvText(foodLevel?.(p.give));
+      // 半角括号后面接中文要空一格（简中写法）；没有等级时不空
+      const give = `${foodName(p.give)}${giveLv}${giveLv ? ' ' : ''}`;
+      const take = `${foodName(p.take)}${lvText(foodLevel?.(p.take))}`;
+      return p.result === 'caught'
+        ? `${who} 想用${give}偷换你锁定的${take}, 被抓住了, 赔给你 2 个${foodName(p.give)}`
+        : `${who} 用 1 个${give}换走了你的 1 个${take}`;
+    }
     case 'mc.eaten':
       return `${who} 品尝了你的特色菜`;
     case 'lesson.taught':
@@ -299,5 +316,9 @@ export default {
       return `菜场竞猜 ${day} ${Number(hour)} 点那一轮没有开奖, 退还了报名费`;
     },
   }),
-  feed: (item: RestLogDto, foodName: (id: number) => string) => describeFeed(item, foodName),
+  feed: (
+    item: RestLogDto,
+    foodName: (id: number) => string,
+    foodLevel?: (id: number) => number | undefined,
+  ) => describeFeed(item, foodName, foodLevel),
 };
