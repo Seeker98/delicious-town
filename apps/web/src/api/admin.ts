@@ -1,6 +1,8 @@
 import type {
   AccountRole,
   AdminTitleDto,
+  AdminFuturesFoodDto,
+  AdminFuturesUpdateInput,
   AdminDailyDetailDto,
   AdminDailyEditBody,
   AdminDailyRowDto,
@@ -176,6 +178,10 @@ export const adminApi = {
   icons: (restId: number) => api.get<AdminIconDto[]>(`${A}/restaurants/${restId}/icons`),
   grantIcon: (restId: number, b: { key: string; days?: number; until?: string }) =>
     api.post<AdminIconDto[]>(`${A}/restaurants/${restId}/icons`, b),
+  /** 期货食材（期货设计 §5.3） */
+  futuresFoods: (shardId: number) => api.get<AdminFuturesFoodDto[]>(`${A}/futures/foods${qs({ shardId })}`),
+  updateFuturesFoods: (items: AdminFuturesUpdateInput['items']) =>
+    api.post<null>(`${A}/futures/foods`, { items }),
   titles: (q?: string) => api.get<AdminTitleDto[]>(`${A}/titles${qs({ q })}`),
   createTitle: (b: { title: string; desc?: string; note?: string }) =>
     api.post<AdminTitleDto>(`${A}/titles`, b),
