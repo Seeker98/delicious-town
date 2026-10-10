@@ -56,6 +56,54 @@ export function pickWithNeed(
   return pool.total > 0 ? pickWeighted(pool, rng)[0] : fallback();
 }
 
+/**
+ * 街市补给包（理财设计 §1.1）：在缺料清单的 level 级食材里按缺口加权抽 num 个，抽一个扣一个（缺口扣完的不再抽）；
+ * 这一级没有缺料、或者都扣完了时用 fallback。不改传入的清单
+ */
+export function drawNeedFoods(
+  need: NeedMap,
+  levelOf: (foodsId: number) => number,
+  level: number,
+  num: number,
+  rng: Rng,
+  fallback: () => number,
+): Map<number, number> {
+  const gaps = new Map([...need].filter(([id]) => levelOf(id) === level));
+  const got = new Map<number, number>();
+  for (let i = 0; i < num; i++) {
+    let id: number;
+    if (gaps.size > 0) {
+      id = pickWeighted(
+        buildPool([...gaps], ([, gap]) => gap),
+        rng,
+      )[0];
+      const left = gaps.get(id)! - 1;
+      if (left > 0) gaps.set(id, left);
+      else gaps.delete(id);
+    } else id = fallback();
+    got.set(id, (got.get(id) ?? 0) + 1);
+  }
+  return got;
+}
+
+/** 本店现在的缺料清单：按店现在所在的街道（理财设计 §1.1：开包时的街道）。同一个事务连接上按顺序读 */
+export async function opNeedMap(
+  o: Op,
+  known?: { foods?: ReadonlyMap<number, { num: number }> },
+): Promise<Map<number, number>> {
+  // 同一个事务连接上不能并发查询（pg 会排队并警告，pg@9 会报错），按顺序读
+  const levels = await levelsOf(o.tx, o.rest.id);
+  const foods = known?.foods ?? (await foodsMap(o.tx, o.rest.id));
+  return needMapOf(
+    o.config.cookbookIndex.idsByStreet.get(o.rest.street_id) ?? [],
+    levels,
+    o.config.cookbookIndex.slotOf,
+    o.tuning.rest.cookbookMaxGrade,
+    (id, g) => o.config.requireCookbook(id).needFoods[g] ?? [],
+    (id) => foods.get(id)?.num ?? 0,
+  );
+}
+
 export type NeedPick = (accept: (foodsId: number) => boolean, fallback: () => number) => number;
 
 /**
@@ -70,19 +118,7 @@ export async function opNeedPick(
   if (hit) return hit;
   const p = needChance(o.tuning.scarcity, (await opLuck(o)).rate);
   let need: NeedMap = new Map();
-  if (p > 0) {
-    // 同一个事务连接上不能并发查询（pg 会排队并警告，pg@9 会报错），按顺序读
-    const levels = await levelsOf(o.tx, o.rest.id);
-    const foods = known?.foods ?? (await foodsMap(o.tx, o.rest.id));
-    need = needMapOf(
-      o.config.cookbookIndex.idsByStreet.get(o.rest.street_id) ?? [],
-      levels,
-      o.config.cookbookIndex.slotOf,
-      o.tuning.rest.cookbookMaxGrade,
-      (id, g) => o.config.requireCookbook(id).needFoods[g] ?? [],
-      (id) => foods.get(id)?.num ?? 0,
-    );
-  }
+  if (p > 0) need = await opNeedMap(o, known);
   const pick: NeedPick = (accept, fallback) => pickWithNeed(need, accept, p, o.rng, fallback);
   o.cache.set('needPick', pick);
   return pick;
