@@ -51,3 +51,36 @@ export interface FuturesDto {
   /** 进行中的全部，已结束的最近 30 张；新的在前 */
   contracts: FuturesContractDto[];
 }
+
+/** 后台“期货食材”页的一行（期货设计 §5.3）：1~5 级全部没下架的食材，含不在表里的 */
+export interface AdminFuturesFoodDto {
+  foodsId: number;
+  level: number;
+  rare: boolean;
+  inList: boolean;
+  enabled: boolean;
+  /** 单独的额度；null = 按等级默认 */
+  dailyQuota: number | null;
+  defaultQuota: number;
+  /** 菜谱要用它的街道 */
+  streets: number[];
+  /** 所选区服今天的参考价、等级价、期货单价、已订份数 */
+  ref: number;
+  levelPrice: number;
+  unitPrice: number;
+  ordered: number;
+}
+export const adminFuturesQuery = z.object({ shardId: z.coerce.number().int().positive() });
+export const adminFuturesUpdateBody = z.object({
+  items: z
+    .array(
+      z.object({
+        foodsId: z.number().int().positive(),
+        enabled: z.boolean().optional(),
+        dailyQuota: z.number().int().min(0).max(1_000_000).nullable().optional(),
+      }),
+    )
+    .min(1)
+    .max(500),
+});
+export type AdminFuturesUpdateInput = z.infer<typeof adminFuturesUpdateBody>;
