@@ -260,6 +260,16 @@ const events: Messages['events'] = {
         : `Ordre d'achat exécuté\u202f: ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'qty')} à ${formatNum(n(p, 'price'))} l'unité${p.held ? heldNote(p) : ' (ingrédients sur votre compte de bourse)'}`,
     'exchange.cancel': (p, names) =>
       `Ordre ${side(p)} annulé\u202f: ${names.foodName(n(p, 'foodsId'))}, ${n(p, 'left')} restitués`,
+    'futures.order': (p, names) =>
+      `Contrat à terme passé\u202f: ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'qty')}, acompte de ${formatNum(n(p, 'deposit'))} pièces`,
+    'futures.cancel': (p, names) =>
+      `Contrat annulé\u202f: ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'qty')}, acompte de ${formatNum(n(p, 'deposit'))} pièces perdu`,
+    'futures.delivered': (p, names) =>
+      `Contrat livré\u202f: ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'qty')}${n(p, 'toWallet') > 0 ? `, dont ${n(p, 'toWallet')} sur votre compte de la bourse` : ''}`,
+    'futures.defaulted': (p, names) =>
+      `Contrat en défaut\u202f: pas assez de pièces pour le solde, ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'qty')} non livré, acompte de ${formatNum(n(p, 'deposit'))} pièces perdu`,
+    'futures.refunded': (p, names) =>
+      `Contrat annulé\u202f: ${names.foodName(n(p, 'foodsId'))} n’existe plus, acompte de ${formatNum(n(p, 'deposit'))} pièces rendu`,
     'exchange.expire': (p, names) =>
       `Ordre ${side(p)} expiré\u202f: ${names.foodName(n(p, 'foodsId'))}, les ${n(p, 'left')} restants reviennent sur votre compte de bourse`,
     'exchange.withdraw': (p, names) =>

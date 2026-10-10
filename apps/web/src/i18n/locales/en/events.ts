@@ -255,6 +255,16 @@ const events: Messages['events'] = {
         : `Buy order filled: ${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')} at ${formatNum(n(p, 'price'))} each${p.held ? heldNote(p) : ' (ingredients in your exchange account)'}`,
     'exchange.cancel': (p, names) =>
       `Cancelled a ${side(p)} order: ${names.foodName(n(p, 'foodsId'))}, ${n(p, 'left')} returned`,
+    'futures.order': (p, names) =>
+      `Ordered futures: ${names.foodName(n(p, 'foodsId'))}×${n(p, 'qty')}, paid a deposit of ${formatNum(n(p, 'deposit'))} coins`,
+    'futures.cancel': (p, names) =>
+      `Cancelled futures: ${names.foodName(n(p, 'foodsId'))}×${n(p, 'qty')}, deposit of ${formatNum(n(p, 'deposit'))} coins lost`,
+    'futures.delivered': (p, names) =>
+      `Futures delivered: ${names.foodName(n(p, 'foodsId'))}×${n(p, 'qty')}${n(p, 'toWallet') > 0 ? `, ${n(p, 'toWallet')} went to your exchange account` : ''}`,
+    'futures.defaulted': (p, names) =>
+      `Futures defaulted: not enough coins for the balance, ${names.foodName(n(p, 'foodsId'))}×${n(p, 'qty')} not delivered, deposit of ${formatNum(n(p, 'deposit'))} coins lost`,
+    'futures.refunded': (p, names) =>
+      `Futures cancelled: ${names.foodName(n(p, 'foodsId'))} no longer exists, deposit of ${formatNum(n(p, 'deposit'))} coins refunded`,
     'exchange.expire': (p, names) =>
       `A ${side(p)} order expired: ${names.foodName(n(p, 'foodsId'))}, the remaining ${n(p, 'left')} went back to your exchange account`,
     'exchange.withdraw': (p, names) =>

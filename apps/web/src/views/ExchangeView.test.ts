@@ -6,6 +6,8 @@ import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 import ExchangeView from './ExchangeView.vue';
+import { createMemoryHistory, createRouter } from 'vue-router';
+import { useRestaurantStore } from '../stores/restaurant';
 
 vi.mock('../api/endpoints', () => ({
   endpoints: {
@@ -16,6 +18,8 @@ vi.mock('../api/endpoints', () => ({
     tradeCancel: vi.fn(),
     tradeWithdraw: vi.fn(),
     tradeSellSystem: vi.fn(),
+    futures: vi.fn(),
+    cupboard: vi.fn(),
   },
 }));
 
@@ -539,5 +543,74 @@ describe('终审 I2：冷静期已过的所得能取出', () => {
     expect(w.find('[data-testid="ex-holds"]').text()).toContain('银币 500');
     expect(w.find('[data-testid="ex-holds"]').text()).toContain('还剩 2 小时');
     expect(w.find('[data-testid="ex-holds"]').text()).not.toContain('松露');
+  });
+
+  describe('现货、期货两个标签（期货设计 §10）', () => {
+    const fut = (open: boolean) => ({
+      enabled: false,
+      blocked: null,
+      needLevel: 20,
+      needDays: 7,
+      foods: [],
+      personDaily: 50,
+      personLeft: 50,
+      deliverHours: 72,
+      depositRate: 0.3,
+      contracts: open
+        ? [
+            {
+              id: 1,
+              foodsId: 12,
+              qty: 1,
+              unitPrice: 1,
+              deposit: 1,
+              balance: 1,
+              createdAt: '2026-10-10T00:00:00Z',
+              dueAt: '2026-10-13T00:00:00Z',
+              status: 'open' as const,
+              settledAt: null,
+              toCupboard: 0,
+              toWallet: 0,
+            },
+          ]
+        : [],
+    });
+    beforeEach(() => {
+      vi.mocked(endpoints.futures).mockResolvedValue(fut(false));
+      vi.mocked(endpoints.cupboard).mockResolvedValue({ items: [] } as never);
+    });
+
+    it('默认现货；点期货切过去，现货的盘口不显示', async () => {
+      const w = mount(ExchangeView);
+      await flushPromises();
+      expect(w.find('[data-testid="ex-search"]').exists()).toBe(true);
+      await w.get('[data-testid="ex-tab-futures"]').trigger('click');
+      await flushPromises();
+      expect(w.find('[data-testid="ex-search"]').exists()).toBe(false);
+      expect(endpoints.futures).toHaveBeenCalled();
+    });
+
+    it('地址带 ?tab=futures 直接打开期货', async () => {
+      const router = createRouter({
+        history: createMemoryHistory(),
+        routes: [{ path: '/:p(.*)*', component: ExchangeView }],
+      });
+      await router.push('/exchange?tab=futures');
+      const w = mount(ExchangeView, { global: { plugins: [router] } });
+      await flushPromises();
+      expect(w.get('[data-testid="ex-tab-futures"]').classes()).toContain('active');
+      expect(w.find('[data-testid="ex-search"]').exists()).toBe(false);
+    });
+
+    it('本区服关了期货：没有进行中的单时不显示期货标签，有就显示', async () => {
+      useRestaurantStore().rest = { id: 1, disabledFeatures: ['futures'] } as never;
+      let w = mount(ExchangeView);
+      await flushPromises();
+      expect(w.find('[data-testid="ex-tab-futures"]').exists()).toBe(false);
+      vi.mocked(endpoints.futures).mockResolvedValue(fut(true));
+      w = mount(ExchangeView);
+      await flushPromises();
+      expect(w.find('[data-testid="ex-tab-futures"]').exists()).toBe(true);
+    });
   });
 });
