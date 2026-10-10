@@ -128,6 +128,7 @@ bulk: {
 - `0 ≤ openHour ≤ 23`，`hours ≥ 1`，`1 ≤ closeWindowMin < hours × 60`；
 - `qty`、`levelWeights` 各 5 项，`qty` 都 ≥ 1，`levelWeights` 都 ≥ 0 且至少一项 > 0；
 - `reserveRate ≥ 1`；`0 < capRate < groupRate ≤ 1`，保证一个人成不了团；
+- 每一级都要 `floor(qty × capRate) ≥ 1`（每人上限向下取整，份数调得很小时不能变成 0）。上限向下取整、成团向上取整，`capRate < groupRate` 时每人上限一定小于成团份数；
 - `0 < minRaise ≤ 1`；`cooldownSec ≥ 0`；`0 ≤ consolationRate ≤ 1`；
 - `consolation.goods` 是存在的道具，`num ≥ 1`；
 - `setting_docs.json` 写说明。区服功能开关加 `bulk`，默认开。
