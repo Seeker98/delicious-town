@@ -1404,6 +1404,26 @@ export interface FundDepositTable {
   returned: Nullable<number>;
 }
 
+/** 食材理财（理财设计 §3.2）：期限、补给包、个数按存入时写进来 */
+export interface WealthDepositTable {
+  id: Generated<number>;
+  shard_id: number;
+  rest_id: number;
+  coin: number;
+  days: number;
+  goods_id: number;
+  packs: number;
+  started_at: Ts;
+  matures_at: Ts;
+  status: ColumnType<
+    'active' | 'claimed' | 'withdrawn',
+    'active' | 'claimed' | 'withdrawn' | undefined,
+    'active' | 'claimed' | 'withdrawn'
+  >;
+  settled_at: TsNullable;
+  returned: Nullable<number>;
+}
+
 export interface KujiPoolTable {
   id: Generated<string>;
   shard_id: number;
@@ -1548,6 +1568,7 @@ export interface DB {
   predict_trade: PredictTradeTable;
   kuji_pool: KujiPoolTable;
   fund_deposit: FundDepositTable;
+  wealth_deposit: WealthDepositTable;
   rest_income_day: RestIncomeDayTable;
   rest_income_best: RestIncomeBestTable;
   town_daily: TownDailyTable;
