@@ -33,11 +33,76 @@ html {
 .dt-app-wide {
   max-width: 1200px;
 }
+/* ---------- 顶栏（界面改版 P2a，设计 §4.2）：返回、标题、时间、邮件、“我” ---------- */
 .dt-header {
-  height: 44px;
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 48px;
+  padding: 0 10px 0 8px;
   background: var(--dt-header-bg);
   border-bottom: 1px solid var(--dt-line);
+}
+.dt-header-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  margin-right: -4px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--dt-muted);
+  font-size: 18px;
+}
+.dt-header-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--dt-text);
+}
+.dt-header-clock {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-header-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--dt-muted);
+  font-size: 20px;
+  line-height: 1;
+}
+.dt-header-me {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--dt-primary-soft);
   color: var(--dt-primary-ink);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .dt-header-back:hover {
+    background: var(--dt-surface-2);
+    color: var(--dt-text);
+  }
 }
 .dt-main {
   padding: 8px;
@@ -905,11 +970,7 @@ details.dt-card > summary {
 .dt-exp-bar {
   background-color: var(--dt-fill-primary);
 }
-/* 顶栏邮箱（问题记录 200）：图标放大，未读数缩小贴在右上角 */
-.dt-mail-icon {
-  font-size: 20px;
-  line-height: 1;
-}
+/* 顶栏邮箱未读数（问题记录 200）：缩小贴在图标右上角 */
 .dt-mail-badge {
   font-size: 11px;
   line-height: 1;
