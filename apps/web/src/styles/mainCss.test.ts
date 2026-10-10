@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { allCss } from './cssSource';
+import { allCss, readCss, stripComments } from './cssSource';
 
 const css = allCss();
 
@@ -65,5 +65,19 @@ describe('触屏小号输入框和 btn-sm 等高（质量期 ①a）', () => {
     expect(rule).toMatch(/position:\s*absolute/);
     expect(rule).toMatch(/inset:\s*-8px -6px/);
     expect(css).toMatch(/\.dt-link-btn\s*\{[^}]*position:\s*relative/);
+  });
+});
+
+describe('颜色只读令牌（界面改版 P1）', () => {
+  it('base.css、main.css 不写裸色值（色值只在 tokens.css）', () => {
+    for (const name of ['base', 'main'] as const) {
+      const src = stripComments(readCss(name)).replace(/url\("data:[^"]*"\)/g, '');
+      expect(src.match(/#[0-9a-fA-F]{3,8}\b|rgba?\(\s*\d/g) ?? [], name).toEqual([]);
+    }
+  });
+
+  it('最小字号 11px（不再有 9px 的未读数）', () => {
+    const sizes = [...stripComments(allCss()).matchAll(/font-size:\s*(\d+)px/g)].map((m) => Number(m[1]));
+    expect(Math.min(...sizes)).toBeGreaterThanOrEqual(11);
   });
 });

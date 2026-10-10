@@ -27,7 +27,7 @@ html {
   max-width: 720px;
   margin: 0 auto;
   min-height: 100vh;
-  background: #fff;
+  background: var(--dt-surface);
 }
 
 .dt-app-wide {
@@ -36,7 +36,8 @@ html {
 .dt-header {
   height: 44px;
   background: var(--dt-header-bg);
-  color: var(--dt-primary);
+  border-bottom: 1px solid var(--dt-line);
+  color: var(--dt-primary-ink);
 }
 .dt-main {
   padding: 8px;
@@ -56,12 +57,12 @@ html {
   bottom: 0;
   width: 100%;
   max-width: 720px;
-  background: #fff;
-  border-top: 1px solid #eee;
+  background: var(--dt-surface);
+  border-top: 1px solid var(--dt-line);
   z-index: 1030;
 }
 .dt-bottom-nav a {
-  color: #666;
+  color: var(--dt-muted);
   text-decoration: none;
 }
 .dt-bottom-nav a.router-link-exact-active {
@@ -75,8 +76,8 @@ html {
   z-index: 1045;
   padding: 4px 8px;
   border-radius: 6px;
-  background: #fff;
-  color: #333;
+  background: var(--dt-surface);
+  color: var(--dt-text);
   font-size: 12px;
   white-space: nowrap;
 }
@@ -101,6 +102,7 @@ html {
   bottom: calc(16px + env(safe-area-inset-bottom, 0px));
 }
 .dt-toast-pill {
+  box-shadow: var(--dt-shadow-float);
   max-width: 100%;
   text-align: center;
   /* 固定圆角：一行时是胶囊，英法西的得失汇总折成几行时是圆角矩形（rounded-pill 会变成大椭圆，终审） */
@@ -114,7 +116,7 @@ html {
   display: inline-block;
   padding: 0 8px;
   border-radius: 8px;
-  background: #f1f3f5;
+  background: var(--dt-surface-2);
   font-size: 12px;
 }
 /* 放在大一号文字前的标签（问题记录 388：街道类型和加成说明）：按基线对齐时小字整体偏下约 1px，
@@ -153,13 +155,13 @@ html {
 }
 .dt-more-link {
   font-size: 11px;
-  color: #495057;
+  color: var(--dt-muted);
   padding: 4px 0;
   border-radius: 6px;
   line-height: 1.2;
 }
 .dt-more-link:hover {
-  background: #f1f3f5;
+  background: var(--dt-surface-2);
 }
 .dt-more-link i {
   font-size: 18px;
@@ -168,7 +170,7 @@ html {
 .dt-more-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--dt-scrim);
   /* 在底部导航之下：面板打开时仍能直接点别的标签 */
   z-index: 1028;
 }
@@ -181,7 +183,7 @@ html {
   max-width: 720px;
   max-height: 70vh;
   overflow-y: auto;
-  background: #fff;
+  background: var(--dt-surface);
   border-radius: 12px 12px 0 0;
   /* 底部留出导航栏的高度 */
   padding: 12px 16px 64px;
@@ -211,15 +213,15 @@ html {
   gap: 4px;
 }
 .dt-act {
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--dt-line);
   border-radius: 6px;
   padding: 4px 8px;
-  background: #fff;
+  background: var(--dt-surface);
   min-width: 0;
 }
 .dt-act-bar {
   height: 4px;
-  background: #f1f3f5;
+  background: var(--dt-surface-2);
   border-radius: 2px;
   margin: 3px 0 2px;
   overflow: hidden;
@@ -230,18 +232,18 @@ html {
 }
 .dt-act-pts {
   font-size: 11px;
-  color: #868e96;
+  color: var(--dt-muted);
 }
 .dt-act-done {
-  background: #ebfbee;
-  border-color: #b2f2bb;
+  background: var(--dt-soft-success);
+  border-color: var(--dt-fill-success);
 }
 .dt-act-done .dt-act-bar > div {
   background: var(--dt-fill-success);
 }
 .dt-act-locked {
-  background: #f1f3f5;
-  color: #868e96;
+  background: var(--dt-surface-2);
+  color: var(--dt-muted);
 }
 /* 锁定原因（注册天数、邮箱、没有限时活动）在英法西文里很长：单独一行，放在进度条的位置 */
 .dt-act-lock {
@@ -255,7 +257,7 @@ html {
   display: flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--dt-line);
   border-radius: 6px;
   padding: 4px 8px;
   margin-bottom: 3px;
@@ -302,12 +304,12 @@ html {
   border-radius: 8px;
 }
 .dt-chip-good {
-  background: #ebfbee;
-  color: #2b8a3e;
+  background: var(--dt-soft-success);
+  color: var(--dt-ink-success);
 }
 .dt-chip-bad {
-  background: #fff5f5;
-  color: #c92a2a;
+  background: var(--dt-soft-danger);
+  color: var(--dt-ink-danger);
 }
 .dt-clamp1 {
   white-space: nowrap;
@@ -354,7 +356,7 @@ h5 {
   gap: 8px;
   min-height: 32px;
   padding: 2px 0;
-  border-top: 1px solid #f1e6da;
+  border-top: 1px solid var(--dt-line);
 }
 /*
  * 文字链接统一（问题记录 445）：都是品牌色、没有下划线。
@@ -434,7 +436,7 @@ details.dt-card > summary {
 }
 /* 交易所食材列表：有人在卖的绿框；卖 N / 收 N 小标（问题记录 282） */
 .btn.dt-on-sale:not(.btn-primary) {
-  border-color: #2b8a3e;
+  border-color: var(--dt-success);
 }
 .dt-sale-tag {
   display: inline-block;
@@ -442,8 +444,8 @@ details.dt-card > summary {
   border-radius: 4px;
   font-size: 11px;
   line-height: 16px;
-  background: #ebfbee;
-  color: #2b8a3e;
+  background: var(--dt-soft-success);
+  color: var(--dt-ink-success);
 }
 .dt-buy-tag {
   display: inline-block;
@@ -451,8 +453,8 @@ details.dt-card > summary {
   border-radius: 4px;
   font-size: 11px;
   line-height: 16px;
-  background: #e7f5ff;
-  color: #1864ab;
+  background: var(--dt-soft-primary);
+  color: var(--dt-ink-primary);
 }
 /* 卡片标题：和正文同字号、粗 600（问题记录 278：卡片里的 <b> 继承 16px 显得粗大） */
 .dt-card-title {
@@ -546,9 +548,9 @@ details.dt-card > summary {
 /* 卡片 */
 /* 内边距 8/12 → 6/10、卡片间距 8 → 6（问题记录 439） */
 .dt-card {
-  background: #fff;
-  border: 1px solid #f1e6da;
-  border-radius: 8px;
+  background: var(--dt-surface);
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-md);
   padding: 6px 10px;
 }
 .dt-card + .dt-card {
@@ -578,8 +580,8 @@ details.dt-card > summary {
 }
 /* 右边还有没露出来的标签：右侧渐隐（utils/tabsScroll.ts 加类） */
 .nav-tabs.dt-tabs-more {
-  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
-  mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+  -webkit-mask-image: linear-gradient(to right, black calc(100% - 24px), transparent);
+  mask-image: linear-gradient(to right, black calc(100% - 24px), transparent);
 }
 .nav-tabs::-webkit-scrollbar {
   display: none;
@@ -603,8 +605,8 @@ details.dt-card > summary {
 /* 品牌浅底的提示块（一番赏月度主题等），代替 Bootstrap 的青色 alert-info */
 .dt-note {
   background: var(--dt-primary-soft);
-  border: 1px solid #f1e6da;
-  border-radius: 8px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-sm);
   padding: 4px 12px;
 }
 .dt-empty {
@@ -626,7 +628,7 @@ details.dt-card > summary {
   gap: 4px;
 }
 .dt-pick {
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--dt-line);
   border-radius: 6px;
   padding: 4px 6px;
   font-size: 12px;
@@ -670,7 +672,7 @@ details.dt-card > summary {
   border-width: 2px;
 }
 .dt-deal-opened {
-  background: #fff;
+  background: var(--dt-surface);
   color: var(--dt-muted);
 }
 .dt-deal-box-text {
@@ -734,7 +736,7 @@ details.dt-card > summary {
   min-height: 32px;
   border: 1px dashed var(--dt-line);
   border-radius: 6px;
-  background: #fff;
+  background: var(--dt-surface);
   font: inherit;
   color: inherit;
 }
@@ -780,7 +782,7 @@ details.dt-card > summary {
   padding: 8px 4px;
   border: 1px solid var(--dt-line);
   border-radius: 8px;
-  background: #fff;
+  background: var(--dt-surface);
   font-size: 12px;
   color: var(--dt-muted);
 }
@@ -792,8 +794,8 @@ details.dt-card > summary {
   opacity: 1;
 }
 .dt-cup-me {
-  background: #ebfbee;
-  border-color: #b2f2bb;
+  background: var(--dt-soft-success);
+  border-color: var(--dt-fill-success);
 }
 .dt-cup-bar {
   background: var(--dt-line);
@@ -803,9 +805,9 @@ details.dt-card > summary {
   opacity: 0.45;
 }
 .dt-cup-spiked {
-  background: #fff5f5;
-  border-color: #ffa8a8;
-  color: #c92a2a;
+  background: var(--dt-soft-danger);
+  border-color: var(--dt-fill-danger);
+  color: var(--dt-ink-danger);
 }
 /* 记忆调酒：8 种配料两行 */
 .dt-mixes {
@@ -819,7 +821,7 @@ details.dt-card > summary {
   padding: 8px 0;
   border: 1px solid var(--dt-line);
   border-radius: 8px;
-  background: #fff;
+  background: var(--dt-surface);
   font-size: 13px;
   color: var(--dt-muted);
 }
@@ -827,16 +829,16 @@ details.dt-card > summary {
   opacity: 1;
 }
 .dt-mix-on {
-  background: var(--dt-primary-ink);
-  border-color: var(--dt-primary-ink);
-  color: #fff;
+  background: var(--dt-primary);
+  border-color: var(--dt-primary);
+  color: var(--dt-on-primary);
 }
 /* 飞镖：横向靶条，中间三圈，准星是一条竖线（宽度按 tuning 的 0.3 / 0.15 / 0.05 半径） */
 .dt-board {
   position: relative;
   height: 44px;
   border-radius: 8px;
-  background: #f1f3f5;
+  background: var(--dt-surface-2);
   overflow: hidden;
 }
 .dt-board-ring {
@@ -848,15 +850,15 @@ details.dt-card > summary {
 }
 .dt-board-r5 {
   width: 50%;
-  background: #fff4e6;
+  background: var(--dt-primary-soft);
 }
 .dt-board-r10 {
   width: 30%;
-  background: #ffe8cc;
+  background: color-mix(in srgb, var(--dt-primary) 30%, var(--dt-surface));
 }
 .dt-board-r25 {
   width: 15%;
-  background: #ffc078;
+  background: color-mix(in srgb, var(--dt-primary) 60%, var(--dt-surface));
 }
 .dt-board-r50 {
   width: 5%;
@@ -868,7 +870,7 @@ details.dt-card > summary {
   bottom: 2px;
   width: 3px;
   margin-left: -1px;
-  background: #212529;
+  background: var(--dt-text);
   border-radius: 2px;
 }
 
@@ -880,7 +882,7 @@ details.dt-card > summary {
   width: 8rem;
 }
 .dt-item-me {
-  background: #fff4e6;
+  background: var(--dt-primary-soft);
   border-radius: 6px;
 }
 .dt-rank-no {
@@ -901,7 +903,7 @@ details.dt-card > summary {
 /* 顶栏邮箱未读数（子项目 6A） */
 /* 首页经验条（问题记录 212）：柔和的橙色，不再是亮黄色大块 */
 .dt-exp-bar {
-  background-color: #ffc078;
+  background-color: var(--dt-fill-primary);
 }
 /* 顶栏邮箱（问题记录 200）：图标放大，未读数缩小贴在右上角 */
 .dt-mail-icon {
@@ -909,7 +911,7 @@ details.dt-card > summary {
   line-height: 1;
 }
 .dt-mail-badge {
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1;
   min-width: 14px;
   padding: 2px 4px;

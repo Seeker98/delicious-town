@@ -2,10 +2,11 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import zhCN from '../i18n/locales/zh-CN';
+import { allCss } from './cssSource';
 
 /** 文字链接统一（问题记录 451，规范见 docs/design/文字链接-2026-10-07.md） */
 const SRC = join(__dirname, '..');
-const css = readFileSync(join(__dirname, 'main.css'), 'utf8');
+const css = allCss();
 function vueFiles(dir: string): string[] {
   return readdirSync(dir).flatMap((n) => {
     const p = join(dir, n);
