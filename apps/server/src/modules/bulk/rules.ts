@@ -14,6 +14,8 @@ export const bulkCap = (n: number, t: BulkTuning) => Math.floor(clean(n * t.capR
 export const bulkGroup = (n: number, t: BulkTuning) => Math.ceil(clean(n * t.groupRate));
 /** 起拍价 = 期货单价 × reserveRate，向上取整 */
 export const bulkReserve = (futuresUnit: number, t: BulkTuning) => ceilClean(futuresUnit * t.reserveRate);
+/** 安慰奖门槛：出价不低于成交价 × consolationRate（向上取整）的落选者有安慰奖 */
+export const consolationLine = (price: number, t: BulkTuning) => ceilClean(price * t.consolationRate);
 /** 改出价时单价至少要加到多少 */
 export const minRaisePrice = (old: number, t: BulkTuning) => ceilClean(old * (1 + t.minRaise));
 

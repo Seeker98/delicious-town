@@ -200,6 +200,8 @@ export async function buffsOf(
  * 老鼠偷食材、手动进货被买、冰箱满了丢食材）。好友页"动态"卡和首页的"餐厅动态"都用它
  */
 export const FEED_TYPES = [
+  'bulk.won',
+  'bulk.failed',
   'dine.start',
   'dine.expelled',
   'roach.laid',
