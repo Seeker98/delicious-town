@@ -6,7 +6,7 @@ const bulk: Messages['bulk'] = {
   intro:
     'A new lot of one ingredient opens every day. Bid a unit price and a quantity; at the close, the price of the last unit that made it in is the single price everyone pays, and any extra you froze comes back.',
   helpTitle: 'How bulk subscription works',
-  help: (cap, group, raisePct, cooldown, windowMin, openHour) => [
+  help: (cap, group, raisePct, cooldown, windowMin, openHour, blindMin) => [
     `A new lot opens every day at ${openHour}:00 and runs for a day`,
     'Units go to the highest prices first (earlier bids win ties); the bid on the last unit handed out is the single price everyone pays',
     `Up to ${cap} ${plEn(cap, 'unit', 'units')} per player in this lot; if fewer than ${group} units are bid in total, the lot fails and everyone is refunded`,
@@ -15,6 +15,11 @@ const bulk: Messages['bulk'] = {
     `The lot can close at any moment in the last ${windowMin} minutes, and bids after the close don't count; after each bid you must wait ${cooldown} ${plEn(cooldown, 'second', 'seconds')}`,
     'If you get no units but your bid was close to the final price, you get a random ingredient ticket',
     'Same requirements as the exchange',
+    ...(blindMin > 0
+      ? [
+          `From ${blindMin} minutes before the end, the expected price, cutoff and units bid freeze at that moment; who gets in is revealed at the close`,
+        ]
+      : []),
   ],
   off: 'Bulk subscription is not open on this server yet',
   none: (openHour) => `No lot right now; a new one opens every day at ${openHour}:00`,
@@ -43,6 +48,10 @@ const bulk: Messages['bulk'] = {
   estimateAll: (price, total) =>
     `At the expected price of ${price}, getting all of them would cost about ${total}.`,
   estimateOut: "At this price you wouldn't get in right now; bid above the threshold to get in.",
+  blindNote: (time) =>
+    `Final stretch: the figures above are frozen as of ${time}; later bids are revealed at the close`,
+  blindMine: 'Who gets in is hidden in the final stretch and revealed at the close',
+  estimateBlind: 'Final stretch: whether you get in and what you pay are revealed at the close.',
   partialHint:
     'If your price is right at the cutoff you may get only some of the units: earlier bids win ties, and units you miss are fully refunded.',
   reasons: {

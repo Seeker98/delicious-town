@@ -15,6 +15,7 @@ describe('大宗认购配置（大宗认购设计 §2.1）', () => {
       qty: [150, 110, 80, 60, 45],
       capRate: 0.25,
       groupRate: 0.3,
+      blindMin: 60,
     });
   });
 
@@ -25,10 +26,12 @@ describe('大宗认购配置（大宗认购设计 §2.1）', () => {
     t.bulk.qty = [150, 110, 80, 60, 3];
     t.bulk.closeWindowMin = 24 * 60;
     t.bulk.consolation.goods = 1;
+    t.bulk.blindMin = 24 * 60;
     const { errors } = buildBundle({ ...src, 'game/tuning': t });
     expect(errors).toContain('tuning.bulk capRate 0.3 must be less than groupRate 0.3');
     expect(errors).toContain('tuning.bulk qty level 5 (3) gives a per-person cap of 0');
     expect(errors).toContain('tuning.bulk closeWindowMin 1440 must be shorter than hours 24');
     expect(errors).toContain('tuning.bulk consolation goods 1 does not exist');
+    expect(errors).toContain('tuning.bulk blindMin 1440 must be shorter than hours 24');
   });
 });

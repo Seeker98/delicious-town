@@ -31,15 +31,17 @@ export interface BulkLotDto {
   demand: number;
   bidders: number;
   grouped: boolean;
+  /** 停更开始的时刻（问题记录 595）：不为空时上面几个数停在这一刻；为空 = 实时 */
+  blindAt: string | null;
 }
 
 export interface BulkMineDto {
   price: number;
   qty: number;
   frozen: number;
-  /** 照现在收盘能中几份、大约付多少 */
-  won: number;
-  estimate: number;
+  /** 照现在收盘能中几份、大约付多少；停更期间不公布，为 null（问题记录 595） */
+  won: number | null;
+  estimate: number | null;
   /** 还要等几秒才能再出价；0 = 现在可以 */
   cooldownLeft: number;
 }
@@ -74,6 +76,8 @@ export interface BulkDto {
   cooldownSec: number;
   minRaise: number;
   closeWindowMin: number;
+  /** 名义结束前多少分钟起停更；0 = 全程实时（问题记录 595） */
+  blindMin: number;
   openHour: number;
   /** 当前银币：出价框判断冻结差额够不够 */
   coin: number;

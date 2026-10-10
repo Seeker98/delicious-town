@@ -463,7 +463,8 @@
     "minRaise": 0.01,
     "cooldownSec": 5,
     "consolationRate": 0.9,
-    "consolation": { "goods": 10202, "num": 1 }
+    "consolation": { "goods": 10202, "num": 1 },
+    "blindMin": 60
   },
   "acquire": {
     "priceDays": 7, "priceMultiple": 5, "minPrice": 100000,

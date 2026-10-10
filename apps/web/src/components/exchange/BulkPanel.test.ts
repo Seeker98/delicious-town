@@ -24,6 +24,7 @@ const lot = (p: Partial<BulkLotDto> = {}): BulkLotDto => ({
   demand: 12,
   bidders: 3,
   grouped: true,
+  blindAt: null,
   ...p,
 });
 const mine = (p: Partial<BulkMineDto> = {}): BulkMineDto => ({
@@ -43,6 +44,7 @@ const data = (p: Partial<BulkDto> = {}): BulkDto => ({
   cooldownSec: 5,
   minRaise: 0.01,
   closeWindowMin: 5,
+  blindMin: 60,
   openHour: 20,
   coin: 5_000_000,
   lot: lot(),
@@ -232,6 +234,31 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
     expect(ok).toContain('1.2');
     expect(ok).toContain('106,000');
     expect(el(w, 'bk-recent-4').text()).toContain('流拍');
+  });
+
+  it('最后阶段停更（问题记录 595）：写明数停在几点；我的入围情况和预计付款不显示；说明里写停更规则', async () => {
+    vi.mocked(endpoints.bulk).mockResolvedValue(
+      data({
+        lot: lot({ blindAt: '2026-10-13T11:00:00Z' }),
+        mine: mine({ won: null, estimate: null }),
+      }),
+    );
+    const w = mount(BulkPanel);
+    await flushPromises();
+    expect(el(w, 'bk-blind').text()).toContain('收盘后公布');
+    const m = el(w, 'bk-mine').text();
+    expect(m).toContain('收盘后公布');
+    expect(m).not.toContain('入围 2');
+    expect(el(w, 'bk-freeze').text()).toContain('收盘后公布');
+    expect(el(w, 'bk-help').text()).toContain('最后 60 分钟');
+  });
+
+  it('区服不停更（blindMin 0）：说明里没有停更这一条', async () => {
+    vi.mocked(endpoints.bulk).mockResolvedValue(data({ blindMin: 0 }));
+    const w = mount(BulkPanel);
+    await flushPromises();
+    expect(el(w, 'bk-help').text()).not.toContain('停更');
+    expect(w.find('[data-testid="bk-blind"]').exists()).toBe(false);
   });
 
   it('出价失败：报错并重读', async () => {

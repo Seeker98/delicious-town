@@ -732,6 +732,7 @@
     "tuning.bulk.consolationRate": "一份都没中、出价不低于成交价 × 这个数的店得安慰奖",
     "tuning.bulk.consolation.goods": "安慰奖的道具（默认二级食材随机券）",
     "tuning.bulk.consolation.num": "安慰奖给几个",
+    "tuning.bulk.blindMin": "名义结束前多少分钟起，预计成交价、入围门槛、认购份数停在那一刻，入围情况不再显示，收盘后公布结果（分钟）；0 = 全程实时显示",
     "tuning.acquire.priceDays": "基础身价按近几天的日均结算银币算（天）",
     "tuning.acquire.priceMultiple": "基础身价 = 日均结算银币 × 这个数（倍）",
     "tuning.acquire.minPrice": "基础身价下限（银币）",

@@ -1450,6 +1450,12 @@ export interface BulkLotTable {
   price: Nullable<number>;
   sold: Nullable<number>;
   settled_at: TsNullable;
+  /** 进入停更那一刻的看板（问题记录 595）；为空 = 还没停更 */
+  blind_at: TsNullable;
+  blind_price: Nullable<number>;
+  blind_threshold: Nullable<number>;
+  blind_demand: Nullable<number>;
+  blind_bidders: Nullable<number>;
 }
 /** 大宗认购的出价：每店每批一条，改出价就是更新这一条；结算第二段写 paid / refunded / settled_at */
 export interface BulkBidTable {

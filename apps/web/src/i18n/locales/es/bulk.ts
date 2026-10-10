@@ -6,7 +6,7 @@ const bulk: Messages['bulk'] = {
   intro:
     'Cada día sale un lote de un ingrediente. Puja un precio por unidad y una cantidad; al cierre, el precio de la última unidad que entra es el precio único que pagan todos, y lo congelado de más se devuelve.',
   helpTitle: 'Cómo funciona la suscripción mayorista',
-  help: (cap, group, raisePct, cooldown, windowMin, openHour) => [
+  help: (cap, group, raisePct, cooldown, windowMin, openHour, blindMin) => [
     `Cada día a las ${openHour}:00 sale un lote nuevo, que dura un día`,
     'Las unidades se reparten de mayor a menor precio (a igual precio, gana la puja anterior); la puja de la última unidad repartida es el precio único que pagan todos',
     `Como máximo ${cap} ${plEs(cap, 'unidad', 'unidades')} por jugador en este lote; si en total se pujan menos de ${group}, el lote fracasa y se devuelve todo`,
@@ -15,6 +15,11 @@ const bulk: Messages['bulk'] = {
     `El lote puede cerrarse en cualquier momento de los últimos ${windowMin} minutos y las pujas posteriores no cuentan; tras cada puja hay que esperar ${cooldown} ${plEs(cooldown, 'segundo', 'segundos')}`,
     'Si no consigues ninguna unidad pero tu puja quedó cerca del precio final, recibes un vale de ingrediente al azar',
     'Los mismos requisitos que la bolsa',
+    ...(blindMin > 0
+      ? [
+          `Desde ${blindMin} minutos antes del final, el precio previsto, el umbral y las unidades pujadas se congelan en ese momento; quién entra se sabe al cierre`,
+        ]
+      : []),
   ],
   off: 'La suscripción mayorista aún no está abierta en este servidor',
   none: (openHour) => `Ahora no hay ningún lote; cada día sale uno nuevo a las ${openHour}:00`,
@@ -44,6 +49,10 @@ const bulk: Messages['bulk'] = {
   settleNote: 'Al cierre pagas el precio final único, nunca más que tu puja; se devuelve el resto.',
   estimateAll: (price, total) => `Al precio previsto de ${price}, conseguirlas todas costaría unas ${total}.`,
   estimateOut: 'Con este precio ahora no entrarías; puja por encima del umbral para entrar.',
+  blindNote: (time) =>
+    `Tramo final: las cifras de arriba se quedaron congeladas a las ${time}; las pujas posteriores se conocen al cierre`,
+  blindMine: 'En el tramo final no se muestra quién entra; se sabe al cierre',
+  estimateBlind: 'Tramo final: si entras y cuánto pagas se sabe al cierre.',
   partialHint:
     'Si tu precio queda justo en el corte puede que solo consigas parte de las unidades: a igual precio gana la puja anterior, y las que no entren se devuelven íntegras.',
   reasons: {
