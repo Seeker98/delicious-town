@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    wealth1010:
+      "L'Association propose désormais des placements\u202f: placez des pièces 3, 7 ou 14 jours et récupérez tout le capital à l'échéance, plus un colis de ravitaillement du marché de niveau 3, 4 ou 5 par tranche de 1\u202f000\u202f000 pièces. À l'ouverture, le colis donne un ingrédient de son niveau qui manque à la rue où vous êtes. Jusqu'à 3 placements et 10\u202f000\u202f000 pièces au total, dès le niveau 20\u202f; un retrait anticipé rend 95\u202f%, sans colis",
     futures1010:
       'La bourse a un nouvel onglet Contrats à terme\u202f: commandez un ingrédient précis, payez un acompte de 30\u202f% pour fixer le prix, et il est livré automatiquement 3 jours plus tard, le solde étant prélevé à ce moment-là (ce qui ne rentre pas au garde-manger va sur votre compte de la bourse). Si vous ne pouvez pas payer le solde à l’échéance, ou si vous annulez avant, le contrat est en défaut et l’acompte n’est pas rendu. Chaque ingrédient a un quota quotidien pour tout le serveur, et chaque joueur peut commander jusqu’à 50 unités par jour au total',
     backlog1010:

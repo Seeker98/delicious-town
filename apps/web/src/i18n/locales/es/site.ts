@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    wealth1010:
+      'La Asociación tiene una nueva página de Depósitos: deposita monedas 3, 7 o 14 días y al vencer recuperas todo el capital, además de un paquete de suministros del mercado de nivel 3, 4 o 5 por cada 1.000.000 de monedas. Al abrir el paquete recibes un ingrediente de su nivel que le falte a la calle donde estés. Hasta 3 depósitos y 10.000.000 de monedas en total, desde el nivel 20; retirar antes devuelve el 95\u00a0% y sin paquetes',
     futures1010:
       'La bolsa tiene una nueva pestaña de Futuros: encarga un ingrediente concreto, paga un depósito del 30\u00a0% para fijar el precio y se entrega solo a los 3 días, cuando se cobra el resto (lo que no quepa en la despensa va a tu cuenta de la bolsa). Si al vencer no puedes pagar el resto, o cancelas antes, el pedido queda impagado y el depósito no se devuelve. Cada ingrediente tiene un cupo diario para todo el servidor y cada jugador puede encargar hasta 50 al día en total',
     backlog1010:

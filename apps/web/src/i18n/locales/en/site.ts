@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    wealth1010:
+      'The Association has a new Deposits page: lock away coins for 3, 7 or 14 days and get the full principal back at maturity, plus one level 3, 4 or 5 Market Supply Pack per 1,000,000 coins. When you open a pack, it gives an ingredient of its level that your current street is short of. Up to 3 deposits and 10,000,000 coins in total, from restaurant level 20; withdrawing early returns 95% and no packs',
     futures1010:
       'The exchange has a new Futures tab: order a specific ingredient, pay a 30% deposit to lock the unit price, and it is delivered automatically 3 days later with the balance charged then (anything that does not fit your pantry goes to your exchange account). If you cannot pay the balance when it is due, or you cancel early, the order defaults and the deposit is not refunded. Each ingredient has a server-wide daily quota, and each player can order up to 50 in total per day',
     backlog1010:
