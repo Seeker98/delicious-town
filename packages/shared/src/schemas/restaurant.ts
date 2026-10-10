@@ -99,6 +99,8 @@ export interface RestaurantDto {
   acquireOwner: { restId: number; name: string } | null;
   /** 资产：名下的店身价合计，和投资榜一样（问题记录 447）；区服关了收购为 null */
   assets: number | null;
+  /** 到期没领的理财笔数（首页待办，理财设计 §3.4）；区服关了理财为 0，旧服务端没有 */
+  wealthDue?: number;
   /** 首页的食谱数：学会几道 / 全部几道（问题记录 447） */
   cookbooks: { learned: number; total: number };
   /** 在售的特色菜：哪道、几级；没有、卖完为 null（问题记录 447） */

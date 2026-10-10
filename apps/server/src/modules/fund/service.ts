@@ -14,7 +14,7 @@ const DAY = 86_400_000;
  * 本金 × 比例向下取整。比例先换成整数百万分比再乘，免得 700,000 × 0.7 算成 489,999.99…（backlog 基金），
  * 也不会像加一点点那样在 3 × 0.333333 时多给 1（质量期 ②）；比例超过 6 位小数的部分不算
  */
-const share = (coin: number, rate: number) => Math.floor((coin * Math.round(rate * 1e6)) / 1e6);
+export const share = (coin: number, rate: number) => Math.floor((coin * Math.round(rate * 1e6)) / 1e6);
 
 /**
  * 领取时一起发的限时称号（用户追加）：和勋章同时到期；先去掉别的基金称号（和勋章一样不叠加），
