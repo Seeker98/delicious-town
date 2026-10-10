@@ -1304,6 +1304,41 @@ export interface AcquireTendTable {
 }
 
 /** 每家被收购的店每天给老板的分红（压过封顶以后的）；day 是结算的那天 */
+/** 期货食材列表（期货设计 §5）：全服一份；不在表里 = 没上架 */
+export interface FuturesFoodTable {
+  foods_id: number;
+  enabled: Default<boolean>;
+  /** 单独的区服每日额度；空 = 按等级默认 */
+  daily_quota: Nullable<number>;
+  updated_at: TsDefault;
+  updated_by: Nullable<number>;
+}
+/** 期货单（期货设计 §6）：单价、定金、尾款下单时锁定 */
+export interface FuturesContractTable {
+  id: Generated<string>;
+  shard_id: number;
+  rest_id: number;
+  foods_id: number;
+  qty: number;
+  unit_price: number;
+  deposit: number;
+  balance: number;
+  created_at: Ts;
+  due_at: Ts;
+  status: Default<'open' | 'delivered' | 'defaulted' | 'cancelled'>;
+  settled_at: TsNullable;
+  to_cupboard: Default<number>;
+  to_wallet: Default<number>;
+}
+/** 区服每天每种食材已订的份数（期货设计 §4） */
+export interface FuturesQuotaTable {
+  shard_id: number;
+  foods_id: number;
+  /** YYYY-MM-DD（游戏日） */
+  day: string;
+  used: Default<number>;
+}
+
 export interface AcquireDividendTable {
   rest_id: number;
   day: string;
@@ -1497,6 +1532,9 @@ export interface DB {
   activity_settle: ActivitySettleTable;
   activity_settle_fail: ActivitySettleFailTable;
   exchange_order: ExchangeOrderTable;
+  futures_food: FuturesFoodTable;
+  futures_contract: FuturesContractTable;
+  futures_quota: FuturesQuotaTable;
   exchange_trade: ExchangeTradeTable;
   exchange_ref: ExchangeRefTable;
   exchange_wallet: ExchangeWalletTable;
