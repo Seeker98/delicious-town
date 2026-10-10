@@ -41,6 +41,7 @@ import { createFundService, type FundService } from './modules/fund/service';
 import { createFuturesService, type FuturesService } from './modules/futures/service';
 import { createWealthService, type WealthService } from './modules/wealth/service';
 import { createBulkService, type BulkService } from './modules/bulk/service';
+import { createWishTreeService, type WishTreeService } from './modules/wishtree/service';
 import { bulkJobs } from './modules/bulk/jobs';
 import { createAcquireService, type AcquireService } from './modules/acquire/service';
 import { createMailService, type MailService } from './modules/mail/service';
@@ -105,6 +106,7 @@ export interface Game {
   futures: FuturesService;
   wealth: WealthService;
   bulk: BulkService;
+  wishtree: WishTreeService;
   acquire: AcquireService;
   jobs: PeriodicJob[];
 }
@@ -184,6 +186,7 @@ export function createGame(app: AppDeps): Game {
     futures: createFuturesService(deps),
     wealth: createWealthService(deps),
     bulk: createBulkService(deps),
+    wishtree: createWishTreeService(deps),
     acquire: createAcquireService(deps),
     shop,
     market,
