@@ -53,6 +53,7 @@ import { createStoreService, type StoreService } from './modules/store/service';
 import { registerActivityHandlers } from './modules/activity/handler';
 import { activityJobs } from './modules/activity/settle';
 import { exchangeJobs } from './modules/exchange/jobs';
+import { futuresJobs } from './modules/futures/deliver';
 import { predictJobs } from './modules/predict/jobs';
 import { dailyJobs } from './modules/daily/generate';
 import { registerTaskHandlers } from './modules/task/handler';
@@ -139,6 +140,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...hiphopJobs(deps));
   jobs.push(...activityJobs(deps));
   jobs.push(...exchangeJobs(deps));
+  jobs.push(...futuresJobs(deps));
   jobs.push(...predictJobs(deps));
   jobs.push(...dailyJobs(deps, app.writer));
   return {
