@@ -12,6 +12,11 @@ import { useLocaleStore } from './stores/locale';
 import { useToastStore } from './stores/toast';
 import { bustThenGo, chunkTarget, goOrReload, reloadOnce } from './utils/chunkReload';
 import { installTabsScroll } from './utils/tabsScroll';
+import { applyTheme, installThemeWatcher, readThemePref, resolveTheme, systemDark } from './utils/theme';
+
+// 深色模式（界面改版 P1）：index.html 已在渲染前写好；这里再应用一次（脚本被拦时兜底）并跟随系统切换
+applyTheme(resolveTheme(readThemePref(), systemDark()));
+installThemeWatcher();
 
 // 发版后预加载旧的页面文件失败（问题记录 497）：刷新一次；10 秒内又失败就照常报错
 // 正在点去别的页面时，刷新到要去的页面（终审：这个报错先到，那时地址还是当前页）
