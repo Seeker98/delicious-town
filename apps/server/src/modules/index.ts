@@ -22,6 +22,7 @@ import { kujiRoutes } from './kuji/routes';
 import { fundRoutes } from './fund/routes';
 import { futuresRoutes } from './futures/routes';
 import { wealthRoutes } from './wealth/routes';
+import { bulkRoutes } from './bulk/routes';
 import { acquireRoutes } from './acquire/routes';
 import { siteRoutes } from './site/routes';
 import { createSite } from './site/service';
@@ -80,6 +81,7 @@ export function registerModules(app: FastifyInstance, game: Game): void {
   app.register(fundRoutes(game.fund), { prefix: '/api/v1' });
   app.register(futuresRoutes(game.futures), { prefix: '/api/v1' });
   app.register(wealthRoutes(game.wealth), { prefix: '/api/v1' });
+  app.register(bulkRoutes(game.bulk), { prefix: '/api/v1' });
   app.register(acquireRoutes(game.acquire), { prefix: '/api/v1' });
   app.register(siteRoutes(createSite(game)), { prefix: '/api/v1' });
   app.register(redeemRoutes(game.redeem), { prefix: '/api/v1' });
