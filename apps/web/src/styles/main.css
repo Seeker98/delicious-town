@@ -1066,3 +1066,99 @@ details.dt-card > summary {
     transform: scale(0.92);
   }
 }
+/* ---------- 小镇、我、帮助中心（界面改版 P2a，设计 §4.1、§5.2） ---------- */
+.dt-place-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.dt-place {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  padding: 8px 4px 6px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  text-decoration: none;
+  text-align: center;
+}
+.dt-place-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--dt-radius-sm);
+  background: var(--dt-primary-soft);
+}
+.dt-place-name {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+/* 副标题最多两行：英法西的说明长 */
+.dt-place-sub {
+  max-width: 100%;
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--dt-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.dt-group-card {
+  overflow: hidden;
+  background: var(--dt-surface);
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-md);
+}
+.dt-nav-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 12px;
+  color: var(--dt-text);
+  text-decoration: none;
+  border-bottom: 1px solid var(--dt-line);
+}
+.dt-nav-row:last-child {
+  border-bottom: 0;
+}
+.dt-nav-row-label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.dt-nav-row-value {
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-nav-row::after {
+  content: '›';
+  content: '›' / '';
+  color: var(--dt-muted);
+}
+.dt-me-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 4px 4px;
+}
+.dt-me-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--dt-primary-soft);
+  color: var(--dt-primary-ink);
+  font-size: 18px;
+  font-weight: 600;
+}
