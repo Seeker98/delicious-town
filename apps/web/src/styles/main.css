@@ -23,10 +23,6 @@ html {
     min-height: calc(1.3125em + 0.5rem + 2px);
   }
 }
-body {
-  background: var(--dt-bg);
-  min-width: 360px;
-}
 .dt-app {
   max-width: 720px;
   margin: 0 auto;
@@ -320,10 +316,6 @@ body {
 }
 
 /* ---------- 视觉规范（docs/design/视觉规范.md） ---------- */
-/* 强调色文字和链接、按钮同一个深橙色（问题记录 575：原来广播是亮橙 #d9480f、日报链接是深橙，看着不一样；深橙在白底上也更清楚） */
-.text-primary {
-  color: rgba(var(--dt-primary-ink-rgb), var(--bs-text-opacity, 1)) !important;
-}
 .btn-primary {
   --bs-btn-bg: var(--dt-primary-ink);
   --bs-btn-border-color: var(--dt-primary-ink);
@@ -1108,57 +1100,6 @@ details.dt-card > summary {
 .dt-cell-done {
   background: var(--bs-success-bg-subtle);
   border-color: var(--bs-success-border-subtle);
-}
-
-/* 徽章、标签：浅底深字（问题记录 216）；未读数圆点（rounded-pill）保持实心醒目 */
-.badge.text-bg-primary,
-.badge:not(.rounded-pill).bg-primary {
-  background-color: var(--dt-soft-primary) !important;
-  color: var(--dt-ink-primary) !important;
-}
-.badge.text-bg-success,
-.badge:not(.rounded-pill).bg-success {
-  background-color: var(--dt-soft-success) !important;
-  color: var(--dt-ink-success) !important;
-}
-.badge.text-bg-danger,
-.badge:not(.rounded-pill).bg-danger {
-  background-color: var(--dt-soft-danger) !important;
-  color: var(--dt-ink-danger) !important;
-}
-.badge.text-bg-warning,
-.badge:not(.rounded-pill).bg-warning {
-  background-color: var(--dt-soft-warning) !important;
-  color: var(--dt-ink-warning) !important;
-}
-.badge.text-bg-info,
-.badge:not(.rounded-pill).bg-info {
-  background-color: var(--dt-soft-info) !important;
-  color: var(--dt-ink-info) !important;
-}
-.badge.text-bg-secondary,
-.badge:not(.rounded-pill).bg-secondary {
-  background-color: var(--dt-soft-secondary) !important;
-  color: var(--dt-ink-secondary) !important;
-}
-/* 进度条填充：中等亮度，不再是饱和色块 */
-.progress-bar.bg-primary {
-  background-color: var(--dt-fill-primary) !important;
-}
-.progress-bar.bg-success {
-  background-color: var(--dt-fill-success) !important;
-}
-.progress-bar.bg-danger {
-  background-color: var(--dt-fill-danger) !important;
-}
-.progress-bar.bg-warning {
-  background-color: var(--dt-fill-warning) !important;
-}
-.progress-bar.bg-info {
-  background-color: var(--dt-fill-info) !important;
-}
-.progress-bar.bg-secondary {
-  background-color: var(--dt-fill-secondary) !important;
 }
 
 /* 活动条（问题记录 226）：手机上横向滑动，宽屏自动换行 */

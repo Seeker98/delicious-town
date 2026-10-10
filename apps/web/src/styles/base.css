@@ -1,0 +1,213 @@
+/*
+ * Bootstrap 接管（界面改版设计 §2.8）：Bootstrap 只提供排版和工具类，长相全部读我们的令牌。
+ * 选择器带 [data-theme]：子元素切换模式时这些映射也跟着重新解析（变量引用在声明处就算好，不随继承更新）。
+ */
+:root,
+[data-theme] {
+  --bs-font-sans-serif: var(--dt-font-sans);
+  --bs-body-font-family: var(--dt-font-sans);
+  --bs-body-bg: var(--dt-surface);
+  --bs-body-color: var(--dt-text);
+  --bs-emphasis-color: var(--dt-text);
+  --bs-heading-color: var(--dt-text);
+  --bs-secondary-color: var(--dt-muted);
+  --bs-secondary-bg: var(--dt-surface-2);
+  --bs-tertiary-color: var(--dt-muted);
+  --bs-tertiary-bg: var(--dt-surface-2);
+  --bs-border-color: var(--dt-line);
+  --bs-border-color-translucent: var(--dt-line);
+  --bs-primary: var(--dt-primary);
+  --bs-primary-rgb: var(--dt-primary-rgb);
+  --bs-success: var(--dt-success);
+  --bs-success-rgb: var(--dt-success-rgb);
+  --bs-danger: var(--dt-danger);
+  --bs-danger-rgb: var(--dt-danger-rgb);
+  --bs-warning: var(--dt-warning);
+  --bs-warning-rgb: var(--dt-warning-rgb);
+  --bs-primary-bg-subtle: var(--dt-soft-primary);
+  --bs-success-bg-subtle: var(--dt-soft-success);
+  --bs-danger-bg-subtle: var(--dt-soft-danger);
+  --bs-warning-bg-subtle: var(--dt-soft-warning);
+  --bs-primary-border-subtle: var(--dt-line-strong);
+  --bs-success-border-subtle: var(--dt-fill-success);
+  --bs-danger-border-subtle: var(--dt-fill-danger);
+  --bs-warning-border-subtle: var(--dt-fill-warning);
+  --bs-link-color: var(--dt-primary-ink);
+  --bs-link-color-rgb: var(--dt-primary-ink-rgb);
+  --bs-link-hover-color: var(--dt-primary-ink-hover);
+  --bs-link-hover-color-rgb: var(--dt-primary-ink-rgb);
+  --bs-focus-ring-color: rgba(var(--dt-primary-rgb), 0.35);
+}
+/* 模板里写死的浅色类：深色模式下 Bootstrap 不会自动换，这里接到令牌上 */
+.bg-white {
+  background-color: var(--dt-surface) !important;
+}
+.bg-light {
+  background-color: var(--dt-surface-2) !important;
+}
+.text-dark {
+  color: var(--dt-text) !important;
+}
+.text-muted {
+  color: var(--dt-muted) !important;
+}
+.text-bg-light {
+  color: var(--dt-ink-secondary) !important;
+  background-color: var(--dt-soft-secondary) !important;
+}
+/* 强调色文字和链接、按钮同一种紫（问题记录 575 的规则沿用） */
+.text-primary {
+  color: rgba(var(--dt-primary-ink-rgb), var(--bs-text-opacity, 1)) !important;
+}
+/* 徽章：浅底深字（问题记录 216 的规则沿用）；未读数圆点（rounded-pill）保持实心 */
+.badge {
+  --bs-badge-font-weight: 500;
+  --bs-badge-border-radius: var(--dt-radius-xs);
+}
+.badge.text-bg-primary,
+.badge:not(.rounded-pill).bg-primary {
+  background-color: var(--dt-soft-primary) !important;
+  color: var(--dt-ink-primary) !important;
+}
+.badge.text-bg-success,
+.badge:not(.rounded-pill).bg-success {
+  background-color: var(--dt-soft-success) !important;
+  color: var(--dt-ink-success) !important;
+}
+.badge.text-bg-danger,
+.badge:not(.rounded-pill).bg-danger {
+  background-color: var(--dt-soft-danger) !important;
+  color: var(--dt-ink-danger) !important;
+}
+.badge.text-bg-warning,
+.badge:not(.rounded-pill).bg-warning {
+  background-color: var(--dt-soft-warning) !important;
+  color: var(--dt-ink-warning) !important;
+}
+.badge.text-bg-info,
+.badge:not(.rounded-pill).bg-info {
+  background-color: var(--dt-soft-info) !important;
+  color: var(--dt-ink-info) !important;
+}
+.badge.text-bg-secondary,
+.badge:not(.rounded-pill).bg-secondary {
+  background-color: var(--dt-soft-secondary) !important;
+  color: var(--dt-ink-secondary) !important;
+}
+.badge.rounded-pill {
+  border-radius: 999px;
+}
+.badge.rounded-pill.bg-danger {
+  color: var(--dt-on-danger);
+}
+.badge.rounded-pill.bg-primary {
+  color: var(--dt-on-primary);
+}
+/* 提示块：浅底深字、无边框；info 不用青色（设计 §2.1） */
+.alert {
+  --bs-alert-border-radius: var(--dt-radius-sm);
+  --bs-alert-padding-x: 12px;
+  --bs-alert-padding-y: 6px;
+  --bs-alert-border-color: transparent;
+}
+.alert-danger {
+  --bs-alert-bg: var(--dt-soft-danger);
+  --bs-alert-color: var(--dt-ink-danger);
+  --bs-alert-link-color: var(--dt-ink-danger);
+}
+.alert-warning {
+  --bs-alert-bg: var(--dt-soft-warning);
+  --bs-alert-color: var(--dt-ink-warning);
+  --bs-alert-link-color: var(--dt-ink-warning);
+}
+.alert-success {
+  --bs-alert-bg: var(--dt-soft-success);
+  --bs-alert-color: var(--dt-ink-success);
+  --bs-alert-link-color: var(--dt-ink-success);
+}
+.alert-info {
+  --bs-alert-bg: var(--dt-soft-primary);
+  --bs-alert-color: var(--dt-ink-primary);
+  --bs-alert-link-color: var(--dt-ink-primary);
+}
+.alert-secondary {
+  --bs-alert-bg: var(--dt-soft-secondary);
+  --bs-alert-color: var(--dt-ink-secondary);
+  --bs-alert-link-color: var(--dt-ink-secondary);
+}
+/* 进度条：轨道浅紫、填充中等亮度（问题记录 212 的规则沿用） */
+.progress {
+  --bs-progress-bg: var(--dt-primary-soft);
+  --bs-progress-border-radius: 999px;
+  --bs-progress-bar-bg: var(--dt-primary);
+}
+.progress-bar.bg-primary {
+  background-color: var(--dt-fill-primary) !important;
+}
+.progress-bar.bg-success {
+  background-color: var(--dt-fill-success) !important;
+}
+.progress-bar.bg-danger {
+  background-color: var(--dt-fill-danger) !important;
+}
+.progress-bar.bg-warning {
+  background-color: var(--dt-fill-warning) !important;
+}
+.progress-bar.bg-info {
+  background-color: var(--dt-fill-info) !important;
+}
+.progress-bar.bg-secondary {
+  background-color: var(--dt-fill-secondary) !important;
+}
+/* 表格：细线、表头小号次要色 */
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--dt-text);
+  --bs-table-border-color: var(--dt-line);
+  --bs-table-striped-bg: var(--dt-surface-2);
+  --bs-table-hover-bg: var(--dt-surface-2);
+  --bs-table-active-bg: var(--dt-primary-soft);
+}
+.table > thead th {
+  color: var(--dt-muted);
+  font-weight: 500;
+  font-size: 12px;
+}
+.table-success {
+  --bs-table-bg: var(--dt-soft-success);
+  --bs-table-color: var(--dt-ink-success);
+}
+.table-danger {
+  --bs-table-bg: var(--dt-soft-danger);
+  --bs-table-color: var(--dt-ink-danger);
+}
+/* 卡片、列表组、弹窗 */
+.card {
+  --bs-card-bg: var(--dt-surface);
+  --bs-card-border-color: var(--dt-line);
+  --bs-card-border-radius: var(--dt-radius-md);
+}
+.list-group {
+  --bs-list-group-bg: var(--dt-surface);
+  --bs-list-group-color: var(--dt-text);
+  --bs-list-group-border-color: var(--dt-line);
+  --bs-list-group-action-hover-bg: var(--dt-surface-2);
+  --bs-list-group-action-color: var(--dt-text);
+}
+.modal {
+  --bs-modal-bg: var(--dt-surface);
+  --bs-modal-border-color: var(--dt-line);
+  --bs-modal-border-radius: var(--dt-radius-md);
+  --bs-modal-box-shadow: var(--dt-shadow-float);
+}
+.modal-backdrop {
+  --bs-backdrop-bg: var(--dt-scrim);
+  --bs-backdrop-opacity: 1;
+}
+body {
+  background: var(--dt-bg);
+  min-width: 360px;
+  font-family: var(--dt-font-sans);
+  /* 数字等宽：数量、价格、排行上下对齐（设计 §2.3） */
+  font-variant-numeric: tabular-nums;
+}
