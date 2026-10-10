@@ -56,6 +56,9 @@ const home: Messages['home'] = {
   guideHint: 'Nouveau\u202f? Un code de bienvenue vous attend',
   guideCodes: 'Un code de bienvenue est à récupérer',
   wealthDue: (n) => `${n} ${plFr(n, 'placement échu', 'placements échus')} à récupérer`,
+  exchangeRow: 'Bourse\u202f: achetez et vendez des ingrédients rares, commandez des contrats à terme',
+  bulkRow: (name, level, qty, demand) =>
+    `Souscription en gros\u202f: ${name} (niv. ${level}), ${qty} unités, ${demand === null ? 'chiffres figés pour la dernière ligne droite' : `${demand} demandées pour l'instant`}`,
   devices: 'Équipements',
   notOpened: 'Non débloqué',
   starOpen: (n) => `Ouvre à ${n}★`,

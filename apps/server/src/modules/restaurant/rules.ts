@@ -82,6 +82,8 @@ export interface OverviewExtra {
   boosts: ActiveBoostDto[];
   /** 到期没领的理财笔数（理财设计 §3.4）；不给按 0 */
   wealthDue?: number;
+  /** 首页待办的交易所一行（问题记录 591）；不给按 null */
+  exchangeHint?: RestaurantDto['exchangeHint'];
 }
 
 export function toRestaurantDto(
@@ -156,6 +158,7 @@ export function toRestaurantDto(
     cookbooks: extra.cookbooks,
     special: extra.special,
     wealthDue: extra.wealthDue ?? 0,
+    exchangeHint: extra.exchangeHint ?? null,
     createdAt: r.created_at.toISOString(),
   };
 }

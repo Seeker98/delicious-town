@@ -55,6 +55,9 @@ const home: Messages['home'] = {
   guideHint: 'New here? There is a starter code',
   guideCodes: 'You have a starter code to claim',
   wealthDue: (n) => `${n} ${plEn(n, 'deposit has', 'deposits have')} matured — claim now`,
+  exchangeRow: 'Exchange: trade rare ingredients, order futures',
+  bulkRow: (name, level, qty, demand) =>
+    `Bulk subscription: ${name} (level ${level}), ${qty} units, ${demand === null ? 'figures frozen for the final stretch' : `${demand} bid so far`}`,
   devices: 'Facilities',
   notOpened: 'Not unlocked',
   starOpen: (n) => `Opens at ${n}★`,

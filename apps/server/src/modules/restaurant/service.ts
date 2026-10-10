@@ -21,6 +21,7 @@ import { listActiveEffects } from '../effects/service';
 import { shownEffects } from '../effects/aggregate';
 import { equipOff } from '../equip/power';
 import { headlines } from '../news/news';
+import { eligibilityOf } from '../exchange/eligibility';
 import { todayBless } from '../town/bless';
 import { recordLedger } from '../ledger/ledger';
 import { postNews } from '../news/news';
@@ -71,6 +72,35 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       .leftJoin('acquire_state as s', 's.rest_id', 'r.id')
       .leftJoin('restaurant as o', 'o.id', 's.owner_rest_id')
       .leftJoin('mc_cook as c', 'c.id', 'r.mc_cook_id')
+      // 交易所门槛要账号注册时间、是否验证邮箱（首页待办的交易所一行，问题记录 591）
+      .innerJoin('account as acc', 'acc.id', 'r.account_id')
+      // 本区服进行中的大宗认购（同上）：食材、份数、停更快照和实时的认购份数
+      .leftJoinLateral(
+        (eb) =>
+          eb
+            .selectFrom('bulk_lot as bl')
+            .select([
+              'bl.id as bulk_id',
+              'bl.foods_id as bulk_foods_id',
+              'bl.level as bulk_level',
+              'bl.qty as bulk_qty',
+              'bl.ends_at as bulk_ends_at',
+              'bl.blind_at as bulk_blind_at',
+              'bl.blind_demand as bulk_blind_demand',
+              (e) =>
+                e
+                  .selectFrom('bulk_bid as bb')
+                  .select((x) => x.fn.coalesce(x.fn.sum<string>('bb.qty'), x.lit(0)).as('n'))
+                  .whereRef('bb.lot_id', '=', 'bl.id')
+                  .as('bulk_demand'),
+            ])
+            .whereRef('bl.shard_id', '=', 'r.shard_id')
+            .where('bl.status', '=', 'open')
+            .orderBy('bl.opens_at', 'desc')
+            .limit(1)
+            .as('bl'),
+        (join) => join.onTrue(),
+      )
       .selectAll('r')
       .select([
         's.owner_rest_id as acquire_owner_id',
@@ -79,6 +109,16 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
         'c.level as special_level',
         'c.left_num as special_left',
         'c.ended_at as special_ended',
+        'acc.created_at as account_created_at',
+        'acc.email_verified_at as account_verified_at',
+        'bl.bulk_id',
+        'bl.bulk_foods_id',
+        'bl.bulk_level',
+        'bl.bulk_qty',
+        'bl.bulk_ends_at',
+        'bl.bulk_blind_at',
+        'bl.bulk_blind_demand',
+        'bl.bulk_demand',
         // 和投资榜一样：每家身价先四舍五入（floor(x + 0.5)，和 JS 的 Math.round 一致）再加
         (eb) =>
           eb
@@ -117,6 +157,16 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       acquire_assets: assets,
       thumbs_received: thumbsReceivedNum,
       wealth_due: wealthDueNum,
+      account_created_at: accountCreatedAt,
+      account_verified_at: accountVerifiedAt,
+      bulk_id: bulkId,
+      bulk_foods_id: bulkFoodsId,
+      bulk_level: bulkLevel,
+      bulk_qty: bulkQty,
+      bulk_ends_at: bulkEndsAt,
+      bulk_blind_at: bulkBlindAt,
+      bulk_blind_demand: bulkBlindDemand,
+      bulk_demand: bulkDemand,
       ...row
     } = joined;
     // 其余十来条查询互不依赖，一起发（质量期 ③：首页最常用的接口，原来一条接一条，查询时间占了八成）
@@ -149,6 +199,31 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
         feedPage(d.db, restId, { limit: 3 }, now).then((p) => p.items),
       ]);
     const tuning = settings.tuning;
+    /**
+     * 首页待办的交易所一行（问题记录 591）：区服开着交易所、这家店够门槛才有；有进行中的大宗认购时带上批次。
+     * 停更期间（问题记录 595）用停在那一刻的认购份数；进了停更、快照还没写时不给份数
+     */
+    const exchangeHintOf = () => {
+      if (!isFeatureEnabled(settings, 'exchange')) return null;
+      const reason = eligibilityOf(
+        { level: row.level, createdAt: accountCreatedAt, verified: accountVerifiedAt !== null },
+        tuning.exchange,
+        now,
+      );
+      if (reason !== null) return null;
+      if (!isFeatureEnabled(settings, 'bulk') || bulkId === null || bulkId === undefined)
+        return { bulk: null };
+      const blindMin = tuning.bulk.blindMin;
+      const inBlind =
+        blindMin > 0 && bulkEndsAt !== null && now.getTime() >= bulkEndsAt.getTime() - blindMin * 60_000;
+      const demand =
+        bulkBlindAt !== null && blindMin > 0
+          ? Number(bulkBlindDemand ?? 0)
+          : inBlind
+            ? null
+            : Number(bulkDemand ?? 0);
+      return { bulk: { foodsId: bulkFoodsId!, level: bulkLevel!, qty: bulkQty!, demand } };
+    };
     const growth = tuning.growth;
     const dto = toRestaurantDto(row, tables.tables, shownEffects(effects, equipOff(settings)), d.config, {
       devices,
@@ -160,6 +235,7 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       cookfoodsPerFlag: tuning.settlement.cookfoodsPerFlag,
       headlines: news,
       wealthDue: isFeatureEnabled(settings, 'wealth') ? Number(wealthDueNum ?? 0) : 0,
+      exchangeHint: exchangeHintOf(),
       feed,
       thumbs: Number(thumbsReceivedNum ?? 0),
       boosts: boosts.map((b) => ({

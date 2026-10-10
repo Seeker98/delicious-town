@@ -48,6 +48,12 @@ const mainAllDone = ref(false);
 /** 任务页第一个有奖励可领的卡（问题记录 555）；读不到任务时为 null */
 const claimTab = ref<TaskTab | null>(null);
 const tasksTo = computed(() => (claimTab.value ? `/rest/tasks?tab=${claimTab.value}` : '/rest/tasks'));
+/** 首页交易所一行的文字（问题记录 591） */
+const exchangeRowText = computed(() => {
+  const b = rest.value?.exchangeHint?.bulk;
+  const h = t.value.home;
+  return b ? h.bulkRow(catalog.foodName(b.foodsId), b.level, b.qty, b.demand) : h.exchangeRow;
+});
 const chapterName = (c: NonNullable<QuestsDto['chapter']>) => catalog.data('chapters', c.id)?.name ?? c.name;
 /** "主线：第 2 章 小店经营"：拼成一段，模板里换行不会在冒号后多出空格 */
 const mainChapterText = computed(() => {
@@ -574,6 +580,15 @@ onBeforeUnmount(() => {
         >
       </div>
       <ActivityBanner />
+      <!-- 交易所（问题记录 591）：够门槛才有；有大宗认购时写批次和认购份数，点了去大宗认购标签。旧服务端没有这个字段 -->
+      <RouterLink
+        v-if="rest.exchangeHint"
+        :to="rest.exchangeHint.bulk ? '/exchange?tab=bulk' : '/exchange'"
+        class="dt-todo-row text-reset text-decoration-none"
+        data-testid="home-exchange-row"
+        ><span class="flex-fill"><i class="bi bi-graph-up-arrow me-1"></i>{{ exchangeRowText }}</span
+        ><span class="dt-go">{{ t.nav.links.exchange }}</span></RouterLink
+      >
       <div v-if="dining" class="dt-todo-row" data-testid="dine-card">
         <div class="flex-fill">
           <i class="bi bi-cup-hot me-1"></i>{{ t.home.dining.before }}
