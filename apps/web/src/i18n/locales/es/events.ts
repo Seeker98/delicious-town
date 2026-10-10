@@ -299,6 +299,12 @@ const events: Messages['events'] = {
       `Cobraste tu depósito del Fondo de Desarrollo: recuperaste ${formatNum(n(p, 'coin'))} ${plEs(formatNum(n(p, 'coin')), 'moneda', 'monedas')} y ${names.goodsName(n(p, 'medal'))}`,
     'fund.withdraw': (p) =>
       `Retiraste tu depósito del Fondo de Desarrollo antes de tiempo: recuperaste ${formatNum(n(p, 'coin'))} ${plEs(formatNum(n(p, 'coin')), 'moneda', 'monedas')}`,
+    'wealth.deposit': (p, names) =>
+      `Depositaste ${formatNum(n(p, 'coin'))} monedas a ${n(p, 'days')} ${plEs(n(p, 'days'), 'día', 'días')}, a cambio de ${names.goodsName(n(p, 'goodsId'))} ×${n(p, 'packs')}`,
+    'wealth.claim': (p, names) =>
+      `Cobraste un depósito: ${formatNum(n(p, 'coin'))} monedas de vuelta y ${names.goodsName(n(p, 'goodsId'))} ×${n(p, 'packs')}`,
+    'wealth.withdraw': (p) =>
+      `Retiraste un depósito antes de tiempo: recuperaste ${formatNum(n(p, 'coin'))} monedas`,
     'activity.claim': (p) => `Reclamaste las recompensas del evento «${String(p.title ?? '')}»`,
     'activity.unlock': (p) => `Desbloqueaste las recompensas premium del evento «${String(p.title ?? '')}»`,
     'activity.exchange': (p) =>

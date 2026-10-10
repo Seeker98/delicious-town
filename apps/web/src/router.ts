@@ -335,7 +335,7 @@ export const routes: RouteRecordRaw[] = [
   },
   // 从广场搬过来的教室、三位兑换 NPC、发展基金（问题记录 441、443）
   {
-    path: '/society/:npc(classroom|mayor|bro13|carmen|fund)',
+    path: '/society/:npc(classroom|mayor|bro13|carmen|fund|wealth)',
     name: 'society-npc',
     component: () => import('./views/SocietyNpcView.vue'),
     props: true,

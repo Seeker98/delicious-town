@@ -54,6 +54,7 @@ const home: Messages['home'] = {
   },
   guideHint: '¿Eres nuevo? Hay un código de bienvenida',
   guideCodes: 'Tienes un código de bienvenida por canjear',
+  wealthDue: (n) => `Tienes ${n} ${plEs(n, 'depósito vencido', 'depósitos vencidos')} por cobrar`,
   devices: 'Instalaciones',
   notOpened: 'Sin desbloquear',
   starOpen: (n) => `Se abre con ${n}★`,

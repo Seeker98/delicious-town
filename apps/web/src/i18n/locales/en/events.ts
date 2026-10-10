@@ -295,6 +295,11 @@ const events: Messages['events'] = {
       `Claimed a matured Town Development Fund deposit: got back ${formatNum(n(p, 'coin'))} ${plEn(formatNum(n(p, 'coin')), 'coin', 'coins')} and ${names.goodsName(n(p, 'medal'))}`,
     'fund.withdraw': (p) =>
       `Withdrew a Town Development Fund deposit early: got back ${formatNum(n(p, 'coin'))} ${plEn(formatNum(n(p, 'coin')), 'coin', 'coins')}`,
+    'wealth.deposit': (p, names) =>
+      `Deposited ${formatNum(n(p, 'coin'))} coins for ${n(p, 'days')} ${plEn(n(p, 'days'), 'day', 'days')}, earning ${names.goodsName(n(p, 'goodsId'))} ×${n(p, 'packs')}`,
+    'wealth.claim': (p, names) =>
+      `Claimed a deposit: ${formatNum(n(p, 'coin'))} coins back plus ${names.goodsName(n(p, 'goodsId'))} ×${n(p, 'packs')}`,
+    'wealth.withdraw': (p) => `Withdrew a deposit early: got back ${formatNum(n(p, 'coin'))} coins`,
     'activity.claim': (p) => `Claimed rewards from the event "${String(p.title ?? '')}"`,
     'activity.unlock': (p) => `Unlocked premium rewards for the event "${String(p.title ?? '')}"`,
     'activity.exchange': (p) =>

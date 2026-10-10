@@ -591,6 +591,16 @@ onBeforeUnmount(() => {
           {{ t.home.dining.end }}
         </button>
       </div>
+      <!-- 到期没领的理财（理财设计 §3.4）；旧服务端没有 wealthDue -->
+      <RouterLink
+        v-if="(rest.wealthDue ?? 0) > 0"
+        to="/society/wealth"
+        class="dt-todo-row text-reset text-decoration-none"
+        data-testid="home-wealth-row"
+        ><span class="flex-fill"
+          ><i class="bi bi-piggy-bank me-1"></i>{{ t.home.wealthDue(rest.wealthDue ?? 0) }}</span
+        ><span class="dt-go">{{ t.npc.links.wealth.label }}</span></RouterLink
+      >
       <!-- 新手提示（问题记录 150）：有能领的新手码时提示去领；没有时 10 级以前照旧提示看指引 -->
       <RouterLink
         v-if="codesClaimable || rest.level < 10"

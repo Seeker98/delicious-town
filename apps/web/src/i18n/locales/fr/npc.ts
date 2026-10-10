@@ -33,6 +33,14 @@ const npc: Messages['npc'] = {
       'Chaque restaurant ne peut avoir qu’un dépôt à la fois.',
     ],
   },
+  garyWealth: {
+    name: 'Gary',
+    lines: [
+      "Placements\u202f: attendez l'échéance et vous récupérez toutes vos pièces, avec des colis de ravitaillement en guise d'intérêts.",
+      "Le colis choisit son ingrédient à l'ouverture, selon la rue où vous êtes à ce moment-là.",
+      'Retirez avant et vous perdez une partie du capital et tous les colis.',
+    ],
+  },
   fanDao: {
     name: 'Le taoïste Fan',
     lines: [
@@ -66,6 +74,10 @@ const npc: Messages['npc'] = {
       desc: 'Échanger les bons d’ingrédients mystères\u202f; un offert à la première visite',
     },
     fund: { label: 'Gary', desc: 'Fonds de développement de la ville' },
+    wealth: {
+      label: 'Placements',
+      desc: 'Placez des pièces quelques jours\u202f: capital rendu et ingrédients qui manquent à votre rue',
+    },
   },
   titles: {
     classroom: 'Classe',
@@ -73,6 +85,7 @@ const npc: Messages['npc'] = {
     bro13: 'Échange d’ingrédients',
     carmen: 'Échange d’ingrédients mystères',
     fund: 'Fonds de développement de la ville',
+    wealth: 'Placements',
   },
   /** 镇长页底部：兑换券分给了 13 哥和卡门 */
   ticketsHint:

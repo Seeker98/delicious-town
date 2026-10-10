@@ -33,6 +33,14 @@ const npc: Messages['npc'] = {
       'Cada restaurante solo puede tener un depósito a la vez.',
     ],
   },
+  garyWealth: {
+    name: 'Gary',
+    lines: [
+      'Depósitos: espera al vencimiento y recuperas todas tus monedas, con paquetes de suministros como intereses.',
+      'El paquete elige su ingrediente al abrirlo, según la calle donde estés entonces.',
+      'Si retiras antes, pierdes parte del capital y todos los paquetes.',
+    ],
+  },
   fanDao: {
     name: 'Taoísta Fan',
     lines: [
@@ -60,6 +68,10 @@ const npc: Messages['npc'] = {
       desc: 'Cambiar vales de ingredientes misteriosos; uno gratis en la primera visita',
     },
     fund: { label: 'Gary', desc: 'Fondo de Desarrollo del Pueblo' },
+    wealth: {
+      label: 'Depósitos',
+      desc: 'Deposita monedas unos días: recuperas el capital y recibes ingredientes que le faltan a tu calle',
+    },
   },
   titles: {
     classroom: 'Aula',
@@ -67,6 +79,7 @@ const npc: Messages['npc'] = {
     bro13: 'Intercambio de ingredientes',
     carmen: 'Intercambio de ingredientes misteriosos',
     fund: 'Fondo de Desarrollo del Pueblo',
+    wealth: 'Depósitos',
   },
   /** 镇长页底部：兑换券分给了 13 哥和卡门 */
   ticketsHint: 'Vales de ingredientes: el Hermano 13; vales de ingredientes misteriosos: Carmen —',

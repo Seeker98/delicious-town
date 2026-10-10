@@ -1,5 +1,5 @@
 /*! Bootstrap Icons v1.13.1 | Copyright 2019-2024 The Bootstrap Authors | MIT License | https://github.com/twbs/icons/blob/main/LICENSE */
-/* 由 scripts/gen-icons.mjs 生成，别手改：只含网页用到的 79 个图标 */
+/* 由 scripts/gen-icons.mjs 生成，别手改：只含网页用到的 80 个图标 */
 
 @font-face {
   font-display: block;
@@ -89,6 +89,7 @@
 .bi-people::before { content: "\f4d0"; }
 .bi-person-badge::before { content: "\f4d3"; }
 .bi-person-circle::before { content: "\f4d7"; }
+.bi-piggy-bank::before { content: "\f64a"; }
 .bi-plus-lg::before { content: "\f64d"; }
 .bi-search::before { content: "\f52a"; }
 .bi-shield-lock::before { content: "\f538"; }
