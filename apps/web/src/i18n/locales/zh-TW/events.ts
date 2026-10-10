@@ -271,6 +271,12 @@ export default {
     'fund.claim': (p, names) =>
       `領取小鎮發展基金: 拿回 ${formatNum(n(p, 'coin'))} 銀幣和${names.goodsName(n(p, 'medal'))}`,
     'fund.withdraw': (p) => `提前取出小鎮發展基金, 拿回 ${formatNum(n(p, 'coin'))} 銀幣`,
+    // 食材理財（理財設計 2026-10-10）
+    'wealth.deposit': (p, names) =>
+      `存入理財 ${formatNum(n(p, 'coin'))} 銀幣, ${n(p, 'days')} 天后得${names.goodsName(n(p, 'goodsId'))}×${n(p, 'packs')}`,
+    'wealth.claim': (p, names) =>
+      `領取理財: 拿回 ${formatNum(n(p, 'coin'))} 銀幣和${names.goodsName(n(p, 'goodsId'))}×${n(p, 'packs')}`,
+    'wealth.withdraw': (p) => `提前取出理財, 拿回 ${formatNum(n(p, 'coin'))} 銀幣`,
     'activity.claim': (p) => `領取了活動「${String(p.title ?? '')}」的獎勵`,
     'activity.unlock': (p) => `解鎖了活動「${String(p.title ?? '')}」的進階獎勵`,
     'activity.exchange': (p) => `在活動「${String(p.title ?? '')}」兌換了 ${String(p.times ?? 1)} 次`,

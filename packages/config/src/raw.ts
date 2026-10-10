@@ -547,6 +547,7 @@ const goodsSrc = z.enum([
   'fund',
   'poster',
   'luckGem',
+  'wealth',
 ]);
 export const masterGoods = z
   .object({
@@ -572,10 +573,12 @@ export const masterGoods = z
     value: z.custom<unknown>((v) => v !== undefined, { message: 'value is required (use null)' }),
     /** 后期海报奖杯（问题记录 146） */
     needStar: int.optional(),
-    /** 一到五级食材随机券（问题记录 331）：value 是空的，用法直接写 */
+    /** 一到五级食材随机券（问题记录 331）、街市补给包（理财设计 §1.1）：value 是空的，用法直接写 */
     use: z
-      .object({ kind: z.literal('randomFood'), level: int.min(1).max(7) })
-      .strict()
+      .discriminatedUnion('kind', [
+        z.object({ kind: z.literal('randomFood'), level: int.min(1).max(7) }).strict(),
+        z.object({ kind: z.literal('needFood'), level: int.min(1).max(5) }).strict(),
+      ])
       .optional(),
   })
   .strict();

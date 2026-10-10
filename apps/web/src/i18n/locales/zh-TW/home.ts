@@ -56,6 +56,8 @@ export default {
   },
   guideHint: '新手看這裡, 有新手兌換碼',
   guideCodes: '有可以領的新手兌換碼',
+  /** 到期沒領的理財（理財設計 §3.4） */
+  wealthDue: (n: number) => `理財到期 ${n} 筆, 去領取`,
   devices: '設施',
   notOpened: '未開通',
   starOpen: (n: number) => `${n} 星開放`,

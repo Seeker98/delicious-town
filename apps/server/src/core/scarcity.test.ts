@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { sequenceRng } from '@dt/shared';
-import { needChance, needMapOf, pickWithNeed } from './scarcity';
+import { seededRng, sequenceRng } from '@dt/shared';
+import { drawNeedFoods, needChance, needMapOf, pickWithNeed } from './scarcity';
 import { fid } from '../../test/items';
 
 const t = { needBase: 0.05, needLuckFactor: 0.6, needMax: 0.3 };
@@ -58,5 +58,53 @@ describe('抽取', () => {
       ),
     ).toBe(999);
     expect(pickWithNeed(new Map(), lv1, 1, sequenceRng([0]), () => 999)).toBe(999);
+  });
+});
+
+describe('街市补给包抽取（理财设计 §1.1）', () => {
+  const lv = (id: number) => (id < 100 ? 3 : 4);
+  const total = (m: Map<number, number>) => [...m.values()].reduce((a, n) => a + n, 0);
+
+  it('只抽这一级的缺料，抽一个扣一个：只缺 1 个的最多给 1 个，扣完后用 fallback', () => {
+    const got = drawNeedFoods(
+      new Map([
+        [1, 1],
+        [2, 2],
+        [101, 50],
+      ]),
+      lv,
+      3,
+      6,
+      seededRng(1),
+      () => 999,
+    );
+    expect(total(got)).toBe(6);
+    expect(got.get(1)).toBe(1);
+    expect(got.get(2)).toBe(2);
+    expect(got.get(999)).toBe(3);
+    expect(got.has(101)).toBe(false);
+  });
+
+  it('按缺口加权：缺口大的抽得多', () => {
+    const got = drawNeedFoods(
+      new Map([
+        [1, 1000],
+        [2, 10],
+      ]),
+      lv,
+      3,
+      200,
+      seededRng(7),
+      () => 999,
+    );
+    expect(got.get(1)!).toBeGreaterThan(got.get(2) ?? 0);
+    expect(got.has(999)).toBe(false);
+  });
+
+  it('这一级没有缺料时全部用 fallback；传入的清单不被改', () => {
+    const need = new Map([[101, 5]]);
+    const got = drawNeedFoods(need, lv, 3, 4, seededRng(1), () => 999);
+    expect([...got]).toEqual([[999, 4]]);
+    expect([...need]).toEqual([[101, 5]]);
   });
 });

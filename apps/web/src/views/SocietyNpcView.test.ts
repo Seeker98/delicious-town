@@ -15,6 +15,7 @@ vi.mock('../api/endpoints', () => ({
     lessons: vi.fn(),
     mc: vi.fn(),
     fund: vi.fn(),
+    wealth: vi.fn(),
     overview: vi.fn(),
   },
 }));
@@ -91,6 +92,14 @@ describe('协会里的 NPC 页（问题记录 441、443）', () => {
   it('教室、基金页不请求广场数据', async () => {
     await mountAt('fund');
     await mountAt('classroom');
+    expect(endpoints.town).not.toHaveBeenCalled();
+  });
+
+  it('理财：盖乐瑞讲理财的台词和理财面板，不请求广场数据（理财设计 §3.4）', async () => {
+    vi.mocked(endpoints.wealth).mockReturnValue(new Promise(() => undefined));
+    const w = await mountAt('wealth');
+    expect(w.get('[data-testid="npc-garyWealth"]').text()).toContain('盖乐瑞');
+    expect(w.find('[data-testid="wealth-panel"]').exists()).toBe(true);
     expect(endpoints.town).not.toHaveBeenCalled();
   });
 

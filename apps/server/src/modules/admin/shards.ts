@@ -1,6 +1,7 @@
 import { ZodError } from 'zod';
 import {
   fundErrors,
+  wealthErrors,
   GOODS_TYPE,
   isFeatureEnabled,
   kujiErrors,
@@ -97,6 +98,14 @@ export function createAdminShards(game: Game, log?: WarnLog) {
     if (fund.length > 0)
       throw new AppError(ErrorCode.INVALID_CONFIG, 400, {
         issues: fund.map((message) => ({ path: 'tuning.fund', message })),
+      });
+    // 食材理财（理财设计 §3.1）：和配置构建同一套检查
+    const wealth = wealthErrors(resolved.tuning.wealth, {
+      packIds: new Set([...config.goods.values()].filter((g) => g.use?.kind === 'needFood').map((g) => g.id)),
+    });
+    if (wealth.length > 0)
+      throw new AppError(ErrorCode.INVALID_CONFIG, 400, {
+        issues: wealth.map((message) => ({ path: 'tuning.wealth', message })),
       });
     // 老虎机保底奖（backlog 1010）：和配置构建同一套检查
     const slot = slotFloorErrors(resolved.tuning.bar.slotFloorAwardId, config.bundle.slotAwards);

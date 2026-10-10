@@ -75,6 +75,26 @@
     "name": "Bon d'ingrédient mystère au hasard",
     "desc": "Donne un ingrédient mystère au hasard"
   },
+  "10211": {
+    "name": "Colis de ravitaillement du marché niv. 1",
+    "desc": "Donne 1 ingrédient de niveau 1 qui manque à votre rue (celle où vous êtes en l'utilisant), sinon un ingrédient de niveau 1 au hasard"
+  },
+  "10212": {
+    "name": "Colis de ravitaillement du marché niv. 2",
+    "desc": "Donne 1 ingrédient de niveau 2 qui manque à votre rue (celle où vous êtes en l'utilisant), sinon un ingrédient de niveau 2 au hasard"
+  },
+  "10213": {
+    "name": "Colis de ravitaillement du marché niv. 3",
+    "desc": "Donne 1 ingrédient de niveau 3 qui manque à votre rue (celle où vous êtes en l'utilisant), sinon un ingrédient de niveau 3 au hasard"
+  },
+  "10214": {
+    "name": "Colis de ravitaillement du marché niv. 4",
+    "desc": "Donne 1 ingrédient de niveau 4 qui manque à votre rue (celle où vous êtes en l'utilisant), sinon un ingrédient de niveau 4 au hasard"
+  },
+  "10215": {
+    "name": "Colis de ravitaillement du marché niv. 5",
+    "desc": "Donne 1 ingrédient de niveau 5 qui manque à votre rue (celle où vous êtes en l'utilisant), sinon un ingrédient de niveau 5 au hasard"
+  },
   "10301": {
     "name": "Ticket de la Tour des chefs",
     "desc": "Ajoute un défi à la Tour des chefs pour aujourd'hui"

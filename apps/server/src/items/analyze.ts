@@ -32,6 +32,7 @@ const USE_NAME: Record<string, string> = {
   gift: '打开礼包',
   randomFood: '换随机食材',
   mysteryFood: '换随机食材',
+  needFood: '换本街缺的食材',
   bundle: '合成道具',
   currency: '换货币',
   strength: '加体力',
@@ -139,7 +140,7 @@ export function analyzeItems(
   for (const lv of [2, 3])
     for (const f of config.rareFoodPools.get(lv)?.items ?? []) add('foods', f.id, 'gives', '万能食材兑换');
   for (const g of b.goods) {
-    if (g.use?.kind === 'randomFood' || g.use?.kind === 'mysteryFood')
+    if (g.use?.kind === 'randomFood' || g.use?.kind === 'mysteryFood' || g.use?.kind === 'needFood')
       byLevel([g.use.level], `道具 ${g.id} ${g.name}`, g.id);
     for (const i of g.gift ?? []) {
       if (i.type !== 'foods' || (i.id !== undefined && i.id > 0)) continue;

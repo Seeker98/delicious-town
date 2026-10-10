@@ -209,6 +209,19 @@ describe('RestaurantHomeView', () => {
     expect((await mountView()).find('[data-testid="guide-hint"]').exists()).toBe(false);
   });
 
+  it('有到期没领的理财时待办里多一行，链到理财页；没有或旧服务端没有这个字段时不显示（理财设计 §3.4）', async () => {
+    vi.mocked(endpoints.guideCodes).mockResolvedValue([]);
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, wealthDue: 2 });
+    const w = await mountView();
+    const row = w.get('[data-testid="home-wealth-row"]');
+    expect(row.text()).toContain('理财到期 2 笔');
+    expect(row.attributes('href')).toBe('/society/wealth');
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, wealthDue: 0 });
+    expect((await mountView()).find('[data-testid="home-wealth-row"]').exists()).toBe(false);
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, wealthDue: undefined });
+    expect((await mountView()).find('[data-testid="home-wealth-row"]').exists()).toBe(false);
+  });
+
   it('等级 < 10 显示新手提示，链到游玩指引；10 级起不显示（问题记录 150）', async () => {
     vi.mocked(endpoints.guideCodes).mockResolvedValue([]);
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, level: 9 });

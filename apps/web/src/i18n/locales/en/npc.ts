@@ -33,6 +33,14 @@ const npc: Messages['npc'] = {
       'Each restaurant can hold only one deposit at a time.',
     ],
   },
+  garyWealth: {
+    name: 'Gary',
+    lines: [
+      'Deposits: wait out the term and every coin comes back, with Market Supply Packs as interest.',
+      'A pack picks its ingredient when you open it, based on the street you are on then.',
+      'Withdraw early and you lose part of the principal and all the packs.',
+    ],
+  },
   fanDao: {
     name: 'Taoist Fan',
     lines: [
@@ -57,6 +65,10 @@ const npc: Messages['npc'] = {
     bro13: { label: 'Brother 13', desc: 'Daily chat for horns; trade ingredient vouchers' },
     carmen: { label: 'Carmen', desc: 'Trade mystery ingredient vouchers; a free one on your first visit' },
     fund: { label: 'Gary', desc: 'Town Development Fund' },
+    wealth: {
+      label: 'Deposits',
+      desc: 'Lock coins for a few days: principal back plus ingredients your street needs',
+    },
   },
   titles: {
     classroom: 'Classroom',
@@ -64,6 +76,7 @@ const npc: Messages['npc'] = {
     bro13: 'Ingredient exchange',
     carmen: 'Mystery ingredient exchange',
     fund: 'Town Development Fund',
+    wealth: 'Deposits',
   },
   /** 镇长页底部：兑换券分给了 13 哥和卡门 */
   ticketsHint: 'Ingredient vouchers: see Brother 13; mystery ingredient vouchers: see Carmen —',

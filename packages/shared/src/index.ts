@@ -46,6 +46,7 @@ export * from './activity';
 export * from './schemas/activity';
 export * from './schemas/exchange';
 export * from './schemas/futures';
+export * from './schemas/wealth';
 export * from './predict';
 export * from './schemas/predict';
 export * from './schemas/kuji';

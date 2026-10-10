@@ -64,6 +64,7 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
   }
 
   async function overview(restId: number): Promise<RestaurantDto> {
+    const now = d.now();
     // 被收购时的老板（收购 PR 3：首页提示）、在售特色菜和名下的店身价合计（问题记录 447）一起读出来，不多查询
     const joined = await d.db
       .selectFrom('restaurant as r')
@@ -93,6 +94,15 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
             .whereRef('ec.rest_id', '=', 'r.id')
             .where('ec.key', '=', 'thumbs.received')
             .as('thumbs_received'),
+        // 到期没领的理财（首页待办，理财设计 §3.4）：跟着这条一起读，不多查询；区服关了理财时按 0
+        (eb) =>
+          eb
+            .selectFrom('wealth_deposit as wd')
+            .select((e) => e.fn.countAll<string>().as('n'))
+            .whereRef('wd.rest_id', '=', 'r.id')
+            .where('wd.status', '=', 'active')
+            .where('wd.matures_at', '<=', now)
+            .as('wealth_due'),
       ])
       .where('r.id', '=', restId)
       .executeTakeFirst();
@@ -106,9 +116,9 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       special_ended: specialEnded,
       acquire_assets: assets,
       thumbs_received: thumbsReceivedNum,
+      wealth_due: wealthDueNum,
       ...row
     } = joined;
-    const now = d.now();
     // 其余十来条查询互不依赖，一起发（质量期 ③：首页最常用的接口，原来一条接一条，查询时间占了八成）
     const settingsP = shards.settings(row.shard_id);
     const [tables, effects, snap, settings, devices, last, icons, news, boosts, today, feed] =
@@ -149,6 +159,7 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       plaque2Cost: { star: growth.plaque2Star, coin: growth.plaque2Coin, diamond: growth.plaque2Diamond },
       cookfoodsPerFlag: tuning.settlement.cookfoodsPerFlag,
       headlines: news,
+      wealthDue: isFeatureEnabled(settings, 'wealth') ? Number(wealthDueNum ?? 0) : 0,
       feed,
       thumbs: Number(thumbsReceivedNum ?? 0),
       boosts: boosts.map((b) => ({

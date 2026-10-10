@@ -55,6 +55,7 @@ const home: Messages['home'] = {
   },
   guideHint: 'Nouveau\u202f? Un code de bienvenue vous attend',
   guideCodes: 'Un code de bienvenue est à récupérer',
+  wealthDue: (n) => `${n} ${plFr(n, 'placement échu', 'placements échus')} à récupérer`,
   devices: 'Équipements',
   notOpened: 'Non débloqué',
   starOpen: (n) => `Ouvre à ${n}★`,

@@ -54,6 +54,7 @@ const home: Messages['home'] = {
   },
   guideHint: 'New here? There is a starter code',
   guideCodes: 'You have a starter code to claim',
+  wealthDue: (n) => `${n} ${plEn(n, 'deposit has', 'deposits have')} matured — claim now`,
   devices: 'Facilities',
   notOpened: 'Not unlocked',
   starOpen: (n) => `Opens at ${n}★`,

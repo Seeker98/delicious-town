@@ -977,6 +977,15 @@ export const tuningSchema = z.object({
     dailyQuota: z.array(int.min(0)).length(5),
     personDaily: int.min(1),
   }),
+  /** 食材理财（理财设计 2026-10-10）：锁银币 days 天，到期本金全退，每 unit 银币给 perUnit 个街市补给包 */
+  wealth: z.object({
+    minLevel: int.min(1),
+    unit: int.min(1),
+    maxActive: int.min(1),
+    maxTotal: int.min(1),
+    earlyRate: num.gt(0).max(1),
+    terms: z.array(z.object({ days: int.min(1), goods: int.min(1), perUnit: int.min(1) })).min(1),
+  }),
 });
 
 export type Tuning = z.infer<typeof tuningSchema>;

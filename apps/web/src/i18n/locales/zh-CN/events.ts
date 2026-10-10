@@ -270,6 +270,12 @@ export default {
     'fund.claim': (p, names) =>
       `领取小镇发展基金: 拿回 ${formatNum(n(p, 'coin'))} 银币和${names.goodsName(n(p, 'medal'))}`,
     'fund.withdraw': (p) => `提前取出小镇发展基金, 拿回 ${formatNum(n(p, 'coin'))} 银币`,
+    // 食材理财（理财设计 2026-10-10）
+    'wealth.deposit': (p, names) =>
+      `存入理财 ${formatNum(n(p, 'coin'))} 银币, ${n(p, 'days')} 天后得${names.goodsName(n(p, 'goodsId'))}×${n(p, 'packs')}`,
+    'wealth.claim': (p, names) =>
+      `领取理财: 拿回 ${formatNum(n(p, 'coin'))} 银币和${names.goodsName(n(p, 'goodsId'))}×${n(p, 'packs')}`,
+    'wealth.withdraw': (p) => `提前取出理财, 拿回 ${formatNum(n(p, 'coin'))} 银币`,
     'activity.claim': (p) => `领取了活动「${String(p.title ?? '')}」的奖励`,
     'activity.unlock': (p) => `解锁了活动「${String(p.title ?? '')}」的进阶奖励`,
     'activity.exchange': (p) => `在活动「${String(p.title ?? '')}」兑换了 ${String(p.times ?? 1)} 次`,

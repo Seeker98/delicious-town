@@ -7,6 +7,7 @@ import NpcCard, { type NpcCardKey } from '../components/NpcCard.vue';
 import ClassroomPanel from '../components/town/ClassroomPanel.vue';
 import ExchangePanel from '../components/town/ExchangePanel.vue';
 import FundPanel from '../components/town/FundPanel.vue';
+import WealthPanel from '../components/town/WealthPanel.vue';
 import MayorAsk from '../components/town/MayorAsk.vue';
 import NpcTalk from '../components/town/NpcTalk.vue';
 import { useT } from '../composables/useT';
@@ -18,7 +19,7 @@ import { useToastStore } from '../stores/toast';
  * 协会里从广场搬过来的几项（问题记录 441、443）：教室；兑换拆给三位 NPC——镇长大胃锅（稀有道具，
  * 带着“嘻哈男孩在哪”的问答）、13 哥（食材兑换券，带着每天聊天）、卡门（神秘食材兑换券）；发展基金归盖乐瑞
  */
-export type SocietyNpc = 'classroom' | 'mayor' | 'bro13' | 'carmen' | 'fund';
+export type SocietyNpc = 'classroom' | 'mayor' | 'bro13' | 'carmen' | 'fund' | 'wealth';
 const props = defineProps<{ npc: SocietyNpc }>();
 const t = useT();
 const toast = useToastStore();
@@ -31,12 +32,14 @@ const FEATURE: Record<SocietyNpc, string> = {
   bro13: 'town',
   carmen: 'town',
   fund: 'fund',
+  wealth: 'wealth',
 };
 const CARD: Partial<Record<SocietyNpc, NpcCardKey>> = {
   mayor: 'mayor',
   bro13: 'bro13',
   carmen: 'carmen',
   fund: 'gary',
+  wealth: 'garyWealth',
 };
 
 /** 直接从链接进来时还没有餐厅数据：先读一次，才知道区服关没关这一项（不然先弹“功能关闭”，backlog ①a） */
@@ -67,7 +70,7 @@ async function loadTown() {
     toast.push(errorMessage(e, t.value.town.loadFailed), 'danger');
   }
 }
-const needTown = computed(() => props.npc !== 'classroom' && props.npc !== 'fund');
+const needTown = computed(() => !['classroom', 'fund', 'wealth'].includes(props.npc));
 watch(
   () => [ready.value && on.value && needTown.value, props.npc] as const,
   ([go]) => {
@@ -97,6 +100,7 @@ onMounted(() => {
       <div v-if="!on" class="dt-empty" data-testid="npc-off">{{ t.npc.off }}</div>
       <ClassroomPanel v-else-if="npc === 'classroom'" />
       <FundPanel v-else-if="npc === 'fund'" />
+      <WealthPanel v-else-if="npc === 'wealth'" />
       <template v-else>
         <div v-if="townFailed" class="small text-muted" data-testid="npc-town-failed">
           {{ t.town.loadFailed }}

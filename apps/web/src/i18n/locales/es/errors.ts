@@ -107,6 +107,9 @@ const errors: Messages['errors'] = {
       `Puedes tener como máximo ${s(p.max)} ${plEs(s(p.max), 'orden abierta', 'órdenes abiertas')}`,
     futures_person: (p) => `Hoy solo puedes encargar ${s(p.left)} más (${s(p.max)} al día)`,
     futures_quota: (p) => `Hoy solo quedan ${s(p.left)} de este ingrediente en el servidor`,
+    wealth_count: (p) => `Como máximo ${s(p.max)} depósitos a la vez`,
+    wealth_total: (p) =>
+      `Los depósitos tienen un límite de ${formatNum(Number(p.max))} monedas en total; puedes añadir ${formatNum(Number(p.left))} más`,
     exchange_qty: (p) => `Como máximo ${s(p.max)} por orden`,
     exchange_system_qty: (p) => `Hoy el sistema puede comprarte como máximo ${s(p.max)} más`,
     predict_trade: (p) =>
@@ -302,6 +305,10 @@ const errors: Messages['errors'] = {
     fund_none: 'No hay depósito',
     fund_not_mature: 'Aún no ha vencido',
     fund_mature: 'Ya venció: reclámalo',
+    bad_term: 'No existe ese plazo',
+    wealth_none: 'No existe ese depósito',
+    wealth_not_mature: 'Todavía no ha vencido',
+    wealth_mature: 'Ya venció: cóbralo',
     bad_tier: 'No existe esa clase',
     guardian_down: 'Hoy ya derrotaste al guardián. Vuelve mañana.',
     trial_ready: 'Tu medalla de prueba sigue siendo válida; puedes empezar la prueba',

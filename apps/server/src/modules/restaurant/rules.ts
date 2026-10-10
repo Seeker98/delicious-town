@@ -80,6 +80,8 @@ export interface OverviewExtra {
   cookbooks: { learned: number; total: number };
   special: { id: number; level: number } | null;
   boosts: ActiveBoostDto[];
+  /** 到期没领的理财笔数（理财设计 §3.4）；不给按 0 */
+  wealthDue?: number;
 }
 
 export function toRestaurantDto(
@@ -153,6 +155,7 @@ export function toRestaurantDto(
     assets: extra.assets,
     cookbooks: extra.cookbooks,
     special: extra.special,
+    wealthDue: extra.wealthDue ?? 0,
     createdAt: r.created_at.toISOString(),
   };
 }

@@ -8,7 +8,7 @@ import { AppError } from '../../http/errors';
 import { openGift } from '../award/award';
 import { incrementDaily } from '../counter/dailyCounter';
 import { addFoods } from '../cupboard/foods';
-import { opNeedPick } from '../../core/scarcity';
+import { drawNeedFoods, opNeedMap, opNeedPick } from '../../core/scarcity';
 import { consumeGoods, countGoods, grantGoodsOp } from './goods';
 import { KEY } from '../tower/common';
 
@@ -137,6 +137,21 @@ export async function useGoods(
         );
         got.set(id, (got.get(id) ?? 0) + 1);
       }
+      for (const [id, n] of got) await addFoods(op, id, n);
+      break;
+    }
+    case 'needFood': {
+      // 街市补给包（理财设计 §1.1）：按使用时所在街道的缺料清单抽，抽一个扣一个；不缺时同随机食材券
+      const pool = op.config.foodPools.get(use.level);
+      if (!pool || pool.total === 0) break;
+      const got = drawNeedFoods(
+        await opNeedMap(op),
+        (id) => op.config.foods.get(id)?.level ?? 0,
+        use.level,
+        num,
+        op.rng,
+        () => pickWeighted(pool, op.rng).id,
+      );
       for (const [id, n] of got) await addFoods(op, id, n);
       break;
     }

@@ -300,6 +300,12 @@ const events: Messages['events'] = {
       `A récupéré son dépôt échu du Fonds de développement\u202f: ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce', 'pièces')} et ${names.goodsName(n(p, 'medal'))}`,
     'fund.withdraw': (p) =>
       `A retiré son dépôt du Fonds de développement avant l'échéance\u202f: ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce récupérée', 'pièces récupérées')}`,
+    'wealth.deposit': (p, names) =>
+      `A placé ${formatNum(n(p, 'coin'))} pièces pour ${n(p, 'days')} ${plFr(n(p, 'days'), 'jour', 'jours')}, contre ${names.goodsName(n(p, 'goodsId'))}\u202f×\u202f${n(p, 'packs')}`,
+    'wealth.claim': (p, names) =>
+      `A récupéré un placement\u202f: ${formatNum(n(p, 'coin'))} pièces rendues et ${names.goodsName(n(p, 'goodsId'))}\u202f×\u202f${n(p, 'packs')}`,
+    'wealth.withdraw': (p) =>
+      `A retiré un placement avant l'échéance\u202f: ${formatNum(n(p, 'coin'))} pièces récupérées`,
     'activity.claim': (p) =>
       `A récupéré les récompenses de l'événement «\u202f${String(p.title ?? '')}\u202f»`,
     'activity.unlock': (p) =>

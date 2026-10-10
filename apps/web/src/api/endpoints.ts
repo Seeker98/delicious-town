@@ -168,6 +168,7 @@ import type {
   LinkDto,
   ServerTimeDto,
   FundViewDto,
+  WealthViewDto,
   PredictListDto,
   PredictTradeDto,
   ActivitySummaryDto,
@@ -581,6 +582,11 @@ export const endpoints = {
   fundDeposit: (tier: string) => api.post<FundViewDto>('/api/v1/fund/deposit', { tier }),
   fundClaim: () => api.post<FundViewDto>('/api/v1/fund/claim', {}),
   fundWithdraw: () => api.post<FundViewDto>('/api/v1/fund/withdraw', {}),
+  wealth: () => api.get<WealthViewDto>('/api/v1/wealth'),
+  wealthDeposit: (days: number, coin: number) =>
+    api.post<WealthViewDto>('/api/v1/wealth/deposit', { days, coin }),
+  wealthClaim: (id: number) => api.post<WealthViewDto>(`/api/v1/wealth/${id}/claim`, {}),
+  wealthWithdraw: (id: number) => api.post<WealthViewDto>(`/api/v1/wealth/${id}/withdraw`, {}),
   predictList: () => api.get<PredictListDto>('/api/v1/predict/events'),
   predictDetail: (id: number) => api.get<PredictDetailDto>(`/api/v1/predict/events/${id}`),
   predictTrade: (id: number, b: { side: 'yes' | 'no'; dir: 'buy' | 'sell'; qty: number; limit?: number }) =>

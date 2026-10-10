@@ -55,6 +55,8 @@ export default {
   },
   guideHint: '新手看这里, 有新手兑换码',
   guideCodes: '有可以领的新手兑换码',
+  /** 到期没领的理财（理财设计 §3.4） */
+  wealthDue: (n: number) => `理财到期 ${n} 笔, 去领取`,
   devices: '设施',
   notOpened: '未开通',
   starOpen: (n: number) => `${n} 星开放`,

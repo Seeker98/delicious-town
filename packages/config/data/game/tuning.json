@@ -439,6 +439,18 @@
   "scarcity": { "needBase": 0.05, "needLuckFactor": 0.6, "needMax": 0.3 },
   "daily": { "autoPublish": false, "hour": 0, "minute": 10, "maxEvents": 30 },
   "futures": { "deliverHours": 72, "premium": 1.2, "capRate": 2, "depositRate": 0.3, "dailyQuota": [500, 500, 100, 100, 100], "personDaily": 50 },
+  "wealth": {
+    "minLevel": 20,
+    "unit": 1000000,
+    "maxActive": 3,
+    "maxTotal": 10000000,
+    "earlyRate": 0.95,
+    "terms": [
+      { "days": 3, "goods": 10213, "perUnit": 1 },
+      { "days": 7, "goods": 10214, "perUnit": 1 },
+      { "days": 14, "goods": 10215, "perUnit": 1 }
+    ]
+  },
   "acquire": {
     "priceDays": 7, "priceMultiple": 5, "minPrice": 100000,
     "heatStep": 0.2, "heatListDrop": 0.1, "heatMax": 3, "heatDecay": 0.1,

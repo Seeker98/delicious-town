@@ -25,6 +25,8 @@ const links = computed(() => {
     { to: '/society/bro13', icon: 'bi-megaphone', feature: 'town', ...n.bro13 },
     { to: '/society/carmen', icon: 'bi-stars', feature: 'town', ...n.carmen },
     { to: '/society/fund', icon: 'bi-bank', feature: 'fund', ...n.fund },
+    // 食材理财（理财设计 §3.4）：挨着发展基金
+    { to: '/society/wealth', icon: 'bi-piggy-bank', feature: 'wealth', ...n.wealth },
   ].filter((l) => !('feature' in l) || restaurant.featureOn(l.feature));
 });
 </script>
