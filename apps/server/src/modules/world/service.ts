@@ -185,6 +185,7 @@ export function createWorldService(d: GameDeps) {
         odds: f.odds,
         coin: f.coin,
         type: f.type,
+        art: f.art,
       })),
       streets: d.config.bundle.streets.map((s) => ({
         id: s.id,

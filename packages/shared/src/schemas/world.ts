@@ -41,6 +41,8 @@ export interface CatalogFoodDto {
   odds: number;
   coin: number;
   type: number | null;
+  /** 配图类别（界面改版 P4）：网页画 food-<art>；旧服务端没有 */
+  art?: string;
 }
 
 /** 前端显示名称用的目录（道具、食材、街道、天气、设施位），按配置版本缓存 */

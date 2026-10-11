@@ -23,6 +23,7 @@ export * from './tuning';
 export * from './ids';
 export { QUEST_STATE_KEYS, isQuestStateKey } from './quests';
 export * from './goodsUse';
+export { FOOD_ARTS, type FoodArt } from './foodArt';
 export { PART_MAIN, rewriteStatDesc, scaleToTotal } from './stressTable';
 export { settingGroup, settingLeaves } from './settingDocs';
 export type { NewbieCode } from './newbieCodes';

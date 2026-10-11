@@ -1,3 +1,4 @@
+import type { FoodArt } from './foodArt';
 import type { z } from 'zod';
 import type { masterCookbook, masterFood, masterGoods, rawFood, rawGoods } from './raw';
 
@@ -55,11 +56,11 @@ function parseValue(text: string, ids: { id: number; legacyId: number }): unknow
   }
 }
 
-/** 原版格式的食材转成主表条目；新编号、旧编号由调用方给（重新编号 PR 4） */
+/** 原版格式的食材转成主表条目；新编号、旧编号由调用方给（重新编号 PR 4），配图类别也由调用方给（界面改版 P4） */
 export function foodFromRaw(
   f: z.infer<typeof rawFood>,
   src: MasterFood['src'],
-  ids: { id: number; legacyId: number },
+  ids: { id: number; legacyId: number; art: FoodArt },
 ): MasterFood {
   return {
     id: ids.id,
@@ -71,6 +72,7 @@ export function foodFromRaw(
     odds: f.odds,
     maxNum: f.maxNum ?? 999,
     type: f.type ?? null,
+    art: ids.art,
   };
 }
 

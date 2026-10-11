@@ -263,6 +263,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     weight: f.odds,
     type: f.type,
     maxNum: f.maxNum,
+    art: f.art,
   }));
   unique(
     'foods',

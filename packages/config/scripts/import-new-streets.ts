@@ -28,6 +28,7 @@ import {
   type MasterFood,
   type MasterGoods,
 } from '../src/master';
+import type { FoodArt } from '../src/foodArt';
 import type { rawFood, rawGoods } from '../src/raw';
 import { addMedalRows, assignIds, assignSlots, importConflicts, pruneNames } from '../src/streetImport';
 
@@ -142,6 +143,17 @@ write(
   streets.map((s) => pick(s, ['id', 'name', 'cookname', 'cookshortname', 'desc'])),
 );
 /** 主表：只换 src 为 streets 的那一块，再按编号排序 */
+/**
+ * 食材的配图类别（界面改版 P4）：已有的食材沿用 master/foods.json 里的；新食材先在 NEW_FOOD_ARTS 里按名字写上，
+ * 没写就停下来报错，免得导入后构建才发现
+ */
+const NEW_FOOD_ARTS: Record<string, FoodArt> = {};
+const artOf = (name: string, id: number): FoodArt => {
+  const art = mFoods.data.find((x) => x.id === id)?.art ?? NEW_FOOD_ARTS[name];
+  if (!art)
+    throw new Error(`新食材「${name}」还没有配图类别：在 NEW_FOOD_ARTS 里写上（类别见 src/foodArt.ts）`);
+  return art;
+};
 const writeMaster = <T extends { src: string; id: number }>(
   name: string,
   m: { rule: string; data: T[] },
@@ -157,7 +169,9 @@ const writeMaster = <T extends { src: string; id: number }>(
 writeMaster(
   'foods',
   mFoods,
-  foods.map((f) => foodFromRaw(f, 'streets', { id: toFood(f.id), legacyId: f.id })),
+  foods.map((f) =>
+    foodFromRaw(f, 'streets', { id: toFood(f.id), legacyId: f.id, art: artOf(f.name, toFood(f.id)) }),
+  ),
 );
 writeMaster(
   'goods',

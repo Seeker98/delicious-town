@@ -4,6 +4,7 @@ import { buildBundle, featureOfKey } from './build';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { FOODS, FUND, GOODS, GOODS_TYPE, NEWBIE, SPONSOR_HATS, WIKI_HIDDEN_GOODS } from './ids';
+import { FOOD_ARTS } from './foodArt';
 import { deriveGoodsUse } from './goodsUse';
 import { itemRefs } from './itemRefs';
 import { realBuild } from './testBundle';
@@ -2271,5 +2272,30 @@ describe('门的图形（界面改版 P3：首页头图按门显示）', () => {
     const missing = withDoors((d) => delete d[1]!.art).errors;
     expect(missing.some((e) => e.includes('art'))).toBe(true);
     expect(withDoors((d) => (d[1]!.art = d[0]!.art)).errors).toContain('looks: duplicate door art wood');
+  });
+});
+
+describe('食材配图类别（界面改版 P4）', () => {
+  type RawFood = { id: number; name: string; art?: string };
+  const withFoods = (edit: (foods: RawFood[]) => void) => {
+    const src = source();
+    const foods = structuredClone(src['master/foods']) as RawFood[];
+    edit(foods);
+    return buildBundle({ ...src, 'master/foods': foods });
+  };
+
+  it('真实数据：每种食材都有类别、都在 FOOD_ARTS 里；神秘食材、万能食材各归一类', () => {
+    const foods = withFoods(() => undefined).bundle!.foods;
+    expect(foods).toHaveLength(336);
+    for (const f of foods) expect(FOOD_ARTS, f.name).toContain(f.art);
+    for (const f of foods.filter((x) => x.name.startsWith('神秘'))) expect(f.art, f.name).toBe('mystery');
+    for (const f of foods.filter((x) => x.name.endsWith('万能食材'))) expect(f.art, f.name).toBe('master');
+  });
+
+  it('漏写类别、写了不认识的类别时报错，写明是哪种食材（Review Focus 1）', () => {
+    const missing = withFoods((f) => delete f[0]!.art).errors;
+    expect(missing.some((e) => e.includes('master/foods') && e.includes('art'))).toBe(true);
+    const bad = withFoods((f) => (f[0]!.art = 'xyz')).errors;
+    expect(bad.some((e) => e.includes('master/foods') && e.includes('art'))).toBe(true);
   });
 });

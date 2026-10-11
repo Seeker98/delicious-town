@@ -145,6 +145,14 @@ describe('道具目录按语言（问题记录 272）', () => {
     expect(data.questLines.find((x: { id: number }) => x.id === 12).name).toBe('Ichiban Kuji');
   });
 
+  it('接口：食材带配图类别（界面改版 P4），网页按它画图', async () => {
+    const r = await call(http.app, 'GET', '/api/v1/world/catalog?lang=en');
+    const foods = r.json.data.foods as Array<{ id: number; art: string }>;
+    expect(foods.length).toBeGreaterThan(300);
+    expect(foods.find((x) => x.id === 1001)?.art).toBe('grain'); // 大米
+    expect(foods.every((x) => typeof x.art === 'string' && x.art.length > 0)).toBe(true);
+  });
+
   it('简中原样返回', () => {
     expect(localizeCatalog(base, undefined, 'zh-CN')).toBe(base);
   });
