@@ -12,8 +12,10 @@ const props = withDefaults(
     /** 落在中间的输入框上：原来数字框的测试用 setValue 照常能用 */
     testid?: string;
     disabled?: boolean;
+    /** 紧凑尺寸：列表行里用（界面改版 P4，菜场一行放不下普通尺寸） */
+    size?: 'sm';
   }>(),
-  { min: 0, max: Number.MAX_SAFE_INTEGER, step: 1, testid: undefined, disabled: false },
+  { min: 0, max: Number.MAX_SAFE_INTEGER, step: 1, testid: undefined, disabled: false, size: undefined },
 );
 const emit = defineEmits<{ 'update:modelValue': [n: number] }>();
 const t = useT();
@@ -45,7 +47,7 @@ watch(
 </script>
 
 <template>
-  <div class="dt-stepper">
+  <div :class="['dt-stepper', { 'dt-stepper-sm': size === 'sm' }]">
     <button
       type="button"
       :aria-label="t.common.decrease"

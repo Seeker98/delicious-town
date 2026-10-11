@@ -3,6 +3,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { MarketDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useConfirmStore } from '../stores/confirm';
 import { useRestaurantStore } from '../stores/restaurant';
 import { useSessionStore } from '../stores/session';
 import MarketView from './MarketView.vue';
@@ -212,5 +213,50 @@ describe('MarketView', () => {
     await flushPromises();
     expect(w.find('section h6').classes()).toContain('dt-section');
     expect(w.find('[data-testid="item-11"] b').exists()).toBe(false);
+  });
+
+  it('每行前面是食材图，一行一个 .dt-item，两段各在一张卡片里；数量是步进器（界面改版 P4）', async () => {
+    const w = mount(MarketView);
+    await flushPromises();
+    const row = w.get('[data-testid="item-11"]');
+    expect(row.classes()).toContain('dt-item');
+    expect(row.get('use').attributes('href')).toMatch(/#food-/);
+    expect(row.element.closest('.dt-card')).not.toBeNull();
+    expect(w.get('[data-testid="qty-11"]').element.closest('.dt-stepper')).not.toBeNull();
+  });
+
+  it('没读回来时是骨架行（界面改版 P4）', async () => {
+    vi.mocked(endpoints.market).mockReturnValue(new Promise(() => undefined));
+    const w = mount(MarketView);
+    await flushPromises();
+    expect(w.find('[data-testid="market-skeleton"]').exists()).toBe(true);
+  });
+
+  it('手动进货走确认面板（界面改版 P4）', async () => {
+    vi.mocked(endpoints.market).mockResolvedValue({
+      ...structuredClone(view),
+      manual: { ...view.manual, hasCard: true },
+    });
+    const spy = vi.spyOn(window, 'confirm');
+    const store = useConfirmStore();
+    store.hosts = 1;
+    const w = mount(MarketView);
+    await flushPromises();
+    await w.get('[data-testid="market-manual"]').trigger('click');
+    await flushPromises();
+    expect(spy).not.toHaveBeenCalled();
+    expect(store.current?.title).toContain('下次日常进货');
+    store.answer(false);
+    await flushPromises();
+    expect(endpoints.marketManualStock).not.toHaveBeenCalled();
+    spy.mockRestore();
+  });
+
+  it('限购写在名字那一行右边，价格行只写价格和剩余：一行放得下，不折成两行（界面改版 P4）', async () => {
+    const w = mount(MarketView);
+    await flushPromises();
+    const row = w.get('[data-testid="item-11"]');
+    expect(row.get('[data-testid="limit-11"]').text()).toMatch(/^限购 \d+\/\d+$/);
+    expect(row.get('[data-testid="price-11"]').text()).not.toContain('限购');
   });
 });

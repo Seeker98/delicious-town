@@ -665,6 +665,16 @@ details.dt-card > summary {
   appearance: none;
   margin: 0;
 }
+/* 紧凑尺寸（列表行里）：按钮 26px、数字框 34px */
+.dt-stepper.dt-stepper-sm {
+  height: 30px;
+}
+.dt-stepper-sm > button {
+  width: 26px;
+}
+.dt-stepper-sm > input {
+  width: 34px;
+}
 .dt-stepper:focus-within {
   border-color: var(--dt-primary);
 }

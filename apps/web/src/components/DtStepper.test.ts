@@ -58,4 +58,9 @@ describe('数量步进器（界面改版 P3，设计 §5 第 6 条）', () => {
     await input.setValue('500');
     expect((input.element as HTMLInputElement).value).toBe('10');
   });
+
+  it('紧凑尺寸（列表行里用，界面改版 P4）：多一个 dt-stepper-sm 类', () => {
+    expect(mountIt({ size: 'sm' }).classes()).toContain('dt-stepper-sm');
+    expect(mountIt({}).classes()).not.toContain('dt-stepper-sm');
+  });
 });
