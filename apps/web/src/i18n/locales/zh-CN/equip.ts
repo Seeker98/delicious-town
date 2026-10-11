@@ -82,6 +82,21 @@ export default {
   },
   detail: {
     noAttrs: '没有属性加成',
+    /** 界面改版 P7：头部小标签、属性横条、强化一块、宝石圆孔 */
+    minLevel: (lv: number) => `${lv} 级可穿`,
+    barLabel: (name: string, base: number, boost: number, gem: number, total: number) =>
+      `${name} ${total} (基础 ${base} + 强化 ${boost} + 宝石 ${gem})`,
+    costLabel: '消耗',
+    costShort: (essence: number, have: number, coin: string) => `精华 ×${essence} (有 ${have}) · 银币 ${coin}`,
+    stoneTitle: '用强化石, 必定成功',
+    stoneHave: (n: number) => `有 ${n} 块`,
+    holes: (n: number, cur: number, max: number) => `${n} / ${cur} 孔${cur < max ? ` · 最多 ${max} 孔` : ''}`,
+    emptyHole: '空孔, 点了镶嵌',
+    emptyShort: '空',
+    drillShort: '+ 孔',
+    gemNote: (drill: number, coinPerLevel: string | null) =>
+      `打孔用打孔石 (有 ${drill})。${coinPerLevel ? `摘除要花 阶数×${coinPerLevel} 银币` : '现在摘除免费 (2 星以下或酸雨天)'}`,
+    noGemItems: '没有可以镶的宝石',
     noGems: '这件不能镶宝石',
     rows: { base: '基础', boost: '强化', gem: '宝石', total: '合计' },
     meta: (part: string, lv: number, worn: boolean) => `${part} · ${lv} 级可穿${worn ? ' · 穿戴中' : ''}`,

@@ -83,6 +83,21 @@ export default {
   },
   detail: {
     noAttrs: '沒有屬性加成',
+    /** 介面改版 P7：頭部小標籤、屬性橫條、強化一塊、寶石圓孔 */
+    minLevel: (lv: number) => `${lv} 級可穿`,
+    barLabel: (name: string, base: number, boost: number, gem: number, total: number) =>
+      `${name} ${total} (基礎 ${base} + 強化 ${boost} + 寶石 ${gem})`,
+    costLabel: '消耗',
+    costShort: (essence: number, have: number, coin: string) => `精華 ×${essence} (有 ${have}) · 銀幣 ${coin}`,
+    stoneTitle: '用強化石, 必定成功',
+    stoneHave: (n: number) => `有 ${n} 塊`,
+    holes: (n: number, cur: number, max: number) => `${n} / ${cur} 孔${cur < max ? ` · 最多 ${max} 孔` : ''}`,
+    emptyHole: '空孔, 點了鑲嵌',
+    emptyShort: '空',
+    drillShort: '+ 孔',
+    gemNote: (drill: number, coinPerLevel: string | null) =>
+      `打孔用打孔石 (有 ${drill})。${coinPerLevel ? `摘除要花 階數×${coinPerLevel} 銀幣` : '現在摘除免費 (2 星以下或酸雨天)'}`,
+    noGemItems: '沒有可以鑲的寶石',
     noGems: '這件不能鑲寶石',
     rows: { base: '基礎', boost: '強化', gem: '寶石', total: '合計' },
     meta: (part: string, lv: number, worn: boolean) => `${part} · ${lv} 級可穿${worn ? ' · 穿戴中' : ''}`,
