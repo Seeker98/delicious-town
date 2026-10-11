@@ -17,6 +17,8 @@ const SCENE_SIZE: Record<string, string> = {
   tower: '390 120',
   society: '390 120',
   plaza: '390 120',
+  gate: '390 200',
+  newshop: '390 170',
 };
 const CONTENT = svgs('content');
 
@@ -39,7 +41,7 @@ describe('图形（界面改版 P1，设计 §3）', () => {
 
   it('界面图标只用 currentColor，不写色值、不写 fill-opacity（跟主题和深色自动变）', () => {
     for (const { name, src } of UI) {
-      expect(name).toMatch(/^(nav|place|me|fac|slot|sec)-/);
+      expect(name).toMatch(/^(nav|place|me|fac|slot|sec|set)-/);
       expect(src.match(/#[0-9a-fA-F]{3,6}\b/g) ?? [], name).toEqual([]);
       expect(src, name).not.toMatch(/fill-opacity/);
     }
@@ -47,7 +49,7 @@ describe('图形（界面改版 P1，设计 §3）', () => {
 
   it('内容图形以分类前缀开头', () => {
     for (const { name } of CONTENT)
-      expect(name).toMatch(/^(res|food|goods|npc|empty|door|avatar|game|weather|town)-/);
+      expect(name).toMatch(/^(res|food|goods|npc|empty|door|avatar|game|weather|town|wiki)-/);
   });
 
   it('生成的名字表和源文件一致（改了图形要跑 pnpm -F @dt/web art）', () => {
@@ -63,7 +65,8 @@ describe('图形（界面改版 P1，设计 §3）', () => {
     for (const n of scenes) {
       const src = readFileSync(join(ROOT, 'scene', n), 'utf8');
       expect(n.slice(0, -4), n).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
-      // 店面 320×72；酒吧首页 390×196，神殿、厨塔、协会、广场 390×120（P9、P10：放在页面顶上整宽）
+      // 店面 320×72；酒吧首页 390×196，神殿、厨塔、协会、广场 390×120（P9、P10：放在页面顶上整宽）；
+      // 登录注册的小镇门口 390×200、开店页的空店 390×170（P11）
       const size = SCENE_SIZE[n.slice(0, -4)] ?? '320 72';
       expect(src.startsWith(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size}">`), n).toBe(true);
       expect(src, n).not.toMatch(/<script|<style|href=|<image|<text/i);

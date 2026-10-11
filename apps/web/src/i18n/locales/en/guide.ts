@@ -6,8 +6,11 @@ const guide: Messages['guide'] = {
   codes: 'Starter codes',
   codesNoRest:
     'Available once you join a server and open a restaurant. Each restaurant can claim each code once.',
-  codesNote: 'Each restaurant can claim each code once, as soon as its level is high enough.',
+  codesNote: 'Each restaurant can claim each code once',
   minLevel: (n) => `Level ${n}+`,
+  lackLevels: (n) => `${n} ${n === 1 ? 'level' : 'levels'} to go`,
+  wikiPill: 'Look up items, ingredients, recipes',
+  dailyMore: (n) => `${n} more · show all`,
   take: 'Claim',
   taken: 'Claimed',
   ended: 'Ended',

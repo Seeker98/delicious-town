@@ -145,6 +145,8 @@ describe('开放接口数据（问题记录 142）', () => {
       name: '南煎丸子',
       streetId: config.cookbooks.get(cid('南煎丸子'))!.streetId,
       grade: 1,
+      // 主料：普通品级的第一样食材（界面改版 P11，资料库里画它的图）
+      mainFoodId: fid('猪肉'),
     });
     expect(food.cookbooks.map((c) => c.id)).toEqual(
       [...food.cookbooks.map((c) => c.id)].sort((x, y) => x - y),
@@ -166,6 +168,8 @@ describe('开放接口数据（问题记录 142）', () => {
       b.i18n.en!.cookbooks[String(cid('南煎丸子'))]!.name,
     );
     expect(data.cookbooks('zh-CN').items).toHaveLength(b.cookbooks.length);
+    expect(c.mainFoodId).toBe(fid('猪肉'));
+    expect(data.cookbooks('zh-CN').items.find((x) => x.id === cid('南煎丸子'))!.mainFoodId).toBe(fid('猪肉'));
   });
 
   it('道具详情带需要的星级；宝石带下一阶的名字（backlog 146、#115）', () => {

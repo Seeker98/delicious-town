@@ -1,3 +1,4 @@
+import type { ArtName, UiArtName } from '../../art/generated/names';
 import { ApiError } from '../../api/client';
 import { endpoints } from '../../api/endpoints';
 import { useWikiStore } from '../../stores/wiki';
@@ -34,3 +35,20 @@ export function useWikiData() {
 
 /** 读不到（404）还是读失败：页面上写不同的话 */
 export const isNotFound = (e: unknown) => e instanceof ApiError && e.code === 'NOT_FOUND';
+
+/** 厨具部位的图标：1 铲、2 刀、3 锅、4 瓶、5 帽（和厨具页一致；界面改版 P11 资料库列表、词条用） */
+export const PART_ART: Record<number, UiArtName> = {
+  1: 'slot-spatula',
+  2: 'slot-knife',
+  3: 'slot-pot',
+  4: 'slot-bottle',
+  5: 'slot-hat',
+};
+/** 资料库五类的图（首页目录、搜索分组） */
+export const KIND_ART: Record<WikiKind, ArtName> = {
+  goods: 'wiki-goods',
+  foods: 'wiki-foods',
+  cookbooks: 'wiki-books',
+  equips: 'wiki-equips',
+  streets: 'wiki-streets',
+};

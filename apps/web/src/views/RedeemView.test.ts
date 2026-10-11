@@ -7,7 +7,12 @@ import { useSessionStore } from '../stores/session';
 import RedeemView from './RedeemView.vue';
 
 vi.mock('../api/endpoints', () => ({
-  endpoints: { redeem: vi.fn(), guideCodes: vi.fn(), catalog: vi.fn(() => new Promise(() => {})) },
+  endpoints: {
+    redeem: vi.fn(),
+    guideCodes: vi.fn(),
+    invite: vi.fn(),
+    catalog: vi.fn(() => new Promise(() => {})),
+  },
 }));
 
 const mountView = async () => {
@@ -25,6 +30,7 @@ describe('RedeemView（问题记录 164）', () => {
     vi.mocked(endpoints.guideCodes).mockResolvedValue([
       { code: 'XINSHOU', minLevel: 1, items: { coin: 50000 }, state: 'ok' },
     ]);
+    vi.mocked(endpoints.invite).mockRejectedValue(new Error('net'));
   });
 
   it('独立的兑换码页：有输入框和说明', async () => {
@@ -40,9 +46,25 @@ describe('RedeemView（问题记录 164）', () => {
     expect(invite?.text()).toContain('邀请好友');
   });
 
-  it('区服关了邀请：没有去邀请的入口', async () => {
+  it('邀请入口卡写本月已邀请几人；读不到时只写一句说明（界面改版 P11）', async () => {
+    const plain = await mountView();
+    expect(plain.get('[data-testid="invite-entry"]').text()).toContain('好友升级你也拿奖励');
+    expect(plain.get('[data-testid="invite-entry"]').text()).not.toContain('本月已邀请');
+    vi.mocked(endpoints.invite).mockResolvedValue({
+      code: 'ABCD2345',
+      monthCount: 3,
+      monthlyCap: 20,
+      levels: { lv10: 10, lv30: 30 },
+      invitees: [],
+    });
+    const w = await mountView();
+    expect(w.get('[data-testid="invite-entry"]').text()).toContain('本月已邀请 3 / 20 人');
+  });
+
+  it('区服关了邀请：没有去邀请的入口，也不读邀请信息', async () => {
     useRestaurantStore().rest = { disabledFeatures: ['invite'] } as never;
     const w = await mountView();
     expect(w.findAllComponents(RouterLinkStub).some((x) => x.props('to') === '/invite')).toBe(false);
+    expect(endpoints.invite).not.toHaveBeenCalled();
   });
 });

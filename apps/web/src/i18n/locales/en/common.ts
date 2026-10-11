@@ -12,6 +12,13 @@ const common: Messages['common'] = {
   themeSystem: 'Match system',
   themeLight: 'Light',
   themeDark: 'Dark',
+  langNames: {
+    'zh-CN': 'Simplified Chinese',
+    'zh-TW': 'Traditional Chinese',
+    en: 'English',
+    fr: 'French',
+    es: 'Spanish',
+  } as Record<string, string>,
   loadFailed: 'Failed to load',
   langLoadFailed: 'Could not switch language. Check your connection and try again.',
   offline: 'You’re offline. Try again once you’re connected',

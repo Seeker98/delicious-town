@@ -33,5 +33,6 @@ export default {
     btn: '兑换',
     done: (text: string) => `兑换成功: ${text}`,
     failed: '兑换失败',
+    got: '领到了',
   },
 };

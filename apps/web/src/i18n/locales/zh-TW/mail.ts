@@ -34,5 +34,6 @@ export default {
     btn: '兌換',
     done: (text: string) => `兌換成功: ${text}`,
     failed: '兌換失敗',
+    got: '領到了',
   },
 };

@@ -4,6 +4,8 @@ export interface InviteeDto {
   restName: string | null;
   shardName: string | null;
   level: number | null;
+  /** 那家店选的头像（界面改版 P11）；没开店或没选为 null */
+  avatar: number | null;
   verified: boolean;
   lv10: InviteStatus | null;
   lv30: InviteStatus | null;

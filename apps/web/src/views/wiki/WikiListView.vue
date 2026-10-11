@@ -7,17 +7,27 @@ import type {
   OpenFoodBrief,
   OpenGoodsBrief,
   OpenStreetDto,
+  OpenSuitDto,
 } from '@dt/shared';
+import type { ArtName } from '../../art/generated/names';
+import DtSheet from '../../components/DtSheet.vue';
+import PickRow from '../../components/PickRow.vue';
+import WikiRow from '../../components/wiki/WikiRow.vue';
 import { useT } from '../../composables/useT';
+import { useCatalogStore } from '../../stores/catalog';
 import { usePageTitle } from '../../stores/pageTitle';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
-import { PART_NAMES } from '../../utils/labels';
+import { PART_NAMES, STREET_FOCUS } from '../../utils/labels';
 import { matchText } from '../../utils/match';
 import { queryInt } from '../../utils/query';
-import { isWikiKind, useWikiData, wikiPath, type WikiKind } from './wiki';
+import { isWikiKind, PART_ART, useWikiData, wikiPath, type WikiKind } from './wiki';
 
-/** 游戏资料列表（问题记录 142）：五类共用，按类目换筛选和信息行 */
+/**
+ * 游戏资料列表（问题记录 142；界面改版 P11）：五类共用，按类目换筛选和信息行。
+ * 一行一条，左边 44px 图（道具按类别、食材按类别、食谱用主料、厨具用部位图标），名字后面按等级标角标；
+ * 筛选胶囊放得下就换行，条数写在列表右上；食谱的街道是整宽胶囊，点开底部面板选
+ */
 const PAGE = 50;
 const GOODS_TYPES = [0, 1, 2, 3, 4, 5, 9, 10];
 const FOOD_LEVELS = [1, 2, 3, 4, 5, 6, 7];
@@ -52,6 +62,7 @@ const goods = shallowRef<OpenGoodsBrief[]>([]);
 const foods = shallowRef<OpenFoodBrief[]>([]);
 const cookbooks = shallowRef<OpenCookbookBrief[]>([]);
 const equips = shallowRef<OpenEquipBrief[]>([]);
+const suits = shallowRef<OpenSuitDto[]>([]);
 const streets = shallowRef<OpenStreetDto[]>([]);
 const toast = useToastStore();
 const error = ref(false);
@@ -89,7 +100,7 @@ async function load(k: WikiKind) {
           : k === 'cookbooks'
             ? (await data.cookbooks()).items
             : k === 'equips'
-              ? (await data.equips()).items
+              ? await data.equips()
               : null;
     if (mine !== seq) return;
     streets.value = s;
@@ -103,7 +114,10 @@ async function load(k: WikiKind) {
     if (k === 'goods') goods.value = items as OpenGoodsBrief[];
     else if (k === 'foods') foods.value = items as OpenFoodBrief[];
     else if (k === 'cookbooks') cookbooks.value = items as OpenCookbookBrief[];
-    else if (k === 'equips') equips.value = items as OpenEquipBrief[];
+    else if (k === 'equips' && items && 'suits' in items) {
+      equips.value = items.items;
+      suits.value = items.suits;
+    }
   } catch {
     if (mine !== seq) return;
     error.value = true;
@@ -146,6 +160,8 @@ watch([q, filter, rareOnly, street, shown], ([qq, f, rare, s, n]) => {
 });
 
 const streetName = computed(() => new Map(streets.value.map((s) => [s.id, s.name])));
+const suitName = computed(() => new Map(suits.value.map((s) => [s.id, s.name])));
+const catalog = useCatalogStore();
 const w = computed(() => t.value.wiki);
 /** 顶栏标题是类目名（界面改版 P2a） */
 usePageTitle(() => (kind.value ? t.value.wiki.kinds[kind.value] : null));
@@ -153,21 +169,27 @@ usePageTitle(() => (kind.value ? t.value.wiki.kinds[kind.value] : null));
 interface Row {
   id: number;
   name: string;
-  meta: string;
+  art: ArtName;
+  /** 名字后面的等级角标（1 级不标） */
+  level?: number;
+  /** 名字后面的灰色小标签（食谱的推荐等级） */
+  tag?: string;
+  sub: string;
+  rare?: boolean;
 }
 /** 筛选前的全部行（只看名字搜索） */
 const all = computed<Row[]>(() => {
   const k = kind.value;
-  const level = (n: number) => w.value.level(n);
   if (k === 'goods')
     return goods.value
       .filter((g) => filter.value === null || g.type === filter.value)
       .map((g) => ({
         id: g.id,
         name: g.name,
-        meta: [
+        art: catalog.goodsArt(g.id),
+        level: g.level,
+        sub: [
           w.value.goodsTypes[String(g.type)] ?? '',
-          level(g.level),
           g.onSale && g.coin > 0 ? w.value.coin(formatNum(g.coin)) : '',
           g.onSale && g.diamond > 0 ? w.value.diamond(formatNum(g.diamond)) : '',
         ]
@@ -180,13 +202,10 @@ const all = computed<Row[]>(() => {
       .map((f) => ({
         id: f.id,
         name: f.name,
-        meta: [
-          level(f.level),
-          f.rare ? w.value.rare : w.value.common,
-          f.type === null ? '' : (w.value.foodTypes[String(f.type)] ?? ''),
-        ]
-          .filter(Boolean)
-          .join(' · '),
+        art: catalog.foodArt(f.id),
+        level: f.level,
+        sub: f.type === null ? '' : (w.value.foodTypes[String(f.type)] ?? ''),
+        rare: f.rare,
       }));
   if (k === 'cookbooks') {
     const band = filter.value === null ? null : LEVEL_BANDS[filter.value]!;
@@ -196,11 +215,9 @@ const all = computed<Row[]>(() => {
       .map((c) => ({
         id: c.id,
         name: c.name,
-        meta: [
-          streetName.value.get(c.streetId) ?? '',
-          w.value.fields.recommend(c.level),
-          `${w.value.fields.price} ${formatNum(c.coin)}`,
-        ]
+        art: c.mainFoodId ? catalog.foodArt(c.mainFoodId) : 'food-misc',
+        tag: w.value.fields.recommend(c.level),
+        sub: [streetName.value.get(c.streetId) ?? '', `${w.value.fields.price} ${formatNum(c.coin)}`]
           .filter(Boolean)
           .join(' · '),
       }));
@@ -211,9 +228,11 @@ const all = computed<Row[]>(() => {
       .map((e) => ({
         id: e.id,
         name: e.name,
+        art: PART_ART[e.part] ?? 'wiki-equips',
         // 没有等级门槛时不写“0 级可以穿”（backlog #115）
-        meta: [
+        sub: [
           PART_NAMES[e.part] ?? '',
+          suitName.value.get(e.suitId) ?? '',
           e.minLevel > 0 ? w.value.fields.minLevel(e.minLevel) : '',
           `+10 ${e.maxTotal}`,
         ]
@@ -224,7 +243,10 @@ const all = computed<Row[]>(() => {
     return streets.value.map((s) => ({
       id: s.id,
       name: s.name,
-      meta: `${s.cookName} · ${w.value.fields.cookbookCount(s.cookbookCount)}`,
+      art: 'wiki-streets' as const,
+      sub: [s.cookName, w.value.fields.cookbookCount(s.cookbookCount), s.focus ? STREET_FOCUS[s.focus] : '']
+        .filter(Boolean)
+        .join(' · '),
     }));
   return [];
 });
@@ -245,37 +267,40 @@ const pills = computed<Array<{ value: number; label: string }>>(() => {
     return LEVEL_BANDS.map(([a, b], i) => ({ value: i, label: b >= 999 ? `${a}+` : `${a}~${b}` }));
   return [];
 });
-const onStreet = (e: Event) => {
-  const v = (e.target as HTMLSelectElement).value;
-  street.value = v === '' ? null : Number(v);
-};
+/** 食谱的街道：整宽胶囊，点开从底部弹出街道单选面板 */
+const streetSheet = ref(false);
+function pickStreet(id: number | null) {
+  street.value = id;
+  streetSheet.value = false;
+}
 </script>
 
 <template>
   <div>
     <div v-if="!kind" class="dt-empty" data-testid="wiki-error">{{ t.wiki.notFound }}</div>
     <template v-else>
-      <div class="dt-page-meta dt-meta">{{ t.wiki.count(matched.length) }}</div>
-      <input
-        v-model="q"
-        type="search"
-        class="form-control form-control-sm mb-2"
-        :placeholder="t.wiki.search"
-        :aria-label="t.wiki.search"
-        data-testid="wiki-q"
-      />
-      <select
+      <label class="dt-search-box dt-wiki-search">
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <input
+          v-model="q"
+          type="search"
+          :placeholder="t.wiki.searchKind(t.wiki.kinds[kind])"
+          :aria-label="t.wiki.search"
+          data-testid="wiki-q"
+        />
+      </label>
+      <button
         v-if="kind === 'cookbooks'"
-        class="form-select form-select-sm mb-2"
-        :value="street ?? ''"
+        type="button"
+        class="dt-wide-select"
         :aria-label="t.wiki.kinds.streets"
         data-testid="wiki-street"
-        @change="onStreet"
+        @click="streetSheet = true"
       >
-        <option value="">{{ t.wiki.allStreets }}</option>
-        <option v-for="s in streets" :key="s.id" :value="s.id">{{ s.name }}</option>
-      </select>
-      <div v-if="pills.length > 0" class="dt-pills mb-2">
+        <span>{{ street === null ? t.wiki.allStreets : (streetName.get(street) ?? t.wiki.allStreets) }}</span
+        ><i class="bi bi-chevron-down" aria-hidden="true"></i>
+      </button>
+      <div v-if="pills.length > 0" class="dt-pills dt-wiki-pills">
         <button
           type="button"
           :class="{ active: filter === null }"
@@ -307,27 +332,34 @@ const onStreet = (e: Event) => {
           {{ t.wiki.rareOnly }}
         </button>
       </div>
+      <div class="dt-wiki-count dt-meta">{{ t.wiki.count(matched.length) }}</div>
       <div v-if="error" class="dt-empty" data-testid="wiki-error">{{ t.wiki.loadFailed }}</div>
       <template v-else-if="loaded">
-        <RouterLink
-          v-for="r in visible"
-          :key="r.id"
-          :to="wikiPath(kind, r.id)"
-          class="dt-item text-reset text-decoration-none"
-          :data-testid="`wiki-row-${r.id}`"
-        >
-          <div class="dt-item-main">
-            <div class="dt-item-title">{{ r.name }}</div>
-            <div class="dt-meta">{{ r.meta }}</div>
-          </div>
-          <i class="bi bi-chevron-right text-muted"></i>
-        </RouterLink>
+        <div v-if="visible.length > 0" class="dt-card dt-rows-card">
+          <WikiRow
+            v-for="r in visible"
+            :key="r.id"
+            :to="wikiPath(kind, r.id)"
+            :art="r.art"
+            :name="r.name"
+            :level="r.level"
+            :tag="r.tag"
+            :testid="`wiki-row-${r.id}`"
+          >
+            <template #sub
+              >{{ r.sub
+              }}<template v-if="r.rare"
+                >{{ r.sub ? ' · ' : '' }}<span class="dt-ink-warn">{{ t.wiki.rare }}</span></template
+              ></template
+            >
+          </WikiRow>
+        </div>
         <div v-if="matched.length === 0" class="dt-empty" data-testid="wiki-empty">{{ t.wiki.noResult }}</div>
         <!-- 显示条数最多 MAX_SHOWN（地址里恢复也按它）：到了就不再给“再显示”，改写怎么缩小范围（backlog 第 ⑧ 批审查） -->
         <button
           v-if="visible.length < matched.length && shown < MAX_SHOWN"
           type="button"
-          class="btn btn-sm btn-outline-primary w-100 mt-2"
+          class="btn btn-light dt-btn-block mt-2"
           data-testid="wiki-more"
           @click="more = { key: filterKey, n: Math.min(shown + PAGE, MAX_SHOWN) }"
         >
@@ -341,6 +373,25 @@ const onStreet = (e: Event) => {
           {{ t.wiki.maxShown(formatNum(MAX_SHOWN)) }}
         </div>
       </template>
+      <DtSheet :open="streetSheet" :title="t.wiki.kinds.streets" @close="streetSheet = false">
+        <div class="dt-card dt-rows-card" role="radiogroup" :aria-label="t.wiki.kinds.streets">
+          <PickRow
+            :on="street === null"
+            :title="t.wiki.allStreets"
+            testid="wiki-street-all"
+            @pick="pickStreet(null)"
+          />
+          <PickRow
+            v-for="s in streets"
+            :key="s.id"
+            :on="street === s.id"
+            :title="s.name"
+            :sub="s.cookName"
+            :testid="`wiki-street-${s.id}`"
+            @pick="pickStreet(s.id)"
+          />
+        </div>
+      </DtSheet>
     </template>
   </div>
 </template>

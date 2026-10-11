@@ -32,6 +32,7 @@ const mail: Messages['mail'] = {
     btn: 'Redeem',
     done: (text) => `Redeemed: ${text}`,
     failed: 'Redeem failed',
+    got: 'You got',
   },
 };
 export default mail;

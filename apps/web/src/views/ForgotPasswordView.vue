@@ -2,10 +2,14 @@
 import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { endpoints } from '../api/endpoints';
+import AuthField from '../components/auth/AuthField.vue';
+import AuthScene from '../components/auth/AuthScene.vue';
+import DtArt from '../components/DtArt.vue';
 import TurnstileBox from '../components/TurnstileBox.vue';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 
+/** 找回密码（界面改版 P11）：矮版头图 + 表单卡；发出以后同一张卡换成结果（邮件图标 + 说明 + 返回登录） */
 const email = ref('');
 const captchaToken = ref('');
 const turnstile = ref<InstanceType<typeof TurnstileBox> | null>(null);
@@ -18,7 +22,7 @@ async function submit() {
   busy.value = true;
   error.value = '';
   try {
-    await endpoints.forgotPassword({ email: email.value, captchaToken: captchaToken.value });
+    await endpoints.forgotPassword({ email: email.value.trim(), captchaToken: captchaToken.value });
     sent.value = true;
   } catch (e) {
     error.value = errorMessage(e, t.value.auth.sendFailed);
@@ -32,27 +36,30 @@ async function submit() {
 </script>
 
 <template>
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">{{ t.auth.forgotTitle }}</h5>
-      <p v-if="sent" class="text-success">{{ t.auth.forgotSent }}</p>
-      <form v-else @submit.prevent="submit">
-        <input
-          v-model.trim="email"
-          type="email"
-          class="form-control mb-2"
-          :placeholder="t.auth.forgotEmail"
-          required
-        />
-        <TurnstileBox ref="turnstile" @token="captchaToken = $event" />
-        <div v-if="error" class="alert alert-danger py-1 my-2">{{ error }}</div>
-        <button class="btn btn-primary w-100" :disabled="busy || !captchaToken">
+  <AuthScene short />
+  <section class="dt-auth-card">
+    <div v-if="sent" class="dt-auth-result" data-testid="forgot-sent">
+      <span class="dt-auth-ring is-ok"><DtArt name="set-mail" :size="30" /></span>
+      <b>{{ t.auth.forgotSentTitle }}</b>
+      <span>{{ t.auth.forgotSent }}</span>
+      <RouterLink to="/login" class="btn btn-light dt-btn-block dt-auth-submit">{{
+        t.auth.backToLogin
+      }}</RouterLink>
+    </div>
+    <template v-else>
+      <div v-if="error" class="dt-auth-error" role="alert">{{ error }}</div>
+      <h2 class="dt-auth-title">{{ t.auth.forgotTitle }}</h2>
+      <p class="dt-auth-sub">{{ t.auth.forgotSub }}</p>
+      <form @submit.prevent="submit">
+        <AuthField v-model="email" :label="t.auth.email" type="email" autocomplete="email" required />
+        <TurnstileBox ref="turnstile" class="mt-3" @token="captchaToken = $event" />
+        <button class="btn btn-primary dt-btn-block dt-auth-submit" :disabled="busy || !captchaToken">
           {{ t.auth.sendReset }}
         </button>
       </form>
-      <div class="mt-2 small">
-        <RouterLink to="/login" class="dt-back">{{ t.auth.backToLogin }}</RouterLink>
-      </div>
-    </div>
-  </div>
+      <p class="dt-auth-links is-center">
+        <RouterLink to="/login" class="dt-go">{{ t.auth.backToLogin }}</RouterLink>
+      </p>
+    </template>
+  </section>
 </template>

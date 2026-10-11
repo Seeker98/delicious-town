@@ -7,8 +7,12 @@ export default {
   wikiHint: '想查道具、食材、食谱？看游戏资料',
   codes: '新手兑换码',
   codesNoRest: '进入区服、开店后可以领。每家店每个码领一次。',
-  codesNote: '每家店每个码领一次, 等级够了就能领。',
+  codesNote: '每家店每个码领一次',
   minLevel: (n: number) => `${n} 级可领`,
+  /** 界面改版 P11 */
+  lackLevels: (n: number) => `还差 ${n} 级`,
+  wikiPill: '查道具、食材、食谱',
+  dailyMore: (n: number) => `还有 ${n} 项 · 展开全部`,
   take: '领取',
   taken: '已领',
   ended: '已结束',

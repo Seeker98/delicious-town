@@ -8,27 +8,29 @@ test('登录页选 English 后注册开店，首页英文，刷新后不变，�
   const email = `${username}@e2e.local`;
 
   await page.goto('/login');
-  await page.getByTestId('lang-select').selectOption('en');
-  await expect(page.getByRole('heading', { name: 'Log in to Delicious Town' })).toBeVisible();
+  // 语言胶囊点开语言面板（界面改版 P11）
+  await page.getByTestId('lang-chip').click();
+  await page.getByTestId('lang-en').click();
+  await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Log in' })).toBeVisible();
 
   await page.getByRole('link', { name: 'Create an account' }).click();
-  await expect(page.getByRole('heading', { name: 'Join Delicious Town' })).toBeVisible();
-  await page.getByPlaceholder('Username').fill(username);
-  await page.getByPlaceholder('Password', { exact: true }).fill('secret123');
-  await page.getByPlaceholder('Confirm password').fill('secret123');
-  await page.getByPlaceholder('Email').fill(email);
+  await expect(page.getByRole('heading', { name: 'Create an account' })).toBeVisible();
+  await page.getByLabel('Username').fill(username);
+  await page.getByLabel('Password', { exact: true }).fill('secret123');
+  await page.getByLabel('Confirm password').fill('secret123');
+  await page.getByLabel('Email', { exact: true }).fill(email);
   await page.getByRole('button', { name: 'Sign up' }).click();
   await expect(page).toHaveURL(/\/shards/);
   await expect(page.getByRole('heading', { name: 'Switch server' })).toBeVisible();
 
   await page.goto(await mailLink(request, email));
-  await expect(page.getByText('Email verified!')).toBeVisible();
+  await expect(page.getByText('Email verified', { exact: true })).toBeVisible();
   await page.goto('/shards');
   await page.getByRole('button', { name: /一服/ }).click();
   await expect(page.getByRole('heading', { name: 'Open a restaurant' })).toBeVisible();
   const name = `店${id.slice(-5)}`;
-  await page.getByPlaceholder('Restaurant name').fill(name);
+  await page.getByLabel('Restaurant name').fill(name);
   await page.getByRole('button', { name: 'Open' }).click();
   await expect(page.getByTestId('page-title')).toHaveText(name);
   await expect(page.getByTestId('home-todo')).toContainText("Today's to-do");

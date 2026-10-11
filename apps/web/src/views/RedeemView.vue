@@ -1,23 +1,40 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import NavRow from '../components/NavRow.vue';
+import { onMounted, ref } from 'vue';
+import { RouterLink } from 'vue-router';
+import type { InviteDto } from '@dt/shared';
+import { endpoints } from '../api/endpoints';
+import DtArt from '../components/DtArt.vue';
 import NewbieCodes from '../components/NewbieCodes.vue';
 import RedeemBox from '../components/RedeemBox.vue';
 import { useT } from '../composables/useT';
 import { useRestaurantStore } from '../stores/restaurant';
 
 /**
- * 兑换码（问题记录 164）：兑换码只留这一处（界面改版 P2b）——兑换框、新手兑换码（原来在游玩指引）、
- * 邀请好友（原来在账号页）；邮箱和指引只放一条链接过来
+ * 兑换码和邀请（界面改版 P2b；P11 重排）：兑换框一张卡，下面新手兑换码一行一个，
+ * 最下面一张“邀请好友”入口卡，写本月已邀请几人
  */
 const t = useT();
 const restStore = useRestaurantStore();
 const codes = ref<InstanceType<typeof NewbieCodes> | null>(null);
+const invite = ref<InviteDto | null>(null);
+onMounted(async () => {
+  if (!restStore.featureOn('invite')) return;
+  invite.value = await endpoints.invite().catch(() => null);
+});
 </script>
 
 <template>
   <RedeemBox @redeemed="codes?.reload()" />
-  <p class="small text-muted">{{ t.misc.redeem.note }}</p>
-  <NewbieCodes ref="codes" class="mb-3" />
-  <NavRow v-if="restStore.featureOn('invite')" to="/invite" art="nav-friends" :label="t.misc.invite.title" />
+  <NewbieCodes ref="codes" class="mt-3" />
+  <div v-if="restStore.featureOn('invite')" class="dt-card dt-rows-card mt-3">
+    <RouterLink to="/invite" class="dt-row is-link dt-invite-entry" data-testid="invite-entry">
+      <span class="dt-code-art"><DtArt name="town-invite" :size="30" /></span>
+      <span class="dt-row-main">
+        <span class="dt-row-title is-strong">{{ t.misc.invite.title }}</span>
+        <span class="dt-row-sub">{{
+          invite ? t.misc.invite.entrySub(invite.monthCount, invite.monthlyCap) : t.misc.invite.entrySubPlain
+        }}</span>
+      </span>
+    </RouterLink>
+  </div>
 </template>

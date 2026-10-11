@@ -6,8 +6,11 @@ const guide: Messages['guide'] = {
   codes: 'Codes de bienvenue',
   codesNoRest:
     'Disponibles une fois que vous avez rejoint un serveur et ouvert un restaurant. Chaque restaurant peut récupérer chaque code une fois.',
-  codesNote: 'Chaque restaurant peut récupérer chaque code une fois, dès que son niveau est suffisant.',
+  codesNote: 'Chaque restaurant peut récupérer chaque code une fois',
   minLevel: (n) => `Dès le niveau ${n}`,
+  lackLevels: (n) => `Encore ${n} ${n > 1 ? 'niveaux' : 'niveau'}`,
+  wikiPill: 'Chercher objets, ingrédients, recettes',
+  dailyMore: (n) => `Encore ${n} · tout afficher`,
   take: 'Récupérer',
   taken: 'Récupéré',
   ended: 'Terminé',

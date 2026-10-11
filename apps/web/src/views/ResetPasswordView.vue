@@ -2,9 +2,12 @@
 import { computed, ref } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import { endpoints } from '../api/endpoints';
+import AuthField from '../components/auth/AuthField.vue';
+import AuthScene from '../components/auth/AuthScene.vue';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 
+/** 重设密码（界面改版 P11）：矮版头图 + 表单卡；改好以后同一张卡换成结果（绿圈对号 + 去登录） */
 const route = useRoute();
 const password = ref('');
 const password2 = ref('');
@@ -12,14 +15,13 @@ const done = ref(false);
 const error = ref('');
 const busy = ref(false);
 const t = useT();
-const localError = computed(() => {
-  if (password.value && password.value.length < 6) return t.value.auth.passwordMin;
-  if (password2.value && password.value !== password2.value) return t.value.auth.passwordMismatch;
-  return '';
-});
+const pwErr = computed(() => (password.value && password.value.length < 6 ? t.value.auth.passwordMin : ''));
+const pw2Err = computed(() =>
+  password2.value && password.value !== password2.value ? t.value.auth.passwordMismatch : '',
+);
 
 async function submit() {
-  if (localError.value) return;
+  if (pwErr.value || pw2Err.value) return;
   busy.value = true;
   error.value = '';
   try {
@@ -35,33 +37,45 @@ async function submit() {
 </script>
 
 <template>
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">{{ t.auth.resetTitle }}</h5>
-      <p v-if="done" class="text-success">{{ t.auth.resetDone }}</p>
-      <form v-else @submit.prevent="submit">
-        <input
-          v-model="password"
-          type="password"
-          class="form-control mb-2"
-          :placeholder="t.auth.newPassword"
-          autocomplete="new-password"
-          required
-        />
-        <input
-          v-model="password2"
-          type="password"
-          class="form-control mb-2"
-          :placeholder="t.auth.newPassword2"
-          autocomplete="new-password"
-          required
-        />
-        <div v-if="localError || error" class="alert alert-danger py-1">{{ localError || error }}</div>
-        <button class="btn btn-primary w-100" :disabled="busy">{{ t.common.confirm }}</button>
-      </form>
-      <div class="mt-2 small">
-        <RouterLink to="/login" class="dt-go">{{ t.auth.goLogin }}</RouterLink>
-      </div>
+  <AuthScene short />
+  <section class="dt-auth-card">
+    <div v-if="done" class="dt-auth-result" data-testid="reset-done">
+      <span class="dt-auth-ring is-ok" aria-hidden="true">✓</span>
+      <b>{{ t.auth.resetDoneTitle }}</b>
+      <span>{{ t.auth.resetDone }}</span>
+      <RouterLink to="/login" class="btn btn-primary dt-btn-block dt-auth-submit">{{
+        t.auth.goLogin
+      }}</RouterLink>
     </div>
-  </div>
+    <template v-else>
+      <div v-if="error" class="dt-auth-error" role="alert">{{ error }}</div>
+      <h2 class="dt-auth-title">{{ t.auth.resetTitle }}</h2>
+      <form @submit.prevent="submit">
+        <AuthField
+          v-model="password"
+          :label="t.auth.newPassword"
+          type="password"
+          autocomplete="new-password"
+          :placeholder="t.account.pwRange"
+          :error="pwErr"
+          required
+        />
+        <AuthField
+          v-model="password2"
+          :label="t.auth.newPassword2"
+          type="password"
+          autocomplete="new-password"
+          :placeholder="t.auth.again"
+          :error="pw2Err"
+          required
+        />
+        <button class="btn btn-primary dt-btn-block dt-auth-submit" :disabled="busy">
+          {{ t.common.confirm }}
+        </button>
+      </form>
+      <p class="dt-auth-links is-center">
+        <RouterLink to="/login" class="dt-go">{{ t.auth.goLogin }}</RouterLink>
+      </p>
+    </template>
+  </section>
 </template>

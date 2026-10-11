@@ -2,15 +2,22 @@
 import { computed, ref, onBeforeUnmount, watch } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { OpenGiftItem, OpenGoodsDto, OpenSuitDto } from '@dt/shared';
+import type { ArtName } from '../../art/generated/names';
+import DtArt from '../../components/DtArt.vue';
+import WikiEntry from '../../components/wiki/WikiEntry.vue';
 import WikiExchangeRule from '../../components/wiki/WikiExchangeRule.vue';
 import { useT } from '../../composables/useT';
+import { useCatalogStore } from '../../stores/catalog';
 import { usePageTitle } from '../../stores/pageTitle';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 import { ATTR_KEYS, ATTR_NAMES, PART_NAMES } from '../../utils/labels';
-import { isNotFound, useWikiData } from './wiki';
+import { isNotFound, PART_ART, useWikiData } from './wiki';
 
-/** 道具详情（厨具也用这一页，问题记录 142） */
+/**
+ * 道具词条（厨具也用这一页，问题记录 142；界面改版 P11 报刊风）：厨具的大图用部位图标；
+ * 礼包多一节“礼包内容”（一行一样，带图和数量），宝石多一节“宝石属性”和下一阶链接
+ */
 const route = useRoute();
 const router = useRouter();
 const t = useT();
@@ -18,6 +25,7 @@ const data = useWikiData();
 const g = ref<OpenGoodsDto | null>(null);
 const error = ref<'' | 'missing' | 'failed'>('');
 const toast = useToastStore();
+const catalog = useCatalogStore();
 /** 套装效果（从厨具列表取，backlog #115）、宝石下一阶的名字（从道具列表取） */
 const suit = ref<OpenSuitDto | null>(null);
 
@@ -118,6 +126,42 @@ const shopPrice = computed(() => {
     .filter(Boolean)
     .join(' / ');
 });
+/** 第一行分类：厨具写部位、等级、几级能穿；别的道具写类型和等级 */
+const kick = computed(() => {
+  const v = g.value;
+  if (!v) return '';
+  if (v.equip)
+    return [
+      w.value.kinds.equips,
+      PART_NAMES[v.equip.part] ?? '',
+      w.value.level(v.level),
+      v.equip.minLevel > 0 ? w.value.fields.minLevel(v.equip.minLevel) : '',
+    ]
+      .filter(Boolean)
+      .join(' · ');
+  return [w.value.kinds.goods, w.value.goodsTypes[String(v.type)] ?? '', w.value.level(v.level)]
+    .filter(Boolean)
+    .join(' · ');
+});
+/** 礼包里不带链接的项的图 */
+function giftArt(i: OpenGiftItem): ArtName {
+  switch (i.kind) {
+    case 'coin':
+      return 'res-coin-silver';
+    case 'exp':
+      return 'res-exp';
+    case 'diamond':
+      return 'res-diamond';
+    case 'renown':
+      return 'res-prestige';
+    case 'masterFoods':
+      return 'food-master';
+    case 'randomFoods':
+      return 'food-misc';
+    default:
+      return 'goods-gift';
+  }
+}
 </script>
 
 <template>
@@ -125,12 +169,14 @@ const shopPrice = computed(() => {
     <div v-if="error" class="dt-empty" data-testid="wiki-error">
       {{ error === 'missing' ? t.wiki.notFound : t.wiki.loadFailed }}
     </div>
-    <template v-else-if="g">
-      <p class="mb-2">
-        <span class="dt-tag">{{ w.goodsTypes[String(g.type)] }}</span>
-      </p>
-      <p v-if="g.desc" class="small mb-2">{{ g.desc }}</p>
-      <dl class="dt-kv small">
+    <WikiEntry
+      v-else-if="g"
+      :art="g.equip ? (PART_ART[g.equip.part] ?? 'wiki-equips') : catalog.goodsArt(g.id)"
+      :name="g.name"
+      :kick="kick"
+    >
+      <p v-if="g.desc" class="dt-entry-desc">{{ g.desc }}</p>
+      <dl v-if="!g.equip" class="dt-entry-dl">
         <dt>{{ w.fields.level }}</dt>
         <dd>{{ w.level(g.level) }}</dd>
         <dt>{{ w.fields.type }}</dt>
@@ -147,13 +193,8 @@ const shopPrice = computed(() => {
       </dl>
 
       <template v-if="g.equip">
-        <h6 class="dt-section">{{ w.sections.equip }}</h6>
-        <dl class="dt-kv small" data-testid="wiki-equip">
-          <dt>{{ w.fields.part }}</dt>
-          <dd>
-            {{ PART_NAMES[g.equip.part]
-            }}<template v-if="g.equip.minLevel > 0"> · {{ w.fields.minLevel(g.equip.minLevel) }}</template>
-          </dd>
+        <h3 class="dt-entry-h">{{ w.sections.equip }}</h3>
+        <dl class="dt-entry-dl" data-testid="wiki-equip">
           <dt>{{ w.fields.suit }}</dt>
           <dd>{{ g.equip.suitName ?? w.fields.noSuit }}</dd>
           <dt>{{ w.fields.baseAttrs }}</dt>
@@ -165,21 +206,12 @@ const shopPrice = computed(() => {
             <dd>{{ w.fields.holes(g.equip.hole, g.equip.maxHole) }}</dd>
           </template>
         </dl>
-        <template v-if="suit && suit.tiers.length > 0">
-          <h6 class="dt-section">{{ w.sections.suit }}</h6>
-          <dl class="dt-kv small" data-testid="wiki-suit">
-            <template v-for="x in suit.tiers" :key="x.need">
-              <dt>{{ w.fields.suitTier(x.need) }}</dt>
-              <dd>{{ x.desc }}</dd>
-            </template>
-          </dl>
-        </template>
-        <h6 class="dt-section">{{ w.sections.stress }}</h6>
-        <div class="table-responsive" data-testid="wiki-stress">
-          <table class="table table-sm small mb-0 text-center">
+        <h3 class="dt-entry-h">{{ w.sections.stress }}</h3>
+        <div class="dt-entry-table" data-testid="wiki-stress">
+          <table>
             <tbody>
               <tr>
-                <td v-for="(_, i) in g.equip.stressTable" :key="i" class="text-muted">
+                <td v-for="(_, i) in g.equip.stressTable" :key="i" class="is-head">
                   {{ w.fields.stressLevel(i) }}
                 </td>
               </tr>
@@ -189,11 +221,22 @@ const shopPrice = computed(() => {
             </tbody>
           </table>
         </div>
+        <template v-if="suit && suit.tiers.length > 0">
+          <h3 class="dt-entry-h">
+            {{ w.sections.suit }}<small>{{ w.fields.suitOf(suit.name, suit.maxNum) }}</small>
+          </h3>
+          <dl class="dt-entry-dl" data-testid="wiki-suit">
+            <template v-for="x in suit.tiers" :key="x.need">
+              <dt>{{ w.fields.suitTier(x.need) }}</dt>
+              <dd>{{ x.desc }}</dd>
+            </template>
+          </dl>
+        </template>
       </template>
 
       <template v-if="g.gem">
-        <h6 class="dt-section">{{ w.sections.gem }}</h6>
-        <dl class="dt-kv small" data-testid="wiki-gem">
+        <h3 class="dt-entry-h">{{ w.sections.gem }}</h3>
+        <dl class="dt-entry-dl" data-testid="wiki-gem">
           <dt>{{ w.fields.level }}</dt>
           <dd>{{ w.fields.gemLevel(g.gem.level) }} · {{ gemAttrs.join(' · ') }}</dd>
           <template v-if="g.gem.nextId !== null">
@@ -208,25 +251,32 @@ const shopPrice = computed(() => {
       </template>
 
       <template v-if="g.gift && g.gift.length > 0">
-        <h6 class="dt-section">{{ w.sections.gift }}</h6>
-        <ul class="small mb-1 ps-3" data-testid="wiki-gift">
-          <li v-for="(i, n) in g.gift" :key="n">
-            <template v-if="i.kind === 'goods'">
-              <RouterLink :to="`/wiki/goods/${i.id}`">{{ i.name }}</RouterLink
-              >{{ t.common.times }}{{ i.num }}
-            </template>
-            <template v-else-if="i.kind === 'foods'">
-              <RouterLink :to="`/wiki/foods/${i.id}`">{{ i.name }}</RouterLink
-              >{{ t.common.times }}{{ i.num }}
-            </template>
-            <template v-else>{{ giftText(i) }}</template>
-          </li>
-          <li class="list-unstyled dt-meta">{{ w.gift.note }}</li>
-        </ul>
+        <h3 class="dt-entry-h">{{ w.sections.gift }}</h3>
+        <div data-testid="wiki-gift">
+          <template v-for="(i, n) in g.gift" :key="n">
+            <RouterLink
+              v-if="i.kind === 'goods' || i.kind === 'foods'"
+              :to="`/wiki/${i.kind}/${i.id}`"
+              class="dt-entry-row"
+            >
+              <DtArt :name="i.kind === 'goods' ? catalog.goodsArt(i.id) : catalog.foodArt(i.id)" :size="28" />
+              <span class="dt-row-main"
+                ><span class="dt-row-title">{{ i.name }}{{ t.common.times }}{{ i.num }}</span></span
+              >
+            </RouterLink>
+            <div v-else class="dt-entry-row is-static">
+              <DtArt :name="giftArt(i)" :size="28" />
+              <span class="dt-row-main"
+                ><span class="dt-row-title">{{ giftText(i) }}</span></span
+              >
+            </div>
+          </template>
+          <p class="dt-entry-note">{{ w.gift.note }}</p>
+        </div>
       </template>
 
-      <h6 class="dt-section">{{ w.sections.sources }}</h6>
-      <ul class="small mb-1 ps-3" data-testid="wiki-sources">
+      <h3 class="dt-entry-h">{{ w.sections.sources }}</h3>
+      <ul class="dt-entry-list" data-testid="wiki-sources">
         <li v-if="g.sources.shop">{{ w.sources.shop }}{{ shopPrice }}</li>
         <li v-if="g.sources.renownShop">
           {{ w.sources.renownShop(formatNum(g.sources.renownShop.renown), g.sources.renownShop.rotating) }}
@@ -243,15 +293,15 @@ const shopPrice = computed(() => {
         <li v-for="(r, n) in g.sources.exchange" :key="`x${n}`">
           {{ w.sources.exchange }}<WikiExchangeRule :rule="r" />
         </li>
-        <li v-if="noSource" class="list-unstyled text-muted">{{ w.sources.none }}</li>
+        <li v-if="noSource" class="is-none">{{ w.sources.none }}</li>
       </ul>
 
       <template v-if="g.usedIn.length > 0">
-        <h6 class="dt-section">{{ w.sections.usedIn }}</h6>
-        <ul class="small mb-1 ps-3" data-testid="wiki-used-in">
+        <h3 class="dt-entry-h">{{ w.sections.usedIn }}</h3>
+        <ul class="dt-entry-list" data-testid="wiki-used-in">
           <li v-for="(r, n) in g.usedIn" :key="n"><WikiExchangeRule :rule="r" /></li>
         </ul>
       </template>
-    </template>
+    </WikiEntry>
   </div>
 </template>

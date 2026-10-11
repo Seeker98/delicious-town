@@ -33,6 +33,7 @@ const mail: Messages['mail'] = {
     btn: 'Canjear',
     done: (text) => `Canjeado: ${text}`,
     failed: 'No se pudo canjear',
+    got: 'Recibiste',
   },
 };
 export default mail;

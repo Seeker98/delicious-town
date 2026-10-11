@@ -1,14 +1,20 @@
 <script setup lang="ts">
-import LangSelect from '../components/LangSelect.vue';
 import { onMounted, ref } from 'vue';
 import type { AnnouncementDto } from '@dt/shared';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { endpoints } from '../api/endpoints';
 import AnnounceBanner from '../components/AnnounceBanner.vue';
+import AuthField from '../components/auth/AuthField.vue';
+import AuthScene from '../components/auth/AuthScene.vue';
+import DtArt from '../components/DtArt.vue';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useSessionStore } from '../stores/session';
 
+/**
+ * 登录（界面改版 P11）：小镇门口头图，表单卡往上压进头图；字段上面写标签，密码框能显示密码。
+ * 没登录也能看的两页（游戏资料、游玩指引）做成两个胶囊放卡片下面
+ */
 const username = ref('');
 const password = ref('');
 const error = ref('');
@@ -31,7 +37,9 @@ async function submit() {
   busy.value = true;
   error.value = '';
   try {
-    await session.applyMe(await endpoints.login({ username: username.value, password: password.value }));
+    await session.applyMe(
+      await endpoints.login({ username: username.value.trim(), password: password.value }),
+    );
     const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/shards';
     await router.replace(redirect);
   } catch (e) {
@@ -43,42 +51,35 @@ async function submit() {
 </script>
 
 <template>
-  <AnnounceBanner :items="announcements" />
-  <div class="card">
-    <div class="card-body">
-      <div class="d-flex align-items-center justify-content-between mb-2">
-        <h5 class="card-title mb-0">{{ t.auth.loginTitle }}</h5>
-        <LangSelect />
-      </div>
-      <form @submit.prevent="submit">
-        <input
-          v-model.trim="username"
-          class="form-control mb-2"
-          :placeholder="t.auth.username"
-          autocomplete="username"
-          required
-        />
-        <input
-          v-model="password"
-          type="password"
-          class="form-control mb-2"
-          :placeholder="t.auth.password"
-          autocomplete="current-password"
-          required
-        />
-        <div v-if="error" class="alert alert-danger py-1">{{ error }}</div>
-        <button class="btn btn-primary w-100" :disabled="busy">{{ t.auth.login }}</button>
-      </form>
-      <div class="d-flex justify-content-between mt-2 small">
-        <RouterLink to="/register" class="dt-go">{{ t.auth.toRegister }}</RouterLink>
-        <RouterLink to="/forgot-password" class="dt-go">{{ t.auth.forgot }}</RouterLink>
-      </div>
-      <!-- 游戏资料不用登录也能看（问题记录 142） -->
-      <div class="text-center mt-3 small">
-        <RouterLink to="/wiki" class="dt-go" data-testid="login-wiki"
-          ><i class="bi bi-book me-1"></i>{{ t.auth.wiki }}</RouterLink
-        >
-      </div>
+  <AuthScene />
+  <section class="dt-auth-card">
+    <div v-if="error" class="dt-auth-error" role="alert">{{ error }}</div>
+    <AnnounceBanner :items="announcements" />
+    <h2 class="dt-auth-title">{{ t.auth.welcome }}</h2>
+    <p class="dt-auth-sub">{{ t.auth.loginSub }}</p>
+    <form @submit.prevent="submit">
+      <AuthField v-model="username" :label="t.auth.username" autocomplete="username" required />
+      <AuthField
+        v-model="password"
+        :label="t.auth.password"
+        type="password"
+        autocomplete="current-password"
+        required
+      />
+      <button class="btn btn-primary dt-btn-block dt-auth-submit" :disabled="busy">{{ t.auth.login }}</button>
+    </form>
+    <div class="dt-auth-links">
+      <RouterLink to="/register" class="dt-go">{{ t.auth.toRegister }}</RouterLink>
+      <RouterLink to="/forgot-password" class="dt-go">{{ t.auth.forgot }}</RouterLink>
     </div>
-  </div>
+  </section>
+  <!-- 不用登录也能看的两页（问题记录 142） -->
+  <nav class="dt-auth-pills" :aria-label="t.auth.openPages">
+    <RouterLink to="/wiki" class="dt-auth-pill" data-testid="login-wiki"
+      ><DtArt name="wiki-books" :size="18" />{{ t.auth.wiki }}</RouterLink
+    >
+    <RouterLink to="/guide" class="dt-auth-pill" data-testid="login-guide"
+      ><DtArt name="wiki-guide" :size="18" />{{ t.guide.title }}</RouterLink
+    >
+  </nav>
 </template>

@@ -34,6 +34,7 @@ const mail: Messages['mail'] = {
     btn: 'Utiliser',
     done: (text) => `Code utilisé\u202f: ${text}`,
     failed: "Échec de l'utilisation du code",
+    got: 'Reçu',
   },
 };
 export default mail;

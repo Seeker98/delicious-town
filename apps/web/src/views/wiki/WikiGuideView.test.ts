@@ -63,10 +63,21 @@ describe('玩法攻略（问题记录 384）', () => {
     const sections = w.findAll('[data-testid="guide-section"]');
     expect(sections).toHaveLength(zhCN.wiki.guide.sections.length);
     sections.forEach((s, i) => {
-      expect(s.get('h6').text()).toBe(zhCN.wiki.guide.sections[i]!.title);
-      expect(s.findAll('li')).toHaveLength(zhCN.wiki.guide.sections[i]!.items.length);
+      expect(s.get('h3.dt-paper-h').text()).toBe(zhCN.wiki.guide.sections[i]!.title);
+      // 界面改版 P11：第一节“三种节奏”排成表格（左边节奏名、右边做法），别的节逐条列出
+      if (i === 0) {
+        expect(s.find('ul').exists()).toBe(false);
+        expect(s.findAll('.dt-paper-table tr')).toHaveLength(zhCN.wiki.guide.sections[i]!.items.length);
+      } else {
+        expect(s.find('table').exists()).toBe(false);
+        expect(s.findAll('ul.dt-paper-list li')).toHaveLength(zhCN.wiki.guide.sections[i]!.items.length);
+      }
     });
-    expect(sections[0]!.text()).toContain('勤快');
+    expect(sections[0]!.get('th').text()).toContain('勤快');
+    // 页首目录：一节一个按钮
+    expect(w.findAll('.dt-paper-toc button').map((b) => b.text())).toEqual(
+      zhCN.wiki.guide.sections.map((s) => s.title),
+    );
     // 返回在顶栏（界面改版 P2a），页面里不再有返回链接
     expect(w.find('.dt-back').exists()).toBe(false);
   });

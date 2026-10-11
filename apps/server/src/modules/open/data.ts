@@ -180,6 +180,9 @@ export function createOpenData(config: GameConfig) {
       type: f.type,
     };
   };
+  /** 主料：普通品级的第一样食材 */
+  const mainFood = (id: number): number | null =>
+    config.cookbooks.get(id)?.needFoods[1]?.[0]?.foodsId ?? null;
   const cookbookBrief = (lang: Locale, id: number): OpenCookbookBrief => {
     const c = config.cookbooks.get(id)!;
     return {
@@ -188,6 +191,7 @@ export function createOpenData(config: GameConfig) {
       streetId: c.streetId,
       level: c.level,
       coin: dishCoin(c.coin, config.tuning.settlement.dishCoinRate),
+      mainFoodId: mainFood(c.id),
     };
   };
 
@@ -282,6 +286,7 @@ export function createOpenData(config: GameConfig) {
             name: cookbookName(lang, cid),
             streetId: config.cookbooks.get(cid)!.streetId,
             grade,
+            mainFoodId: mainFood(cid),
           })),
         mysterious: (foodMc.get(id) ?? []).map((mid) => ({
           id: mid,

@@ -3,11 +3,36 @@ import type { Messages } from '../..';
 const site: Messages['site'] = {
   changelogTitle: 'Journal des mises à jour',
   linksTitle: 'Liens',
-  linksEmpty: 'Aucun lien pour le moment.',
+  linksEmpty: 'Pas encore de liens',
+  linksEmptyBody: 'Vous avez créé un site sur la ville\u202f? Dites-le aux admins sur le forum',
   linksLoadFailed: 'Impossible de charger les liens',
   clockTitle: 'Heure actuelle (heure de Pékin)',
+  newMark: 'Nouveau',
+  clTotal: (n) => `${n} ${n > 1 ? 'entrées' : 'entrée'}`,
+  clLatest: (d) => `Dernière\u202f: ${d}`,
+  clMore: (n) => `${n} ${n > 1 ? 'jours' : 'jour'} de plus`,
+  clColon: '\u202f: ',
+  monthDay: (m, d) =>
+    new Date(Date.UTC(2000, m - 1, d)).toLocaleDateString('fr', {
+      timeZone: 'UTC',
+      month: 'long',
+      day: 'numeric',
+    }),
+  ymd: (y, m, d) =>
+    new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('fr', {
+      timeZone: 'UTC',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }),
+  monthShort: (m) =>
+    new Date(Date.UTC(2000, m - 1, 1)).toLocaleDateString('fr', { timeZone: 'UTC', month: 'short' }),
+  weekday: (w) =>
+    new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    account1012:
+      "Connexion, compte, centre d'aide et bibliothèque repensés\u202f: la porte de la ville en tête des pages de connexion et d'inscription, chaque champ a son titre et sa propre ligne d'erreur, et l'œil affiche le mot de passe\u202f; chaque serveur est une carte avec votre restaurant\u202f; langue, apparence et mot de passe se changent dans des panneaux\u202f; les récompenses des codes ont des images et le code d'invitation est dans un cadre pointillé\u202f; le centre d'aide passe en tuiles et le guide se replie\u202f; le journal des mises à jour et la bibliothèque prennent un air de journal, les listes ont des images et les fiches d'objets, d'ingrédients, de recettes et de rues se lisent comme un petit carnet",
     social1012:
       "Guilde, Place, Forum, Amis et Courrier repensés\u202f: la Guilde et la Place ont une image d'en-tête, le maire, Frère 13 et Carmen ont un portrait dans une rangée qui montre avec qui vous avez parlé aujourd'hui\u202f; gagner une étoile et agrandir le bidon listent ce qui manque, renommer et déménager se font dans un panneau\u202f; répondez au maire en touchant un lieu, choisissez les quantités d'objets rares dans un panneau et les ingrédients mystère de Carmen dans une grille\u202f; un panneau pour choisir la spécialité et le certificat d'un cours\u202f; le journal de la ville ressemble à un vrai journal, annonces et marteau de Thor passent par des panneaux, les classements ont des médailles et des avatars\u202f; les sujets du forum sont des cartes, la réponse est en bas et modifier/supprimer sous «\u202f⋯\u202f»\u202f; les lignes d'amis indiquent repas gratis, cases du garde-manger et cafards, le restaurant d'un ami reprend votre en-tête avec une grille d'actions et des tables à toucher\u202f; les pièces jointes ont des icônes et chaque courrier s'ouvre dans un panneau",
     play1012:

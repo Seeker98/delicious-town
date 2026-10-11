@@ -148,7 +148,7 @@ export interface OpenFoodDto extends OpenMeta, OpenFoodBrief {
   /** 菜园里能种出它的种子（种子名没有翻译，只给 id 和每次收获几个） */
   seed: { id: number; harvestNum: number } | null;
   /** 用到它的菜谱：最低用到的品级 */
-  cookbooks: Array<{ id: number; name: string; streetId: number; grade: number }>;
+  cookbooks: Array<{ id: number; name: string; streetId: number; grade: number; mainFoodId: number | null }>;
   mysterious: Array<{ id: number; name: string }>;
 }
 
@@ -159,6 +159,8 @@ export interface OpenCookbookBrief {
   /** 推荐等级 */
   level: number;
   coin: number;
+  /** 主料：普通品级的第一样食材（界面改版 P11：资料库里食谱的图用主料的图）；没有配方时为 null */
+  mainFoodId: number | null;
 }
 
 export interface OpenCookbookDto extends OpenMeta, OpenCookbookBrief {

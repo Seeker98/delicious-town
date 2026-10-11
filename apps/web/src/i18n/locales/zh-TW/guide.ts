@@ -8,8 +8,12 @@ export default {
   wikiHint: '想查道具、食材、食譜？看遊戲資料',
   codes: '新手兌換碼',
   codesNoRest: '進入區服、開店後可以領。每家店每個碼領一次。',
-  codesNote: '每家店每個碼領一次, 等級夠了就能領。',
+  codesNote: '每家店每個碼領一次',
   minLevel: (n: number) => `${n} 級可領`,
+  /** 介面改版 P11 */
+  lackLevels: (n: number) => `還差 ${n} 級`,
+  wikiPill: '查道具、食材、食譜',
+  dailyMore: (n: number) => `還有 ${n} 項 · 展開全部`,
   take: '領取',
   taken: '已領',
   ended: '已結束',

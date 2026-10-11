@@ -138,7 +138,7 @@ describe('邀请好友页', () => {
   it('邀请码生成一次后不变；列出被邀请人和各档状态、本月已计人数', async () => {
     const shardId = await createShard(t.db);
     const me = await newRestaurant(t, { shardId });
-    const b = await newRestaurant(t, { shardId, patch: { level: 12 }, verified: true });
+    const b = await newRestaurant(t, { shardId, patch: { level: 12, avatar: 3 }, verified: true });
     await invite(b.accountId, me.accountId);
     await scanInvites(t.game, log, shardId);
     const first = await t.game.invite.overview(me);
@@ -151,7 +151,8 @@ describe('邀请好友页', () => {
     await setTuning(t, shardId, { invite: { levels: { lv10: 8, lv30: 25 } } });
     expect((await t.game.invite.overview(me)).levels).toEqual({ lv10: 8, lv30: 25 });
     expect(first.invitees).toEqual([
-      expect.objectContaining({ level: 12, verified: true, lv10: 'sent', lv30: null }),
+      // 带那家店选的头像（界面改版 P11）
+      expect.objectContaining({ level: 12, avatar: 3, verified: true, lv10: 'sent', lv30: null }),
     ]);
   });
 });

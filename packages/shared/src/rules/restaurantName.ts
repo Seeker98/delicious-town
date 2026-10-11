@@ -20,14 +20,19 @@ export type RestaurantNameCheck = 'ok' | 'empty' | 'bad_chars' | 'too_long' | 'r
 const ALLOWED = /^[A-Za-z0-9_\-一-龥]+$/;
 const ALNUM = /[A-Za-z0-9]/;
 
+/** 店名的长度分：汉字（和别的字）8 分、字母数字 5 分，最多 64 分（8 个汉字或 12 个字母数字；界面改版 P11 开店页数字数用） */
+export function restaurantNameWeight(name: string): number {
+  let weight = 0;
+  for (const ch of name) weight += ALNUM.test(ch) ? 5 : 8;
+  return weight;
+}
+
 /** 餐厅名规则（规格书 02 §2.1）：先去掉首尾空格；字母数字计 5、其他计 8，累计 <= 64 */
 export function checkRestaurantName(raw: string): RestaurantNameCheck {
   const name = raw.trim();
   if (!name) return 'empty';
   if (!ALLOWED.test(name)) return 'bad_chars';
-  let weight = 0;
-  for (const ch of name) weight += ALNUM.test(ch) ? 5 : 8;
-  if (weight > 64) return 'too_long';
+  if (restaurantNameWeight(name) > 64) return 'too_long';
   if (RESERVED_NAME_WORDS.some((w) => name.includes(w))) return 'reserved';
   return 'ok';
 }

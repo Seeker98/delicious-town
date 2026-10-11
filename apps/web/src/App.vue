@@ -42,8 +42,8 @@ onMounted(() => {
 
 <template>
   <div :class="['dt-app', { 'dt-app-wide': wide }]">
-    <AppHeader :in-game="inGame" />
-    <main :class="['dt-main', { 'dt-main-nav': inGame }]">
+    <AppHeader v-if="!route.meta.bare" :in-game="inGame" />
+    <main :class="['dt-main', { 'dt-main-nav': inGame, 'dt-main-bare': route.meta.bare }]">
       <RouterView :key="locale.locale" />
     </main>
     <AnnouncePopup v-if="inGame" />

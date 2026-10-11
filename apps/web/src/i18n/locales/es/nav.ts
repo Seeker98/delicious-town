@@ -64,7 +64,8 @@ const nav: Messages['nav'] = {
     shard: 'Cambiar de servidor',
     help: 'Centro de ayuda',
     admin: 'Administración',
-    headLine: (user: string, street: string) => `${user} · ${street}`,
+    headLine: (user, shard, street, star) =>
+      `${user} · ${shard ? `${shard} · ` : ''}${street} · ${star} ${star === 1 ? 'estrella' : 'estrellas'}`,
   },
   help: {
     guide: 'Guía',
@@ -73,6 +74,12 @@ const nav: Messages['nav'] = {
     api: 'API abierta',
     changelog: 'Cambios',
     links: 'Enlaces',
+    guideSub: 'Empieza aquí al abrir: primer día, rutina diaria, preguntas frecuentes',
+    wikiSub: 'Objetos, ingredientes, recetas, utensilios, calles',
+    wikiSubCount: (n) => `Objetos, ingredientes, recetas, utensilios, calles: ${n} entradas`,
+    wikiGuideSub: 'Los tres ritmos y en qué gastar primero',
+    apiSub: 'Para jugadores que hacen herramientas',
+    changelogSub: (day, head) => `${day}: ${head}`,
   },
   links: {
     activities: 'Eventos',
