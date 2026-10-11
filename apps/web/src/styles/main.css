@@ -1224,3 +1224,87 @@ details.dt-card > summary {
   padding: 0 8px;
   background: var(--dt-surface);
 }
+/* ---------- 底部面板、确认面板（界面改版 P3，设计 §5 第 6、7 条） ---------- */
+.dt-sheet-lock {
+  overflow: hidden;
+}
+.dt-sheet-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 1060;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.dt-sheet-scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--dt-scrim);
+}
+.dt-sheet {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  margin: 0 auto;
+  overflow-y: auto;
+  padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  border-radius: var(--dt-radius-md) var(--dt-radius-md) 0 0;
+  box-shadow: var(--dt-shadow-float);
+}
+.dt-sheet:focus {
+  outline: none;
+}
+.dt-sheet-grip {
+  width: 36px;
+  height: 4px;
+  margin: 0 auto 10px;
+  border-radius: 2px;
+  background: var(--dt-line-strong);
+}
+.dt-sheet-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.dt-sheet-text {
+  color: var(--dt-muted);
+  font-size: 14px;
+  margin-bottom: 0;
+  white-space: pre-line;
+}
+.dt-sheet-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+.dt-sheet-actions > .btn {
+  flex: 1;
+  min-height: 40px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dt-sheet-scrim {
+    animation: dt-fade-in var(--dt-dur-base) var(--dt-ease-out);
+  }
+  .dt-sheet {
+    animation: dt-sheet-up var(--dt-dur-panel) var(--dt-ease-drawer);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dt-sheet,
+  .dt-sheet-scrim {
+    animation: dt-fade-in var(--dt-dur-fast) linear;
+  }
+}
+@keyframes dt-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes dt-sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+}
