@@ -49,7 +49,7 @@ const guide: Messages['guide'] = {
   dailyItems: [
     { to: '/', text: 'Check in on the home page: once a day, for a check-in gift pack' },
     {
-      to: '/rest/activation',
+      to: '/rest/tasks?tab=today',
       text: 'Daily activity: do daily tasks to earn activity points and claim activity rewards',
     },
     {

@@ -14,7 +14,6 @@ export default {
     floor: '樓層餐桌',
     income: '收益記錄',
     info: '餐廳資訊',
-    activation: '簽到和今日活躍',
     tasks: '任務',
     cookbooks: '食譜',
     cupboard: '櫥櫃',

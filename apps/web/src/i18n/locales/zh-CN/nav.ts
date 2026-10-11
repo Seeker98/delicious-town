@@ -13,7 +13,6 @@ export default {
     floor: '楼层餐桌',
     income: '收益记录',
     info: '餐厅信息',
-    activation: '签到和今日活跃',
     tasks: '任务',
     cookbooks: '食谱',
     cupboard: '橱柜',

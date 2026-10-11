@@ -53,7 +53,7 @@ const guide: Messages['guide'] = {
   dailyItems: [
     { to: '/', text: "Pointer sur la page d'accueil\u202f: une fois par jour, pour un pack de pointage" },
     {
-      to: '/rest/activation',
+      to: '/rest/tasks?tab=today',
       text: "Activité du jour\u202f: faites les tâches du jour pour gagner des points d'activité et récupérer leurs récompenses",
     },
     {

@@ -98,9 +98,8 @@ export default {
     side: '支线',
     noSide: '暂时没有支线任务',
     /** 任务页的选项卡（问题记录：活跃和任务拆页） */
-    tabs: { main: '主线', weekly: '每周', side: '支线' },
+    tabs: { today: '今日', main: '主线', weekly: '每周', side: '支线' },
     noWeekly: '现在没有每周任务',
-    activationLink: '签到和今日活跃',
     award: (text: string) => `奖励: ${text}`,
     claimTask: '领奖',
     claimFailed: '领取失败',

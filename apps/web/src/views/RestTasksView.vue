@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { claimableTabs, TASK_TABS, type TaskTab } from '../utils/tasks';
 import { computed, onMounted, ref } from 'vue';
-import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { AwardDto, QuestDto, QuestsDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtTabs from '../components/DtTabs.vue';
 import QuestCard from '../components/QuestCard.vue';
+import ActivationPanel from '../components/tasks/ActivationPanel.vue';
 import { useT } from '../composables/useT';
+import { useTabQuery } from '../composables/useTabQuery';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
@@ -48,53 +50,26 @@ const leftText = (unfinished: number) =>
   unfinished > 0 ? t.value.rest.tasks.chapterLeft(unfinished) : t.value.rest.tasks.claimFirst;
 
 /**
- * 三个选项卡：主线、每周、支线（问题记录：活跃和任务页太长，活跃单拎出来，任务分卡；用户 2026-10-08 定每周单独一卡）。
- * 当前卡写在地址里（?tab=），从首页、指引直接进到每周
+ * 四个选项卡：今日（签到和活跃）、主线、每周、支线（界面改版 P2b：原来活跃单独一页；用户 2026-10-08 定每周单独一卡）。
+ * 当前卡写在地址里（?tab=），从首页、指引直接进到今日、每周
  */
-const TABS = TASK_TABS;
-type Tab = TaskTab;
-const route = useRoute();
-const router = useRouter();
-const tab = computed<Tab>(() => TABS.find((x) => x === route.query.tab) ?? 'main');
-const setTab = (x: Tab) => void router.replace({ query: { ...route.query, tab: x } });
+const TABS = ['today', ...TASK_TABS] as const;
+const tab = useTabQuery({ tabs: TABS });
+const tabItems = computed(() => TABS.map((k) => ({ key: k, label: t.value.rest.tasks.tabs[k] })));
 /** 卡上有能领的时候加一个礼物图标（和首页任务入口同一套判断，问题记录 555） */
 const claimable = computed(() => claimableTabs(tasks.value));
+const giftOn = (k: string) => k !== 'today' && claimable.value[k as TaskTab];
 
 onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.tasks.loadFailed), 'danger')));
 </script>
 
 <template>
-  <!--
-    选项卡和去活跃页的入口在同一行，下边框画在外层（问题记录 530、终审 I1）。
-    放不下时（西、法文的手机屏幕）入口整个挪到选项卡上面靠右，不截成“Acti…”；选项卡照旧贴着下边框（530 遗留）。反向换行时交叉轴也反了：align-items-start 才是贴底
-  -->
-  <div class="d-flex flex-wrap-reverse align-items-start border-bottom mb-3" data-testid="task-tabs-row">
-    <ul
-      class="nav nav-tabs border-bottom-0 flex-shrink-0 dt-tabs-tight"
-      role="tablist"
-      data-testid="task-tabs"
-    >
-      <li v-for="x in TABS" :key="x" class="nav-item">
-        <button
-          type="button"
-          role="tab"
-          :class="['nav-link', { active: tab === x }]"
-          :aria-selected="tab === x"
-          :data-testid="`tab-${x}`"
-          @click="setTab(x)"
-        >
-          {{ t.rest.tasks.tabs[x]
-          }}<i v-if="claimable[x]" class="bi bi-gift text-primary ms-1" :data-testid="`gift-tab-${x}`"></i>
-        </button>
-      </li>
-    </ul>
-    <RouterLink
-      to="/rest/activation"
-      class="dt-go small text-nowrap ms-auto ps-2 pb-2"
-      data-testid="to-activation"
-      >{{ t.rest.tasks.activationLink }}</RouterLink
-    >
-  </div>
+  <DtTabs v-model="tab" :tabs="tabItems">
+    <template #extra="{ tab: k }">
+      <i v-if="giftOn(k)" class="bi bi-gift text-primary ms-1" :data-testid="`gift-tab-${k}`"></i>
+    </template>
+  </DtTabs>
+  <ActivationPanel v-if="tab === 'today'" />
   <template v-if="tasks">
     <!-- 主线：当前章 -->
     <section v-if="tab === 'main'" class="dt-card mb-3" data-testid="card-main">
@@ -232,11 +207,3 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
     </section>
   </template>
 </template>
-
-<style scoped>
-/* 选项卡左右内边距收窄（默认 1rem）：西、法文在手机上给去活跃页的入口留出地方，不截成“Acti…”（530 遗留） */
-.dt-tabs-tight .nav-link {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-}
-</style>

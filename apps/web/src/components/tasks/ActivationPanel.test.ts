@@ -3,11 +3,11 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { ActivationDto } from '@dt/shared';
-import { endpoints } from '../api/endpoints';
-import { useCatalogStore } from '../stores/catalog';
-import RestActivationView from './RestActivationView.vue';
+import { endpoints } from '../../api/endpoints';
+import { useCatalogStore } from '../../stores/catalog';
+import ActivationPanel from './ActivationPanel.vue';
 
-vi.mock('../api/endpoints', () => ({
+vi.mock('../../api/endpoints', () => ({
   endpoints: { activation: vi.fn(), signIn: vi.fn(), claimActivation: vi.fn() },
 }));
 
@@ -92,13 +92,13 @@ async function mountView() {
     history: createMemoryHistory(),
     routes: [{ path: '/:p(.*)*', component: {} }],
   });
-  const w = mount(RestActivationView, { global: { plugins: [router] } });
+  const w = mount(ActivationPanel, { global: { plugins: [router] } });
   await flushPromises();
   return w;
 }
 
-/** 签到和今日活跃单独一页（问题记录：活跃和任务页太长，活跃单拎出来）；这些测试原来在 RestTasksView.test */
-describe('RestActivationView', () => {
+/** 签到和今日活跃：任务页的“今日”标签（界面改版 P2b，原来单独一页 /rest/activation） */
+describe('ActivationPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     setActivePinia(createPinia());
@@ -132,18 +132,10 @@ describe('RestActivationView', () => {
     expect(w.get('[data-testid="act-2"]').text()).toContain('打蟑螂');
   });
 
-  it('有去任务页的入口（终审：以前收藏任务页的玩家两边都能找到）', async () => {
+  it('签到按钮在卡片标题那一行（问题记录 530）；在任务页里，不再放去任务页的入口（界面改版 P2b）', async () => {
     const w = await mountView();
-    expect(w.get('[data-testid="to-tasks"]').attributes('href')).toBe('/rest/tasks');
-    // 和签到按钮放在卡片标题那一行，不单独占一行（问题记录 530）
-    expect(w.find('[data-testid="activation-head"] [data-testid="to-tasks"]').exists()).toBe(true);
     expect(w.find('[data-testid="activation-head"] [data-testid="signin"]').exists()).toBe(true);
-  });
-
-  it('读取失败、还没读到时也有去任务页的入口（终审 M2）', async () => {
-    vi.mocked(endpoints.activation).mockRejectedValue(new Error('x'));
-    const w = await mountView();
-    expect(w.get('[data-testid="to-tasks"]').attributes('href')).toBe('/rest/tasks');
+    expect(w.find('[data-testid="to-tasks"]').exists()).toBe(false);
   });
 
   it('签到按钮', async () => {

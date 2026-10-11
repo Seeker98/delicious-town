@@ -37,6 +37,10 @@ describe('routes', () => {
   it('旧的教室地址跳到协会的教室（问题记录 122、441）', () => {
     expect(routes.find((r) => r.path === '/classroom')?.redirect).toBe('/society/classroom');
   });
+
+  it('旧的签到和活跃页跳到任务页的“今日”（界面改版 P2b）', () => {
+    expect(routes.find((r) => r.path === '/rest/activation')?.redirect).toBe('/rest/tasks?tab=today');
+  });
 });
 
 describe('切页面时的滚动位置', () => {

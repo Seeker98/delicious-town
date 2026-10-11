@@ -91,12 +91,8 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/RestInfoView.vue'),
     meta: { needRestaurant: true, section: 'home', title: T((t) => t.nav.titles.info), parent: '/me' },
   },
-  {
-    path: '/rest/activation',
-    name: 'activation',
-    component: () => import('./views/RestActivationView.vue'),
-    meta: { needRestaurant: true, section: 'home', title: T((t) => t.nav.titles.activation), parent: '/' },
-  },
+  // 签到和今日活跃并进任务页的“今日”标签（界面改版 P2b）
+  { path: '/rest/activation', redirect: '/rest/tasks?tab=today' },
   {
     path: '/rest/tasks',
     name: 'tasks',

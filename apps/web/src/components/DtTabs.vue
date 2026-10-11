@@ -24,7 +24,8 @@ defineEmits<{ 'update:modelValue': [key: string] }>();
           :data-testid="x.testid ?? `${testidPrefix}${x.key}`"
           @click="$emit('update:modelValue', x.key)"
         >
-          {{ x.label }}<span v-if="x.badge" class="badge rounded-pill bg-danger ms-1">{{ x.badge }}</span>
+          {{ x.label }}<span v-if="x.badge" class="badge rounded-pill bg-danger ms-1">{{ x.badge }}</span
+          ><slot name="extra" :tab="x.key" />
         </button>
       </li>
     </ul>

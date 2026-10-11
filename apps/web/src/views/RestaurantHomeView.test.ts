@@ -488,7 +488,7 @@ describe('RestaurantHomeView', () => {
     expect(main.find('i.bi-flag').exists()).toBe(true);
     expect(main.text()).toContain('主线: 填一次油');
     // 还没完成时右边是任务入口（问题记录：“更多”里的任务入口去掉，从首页主线那一行进）
-    expect(main.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks');
+    expect(main.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks?tab=main');
     expect(w.get('[data-testid="dine-card"]').find('i.bi-cup-hot').exists()).toBe(true);
     expect(w.get('[data-testid="guide-hint"]').find('i.bi-lightbulb').exists()).toBe(true);
     for (const row of w.get('[data-testid="home-todo"]').findAll('.dt-todo-row'))
@@ -590,7 +590,7 @@ describe('RestaurantHomeView', () => {
     expect(todo.find('[data-testid="main-task"]').exists()).toBe(true);
     const act = todo.get('[data-testid="home-activation"]');
     expect(act.text()).toContain('今日活跃 18');
-    expect(act.attributes('href')).toBe('/rest/activation');
+    expect(act.attributes('href')).toBe('/rest/tasks?tab=today');
     // 顺序：餐厅 → 待办 → 小镇动态 → 设施
     const pos = (sel: string) => w.html().indexOf(sel);
     expect(pos('data-testid="home-status"')).toBeLessThan(pos('data-testid="home-todo"'));
@@ -804,7 +804,7 @@ describe('RestaurantHomeView', () => {
     l = await link(quests([quest()], { weekly: weekly(false), lines: [line] }));
     expect(l.attributes('href')).toBe('/rest/tasks?tab=side');
     l = await link(quests([quest()], { lines: [{ ...line, lockedStar: 2 }] }));
-    expect(l.attributes('href')).toBe('/rest/tasks');
+    expect(l.attributes('href')).toBe('/rest/tasks?tab=main');
     expect(l.find('[data-testid="home-tasks-gift"]').exists()).toBe(false);
     l = await link(quests([quest({ progress: 1, done: true })], { weekly: weekly(true), lines: [line] }));
     expect(l.attributes('href')).toBe('/rest/tasks?tab=main');
@@ -831,17 +831,17 @@ describe('RestaurantHomeView', () => {
     );
     w = await mountView();
     expect(w.get('[data-testid="main-task"]').text()).toContain('分配属性点');
-    expect(w.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks');
+    expect(w.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks?tab=main');
     expect(w.find('[data-testid="home-tasks-gift"]').exists()).toBe(false);
     // 主线全做完：这一行写已全部完成，右边照样有任务入口（终审 C1：每周和支线还要从这里进）
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([], { chapter: null, allMainDone: true }));
     w = await mountView();
     expect(w.get('[data-testid="main-task"]').text()).toContain('主线已全部完成');
-    expect(w.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks');
+    expect(w.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks?tab=main');
     // 任务读不到时也留着入口
     vi.mocked(endpoints.tasks).mockRejectedValue(new Error('x'));
     w = await mountView();
-    expect(w.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks');
+    expect(w.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks?tab=main');
   });
 
   it('区服关掉任务功能时首页不放任务入口（终审：原来“更多”里的入口看功能开关）', async () => {
@@ -1019,7 +1019,7 @@ describe('RestaurantHomeView', () => {
     expect(signed.get('.visually-hidden').text()).toBe('已签到');
     const act = row.get('[data-testid="home-activation"]');
     expect(act.text()).toContain('今日活跃 10');
-    expect(act.attributes('href')).toBe('/rest/activation');
+    expect(act.attributes('href')).toBe('/rest/tasks?tab=today');
     // 问题记录 445：不再写签到领到了什么
     expect(w.find('[data-testid="home-signin-gift"]').exists()).toBe(false);
   });

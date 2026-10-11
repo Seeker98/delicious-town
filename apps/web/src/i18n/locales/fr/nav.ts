@@ -14,7 +14,6 @@ const nav: Messages['nav'] = {
     floor: 'Étages et tables',
     income: 'Journal des revenus',
     info: 'Infos du restaurant',
-    activation: 'Pointage et activité',
     tasks: 'Quêtes',
     cookbooks: 'Recettes',
     cupboard: 'Garde-manger',

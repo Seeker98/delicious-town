@@ -99,9 +99,8 @@ export default {
     side: '支線',
     noSide: '暫時沒有支線任務',
     /** 任務頁的選項卡（問題記錄：活躍和任務拆頁） */
-    tabs: { main: '主線', weekly: '每週', side: '支線' },
+    tabs: { today: '今日', main: '主線', weekly: '每週', side: '支線' },
     noWeekly: '現在沒有每週任務',
-    activationLink: '簽到和今日活躍',
     award: (text: string) => `獎勵: ${text}`,
     claimTask: '領獎',
     claimFailed: '領取失敗',

@@ -14,7 +14,6 @@ const nav: Messages['nav'] = {
     floor: 'Plantas y mesas',
     income: 'Registro de ingresos',
     info: 'Info del restaurante',
-    activation: 'Registro y actividad',
     tasks: 'Misiones',
     cookbooks: 'Recetas',
     cupboard: 'Despensa',

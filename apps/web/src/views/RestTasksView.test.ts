@@ -127,8 +127,8 @@ const quests = (main: QuestDto[], patch: Partial<QuestsDto> = {}): QuestsDto => 
   ...patch,
 });
 
-/** path 可以带 ?tab=weekly / side（问题记录：任务页分三个选项卡） */
-async function mountView(path = '/') {
+/** path 可以带 ?tab=weekly / side；不带时是“今日”，这里默认看主线（界面改版 P2b） */
+async function mountView(path = '/?tab=main') {
   const router = createRouter({
     history: createMemoryHistory(),
     routes: [{ path: '/', component: RestTasksView }],
@@ -289,22 +289,15 @@ describe('RestTasksView 四块和每周任务（问题记录 318 PR 2）', () =>
     vi.mocked(endpoints.activation).mockResolvedValue(act());
   });
 
-  it('三个选项卡：主线、每周、支线，默认主线；切换只显示那一块，写进地址；有能领的卡加礼物图标（问题记录：活跃和任务拆页）', async () => {
+  it('四个选项卡：今日、主线、每周、支线；切换只显示那一块，写进地址；有能领的卡加礼物图标（界面改版 P2b：签到和活跃并进来）', async () => {
     vi.mocked(endpoints.tasks).mockResolvedValue(
       quests([task()], { weekly: weekly([false, false, false, false]) }),
     );
     const w = await mountView();
-    expect(w.findAll('[data-testid^="tab-"]').map((x) => x.text())).toEqual(['主线', '每周', '支线']);
+    expect(w.findAll('[data-testid^="tab-"]').map((x) => x.text())).toEqual(['今日', '主线', '每周', '支线']);
     expect(w.find('[data-testid="card-activation"]').exists()).toBe(false);
-    expect(w.get('[data-testid="to-activation"]').attributes('href')).toBe('/rest/activation');
-    // 入口放在选项卡那一行的右边，不单独占一行（问题记录 530）
-    expect(w.find('[data-testid="task-tabs-row"] [data-testid="to-activation"]').exists()).toBe(true);
-    expect(w.find('[data-testid="task-tabs"] [data-testid="to-activation"]').exists()).toBe(false);
-    // 放不下时（西、法文的手机屏幕）入口整个挪到选项卡上面，不截成“Acti…”；选项卡照旧贴着下边框（530 遗留）
-    expect(w.get('[data-testid="to-activation"]').classes()).toContain('text-nowrap');
-    expect(w.get('[data-testid="task-tabs-row"]').classes()).toEqual(
-      expect.arrayContaining(['flex-wrap-reverse', 'align-items-start']),
-    );
+    // 签到和活跃并进来了，不再有去活跃页的入口
+    expect(w.find('[data-testid="to-activation"]').exists()).toBe(false);
     expect(w.findAll('[data-testid^="card-"]').map((x) => x.attributes('data-testid'))).toEqual([
       'card-main',
     ]);
@@ -523,5 +516,17 @@ describe('任务名里的 {n} 按区服数值代入（515 支线扩充 B 遗留�
     const side = await mountView('/?tab=side');
     expect(side.get('[data-testid="line-6"]').text()).toContain('Get more than 50 favor');
     expect(side.text()).not.toContain('{n}');
+  });
+
+  it('不带 ?tab 时打开“今日”：签到和活跃在这里（界面改版 P2b）', async () => {
+    vi.mocked(endpoints.tasks).mockResolvedValue(quests([task()]));
+    const w = await mountView('/');
+    expect(w.get('[data-testid="tab-today"]').attributes('aria-selected')).toBe('true');
+    expect(w.find('[data-testid="signin"]').exists()).toBe(true);
+    expect(w.find('[data-testid="card-main"]').exists()).toBe(false);
+    await w.get('[data-testid="tab-main"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="card-activation"]').exists()).toBe(false);
+    expect(w.find('[data-testid="card-main"]').exists()).toBe(true);
   });
 });

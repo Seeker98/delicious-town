@@ -53,7 +53,7 @@ const guide: Messages['guide'] = {
   dailyItems: [
     { to: '/', text: 'Regístrate en la página de inicio: una vez al día, por un pack de registro' },
     {
-      to: '/rest/activation',
+      to: '/rest/tasks?tab=today',
       text: 'Actividad del día: haz las tareas diarias para sumar puntos de actividad y recoger sus premios',
     },
     {

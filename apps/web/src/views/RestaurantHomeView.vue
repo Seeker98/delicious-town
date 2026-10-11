@@ -50,7 +50,8 @@ const mainChapter = ref<QuestsDto['chapter']>(null);
 const mainAllDone = ref(false);
 /** 任务页第一个有奖励可领的卡（问题记录 555）；读不到任务时为 null */
 const claimTab = ref<TaskTab | null>(null);
-const tasksTo = computed(() => (claimTab.value ? `/rest/tasks?tab=${claimTab.value}` : '/rest/tasks'));
+/** 没有能领的进主线：任务页不带 ?tab 时是“今日”（界面改版 P2b） */
+const tasksTo = computed(() => `/rest/tasks?tab=${claimTab.value ?? 'main'}`);
 /** 首页交易所一行的文字（问题记录 591） */
 const exchangeRowText = computed(() => {
   const b = rest.value?.exchangeHint?.bulk;
@@ -536,7 +537,7 @@ onBeforeUnmount(() => {
         </span>
         <RouterLink
           v-if="activeTotal !== null"
-          to="/rest/activation"
+          to="/rest/tasks?tab=today"
           class="dt-go ms-auto d-inline-block py-1"
           data-testid="home-activation"
           >{{ t.home.activation(activeTotal)

@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { RouterLink } from 'vue-router';
 import type { ActivationDto } from '@dt/shared';
-import { endpoints } from '../api/endpoints';
-import { useT } from '../composables/useT';
-import { errorMessage } from '../i18n/zh-CN';
-import { useCatalogStore } from '../stores/catalog';
-import { useToastStore } from '../stores/toast';
-import { awardText } from '../utils/reward';
+import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
+import { errorMessage } from '../../i18n/zh-CN';
+import { useCatalogStore } from '../../stores/catalog';
+import { useToastStore } from '../../stores/toast';
+import { awardText } from '../../utils/reward';
 
-/** 签到和今日活跃（问题记录：活跃和任务页太长，活跃单拎出来；从首页“今日活跃”进来） */
+/** 签到和今日活跃：任务页的“今日”标签（界面改版 P2b，原来单独一页 /rest/activation；问题记录：活跃和任务页太长） */
 const catalog = useCatalogStore();
 const toast = useToastStore();
 const t = useT();
@@ -58,16 +57,10 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
 </script>
 
 <template>
-  <div v-if="!act" class="text-end small mb-1">
-    <RouterLink to="/rest/tasks" class="dt-go" data-testid="to-tasks">{{ t.home.tasksLink }}</RouterLink>
-  </div>
   <section v-if="act" class="dt-card mb-3" data-testid="card-activation">
-    <!-- 去任务页的入口和签到按钮放在标题这一行，不单独占一行（问题记录 530） -->
+    <!-- 签到按钮放在标题这一行，不单独占一行（问题记录 530） -->
     <div class="d-flex align-items-center gap-2 mb-2" data-testid="activation-head">
       <span class="dt-card-title flex-fill">{{ t.rest.tasks.today(act.total) }}</span>
-      <RouterLink to="/rest/tasks" class="dt-go small text-nowrap" data-testid="to-tasks">{{
-        t.home.tasksLink
-      }}</RouterLink>
       <button
         class="btn btn-sm btn-primary text-nowrap"
         data-testid="signin"
