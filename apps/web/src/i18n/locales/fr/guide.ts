@@ -121,7 +121,7 @@ const guide: Messages['guide'] = {
     },
     {
       q: 'Où utiliser un code cadeau\u202f? ',
-      a: ['«\u202fPlus → Autres → Code cadeau\u202f», ou le champ en haut de la boîte aux lettres.'],
+      a: ['«\u202fMoi → Codes et invitations\u202f», ou le champ en haut de la boîte aux lettres.'],
     },
     {
       q: 'Faut-il attendre le résultat d’une prédiction\u202f? ',
