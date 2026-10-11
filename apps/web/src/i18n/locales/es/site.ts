@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    market1011:
+      'La despensa es ahora una cuadrícula de mochila: iconos grandes, cantidad en la esquina, ingredientes de nivel 2 o más y universales con color, y al tocar una casilla se abre un panel con lo que tienes, la meta de la calle, la cantidad y las acciones de descomponer, combinar, canjear o bloquear; la nevera muestra una fila por ingrediente. El mercado muestra un ingrediente por fila con su nivel tras el nombre y un botón de precio que abre un panel de compra con atajos 10 / 100 / máx., el total y tu saldo, y un aviso si no te llegan las monedas',
     home1011b:
       'La portada tiene un nuevo diseño: la fachada es más grande y cuelga un cartel de «Cerrado» cuando se acaba el aceite; el nivel se muestra en un anillo de experiencia; el aceite y el llenado están en una tarjeta de estado arriba, con llenado en un toque cuando está cerrado; la última ronda muestra tres números grandes; registro, misión principal, actividad del día y consejos de novato son fichas grandes de 2×2, con el registro en morado mientras no lo hagas; recetas, plato especial y patrimonio están en «Mi restaurante»; las páginas principales tienen títulos más grandes',
     kitchen1011:

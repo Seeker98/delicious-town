@@ -11,6 +11,9 @@ export default {
   capShared: (shared: number, can: number) =>
     `同一網路或裝置本輪已買 ${shared} 份 (限購按店、裝置、網路分別算), 最多再買 ${can}`,
   capSlots: '櫥櫃格子滿了, 先騰出一格',
+  /** 受限時行裡的短標籤（完整原因在購買面板裡） */
+  capShort: (n: string) => `最多再買 ${n}`,
+  capNone: '買不了',
   capFull: (max: number) => `櫥櫃裡已經放滿了 (單種上限 ${max})`,
   capRoom: (max: number, have: number, room: number) => `櫥櫃單種上限 ${max}, 已有 ${have}, 最多再買 ${room}`,
   guessFailed: '競猜失敗',
@@ -27,6 +30,21 @@ export default {
   priceLine: (price: string, left: string) => `${price} 銀幣 · 剩 ${left}`,
   limitLine: (bought: number, limit: number) => `限購 ${bought}/${limit}`,
   buy: '買',
+  /** 購買面板（介面改版 P6） */
+  sheet: {
+    open: (name: string, price: string) => `買${name}, ${price}`,
+    free: '免費',
+    each: (price: string) => `每個 ${price} 銀幣`,
+    have: (n: string) => `櫥櫃裡有 ${n}`,
+    canBuy: (n: string) => `最多能買 ${n}`,
+    qty: '買幾個',
+    max: (n: string) => `最多 ${n}`,
+    total: '合計',
+    coin: '銀幣',
+    balance: (n: string) => `餘 ${n}`,
+    short: '銀幣不夠',
+    confirm: (n: number) => `買 ${n} 個`,
+  },
   guess: {
     title: '菜場競猜',
     hint: (hour: string) => `猜下一輪日常菜場 (${hour} 點) 上什麼菜`,

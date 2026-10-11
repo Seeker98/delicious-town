@@ -17,6 +17,8 @@ const market: Messages['market'] = {
   capShared: (shared, can) =>
     `Tu red o dispositivo ya compró ${shared} en esta ronda (el límite cuenta por restaurante, dispositivo y red). Puedes comprar ${can} más`,
   capSlots: 'Tu despensa no tiene huecos libres. Libera uno primero',
+  capShort: (n) => `Máx. ${n} más`,
+  capNone: 'No disponible',
   capFull: (max) => `Tu despensa está llena de este ingrediente (máx. ${max} de cada uno)`,
   capRoom: (max, have, room) =>
     `Máx. ${max} de cada ingrediente; tienes ${have}, así que puedes comprar ${room} más`,
@@ -33,6 +35,20 @@ const market: Messages['market'] = {
   priceLine: (price, left) => `${price} ${plEs(price, 'moneda', 'monedas')} · quedan ${left}`,
   limitLine: (bought, limit) => `comprado ${bought}/${limit}`,
   buy: 'Comprar',
+  sheet: {
+    open: (name, price) => `Comprar ${name}, ${price}`,
+    free: 'Gratis',
+    each: (price) => `${price} monedas c/u`,
+    have: (n) => `${n} en la despensa`,
+    canBuy: (n) => `hasta ${n}`,
+    qty: 'Cuántos',
+    max: (n) => `Máx. ${n}`,
+    total: 'Total',
+    coin: 'monedas',
+    balance: (n) => `quedan ${n}`,
+    short: 'No tienes monedas suficientes',
+    confirm: (n) => `Comprar ${n}`,
+  },
   guess: {
     title: 'Apuesta del mercado',
     hint: (hour) => `Adivina qué venderá el próximo mercado diario (${hour}:00)`,

@@ -17,6 +17,8 @@ const market: Messages['market'] = {
   capShared: (shared, can) =>
     `Votre réseau ou appareil en a déjà acheté ${shared} ce tour-ci (limite par restaurant, appareil et réseau). Vous pouvez encore en acheter ${can}`,
   capSlots: "Votre garde-manger n'a plus d'emplacement libre. Libérez-en un d'abord",
+  capShort: (n) => `Encore ${n} max`,
+  capNone: 'Indisponible',
   capFull: (max) => `Votre garde-manger est plein pour cet ingrédient (max ${max} chacun)`,
   capRoom: (max, have, room) =>
     `Max ${max} par ingrédient\u202f; vous en avez ${have}, vous pouvez donc en acheter ${room} de plus`,
@@ -34,6 +36,20 @@ const market: Messages['market'] = {
   priceLine: (price, left) => `${price} ${plFr(price, 'pièce', 'pièces')} · reste ${left}`,
   limitLine: (bought, limit) => `acheté ${bought}/${limit}`,
   buy: 'Acheter',
+  sheet: {
+    open: (name, price) => `Acheter ${name}, ${price}`,
+    free: 'Gratuit',
+    each: (price) => `${price} pièces l’unité`,
+    have: (n) => `${n} dans le placard`,
+    canBuy: (n) => `jusqu’à ${n}`,
+    qty: 'Combien',
+    max: (n) => `Max ${n}`,
+    total: 'Total',
+    coin: 'pièces',
+    balance: (n) => `reste ${n}`,
+    short: 'Pas assez de pièces',
+    confirm: (n) => `Acheter ${n}`,
+  },
   guess: {
     title: 'Pronostic du marché',
     hint: (hour) => `Devinez ce que vendra le prochain marché du jour (${hour} h)`,

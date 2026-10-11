@@ -7,6 +7,16 @@ const cupboard: Messages['cupboard'] = {
   summary: (p) =>
     `Emplacements ${p.used}/${p.slots} · Verrouillés ${p.lockUsed}/${p.lockSlots} · Max ${p.max} chacun · ${p.free} ${plFr(p.free, 'traitement gratuit restant', 'traitements gratuits restants')} aujourd'hui · Objectif de la rue\u202f: qualité ${p.grade}`,
   levelCount: (label, n) => `${label} (${n})`,
+  meta: {
+    slots: (used, all) => `Emplacements ${used}/${all}`,
+    lock: (used, all) => `Verrouillées ${used}/${all}`,
+    rules: (free, max, grade) =>
+      `${free} ${plFr(free, 'traitement gratuit', 'traitements gratuits')} aujourd’hui · max ${max} par ingrédient · objectif de la rue\u202f: qualité ${grade}`,
+  },
+  needShort: (n) => `Manque ${n}`,
+  have: (n) => `Vous en avez ${n}`,
+  howMany: 'Combien',
+  locked: 'Verrouillé',
   levelEmpty: 'Aucun ingrédient de ce niveau',
   /** 橱柜空着（界面改版 P4：空状态） */
   empty: {
