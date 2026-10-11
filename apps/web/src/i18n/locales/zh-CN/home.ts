@@ -26,6 +26,10 @@ export default {
   statusOpen: '营业中',
   oilFull: '油是满的',
   lastRound: '上一轮: ',
+  /** 首页区块标题、签到块（界面改版 P5） */
+  roundTitle: '上一轮',
+  todayTitle: '今日',
+  signInTodo: '今天还没签',
   roundCoin: '银币',
   roundExp: '经验',
   roundOil: '耗油',

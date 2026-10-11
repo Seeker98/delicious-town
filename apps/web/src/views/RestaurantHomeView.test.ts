@@ -10,6 +10,7 @@ import { useToastStore } from '../stores/toast';
 import { usePageTitleStore } from '../stores/pageTitle';
 import RestaurantHomeView from './RestaurantHomeView.vue';
 import { setServerOffset } from '../utils/serverNow';
+import { readCss } from '../styles/cssSource';
 
 /** 问题记录 318：主线任务、任务列表 */
 const quest = (patch: Partial<QuestDto> = {}): QuestDto => ({
@@ -272,30 +273,18 @@ describe('RestaurantHomeView', () => {
     expect(w.findAll('a').some((a) => a.text() === '切换区服')).toBe(true);
     expect(w.find('[data-testid="rest-level"]').text()).toBe('1');
     expect(w.find('[data-testid="rest-coin"]').text()).toBe('100,000');
-    // 问题记录 433：银币、经验、耗油换成图标；收益记录在上一轮那行右边，楼层餐桌在顾客那行右边
+    // 界面改版 P5：上一轮是三个统计块（大数字 + 名字），收益记录在区块标题右边，楼层餐桌在顾客那行右边
     const last = w.get('[data-testid="last-round"]');
-    const line = last.get('[data-testid="last-round-line"]');
-    // 只显示图标；名字悬停能看（title），读屏读隐藏的文字（终审 I1：i 上的 aria-label 读屏不读）
-    const visible = line.element.cloneNode(true) as HTMLElement;
-    visible.querySelectorAll('.visually-hidden').forEach((x) => x.remove());
-    expect(visible.textContent).not.toMatch(/银币|经验|耗油/);
-    // 界面改版 P3：图标换成彩色扁平图，悬停名字写在外面一层
-    for (const [art, label] of [
-      ['res-coin-silver', '银币'],
-      ['res-exp', '经验'],
-      ['res-oil', '耗油'],
-    ]) {
-      const wrap = line.get(`[title="${label}"]`);
-      expect(artOf(wrap)).toBe(art);
-      expect(wrap.get('svg').attributes('aria-hidden')).toBe('true');
-      expect(wrap.get('.visually-hidden').text()).toBe(label);
-    }
-    // 经验条上也有同一个图标（手机上没有悬停，靠它认出经验）
+    const tiles = last.get('[data-testid="last-round-line"]').findAll('.dt-stat');
+    expect(tiles.map((x) => x.get('.dt-stat-value').text())).toEqual(['+12', '+3', '2']);
+    expect(tiles.map((x) => x.get('.dt-stat-label').text())).toEqual(['银币', '经验', '耗油']);
+    expect(tiles.map((x) => x.classes().includes('is-good'))).toEqual([true, true, false]);
+    // 经验数字前面有经验图标（手机上没有悬停，靠它认出经验）
     expect(artOf(w.get('[data-testid="exp-text"]'))).toBe('res-exp');
-    expect(line.text()).toContain('12');
-    expect(last.get('[data-testid="last-round-line"] + a').attributes('href')).toBe('/rest/income');
+    const income = last.get('.dt-block-head a');
+    expect(income.attributes('href')).toBe('/rest/income');
+    expect(income.classes()).toContain('dt-go');
     expect(last.get('[data-testid="last-round-guests"] + a').attributes('href')).toBe('/rest/floor');
-    expect(last.get('[data-testid="last-round-line"] + a').classes()).toContain('dt-go');
     // 问题记录 435：油量右边一个小升级图标，链到油壶升级
     const up = w.get('[data-testid="oil-upgrade"]');
     expect(up.attributes('href')).toBe('/society/oil');
@@ -500,8 +489,9 @@ describe('RestaurantHomeView', () => {
     expect(main.find('.dt-tag').exists()).toBe(false);
     expect(main.find('i.bi-flag').exists()).toBe(true);
     expect(main.text()).toContain('主线: 填一次油');
-    // 还没完成时右边是任务入口（问题记录：“更多”里的任务入口去掉，从首页主线那一行进）
-    expect(main.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks?tab=main');
+    // 界面改版 P5：主线块整块去任务页，“今日”标题右边也有任务入口
+    expect(main.attributes('href')).toBe('/rest/tasks?tab=main');
+    expect(w.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks?tab=main');
     expect(w.get('[data-testid="dine-card"]').find('i.bi-cup-hot').exists()).toBe(true);
     expect(w.get('[data-testid="guide-hint"]').find('i.bi-lightbulb').exists()).toBe(true);
     for (const row of w.get('[data-testid="home-todo"]').findAll('.dt-todo-row'))
@@ -782,10 +772,10 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([quest({ progress: 1, done: true })]));
     const w = await mountView();
     const card = w.find('[data-testid="main-task"]');
-    // 待办卡里统一的一行样式：flex + 垂直居中（问题记录 280）
-    expect(card.classes()).toContain('dt-todo-row');
+    // 界面改版 P5：今日 2×2 里的一块；能领时浅绿底
+    expect(card.classes()).toEqual(expect.arrayContaining(['dt-do', 'is-claim']));
     expect(card.find('button').exists()).toBe(false);
-    const link = card.get('[data-testid="home-tasks-link"]');
+    const link = w.get('[data-testid="home-tasks-link"]');
     expect(link.attributes('href')).toBe('/rest/tasks?tab=main');
     expect(link.find('[data-testid="home-tasks-gift"] i.bi-gift').exists()).toBe(true);
   });
@@ -905,8 +895,8 @@ describe('RestaurantHomeView', () => {
     expect(row.text()).toContain('主线: 第 1 章 开张大吉 章末奖励');
     // 章末奖励也到任务页领（问题记录 555）
     expect(row.find('button').exists()).toBe(false);
-    expect(row.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks?tab=main');
-    expect(row.find('[data-testid="home-tasks-gift"]').exists()).toBe(true);
+    expect(row.attributes('href')).toBe('/rest/tasks?tab=main');
+    expect(w.find('[data-testid="home-tasks-gift"]').exists()).toBe(true);
     vi.mocked(endpoints.tasks).mockResolvedValue(
       quests([], { chapter: { ...all.chapter!, id: 2, name: '小店经营', needLevel: 5, locked: true } }),
     );
@@ -940,9 +930,11 @@ describe('RestaurantHomeView', () => {
     const w = await mountView();
     const btn = w.find('[data-testid="home-signin"]');
     expect(btn.text()).toContain('签到');
-    // 问题记录 445：不用绿色大按钮，改成文字链接的样子
-    expect(btn.classes()).toContain('dt-link-btn');
-    expect(btn.classes()).not.toContain('btn');
+    // 界面改版 P5：没签到时签到块是紫色实心的整块按钮（今日 2×2 的第一块）
+    const tile = w.get('[data-testid="home-signin-row"]');
+    expect(tile.element.tagName).toBe('BUTTON');
+    expect(tile.classes()).toEqual(expect.arrayContaining(['dt-do', 'dt-do-primary']));
+    expect(tile.text()).toContain('今天还没签');
     vi.mocked(endpoints.activation).mockResolvedValue({
       total: 0,
       signedIn: true,
@@ -959,12 +951,25 @@ describe('RestaurantHomeView', () => {
     expect(w.get('[data-testid="home-signed"]').text()).toBe('已签到');
   });
 
-  it('没签到时“签到”按钮和今日活跃在同一行（问题记录 437）', async () => {
+  it('今日 2×2：签到、主线、今日活跃、新手各一块，排在“今日”标题下（界面改版 P5）', async () => {
+    vi.mocked(endpoints.guideCodes).mockResolvedValue([]);
     const w = await mountView();
-    const row = w.get('[data-testid="home-signin-row"]');
-    expect(row.find('[data-testid="home-signin"]').exists()).toBe(true);
-    expect(row.find('[data-testid="home-activation"]').exists()).toBe(true);
+    const todo = w.get('[data-testid="home-todo"]');
+    expect(todo.get('.dt-block-title').text()).toBe('今日');
+    const ids = todo.findAll('.dt-do-grid > .dt-do').map((x) => x.attributes('data-testid'));
+    expect(ids).toEqual(['home-signin-row', 'main-task', 'home-activation', 'guide-hint']);
     expect(w.findAll('[data-testid="home-activation"]')).toHaveLength(1);
+  });
+
+  it('签到和活跃读失败、没有新手提示时只剩主线一块，占满一行、不留空格子（界面改版 P5）', async () => {
+    vi.mocked(endpoints.activation).mockRejectedValue(new Error('x'));
+    vi.mocked(endpoints.guideCodes).mockResolvedValue([]);
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, level: 30 });
+    const w = await mountView();
+    const ids = w.findAll('.dt-do-grid > .dt-do').map((x) => x.attributes('data-testid'));
+    expect(ids).toEqual(['main-task']);
+    // 奇数块时最后一块占满一行
+    expect(readCss('main')).toMatch(/\.dt-do:last-child:nth-child\(odd\) \{\s*grid-column: 1 \/ -1;/);
   });
 
   it('读签到状态失败时不显示这一行', async () => {
@@ -996,15 +1001,15 @@ describe('RestaurantHomeView', () => {
     setActivePinia(pinia);
     try {
       const w = await mountView();
-      expect(w.find('[data-testid="home-todo"] .dt-card-title').text()).toBe("Today's to-do");
+      expect(w.find('[data-testid="home-todo"] .dt-block-title').text()).toBe('Today');
       expect(w.find('[data-testid="home-switches"] .dt-card-title').text()).toBe('Business settings');
       expect(w.find('[data-testid="home-devices"] .dt-card-title').text()).toBe('Facilities');
       expect(w.find('[data-testid="home-signin"]').text()).toBe('Check in');
       expect(w.find('[data-testid="rest-coin"]').text()).toBe('100,000');
       expect(w.find('[data-testid="refuel"]').attributes('aria-label')).toBe('Fill up (600 coins)');
       expect(w.find('[data-testid="refuel"] .text-truncate').text()).toBe('Fill up');
-      expect(w.find('[data-testid="last-round"]').text()).toContain('Last round:');
-      expect(w.find('[data-testid="last-round"] [title="Coins"]').exists()).toBe(true);
+      expect(w.find('[data-testid="last-round"] .dt-block-title').text()).toBe('Last round');
+      expect(w.find('[data-testid="last-round"] .dt-stat-label').text()).toBe('Coins');
       expect(w.find('[data-testid="last-round"]').text()).toContain('Regular customer×1');
       expect(w.text()).not.toMatch(/今日待办|经营开关|签到/);
     } finally {
@@ -1024,15 +1029,15 @@ describe('RestaurantHomeView', () => {
     });
     const w = await mountView();
     const row = w.get('[data-testid="home-signin-row"]');
-    // 问题记录 437：字样右边只放一个对勾；同一行右边是今日活跃，链到活跃页
+    // 界面改版 P5：签过后签到块是普通块，写“已签到”和一个细线对勾（问题记录 445：不用绿底实心圆）
+    expect(row.element.tagName).not.toBe('BUTTON');
+    expect(row.classes()).not.toContain('dt-do-primary');
     const signed = row.get('[data-testid="home-signed"]');
-    // 问题记录 445：细线对勾，不用绿底实心圆
     expect(signed.find('i.bi-check-circle-fill').exists()).toBe(false);
-    const tick = signed.get('i.bi-check2');
-    expect(tick.attributes('title')).toBe('已签到');
-    expect(tick.attributes('aria-hidden')).toBe('true');
-    expect(signed.get('.visually-hidden').text()).toBe('已签到');
-    const act = row.get('[data-testid="home-activation"]');
+    expect(signed.get('i.bi-check2').attributes('aria-hidden')).toBe('true');
+    expect(signed.text()).toBe('已签到');
+    // 今日活跃是旁边单独一块，链到活跃页
+    const act = w.get('[data-testid="home-activation"]');
     expect(act.text()).toContain('今日活跃 10');
     expect(act.attributes('href')).toBe('/rest/tasks?tab=today');
     // 问题记录 445：不再写签到领到了什么
@@ -1129,7 +1134,7 @@ describe('RestaurantHomeView', () => {
     const w = await mountView();
     for (const sel of [
       '[data-testid="home-acquired"] a',
-      '[data-testid="home-activation"]',
+      // 今日活跃是今日 2×2 里的一块（界面改版 P5），不再是 dt-go 文字链接
       '[data-testid="home-news-more"]',
       '[data-testid="home-cookbooks"]',
       '[data-testid="home-special"]',
@@ -1200,7 +1205,8 @@ describe('首页套用新的页面模式（界面改版 P3）', () => {
     expect(artOf(w.get('[data-testid="slot-1"]'))).toBe('fac-poster');
     expect(artOf(w.get('[data-testid="slot-4"]'))).toBe('fac-mousetrap');
     expect(artOf(w.get('[data-testid="home-devices"] .dt-card-title'))).toBe('sec-star');
-    expect(artOf(w.get('[data-testid="home-todo"] .dt-card-title'))).toBe('sec-tasks');
+    // 界面改版 P5：卡片外的区块标题（今日、上一轮）是纯文字大标题，不带图标
+    expect(w.get('[data-testid="home-todo"] .dt-block-title').find('svg').exists()).toBe(false);
     const newsHead = w.get('[data-testid="home-news-more"]').element.parentElement!;
     expect(newsHead.querySelector('use')?.getAttribute('href')?.split('#')[1]).toBe('sec-news');
   });

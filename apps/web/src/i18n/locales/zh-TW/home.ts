@@ -27,6 +27,10 @@ export default {
   statusOpen: '營業中',
   oilFull: '油是滿的',
   lastRound: '上一輪: ',
+  /** 首頁區塊標題、簽到塊（介面改版 P5） */
+  roundTitle: '上一輪',
+  todayTitle: '今日',
+  signInTodo: '今天還沒簽',
   roundCoin: '銀幣',
   roundExp: '經驗',
   roundOil: '耗油',
