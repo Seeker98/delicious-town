@@ -9,15 +9,17 @@ const props = defineProps<{ open: boolean; title: string }>();
 const emit = defineEmits<{ close: [] }>();
 const titleId = `dt-sheet-${useId()}`;
 const panel = ref<HTMLElement | null>(null);
-let back: HTMLElement | null = null;
 
 function onKey(e: KeyboardEvent) {
   if (e.key === 'Escape') emit('close');
 }
 function opened() {
-  back = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  if (openCount++ === 0) {
+    // 第一层打开：记下回到哪；同一时刻刚关掉一层（收起预设再弹确认）就沿用那一层的
+    back = justClosedBack ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+    document.body.classList.add('dt-sheet-lock');
+  }
   document.addEventListener('keydown', onKey);
-  document.body.classList.add('dt-sheet-lock');
   void nextTick(() => {
     const first = panel.value?.querySelector<HTMLElement>('button, [href], input, select, textarea');
     (first ?? panel.value)?.focus();
@@ -25,10 +27,16 @@ function opened() {
 }
 function closed() {
   document.removeEventListener('keydown', onKey);
+  if (--openCount > 0) return;
+  // 最后一层关掉：解开滚动、焦点回到最早打开面板的按钮；同一时刻又开了一层就都交给它（终审 I3）
   document.body.classList.remove('dt-sheet-lock');
-  const el = back;
+  justClosedBack = back;
   back = null;
-  void nextTick(() => el?.focus());
+  void nextTick(() => {
+    const el = justClosedBack;
+    justClosedBack = null;
+    if (openCount === 0) el?.focus();
+  });
 }
 watch(
   () => props.open,
@@ -41,6 +49,15 @@ watch(
 onBeforeUnmount(() => {
   if (props.open) closed();
 });
+</script>
+
+<script lang="ts">
+/** 开着的面板层数：滚动锁和焦点按层数管，同一时刻一层关、一层开时不互相打架（终审 I3） */
+let openCount = 0;
+/** 最早打开面板时的焦点（关掉最后一层时回到这里） */
+let back: HTMLElement | null = null;
+/** 刚关掉最后一层、焦点还没回去时的那个按钮 */
+let justClosedBack: HTMLElement | null = null;
 </script>
 
 <template>

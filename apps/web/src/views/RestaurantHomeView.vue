@@ -378,17 +378,11 @@ onBeforeUnmount(() => {
         <div class="dt-hero-main">
           {{ t.home.level }} <b data-testid="rest-level">{{ rest.level }}</b>
         </div>
-        <div
-          v-if="rest.state === 2 || rest.icons.length > 0"
-          class="d-flex flex-wrap align-items-center gap-1"
-        >
+        <!-- 停业、称号一行放不下就藏起来，不换行（终审 I4：换成几行会把头图上的字顶出去） -->
+        <div v-if="rest.state === 2 || rest.icons.length > 0" class="dt-hero-tags">
           <span v-if="rest.state === 2" class="badge bg-danger">{{ t.home.closed }}</span>
           <!-- 弹性盒按行高居中：按文字基线对齐时底色框比文字低约 1 像素（问题记录 563） -->
-          <span
-            v-if="rest.icons.length > 0"
-            class="d-inline-flex align-items-center flex-wrap"
-            data-testid="my-icons"
-          >
+          <span v-if="rest.icons.length > 0" class="d-inline-flex align-items-center" data-testid="my-icons">
             <IconTag v-for="i in rest.icons" :key="i.key" :title="catalog.icon(i.key)?.title ?? i.title" />
           </span>
         </div>

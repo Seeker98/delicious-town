@@ -1,6 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { createMemoryHistory, createRouter } from 'vue-router';
 import { useConfirmStore } from '../stores/confirm';
 import DtConfirmHost from './DtConfirmHost.vue';
 
@@ -40,5 +41,20 @@ describe('确认面板（界面改版 P3）', () => {
     expect(ok.text()).toBe('确定');
     await w.get('[data-testid="confirm-cancel"]').trigger('click');
     await expect(p).resolves.toBe(false);
+  });
+
+  it('换了页面（安卓返回手势）：确认按取消结束、面板关掉，不会在新页面上执行上一页的操作（终审 I2）', async () => {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/:p(.*)*', component: { template: '<p/>' } }],
+    });
+    await router.push('/rest/equip/7');
+    const w = mount(DtConfirmHost, { global: { plugins: [router], stubs: { teleport: true } } });
+    const p = useConfirmStore().ask({ title: '分解？', danger: true });
+    await flushPromises();
+    await router.push('/rest/equip');
+    await flushPromises();
+    await expect(p).resolves.toBe(false);
+    expect(w.find('[role="dialog"]').exists()).toBe(false);
   });
 });

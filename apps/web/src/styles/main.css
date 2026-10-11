@@ -1400,6 +1400,27 @@ details.dt-card > summary {
   font-size: 12px;
   color: var(--dt-muted);
 }
+.dt-hero-sub,
+.dt-hero-tags {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* 停业、称号一行放不下就藏起来（终审 I4） */
+.dt-hero-tags {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.dt-hero-tags > * {
+  flex-shrink: 0;
+}
+.dt-hero-tags > [data-testid='my-icons'] {
+  flex-wrap: nowrap;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+}
 .dt-hero-main {
   font-size: 13px;
 }

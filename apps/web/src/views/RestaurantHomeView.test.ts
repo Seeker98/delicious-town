@@ -1169,6 +1169,8 @@ describe('首页套用新的页面模式（界面改版 P3）', () => {
     expect(plate.text()).toContain('0 星');
     expect(plate.get('[data-testid="rest-level"]').text()).toBe('1');
     expect(plate.text()).toContain('停业');
+    // 称号多时不换行（终审 I4：换成三四行会把头图上的字顶出去截掉），放不下的藏起来
+    expect(plate.get('.dt-hero-tags').classes()).not.toContain('flex-wrap');
   });
 
   it('资源用彩色扁平图（银币、钻石、体力、声望、油），读屏照样读名字', async () => {

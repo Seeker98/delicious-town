@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted } from 'vue';
+import { inject, onBeforeUnmount, onMounted, watch } from 'vue';
+import { routeLocationKey } from 'vue-router';
 import { useT } from '../composables/useT';
 import { useConfirmStore } from '../stores/confirm';
 import DtSheet from './DtSheet.vue';
@@ -8,6 +9,14 @@ import DtSheet from './DtSheet.vue';
 const store = useConfirmStore();
 const t = useT();
 onMounted(() => store.hosts++);
+// 换了页面（安卓返回手势、点了底部导航）：确认按取消结束，不在新页面上执行上一页的操作（终审 I2）
+const route = inject(routeLocationKey, null);
+watch(
+  () => route?.fullPath,
+  () => {
+    if (store.current) store.answer(false);
+  },
+);
 onBeforeUnmount(() => {
   store.hosts--;
   if (store.current) store.answer(false);
