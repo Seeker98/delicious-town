@@ -323,7 +323,11 @@ describe('MarketView', () => {
 
   it('特价菜打开购买面板时数量默认就是最多能买的（用户 2026-10-11）；日常菜默认 1', async () => {
     const special = { ...view.daily[0]!, id: 21, shelf: 1 as const, price: 100, canBuy: 3 };
-    vi.mocked(endpoints.market).mockResolvedValue({ ...structuredClone(view), coin: 1e9, special: [special] });
+    vi.mocked(endpoints.market).mockResolvedValue({
+      ...structuredClone(view),
+      coin: 1e9,
+      special: [special],
+    });
     const w = mountView();
     await flushPromises();
     await openBuy(w, 21);
