@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    home1011b:
+      'Nouvelle mise en page de l’accueil\u202f: devanture plus grande, avec un panneau «\u202fFermé\u202f» quand l’huile est épuisée\u202f; le niveau s’affiche dans un anneau d’expérience\u202f; l’huile et le plein sont dans une carte d’état en haut, avec le plein en un geste quand le restaurant est fermé\u202f; le dernier tour montre trois grands chiffres\u202f; pointage, quête principale, activité du jour et conseils débutant deviennent de grandes tuiles 2×2, le pointage en violet tant qu’il n’est pas fait\u202f; recettes, plat signature et patrimoine sont regroupés sous «\u202fMon restaurant\u202f»\u202f; les pages principales ont des titres plus grands',
     kitchen1011:
       'Chaque ingrédient a maintenant une petite icône selon son type (viande, poisson, légumes, fruits…), visible dans le placard, le frigo, le marché et le détail des recettes. Le placard est une grille de quatre colonnes avec une carte pour l’ingrédient choisi\u202f; le marché, l’entrepôt et les plats signature règlent les quantités avec − et +, et vendre, jeter ou vider demande d’abord confirmation dans un panneau en bas. Le détail des recettes montre une ligne par niveau, avec les ingrédients manquants en rouge et les niveaux appris cochés\u202f; les pages affichent des blocs gris pendant le chargement et un conseil avec un lien quand elles sont vides',
     rest1011:
