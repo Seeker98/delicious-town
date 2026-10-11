@@ -24,12 +24,7 @@ const tab = useTabQuery({ tabs: ['items', 'souvenirs', 'records'] as const });
 const tabItems = computed(() =>
   (['items', 'souvenirs', 'records'] as const).map((k) => ({ key: k, label: t.value.store.tabs[k] })),
 );
-/** 纪念品、流水用到才读 */
-function pickTab(k: string) {
-  tab.value = k as 'items' | 'souvenirs' | 'records';
-  if (k === 'souvenirs') void loadSouvenirs();
-  if (k === 'records') void loadRecords();
-}
+
 const type = ref<number | undefined>(undefined);
 const data = ref<StoreDto | null>(null);
 const records = ref<LedgerRecordDto[]>([]);
@@ -125,11 +120,20 @@ const recordName = (r: LedgerRecordDto) => recordLabel(r, catalog);
 
 watch(type, () => void load());
 watch(range, () => void loadRecords());
+// 纪念品、流水用到才读：切过去、网址直接带 ?tab= 都读（终审 I2：原来直接打开时写“没有”）
+watch(
+  tab,
+  (k) => {
+    if (k === 'souvenirs') void loadSouvenirs();
+    if (k === 'records') void loadRecords();
+  },
+  { immediate: true },
+);
 onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.store.loadFailed), 'danger')));
 </script>
 
 <template>
-  <DtTabs :model-value="tab" :tabs="tabItems" @update:model-value="pickTab" />
+  <DtTabs v-model="tab" :tabs="tabItems" />
   <template v-if="tab === 'items' && data">
     <div class="d-flex align-items-center mb-2 small">
       <select v-model="type" class="form-select form-select-sm w-auto">

@@ -105,4 +105,34 @@ describe('useTabQuery（界面改版 P2b，设计 §4.2 第 6 条）', () => {
     await flushPromises();
     expect(tab.value).toBe('town');
   });
+
+  it('切过去的面板挂载时也改网址（食谱列表写街道）：切标签的那次被它打断，网址最后照样是新标签、别的参数也在（终审 I1）', async () => {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/:p(.*)*', component: { template: '<div/>' } }],
+    });
+    await router.push('/cookbooks?tab=mc');
+    /** 像食谱列表：挂载时按旧的 route.query 写街道 */
+    const Child = defineComponent({
+      setup: () => {
+        const route = router.currentRoute;
+        void router.replace({ query: { ...route.value.query, street: '5' } });
+        return () => h('div', 'list');
+      },
+    });
+    let tab!: ReturnType<typeof useTabQuery<'list' | 'mc'>>;
+    const Parent = defineComponent({
+      setup: () => {
+        tab = useTabQuery({ tabs: ['list', 'mc'] as const });
+        return () => (tab.value === 'list' ? h(Child) : h('div', 'mc'));
+      },
+    });
+    const w = mount(Parent, { global: { plugins: [router] } });
+    await flushPromises();
+    tab.value = 'list';
+    await flushPromises();
+    await flushPromises();
+    expect(w.text()).toBe('list');
+    expect(router.currentRoute.value.query).toEqual({ tab: 'list', street: '5' });
+  });
 });

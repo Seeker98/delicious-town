@@ -1,12 +1,12 @@
 import { expect, test } from './fixtures';
 import { registerAndOpen } from './helpers';
 
-/** 只用本用例注册的账号：领新手码 → 改密码 → 用新密码登录（问题记录 150、178） */
-test('游玩指引领新手码；我的账号改密码后用新密码登录', async ({ page, request }) => {
+/** 只用本用例注册的账号：领新手码（界面改版 P2b 起在兑换码页） → 改密码 → 用新密码登录（问题记录 150、178） */
+test('兑换码页领新手码；我的账号改密码后用新密码登录', async ({ page, request }) => {
   test.setTimeout(120_000);
   const me = await registerAndOpen(page, request);
 
-  await page.goto('/guide');
+  await page.goto('/redeem');
   await page.getByTestId('guide-redeem-XINSHOU').click();
   await expect(page.getByText('领取成功')).toBeVisible();
   await expect(page.getByTestId('guide-redeem-XINSHOU')).toHaveCount(0);

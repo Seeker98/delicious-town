@@ -2,6 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SHARED_GOODS, type StoreDto } from '@dt/shared';
+import { createMemoryHistory, createRouter } from 'vue-router';
 import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
 import StoreView from './StoreView.vue';
@@ -345,5 +346,23 @@ describe('仓库记录的时间（backlog：选“昨天”“更早”时看不
     expect(time(0)).toMatch(/^\d\d:\d\d:\d\d$/);
     expect(time(1)).toContain('10/06');
     expect(time(1)).toContain('12:05');
+  });
+
+  it('直接打开 ?tab=records、?tab=souvenirs：照样读流水、纪念品，不写“没有”（终审 I2）', async () => {
+    vi.mocked(endpoints.storeRecords).mockResolvedValue([] as never);
+    const open = async (path: string) => {
+      const router = createRouter({
+        history: createMemoryHistory(),
+        routes: [{ path: '/:p(.*)*', component: StoreView }],
+      });
+      await router.push(path);
+      mount(StoreView, { global: { plugins: [router] } });
+      await flushPromises();
+    };
+    await open('/store?tab=records');
+    expect(endpoints.storeRecords).toHaveBeenCalled();
+    vi.mocked(endpoints.store).mockClear();
+    await open('/store?tab=souvenirs');
+    expect(vi.mocked(endpoints.store).mock.calls.length).toBeGreaterThanOrEqual(2);
   });
 });

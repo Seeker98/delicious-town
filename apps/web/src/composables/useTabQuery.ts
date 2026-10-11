@@ -1,5 +1,5 @@
 import { computed, inject, ref, toValue, watch, type MaybeRefOrGetter, type WritableComputedRef } from 'vue';
-import { routeLocationKey, routerKey } from 'vue-router';
+import { isNavigationFailure, NavigationFailureType, routeLocationKey, routerKey } from 'vue-router';
 
 /**
  * 一级标签页的当前标签（界面改版设计 §4.2 第 6 条）：写进网址 ?tab=（能分享、能后退、刷新不丢），
@@ -34,6 +34,13 @@ export function useTabQuery<T extends string>(opts: TabQueryOptions<T>): Writabl
     }
   };
   const valid = (v: unknown): v is T => typeof v === 'string' && list.value.includes(v as T);
+  /** 当前网址参数换上这个标签（omitWhen 时去掉） */
+  const withTab = (v: string) => {
+    const query = { ...route!.query };
+    if (opts.omitWhen !== undefined && v === opts.omitWhen) delete query[param];
+    else query[param] = v;
+    return query;
+  };
   const tab = computed<T>({
     get: () => {
       if (valid(pending.value)) return pending.value;
@@ -46,10 +53,17 @@ export function useTabQuery<T extends string>(opts: TabQueryOptions<T>): Writabl
     set: (v) => {
       if (route && router) {
         pending.value = v;
-        const query = { ...route.query };
-        if (opts.omitWhen !== undefined && v === opts.omitWhen) delete query[param];
-        else query[param] = v;
-        void router.replace({ query });
+        const path = route.path;
+        void router.replace({ query: withTab(v) }).then((f) => {
+          // 被别的跳转打断（切过去的面板挂载时按旧网址写参数，比如食谱列表写街道，终审 I1）：
+          // 等打断它的那次走完，还在这页、还要这个标签而网址不是，就按当时的网址再写一次
+          if (!isNavigationFailure(f, NavigationFailureType.cancelled)) return;
+          const stop = router.afterEach(() => {
+            stop();
+            if (pending.value === v && route.path === path && route.query[param] !== withTab(v)[param])
+              void router.replace({ query: withTab(v) });
+          });
+        });
       } else memory.value = v;
       if (opts.storageKey) {
         try {

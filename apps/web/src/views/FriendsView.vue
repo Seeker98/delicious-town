@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { FriendRequestDto, FriendsDto, RestBriefDto, RestLogDto, ThumbTodayDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -62,7 +62,6 @@ async function loadRequests() {
  */
 let seq = 0;
 async function show(next: Tab) {
-  tab.value = next;
   const mine = ++seq;
   try {
     if (next === 'friends') {
@@ -132,12 +131,13 @@ function returnAll() {
   }, t.value.friends.returnFailed);
 }
 
-// 地址带 ?tab= 直接打开那个标签（首页餐厅动态的“全部”带 ?tab=feed，问题记录 553）
-onMounted(() => show(tab.value));
+// 读取跟着当前标签走：地址带 ?tab= 直接打开（首页餐厅动态的“全部”带 ?tab=feed，问题记录 553），
+// 在这页点底部导航“好友”换了网址也会读（终审 I3：原来组件不重挂、列表是空白）
+watch(tab, (k) => void show(k), { immediate: true });
 </script>
 
 <template>
-  <DtTabs :model-value="tab" :tabs="tabItems" @update:model-value="(k) => show(k as Tab)" />
+  <DtTabs v-model="tab" :tabs="tabItems" />
 
   <template v-if="tab === 'friends' && list">
     <div class="d-flex justify-content-between align-items-center mb-2 small">

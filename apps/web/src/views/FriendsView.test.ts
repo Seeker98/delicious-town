@@ -208,4 +208,22 @@ describe('FriendsView', () => {
     expect(endpoints.friendRequests).toHaveBeenCalled();
     expect(w.get('[data-testid="tab-requests"]').attributes('aria-selected')).toBe('true');
   });
+
+  it('在动态卡时点底部导航“好友”（同一页面换了网址）：切回好友列表并读出来（终审 I3）', async () => {
+    vi.mocked(endpoints.friendFeed).mockResolvedValue({ items: [] } as never);
+    vi.mocked(endpoints.thumbsToday).mockResolvedValue([]);
+    useRestaurantStore().rest = { id: 5 } as never;
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/:p(.*)*', component: FriendsView }],
+    });
+    await router.push('/friends?tab=feed');
+    const w = mount(FriendsView, { global: { plugins: [router] } });
+    await flushPromises();
+    vi.mocked(endpoints.friendList).mockClear();
+    await router.push('/friends');
+    await flushPromises();
+    expect(endpoints.friendList).toHaveBeenCalled();
+    expect(w.get('[data-testid="tab-friends"]').attributes('aria-selected')).toBe('true');
+  });
 });

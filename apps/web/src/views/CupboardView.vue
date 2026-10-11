@@ -23,10 +23,7 @@ const tabItems = computed(() => [
     badge: data.value?.fridgeUnread ? t.value.cupboard.newBadge : null,
   },
 ]);
-function pickTab(k: string) {
-  if (k === 'fridge') void openFridge();
-  else tab.value = 'cupboard';
-}
+
 const data = ref<CupboardDto | null>(null);
 const fridge = ref<FridgeDto | null>(null);
 const picked = ref<number | null>(null);
@@ -99,11 +96,16 @@ function thaw(f: FridgeDto['items'][number]) {
   if (!window.confirm(t.value.cupboard.thawConfirm(f.thawable, name, formatNum(f.thawCoin)))) return;
   void run(() => endpoints.thaw(f.foodsId), t.value.cupboard.thawFailed);
 }
-async function openFridge() {
-  tab.value = 'fridge';
+/** 冰箱用到才读；看过就标成已读（橱柜数据读回来后才知道有没有新的） */
+async function loadFridge() {
   fridge.value = await endpoints.fridge();
   if (data.value?.fridgeUnread) await endpoints.readFridge();
 }
+const fridgeFailed = (e: unknown) => toast.push(errorMessage(e, t.value.cupboard.loadFailed), 'danger');
+// 切到冰箱时读；网址直接带 ?tab=fridge 时在橱柜读回来后读（终审 I2：刷新、后退、分享的链接原来是空白）
+watch(tab, (k) => {
+  if (k === 'fridge') loadFridge().catch(fridgeFailed);
+});
 async function run(fn: () => Promise<unknown>, fallback: string) {
   busy.value = true;
   try {
@@ -128,11 +130,15 @@ function handle(way: 'compose' | 'decompose') {
     toast.push(t.value.cupboard.handleResult(r.success, r.chances, !!r.strengthUsed), 'info');
   }, t.value.cupboard.handleFailed);
 }
-onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.cupboard.loadFailed), 'danger')));
+onMounted(() =>
+  load()
+    .then(() => (tab.value === 'fridge' ? loadFridge() : undefined))
+    .catch((e) => toast.push(errorMessage(e, t.value.cupboard.loadFailed), 'danger')),
+);
 </script>
 
 <template>
-  <DtTabs :model-value="tab" :tabs="tabItems" @update:model-value="pickTab" />
+  <DtTabs v-model="tab" :tabs="tabItems" />
 
   <template v-if="tab === 'cupboard' && data">
     <div class="small text-muted mb-2">
