@@ -51,4 +51,11 @@ describe('数量步进器（界面改版 P3，设计 §5 第 6 条）', () => {
     for (const b of w.findAll('button')) expect(b.attributes('disabled')).toBeDefined();
     expect(w.get('input').attributes('disabled')).toBeDefined();
   });
+
+  it('已经在上限时再打更大的数：框里马上退回上限（不等失焦）', async () => {
+    const w = mountIt({ modelValue: 10 });
+    const input = w.get('input');
+    await input.setValue('500');
+    expect((input.element as HTMLInputElement).value).toBe('10');
+  });
 });

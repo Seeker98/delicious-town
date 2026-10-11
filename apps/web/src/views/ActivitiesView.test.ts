@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ActivityDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
+import { useConfirmStore } from '../stores/confirm';
 import ActivitiesView from './ActivitiesView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -367,7 +368,7 @@ describe('终审 I1：兑换次数输入无效时按钮禁用', () => {
     claimable: 0,
     exchangeUntil: new Date(Date.now() + 3 * 86_400_000).toISOString(),
   };
-  it('清空、0、小数、超过剩余次数都禁用；有效时按填的次数兑换', async () => {
+  it('次数是步进器（界面改版 P3）：0、小数、超过剩余次数自动夹回能兑的范围；按填的次数兑换', async () => {
     vi.mocked(endpoints.activities).mockResolvedValue({ items: [rich as never], level: 10 });
     vi.mocked(endpoints.activityExchange).mockResolvedValue({
       index: 0,
@@ -378,10 +379,16 @@ describe('终审 I1：兑换次数输入无效时按钮禁用', () => {
     await flushPromises();
     const input = w.find('[data-testid="times-12-0"]');
     const btn = () => w.find('[data-testid="exchange-12-0"]');
-    for (const v of ['', '0', '1.5', '6']) {
-      await input.setValue(v);
-      expect(btn().attributes('disabled'), `times=${v}`).toBeDefined();
-    }
+    const value = () => (input.element as HTMLInputElement).value;
+    expect(input.element.closest('.dt-stepper')).not.toBeNull();
+    await input.setValue('0');
+    await input.trigger('blur');
+    expect(value()).toBe('1');
+    await input.setValue('1.5');
+    await input.trigger('blur');
+    expect(value()).toBe('1');
+    await input.setValue('6');
+    expect(Number(value())).toBeLessThan(6);
     await input.setValue('2');
     expect(btn().attributes('disabled')).toBeUndefined();
     await btn().trigger('click');
@@ -725,5 +732,46 @@ describe('backlog 长尾第 2 批：活动卡片的状态文案', () => {
     });
     expect(w.find('[data-testid="coop-hint-21-0"]').exists()).toBe(false);
     expect(w.find('[data-testid="activity-21"]').text()).not.toContain('全服还差');
+  });
+});
+
+describe('活动页套用空状态、骨架、确认面板（界面改版 P3）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+  });
+
+  it('没有活动时是空状态，配图', async () => {
+    vi.mocked(endpoints.activities).mockResolvedValue({ items: [], level: 10 });
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    const empty = w.get('[data-testid="activity-empty"]');
+    expect(empty.classes()).toContain('dt-empty-state');
+    expect(empty.get('use').attributes('href')).toContain('#empty-activity');
+  });
+
+  it('还没读回来时是骨架行', async () => {
+    vi.mocked(endpoints.activities).mockReturnValue(new Promise(() => undefined));
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    expect(w.find('[data-testid="activity-skeleton"]').exists()).toBe(true);
+  });
+
+  it('解锁战令走确认面板', async () => {
+    vi.mocked(endpoints.activities).mockResolvedValue({ items: [pass], level: 10 });
+    vi.mocked(endpoints.activityUnlock).mockResolvedValue({} as never);
+    const spy = vi.spyOn(window, 'confirm');
+    const store = useConfirmStore();
+    store.hosts = 1;
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    await w.get('[data-testid="unlock-3"]').trigger('click');
+    await flushPromises();
+    expect(spy).not.toHaveBeenCalled();
+    expect(store.current?.title).toContain('解锁进阶奖励');
+    store.answer(true);
+    await flushPromises();
+    expect(endpoints.activityUnlock).toHaveBeenCalledWith(3);
+    spy.mockRestore();
   });
 });

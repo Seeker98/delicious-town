@@ -24,10 +24,13 @@ function set(n: number) {
   if (v !== props.modelValue) emit('update:modelValue', v);
 }
 function onInput(e: Event) {
-  const raw = (e.target as HTMLInputElement).value;
-  const n = Number(raw);
-  // 打字时只在是合法数字时跟着变；空的、打了一半的等失焦再处理
-  if (raw !== '' && Number.isFinite(n)) set(n);
+  const el = e.target as HTMLInputElement;
+  const n = Number(el.value);
+  // 打字时只在是合法数字时跟着变；空的、打了一半的、低于下限的等失焦再处理
+  if (el.value === '' || !Number.isFinite(n)) return;
+  set(n);
+  // 超过上限马上退回上限（已经在上限时值没变、不会重新渲染，框里要自己改回来）
+  if (n > props.max) el.value = String(props.max);
 }
 function onBlur(e: Event) {
   const el = e.target as HTMLInputElement;
