@@ -2576,3 +2576,16 @@ details.dt-card > summary {
   flex-wrap: wrap;
   gap: 6px;
 }
+/* 有底色的格子里灰字不够深（浅色 3 级以上只有 4.4:1）：用同色系的深字（P6 审查） */
+.dt-bag-cell.is-t2 .dt-bag-need,
+.dt-bag-cell.is-t2 .dt-bag-lock {
+  color: var(--dt-ink-success);
+}
+.dt-bag-cell.is-t3 .dt-bag-need,
+.dt-bag-cell.is-t3 .dt-bag-lock {
+  color: var(--dt-ink-primary);
+}
+.dt-bag-cell.is-master .dt-bag-need,
+.dt-bag-cell.is-master .dt-bag-lock {
+  color: var(--dt-ink-warning);
+}

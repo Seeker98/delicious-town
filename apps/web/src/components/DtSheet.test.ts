@@ -60,6 +60,32 @@ describe('底部面板（界面改版 P3，设计 §5 第 6、7 条）', () => {
     w.unmount();
   });
 
+  it('第一个按钮是灰掉的（步进器的“−”）时，焦点落在第一个能用的按钮上（P6 审查 I1）', async () => {
+    const Disabled = defineComponent({
+      setup() {
+        const open = ref(false);
+        return () => [
+          h('button', { id: 'opener2', onClick: () => (open.value = true) }, '打开'),
+          h(
+            DtSheet,
+            { open: open.value, title: '买', onClose: () => (open.value = false) },
+            {
+              default: () => [
+                h('button', { id: 'minus', disabled: true }, '−'),
+                h('button', { id: 'plus' }, '+'),
+              ],
+            },
+          ),
+        ];
+      },
+    });
+    const w = mount(Disabled, { attachTo: document.body, global: { stubs: { teleport: true } } });
+    await w.get('#opener2').trigger('click');
+    await flushPromises();
+    expect(document.activeElement?.id).toBe('plus');
+    w.unmount();
+  });
+
   it('同一时刻关掉一个、打开另一个（收起预设再弹确认）：滚动锁还在，焦点在新面板里，不被拉回页面（终审 I3）', async () => {
     const Two = defineComponent({
       setup() {

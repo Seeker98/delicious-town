@@ -64,6 +64,36 @@ describe('CupboardView', () => {
     });
   });
 
+  it('选中的食材用完了（分解光）：面板关上、不再记着它，之后在冰箱解冻同一种也不会突然弹出来（P6 审查 I2）', async () => {
+    const w = mountView();
+    await flushPromises();
+    await w.get('[data-testid="pick-302"]').trigger('click');
+    expect(w.find('[data-testid="picked-card"]').exists()).toBe(true);
+    const full = await endpoints.cupboard();
+    vi.mocked(endpoints.cupboard).mockResolvedValueOnce({
+      ...full,
+      items: [{ foodsId: 303, num: 1, locked: false, streetNeed: 0 }],
+    });
+    await w.get('[data-testid="decompose"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="picked-card"]').exists()).toBe(false);
+    // 到冰箱解冻同一种：重新读橱柜时 302 又回来了，面板不能自己弹出来
+    vi.mocked(endpoints.fridge).mockResolvedValue({
+      items: [{ foodsId: 302, num: 5, thawable: 3, thawCoin: 750, streetNeed: 0 }],
+    });
+    vi.mocked(endpoints.thaw).mockResolvedValue({ foodsId: 302, moved: 3, coin: 750 });
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    await w.get('[data-testid="tab-fridge"]').trigger('click');
+    await flushPromises();
+    await w.get('[data-testid="thaw-302"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.thaw).toHaveBeenCalledWith(302);
+    expect(w.find('[data-testid="picked-card"]').exists()).toBe(false);
+    confirm.mockRestore();
+    // 这个文件的 beforeEach 不清调用记录：别让后面的冰箱测试看到这次解冻
+    vi.mocked(endpoints.thaw).mockClear();
+  });
+
   it('选择食材后可以分解', async () => {
     const w = mountView();
     await flushPromises();

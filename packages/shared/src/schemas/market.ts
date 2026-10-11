@@ -1,8 +1,10 @@
 import { z } from 'zod';
 
+/** 菜场一次最多买几个（接口校验；网页的“最多”也不超过它） */
+export const MARKET_BUY_MAX = 1000;
 export const marketBuyBody = z.object({
   itemId: z.number().int().positive(),
-  num: z.number().int().min(1).max(1000),
+  num: z.number().int().min(1).max(MARKET_BUY_MAX),
 });
 export const guessBody = z.object({ foodsIds: z.array(z.number().int().positive()).min(1).max(20) });
 

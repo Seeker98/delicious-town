@@ -11,7 +11,7 @@ const cupboard: Messages['cupboard'] = {
     slots: (used, all) => `Huecos ${used}/${all}`,
     lock: (used, all) => `Bloqueados ${used}/${all}`,
     rules: (free, max, grade) =>
-      `${free} ${plEs(free, 'proceso gratis', 'procesos gratis')} hoy · máx. ${max} por ingrediente · meta de la calle grado ${grade}`,
+      `${free} ${plEs(free, 'proceso gratis', 'procesos gratis')} hoy · máx. ${max} por ingrediente · objetivo de la calle: calidad ${grade}`,
   },
   needShort: (n) => `Faltan ${n}`,
   have: (n) => `Tienes ${n}`,

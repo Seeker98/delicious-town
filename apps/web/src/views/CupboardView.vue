@@ -66,6 +66,10 @@ const shown = computed(() =>
 );
 
 const pickedItem = computed(() => data.value?.items.find((x) => x.foodsId === picked.value) ?? null);
+// 选中的食材用完了（分解光、合成光、兑换光）：不再记着它，免得之后同一种又回到橱柜时面板自己弹出来（P6 审查 I2）
+watch(pickedItem, (it) => {
+  if (!it) picked.value = null;
+});
 const pickedLevel = computed(() => (picked.value ? (catalog.food(picked.value)?.level ?? 0) : 0));
 const canDecompose = computed(() => pickedLevel.value >= 2 && pickedLevel.value <= 6);
 const canCompose = computed(() => pickedLevel.value >= 1 && pickedLevel.value <= 4);
@@ -264,7 +268,7 @@ onMounted(() =>
 
   <!-- 点一格从底部弹出详情：大图、持有、本街还需；数量和分解、合成、兑换、锁定 -->
   <DtSheet
-    :open="!!pickedItem"
+    :open="tab === 'cupboard' && !!pickedItem"
     :title="pickedItem ? catalog.foodName(pickedItem.foodsId) : ''"
     @close="picked = null"
   >

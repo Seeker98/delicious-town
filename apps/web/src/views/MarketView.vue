@@ -9,7 +9,7 @@ import FoodArt from '../components/FoodArt.vue';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import GardenSis from '../components/market/GardenSis.vue';
 import { computed, onMounted, ref } from 'vue';
-import type { MarketDto, MarketItemDto } from '@dt/shared';
+import { MARKET_BUY_MAX, type MarketDto, type MarketItemDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
@@ -95,7 +95,8 @@ function maxBuy(it: MarketItemDto): number {
   const coin = data.value?.coin;
   const p = unitPrice(it);
   const byCoin = coin === undefined || p <= 0 ? Infinity : Math.floor(coin / p);
-  return Math.max(0, Math.min(it.canBuy, byCoin));
+  // 一次最多 1000 个（接口的上限，P6 审查）
+  return Math.max(0, Math.min(it.canBuy, byCoin, MARKET_BUY_MAX));
 }
 /** 购买面板：点价格按钮弹出 */
 const buying = ref<MarketItemDto | null>(null);

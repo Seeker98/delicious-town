@@ -21,7 +21,10 @@ function opened() {
   }
   document.addEventListener('keydown', onKey);
   void nextTick(() => {
-    const first = panel.value?.querySelector<HTMLElement>('button, [href], input, select, textarea');
+    const first = panel.value?.querySelector<HTMLElement>(
+      // 跳过灰掉的：步进器的“−”在数量为 1 时是灰的，聚焦它没用，焦点会留在面板外面（P6 审查 I1）
+      'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled)',
+    );
     (first ?? panel.value)?.focus();
   });
 }

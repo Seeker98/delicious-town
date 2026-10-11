@@ -8,10 +8,10 @@ const cupboard: Messages['cupboard'] = {
     `Emplacements ${p.used}/${p.slots} · Verrouillés ${p.lockUsed}/${p.lockSlots} · Max ${p.max} chacun · ${p.free} ${plFr(p.free, 'traitement gratuit restant', 'traitements gratuits restants')} aujourd'hui · Objectif de la rue\u202f: qualité ${p.grade}`,
   levelCount: (label, n) => `${label} (${n})`,
   meta: {
-    slots: (used, all) => `Cases ${used}/${all}`,
+    slots: (used, all) => `Emplacements ${used}/${all}`,
     lock: (used, all) => `Verrouillées ${used}/${all}`,
     rules: (free, max, grade) =>
-      `${free} ${plFr(free, 'traitement gratuit', 'traitements gratuits')} aujourd’hui · max ${max} par ingrédient · objectif de la rue niv.\u202f${grade}`,
+      `${free} ${plFr(free, 'traitement gratuit', 'traitements gratuits')} aujourd’hui · max ${max} par ingrédient · objectif de la rue\u202f: qualité ${grade}`,
   },
   needShort: (n) => `Manque ${n}`,
   have: (n) => `Vous en avez ${n}`,

@@ -8,6 +8,7 @@ import { useConfirmStore } from '../stores/confirm';
 import { useRestaurantStore } from '../stores/restaurant';
 import { useSessionStore } from '../stores/session';
 import MarketView from './MarketView.vue';
+import { readCss } from '../styles/cssSource';
 
 // 菜场页顶部有"交易所"入口（156-1）：测试不挂路由，用桩代替
 config.global.stubs.RouterLink = RouterLinkStub;
@@ -318,6 +319,24 @@ describe('MarketView', () => {
     await w.get('[data-testid="buy-confirm"]').trigger('click');
     await flushPromises();
     expect(endpoints.marketBuy).toHaveBeenLastCalledWith(11, 4);
+  });
+
+  it('一次最多买 1000 个（服务端的上限），“最多”不超过它（P6 审查）', async () => {
+    vi.mocked(endpoints.market).mockResolvedValue({
+      ...structuredClone(view),
+      coin: 1e12,
+      daily: [{ ...view.daily[0]!, price: 1, canBuy: 5000 }],
+    });
+    const w = mountView();
+    await flushPromises();
+    await openBuy(w, 11);
+    expect(w.get('[data-testid="quick-max"]').text()).toContain('最多 1,000');
+  });
+
+  it('3 级以上、2 级、万能的格子里，灰字改用同色系的深字，浅色下对比度够 4.5（P6 审查）', () => {
+    const css = readCss('main');
+    for (const tier of ['is-t2', 'is-t3', 'is-master'])
+      expect(css).toMatch(new RegExp(`\\.dt-bag-cell\\.${tier} \\.dt-bag-need`));
   });
 
   it('银币一个都买不起时写银币不够，确认按钮灰掉（界面改版 P6）', async () => {
