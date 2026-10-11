@@ -33,5 +33,7 @@ export default {
   parenOpen: ' (',
   parenClose: ')',
   colon: (s: string) => `${s}: `,
+  /** 等級環的讀屏文字（介面改版 P5） */
+  levelRing: (level: number, pct: number) => `等級 ${level}, 經驗 ${pct}%`,
   semi: '；',
 };

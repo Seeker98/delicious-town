@@ -1679,3 +1679,85 @@ details.dt-card > summary {
 .dt-name-row-name {
   overflow-wrap: anywhere;
 }
+/* 等级环（界面改版 P5）：外圈经验进度，中间等级 */
+.dt-level-ring {
+  position: relative;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--dt-surface);
+  box-shadow: var(--dt-shadow-card);
+}
+.dt-level-ring > svg {
+  display: block;
+}
+.dt-level-ring-track {
+  fill: none;
+  stroke: var(--dt-line);
+  stroke-width: 5;
+}
+.dt-level-ring-arc {
+  fill: none;
+  stroke: var(--dt-primary);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+.dt-level-ring-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.05;
+}
+.dt-level-ring-text small {
+  font-size: 11px;
+  color: var(--dt-muted);
+}
+.dt-level-ring-text b {
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+}
+/* 资源胶囊：左图右值，数字等宽，不换行 */
+.dt-res-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  height: 34px;
+  padding: 0 10px 0 6px;
+  border: 1px solid var(--dt-line);
+  border-radius: 999px;
+  background: var(--dt-surface);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.dt-res-pill.is-danger {
+  color: var(--dt-ink-danger);
+}
+/* 统计块：大数字 + 小标签 */
+.dt-stat {
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-surface);
+}
+.dt-stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+}
+.dt-stat-label {
+  font-size: 11px;
+  color: var(--dt-muted);
+}
+.dt-stat.is-good .dt-stat-value {
+  color: var(--dt-ink-success);
+}
+.dt-stat.is-bad .dt-stat-value {
+  color: var(--dt-ink-danger);
+}

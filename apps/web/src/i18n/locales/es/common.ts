@@ -29,6 +29,7 @@ const common: Messages['common'] = {
   parenOpen: ' (',
   parenClose: ')',
   colon: (s) => `${s}: `,
+  levelRing: (level, pct) => `Nivel ${level}, ${pct}\u00a0% de experiencia`,
   semi: '; ',
 };
 export default common;
