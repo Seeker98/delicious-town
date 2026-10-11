@@ -1651,3 +1651,11 @@ details.dt-card > summary {
   align-items: center;
   gap: 2px;
 }
+/* 特色菜已学的一行（界面改版 P4） */
+.dt-mc-row {
+  padding: 4px 0;
+  border-bottom: 1px solid var(--dt-line);
+}
+.dt-mc-row:last-child {
+  border-bottom: 0;
+}

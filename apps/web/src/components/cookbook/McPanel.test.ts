@@ -5,6 +5,7 @@ import { createMemoryHistory, createRouter } from 'vue-router';
 import type { McOverviewDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { useCatalogStore } from '../../stores/catalog';
+import { useConfirmStore } from '../../stores/confirm';
 import { useToastStore } from '../../stores/toast';
 import McPanel from './McPanel.vue';
 
@@ -366,9 +367,63 @@ describe('McPanel', () => {
     expect(qty.attributes('max')).toBe('2');
     await row.find('select').setValue('5');
     await qty.setValue(2);
-    expect(row.find('button').text()).toContain('2');
-    await row.find('button').trigger('click');
+    expect(row.get('[data-testid="exchange-go-3"]').text()).toContain('2');
+    await row.get('[data-testid="exchange-go-3"]').trigger('click');
     await flushPromises();
     expect(endpoints.mcExchange).toHaveBeenCalledWith(5, 2);
+  });
+});
+
+describe('特色菜套用新控件（界面改版 P4）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+  });
+
+  it('残卷数量是步进器；已学、残卷各在一张卡片里', async () => {
+    vi.mocked(endpoints.mc).mockResolvedValue(structuredClone(overview));
+    const w = mountView();
+    await flushPromises();
+    expect(w.get('[data-testid="remnant-num-3"]').element.closest('.dt-stepper')).not.toBeNull();
+    expect(w.get('[data-testid="learned-1"]').element.closest('.dt-card')).not.toBeNull();
+    expect(w.get('[data-testid="remnant-num-3"]').element.closest('.dt-card')).not.toBeNull();
+  });
+
+  it('没学会、没有残卷时是空状态', async () => {
+    vi.mocked(endpoints.mc).mockResolvedValue({ ...structuredClone(overview), learned: [], remnants: [] });
+    const w = mountView();
+    await flushPromises();
+    expect(w.get('[data-testid="mc-learned-empty"]').classes()).toContain('dt-empty-state');
+    expect(w.get('[data-testid="mc-remnants-empty"]').classes()).toContain('dt-empty-state');
+  });
+
+  it('倒掉在售的特色菜走确认面板，标成危险操作', async () => {
+    vi.mocked(endpoints.mc).mockResolvedValue({
+      ...structuredClone(overview),
+      current: {
+        id: 9,
+        mcId: 1,
+        grade: 3,
+        totalNum: 600,
+        leftNum: 120,
+        price: 40,
+        luck: false,
+        eatCount: 1,
+        createdAt: '',
+      },
+    });
+    const spy = vi.spyOn(window, 'confirm');
+    const store = useConfirmStore();
+    store.hosts = 1;
+    const w = mountView();
+    await flushPromises();
+    await w.get('[data-testid="dump"]').trigger('click');
+    await flushPromises();
+    expect(spy).not.toHaveBeenCalled();
+    expect(store.current?.danger).toBe(true);
+    store.answer(false);
+    await flushPromises();
+    expect(endpoints.mcDump).not.toHaveBeenCalled();
+    spy.mockRestore();
   });
 });

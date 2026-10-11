@@ -3,9 +3,12 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { McOverviewDto, McPreviewDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import DtEmpty from '../DtEmpty.vue';
+import DtStepper from '../DtStepper.vue';
 import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
+import { useConfirmStore } from '../../stores/confirm';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 import { GRADE_NAMES, ROAD_NAMES } from '../../utils/labels';
@@ -220,8 +223,10 @@ function cook(n: number) {
     t.value.mc.cookFailed,
   );
 }
-function dump() {
-  if (!window.confirm(t.value.mc.dumpConfirm)) return;
+const confirm = useConfirmStore();
+/** 倒掉在售的特色菜：危险操作，确认面板红色按钮（界面改版 P4） */
+async function dump() {
+  if (!(await confirm.ask({ title: t.value.mc.dumpConfirm, ok: t.value.mc.dump, danger: true }))) return;
   return act(() => endpoints.mcDump(), t.value.mc.dumped, t.value.mc.dumpFailed);
 }
 
@@ -236,11 +241,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
     </div>
     <p v-if="o.star < 1" class="small text-muted">{{ t.mc.needStar }}</p>
 
-    <div
-      v-if="o.current"
-      class="border rounded p-2 mb-2 small d-flex align-items-center"
-      data-testid="mc-current"
-    >
+    <div v-if="o.current" class="dt-card mb-2 small d-flex align-items-center" data-testid="mc-current">
       <div class="flex-fill">
         {{ t.mc.onSale }}<b>{{ nameOf(o.current.mcId) }}</b> {{ GRADE_NAMES[o.current.grade]
         }}{{ o.current.luck ? t.mc.lucky : '' }}
@@ -295,81 +296,82 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
         filtering ? t.mc.learnedOf(sortedLearned.length, o.learned.length) : t.mc.learned(o.learned.length)
       }}
     </h6>
-    <div v-if="o.learned.length === 0" class="small text-muted mb-2">
-      {{ t.mc.noLearned }}
-    </div>
+    <DtEmpty v-if="o.learned.length === 0" :title="t.mc.noLearned" data-testid="mc-learned-empty" />
     <div v-else-if="sortedLearned.length === 0" class="small text-muted mb-2" data-testid="mc-learned-none">
       {{ t.mc.filter.none }}
     </div>
-    <div
-      v-for="m in sortedLearned"
-      :key="m.mcId"
-      class="border-bottom py-1 small"
-      :data-testid="`learned-${m.mcId}`"
-    >
-      <div class="d-flex align-items-center">
-        <div class="flex-fill">
-          <b>{{ nameOf(m.mcId) }}</b>
-          <span class="text-muted ms-1">
-            {{
-              t.mc.dishMeta(
-                dish(m.mcId)?.level,
-                ROAD_NAMES[dish(m.mcId)?.road ?? 0] ?? '',
-                catalog.data('proficiency', m.curlevel)?.name ?? m.levelName,
-              )
-            }}
-          </span>
-          <div class="progress mt-1" style="height: 6px">
-            <div
-              class="progress-bar bg-warning"
-              :style="{ width: `${m.expNext ? Math.min(100, (m.curexp / m.expNext) * 100) : 100}%` }"
-            ></div>
-          </div>
-          <div class="text-muted">
-            {{ t.mc.proficiency(formatNum(m.curexp), m.expNext ? formatNum(m.expNext) : null) }}
-          </div>
-        </div>
-        <button
-          class="btn btn-sm btn-primary ms-2"
-          :data-testid="`cook-${m.mcId}`"
-          :disabled="busy || o.current !== null || o.star < 1"
-          @click="openCook(m.mcId)"
-        >
-          {{ t.mc.cook }}
-        </button>
-      </div>
+    <!-- 已学的一张卡片，一道一行（界面改版 P4） -->
+    <div v-if="sortedLearned.length > 0" class="dt-card mb-2">
       <div
-        v-if="preview && preview.mcId === m.mcId"
-        class="bg-light rounded p-2 mt-1"
-        data-testid="cook-panel"
+        v-for="m in sortedLearned"
+        :key="m.mcId"
+        class="dt-mc-row small"
+        :data-testid="`learned-${m.mcId}`"
       >
-        <div>
-          {{ t.mc.foods
-          }}<span v-for="f in preview.foods" :key="f.foodsId" class="me-2"
-            >{{ catalog.foodName(f.foodsId) }} {{ f.have }}</span
-          >
-        </div>
-        <label class="d-block my-1">
-          <input
-            v-model="cookie"
-            type="checkbox"
-            class="form-check-input me-1"
-            data-testid="cookie"
-            :disabled="preview.cookies === 0"
-          />{{ t.mc.cookie(preview.cookies) }}
-        </label>
-        <div class="d-flex flex-wrap gap-1">
+        <div class="d-flex align-items-center">
+          <div class="flex-fill">
+            <b>{{ nameOf(m.mcId) }}</b>
+            <span class="text-muted ms-1">
+              {{
+                t.mc.dishMeta(
+                  dish(m.mcId)?.level,
+                  ROAD_NAMES[dish(m.mcId)?.road ?? 0] ?? '',
+                  catalog.data('proficiency', m.curlevel)?.name ?? m.levelName,
+                )
+              }}
+            </span>
+            <div class="progress mt-1" style="height: 6px">
+              <div
+                class="progress-bar bg-warning"
+                :style="{ width: `${m.expNext ? Math.min(100, (m.curexp / m.expNext) * 100) : 100}%` }"
+              ></div>
+            </div>
+            <div class="text-muted">
+              {{ t.mc.proficiency(formatNum(m.curexp), m.expNext ? formatNum(m.expNext) : null) }}
+            </div>
+          </div>
           <button
-            v-for="c in preview.cookNums"
-            :key="c.n"
-            class="btn btn-sm btn-outline-primary"
-            :data-testid="`cooknum-${c.n}`"
-            :disabled="busy || !c.ok || (cookie && preview.cookies < c.n)"
-            @click="cook(c.n)"
+            class="btn btn-sm btn-primary ms-2"
+            :data-testid="`cook-${m.mcId}`"
+            :disabled="busy || o.current !== null || o.star < 1"
+            @click="openCook(m.mcId)"
           >
-            {{ t.mc.batches(c.n) }}
+            {{ t.mc.cook }}
           </button>
-          <button type="button" class="dt-link-btn" @click="preview = null">{{ t.common.cancel }}</button>
+        </div>
+        <div
+          v-if="preview && preview.mcId === m.mcId"
+          class="bg-light rounded p-2 mt-1"
+          data-testid="cook-panel"
+        >
+          <div>
+            {{ t.mc.foods
+            }}<span v-for="f in preview.foods" :key="f.foodsId" class="me-2"
+              >{{ catalog.foodName(f.foodsId) }} {{ f.have }}</span
+            >
+          </div>
+          <label class="d-block my-1">
+            <input
+              v-model="cookie"
+              type="checkbox"
+              class="form-check-input me-1"
+              data-testid="cookie"
+              :disabled="preview.cookies === 0"
+            />{{ t.mc.cookie(preview.cookies) }}
+          </label>
+          <div class="d-flex flex-wrap gap-1">
+            <button
+              v-for="c in preview.cookNums"
+              :key="c.n"
+              class="btn btn-sm btn-outline-primary"
+              :data-testid="`cooknum-${c.n}`"
+              :disabled="busy || !c.ok || (cookie && preview.cookies < c.n)"
+              @click="cook(c.n)"
+            >
+              {{ t.mc.batches(c.n) }}
+            </button>
+            <button type="button" class="dt-link-btn" @click="preview = null">{{ t.common.cancel }}</button>
+          </div>
         </div>
       </div>
     </div>
@@ -395,18 +397,18 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
           <option value="">{{ t.mc.exchange.pick }}</option>
           <option v-for="m in r.options" :key="m.id" :value="String(m.id)">{{ nameOf(m.id) }}</option>
         </select>
-        <input
+        <DtStepper
           v-if="exMax(r.num) > 1"
-          v-model.number="exNum[r.level]"
-          type="number"
-          min="1"
+          :model-value="exCount(r.level, r.num)"
+          :min="1"
           :max="exMax(r.num)"
-          class="form-control form-control-sm"
-          style="width: 60px"
-          :data-testid="`exchange-num-${r.level}`"
+          size="sm"
+          :testid="`exchange-num-${r.level}`"
+          @update:model-value="exNum[r.level] = $event"
         />
         <button
           class="btn btn-sm btn-outline-primary"
+          :data-testid="`exchange-go-${r.level}`"
           :disabled="busy || !exPick[r.level] || r.num < o.fragmentPerRemnant"
           @click="exchange(r.level, r.num)"
         >
@@ -414,11 +416,12 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
         </button>
       </div>
     </div>
-    <div v-if="o.remnants.length === 0" class="small text-muted">{{ t.mc.noRemnants }}</div>
+    <DtEmpty v-if="o.remnants.length === 0" :title="t.mc.noRemnants" data-testid="mc-remnants-empty" />
     <div v-else-if="groups.length === 0" class="small text-muted" data-testid="mc-remnants-none">
       {{ t.mc.filter.none }}
     </div>
-    <div v-for="g in groups" :key="g.key" class="mb-2" :data-testid="`group-${g.key}`">
+    <!-- 残卷按组各一张卡片（界面改版 P4） -->
+    <div v-for="g in groups" :key="g.key" class="dt-card mb-2" :data-testid="`group-${g.key}`">
       <div class="d-flex align-items-center small fw-bold text-muted mt-1">
         <span class="flex-fill">{{ t.mc.groupTitle(t.mc.groups[g.key], g.items.length) }}</span>
         <button
@@ -463,14 +466,13 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
         >
           {{ t.mc.learn }}
         </button>
-        <input
-          v-model.number="qty[r.mcId]"
-          type="number"
-          min="1"
+        <DtStepper
+          :model-value="numOf(r.mcId, r.num)"
+          :min="1"
           :max="r.num"
-          class="form-control form-control-sm"
-          style="width: 60px"
-          :data-testid="`remnant-num-${r.mcId}`"
+          size="sm"
+          :testid="`remnant-num-${r.mcId}`"
+          @update:model-value="qty[r.mcId] = $event"
         />
         <button
           class="btn btn-sm btn-outline-secondary"
