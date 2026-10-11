@@ -67,6 +67,7 @@ const home: Messages['home'] = {
   bulkRow: (name, level, qty, demand) =>
     `Bulk subscription: ${name} (level ${level}), ${qty} units, ${demand === null ? 'figures frozen for the final stretch' : `${demand} bid so far`}`,
   row: {
+    claimable: 'Ready',
     mainClaim: 'Claim main quest',
     activity: 'Daily activity',
     activityPts: (n) => `${n} ${plEn(n, 'point', 'points')}`,

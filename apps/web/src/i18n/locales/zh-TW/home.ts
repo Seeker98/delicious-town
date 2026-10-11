@@ -75,6 +75,7 @@ export default {
     `大宗認購: ${name} (${level} 級) 共 ${qty} 份, ${demand === null ? '最後階段停更中' : `已認購 ${demand} 份`}`,
   /** 首頁的短標題和灰色副行（介面改版 P5 返工：標題短、細節放副行） */
   row: {
+    claimable: '可領獎',
     mainClaim: '領主線獎勵',
     activity: '今日活躍',
     activityPts: (n: number) => `活躍度 ${n}`,

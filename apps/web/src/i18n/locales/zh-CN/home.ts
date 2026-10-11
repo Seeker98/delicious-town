@@ -74,6 +74,7 @@ export default {
     `大宗认购: ${name} (${level} 级) 共 ${qty} 份, ${demand === null ? '最后阶段停更中' : `已认购 ${demand} 份`}`,
   /** 首页的短标题和灰色副行（界面改版 P5 返工：标题短、细节放副行） */
   row: {
+    claimable: '可领奖',
     mainClaim: '领主线奖励',
     activity: '今日活跃',
     activityPts: (n: number) => `活跃度 ${n}`,

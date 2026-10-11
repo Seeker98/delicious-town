@@ -76,11 +76,6 @@ const mainChapterBody = computed(() => {
   const x = t.value.rest.tasks;
   return c.locked ? x.chapterLocked(c.id, chapterName(c)) : x.chapterAwardRow(c.id, chapterName(c));
 });
-/** 主线块浅绿底：显示的任务做完没领，或章末奖励能领（界面改版 P5） */
-const mainClaimable = computed(
-  () =>
-    (!!mainTask.value && mainTask.value.done && !mainTask.value.claimed) || !!mainChapter.value?.claimable,
-);
 const dining = ref<DineCurrentDto | null>(null);
 const announcements = ref<AnnouncementDto[]>([]);
 const options = ref<DeviceOptionsDto | null>(null);
@@ -351,7 +346,7 @@ onBeforeUnmount(() => {
           </template>
         </template>
         <template #aside>
-          <RouterLink to="/shards" class="dt-go">{{ t.nav.links.shards }}</RouterLink>
+          <RouterLink to="/shards">{{ t.nav.links.shards }}</RouterLink>
         </template>
       </HomeScene>
       <!-- 等级环往上压进头图；右边称号和经验数字（经验条换成等级环） -->
@@ -426,140 +421,135 @@ onBeforeUnmount(() => {
       <HomeStatus :rest="rest" :busy="busy" @refuel="act(() => endpoints.refuel(), t.home.refuelFailed)" />
     </section>
 
-    <!-- 上一轮（界面改版 P5）：三个统计块；收益记录在标题右边，楼层餐桌在客人那行右边 -->
+    <!-- 上一轮（界面改版 P5）：标题整行去收益记录；三个统计块；楼层餐桌一行（写这轮来了哪些客人） -->
     <!-- 还没结算过也显示这块：楼层页能灭蟑螂、赶白食，入口不能没有（问题记录 447） -->
     <section class="dt-block" data-testid="last-round">
-      <div class="dt-block-head">
+      <RouterLink to="/rest/income" class="dt-block-head is-link" data-testid="home-income-link">
         <h2 class="dt-block-title">{{ t.home.roundTitle }}</h2>
-        <RouterLink to="/rest/income" class="dt-go">{{ t.home.income }}</RouterLink>
-      </div>
+        <span class="dt-block-more">{{ t.home.income }}</span>
+      </RouterLink>
       <div v-if="rest.lastRound" class="dt-stat-grid" data-testid="last-round-line">
         <DtStatTile :value="`+${formatNum(rest.lastRound.coin)}`" :label="t.home.roundCoin" tone="good" />
         <DtStatTile :value="`+${formatNum(rest.lastRound.exp)}`" :label="t.home.roundExp" tone="good" />
         <DtStatTile :value="formatNum(rest.lastRound.oil)" :label="t.home.roundOil" />
       </div>
-      <div class="dt-block-row">
-        <span v-if="rest.lastRound" class="dt-shrink text-muted dt-clamp1" data-testid="last-round-guests">{{
-          customers || t.home.noGuests
-        }}</span>
-        <span v-else class="dt-shrink text-muted">{{ t.home.noRound }}</span>
-        <RouterLink to="/rest/floor" class="dt-go"
-          ><template v-if="hasRoach"
-            ><i class="bi bi-bug text-danger me-1" aria-hidden="true" data-testid="home-floor-roach"></i
-            ><span class="visually-hidden">{{ t.home.hasRoach }}</span></template
-          >{{ t.home.floor }}</RouterLink
-        >
+      <div class="dt-card dt-rows-card mt-2">
+        <DtRow to="/rest/floor" :title="t.home.floor" art="nav-home" data-testid="home-floor-row">
+          <template #title
+            >{{ t.home.floor
+            }}<template v-if="hasRoach"
+              ><i class="bi bi-bug text-danger ms-1" aria-hidden="true" data-testid="home-floor-roach"></i
+              ><span class="visually-hidden">{{ t.home.hasRoach }}</span></template
+            ></template
+          >
+          <template #sub
+            ><span data-testid="last-round-guests">{{
+              rest.lastRound ? customers || t.home.noGuests : t.home.noRound
+            }}</span></template
+          >
+        </DtRow>
       </div>
     </section>
 
-    <!-- 今日（界面改版 P5）：2×2 的大块——签到、主线、今日活跃、新手；缺的块不留空格子，奇数时最后一块占满一行 -->
-    <!-- 首页不直接领奖（问题记录 555）：主线、章末、每周、支线任意能领时任务入口加礼物图标，点进第一个能领的卡 -->
+    <!-- 今日待办（P5 返工，按最初定的设计）：一张卡片一行一件事；签到是右边的胶囊按钮，其余整行去对应页面 -->
+    <!-- 首页不直接领奖（问题记录 555）：主线、章末、每周、支线任意能领时主线行写“可领奖”，点进第一个能领的卡 -->
     <section class="dt-block" data-testid="home-todo">
       <div class="dt-block-head">
-        <h2 class="dt-block-title">{{ t.home.todayTitle }}</h2>
-        <RouterLink v-if="showTasks" :to="tasksTo" class="dt-go" data-testid="home-tasks-link"
-          >{{ t.home.tasksLink
-          }}<span v-if="claimTab" class="text-primary ms-1" data-testid="home-tasks-gift"
-            ><i class="bi bi-gift" aria-hidden="true"></i
-            ><span class="visually-hidden">{{ t.home.activationClaimable }}</span></span
-          ></RouterLink
-        >
+        <h2 class="dt-block-title">{{ t.home.todo }}</h2>
       </div>
-      <!-- 每块一个短标题，细节写在灰色副行（P5 返工：原来整句加粗、折成两三行） -->
-      <div class="dt-do-grid">
-        <!-- 签到：没签是紫色实心的整块按钮；签过是普通块，细线对勾（问题记录 445） -->
-        <template v-if="signedIn !== null">
-          <button
-            v-if="!signedIn"
-            type="button"
-            class="dt-do dt-do-primary"
-            data-testid="home-signin-row"
-            :disabled="busy"
-            @click="act(() => endpoints.signIn(), t.home.signInFailed)"
-          >
-            <span class="dt-do-title" data-testid="home-signin">{{ t.home.signInBtn }}</span>
-            <span class="dt-do-sub">{{ t.home.signInTodo }}</span>
-          </button>
-          <div v-else class="dt-do" data-testid="home-signin-row">
-            <span class="dt-do-title">{{ t.home.signInBtn }}</span>
-            <span class="dt-do-sub" data-testid="home-signed"
+      <div class="dt-card dt-rows-card">
+        <DtRow v-if="signedIn !== null" :title="t.home.signIn" art="sec-tasks" data-testid="home-signin-row">
+          <template #end>
+            <button
+              v-if="!signedIn"
+              type="button"
+              class="btn btn-sm btn-primary"
+              data-testid="home-signin"
+              :disabled="busy"
+              @click="act(() => endpoints.signIn(), t.home.signInFailed)"
+            >
+              {{ t.home.signInBtn }}
+            </button>
+            <span v-else class="dt-row-done" data-testid="home-signed"
               ><i class="bi bi-check2 me-1" aria-hidden="true"></i>{{ t.home.signedShort }}</span
             >
-          </div>
-        </template>
-        <!-- 主线：本章第一个能领的 / 第一个没完成的任务，或章末奖励、解锁条件；整块去任务页，能领时浅绿底 -->
-        <component
-          :is="showTasks ? RouterLink : 'div'"
+          </template>
+        </DtRow>
+        <DtRow
           v-if="mainTask || mainChapter || showTasks"
           :to="showTasks ? tasksTo : undefined"
-          :class="['dt-do', { 'is-claim': mainClaimable }]"
+          :title="t.home.mainTag"
+          art="sec-rank"
           data-testid="main-task"
         >
-          <span class="dt-do-title">{{ mainClaimable ? t.home.row.mainClaim : t.home.mainTag }}</span>
-          <span v-if="mainTask" class="dt-do-sub dt-clamp2"
-            >{{ questTitle(catalog.data('tasks', mainTask.id)?.name ?? mainTask.name, mainTask)
-            }}{{
-              t.common.paren(
-                `${formatNum(Math.min(mainTask.progress, mainTask.target))}/${formatNum(mainTask.target)}`,
-              )
-            }}</span
+          <template #sub>
+            <template v-if="mainTask"
+              >{{ questTitle(catalog.data('tasks', mainTask.id)?.name ?? mainTask.name, mainTask)
+              }}{{
+                t.common.paren(
+                  `${formatNum(Math.min(mainTask.progress, mainTask.target))}/${formatNum(mainTask.target)}`,
+                )
+              }}</template
+            >
+            <template v-else-if="mainChapter"
+              >{{ mainChapterBody
+              }}<template v-if="mainChapter.locked">{{
+                t.common.paren(
+                  mainChapter.needStar > 0
+                    ? t.rest.tasks.lockedStar(mainChapter.needStar)
+                    : t.rest.tasks.lockedLevel(mainChapter.needLevel),
+                )
+              }}</template></template
+            >
+            <template v-else>{{ mainAllDone ? t.rest.tasks.mainDone : t.rest.tasks.main }}</template>
+          </template>
+          <template v-if="claimTab" #value
+            ><span class="dt-tag dt-tag-warn" data-testid="home-tasks-gift">{{
+              t.home.row.claimable
+            }}</span></template
           >
-          <span v-else-if="mainChapter" class="dt-do-sub dt-clamp2"
-            >{{ mainChapterBody
-            }}<template v-if="mainChapter.locked">{{
-              t.common.paren(
-                mainChapter.needStar > 0
-                  ? t.rest.tasks.lockedStar(mainChapter.needStar)
-                  : t.rest.tasks.lockedLevel(mainChapter.needLevel),
-              )
-            }}</template></span
-          >
-          <span v-else class="dt-do-sub">{{ mainAllDone ? t.rest.tasks.mainDone : t.rest.tasks.main }}</span>
-        </component>
-        <RouterLink
+        </DtRow>
+        <ActivityBanner />
+        <DtRow
           v-if="activeTotal !== null"
           to="/rest/tasks?tab=today"
-          class="dt-do"
+          :title="t.home.activation(activeTotal)"
+          art="sec-bonus"
           data-testid="home-activation"
-          ><span class="dt-do-title"
-            >{{ t.home.row.activity
-            }}<span v-if="activeClaimable" class="text-primary ms-1" data-testid="home-activation-gift"
-              ><i class="bi bi-gift" aria-hidden="true"></i
-              ><span class="visually-hidden">{{ t.home.activationClaimable }}</span></span
-            ></span
-          ><span class="dt-do-sub">{{ t.home.row.activityPts(activeTotal) }}</span></RouterLink
         >
+          <template v-if="activeClaimable" #value
+            ><span class="dt-tag dt-tag-warn" data-testid="home-activation-gift">{{
+              t.home.row.claimable
+            }}</span></template
+          >
+        </DtRow>
         <!-- 新手提示（问题记录 150）：有能领的新手码时去兑换码页（界面改版 P2b）；没有时 10 级以前看指引 -->
-        <RouterLink
+        <DtRow
           v-if="codesClaimable || rest.level < 10"
           :to="codesClaimable ? '/redeem' : '/guide'"
-          class="dt-do"
+          :title="codesClaimable ? t.home.row.codes : t.home.row.guide"
+          :sub="codesClaimable ? t.home.row.codesSub : t.home.row.guideSub"
+          :art="codesClaimable ? 'me-redeem' : 'me-help'"
           data-testid="guide-hint"
-          ><span class="dt-do-title">{{ codesClaimable ? t.home.row.codes : t.home.row.guide }}</span
-          ><span class="dt-do-sub">{{
-            codesClaimable ? t.home.row.codesSub : t.home.row.guideSub
-          }}</span></RouterLink
         >
-      </div>
-      <!-- 其余提醒：活动、交易所、白食、理财到期，一行一件；一件都没有时整张卡片不显示 -->
-      <div class="dt-card dt-rows-card mt-2" data-testid="home-reminders">
-        <ActivityBanner />
+        </DtRow>
         <!-- 交易所（问题记录 591）：够门槛才有；有大宗认购时写批次和认购份数，点了去大宗认购标签。旧服务端没有这个字段 -->
         <DtRow
           v-if="rest.exchangeHint"
           :to="rest.exchangeHint.bulk ? '/exchange?tab=bulk' : '/exchange'"
-          art="place-exchange"
           :title="rest.exchangeHint.bulk ? t.home.row.bulk : t.nav.links.exchange"
           :sub="exchangeRowText"
+          art="place-exchange"
           data-testid="home-exchange-row"
-        />
+        >
+        </DtRow>
         <DtRow
           v-if="dining"
-          art="nav-friends"
           :title="t.home.row.dining"
           :sub="
             t.home.row.diningSub(restName(dining.hostRestId, dining.hostName), dining.tableNo, dining.minutes)
           "
+          art="nav-friends"
           data-testid="dine-card"
         >
           <template #end>
@@ -577,11 +567,12 @@ onBeforeUnmount(() => {
         <DtRow
           v-if="(rest.wealthDue ?? 0) > 0"
           to="/bank?tab=wealth"
-          art="place-bank"
           :title="t.home.row.wealth"
           :sub="t.home.row.wealthSub(rest.wealthDue ?? 0)"
+          art="place-bank"
           data-testid="home-wealth-row"
-        />
+        >
+        </DtRow>
       </div>
     </section>
 

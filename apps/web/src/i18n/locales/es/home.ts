@@ -67,6 +67,7 @@ const home: Messages['home'] = {
   bulkRow: (name, level, qty, demand) =>
     `Suscripción mayorista: ${name} (nv. ${level}), ${qty} unidades, ${demand === null ? 'cifras congeladas en el tramo final' : `${demand} pujadas por ahora`}`,
   row: {
+    claimable: 'Para reclamar',
     mainClaim: 'Reclamar misión principal',
     activity: 'Actividad del día',
     activityPts: (n) => `${n} ${plEs(n, 'punto', 'puntos')}`,

@@ -68,6 +68,7 @@ const home: Messages['home'] = {
   bulkRow: (name, level, qty, demand) =>
     `Souscription en gros\u202f: ${name} (niv. ${level}), ${qty} unités, ${demand === null ? 'chiffres figés pour la dernière ligne droite' : `${demand} demandées pour l'instant`}`,
   row: {
+    claimable: 'À récupérer',
     mainClaim: 'Récupérer la quête principale',
     activity: 'Activité du jour',
     activityPts: (n) => `${n} ${plFr(n, 'point', 'points')}`,

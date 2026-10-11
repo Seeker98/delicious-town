@@ -18,12 +18,11 @@ const isNew = (f: RestLogDto) => seen.value === null || f.at > seen.value;
 
 <template>
   <section v-if="items.length > 0" class="dt-block" data-testid="home-feed">
-    <div class="dt-block-head">
+    <!-- 标题整行去好友页动态（P5 返工：不再用“全部 ›”文字链接） -->
+    <RouterLink to="/friends?tab=feed" class="dt-block-head is-link" data-testid="home-feed-more">
       <h2 class="dt-block-title">{{ t.home.feedTitle }}</h2>
-      <RouterLink to="/friends?tab=feed" class="dt-go" data-testid="home-feed-more">{{
-        t.nav.news.more
-      }}</RouterLink>
-    </div>
+      <span class="dt-block-more">{{ t.nav.news.more }}</span>
+    </RouterLink>
     <!-- 和好友页动态同一种行（界面改版 P2b）；首页只占一行，长的截断 -->
     <div class="dt-card dt-list-card small">
       <FeedRow

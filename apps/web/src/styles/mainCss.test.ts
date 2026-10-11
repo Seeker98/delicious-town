@@ -39,6 +39,11 @@ describe('main.css', () => {
     expect(rule).toContain('flex-wrap: wrap');
   });
 
+  it('去别处的文字链接是紫字加点状下划线，后面不再加 ›（P5 返工，设计 §2.6：“文字 ›”只留给整行去别处）', () => {
+    expect(css).toMatch(/\.dt-go \{[^}]*text-decoration: underline dotted;/);
+    expect(css).not.toMatch(/\.dt-go::after/);
+  });
+
   it('同一个类不在顶层定义两次，免得后写的悄悄覆盖前面的（问题记录 212：.dt-chip 撞名）', () => {
     const seen = new Map<string, number>();
     for (const s of topLevelSelectors(css)) seen.set(s, (seen.get(s) ?? 0) + 1);

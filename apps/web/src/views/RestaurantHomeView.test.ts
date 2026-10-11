@@ -212,8 +212,8 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, level: 20 });
     vi.mocked(endpoints.guideCodes).mockResolvedValue([code('ok')]);
     const can = await mountView();
-    expect(can.get('[data-testid="guide-hint"] .dt-do-title').text()).toBe('新手兑换码');
-    expect(can.get('[data-testid="guide-hint"] .dt-do-sub').text()).toBe('有可以领的码');
+    expect(can.get('[data-testid="guide-hint"] .dt-row-title').text()).toBe('新手兑换码');
+    expect(can.get('[data-testid="guide-hint"] .dt-row-sub').text()).toBe('有可以领的码');
     // 新手码搬到兑换码页（界面改版 P2b）
     expect(can.get('[data-testid="guide-hint"]').attributes('href')).toBe('/redeem');
     vi.mocked(endpoints.guideCodes).mockResolvedValue([code('used')]);
@@ -283,10 +283,13 @@ describe('RestaurantHomeView', () => {
     expect(tiles.map((x) => x.classes().includes('is-good'))).toEqual([true, true, false]);
     // 经验数字前面有经验图标（手机上没有悬停，靠它认出经验）
     expect(artOf(w.get('[data-testid="exp-text"]'))).toBe('res-exp');
-    const income = last.get('.dt-block-head a');
+    // P5 返工：标题整行去收益记录；楼层餐桌是一行，客人写在灰色副行
+    const income = last.get('[data-testid="home-income-link"]');
     expect(income.attributes('href')).toBe('/rest/income');
-    expect(income.classes()).toContain('dt-go');
-    expect(last.get('[data-testid="last-round-guests"] + a').attributes('href')).toBe('/rest/floor');
+    expect(income.classes()).toContain('is-link');
+    const floor = last.get('[data-testid="home-floor-row"]');
+    expect(floor.attributes('href')).toBe('/rest/floor');
+    expect(floor.get('[data-testid="last-round-guests"]').text()).toBe('普通顾客×1');
     // 问题记录 435：油量右边一个小升级图标，链到油壶升级
     const up = w.get('[data-testid="oil-upgrade"]');
     expect(up.attributes('href')).toBe('/society/oil');
@@ -489,19 +492,17 @@ describe('RestaurantHomeView', () => {
     const w = await mountView();
     const main = w.get('[data-testid="main-task"]');
     expect(main.find('.dt-tag').exists()).toBe(false);
-    // P5 返工：块里只有短标题“主线”，任务名和进度写在灰色副行
-    expect(main.get('.dt-do-title').text()).toBe('主线');
-    expect(main.get('.dt-do-sub').text()).toBe('填一次油 (0/1)');
-    // 界面改版 P5：主线块整块去任务页，“今日”标题右边也有任务入口
+    // P5 返工：一行写“主线”，任务名和进度写在灰色副行；整行去任务页
+    expect(main.get('.dt-row-title').text()).toBe('主线');
+    expect(main.get('.dt-row-sub').text()).toBe('填一次油 (0/1)');
     expect(main.attributes('href')).toBe('/rest/tasks?tab=main');
-    expect(w.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks?tab=main');
     // P5 返工：提醒行都是同一种行，左边一个图标托盘，标题和灰色副行分开写
     const dine = w.get('[data-testid="dine-card"]');
     expect(dine.classes()).toContain('dt-row');
     expect(artOf(dine.get('.dt-row-ico'))).toBe('nav-friends');
     expect(dine.get('.dt-row-title').text()).toBe('白食中');
     expect(dine.get('.dt-row-sub').text()).toBe('乙店 第 3 桌, 已 45 分钟');
-    for (const row of w.get('[data-testid="home-reminders"]').findAll('.dt-row'))
+    for (const row of w.get('[data-testid="home-todo"]').findAll('.dt-row'))
       expect(row.find('.dt-row-ico svg').exists(), row.text()).toBe(true);
   });
 
@@ -601,8 +602,7 @@ describe('RestaurantHomeView', () => {
     expect(todo.find('[data-testid="home-signin-row"]').exists()).toBe(true);
     expect(todo.find('[data-testid="main-task"]').exists()).toBe(true);
     const act = todo.get('[data-testid="home-activation"]');
-    expect(act.get('.dt-do-title').text()).toBe('今日活跃');
-    expect(act.get('.dt-do-sub').text()).toBe('活跃度 18');
+    expect(act.get('.dt-row-title').text()).toBe('今日活跃 18');
     expect(act.attributes('href')).toBe('/rest/tasks?tab=today');
     // 顺序：餐厅 → 待办 → 小镇动态 → 设施
     const pos = (sel: string) => w.html().indexOf(sel);
@@ -793,12 +793,11 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([quest({ progress: 1, done: true })]));
     const w = await mountView();
     const card = w.find('[data-testid="main-task"]');
-    // 界面改版 P5：今日 2×2 里的一块；能领时浅绿底
-    expect(card.classes()).toEqual(expect.arrayContaining(['dt-do', 'is-claim']));
+    // P5 返工：今日待办里的一行，整行去任务页；能领时右边一个“可领奖”标签（不是按钮）
+    expect(card.classes()).toEqual(expect.arrayContaining(['dt-row', 'is-link']));
     expect(card.find('button').exists()).toBe(false);
-    const link = w.get('[data-testid="home-tasks-link"]');
-    expect(link.attributes('href')).toBe('/rest/tasks?tab=main');
-    expect(link.find('[data-testid="home-tasks-gift"] i.bi-gift').exists()).toBe(true);
+    expect(card.attributes('href')).toBe('/rest/tasks?tab=main');
+    expect(card.get('[data-testid="home-tasks-gift"]').text()).toBe('可领奖');
   });
 
   it('每周、支线有能领的也在任务入口加礼物图标，点进那一卡；主线优先（问题记录 555）', async () => {
@@ -819,7 +818,7 @@ describe('RestaurantHomeView', () => {
     };
     const link = async (q: QuestsDto) => {
       vi.mocked(endpoints.tasks).mockResolvedValue(q);
-      return (await mountView()).get('[data-testid="home-tasks-link"]');
+      return (await mountView()).get('[data-testid="main-task"]');
     };
     let l = await link(quests([quest()], { weekly: weekly(true), lines: [line] }));
     expect(l.attributes('href')).toBe('/rest/tasks?tab=weekly');
@@ -854,17 +853,17 @@ describe('RestaurantHomeView', () => {
     );
     w = await mountView();
     expect(w.get('[data-testid="main-task"]').text()).toContain('分配属性点');
-    expect(w.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks?tab=main');
+    expect(w.get('[data-testid="main-task"]').attributes('href')).toBe('/rest/tasks?tab=main');
     expect(w.find('[data-testid="home-tasks-gift"]').exists()).toBe(false);
     // 主线全做完：这一行写已全部完成，右边照样有任务入口（终审 C1：每周和支线还要从这里进）
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([], { chapter: null, allMainDone: true }));
     w = await mountView();
     expect(w.get('[data-testid="main-task"]').text()).toContain('主线已全部完成');
-    expect(w.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks?tab=main');
+    expect(w.get('[data-testid="main-task"]').attributes('href')).toBe('/rest/tasks?tab=main');
     // 任务读不到时也留着入口
     vi.mocked(endpoints.tasks).mockRejectedValue(new Error('x'));
     w = await mountView();
-    expect(w.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks?tab=main');
+    expect(w.get('[data-testid="main-task"]').attributes('href')).toBe('/rest/tasks?tab=main');
   });
 
   it('区服关掉任务功能时首页不放任务入口（终审：原来“更多”里的入口看功能开关）', async () => {
@@ -886,7 +885,7 @@ describe('RestaurantHomeView', () => {
     );
     w = await mountView();
     expect(w.get('[data-testid="main-task"]').text()).toContain('领一次限时活动奖励');
-    expect(w.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks?tab=main');
+    expect(w.get('[data-testid="main-task"]').attributes('href')).toBe('/rest/tasks?tab=main');
     vi.mocked(endpoints.tasks).mockResolvedValue(
       quests([], { chapter: null, allMainDone: true, leftover: [{ ...left, progress: 0, done: false }] }),
     );
@@ -904,7 +903,7 @@ describe('RestaurantHomeView', () => {
     expect(w.find('.alert-danger').exists()).toBe(false);
     // 主线行只剩“主线”和任务入口（终审 C1）
     expect(w.get('[data-testid="main-task"]').text()).toMatch(/^主线/);
-    expect(w.find('[data-testid="home-tasks-link"]').exists()).toBe(true);
+    expect(w.get('[data-testid="main-task"]').attributes('href')).toBe('/rest/tasks?tab=main');
     expect(w.find('[data-testid="home-todo"]').exists()).toBe(true);
   });
 
@@ -913,8 +912,8 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.tasks).mockResolvedValue({ ...all, chapter: { ...all.chapter!, claimable: true } });
     let w = await mountView();
     const row = w.get('[data-testid="main-task"]');
-    expect(row.get('.dt-do-title').text()).toBe('领主线奖励');
-    expect(row.get('.dt-do-sub').text()).toContain('第 1 章 开张大吉 章末奖励');
+    expect(row.get('.dt-row-title').text()).toBe('主线');
+    expect(row.get('.dt-row-sub').text()).toContain('第 1 章 开张大吉 章末奖励');
     // 章末奖励也到任务页领（问题记录 555）
     expect(row.find('button').exists()).toBe(false);
     expect(row.attributes('href')).toBe('/rest/tasks?tab=main');
@@ -924,8 +923,8 @@ describe('RestaurantHomeView', () => {
     );
     w = await mountView();
     // 冒号后不多空格（终审小项）
-    expect(w.get('[data-testid="main-task"] .dt-do-title').text()).toBe('主线');
-    expect(w.get('[data-testid="main-task"] .dt-do-sub').text()).toBe('第 2 章 小店经营 (🔒 5 级解锁)');
+    expect(w.get('[data-testid="main-task"] .dt-row-title').text()).toBe('主线');
+    expect(w.get('[data-testid="main-task"] .dt-row-sub').text()).toBe('第 2 章 小店经营 (🔒 5 级解锁)');
     expect(w.find('[data-testid="home-tasks-gift"]').exists()).toBe(false);
   });
 
@@ -952,11 +951,12 @@ describe('RestaurantHomeView', () => {
     const w = await mountView();
     const btn = w.find('[data-testid="home-signin"]');
     expect(btn.text()).toContain('签到');
-    // 界面改版 P5：没签到时签到块是紫色实心的整块按钮（今日 2×2 的第一块）
-    const tile = w.get('[data-testid="home-signin-row"]');
-    expect(tile.element.tagName).toBe('BUTTON');
-    expect(tile.classes()).toEqual(expect.arrayContaining(['dt-do', 'dt-do-primary']));
-    expect(tile.text()).toContain('今天还没签');
+    // P5 返工：签到是今日待办里的一行，右边一个紫色胶囊按钮（最初定的“本页操作”）
+    const row = w.get('[data-testid="home-signin-row"]');
+    expect(row.classes()).toContain('dt-row');
+    expect(row.get('.dt-row-title').text()).toBe('每日签到');
+    expect(btn.classes()).toEqual(expect.arrayContaining(['btn', 'btn-primary']));
+    expect(btn.element.closest('.dt-row-end')).not.toBeNull();
     vi.mocked(endpoints.activation).mockResolvedValue({
       total: 0,
       signedIn: true,
@@ -973,25 +973,25 @@ describe('RestaurantHomeView', () => {
     expect(w.get('[data-testid="home-signed"]').text()).toBe('已签到');
   });
 
-  it('今日 2×2：签到、主线、今日活跃、新手各一块，排在“今日”标题下（界面改版 P5）', async () => {
+  it('今日待办一张卡片、一行一件事：签到、主线、今日活跃、新手（P5 返工，按最初定的设计）', async () => {
     vi.mocked(endpoints.guideCodes).mockResolvedValue([]);
     const w = await mountView();
     const todo = w.get('[data-testid="home-todo"]');
-    expect(todo.get('.dt-block-title').text()).toBe('今日');
-    const ids = todo.findAll('.dt-do-grid > .dt-do').map((x) => x.attributes('data-testid'));
+    expect(todo.get('.dt-block-title').text()).toBe('今日待办');
+    const ids = todo.findAll('.dt-rows-card > .dt-row').map((x) => x.attributes('data-testid'));
     expect(ids).toEqual(['home-signin-row', 'main-task', 'home-activation', 'guide-hint']);
-    expect(w.findAll('[data-testid="home-activation"]')).toHaveLength(1);
+    expect(todo.find('.dt-do').exists()).toBe(false);
   });
 
-  it('签到和活跃读失败、没有新手提示时只剩主线一块，占满一行、不留空格子（界面改版 P5）', async () => {
+  it('签到和活跃读失败、没有新手提示时只剩主线一行', async () => {
     vi.mocked(endpoints.activation).mockRejectedValue(new Error('x'));
     vi.mocked(endpoints.guideCodes).mockResolvedValue([]);
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, level: 30 });
     const w = await mountView();
-    const ids = w.findAll('.dt-do-grid > .dt-do').map((x) => x.attributes('data-testid'));
+    const ids = w
+      .findAll('[data-testid="home-todo"] .dt-rows-card > .dt-row')
+      .map((x) => x.attributes('data-testid'));
     expect(ids).toEqual(['main-task']);
-    // 奇数块时最后一块占满一行
-    expect(readCss('main')).toMatch(/\.dt-do:last-child:nth-child\(odd\) \{\s*grid-column: 1 \/ -1;/);
   });
 
   it('读签到状态失败时不显示这一行', async () => {
@@ -1023,7 +1023,7 @@ describe('RestaurantHomeView', () => {
     setActivePinia(pinia);
     try {
       const w = await mountView();
-      expect(w.find('[data-testid="home-todo"] .dt-block-title').text()).toBe('Today');
+      expect(w.find('[data-testid="home-todo"] .dt-block-title').text()).toBe("Today's to-do");
       expect(w.find('[data-testid="home-switches"] .dt-block-title').text()).toBe('Business settings');
       expect(w.find('[data-testid="home-devices"] .dt-block-title').text()).toBe('Facilities');
       expect(w.find('[data-testid="home-signin"]').text()).toBe('Check in');
@@ -1058,9 +1058,9 @@ describe('RestaurantHomeView', () => {
     expect(signed.find('i.bi-check-circle-fill').exists()).toBe(false);
     expect(signed.get('i.bi-check2').attributes('aria-hidden')).toBe('true');
     expect(signed.text()).toBe('已签到');
-    // 今日活跃是旁边单独一块，链到活跃页
+    // 今日活跃是下面一行，链到活跃页
     const act = w.get('[data-testid="home-activation"]');
-    expect(act.get('.dt-do-sub').text()).toBe('活跃度 10');
+    expect(act.get('.dt-row-title').text()).toBe('今日活跃 10');
     expect(act.attributes('href')).toBe('/rest/tasks?tab=today');
     // 问题记录 445：不再写签到领到了什么
     expect(w.find('[data-testid="home-signin-gift"]').exists()).toBe(false);
@@ -1081,12 +1081,9 @@ describe('RestaurantHomeView', () => {
     const w = await mountView();
     const act = w.get('[data-testid="home-activation"]');
     const gift = act.get('[data-testid="home-activation-gift"]');
-    expect(gift.get('i.bi-gift').attributes('aria-hidden')).toBe('true');
-    // 读屏读成“今日活跃 40, 有奖励可领”：数字和后半句之间有分隔（问题记录 475~493 遗留）
-    expect(gift.get('.visually-hidden').text()).toBe(', 有奖励可领');
-    // 读屏读成“今日活跃, 有奖励可领 活跃度 40”；看得到的字是标题“今日活跃”和副行“活跃度 40”
-    expect(act.get('.dt-do-title').text()).toBe('今日活跃, 有奖励可领');
-    expect(act.get('.dt-do-sub').text()).toBe('活跃度 40');
+    // P5 返工：右边一个“可领奖”标签（看得见，读屏也读）
+    expect(gift.text()).toBe('可领奖');
+    expect(act.get('.dt-row-title').text()).toBe('今日活跃 40');
 
     vi.mocked(endpoints.activation).mockResolvedValue({
       ...base,
@@ -1157,12 +1154,6 @@ describe('RestaurantHomeView', () => {
     expect(css).not.toMatch(/\.dt-home-res > \.dt-res-pill \{[^}]*flex: 1 1 0;/);
   });
 
-  it('今日块按下缩小只在没开“减少动态效果”时（设计 §2.5，P5 终审）', () => {
-    expect(readCss('main')).toMatch(
-      /@media \(prefers-reduced-motion: no-preference\) \{\s*a\.dt-do:active,\s*button\.dt-do:active:not\(:disabled\) \{\s*transform: scale\(0\.97\);/,
-    );
-  });
-
   it('开了的设施格子图形放在 40px 托盘里（界面改版 P5）', async () => {
     const w = await mountView();
     expect(w.get('[data-testid="slot-1"] .dt-fac-ico svg').attributes('width')).toBe('28');
@@ -1199,15 +1190,11 @@ describe('RestaurantHomeView', () => {
     });
     vi.mocked(endpoints.guideCodes).mockResolvedValue([]);
     const w = await mountView();
-    for (const sel of [
-      '[data-testid="home-acquired"] a',
-      // 今日活跃是今日 2×2 里的一块（界面改版 P5），不再是 dt-go 文字链接
-      '[data-testid="home-news-more"]',
-      // 食谱、特色菜是“我的店”里的导航行（界面改版 P5），箭头由导航行的样式加
-      'a[href="/shards"]',
-      'a[href="/weather"]',
-    ])
+    for (const sel of ['[data-testid="home-acquired"] a', 'a[href="/weather"]'])
       expect(w.get(sel).classes(), sel).toContain('dt-go');
+    // P5 返工：去别处的区块标题整行可点；切换区服是小胶囊，不是文字链接
+    expect(w.get('[data-testid="home-news-more"]').classes()).toContain('is-link');
+    expect(w.get('a[href="/shards"]').classes()).not.toContain('dt-go');
     expect(w.text()).not.toMatch(/[›→]/);
   });
 });
