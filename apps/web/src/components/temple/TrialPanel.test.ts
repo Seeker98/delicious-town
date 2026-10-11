@@ -18,6 +18,18 @@ vi.mock('../../api/endpoints', () => ({
   },
 }));
 
+/** 选食材、触手指定、玩法说明都是底部面板（Teleport 到 body）：测试里把 teleport 桩掉，面板内容留在 wrapper 里（同 ShopView.test） */
+const stubs = { teleport: true };
+
+type W = ReturnType<typeof mount>;
+/** 点格子打开食材面板，选一种（选好面板自动关） */
+async function pick(w: W, slot: 'main' | 'sub', id: number) {
+  await w.get(`[data-testid="trial-slot-${slot}"]`).trigger('click');
+  await w.get(`[data-testid="trial-food-${id}"]`).trigger('click');
+}
+/** 点格子打开食材面板 */
+const openSlot = (w: W, slot: 'main' | 'sub') => w.get(`[data-testid="trial-slot-${slot}"]`).trigger('click');
+
 describe('TrialPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -66,8 +78,11 @@ describe('TrialPanel', () => {
   });
 
   it('没准备时显示注射和冥想；冥想调用 way 2', async () => {
-    const w = mount(TrialPanel, { props: { data: templeData() } });
+    const w = mount(TrialPanel, { global: { stubs }, props: { data: templeData() } });
     await flushPromises();
+    expect(w.find('[data-testid="trial-ready"]').exists()).toBe(false);
+    expect(w.find('[data-testid="trial-inject"]').exists()).toBe(true);
+    expect(w.get('[data-testid="block"]').text()).toBe('先注射或冥想做好准备');
     await w.find('[data-testid="trial-meditate"]').trigger('click');
     await flushPromises();
     expect(endpoints.trialPrepare).toHaveBeenCalledWith(2);
@@ -77,13 +92,14 @@ describe('TrialPanel', () => {
   it('法语：预计成功率用小数逗号（backlog：原来显示成 45.3 %）', async () => {
     await useLocaleStore().set('fr');
     const w = mount(TrialPanel, {
+      global: { stubs },
       props: {
         data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
       },
     });
     await flushPromises();
-    await w.get('[data-testid="trial-food-150"]').trigger('click');
-    await w.get('[data-testid="trial-food-423"]').trigger('click');
+    await pick(w, 'main', 150);
+    await pick(w, 'sub', 423);
     const text = w.find('[data-testid="trial-rate"]').text();
     expect(text).toMatch(/\d,\d\s%/);
     expect(text).not.toMatch(/\d\.\d/);
@@ -91,20 +107,31 @@ describe('TrialPanel', () => {
 
   it('准备好后选主辅食材开始试炼，显示预计成功率和结果', async () => {
     const w = mount(TrialPanel, {
+      global: { stubs },
       props: {
         data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
       },
     });
     await flushPromises();
-    expect(w.text()).toContain('秘·凤凰展翅');
-    // 主料槽默认选中；点一个食材填进主料，自动换到辅料槽（问题记录 487）
-    expect(w.get('[data-testid="trial-slot-main"]').attributes('aria-pressed')).toBe('true');
+    expect(w.get('[data-testid="trial-ready"]').text()).toContain('勋章还剩 30 分钟 · 创意 5');
+    expect(w.find('[data-testid="trial-inject"]').exists()).toBe(false);
+    expect(w.get('[data-testid="trial-target"]').text()).toContain('秘·凤凰展翅');
+    expect(w.get('[data-testid="block"]').text()).toBe('选好主料和辅料');
+    // 点主料格子从下面弹出食材面板（界面改版 P9）；选好自动关，不再自动跳到辅料（问题记录 487）
+    expect(w.find('[data-testid="trial-search"]').exists()).toBe(false);
+    await openSlot(w, 'main');
+    expect(w.get('.dt-sheet-title').text()).toBe('选主料');
     await w.get('[data-testid="trial-food-150"]').trigger('click');
+    expect(w.find('[data-testid="trial-search"]').exists()).toBe(false);
     expect(w.get('[data-testid="trial-slot-main"]').text()).toContain('稀有料');
-    expect(w.get('[data-testid="trial-slot-sub"]').attributes('aria-pressed')).toBe('true');
+    expect(w.get('[data-testid="trial-slot-sub"]').text()).toContain('+ 选辅料');
+    await openSlot(w, 'sub');
+    expect(w.get('.dt-sheet-title').text()).toBe('选辅料');
     await w.get('[data-testid="trial-food-423"]').trigger('click');
+    expect(w.find('[data-testid="trial-search"]').exists()).toBe(false);
     expect(w.get('[data-testid="trial-slot-sub"]').text()).toContain('普通料');
     expect(w.find('[data-testid="trial-rate"]').text()).toContain('%');
+    expect(w.find('[data-testid="block"]').exists()).toBe(false);
     await w.find('[data-testid="trial-start"]').trigger('click');
     await flushPromises();
     expect(endpoints.trialStart).toHaveBeenCalledWith(150, 423);
@@ -130,11 +157,13 @@ describe('TrialPanel', () => {
       items: [150, 423, 31, 21].map((foodsId) => ({ foodsId, num: 5, locked: false, streetNeed: 0 })),
     } as never);
     const w = mount(TrialPanel, {
+      global: { stubs },
       props: {
         data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
       },
     });
     await flushPromises();
+    await openSlot(w, 'main');
     const groups = w.findAll('[data-testid^="trial-group-"]');
     expect(groups.map((g) => g.attributes('data-testid'))).toEqual([
       'trial-group-5',
@@ -157,26 +186,29 @@ describe('TrialPanel', () => {
     ]);
   });
 
-  it('试炼后重读橱柜：数量跟着变，用光的从主辅里去掉、回到主料槽（终审）', async () => {
+  it('试炼后重读橱柜：数量跟着变，用光的从主辅里去掉、主料槽空出来（终审）', async () => {
     const w = mount(TrialPanel, {
+      global: { stubs },
       props: {
         data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
       },
     });
     await flushPromises();
-    await w.get('[data-testid="trial-food-150"]').trigger('click');
-    await w.get('[data-testid="trial-food-423"]').trigger('click');
+    await pick(w, 'main', 150);
+    await pick(w, 'sub', 423);
+    expect(w.get('[data-testid="trial-slot-sub"]').text()).toContain('持有 5');
     vi.mocked(endpoints.cupboard).mockResolvedValue({
       items: [{ foodsId: 423, num: 4, locked: false, streetNeed: 0 }],
     } as never);
     await w.get('[data-testid="trial-start"]').trigger('click');
     await flushPromises();
     expect(endpoints.cupboard).toHaveBeenCalledTimes(2);
-    expect(w.find('[data-testid="trial-food-150"]').exists()).toBe(false);
-    expect(w.get('[data-testid="trial-food-423"]').text()).toContain('×4');
-    expect(w.get('[data-testid="trial-slot-main"]').text()).toContain('未选');
+    expect(w.get('[data-testid="trial-slot-main"]').text()).toContain('+ 选主料');
     expect(w.get('[data-testid="trial-slot-sub"]').text()).toContain('普通料');
-    expect(w.get('[data-testid="trial-slot-main"]').attributes('aria-pressed')).toBe('true');
+    expect(w.get('[data-testid="trial-slot-sub"]').text()).toContain('持有 4');
+    await openSlot(w, 'main');
+    expect(w.find('[data-testid="trial-food-150"]').exists()).toBe(false);
+    expect(w.get('[data-testid="trial-food-423"] .dt-trial-food-num').text()).toBe('4');
   });
 
   it('主辅选同一种要 2 个：只有 1 个时，另一个槽里这种灰掉（问题记录 487）', async () => {
@@ -187,17 +219,19 @@ describe('TrialPanel', () => {
       ],
     } as never);
     const w = mount(TrialPanel, {
+      global: { stubs },
       props: {
         data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
       },
     });
     await flushPromises();
-    await w.get('[data-testid="trial-food-150"]').trigger('click');
+    await pick(w, 'main', 150);
+    await openSlot(w, 'sub');
     expect(w.get('[data-testid="trial-food-150"]').attributes('disabled')).toBeDefined();
     // 灰掉了也看得出它是主料
     expect(w.get('[data-testid="trial-food-150"] [data-testid="trial-food-role"]').text()).toBe('主料');
     await w.get('[data-testid="trial-food-423"]').trigger('click');
-    await w.get('[data-testid="trial-slot-main"]').trigger('click');
+    await openSlot(w, 'main');
     // 回到主料槽：150 就是主料自己，可以点（换成别的再换回来）
     expect(w.get('[data-testid="trial-food-150"]').attributes('disabled')).toBeUndefined();
   });
@@ -223,17 +257,22 @@ describe('TrialPanel', () => {
       ],
     } as never);
     const w = mount(TrialPanel, {
+      global: { stubs },
       props: {
         data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
       },
     });
     await flushPromises();
+    await openSlot(w, 'main');
     expect(w.get('[data-testid="trial-food-150"]').attributes('disabled')).toBeDefined();
     expect(w.get('[data-testid="trial-food-423"]').attributes('disabled')).toBeUndefined();
     expect(w.get('[data-testid="trial-blocked-note"]').text()).toContain('这道菜本身的食材');
     // 主辅都选普通料要 2 个，有 2 个：可以
     await w.get('[data-testid="trial-food-423"]').trigger('click');
+    await openSlot(w, 'sub');
     expect(w.get('[data-testid="trial-food-423"]').attributes('disabled')).toBeUndefined();
+    await w.get('[data-testid="trial-food-423"]').trigger('click');
+    expect(w.get('[data-testid="trial-start"]').attributes('disabled')).toBeUndefined();
   });
 
   it('试炼后已选的不够扣了（这道菜本身也要扣）：从主辅里去掉；菜本身要的一个都没有：写明缺什么（终审 I3）', async () => {
@@ -260,13 +299,14 @@ describe('TrialPanel', () => {
       ],
     } as never);
     const w = mount(TrialPanel, {
+      global: { stubs },
       props: {
         data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
       },
     });
     await flushPromises();
-    await w.get('[data-testid="trial-food-150"]').trigger('click');
-    await w.get('[data-testid="trial-food-423"]').trigger('click');
+    await pick(w, 'main', 150);
+    await pick(w, 'sub', 423);
     // 试炼扣了主料 1 个、菜本身 1 个：150 剩 1 个，再当主料就不够（主料 1 + 菜本身 1）；31 用光
     vi.mocked(endpoints.cupboard).mockResolvedValue({
       items: [
@@ -276,19 +316,21 @@ describe('TrialPanel', () => {
     } as never);
     await w.get('[data-testid="trial-start"]').trigger('click');
     await flushPromises();
-    expect(w.get('[data-testid="trial-slot-main"]').text()).toContain('未选');
+    expect(w.get('[data-testid="trial-slot-main"]').text()).toContain('+ 选主料');
     expect(w.get('[data-testid="trial-slot-sub"]').text()).toContain('普通料');
     expect(w.get('[data-testid="block"]').text()).toBe('这道菜本身的食材不够: 三级料');
   });
 
   it('食材按钮写明选没选（aria-pressed）；搜不到写“没有找到”（487 遗留）', async () => {
     const w = mount(TrialPanel, {
+      global: { stubs },
       props: {
         data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
       },
     });
     await flushPromises();
-    await w.get('[data-testid="trial-food-150"]').trigger('click');
+    await pick(w, 'main', 150);
+    await openSlot(w, 'sub');
     expect(w.get('[data-testid="trial-food-150"]').attributes('aria-pressed')).toBe('true');
     expect(w.get('[data-testid="trial-food-423"]').attributes('aria-pressed')).toBe('false');
     await w.get('[data-testid="trial-search"]').setValue('没有这种');
@@ -312,11 +354,13 @@ describe('TrialPanel', () => {
       ],
     } as never);
     const w = mount(TrialPanel, {
+      global: { stubs },
       props: {
         data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
       },
     });
     await flushPromises();
+    await openSlot(w, 'main');
     const open = () => w.get('[data-testid="trial-group-5"]').attributes('aria-expanded');
     await w.get('[data-testid="trial-search"]').setValue('料');
     await w.get('[data-testid="trial-group-5"]').trigger('click');
@@ -332,7 +376,7 @@ describe('TrialPanel', () => {
     expect(open()).toBe('true');
   });
 
-  it('主辅都选了以后再换主料：槽位停在主料，不跳到辅料（487 遗留：缺的测试）', async () => {
+  it('主辅都选了以后再换主料：只换主料、辅料不动，选好面板关掉（487 遗留：缺的测试；P9 改成选好就关）', async () => {
     useCatalogStore().apply({
       version: 'x',
       goods: [],
@@ -350,16 +394,17 @@ describe('TrialPanel', () => {
       items: [150, 423, 31].map((foodsId) => ({ foodsId, num: 5, locked: false, streetNeed: 0 })),
     } as never);
     const w = mount(TrialPanel, {
+      global: { stubs },
       props: {
         data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
       },
     });
     await flushPromises();
-    await w.get('[data-testid="trial-food-150"]').trigger('click');
-    await w.get('[data-testid="trial-food-423"]').trigger('click');
-    await w.get('[data-testid="trial-slot-main"]').trigger('click');
+    await pick(w, 'main', 150);
+    await pick(w, 'sub', 423);
+    await openSlot(w, 'main');
     await w.get('[data-testid="trial-food-31"]').trigger('click');
-    expect(w.get('[data-testid="trial-slot-main"]').attributes('aria-pressed')).toBe('true');
+    expect(w.find('[data-testid="trial-search"]').exists()).toBe(false);
     expect(w.get('[data-testid="trial-slot-main"]').text()).toContain('三级料');
     expect(w.get('[data-testid="trial-slot-sub"]').text()).toContain('普通料');
   });
@@ -380,14 +425,20 @@ describe('TrialPanel', () => {
       ],
     } as never);
     const w = mount(TrialPanel, {
+      global: { stubs },
       props: {
         data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
       },
     });
     await flushPromises();
-    expect(w.find('[data-testid="trial-target"]').text()).toContain('试炼价值 4% / 30%');
-    expect(w.find('[data-testid="trial-target"]').text()).toContain('试炼经验 10% / 150%');
-    const help = w.find('[data-testid="trial-help"]').text();
+    expect(w.get('[data-testid="trial-target"]').text()).toContain('熟练度 入门');
+    const meters = w.findAll('[data-testid="trial-target"] .dt-trial-meter').map((x) => x.text());
+    expect(meters).toEqual(['试炼价值4% / 30%', '试炼经验10% / 150%']);
+    expect(w.get('[data-testid="trial-help"]').text()).toContain('试炼价值最多 +30%, 试炼经验最多 +150%');
+    // 点“玩法说明”从下面弹出说明
+    expect(w.find('.dt-help').exists()).toBe(false);
+    await w.get('[data-testid="trial-help"]').trigger('click');
+    const help = w.get('.dt-help').text();
     for (const x of ['注射', '冥想', '触手', '稀有', '主料']) expect(help).toContain(x);
     // 上限按区服数值写（用户 2026-10-07 定：50 → 30），说明里写明对决不算试炼价值
     expect(w.text()).toContain('最多 +30%');

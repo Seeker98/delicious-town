@@ -22,8 +22,8 @@ test('猜酒杯：猜第 1 轮，猜中就收手，猜错就再来一局，直�
     await client.end();
   }
 
-  await page.goto('/bar');
-  await page.getByTestId('tab-cup').click();
+  // 每个游戏单独一页（界面改版 P9）
+  await page.goto('/bar/cup');
   await expect(page.getByTestId('cup-tier-3')).toBeVisible();
   let s: CupDto | null = null;
   for (let i = 0; i < 10 && s?.result !== 'stop'; i++) {
@@ -41,5 +41,6 @@ test('猜酒杯：猜第 1 轮，猜中就收手，猜错就再来一局，直�
   }
   expect(s?.result).toBe('stop');
   await expect(page.getByTestId('cup-award')).toHaveCount(1);
-  await expect(page.getByTestId('cup-streak')).toContainText('1');
+  // 连胜写在顶上说明卡的副行里
+  await expect(page.getByTestId('bar-info-sub')).toContainText('当前 1 连胜');
 });

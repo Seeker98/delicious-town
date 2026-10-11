@@ -37,9 +37,10 @@ test('特色菜：鉴定 → 学会 → 烹制 → 倒掉', async ({ page, reque
     await client.end();
   }
 
-  await page.goto('/temple');
-  await page.getByTestId('tool').selectOption('10814');
-  await page.getByTestId('appraise').click();
+  // 界面改版 P9：鉴定道具一行一行列出，点行尾按钮弹出数量面板确认（默认 1 次）
+  await page.goto('/temple?tab=appraise');
+  await page.getByTestId('appraise-open-10814').click();
+  await page.getByTestId('qty-ok').click();
   await expect(page.getByTestId('results')).toContainText('残卷');
 
   await page.goto('/cookbooks?tab=mc');
@@ -49,7 +50,8 @@ test('特色菜：鉴定 → 学会 → 烹制 → 倒掉', async ({ page, reque
   await page.getByTestId('cooknum-5').click();
   await expect(page.getByTestId('mc-current')).toContainText('秘·仿膳饽饽');
 
-  page.once('dialog', (d) => void d.accept());
+  // 倒掉要在页面自己的确认框里点确定
   await page.getByTestId('dump').click();
+  await page.getByTestId('confirm-ok').click();
   await expect(page.getByTestId('mc-current')).toHaveCount(0);
 });

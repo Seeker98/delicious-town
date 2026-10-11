@@ -50,6 +50,9 @@ const overview: McOverviewDto = {
   starBook: true,
 };
 
+/** 数量面板用 Teleport 挂到 body 上：测试里把 teleport 桩掉，面板内容就留在 wrapper 里（同 ShopView.test） */
+const mountPanel = () => mount(AppraisePanel, { global: { stubs: { teleport: true } } });
+
 describe('AppraisePanel', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -72,18 +75,38 @@ describe('AppraisePanel', () => {
     });
   });
 
-  it('默认选有货的道具；次数不超过 神秘食谱和道具的持有数；显示结果', async () => {
-    const w = mount(AppraisePanel);
+  it('道具一行一种，点哪行鉴定哪种；次数不超过 神秘食谱和道具的持有数；显示结果', async () => {
+    const w = mountPanel();
     await flushPromises();
-    expect((w.find('[data-testid="tool"]').element as HTMLSelectElement).value).toBe('165');
+    expect(w.find('[data-testid="tool-163"]').exists()).toBe(true);
+    expect(w.find('[data-testid="tool-165"]').text()).toContain('持有 5');
+    expect(w.find('[data-testid="recipes"]').text()).toContain('2');
+    // 没点之前不弹面板
+    expect(w.find('[data-testid="qty-ok"]').exists()).toBe(false);
+    await w.find('[data-testid="appraise-open-165"]').trigger('click');
     expect(w.find('[data-testid="no-retry"]').exists()).toBe(true);
     await w.find('[data-testid="times"]').setValue('9');
-    await w.find('[data-testid="appraise"]').trigger('click');
+    await w.find('[data-testid="qty-ok"]').trigger('click');
     await flushPromises();
     expect(endpoints.mcAppraise).toHaveBeenCalledWith(165, 2, false);
-    const text = w.find('[data-testid="results"]').text();
-    expect(text).toContain('秘·仿膳饽饽 残卷 ×2 (星神眷恋)');
-    expect(text).toContain('这只是一堆厕纸而已');
+    // 鉴定完面板关掉
+    expect(w.find('[data-testid="qty-ok"]').exists()).toBe(false);
+    const rows = w.findAll('[data-testid="results"] > *');
+    expect(rows).toHaveLength(2);
+    expect(rows[0]!.text()).toContain('秘·仿膳饽饽 残卷 ×2');
+    expect(rows[0]!.text()).toContain('4 级');
+    expect(rows[0]!.text()).toContain('星神眷恋');
+    expect(rows[1]!.text()).toContain('这只是一堆厕纸而已');
+  });
+
+  it('勾上“低于 5 级不重抽”时带上 noRetry', async () => {
+    const w = mountPanel();
+    await flushPromises();
+    await w.find('[data-testid="appraise-open-165"]').trigger('click');
+    await w.find('[data-testid="no-retry"]').setValue(true);
+    await w.find('[data-testid="qty-ok"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.mcAppraise).toHaveBeenCalledWith(165, 1, true);
   });
 });
 
@@ -95,31 +118,37 @@ describe('AppraisePanel：按钮灰掉时写明原因（问题记录：鉴定按
 
   it('没有神秘食谱时提示每次鉴定要消耗 1 个', async () => {
     vi.mocked(endpoints.mc).mockResolvedValue({ ...structuredClone(overview), recipes: 0 });
-    const w = mount(AppraisePanel);
+    const w = mountPanel();
     await flushPromises();
-    expect(w.find('[data-testid="appraise"]').attributes('disabled')).toBeDefined();
-    expect(w.find('[data-testid="appraise-block"]').text()).toContain('没有神秘食谱');
+    await w.find('[data-testid="appraise-open-165"]').trigger('click');
+    expect(w.find('[data-testid="qty-ok"]').attributes('disabled')).toBeDefined();
+    expect(w.find('[data-testid="qty-reason"]').text()).toContain('没有神秘食谱');
   });
 
   it('选中的鉴定道具没有了时提示；有货时不显示提示', async () => {
     vi.mocked(endpoints.mc).mockResolvedValue(structuredClone(overview));
-    const w = mount(AppraisePanel);
+    const w = mountPanel();
     await flushPromises();
-    expect(w.find('[data-testid="appraise-block"]').exists()).toBe(false);
-    await w.find('[data-testid="tool"]').setValue('163');
-    expect(w.find('[data-testid="appraise-block"]').text()).toContain('没有这个鉴定道具');
+    await w.find('[data-testid="appraise-open-165"]').trigger('click');
+    expect(w.find('[data-testid="qty-reason"]').exists()).toBe(false);
+    expect(w.find('[data-testid="qty-ok"]').attributes('disabled')).toBeUndefined();
+    await w.find('[data-testid="appraise-open-163"]').trigger('click');
+    expect(w.find('[data-testid="qty-reason"]').text()).toContain('没有这个鉴定道具');
+    expect(w.find('[data-testid="qty-ok"]').attributes('disabled')).toBeDefined();
   });
 
   it('写出选中的鉴定道具怎么获得（问题记录 415）', async () => {
-    const w = mount(AppraisePanel);
+    const w = mountPanel();
     await flushPromises();
-    // 默认选有货的 165：不在商店卖
+    // 165：不在商店卖
+    await w.find('[data-testid="appraise-open-165"]').trigger('click');
     expect(w.find('[data-testid="tool-how"]').text()).toBe(
       '获得: 黑市 30 钻、厨塔和酒吧等的随机奖励、昨日特色菜冠军',
     );
-    await w.find('[data-testid="tool"]').setValue(163);
-    expect(w.find('[data-testid="tool-how"]').text()).toBe(
-      '获得: 银币商店 90,000、黑市 8 钻、厨塔和酒吧等的随机奖励、持有捕梦网时, 神殿守护兽暴击掉落',
-    );
+    await w.find('[data-testid="appraise-open-163"]').trigger('click');
+    const how = '银币商店 90,000、黑市 8 钻、厨塔和酒吧等的随机奖励、持有捕梦网时, 神殿守护兽暴击掉落';
+    expect(w.find('[data-testid="tool-how"]').text()).toBe(`获得: ${how}`);
+    // 没有的道具在列表行里也写明怎么获得
+    expect(w.find('[data-testid="tool-163"]').text()).toContain(`持有 0 · ${how}`);
   });
 });

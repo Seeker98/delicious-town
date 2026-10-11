@@ -22,8 +22,8 @@ test('最后一颗糖：新手桌按必胜法选先后、每次拿到剩下 k+1 
     await client.end();
   }
 
-  await page.goto('/bar');
-  await page.getByTestId('tab-nim').click();
+  // 每个游戏单独一页（界面改版 P9）
+  await page.goto('/bar/nim');
   const nimOf = async (url: string, click: () => Promise<void>): Promise<NimDto> => {
     const res = page.waitForResponse((r) => r.url().includes(url));
     await click();

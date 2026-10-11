@@ -19,7 +19,6 @@ import { useToastStore } from '../stores/toast';
 import { recordLabel } from '../utils/events';
 import { formatNum, gameDateTime, gameTimeOfDay } from '../utils/format';
 import { serverNowMs } from '../utils/serverNow';
-import { goodsArt } from '../utils/goodsArt';
 import { groupStoreItems } from '../utils/storeSort';
 
 const catalog = useCatalogStore();
@@ -248,7 +247,7 @@ onMounted(() =>
           @click="pick(it.goodsId)"
         >
           <span v-if="it.num > 1" class="dt-bag-num" aria-hidden="true">{{ formatNum(it.num) }}</span>
-          <DtArt :name="goodsArt(it.goodsId)" :size="36" />
+          <DtArt :name="catalog.goodsArt(it.goodsId)" :size="36" />
           <span class="dt-bag-name" aria-hidden="true">{{ catalog.goodsName(it.goodsId) }}</span>
           <span :class="['dt-bag-need', { 'is-danger': it.usable && it.maxUse === 0 }]" aria-hidden="true">{{
             cellSub(it)
@@ -266,7 +265,7 @@ onMounted(() =>
   >
     <div v-if="pickedItem" class="dt-detail" data-testid="store-sheet">
       <div class="dt-detail-head">
-        <span class="dt-detail-art"><DtArt :name="goodsArt(pickedItem.goodsId)" :size="52" /></span>
+        <span class="dt-detail-art"><DtArt :name="catalog.goodsArt(pickedItem.goodsId)" :size="52" /></span>
         <div class="dt-detail-info">
           <div>{{ typeLabel(pickedItem.type) }}</div>
           <div class="dt-detail-sub">
@@ -373,7 +372,7 @@ onMounted(() =>
         :data-testid="`souvenir-${it.goodsId}`"
       >
         <span v-if="it.num > 1" class="dt-bag-num">{{ formatNum(it.num) }}</span>
-        <DtArt :name="goodsArt(it.goodsId)" :size="36" />
+        <DtArt :name="catalog.goodsArt(it.goodsId)" :size="36" />
         <span class="dt-bag-name">{{ catalog.goodsName(it.goodsId) }}</span>
         <span class="dt-bag-need dt-clamp2">{{ catalog.goodsMap.get(it.goodsId)?.desc }}</span>
       </div>

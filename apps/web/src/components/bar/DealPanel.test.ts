@@ -46,8 +46,13 @@ describe('DealPanel', () => {
     vi.mocked(endpoints.barDealStart).mockResolvedValue(round());
     const data = withRound(null, { played: 1 });
     data.coin = 50_000;
-    const w = mount(DealPanel, { props: { data } });
-    expect(w.text()).toContain('小镇银行家');
+    // 玩法在 Teleport 到 body 的底部面板里：测试里把 teleport 桩掉（界面改版 P9）
+    const w = mount(DealPanel, { props: { data }, global: { stubs: { teleport: true } } });
+    expect(w.get('[data-testid="bar-info-title"]').text()).toBe('每局 10,000 银币');
+    expect(w.get('[data-testid="bar-info-sub"]').text()).toBe('今天 1/3 局 · 每个箱子里是一份食材');
+    expect(w.find('[data-testid="bar-rules"]').exists()).toBe(false);
+    await w.get('[data-testid="bar-rules-open"]').trigger('click');
+    expect(w.get('[data-testid="bar-rules"]').text()).toContain('小镇银行家');
     expect(w.text()).toContain('今天还能玩 2 局');
     expect(w.findAll('[data-testid^="deal-prize-"]')).toHaveLength(10);
     expect(w.get('[data-testid="deal-prize-0"]').text()).toBe('1 级食材×1');
@@ -96,7 +101,13 @@ describe('DealPanel', () => {
     vi.mocked(endpoints.barDealAnswer).mockResolvedValue(round({ mine: 0, round: 1, toOpen: 2 }));
     const w = mount(DealPanel, { props: { data: withRound(offered) } });
     expect(w.get('[data-testid="deal-box-3"]').attributes('disabled')).toBeDefined();
-    expect(w.get('[data-testid="deal-offer"]').text()).toContain('银行家出价: 16,900 银币');
+    const offer = w.get('[data-testid="deal-offer"]');
+    expect(offer.get('.dt-deal-offer-label').text()).toBe('小镇银行家出价');
+    expect(offer.get('.dt-deal-offer').text()).toBe('16,900 银币');
+    expect(offer.get('.dt-bar-detail').text()).toBe('成交就拿银币走人；不成交再开 2 个箱子');
+    expect(w.get('[data-testid="deal-yes"]').text()).toBe('成交');
+    expect(w.get('[data-testid="deal-no"]').text()).toBe('不成交, 继续开');
+    expect(w.text()).toContain('第 1 轮开完了');
     await w.get('[data-testid="deal-no"]').trigger('click');
     await flushPromises();
     expect(endpoints.barDealAnswer).toHaveBeenCalledWith(false);

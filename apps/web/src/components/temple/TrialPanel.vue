@@ -6,9 +6,16 @@ import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
-import { formatPct } from '../../utils/format';
+import { foodLevelLabel, formatPct } from '../../utils/format';
 import { matchText } from '../../utils/match';
+import DtRow from '../DtRow.vue';
+import DtSheet from '../DtSheet.vue';
+import FoodArt from '../FoodArt.vue';
 
+/**
+ * 试炼（界面改版 P9）：准备状态、试炼对象（价值和经验两条进度）、主料和辅料两个大格子、预计成功率；
+ * 点格子从下面弹出食材面板（搜索、按等级分组、4 列格子），选好自动关
+ */
 const props = defineProps<{ data: TempleDto }>();
 const emit = defineEmits<{ reload: [] }>();
 const catalog = useCatalogStore();
@@ -18,8 +25,11 @@ const foods = ref<CupboardFoodDto[]>([]);
 const learned = ref<McLearnedDto[]>([]);
 const main = ref<number | null>(null);
 const sub = ref<number | null>(null);
-const pick = ref<number | null>(null);
 const busy = ref(false);
+/** 选食材面板、用触手指定面板、玩法说明 */
+const picker = ref(false);
+const tentacleOpen = ref(false);
+const helpOpen = ref(false);
 const result = ref<TrialResultDto | null>(null);
 /** 稀有食材：odds < 100（规格书 09 §9.4） */
 const RARE = 100;
@@ -34,11 +44,10 @@ async function loadFoods() {
   }
 }
 onMounted(loadFoods);
-/** 试炼后重读（终审：面板一直挂着，数量和选择会停在试炼前）；不够扣的从主辅里去掉，回到主料槽 */
+/** 试炼后重读（终审：面板一直挂着，数量和选择会停在试炼前）；不够扣的从主辅里去掉 */
 async function afterTrial() {
   await loadFoods();
   dropShort();
-  slot.value = main.value === null ? 'main' : 'sub';
 }
 
 const trial = computed(() => props.data.trial);
@@ -111,13 +120,16 @@ const dishShort = computed(() =>
   [...new Set(dish.value?.foods ?? [])].filter((id) => numOf(id) < dishNeed(id)),
 );
 const anyBlocked = computed(() => groups.value.some((g) => isOpen(g.lv) && g.list.some(blockedFood)));
-function pickFood(id: number) {
-  if (slot.value === 'main') {
-    main.value = id;
-    if (sub.value === null) slot.value = 'sub';
-  } else sub.value = id;
+function openSlot(s: 'main' | 'sub') {
+  slot.value = s;
+  picker.value = true;
 }
-const slotName = (id: number | null) => (id === null ? t.value.temple.trial.slotEmpty : catalog.foodName(id));
+/** 选好就关掉面板 */
+function pickFood(id: number) {
+  if (slot.value === 'main') main.value = id;
+  else sub.value = id;
+  picker.value = false;
+}
 /** 预计成功率（不含幸运），与服务端同一公式，以服务端为准 */
 const rate = computed(() => {
   const a = main.value === null ? undefined : catalog.food(main.value);
@@ -146,6 +158,7 @@ async function run(fn: () => Promise<unknown>, fallback: string) {
   try {
     await fn();
     emit('reload');
+    return true;
   } catch (e) {
     toast.push(errorMessage(e, fallback), 'danger');
   } finally {
@@ -155,6 +168,11 @@ async function run(fn: () => Promise<unknown>, fallback: string) {
 const prepare = (way: 1 | 2) => run(() => endpoints.trialPrepare(way), t.value.temple.trial.prepareFailed);
 const refresh = (mcId?: number) =>
   run(() => endpoints.trialRefresh(mcId), t.value.temple.trial.refreshFailed);
+/** 用触手指定一道（花 1 条触手） */
+async function pickByTentacle(mcId: number) {
+  // 失败时面板留着（P9 终审 M9）
+  if (await refresh(mcId)) tentacleOpen.value = false;
+}
 const start = async () => {
   await run(async () => {
     result.value = await endpoints.trialStart(main.value!, sub.value!);
@@ -164,173 +182,259 @@ const start = async () => {
 </script>
 
 <template>
-  <div class="small">
-    <p class="text-muted">
-      {{ t.temple.trial.intro(trial.creatives, trial.worthMax, trial.expMax) }}
-    </p>
-    <details class="mb-2" data-testid="trial-help">
-      <summary>{{ t.temple.trial.help }}</summary>
-      <ol class="mb-0 ps-3">
-        <li v-for="(x, i) in t.temple.trial.helpItems" :key="i">{{ x }}</li>
-      </ol>
-    </details>
-    <div v-if="trial.readyMinutes === 0" class="d-flex gap-1 mb-2">
+  <section v-if="trial.readyMinutes > 0" class="dt-card dt-bar-info" data-testid="trial-ready">
+    <span class="dt-tag dt-tag-ok">{{ t.temple.trial.ready }}</span>
+    <span class="dt-bar-info-main"
+      ><span class="dt-trial-ready">{{
+        t.temple.trial.readyLine(trial.readyMinutes, trial.creatives)
+      }}</span></span
+    >
+  </section>
+  <section v-else class="dt-card dt-trial-prep">
+    <b>{{ t.temple.trial.prepTitle }}</b>
+    <p>{{ t.temple.trial.prepIntro }}</p>
+    <div class="dt-trial-opts">
       <button
-        class="btn btn-sm btn-outline-primary"
+        type="button"
+        class="dt-trial-opt"
         data-testid="trial-inject"
         :disabled="busy"
         @click="prepare(1)"
       >
-        {{ t.temple.trial.inject }}
+        <b>{{ t.temple.trial.injectName }}</b>
+        <span>{{ t.temple.trial.injectCost }}</span>
+        <span class="dt-tag dt-tag-ok">{{ t.temple.trial.creativesUp(25) }}</span>
       </button>
       <button
-        class="btn btn-sm btn-outline-primary"
+        type="button"
+        class="dt-trial-opt"
         data-testid="trial-meditate"
         :disabled="busy"
         @click="prepare(2)"
       >
-        {{ t.temple.trial.meditate }}
+        <b>{{ t.temple.trial.meditateName }}</b>
+        <span>{{ t.temple.trial.meditateCost }}</span>
+        <span class="dt-tag dt-tag-ok">{{ t.temple.trial.creativesUp(5) }}</span>
       </button>
     </div>
-    <div v-else class="mb-1 text-success">{{ t.temple.trial.readyLeft(trial.readyMinutes) }}</div>
-    <template v-if="dish">
-      <div class="mb-1" data-testid="trial-target">
-        {{ t.temple.trial.target }}<b>{{ dish.name }}</b
-        >{{ t.temple.trial.targetLevel(dish.level) }}
+  </section>
+
+  <template v-if="dish">
+    <section class="dt-card dt-trial-target" data-testid="trial-target">
+      <span class="dt-trial-label">{{ t.temple.trial.target }}</span>
+      <div class="dt-trial-dish">
+        <b>{{ dish.name }}</b
+        ><span :class="['dt-tag', 'dt-lv', dish.level >= 3 ? 'is-t3' : dish.level === 2 ? 'is-t2' : '']">{{
+          t.temple.trial.targetLevel(dish.level)
+        }}</span
+        ><span v-if="stat" class="dt-tag">{{ t.temple.trial.prof(stat.levelName) }}</span>
+      </div>
+      <template v-if="stat">
+        <div class="dt-trial-meter">
+          <span>{{ t.temple.trial.worth }}</span>
+          <span class="dt-meter"
+            ><i
+              :style="{ width: `${Math.min(100, (stat.trialWorth / Math.max(1, trial.worthMax)) * 100)}%` }"
+            ></i
+          ></span>
+          <b>{{ t.temple.trial.pctOf(stat.trialWorth, trial.worthMax) }}</b>
+        </div>
+        <div class="dt-trial-meter">
+          <span>{{ t.temple.trial.exp }}</span>
+          <span class="dt-meter"
+            ><i :style="{ width: `${Math.min(100, (stat.trialExp / Math.max(1, trial.expMax)) * 100)}%` }"></i
+          ></span>
+          <b>{{ t.temple.trial.pctOf(stat.trialExp, trial.expMax) }}</b>
+        </div>
+      </template>
+      <div class="dt-trial-acts">
         <button
           type="button"
-          class="dt-link-btn"
+          class="btn btn-sm btn-outline-primary"
           data-testid="trial-refresh"
           :disabled="busy"
           @click="refresh()"
         >
           {{ t.temple.trial.refresh }}
         </button>
-        <div v-if="stat" class="text-muted">
-          {{
-            t.temple.trial.stat(stat.trialWorth, trial.worthMax, stat.trialExp, trial.expMax, stat.levelName)
-          }}
-        </div>
-      </div>
-      <div class="d-flex gap-1 mb-2">
-        <select v-model.number="pick" class="form-select form-select-sm" data-testid="trial-pick">
-          <option :value="null" disabled>{{ t.temple.trial.pickByTentacle(data.tentacles) }}</option>
-          <option v-for="m in learned" :key="m.mcId" :value="m.mcId">{{ catalog.mcName(m.mcId) }}</option>
-        </select>
         <button
-          class="btn btn-sm btn-outline-secondary text-nowrap"
-          :disabled="busy || pick === null || data.tentacles < 1"
-          @click="refresh(pick!)"
-        >
-          {{ t.temple.trial.pick }}
-        </button>
-      </div>
-      <div class="d-flex gap-1 mb-1">
-        <button
-          v-for="s in ['main', 'sub'] as const"
-          :key="s"
           type="button"
-          :class="[
-            'btn btn-sm flex-fill text-start dt-trial-slot',
-            slot === s ? 'btn-primary' : 'btn-outline-secondary',
-          ]"
-          :aria-pressed="slot === s"
-          :data-testid="`trial-slot-${s}`"
-          @click="slot = s"
+          class="btn btn-sm btn-outline-primary"
+          data-testid="trial-pick-open"
+          :disabled="busy"
+          @click="tentacleOpen = true"
         >
-          <!-- 槽名和选中的食材分两行：法文槽名长，挤在一行会把食材名截掉 -->
-          <span class="d-block small opacity-75">{{ t.temple.trial[s] }}</span
-          ><span class="d-block dt-clamp1">{{ slotName(s === 'main' ? main : sub) }}</span>
+          {{ t.temple.trial.pickByTentacle(data.tentacles) }}
         </button>
       </div>
-      <input
-        v-model="q"
-        type="search"
-        class="form-control form-control-sm mb-1"
-        :placeholder="t.temple.trial.search"
-        data-testid="trial-search"
-      />
-      <div class="dt-card dt-trial-foods mb-1" data-testid="trial-foods">
-        <div v-if="groups.length === 0" class="text-muted">
-          {{ searching ? t.temple.trial.noMatch : t.temple.trial.noFoods }}
-        </div>
-        <div v-for="g in groups" :key="g.lv" class="mb-1">
-          <button
-            type="button"
-            class="dt-link-btn dt-group-label"
-            :aria-expanded="isOpen(g.lv)"
-            :data-testid="`trial-group-${g.lv}`"
-            @click="toggleGroup(g.lv)"
+    </section>
+
+    <div class="dt-block-head">
+      <h2 class="dt-block-title">{{ t.temple.trial.slotsTitle }}</h2>
+      <span class="dt-block-more">{{ t.temple.trial.slotsTap }}</span>
+    </div>
+    <div class="dt-trial-slots">
+      <button
+        v-for="s in ['main', 'sub'] as const"
+        :key="s"
+        type="button"
+        :class="['dt-trial-slot', { 'is-empty': (s === 'main' ? main : sub) === null }]"
+        :data-testid="`trial-slot-${s}`"
+        @click="openSlot(s)"
+      >
+        <span class="dt-trial-slot-k">{{ t.temple.trial[s] }}</span>
+        <template v-if="(s === 'main' ? main : sub) !== null">
+          <FoodArt :id="(s === 'main' ? main : sub)!" :size="40" />
+          <span class="dt-trial-slot-n"
+            >{{ catalog.foodName((s === 'main' ? main : sub)!)
+            }}<span
+              v-if="levelOf((s === 'main' ? main : sub)!) >= 2"
+              :class="['dt-tag', 'dt-lv', levelOf((s === 'main' ? main : sub)!) >= 3 ? 'is-t3' : 'is-t2']"
+              >{{ foodLevelLabel(levelOf((s === 'main' ? main : sub)!)) }}</span
+            ></span
           >
-            <i :class="['bi', isOpen(g.lv) ? 'bi-chevron-down' : 'bi-chevron-right']" aria-hidden="true"></i>
-            {{ t.temple.trial.group(g.lv, g.list.length) }}
-          </button>
-          <div v-if="isOpen(g.lv)">
-            <button
-              v-for="f in g.list"
-              :key="f.foodsId"
-              type="button"
-              :class="[
-                'btn btn-sm me-1 mb-1',
-                f.foodsId === main || f.foodsId === sub ? 'btn-primary' : 'btn-outline-secondary',
-              ]"
-              :disabled="blockedFood(f)"
-              :aria-pressed="f.foodsId === main || f.foodsId === sub"
-              :data-testid="`trial-food-${f.foodsId}`"
-              @click="pickFood(f.foodsId)"
-            >
-              {{ t.common.qty(catalog.foodName(f.foodsId), f.num)
-              }}<span v-if="isRare(f.foodsId)" class="dt-sale-tag ms-1">{{ t.temple.trial.rareTag }}</span
-              ><span
-                v-if="f.foodsId === main || f.foodsId === sub"
-                class="ms-1"
-                data-testid="trial-food-role"
-                >{{
-                  [f.foodsId === main ? t.temple.trial.main : '', f.foodsId === sub ? t.temple.trial.sub : '']
-                    .filter(Boolean)
-                    .join(t.events.sep)
-                }}</span
-              >
-            </button>
-          </div>
-        </div>
+          <span v-if="isRare((s === 'main' ? main : sub)!)" class="dt-tag dt-tag-warn">{{
+            t.temple.trial.rareTag
+          }}</span>
+          <span v-else class="dt-trial-slot-sub">{{
+            t.temple.trial.have(numOf((s === 'main' ? main : sub)!))
+          }}</span>
+        </template>
+        <span v-else class="dt-trial-slot-plus">{{ t.temple.trial.pickSlot(t.temple.trial[s]) }}</span>
+      </button>
+    </div>
+    <section class="dt-card dt-trial-rate" data-testid="trial-rate">
+      <div class="dt-trial-rate-head">
+        <span>{{ t.temple.trial.rateLabel }}</span>
+        <b>{{ rate === null ? '—' : formatPct(rate, { digits: 1, min: 1 }) }}</b>
       </div>
-      <div v-if="anyBlocked" class="text-muted" data-testid="trial-blocked-note">
-        {{ t.temple.trial.blockedNote }}
-      </div>
-      <div v-if="rate !== null" class="text-muted" data-testid="trial-rate">
-        {{ t.temple.trial.rate(formatPct(rate, { digits: 1, min: 1 })) }}
+      <span class="dt-meter"><i :style="{ width: `${Math.min(100, (rate ?? 0) * 100)}%` }"></i></span>
+      <span class="dt-trial-rate-note">{{ t.temple.trial.costNote }}</span>
+    </section>
+  </template>
+
+  <button
+    type="button"
+    class="btn btn-primary dt-btn-block dt-bar-go"
+    data-testid="trial-start"
+    :disabled="busy || !!block"
+    @click="start"
+  >
+    {{ t.temple.trial.start }}
+  </button>
+  <div v-if="block" class="dt-bar-block" data-testid="block">{{ block }}</div>
+  <section
+    v-if="result"
+    :class="['dt-bar-result', result.success ? 'is-ok' : 'is-bad']"
+    role="status"
+    data-testid="trial-result"
+  >
+    <template v-if="result.success">
+      <b>{{ t.temple.trial.successHead(!!result.lucky) }}</b>
+      <div class="dt-bar-detail">
+        {{ t.temple.trial.successLine(result.addWorth, result.addExp, result.proficiency) }}
       </div>
     </template>
-    <button
-      class="btn btn-sm btn-primary mt-1"
-      data-testid="trial-start"
-      :disabled="busy || !!block"
-      @click="start"
-    >
-      {{ t.temple.trial.start }}
+    <b v-else>{{ t.temple.trial.fail }}</b>
+  </section>
+  <div class="dt-card dt-rows-card">
+    <button type="button" class="dt-row is-link" data-testid="trial-help" @click="helpOpen = true">
+      <span class="dt-row-main"
+        ><span class="dt-row-title is-strong">{{ t.temple.trial.help }}</span
+        ><span class="dt-row-sub">{{ t.temple.trial.helpSub(trial.worthMax, trial.expMax) }}</span></span
+      >
     </button>
-    <div v-if="block" class="text-danger" data-testid="block">{{ block }}</div>
-    <div v-if="result" class="mt-1" data-testid="trial-result">
-      <template v-if="result.success">
-        {{ t.temple.trial.success(!!result.lucky, result.addWorth, result.addExp, result.proficiency) }}
-      </template>
-      <template v-else>{{ t.temple.trial.fail }}</template>
-    </div>
   </div>
-</template>
 
-<style scoped>
-.dt-trial-slot {
-  min-width: 0;
-  flex-basis: 0;
-}
-.dt-trial-foods {
-  max-height: 16rem;
-  overflow-y: auto;
-}
-/* 第一个组名不要上边距：卡片自己有内边距，原来上面多一截空白（487 遗留） */
-.dt-trial-foods > div:first-child > .dt-group-label {
-  margin-top: 0;
-}
-</style>
+  <DtSheet
+    :open="picker"
+    :title="t.temple.trial.pickTitle(t.temple.trial[slot])"
+    focus-panel
+    @close="picker = false"
+  >
+    <input
+      v-model="q"
+      type="search"
+      class="form-control dt-trial-search"
+      :placeholder="t.temple.trial.search"
+      data-testid="trial-search"
+    />
+    <div data-testid="trial-foods">
+      <div v-if="groups.length === 0" class="dt-detail-note">
+        {{ searching ? t.temple.trial.noMatch : t.temple.trial.noFoods }}
+      </div>
+      <div v-for="g in groups" :key="g.lv">
+        <button
+          type="button"
+          class="dt-trial-group"
+          :aria-expanded="isOpen(g.lv)"
+          :data-testid="`trial-group-${g.lv}`"
+          @click="toggleGroup(g.lv)"
+        >
+          {{ t.temple.trial.group(foodLevelLabel(g.lv), g.list.length)
+          }}<i :class="['bi', isOpen(g.lv) ? 'bi-chevron-up' : 'bi-chevron-down']" aria-hidden="true"></i>
+        </button>
+        <div v-if="isOpen(g.lv)" class="dt-trial-grid">
+          <button
+            v-for="f in g.list"
+            :key="f.foodsId"
+            type="button"
+            :class="['dt-trial-food', { 'is-on': f.foodsId === main || f.foodsId === sub }]"
+            :disabled="blockedFood(f)"
+            :aria-pressed="f.foodsId === main || f.foodsId === sub"
+            :data-testid="`trial-food-${f.foodsId}`"
+            @click="pickFood(f.foodsId)"
+          >
+            <span v-if="isRare(f.foodsId)" class="dt-trial-food-rare">{{ t.temple.trial.rareTag }}</span>
+            <span class="dt-trial-food-num">{{ f.num }}</span>
+            <FoodArt :id="f.foodsId" :size="30" />
+            <span class="dt-trial-food-name">{{ catalog.foodName(f.foodsId) }}</span>
+            <span
+              v-if="f.foodsId === main || f.foodsId === sub"
+              class="dt-trial-food-role"
+              data-testid="trial-food-role"
+              >{{
+                [f.foodsId === main ? t.temple.trial.main : '', f.foodsId === sub ? t.temple.trial.sub : '']
+                  .filter(Boolean)
+                  .join(t.events.sep)
+              }}</span
+            >
+          </button>
+        </div>
+      </div>
+    </div>
+    <p v-if="anyBlocked" class="dt-detail-note" data-testid="trial-blocked-note">
+      {{ t.temple.trial.blockedNote }}
+    </p>
+  </DtSheet>
+
+  <DtSheet :open="tentacleOpen" :title="t.temple.trial.tentacleTitle" @close="tentacleOpen = false">
+    <p class="dt-detail-note">{{ t.temple.trial.tentacleNote(data.tentacles) }}</p>
+    <div class="dt-sheet-list" data-testid="trial-pick">
+      <DtRow v-for="m in learned" :key="m.mcId">
+        <template #title>{{ catalog.mcName(m.mcId) }}</template>
+        <template #sub>{{ t.temple.trial.targetLevel(catalog.mc(m.mcId)?.level ?? 0) }}</template>
+        <template #end>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-primary"
+            :disabled="busy || data.tentacles < 1 || m.mcId === trial.mcId"
+            :data-testid="`trial-pick-${m.mcId}`"
+            @click="pickByTentacle(m.mcId)"
+          >
+            {{ m.mcId === trial.mcId ? t.temple.trial.current : t.temple.trial.pick }}
+          </button>
+        </template>
+      </DtRow>
+    </div>
+  </DtSheet>
+
+  <DtSheet :open="helpOpen" :title="t.temple.trial.help" @close="helpOpen = false">
+    <div class="dt-help">
+      <p>{{ t.temple.trial.intro(trial.creatives, trial.worthMax, trial.expMax) }}</p>
+      <ul>
+        <li v-for="(x, i) in t.temple.trial.helpItems" :key="i">{{ x }}</li>
+      </ul>
+    </div>
+  </DtSheet>
+</template>

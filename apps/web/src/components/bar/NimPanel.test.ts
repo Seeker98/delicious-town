@@ -30,6 +30,9 @@ const withRound = (r: NimDto | null, patch: Partial<ReturnType<typeof barData>['
   return data;
 };
 
+/** 画出来的糖果个数 */
+const candies = (w: ReturnType<typeof mount>) => w.findAll('.dt-nim-candies svg');
+
 describe('NimPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -40,11 +43,13 @@ describe('NimPanel', () => {
   it('没有局时列出两张桌子：入场费、每次最多拿几颗、奖励；今天还能玩几局；点了开局', async () => {
     vi.mocked(endpoints.barNimStart).mockResolvedValue(round({ needFirst: true }));
     const w = mount(NimPanel, { props: { data: withRound(null, { played: 3 }) } });
-    expect(w.text()).toContain('今天还能玩 7 局');
+    expect(w.get('[data-testid="bar-info-sub"]').text()).toBe('今天还能玩 7 局');
     const novice = w.get('[data-testid="nim-table-novice"]');
-    expect(novice.text()).toContain('入场 1 张神秘礼券');
-    expect(novice.text()).toContain('每次最多拿 3 颗');
-    expect(novice.text()).toContain('声望 +1');
+    expect(novice.text()).toContain('新手桌');
+    expect(novice.text()).toContain('入场 1 张 · 每次最多拿 3 颗');
+    expect(novice.text()).toContain('赢了声望 +1, 还有一份奖励');
+    expect(w.get('[data-testid="nim-table-expert"]').text()).toContain('入场 2 张');
+    expect(w.get('[data-testid="nim-table-expert"]').text()).toContain('声望 +3');
     expect(w.get('[data-testid="nim-table-expert"]').text()).toContain('每次最多拿 3~5 颗');
     await w.get('[data-testid="nim-start-novice"]').trigger('click');
     await flushPromises();
@@ -57,17 +62,18 @@ describe('NimPanel', () => {
     const data = withRound(null);
     data.nim.tables.novice = { ...data.nim.tables.novice, first: 'coin', careless: false };
     const w = mount(NimPanel, { props: { data } });
-    expect(w.get('[data-testid="nim-table-novice"]').text()).toContain('开局抛硬币定谁先拿, 调酒师从不失手');
-    expect(w.get('[data-testid="nim-table-expert"]').text()).toContain('开局抛硬币定谁先拿, 调酒师从不失手');
+    expect(w.get('[data-testid="nim-table-novice"]').text()).toContain('开局抛硬币定先后 · 调酒师从不失手');
+    expect(w.get('[data-testid="nim-table-expert"]').text()).toContain('开局抛硬币定先后 · 调酒师从不失手');
     data.nim.tables.novice = { ...data.nim.tables.novice, first: 'choose', careless: true };
     const v = mount(NimPanel, { props: { data } });
-    expect(v.get('[data-testid="nim-table-novice"]').text()).toContain('你自己选先后, 调酒师有时会走神');
+    expect(v.get('[data-testid="nim-table-novice"]').text()).toContain('你自己选先后 · 调酒师有时会走神');
   });
 
   it('次数用完或礼券不够时开局按钮灰掉并写原因', () => {
     const used = mount(NimPanel, { props: { data: withRound(null, { played: 10 }) } });
     expect(used.get('[data-testid="nim-start-novice"]').attributes('disabled')).toBeDefined();
-    expect(used.text()).toContain('今天的局数用完了');
+    expect(used.get('[data-testid="bar-info-sub"]').text()).toBe('今天的局数用完了');
+    expect(used.get('[data-testid="nim-table-novice"]').text()).toContain('今天的局数用完了');
     const data = withRound(null);
     data.tickets = 1;
     const poor = mount(NimPanel, { props: { data } });
@@ -84,13 +90,21 @@ describe('NimPanel', () => {
     await flushPromises();
     expect(endpoints.barNimFirst).toHaveBeenCalledWith('me');
     expect(w.findAll('[data-testid^="nim-take-"]')).toHaveLength(3);
+    expect(w.find('[data-testid="nim-first-me"]').exists()).toBe(false);
   });
 
   it('进行中：画剩余的糖果；拿的按钮超过剩余的灰掉；点了拿', async () => {
     vi.mocked(endpoints.barNimTake).mockResolvedValue(round({ left: 0, result: 'win', renown: 1 }));
     const w = mount(NimPanel, { props: { data: withRound(round({ left: 2 })) } });
-    expect(w.findAll('.dt-nim-candy')).toHaveLength(2);
-    expect(w.text()).toContain('还剩 2 颗, 每次拿 1~3 颗');
+    expect(candies(w)).toHaveLength(2);
+    expect(w.get('[data-testid="nim-status"] b').text()).toBe('2');
+    expect(w.get('[data-testid="nim-status"]').text()).toBe('还剩2颗');
+    expect(w.get('[data-testid="bar-info-title"]').text()).toBe('新手桌 · 每次拿 1~3 颗');
+    expect(w.get('[data-testid="nim-live"]').text()).toBe('还剩 2 颗, 每次拿 1~3 颗');
+    // 拿的按钮只写数字，读屏标签写全
+    expect(w.get('[data-testid="nim-take-2"]').text()).toBe('2');
+    expect(w.get('[data-testid="nim-take-2"]').attributes('aria-label')).toBe('拿 2 颗');
+    expect(w.get('[data-testid="nim-take-2"]').attributes('disabled')).toBeUndefined();
     expect(w.get('[data-testid="nim-take-3"]').attributes('disabled')).toBeDefined();
     await w.get('[data-testid="nim-take-2"]').trigger('click');
     await flushPromises();
@@ -111,17 +125,24 @@ describe('NimPanel', () => {
     const w = mount(NimPanel, { props: { data: withRound(round()) } });
     await w.get('[data-testid="nim-take-1"]').trigger('click');
     await flushPromises();
-    expect(w.findAll('.dt-nim-candy')).toHaveLength(11);
+    expect(candies(w)).toHaveLength(11);
+    expect(w.get('[data-testid="nim-status"] b').text()).toBe('11');
     expect(w.get('[data-testid="nim-take-1"]').attributes('disabled')).toBeDefined();
     expect(w.find('[data-testid="nim-bartender"]').exists()).toBe(false);
     vi.advanceTimersByTime(600);
     await flushPromises();
-    expect(w.findAll('.dt-nim-candy')).toHaveLength(8);
-    expect(w.get('[data-testid="nim-bartender"]').text()).toBe('调酒师拿了 3 颗');
+    expect(candies(w)).toHaveLength(8);
+    expect(w.get('[data-testid="nim-status"] b').text()).toBe('8');
+    expect(w.get('[data-testid="nim-bartender"]').text()).toBe('调酒师拿了 3 颗, 轮到你了');
     // 固定的播报区念出调酒师那一步和剩余（#190 审查）
-    expect(w.get('[data-testid="nim-live"]').text()).toBe('调酒师拿了 3 颗 还剩 8 颗, 每次拿 1~3 颗');
+    expect(w.get('[data-testid="nim-live"]').text()).toBe(
+      '调酒师拿了 3 颗, 轮到你了 还剩 8 颗, 每次拿 1~3 颗',
+    );
     expect(w.get('[data-testid="nim-take-1"]').attributes('disabled')).toBeUndefined();
-    expect(w.get('[data-testid="nim-log"]').text()).toBe('你 1 · 调酒师 3');
+    const log = w.findAll('[data-testid="nim-log"] span');
+    expect(log.map((x) => x.text())).toEqual(['你 1', '调酒师 3']);
+    expect(log[0]!.classes()).toContain('is-me');
+    expect(log[1]!.classes()).not.toContain('is-me');
   });
 
   it('概览晚到、还是旧局面时不覆盖手上的局面（#191 审查）', async () => {
@@ -130,7 +151,7 @@ describe('NimPanel', () => {
     await w.get('[data-testid="nim-take-2"]').trigger('click');
     await flushPromises();
     await w.setProps({ data: withRound(round()) });
-    expect(w.findAll('.dt-nim-candy')).toHaveLength(10);
+    expect(candies(w)).toHaveLength(10);
   });
 
   it('播报区一直在（没开局时也在），开局后第一条播报才念得出来（终审）', () => {
@@ -152,7 +173,8 @@ describe('NimPanel', () => {
         ),
       },
     });
-    expect(w.text()).toContain('抛硬币: 调酒师先拿');
+    expect(w.get('[data-testid="bar-info-sub"]').text()).toBe('抛硬币: 调酒师先拿');
+    expect(w.get('[data-testid="bar-info-title"]').text()).toBe('高手桌 · 每次拿 1~3 颗');
   });
 
   it('结束：写输赢和声望，有再来一局', async () => {
@@ -163,8 +185,10 @@ describe('NimPanel', () => {
     await w.get('[data-testid="nim-take-2"]').trigger('click');
     await flushPromises();
     const res = w.get('[data-testid="nim-result"]');
-    expect(res.text()).toContain('你拿到了最后一颗！声望 +1');
-    expect(res.text()).toContain('银币 500');
+    expect(res.find('b').text()).toBe('你拿到了最后一颗！声望 +1');
+    expect(res.classes()).toContain('is-ok');
+    expect(res.findAll('[data-testid="award-chip"]').map((c) => c.text())).toEqual(['银币 500']);
+    expect(w.find('[data-testid^="nim-take-"]').exists()).toBe(false);
     expect(w.get('[data-testid="nim-live"]').text()).toContain('你拿到了最后一颗！声望 +1');
     // 结束后不再写“还剩 0 颗”
     expect(w.find('[data-testid="nim-status"]').exists()).toBe(false);
@@ -189,6 +213,6 @@ describe('NimPanel', () => {
     expect(w.emitted('reload')).toHaveLength(1);
     // 概览读回来的新局面能顶掉旧画面
     await w.setProps({ data: withRound(round({ left: 4 })) });
-    expect(w.findAll('.dt-nim-candy')).toHaveLength(4);
+    expect(candies(w)).toHaveLength(4);
   });
 });

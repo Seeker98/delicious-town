@@ -17,7 +17,6 @@ import { useCatalogStore } from '../stores/catalog';
 import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
-import { goodsArt } from '../utils/goodsArt';
 import { SHOP_CATS, shopCat, type ShopCat } from '../utils/shopCats';
 
 /**
@@ -188,7 +187,7 @@ async function buy() {
     </div>
     <div class="dt-card dt-rows-card">
       <DtRow v-for="it in shown" :key="it.goodsId" class="dt-row-wrap" :data-testid="`item-${it.goodsId}`">
-        <template #icon><DtArt :name="goodsArt(it.goodsId)" :size="28" /></template>
+        <template #icon><DtArt :name="catalog.goodsArt(it.goodsId)" :size="28" /></template>
         <template #title>{{ catalog.goodsName(it.goodsId) }}</template>
         <template #sub
           ><span
@@ -224,7 +223,7 @@ async function buy() {
     <DtEmpty v-if="!special" :title="t.store.shop.specialSoon" data-testid="special-none" />
     <div v-else class="dt-card dt-rows-card">
       <DtRow data-testid="special">
-        <template #icon><DtArt :name="goodsArt(special.goodsId)" :size="28" /></template>
+        <template #icon><DtArt :name="catalog.goodsArt(special.goodsId)" :size="28" /></template>
         <template #title
           ><span data-testid="special-title"
             >{{ catalog.goodsName(special.goodsId)
@@ -263,7 +262,7 @@ async function buy() {
   >
     <div v-if="sheetGoods != null" data-testid="shop-sheet">
       <div class="dt-detail-head">
-        <span class="dt-detail-art"><DtArt :name="goodsArt(sheetGoods)" :size="52" /></span>
+        <span class="dt-detail-art"><DtArt :name="catalog.goodsArt(sheetGoods)" :size="52" /></span>
         <div class="dt-detail-info">
           <div v-if="pickedSpecial && special">
             {{ t.store.shop.tier(Math.round((1 - special.discount) * 100), special.tierName) }}

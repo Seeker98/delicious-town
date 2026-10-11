@@ -27,10 +27,17 @@ test('厨塔：试打 → 挑战 1 层 → 赛厨榜占位 → 声望商店兑�
 
     await page.goto('/tower');
     await page.getByTestId('tab-tower').click();
+    // 界面改版 P9：试打在点开那一层的底部面板里；结果也在底部面板里，看完关掉
+    await page.getByTestId('floor-open-1').click();
     await page.getByTestId('tp-1').click();
     await expect(page.getByTestId('duel-headline')).toContainText('试打: 赢了');
+    await page.getByTestId('duel-close').click();
+    await expect(page.getByTestId('duel-result')).toHaveCount(0);
+    // 挑战直接点那一行的按钮；标题只写胜负和票数，声望写在下面的小标签里
     await page.getByTestId('tc-1').click();
-    await expect(page.getByTestId('duel-headline')).toHaveText(/^你赢了 \d:\d, 声望 \+7$/);
+    await expect(page.getByTestId('duel-headline')).toHaveText(/^你赢了 \d:\d( \(票数相同, 比总分\))?$/);
+    await expect(page.locator('.dt-duel-tags .dt-tag')).toContainText(['声望 +7']);
+    await page.getByTestId('duel-close').click();
 
     await page.getByTestId('tab-rank').click();
     await expect(page.getByTestId('my-rank')).toHaveText('未上榜');
@@ -40,8 +47,11 @@ test('厨塔：试打 → 挑战 1 层 → 赛厨榜占位 → 声望商店兑�
 
     await page.getByTestId('tab-shop').click();
     await expect(page.getByTestId('shop-renown')).toContainText('107');
+    // 兑换在数量面板里确认（默认 1 个）
     await page.getByTestId('buy-10007').click();
+    await page.getByTestId('qty-ok').click();
     await expect(page.getByTestId('shop-renown')).toContainText('47');
+    await expect(page.getByTestId('tower-renown')).toContainText('47');
   } finally {
     await client.end();
   }

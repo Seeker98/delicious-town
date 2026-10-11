@@ -21,9 +21,14 @@ test('酒吧扩展：魔鬼辣杯喝到出结果；飞镖投三镖', async ({ pa
     await client.end();
   }
 
-  await page.goto('/bar');
-  await page.getByTestId('tab-devil').click();
+  // 每个游戏单独一页（界面改版 P9）；魔鬼辣杯先选押注档，再点开喝
+  await page.goto('/bar/devil');
   await page.getByTestId('devil-stake-1').click();
+  await expect(page.getByTestId('devil-stake-1')).toHaveAttribute('aria-checked', 'true');
+  const started = page.waitForResponse((r) => r.url().includes('/api/v1/bar/devil/start'));
+  await page.getByTestId('devil-start').click();
+  expect((await started).ok()).toBe(true);
+  await expect(page.getByTestId('devil-cup-0')).toBeVisible();
   // 一直挑还没喝过的杯，直到有人喝到特辣酒
   for (let i = 0; i < 6; i++) {
     if (await page.getByTestId('devil-result').isVisible()) break;
@@ -33,7 +38,7 @@ test('酒吧扩展：魔鬼辣杯喝到出结果；飞镖投三镖', async ({ pa
   }
   await expect(page.getByTestId('devil-result')).toBeVisible();
 
-  await page.getByTestId('tab-darts').click();
+  await page.goto('/bar/darts');
   await page.getByTestId('darts-start').click();
   for (let i = 0; i < 3; i++) {
     await page.getByTestId('darts-aim').click();

@@ -6,10 +6,17 @@ import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
+import type { ArtName } from '../../art/generated/names';
+import DtArt from '../DtArt.vue';
+import AwardChip from './AwardChip.vue';
+import BarInfo from './BarInfo.vue';
 import { awardText } from './award';
 import { roundGone } from './gone';
 
-/** 最后一颗糖（问题记录 427-1）：两张桌子，和调酒师轮流拿 1~k 颗，拿到最后一颗的赢 */
+/**
+ * 最后一颗糖（问题记录 427-1）：两张桌子，和调酒师轮流拿 1~k 颗，拿到最后一颗的赢。
+ * 界面改版 P9：没开局时两张桌子各一行；开局后是剩下的糖果堆、每一步的记录和“拿几颗”按钮
+ */
 const props = defineProps<{ data: BarDto }>();
 const emit = defineEmits<{ reload: [] }>();
 const t = useT();
@@ -17,6 +24,7 @@ const toast = useToastStore();
 const catalog = useCatalogStore();
 const busy = ref(false);
 const TABLES: readonly NimTable[] = ['novice', 'expert'];
+const CANDY_ART: readonly ArtName[] = ['game-candy-purple', 'game-candy', 'game-candy-gold'];
 /** 调酒师那一步晚多久显示 */
 const BARTENDER_DELAY = 600;
 
@@ -106,11 +114,6 @@ const lastBartender = computed(() => {
   const last = v?.log.at(-1);
   return v && v.log.length > 0 && last?.who === 'bartender' ? last.take : null;
 });
-const logText = computed(() =>
-  (view.value?.log ?? [])
-    .map((m) => (m.who === 'me' ? t.value.bar.nim.logMe(m.take) : t.value.bar.nim.logBartender(m.take)))
-    .join(' · '),
-);
 const resultText = computed(() => {
   const v = view.value;
   if (!v?.result) return '';
@@ -131,25 +134,37 @@ const liveText = computed(() => {
 </script>
 
 <template>
-  <div class="small">
-    <div class="dt-meta mb-2">{{ t.bar.nim.rule }}</div>
-    <!-- 固定播报区：一直在，开局后的第一条（抛硬币、调酒师先拿）也念得出来（终审） -->
-    <div class="visually-hidden" aria-live="polite" data-testid="nim-live">{{ liveText }}</div>
-    <template v-if="!view">
-      <div class="mb-1">{{ leftToday > 0 ? t.bar.nim.left(leftToday) : t.bar.nim.noLeft }}</div>
-      <div v-for="x in TABLES" :key="x" class="dt-item" :data-testid="`nim-table-${x}`">
-        <div class="dt-item-main">
-          <div class="dt-item-title">{{ t.bar.nim.tables[x] }}</div>
-          <div class="dt-meta">
-            {{ t.bar.nim.tableLine(n.tables[x].cost, kText(n.tables[x].k), n.tables[x].renown) }}
-          </div>
-          <div class="dt-meta">
-            {{ t.bar.nim.hint(n.tables[x].first, n.tables[x].careless) }}
-          </div>
-          <div v-if="blockOf(x)" class="dt-meta text-danger">{{ blockOf(x) }}</div>
-        </div>
-        <div class="dt-item-actions">
+  <!-- 固定播报区：一直在，开局后的第一条（抛硬币、调酒师先拿）也念得出来（终审） -->
+  <div class="visually-hidden" aria-live="polite" data-testid="nim-live">{{ liveText }}</div>
+  <template v-if="!view">
+    <BarInfo
+      game="nim"
+      :title="t.bar.nim.title"
+      :sub="leftToday > 0 ? t.bar.nim.left(leftToday) : t.bar.nim.noLeft"
+    />
+    <div class="dt-block-head">
+      <h2 class="dt-block-title">{{ t.bar.nim.pickTable }}</h2>
+    </div>
+    <div class="dt-card dt-rows-card">
+      <div
+        v-for="x in TABLES"
+        :key="x"
+        class="dt-row dt-row-wrap dt-nim-table"
+        :data-testid="`nim-table-${x}`"
+      >
+        <span class="dt-row-ico"
+          ><DtArt :name="x === 'novice' ? 'game-candy' : 'game-candy-purple'" :size="28"
+        /></span>
+        <span class="dt-row-main">
+          <span class="dt-row-title is-strong">{{ t.bar.nim.tables[x] }}</span>
+          <span class="dt-row-sub">{{ t.bar.nim.tableLine(n.tables[x].cost, kText(n.tables[x].k)) }}</span>
+          <span class="dt-row-sub">{{ t.bar.nim.hint(n.tables[x].first, n.tables[x].careless) }}</span>
+          <span class="dt-row-sub">{{ t.bar.nim.prize(n.tables[x].renown) }}</span>
+          <span v-if="blockOf(x)" class="dt-row-sub text-danger">{{ blockOf(x) }}</span>
+        </span>
+        <span class="dt-row-end">
           <button
+            type="button"
             class="btn btn-sm btn-outline-primary"
             :disabled="busy || !!blockOf(x)"
             :data-testid="`nim-start-${x}`"
@@ -157,65 +172,93 @@ const liveText = computed(() => {
           >
             {{ t.bar.nim.start }}
           </button>
-        </div>
+        </span>
       </div>
-    </template>
-    <template v-else>
-      <div class="fw-bold mb-1">{{ t.bar.nim.tables[view.table] }}</div>
-      <div v-if="view.coin" class="dt-meta mb-1" data-testid="nim-coin">
-        {{ view.coin === 'me' ? t.bar.nim.coinMe : t.bar.nim.coinBartender }}
+    </div>
+  </template>
+  <template v-else>
+    <BarInfo
+      game="nim"
+      :title="t.bar.nim.tableTitle(t.bar.nim.tables[view.table], view.k)"
+      :sub="
+        view.coin
+          ? view.coin === 'me'
+            ? t.bar.nim.coinMe
+            : t.bar.nim.coinBartender
+          : t.bar.nim.hint(n.tables[view.table].first, n.tables[view.table].careless)
+      "
+    />
+    <section class="dt-card dt-bar-stage dt-nim-stage">
+      <!-- 结束后不再写“还剩 0 颗” -->
+      <div v-if="!view.result" class="dt-nim-left" data-testid="nim-status">
+        <span>{{ t.bar.nim.leftLabel }}</span>
+        <b>{{ view.left }}</b>
+        <small>{{ t.bar.nim.unit }}</small>
       </div>
-      <div v-if="!view.result" class="mb-1" data-testid="nim-status">
-        {{ t.bar.nim.status(view.left, view.k) }}
+      <div class="dt-nim-candies" aria-hidden="true">
+        <DtArt v-for="i in view.left" :key="i" :name="CANDY_ART[i % 3]!" :size="30" />
       </div>
-      <div class="dt-nim-board mb-2" aria-hidden="true">
-        <span v-for="i in view.left" :key="i" class="dt-nim-candy"></span>
+      <div v-if="view.log.length > 0" class="dt-nim-log" data-testid="nim-log">
+        <span v-for="(m, i) in view.log" :key="i" :class="{ 'is-me': m.who === 'me' }">{{
+          m.who === 'me' ? t.bar.nim.logMe(m.take) : t.bar.nim.logBartender(m.take)
+        }}</span>
       </div>
-      <div v-if="lastBartender !== null && !view.result" class="mb-1" data-testid="nim-bartender">
+      <p v-if="lastBartender !== null && !view.result" class="dt-bar-status" data-testid="nim-bartender">
         {{ t.bar.nim.bartenderTook(lastBartender) }}
-      </div>
-      <div v-if="view.needFirst" class="d-flex flex-wrap gap-1">
-        <button
-          class="btn btn-sm btn-primary"
-          :disabled="busy"
-          data-testid="nim-first-me"
-          @click="run(() => endpoints.barNimFirst('me'), t.bar.nim.failed)"
-        >
-          {{ t.bar.nim.meFirst }}
-        </button>
-        <button
-          class="btn btn-sm btn-outline-primary"
-          :disabled="busy"
-          data-testid="nim-first-bartender"
-          @click="run(() => endpoints.barNimFirst('bartender'), t.bar.nim.failed)"
-        >
-          {{ t.bar.nim.bartenderFirst }}
-        </button>
-      </div>
-      <div v-else-if="!view.result" class="d-flex flex-wrap gap-1">
+      </p>
+    </section>
+    <div v-if="view.needFirst" class="dt-bar-pair">
+      <button
+        type="button"
+        class="btn btn-primary"
+        :disabled="busy"
+        data-testid="nim-first-me"
+        @click="run(() => endpoints.barNimFirst('me'), t.bar.nim.failed)"
+      >
+        {{ t.bar.nim.meFirst }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        :disabled="busy"
+        data-testid="nim-first-bartender"
+        @click="run(() => endpoints.barNimFirst('bartender'), t.bar.nim.failed)"
+      >
+        {{ t.bar.nim.bartenderFirst }}
+      </button>
+    </div>
+    <template v-else-if="!view.result">
+      <p class="dt-bar-label">{{ t.bar.nim.howMany }}</p>
+      <div class="dt-nim-takes" :style="{ gridTemplateColumns: `repeat(${takes.length}, minmax(0, 1fr))` }">
         <button
           v-for="k in takes"
           :key="k"
-          class="btn btn-sm btn-outline-primary"
+          type="button"
+          class="btn btn-outline-primary"
           :disabled="busy || waiting || k > view.left"
+          :aria-label="t.bar.nim.take(k)"
           :data-testid="`nim-take-${k}`"
           @click="run(() => endpoints.barNimTake(k), t.bar.nim.failed)"
         >
-          {{ t.bar.nim.take(k) }}
+          {{ k }}
         </button>
       </div>
-      <div v-if="logText" class="dt-meta mt-2" data-testid="nim-log">{{ logText }}</div>
-      <template v-if="view.result">
-        <div
-          :class="['mt-2', 'fw-bold', view.result === 'win' ? 'text-success' : 'text-danger']"
-          data-testid="nim-result"
-        >
-          {{ resultText }}
-        </div>
-        <button class="btn btn-sm btn-outline-primary mt-2" data-testid="nim-again" @click="reset">
-          {{ t.bar.again }}
-        </button>
-      </template>
     </template>
-  </div>
+    <section
+      v-if="view.result"
+      :class="['dt-bar-result', view.result === 'win' ? 'is-ok' : 'is-bad']"
+      data-testid="nim-result"
+    >
+      <b>{{ view.result === 'win' ? t.bar.nim.win(view.renown) : t.bar.nim.lose }}</b>
+      <div v-if="view.award" class="dt-award-chips"><AwardChip :award="view.award" /></div>
+      <button
+        type="button"
+        class="btn btn-outline-primary dt-btn-block"
+        data-testid="nim-again"
+        @click="reset"
+      >
+        {{ t.bar.again }}
+      </button>
+    </section>
+  </template>
 </template>

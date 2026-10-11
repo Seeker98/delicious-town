@@ -1,12 +1,22 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { TowerDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { useCatalogStore } from '../../stores/catalog';
 import FloorPanel from './FloorPanel.vue';
 import { duelResult, towerData, towerFloor } from './testData';
 
 vi.mock('../../api/endpoints', () => ({ endpoints: { towerChallenge: vi.fn() } }));
+
+/** 一层的面板和对决结果都用 Teleport 挂到 body 上：测试里把 teleport 桩掉，面板内容就留在 wrapper 里（界面改版 P9） */
+const mountPanel = (data: TowerDto) =>
+  mount(FloorPanel, { props: { data }, global: { stubs: { teleport: true } } });
+/** 点开一层的面板 */
+const openFloor = async (w: ReturnType<typeof mountPanel>, n: number) => {
+  await w.get(`[data-testid="floor-open-${n}"]`).trigger('click');
+  return w.get('.dt-sheet');
+};
 
 describe('FloorPanel', () => {
   beforeEach(() => {
@@ -38,52 +48,88 @@ describe('FloorPanel', () => {
         cookbooks: [],
       },
     });
-    const text = mount(FloorPanel, { props: { data: towerData() } })
-      .get('[data-testid="floor-1"]')
-      .text();
+    const w = mountPanel(towerData());
+    // 一行里写店名、称号
+    const text = w.get('[data-testid="floor-1"]').text();
     expect(text).toContain('Apprentice Model Restaurant');
     expect(text).toContain('Apprentice Guardian');
-    expect(text).toContain('Bring it on');
     expect(text).not.toContain('守塔人1');
+    // 点开的面板：标题是店名，称号、台词也按目录
+    const sheet = (await openFloor(w, 1)).text();
+    expect(sheet).toContain('Apprentice Model Restaurant');
+    expect(sheet).toContain('Apprentice Guardian');
+    expect(sheet).toContain('Bring it on');
+    expect(sheet).not.toMatch(/守塔人1|称号1|来挑战吧/);
   });
 
   it('挑战后显示对决结果并通知刷新；试打按 test = true 调用', async () => {
-    const w = mount(FloorPanel, { props: { data: towerData() } });
-    await w.find('[data-testid="tc-1"]').trigger('click');
+    const w = mountPanel(towerData());
+    // 行上的“挑战”直接打
+    await w.get('[data-testid="tc-1"]').trigger('click');
     await flushPromises();
     expect(endpoints.towerChallenge).toHaveBeenCalledWith(1, false);
+    // 结果从下面弹出
+    expect(w.get('.dt-sheet-title').text()).toBe('对决结果');
     expect(w.find('[data-testid="duel-result"]').exists()).toBe(true);
     expect(w.emitted('reload')).toHaveLength(1);
-    await w.find('[data-testid="tp-1"]').trigger('click');
+    await w.get('[data-testid="duel-close"]').trigger('click');
+    expect(w.find('[data-testid="duel-result"]').exists()).toBe(false);
+    // 面板里的试打按 test = true 调用，打完面板收起、弹出结果
+    await openFloor(w, 1);
+    await w.get('[data-testid="tp-1"]').trigger('click');
     await flushPromises();
     expect(endpoints.towerChallenge).toHaveBeenLastCalledWith(1, true);
+    expect(w.find('[data-testid="tp-1"]').exists()).toBe(false);
+    expect(w.find('[data-testid="duel-result"]').exists()).toBe(true);
+    expect(w.emitted('reload')).toHaveLength(2);
+    // 面板里的“挑战”也是正式挑战
+    await w.get('[data-testid="duel-close"]').trigger('click');
+    await openFloor(w, 1);
+    await w.get('[data-testid="tc-sheet-1"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.towerChallenge).toHaveBeenLastCalledWith(1, false);
   });
 
-  it('不能挑战时写明原因：等级不够、没打赢下一层、夜间、次数用完（试打仍可用）、体力不够', () => {
-    const w = mount(FloorPanel, {
-      props: {
-        data: towerData({
-          level: 15,
-          hour: 3,
-          floors: [
-            towerFloor(1, { unlocked: true }),
-            towerFloor(2, { unlocked: false }),
-            towerFloor(3),
-            towerFloor(4, { unlocked: true }),
-          ],
-        }),
-      },
-    });
-    expect(w.find('[data-testid="block-2"]').text()).toBe('先打赢第 1 层');
-    expect(w.find('[data-testid="block-3"]').text()).toBe('餐厅 21 级才能挑战');
-    expect(w.find('[data-testid="block-4"]').text()).toBe('4 层以上 6 点以后才能挑战');
-    expect(w.find('[data-testid="tc-4"]').attributes('disabled')).toBeDefined();
-    const used = mount(FloorPanel, { props: { data: towerData({ left: 0 }) } });
-    expect(used.find('[data-testid="block-1"]').text()).toBe('今天的挑战次数用完了');
-    expect(used.find('[data-testid="tc-1"]').attributes('disabled')).toBeDefined();
-    expect(used.find('[data-testid="tp-1"]').attributes('disabled')).toBeUndefined();
-    const tired = mount(FloorPanel, { props: { data: towerData({ strength: 3 }) } });
-    expect(tired.find('[data-testid="block-1"]').text()).toBe('体力不够 (要 5)');
+  it('不能挑战时写明原因：等级不够、没打赢下一层、夜间、次数用完（试打仍可用）、体力不够', async () => {
+    const w = mountPanel(
+      towerData({
+        level: 15,
+        hour: 3,
+        floors: [
+          towerFloor(1, { unlocked: true }),
+          towerFloor(2, { unlocked: false }),
+          towerFloor(3),
+          towerFloor(4, { unlocked: true }),
+        ],
+      }),
+    );
+    expect(w.get('[data-testid="block-2"]').text()).toBe('先打赢第 1 层');
+    expect(w.get('[data-testid="block-3"]').text()).toBe('餐厅 21 级才能挑战');
+    // 没解锁的层没有挑战按钮
+    expect(w.find('[data-testid="tc-2"]').exists()).toBe(false);
+    expect(w.find('[data-testid="tc-3"]').exists()).toBe(false);
+    expect(w.get('[data-testid="block-4"]').text()).toBe('4 层以上 6 点以后才能挑战');
+    expect(w.get('[data-testid="tc-4"]').attributes('disabled')).toBeDefined();
+    // 点开的面板里也写原因，挑战灰掉
+    await openFloor(w, 4);
+    expect(w.get('[data-testid="sheet-block-4"]').text()).toBe('4 层以上 6 点以后才能挑战');
+    expect(w.get('[data-testid="tc-sheet-4"]').attributes('disabled')).toBeDefined();
+    const used = mountPanel(towerData({ left: 0 }));
+    expect(used.get('[data-testid="block-1"]').text()).toBe('今天的挑战次数用完了');
+    expect(used.get('[data-testid="tc-1"]').attributes('disabled')).toBeDefined();
+    await openFloor(used, 1);
+    expect(used.get('[data-testid="tc-sheet-1"]').attributes('disabled')).toBeDefined();
+    expect(used.get('[data-testid="tp-1"]').attributes('disabled')).toBeUndefined();
+    const tired = mountPanel(towerData({ strength: 3 }));
+    expect(tired.get('[data-testid="block-1"]').text()).toBe('体力不够 (要 5)');
+    // 这一层今天打满了：不写红字，按钮换成“累了”的标签，试打仍可用
+    const full = mountPanel(towerData({ floors: [towerFloor(1, { left: 0 })] }));
+    expect(full.find('[data-testid="block-1"]').exists()).toBe(false);
+    expect(full.find('[data-testid="tc-1"]').exists()).toBe(false);
+    expect(full.get('[data-testid="floor-1"]').text()).toContain('今天累了');
+    await openFloor(full, 1);
+    expect(full.get('[data-testid="tc-sheet-1"]').attributes('disabled')).toBeDefined();
+    expect(full.get('[data-testid="tp-1"]').attributes('disabled')).toBeUndefined();
   });
 });
 
@@ -91,16 +137,20 @@ describe('问题记录 230：次数提示用对手的名字', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
   });
-  it('写"今天还能挑战某某"，不写"他"', () => {
+  it('写"今天还能挑战某某"，不写"他"', async () => {
     const data = towerData();
-    const w = mount(FloorPanel, { props: { data } });
+    const w = mountPanel(data);
     const f = data.floors[0]!;
-    expect(w.find(`[data-testid="floor-${f.floor}"]`).text()).toContain(`今天还能挑战${f.name}`);
+    // 次数提示在点开的那一层的面板里
+    const sheet = await openFloor(w, f.floor);
+    expect(sheet.text()).toContain(`今天还能挑战${f.name}`);
     expect(w.text()).not.toContain('挑战他');
   });
 
-  it('赛厨规则按厨塔接口给的评委数写（backlog 396 审查）', () => {
-    const w = mount(FloorPanel, { props: { data: towerData({ duelJudges: 3 }) } });
-    expect(w.get('[data-testid="duel-rules"]').text()).toContain('随机请 3 位');
+  it('赛厨规则按厨塔接口给的评委数写（backlog 396 审查）', async () => {
+    const w = mountPanel(towerData({ duelJudges: 3 }));
+    expect(w.get('[data-testid="duel-rules"]').text()).toContain('3 位评委投票');
+    await w.get('[data-testid="duel-rules"]').trigger('click');
+    expect(w.get('[data-testid="duel-rules-body"]').text()).toContain('随机请 3 位');
   });
 });

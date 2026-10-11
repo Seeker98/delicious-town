@@ -11,7 +11,7 @@ describe('最后一颗糖的文案（审查）', () => {
     ['es', es],
     ['fr', fr],
   ])('%s：规则和更新记录里不出现字母 k（玩家看不懂）', (_l, m) => {
-    expect(m.bar.nim.rule).not.toMatch(/\bk\b/);
+    expect(m.bar.rules.nim.join(' ')).not.toMatch(/\bk\b/);
     expect(m.site.changelog.nim1007).not.toMatch(/\bk\b/);
   });
 

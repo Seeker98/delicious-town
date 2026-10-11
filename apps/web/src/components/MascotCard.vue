@@ -49,7 +49,7 @@ watch(
       <b>{{ name }}</b>
       <span :data-testid="`${testid}-line`" aria-live="polite">{{ line }}</span>
     </div>
-    <div v-if="$slots.default" class="dt-mascot-end" @click.stop @keydown.enter.stop>
+    <div v-if="$slots.default" class="dt-mascot-end" @click.stop @keydown.enter.stop @keydown.space.stop>
       <slot />
     </div>
   </div>

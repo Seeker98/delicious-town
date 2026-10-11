@@ -71,6 +71,8 @@ export interface Goods {
   gem: GemDef | null;
   /** 购买、摆放要求的最低星级（问题记录 146 的后期海报奖杯）；不写是 0 */
   needStar?: number;
+  /** 单个道具的配图（界面改版 P9）：网页画 goods-<art>；不写就按小类给图 */
+  art?: string;
   /** 已下架（问题记录 367）：定义保留给已持有的玩家，不再从任何途径产出；没下架的不写 */
   retired?: true;
 }

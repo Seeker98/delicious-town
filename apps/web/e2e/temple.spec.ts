@@ -39,23 +39,34 @@ test('神殿：打守护兽 → 探险 → 冥想准备试炼 → 试炼', async
     await client.end();
   }
 
+  // 界面改版 P9：发射、探险都是一行一行的道具，点行尾按钮弹出数量面板确认（默认 1 次）
   await page.goto('/temple');
   await page.getByTestId('tab-guardian').click();
-  await page.getByTestId('missile').selectOption('10701');
-  await page.getByTestId('fire').click();
+  await page.getByTestId('fire-open-10701').click();
+  await page.getByTestId('qty-ok').click();
   await expect(page.getByTestId('shots')).toBeVisible();
+  await expect(page.getByTestId('qty-ok')).toHaveCount(0);
 
   await page.getByTestId('tab-explore').click();
-  await page.getByTestId('map').selectOption('10704');
-  await page.getByTestId('explore').click();
+  await page.getByTestId('explore-open-10704').click();
+  await page.getByTestId('qty-ok').click();
   await expect(page.getByTestId('explore-result')).toContainText('成功');
 
   await page.getByTestId('tab-trial').click();
   await page.getByTestId('trial-meditate').click();
   await expect(page.getByTestId('trial-target')).toBeVisible();
-  // 主料槽默认选中，点完主料自动换到辅料（问题记录 487）
-  await page.getByTestId('trial-food-5001').click();
-  await page.getByTestId('trial-food-5009').click();
+  // 主料、辅料两个槽：点槽弹出按等级分组的食材面板，选好自动关掉；比这道菜低的等级默认收起，先全展开
+  for (const [slot, foodsId] of [
+    ['main', 5001],
+    ['sub', 5009],
+  ] as const) {
+    await page.getByTestId(`trial-slot-${slot}`).click();
+    await expect(page.getByTestId('trial-foods')).toBeVisible();
+    const closed = page.locator('[data-testid^="trial-group-"][aria-expanded="false"]');
+    while ((await closed.count()) > 0) await closed.first().click();
+    await page.getByTestId(`trial-food-${foodsId}`).click();
+    await expect(page.getByTestId('trial-foods')).toHaveCount(0);
+  }
   await page.getByTestId('trial-start').click();
   await expect(page.getByTestId('trial-result')).toContainText('试炼');
 });

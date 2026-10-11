@@ -12,7 +12,7 @@ const bar = (patch: Partial<BarDto> = {}): BarDto =>
     slot: { emailVerified: true, lamp: false, floorLeft: 30, rareEvery: 90, pool: [], stats: [] },
     krabCoinTickets: 10,
     devil: { stakes: [1], round: null },
-    memory: { cost: 1, played: 3, max: 3, flashMs: 600, gapMs: 200, round: null },
+    memory: { cost: 1, played: 3, max: 3, flashMs: 600, gapMs: 200, lengths: [3, 5, 7], round: null },
     darts: { cost: 1, played: 5, max: 5, round: null },
     ...patch,
   }) as BarDto;
@@ -21,7 +21,7 @@ const texts = (d: BarDto | null) => wenjieLines(d).map((l) => l.text);
 describe('雯姐台词（问题记录 210）', () => {
   it('记忆调酒、飞镖还有次数时提醒剩几局；玩满了不提', () => {
     const d = bar({
-      memory: { cost: 1, played: 1, max: 3, flashMs: 600, gapMs: 200, round: null },
+      memory: { cost: 1, played: 1, max: 3, flashMs: 600, gapMs: 200, lengths: [3, 5, 7], round: null },
       darts: { cost: 1, played: 0, max: 5, round: null },
     });
     expect(texts(d).some((t) => t.includes('记忆调酒今天还能玩 2 局'))).toBe(true);

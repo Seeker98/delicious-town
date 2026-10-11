@@ -38,11 +38,27 @@ describe('SpicePanel', () => {
 
   it('没有局时写规则、三档奖励、今天还能玩几局；点了开局', async () => {
     vi.mocked(endpoints.barSpiceStart).mockResolvedValue(round());
-    const w = mount(SpicePanel, { props: { data: withRound(null, { played: 2 }) } });
-    expect(w.text()).toContain('A 是调料和位置都对');
-    expect(w.text()).toContain('今天还能玩 3 局');
+    // 玩法在 Teleport 到 body 的底部面板里：测试里把 teleport 桩掉（界面改版 P9）
+    const w = mount(SpicePanel, {
+      props: { data: withRound(null, { played: 2 }) },
+      global: { stubs: { teleport: true } },
+    });
+    expect(w.get('[data-testid="bar-info-title"]').text()).toBe('猜出 4 种调料和顺序');
+    expect(w.get('[data-testid="bar-info-sub"]').text()).toBe('今天 2/5 局 · 4 次内猜中奖励最好');
+    expect(w.find('[data-testid="bar-rules"]').exists()).toBe(false);
+    await w.get('[data-testid="bar-rules-open"]').trigger('click');
+    const rules = w.get('[data-testid="bar-rules"]');
+    expect(rules.text()).toContain('A 是调料和位置都对');
+    expect(rules.findAll('tr').map((x) => x.text())).toEqual([
+      '第 1~4 次猜中: 声望 +5, 一份奖励',
+      '第 5~6 次猜中: 声望 +2, 一份奖励',
+      '第 7~8 次猜中: 一份奖励',
+    ]);
     expect(w.get('[data-testid="spice-tier-0"]').text()).toContain('第 1~4 次猜中');
     expect(w.get('[data-testid="spice-tier-0"]').text()).toContain('声望 +5');
+    expect(w.get('[data-testid="spice-tier-2"]').text()).toContain('第 7~8 次猜中');
+    expect(w.get('[data-testid="spice-tier-2"]').text()).not.toContain('声望');
+    expect(w.get('[data-testid="spice-start"]').text()).toBe('开一局 (2 张神秘礼券)');
     await w.get('[data-testid="spice-start"]').trigger('click');
     await flushPromises();
     expect(endpoints.barSpiceStart).toHaveBeenCalled();
@@ -96,16 +112,26 @@ describe('SpicePanel', () => {
     expect(w.get('[data-testid="spice-slot-1"]').text()).toBe('花椒');
     expect(w.get('[data-testid="spice-kind-5"]').attributes('disabled')).toBeDefined();
     expect(w.get('[data-testid="spice-submit"]').attributes('disabled')).toBeDefined();
+    expect(w.get('[data-testid="spice-submit"]').text()).toBe('交给调酒师 (还差 1 种)');
     await w.get('[data-testid="spice-slot-1"]').trigger('click');
     expect(w.get('[data-testid="spice-kind-5"]').attributes('disabled')).toBeUndefined();
     await pick(w, [0, 4]);
     // 拿掉第 2 位后，新选的补到第 2 位：酱油、盐、辣椒、料酒
     expect(w.get('[data-testid="spice-slot-1"]').text()).toBe('盐');
+    // 满了：别的调料都灰掉，交的按钮可以点
+    expect(w.get('[data-testid="spice-kind-7"]').attributes('disabled')).toBeDefined();
+    expect(w.get('[data-testid="spice-submit"]').text()).toBe('交给调酒师');
     await w.get('[data-testid="spice-submit"]').trigger('click');
     await flushPromises();
     expect(endpoints.barSpiceGuess).toHaveBeenCalledWith([2, 0, 9, 4]);
-    expect(w.get('[data-testid="spice-row-0"]').text()).toBe('第 1 次: 酱油、盐、辣椒、料酒 1A2B');
-    expect(w.text()).toContain('还能猜 7 次');
+    // 每次一行：调料各一格，A 绿点、B 黄圈；整行的文字在读屏标签里
+    const row = w.get('[data-testid="spice-row-0"]');
+    expect(row.get('.visually-hidden').text()).toBe('第 1 次: 酱油、盐、辣椒、料酒 1A2B');
+    expect(row.findAll('.dt-spice-cells span').map((x) => x.text())).toEqual(['酱油', '盐', '辣椒', '料酒']);
+    expect(row.findAll('.dt-spice-pegs .is-a')).toHaveLength(1);
+    expect(row.findAll('.dt-spice-pegs .is-b')).toHaveLength(2);
+    expect(row.findAll('.dt-spice-pegs i')).toHaveLength(4);
+    expect(w.get('[data-testid="bar-info-sub"]').text()).toContain('还能猜 7 次');
     expect(w.get('[data-testid="spice-slot-0"]').text()).toBe('');
   });
 
@@ -123,9 +149,10 @@ describe('SpicePanel', () => {
     // 结束的结果由猜的返回给出，这里用一个已结束的局面直接挂载
     const done = mount(SpicePanel, { props: { data: withRound(r) } });
     expect(w.find('[data-testid="spice-result"]').exists()).toBe(false);
-    expect(done.get('[data-testid="spice-result"]').text()).toContain('第 1 次猜中了');
-    expect(done.get('[data-testid="spice-result"]').text()).toContain('声望 +5');
-    expect(done.get('[data-testid="spice-result"]').text()).toContain('银币 800');
+    const res = done.get('[data-testid="spice-result"]');
+    expect(res.get('b').text()).toBe('第 1 次猜中了, 声望 +5');
+    expect(res.classes()).toContain('is-ok');
+    expect(res.findAll('[data-testid="award-chip"]').map((c) => c.text())).toEqual(['银币 800']);
     expect(done.get('[data-testid="spice-secret"]').text()).toBe('配方: 醋、糖、料酒、盐');
     expect(done.find('[data-testid="spice-submit"]').exists()).toBe(false);
     expect(done.find('[data-testid="spice-again"]').exists()).toBe(true);
@@ -134,7 +161,9 @@ describe('SpicePanel', () => {
   it('8 次没猜中：写没猜中，亮出配方', () => {
     const r = round({ left: 0, result: 'lose', secret: [3, 1, 4, 0] });
     const w = mount(SpicePanel, { props: { data: withRound(r) } });
-    expect(w.get('[data-testid="spice-result"]').text()).toContain('8 次都没猜中');
+    expect(w.get('[data-testid="spice-result"] b').text()).toBe('8 次都没猜中');
+    expect(w.get('[data-testid="spice-result"]').classes()).toContain('is-bad');
+    expect(w.find('[data-testid="award-chip"]').exists()).toBe(false);
     expect(w.get('[data-testid="spice-secret"]').text()).toContain('醋');
   });
 
@@ -195,7 +224,10 @@ describe('SpicePanel', () => {
       award: { kind: 'coin', id: null, num: 800, lucky: false },
     });
     const done = mount(SpicePanel, { props: { data: withRound(r) } });
-    expect(done.get('[data-testid="spice-result"]').text()).toBe('第 8 次猜中了, 得到 银币 800');
+    // 结果卡：标题不带“就”，奖励是奖励小块；播报区念整句，奖励前写“得到”
+    expect(done.get('[data-testid="spice-result"] b').text()).toBe('第 8 次猜中了');
+    expect(done.get('[data-testid="spice-result"] [data-testid="award-chip"]').text()).toBe('银币 800');
+    expect(done.get('[data-testid="spice-live"]').text()).toBe('第 8 次猜中了, 得到 银币 800');
     const tiers = [
       { maxTries: 4, awardLevel: 8, renown: 5 },
       { maxTries: 5, awardLevel: 5, renown: 2 },

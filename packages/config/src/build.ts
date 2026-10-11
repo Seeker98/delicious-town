@@ -313,6 +313,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
       else item.gem = d;
     }
     if (m.needStar !== undefined) item.needStar = m.needStar;
+    if (m.art !== undefined) item.art = m.art;
     return item;
   });
   // 后期的宣传海报、奖杯（问题记录 146）：设施位只能是 1、2，星级不超过最高星

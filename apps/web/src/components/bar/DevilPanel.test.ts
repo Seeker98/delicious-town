@@ -29,27 +29,51 @@ describe('DevilPanel', () => {
 
   it('没有局时选押注开局；礼券不够的押注灰掉', async () => {
     vi.mocked(endpoints.barDevilStart).mockResolvedValue(round({ stake: 1 }));
-    const w = mount(DevilPanel, { props: { data: barData({ tickets: 3 }) } });
-    expect(w.find('[data-testid="devil-stake-5"]').attributes('disabled')).toBeDefined();
+    const w = mount(DevilPanel, { props: { data: barData({ tickets: 6 }) } });
+    expect(w.find('[data-testid="devil-stake-10"]').attributes('disabled')).toBeDefined();
+    expect(w.find('[data-testid="devil-stake-5"]').attributes('disabled')).toBeUndefined();
+    // 默认选第一档押得起的；点押注只是选中，按“开喝”才开局（界面改版 P9）
+    expect(w.find('[data-testid="devil-stake-1"]').attributes('aria-checked')).toBe('true');
+    await w.find('[data-testid="devil-stake-5"]').trigger('click');
+    expect(w.find('[data-testid="devil-stake-5"]').attributes('aria-checked')).toBe('true');
+    expect(w.find('[data-testid="devil-stake-1"]').attributes('aria-checked')).toBe('false');
+    expect(endpoints.barDevilStart).not.toHaveBeenCalled();
+    expect(w.find('[data-testid="devil-start"]').text()).toBe('押 5 张, 开喝');
     await w.find('[data-testid="devil-stake-1"]').trigger('click');
+    await w.find('[data-testid="devil-start"]').trigger('click');
     await flushPromises();
     expect(endpoints.barDevilStart).toHaveBeenCalledWith(1);
     expect(w.emitted('reload')).toHaveLength(1);
     expect(w.findAll('[data-testid^="devil-cup-"]')).toHaveLength(6);
+    // 一档都押不起：开局按钮也灰掉，写明哪些押不起
+    const poor = mount(DevilPanel, { props: { data: barData({ tickets: 0 }) } });
+    expect(poor.find('[data-testid="devil-stake-1"]').attributes('disabled')).toBeDefined();
+    expect(poor.find('[data-testid="devil-start"]').attributes('disabled')).toBeDefined();
+    expect(poor.text()).toContain('押 1, 5, 10, 20 张: 神秘礼券不够');
   });
 
-  it('显示今天的局数和赔付表（2026-10-09）；局数用完时押注都灰掉', async () => {
-    const w = mount(DevilPanel, { props: { data: barData() } });
+  it('显示今天的局数和赔付表（2026-10-09）；局数用完时开局按钮灰掉', async () => {
+    const w = mount(DevilPanel, { props: { data: barData() }, global: { stubs: { teleport: true } } });
     expect(w.find('[data-testid="devil-played"]').text()).toContain('3/20');
-    const rows = w.findAll('[data-testid="devil-payout-row"]');
+    const rows = w.findAll('[role="radio"]');
     expect(rows).toHaveLength(4);
-    expect(rows[3]!.text()).toContain('20');
-    expect(rows[3]!.text()).toContain('49');
+    expect(rows[3]!.findAll('[data-testid="devil-payout-row"]').map((c) => c.text())).toEqual([
+      '27',
+      '36',
+      '49',
+    ]);
+    expect(rows[3]!.text()).toContain('押 20 张');
     expect(w.text()).not.toContain('1.4');
+    // 玩法面板里也有一张完整的赔付表
+    await w.find('[data-testid="bar-rules-open"]').trigger('click');
+    const table = w.find('[data-testid="devil-payouts"]');
+    expect(table.findAll('tbody tr')).toHaveLength(4);
+    expect(table.findAll('tbody tr')[3]!.text()).toBe('20273649');
+    expect(table.find('thead').text()).toContain('活过 3 杯');
     const full = mount(DevilPanel, {
       props: { data: barData({ devil: { ...barData().devil, played: 20 } }) },
     });
-    expect(full.find('[data-testid="devil-stake-1"]').attributes('disabled')).toBeDefined();
+    expect(full.find('[data-testid="devil-start"]').attributes('disabled')).toBeDefined();
     expect(full.text()).toContain('今天的局数用完了');
   });
 
@@ -60,6 +84,9 @@ describe('DevilPanel', () => {
       round({ cups: ['me', 'bartender', 'me', 'bartender', null, null], survived: 2, lastBartender: 3 }),
     );
     const w = mount(DevilPanel, { props: { data } });
+    // 说明卡写押了多少、活过几杯，副标题写再活过几杯拿回多少
+    expect(w.find('[data-testid="bar-info-title"]').text()).toBe('押 5 张 · 你已经活过 1 杯');
+    expect(w.find('[data-testid="bar-info-sub"]').text()).toBe('活过 2 杯拿回 9 张, 活过 3 杯拿回 12 张');
     expect(w.find('[data-testid="devil-cup-0"]').attributes('disabled')).toBeDefined();
     expect(w.find('[data-testid="devil-cup-1"]').text()).toContain('调酒师');
     await w.find('[data-testid="devil-cup-2"]').trigger('click');
@@ -92,14 +119,14 @@ describe('DevilPanel', () => {
     const w = mount(DevilPanel, { props: { data } });
     await w.find('[data-testid="devil-cup-0"]').trigger('click');
     await flushPromises();
-    expect(w.find('[data-testid="devil-result"]').text()).toBe(
+    expect(w.find('[data-testid="devil-result"] b').text()).toBe(
       '调酒师喝到了特辣酒！你活过 1 杯, 赢得 7 张神秘礼券',
     );
-    expect(w.find('[data-testid="devil-cup-5"]').classes()).toContain('dt-cup-spiked');
+    expect(w.find('[data-testid="devil-cup-5"]').classes()).toContain('is-spiked');
     expect(w.find('[data-testid="devil-result"]').attributes('aria-live')).toBe('polite');
     // 结束后没喝的杯子变灰（PR28 遗留）
-    expect(w.find('[data-testid="devil-cup-1"]').classes()).toContain('dt-cup-left');
-    expect(w.find('[data-testid="devil-cup-0"]').classes()).not.toContain('dt-cup-left');
+    expect(w.find('[data-testid="devil-cup-1"]').classes()).toContain('is-left');
+    expect(w.find('[data-testid="devil-cup-0"]').classes()).not.toContain('is-left');
     await w.find('[data-testid="devil-again"]').trigger('click');
     expect(w.find('[data-testid="devil-stake-1"]').exists()).toBe(true);
   });
@@ -149,5 +176,22 @@ describe('DevilPanel', () => {
     await w.find('[data-testid="devil-cup-3"]').trigger('click');
     await flushPromises();
     expect(w.find('[data-testid="devil-status"]').text()).not.toContain('你喝了 4 号杯');
+  });
+
+  it('礼券变少后选中的押注押不起了：换成押得起的最高一档；方向键在押得起的几档之间移动（P9 终审 M3）', async () => {
+    const w = mount(DevilPanel, { props: { data: barData({ tickets: 30 }) }, attachTo: document.body });
+    await w.find('[data-testid="devil-stake-20"]').trigger('click');
+    await w.setProps({ data: barData({ tickets: 6 }) });
+    expect(w.find('[data-testid="devil-stake-5"]').attributes('aria-checked')).toBe('true');
+    // 只有选中的那档在 Tab 顺序里
+    expect(w.find('[data-testid="devil-stake-5"]').attributes('tabindex')).toBe('0');
+    expect(w.find('[data-testid="devil-stake-1"]').attributes('tabindex')).toBe('-1');
+    await w.find('[data-testid="devil-stake-5"]').trigger('keydown', { key: 'ArrowUp' });
+    expect(w.find('[data-testid="devil-stake-1"]').attributes('aria-checked')).toBe('true');
+    // 下面那档押不起：方向键停在原处
+    await w.find('[data-testid="devil-stake-1"]').trigger('keydown', { key: 'ArrowDown' });
+    await w.find('[data-testid="devil-stake-5"]').trigger('keydown', { key: 'ArrowDown' });
+    expect(w.find('[data-testid="devil-stake-5"]').attributes('aria-checked')).toBe('true');
+    w.unmount();
   });
 });

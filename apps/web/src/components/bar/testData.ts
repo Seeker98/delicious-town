@@ -45,7 +45,7 @@ export const barData = (patch: Partial<BarDto> = {}): BarDto => ({
     max: 20,
     round: null,
   },
-  memory: { cost: 1, played: 0, max: 20, flashMs: 600, gapMs: 200, round: null },
+  memory: { cost: 1, played: 0, max: 20, flashMs: 600, gapMs: 200, lengths: [3, 5, 7], round: null },
   darts: { cost: 2, played: 0, max: 20, round: null },
   nim: {
     played: 0,

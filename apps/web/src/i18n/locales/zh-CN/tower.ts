@@ -1,8 +1,10 @@
-/** 厨塔：挑战、赛厨榜、声望商店、好友切磋（问题记录 272） */
+/** 厨塔：挑战、赛厨榜、声望商店、好友切磋（问题记录 272；界面改版 P9） */
 export default {
   title: '厨塔',
   tabs: { tower: '挑战', rank: '赛厨榜', shop: '声望商店' },
   loadFailed: '读取厨塔失败',
+  /** 头图上的数字胶囊 */
+  chips: { power: '我的厨力', rank: '赛厨榜', renown: '声望' },
   noStrength: (n: number) => `体力不够 (要 ${n})`,
   noMoreToday: '今天的挑战次数用完了',
   challengeFailed: '挑战失败',
@@ -13,9 +15,15 @@ export default {
     test: (win: boolean) => `试打: ${win ? '赢了' : '输了'}`,
     win: '你赢了',
     lose: '你输了',
-    renown: (n: number) => `, 声望 ${n > 0 ? '+' : ''}${n}`,
-    rank: (n: number) => `, 你现在是第 ${n} 名`,
-    power: (name: string, power: number) => `${name} (厨力 ${power})`,
+    /** 结果标题下面的小标签 */
+    renownTag: (n: number) => `声望 ${n > 0 ? '+' : ''}${n}`,
+    rankTag: (n: number) => `现在第 ${n} 名`,
+    powerShort: (power: number) => `厨力 ${power}`,
+    resultTitle: '对决结果',
+    srMe: '我 ',
+    srThem: '对手 ',
+    ok: '知道了',
+    gotTitle: '得到',
     /** 比分（问题记录 396）：我的票 : 对方的票 */
     votes: (me: number, them: number) => ` ${me}:${them}`,
     /** 票数持平、按上场评委的总分定胜负 */
@@ -33,8 +41,7 @@ export default {
       joe: '老乔',
       xiaoKai: '小凯',
     },
-    /** 评委点评（问题记录 431）：【评委 点评 我】：以[项]胜负，……，比分 我:对方 */
-    judgeOn: (name: string) => `【${name} 点评 我】: `,
+    /** 评委点评（问题记录 431）：评委名后面写 以[项]胜负，……，比分 我:对方 */
     itemVerdict: { win: '大获全胜', close: '不分伯仲', lose: '全军覆没' },
     itemLine: (item: string, verdict: string) => `以[${item}]${verdict}`,
     commentSep: ', ',
@@ -48,6 +55,7 @@ export default {
     itemSep: '、',
     verdict: { me: '投给你', them: '投给对方', tie: '平' },
     rulesTitle: '赛厨规则',
+    rulesSub: (n: number) => `色香味形养五项比拼, ${n} 位评委投票`,
     rules: [
       '双方按属性算出色、香、味、形、养五项: 色看厨艺、刀工, 香看厨艺、调味, 味看火候、调味, 形看火候、刀工, 养看火候、调味、刀工和在售的特色菜。创意越高、幸运越好, 每项多加的随机分越多。',
     ],
@@ -63,16 +71,15 @@ export default {
     rulesWeights: (parts: string[]) =>
       `双方按属性算出色、香、味、形、养五项: ${parts.join(', ')}。创意越高、幸运越好, 每项多加的随机分越多。`,
     rulesJudges: '评委和他们关注的项目: ',
-    awards: (text: string) => `得到 ${text}`,
     /** 打赢长老掉的厨具（backlog 408） */
     elderDrop: (name: string) => `长老掉落: ${name}`,
   },
   /** 赛厨长老的装备（问题记录 408） */
   elder: {
-    summary: (level: number, stress: number, pct: number) =>
-      `长老装备: ${level} 级, 全套强化 +${stress}${pct > 0 ? `；正式挑战打赢有 ${pct}% 掉一件` : ''}`,
+    title: (level: number, stress: number) => `长老装备 · ${level} 级 · 全套强化 +${stress}`,
+    drop: (pct: number) => `正式挑战打赢有 ${pct}% 掉一件`,
     points: (text: string) => `加点: ${text}`,
-    piece: (name: string, stress: number, text: string) => `${name} +${stress}: ${text}`,
+    pieceName: (name: string, stress: number) => `${name} +${stress}`,
     attrs: (text: string) => `被挑战时: ${text}`,
     drops: (names: string) => `可能掉落: ${names}`,
     sep: '、',
@@ -81,16 +88,32 @@ export default {
     needLevel: (n: number) => `餐厅 ${n} 级才能挑战`,
     needPrev: (n: number) => `先打赢第 ${n} 层`,
     night: (floor: number, hour: number) => `${floor} 层以上 ${hour} 点以后才能挑战`,
-    tired: '他今天已经累了',
-    head: (power: number, left: number, total: number, tickets: number, strength: string) =>
-      `我的进攻厨力 ${power} · 今日还能挑战 ${left}/${total} 次 · 挑战券 ${tickets} (在仓库使用, 当天多一次) · 体力 ${strength}`,
+    tired: '守护者今天已经累了',
+    /** 一行右边的短标签（问题记录 230：守护者有男有女，不写“他”） */
+    tiredTag: '今天累了',
+    leftLabel: '今日挑战',
+    leftOf: (left: number, total: number) => `${left} / ${total}`,
+    ticketsLabel: '挑战券',
+    strengthLabel: '体力',
+    ticketNote: '挑战券在仓库使用, 当天多挑战一次。',
+    listTitle: '十层守护者',
+    listTap: '点一层看详情',
+    leftToday: (left: number, max: number) => `今天 ${left}/${max} 次`,
+    myPower: '我的厨力',
+    hisPower: '对手厨力',
+    leftHim: (name: string) => `今天还能挑战${name}`,
+    times: (left: number, max: number) => `${left} / ${max} 次`,
+    mcLabel: '今日特色菜',
+    mcValue: (name: string, price: number) => `${name} (每份 ${price})`,
+    needLabel: '挑战要求',
+    needValue: (level: number) => `餐厅 ${level} 级起`,
+    testNote: '试打不算次数、没有奖励, 只看能不能赢',
     name: (floor: number, name: string) => `${floor} 层 · ${name}`,
+    /** 守护者的台词 */
+    quote: (note: string) => `「${note}」`,
     power: (n: number) => `厨力 ${n}`,
-    meta: (note: string, level: number, name: string, left: number, max: number) =>
-      `「${note}」${level} 级起；今天还能挑战${name} ${left}/${max} 次`,
-    mc: (name: string, price: number) => `；今日特色菜 ${name} (每份 ${price})`,
-    test: (n: number) => `试打 (${n} 体力)`,
-    go: (n: number) => `挑战 (${n} 体力)`,
+    test: (n: number) => `试打 · ${n} 体力`,
+    go: (n: number) => `挑战 · ${n} 体力`,
   },
   friend: {
     loadFailed: '读取切磋次数失败',
@@ -107,9 +130,16 @@ export default {
     myRank: '我的名次 ',
     unranked: '未上榜',
     rankN: (n: number) => `第 ${n} 名`,
-    head: (left: number, strength: number) => ` · 今日还能挑战 ${left} 次 · 每次 ${strength} 体力`,
-    weekly: '每周一 0 点换新榜: 第 1~3 名、4~8 名、9~15 名有名次礼包, 前三名得厨神、厨圣、厨王',
-    slotName: (name: string, level: number) => `${name} (${level} 级)`,
+    head: (left: number, strength: number) => `今日还能挑战 ${left} 次 · 每次 ${strength} 体力`,
+    weeklyTitle: '每周一 0 点换新榜',
+    weekly: '1~3 名、4~8 名、9~15 名有名次礼包, 前三名得厨神、厨圣、厨王',
+    weeklyItems: [
+      '每周一 0 点换新榜, 名次从头算。',
+      '第 1~3 名、4~8 名、9~15 名有名次礼包。',
+      '前三名分别得到厨神、厨圣、厨王。',
+    ] as string[],
+    listTitle: '本周榜单',
+    level: (n: number) => `${n} 级`,
     empty: '空',
     me: '我',
     occupy: '占位',
@@ -123,8 +153,14 @@ export default {
     failed: '兑换失败',
     renown: (n: string) => `我的声望 ${n}`,
     rule: '美味券、四级和五级食材随机券常驻；雕像每周轮换, 每人限拥有 1 个',
-    limitOne: '限拥有 1 个',
-    meta: (renown: string, bought: number, limit: number) => `${renown} 声望 · 本周 ${bought}/${limit}`,
-    btn: '兑换',
+    rareLine: '本周轮换 · 限拥有 1 个',
+    weekLine: (bought: number, limit: number) => `本周 ${bought}/${limit}`,
+    open: (name: string, price: string) => `兑换 ${name}, ${price} 声望`,
+    howMany: '换几个',
+    btnN: (n: number) => `兑换 ${n} 个`,
+    unit: '单价',
+    total: '共',
+    after: '换完剩',
+    price: (n: string) => `${n} 声望`,
   },
 };

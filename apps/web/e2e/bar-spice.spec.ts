@@ -39,8 +39,8 @@ test('秘制调料：每次交和之前回答都吻合的第一个组合，猜�
     await client.end();
   }
 
-  await page.goto('/bar');
-  await page.getByTestId('tab-spice').click();
+  // 每个游戏单独一页（界面改版 P9）
+  await page.goto('/bar/spice');
   await page.getByTestId('spice-start').click();
   let cand = allCodes();
   let s: SpiceDto | null = null;

@@ -18,8 +18,10 @@ test('一掷千金：选 1 号箱子，依次开别的箱子，每轮都不成�
     await client.end();
   }
 
+  // 从酒吧首页的格子进一掷千金页（界面改版 P9：每个游戏单独一页）
   await page.goto('/bar');
-  await page.getByTestId('tab-deal').click();
+  await page.getByTestId('game-deal').click();
+  await expect(page).toHaveURL(/\/bar\/deal$/);
   const call = async (url: string, click: () => Promise<void>): Promise<DealDto> => {
     const res = page.waitForResponse((r) => r.url().includes(url));
     await click();

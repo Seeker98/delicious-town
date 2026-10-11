@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { DUEL_JUDGE_ITEMS, type DuelResultDto } from '@dt/shared';
+import { DUEL_JUDGE_ITEMS, type DuelJudgeId, type DuelResultDto } from '@dt/shared';
+import type { ArtName } from '../../art/generated/names';
+import DtArt from '../DtArt.vue';
+import AwardChip from '../bar/AwardChip.vue';
 import { useT } from '../../composables/useT';
 import { formatNum } from '../../utils/format';
 import { useCatalogStore } from '../../stores/catalog';
-import { awardText } from '../bar/award';
 
-/** themName：对手的显示名（厨塔楼层用译名；不传用服务器给的名字，视觉第三轮） */
+/**
+ * 对决结果（界面改版 P9：放在底部面板里）：比分和声望、双方厨力、五项各两条横条、评委一位一位亮出、奖励。
+ * themName：对手的显示名（厨塔楼层用译名；不传用服务器给的名字，视觉第三轮）
+ */
 const props = defineProps<{ result: DuelResultDto; themName?: string }>();
 const catalog = useCatalogStore();
 const t = useT();
@@ -23,6 +28,14 @@ const rows = computed(() =>
     them: props.result.them.scores[i] ?? 0,
   })),
 );
+/** 五项横条的满格：双方各项里最高的那个 */
+const maxScore = computed(() => Math.max(1, ...props.result.me.scores, ...props.result.them.scores));
+/** 画了头像的评委；其他的写名字的第一个字 */
+const JUDGE_ART: Partial<Record<DuelJudgeId, ArtName>> = {
+  wenjie: 'npc-wenjie',
+  fanDao: 'npc-fandao',
+  gary: 'npc-gary',
+};
 /** 一项的点评（问题记录 431）：差在高的一方的 10% 以内算不分伯仲，否则按谁高写大获全胜 / 全军覆没 */
 const CLOSE = 0.1;
 function itemVerdict(me: number, them: number): 'win' | 'close' | 'lose' {
@@ -41,7 +54,9 @@ const judges = computed(() => {
     return {
       ...j,
       // 不认识的评委（服务器加了新评委、网页还是旧的）只写编号（backlog 396）
-      who: d.judgeOn(items ? d.judges[j.id] : String(j.id)),
+      name: items ? d.judges[j.id] : String(j.id),
+      initial: [...(items ? d.judges[j.id] : String(j.id))][0] ?? '',
+      art: items ? JUDGE_ART[j.id] : undefined,
       text: [...comments, d.judgeScore(formatNum(j.me), formatNum(j.them))].join(d.commentSep),
       vote: j.me > j.them ? ('me' as const) : j.them > j.me ? ('them' as const) : ('tie' as const),
     };
@@ -60,65 +75,107 @@ const headline = computed(() => {
   const d = t.value.tower.duel;
   const head = r.test ? d.test(r.win) : r.win ? d.win : d.lose;
   const votes = d.votes(r.votes[0], r.votes[1]) + (r.votes[0] === r.votes[1] ? d.onTotal : '');
-  const renown = r.renown === 0 ? '' : d.renown(r.renown);
-  const rank = r.win && r.rank !== null ? d.rank(r.rank) : '';
-  return `${head}${votes}${renown}${rank}`;
+  return `${head}${votes}`;
 });
-const awards = computed(() => props.result.awards.map((a) => awardText(a, catalog)).join(t.value.events.sep));
+/** 标题下面的小标签：声望、名次 */
+const tags = computed(() => {
+  const r = props.result;
+  const d = t.value.tower.duel;
+  return [
+    r.renown === 0 ? '' : d.renownTag(r.renown),
+    r.win && r.rank !== null ? d.rankTag(r.rank) : '',
+  ].filter(Boolean);
+});
 </script>
 
 <template>
-  <div class="border rounded p-2 small mt-2" data-testid="duel-result">
-    <div :class="['fw-bold mb-1', result.win ? 'text-success' : 'text-danger']" data-testid="duel-headline">
-      {{ headline }}
+  <div class="dt-duel" data-testid="duel-result">
+    <div class="dt-duel-head">
+      <b :class="result.win ? 'is-win' : 'is-lose'" data-testid="duel-headline">{{ headline }}</b>
+      <span v-if="tags.length > 0" class="dt-duel-tags"
+        ><span v-for="(x, i) in tags" :key="i" class="dt-tag dt-tag-ok">{{ x }}</span></span
+      >
     </div>
-    <table class="table table-sm mb-1 text-center">
-      <thead>
-        <tr>
-          <th></th>
-          <th>{{ t.tower.duel.power(result.me.name, result.me.power) }}</th>
-          <th>{{ t.tower.duel.power(themName ?? result.them.name, result.them.power) }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="r in rows" :key="r.label">
-          <th>{{ r.label }}</th>
-          <td :class="{ 'text-success fw-bold': r.me > r.them }">{{ formatNum(r.me) }}</td>
-          <td :class="{ 'text-success fw-bold': r.them > r.me }">{{ formatNum(r.them) }}</td>
-        </tr>
-      </tbody>
-    </table>
-    <div v-if="dishes" class="mb-1" data-testid="duel-dishes">{{ dishes }}</div>
-    <div class="fw-bold mb-1">{{ t.tower.duel.judgesTitle }}</div>
+    <div class="dt-duel-vs">
+      <div>
+        <span>{{ result.me.name }}</span
+        ><b>{{ t.tower.duel.powerShort(result.me.power) }}</b>
+      </div>
+      <span class="dt-duel-vs-mid" aria-hidden="true">VS</span>
+      <div>
+        <span>{{ themName ?? result.them.name }}</span
+        ><b>{{ t.tower.duel.powerShort(result.them.power) }}</b>
+      </div>
+    </div>
+    <div class="dt-duel-items">
+      <div v-for="r in rows" :key="r.label" class="dt-duel-item" data-testid="duel-item">
+        <b>{{ r.label }}</b>
+        <span class="dt-duel-bars" aria-hidden="true"
+          ><i class="is-me" :style="{ width: `${(r.me / maxScore) * 100}%` }"></i
+          ><i class="is-them" :style="{ width: `${(r.them / maxScore) * 100}%` }"></i
+        ></span>
+        <!-- 横条不念：两个数字前面给读屏写谁是谁（P9 终审 M8） -->
+        <span :class="{ 'is-win': r.me > r.them }"
+          ><span class="visually-hidden">{{ t.tower.duel.srMe }}</span
+          >{{ formatNum(r.me) }}</span
+        >
+        <span :class="{ 'is-win': r.them > r.me }"
+          ><span class="visually-hidden">{{ t.tower.duel.srThem }}</span
+          >{{ formatNum(r.them) }}</span
+        >
+      </div>
+    </div>
+    <p v-if="dishes" class="dt-duel-dishes" data-testid="duel-dishes">{{ dishes }}</p>
+    <div class="dt-block-head mt-3">
+      <h2 class="dt-block-title">{{ t.tower.duel.judgesTitle }}</h2>
+    </div>
     <!-- 评委一位一位亮出（问题记录 396）；减少动画时直接显示 -->
-    <ol :key="round" class="dt-duel-judges list-unstyled mb-1">
+    <ol :key="round" class="dt-duel-judges">
       <li
         v-for="(j, i) in judges"
         :key="j.id"
-        class="dt-duel-judge py-1 border-top"
+        class="dt-duel-judge"
         :style="{ animationDelay: `${i * 0.4}s` }"
         data-testid="duel-judge"
       >
+        <span class="dt-duel-ava"
+          ><DtArt v-if="j.art" :name="j.art" :size="32" /><b v-else aria-hidden="true">{{
+            j.initial
+          }}</b></span
+        >
         <!-- 点评和这一票接着写，不另起一行（问题记录 431） -->
-        {{ j.who }}{{ j.text }}
+        <span class="dt-duel-say"
+          ><b>{{ j.name }}</b> {{ j.text }}</span
+        >
         <span
-          class="text-nowrap ms-1"
-          :class="j.vote === 'me' ? 'text-success' : j.vote === 'them' ? 'text-danger' : 'text-muted'"
+          :class="[
+            'text-nowrap',
+            j.vote === 'me' ? 'dt-tag-ok' : j.vote === 'them' ? 'dt-tag-danger' : 'dt-tag-mute',
+          ]"
           >{{ t.tower.duel.verdict[j.vote] }}</span
         >
       </li>
     </ol>
-    <div v-if="awards" data-testid="duel-awards">{{ t.tower.duel.awards(awards) }}</div>
-    <!-- 长老掉的厨具单独一行（backlog 408） -->
-    <div v-if="result.elderDrop" class="fw-bold text-success" data-testid="duel-elder-drop">
-      {{ t.tower.duel.elderDrop(catalog.goodsName(result.elderDrop)) }}
-    </div>
+    <section
+      v-if="result.awards.length > 0 || result.elderDrop"
+      class="dt-bar-result is-ok"
+      data-testid="duel-awards"
+    >
+      <b>{{ t.tower.duel.gotTitle }}</b>
+      <div v-if="result.awards.length > 0" class="dt-award-chips">
+        <AwardChip v-for="(a, i) in result.awards" :key="i" :award="a" />
+      </div>
+      <!-- 长老掉的厨具单独一行（backlog 408） -->
+      <div v-if="result.elderDrop" class="dt-duel-drop" data-testid="duel-elder-drop">
+        {{ t.tower.duel.elderDrop(catalog.goodsName(result.elderDrop)) }}
+      </div>
+    </section>
   </div>
 </template>
 
 <style scoped>
 .dt-duel-judge {
-  animation: dt-judge-in 0.3s ease-out both;
+  animation: dt-judge-in 0.3s var(--dt-ease-out) both;
 }
 @keyframes dt-judge-in {
   from {

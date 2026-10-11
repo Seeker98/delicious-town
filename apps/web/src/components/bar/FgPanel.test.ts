@@ -23,13 +23,18 @@ describe('FgPanel', () => {
       award: { kind: 'coin', id: null, num: 200, lucky: false },
     });
     const w = mount(FgPanel, { props: { data: barData({ fg: { result: 'win', times: 1 } }) } });
-    expect(w.find('[data-testid="fg-streak"]').text()).toContain('1 连胜');
+    // 当前连胜写在说明卡的副标题里（界面改版 P9）
+    expect(w.find('[data-testid="bar-info-sub"]').text()).toContain('1 连胜');
+    expect(w.find('[data-testid="fg-result"]').exists()).toBe(false);
     await w.find('[data-testid="fg-0"]').trigger('click');
     await flushPromises();
     expect(endpoints.barFg).toHaveBeenCalledWith(0);
-    expect(w.find('[data-testid="fg-result"]').text()).toBe(
-      '你出石头, 对方出剪刀: 幸运地赢了 (2 连胜), 得到 银币 200',
-    );
+    expect(w.find('[data-testid="fg-me"]').text()).toBe('你 · 石头');
+    expect(w.find('[data-testid="fg-bar"]').text()).toBe('调酒师 · 剪刀');
+    const res = w.find('[data-testid="fg-result"]');
+    expect(res.find('b').text()).toBe('幸运地赢了！2 连胜');
+    expect(res.classes()).toContain('is-ok');
+    expect(res.findAll('[data-testid="award-chip"]').map((c) => c.text())).toEqual(['银币 200']);
     expect(w.emitted('reload')).toHaveLength(1);
   });
 
@@ -45,7 +50,10 @@ describe('FgPanel', () => {
     const w = mount(FgPanel, { props: { data: barData() } });
     await w.find('[data-testid="fg-2"]').trigger('click');
     await flushPromises();
-    expect(w.find('[data-testid="fg-result"]').text()).toBe('你出布, 对方出布: 平局, 得到银币 30');
+    expect(w.find('[data-testid="fg-me"]').text()).toBe('你 · 布');
+    expect(w.find('[data-testid="fg-bar"]').text()).toBe('调酒师 · 布');
+    expect(w.find('[data-testid="fg-result"]').text()).toBe('平局, 得到银币 30');
+    expect(w.find('[data-testid="award-chip"]').exists()).toBe(false);
     vi.mocked(endpoints.barFg).mockResolvedValue({
       result: 'lose',
       barHand: 2,
@@ -56,7 +64,10 @@ describe('FgPanel', () => {
     });
     await w.find('[data-testid="fg-0"]').trigger('click');
     await flushPromises();
-    expect(w.find('[data-testid="fg-result"]').text()).toBe('你出石头, 对方出布: 你输了');
+    expect(w.find('[data-testid="fg-me"]').text()).toBe('你 · 石头');
+    expect(w.find('[data-testid="fg-bar"]').text()).toBe('调酒师 · 布');
+    expect(w.find('[data-testid="fg-result"]').text()).toBe('你输了');
+    expect(w.find('[data-testid="fg-result"]').classes()).toContain('is-bad');
   });
 
   it('礼券不够时按钮灰掉并写明原因', () => {

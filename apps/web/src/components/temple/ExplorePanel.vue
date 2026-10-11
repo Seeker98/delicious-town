@@ -1,23 +1,30 @@
 <script setup lang="ts">
 import { formatNum } from '../../utils/format';
 import { computed, ref } from 'vue';
-import type { ExploreResultDto, TempleDto } from '@dt/shared';
+import type { BarAwardDto, ExploreResultDto, TempleDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
+import DtArt from '../DtArt.vue';
+import DtRow from '../DtRow.vue';
+import QtySheet from '../QtySheet.vue';
+import AwardChip from '../bar/AwardChip.vue';
 
+/**
+ * 探险（界面改版 P9）：上面体力；探险图一行一种（持有、每次体力），点“探险”弹出数量面板；
+ * 刚才探险的成功次数、带回的食材在下面
+ */
 const props = defineProps<{ data: TempleDto }>();
 const emit = defineEmits<{ reload: [] }>();
 const catalog = useCatalogStore();
 const toast = useToastStore();
 const t = useT();
-const goodsId = ref<number>(
-  props.data.maps.find((m) => m.num > 0)?.goodsId ?? props.data.maps[0]?.goodsId ?? 0,
-);
+const goodsId = ref<number>(props.data.maps[0]?.goodsId ?? 0);
 const times = ref(1);
 const busy = ref(false);
+const open = ref(false);
 const result = ref<ExploreResultDto | null>(null);
 
 const map = computed(() => props.data.maps.find((m) => m.goodsId === goodsId.value));
@@ -30,14 +37,27 @@ const block = computed(() => {
   if (byStrength.value < 1) return x.noStrength(map.value!.needStrength, props.data.strength);
   return '';
 });
-const list = (xs: Array<{ foodsId: number; num: number }>) =>
-  xs.map((f) => t.value.common.qty(catalog.foodName(f.foodsId), f.num)).join(t.value.events.sep);
+/** 带回的食材按奖励小块画：神秘食材在前 */
+const got = computed<BarAwardDto[]>(() =>
+  [...(result.value?.rare ?? []), ...(result.value?.foods ?? [])].map((f) => ({
+    kind: 'foods',
+    id: f.foodsId,
+    num: f.num,
+    lucky: false,
+  })),
+);
 
+function openMap(id: number) {
+  goodsId.value = id;
+  times.value = 1;
+  open.value = true;
+}
 async function go() {
   if (busy.value || block.value) return;
   busy.value = true;
   try {
     result.value = await endpoints.templeExplore(goodsId.value, n.value);
+    open.value = false;
     emit('reload');
   } catch (e) {
     toast.push(errorMessage(e, t.value.temple.explore.failed), 'danger');
@@ -48,40 +68,70 @@ async function go() {
 </script>
 
 <template>
-  <div class="small">
-    <div class="d-flex gap-1 align-items-center mb-1">
-      <select v-model.number="goodsId" class="form-select form-select-sm" data-testid="map">
-        <option v-for="m in data.maps" :key="m.goodsId" :value="m.goodsId">
-          {{ t.temple.explore.mapOption(catalog.goodsName(m.goodsId), m.num, m.needStrength) }}
-        </option>
-      </select>
-      <input
-        v-model.number="times"
-        type="number"
-        min="1"
-        :max="Math.max(1, max)"
-        class="form-control form-control-sm"
-        style="width: 70px"
-        data-testid="times"
-      />
-      <button
-        class="btn btn-sm btn-primary text-nowrap"
-        data-testid="explore"
-        :disabled="busy || !!block"
-        @click="go"
-      >
-        {{ t.temple.explore.btn(n) }}
-      </button>
-    </div>
-    <div class="text-muted mb-1">{{ t.temple.explore.strength(formatNum(data.strength)) }}</div>
-    <div v-if="block" class="text-danger mb-1" data-testid="block">{{ block }}</div>
-    <div v-if="result" data-testid="explore-result">
-      {{ t.temple.explore.result(result.success, result.fail) }}
-      <div v-if="result.rare.length > 0" class="text-success">
-        {{ t.temple.explore.rare(list(result.rare)) }}
-      </div>
-      <div v-if="result.foods.length > 0">{{ t.temple.explore.foods(list(result.foods)) }}</div>
-      <div v-if="result.exp > 0">{{ t.temple.explore.exp(result.exp) }}</div>
-    </div>
+  <section class="dt-card dt-bar-info">
+    <span class="dt-bar-info-art is-warn"><DtArt name="res-strength" :size="28" /></span>
+    <span class="dt-bar-info-main">
+      <b data-testid="strength">{{ t.temple.explore.strength(formatNum(data.strength)) }}</b>
+      <span>{{ t.temple.explore.intro }}</span>
+    </span>
+  </section>
+  <div class="dt-block-head">
+    <h2 class="dt-block-title">{{ t.temple.explore.mapsTitle }}</h2>
   </div>
+  <div class="dt-card dt-rows-card">
+    <DtRow v-for="m in data.maps" strong :key="m.goodsId" :data-testid="`map-${m.goodsId}`">
+      <template #icon><DtArt :name="catalog.goodsArt(m.goodsId)" :size="28" /></template>
+      <template #title>{{ catalog.goodsName(m.goodsId) }}</template>
+      <template #sub>{{ t.temple.explore.mapLine(m.num, m.needStrength) }}</template>
+      <template #end>
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-primary"
+          :data-testid="`explore-open-${m.goodsId}`"
+          @click="openMap(m.goodsId)"
+        >
+          {{ t.temple.explore.go }}
+        </button>
+      </template>
+    </DtRow>
+  </div>
+
+  <template v-if="result">
+    <div class="dt-block-head mt-3">
+      <h2 class="dt-block-title">{{ t.temple.explore.lastTitle(result.success + result.fail) }}</h2>
+    </div>
+    <section :class="['dt-bar-result', result.success > 0 ? 'is-ok' : 'is-bad']" data-testid="explore-result">
+      <b>{{ t.temple.explore.result(result.success, result.fail) }}</b>
+      <div v-if="got.length > 0" class="dt-award-chips">
+        <AwardChip v-for="(a, i) in got" :key="i" :award="a" />
+      </div>
+      <div v-if="result.exp > 0" class="dt-bar-detail">{{ t.temple.explore.exp(result.exp) }}</div>
+    </section>
+  </template>
+
+  <QtySheet
+    v-model="times"
+    :open="open"
+    :title="catalog.goodsName(goodsId)"
+    :art="catalog.goodsArt(goodsId)"
+    :lines="[
+      t.temple.explore.mapLine(map?.num ?? 0, map?.needStrength ?? 0),
+      t.temple.explore.strength(formatNum(data.strength)),
+    ]"
+    :label="t.temple.explore.howMany"
+    :max="max"
+    :ok-text="t.temple.explore.btn(n)"
+    :busy="busy"
+    :reason="block"
+    :sum="[
+      [t.temple.explore.cost, t.temple.explore.strengthN(n * (map?.needStrength ?? 0)), true],
+      [
+        t.temple.explore.after,
+        t.temple.explore.strengthN(Math.max(0, data.strength - n * (map?.needStrength ?? 0))),
+      ],
+    ]"
+    testid="times"
+    @close="open = false"
+    @ok="go"
+  />
 </template>

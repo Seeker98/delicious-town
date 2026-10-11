@@ -14,6 +14,10 @@ vi.mock('../../api/endpoints', () => ({
 const marker = (w: ReturnType<typeof mount>) =>
   (w.find('[data-testid="darts-marker"]').element as HTMLElement).style.left;
 
+/** 三镖的分数格子：镖号 + 分数（没投的是 ?） */
+const throwBoxes = (w: ReturnType<typeof mount>) =>
+  w.findAll('[data-testid="darts-throws"] .dt-darts-throw').map((b) => b.text());
+
 describe('DartsPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -36,7 +40,9 @@ describe('DartsPanel', () => {
       refund: 0,
     });
     const w = mount(DartsPanel, { props: { data: barData() } });
-    expect(w.find('[data-testid="darts-played"]').text()).toBe('今天 0/20 局, 每局 2 张神秘礼券');
+    expect(w.find('[data-testid="bar-info-title"]').text()).toBe('每局 2 张神秘礼券');
+    expect(w.find('[data-testid="bar-info-sub"]').text()).toBe('今天 0/20 局 · 三镖总分超过老板就赢');
+    expect(throwBoxes(w)).toEqual(['第 1 镖?', '第 2 镖?', '第 3 镖?']);
     await w.find('[data-testid="darts-start"]').trigger('click');
     await flushPromises();
     await w.find('[data-testid="darts-aim"]').trigger('click');
@@ -48,8 +54,9 @@ describe('DartsPanel', () => {
     await w.find('[data-testid="darts-throw"]').trigger('click');
     await flushPromises();
     expect(endpoints.barDartsThrow).toHaveBeenCalledWith(225);
-    expect(w.find('[data-testid="darts-throws"]').text()).toContain('第 1 镖: 0 分');
-    expect(w.find('[data-testid="darts-aim"]').exists()).toBe(true);
+    expect(throwBoxes(w)).toEqual(['第 1 镖0', '第 2 镖?', '第 3 镖?']);
+    expect(w.find('.dt-darts-throw.is-now').text()).toBe('第 2 镖?');
+    expect(w.find('[data-testid="darts-aim"]').text()).toBe('瞄准第 2 镖');
   });
 
   it('三镖投完：公布老板分数和输赢', async () => {
@@ -71,7 +78,13 @@ describe('DartsPanel', () => {
     await flushPromises();
     await w.find('[data-testid="darts-throw"]').trigger('click');
     await flushPromises();
-    expect(w.find('[data-testid="darts-result"]').text()).toBe('你 150 : 35 老板, 赢了！得到 经验 300');
+    const res = w.find('[data-testid="darts-result"]');
+    expect(res.find('b').text()).toBe('你 150 : 35 老板, 赢了！');
+    expect(res.classes()).toContain('is-ok');
+    expect(res.find('.dt-bar-detail').text()).toBe('老板三镖: 10 / 25 / 0');
+    expect(res.findAll('[data-testid="award-chip"]').map((c) => c.text())).toEqual(['经验 300']);
+    expect(throwBoxes(w)).toEqual(['第 1 镖50', '第 2 镖50', '第 3 镖50']);
+    expect(w.find('[data-testid="darts-aim"]').exists()).toBe(false);
     expect(w.find('[data-testid="darts-again"]').exists()).toBe(true);
   });
 
@@ -100,9 +113,9 @@ describe('DartsPanel', () => {
       refund: 0,
     });
     const w = mount(DartsPanel, { props: { data: d } });
-    expect(w.find('.dt-board-r5').exists()).toBe(true);
+    expect(w.findAll('.dt-darts-zones .is-5')).toHaveLength(2);
     // 靶子有文字说明（PR28 遗留）
-    expect(w.find('.dt-board').attributes('aria-label')).toBe(
+    expect(w.find('.dt-darts-board').attributes('aria-label')).toBe(
       '靶条: 正中 50 分, 向外依次 25、10、5 分, 边缘 0 分',
     );
     await w.find('[data-testid="darts-aim"]').trigger('click');
@@ -121,6 +134,8 @@ describe('DartsPanel', () => {
     await w.find('[data-testid="darts-aim"]').trigger('click');
     await flushPromises();
     expect(w.emitted('reload')).toHaveLength(1);
-    expect(w.find('[data-testid="darts-throws"]').exists()).toBe(false);
+    expect(throwBoxes(w)).toEqual(['第 1 镖?', '第 2 镖?', '第 3 镖?']);
+    expect(w.find('[data-testid="darts-aim"]').exists()).toBe(false);
+    expect(w.find('[data-testid="darts-start"]').exists()).toBe(true);
   });
 });

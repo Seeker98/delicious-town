@@ -571,6 +571,11 @@ export const masterGoods = z
     src: goodsSrc,
     /** 小类（data/game/goods_groups.json 的 key），编号必须在它的号段里 */
     group: z.string().min(1),
+    /** 单个道具的配图（界面改版 P9）：网页画 goods-<art>；不写就按小类给图 */
+    art: z
+      .string()
+      .regex(/^[a-z]+(-[a-z]+)*$/)
+      .optional(),
     name: z.string().min(1),
     type: int,
     deviceType: int.nullable(),

@@ -20,15 +20,24 @@ describe('FriendDuel', () => {
   });
 
   it('写明今天还能切磋几次；切磋后显示结果并刷新次数', async () => {
-    const w = mount(FriendDuel, { props: { restId: 2 } });
+    // 结果面板用 Teleport 挂到 body 上：测试里桩掉（界面改版 P9）
+    const w = mount(FriendDuel, { props: { restId: 2 }, global: { stubs: { teleport: true } } });
     await flushPromises();
     expect(endpoints.duelInfo).toHaveBeenCalledWith(2);
     expect(w.find('[data-testid="act-duel"]').text()).toBe('切磋 (今天还能 10 次)');
+    expect(w.find('[data-testid="duel-result"]').exists()).toBe(false);
+    vi.mocked(endpoints.duelInfo).mockResolvedValue({ left: 9, spar: 1, strength: 95, duelStrength: 5 });
     await w.find('[data-testid="act-duel"]').trigger('click');
     await flushPromises();
     expect(endpoints.friendDuel).toHaveBeenCalledWith(2);
+    // 结果从下面弹出
+    expect(w.get('.dt-sheet-title').text()).toBe('对决结果');
     expect(w.find('[data-testid="duel-result"]').text()).toContain('乙店');
     expect(endpoints.duelInfo).toHaveBeenCalledTimes(2);
+    expect(w.find('[data-testid="act-duel"]').text()).toBe('切磋 (今天还能 9 次)');
+    // 关掉结果面板
+    await w.get('.dt-sheet-actions button').trigger('click');
+    expect(w.find('[data-testid="duel-result"]').exists()).toBe(false);
   });
 
   it('次数用完、体力不够时灰掉并写明原因', async () => {

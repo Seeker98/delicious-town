@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    play1012:
+      'Bar, Temple et Tour des chefs refaits\u202f: les trois ont une image d’en-tête avec vos bons, votre énergie ou votre puissance\u202f; l’accueil du bar est une grille des dix jeux avec les parties du jour et celles en cours, chaque jeu a sa page, les règles sont une courte liste sous Règles et les récompenses ont une image\u202f; au temple, expertiser, tirer, explorer et nourrir se règlent dans un panneau, et l’épreuve ouvre un panneau d’ingrédients depuis les cases principal et secondaire\u202f; la tour montre un étage par ligne, un étage s’ouvre avec son gardien et l’équipement de l’ancien, et les résultats des duels et les juges s’ouvrent en bas',
     trade1012:
       'Boutique, Bourse, Rachats, Ichiban Kuji, Prédictions, Livraison et Banque refaits\u202f: la boutique montre un objet par ligne avec des filtres et un bouton prix qui ouvre un panneau d’achat\u202f; la bourse montre un ingrédient par ligne avec sa variation, et le carnet d’ordres et l’ordre s’ouvrent en bas, comme les contrats à terme et les enchères en gros\u202f; les classements de rachat ouvrent un panneau avec la part du propriétaire et la taxe\u202f; le kuji montre une ligne par lot et les résultats dans un panneau\u202f; chaque prédiction a sa page avec un graphique et votre gain dans les deux cas\u202f; la livraison coche chaque condition et le livreur se choisit dans un panneau\u202f; le garçon hip-hop est replié sur une ligne au départ',
     pages1011:
