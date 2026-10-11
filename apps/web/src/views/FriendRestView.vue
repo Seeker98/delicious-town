@@ -8,7 +8,6 @@ import type { FriendRestDto, TableDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { formatNum } from '../utils/format';
 import { useT } from '../composables/useT';
-import type { ArtName } from '../art/generated/names';
 import DtArt from '../components/DtArt.vue';
 import ReportButton from '../components/ReportButton.vue';
 import TableGrid from '../components/TableGrid.vue';
@@ -91,10 +90,8 @@ onMounted(() => {
   window.addEventListener('focus', onFocus);
 });
 onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
-/** 门的图形：目录里找不到这扇门、没写图形名时画木门 */
-const doorArt = computed(
-  () => `door-${catalog.looks?.doors.find((d) => d.id === rest.value?.door)?.art || 'wood'}` as ArtName,
-);
+/** 门的图形：目录里找不到这扇门、没写图形名、网页里没有这张图时画木门 */
+const doorArt = computed(() => catalog.doorArt(rest.value?.door ?? 0));
 </script>
 
 <template>

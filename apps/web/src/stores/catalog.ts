@@ -125,6 +125,14 @@ export const useCatalogStore = defineStore('catalog', {
       const name = `food-${this.foodsMap.get(id)?.art ?? 'misc'}`;
       return (CONTENT_ART as readonly string[]).includes(name) ? (name as ArtName) : 'food-misc';
     },
+    /**
+     * 门的图形（P4 终审遗留：首页头图、装扮、好友餐厅原来各写一份）：按目录里的门画 door-<款式>；
+     * 目录还没读到、查不到这扇门、网页里还没有这张图都画木门
+     */
+    doorArt(id: number): ArtName {
+      const name = `door-${this.looks?.doors.find((d) => d.id === id)?.art || 'wood'}`;
+      return (CONTENT_ART as readonly string[]).includes(name) ? (name as ArtName) : 'door-wood';
+    },
     mcName(id: number): string {
       return this.mcMap.get(id)?.name ?? activeMessages().errors.fallbackName.mc(id);
     },

@@ -16,6 +16,9 @@
   --dt-radius-xs: 4px;
   --dt-radius-sm: 10px;
   --dt-radius-md: 14px;
+  /* 卡片、底部面板（界面改版 P5，设计 §1.1 第 7 条） */
+  --dt-radius-lg: 16px;
+  --dt-radius-sheet: 22px;
   /* 按钮、胶囊：一行时是胶囊，英法西长文案折成两行时是圆角矩形（不用 999px，会变大椭圆） */
   --dt-radius-pill: 16px;
   --dt-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -64,6 +67,13 @@
   --dt-disabled-text: #5e5670;
   --dt-scrim: rgba(23, 19, 29, 0.4);
   --dt-shadow-float: 0 6px 20px rgba(46, 26, 74, 0.14), 0 1px 4px rgba(46, 26, 74, 0.08);
+  /* 浮起来的主角卡片（首页营业状态）；深色下不用阴影 */
+  --dt-shadow-card: 0 6px 20px rgba(46, 26, 74, 0.1), 0 1px 4px rgba(46, 26, 74, 0.06);
+  /* 场景头图的天空、山坡、地面（天空上要写次要文字，对比度 ≥ 4.5）；大图形的托盘底色 */
+  --dt-scene-sky: #efe8fa;
+  --dt-scene-hill: #ddd0f1;
+  --dt-scene-ground: #cbbbe3;
+  --dt-plate: #f6f0fd;
   --dt-header-bg: #ffffff;
   --dt-soft-primary: #eee4fb;
   --dt-ink-primary: #5f3499;
@@ -116,6 +126,11 @@
   --dt-disabled-text: #a99fba;
   --dt-scrim: rgba(0, 0, 0, 0.55);
   --dt-shadow-float: 0 6px 20px rgba(0, 0, 0, 0.45);
+  --dt-shadow-card: none;
+  --dt-scene-sky: #2a2140;
+  --dt-scene-hill: #332850;
+  --dt-scene-ground: #3d3158;
+  --dt-plate: #2a2335;
   --dt-header-bg: #211b2a;
   --dt-soft-primary: #382a50;
   --dt-ink-primary: #d2b4f5;

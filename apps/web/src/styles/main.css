@@ -61,6 +61,16 @@ html {
   color: var(--dt-muted);
   font-size: 18px;
 }
+/* 底部导航的 6 个根页面：大标题（界面改版 P5，设计 §1.1 第 7 条） */
+.dt-header-root .dt-header-title {
+  font-size: 22px;
+  font-weight: 700;
+}
+/* 有场景头图的页面（meta.scene）：顶栏和天空同色、不画底线，像头图的一部分 */
+.dt-header-scene {
+  background: var(--dt-scene-sky);
+  border-bottom-color: transparent;
+}
 .dt-header-title {
   flex: 1 1 auto;
   min-width: 0;
@@ -394,12 +404,15 @@ html {
 .dt-slot {
   font-size: 12px;
   line-height: 1.3;
+  /* 界面改版 P5：格子圆角跟卡片一致 */
+  border-radius: var(--dt-radius-md);
 }
 /* 加成标签：有利绿色、不利红色 */
 .dt-chip {
   font-size: 11px;
-  padding: 0 5px;
-  border-radius: 8px;
+  padding: 1px 6px;
+  border-radius: var(--dt-radius-xs);
+  line-height: 1.5;
 }
 .dt-chip-good {
   background: var(--dt-soft-success);
@@ -460,9 +473,11 @@ h5 {
  * .dt-go 去别的页面，末尾由样式加一个 ›（读屏不读）；文案里不再自己写箭头。
  * .dt-link-btn 在本页做一件事（签到、加油），不加箭头；用 <button> 写，样子和链接一样，行高跟着文字走。
  */
+/* 去别处的文字链接（P5 返工，设计 §2.6 句中链接）：紫字 + 点状下划线；“文字 ›”只留给整行去别处 */
 .dt-go {
-  color: var(--bs-link-color);
-  text-decoration: none;
+  color: var(--dt-primary-ink);
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
   white-space: nowrap;
 }
 .dt-go:hover,
@@ -473,10 +488,6 @@ a:hover > .dt-go,
 /* 放在 flex 行里、要截断子项的链接：允许比内容窄 */
 .dt-min0 {
   min-width: 0;
-}
-.dt-go::after {
-  content: '\a0›';
-  content: '\a0›' / '';
 }
 /*
  * 全游戏文字链接（问题记录 451，规范见 docs/design/文字链接-2026-10-07.md）：
@@ -708,7 +719,7 @@ details.dt-card > summary {
 .dt-card {
   background: var(--dt-surface);
   border: 1px solid var(--dt-line);
-  border-radius: var(--dt-radius-md);
+  border-radius: var(--dt-radius-lg);
   padding: 6px 10px;
 }
 .dt-card + .dt-card {
@@ -1304,7 +1315,7 @@ details.dt-card > summary {
   padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
   background: var(--dt-surface);
   color: var(--dt-text);
-  border-radius: var(--dt-radius-md) var(--dt-radius-md) 0 0;
+  border-radius: var(--dt-radius-sheet) var(--dt-radius-sheet) 0 0;
   box-shadow: var(--dt-shadow-float);
 }
 .dt-sheet:focus {
@@ -1668,4 +1679,630 @@ details.dt-card > summary {
 }
 .dt-name-row-name {
   overflow-wrap: anywhere;
+}
+/* 等级环（界面改版 P5）：外圈经验进度，中间等级 */
+.dt-level-ring {
+  position: relative;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--dt-surface);
+  box-shadow: var(--dt-shadow-card);
+}
+.dt-level-ring > svg {
+  display: block;
+}
+.dt-level-ring-track {
+  fill: none;
+  stroke: var(--dt-line);
+  stroke-width: 5;
+}
+.dt-level-ring-arc {
+  fill: none;
+  stroke: var(--dt-primary);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+.dt-level-ring-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.05;
+}
+.dt-level-ring-text small {
+  font-size: 11px;
+  color: var(--dt-muted);
+}
+.dt-level-ring-text b {
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+}
+/* 资源胶囊：左图右值，数字等宽，不换行 */
+.dt-res-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  height: 34px;
+  padding: 0 10px 0 6px;
+  border: 1px solid var(--dt-line);
+  border-radius: 999px;
+  background: var(--dt-surface);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.dt-res-pill.is-danger {
+  color: var(--dt-ink-danger);
+}
+/* 统计块：大数字 + 小标签 */
+.dt-stat {
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-surface);
+}
+.dt-stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+}
+.dt-stat-label {
+  font-size: 11px;
+  color: var(--dt-muted);
+}
+.dt-stat.is-good .dt-stat-value {
+  color: var(--dt-ink-success);
+}
+.dt-stat.is-bad .dt-stat-value {
+  color: var(--dt-ink-danger);
+}
+/* 首页场景头图（界面改版 P5，样稿 B）：顶到页面左右和顶栏，天空接着顶栏的天空色 */
+.dt-scene {
+  position: relative;
+  height: 144px;
+  margin: -8px -8px 0;
+  overflow: hidden;
+  background: var(--dt-scene-sky);
+}
+.dt-scene-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+/* 店面图放大 1.394 倍（446×100），店面中心在图里 x≈300，对准头图中线；底边落在地面上 */
+.dt-scene-shop-wrap {
+  position: absolute;
+  left: calc(50% - 300px);
+  bottom: 12px;
+  width: 446px;
+  height: 100px;
+}
+.dt-scene-shop {
+  display: block;
+  width: 446px;
+  height: 100px;
+}
+/* 门洞（原图 x=217~243、y=35~69）：57px 的门图形，门板正好盖住门洞 */
+.dt-scene-door {
+  position: absolute;
+  left: 292px;
+  top: 43px;
+}
+/* 停业牌挂在招牌下、门上方 */
+.dt-scene-closed {
+  position: absolute;
+  left: 321px;
+  top: 28px;
+  transform: translateX(-50%);
+  padding: 1px 8px;
+  border-radius: var(--dt-radius-xs);
+  background: var(--dt-danger);
+  color: var(--dt-on-danger);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.dt-scene-top {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: 8px;
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+}
+.dt-scene-meta {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--dt-muted);
+  white-space: nowrap;
+}
+/* 放不下时先截街道，天气链接留着（P5 终审） */
+.dt-scene-street {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dt-scene-meta > a {
+  flex-shrink: 0;
+}
+.dt-scene-sep {
+  flex-shrink: 0;
+  margin: 0 4px;
+}
+.dt-scene-aside {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+/* 等级环往上压进头图 30px；右边称号和经验 */
+.dt-home-level {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  margin: -30px 4px 0;
+}
+.dt-home-level-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-bottom: 6px;
+}
+.dt-home-tags {
+  display: flex;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.dt-home-tags > [data-testid='my-icons'] {
+  flex-wrap: nowrap;
+  min-width: 0;
+  overflow: hidden;
+}
+.dt-home-exp {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-home-exp .dt-art {
+  vertical-align: -3px;
+}
+/* 首页资源胶囊一排（界面改版 P5）：按内容宽度排、剩下的平分；数字很大放不下时换到第二行，不压到旁边（P5 终审 I1） */
+.dt-home-res {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0 0;
+}
+.dt-home-res > .dt-res-pill {
+  flex: 1 1 auto;
+  justify-content: center;
+}
+/* 营业状态卡：首页的主角，浮起来的卡片 */
+.dt-home-oil {
+  margin: 12px 0 8px;
+  padding: 14px;
+  border-radius: 18px;
+  background: var(--dt-surface);
+  border: 1px solid var(--dt-line);
+  box-shadow: var(--dt-shadow-card);
+}
+.dt-home-oil-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.dt-home-oil-ico {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--dt-plate);
+}
+.dt-home-oil.is-closed .dt-home-oil-ico {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--dt-soft-danger);
+}
+.dt-home-oil-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.dt-home-oil-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+.dt-home-oil.is-closed .dt-home-oil-title {
+  font-size: 16px;
+}
+.dt-home-oil-line {
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-home-oil-up {
+  display: inline-block;
+  padding: 0 4px;
+  text-decoration: none;
+}
+.dt-home-oil-hint::before {
+  content: '·';
+  margin: 0 4px;
+}
+.dt-home-oil-bar {
+  height: 6px;
+  margin-top: 6px;
+  border-radius: 3px;
+  background: var(--dt-line);
+  overflow: hidden;
+}
+.dt-home-oil-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--dt-primary);
+}
+.dt-home-oil-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  max-width: 100%;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.dt-home-oil-btn .flex-shrink-0 {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: 500;
+}
+/* 整宽主按钮（设计 §1.1 第 2 条：主操作 46~48px） */
+.dt-btn-block {
+  display: flex;
+  width: 100%;
+  min-height: 46px;
+  margin-top: 12px;
+  font-size: 15px;
+  font-weight: 700;
+}
+/* 区块：标题在卡片外，右边一个去别处的链接（界面改版 P5，样稿 B） */
+.dt-block {
+  margin: 16px 0 8px;
+}
+.dt-block-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 0 2px 6px;
+}
+.dt-block-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+.dt-block-head > a {
+  flex-shrink: 0;
+  font-size: 13px;
+}
+.dt-block-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 0 2px;
+  font-size: 13px;
+}
+/* 三个统计块一排 */
+.dt-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+/* 一张卡片里装几行导航行（界面改版 P5：首页“我的店”） */
+.dt-rows-card {
+  padding: 0;
+  overflow: hidden;
+}
+/* 整行不可点、右边自己有链接的行：不再画 › */
+.dt-nav-row-static::after {
+  content: none;
+}
+/* 一行（DtRow，界面改版 P5 返工）：图标托盘、标题、灰色副行，右边值或操作；有链接时整行可点、右边 › */
+.dt-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 8px 14px;
+  border-top: 1px solid var(--dt-line);
+  color: var(--dt-text);
+  text-decoration: none;
+}
+.dt-row:first-child {
+  border-top: 0;
+}
+.dt-row.is-link::after {
+  content: '›';
+  content: '›' / '';
+  flex-shrink: 0;
+  color: var(--dt-muted);
+}
+.dt-row.is-link:active {
+  background: var(--dt-surface-2);
+}
+.dt-row-ico {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--dt-plate);
+  color: var(--dt-primary-ink);
+}
+.dt-row-main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+.dt-row-title {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+.dt-row-sub {
+  font-size: 12px;
+  color: var(--dt-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dt-row-value {
+  display: flex;
+  min-width: 0;
+  max-width: 55%;
+  font-size: 13px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.dt-row-end {
+  flex-shrink: 0;
+}
+/* 一行都没有时整张卡片不显示（v-if 留下的注释节点不算内容） */
+.dt-rows-card:empty {
+  display: none;
+}
+/* 卡片里一条一行的列表（首页动态、小镇新闻） */
+.dt-list-card {
+  padding: 4px 14px;
+}
+.dt-list-card > * {
+  padding: 6px 0;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-list-card > :first-child {
+  border-top: 0;
+}
+.dt-list-card > .dt-feed {
+  border-bottom: 0;
+}
+/* 设施格子：3 列，图形在托盘里，名字和状态各一行 */
+.dt-fac-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.dt-fac {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  padding: 10px 6px 8px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font: inherit;
+  font-size: 12px;
+}
+.dt-fac:disabled {
+  opacity: 0.75;
+}
+.dt-fac-ico {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--dt-plate);
+  color: var(--dt-primary-ink);
+}
+.dt-fac-name {
+  max-width: 100%;
+  font-weight: 500;
+}
+.dt-fac-state {
+  max-width: 100%;
+  font-size: 11px;
+  color: var(--dt-muted);
+}
+.dt-fac-state.is-on {
+  color: var(--dt-ink-success);
+}
+/* 没开的设施位：一排小格子，图形 + 几星开放 */
+.dt-fac-locked {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+}
+.dt-fac-lock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  padding: 6px 2px;
+  border: 1px dashed var(--dt-line-strong);
+  border-radius: var(--dt-radius-sm);
+  background: transparent;
+  color: var(--dt-muted);
+  font: inherit;
+}
+.dt-fac-lock-text {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 11px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* 区块标题整行去别处（P5 返工）：标题 + 右边灰色说明和 ›，不再用“全部 ›”文字链接 */
+.dt-block-head.is-link {
+  color: var(--dt-text);
+  text-decoration: none;
+}
+.dt-block-head.is-link::after {
+  content: '›';
+  content: '›' / '';
+  flex-shrink: 0;
+  color: var(--dt-muted);
+}
+.dt-block-more {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+/* 行右边的小标签：可领奖（提醒色，不像按钮） */
+.dt-tag-warn {
+  background: var(--dt-soft-warning);
+  color: var(--dt-ink-warning);
+}
+/* 签过到：行右边一个对勾和“已签到” */
+.dt-row-done {
+  font-size: 13px;
+  color: var(--dt-ink-success);
+}
+/* 头图右上的切换区服：浅底小胶囊（本页外的入口，不用文字链接） */
+.dt-scene-aside > a {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--dt-surface);
+  color: var(--dt-primary-ink);
+  text-decoration: none;
+}
+/* 设施格子：摆了东西时道具名一行、剩余时间一行 */
+.dt-fac-goods {
+  max-width: 100%;
+  font-size: 11px;
+  color: var(--dt-text);
+}
+.dt-pick-current {
+  margin: -4px 0 8px;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+/* 生效的加成（P5 返工）：收起时一行摘要和一个会转的箭头；展开后按来源分组，每条名字和剩余时间一行、标签换行 */
+.dt-effects {
+  padding: 0;
+  overflow: hidden;
+}
+.dt-effects-sum {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 14px;
+  list-style: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-effects-sum::-webkit-details-marker {
+  display: none;
+}
+.dt-effects-sum-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dt-effects-chev {
+  flex-shrink: 0;
+  transition: transform var(--dt-dur-base) var(--dt-ease-out);
+}
+.dt-effects[open] .dt-effects-chev {
+  transform: rotate(180deg);
+}
+.dt-effects-body {
+  border-top: 1px solid var(--dt-line);
+}
+.dt-effects-group {
+  padding: 10px 14px 2px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dt-muted);
+}
+.dt-effect {
+  padding: 6px 14px 8px;
+}
+.dt-effect + .dt-effect {
+  border-top: 1px solid var(--dt-line);
+}
+.dt-effect-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.dt-effect-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+.dt-effect-time {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-effect-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+.dt-effects-more {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  border: 0;
+  border-top: 1px solid var(--dt-line);
+  background: transparent;
+  color: var(--dt-primary-ink);
+  font: inherit;
+  font-size: 13px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dt-effects-chev {
+    transition: none;
+  }
 }

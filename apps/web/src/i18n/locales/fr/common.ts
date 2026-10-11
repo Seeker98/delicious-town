@@ -31,6 +31,7 @@ const common: Messages['common'] = {
   parenOpen: ' (',
   parenClose: ')',
   colon: (s) => `${s}\u202f: `,
+  levelRing: (level, pct) => `Niveau ${level}, ${pct}\u202f% d’expérience`,
   semi: '\u202f; ',
 };
 export default common;

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    home1011b:
+      'La portada tiene un nuevo diseño: la fachada es más grande y cuelga un cartel de «Cerrado» cuando se acaba el aceite; el nivel se muestra en un anillo de experiencia; el aceite y el llenado están en una tarjeta de estado arriba, con llenado en un toque cuando está cerrado; la última ronda muestra tres números grandes; registro, misión principal, actividad del día y consejos de novato son fichas grandes de 2×2, con el registro en morado mientras no lo hagas; recetas, plato especial y patrimonio están en «Mi restaurante»; las páginas principales tienen títulos más grandes',
     kitchen1011:
       'Cada ingrediente tiene ahora un pequeño icono según su tipo (carne, pescado, verdura, fruta y más), visible en la alacena, la nevera, el mercado y el detalle de recetas. La alacena es una cuadrícula de cuatro columnas con una tarjeta para el ingrediente elegido; el mercado, el almacén y los platos especiales usan − y + para las cantidades, y vender, tirar o desechar pide confirmación en un panel inferior. El detalle de recetas muestra una fila por grado, con los ingredientes que faltan en rojo y los grados aprendidos marcados; las páginas muestran bloques grises mientras cargan y una pista con enlace cuando están vacías',
     rest1011:

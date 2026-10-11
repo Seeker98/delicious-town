@@ -43,6 +43,18 @@ describe('顶栏（界面改版 P2a，设计 §4.2）', () => {
     expect(w.find('[data-testid="back"]').exists()).toBe(false);
   });
 
+  it('底部导航的根页面用大标题；带 meta.scene 的页面顶栏是天空底色（界面改版 P5）', async () => {
+    const home = (await mountHeader('/')).w.get('header');
+    expect(home.classes()).toContain('dt-header-root');
+    expect(home.classes()).toContain('dt-header-scene');
+    const books = (await mountHeader('/cookbooks')).w.get('header');
+    expect(books.classes()).toContain('dt-header-root');
+    expect(books.classes()).not.toContain('dt-header-scene');
+    const sub = (await mountHeader('/rest/floor')).w.get('header');
+    expect(sub.classes()).not.toContain('dt-header-root');
+    expect(sub.classes()).not.toContain('dt-header-scene');
+  });
+
   it('返回去逻辑上一级，没有浏览历史也一样（不回首页、不退出网站）', async () => {
     const { w, router } = await mountHeader('/friends/9/flip');
     await w.get('[data-testid="back"]').trigger('click');

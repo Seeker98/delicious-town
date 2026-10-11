@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    home1011b:
+      'The home page has a new layout: a bigger shop front with a "Closed" sign when the oil runs out; your level is an XP ring; oil and refueling sit in a status card at the top, with a one-tap fill-up when closed; last round shows three big numbers; check-in, main quest, daily activity and newbie tips are big 2×2 tiles, with check-in in purple until done; recipes, signature dish and assets are under "My restaurant"; the main tab pages have bigger titles',
     kitchen1011:
       'Every ingredient now has a small icon by type (meat, fish, vegetables, fruit and more), shown in the cupboard, fridge, market and recipe details. The cupboard is a four-column grid with a card for the ingredient you pick; market, storage and signature dishes use − and + for quantities, and selling, discarding or dumping asks first in a panel from the bottom. Recipe details show one row per grade, with missing ingredients in red and learned grades ticked; pages show gray placeholders while loading and a hint with a link when empty',
     rest1011:

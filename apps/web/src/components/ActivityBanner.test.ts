@@ -16,7 +16,8 @@ describe('ActivityBanner', () => {
     vi.mocked(endpoints.activitySummary).mockResolvedValue({ running: 2, claimable: 3 });
     const w = mount(ActivityBanner, opts);
     await flushPromises();
-    expect(w.text()).toContain('活动 2 个进行中');
+    expect(w.get('.dt-row-title').text()).toBe('活动');
+    expect(w.get('.dt-row-sub').text()).toBe('2 个进行中');
     expect(w.text()).toContain('可领 3 份');
   });
   it('没有活动或接口报错（功能关闭）时不显示', async () => {

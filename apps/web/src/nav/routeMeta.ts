@@ -9,6 +9,8 @@ export interface NavMeta {
   title?: (t: Messages) => string;
   /** 上一级：写死的地址，或按当前地址和浏览器历史里的上一页（back）算 */
   parent?: string | ((to: RouteLocationNormalizedLoaded, back: unknown) => string);
+  /** 页面有场景头图：顶栏用天空底色、不画底线（界面改版 P5） */
+  scene?: boolean;
 }
 declare module 'vue-router' {
   interface RouteMeta extends NavMeta, RouteFlags {
