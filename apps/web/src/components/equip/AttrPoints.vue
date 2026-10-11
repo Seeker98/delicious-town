@@ -8,7 +8,11 @@ import { useRestaurantStore } from '../../stores/restaurant';
 import { useToastStore } from '../../stores/toast';
 import { ATTR_NAMES } from '../../utils/labels';
 
-/** 加点（问题记录：从餐厅信息挪到厨具页）；加完通知父页面刷新属性表 */
+/**
+ * 加点（问题记录：从餐厅信息挪到厨具页）；加完通知父页面刷新属性表。
+ * 界面改版 P7：放进底部面板，一项一行；预览写加完以后的合计（含厨具，父页面传 totals）
+ */
+const props = defineProps<{ totals?: Partial<Record<'cook' | 'cutting' | 'fire', number>> }>();
 const emit = defineEmits<{ done: [] }>();
 const store = useRestaurantStore();
 const toast = useToastStore();
@@ -43,11 +47,14 @@ for (const k of FIELDS)
 const fillAll = (k: Field) => {
   add[k] = num(add[k]) + remain.value;
 };
-/** 加点前的数值，和加完后的预览 */
-const base = (k: Field) => store.rest?.attrs[k] ?? 0;
+/** 加点前的数值（有合计用合计，没有用加点数），和加完后的预览 */
+const base = (k: Field) => props.totals?.[k] ?? store.rest?.attrs[k] ?? 0;
 const preview = (k: Field) => {
   const n = num(add[k]);
   return n > 0 ? `${base(k)} → ${base(k) + n}` : String(base(k));
+};
+const clear = () => {
+  add.cook = add.cutting = add.fire = 0;
 };
 
 async function allocate() {
@@ -67,39 +74,38 @@ onMounted(() => store.refresh().catch(() => undefined));
 </script>
 
 <template>
-  <!-- 锚点：餐厅信息页“有 N 点可加”、主线“分配属性点”直接落到这里（530 遗留） -->
-  <div v-if="left > 0" id="attr-points" class="border rounded p-2 mb-2 small">
-    <b data-testid="attr-left">{{ t.equip.points.left(remain) }}</b>
-    <div class="row g-1 mt-1">
-      <div v-for="f in FIELDS" :key="f" class="col-4">
-        <div class="fw-bold" :data-testid="`label-${f}`">{{ ATTR_NAMES[f] }}</div>
-        <DtStepper v-model="add[f]" :min="0" :max="cap(f)" :testid="`add-${f}`" :disabled="busy" />
-        <!-- “全加”放在预览那一行右边：放在名字旁边会和右边一列的名字挨在一起（问题记录 557） -->
-        <div class="d-flex justify-content-between align-items-baseline">
-          <span class="text-muted" style="font-size: 11px" :data-testid="`preview-${f}`">{{
-            preview(f)
-          }}</span>
-          <button
-            type="button"
-            class="dt-link-btn"
-            :disabled="busy || remain === 0"
-            :data-testid="`all-${f}`"
-            @click="fillAll(f)"
-          >
-            {{ t.equip.points.all }}
-          </button>
-        </div>
-      </div>
-      <div class="col-12">
-        <button
-          class="btn btn-sm btn-primary w-100"
-          data-testid="allocate"
-          :disabled="busy || sum <= 0 || sum > left"
-          @click="allocate"
-        >
-          {{ t.equip.points.allocate(sum) }}
-        </button>
-      </div>
+  <div class="dt-points" data-testid="attr-points-body">
+    <div class="dt-points-head">
+      <span class="dt-meta">{{ t.equip.points.note }}</span>
+      <b data-testid="attr-left">{{ t.equip.points.left(remain) }}</b>
+    </div>
+    <div v-for="f in FIELDS" :key="f" class="dt-points-row">
+      <span class="dt-points-name" :data-testid="`label-${f}`">{{ ATTR_NAMES[f] }}</span>
+      <span class="dt-points-val" :data-testid="`preview-${f}`">{{ preview(f) }}</span>
+      <DtStepper v-model="add[f]" :min="0" :max="cap(f)" :testid="`add-${f}`" :disabled="busy" />
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-primary"
+        :disabled="busy || remain === 0"
+        :data-testid="`all-${f}`"
+        @click="fillAll(f)"
+      >
+        {{ t.equip.points.all }}
+      </button>
+    </div>
+    <div class="dt-sheet-pair mt-3">
+      <button type="button" class="btn btn-light" :disabled="busy || sum === 0" @click="clear">
+        {{ t.equip.points.clear }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        data-testid="allocate"
+        :disabled="busy || sum <= 0 || sum > left"
+        @click="allocate"
+      >
+        {{ t.equip.points.allocate(sum) }}
+      </button>
     </div>
   </div>
 </template>

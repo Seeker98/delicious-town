@@ -24,6 +24,8 @@ function localized<T extends object>(pick: (m: Messages['labels']) => object): T
 
 /** 顾客类型（规格书 01 §1.4） */
 export const CUSTOMER_NAMES = localized<Record<string, string>>((l) => l.customer);
+/** 顾客类型的短名（界面改版 P7 餐桌格子里的小标签） */
+export const CUSTOMER_SHORT = localized<Record<string, string>>((l) => l.customerShort);
 export const GRADE_NAMES = localized<readonly string[]>((l) => l.grade);
 export const RATE_LABELS = localized<Record<string, { label: string; percent: boolean }>>((l) => l.rate);
 export const PART_LABELS = localized<Record<string, string>>((l) => l.part);

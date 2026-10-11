@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    pages1011:
+      'Pages du restaurant refaites\u202f: les 12 avatars ont maintenant une image, avatars et portes sont des vignettes illustrées\u202f; la page des ustensiles montre un emplacement par ligne avec le nom complet, les attributs sont des barres (violet foncé pour les points, violet clair pour les ustensiles), et changer d’ustensile ou répartir les points s’ouvre en bas\u202f; le détail d’un ustensile montre un anneau de réussite et les emplacements de gemmes\u202f; «\u202fAujourd’hui\u202f» dans les quêtes est une barre d’activité avec ses paliers, et les quêtes sont des lignes dans une carte\u202f; les recettes ont trois sortes de boutons selon qu’on peut les apprendre, les spécialités 12 par page\u202f; le stockage est une grille avec un panneau par objet\u202f; toucher une table ouvre un panneau, et les revenus ont un petit graphique des 30 derniers tours',
     market1011:
       'Le placard devient une grille de sac\u202f: grandes icônes, quantité dans le coin, ingrédients de niveau 2 et plus et universels teintés\u202f; touchez une case pour un panneau avec la quantité possédée, l’objectif de la rue et les actions décomposer, combiner, échanger ou verrouiller\u202f; le frigo affiche une ligne par ingrédient. Le marché montre une ligne par ingrédient avec son niveau après le nom et un bouton prix qui ouvre un panneau d’achat\u202f: choix rapides 10 / 100 / max, total et solde, et un avertissement si les pièces manquent',
     home1011b:

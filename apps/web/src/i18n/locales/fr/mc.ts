@@ -5,6 +5,9 @@ const mc: Messages['mc'] = {
   title: 'Plats signature',
   temple: 'Expertise au temple',
   classroom: 'Classe',
+  templeSub:
+    'Faites expertiser des recettes mystère pour des fragments\u202f; 3 fragments apprennent un plat',
+  cookTitle: (name) => `Cuisiner «\u202f${name}\u202f»`,
   loadFailed: 'Impossible de charger les plats signature',
   groups: {
     learnable: 'Prêts à apprendre',
@@ -40,6 +43,7 @@ const mc: Messages['mc'] = {
   batches: (n) => `${n} ${plFr(n, 'fournée', 'fournées')}`,
   filter: {
     all: 'Tous',
+    allRoads: 'Toutes les voies',
     level: (n) => `Niv. ${n}`,
     count: (label, n) => `${label} (${n})`,
     none: 'Rien dans ces onglets',

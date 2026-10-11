@@ -24,7 +24,12 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <DtSheet :open="store.current !== null" :title="store.current?.title ?? ''" @close="store.answer(false)">
+  <DtSheet
+    top
+    :open="store.current !== null"
+    :title="store.current?.title ?? ''"
+    @close="store.answer(false)"
+  >
     <p v-if="store.current?.body" class="dt-sheet-text">{{ store.current.body }}</p>
     <template #actions>
       <button

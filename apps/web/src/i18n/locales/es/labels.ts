@@ -13,6 +13,7 @@ const labels: Messages['labels'] = {
     '8': 'Don Krab',
     '9': 'Gorrón',
   },
+  customerShort: { '1': 'Normal', '2': 'Exigente', '6': 'Calamardo', '7': 'Plancton', '8': 'Don Krab' },
   grade: [
     'Sin aprender',
     'Común',

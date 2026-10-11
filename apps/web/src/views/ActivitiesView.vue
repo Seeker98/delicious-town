@@ -16,7 +16,7 @@ import ActivityPass from '../components/activity/ActivityPass.vue';
 import ActivityStrip from '../components/activity/ActivityStrip.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useToastStore } from '../stores/toast';
-import { defaultSelection, orderActivities, timeLeft } from '../utils/activity';
+import { defaultSelection, kindLabel, orderActivities, timeLeft } from '../utils/activity';
 import { serverNowMs } from '../utils/serverNow';
 
 /** 限时活动（问题记录 148，设计 §7.2） */
@@ -100,19 +100,20 @@ const isSignin = (a: ActivityDto) => a.kind === 'goals' && a.def.goals.every((g)
     :selected="selected"
     @select="selected = $event"
   />
-  <div v-for="a in shown" :key="a.id" class="dt-card mb-3" :data-testid="`activity-${a.id}`">
-    <div class="d-flex align-items-center gap-2 mb-1">
-      <span v-if="isSignin(a)" class="badge text-bg-success">{{ t.activity.kinds.signin }}</span>
-      <span class="flex-fill dt-card-title">{{ a.title }}</span>
-      <span class="small text-muted">{{
+  <!-- 活动卡片（界面改版 P7）：标题一行，类型、剩余时间是小标签；说明灰字；结束、等级不够写在浅底提示条里 -->
+  <div v-for="a in shown" :key="a.id" class="dt-card dt-act-detail mb-3" :data-testid="`activity-${a.id}`">
+    <div class="dt-act-detail-head">
+      <h2 class="dt-act-detail-title">{{ a.title }}</h2>
+      <span :class="['dt-tag', isSignin(a) ? 'dt-tag-ok' : 'dt-tag-primary']">{{ kindLabel(a) }}</span>
+      <span :class="['dt-tag', a.state === 'running' ? 'dt-tag-warn' : 'dt-tag-mute']">{{
         a.state === 'running' ? timeLeft(a.endsAt) : t.activity.endedShort
       }}</span>
     </div>
-    <div class="small dt-announce-body mb-2">{{ a.body }}</div>
-    <div v-if="a.state !== 'running'" class="alert alert-secondary py-1 small">
+    <div class="dt-announce-body dt-act-detail-body">{{ a.body }}</div>
+    <div v-if="a.state !== 'running'" class="dt-act-note">
       {{ endNote(a) }}
     </div>
-    <div v-else-if="a.kind !== 'boost' && level < a.minLevel" class="alert alert-warning py-1 small">
+    <div v-else-if="a.kind !== 'boost' && level < a.minLevel" class="dt-act-note is-warn">
       {{ t.activity.needLevel(a.minLevel) }}
     </div>
     <ActivityGoals v-if="a.kind === 'goals'" :a="a" :busy="busy" @claim="claim(a, $event)" />
@@ -136,7 +137,7 @@ const isSignin = (a: ActivityDto) => a.kind === 'goals' && a.def.goals.every((g)
     <button
       v-if="a.claimable > 0"
       type="button"
-      class="btn btn-sm btn-primary mt-2"
+      class="btn btn-primary dt-btn-block mt-3"
       :disabled="busy"
       :data-testid="`claim-all-${a.id}`"
       @click="claimAll(a)"

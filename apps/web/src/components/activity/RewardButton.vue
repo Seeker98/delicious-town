@@ -25,7 +25,7 @@ const status = () => rewardStatus(props.reward, props.state);
 <template>
   <!-- 宫格里格子窄：放不下时状态换到下一行，不把奖励文字挤成一列（问题记录 100） -->
   <span :class="['d-inline-flex align-items-center gap-1', { 'flex-wrap justify-content-center': wrap }]">
-    <span class="small">{{ rewardSummary(reward.award, catalog) }}</span>
+    <span class="dt-reward-text">{{ rewardSummary(reward.award, catalog) }}</span>
     <button
       v-if="status() === 'claim'"
       type="button"
@@ -38,12 +38,14 @@ const status = () => rewardStatus(props.reward, props.state);
     </button>
     <span
       v-else-if="premiumLocked && !reward.claimed"
-      class="badge text-bg-light"
+      class="dt-tag dt-tag-mute"
       :data-testid="`premium-lock-${activityId}-${reward.key.slice(1)}`"
       ><i class="bi bi-lock"></i> {{ t.activity.rewards.premiumLocked }}</span
     >
-    <span v-else class="badge text-bg-light">{{
-      t.activity.rewards[status() as 'locked' | 'page' | 'mail' | 'pending' | 'missed']
-    }}</span>
+    <span
+      v-else
+      :class="['dt-tag', status() === 'page' || status() === 'mail' ? 'dt-tag-ok' : 'dt-tag-mute']"
+      >{{ t.activity.rewards[status() as 'locked' | 'page' | 'mail' | 'pending' | 'missed'] }}</span
+    >
   </span>
 </template>

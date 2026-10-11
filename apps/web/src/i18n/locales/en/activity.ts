@@ -114,6 +114,7 @@ const activity: Messages['activity'] = {
     d1: 'Diagonal ↙',
     row: (n) => `Row ${n}`,
     col: (n) => `Column ${n}`,
+    linesTitle: 'Line rewards',
   },
   pass: {
     points: (n) => `Points ${n}`,

@@ -173,9 +173,10 @@ describe('RestTasksView', () => {
     expect(w.text()).toContain('Refill oil once');
   });
 
-  it('任务卡片：没完成时显示进度条、不放按钮；完成后绿边和领奖按钮', async () => {
+  it('任务卡片：没完成时显示进度、不放按钮；完成后绿边和领奖按钮', async () => {
     const w = await mountView();
-    expect(w.find('[data-testid="task-2021"]').find('.dt-quest-bar').exists()).toBe(true);
+    expect(w.get('[data-testid="task-2021"] .dt-act-count').text()).toBe('0/1');
+    expect(w.get('[data-testid="task-2021"] .dt-row-sub').text()).toBe('银币 2,000');
     expect(w.find('[data-testid="claim-task-2021"]').exists()).toBe(false);
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([task({ progress: 1, done: true })]));
     const done = await mountView();
@@ -195,25 +196,34 @@ describe('RestTasksView', () => {
       ]),
     );
     const w = await mountView();
-    expect(w.get('[data-testid="chapter"]').text()).toContain('第 1 章 开张大吉 (1/3)');
+    const head = w.get('[data-testid="chapter"]');
+    expect(head.text()).toContain('第 1 章');
+    expect(head.text()).toContain('开张大吉');
+    expect(head.get('.dt-quest-head-count').text()).toBe('1 / 3');
+    expect(head.get('.dt-quest-bar > span').attributes('style')).toContain('width: 33.3');
     expect(w.findAll('[data-testid^="task-20"]').map((x) => x.attributes('data-testid'))).toEqual([
       'task-2023',
       'task-2022',
       'task-2021',
     ]);
-    expect(w.get('[data-testid="task-2021"]').text()).toContain('✓ 已领');
-    expect(w.find('[data-testid="claim-chapter"]').attributes('disabled')).toBeDefined();
-    // 没领完时不是绿色，写明还差几个（问题记录 318 试玩反馈：绿色按钮点不了像坏了）
-    expect(w.get('[data-testid="claim-chapter"]').classes()).not.toContain('btn-primary');
-    expect(w.get('[data-testid="claim-chapter"]').text()).toBe('还差 1 个任务');
+    expect(w.get('[data-testid="task-2021"] .dt-tag-ok').text()).toBe('已领');
+    // 卡片底写章末奖励
+    expect(w.get('[data-testid="card-main"] .dt-quest-foot').text()).toContain('章末奖励');
+    // 没领完时不是按钮、不是品牌色，写明还差几个（问题记录 318 试玩反馈：绿色按钮点不了像坏了）
+    const chapterBtn = w.get('[data-testid="claim-chapter"]');
+    expect(chapterBtn.element.tagName).toBe('SPAN');
+    expect(chapterBtn.classes()).toContain('dt-tag');
+    expect(chapterBtn.classes()).not.toContain('btn-primary');
+    expect(chapterBtn.text()).toBe('还差 1 个任务');
     vi.mocked(endpoints.tasks).mockResolvedValue(
       quests([task({ progress: 1, done: true, claimed: true })], {
         chapter: { ...quests([]).chapter!, claimable: true, total: 1, claimedCount: 1, doneCount: 1 },
       }),
     );
     const ready = await mountView();
+    expect(ready.get('[data-testid="claim-chapter"]').element.tagName).toBe('BUTTON');
     expect(ready.get('[data-testid="claim-chapter"]').classes()).toContain('btn-primary');
-    expect(ready.get('[data-testid="claim-chapter"]').text()).toBe('领章末奖励');
+    expect(ready.get('[data-testid="claim-chapter"]').text()).toBe('领奖');
     await ready.get('[data-testid="claim-chapter"]').trigger('click');
     await flushPromises();
     expect(endpoints.claimChapter).toHaveBeenCalledWith(1);
@@ -245,13 +255,24 @@ describe('RestTasksView', () => {
       }),
     );
     const w = await mountView();
-    expect(w.get('[data-testid="chapter"]').text()).toContain('🔒 5 级解锁');
+    const chapter = w.get('[data-testid="chapter"]');
+    expect(chapter.text()).toContain('第 2 章');
+    expect(chapter.text()).toContain('小店经营');
+    // 锁定写解锁条件：小标签里画锁图标，文字去掉锁符号；不写进度、不放章末奖励
+    const lock = chapter.get('.dt-tag.dt-tag-mute');
+    expect(lock.text()).toBe('5 级解锁');
+    expect(lock.find('.bi-lock-fill').exists()).toBe(true);
+    expect(chapter.text()).not.toContain('🔒');
+    expect(chapter.find('.dt-quest-head-count').exists()).toBe(false);
+    expect(w.find('[data-testid="claim-chapter"]').exists()).toBe(false);
     const side = await mountView('/?tab=side');
+    expect(side.get('[data-testid="line-1"]').text()).toContain('食谱');
     expect(side.get('[data-testid="line-1"]').text()).toContain('把 10 道食谱升到上品');
-    expect(side.get('[data-testid="line-1"]').text()).toContain('0/6');
-    expect(side.get('[data-testid="line-2"]').text()).toContain('🔒 2 星解锁');
+    expect(side.get('[data-testid="line-1"] .dt-quest-head-count').text()).toBe('0 / 6');
+    expect(side.get('[data-testid="line-2"] .dt-quest-head-count').text()).toBe('1 / 3');
+    expect(side.get('[data-testid="line-2"] .dt-tag-mute').text()).toBe('2 星解锁');
     expect(side.find('[data-testid="claim-task-3042"]').exists()).toBe(false);
-    expect(side.get('[data-testid="line-3"]').text()).toContain('已全部完成');
+    expect(side.get('[data-testid="line-3"] .dt-tag-ok').text()).toBe('已全部完成');
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([], { chapter: null, allMainDone: true }));
     const done = await mountView();
     expect(done.text()).toContain('主线已全部完成');
@@ -316,6 +337,7 @@ describe('RestTasksView 四块和每周任务（问题记录 318 PR 2）', () =>
     expect(w.findAll('[data-testid^="card-"]').map((x) => x.attributes('data-testid'))).toEqual([
       'card-lines',
     ]);
+    expect(w.get('[data-testid="card-lines"]').text()).toBe('暂时没有支线任务');
   });
 
   it('每周：写组别和剩余时间；单个任务能领；没领完时全完成奖励灰色写还差几个', async () => {
@@ -330,7 +352,8 @@ describe('RestTasksView 四块和每周任务（问题记录 318 PR 2）', () =>
     await flushPromises();
     expect(endpoints.claimTask).toHaveBeenCalledWith(4012);
     const full = card.get('[data-testid="claim-weekly-full"]');
-    expect(full.attributes('disabled')).toBeDefined();
+    expect(full.element.tagName).toBe('SPAN');
+    expect(full.classes()).toContain('dt-tag');
     expect(full.classes()).not.toContain('btn-primary');
     expect(full.text()).toBe('先领完上面的任务');
   });
@@ -341,9 +364,10 @@ describe('RestTasksView 四块和每周任务（问题记录 318 PR 2）', () =>
     );
     const w = await mountView('/?tab=weekly');
     const full = w.get('[data-testid="claim-weekly-full"]');
+    expect(full.element.tagName).toBe('BUTTON');
     expect(full.classes()).toContain('btn-primary');
-    expect(full.text()).toBe('领取');
-    expect(w.get('[data-testid="card-weekly"]').text()).toContain('全完成奖励: ');
+    expect(full.text()).toBe('领奖');
+    expect(w.get('[data-testid="card-weekly"] .dt-quest-foot').text()).toContain('全完成奖励');
     await full.trigger('click');
     await flushPromises();
     expect(endpoints.claimTask).toHaveBeenCalledWith(4019);
@@ -351,7 +375,7 @@ describe('RestTasksView 四块和每周任务（问题记录 318 PR 2）', () =>
       quests([task()], { weekly: weekly([true, true, true, true], true) }),
     );
     const done = await mountView('/?tab=weekly');
-    expect(done.get('[data-testid="claim-weekly-full"]').text()).toBe('✓ 已领取');
+    expect(done.get('[data-testid="claim-weekly-full"]').text()).toBe('已领');
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([task()]));
     const none = await mountView('/?tab=weekly');
     expect(none.find('[data-testid="card-weekly"]').exists()).toBe(false);
@@ -382,12 +406,14 @@ describe('任务页终审遗留（backlog 318）', () => {
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([task({ id: 2081 })], { leftover: [left] }));
     let w = await mountView();
     let card = w.get('[data-testid="card-main"]');
-    expect(card.get('[data-testid="chapter"]').text()).toContain(' (0/1)');
-    const box = card.get('[data-testid="main-leftover"]');
-    expect(box.text()).toContain('补领');
-    expect(box.find('[data-testid="task-2061"]').exists()).toBe(true);
+    expect(card.get('[data-testid="chapter"] .dt-quest-head-count').text()).toBe('0 / 1');
+    // 补领是本章卡片下面单独一块（界面改版 P7），本章卡片里只有本章的任务
     expect(card.findAll('[data-testid^="task-"]').map((x) => x.attributes('data-testid'))).toEqual([
       'task-2081',
+    ]);
+    const box = w.get('[data-testid="main-leftover"]');
+    expect(box.get('.dt-block-title').text()).toBe('补领: 前面章节后来开放的任务');
+    expect(box.findAll('[data-testid^="task-"]').map((x) => x.attributes('data-testid'))).toEqual([
       'task-2061',
     ]);
     await box.get('[data-testid="claim-task-2061"]').trigger('click');
@@ -407,7 +433,7 @@ describe('任务页终审遗留（backlog 318）', () => {
     w = await mountView();
     card = w.get('[data-testid="card-main"]');
     expect(card.text()).toContain('主线已全部完成');
-    expect(card.find('[data-testid="main-leftover"] [data-testid="task-2061"]').exists()).toBe(true);
+    expect(w.find('[data-testid="main-leftover"] [data-testid="task-2061"]').exists()).toBe(true);
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([task()]));
     expect((await mountView()).find('[data-testid="main-leftover"]').exists()).toBe(false);
   });
@@ -420,7 +446,7 @@ describe('任务页终审遗留（backlog 318）', () => {
     full: { id: 4019, award: { goods: [] }, claimable: false, claimed: false, ...full },
   });
 
-  it('每周：没完成的显示进度条；可领的排前面、没完成的其次、已领的最后；全完成按钮数没完成的', async () => {
+  it('每周：没完成的显示进度；可领的排前面、没完成的其次、已领的最后；全完成按钮数没完成的', async () => {
     vi.mocked(endpoints.tasks).mockResolvedValue(
       quests([task()], {
         weekly: weeklyOf([
@@ -438,14 +464,13 @@ describe('任务页终审遗留（backlog 318）', () => {
       'task-4014',
       'task-4011',
     ]);
-    expect(card.get('[data-testid="task-4012"] .dt-quest-bar > div').attributes('style')).toContain(
-      'width: 40%',
-    );
+    expect(card.get('[data-testid="task-4012"] .dt-act-count').text()).toBe('4/10');
+    expect(card.get('[data-testid="task-4014"] .dt-act-count').text()).toBe('0/10');
     expect(card.find('[data-testid="claim-task-4012"]').exists()).toBe(false);
     expect(card.get('[data-testid="claim-weekly-full"]').text()).toBe('还差 2 个任务');
   });
 
-  it('每周全完成奖励领过后是浅灰底（和活跃页已领的奖励一个样子）', async () => {
+  it('每周全完成奖励领过后是“已领”小标签（和活跃页已领的奖励一个样子）', async () => {
     vi.mocked(endpoints.tasks).mockResolvedValue(
       quests([task()], {
         weekly: weeklyOf([task({ id: 4011, progress: 1, done: true, claimed: true })], { claimed: true }),
@@ -453,8 +478,9 @@ describe('任务页终审遗留（backlog 318）', () => {
     );
     const w = await mountView('/?tab=weekly');
     const full = w.get('[data-testid="claim-weekly-full"]');
-    expect(full.classes()).toEqual(expect.arrayContaining(['btn-light', 'text-muted']));
-    expect(full.classes()).not.toContain('btn-outline-secondary');
+    expect(full.element.tagName).toBe('SPAN');
+    expect(full.classes()).toEqual(expect.arrayContaining(['dt-tag', 'dt-tag-ok']));
+    expect(full.classes()).not.toContain('btn');
   });
 });
 

@@ -52,51 +52,63 @@
   "avatars": [
     {
       "id": 1,
-      "name": "小厨师"
+      "name": "小厨师",
+      "art": "chef"
     },
     {
       "id": 2,
-      "name": "大厨"
+      "name": "大厨",
+      "art": "headchef"
     },
     {
       "id": 3,
-      "name": "服务员"
+      "name": "服务员",
+      "art": "waiter"
     },
     {
       "id": 4,
-      "name": "采购员"
+      "name": "采购员",
+      "art": "buyer"
     },
     {
       "id": 5,
-      "name": "美食家"
+      "name": "美食家",
+      "art": "gourmet"
     },
     {
       "id": 6,
-      "name": "甜点师"
+      "name": "甜点师",
+      "art": "pastry"
     },
     {
       "id": 7,
-      "name": "面点师"
+      "name": "面点师",
+      "art": "baker"
     },
     {
       "id": 8,
-      "name": "烧烤师"
+      "name": "烧烤师",
+      "art": "grill"
     },
     {
       "id": 9,
-      "name": "调酒师"
+      "name": "调酒师",
+      "art": "bartender"
     },
     {
       "id": 10,
-      "name": "渔夫"
+      "name": "渔夫",
+      "art": "fisher"
     },
     {
       "id": 11,
-      "name": "园丁"
+      "name": "园丁",
+      "art": "gardener"
     },
     {
       "id": 12,
-      "name": "蟹老板"
+      "name": "蟹老板",
+      "art": "crab"
     }
   ],
   "icons": [

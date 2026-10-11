@@ -5,7 +5,8 @@ import { nextTick, onBeforeUnmount, ref, useId, watch } from 'vue';
  * 底部面板（界面改版设计 §5 第 6、7 条）：长表单（预设、一键处理、下单）和确认都从下面弹出。
  * Esc、点遮罩关掉；打开时焦点进面板，关掉回到原来的按钮；“减少动态效果”时只淡入不滑动
  */
-const props = defineProps<{ open: boolean; title: string }>();
+/** top：确认面板用，永远压在别的面板上面（P7 终审 C1：后挂载的页面面板会盖住确认面板） */
+const props = defineProps<{ open: boolean; title: string; top?: boolean }>();
 const emit = defineEmits<{ close: [] }>();
 const titleId = `dt-sheet-${useId()}`;
 const panel = ref<HTMLElement | null>(null);
@@ -65,7 +66,7 @@ let justClosedBack: HTMLElement | null = null;
 
 <template>
   <Teleport to="body">
-    <div v-if="open" class="dt-sheet-wrap">
+    <div v-if="open" :class="['dt-sheet-wrap', { 'is-top': top }]">
       <div class="dt-sheet-scrim" @click="emit('close')"></div>
       <div
         ref="panel"

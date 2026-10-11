@@ -4,6 +4,7 @@ export default {
   loading: '載入中……',
   confirm: '確定',
   cancel: '取消',
+  close: '關閉',
   decrease: '減少',
   increase: '增加',
   language: '語言',

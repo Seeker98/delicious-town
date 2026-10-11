@@ -140,29 +140,80 @@ describe('ActivationPanel', () => {
 
   it('签到按钮', async () => {
     const w = await mountView();
-    await w.find('[data-testid="signin"]').trigger('click');
+    const btn = w.get('[data-testid="signin"]');
+    expect(btn.element.tagName).toBe('BUTTON');
+    expect(btn.text()).toBe('签到');
+    await btn.trigger('click');
     await flushPromises();
     expect(endpoints.signIn).toHaveBeenCalled();
   });
 
-  it('活跃项：没做满的写进度排前面，星级不够的写几星开放，做满的标"✓ 已满"排后面（问题记录：灰色黑色分不清）', async () => {
+  it('签过到了写“今天已签到”小标签，不再是按钮', async () => {
+    vi.mocked(endpoints.activation).mockResolvedValue(act({ signedIn: true }));
     const w = await mountView();
-    expect(w.findAll('[data-testid^="act-"]').map((x) => x.attributes('data-testid'))).toEqual([
+    const tag = w.get('[data-testid="activation-head"] [data-testid="signin"]');
+    expect(tag.element.tagName).toBe('SPAN');
+    expect(tag.classes()).toEqual(expect.arrayContaining(['dt-tag', 'dt-tag-ok']));
+    expect(tag.text()).toBe('今天已签到');
+  });
+
+  it('活跃项：没做满的写进度排前面，星级不够的写几星开放，做满的收起来标"已满"排后面（问题记录：灰色黑色分不清）', async () => {
+    const w = await mountView();
+    expect(w.findAll('.dt-row[data-testid^="act-"]').map((x) => x.attributes('data-testid'))).toEqual([
       'act-2',
       'act-50',
       'act-901',
       'act-903',
       'act-1',
     ]);
-    expect(w.find('[data-testid="act-2"]').text()).toContain('3/12');
-    expect(w.find('[data-testid="act-50"]').text()).toContain('🔒 2 星开放');
-    expect(w.find('[data-testid="act-50"]').classes()).toContain('dt-act-locked');
+    expect(w.text()).toContain('做什么能加活跃');
+    expect(w.get('[data-testid="act-2"]').text()).toContain('3/12');
+    expect(w.get('[data-testid="act-2"]').classes()).not.toContain('is-locked');
+    // 锁定的灰掉写原因（锁符号换成图标）和每次几点，不写进度
+    const star = w.get('[data-testid="act-50"]');
+    expect(star.text()).toContain('2 星开放');
+    expect(star.text()).toContain('每次 5 点');
+    expect(star.text()).not.toContain('🔒');
+    expect(star.text()).not.toContain('0/2');
+    expect(star.find('.bi-lock-fill').exists()).toBe(true);
+    expect(star.classes()).toContain('is-locked');
     // 等级不够、区服没开的也标锁定（问题记录 360）
-    expect(w.find('[data-testid="act-901"]').text()).toContain('🔒 30 级解锁');
-    expect(w.find('[data-testid="act-901"]').classes()).toContain('dt-act-locked');
-    expect(w.find('[data-testid="act-903"]').text()).toContain('🔒 本服未开放');
-    expect(w.find('[data-testid="act-1"]').text()).toContain('✓ 已满');
-    expect(w.find('[data-testid="act-1"]').classes()).toContain('dt-act-done');
+    expect(w.get('[data-testid="act-901"]').text()).toContain('30 级解锁');
+    expect(w.get('[data-testid="act-901"]').classes()).toContain('is-locked');
+    expect(w.get('[data-testid="act-903"]').text()).toContain('本服未开放');
+    expect(w.get('[data-testid="act-903"]').classes()).toContain('is-locked');
+    // 做满的收进折叠行，折叠行写几项和名字
+    const fold = w.get('[data-testid="act-done"]');
+    expect(fold.element.tagName).toBe('DETAILS');
+    expect(fold.get('summary').text()).toBe('已做满 1 项 · 签到');
+    const full = fold.get('[data-testid="act-1"]');
+    expect(full.get('.dt-tag.dt-tag-ok').text()).toBe('已满');
+  });
+
+  it('排序：做了一部分的在最前，再是没做的，没开放的最后；没有做满的就没有折叠行（界面改版 P7）', async () => {
+    const item = (id: number, count: number, needStar = 0) => ({
+      id,
+      name: String(id),
+      points: 1,
+      limit: 5,
+      count,
+      needStar,
+      needLevel: 0,
+      needDays: 0,
+      blocked: null,
+      off: false,
+    });
+    vi.mocked(endpoints.activation).mockResolvedValue(
+      act({ items: [item(11, 0, 3), item(12, 0), item(13, 2), item(14, 0)] }),
+    );
+    const w = await mountView();
+    expect(w.findAll('.dt-row[data-testid^="act-"]').map((x) => x.attributes('data-testid'))).toEqual([
+      'act-13',
+      'act-12',
+      'act-14',
+      'act-11',
+    ]);
+    expect(w.find('[data-testid="act-done"]').exists()).toBe(false);
   });
 
   it('交易所注册天数不够、邮箱没验证，没有能领奖的限时活动，也标锁定写原因（backlog 第 ⑥ 批）', async () => {
@@ -184,49 +235,84 @@ describe('ActivationPanel', () => {
       }),
     );
     const w = await mountView();
-    expect(w.find('[data-testid="act-901"]').text()).toContain('🔒 注册满 7 天解锁');
-    expect(w.find('[data-testid="act-902"]').text()).toContain('🔒 验证邮箱后解锁');
+    expect(w.get('[data-testid="act-901"]').text()).toContain('注册满 7 天解锁');
+    expect(w.get('[data-testid="act-902"]').text()).toContain('验证邮箱后解锁');
     // 交易所被冻结的店（backlog 下架编号审查）
-    expect(w.find('[data-testid="act-903"]').text()).toContain('🔒 交易所已被冻结');
-    expect(w.find('[data-testid="act-904"]').text()).toContain('现在没有进行中的限时活动');
-    for (const id of [901, 902, 903, 904])
-      expect(w.find(`[data-testid="act-${id}"]`).classes()).toContain('dt-act-locked');
+    expect(w.get('[data-testid="act-903"]').text()).toContain('交易所已被冻结');
+    expect(w.get('[data-testid="act-904"]').text()).toContain('现在没有进行中的限时活动');
+    for (const id of [901, 902, 903, 904]) {
+      const row = w.get(`[data-testid="act-${id}"]`);
+      expect(row.classes()).toContain('is-locked');
+      expect(row.find('.bi-lock-fill').exists()).toBe(true);
+      expect(row.text()).not.toContain('🔒');
+    }
   });
 
   it('活跃奖励三种样子：已领、可以领（实心）、还差几点', async () => {
     const w = await mountView();
-    const claimed = w.find('[data-testid="claim-50"]');
-    expect(claimed.text()).toBe('✓ 已领 50 点经验 500');
-    expect(claimed.attributes('disabled')).toBeDefined();
-    const ready = w.find('[data-testid="claim-100"]');
-    expect(ready.text()).toBe('领 100 点奖励钻石 2');
+    const claimed = w.get('[data-testid="claim-50"]');
+    expect(claimed.element.tagName).toBe('SPAN');
+    expect(claimed.classes()).toEqual(expect.arrayContaining(['dt-tag', 'dt-tag-ok']));
+    expect(claimed.text()).toBe('已领');
+    const ready = w.get('[data-testid="claim-100"]');
+    expect(ready.element.tagName).toBe('BUTTON');
+    expect(ready.text()).toBe('领奖');
     expect(ready.classes()).toContain('btn-primary');
     expect(ready.attributes('disabled')).toBeUndefined();
-    const far = w.find('[data-testid="claim-150"]');
-    expect(far.text()).toBe('150 点 (还差 30)钻石 5');
-    expect(far.attributes('disabled')).toBeDefined();
+    expect(w.get('[data-testid="tier-100"]').classes()).toContain('is-ready');
+    await ready.trigger('click');
+    await flushPromises();
+    expect(endpoints.claimActivation).toHaveBeenCalledWith(100);
+    const far = w.get('[data-testid="claim-150"]');
+    expect(far.element.tagName).toBe('SPAN');
+    expect(far.classes()).toContain('dt-tag');
+    expect(far.text()).toBe('还差 30');
+    expect(w.get('[data-testid="tier-150"]').classes()).not.toContain('is-ready');
+    expect(w.get('[data-testid="tier-50"]').classes()).not.toContain('is-ready');
   });
 
-  it('每档按钮写出这一档送什么（backlog B6）', async () => {
+  it('每档写出这一档送什么（backlog B6）', async () => {
     const w = await mountView();
     expect(w.get('[data-testid="claim-award-50"]').text()).toBe('经验 500');
     expect(w.get('[data-testid="claim-award-100"]').text()).toBe('钻石 2');
-    expect(w.get('[data-testid="claim-150"]').text()).toContain('钻石 5');
+    expect(w.get('[data-testid="claim-award-150"]').text()).toBe('钻石 5');
+    expect(w.get('[data-testid="tier-150"]').text()).toContain('钻石 5');
+  });
+
+  it('翻倍的档写奖励翻倍', async () => {
+    vi.mocked(endpoints.activation).mockResolvedValue(
+      act({
+        rewards: [
+          { points: 50, award: { exp: 500 }, claimed: true, multiplier: 1 },
+          { points: 100, award: { diamond: 2 }, claimed: false, multiplier: 2 },
+        ],
+      }),
+    );
+    const w = await mountView();
+    expect(w.get('[data-testid="tier-100"]').text()).toContain('奖励翻倍');
+    expect(w.get('[data-testid="tier-50"]').text()).not.toContain('奖励翻倍');
   });
 
   it('写明哪一档另送几张券；区服关掉一番赏时不写', async () => {
     vi.mocked(endpoints.activation).mockResolvedValue(act({ kujiTicket: { points: 150, num: 1 } }));
-    expect((await mountView()).get('[data-testid="act-kuji-hint"]').text()).toBe(
-      '领 150 点奖励另送一番赏抽赏券 ×1',
-    );
+    const w = await mountView();
+    expect(w.get('[data-testid="tier-150"] .dt-row-sub').text()).toBe('另送一番赏抽赏券 ×1');
+    expect(w.get('[data-testid="tier-100"]').text()).not.toContain('抽赏券');
     vi.mocked(endpoints.activation).mockResolvedValue(act());
-    expect((await mountView()).find('[data-testid="act-kuji-hint"]').exists()).toBe(false);
+    expect((await mountView()).text()).not.toContain('抽赏券');
   });
 
-  it('活跃度块的标题用卡片标题样式，和任务页各块一样', async () => {
+  it('活跃度卡片头写今日活跃和最高一档，下面一条进度条（界面改版 P7）', async () => {
     const card = (await mountView()).get('[data-testid="card-activation"]');
     expect(card.find('h6').exists()).toBe(false);
-    expect(card.get('.dt-card-title').text()).toBe('今日活跃 120');
+    const head = card.get('[data-testid="activation-head"]');
+    expect(head.text()).toContain('今日活跃');
+    expect(head.get('.dt-act-total').text().replace(/\s+/g, ' ')).toBe('今日活跃 120 / 150');
+    const bar = card.get('[role="progressbar"]');
+    expect(bar.attributes('aria-valuenow')).toBe('120');
+    expect(bar.attributes('aria-valuemax')).toBe('150');
+    expect(bar.findAll('.dt-act-node')).toHaveLength(3);
+    expect(bar.findAll('.dt-act-node.is-on')).toHaveLength(2);
   });
 
   it('还没读回来时是骨架行（界面改版 P3）', async () => {

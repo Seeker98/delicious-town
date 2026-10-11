@@ -5,6 +5,8 @@ const mc: Messages['mc'] = {
   title: 'Signature dishes',
   temple: 'Temple appraisal',
   classroom: 'Classroom',
+  templeSub: 'Appraise mystery recipes for fragments; 3 fragments teach a dish',
+  cookTitle: (name) => `Cook "${name}"`,
   loadFailed: "Couldn't load signature dishes",
   groups: {
     learnable: 'Ready to learn',
@@ -40,6 +42,7 @@ const mc: Messages['mc'] = {
   batches: (n) => `${n} ${n === 1 ? 'batch' : 'batches'}`,
   filter: {
     all: 'All',
+    allRoads: 'All paths',
     level: (n) => `Lv. ${n}`,
     count: (label, n) => `${label} (${n})`,
     none: 'None on these tabs',

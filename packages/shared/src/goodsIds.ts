@@ -6,6 +6,8 @@ export const SHARED_GOODS = {
   mysteryTicket: 10001, // 神秘礼券
   starPromoHonor: 60202, // 升星促销勋章（仓库页单独说明）
   krabCoin: 10006, // 蟹币
+  backStressOne: 10605, // 归元石（强化回退 1 级；厨具详情没有回退道具时写名字）
+  backStressAll: 10604, // 神秘水晶（强化回退到初始）
 } as const;
 
 /** 前后端都要用到的食材 id：万能食材 = masterBase + 食材等级（1~5 级）；一级、二级能换稀有食材（重新编号 PR 2） */

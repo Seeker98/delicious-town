@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { EquipDto, EquipOverviewDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import type { UiArtName } from '../art/generated/names';
@@ -16,6 +16,7 @@ import { activeMessages } from '../i18n';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useConfirmStore } from '../stores/confirm';
+import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 import { formatNum, formatPct } from '../utils/format';
 import { equipName } from '../utils/equipName';
@@ -39,6 +40,34 @@ const all = ref<EquipDto[]>([]);
 const picked = ref(new Set<number>());
 const way = ref<'salvage' | 'sell'>('salvage');
 const busy = ref(false);
+const route = useRoute();
+const router = useRouter();
+const restStore = useRestaurantStore();
+/** 还没加的属性点；加点放在底部面板里（界面改版 P7） */
+const pointsLeft = computed(() => restStore.rest?.attrLeft ?? 0);
+const pointsOpen = ref(false);
+function pointsDone() {
+  pointsOpen.value = false;
+  void load();
+}
+/** 属性横条按最高的一项合计算长度 */
+const barMax = computed(() => Math.max(1, ...ATTR_KEYS.map((k) => o.value?.attrs.total[k] ?? 0)));
+const barPct = (v: number) => `${Math.max(0, (v / barMax.value) * 100)}%`;
+/** 一件厨具最高的两项属性：“厨艺 +31 · 创意 +98” */
+function attrsText(e: EquipDto): string {
+  return ATTR_KEYS.filter((k) => e.total[k] > 0)
+    .sort((a, b) => e.total[b] - e.total[a])
+    .slice(0, 2)
+    .map((k) => t.value.equip.attrPlus(ATTR_NAMES[k] ?? k, e.total[k]))
+    .join(' · ');
+}
+const wornSub = (p: number, e: EquipDto) => [PART_NAMES[p], attrsText(e)].filter(Boolean).join(' · ');
+/** 部位面板：穿着的排最前 */
+const sortedPieces = computed(() => [...pieces.value].sort((a, b) => Number(b.worn) - Number(a.worn)));
+function closePart() {
+  part.value = null;
+  pieces.value = [];
+}
 
 async function load() {
   o.value = await endpoints.equipOverview();
@@ -151,30 +180,118 @@ async function doBatch() {
   picked.value = new Set(candidates.value.map((e) => e.id));
 }
 
-onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.loadFailed), 'danger')));
+onMounted(async () => {
+  void restStore.refresh().catch(() => undefined);
+  try {
+    await load();
+  } catch (e) {
+    toast.push(errorMessage(e, t.value.equip.loadFailed), 'danger');
+    return;
+  }
+  // 从餐厅信息“去加点”、主线“分配属性点”过来：直接打开加点面板
+  if (route.hash === '#attr-points') {
+    await restStore.refresh().catch(() => undefined);
+    if (pointsLeft.value > 0) pointsOpen.value = true;
+    // 打开过就把锚点去掉：从厨具详情返回时不再自己弹出来（P7 终审）
+    void router.replace({ hash: '' });
+  }
+});
 </script>
 
 <template>
   <DtTabs v-model="tab" :tabs="tabItems" />
   <GemPanel v-if="tab === 'gem'" />
   <div v-else-if="o">
-    <div class="dt-page-meta dt-meta" data-testid="equip-count">{{ t.equip.count(o.count) }}</div>
-    <div class="row g-1 mb-2">
-      <div v-for="p in [1, 2, 3, 4, 5]" :key="p" class="col">
-        <div
-          class="border rounded p-1 small text-center"
-          :class="{ 'border-primary': part === p }"
-          role="button"
+    <!-- 厨力和赛厨的进攻、防守：三个数字一排（界面改版 P7） -->
+    <section class="dt-card dt-equip-power" data-testid="power-line">
+      <div>
+        <span class="dt-stat-label">{{ t.equip.power }}</span>
+        <b class="dt-equip-power-main" data-testid="power">{{ formatNum(o.attrs.power) }}</b>
+      </div>
+      <!-- 赛厨时的厨力（问题记录 417）：和厨塔页的对得上 -->
+      <div data-testid="duel-power">
+        <span class="dt-stat-label">{{ t.equip.duelAttack }}</span>
+        <b>{{ formatNum(o.duelPower.attack) }}</b>
+      </div>
+      <div>
+        <span class="dt-stat-label">{{ t.equip.duelDefend }}</span>
+        <b>{{ formatNum(o.duelPower.defend) }}</b>
+      </div>
+    </section>
+
+    <!-- 穿戴中（界面改版 P7）：一个部位一行，名字写全（太长折成两行），点一行弹出这个部位的厨具 -->
+    <section class="dt-block">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.equip.wornTitle }}</h2>
+        <span class="dt-block-more" data-testid="equip-count">{{ t.equip.countHint(o.count) }}</span>
+      </div>
+      <div class="dt-card dt-rows-card">
+        <button
+          v-for="p in [1, 2, 3, 4, 5]"
+          :key="p"
+          type="button"
+          class="dt-row is-link dt-gear-row"
           :data-testid="`slot-${p}`"
           @click="pick(p)"
         >
-          <DtArt :name="SLOT_ART[p]!" :size="22" />
-          <div class="text-muted">{{ PART_NAMES[p] }}</div>
-          <div v-if="o.worn[p - 1]">{{ name(o.worn[p - 1]!) }}</div>
-          <div v-else class="text-muted">{{ t.equip.empty }}</div>
+          <span :class="['dt-equip-tray', { 'is-empty': !o.worn[p - 1] }]"
+            ><DtArt :name="SLOT_ART[p]!" :size="26"
+          /></span>
+          <span class="dt-row-main">
+            <template v-if="o.worn[p - 1]">
+              <span class="dt-row-title dt-gear-name"
+                >{{ equipName(catalog, o.worn[p - 1]!)
+                }}<span v-if="o.worn[p - 1]!.stress > 0" class="dt-tag dt-tag-primary"
+                  >+{{ o.worn[p - 1]!.stress }}</span
+                ></span
+              >
+              <span class="dt-row-sub">{{ wornSub(p, o.worn[p - 1]!) }}</span>
+            </template>
+            <template v-else>
+              <span class="dt-row-title dt-meta">{{ t.equip.empty }}</span>
+              <span class="dt-row-sub">{{ PART_NAMES[p] }}</span>
+            </template>
+          </span>
+        </button>
+        <!-- 套装：名字和件数，每一档一行，生效的打勾 -->
+        <div v-for="s in o.suits" :key="s.suitId" class="dt-equip-suit" data-testid="suit">
+          <div class="dt-equip-suit-head">
+            <b>{{ catalog.suit(s.suitId)?.name ?? s.name }}</b>
+            <span :class="['dt-tag', s.tiers.some((x) => x.active) ? 'dt-tag-ok' : 'dt-tag-mute']">{{
+              t.equip.suitCount(s.count, s.maxNum)
+            }}</span>
+          </div>
+          <div v-for="(x, i) in s.tiers" :key="x.need" :class="['dt-equip-tier', { 'is-on': x.active }]">
+            <i :class="['bi', x.active ? 'bi-check2' : 'bi-dot']" aria-hidden="true"></i>
+            <span
+              ><span class="dt-meta">{{ t.equip.tierNeed(x.need) }}</span>
+              {{ catalog.suit(s.suitId)?.tiers[i]?.desc ?? x.desc }}</span
+            >
+          </div>
         </div>
       </div>
-    </div>
+      <div class="dt-equip-actions">
+        <button
+          type="button"
+          class="btn btn-outline-primary"
+          data-testid="open-presets"
+          @click="panel = 'presets'"
+        >
+          {{ t.equip.presets }}
+        </button>
+        <button type="button" class="btn btn-outline-primary" data-testid="open-batch" @click="openBatch">
+          {{ t.equip.batch }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-light"
+          :disabled="busy"
+          @click="run(() => endpoints.equipUnwearAll(), t.equip.unwearFailed)"
+        >
+          {{ t.equip.unwearAll }}
+        </button>
+      </div>
+    </section>
 
     <!-- 一件厨具都没有：写去哪里获得（界面改版 P3） -->
     <DtEmpty
@@ -186,71 +303,51 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.loa
       :link="t.equip.none.link"
       data-testid="equip-empty"
     />
-    <div v-if="part !== null" class="border rounded p-2 mb-2 small">
-      <div v-if="pieces.length === 0" class="text-muted">{{ t.equip.noPieces }}</div>
-      <div v-for="e in pieces" :key="e.id" class="d-flex align-items-center gap-1 border-bottom py-1">
-        <RouterLink :to="`/rest/equip/${e.id}`" class="flex-fill">
-          {{ name(e) }}
-          <span v-if="e.locked" class="bi bi-lock"></span>
-          <span class="text-muted ms-1">
-            {{
-              ATTR_KEYS.filter((k) => e.total[k] > 0)
-                .map((k) => t.equip.attrValue(ATTR_NAMES[k] ?? k, e.total[k]))
-                .join(' ')
-            }}
-          </span>
-        </RouterLink>
-        <span v-if="o.level < e.minLevel" class="text-danger">{{ t.equip.needLevel(e.minLevel) }}</span>
-        <button
-          v-if="!e.worn"
-          class="btn btn-sm btn-primary"
-          :disabled="busy || o.level < e.minLevel"
-          :data-testid="`wear-${e.id}`"
-          @click="run(() => endpoints.equipWear(e.id), t.equip.wearFailed)"
-        >
-          {{ t.equip.wear }}
-        </button>
-        <button
-          v-else
-          class="btn btn-sm btn-outline-secondary"
-          :disabled="busy"
-          @click="run(() => endpoints.equipUnwear(e.id), t.equip.unwearFailed)"
-        >
-          {{ t.equip.unwear }}
-        </button>
+
+    <!-- 点一个部位：这个部位的厨具一行一件，名字进详情，右边穿戴或卸下 -->
+    <DtSheet :open="part !== null" :title="part !== null ? (PART_NAMES[part] ?? '') : ''" @close="closePart">
+      <div class="dt-meta mb-2">{{ t.equip.partHint(pieces.length) }}</div>
+      <div v-if="pieces.length === 0" class="dt-meta">{{ t.equip.noPieces }}</div>
+      <div v-else class="dt-sheet-list" data-testid="part-pieces">
+        <div v-for="e in sortedPieces" :key="e.id" :class="['dt-row', 'dt-gear-row', { 'is-worn': e.worn }]">
+          <span class="dt-equip-tray"><DtArt :name="SLOT_ART[e.part]!" :size="26" /></span>
+          <RouterLink :to="`/rest/equip/${e.id}`" class="dt-row-main dt-equip-link">
+            <span class="dt-row-title dt-gear-name"
+              >{{ equipName(catalog, e)
+              }}<span v-if="e.stress > 0" class="dt-tag dt-tag-primary">+{{ e.stress }}</span
+              ><i v-if="e.locked" class="bi bi-lock-fill ms-1 dt-meta" :aria-label="t.equip.locked"></i
+            ></span>
+            <span class="dt-row-sub"
+              ><span v-if="e.worn" class="dt-tag dt-tag-ok me-1">{{ t.equip.wornTag }}</span
+              ><span v-else-if="o.level < e.minLevel" class="dt-tag dt-tag-danger me-1">{{
+                t.equip.needLevel(e.minLevel)
+              }}</span
+              >{{ attrsText(e) }}</span
+            >
+          </RouterLink>
+          <button
+            v-if="!e.worn"
+            type="button"
+            class="btn btn-sm btn-outline-primary"
+            :disabled="busy || o.level < e.minLevel"
+            :data-testid="`wear-${e.id}`"
+            @click="run(() => endpoints.equipWear(e.id), t.equip.wearFailed)"
+          >
+            {{ t.equip.wear }}
+          </button>
+          <button
+            v-else
+            type="button"
+            class="btn btn-sm btn-light"
+            :disabled="busy"
+            :data-testid="`unwear-${e.id}`"
+            @click="run(() => endpoints.equipUnwear(e.id), t.equip.unwearFailed)"
+          >
+            {{ t.equip.unwear }}
+          </button>
+        </div>
       </div>
-    </div>
-
-    <div v-for="s in o.suits" :key="s.suitId" class="small mb-1">
-      <b>{{ t.equip.suitName(catalog.suit(s.suitId)?.name ?? s.name, s.count, s.maxNum) }}</b>
-      <span
-        v-for="(x, i) in s.tiers"
-        :key="x.need"
-        :class="['ms-2', x.active ? 'text-success' : 'text-muted']"
-      >
-        {{ t.equip.suitTier(x.need, catalog.suit(s.suitId)?.tiers[i]?.desc ?? x.desc) }}
-      </span>
-    </div>
-
-    <div class="d-flex flex-wrap gap-1 my-2">
-      <button
-        class="btn btn-sm btn-outline-primary"
-        data-testid="open-presets"
-        @click="panel = panel === 'presets' ? 'none' : 'presets'"
-      >
-        {{ t.equip.presets }}
-      </button>
-      <button class="btn btn-sm btn-outline-primary" data-testid="open-batch" @click="openBatch">
-        {{ t.equip.batch }}
-      </button>
-      <button
-        class="btn btn-sm btn-outline-secondary"
-        :disabled="busy"
-        @click="run(() => endpoints.equipUnwearAll(), t.equip.unwearFailed)"
-      >
-        {{ t.equip.unwearAll }}
-      </button>
-    </div>
+    </DtSheet>
 
     <!-- 预设、一键处理是长表单，放进底部面板（界面改版 P3） -->
     <DtSheet :open="panel === 'presets'" :title="t.equip.presets" @close="panel = 'none'">
@@ -321,45 +418,78 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.loa
       </div>
     </DtSheet>
 
-    <!-- 问题记录 530：部位和操作按钮放最上面，属性表和加点放下面 -->
-    <!-- 每项属性一行、三列数值：原来属性横排七列，英法西文在手机上要左右滑才看得到后几项（问题记录 304、质量期 ④） -->
-    <div class="table-responsive mb-2" data-testid="attr-table">
-      <table class="table table-sm small mb-0 dt-num-table">
-        <thead>
-          <tr>
-            <th></th>
-            <th class="text-end">{{ t.equip.rows.points }}</th>
-            <th class="text-end">{{ t.equip.rows.gear }}</th>
-            <th class="text-end">{{ t.equip.rows.total }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="k in ATTR_KEYS" :key="k">
-            <th class="fw-normal" scope="row">{{ ATTR_NAMES[k] }}</th>
-            <td class="text-end">{{ o.attrs.points[k] }}</td>
-            <td class="text-end">{{ o.attrs.gear[k] }}</td>
-            <td class="text-end fw-bold">{{ o.attrs.total[k] }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <AttrPoints @done="load" />
-    <div class="small mb-1" data-testid="power-line">
-      {{ t.equip.power }} <b data-testid="power">{{ o.attrs.power }}</b>
-    </div>
-    <!-- 赛厨时的厨力（问题记录 417）：和厨塔页的对得上 -->
-    <div class="small mb-1" data-testid="duel-power">
-      {{ t.equip.duelPower(formatNum(o.duelPower.attack), formatNum(o.duelPower.defend)) }}
-    </div>
-    <!-- 厨具收益加成（问题记录 411） -->
-    <div class="small mb-2" data-testid="gear-income">
-      {{
-        t.equip.income(pctText(o.income.coinRate), pctText(o.income.expRate), pctText(o.income.mcGoldRate))
-      }}
-    </div>
-    <details class="small text-muted mb-2" data-testid="equip-notes">
-      <summary>{{ t.equip.notesTitle }}</summary>
-      <ul class="mb-0 ps-3">
+    <!-- 属性（界面改版 P7）：每项一根横条，深紫是加点、浅紫是厨具，右边合计；下面一行小字写“加点 + 厨具” -->
+    <section class="dt-block">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.equip.attrsTitle }}</h2>
+        <span class="dt-block-more dt-equip-legend"
+          ><i class="is-a" aria-hidden="true"></i>{{ t.equip.rows.points
+          }}<i class="is-b" aria-hidden="true"></i>{{ t.equip.rows.gear }}</span
+        >
+      </div>
+      <div class="dt-card dt-attr-bars" data-testid="attr-table">
+        <div v-for="k in ATTR_KEYS" :key="k" class="dt-attr-bar" :data-testid="`attr-${k}`">
+          <span class="dt-attr-bar-name">{{ ATTR_NAMES[k] }}</span>
+          <span
+            class="dt-hbar"
+            role="img"
+            :aria-label="
+              t.equip.barLabel(ATTR_NAMES[k] ?? k, o.attrs.points[k], o.attrs.gear[k], o.attrs.total[k])
+            "
+            ><i class="is-a" :style="{ width: barPct(o.attrs.points[k]) }"></i
+            ><i class="is-b" :style="{ width: barPct(o.attrs.gear[k]) }"></i
+          ></span>
+          <b class="dt-attr-bar-total">{{ o.attrs.total[k] }}</b>
+          <small class="dt-attr-bar-sum" aria-hidden="true"
+            >{{ o.attrs.points[k] }} + {{ o.attrs.gear[k] }}</small
+          >
+        </div>
+        <!-- 锚点：餐厅信息页“去加点”、主线“分配属性点”直接落到这里并打开加点面板（530 遗留） -->
+        <div v-if="pointsLeft > 0" id="attr-points" class="dt-attr-points">
+          <span
+            ><b>{{ pointsLeft }}</b> {{ t.equip.pointsLeftText }}</span
+          >
+          <button
+            type="button"
+            class="btn btn-sm btn-primary"
+            data-testid="open-points"
+            @click="pointsOpen = true"
+          >
+            {{ t.equip.points.open }}
+          </button>
+        </div>
+      </div>
+    </section>
+    <DtSheet :open="pointsOpen" :title="t.equip.points.title" @close="pointsOpen = false">
+      <AttrPoints :totals="o.attrs.total" @done="pointsDone" />
+    </DtSheet>
+
+    <!-- 厨具收益加成（问题记录 411）：三个绿色数字 -->
+    <section class="dt-block">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.equip.incomeTitle }}</h2>
+      </div>
+      <div class="dt-card dt-equip-power" data-testid="gear-income">
+        <div>
+          <span class="dt-stat-label">{{ t.equip.incomeCoin }}</span>
+          <b class="is-good">{{ pctText(o.income.coinRate) }}</b>
+        </div>
+        <div>
+          <span class="dt-stat-label">{{ t.equip.incomeExp }}</span>
+          <b class="is-good">{{ pctText(o.income.expRate) }}</b>
+        </div>
+        <div>
+          <span class="dt-stat-label">{{ t.equip.incomeGold }}</span>
+          <b class="is-good">{{ pctText(o.income.mcGoldRate) }}</b>
+        </div>
+      </div>
+    </section>
+    <details class="dt-card dt-effects mt-2" data-testid="equip-notes">
+      <summary class="dt-effects-sum">
+        <span class="dt-effects-sum-text">{{ t.equip.notesTitle }}</span>
+        <i class="bi bi-chevron-down dt-effects-chev" aria-hidden="true"></i>
+      </summary>
+      <ul class="dt-effects-body dt-equip-notes">
         <li>{{ t.equip.powerNote }}</li>
         <li>{{ t.equip.duelNote }}</li>
         <li>{{ t.equip.incomeNote }}</li>

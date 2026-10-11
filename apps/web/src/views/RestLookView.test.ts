@@ -33,8 +33,8 @@ describe('RestLookView', () => {
           { id: 1, name: '红漆门', coin: 20000, art: 'red' },
         ],
         avatars: [
-          { id: 1, name: '小厨师' },
-          { id: 2, name: '大厨' },
+          { id: 1, name: '小厨师', art: 'chef' },
+          { id: 2, name: '大厨', art: 'headchef' },
         ],
         icons: [],
       },
@@ -139,7 +139,10 @@ describe('RestLookView', () => {
     expect(shop.text()).toContain('金秋食神');
     expect(shop.text()).toContain('8,000,000');
     expect(shop.text()).toContain('3 天');
-    expect(w.get('[data-testid="icon-buy-oct26_s"]').attributes('disabled')).toBeDefined();
+    // 买过的是“已拥有”小标签，不是按钮（界面改版 P7）
+    expect(w.get('[data-testid="icon-buy-oct26_s"]').element.tagName).toBe('SPAN');
+    expect(w.get('[data-testid="icon-buy-oct26_s"]').text()).toBe('已拥有');
+    expect(w.get('[data-testid="icon-buy-oct26_l"]').classes()).toContain('dt-price-btn');
     const confirm = vi.spyOn(window, 'confirm').mockReturnValueOnce(false).mockReturnValueOnce(true);
     await w.get('[data-testid="icon-buy-oct26_l"]').trigger('click');
     expect(endpoints.iconBuy).not.toHaveBeenCalled();
@@ -161,18 +164,51 @@ describe('RestLookView', () => {
     expect(old.find('[data-testid="icon-shop"]').exists()).toBe(false);
   });
 
-  it('头像、门是选择胶囊（界面改版 P3），选中的 aria-pressed；现在的门不能点', async () => {
+  it('头像、门是带图的选择格子（界面改版 P7），选中的 aria-pressed；现在的门写“使用中”、不能点；没买的门写价格', async () => {
     const w = mount(RestLookView);
     await flushPromises();
     const a1 = w.get('[data-testid="avatar-1"]');
-    expect(a1.classes()).toContain('dt-choice');
+    expect(a1.classes()).toContain('dt-avatar-tile');
     expect(a1.attributes('aria-pressed')).toBe('false');
+    expect(a1.get('use').attributes('href')).toContain('#avatar-chef');
     const d0 = w.get('[data-testid="door-0"]');
-    expect(d0.classes()).toContain('dt-choice');
+    expect(d0.classes()).toContain('dt-door-tile');
     expect(d0.attributes('aria-pressed')).toBe('true');
     expect(d0.attributes('disabled')).toBeDefined();
-    // 胶囊里不画门：加了图形门的胶囊排成四行，首屏的限定称号被挤出去（P3 截图），门的样子看首页头图
-    expect(w.find('[data-testid="door-1"] svg').exists()).toBe(false);
+    expect(d0.get('.dt-tag').text()).toBe('使用中');
+    expect(w.get('[data-testid="door-1"] use').attributes('href')).toContain('#door-red');
+    expect(w.get('[data-testid="door-1"] .dt-tag').text()).toBe('20,000 银');
+    // 没设头像：一张提醒行
+    expect(w.get('[data-testid="no-avatar"]').text()).toContain('还没有设置头像');
+  });
+
+  it('个性图标：标题旁写展示几个；展示中的排前面；超过 8 个时其余收起，点了才全列（界面改版 P7）', async () => {
+    const icons = Array.from({ length: 12 }, (_, i) => ({
+      id: i + 1,
+      key: `k${i + 1}`,
+      title: `图标${i + 1}`,
+      desc: '',
+      shown: i >= 9,
+      expiresAt: null,
+    }));
+    vi.mocked(endpoints.myLooks).mockResolvedValue({
+      door: 0,
+      ownedDoors: [0],
+      avatar: 1,
+      notice: '',
+      icons,
+    });
+    const w = mount(RestLookView);
+    await flushPromises();
+    expect(w.get('[data-testid="icons-shown"]').text()).toBe('展示 3 / 5');
+    const rows = () =>
+      w.findAll('[data-testid^="icon-"][role="switch"]').map((x) => x.attributes('data-testid'));
+    expect(rows()).toHaveLength(7);
+    expect(rows().slice(0, 3)).toEqual(['icon-10', 'icon-11', 'icon-12']);
+    expect(w.get('[data-testid="icons-more"]').text()).toBe('还有 5 个没展示的');
+    await w.get('[data-testid="icons-more"]').trigger('click');
+    expect(rows()).toHaveLength(12);
+    expect(w.find('[data-testid="icons-more"]').exists()).toBe(false);
   });
 
   it('公告栏、限定称号、个性图标各一张卡片；称号一行一个，图标用开关；买称号走确认面板', async () => {
@@ -192,7 +228,7 @@ describe('RestLookView', () => {
     await flushPromises();
     for (const id of ['notice', 'icon-shop', 'icon-5'])
       expect(w.get(`[data-testid="${id}"]`).element.closest('.dt-card'), id).not.toBeNull();
-    expect(w.get('[data-testid="icon-buy-oct26_l"]').element.closest('.dt-item')).not.toBeNull();
+    expect(w.get('[data-testid="icon-buy-oct26_l"]').element.closest('.dt-row')).not.toBeNull();
     expect(w.get('[data-testid="icon-5"]').attributes('role')).toBe('switch');
     await w.get('[data-testid="icon-buy-oct26_l"]').trigger('click');
     await flushPromises();
@@ -203,5 +239,37 @@ describe('RestLookView', () => {
     await flushPromises();
     expect(endpoints.iconBuy).toHaveBeenCalledWith('oct26_l');
     spy.mockRestore();
+  });
+
+  it('点开关以后那一行不挪位置（P7 终审 I3：原来按展示中在前重排，刚关掉的会跳到后面、被收起）', async () => {
+    const icon = (id: number, shown: boolean) => ({
+      id,
+      key: `k${id}`,
+      title: `图标${id}`,
+      desc: '',
+      shown,
+      expiresAt: null,
+    });
+    vi.mocked(endpoints.myLooks).mockResolvedValue({
+      door: 0,
+      ownedDoors: [0],
+      avatar: 1,
+      notice: '',
+      icons: [icon(1, false), icon(2, true)],
+    });
+    const w = mount(RestLookView);
+    await flushPromises();
+    const order = () => w.findAll('[role="switch"]').map((x) => x.attributes('data-testid'));
+    expect(order()).toEqual(['icon-2', 'icon-1']);
+    vi.mocked(endpoints.myLooks).mockResolvedValue({
+      door: 0,
+      ownedDoors: [0],
+      avatar: 1,
+      notice: '',
+      icons: [icon(1, true), icon(2, false)],
+    });
+    await w.get('[data-testid="icon-2"]').trigger('change');
+    await flushPromises();
+    expect(order()).toEqual(['icon-2', 'icon-1']);
   });
 });

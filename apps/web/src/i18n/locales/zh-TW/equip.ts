@@ -9,7 +9,26 @@ export default {
   power: '廚力',
   powerNote: '廚力 = 五項之和 + 幸運/2, 只作參考；賽廚的勝負看評委按色香味形養打分',
   /** 廚力等三行的說明收在這裡（問題記錄 530） */
-  notesTitle: '這些數怎麼算',
+  notesTitle: '廚力、加成這些數怎麼算',
+  /** 介面改版 P7：頂部三個數字、穿戴中一個部位一行、屬性橫條、部位面板 */
+  duelAttack: '賽廚進攻',
+  duelDefend: '賽廚防守',
+  wornTitle: '穿戴中',
+  countHint: (n: number) => `共 ${n} 件 · 點一行換裝`,
+  suitCount: (count: number, max: number) => `${count} / ${max} 件`,
+  tierNeed: (n: number) => `${n} 件`,
+  partHint: (n: number) => `${n} 件 · 點名字看詳情`,
+  locked: '已鎖定',
+  wornTag: '穿戴中',
+  attrPlus: (name: string, v: number) => `${name} +${v}`,
+  attrsTitle: '屬性',
+  barLabel: (name: string, points: number, gear: number, total: number) =>
+    `${name} ${total} (加點 ${points} + 廚具 ${gear})`,
+  pointsLeftText: '點還沒加',
+  incomeTitle: '廚具收益加成',
+  incomeCoin: '最終銀幣',
+  incomeExp: '最終經驗',
+  incomeGold: '特色菜金牌',
   duelNote: '賽廚時的進攻、防守算上了所有幸運加成和套裝的進攻、防守加成；廚塔頁顯示的是進攻這個',
   /** 穿戴廚具（含寶石）的收益加成（問題記錄 411） */
   /** 賽廚時的廚力（問題記錄 417） */
@@ -53,13 +72,33 @@ export default {
   processFailed: '處理失敗',
   loadFailed: '讀取廚具失敗',
   points: {
-    left: (n: number) => `剩餘點數 ${n}`,
-    allocate: (n: number) => `加點 (${n})`,
+    left: (n: number) => `還剩 ${n} 點`,
+    allocate: (n: number) => `加 ${n} 點`,
     all: '全加',
+    open: '加點',
+    title: '加點',
+    note: '中間是加完以後的合計 (含廚具)',
+    clear: '清零',
     failed: '加點失敗',
   },
   detail: {
     noAttrs: '沒有屬性加成',
+    /** 介面改版 P7：頭部小標籤、屬性橫條、強化一塊、寶石圓孔 */
+    minLevel: (lv: number) => `${lv} 級可穿`,
+    barLabel: (name: string, base: number, boost: number, gem: number, total: number) =>
+      `${name} ${total} (基礎 ${base} + 強化 ${boost} + 寶石 ${gem})`,
+    costLabel: '消耗',
+    costShort: (essence: number, have: number, coin: string) =>
+      `精華 ×${essence} (有 ${have}) · 銀幣 ${coin}`,
+    stoneTitle: '用強化石, 必定成功',
+    stoneHave: (n: number) => `有 ${n} 塊`,
+    holes: (n: number, cur: number, max: number) => `${n} / ${cur} 孔${cur < max ? ` · 最多 ${max} 孔` : ''}`,
+    emptyHole: '空孔, 點了鑲嵌',
+    emptyShort: '空',
+    drillShort: '+ 孔',
+    gemNote: (drill: number, coinPerLevel: string | null) =>
+      `打孔用打孔石 (有 ${drill})。${coinPerLevel ? `摘除要花 階數×${coinPerLevel} 銀幣` : '現在摘除免費 (2 星以下或酸雨天)'}`,
+    noGemItems: '沒有可以鑲的寶石',
     noGems: '這件不能鑲寶石',
     rows: { base: '基礎', boost: '強化', gem: '寶石', total: '合計' },
     meta: (part: string, lv: number, worn: boolean) => `${part} · ${lv} 級可穿${worn ? ' · 穿戴中' : ''}`,
@@ -68,6 +107,10 @@ export default {
     rateParts: (base: string, luck: string, weather: string, floor: string) =>
       ` (基礎 ${base} + 幸運 ${luck} + 天氣 ${weather} + 保底 ${floor})`,
     next: (gain: number, total: number) => `成功後屬性總和 +${gain} (到 ${total}, 不含寶石)`,
+    /** 介面改版 P7：強化一塊拆成兩行；沒有回退道具時 */
+    nextGain: (gain: number) => `成功後屬性總和 +${gain}`,
+    nextTotal: (total: number) => `到 ${total} (不含寶石)`,
+    noBackItems: (one: string, all: string) => `沒有${one}或${all}, 不能回退`,
     cost: (essence: number, have: number, coin: string) =>
       `消耗: 精華 ×${essence} (有 ${have})、銀幣 ${coin}`,
     useStone: (n: number) => `用強化石 (必定成功, 有 ${n})`,

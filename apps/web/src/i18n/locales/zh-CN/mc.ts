@@ -3,6 +3,9 @@ export default {
   title: '特色菜',
   temple: '神殿鉴定',
   classroom: '教室',
+  /** 界面改版 P7：神殿一行的说明、烹制面板标题 */
+  templeSub: '鉴定神秘食谱得到残卷, 3 张残卷学会一道',
+  cookTitle: (name: string) => `烹制「${name}」`,
   loadFailed: '读取特色菜失败',
   groups: {
     learnable: '可以学习',
@@ -41,6 +44,7 @@ export default {
   /** 按级、按道分页（问题记录 414） */
   filter: {
     all: '全部',
+    allRoads: '全部道',
     level: (n: number) => `${n} 级`,
     count: (label: string, n: number) => `${label} (${n})`,
     none: '这一页没有',

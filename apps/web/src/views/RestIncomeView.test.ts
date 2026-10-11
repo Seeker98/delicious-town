@@ -45,7 +45,7 @@ describe('收益记录页（问题记录 530）', () => {
     expect(endpoints.buffs).toHaveBeenCalled();
   });
 
-  it('加成默认收起，放在最上面；下面是收益记录，先写今天的小计（问题记录 551）', async () => {
+  it('今天一张卡片在最上面，加成默认收起在它下面，再下面是每一轮的记录（问题记录 551；界面改版 P7）', async () => {
     const w = mount(RestIncomeView);
     await flushPromises();
     const html = w.html();
@@ -53,9 +53,11 @@ describe('收益记录页（问题记录 530）', () => {
       html.indexOf('data-testid="income-records"'),
     );
     expect(w.get('[data-testid="income-buffs"]').attributes('open')).toBeUndefined();
-    expect(w.get('[data-testid="income-today"]').text()).toBe(
-      '今天 30 轮 · 银币 123,456 · 经验 7,890 · 耗油 240',
+    expect(html.indexOf('data-testid="income-today"')).toBeLessThan(
+      html.indexOf('data-testid="income-buffs"'),
     );
+    const today = w.get('[data-testid="income-today"]').text();
+    for (const s of ['今天', '30 轮', '123,456', '7,890', '240']) expect(today).toContain(s);
   });
 
   it('表格多一列客人（付钱的客人数，不算空桌、蟑螂），数字右对齐、有千分位', async () => {
@@ -82,7 +84,7 @@ describe('收益记录页（问题记录 530）', () => {
     vi.mocked(endpoints.income).mockResolvedValue(noToday);
     const w = mount(RestIncomeView);
     await flushPromises();
-    expect(w.find('[data-testid="income-today"]').exists()).toBe(false);
+    expect(w.find('[data-testid="income-today"] .dt-income-stats').exists()).toBe(false);
     expect(w.findAll('tbody tr')).toHaveLength(1);
   });
 
@@ -117,10 +119,32 @@ describe('收益记录页（问题记录 530）', () => {
     expect(box.text()).toContain('开张大吉');
   });
 
-  it('加成收在卡片里的折叠块；记录表数字等宽；今天的小计在表格上方', async () => {
+  it('加成是折叠卡；记录表放在卡片里、数字等宽', async () => {
     const w = mount(RestIncomeView);
     await flushPromises();
-    expect(w.get('[data-testid="income-buffs"]').element.closest('.dt-card')).not.toBeNull();
-    expect(w.get('[data-testid="income-records"] table').classes()).toContain('dt-num-table');
+    expect(w.get('[data-testid="income-buffs"]').classes()).toContain('dt-card');
+    expect(w.get('[data-testid="income-records"] table').classes()).toContain('dt-income-table');
+  });
+
+  it('最近几轮银币画成小柱状图：旧的在左、最新在右，按最高的一轮算高度；只有一轮时不画（界面改版 P7）', async () => {
+    const one = page.items[0]!;
+    vi.mocked(endpoints.income).mockResolvedValue({
+      ...page,
+      items: [
+        { ...one, roundNo: 3, coin: 200 },
+        { ...one, roundNo: 2, coin: 100 },
+      ],
+    });
+    const w = mount(RestIncomeView);
+    await flushPromises();
+    const bars = w.findAll('[data-testid="income-chart"] .dt-income-bars > i');
+    expect(bars.map((b) => b.attributes('style'))).toEqual(['height: 22px;', 'height: 44px;']);
+    expect(w.get('[data-testid="income-chart"] [role="img"]').attributes('aria-label')).toBe(
+      '最近 2 轮银币, 最新一轮 200',
+    );
+    vi.mocked(endpoints.income).mockResolvedValue(page);
+    const w1 = mount(RestIncomeView);
+    await flushPromises();
+    expect(w1.find('[data-testid="income-chart"]').exists()).toBe(false);
   });
 });

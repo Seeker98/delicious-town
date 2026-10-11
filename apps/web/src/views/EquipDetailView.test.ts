@@ -86,7 +86,11 @@ async function mountView() {
     ],
   });
   await router.push('/rest/equip/7');
-  const w = mount({ template: '<RouterView />' }, { global: { plugins: [router] } });
+  // 底部面板（宝石）用 Teleport：测试里原地渲染
+  const w = mount(
+    { template: '<RouterView />' },
+    { global: { plugins: [router], stubs: { teleport: true } } },
+  );
   await flushPromises();
   return { w, router };
 }
@@ -127,13 +131,17 @@ describe('EquipDetailView', () => {
     expect(useToastStore().items.some((x) => x.text.includes('强化成功 +3'))).toBe(true);
   });
 
-  it('属性表每项属性一行，列为基础、强化、宝石、合计；只列有数的属性（视觉第三轮；问题记录 530）', async () => {
+  it('属性每项一根三段横条（基础、强化、宝石），右边合计，下面写加法；只列有数的属性（问题记录 530；界面改版 P7）', async () => {
     const { w } = await mountView();
     const rows = w.findAll('[data-testid^="attr-row-"]');
     // 夹具里只有火候（基础 12、强化 3）和厨艺（宝石 1）有数
     expect(rows.map((x) => x.attributes('data-testid'))).toEqual(['attr-row-cook', 'attr-row-fire']);
     const fire = w.get('[data-testid="attr-row-fire"]');
-    expect(fire.findAll('td').map((x) => x.text())).toEqual(['12', '3', '0', '15']);
+    expect(fire.get('.dt-attr-bar-total').text()).toBe('15');
+    expect(fire.get('.dt-attr-bar-sum').text()).toBe('12 + 3');
+    expect(fire.get('.is-a').attributes('style')).toContain('width: 80%');
+    expect(fire.get('[role="img"]').attributes('aria-label')).toBe('火候 15 (基础 12 + 强化 3 + 宝石 0)');
+    expect(w.get('[data-testid="attr-row-cook"] .dt-attr-bar-sum').text()).toBe('0 + 0 + 1');
     expect(w.find('[data-testid="no-attrs"]').exists()).toBe(false);
   });
 
@@ -151,7 +159,7 @@ describe('EquipDetailView', () => {
     const { w } = await mountView();
     expect(w.get('[data-testid="no-attrs"]').text()).toBe('没有属性加成');
     expect(w.findAll('[data-testid^="attr-row-"]')).toHaveLength(0);
-    expect(w.get('[data-testid="no-gems"]').text()).toBe('宝石: 这件不能镶宝石');
+    expect(w.get('[data-testid="no-gems"]').text()).toBe('这件不能镶宝石');
     expect(w.find('[data-testid="hole-count"]').exists()).toBe(false);
   });
 
@@ -162,12 +170,15 @@ describe('EquipDetailView', () => {
     await flushPromises();
     await w.find('[data-testid="drill-go"]').trigger('click');
     await flushPromises();
+    // 界面改版 P7：点宝石弹出面板再摘；点空孔弹出面板再镶
+    await w.find('[data-testid="gem-55"]').trigger('click');
     await w.find('[data-testid="ungem-55"]').trigger('click');
     await flushPromises();
     expect(endpoints.equipRollback).toHaveBeenCalledWith(7, 225);
     expect(endpoints.equipDrill).toHaveBeenCalledWith(7);
     expect(endpoints.equipUngem).toHaveBeenCalledWith(55);
-    expect(w.find('[data-testid="hole-count"]').text()).toContain('1/2');
+    expect(w.find('[data-testid="hole-count"]').text()).toBe('1 / 2 孔 · 最多 3 孔');
+    await w.find('[data-testid="hole-empty"]').trigger('click');
     await w.find('[data-testid="inlay-go"]').trigger('click');
     await flushPromises();
     expect(endpoints.equipInlay).toHaveBeenCalledWith(7, 44);
@@ -196,7 +207,12 @@ describe('EquipDetailView', () => {
     } as never);
     const { w } = await mountView();
     expect(usePageTitleStore().title).toBe('沉默之度玛的静谧之镬 +2');
-    expect(w.find('[data-testid="equip-meta"]').text()).toBe('锅 · 13 级可穿');
+    // 界面改版 P7：名字下面一排小标签
+    expect(w.findAll('[data-testid="equip-meta"] .dt-tag').map((x) => x.text())).toEqual([
+      '+2',
+      '锅',
+      '13 级可穿',
+    ]);
     expect(w.find('[data-testid="equip-desc"]').text()).toBe('随机增加25点属性。度玛教徒弟从不开口。');
   });
 
@@ -212,6 +228,7 @@ describe('EquipDetailView', () => {
   it('摘除要花银币时先确认并写明花多少；免费时直接摘（问题记录 128）', async () => {
     const ask = vi.spyOn(window, 'confirm').mockReturnValue(false);
     const { w } = await mountView();
+    await w.find('[data-testid="gem-55"]').trigger('click');
     await w.find('[data-testid="ungem-55"]').trigger('click');
     await flushPromises();
     expect(ask.mock.calls[0]![0]).toContain('10,000 银币');
@@ -220,6 +237,7 @@ describe('EquipDetailView', () => {
     vi.mocked(endpoints.equipDetail).mockResolvedValue({ ...detail(), ungemCoinPerLevel: 0 });
     const { w: free } = await mountView();
     expect(free.text()).toContain('现在摘除免费');
+    await free.find('[data-testid="gem-55"]').trigger('click');
     await free.find('[data-testid="ungem-55"]').trigger('click');
     await flushPromises();
     expect(ask).not.toHaveBeenCalled();
@@ -248,7 +266,10 @@ describe('EquipDetailView', () => {
 
   it('写明强化成功后属性总和到多少；满级不显示（问题记录 120）', async () => {
     const { w } = await mountView();
-    expect(w.find('[data-testid="stress-next"]').text()).toBe('成功后属性总和 +2 (到 9, 不含宝石)');
+    // P7 用户反馈：加多少是标题行，到多少、不含宝石是下面一行灰字
+    expect(w.find('[data-testid="stress-next"]').text()).toBe('成功后属性总和 +2');
+    expect(w.find('[data-testid="stress-next-total"]').text()).toBe('到 9 (不含宝石)');
+    expect(w.find('[data-testid="stress-next-total"]').classes()).toContain('dt-meta');
     vi.mocked(endpoints.equipDetail).mockResolvedValue({ ...detail(), rate: null, next: null });
     const { w: w2 } = await mountView();
     expect(w2.find('[data-testid="stress-next"]').exists()).toBe(false);
@@ -269,5 +290,26 @@ describe('EquipDetailView', () => {
     await flushPromises();
     expect(endpoints.equipSalvage).not.toHaveBeenCalled();
     spy.mockRestore();
+  });
+
+  it('强化过就一直有回退这一行；没有归元石、神秘水晶时写明、按钮灰掉（P7 用户反馈）', async () => {
+    vi.mocked(endpoints.equipDetail).mockResolvedValue({ ...detail(), backItems: [] });
+    const { w } = await mountView();
+    expect(w.find('[data-testid="rollback-row"]').exists()).toBe(true);
+    expect(w.get('[data-testid="rollback-none"]').text()).toContain('不能回退');
+    expect(w.get('[data-testid="rollback-go"]').attributes('disabled')).toBeDefined();
+    vi.mocked(endpoints.equipDetail).mockResolvedValue({ ...detail({ stress: 0 }), backItems: [] });
+    const { w: fresh } = await mountView();
+    expect(fresh.find('[data-testid="rollback-row"]').exists()).toBe(false);
+  });
+
+  it('镶着的宝石按种类画颜色，右下角写阶数（P7 用户反馈：原来都是一张图）', async () => {
+    vi.mocked(endpoints.equipDetail).mockResolvedValue(
+      detail({ gems: [{ id: 55, goodsId: 50104, level: 4, attrs: attrs({ cook: 1 }) }] }),
+    );
+    const { w } = await mountView();
+    const gem = w.get('[data-testid="gem-55"]');
+    expect(gem.get('.dt-hole-lv').text()).toBe('4');
+    expect(gem.get('use').attributes('href')).toContain('#goods-jade-ruby');
   });
 });

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    pages1011:
+      'Páginas del restaurante rehechas: los 12 avatares tienen dibujo y avatares y puertas son casillas con imagen; la página de utensilios muestra una ranura por fila con el nombre completo, los atributos son barras (morado oscuro para puntos, claro para utensilios) y cambiar utensilios o asignar puntos se abre desde abajo; el detalle de un utensilio tiene un anillo de probabilidad y huecos de gemas; «Hoy» en misiones es una barra de actividad con sus niveles y las misiones son filas en una tarjeta; las recetas muestran uno de tres botones según puedas aprenderlas y las especialidades van de 12 en 12; el almacén es una cuadrícula con un panel por objeto; tocar una mesa abre un panel e Ingresos tiene un pequeño gráfico de las últimas 30 rondas',
     market1011:
       'La despensa es ahora una cuadrícula de mochila: iconos grandes, cantidad en la esquina, ingredientes de nivel 2 o más y universales con color, y al tocar una casilla se abre un panel con lo que tienes, la meta de la calle, la cantidad y las acciones de descomponer, combinar, canjear o bloquear; la nevera muestra una fila por ingrediente. El mercado muestra un ingrediente por fila con su nivel tras el nombre y un botón de precio que abre un panel de compra con atajos 10 / 100 / máx., el total y tu saldo, y un aviso si no te llegan las monedas',
     home1011b:

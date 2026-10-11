@@ -80,6 +80,11 @@ export default {
   tables: {
     freeloader: (name: string | null) => `白食: ${name ?? '好友'}`,
     floor: (n: number) => `${n} 楼`,
+    /** 一层的汇总（界面改版 P7）：几桌、几桌在吃、几只蟑螂、几桌白食 */
+    count: (floor: number, n: number) => `${floor} 楼 ${n} 桌`,
+    eating: (n: number) => `${n} 桌在吃`,
+    roach: (n: number) => `${n} 只蟑螂`,
+    free: (n: number) => `${n} 桌白食`,
   },
   flip: {
     title: '翻橱柜',

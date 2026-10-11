@@ -26,7 +26,10 @@ describe('第 3 批社交页面按语言（问题记录 272）', () => {
       props: { tables: [table(1, 1, 9, { freeloaderName: 'Bob' }), table(2, 2, 2)] },
     });
     expect(grid.text()).toContain('Floor 1');
-    expect(grid.find('[data-testid="table-1"]').text()).toContain('Freeloading: Bob');
+    // 界面改版 P7：格子里一行“Freeloader”、一行名字；汇总写“Floor 1: 1 table · 1 freeloading”
+    expect(grid.get('[data-testid="table-1"] .dt-table-main').text()).toBe('Freeloader');
+    expect(grid.get('[data-testid="table-1"] .dt-table-who').text()).toBe('Bob');
+    expect(grid.get('[data-testid="floor-summary"]').text()).toBe('Floor 1: 1 table · 1 freeloading');
     const report = mount(ReportButton, { props: { targetType: 'post', targetId: 1 } });
     expect(report.find('[data-testid="report-open"]').text()).toBe('Report');
     await report.find('[data-testid="report-open"]').trigger('click');

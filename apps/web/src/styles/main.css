@@ -273,51 +273,6 @@ html {
 .dt-equip-name {
   overflow-wrap: anywhere;
 }
-.dt-act-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 4px;
-}
-.dt-act {
-  border: 1px solid var(--dt-line);
-  border-radius: 6px;
-  padding: 4px 8px;
-  background: var(--dt-surface);
-  min-width: 0;
-}
-.dt-act-bar {
-  height: 4px;
-  background: var(--dt-surface-2);
-  border-radius: 2px;
-  margin: 3px 0 2px;
-  overflow: hidden;
-}
-.dt-act-bar > div {
-  height: 100%;
-  background: var(--dt-fill-primary);
-}
-.dt-act-pts {
-  font-size: 11px;
-  color: var(--dt-muted);
-}
-.dt-act-done {
-  background: var(--dt-soft-success);
-  border-color: var(--dt-fill-success);
-}
-.dt-act-done .dt-act-bar > div {
-  background: var(--dt-fill-success);
-}
-.dt-act-locked {
-  background: var(--dt-surface-2);
-  color: var(--dt-muted);
-}
-/* 锁定原因（注册天数、邮箱、没有限时活动）在英法西文里很长：单独一行，放在进度条的位置 */
-.dt-act-lock {
-  font-size: 12px;
-  line-height: 1.25;
-  margin: 2px 0;
-  overflow-wrap: anywhere;
-}
 /* 食谱列表的紧凑卡片（问题记录：信息密度低） */
 /* 食谱列表的一行（界面改版 P4：卡片里的行，细线分隔） */
 .dt-cb {
@@ -1087,21 +1042,46 @@ details.dt-card > summary {
 /* 限时活动九宫格（148-1） */
 .dt-grid-board {
   display: grid;
-  gap: 4px;
+  gap: 6px;
   margin-bottom: 8px;
 }
 /* 列宽用 minmax(0, 1fr)，格子里的长单词可以断开，不把宫格撑出屏幕（问题记录 304） */
 .dt-grid-cell {
-  border: 1px solid var(--bs-border-color);
-  border-radius: 6px;
-  padding: 4px;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
   min-width: 0;
+  min-height: 76px;
+  padding: 8px 4px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-sm);
+  background: var(--dt-surface-2);
+  text-align: center;
   overflow-wrap: anywhere;
 }
 .dt-cell-done {
-  background: var(--bs-success-bg-subtle);
-  border-color: var(--bs-success-border-subtle);
+  background: var(--dt-soft-success);
+  border-color: transparent;
+}
+/* 格子里：名字最多两行，下面进度（做满打勾）、奖励 */
+.dt-grid-name {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.dt-grid-count {
+  font-size: 11px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-cell-done .dt-grid-count {
+  color: var(--dt-ink-success);
 }
 
 /* 活动条（问题记录 226）：手机上横向滑动，宽屏自动换行 */
@@ -1299,6 +1279,10 @@ details.dt-card > summary {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+}
+/* 确认面板永远在最上面（P7 终审 C1：后挂载的页面面板会盖住先挂载的确认面板） */
+.dt-sheet-wrap.is-top {
+  z-index: 1070;
 }
 .dt-sheet-scrim {
   position: absolute;
@@ -1533,34 +1517,99 @@ details.dt-card > summary {
 .dt-table-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 4px;
+  gap: 8px;
 }
-/* 同一排格子一样高、内容靠上（问题记录 585） */
+/* 餐桌格子（界面改版 P7）：左上角桌号，中间点的菜（最多两行），下面顾客类型小标签；同一排一样高（问题记录 585） */
 .dt-table-cell {
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
   width: 100%;
-  height: 100%;
-  min-height: 56px;
-  padding: 4px;
+  min-height: 84px;
+  padding: 16px 4px 6px;
   border: 1px solid var(--dt-line);
-  border-radius: var(--dt-radius-sm);
+  border-radius: var(--dt-radius-md);
   background: var(--dt-surface);
   color: var(--dt-text);
-  font-size: 13px;
+  font: inherit;
+  font-size: 12px;
   text-align: center;
+  transition: transform var(--dt-dur-press) var(--dt-ease-out);
 }
 .dt-table-cell.is-roach {
   background: var(--dt-soft-danger);
+  border-color: transparent;
   color: var(--dt-ink-danger);
 }
 .dt-table-cell.is-freeloader {
   background: var(--dt-soft-warning);
+  border-color: transparent;
+  color: var(--dt-ink-warning);
+}
+.dt-table-cell.is-empty {
+  border-style: dashed;
+  background: transparent;
 }
 .dt-table-cell[aria-pressed='true'] {
   border: 2px solid var(--dt-primary);
-  padding: 3px;
+  padding: 15px 3px 5px;
+}
+.dt-table-cell.is-roach[aria-pressed='true'] {
+  border-color: var(--dt-ink-danger);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dt-table-cell:active {
+    transform: scale(0.97);
+  }
+}
+.dt-table-no {
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-table-cell.is-roach .dt-table-no,
+.dt-table-cell.is-freeloader .dt-table-no {
+  color: inherit;
+}
+.dt-table-main {
+  max-width: 100%;
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.dt-table-who {
+  max-width: 100%;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dt-table-cell.is-empty .dt-table-who {
+  color: var(--dt-muted);
+}
+.dt-table-cell .dt-tag {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* 楼层下面一行汇总：几桌、几桌在吃、几只蟑螂、几桌白食 */
+.dt-table-sum {
+  margin: 2px 4px 10px;
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
 }
 /* 选择胶囊（界面改版 P3：头像、门）：浅紫描边，选中实心紫；和筛选胶囊（正文色实心）区分开 */
 .dt-choice {
@@ -1597,78 +1646,69 @@ details.dt-card > summary {
   flex: 1;
   min-width: 0;
 }
-/* 任务是卡片里的一行（界面改版 P3）：可领的左边紫色竖条，已领的次要色 */
-.dt-quest {
-  position: relative;
-  align-items: flex-start;
-  padding: 6px 0;
-}
-.dt-quest.is-ready {
-  padding-left: 8px;
-}
-.dt-quest.is-ready::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 6px;
-  bottom: 6px;
-  width: 3px;
-  border-radius: 2px;
-  background: var(--dt-primary);
-}
-.dt-quest.is-claimed {
-  color: var(--dt-muted);
-}
-.dt-quest > .dt-item-actions {
-  align-self: center;
-}
-.dt-quest-bar {
-  height: 4px;
-  margin-top: 4px;
-  border-radius: 2px;
-  background: var(--dt-surface-2);
-  overflow: hidden;
-}
-.dt-quest-bar > div {
-  height: 100%;
-  background: var(--dt-warning);
-}
 /* 食谱详情的品级行（界面改版 P4） */
 .dt-grade-row {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
-  padding: 4px 0;
-  border-bottom: 1px solid var(--dt-line);
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--dt-line);
 }
-.dt-grade-row:last-child {
-  border-bottom: 0;
+.dt-grade-row:first-child {
+  border-top: 0;
 }
 .dt-grade-row.is-done .dt-grade-name {
   color: var(--dt-ink-success);
 }
 .dt-grade-name {
-  flex: 0 0 3.5em;
-  white-space: nowrap;
+  flex: 0 0 auto;
+  max-width: 40%;
+  min-width: 4.5em;
+  padding-top: 5px;
+  font-size: 13px;
+  color: var(--dt-muted);
 }
 .dt-grade-foods {
   display: flex;
   flex-wrap: wrap;
-  gap: 2px 10px;
+  gap: 6px;
   min-width: 0;
 }
+/* 食谱详情（P7）：食材是带图的小块，缺的红底 */
 .dt-need {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
+  min-height: 30px;
+  padding: 0 10px 0 6px;
+  border: 1px solid var(--dt-line);
+  border-radius: 999px;
+  background: var(--dt-surface-2);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
 }
-/* 特色菜已学的一行（界面改版 P4） */
-.dt-mc-row {
-  padding: 4px 0;
-  border-bottom: 1px solid var(--dt-line);
+.dt-need > small {
+  font-size: 11px;
+  color: var(--dt-muted);
 }
-.dt-mc-row:last-child {
-  border-bottom: 0;
+.dt-need.is-miss {
+  border-color: transparent;
+  background: var(--dt-soft-danger);
+  color: var(--dt-ink-danger);
+}
+.dt-need.is-miss > small {
+  color: var(--dt-ink-danger);
+}
+.dt-cbi-hero {
+  padding: 14px;
+}
+.dt-cbi-name {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+.dt-cbi-name > .dt-tag {
+  vertical-align: 3px;
 }
 /* 名字一行：名字按字折行，右边的小字（限购）放不下时换到下一行，不压在名字上（终审 I1） */
 .dt-name-row {
@@ -2445,8 +2485,19 @@ details.dt-card > summary {
 .dt-detail-art.is-t3 {
   background: var(--dt-soft-primary);
 }
-.dt-detail-art.is-master {
+.dt-detail-art.is-master,
+.dt-detail-art.is-warn {
   background: var(--dt-soft-warning);
+}
+/* 餐桌面板（P7）：蟑螂红底红图；普通桌托盘里写桌号 */
+.dt-detail-art.is-danger {
+  background: var(--dt-soft-danger);
+  color: var(--dt-ink-danger);
+}
+.dt-detail-no {
+  font-size: 26px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
 }
 .dt-detail-info {
   min-width: 0;
@@ -2477,6 +2528,7 @@ details.dt-card > summary {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  width: 100%;
 }
 .dt-cup-actions > .btn {
   flex: 1 1 0;
@@ -2589,4 +2641,1198 @@ details.dt-card > summary {
 /* 紫底的格子里数量角标换成白底，免得和格子底色混在一起 */
 .dt-bag-cell.is-t3 .dt-bag-num {
   background: var(--dt-surface);
+}
+/* ===== 界面改版 P7：餐厅、厨具、任务、活动、食谱、仓库 ===== */
+/* 状态小标签（设计 §2.6：4px 小方块）：红、绿、紫、灰 */
+.dt-tag-danger {
+  border-radius: var(--dt-radius-xs);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  padding: 0 6px;
+  background: var(--dt-soft-danger);
+  color: var(--dt-ink-danger);
+}
+.dt-tag-ok {
+  border-radius: var(--dt-radius-xs);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  padding: 0 6px;
+  background: var(--dt-soft-success);
+  color: var(--dt-ink-success);
+}
+.dt-tag-primary {
+  border-radius: var(--dt-radius-xs);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  padding: 0 6px;
+  background: var(--dt-soft-primary);
+  color: var(--dt-ink-primary);
+}
+.dt-tag-mute {
+  border-radius: var(--dt-radius-xs);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  padding: 0 6px;
+  background: var(--dt-surface-2);
+  color: var(--dt-muted);
+}
+/* 底部面板两个按钮：次要一份、主要两份宽 */
+.dt-sheet-pair {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 8px;
+  width: 100%;
+}
+.dt-sheet-pair > .btn {
+  min-height: 46px;
+  font-weight: 600;
+}
+/* 折叠卡的摘要带图标、标题和一行灰字（收益“加成”、厨具“怎么算”） */
+.dt-fold-ico {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--dt-plate);
+  color: var(--dt-primary-ink);
+}
+.dt-fold-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dt-text);
+}
+.dt-fold-sub {
+  display: block;
+  font-size: 12px;
+  color: var(--dt-muted);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dt-fold .dt-effects-sum {
+  min-height: 56px;
+  gap: 12px;
+}
+/* “更早的记录”一类：居中一个浅紫胶囊 */
+.dt-more-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+.dt-more-row > .btn {
+  min-width: 140px;
+}
+/* 收益（P7）：今天一张卡片，三个数字、最近几轮银币的小柱状图 */
+.dt-income-today {
+  margin-bottom: 10px;
+  padding: 14px 14px 12px;
+}
+.dt-income-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.dt-income-title {
+  flex: 1 1 auto;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+.dt-income-meta {
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-income-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+.dt-income-stats .dt-stat-label {
+  display: block;
+  font-size: 12px;
+}
+.dt-income-num {
+  display: block;
+  font-size: 17px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.dt-income-chart {
+  margin-top: 14px;
+}
+.dt-income-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 44px;
+}
+.dt-income-bars > i {
+  flex: 1 1 0;
+  border-radius: 2px 2px 0 0;
+  background: var(--dt-line-strong);
+}
+.dt-income-bars > i:last-child {
+  background: var(--dt-primary);
+}
+.dt-income-axis {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-income-card {
+  padding: 0;
+  overflow: hidden;
+}
+.dt-income-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-income-table th {
+  padding: 8px 12px 6px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--dt-muted);
+}
+.dt-income-table td {
+  height: 38px;
+  padding: 0 12px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-income-table td:first-child {
+  color: var(--dt-muted);
+}
+.dt-income-table th + th,
+.dt-income-table td + td {
+  padding-left: 4px;
+}
+/* 餐厅信息（P7）：属性 3×2 小数字块，0 灰掉；容量一张卡片一行一项 */
+.dt-attr-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+.dt-attr-tiles dd {
+  margin: 0;
+}
+.dt-attr-tiles .dt-stat-label {
+  font-size: 12px;
+  font-weight: 400;
+}
+.dt-stat-value.is-zero {
+  color: var(--dt-muted);
+}
+.dt-attr-note {
+  margin: 8px 2px 0;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-kv-rows {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+.dt-kv-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 46px;
+  padding: 0 14px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-kv-row:first-child {
+  border-top: 0;
+}
+.dt-kv-row > dt {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: 400;
+  color: var(--dt-muted);
+}
+.dt-kv-row > dd {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+/* 装扮（P7）：头像 6 列、门 4 列的选择格子；选中的紫边浅紫底 */
+/* 至少 52px 一格：390 宽 6 列，窄屏、外文名字长时少一列，不把词从中间截断 */
+.dt-avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+  gap: 6px;
+}
+.dt-door-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.dt-avatar-tile,
+.dt-door-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 8px 2px 6px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font: inherit;
+  font-size: 12px;
+  transition: transform var(--dt-dur-press) var(--dt-ease-out);
+}
+.dt-avatar-tile[aria-pressed='true'],
+.dt-door-tile[aria-pressed='true'] {
+  border: 2px solid var(--dt-primary);
+  background: var(--dt-soft-primary);
+  padding: 7px 1px 5px;
+  font-weight: 600;
+}
+.dt-door-tile:disabled[aria-pressed='true'] {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dt-avatar-tile:active:not(:disabled),
+  .dt-door-tile:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+}
+.dt-avatar-name {
+  max-width: 100%;
+  line-height: 1.3;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/* 限定称号：黄底徽章 */
+.dt-title-badge {
+  display: inline-block;
+  padding: 0 8px;
+  border-radius: var(--dt-radius-xs);
+  background: var(--dt-soft-warning);
+  color: var(--dt-ink-warning);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 20px;
+}
+.dt-notice-card {
+  padding: 12px;
+}
+.dt-notice-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+.dt-row-warn {
+  color: var(--dt-ink-warning);
+}
+.dt-row-end.form-switch {
+  padding-left: 0;
+}
+.dt-row-end.form-switch .form-check-input {
+  float: none;
+  margin: 0;
+}
+/* 厨具（P7）：顶部厨力三个数字、收益加成三个数字，中间竖线隔开 */
+.dt-equip-power {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  padding: 0;
+  overflow: hidden;
+}
+.dt-equip-power > div {
+  min-width: 0;
+  padding: 10px 12px;
+}
+.dt-equip-power > div + div {
+  border-left: 1px solid var(--dt-line);
+}
+.dt-equip-power .dt-stat-label {
+  display: block;
+  font-size: 12px;
+}
+.dt-equip-power b {
+  display: block;
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.dt-equip-power b.is-good {
+  color: var(--dt-ink-success);
+}
+.dt-equip-power b.dt-equip-power-main {
+  font-size: 22px;
+  color: var(--dt-primary-ink);
+}
+/* 穿戴中：一个部位一行，名字写全（最多两行），托盘里是部位图 */
+.dt-gear-row {
+  width: 100%;
+  min-height: 62px;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+}
+.dt-rows-card > .dt-gear-row:first-child {
+  border-top: 0;
+}
+.dt-equip-tray {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--dt-soft-warning);
+  color: var(--dt-ink-warning);
+}
+.dt-equip-tray.is-empty {
+  background: var(--dt-plate);
+  color: var(--dt-muted);
+}
+.dt-gear-name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.dt-gear-name > .dt-tag {
+  margin-left: 6px;
+  vertical-align: 1px;
+}
+.dt-row.is-worn {
+  background: var(--dt-surface-2);
+}
+.dt-equip-link {
+  color: var(--dt-text);
+  text-decoration: none;
+}
+.dt-sheet-list {
+  margin: 0 -16px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-sheet-list > .dt-row {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+.dt-sheet-list > .dt-row:first-child {
+  border-top: 0;
+}
+/* 套装：卡片底部浅底一块，每一档一行，生效的绿色对勾 */
+.dt-equip-suit {
+  padding: 10px 14px 12px;
+  border-top: 1px solid var(--dt-line);
+  background: var(--dt-surface-2);
+}
+.dt-equip-suit-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+.dt-equip-suit-head b {
+  font-weight: 600;
+}
+.dt-equip-tier {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-equip-tier.is-on {
+  color: var(--dt-text);
+}
+.dt-equip-tier > .bi {
+  flex-shrink: 0;
+  color: var(--dt-muted);
+}
+.dt-equip-tier.is-on > .bi {
+  color: var(--dt-ink-success);
+}
+.dt-equip-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.dt-equip-actions > .btn {
+  min-height: 36px;
+  font-weight: 600;
+}
+/* 属性横条：深紫加点、浅紫厨具（详情页再加宝石金）；右边合计，下面一行小字写加法 */
+.dt-equip-legend > i {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin: 0 4px 0 8px;
+  border-radius: 2px;
+}
+.dt-equip-legend > i.is-a,
+.dt-hbar > i.is-a {
+  background: var(--dt-primary);
+}
+.dt-equip-legend > i.is-b,
+.dt-hbar > i.is-b {
+  background: var(--dt-bar-b);
+}
+.dt-equip-legend > i.is-c,
+.dt-hbar > i.is-c {
+  background: var(--dt-bar-c);
+}
+/* 名字一列按这张卡片里最长的名字定宽（法文“Maîtrise du feu”），各行横条对齐：外层网格、每行 subgrid */
+.dt-attr-bars {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) auto;
+  padding: 0;
+  overflow: hidden;
+}
+.dt-attr-bar {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: center;
+  column-gap: 10px;
+  padding: 9px 14px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-attr-bar:first-child {
+  border-top: 0;
+}
+.dt-attr-bar-name {
+  min-width: 40px;
+  font-size: 14px;
+}
+.dt-hbar {
+  display: flex;
+  height: 10px;
+  border-radius: 5px;
+  background: var(--dt-bar-track);
+  overflow: hidden;
+}
+.dt-hbar > i {
+  display: block;
+  height: 100%;
+}
+.dt-attr-bar-total {
+  min-width: 36px;
+  font-size: 15px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.dt-attr-bar-sum {
+  grid-column: 2;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-attr-points {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-attr-points > span {
+  flex: 1 1 auto;
+}
+.dt-equip-notes {
+  margin: 0;
+  padding: 10px 14px 12px 30px;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+/* 加点面板：一项一行，名字、加完以后的合计、步进器、全加 */
+.dt-points-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.dt-points-head > b {
+  flex-shrink: 0;
+  color: var(--dt-primary-ink);
+}
+.dt-points-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-points-name {
+  width: 44px;
+  flex-shrink: 0;
+}
+.dt-points-val {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 13px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+/* 厨具详情（P7）：头部大图、全名、小标签；说明一段 */
+.dt-equip-hero {
+  padding: 14px;
+}
+.dt-equip-hero-art {
+  background: var(--dt-soft-warning);
+  color: var(--dt-ink-warning);
+}
+.dt-equip-hero-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.dt-equip-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+.dt-equip-hero-desc {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+/* 强化：圆环 + 成功后到多少；消耗一行、强化石开关、整宽主按钮 */
+.dt-stress-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+}
+.dt-ring {
+  flex-shrink: 0;
+}
+.dt-ring-track {
+  fill: none;
+  stroke-width: 7;
+  stroke: var(--dt-bar-track);
+}
+.dt-ring-fill {
+  fill: none;
+  stroke-width: 7;
+  stroke: var(--dt-primary);
+  stroke-linecap: round;
+}
+.dt-ring-text {
+  fill: var(--dt-text);
+  font-size: 15px;
+  font-weight: 700;
+}
+.dt-stress-gain {
+  font-weight: 600;
+}
+.dt-stress-cost {
+  font-size: 13px;
+  font-weight: 400;
+}
+.dt-stress-stone {
+  cursor: pointer;
+}
+.dt-stress-go {
+  padding: 4px 14px 14px;
+}
+.dt-stress-back .form-select {
+  max-width: 100%;
+}
+/* 宝石：一排圆孔 */
+.dt-gem-card {
+  padding: 14px;
+}
+.dt-holes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.dt-hole {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--dt-soft-warning);
+  color: var(--dt-muted);
+  font: inherit;
+  font-size: 12px;
+}
+/* 镶着的宝石右下角写阶数（一~六阶；颜色看种类，石 / 玉看形状） */
+.dt-hole.is-gem {
+  position: relative;
+}
+.dt-hole-lv {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: var(--dt-surface);
+  box-shadow: 0 0 0 1px var(--dt-line);
+  color: var(--dt-text);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-hole.is-empty {
+  border: 2px dashed var(--dt-line-strong);
+  background: transparent;
+}
+.dt-hole.is-drill {
+  border: 2px dashed var(--dt-primary);
+  background: transparent;
+  color: var(--dt-primary-ink);
+  font-weight: 600;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dt-hole:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+}
+.dt-rows-card > .dt-kv-rows {
+  border-top: 1px solid var(--dt-line);
+}
+/* 任务·今日（P7）：活跃进度条，档位节点和数字在条上；下面一档一行 */
+.dt-act-card {
+  padding: 0;
+  overflow: hidden;
+}
+.dt-act-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 14px 0;
+}
+.dt-act-total {
+  flex: 1 1 auto;
+  font-variant-numeric: tabular-nums;
+}
+.dt-act-total > b {
+  margin-left: 4px;
+  font-size: 22px;
+}
+.dt-act-track {
+  position: relative;
+  display: block;
+  height: 30px;
+  margin: 14px 20px 6px;
+}
+.dt-act-rail {
+  position: absolute;
+  left: 0;
+  top: 4px;
+  height: 8px;
+  border-radius: 4px;
+  right: 0;
+  background: var(--dt-bar-track);
+}
+.dt-act-fill {
+  position: absolute;
+  left: 0;
+  top: 4px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--dt-primary);
+}
+.dt-act-node {
+  position: absolute;
+  top: 2px;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  border-radius: 50%;
+  background: var(--dt-surface);
+  box-shadow: inset 0 0 0 2px var(--dt-line-strong);
+}
+.dt-act-node.is-on {
+  top: 0;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  background: var(--dt-primary);
+  box-shadow: 0 0 0 3px var(--dt-surface);
+}
+.dt-act-mark {
+  position: absolute;
+  top: 18px;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-act-mark.is-on {
+  font-weight: 700;
+  color: var(--dt-primary-ink);
+}
+.dt-act-tier {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 6px 14px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-act-tier > .dt-tag {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.dt-act-tier.is-ready {
+  background: var(--dt-surface-2);
+}
+.dt-act-pt {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--dt-surface-2);
+  color: var(--dt-muted);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.dt-act-pt.is-on {
+  background: var(--dt-primary);
+  color: var(--dt-on-primary);
+}
+.dt-act-tier .dt-row-sub,
+.dt-quest .dt-row-sub {
+  white-space: normal;
+}
+.dt-act-count {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-act-count.is-on {
+  font-weight: 600;
+  color: var(--dt-primary-ink);
+}
+.dt-row.is-locked .dt-row-title {
+  color: var(--dt-muted);
+}
+.dt-act-done {
+  border-top: 1px solid var(--dt-line);
+}
+.dt-act-done[open] .dt-effects-chev {
+  transform: rotate(180deg);
+}
+/* 主线、每周、支线：卡片头写名字和进度条，一行一个任务，卡片底写奖励 */
+.dt-quest-card + .dt-quest-card {
+  margin-top: 10px;
+}
+.dt-quest-head {
+  padding: 12px 14px 10px;
+}
+.dt-quest-head-line {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.dt-quest-head-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+.dt-quest-head-count {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-quest-bar {
+  display: block;
+  height: 6px;
+  margin-top: 8px;
+  border-radius: 3px;
+  background: var(--dt-bar-track);
+  overflow: hidden;
+}
+.dt-quest-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--dt-primary);
+}
+.dt-quest-card > .dt-quest {
+  border-top: 1px solid var(--dt-line);
+}
+.dt-quest.is-ready {
+  background: var(--dt-surface-2);
+}
+.dt-quest.is-claimed .dt-row-title {
+  color: var(--dt-muted);
+}
+.dt-quest-foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 6px 14px;
+  border-top: 1px solid var(--dt-line);
+  background: var(--dt-surface-2);
+  color: var(--dt-primary-ink);
+}
+.dt-quest-foot .dt-row-title {
+  color: var(--dt-text);
+}
+/* 活动（P7）：活动条是一排能横滑的筛选胶囊；详情卡片头一行标题和两个小标签 */
+.dt-pills-scroll {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.dt-pills-scroll::-webkit-scrollbar {
+  display: none;
+}
+.dt-pills-scroll > button {
+  flex-shrink: 0;
+}
+/* 宽屏上鼠标不好横滑：换行（原来活动条在 768px 起换行，P7 终审） */
+@media (min-width: 768px) {
+  .dt-pills-scroll {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}
+.dt-act-detail {
+  padding: 14px 12px 12px;
+}
+.dt-act-detail-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.dt-act-detail-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+.dt-act-detail-body {
+  margin: 4px 0 12px;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-act-note {
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  border-radius: var(--dt-radius-sm);
+  background: var(--dt-surface-2);
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-act-note.is-warn {
+  background: var(--dt-soft-warning);
+  color: var(--dt-ink-warning);
+}
+.dt-act-sub {
+  font-size: 15px;
+}
+.dt-act-lines {
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-sm);
+}
+.dt-act-lines > .dt-row {
+  min-height: 46px;
+}
+.dt-act-lines > .dt-row.is-ready {
+  background: var(--dt-surface-2);
+}
+.dt-reward-text {
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+/* 食谱（P7）：本街一张折叠卡，下面街道下拉和筛选胶囊，一张卡片一行一道菜 */
+.dt-cb-street {
+  margin-bottom: 10px;
+}
+.dt-cb-street-sum {
+  align-items: flex-start;
+  padding: 10px 14px;
+}
+.dt-cb-street-sum .dt-effects-sum-text {
+  white-space: normal;
+}
+.dt-cb-street-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 8px;
+}
+.dt-cb-street-line > b {
+  font-size: 15px;
+  color: var(--dt-text);
+}
+.dt-cb-street-body {
+  padding: 10px 14px 12px;
+  font-size: 13px;
+}
+.dt-cb-filters {
+  align-items: center;
+}
+/* 原生下拉框做成胶囊样子（读屏、手机上的系统选择器照常） */
+.dt-select-pill {
+  position: relative;
+  display: inline-flex;
+}
+.dt-select-pill > select {
+  appearance: none;
+  height: 32px;
+  padding: 0 28px 0 12px;
+  border: 1px solid var(--dt-line);
+  border-radius: 999px;
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+.dt-select-pill::after {
+  content: '';
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid var(--dt-muted);
+  border-bottom: 1.5px solid var(--dt-muted);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+.dt-cb-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.dt-cb-ico {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+}
+.dt-cb-name {
+  color: var(--dt-text);
+  font-weight: 600;
+  text-decoration: none;
+}
+.dt-cb-row .dt-row-sub {
+  white-space: normal;
+}
+.dt-miss {
+  color: var(--dt-ink-danger);
+  font-weight: 600;
+}
+/* 外文按钮、标签长（“Déménagez dans … pour l'apprendre”）：最多占四成宽，放不下就折行，不把菜名挤没（P7 终审 I2） */
+.dt-cb-master {
+  max-width: 40%;
+  font-size: 12px;
+  white-space: normal;
+  line-height: 1.25;
+}
+.dt-cb-state {
+  max-width: 40%;
+  white-space: normal;
+  text-align: right;
+}
+.dt-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+/* 特色菜（P7）：一道一行，名字后面等级、道两个小标签，下面熟练度细条和文字 */
+.dt-mc-row {
+  min-height: 60px;
+}
+.dt-mc-prof {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-mc-bar {
+  flex: 1 1 auto;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--dt-bar-track);
+  overflow: hidden;
+}
+.dt-mc-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--dt-primary);
+}
+.dt-mc-prof > span:last-child {
+  flex-shrink: 0;
+}
+.dt-mc-cookie {
+  padding-left: 0;
+  padding-right: 0;
+  border-top: 1px solid var(--dt-line);
+  cursor: pointer;
+}
+.dt-mc-nums {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.dt-mc-nums > .btn {
+  flex: 1 1 0;
+  min-height: 44px;
+  font-weight: 600;
+}
+/* 进度一览（P7）：各品级一行细进度条；街道表放在卡片里，街名一列固定 */
+.dt-grade-bars {
+  padding: 8px 0;
+}
+.dt-grade-bar {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 34px;
+  padding: 0 14px;
+}
+.dt-grade-bar-name {
+  font-size: 13px;
+}
+.dt-grade-bar .dt-hbar {
+  height: 8px;
+}
+.dt-grade-bar-num {
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.dt-progress-card {
+  padding: 0;
+  overflow-x: auto;
+}
+.dt-progress-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-progress-table th,
+.dt-progress-table td {
+  padding: 0 6px;
+  height: 36px;
+  text-align: right;
+  white-space: nowrap;
+}
+.dt-progress-table thead th {
+  height: 32px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--dt-muted);
+  border-bottom: 1px solid var(--dt-line);
+}
+.dt-progress-table tbody tr + tr > * {
+  border-top: 1px solid var(--dt-line);
+}
+.dt-progress-table th:first-child {
+  position: sticky;
+  left: 0;
+  padding-left: 12px;
+  background: var(--dt-surface);
+  text-align: left;
+}
+.dt-progress-table tbody th {
+  font-weight: 500;
+}
+.dt-progress-table td:last-child,
+.dt-progress-table th:last-child {
+  padding-right: 12px;
+}
+.dt-progress-table td.is-zero {
+  color: var(--dt-muted);
+}
+.dt-progress-table td.is-full {
+  color: var(--dt-ink-success);
+  font-weight: 700;
+}
+.dt-progress-table tr.is-current > * {
+  background: var(--dt-soft-primary);
+}
+.dt-progress-table tr.is-current > th {
+  color: var(--dt-ink-primary);
+  font-weight: 700;
+}
+.dt-progress-table tr.is-sum > * {
+  font-weight: 700;
+  border-top: 2px solid var(--dt-line);
+}
+/* 仓库（P7）：分组小标题写数量；格子下面一行到上限时红字 */
+.dt-bag-group {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 14px 2px 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.dt-bag-group > span {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--dt-muted);
+}
+.dt-bag-need.is-danger {
+  color: var(--dt-ink-danger);
+}
+.dt-act-lines .dt-row-main {
+  font-size: 14px;
+}
+/* 行里的按钮不被挤窄：中文按钮被挤时一个字一行，看着像被竖着拉长（P7 用户反馈：食谱“升级”、特色菜“倒掉”） */
+.dt-row > .btn:not(.dt-cb-master),
+.dt-row-end > .btn {
+  flex-shrink: 0;
+  white-space: nowrap;
 }

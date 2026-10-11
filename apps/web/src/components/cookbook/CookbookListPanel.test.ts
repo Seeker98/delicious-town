@@ -74,7 +74,7 @@ describe('CookbookListPanel', () => {
     expect(endpoints.cookbookList).toHaveBeenLastCalledWith({ street: 2, page: 1, filter: 'all' });
   });
 
-  it('可学的食谱能点"学习"，学完刷新列表；不能学的按钮禁用', async () => {
+  it('可学的食谱能点"学习"，学完刷新列表；学不了的只是灰色小标签、不是按钮（界面改版 P7）', async () => {
     const router = createRouter({
       history: createMemoryHistory(),
       routes: [
@@ -84,7 +84,8 @@ describe('CookbookListPanel', () => {
     });
     const w = mount(CookbookListPanel, { global: { plugins: [router] } });
     await flushPromises();
-    expect(w.find('[data-testid="learn-439"]').attributes('disabled')).toBeDefined();
+    expect(w.get('[data-testid="learn-439"]').element.tagName).toBe('SPAN');
+    expect(w.get('[data-testid="learn-439"]').classes()).toContain('dt-tag');
     await w.find('[data-testid="learn-194"]').trigger('click');
     await flushPromises();
     expect(endpoints.learn).toHaveBeenCalledWith(194);
@@ -113,12 +114,14 @@ describe('CookbookListPanel', () => {
     const w = mount(CookbookListPanel, { global: { plugins: [router] } });
     await flushPromises();
     const box = w.get('[data-testid="cookbook-filters"]');
-    expect(box.classes()).toContain('flex-wrap');
+    // 界面改版 P7：和别处一样的筛选胶囊（.dt-pills 本身就能换行）
+    expect(box.classes()).toContain('dt-pills');
     expect(w.find('.btn-group').exists()).toBe(false);
     expect(box.findAll('button')).toHaveLength(5);
+    expect(box.get('[data-testid="filter-all"]').attributes('aria-pressed')).toBe('true');
   });
 
-  it('别的街的菜：按钮写"搬到 X 才能学"并禁用（问题记录 312）', async () => {
+  it('别的街的菜：写"搬到 X 才能学"的灰色小标签，不能点（问题记录 312）', async () => {
     useCatalogStore().streets = [
       { id: 0, name: '新手街', cookName: '家常菜', desc: '', theme: '', focus: null },
       { id: 1, name: '湖南街', cookName: '湘菜', desc: '', theme: '', focus: null },
@@ -136,12 +139,12 @@ describe('CookbookListPanel', () => {
     });
     const w = mount(CookbookListPanel, { global: { plugins: [router] } });
     await flushPromises();
-    const btn = w.get('[data-testid="cb-176"] button');
+    const btn = w.get('[data-testid="learn-176"]');
     expect(btn.text()).toBe('搬到湖南街才能学');
-    expect(btn.attributes('disabled')).toBeDefined();
+    expect(btn.element.tagName).toBe('SPAN');
   });
 
-  it('紧凑卡片：菜名、品级、食材在左两行，按钮在右（问题记录：信息密度低）', async () => {
+  it('一张卡片一行一道菜：左边食材图，菜名、品级、食材两行，按钮在右（问题记录：信息密度低；界面改版 P7）', async () => {
     const router = createRouter({
       history: createMemoryHistory(),
       routes: [{ path: '/', component: CookbookListPanel }],
@@ -149,11 +152,12 @@ describe('CookbookListPanel', () => {
     const w = mount(CookbookListPanel, { global: { plugins: [router] } });
     await flushPromises();
     const card = w.find('[data-testid="cb-194"]');
-    expect(card.classes()).toContain('dt-cb');
+    expect(card.classes()).toContain('dt-row');
+    expect(card.find('.dt-cb-ico svg').exists()).toBe(true);
     // 界面改版 P4：一张卡片里一行一道菜，不再一行一个带边框的格子
     expect(card.element.closest('.dt-card')).not.toBeNull();
     expect(card.find('.dt-cb-foods').text()).toContain('1/1');
-    expect(card.find('[data-testid="learn-194"]').classes()).toContain('dt-btn-xs');
+    expect(card.find('[data-testid="learn-194"]').classes()).toContain('btn-primary');
   });
 
   it('食材行可以折行，缺料项不会被截掉（审查）', async () => {

@@ -26,6 +26,12 @@ export default {
   equipsLink: '廚具頁',
   equipsAfter: ' (每件佔一格)',
   use: '使用',
+  /** 介面改版 P7：篩選膠囊的讀屏名、面板裡的數量和按鈕 */
+  typeLabel: '按類型',
+  rangeLabel: '時間範圍',
+  howMany: '幾個',
+  sellFor: (coin: string) => `賣 · ${coin}`,
+  useN: (n: number) => `使用 ${n} 個`,
   useFailed: '使用失敗',
   sell: '賣',
   discard: '丟棄',

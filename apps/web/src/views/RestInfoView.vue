@@ -39,6 +39,8 @@ onMounted(async () => {
 /** 日志时间只写月日时分（界面改版 P3：和动态一样） */
 const logTime = (iso: string) =>
   gameDateTime(iso, { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
+/** 加点的属性（不含厨具）；幸运单独一个字段 */
+const attrValue = (k: (typeof ATTR_KEYS)[number]) => (k === 'luck' ? rest.value!.luck : rest.value!.attrs[k]);
 /** 容量那组：名字和数值成对（界面改版 P3）；累计获赞旧服务端没有（问题记录 553） */
 const capacity = computed(() => {
   const r = rest.value;
@@ -61,43 +63,64 @@ const capacity = computed(() => {
 <template>
   <DtSkeleton v-if="!rest" :rows="6" data-testid="info-skeleton" />
   <div v-else>
-    <h6 class="dt-section mt-0">{{ t.rest.info.attrs }}</h6>
-    <!-- 键值成对排（界面改版 P3）：放得下两列就两列，名字长（法文）自动折行，不撑出屏幕 -->
-    <dl class="dt-kv-grid small mb-1" data-testid="info-attrs">
-      <div v-for="k in ATTR_KEYS" :key="k" class="dt-kv-pair">
-        <dt>{{ ATTR_NAMES[k] }}</dt>
-        <dd>{{ k === 'luck' ? rest.luck : rest.attrs[k] }}</dd>
+    <!-- 属性（界面改版 P7）：3×2 小数字块，0 灰掉；下面一句说明，句末是去加点的句中链接 -->
+    <section class="dt-block mt-2">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.rest.info.attrs }}</h2>
       </div>
-    </dl>
-    <RouterLink
-      :to="rest.attrLeft > 0 ? '/rest/equip#attr-points' : '/rest/equip'"
-      class="small dt-go"
-      data-testid="to-points"
-      >{{ rest.attrLeft > 0 ? t.rest.info.toPoints(rest.attrLeft) : t.rest.info.toEquip }}</RouterLink
-    >
-    <h6 class="dt-section">{{ t.rest.info.capacity }}</h6>
-    <dl class="dt-kv-grid small" data-testid="info-capacity">
-      <div v-for="x in capacity" :key="x.label" class="dt-kv-pair">
-        <dt>{{ x.label }}</dt>
-        <dd :data-testid="x.testid">{{ x.value }}</dd>
+      <dl class="dt-attr-tiles" data-testid="info-attrs">
+        <div v-for="k in ATTR_KEYS" :key="k" class="dt-stat">
+          <dt class="dt-stat-label">{{ ATTR_NAMES[k] }}</dt>
+          <dd :class="['dt-stat-value', { 'is-zero': attrValue(k) === 0 }]">{{ attrValue(k) }}</dd>
+        </div>
+      </dl>
+      <p class="dt-attr-note">
+        {{ t.rest.info.attrsNote
+        }}<template v-if="rest.attrLeft > 0">{{ t.rest.info.pointsLeft(rest.attrLeft) }}</template>
+        <RouterLink
+          :to="rest.attrLeft > 0 ? '/rest/equip#attr-points' : '/rest/equip'"
+          class="dt-go"
+          data-testid="to-points"
+          >{{ rest.attrLeft > 0 ? t.rest.info.goPoints : t.rest.info.toEquip }}</RouterLink
+        >
+      </p>
+    </section>
+    <!-- 容量：一张卡片一行一项，名字左、数值右 -->
+    <section class="dt-block">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.rest.info.capacity }}</h2>
       </div>
-    </dl>
-    <h6 class="dt-section">{{ t.rest.info.logs }}</h6>
-    <DtEmpty
-      v-if="logsState === 'ok' && logs.length === 0"
-      :title="t.rest.info.noLogs"
-      data-testid="logs-empty"
-    />
-    <div v-else-if="logsState === 'failed'" class="dt-empty" data-testid="logs-failed">
-      {{ t.rest.info.logsFailed }}
-    </div>
-    <!-- 每条一行，时间写月日时分（界面改版 P3） -->
-    <div v-for="(l, i) in logs" :key="i" class="dt-feed">
-      <span class="dt-feed-time">{{ logTime(l.at) }}</span>
-      <span class="dt-feed-text">{{ logText(l, catalog) }}</span>
-    </div>
-    <button v-if="next" class="btn btn-sm btn-outline-secondary w-100" @click="moreLogs">
-      {{ t.rest.info.moreLogs }}
-    </button>
+      <dl class="dt-card dt-kv-rows" data-testid="info-capacity">
+        <div v-for="x in capacity" :key="x.label" class="dt-kv-row">
+          <dt>{{ x.label }}</dt>
+          <dd :data-testid="x.testid">{{ x.value }}</dd>
+        </div>
+      </dl>
+    </section>
+    <section class="dt-block">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.rest.info.logs }}</h2>
+      </div>
+      <DtEmpty
+        v-if="logsState === 'ok' && logs.length === 0"
+        :title="t.rest.info.noLogs"
+        data-testid="logs-empty"
+      />
+      <div v-else-if="logsState === 'failed'" class="dt-empty" data-testid="logs-failed">
+        {{ t.rest.info.logsFailed }}
+      </div>
+      <!-- 每条一行，和首页动态一样是“时间 + 文字”（界面改版 P7：去掉虚线，放进卡片） -->
+      <div v-if="logs.length > 0" class="dt-card dt-list-card" data-testid="info-logs">
+        <div v-for="(l, i) in logs" :key="i" class="dt-feed">
+          <span class="dt-feed-time">{{ logTime(l.at) }}</span>
+          <span class="dt-feed-text">{{ logText(l, catalog) }}</span>
+        </div>
+      </div>
+      <div v-if="next" class="dt-more-row">
+        <button type="button" class="btn btn-outline-primary" data-testid="logs-more" @click="moreLogs">
+          {{ t.rest.info.moreLogs }}
+        </button>
+      </div>
+    </section>
   </div>
 </template>

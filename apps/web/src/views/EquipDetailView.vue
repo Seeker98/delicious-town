@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import type { EquipDetailDto } from '@dt/shared';
+import { SHARED_GOODS, type EquipDetailDto, type EquipGemDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import type { UiArtName } from '../art/generated/names';
+import DtArt from '../components/DtArt.vue';
+import DtSheet from '../components/DtSheet.vue';
+import { goodsArt } from '../utils/goodsArt';
 import { useT } from '../composables/useT';
 import { activeMessages } from '../i18n';
 import { errorMessage } from '../i18n/zh-CN';
@@ -27,6 +31,45 @@ const backPick = ref<number | null>(null);
 const busy = ref(false);
 const pct = (x: number) => formatPct(x, { min: 1 });
 const ROWS = ['base', 'boost', 'gem', 'total'] as const;
+/** 部位图：1 铲、2 刀、3 锅、4 瓶、5 帽 */
+const SLOT_ART: Record<number, UiArtName> = {
+  1: 'slot-spatula',
+  2: 'slot-knife',
+  3: 'slot-pot',
+  4: 'slot-bottle',
+  5: 'slot-hat',
+};
+/** 属性横条（界面改版 P7）：按列出来的最高合计算长度 */
+const barMax = computed(() => Math.max(1, ...shownAttrs.value.map((k) => e.value?.total[k] ?? 0)));
+const barPct = (v: number) => `${Math.max(0, (v / barMax.value) * 100)}%`;
+/** 横条下面的加法：基础 + 强化，有宝石再 + 宝石 */
+const sumText = (k: (typeof ATTR_KEYS)[number]) => {
+  const x = e.value!;
+  return [x.base[k], x.boost[k], ...(x.gem[k] !== 0 ? [x.gem[k]] : [])].join(' + ');
+};
+/** 成功率圆环：周长 2π×27 */
+const ringLen = (rate: number) => Math.max(0, Math.min(1, rate)) * 169.65;
+const suitName = computed(() =>
+  e.value && e.value.suitId > 0 ? (catalog.suit(e.value.suitId)?.name ?? '') : '',
+);
+/** 宝石面板：点空孔是镶嵌，点一颗宝石是看属性、摘除 */
+const gemSheet = ref<EquipGemDto | 'inlay' | null>(null);
+const gemAttrs = (g: EquipGemDto) =>
+  ATTR_KEYS.filter((k) => g.attrs[k] !== 0)
+    .map((k) => t.value.equip.attrPlus(ATTR_NAMES[k] ?? k, g.attrs[k]))
+    .join(' · ');
+async function inlay() {
+  const pick = gemPick.value;
+  if (pick === null) return;
+  gemSheet.value = null;
+  await run(() => endpoints.equipInlay(id, pick), t.value.equip.detail.inlayFailed);
+}
+async function ungemPicked() {
+  const g = gemSheet.value;
+  if (!g || g === 'inlay') return;
+  gemSheet.value = null;
+  await ungem(g);
+}
 /** 只列有数的属性（问题记录 530：六行里大多是 0） */
 const shownAttrs = computed(() =>
   e.value ? ATTR_KEYS.filter((k) => ROWS.some((r) => e.value![r][k] !== 0)) : [],
@@ -123,130 +166,289 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, t.value.equip
 
 <template>
   <div v-if="d && e">
-    <!-- 名字在顶栏；部位和等级要求一行（问题记录 130） -->
-    <div class="dt-meta mb-1" data-testid="equip-meta">
-      {{ t.equip.detail.meta(PART_NAMES[e.part] ?? '', e.minLevel, e.worn) }}
-    </div>
-    <p v-if="desc" class="small text-muted mb-2" data-testid="equip-desc">{{ desc }}</p>
-
-    <!-- 每项属性一行（视觉第三轮：六列属性横排，英法西文要左右滑；和厨具页的属性表一致） -->
-    <div v-if="shownAttrs.length === 0" class="small text-muted mb-2" data-testid="no-attrs">
-      {{ t.equip.detail.noAttrs }}
-    </div>
-    <table v-else class="table table-sm small dt-num-table">
-      <thead>
-        <tr>
-          <th></th>
-          <th v-for="key in ROWS" :key="key" class="text-end">{{ t.equip.detail.rows[key] }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="k in shownAttrs" :key="k" :data-testid="`attr-row-${k}`">
-          <th class="fw-normal" scope="row">{{ ATTR_NAMES[k] }}</th>
-          <td v-for="key in ROWS" :key="key" :class="['text-end', { 'fw-bold': key === 'total' }]">
-            {{ e[key][k] }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="dt-card mb-2 small">
-      <div class="dt-card-title mb-1">{{ t.equip.detail.stress }}</div>
-      <template v-if="d.rate">
-        <div>
-          {{ t.equip.detail.rate }} <b>{{ pct(d.rate.total) }}</b>
-          <span class="text-muted">{{
-            t.equip.detail.rateParts(
-              pct(d.rate.base),
-              pct(d.rate.luck),
-              pct(d.rate.weather),
-              pct(d.rate.floor),
-            )
-          }}</span>
+    <!-- 头部（界面改版 P7）：大图、全名、几个小标签；说明写在下面（问题记录 130、134） -->
+    <section class="dt-card dt-equip-hero">
+      <div class="dt-detail-head">
+        <span class="dt-detail-art dt-equip-hero-art"><DtArt :name="SLOT_ART[e.part]!" :size="48" /></span>
+        <div class="dt-detail-info">
+          <h2 class="dt-equip-hero-name">{{ equipName(catalog, e) }}</h2>
+          <div class="dt-equip-hero-tags" data-testid="equip-meta">
+            <span v-if="e.stress > 0" class="dt-tag dt-tag-primary">+{{ e.stress }}</span>
+            <span class="dt-tag dt-tag-mute">{{ PART_NAMES[e.part] }}</span>
+            <span class="dt-tag dt-tag-mute">{{ t.equip.detail.minLevel(e.minLevel) }}</span>
+            <span v-if="e.worn" class="dt-tag dt-tag-ok">{{ t.equip.wornTag }}</span>
+            <span v-if="e.locked" class="dt-tag dt-tag-mute">{{ t.equip.locked }}</span>
+            <span v-if="suitName" class="dt-tag dt-tag-mute">{{ suitName }}</span>
+          </div>
         </div>
-        <div v-if="d.next" data-testid="stress-next">
-          {{ t.equip.detail.next(d.next.gain, d.next.total) }}
-        </div>
-        <div>
-          {{ t.equip.detail.cost(d.cost.essence, d.have.essence, formatNum(d.cost.coin)) }}
-        </div>
-        <label class="me-2">
-          <input v-model="stone" type="checkbox" :disabled="d.have.stone === 0" data-testid="stone" />
-          {{ t.equip.detail.useStone(d.have.stone) }}
-        </label>
-        <button class="btn btn-sm btn-primary" :disabled="busy" data-testid="stress-go" @click="stress">
-          {{ t.equip.detail.stress }}
-        </button>
-      </template>
-      <div v-else class="text-muted">{{ t.equip.detail.maxed }}</div>
-      <div v-if="e.stress > 0 && d.backItems.length > 0" class="mt-2 d-flex gap-1 align-items-center">
-        <select v-model="backPick" class="form-select form-select-sm w-auto">
-          <option v-for="b in d.backItems" :key="b.goodsId" :value="b.goodsId">
-            {{ t.equip.detail.backOption(catalog.goodsName(b.goodsId), b.back, b.num) }}
-          </option>
-        </select>
-        <button
-          class="btn btn-sm btn-outline-secondary"
-          :disabled="busy || backPick === null"
-          data-testid="rollback-go"
-          @click="rollback"
-        >
-          {{ t.equip.detail.rollback }}
-        </button>
       </div>
-    </div>
+      <p v-if="desc" class="dt-equip-hero-desc" data-testid="equip-desc">{{ desc }}</p>
+    </section>
 
-    <!-- 不能镶宝石的厨具只写一句（问题记录 530：原来写“宝石 0/0 (最多 0 孔…)”） -->
-    <div v-if="e.maxHole === 0 && e.gems.length === 0" class="small text-muted mb-2" data-testid="no-gems">
-      {{ t.common.colon(t.equip.detail.gems) }}{{ t.equip.detail.noGems }}
-    </div>
-    <div v-else class="dt-card mb-2 small">
-      <div class="dt-card-title mb-1">
-        {{ t.equip.detail.gems }} <span data-testid="hole-count">{{ e.gems.length }}/{{ e.curHole }}</span>
-        <span class="text-muted">{{
-          t.equip.detail.holeNote(e.maxHole, d.ungemCoinPerLevel > 0 ? formatNum(d.ungemCoinPerLevel) : null)
+    <!-- 属性：每项一根三段横条（基础、强化、宝石），右边合计；只列有数的属性（问题记录 530） -->
+    <section class="dt-block">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.equip.attrsTitle }}</h2>
+        <span v-if="shownAttrs.length > 0" class="dt-block-more dt-equip-legend"
+          ><i class="is-a" aria-hidden="true"></i>{{ t.equip.detail.rows.base
+          }}<i class="is-b" aria-hidden="true"></i>{{ t.equip.detail.rows.boost
+          }}<i class="is-c" aria-hidden="true"></i>{{ t.equip.detail.rows.gem }}</span
+        >
+      </div>
+      <p v-if="shownAttrs.length === 0" class="dt-block-note" data-testid="no-attrs">
+        {{ t.equip.detail.noAttrs }}
+      </p>
+      <div v-else class="dt-card dt-attr-bars">
+        <div v-for="k in shownAttrs" :key="k" class="dt-attr-bar" :data-testid="`attr-row-${k}`">
+          <span class="dt-attr-bar-name">{{ ATTR_NAMES[k] }}</span>
+          <span
+            class="dt-hbar"
+            role="img"
+            :aria-label="
+              t.equip.detail.barLabel(ATTR_NAMES[k] ?? k, e.base[k], e.boost[k], e.gem[k], e.total[k])
+            "
+            ><i class="is-a" :style="{ width: barPct(e.base[k]) }"></i
+            ><i class="is-b" :style="{ width: barPct(e.boost[k]) }"></i
+            ><i class="is-c" :style="{ width: barPct(e.gem[k]) }"></i
+          ></span>
+          <b class="dt-attr-bar-total">{{ e.total[k] }}</b>
+          <small class="dt-attr-bar-sum" aria-hidden="true">{{ sumText(k) }}</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- 强化：圆环写成功率，旁边写成功后到多少；消耗一行、强化石一个开关、整宽主按钮；回退一行 -->
+    <section class="dt-block">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.equip.detail.stress }}</h2>
+        <span v-if="d.rate" class="dt-block-more">+{{ e.stress }} → +{{ e.stress + 1 }}</span>
+      </div>
+      <div class="dt-card dt-rows-card">
+        <template v-if="d.rate">
+          <div class="dt-stress-top">
+            <svg
+              class="dt-ring"
+              width="64"
+              height="64"
+              viewBox="0 0 64 64"
+              role="img"
+              :aria-label="`${t.equip.detail.rate} ${pct(d.rate.total)}`"
+            >
+              <circle cx="32" cy="32" r="27" class="dt-ring-track"></circle>
+              <circle
+                cx="32"
+                cy="32"
+                r="27"
+                class="dt-ring-fill"
+                :stroke-dasharray="`${ringLen(d.rate.total)} 169.65`"
+                transform="rotate(-90 32 32)"
+              ></circle>
+              <text x="32" y="37" text-anchor="middle" class="dt-ring-text">{{ pct(d.rate.total) }}</text>
+            </svg>
+            <div class="dt-min0">
+              <!-- 成功后加多少是标题行（粗），到多少、不含宝石是下面一行灰字（P7 用户反馈） -->
+              <template v-if="d.next">
+                <div class="dt-stress-gain" data-testid="stress-next">
+                  {{ t.equip.detail.nextGain(d.next.gain) }}
+                </div>
+                <div class="dt-meta" data-testid="stress-next-total">
+                  {{ t.equip.detail.nextTotal(d.next.total) }}
+                </div>
+              </template>
+              <div class="dt-meta">
+                {{ t.equip.detail.rate
+                }}{{
+                  t.equip.detail.rateParts(
+                    pct(d.rate.base),
+                    pct(d.rate.luck),
+                    pct(d.rate.weather),
+                    pct(d.rate.floor),
+                  )
+                }}
+              </div>
+            </div>
+          </div>
+          <dl class="dt-kv-rows">
+            <div class="dt-kv-row">
+              <dt>{{ t.equip.detail.costLabel }}</dt>
+              <dd class="dt-stress-cost">
+                {{ t.equip.detail.costShort(d.cost.essence, d.have.essence, formatNum(d.cost.coin)) }}
+              </dd>
+            </div>
+          </dl>
+          <label class="dt-row dt-stress-stone">
+            <span class="dt-row-main"
+              ><span class="dt-row-title">{{ t.equip.detail.stoneTitle }}</span
+              ><span class="dt-row-sub">{{ t.equip.detail.stoneHave(d.have.stone) }}</span></span
+            >
+            <span class="dt-row-end form-switch"
+              ><input
+                v-model="stone"
+                class="form-check-input"
+                type="checkbox"
+                role="switch"
+                :disabled="d.have.stone === 0"
+                data-testid="stone"
+            /></span>
+          </label>
+          <div class="dt-stress-go">
+            <button
+              class="btn btn-primary dt-btn-block"
+              :disabled="busy"
+              data-testid="stress-go"
+              @click="stress"
+            >
+              {{ t.equip.detail.stress }}
+            </button>
+          </div>
+        </template>
+        <div v-else class="dt-row dt-meta">{{ t.equip.detail.maxed }}</div>
+        <!-- 回退：强化过就一直显示；没有归元石、神秘水晶时写明，按钮灰掉（P7 用户反馈：原来没道具时整行不见了） -->
+        <div v-if="e.stress > 0" class="dt-row dt-stress-back" data-testid="rollback-row">
+          <span class="dt-row-main"
+            ><span class="dt-row-title">{{ t.equip.detail.rollback }}</span
+            ><span v-if="d.backItems.length === 0" class="dt-row-sub" data-testid="rollback-none">{{
+              t.equip.detail.noBackItems(
+                catalog.goodsName(SHARED_GOODS.backStressOne),
+                catalog.goodsName(SHARED_GOODS.backStressAll),
+              )
+            }}</span
+            ><select
+              v-else
+              v-model="backPick"
+              class="form-select form-select-sm mt-1"
+              :aria-label="t.equip.detail.rollback"
+            >
+              <option v-for="b in d.backItems" :key="b.goodsId" :value="b.goodsId">
+                {{ t.equip.detail.backOption(catalog.goodsName(b.goodsId), b.back, b.num) }}
+              </option>
+            </select></span
+          >
+          <button
+            class="btn btn-sm btn-light"
+            :disabled="busy || backPick === null"
+            data-testid="rollback-go"
+            @click="rollback"
+          >
+            {{ t.equip.detail.rollback }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 宝石：一排圆孔，镶着的画宝石（点了可以摘），空孔虚线（点了镶嵌），还能打孔的紫色虚线 + -->
+    <section class="dt-block">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.equip.detail.gems }}</h2>
+        <span v-if="e.maxHole > 0 || e.gems.length > 0" class="dt-block-more" data-testid="hole-count">{{
+          t.equip.detail.holes(e.gems.length, e.curHole, e.maxHole)
         }}</span>
       </div>
-      <div v-for="g in e.gems" :key="g.id" class="d-flex align-items-center gap-1">
-        <span class="flex-fill">{{ catalog.goodsName(g.goodsId) }}</span>
-        <button
-          class="btn btn-sm btn-outline-secondary"
-          :disabled="busy"
-          :data-testid="`ungem-${g.id}`"
-          @click="ungem(g)"
-        >
-          {{ t.equip.detail.ungem }}
-        </button>
+      <!-- 不能镶宝石的厨具只写一句（问题记录 530） -->
+      <p v-if="e.maxHole === 0 && e.gems.length === 0" class="dt-block-note" data-testid="no-gems">
+        {{ t.equip.detail.noGems }}
+      </p>
+      <div v-else class="dt-card dt-gem-card">
+        <div class="dt-holes">
+          <button
+            v-for="g in e.gems"
+            :key="g.id"
+            type="button"
+            class="dt-hole is-gem"
+            :aria-label="catalog.goodsName(g.goodsId)"
+            :data-testid="`gem-${g.id}`"
+            @click="gemSheet = g"
+          >
+            <DtArt :name="goodsArt(g.goodsId)" :size="30" />
+            <span class="dt-hole-lv" aria-hidden="true">{{ g.level }}</span>
+          </button>
+          <button
+            v-for="i in freeHoles"
+            :key="`free-${i}`"
+            type="button"
+            class="dt-hole is-empty"
+            :aria-label="t.equip.detail.emptyHole"
+            data-testid="hole-empty"
+            @click="gemSheet = 'inlay'"
+          >
+            {{ t.equip.detail.emptyShort }}
+          </button>
+          <button
+            v-if="e.maxHole > 0 && e.curHole < e.maxHole"
+            type="button"
+            class="dt-hole is-drill"
+            :aria-label="t.equip.detail.drill(d.have.drill)"
+            :disabled="busy"
+            data-testid="drill-go"
+            @click="run(() => endpoints.equipDrill(id), t.equip.detail.drillFailed)"
+          >
+            {{ t.equip.detail.drillShort }}
+          </button>
+        </div>
+        <p class="dt-meta mb-0 mt-2">
+          {{
+            t.equip.detail.gemNote(
+              d.have.drill,
+              d.ungemCoinPerLevel > 0 ? formatNum(d.ungemCoinPerLevel) : null,
+            )
+          }}
+        </p>
       </div>
-      <div v-if="freeHoles > 0 && d.gems.length > 0" class="d-flex gap-1 mt-1">
-        <select v-model="gemPick" class="form-select form-select-sm dt-shrink" data-testid="inlay-pick">
+    </section>
+    <!-- 点空孔：选一颗宝石镶上；点宝石：写属性，可以摘除 -->
+    <DtSheet
+      :open="gemSheet !== null"
+      :title="
+        gemSheet === 'inlay' ? t.equip.detail.inlay : gemSheet ? catalog.goodsName(gemSheet.goodsId) : ''
+      "
+      @close="gemSheet = null"
+    >
+      <template v-if="gemSheet === 'inlay'">
+        <p v-if="d.gems.length === 0" class="dt-meta">{{ t.equip.detail.noGemItems }}</p>
+        <select
+          v-else
+          v-model="gemPick"
+          class="form-select"
+          data-testid="inlay-pick"
+          :aria-label="t.equip.detail.inlay"
+        >
           <option v-for="g in d.gems" :key="g.goodsId" :value="g.goodsId">
             {{ t.equip.detail.gemOption(catalog.goodsName(g.goodsId), g.num, g.level) }}
           </option>
         </select>
-        <button
-          class="btn btn-sm btn-primary flex-shrink-0"
-          :disabled="busy || gemPick === null"
-          data-testid="inlay-go"
-          @click="run(() => endpoints.equipInlay(id, gemPick!), t.equip.detail.inlayFailed)"
-        >
-          {{ t.equip.detail.inlay }}
-        </button>
-      </div>
-      <button
-        v-if="e.maxHole > 0 && e.curHole < e.maxHole"
-        class="btn btn-sm btn-outline-primary mt-1"
-        :disabled="busy"
-        data-testid="drill-go"
-        @click="run(() => endpoints.equipDrill(id), t.equip.detail.drillFailed)"
-      >
-        {{ t.equip.detail.drill(d.have.drill) }}
-      </button>
-    </div>
+      </template>
+      <p v-else-if="gemSheet" class="dt-meta">{{ gemAttrs(gemSheet) }}</p>
+      <template #actions>
+        <div class="dt-sheet-pair">
+          <button type="button" class="btn btn-light" @click="gemSheet = null">{{ t.common.close }}</button>
+          <button
+            v-if="gemSheet === 'inlay'"
+            type="button"
+            class="btn btn-primary"
+            :disabled="busy || gemPick === null"
+            data-testid="inlay-go"
+            @click="inlay"
+          >
+            {{ t.equip.detail.inlay }}
+          </button>
+          <button
+            v-else-if="gemSheet"
+            type="button"
+            class="btn btn-outline-danger"
+            :disabled="busy"
+            :data-testid="`ungem-${gemSheet.id}`"
+            @click="ungemPicked"
+          >
+            {{ t.equip.detail.ungem }}
+          </button>
+        </div>
+      </template>
+    </DtSheet>
 
-    <div class="d-flex flex-wrap gap-1 mb-2 align-items-center">
+    <!-- 锁定、分解、出售：分解和出售是危险操作（红描边）；不能分解的写原因 -->
+    <div class="dt-equip-actions mt-3">
       <button
-        class="btn btn-sm btn-outline-secondary"
+        class="btn btn-outline-primary"
         :disabled="busy"
         data-testid="lock-go"
         @click="run(() => endpoints.equipLock(id, !e!.locked), t.common.opFailed)"
@@ -254,7 +456,7 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, t.value.equip
         {{ e.locked ? t.equip.detail.unlock : t.equip.detail.lock }}
       </button>
       <button
-        class="btn btn-sm btn-outline-danger"
+        class="btn btn-outline-danger"
         :disabled="busy || !!blocked"
         data-testid="salvage-go"
         @click="salvage"
@@ -263,28 +465,33 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, t.value.equip
       </button>
       <button
         v-if="e.sellPrice !== null"
-        class="btn btn-sm btn-outline-danger"
+        class="btn btn-outline-danger"
         :disabled="busy || !!blocked"
         data-testid="sell-go"
         @click="sell"
       >
         {{ t.equip.detail.sell(formatNum(e.sellPrice)) }}
       </button>
-      <span v-if="blocked" class="small text-muted">{{ t.equip.detail.blockedNote(blocked) }}</span>
     </div>
+    <p v-if="blocked" class="dt-block-note mt-2">{{ t.equip.detail.blockedNote(blocked) }}</p>
 
-    <div v-if="d.history.length > 0" class="small">
-      <div class="fw-bold">{{ t.equip.detail.history }}</div>
-      <div v-for="(h, i) in d.history" :key="i" :class="h.success ? 'text-success' : 'text-muted'">
-        +{{ h.stress }}
-        {{
-          h.success
-            ? t.equip.detail.historyOk(ATTR_NAMES[h.attr ?? ''] ?? '', h.val)
-            : t.equip.detail.historyFail
-        }}
-        {{ h.stone ? t.equip.detail.tags.stone : '' }}{{ h.lucky ? t.equip.detail.tags.lucky : ''
-        }}{{ h.floor ? t.equip.detail.tags.floor : '' }}
+    <section v-if="d.history.length > 0" class="dt-block">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.equip.detail.history }}</h2>
       </div>
-    </div>
+      <div class="dt-card dt-list-card">
+        <div v-for="(h, i) in d.history" :key="i" class="dt-feed">
+          <span class="dt-feed-time">+{{ h.stress }}</span>
+          <span :class="['dt-feed-text', h.success ? 'text-success' : 'dt-meta']"
+            >{{
+              h.success
+                ? t.equip.detail.historyOk(ATTR_NAMES[h.attr ?? ''] ?? '', h.val)
+                : t.equip.detail.historyFail
+            }}{{ h.stone ? t.equip.detail.tags.stone : '' }}{{ h.lucky ? t.equip.detail.tags.lucky : ''
+            }}{{ h.floor ? t.equip.detail.tags.floor : '' }}</span
+          >
+        </div>
+      </div>
+    </section>
   </div>
 </template>

@@ -27,8 +27,11 @@ const lines = computed(() => props.a.rewards.filter((r) => !r.key.startsWith('c'
       :class="['dt-grid-cell', { 'dt-cell-done': byKey.get(`c${i}`)?.reached }]"
       :data-testid="`cell-${a.id}-${i}`"
     >
-      <div class="small fw-bold">{{ actionName(c.key) }}</div>
-      <div class="small text-muted">{{ Math.min(a.counters[c.key] ?? 0, c.target) }}/{{ c.target }}</div>
+      <div class="dt-grid-name">{{ actionName(c.key) }}</div>
+      <div class="dt-grid-count">
+        <i v-if="byKey.get(`c${i}`)?.reached" class="bi bi-check2" aria-hidden="true"></i
+        >{{ Math.min(a.counters[c.key] ?? 0, c.target) }}/{{ c.target }}
+      </div>
       <RewardButton
         wrap
         :activity-id="a.id"
@@ -39,14 +42,20 @@ const lines = computed(() => props.a.rewards.filter((r) => !r.key.startsWith('c'
       />
     </div>
   </div>
-  <div v-for="r in lines" :key="r.key" class="d-flex align-items-center gap-2 border-bottom py-1 small">
-    <span :class="['flex-fill', { 'fw-bold': r.reached }]">{{ LINE_NAME(r.key) }}</span>
-    <RewardButton
-      :activity-id="a.id"
-      :reward="r"
-      :state="a.state"
-      :busy="busy"
-      @claim="$emit('claim', $event)"
-    />
+  <!-- 连线奖励（界面改版 P7）：一张卡片一行一条，右边奖励和状态小标签 -->
+  <div class="dt-block-head mt-3">
+    <h3 class="dt-block-title dt-act-sub">{{ t.activity.grid.linesTitle }}</h3>
+  </div>
+  <div class="dt-rows-card dt-act-lines">
+    <div v-for="r in lines" :key="r.key" :class="['dt-row', { 'is-ready': r.reached && !r.claimed }]">
+      <span :class="['dt-row-main', { 'fw-bold': r.reached }]">{{ LINE_NAME(r.key) }}</span>
+      <RewardButton
+        :activity-id="a.id"
+        :reward="r"
+        :state="a.state"
+        :busy="busy"
+        @claim="$emit('claim', $event)"
+      />
+    </div>
   </div>
 </template>
