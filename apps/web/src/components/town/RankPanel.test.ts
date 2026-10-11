@@ -73,4 +73,28 @@ describe('RankPanel', () => {
     await flushPromises();
     expect(w.find('[data-testid="rank-meta"]').text()).toContain('每 10 分钟更新');
   });
+
+  it('子榜是下拉框（界面改版 P2b：分区不超过两层）；选另一个子榜会重读', async () => {
+    vi.mocked(endpoints.rank).mockResolvedValue(board());
+    const w = mount(RankPanel, { global: { stubs: { RouterLink: { template: '<a><slot /></a>' } } } });
+    await flushPromises();
+    const sel = w.get('[data-testid="rank-board-select"]');
+    const opts = sel.findAll('option');
+    expect(opts.map((o) => o.attributes('value'))).toEqual([
+      'income.coin.today',
+      'income.coin.round',
+      'income.coin.yesterday',
+      'income.exp.today',
+      'income.exp.round',
+      'income.exp.yesterday',
+    ]);
+    expect(opts[0]!.text()).toBe('银币今日');
+    await sel.setValue('income.exp.today');
+    await flushPromises();
+    expect(endpoints.rank).toHaveBeenLastCalledWith('income.exp.today');
+    // 只有一个子榜的大类不出下拉框
+    await w.find('[data-testid="rank-group-等级"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="rank-board-select"]').exists()).toBe(false);
+  });
 });

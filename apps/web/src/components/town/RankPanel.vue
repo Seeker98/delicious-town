@@ -9,7 +9,7 @@ import { useSessionStore } from '../../stores/session';
 import { useToastStore } from '../../stores/toast';
 import { shortNum, timeHM } from '../../utils/format';
 
-/** 排行榜（4E-2 设计文档 §5）：大类胶囊 + 小类按钮组；厨力榜 10 分钟更新，其他每分钟 */
+/** 排行榜（4E-2 设计文档 §5）：大类胶囊 + 小类下拉框；厨力榜 10 分钟更新，其他每分钟 */
 const session = useSessionStore();
 const toast = useToastStore();
 const t = useT();
@@ -79,17 +79,16 @@ onMounted(load);
         >{{ groupName(g) }}</a
       >
     </div>
-    <div v-if="subs.length > 1" class="btn-group btn-group-sm flex-wrap mb-2">
-      <button
-        v-for="b in subs"
-        :key="b.key"
-        :class="['btn', key === b.key ? 'btn-primary' : 'btn-outline-primary']"
-        :data-testid="`rank-board-${b.key}`"
-        @click="key = b.key"
-      >
-        {{ boardName(b) }}
-      </button>
-    </div>
+    <!-- 子榜用下拉框：页面分区不超过两层（界面改版 P2b，原来是按钮组） -->
+    <select
+      v-if="subs.length > 1"
+      v-model="key"
+      class="form-select form-select-sm w-auto mb-2"
+      :aria-label="groupName(group)"
+      data-testid="rank-board-select"
+    >
+      <option v-for="b in subs" :key="b.key" :value="b.key">{{ boardName(b) }}</option>
+    </select>
     <div class="dt-meta mb-1" data-testid="rank-meta">
       {{ key === 'power' ? rk.every10 : rk.every1
       }}<span v-if="data">{{ rk.updatedAt(hhmm(data.updatedAt)) }}</span>
