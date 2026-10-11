@@ -407,15 +407,14 @@ describe('RestaurantHomeView', () => {
     expect(w.get('[data-testid="rest-renown"]').text()).toBe('12,345');
   });
 
-  it('体力、声望的图标和数字之间有间距，和银币、油一致（问题记录 298）', async () => {
+  it('体力、声望的图标和数字之间有间距，和银币一致（问题记录 298）', async () => {
     const w = await mountView();
-    // 界面改版 P3：间距由图标外层 .dt-res-ico 的右边距给，不靠空格（模板折行时空格会被吞掉，298 就是这么来的）
-    for (const id of ['rest-coin', 'rest-strength', 'rest-renown']) {
-      let prev = w.get(`[data-testid="${id}"]`).element.previousSibling;
-      while (prev && prev.nodeType === Node.TEXT_NODE && !prev.textContent?.trim())
-        prev = prev.previousSibling;
-      expect((prev as HTMLElement | null)?.classList.contains('dt-res-ico'), id).toBe(true);
-    }
+    // 界面改版 P5：每种资源一个胶囊，图形和数字的间距由胶囊的 gap 给，不靠空格（模板折行时空格会被吞掉，298 就是这么来的）
+    for (const id of ['rest-coin', 'rest-strength', 'rest-renown'])
+      expect(
+        w.get(`[data-testid="${id}"]`).element.parentElement!.classList.contains('dt-res-pill'),
+        id,
+      ).toBe(true);
   });
 
   it('经验数字写在等级环旁边，不压在进度上（界面改版 P5：经验条换成等级环）', async () => {
@@ -617,13 +616,11 @@ describe('RestaurantHomeView', () => {
     const sw = w.get('[data-testid="home-switches"]');
     expect(sw.get('.dt-card-title').text()).toBe('经营开关');
     expect(sw.findAll('.dt-todo-row').length).toBeGreaterThanOrEqual(2);
-    // 油那一行和银币、钻石同在一个两列网格里；加油是图标加文字链接，不是按钮，行高和上面两行一样（问题记录 447）
-    const refuel = w.get('[data-testid="refuel"]');
-    expect(refuel.classes()).toContain('dt-link-btn');
-    expect(refuel.classes()).not.toContain('btn');
-    // 添油用油滴图形（问题记录 459；界面改版 P3 换成彩色扁平图）
-    expect(artOf(refuel)).toBe('res-oil');
-    expect(refuel.element.closest('.row')).not.toBeNull();
+    // 界面改版 P5：油和加油在营业状态卡里（主角卡片），营业中加油是次要胶囊按钮；油滴图形在卡片左边（问题记录 459）
+    const oil = w.get('[data-testid="home-oil"]');
+    const refuel = oil.get('[data-testid="refuel"]');
+    expect(refuel.classes()).toEqual(expect.arrayContaining(['btn', 'btn-outline-primary']));
+    expect(artOf(oil.get('.dt-home-oil-ico'))).toBe('res-oil');
     // 设施每行三个（问题记录 577）
     expect(w.find('[data-testid="slot-1"]').element.parentElement!.classList.contains('col-4')).toBe(true);
   });
@@ -1184,12 +1181,13 @@ describe('首页套用新的页面模式（界面改版 P3）', () => {
     expect(lv.get('.dt-home-tags').classes()).not.toContain('flex-wrap');
   });
 
-  it('资源用彩色扁平图（银币、钻石、体力、声望、油），读屏照样读名字', async () => {
+  it('资源是一排彩色胶囊（银币、体力、钻石、声望），油在营业状态卡里；读屏照样读名字（界面改版 P5）', async () => {
     const w = await mountView();
     const res = w.get('[data-testid="home-resources"]');
+    expect(res.findAll('.dt-res-pill')).toHaveLength(4);
     const arts = res.findAll('use').map((u) => u.attributes('href')?.split('#')[1]);
-    for (const a of ['res-coin-silver', 'res-diamond', 'res-strength', 'res-prestige', 'res-oil'])
-      expect(arts).toContain(a);
+    expect(arts).toEqual(['res-coin-silver', 'res-strength', 'res-diamond', 'res-prestige']);
+    expect(w.get('[data-testid="home-status"] [data-testid="home-oil"]').text()).toContain('400/1,000');
     for (const i of ['bi-coin', 'bi-gem', 'bi-lightning', 'bi-award', 'bi-droplet'])
       expect(res.find(`i.${i}`).exists()).toBe(false);
     expect(res.findAll('.visually-hidden').map((x) => x.text())).toEqual(

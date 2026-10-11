@@ -1858,3 +1858,107 @@ details.dt-card > summary {
 .dt-home-exp .dt-art {
   vertical-align: -3px;
 }
+/* 首页资源胶囊一排（界面改版 P5）：四个平分，数字长的银币多占一点 */
+.dt-home-res {
+  display: flex;
+  gap: 6px;
+  margin: 12px 0 0;
+}
+.dt-home-res > .dt-res-pill {
+  flex: 1 1 0;
+  justify-content: center;
+}
+.dt-home-res > .dt-res-pill:first-child {
+  flex-grow: 1.4;
+}
+/* 营业状态卡：首页的主角，浮起来的卡片 */
+.dt-home-oil {
+  margin: 12px 0 8px;
+  padding: 14px;
+  border-radius: 18px;
+  background: var(--dt-surface);
+  border: 1px solid var(--dt-line);
+  box-shadow: var(--dt-shadow-card);
+}
+.dt-home-oil-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.dt-home-oil-ico {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--dt-plate);
+}
+.dt-home-oil.is-closed .dt-home-oil-ico {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--dt-soft-danger);
+}
+.dt-home-oil-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.dt-home-oil-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+.dt-home-oil.is-closed .dt-home-oil-title {
+  font-size: 16px;
+}
+.dt-home-oil-line {
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-home-oil-up {
+  display: inline-block;
+  padding: 0 4px;
+  text-decoration: none;
+}
+.dt-home-oil-hint::before {
+  content: '·';
+  margin: 0 4px;
+}
+.dt-home-oil-bar {
+  height: 6px;
+  margin-top: 6px;
+  border-radius: 3px;
+  background: var(--dt-line);
+  overflow: hidden;
+}
+.dt-home-oil-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--dt-primary);
+}
+.dt-home-oil-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  max-width: 100%;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.dt-home-oil-btn .flex-shrink-0 {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: 500;
+}
+/* 整宽主按钮（设计 §1.1 第 2 条：主操作 46~48px） */
+.dt-btn-block {
+  display: flex;
+  width: 100%;
+  min-height: 46px;
+  margin-top: 12px;
+  font-size: 15px;
+  font-weight: 700;
+}

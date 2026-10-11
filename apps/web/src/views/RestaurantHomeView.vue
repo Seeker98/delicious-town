@@ -18,6 +18,8 @@ import AnnounceBanner from '../components/AnnounceBanner.vue';
 import DtArt from '../components/DtArt.vue';
 import DtSkeleton from '../components/DtSkeleton.vue';
 import DtLevelRing from '../components/DtLevelRing.vue';
+import DtResPill from '../components/DtResPill.vue';
+import HomeStatus from '../components/home/HomeStatus.vue';
 import HomeScene from '../components/home/HomeScene.vue';
 import HomeFeed from '../components/town/HomeFeed.vue';
 import HomeNews from '../components/town/HomeNews.vue';
@@ -173,9 +175,6 @@ async function act(fn: () => Promise<unknown>, fallback: string) {
 const expPercent = computed(() =>
   rest.value ? Math.min(100, Math.floor((rest.value.exp / rest.value.expToNext) * 100)) : 0,
 );
-/** 银币不够加满时有多少加多少（服务端同样处理） */
-const refuelNeed = computed(() => (rest.value ? rest.value.oilMax - rest.value.oil : 0));
-const refuelCost = computed(() => (rest.value ? Math.min(refuelNeed.value, rest.value.coin) : 0));
 const customers = computed(() =>
   Object.entries(rest.value?.lastRound?.customers ?? {})
     .filter(([k]) => k !== '0')
@@ -268,9 +267,6 @@ const specialName = computed(() => {
   const sp = rest.value?.special;
   return sp ? t.value.home.special(catalog.mcName(sp.id)) : t.value.home.specialNone;
 });
-const refuelText = computed(() =>
-  t.value.home.refuel(refuelCost.value >= refuelNeed.value, formatNum(refuelCost.value)),
-);
 
 /** 生效的加成按来源分组，默认只显示前几条（问题记录：展示凌乱） */
 const EFFECTS_SHOWN = 5;
@@ -364,6 +360,22 @@ onBeforeUnmount(() => {
           >
         </div>
       </div>
+      <!-- 资源一排彩色胶囊，名字给读屏；油在营业状态卡里（界面改版 P5） -->
+      <div class="dt-home-res" data-testid="home-resources">
+        <DtResPill art="res-coin-silver" :label="t.events.kind.coin"
+          ><span data-testid="rest-coin">{{ formatNum(rest.coin) }}</span></DtResPill
+        >
+        <!-- 体力、声望也按千分位（问题记录 296） -->
+        <DtResPill art="res-strength" :label="t.events.kind.strength"
+          ><span data-testid="rest-strength">{{ strengthText }}</span></DtResPill
+        >
+        <DtResPill art="res-diamond" :label="t.events.kind.diamond"
+          ><span>{{ formatNum(rest.diamond) }}</span></DtResPill
+        >
+        <DtResPill art="res-prestige" :label="t.events.kind.renown" :title="t.home.renown"
+          ><span data-testid="rest-renown">{{ formatNum(rest.renown) }}</span></DtResPill
+        >
+      </div>
       <AnnounceBanner :items="announcements" />
       <!-- 被收购时（问题记录 421）：归谁所有，去收购页打理、赎身 -->
       <div
@@ -397,83 +409,10 @@ onBeforeUnmount(() => {
         </button>
       </div>
 
+      <!-- 营业状态卡：这一页的主角（界面改版 P5，设计 §1.1 第 2 条） -->
+      <HomeStatus :rest="rest" :busy="busy" @refuel="act(() => endpoints.refuel(), t.home.refuelFailed)" />
       <!-- 资源、上一轮、食谱（P5 后续任务再拆） -->
       <div class="dt-card my-2 small" data-testid="home-card">
-        <!-- 资源用彩色扁平图（界面改版 P3），名字给读屏 -->
-        <div class="row g-1 dt-res-grid" data-testid="home-resources">
-          <div class="col-6">
-            <span class="dt-res-ico"
-              ><DtArt name="res-coin-silver" :size="16" /><span class="visually-hidden">{{
-                t.events.kind.coin
-              }}</span></span
-            >
-            <b data-testid="rest-coin">{{ formatNum(rest.coin) }}</b>
-          </div>
-          <div class="col-6">
-            <span class="dt-res-ico"
-              ><DtArt name="res-diamond" :size="16" /><span class="visually-hidden">{{
-                t.events.kind.diamond
-              }}</span></span
-            >
-            <span>{{ formatNum(rest.diamond) }}</span>
-          </div>
-          <!-- 体力、声望也按千分位（问题记录 296：体力很多时只有它没分隔） -->
-          <!-- 图标和数字之间留一个空格，和银币、油一致（问题记录 298：这行太长被格式化折成两行时，空格被模板吞掉） -->
-          <div class="col-6">
-            <span class="dt-res-ico"
-              ><DtArt name="res-strength" :size="16" /><span class="visually-hidden">{{
-                t.events.kind.strength
-              }}</span></span
-            >
-            <span data-testid="rest-strength">{{ strengthText }}</span>
-          </div>
-          <div class="col-6" :title="t.home.renown">
-            <span class="dt-res-ico"
-              ><DtArt name="res-prestige" :size="16" /><span class="visually-hidden">{{
-                t.events.kind.renown
-              }}</span></span
-            >
-            <span data-testid="rest-renown">{{ formatNum(rest.renown) }}</span>
-          </div>
-          <!-- 油和加满在同一个网格里，按钮紧凑，行高和上面一致（280 反馈） -->
-          <div class="col-6">
-            <span class="dt-res-ico"
-              ><DtArt name="res-oil" :size="16" /><span class="visually-hidden">{{
-                t.events.kind.oil
-              }}</span></span
-            >
-            <span>{{ formatNum(rest.oil) }}/{{ formatNum(rest.oilMax) }}</span>
-            <!-- 油壶升级的入口（问题记录 435） -->
-            <RouterLink
-              to="/society/oil"
-              class="d-inline-block px-1 text-decoration-none"
-              :title="t.home.oilUpgrade"
-              :aria-label="t.home.oilUpgrade"
-              data-testid="oil-upgrade"
-              ><i class="bi bi-arrow-up-circle"></i
-            ></RouterLink>
-          </div>
-          <!-- 加油用图标加文字链接，不用按钮，行高和上面两行一样（问题记录 447） -->
-          <div class="col-6">
-            <!-- 看得见的是“加满/加油”和银币数，整句放读屏标签和悬停提示；名字放不下才截断，数字不截（审查 I1） -->
-            <button
-              type="button"
-              class="dt-link-btn d-inline-flex align-items-center gap-1 mw-100"
-              data-testid="refuel"
-              :title="refuelText"
-              :aria-label="refuelText"
-              :disabled="busy || refuelCost <= 0"
-              @click="act(() => endpoints.refuel(), t.home.refuelFailed)"
-            >
-              <DtArt name="res-oil" :size="14" /><span class="text-truncate">{{
-                t.home.refuelShort(refuelCost >= refuelNeed)
-              }}</span
-              ><span class="flex-shrink-0"
-                ><DtArt name="res-coin-silver" :size="14" class="me-1" />{{ formatNum(refuelCost) }}</span
-              >
-            </button>
-          </div>
-        </div>
         <!-- 上一轮（问题记录 433）：银币、经验、耗油用图标，悬停写名字；两个入口各放在一行的右边 -->
         <!-- 还没结算过也显示这块：楼层页能灭蟑螂、赶白食，入口不能没有（问题记录 447 去掉了“更多”里的入口） -->
         <div class="border-top mt-2 pt-1" data-testid="last-round">

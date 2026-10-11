@@ -20,6 +20,11 @@ export default {
   refuel: (full: boolean, cost: string) => `${full ? '加满' : '加油'} (${cost} 银币)`,
   refuelShort: (full: boolean): string => (full ? '加满' : '加油'),
   refuelFailed: '加油失败',
+  /** 首页营业状态卡（界面改版 P5） */
+  statusClosed: '油用光了, 餐厅停业',
+  statusClosedHint: '加满就能继续营业',
+  statusOpen: '营业中',
+  oilFull: '油是满的',
   lastRound: '上一轮: ',
   roundCoin: '银币',
   roundExp: '经验',
