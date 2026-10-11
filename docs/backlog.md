@@ -410,3 +410,18 @@
 - 好友餐厅的门和 `RestaurantHero` 各写一份（一个 `||` 一个 `??`），都没核对 `CONTENT_ART`；可以抽成 `catalog.doorArt(id)`，和 `foodArt` 一样退回木门（和 P3 那条一起做）
 - `main.css` 第 311、331 行附近留着旧注释，和新注释重复
 - 测试缺口：配置构建报错没断言食材编号；`.dt-tile-grid` 4 列、数量不换行没有样式测试；好友餐厅门的测试用的是木门（和兜底一样，分不出来）；新确认面板只测了取消，确定后发的数量只有旧的 `window.confirm` 兜底测试覆盖
+
+## 界面改版 P5 首页（feat/ui-p5）终审遗留
+
+- 停业而油是满的（道具、邮件加油不会自动开门）：大按钮写“加满 0”且灰掉，读屏标签却是“油是满的”；停业分支也该判断油满
+- 停业且银币为 0：主按钮灰掉，没写原因；可以加一行“银币不够”
+- 油量条用 `Math.round`，995/1000 画成满格而按钮还写“加满 5”；改成 `Math.floor`（经验环已经是 floor）
+- `DtLevelRing` 收到 NaN 时读屏读“经验 NaN%”；`Number.isFinite` 兜底
+- 签到块忙的时候（`busy`）还是实心紫色，看不出点不了；加 `:disabled` 样式
+- `.dt-rows-card` 和已有的 `.dt-group-card` 重复，可以合成一个并改用 16px 圆角
+- `.dt-btn-block` 写死了 `margin-top: 12px`，作为通用主按钮类应该把间距挪到 `.dt-home-oil > .dt-btn-block`
+- 旧经验条、旧头图文字板留下的样式没人用了：`.dt-exp-bar`、`.dt-hero-tags`、`.dt-hero-main`、`.dt-res-ico`、`.dt-res-grid .dt-art`；`theme.test` 里“首页经验条”的注释也该改
+- 不再用到的文案键：`home.closed`、`home.lastRound`、`home.todo`（四种语言）
+- e2e `business.spec.ts` 等的是“(1/1)”，主线块现在写“1/1”；它点的首页“领奖”按钮从问题记录 555 起就没有了（e2e 不进 CI）
+- 测试缺口：状态卡“停业 + 银币 0”“停业 + 油满”；关掉任务功能时主线块消失、其余块重排；三块时最后一块占满一行的渲染测试；营业状态的法文、西文 360px 截图
+- 小项：主线块的 `bi-flag` 图标没加 `aria-hidden`（改版前就这样）；`.dt-scene` 的 `-8px` 依赖 `.dt-main` 的 8px 内边距，注释里没写；新加的法文里直撇号和弯撇号混用
