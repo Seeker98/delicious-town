@@ -2,8 +2,6 @@
 import { computed, onMounted, ref } from 'vue';
 import type { MyLooksDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
-import type { ArtName } from '../art/generated/names';
-import DtArt from '../components/DtArt.vue';
 import GameImg from '../components/GameImg.vue';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
@@ -51,9 +49,6 @@ function daysLeft(endsAt: string): number {
 }
 
 const confirm = useConfirmStore();
-/** 门的图形（界面改版 P3）：目录里没写（旧目录缓存）时画木门 */
-const doorArt = (art: string | undefined) => `door-${art || 'wood'}` as ArtName;
-
 async function buyIcon(key: string, fallbackTitle: string, coin: number) {
   const title = catalog.icon(key)?.title ?? fallbackTitle;
   const yes = await confirm.ask({
@@ -102,9 +97,7 @@ onMounted(async () => {
         :disabled="busy || mine.door === d.id"
         @click="act(() => endpoints.setDoor(d.id), t.rest.look.doorSet, t.rest.look.doorFailed)"
       >
-        <DtArt :name="doorArt(d.art)" :size="20" />{{
-          d.name
-        }}<!-- 买过的门换回来免费（问题记录 350） --><span
+        {{ d.name }}<!-- 买过的门换回来免费（问题记录 350） --><span
           v-if="d.coin > 0 && mine.ownedDoors.includes(d.id)"
           class="ms-1 small"
           >{{ t.rest.look.doorOwned }}</span

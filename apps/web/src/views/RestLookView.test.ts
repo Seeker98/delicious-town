@@ -161,7 +161,7 @@ describe('RestLookView', () => {
     expect(old.find('[data-testid="icon-shop"]').exists()).toBe(false);
   });
 
-  it('头像、门是选择胶囊（界面改版 P3），选中的 aria-pressed；门的胶囊里有门的图形，现在的门不能点', async () => {
+  it('头像、门是选择胶囊（界面改版 P3），选中的 aria-pressed；现在的门不能点', async () => {
     const w = mount(RestLookView);
     await flushPromises();
     const a1 = w.get('[data-testid="avatar-1"]');
@@ -171,7 +171,8 @@ describe('RestLookView', () => {
     expect(d0.classes()).toContain('dt-choice');
     expect(d0.attributes('aria-pressed')).toBe('true');
     expect(d0.attributes('disabled')).toBeDefined();
-    expect(w.get('[data-testid="door-1"] use').attributes('href')).toContain('#door-red');
+    // 胶囊里不画门：加了图形门的胶囊排成四行，首屏的限定称号被挤出去（P3 截图），门的样子看首页头图
+    expect(w.find('[data-testid="door-1"] svg').exists()).toBe(false);
   });
 
   it('公告栏、限定称号、个性图标各一张卡片；称号一行一个，图标用开关；买称号走确认面板', async () => {
