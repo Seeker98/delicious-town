@@ -582,8 +582,10 @@ describe('RestaurantHomeView', () => {
     });
     const w = await mountView();
     const status = w.get('[data-testid="home-status"]');
-    for (const id of ['rest-level', 'exp-text', 'rest-coin', 'refuel', 'home-books'])
+    for (const id of ['rest-level', 'exp-text', 'rest-coin', 'refuel'])
       expect(status.find(`[data-testid="${id}"]`).exists(), id).toBe(true);
+    // 界面改版 P5：食谱、特色菜、资产收进今日下面的“我的店”
+    expect(status.find('[data-testid="home-books"]').exists()).toBe(false);
     // 问题记录 447：厨具、仓库、商店入口去掉，换成食谱数和在售特色菜
     expect(status.find('[data-testid="quick-links"]').exists()).toBe(false);
     for (const to of ['/rest/equip', '/store', '/shop'])
@@ -597,7 +599,8 @@ describe('RestaurantHomeView', () => {
     // 顺序：餐厅 → 待办 → 小镇动态 → 设施
     const pos = (sel: string) => w.html().indexOf(sel);
     expect(pos('data-testid="home-status"')).toBeLessThan(pos('data-testid="home-todo"'));
-    expect(pos('data-testid="home-todo"')).toBeLessThan(pos('data-testid="home-news-more"'));
+    expect(pos('data-testid="home-todo"')).toBeLessThan(pos('data-testid="home-books"'));
+    expect(pos('data-testid="home-books"')).toBeLessThan(pos('data-testid="home-news-more"'));
     expect(pos('data-testid="home-news-more"')).toBeLessThan(pos('data-testid="slot-1"'));
     // 设施、经营开关也是卡片，标题样式和上面三张卡一致（280 反馈）
     expect(w.findAll('h6.dt-section')).toHaveLength(0);
@@ -1102,6 +1105,29 @@ describe('RestaurantHomeView', () => {
     expect((await mountView()).find('[data-testid="home-books"]').exists()).toBe(false);
   });
 
+  it('我的店：食谱、特色菜、资产各一行导航行，整行可点（界面改版 P5）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, assets: 195_002 });
+    const w = await mountView();
+    const shop = w.get('[data-testid="home-shop"]');
+    expect(shop.get('.dt-block-title').text()).toBe('我的店');
+    const rows = shop.findAll('.dt-nav-row');
+    expect(rows.map((r) => r.attributes('data-testid'))).toEqual([
+      'home-cookbooks',
+      'home-special',
+      'home-assets',
+    ]);
+    expect(rows[0]!.element.tagName).toBe('A');
+    expect(rows[1]!.element.tagName).toBe('A');
+    expect(artOf(rows[0]!)).toBe('nav-cookbooks');
+    // 资产行本身不可点，右边“收购”是链接，不再多画一个 ›
+    expect(rows[2]!.classes()).toContain('dt-nav-row-static');
+  });
+
+  it('设施格子的图形放大到 32px（界面改版 P5）', async () => {
+    const w = await mountView();
+    expect(w.get('[data-testid="slot-1"] svg').attributes('width')).toBe('32');
+  });
+
   it('资产一行（问题记录 447）：名下身价合计，链到收购页；区服关了收购（null）不显示', async () => {
     const w = await mountView();
     expect(w.find('[data-testid="home-assets"]').exists()).toBe(false);
@@ -1136,8 +1162,7 @@ describe('RestaurantHomeView', () => {
       '[data-testid="home-acquired"] a',
       // 今日活跃是今日 2×2 里的一块（界面改版 P5），不再是 dt-go 文字链接
       '[data-testid="home-news-more"]',
-      '[data-testid="home-cookbooks"]',
-      '[data-testid="home-special"]',
+      // 食谱、特色菜是“我的店”里的导航行（界面改版 P5），箭头由导航行的样式加
       '[data-testid="home-assets"] a',
       '[data-testid="guide-hint"] .dt-go',
       'a[href="/shards"]',

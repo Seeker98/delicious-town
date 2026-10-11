@@ -417,48 +417,6 @@ onBeforeUnmount(() => {
 
       <!-- 营业状态卡：这一页的主角（界面改版 P5，设计 §1.1 第 2 条） -->
       <HomeStatus :rest="rest" :busy="busy" @refuel="act(() => endpoints.refuel(), t.home.refuelFailed)" />
-      <!-- 食谱、特色菜、资产（下一个任务改成“我的店”） -->
-      <div class="dt-card my-2 small" data-testid="home-card">
-        <!-- 食谱数、在售特色菜（问题记录 447）：原来的厨具、仓库、商店入口 -->
-        <!-- 左边食谱数不换行，右边特色菜占剩下的宽度，放不下才截断（菜名长时几级不被挤掉） -->
-        <div
-          v-if="showBooks || showSpecial"
-          class="border-top mt-2 pt-1 d-flex align-items-center gap-3"
-          data-testid="home-books"
-        >
-          <RouterLink
-            v-if="showBooks"
-            to="/cookbooks"
-            class="dt-go flex-shrink-0"
-            data-testid="home-cookbooks"
-            ><i class="bi bi-journal-text"></i>
-            {{
-              t.home.cookbooks(formatNum(rest.cookbooks.learned), formatNum(rest.cookbooks.total))
-            }}</RouterLink
-          >
-          <RouterLink
-            v-if="showSpecial"
-            to="/cookbooks?tab=mc"
-            class="dt-go ms-auto d-flex align-items-center gap-1 dt-min0"
-            data-testid="home-special"
-            ><i class="bi bi-stars"></i><span class="text-truncate">{{ specialName }}</span
-            ><span v-if="rest.special" class="flex-shrink-0">{{
-              t.home.specialLevel(rest.special.level)
-            }}</span></RouterLink
-          >
-        </div>
-        <!-- 资产：名下的店身价合计，和投资榜一样；收购的入口从“更多”挪到这里（问题记录 447） -->
-        <div
-          v-if="rest.assets !== null"
-          class="border-top mt-2 pt-1 d-flex align-items-center gap-2"
-          data-testid="home-assets"
-        >
-          <span class="dt-shrink"
-            ><i class="bi bi-briefcase"></i> {{ t.home.assets(formatNum(rest.assets)) }}</span
-          >
-          <RouterLink to="/acquire" class="dt-go">{{ t.nav.links.acquire }}</RouterLink>
-        </div>
-      </div>
     </section>
 
     <!-- 上一轮（界面改版 P5）：三个统计块；收益记录在标题右边，楼层餐桌在客人那行右边 -->
@@ -620,6 +578,40 @@ onBeforeUnmount(() => {
       </div>
     </section>
 
+    <!-- 我的店（界面改版 P5）：食谱数、在售特色菜、资产各一行导航行（问题记录 447：原来的厨具、仓库、商店入口） -->
+    <section v-if="showBooks || showSpecial || rest.assets !== null" class="dt-block" data-testid="home-shop">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.nav.me.groups.shop }}</h2>
+      </div>
+      <div class="dt-card dt-rows-card" :data-testid="showBooks || showSpecial ? 'home-books' : undefined">
+        <RouterLink v-if="showBooks" to="/cookbooks" class="dt-nav-row dt-tap" data-testid="home-cookbooks"
+          ><DtArt name="nav-cookbooks" :size="22" /><span class="dt-nav-row-label">{{
+            t.home.cookbooks(formatNum(rest.cookbooks.learned), formatNum(rest.cookbooks.total))
+          }}</span></RouterLink
+        >
+        <!-- 菜名放不下才截断，几级不截（审查 I2） -->
+        <RouterLink
+          v-if="showSpecial"
+          to="/cookbooks?tab=mc"
+          class="dt-nav-row dt-tap"
+          data-testid="home-special"
+          ><DtArt name="sec-star" :size="22" /><span class="dt-nav-row-label d-flex dt-min0"
+            ><span class="text-truncate">{{ specialName }}</span
+            ><span v-if="rest.special" class="flex-shrink-0">{{
+              t.home.specialLevel(rest.special.level)
+            }}</span></span
+          ></RouterLink
+        >
+        <!-- 资产：名下的店身价合计，和投资榜一样；右边去收购（问题记录 447） -->
+        <div v-if="rest.assets !== null" class="dt-nav-row dt-nav-row-static" data-testid="home-assets">
+          <DtArt name="place-acquire" :size="22" /><span class="dt-nav-row-label">{{
+            t.home.assets(formatNum(rest.assets))
+          }}</span>
+          <RouterLink to="/acquire" class="dt-go">{{ t.nav.links.acquire }}</RouterLink>
+        </div>
+      </div>
+    </section>
+
     <!-- 餐厅动态在小镇新闻上面（问题记录 553） -->
     <!-- 旧服务端的概览没有 feed（前端可能先上线，问题记录 327 同理） -->
     <HomeFeed :items="rest.feed ?? []" :rest-id="rest.id" />
@@ -637,7 +629,7 @@ onBeforeUnmount(() => {
             :disabled="!d.unlocked || busy"
             @click="openSlot(d.slot)"
           >
-            <DtArt v-if="DEVICE_ART[d.deviceType]" :name="DEVICE_ART[d.deviceType]!" :size="22" />
+            <DtArt v-if="DEVICE_ART[d.deviceType]" :name="DEVICE_ART[d.deviceType]!" :size="32" />
             <div class="text-muted dt-clamp2">{{ catalog.deviceName(d.slot) ?? d.name }}</div>
             <div v-if="!d.unlocked && d.slot === PLAQUE2_SLOT && plaque2Offer">
               <i class="bi bi-lock"></i> {{ t.home.notOpened }}

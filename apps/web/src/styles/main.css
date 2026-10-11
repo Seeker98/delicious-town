@@ -404,6 +404,8 @@ html {
 .dt-slot {
   font-size: 12px;
   line-height: 1.3;
+  /* 界面改版 P5：格子圆角跟卡片一致 */
+  border-radius: var(--dt-radius-md);
 }
 /* 加成标签：有利绿色、不利红色 */
 .dt-chip {
@@ -2059,4 +2061,13 @@ button.dt-do:active:not(:disabled) {
   .dt-do {
     transition: none;
   }
+}
+/* 一张卡片里装几行导航行（界面改版 P5：首页“我的店”） */
+.dt-rows-card {
+  padding: 0;
+  overflow: hidden;
+}
+/* 整行不可点、右边自己有链接的行：不再画 › */
+.dt-nav-row-static::after {
+  content: none;
 }
