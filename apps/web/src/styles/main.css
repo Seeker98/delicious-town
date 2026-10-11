@@ -1164,3 +1164,12 @@ details.dt-card > summary {
   font-size: 18px;
   font-weight: 600;
 }
+/* 一级标签栏吸顶（界面改版设计 §4.2 第 7 条）：滚动时停在 48px 顶栏下面；负外边距让底色铺满 .dt-main 的左右内边距 */
+.dt-tabs-bar {
+  position: sticky;
+  top: 48px;
+  z-index: 10;
+  margin: 0 -8px 8px;
+  padding: 0 8px;
+  background: var(--dt-surface);
+}
