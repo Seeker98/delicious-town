@@ -19,6 +19,7 @@ import DtArt from '../components/DtArt.vue';
 import DtSkeleton from '../components/DtSkeleton.vue';
 import DtLevelRing from '../components/DtLevelRing.vue';
 import DtResPill from '../components/DtResPill.vue';
+import DtRow from '../components/DtRow.vue';
 import DtStatTile from '../components/DtStatTile.vue';
 import HomeStatus from '../components/home/HomeStatus.vue';
 import HomeScene from '../components/home/HomeScene.vue';
@@ -64,16 +65,16 @@ const tasksTo = computed(() => `/rest/tasks?tab=${claimTab.value ?? 'main'}`);
 const exchangeRowText = computed(() => {
   const b = rest.value?.exchangeHint?.bulk;
   const h = t.value.home;
-  return b ? h.bulkRow(catalog.foodName(b.foodsId), b.level, b.qty, b.demand) : h.exchangeRow;
+  return b ? h.row.bulkSub(catalog.foodName(b.foodsId), b.level, b.qty, b.demand) : h.row.exchangeSub;
 });
 const chapterName = (c: NonNullable<QuestsDto['chapter']>) => catalog.data('chapters', c.id)?.name ?? c.name;
 /** "主线：第 2 章 小店经营"：拼成一段，模板里换行不会在冒号后多出空格 */
-const mainChapterText = computed(() => {
+/** 主线块的副行：章末奖励或解锁条件的正文（标题已经写了“主线”） */
+const mainChapterBody = computed(() => {
   const c = mainChapter.value;
   if (!c) return '';
   const x = t.value.rest.tasks;
-  const body = c.locked ? x.chapterLocked(c.id, chapterName(c)) : x.chapterAwardRow(c.id, chapterName(c));
-  return t.value.common.colon(t.value.home.mainTag) + body;
+  return c.locked ? x.chapterLocked(c.id, chapterName(c)) : x.chapterAwardRow(c.id, chapterName(c));
 });
 /** 主线块浅绿底：显示的任务做完没领，或章末奖励能领（界面改版 P5） */
 const mainClaimable = computed(
@@ -196,6 +197,12 @@ async function openSlot(slot: number) {
     toast.push(errorMessage(e, t.value.home.devicesFailed), 'danger');
   }
 }
+/** 设施位：开了的、没开的分开排（P5 返工） */
+const openDevices = computed(() => (rest.value?.devices ?? []).filter((d) => d.unlocked));
+const lockedDevices = computed(() => (rest.value?.devices ?? []).filter((d) => !d.unlocked));
+/** 没开的设施位的全称：名字 + 几星开放（小格子里只写“12★”，全称给悬停和读屏） */
+const lockedLabel = (d: { slot: number; name: string; needStar: number }) =>
+  `${catalog.deviceName(d.slot) ?? d.name} · ${d.slot === PLAQUE2_SLOT && plaque2Offer.value ? t.value.home.notOpened : t.value.home.starOpen(needStarOf(d))}`;
 const choices = computed(() => {
   const slot = options.value?.slots.find((s) => s.slot === pickingSlot.value);
   if (!slot || !options.value) return [];
@@ -458,6 +465,7 @@ onBeforeUnmount(() => {
           ></RouterLink
         >
       </div>
+      <!-- 每块一个短标题，细节写在灰色副行（P5 返工：原来整句加粗、折成两三行） -->
       <div class="dt-do-grid">
         <!-- 签到：没签是紫色实心的整块按钮；签过是普通块，细线对勾（问题记录 445） -->
         <template v-if="signedIn !== null">
@@ -473,9 +481,9 @@ onBeforeUnmount(() => {
             <span class="dt-do-sub">{{ t.home.signInTodo }}</span>
           </button>
           <div v-else class="dt-do" data-testid="home-signin-row">
-            <span class="dt-do-title">{{ t.home.signIn }}</span>
+            <span class="dt-do-title">{{ t.home.signInBtn }}</span>
             <span class="dt-do-sub" data-testid="home-signed"
-              ><i class="bi bi-check2 text-success me-1" aria-hidden="true"></i>{{ t.home.signedShort }}</span
+              ><i class="bi bi-check2 me-1" aria-hidden="true"></i>{{ t.home.signedShort }}</span
             >
           </div>
         </template>
@@ -487,27 +495,26 @@ onBeforeUnmount(() => {
           :class="['dt-do', { 'is-claim': mainClaimable }]"
           data-testid="main-task"
         >
-          <template v-if="mainTask">
-            <span class="dt-do-title"
-              ><i class="bi bi-flag me-1"></i>{{ t.common.colon(t.home.mainTag)
-              }}{{ questTitle(catalog.data('tasks', mainTask.id)?.name ?? mainTask.name, mainTask) }}</span
-            >
-            <span class="dt-do-sub">{{
-              `${formatNum(Math.min(mainTask.progress, mainTask.target))}/${formatNum(mainTask.target)}`
-            }}</span>
-          </template>
-          <template v-else-if="mainChapter">
-            <span class="dt-do-title"><i class="bi bi-flag me-1"></i>{{ mainChapterText }}</span>
-            <span v-if="mainChapter.locked" class="dt-do-sub">{{
-              mainChapter.needStar > 0
-                ? t.rest.tasks.lockedStar(mainChapter.needStar)
-                : t.rest.tasks.lockedLevel(mainChapter.needLevel)
-            }}</span>
-          </template>
-          <span v-else class="dt-do-title"
-            ><i class="bi bi-flag me-1"></i
-            >{{ mainAllDone ? t.rest.tasks.mainDone : t.rest.tasks.main }}</span
+          <span class="dt-do-title">{{ mainClaimable ? t.home.row.mainClaim : t.home.mainTag }}</span>
+          <span v-if="mainTask" class="dt-do-sub dt-clamp2"
+            >{{ questTitle(catalog.data('tasks', mainTask.id)?.name ?? mainTask.name, mainTask)
+            }}{{
+              t.common.paren(
+                `${formatNum(Math.min(mainTask.progress, mainTask.target))}/${formatNum(mainTask.target)}`,
+              )
+            }}</span
           >
+          <span v-else-if="mainChapter" class="dt-do-sub dt-clamp2"
+            >{{ mainChapterBody
+            }}<template v-if="mainChapter.locked">{{
+              t.common.paren(
+                mainChapter.needStar > 0
+                  ? t.rest.tasks.lockedStar(mainChapter.needStar)
+                  : t.rest.tasks.lockedLevel(mainChapter.needLevel),
+              )
+            }}</template></span
+          >
+          <span v-else class="dt-do-sub">{{ mainAllDone ? t.rest.tasks.mainDone : t.rest.tasks.main }}</span>
         </component>
         <RouterLink
           v-if="activeTotal !== null"
@@ -515,12 +522,12 @@ onBeforeUnmount(() => {
           class="dt-do"
           data-testid="home-activation"
           ><span class="dt-do-title"
-            >{{ t.home.activation(activeTotal)
+            >{{ t.home.row.activity
             }}<span v-if="activeClaimable" class="text-primary ms-1" data-testid="home-activation-gift"
               ><i class="bi bi-gift" aria-hidden="true"></i
               ><span class="visually-hidden">{{ t.home.activationClaimable }}</span></span
             ></span
-          ></RouterLink
+          ><span class="dt-do-sub">{{ t.home.row.activityPts(activeTotal) }}</span></RouterLink
         >
         <!-- 新手提示（问题记录 150）：有能领的新手码时去兑换码页（界面改版 P2b）；没有时 10 级以前看指引 -->
         <RouterLink
@@ -528,87 +535,96 @@ onBeforeUnmount(() => {
           :to="codesClaimable ? '/redeem' : '/guide'"
           class="dt-do"
           data-testid="guide-hint"
-          ><span class="dt-do-title"
-            ><i class="bi bi-lightbulb me-1"></i
-            >{{ codesClaimable ? t.home.guideCodes : t.home.guideHint }}</span
-          ><span class="dt-do-sub dt-go">{{
-            codesClaimable ? t.nav.links.redeem : t.nav.links.guide
+          ><span class="dt-do-title">{{ codesClaimable ? t.home.row.codes : t.home.row.guide }}</span
+          ><span class="dt-do-sub">{{
+            codesClaimable ? t.home.row.codesSub : t.home.row.guideSub
           }}</span></RouterLink
         >
       </div>
-      <ActivityBanner />
-      <!-- 其余提醒：交易所、白食、理财到期，保持行式 -->
-      <div v-if="rest.exchangeHint || dining || (rest.wealthDue ?? 0) > 0" class="dt-card small dt-todo mt-2">
+      <!-- 其余提醒：活动、交易所、白食、理财到期，一行一件；一件都没有时整张卡片不显示 -->
+      <div class="dt-card dt-rows-card mt-2" data-testid="home-reminders">
+        <ActivityBanner />
         <!-- 交易所（问题记录 591）：够门槛才有；有大宗认购时写批次和认购份数，点了去大宗认购标签。旧服务端没有这个字段 -->
-        <RouterLink
+        <DtRow
           v-if="rest.exchangeHint"
           :to="rest.exchangeHint.bulk ? '/exchange?tab=bulk' : '/exchange'"
-          class="dt-todo-row text-reset text-decoration-none"
+          art="place-exchange"
+          :title="rest.exchangeHint.bulk ? t.home.row.bulk : t.nav.links.exchange"
+          :sub="exchangeRowText"
           data-testid="home-exchange-row"
-          ><span class="flex-fill"><i class="bi bi-graph-up-arrow me-1"></i>{{ exchangeRowText }}</span
-          ><span class="dt-go">{{ t.nav.links.exchange }}</span></RouterLink
+        />
+        <DtRow
+          v-if="dining"
+          art="nav-friends"
+          :title="t.home.row.dining"
+          :sub="
+            t.home.row.diningSub(restName(dining.hostRestId, dining.hostName), dining.tableNo, dining.minutes)
+          "
+          data-testid="dine-card"
         >
-        <div v-if="dining" class="dt-todo-row" data-testid="dine-card">
-          <div class="flex-fill">
-            <i class="bi bi-cup-hot me-1"></i>{{ t.home.dining.before }}
-            <RouterLink :to="`/friends/${dining.hostRestId}`" class="text-decoration-none">{{
-              restName(dining.hostRestId, dining.hostName)
-            }}</RouterLink>
-            {{ t.home.dining.after(dining.tableNo, dining.minutes) }}
-          </div>
-          <button
-            class="btn btn-sm btn-primary"
-            data-testid="dine-end"
-            :disabled="busy || !dining.canEnd"
-            @click="act(() => endpoints.dineEnd(), t.home.dining.endFailed)"
-          >
-            {{ t.home.dining.end }}
-          </button>
-        </div>
+          <template #end>
+            <button
+              class="btn btn-sm btn-primary"
+              data-testid="dine-end"
+              :disabled="busy || !dining.canEnd"
+              @click="act(() => endpoints.dineEnd(), t.home.dining.endFailed)"
+            >
+              {{ t.home.dining.end }}
+            </button>
+          </template>
+        </DtRow>
         <!-- 到期没领的理财（理财设计 §3.4）；旧服务端没有 wealthDue -->
-        <RouterLink
+        <DtRow
           v-if="(rest.wealthDue ?? 0) > 0"
           to="/bank?tab=wealth"
-          class="dt-todo-row text-reset text-decoration-none"
+          art="place-bank"
+          :title="t.home.row.wealth"
+          :sub="t.home.row.wealthSub(rest.wealthDue ?? 0)"
           data-testid="home-wealth-row"
-          ><span class="flex-fill"
-            ><i class="bi bi-piggy-bank me-1"></i>{{ t.home.wealthDue(rest.wealthDue ?? 0) }}</span
-          ><span class="dt-go">{{ t.npc.links.wealth.label }}</span></RouterLink
-        >
+        />
       </div>
     </section>
 
-    <!-- 我的店（界面改版 P5）：食谱数、在售特色菜、资产各一行导航行（问题记录 447：原来的厨具、仓库、商店入口） -->
+    <!-- 我的店（界面改版 P5）：食谱数、在售特色菜、资产，每行左边名字、右边当前值，整行可点 -->
     <section v-if="showBooks || showSpecial || rest.assets !== null" class="dt-block" data-testid="home-shop">
       <div class="dt-block-head">
         <h2 class="dt-block-title">{{ t.nav.me.groups.shop }}</h2>
       </div>
       <div class="dt-card dt-rows-card" :data-testid="showBooks || showSpecial ? 'home-books' : undefined">
-        <RouterLink v-if="showBooks" to="/cookbooks" class="dt-nav-row dt-tap" data-testid="home-cookbooks"
-          ><DtArt name="nav-cookbooks" :size="22" /><span class="dt-nav-row-label">{{
-            t.home.cookbooks(formatNum(rest.cookbooks.learned), formatNum(rest.cookbooks.total))
-          }}</span></RouterLink
-        >
+        <DtRow
+          v-if="showBooks"
+          to="/cookbooks"
+          art="nav-cookbooks"
+          :title="t.home.row.cookbooks"
+          :value="`${formatNum(rest.cookbooks.learned)}/${formatNum(rest.cookbooks.total)}`"
+          data-testid="home-cookbooks"
+        />
         <!-- 菜名放不下才截断，几级不截（审查 I2） -->
-        <RouterLink
+        <DtRow
           v-if="showSpecial"
           to="/cookbooks?tab=mc"
-          class="dt-nav-row dt-tap"
+          art="sec-star"
+          :title="t.home.row.special"
           data-testid="home-special"
-          ><DtArt name="sec-star" :size="22" /><span class="dt-nav-row-label d-flex dt-min0"
-            ><span class="text-truncate">{{ specialName }}</span
+        >
+          <template #value
+            ><span class="text-truncate">{{
+              rest.special ? catalog.mcName(rest.special.id) : t.home.row.specialNone
+            }}</span
             ><span v-if="rest.special" class="flex-shrink-0">{{
               t.home.specialLevel(rest.special.level)
-            }}</span></span
-          ></RouterLink
-        >
-        <!-- 资产：名下的店身价合计，和投资榜一样；右边去收购（问题记录 447） -->
-        <div v-if="rest.assets !== null" class="dt-nav-row dt-nav-row-static" data-testid="home-assets">
-          <DtArt name="place-acquire" :size="22" /><span class="dt-nav-row-label">{{
-            t.home.assets(formatNum(rest.assets))
-          }}</span>
-          <RouterLink to="/acquire" class="dt-go">{{ t.nav.links.acquire }}</RouterLink>
-        </div>
+            }}</span></template
+          >
+        </DtRow>
+        <!-- 资产：名下的店身价合计，和投资榜一样；整行去收购（问题记录 447） -->
+        <DtRow
+          v-if="rest.assets !== null"
+          to="/acquire"
+          art="place-acquire"
+          :title="t.home.row.assets"
+          :value="formatNum(rest.assets)"
+          data-testid="home-assets"
+        />
       </div>
     </section>
 
@@ -617,57 +633,73 @@ onBeforeUnmount(() => {
     <HomeFeed :items="rest.feed ?? []" :rest-id="rest.id" />
     <HomeNews :headlines="rest.headlines" />
 
-    <div class="dt-card my-2 small" data-testid="home-devices">
-      <div class="dt-card-title mb-1">
-        <DtArt name="sec-star" :size="18" class="me-1" />{{ t.home.devices }}
+    <!-- 设施：3 列格子，图形放在托盘里，名字和状态各一行 -->
+    <section class="dt-block" data-testid="home-devices">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.home.devices }}</h2>
       </div>
-      <div class="row g-1">
-        <div v-for="d in rest.devices" :key="d.slot" class="col-4">
-          <button
-            class="btn btn-light border w-100 h-100 p-1 dt-slot"
-            :data-testid="`slot-${d.slot}`"
-            :disabled="!d.unlocked || busy"
-            @click="openSlot(d.slot)"
+      <!-- 开了的设施位一格一个；没开的收成一排小格子（图形 + 几星开放），省掉两排（P5 返工：首页太长） -->
+      <div v-if="openDevices.length > 0" class="dt-fac-grid">
+        <button
+          v-for="d in openDevices"
+          :key="d.slot"
+          type="button"
+          class="dt-fac"
+          :data-testid="`slot-${d.slot}`"
+          :disabled="busy"
+          @click="openSlot(d.slot)"
+        >
+          <span class="dt-fac-ico"
+            ><DtArt v-if="DEVICE_ART[d.deviceType]" :name="DEVICE_ART[d.deviceType]!" :size="28"
+          /></span>
+          <span class="dt-fac-name dt-clamp1">{{ catalog.deviceName(d.slot) ?? d.name }}</span>
+          <span v-if="d.goodsId" class="dt-fac-state is-on dt-clamp1"
+            >{{ catalog.goodsName(d.goodsId) }} · {{ expiresText(d.expiresAt) }}</span
           >
-            <DtArt v-if="DEVICE_ART[d.deviceType]" :name="DEVICE_ART[d.deviceType]!" :size="32" />
-            <div class="text-muted dt-clamp2">{{ catalog.deviceName(d.slot) ?? d.name }}</div>
-            <div v-if="!d.unlocked && d.slot === PLAQUE2_SLOT && plaque2Offer">
-              <i class="bi bi-lock"></i> {{ t.home.notOpened }}
-            </div>
-            <div v-else-if="!d.unlocked"><i class="bi bi-lock"></i> {{ t.home.starOpen(needStarOf(d)) }}</div>
-            <div v-else-if="d.goodsId">
-              {{ catalog.goodsName(d.goodsId) }}<br /><span class="text-muted">{{
-                expiresText(d.expiresAt)
-              }}</span>
-            </div>
-            <div v-else>{{ t.home.empty }}</div>
-          </button>
-        </div>
+          <span v-else class="dt-fac-state">{{ t.home.empty }}</span>
+        </button>
       </div>
-      <div v-if="plaque2Offer" class="dt-item">
-        <div class="dt-item-main">
-          <div class="dt-item-title">{{ t.home.plaque2.title }}</div>
-          <div class="dt-meta">
-            <span data-testid="plaque2-cost">{{
+      <div v-if="lockedDevices.length > 0" class="dt-fac-locked">
+        <button
+          v-for="d in lockedDevices"
+          :key="d.slot"
+          type="button"
+          class="dt-fac-lock"
+          :data-testid="`slot-${d.slot}`"
+          :title="lockedLabel(d)"
+          disabled
+        >
+          <DtArt v-if="DEVICE_ART[d.deviceType]" :name="DEVICE_ART[d.deviceType]!" :size="22" />
+          <span class="visually-hidden">{{ lockedLabel(d) }}</span>
+          <span class="dt-fac-lock-text"
+            ><i class="bi bi-lock" aria-hidden="true"></i
+            >{{ d.slot === PLAQUE2_SLOT && plaque2Offer ? t.home.notOpened : `${needStarOf(d)}★` }}</span
+          >
+        </button>
+      </div>
+      <div v-if="plaque2Offer" class="dt-card dt-rows-card mt-2">
+        <DtRow art="fac-plaque" :title="t.home.plaque2.title">
+          <template #sub
+            ><span data-testid="plaque2-cost">{{
               t.home.plaque2.cost(formatNum(rest.plaque2Cost.coin), rest.plaque2Cost.diamond)
-            }}</span>
-            <span v-if="plaque2Block" class="text-danger ms-1" data-testid="plaque2-block">{{
+            }}</span
+            ><span v-if="plaque2Block" class="text-danger ms-1" data-testid="plaque2-block">{{
               plaque2Block
-            }}</span>
-          </div>
-        </div>
-        <div class="dt-item-actions">
-          <button
-            class="btn btn-sm btn-outline-primary"
-            data-testid="open-plaque2"
-            :disabled="busy || !!plaque2Block"
-            @click="openPlaque2"
+            }}</span></template
           >
-            {{ t.home.plaque2.open }}
-          </button>
-        </div>
+          <template #end>
+            <button
+              class="btn btn-sm btn-outline-primary"
+              data-testid="open-plaque2"
+              :disabled="busy || !!plaque2Block"
+              @click="openPlaque2"
+            >
+              {{ t.home.plaque2.open }}
+            </button>
+          </template>
+        </DtRow>
       </div>
-      <div v-if="pickingSlot !== null" class="border rounded p-2 mt-2 small">
+      <div v-if="pickingSlot !== null" class="dt-card mt-2 small">
         <!-- 取消的点击区域往外扩了 8px（.dt-link-btn::before），下面留 8px 别盖住第一排选项（终审） -->
         <div class="d-flex justify-content-between mb-2" data-testid="pick-head">
           <b>{{ t.home.pick }}</b>
@@ -689,129 +721,133 @@ onBeforeUnmount(() => {
           }}</span>
         </button>
       </div>
-    </div>
+    </section>
 
-    <!-- 经营开关（280 反馈）：每项一行，名字在左、开关或档位在右 -->
-    <div class="dt-card my-2 small" data-testid="home-switches">
-      <div class="dt-card-title mb-1">{{ t.home.switches }}</div>
-      <label class="dt-todo-row mb-0" for="promo">
-        <span class="flex-fill"
-          >{{ t.home.promo }}<span class="dt-meta ms-1">{{ t.home.promoHint }}</span></span
-        >
-        <span class="form-check form-switch m-0">
-          <input
-            id="promo"
-            class="form-check-input"
-            type="checkbox"
-            :checked="rest.promoOn"
-            :disabled="busy"
-            @change="act(() => endpoints.setPromo(!rest!.promoOn), t.home.setFailed)"
-          />
-        </span>
-      </label>
-      <label class="dt-todo-row mb-0" for="cte">
-        <span class="flex-fill"
-          >{{ t.home.cte }}<span class="dt-meta ms-1">{{ t.home.cteHint }}</span></span
-        >
-        <span class="form-check form-switch m-0">
-          <input
-            id="cte"
-            class="form-check-input"
-            type="checkbox"
-            :checked="rest.cteOn"
-            :disabled="busy"
-            @change="act(() => endpoints.setCte(!rest!.cteOn), t.home.setFailed)"
-          />
-        </span>
-      </label>
-      <template v-if="rest.starLevel >= 6">
-        <div class="dt-todo-row" data-testid="cookfoods-row">
-          <span class="flex-fill">{{ t.home.cookfoods }}</span>
-          <select
-            class="form-select form-select-sm w-auto"
-            :value="rest.cookfoodsFlag"
-            :disabled="busy"
-            @change="
-              act(
-                () => endpoints.setCookfoods(Number(($event.target as HTMLSelectElement).value)),
-                t.home.setFailed,
-              )
-            "
-          >
-            <option v-for="f in [0, 1, 2, 3, 4, 5]" :key="f" :value="f">
-              {{ f === 0 ? t.home.off : t.home.tier(f) }}
-            </option>
-          </select>
+    <!-- 经营开关（280 反馈）：每项一行，名字和说明在左、开关或档位在右 -->
+    <section class="dt-block" data-testid="home-switches">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.home.switches }}</h2>
+      </div>
+      <div class="dt-card dt-rows-card">
+        <DtRow :title="t.home.promo" :sub="t.home.promoHint">
+          <template #end>
+            <span class="form-check form-switch m-0">
+              <input
+                id="promo"
+                class="form-check-input"
+                type="checkbox"
+                :aria-label="t.home.promo"
+                :checked="rest.promoOn"
+                :disabled="busy"
+                @change="act(() => endpoints.setPromo(!rest!.promoOn), t.home.setFailed)"
+              />
+            </span>
+          </template>
+        </DtRow>
+        <DtRow :title="t.home.cte" :sub="t.home.cteHint">
+          <template #end>
+            <span class="form-check form-switch m-0">
+              <input
+                id="cte"
+                class="form-check-input"
+                type="checkbox"
+                :aria-label="t.home.cte"
+                :checked="rest.cteOn"
+                :disabled="busy"
+                @change="act(() => endpoints.setCte(!rest!.cteOn), t.home.setFailed)"
+              />
+            </span>
+          </template>
+        </DtRow>
+        <DtRow v-if="rest.starLevel >= 6" :title="t.home.cookfoods" data-testid="cookfoods-row">
+          <template #end>
+            <select
+              class="form-select form-select-sm w-auto"
+              :aria-label="t.home.cookfoods"
+              :value="rest.cookfoodsFlag"
+              :disabled="busy"
+              @change="
+                act(
+                  () => endpoints.setCookfoods(Number(($event.target as HTMLSelectElement).value)),
+                  t.home.setFailed,
+                )
+              "
+            >
+              <option v-for="f in [0, 1, 2, 3, 4, 5]" :key="f" :value="f">
+                {{ f === 0 ? t.home.off : t.home.tier(f) }}
+              </option>
+            </select>
+          </template>
+        </DtRow>
+      </div>
+      <details v-if="rest.starLevel >= 6" class="dt-meta mt-1 px-1" data-testid="cookfoods-help">
+        <summary>{{ t.home.whatIs }}</summary>
+        <div data-testid="cookfoods-hint">
+          {{ t.home.cookfoodsHint(rest.cookfoodsPerFlag) }}
         </div>
-        <details class="dt-meta" data-testid="cookfoods-help">
-          <summary>{{ t.home.whatIs }}</summary>
-          <div data-testid="cookfoods-hint">
-            {{ t.home.cookfoodsHint(rest.cookfoodsPerFlag) }}
-          </div>
-        </details>
-      </template>
-    </div>
+      </details>
+    </section>
 
     <!-- 生效的加成默认折叠成一行摘要（问题记录 280） -->
-    <details class="dt-card my-2 small" data-testid="effects">
-      <summary>
-        <span class="dt-card-title"
-          ><DtArt name="sec-bonus" :size="18" class="me-1" />{{ t.home.effects }}</span
+    <section class="dt-block">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.home.effects }}</h2>
+      </div>
+      <details class="dt-card dt-effects small" data-testid="effects">
+        <summary class="dt-effects-sum">
+          {{ t.home.effectsCount(rest.effects.length + rest.boosts.length, effectsSummary) }}
+        </summary>
+        <!-- 正在生效的全服加成活动（问题记录 294）：直接改区服数值，不是加成来源，单独一组 -->
+        <template v-if="rest.boosts.length > 0">
+          <div class="text-muted mt-1" data-testid="effect-group">{{ t.home.groups.activity }}</div>
+          <div
+            v-for="b in rest.boosts"
+            :key="`boost-${b.id}`"
+            class="d-flex flex-wrap align-items-center gap-1 border-bottom py-1"
+            data-testid="boost-row"
+          >
+            <i class="bi bi-megaphone"></i>
+            <b>{{ b.title }}</b>
+            <span class="flex-fill d-flex flex-wrap gap-1">
+              <span v-for="i in b.items" :key="i.key" class="dt-chip dt-chip-good"
+                >{{ t.activity.boosts[i.key] ?? i.key }} ×{{ i.factor }}</span
+              >
+            </span>
+            <span class="text-muted text-nowrap ms-auto">{{ expiresText(b.endsAt) }}</span>
+          </div>
+        </template>
+        <template v-for="g in effectGroups" :key="g.type">
+          <div class="text-muted mt-1" data-testid="effect-group">{{ t.home.groups[g.type] }}</div>
+          <div
+            v-for="e in g.items"
+            :key="`${e.sourceType}-${e.sourceId}`"
+            class="d-flex flex-wrap align-items-center gap-1 border-bottom py-1"
+            data-testid="effect-row"
+          >
+            <i class="bi bi-award" aria-hidden="true"></i>
+            <b>{{ effectName(e, catalog) }}</b>
+            <span class="flex-fill d-flex flex-wrap gap-1">
+              <span
+                v-for="c in effectChips(e.effects)"
+                :key="c.text"
+                :class="['dt-chip', c.good ? 'dt-chip-good' : 'dt-chip-bad']"
+                >{{ c.text }}</span
+              >
+            </span>
+            <span class="text-muted text-nowrap ms-auto">{{ effectExpires(e) }}</span>
+          </div>
+        </template>
+        <button
+          v-if="rest.effects.length > EFFECTS_SHOWN"
+          type="button"
+          class="dt-link-btn d-block mt-1"
+          data-testid="effects-more"
+          :aria-expanded="effectsAll"
+          @click="effectsAll = !effectsAll"
         >
-        <span class="text-muted ms-1">{{
-          t.home.effectsCount(rest.effects.length + rest.boosts.length, effectsSummary)
-        }}</span>
-      </summary>
-      <!-- 正在生效的全服加成活动（问题记录 294）：直接改区服数值，不是加成来源，单独一组 -->
-      <template v-if="rest.boosts.length > 0">
-        <div class="text-muted mt-1" data-testid="effect-group">{{ t.home.groups.activity }}</div>
-        <div
-          v-for="b in rest.boosts"
-          :key="`boost-${b.id}`"
-          class="d-flex flex-wrap align-items-center gap-1 border-bottom py-1"
-          data-testid="boost-row"
-        >
-          <i class="bi bi-megaphone"></i>
-          <b>{{ b.title }}</b>
-          <span class="flex-fill d-flex flex-wrap gap-1">
-            <span v-for="i in b.items" :key="i.key" class="dt-chip dt-chip-good"
-              >{{ t.activity.boosts[i.key] ?? i.key }} ×{{ i.factor }}</span
-            >
-          </span>
-          <span class="text-muted text-nowrap ms-auto">{{ expiresText(b.endsAt) }}</span>
-        </div>
-      </template>
-      <template v-for="g in effectGroups" :key="g.type">
-        <div class="text-muted mt-1" data-testid="effect-group">{{ t.home.groups[g.type] }}</div>
-        <div
-          v-for="e in g.items"
-          :key="`${e.sourceType}-${e.sourceId}`"
-          class="d-flex flex-wrap align-items-center gap-1 border-bottom py-1"
-          data-testid="effect-row"
-        >
-          <i class="bi bi-award" aria-hidden="true"></i>
-          <b>{{ effectName(e, catalog) }}</b>
-          <span class="flex-fill d-flex flex-wrap gap-1">
-            <span
-              v-for="c in effectChips(e.effects)"
-              :key="c.text"
-              :class="['dt-chip', c.good ? 'dt-chip-good' : 'dt-chip-bad']"
-              >{{ c.text }}</span
-            >
-          </span>
-          <span class="text-muted text-nowrap ms-auto">{{ effectExpires(e) }}</span>
-        </div>
-      </template>
-      <button
-        v-if="rest.effects.length > EFFECTS_SHOWN"
-        type="button"
-        class="dt-link-btn d-block mt-1"
-        data-testid="effects-more"
-        :aria-expanded="effectsAll"
-        @click="effectsAll = !effectsAll"
-      >
-        {{ effectsAll ? t.home.collapse : t.home.expandAll(rest.effects.length) }}
-      </button>
-    </details>
+          {{ effectsAll ? t.home.collapse : t.home.expandAll(rest.effects.length) }}
+        </button>
+      </details>
+    </section>
   </div>
 </template>

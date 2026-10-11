@@ -2088,3 +2088,157 @@ details.dt-card > summary {
 .dt-nav-row-static::after {
   content: none;
 }
+/* 一行（DtRow，界面改版 P5 返工）：图标托盘、标题、灰色副行，右边值或操作；有链接时整行可点、右边 › */
+.dt-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 8px 14px;
+  border-top: 1px solid var(--dt-line);
+  color: var(--dt-text);
+  text-decoration: none;
+}
+.dt-row:first-child {
+  border-top: 0;
+}
+.dt-row.is-link::after {
+  content: '›';
+  content: '›' / '';
+  flex-shrink: 0;
+  color: var(--dt-muted);
+}
+.dt-row.is-link:active {
+  background: var(--dt-surface-2);
+}
+.dt-row-ico {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--dt-plate);
+  color: var(--dt-primary-ink);
+}
+.dt-row-main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+.dt-row-title {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+.dt-row-sub {
+  font-size: 12px;
+  color: var(--dt-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dt-row-value {
+  display: flex;
+  min-width: 0;
+  max-width: 55%;
+  font-size: 13px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.dt-row-end {
+  flex-shrink: 0;
+}
+/* 一行都没有时整张卡片不显示（v-if 留下的注释节点不算内容） */
+.dt-rows-card:empty {
+  display: none;
+}
+/* 卡片里一条一行的列表（首页动态、小镇新闻） */
+.dt-list-card {
+  padding: 4px 14px;
+}
+.dt-list-card > * {
+  padding: 6px 0;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-list-card > :first-child {
+  border-top: 0;
+}
+/* 设施格子：3 列，图形在托盘里，名字和状态各一行 */
+.dt-fac-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.dt-fac {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  padding: 10px 6px 8px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font: inherit;
+  font-size: 12px;
+}
+.dt-fac:disabled {
+  opacity: 0.75;
+}
+.dt-fac-ico {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--dt-plate);
+  color: var(--dt-primary-ink);
+}
+.dt-fac-name {
+  max-width: 100%;
+  font-weight: 500;
+}
+.dt-fac-state {
+  max-width: 100%;
+  font-size: 11px;
+  color: var(--dt-muted);
+}
+.dt-fac-state.is-on {
+  color: var(--dt-ink-success);
+}
+/* 生效的加成：卡片里一行摘要，点开看全部 */
+.dt-effects-sum {
+  color: var(--dt-muted);
+  cursor: pointer;
+}
+/* 没开的设施位：一排小格子，图形 + 几星开放 */
+.dt-fac-locked {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+}
+.dt-fac-lock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  padding: 6px 2px;
+  border: 1px dashed var(--dt-line-strong);
+  border-radius: var(--dt-radius-sm);
+  background: transparent;
+  color: var(--dt-muted);
+  font: inherit;
+}
+.dt-fac-lock-text {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 11px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

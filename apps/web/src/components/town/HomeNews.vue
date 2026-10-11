@@ -2,13 +2,13 @@
 import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { HeadlinesDto } from '@dt/shared';
-import DtArt from '../DtArt.vue';
 import { useT } from '../../composables/useT';
 import { useCatalogStore } from '../../stores/catalog';
 import { useLocaleStore } from '../../stores/locale';
 import { catalogNames, dailyLang, dailyPlain } from '../../utils/daily';
 import { newsText } from '../../utils/news';
 
+/** 首页小镇新闻（界面改版 P5：区块标题在卡片外，右边“全部”；卡片里一条一行，长的截断） */
 const props = defineProps<{ headlines: HeadlinesDto }>();
 const catalog = useCatalogStore();
 const locale = useLocaleStore();
@@ -23,26 +23,33 @@ const daily = computed(() => {
 </script>
 
 <template>
-  <div class="dt-card my-2 small">
-    <div class="d-flex justify-content-between">
-      <b><DtArt name="sec-news" :size="18" class="me-1 dt-sec-art" />{{ t.nav.news.title }}</b>
+  <section class="dt-block">
+    <div class="dt-block-head">
+      <h2 class="dt-block-title">{{ t.nav.news.title }}</h2>
       <RouterLink to="/town?tab=news" class="dt-go" data-testid="home-news-more">{{
         t.nav.news.more
       }}</RouterLink>
     </div>
-    <div v-if="daily" class="dt-clamp1" data-testid="home-daily">
-      <RouterLink to="/town?tab=news" class="fw-bold"
-        ><i class="bi bi-newspaper"></i> {{ t.nav.news.daily }}{{ daily }}</RouterLink
+    <div class="dt-card dt-list-card small">
+      <div v-if="daily" class="dt-list-line dt-clamp1" data-testid="home-daily">
+        <RouterLink to="/town?tab=news" class="fw-bold">{{ t.nav.news.daily }}{{ daily }}</RouterLink>
+      </div>
+      <div
+        v-if="headlines.broadcast"
+        class="dt-list-line text-primary fw-bold dt-clamp1"
+        data-testid="home-broadcast"
       >
+        {{ t.nav.news.broadcast }}{{ newsText(headlines.broadcast, catalog) }}
+      </div>
+      <div v-for="n in headlines.news" :key="n.id" class="dt-list-line dt-clamp1" data-testid="home-news">
+        {{ newsText(n, catalog) }}
+      </div>
+      <div
+        v-if="!daily && !headlines.broadcast && headlines.news.length === 0"
+        class="dt-list-line text-muted"
+      >
+        {{ t.nav.news.empty }}
+      </div>
     </div>
-    <div v-if="headlines.broadcast" class="text-primary fw-bold dt-clamp1" data-testid="home-broadcast">
-      {{ t.nav.news.broadcast }}{{ newsText(headlines.broadcast, catalog) }}
-    </div>
-    <div v-for="n in headlines.news" :key="n.id" class="dt-clamp1" data-testid="home-news">
-      {{ newsText(n, catalog) }}
-    </div>
-    <div v-if="!daily && !headlines.broadcast && headlines.news.length === 0" class="text-muted">
-      {{ t.nav.news.empty }}
-    </div>
-  </div>
+  </section>
 </template>
