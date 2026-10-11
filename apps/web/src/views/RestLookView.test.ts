@@ -3,6 +3,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
+import { useConfirmStore } from '../stores/confirm';
 import RestLookView from './RestLookView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -28,8 +29,8 @@ describe('RestLookView', () => {
       devices: [],
       looks: {
         doors: [
-          { id: 0, name: '木门', coin: 0 },
-          { id: 1, name: '红漆门', coin: 20000 },
+          { id: 0, name: '木门', coin: 0, art: 'wood' },
+          { id: 1, name: '红漆门', coin: 20000, art: 'red' },
         ],
         avatars: [
           { id: 1, name: '小厨师' },
@@ -158,5 +159,49 @@ describe('RestLookView', () => {
     const old = mount(RestLookView);
     await flushPromises();
     expect(old.find('[data-testid="icon-shop"]').exists()).toBe(false);
+  });
+
+  it('头像、门是选择胶囊（界面改版 P3），选中的 aria-pressed；现在的门不能点', async () => {
+    const w = mount(RestLookView);
+    await flushPromises();
+    const a1 = w.get('[data-testid="avatar-1"]');
+    expect(a1.classes()).toContain('dt-choice');
+    expect(a1.attributes('aria-pressed')).toBe('false');
+    const d0 = w.get('[data-testid="door-0"]');
+    expect(d0.classes()).toContain('dt-choice');
+    expect(d0.attributes('aria-pressed')).toBe('true');
+    expect(d0.attributes('disabled')).toBeDefined();
+    // 胶囊里不画门：加了图形门的胶囊排成四行，首屏的限定称号被挤出去（P3 截图），门的样子看首页头图
+    expect(w.find('[data-testid="door-1"] svg').exists()).toBe(false);
+  });
+
+  it('公告栏、限定称号、个性图标各一张卡片；称号一行一个，图标用开关；买称号走确认面板', async () => {
+    const endsAt = new Date(Date.now() + 3 * 86_400_000).toISOString();
+    vi.mocked(endpoints.myLooks).mockResolvedValue({
+      door: 0,
+      ownedDoors: [0],
+      avatar: 1,
+      notice: '',
+      icons: [{ id: 5, key: 'founder', title: '开服元老', desc: 'x', shown: true, expiresAt: null }],
+      shop: [{ key: 'oct26_l', title: '金秋食神', desc: 'b', coin: 8_000_000, endsAt, owned: false }],
+    });
+    const spy = vi.spyOn(window, 'confirm');
+    const store = useConfirmStore();
+    store.hosts = 1;
+    const w = mount(RestLookView);
+    await flushPromises();
+    for (const id of ['notice', 'icon-shop', 'icon-5'])
+      expect(w.get(`[data-testid="${id}"]`).element.closest('.dt-card'), id).not.toBeNull();
+    expect(w.get('[data-testid="icon-buy-oct26_l"]').element.closest('.dt-item')).not.toBeNull();
+    expect(w.get('[data-testid="icon-5"]').attributes('role')).toBe('switch');
+    await w.get('[data-testid="icon-buy-oct26_l"]').trigger('click');
+    await flushPromises();
+    expect(spy).not.toHaveBeenCalled();
+    expect(store.current?.ok).toBe('购买');
+    expect(store.current?.title).toContain('8,000,000');
+    store.answer(true);
+    await flushPromises();
+    expect(endpoints.iconBuy).toHaveBeenCalledWith('oct26_l');
+    spy.mockRestore();
   });
 });

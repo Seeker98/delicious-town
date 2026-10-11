@@ -7,6 +7,7 @@ import { useT } from '../composables/useT';
 import { activeMessages } from '../i18n';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
+import { useConfirmStore } from '../stores/confirm';
 import { usePageTitle } from '../stores/pageTitle';
 import { useToastStore } from '../stores/toast';
 import { formatNum, formatPct } from '../utils/format';
@@ -82,31 +83,37 @@ async function stress() {
   } else toast.push(m.stressMiss, 'info');
 }
 /** 回退会降强化等级，先确认（问题记录 128） */
+const confirm = useConfirmStore();
 async function rollback() {
   const b = d.value?.backItems.find((x) => x.goodsId === backPick.value);
   if (!b || !e.value) return;
   // 服务端最多退到 +0：道具级数比已强化的多时，多的作废（终审）
   const n = Math.min(b.back, e.value.stress);
   const m = t.value.equip.detail;
-  if (!window.confirm(m.confirmRollback(catalog.goodsName(b.goodsId), n, b.back - n))) return;
+  if (!(await confirm.ask({ title: m.confirmRollback(catalog.goodsName(b.goodsId), n, b.back - n) }))) return;
   await run(() => endpoints.equipRollback(id, b.goodsId), m.rollbackFailed);
 }
 /** 摘除要花银币时先确认并写明多少；免费时直接摘（问题记录 128） */
 async function ungem(g: { id: number; level: number }) {
   const coin = g.level * (d.value?.ungemCoinPerLevel ?? 0);
   const m = t.value.equip.detail;
-  if (coin > 0 && !window.confirm(m.confirmUngem(formatNum(coin)))) return;
+  if (coin > 0 && !(await confirm.ask({ title: m.confirmUngem(formatNum(coin)) }))) return;
   await run(() => endpoints.equipUngem(g.id), m.ungemFailed);
 }
 async function salvage() {
   const m = t.value.equip.detail;
-  if (!e.value || !window.confirm(m.confirmSalvage(e.value.salvage))) return;
+  // 分解、出售是危险操作：确认面板的按钮红色描边（界面改版 P3）
+  if (!e.value || !(await confirm.ask({ title: m.confirmSalvage(e.value.salvage), danger: true }))) return;
   if ((await run(() => endpoints.equipSalvage(id), m.salvageFailed, false)) !== null)
     await router.push('/rest/equip');
 }
 async function sell() {
   const m = t.value.equip.detail;
-  if (!e.value?.sellPrice || !window.confirm(m.confirmSell(formatNum(e.value.sellPrice)))) return;
+  if (
+    !e.value?.sellPrice ||
+    !(await confirm.ask({ title: m.confirmSell(formatNum(e.value.sellPrice)), danger: true }))
+  )
+    return;
   if ((await run(() => endpoints.equipSell(id), m.sellFailed, false)) !== null)
     await router.push('/rest/equip');
 }
@@ -126,7 +133,7 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, t.value.equip
     <div v-if="shownAttrs.length === 0" class="small text-muted mb-2" data-testid="no-attrs">
       {{ t.equip.detail.noAttrs }}
     </div>
-    <table v-else class="table table-sm small">
+    <table v-else class="table table-sm small dt-num-table">
       <thead>
         <tr>
           <th></th>
@@ -143,8 +150,8 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, t.value.equip
       </tbody>
     </table>
 
-    <div class="border rounded p-2 mb-2 small">
-      <div class="fw-bold mb-1">{{ t.equip.detail.stress }}</div>
+    <div class="dt-card mb-2 small">
+      <div class="dt-card-title mb-1">{{ t.equip.detail.stress }}</div>
       <template v-if="d.rate">
         <div>
           {{ t.equip.detail.rate }} <b>{{ pct(d.rate.total) }}</b>
@@ -193,8 +200,8 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, t.value.equip
     <div v-if="e.maxHole === 0 && e.gems.length === 0" class="small text-muted mb-2" data-testid="no-gems">
       {{ t.common.colon(t.equip.detail.gems) }}{{ t.equip.detail.noGems }}
     </div>
-    <div v-else class="border rounded p-2 mb-2 small">
-      <div class="fw-bold mb-1">
+    <div v-else class="dt-card mb-2 small">
+      <div class="dt-card-title mb-1">
         {{ t.equip.detail.gems }} <span data-testid="hole-count">{{ e.gems.length }}/{{ e.curHole }}</span>
         <span class="text-muted">{{
           t.equip.detail.holeNote(e.maxHole, d.ungemCoinPerLevel > 0 ? formatNum(d.ungemCoinPerLevel) : null)

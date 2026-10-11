@@ -33,6 +33,13 @@ describe('装扮（规格书 02 §2.8）', () => {
     expect(await restRow(t, a.restaurantId)).toMatchObject({ door: 0, coin: 10_000 });
   });
 
+  it('首页概况带上现在的门（界面改版 P3：首页头图按门显示）', async () => {
+    const a = await newRestaurant(t, { patch: { coin: 30_000 } });
+    expect((await t.game.restaurant.overview(a.restaurantId)).door).toBe(0);
+    await looks().door(a, 2);
+    expect((await t.game.restaurant.overview(a.restaurantId)).door).toBe(2);
+  });
+
   it('买过的门永久拥有：A→B→A 只在第一次换上 A、B 时扣钱；装扮页列出已拥有的门（问题记录 350）', async () => {
     const a = await newRestaurant(t, { patch: { coin: 100_000 } });
     await looks().door(a, 1);

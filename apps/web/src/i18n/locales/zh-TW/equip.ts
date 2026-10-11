@@ -18,6 +18,8 @@ export default {
     `廚具收益加成: 最終銀幣 ${coin}、最終經驗 ${exp}、特色菜金牌 ${gold}`,
   incomeNote: '廚具收益加成: 廚具和寶石的屬性越高越多, 幸運不算；同樣的點數創意最多、調味最少',
   empty: '空',
+  /** 一件廚具都沒有（介面改版 P3：空狀態） */
+  none: { title: '還沒有廚具', body: '神殿鑑定、廚塔挑戰都能得到廚具', link: '去神殿' },
   noPieces: '沒有這個部位的廚具',
   needLevel: (lv: number) => `需要 ${lv} 級`,
   wear: '穿戴',

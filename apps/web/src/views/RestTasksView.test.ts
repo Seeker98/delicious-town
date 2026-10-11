@@ -175,11 +175,12 @@ describe('RestTasksView', () => {
 
   it('任务卡片：没完成时显示进度条、不放按钮；完成后绿边和领奖按钮', async () => {
     const w = await mountView();
-    expect(w.find('[data-testid="task-2021"]').find('.progress').exists()).toBe(true);
+    expect(w.find('[data-testid="task-2021"]').find('.dt-quest-bar').exists()).toBe(true);
     expect(w.find('[data-testid="claim-task-2021"]').exists()).toBe(false);
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([task({ progress: 1, done: true })]));
     const done = await mountView();
-    expect(done.find('[data-testid="task-2021"]').classes()).toContain('border-primary'); // 可领的任务卡和按钮一样用品牌色框（问题记录 469）
+    // 可领的任务和按钮一样用品牌色标出（问题记录 469；界面改版 P3：左边紫色竖条）
+    expect(done.find('[data-testid="task-2021"]').classes()).toContain('is-ready');
     await done.find('[data-testid="claim-task-2021"]').trigger('click');
     await flushPromises();
     expect(endpoints.claimTask).toHaveBeenCalledWith(2021);
@@ -437,7 +438,9 @@ describe('任务页终审遗留（backlog 318）', () => {
       'task-4014',
       'task-4011',
     ]);
-    expect(card.get('[data-testid="task-4012"] .progress-bar').attributes('style')).toContain('width: 40%');
+    expect(card.get('[data-testid="task-4012"] .dt-quest-bar > div').attributes('style')).toContain(
+      'width: 40%',
+    );
     expect(card.find('[data-testid="claim-task-4012"]').exists()).toBe(false);
     expect(card.get('[data-testid="claim-weekly-full"]').text()).toBe('还差 2 个任务');
   });
@@ -528,5 +531,11 @@ describe('任务名里的 {n} 按区服数值代入（515 支线扩充 B 遗留�
     await flushPromises();
     expect(w.find('[data-testid="card-activation"]').exists()).toBe(false);
     expect(w.find('[data-testid="card-main"]').exists()).toBe(true);
+  });
+
+  it('任务还没读回来时是骨架行（界面改版 P3）', async () => {
+    vi.mocked(endpoints.tasks).mockReturnValue(new Promise(() => undefined));
+    const w = await mountView('/?tab=main');
+    expect(w.find('[data-testid="tasks-skeleton"]').exists()).toBe(true);
   });
 });

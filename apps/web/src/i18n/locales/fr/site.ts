@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    rest1011:
+      'L’accueil montre maintenant la devanture de votre restaurant, avec la porte choisie dans Apparence\u202f; pièces, diamants, énergie et autres ont des icônes en couleur, et les équipements et emplacements d’ustensiles aussi. Les confirmations s’ouvrent par le bas, avec un bouton rouge pour démonter ou vendre\u202f; les quantités se règlent avec − et +\u202f; la liste des quêtes est plus compacte, avec une barre violette à côté de celles à récupérer\u202f; les préréglages et le traitement en lot des ustensiles s’ouvrent dans un panneau en bas\u202f; les pages affichent des blocs gris pendant le chargement',
     ia1011:
       'Le pointage et l’activité du jour deviennent l’onglet «\u202fAujourd’hui\u202f» des quêtes\u202f; plats signature et progression des recettes sont des onglets de Recettes\u202f; les gemmes, un onglet des Ustensiles\u202f; le fonds et l’épargne de Gary passent à la nouvelle «\u202fBanque\u202f» en ville\u202f; codes débutant et invitations sont sur la page Codes. Les onglets sont gardés dans l’adresse\u202f: on peut les partager et Retour garde votre place\u202f; les sous-classements sont un menu déroulant\u202f; la Promo du jour s’appelle désormais Promos limitées',
     shell1011:

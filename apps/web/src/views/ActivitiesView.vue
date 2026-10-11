@@ -3,7 +3,10 @@ import NpcCard from '../components/NpcCard.vue';
 import { computed, onMounted, ref } from 'vue';
 import type { ActivityDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtEmpty from '../components/DtEmpty.vue';
+import DtSkeleton from '../components/DtSkeleton.vue';
 import { useT } from '../composables/useT';
+import { useConfirmStore } from '../stores/confirm';
 import ActivityGoals from '../components/activity/ActivityGoals.vue';
 import ActivityBoost from '../components/activity/ActivityBoost.vue';
 import ActivityCoop from '../components/activity/ActivityCoop.vue';
@@ -59,8 +62,9 @@ async function run(fn: () => Promise<unknown>, ok: string) {
 const claim = (a: ActivityDto, key: string) =>
   run(() => endpoints.activityClaim(a.id, key), t.value.activity.claimed);
 const claimAll = (a: ActivityDto) => run(() => endpoints.activityClaimAll(a.id), t.value.activity.claimedAll);
-function unlock(a: ActivityDto) {
-  if (!window.confirm(t.value.activity.unlockConfirm)) return;
+const confirm = useConfirmStore();
+async function unlock(a: ActivityDto) {
+  if (!(await confirm.ask({ title: t.value.activity.unlockConfirm }))) return;
   void run(() => endpoints.activityUnlock(a.id), t.value.activity.unlocked);
 }
 /** 兑换活动：结束后兑换期内还能换（148-2 设计 §7） */
@@ -82,7 +86,14 @@ const isSignin = (a: ActivityDto) => a.kind === 'goals' && a.def.goals.every((g)
 <template>
   <!-- 限时活动的 NPC 是小凯（问题记录 443） -->
   <NpcCard npc="xiaoKai" />
-  <div v-if="loaded && items.length === 0" class="text-muted">{{ t.activity.none }}</div>
+  <!-- 加载时骨架、没有活动时空状态（界面改版 P3） -->
+  <DtSkeleton v-if="!loaded" :rows="5" data-testid="activity-skeleton" />
+  <DtEmpty
+    v-else-if="items.length === 0"
+    art="empty-activity"
+    :title="t.activity.none"
+    data-testid="activity-empty"
+  />
   <ActivityStrip
     v-if="ordered.length > 1"
     :items="ordered"

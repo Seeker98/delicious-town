@@ -23,13 +23,18 @@ describe('TableGrid', () => {
     expect(w.emitted('pick')![0]).toEqual([expect.objectContaining({ no: 1 })]);
   });
 
-  it('楼层按钮是一排能换行的独立按钮（问题记录 314：楼层多时按钮组超出手机屏幕）', () => {
+  it('楼层是一排能换行的筛选胶囊（问题记录 314；界面改版 P3：原来是一排按钮）', async () => {
     const tables = Array.from({ length: 8 }, (_, i) => ({ no: i * 16 + 1, floor: i + 1, customer: 0 }));
     const w = mount(TableGrid, { props: { tables } });
     const box = w.get('[data-testid="floor-tabs"]');
-    expect(box.classes()).toContain('flex-wrap');
-    expect(w.find('.btn-group').exists()).toBe(false);
-    expect(box.findAll('button')).toHaveLength(8);
+    expect(box.classes()).toContain('dt-pills');
+    const btns = box.findAll('button');
+    expect(btns).toHaveLength(8);
+    expect(btns.some((b) => b.classes().includes('btn'))).toBe(false);
+    expect(btns[0]!.classes()).toContain('active');
+    expect(btns[0]!.attributes('aria-pressed')).toBe('true');
+    await btns[2]!.trigger('click');
+    expect(btns[2]!.attributes('aria-pressed')).toBe('true');
   });
 });
 
@@ -117,9 +122,29 @@ describe('同一排格子一样高（问题记录 585）', () => {
       },
     });
     // 内容靠上排：按钮默认把内容垂直居中，撑高以后短格子的桌号会比旁边低半行（终审）
+    // 界面改版 P3：撑满、靠上排写在 .dt-table-cell 的样式里
     for (const no of [1, 2])
-      expect(w.get(`[data-testid="table-${no}"]`).classes()).toEqual(
-        expect.arrayContaining(['h-100', 'd-flex', 'flex-column', 'justify-content-start']),
-      );
+      expect(w.get(`[data-testid="table-${no}"]`).classes()).toContain('dt-table-cell');
+  });
+});
+
+describe('餐桌格子（界面改版 P3）', () => {
+  beforeEach(() => setActivePinia(createPinia()));
+  it('每桌一个格子；有蟑螂、有白食的桌各有标记；选中的 aria-pressed', () => {
+    const w = mount(TableGrid, {
+      props: {
+        selected: 2,
+        tables: [
+          { no: 1, floor: 1, customer: 3, roach: true, roachBy: null },
+          { no: 2, floor: 1, customer: 9, freeloaderRestId: 5, freeloaderName: '乙', freeloaderSince: 'x' },
+          { no: 3, floor: 1, customer: 1 },
+        ],
+      },
+    });
+    expect(w.get('[data-testid="table-1"]').classes()).toContain('is-roach');
+    expect(w.get('[data-testid="table-2"]').classes()).toContain('is-freeloader');
+    expect(w.get('[data-testid="table-2"]').attributes('aria-pressed')).toBe('true');
+    expect(w.get('[data-testid="table-3"]').attributes('aria-pressed')).toBe('false');
+    expect(w.find('.border-primary').exists()).toBe(false);
   });
 });

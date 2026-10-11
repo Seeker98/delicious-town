@@ -6,6 +6,7 @@ import GameImg from '../components/GameImg.vue';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
+import { useConfirmStore } from '../stores/confirm';
 import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
 import { remainText } from '../utils/remain';
@@ -47,9 +48,14 @@ function daysLeft(endsAt: string): number {
   return Math.max(0, Math.floor((new Date(endsAt).getTime() - serverNowMs()) / 86_400_000));
 }
 
-function buyIcon(key: string, fallbackTitle: string, coin: number) {
+const confirm = useConfirmStore();
+async function buyIcon(key: string, fallbackTitle: string, coin: number) {
   const title = catalog.icon(key)?.title ?? fallbackTitle;
-  if (!window.confirm(t.value.rest.look.buyConfirm(title, formatNum(coin)))) return;
+  const yes = await confirm.ask({
+    title: t.value.rest.look.buyConfirm(title, formatNum(coin)),
+    ok: t.value.rest.look.buy,
+  });
+  if (!yes) return;
   void act(() => endpoints.iconBuy(key), t.value.rest.look.bought(title), t.value.rest.look.buyFailed);
 }
 
@@ -67,7 +73,9 @@ onMounted(async () => {
       <button
         v-for="a in looks?.avatars ?? []"
         :key="a.id"
-        :class="['btn btn-sm', mine.avatar === a.id ? 'btn-primary' : 'btn-outline-secondary']"
+        type="button"
+        class="dt-choice"
+        :aria-pressed="mine.avatar === a.id"
         :data-testid="`avatar-${a.id}`"
         :disabled="busy"
         @click="act(() => endpoints.setAvatar(a.id), t.rest.look.avatarSet, t.rest.look.avatarFailed)"
@@ -82,7 +90,9 @@ onMounted(async () => {
       <button
         v-for="d in looks?.doors ?? []"
         :key="d.id"
-        :class="['btn btn-sm', mine.door === d.id ? 'btn-primary' : 'btn-outline-secondary']"
+        type="button"
+        class="dt-choice"
+        :aria-pressed="mine.door === d.id"
         :data-testid="`door-${d.id}`"
         :disabled="busy || mine.door === d.id"
         @click="act(() => endpoints.setDoor(d.id), t.rest.look.doorSet, t.rest.look.doorFailed)"
@@ -96,35 +106,35 @@ onMounted(async () => {
     </div>
 
     <h6 class="dt-section">{{ t.rest.look.notice }}</h6>
-    <textarea
-      v-model="notice"
-      class="form-control mb-1"
-      rows="3"
-      maxlength="200"
-      data-testid="notice"
-    ></textarea>
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <span class="small text-muted">{{ notice.length }}/200</span>
-      <button
-        class="btn btn-sm btn-primary"
-        data-testid="save-notice"
-        :disabled="busy"
-        @click="act(() => endpoints.setNotice(notice), t.rest.look.noticeSaved, t.rest.look.noticeFailed)"
-      >
-        {{ t.rest.look.save }}
-      </button>
+    <div class="dt-card mb-3">
+      <textarea
+        v-model="notice"
+        class="form-control mb-1"
+        rows="3"
+        maxlength="200"
+        data-testid="notice"
+      ></textarea>
+      <div class="d-flex justify-content-between align-items-center">
+        <span class="small text-muted">{{ notice.length }}/200</span>
+        <button
+          class="btn btn-sm btn-primary"
+          data-testid="save-notice"
+          :disabled="busy"
+          @click="act(() => endpoints.setNotice(notice), t.rest.look.noticeSaved, t.rest.look.noticeFailed)"
+        >
+          {{ t.rest.look.save }}
+        </button>
+      </div>
     </div>
 
     <template v-if="(mine.shop ?? []).length > 0">
       <h6 class="dt-section">{{ t.rest.look.shopTitle }}</h6>
-      <div class="mb-2" data-testid="icon-shop">
-        <div v-for="s in mine.shop" :key="s.key" class="dt-todo-row">
-          <div class="flex-fill">
-            <b>{{ catalog.icon(s.key)?.title ?? s.title }}</b>
-            <span class="d-block small text-muted">{{ catalog.icon(s.key)?.desc ?? s.desc }}</span>
-            <span class="d-block dt-meta">{{
-              t.rest.look.shopMeta(formatNum(s.coin), daysLeft(s.endsAt))
-            }}</span>
+      <div class="dt-card mb-3" data-testid="icon-shop">
+        <div v-for="s in mine.shop" :key="s.key" class="dt-item">
+          <div class="dt-item-main">
+            <div class="dt-item-title">{{ catalog.icon(s.key)?.title ?? s.title }}</div>
+            <div class="small text-muted">{{ catalog.icon(s.key)?.desc ?? s.desc }}</div>
+            <div class="dt-meta">{{ t.rest.look.shopMeta(formatNum(s.coin), daysLeft(s.endsAt)) }}</div>
           </div>
           <button
             class="btn btn-sm btn-primary"
@@ -140,25 +150,28 @@ onMounted(async () => {
 
     <h6 class="dt-section">{{ t.rest.look.icons }}</h6>
     <p v-if="mine.icons.length === 0" class="small text-muted">{{ t.rest.look.noIcons }}</p>
-    <div v-for="i in mine.icons" :key="i.id" class="form-check">
-      <input
-        :id="`icon-${i.id}`"
-        class="form-check-input"
-        type="checkbox"
-        :checked="i.shown"
-        :data-testid="`icon-${i.id}`"
-        :disabled="busy"
-        @change="
-          act(() => endpoints.iconShow(i.id, !i.shown), t.rest.look.iconUpdated, t.rest.look.iconFailed)
-        "
-      />
-      <label class="form-check-label" :for="`icon-${i.id}`"
-        >{{ catalog.icon(i.key)?.title ?? i.title }}
-        <span class="small text-muted">{{ catalog.icon(i.key)?.desc ?? i.desc }}</span>
-        <span v-if="i.expiresAt" class="small text-warning ms-1" :data-testid="`icon-left-${i.id}`">{{
-          remainText(i.expiresAt)
-        }}</span></label
-      >
+    <div v-else class="dt-card">
+      <div v-for="i in mine.icons" :key="i.id" class="dt-item form-switch dt-switch-row">
+        <input
+          :id="`icon-${i.id}`"
+          class="form-check-input"
+          type="checkbox"
+          role="switch"
+          :checked="i.shown"
+          :data-testid="`icon-${i.id}`"
+          :disabled="busy"
+          @change="
+            act(() => endpoints.iconShow(i.id, !i.shown), t.rest.look.iconUpdated, t.rest.look.iconFailed)
+          "
+        />
+        <label class="form-check-label" :for="`icon-${i.id}`"
+          >{{ catalog.icon(i.key)?.title ?? i.title }}
+          <span class="small text-muted">{{ catalog.icon(i.key)?.desc ?? i.desc }}</span>
+          <span v-if="i.expiresAt" class="small text-warning ms-1" :data-testid="`icon-left-${i.id}`">{{
+            remainText(i.expiresAt)
+          }}</span></label
+        >
+      </div>
     </div>
   </template>
 </template>

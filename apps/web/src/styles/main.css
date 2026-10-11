@@ -585,6 +585,48 @@ details.dt-card > summary {
 .dt-qty-text {
   min-width: 64px;
 }
+/* 数量步进器（界面改版 P3，设计 §5 第 6 条）：− 数字 +，胶囊外框 */
+.dt-stepper {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  border: 1px solid var(--dt-line-strong);
+  border-radius: var(--dt-radius-pill);
+  background: var(--dt-surface);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.dt-stepper > button {
+  width: 32px;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--dt-primary-ink);
+  font-size: 16px;
+  line-height: 1;
+}
+.dt-stepper > button:disabled {
+  color: var(--dt-disabled-text);
+}
+.dt-stepper > input {
+  width: 48px;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--dt-text);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.dt-stepper > input::-webkit-outer-spin-button,
+.dt-stepper > input::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+.dt-stepper:focus-within {
+  border-color: var(--dt-primary);
+}
 /* 只读的紧凑列表：新闻、流水 */
 .dt-feed {
   display: flex;
@@ -1181,4 +1223,349 @@ details.dt-card > summary {
   margin: 0 -8px 8px;
   padding: 0 8px;
   background: var(--dt-surface);
+}
+/* ---------- 底部面板、确认面板（界面改版 P3，设计 §5 第 6、7 条） ---------- */
+.dt-sheet-lock {
+  overflow: hidden;
+}
+.dt-sheet-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 1060;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.dt-sheet-scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--dt-scrim);
+}
+.dt-sheet {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  margin: 0 auto;
+  overflow-y: auto;
+  padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  border-radius: var(--dt-radius-md) var(--dt-radius-md) 0 0;
+  box-shadow: var(--dt-shadow-float);
+}
+.dt-sheet:focus {
+  outline: none;
+}
+.dt-sheet-grip {
+  width: 36px;
+  height: 4px;
+  margin: 0 auto 10px;
+  border-radius: 2px;
+  background: var(--dt-line-strong);
+}
+.dt-sheet-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.dt-sheet-text {
+  color: var(--dt-muted);
+  font-size: 14px;
+  margin-bottom: 0;
+  white-space: pre-line;
+}
+.dt-sheet-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+.dt-sheet-actions > .btn {
+  flex: 1;
+  min-height: 40px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dt-sheet-scrim {
+    animation: dt-fade-in var(--dt-dur-base) var(--dt-ease-out);
+  }
+  .dt-sheet {
+    animation: dt-sheet-up var(--dt-dur-panel) var(--dt-ease-drawer);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dt-sheet,
+  .dt-sheet-scrim {
+    animation: dt-fade-in var(--dt-dur-fast) linear;
+  }
+}
+@keyframes dt-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes dt-sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+/* ---------- 空状态、加载骨架（界面改版 P3，设计 §5 第 8 条） ---------- */
+.dt-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 20px 12px;
+  text-align: center;
+}
+.dt-empty-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+.dt-empty-body {
+  margin: 0;
+  max-width: 280px;
+  color: var(--dt-muted);
+  font-size: 13px;
+}
+.dt-skel {
+  padding: 4px 0;
+}
+.dt-skel-row {
+  height: 12px;
+  margin: 12px 0;
+  border-radius: var(--dt-radius-xs);
+  background: var(--dt-surface-2);
+}
+.dt-skel-row:nth-child(3n) {
+  width: 70%;
+}
+.dt-skel-row:nth-child(3n + 1) {
+  width: 90%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dt-skel-row {
+    animation: dt-skel-pulse 1.2s ease-in-out infinite alternate;
+  }
+}
+@keyframes dt-skel-pulse {
+  to {
+    opacity: 0.45;
+  }
+}
+/* ---------- 区域头图（界面改版 P3，设计 §5 第 1 条） ---------- */
+/* 店面图按原尺寸靠右，不缩放：门的位置才对得上；左边空出来放叠字 */
+.dt-hero {
+  position: relative;
+  height: 72px;
+  margin: 0 -8px 6px;
+  overflow: hidden;
+  background: var(--dt-soft-primary);
+  border-bottom: 3px solid var(--dt-line-strong);
+}
+.dt-hero-scene {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 320px;
+  height: 72px;
+}
+/* 门洞中心在店面图 x=230、底边 y=69：40px 的门图形放在右 70px、上 32px */
+.dt-hero-door {
+  position: absolute;
+  right: 70px;
+  top: 32px;
+}
+.dt-hero-text {
+  position: absolute;
+  left: 8px;
+  top: 6px;
+  bottom: 6px;
+  display: flex;
+  align-items: center;
+  max-width: calc(100% - 120px);
+}
+.dt-hero-plate {
+  padding: 3px 8px;
+  border-radius: var(--dt-radius-sm);
+  background: color-mix(in srgb, var(--dt-surface) 88%, transparent);
+  color: var(--dt-text);
+  line-height: 1.25;
+}
+/* 状态卡里的头图贴满卡片顶边（界面改版 P3） */
+.dt-card > .dt-hero:first-child {
+  margin: -6px -10px 6px;
+  border-radius: var(--dt-radius-md) var(--dt-radius-md) 0 0;
+}
+.dt-hero-sub {
+  font-size: 12px;
+  color: var(--dt-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* 停业、称号一行放不下就藏起来，不换行（终审 I4） */
+.dt-hero-tags {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.dt-hero-tags > * {
+  flex-shrink: 0;
+}
+.dt-hero-tags > [data-testid='my-icons'] {
+  flex-wrap: nowrap;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+.dt-hero-main {
+  font-size: 13px;
+}
+.dt-hero-main b {
+  font-size: 20px;
+}
+.dt-res-ico .dt-art,
+.dt-sec-art,
+.dt-res-grid .dt-art,
+.dt-card-title .dt-art {
+  vertical-align: -3px;
+}
+/* 资源图标和数字之间的间距（问题记录 298：不靠空格，模板折行时空格会被吞掉） */
+.dt-res-ico {
+  margin-right: 4px;
+}
+/* ---------- 餐厅：键值两组一排、数字表格、餐桌格子（界面改版 P3） ---------- */
+/* 键值成对排（餐厅信息的属性、容量）：放得下两列就两列，名字长（法文）自动折行；数值右对齐等宽 */
+.dt-kv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 160px), 1fr));
+  column-gap: 16px;
+  margin: 0;
+}
+.dt-kv-pair {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  border-bottom: 1px solid var(--dt-line);
+}
+.dt-kv-pair > dt {
+  flex: 1;
+  min-width: 0;
+  font-weight: normal;
+  color: var(--dt-muted);
+  overflow-wrap: anywhere;
+}
+.dt-kv-pair > dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.dt-num-table td {
+  font-variant-numeric: tabular-nums;
+}
+.dt-table-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+}
+/* 同一排格子一样高、内容靠上（问题记录 585） */
+.dt-table-cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+  min-height: 56px;
+  padding: 4px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-sm);
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font-size: 13px;
+  text-align: center;
+}
+.dt-table-cell.is-roach {
+  background: var(--dt-soft-danger);
+  color: var(--dt-ink-danger);
+}
+.dt-table-cell.is-freeloader {
+  background: var(--dt-soft-warning);
+}
+.dt-table-cell[aria-pressed='true'] {
+  border: 2px solid var(--dt-primary);
+  padding: 3px;
+}
+/* 选择胶囊（界面改版 P3：头像、门）：浅紫描边，选中实心紫；和筛选胶囊（正文色实心）区分开 */
+.dt-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+  padding: 2px 10px;
+  border: 1px solid var(--dt-primary-soft);
+  border-radius: var(--dt-radius-pill);
+  background: var(--dt-surface);
+  color: var(--dt-primary-ink);
+  font-size: 13px;
+}
+.dt-choice[aria-pressed='true'] {
+  background: var(--dt-primary);
+  border-color: var(--dt-primary);
+  color: var(--dt-on-primary);
+}
+.dt-choice:disabled:not([aria-pressed='true']) {
+  color: var(--dt-disabled-text);
+}
+/* 开关在一行的右边（个性图标） */
+.dt-switch-row.form-switch {
+  padding-left: 0;
+}
+.dt-switch-row .form-check-input {
+  order: 2;
+  float: none;
+  margin: 0 0 0 auto;
+  flex-shrink: 0;
+}
+.dt-switch-row .form-check-label {
+  flex: 1;
+  min-width: 0;
+}
+/* 任务是卡片里的一行（界面改版 P3）：可领的左边紫色竖条，已领的次要色 */
+.dt-quest {
+  position: relative;
+  align-items: flex-start;
+  padding: 6px 0;
+}
+.dt-quest.is-ready {
+  padding-left: 8px;
+}
+.dt-quest.is-ready::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--dt-primary);
+}
+.dt-quest.is-claimed {
+  color: var(--dt-muted);
+}
+.dt-quest > .dt-item-actions {
+  align-self: center;
+}
+.dt-quest-bar {
+  height: 4px;
+  margin-top: 4px;
+  border-radius: 2px;
+  background: var(--dt-surface-2);
+  overflow: hidden;
+}
+.dt-quest-bar > div {
+  height: 100%;
+  background: var(--dt-warning);
 }

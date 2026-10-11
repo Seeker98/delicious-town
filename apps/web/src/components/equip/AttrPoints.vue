@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { endpoints } from '../../api/endpoints';
+import DtStepper from '../DtStepper.vue';
 import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useRestaurantStore } from '../../stores/restaurant';
@@ -12,8 +13,8 @@ const emit = defineEmits<{ done: [] }>();
 const store = useRestaurantStore();
 const toast = useToastStore();
 const t = useT();
-/** 输入框默认留空（问题记录：显示 0 时看不出是哪一项） */
-const add = reactive<Record<'cook' | 'cutting' | 'fire', number | ''>>({ cook: '', cutting: '', fire: '' });
+/** 每格加几点：步进器默认 0（界面改版 P3；原来留空是因为看不出是哪一项，现在每格上方写了名字） */
+const add = reactive<Record<'cook' | 'cutting' | 'fire', number>>({ cook: 0, cutting: 0, fire: 0 });
 const busy = ref(false);
 const left = computed(() => store.rest?.attrLeft ?? 0);
 /** 清空的输入框（v-model.number 给空串）按 0 算 */
@@ -35,7 +36,7 @@ for (const k of FIELDS)
   watch(
     () => add[k],
     () => {
-      if (add[k] !== '' && num(add[k]) > cap(k)) add[k] = cap(k);
+      if (num(add[k]) > cap(k)) add[k] = cap(k);
     },
   );
 /** “全加”：剩下的点都填进这一格 */
@@ -53,7 +54,7 @@ async function allocate() {
   busy.value = true;
   try {
     await endpoints.allocate(points());
-    add.cook = add.cutting = add.fire = '';
+    add.cook = add.cutting = add.fire = 0;
     await store.refresh();
     emit('done');
   } catch (e) {
@@ -72,15 +73,7 @@ onMounted(() => store.refresh().catch(() => undefined));
     <div class="row g-1 mt-1">
       <div v-for="f in FIELDS" :key="f" class="col-4">
         <div class="fw-bold" :data-testid="`label-${f}`">{{ ATTR_NAMES[f] }}</div>
-        <input
-          v-model.number="add[f]"
-          type="number"
-          min="0"
-          :max="cap(f)"
-          class="form-control form-control-sm"
-          placeholder="0"
-          :data-testid="`add-${f}`"
-        />
+        <DtStepper v-model="add[f]" :min="0" :max="cap(f)" :testid="`add-${f}`" :disabled="busy" />
         <!-- “全加”放在预览那一行右边：放在名字旁边会和右边一列的名字挨在一起（问题记录 557） -->
         <div class="d-flex justify-content-between align-items-baseline">
           <span class="text-muted" style="font-size: 11px" :data-testid="`preview-${f}`">{{

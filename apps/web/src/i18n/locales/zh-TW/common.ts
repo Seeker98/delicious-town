@@ -4,6 +4,8 @@ export default {
   loading: '載入中……',
   confirm: '確定',
   cancel: '取消',
+  decrease: '減少',
+  increase: '增加',
   language: '語言',
   appearance: '外觀',
   themeSystem: '跟隨系統',

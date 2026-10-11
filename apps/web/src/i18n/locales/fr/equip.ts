@@ -18,6 +18,12 @@ const equip: Messages['equip'] = {
   incomeNote:
     'Bonus de revenus de l’équipement\u202f: plus les caractéristiques de l’équipement et des gemmes sont élevées, plus le bonus est grand\u202f; la Chance ne compte pas\u202f; par point, la Créativité compte le plus et l’Assaisonnement le moins',
   empty: 'Vide',
+  /** 一件厨具都没有（界面改版 P3：空状态） */
+  none: {
+    title: 'Pas encore d’ustensiles',
+    body: 'Les expertises du Temple et la Tour des chefs en donnent',
+    link: 'Aller au Temple',
+  },
   noPieces: 'Aucun ustensile pour cet emplacement',
   needLevel: (lv) => `Niveau ${lv} requis`,
   wear: 'Équiper',

@@ -5,6 +5,7 @@ import { setEventsListener } from './api/client';
 import AnnouncePopup from './components/AnnouncePopup.vue';
 import AppHeader from './components/AppHeader.vue';
 import BottomNav from './components/BottomNav.vue';
+import DtConfirmHost from './components/DtConfirmHost.vue';
 import EventToast from './components/EventToast.vue';
 import { useCatalogStore } from './stores/catalog';
 import { useLocaleStore } from './stores/locale';
@@ -46,6 +47,7 @@ onMounted(() => {
       <RouterView :key="locale.locale" />
     </main>
     <AnnouncePopup v-if="inGame" />
+    <DtConfirmHost />
     <EventToast :nav="inGame" />
     <BottomNav v-if="inGame" />
   </div>

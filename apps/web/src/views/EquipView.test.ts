@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { AttrsDto, EquipDto, EquipOverviewDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useConfirmStore } from '../stores/confirm';
 import { useToastStore } from '../stores/toast';
 import EquipView from './EquipView.vue';
 
@@ -84,7 +85,8 @@ async function mountView(path = '/') {
     routes: [{ path: '/:p(.*)*', component: EquipView }],
   });
   await router.push(path);
-  const w = mount(EquipView, { global: { plugins: [router] } });
+  // 底部面板传送到 body，测试里原地渲染（界面改版 P3）
+  const w = mount(EquipView, { global: { plugins: [router], stubs: { teleport: true } } });
   await flushPromises();
   return w;
 }
@@ -217,7 +219,8 @@ describe('EquipView', () => {
     } as never);
     const w = await mountView();
     expect(w.findAll('[data-testid^="label-"]').map((x) => x.text())).toEqual(['厨艺', '刀工', '火候']);
-    expect((w.find('[data-testid="add-cook"]').element as HTMLInputElement).value).toBe('');
+    // 界面改版 P3：步进器默认 0（每格上方写了是哪一项，原来留空的理由不在了）
+    expect((w.find('[data-testid="add-cook"]').element as HTMLInputElement).value).toBe('0');
     await w.find('[data-testid="add-cook"]').setValue('2');
     expect(w.find('[data-testid="preview-cook"]').text()).toBe('20 → 22');
     expect(w.find('[data-testid="preview-cutting"]').text()).toBe('5');
@@ -237,7 +240,9 @@ describe('EquipView', () => {
     await w.find('[data-testid="add-cutting"]').setValue('8');
     expect(input('cutting').value).toBe('3');
     expect(w.find('[data-testid="attr-left"]').text()).toBe('剩余点数 0');
+    // 步进器里清空在失焦时才算 0（界面改版 P3）
     await w.find('[data-testid="add-cutting"]').setValue('');
+    await w.find('[data-testid="add-cutting"]').trigger('blur');
     await w.find('[data-testid="all-fire"]').trigger('click');
     expect(input('fire').value).toBe('3');
     expect(w.find('[data-testid="allocate"]').text()).toBe('加点 (10)');
@@ -291,5 +296,53 @@ describe('EquipView', () => {
     const eq = await mountView('/rest/equip');
     expect(eq.find('[data-testid="slot-1"]').exists()).toBe(true);
     expect(eq.find('a[href="/rest/gem"]').exists()).toBe(false);
+  });
+
+  it('部位格子配图（铲、刀、锅、瓶、帽）；加点是步进器（界面改版 P3）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      attrLeft: 3,
+      attrs: { cook: 0, cutting: 0, fire: 0, season: 0, creatives: 0 },
+    } as never);
+    const w = await mountView();
+    const art = (p: number) => w.get(`[data-testid="slot-${p}"] use`).attributes('href')?.split('#')[1];
+    expect([1, 2, 3, 4, 5].map(art)).toEqual([
+      'slot-spatula',
+      'slot-knife',
+      'slot-pot',
+      'slot-bottle',
+      'slot-hat',
+    ]);
+    expect(w.get('[data-testid="add-cook"]').element.closest('.dt-stepper')).not.toBeNull();
+  });
+
+  it('预设、一键处理放进底部面板；一键处理走确认面板，标成危险操作（界面改版 P3）', async () => {
+    vi.mocked(endpoints.equipList).mockResolvedValue([piece({ id: 4, salvage: 2 })]);
+    const spy = vi.spyOn(window, 'confirm');
+    const store = useConfirmStore();
+    store.hosts = 1;
+    const w = await mountView();
+    expect(w.find('[data-testid="sheet-presets"]').exists()).toBe(false);
+    await w.get('[data-testid="open-presets"]').trigger('click');
+    expect(w.get('[data-testid="sheet-presets"]').element.closest('[role="dialog"]')).not.toBeNull();
+    await w.get('[data-testid="open-batch"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="sheet-presets"]').exists()).toBe(false);
+    expect(w.get('[data-testid="sheet-batch"]').element.closest('[role="dialog"]')).not.toBeNull();
+    await w.get('[data-testid="batch-go"]').trigger('click');
+    await flushPromises();
+    expect(spy).not.toHaveBeenCalled();
+    expect(store.current?.danger).toBe(true);
+    store.answer(true);
+    await flushPromises();
+    expect(endpoints.equipBatch).toHaveBeenCalledWith([4], 'salvage');
+    spy.mockRestore();
+  });
+
+  it('一件厨具都没有时，部位下面是空状态，写去哪里获得（界面改版 P3）', async () => {
+    vi.mocked(endpoints.equipOverview).mockResolvedValue(overview({ count: 0 }));
+    const w = await mountView();
+    const empty = w.get('[data-testid="equip-empty"]');
+    expect(empty.get('use').attributes('href')).toContain('#empty-equip');
+    expect(empty.get('a').attributes('href')).toBe('/temple');
   });
 });

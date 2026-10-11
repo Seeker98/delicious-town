@@ -56,7 +56,7 @@ onMounted(load);
 <template>
   <div v-if="error" class="alert alert-danger">{{ error }}</div>
   <TableGrid :tables="tables" :selected="picked?.no ?? null" @pick="(x) => (picked = x)" />
-  <div v-if="picked" class="border rounded p-2 mt-2 small">
+  <div v-if="picked" class="dt-card mt-2 small" data-testid="table-detail">
     <div class="mb-1">{{ t.rest.floor.tableNo(picked.no) }}</div>
     <div v-if="picked.last && picked.last.type !== 0" class="text-muted mb-1">
       {{ t.rest.floor.last(formatNum(Math.floor(picked.last.coin)), formatNum(Math.floor(picked.last.exp))) }}

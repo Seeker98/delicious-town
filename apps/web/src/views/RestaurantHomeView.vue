@@ -15,13 +15,18 @@ import type {
 import { endpoints } from '../api/endpoints';
 import ActivityBanner from '../components/ActivityBanner.vue';
 import AnnounceBanner from '../components/AnnounceBanner.vue';
+import DtArt from '../components/DtArt.vue';
+import DtSkeleton from '../components/DtSkeleton.vue';
+import RestaurantHero from '../components/RestaurantHero.vue';
 import GameImg from '../components/GameImg.vue';
 import HomeFeed from '../components/town/HomeFeed.vue';
 import HomeNews from '../components/town/HomeNews.vue';
 import { useT } from '../composables/useT';
 import type { Messages } from '../i18n';
 import { errorMessage } from '../i18n/zh-CN';
+import type { UiArtName } from '../art/generated/names';
 import { useCatalogStore } from '../stores/catalog';
+import { useConfirmStore } from '../stores/confirm';
 import { usePageTitle } from '../stores/pageTitle';
 import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
@@ -191,21 +196,32 @@ const choices = computed(() => {
   if (!slot || !options.value) return [];
   return options.value.store.filter((x) => x.deviceType === slot.deviceType);
 });
-function place(goodsId: number) {
+async function place(goodsId: number) {
   const slot = pickingSlot.value!;
   pickingSlot.value = null;
-  // 替换还没到期的设施：旧设施直接作废、不退还，先让玩家确认
+  // 替换还没到期的设施：旧设施直接作废、不退还，先让玩家确认（界面改版 P3：底部确认面板）
   const current = rest.value?.devices.find((d) => d.slot === slot);
   if (
     current?.goodsId &&
     (current.expiresAt === null || new Date(current.expiresAt).getTime() > serverNowMs()) &&
-    !window.confirm(
-      t.value.home.replaceConfirm(catalog.goodsName(current.goodsId), expiresText(current.expiresAt)),
-    )
+    !(await confirm.ask({
+      title: t.value.home.replaceConfirm(catalog.goodsName(current.goodsId), expiresText(current.expiresAt)),
+    }))
   )
     return;
   return act(() => endpoints.placeDevice(slot, goodsId), t.value.home.placeFailed);
 }
+
+const confirm = useConfirmStore();
+/** 设施格子的图标：按设施类型（1 宣传海报、2 奖杯、3 节油器、4 捕鼠夹、5 蟑螂药、6 牌匾），界面改版 P3 */
+const DEVICE_ART: Record<number, UiArtName> = {
+  1: 'fac-poster',
+  2: 'fac-trophy',
+  3: 'fac-oilsaver',
+  4: 'fac-mousetrap',
+  5: 'fac-roach',
+  6: 'fac-plaque',
+};
 
 /** 第二块牌匾位（设施位 7）：满星级后还要花银币和钻石开通 */
 const PLAQUE2_SLOT = 7;
@@ -222,10 +238,14 @@ const plaque2Block = computed(() => {
 /** 锁定文字的星级：第二块牌匾位按区服的开通星级 */
 const needStarOf = (d: { slot: number; needStar: number }) =>
   d.slot === PLAQUE2_SLOT && rest.value ? Math.max(d.needStar, rest.value.plaque2Cost.star) : d.needStar;
-function openPlaque2() {
+async function openPlaque2() {
   const c = rest.value!.plaque2Cost;
   if (plaque2Block.value) return;
-  if (!window.confirm(t.value.home.plaque2.confirm(formatNum(c.coin), c.diamond))) return;
+  const yes = await confirm.ask({
+    title: t.value.home.plaque2.confirm(formatNum(c.coin), c.diamond),
+    ok: t.value.home.plaque2.open,
+  });
+  if (!yes) return;
   // 花费由全局的得失提示显示
   return act(() => endpoints.openPlaque2(), t.value.home.plaque2.failed);
 }
@@ -304,7 +324,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div v-if="error" class="alert alert-danger">{{ error }}</div>
-  <div v-else-if="!rest" class="text-muted">{{ t.common.loading }}</div>
+  <DtSkeleton v-else-if="!rest" :rows="6" data-testid="home-skeleton" />
   <div v-else>
     <div class="dt-page-meta">
       <span>
@@ -350,21 +370,23 @@ onBeforeUnmount(() => {
 
     <!-- 首页第一屏三张卡（问题记录 280）：餐厅、今日待办、小镇动态 -->
     <div class="dt-card my-2 small" data-testid="home-status">
-      <div class="d-flex flex-wrap align-items-center gap-1">
-        <span class="text-muted"
-          >{{ catalog.streetName(rest.streetId, rest.streetName) }} · {{ t.home.stars(rest.starLevel) }} ·
-          {{ t.home.level }} <b data-testid="rest-level">{{ rest.level }}</b></span
-        >
-        <span v-if="rest.state === 2" class="badge bg-danger">{{ t.home.closed }}</span>
-        <!-- 弹性盒按行高居中：按文字基线对齐时底色框比文字低约 1 像素（问题记录 563） -->
-        <span
-          v-if="rest.icons.length > 0"
-          class="d-inline-flex align-items-center flex-wrap"
-          data-testid="my-icons"
-        >
-          <IconTag v-for="i in rest.icons" :key="i.key" :title="catalog.icon(i.key)?.title ?? i.title" />
-        </span>
-      </div>
+      <!-- 餐厅头图取代原来的第一行（界面改版 P3）：街道、星级、等级、停业和称号叠在店面左边，门跟装扮里选的一样 -->
+      <RestaurantHero :door="rest.door" data-testid="home-hero">
+        <div class="dt-hero-sub">
+          {{ catalog.streetName(rest.streetId, rest.streetName) }} · {{ t.home.stars(rest.starLevel) }}
+        </div>
+        <div class="dt-hero-main">
+          {{ t.home.level }} <b data-testid="rest-level">{{ rest.level }}</b>
+        </div>
+        <!-- 停业、称号一行放不下就藏起来，不换行（终审 I4：换成几行会把头图上的字顶出去） -->
+        <div v-if="rest.state === 2 || rest.icons.length > 0" class="dt-hero-tags">
+          <span v-if="rest.state === 2" class="badge bg-danger">{{ t.home.closed }}</span>
+          <!-- 弹性盒按行高居中：按文字基线对齐时底色框比文字低约 1 像素（问题记录 563） -->
+          <span v-if="rest.icons.length > 0" class="d-inline-flex align-items-center" data-testid="my-icons">
+            <IconTag v-for="i in rest.icons" :key="i.key" :title="catalog.icon(i.key)?.title ?? i.title" />
+          </span>
+        </div>
+      </RestaurantHero>
       <!-- 经验条紧跟等级那一行（问题记录 172：原来卡在资源数字和油量中间） -->
       <div
         class="progress my-2 position-relative"
@@ -378,27 +400,55 @@ onBeforeUnmount(() => {
         <span
           data-testid="exp-text"
           class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center small text-dark"
-          ><i class="bi bi-mortarboard me-1" aria-hidden="true"></i>{{ formatNum(rest.exp) }}/{{
+          ><DtArt name="res-exp" :size="14" class="me-1" />{{ formatNum(rest.exp) }}/{{
             formatNum(rest.expToNext)
           }}</span
         >
       </div>
-      <div class="row g-1">
+      <!-- 资源用彩色扁平图（界面改版 P3），名字给读屏 -->
+      <div class="row g-1 dt-res-grid" data-testid="home-resources">
         <div class="col-6">
-          <i class="bi bi-coin"></i> <b data-testid="rest-coin">{{ formatNum(rest.coin) }}</b>
+          <span class="dt-res-ico"
+            ><DtArt name="res-coin-silver" :size="16" /><span class="visually-hidden">{{
+              t.events.kind.coin
+            }}</span></span
+          >
+          <b data-testid="rest-coin">{{ formatNum(rest.coin) }}</b>
         </div>
-        <div class="col-6"><i class="bi bi-gem"></i> {{ formatNum(rest.diamond) }}</div>
+        <div class="col-6">
+          <span class="dt-res-ico"
+            ><DtArt name="res-diamond" :size="16" /><span class="visually-hidden">{{
+              t.events.kind.diamond
+            }}</span></span
+          >
+          <span>{{ formatNum(rest.diamond) }}</span>
+        </div>
         <!-- 体力、声望也按千分位（问题记录 296：体力很多时只有它没分隔） -->
         <!-- 图标和数字之间留一个空格，和银币、油一致（问题记录 298：这行太长被格式化折成两行时，空格被模板吞掉） -->
         <div class="col-6">
-          <i class="bi bi-lightning"></i> <span data-testid="rest-strength">{{ strengthText }}</span>
+          <span class="dt-res-ico"
+            ><DtArt name="res-strength" :size="16" /><span class="visually-hidden">{{
+              t.events.kind.strength
+            }}</span></span
+          >
+          <span data-testid="rest-strength">{{ strengthText }}</span>
         </div>
         <div class="col-6" :title="t.home.renown">
-          <i class="bi bi-award"></i> <span data-testid="rest-renown">{{ formatNum(rest.renown) }}</span>
+          <span class="dt-res-ico"
+            ><DtArt name="res-prestige" :size="16" /><span class="visually-hidden">{{
+              t.events.kind.renown
+            }}</span></span
+          >
+          <span data-testid="rest-renown">{{ formatNum(rest.renown) }}</span>
         </div>
         <!-- 油和加满在同一个网格里，按钮紧凑，行高和上面一致（280 反馈） -->
         <div class="col-6">
-          <i class="bi bi-droplet"></i> {{ formatNum(rest.oil) }}/{{ formatNum(rest.oilMax) }}
+          <span class="dt-res-ico"
+            ><DtArt name="res-oil" :size="16" /><span class="visually-hidden">{{
+              t.events.kind.oil
+            }}</span></span
+          >
+          <span>{{ formatNum(rest.oil) }}/{{ formatNum(rest.oilMax) }}</span>
           <!-- 油壶升级的入口（问题记录 435） -->
           <RouterLink
             to="/society/oil"
@@ -421,10 +471,11 @@ onBeforeUnmount(() => {
             :disabled="busy || refuelCost <= 0"
             @click="act(() => endpoints.refuel(), t.home.refuelFailed)"
           >
-            <i class="bi bi-droplet-fill" aria-hidden="true"></i
-            ><span class="text-truncate">{{ t.home.refuelShort(refuelCost >= refuelNeed) }}</span
+            <DtArt name="res-oil" :size="14" /><span class="text-truncate">{{
+              t.home.refuelShort(refuelCost >= refuelNeed)
+            }}</span
             ><span class="flex-shrink-0"
-              ><i class="bi bi-coin me-1" aria-hidden="true"></i>{{ formatNum(refuelCost) }}</span
+              ><DtArt name="res-coin-silver" :size="14" class="me-1" />{{ formatNum(refuelCost) }}</span
             >
           </button>
         </div>
@@ -447,18 +498,27 @@ onBeforeUnmount(() => {
           <span class="dt-shrink" data-testid="last-round-line"
             >{{ t.home.lastRound }}
             <span class="text-nowrap"
-              ><i class="bi bi-coin" :title="t.home.roundCoin" aria-hidden="true"></i
-              ><span class="visually-hidden">{{ t.home.roundCoin }}</span>
+              ><span :title="t.home.roundCoin"
+                ><DtArt name="res-coin-silver" :size="14" /><span class="visually-hidden">{{
+                  t.home.roundCoin
+                }}</span></span
+              >
               {{ formatNum(rest.lastRound.coin) }}</span
             >
             <span class="text-nowrap ms-1"
-              ><i class="bi bi-mortarboard" :title="t.home.roundExp" aria-hidden="true"></i
-              ><span class="visually-hidden">{{ t.home.roundExp }}</span>
+              ><span :title="t.home.roundExp"
+                ><DtArt name="res-exp" :size="14" /><span class="visually-hidden">{{
+                  t.home.roundExp
+                }}</span></span
+              >
               {{ formatNum(rest.lastRound.exp) }}</span
             >
             <span class="text-nowrap ms-1"
-              ><i class="bi bi-droplet" :title="t.home.roundOil" aria-hidden="true"></i
-              ><span class="visually-hidden">{{ t.home.roundOil }}</span>
+              ><span :title="t.home.roundOil"
+                ><DtArt name="res-oil" :size="14" /><span class="visually-hidden">{{
+                  t.home.roundOil
+                }}</span></span
+              >
               {{ formatNum(rest.lastRound.oil) }}</span
             ></span
           >
@@ -514,7 +574,9 @@ onBeforeUnmount(() => {
     </div>
 
     <div class="dt-card my-2 small dt-todo" data-testid="home-todo">
-      <div class="dt-card-title mb-1">{{ t.home.todo }}</div>
+      <div class="dt-card-title mb-1">
+        <DtArt name="sec-tasks" :size="18" class="me-1" />{{ t.home.todo }}
+      </div>
       <!-- 签到和今日活跃一行（问题记录 437）：签到在左，签完字样右边一个对勾；领到什么写在下面；右边是今日活跃 -->
       <div v-if="signedIn !== null" class="dt-todo-row flex-wrap" data-testid="home-signin-row">
         <span class="flex-fill text-nowrap">
@@ -638,7 +700,9 @@ onBeforeUnmount(() => {
     <HomeNews :headlines="rest.headlines" />
 
     <div class="dt-card my-2 small" data-testid="home-devices">
-      <div class="dt-card-title mb-1">{{ t.home.devices }}</div>
+      <div class="dt-card-title mb-1">
+        <DtArt name="sec-star" :size="18" class="me-1" />{{ t.home.devices }}
+      </div>
       <div class="row g-1">
         <div v-for="d in rest.devices" :key="d.slot" class="col-4">
           <button
@@ -647,6 +711,7 @@ onBeforeUnmount(() => {
             :disabled="!d.unlocked || busy"
             @click="openSlot(d.slot)"
           >
+            <DtArt v-if="DEVICE_ART[d.deviceType]" :name="DEVICE_ART[d.deviceType]!" :size="22" />
             <div class="text-muted dt-clamp2">{{ catalog.deviceName(d.slot) ?? d.name }}</div>
             <div v-if="!d.unlocked && d.slot === PLAQUE2_SLOT && plaque2Offer">
               <i class="bi bi-lock"></i> {{ t.home.notOpened }}
@@ -772,7 +837,9 @@ onBeforeUnmount(() => {
     <!-- 生效的加成默认折叠成一行摘要（问题记录 280） -->
     <details class="dt-card my-2 small" data-testid="effects">
       <summary>
-        <span class="dt-card-title">{{ t.home.effects }}</span>
+        <span class="dt-card-title"
+          ><DtArt name="sec-bonus" :size="18" class="me-1" />{{ t.home.effects }}</span
+        >
         <span class="text-muted ms-1">{{
           t.home.effectsCount(rest.effects.length + rest.boosts.length, effectsSummary)
         }}</span>

@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { HeadlinesDto } from '@dt/shared';
+import DtArt from '../DtArt.vue';
 import { useT } from '../../composables/useT';
 import { useCatalogStore } from '../../stores/catalog';
 import { useLocaleStore } from '../../stores/locale';
@@ -24,7 +25,7 @@ const daily = computed(() => {
 <template>
   <div class="dt-card my-2 small">
     <div class="d-flex justify-content-between">
-      <b>{{ t.nav.news.title }}</b>
+      <b><DtArt name="sec-news" :size="18" class="me-1 dt-sec-art" />{{ t.nav.news.title }}</b>
       <RouterLink to="/town?tab=news" class="dt-go" data-testid="home-news-more">{{
         t.nav.news.more
       }}</RouterLink>

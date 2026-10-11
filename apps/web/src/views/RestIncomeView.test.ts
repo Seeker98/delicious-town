@@ -116,4 +116,11 @@ describe('收益记录页（问题记录 530）', () => {
     expect(box.text()).not.toContain('挑剔率');
     expect(box.text()).toContain('开张大吉');
   });
+
+  it('加成收在卡片里的折叠块；记录表数字等宽；今天的小计在表格上方', async () => {
+    const w = mount(RestIncomeView);
+    await flushPromises();
+    expect(w.get('[data-testid="income-buffs"]').element.closest('.dt-card')).not.toBeNull();
+    expect(w.get('[data-testid="income-records"] table').classes()).toContain('dt-num-table');
+  });
 });

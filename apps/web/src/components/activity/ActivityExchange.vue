@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive } from 'vue';
 import type { ActivityDto, ExchangeDef } from '@dt/shared';
+import DtStepper from '../DtStepper.vue';
 import { useT } from '../../composables/useT';
 import { useCatalogStore } from '../../stores/catalog';
 import { actionName } from '../../utils/activity';
@@ -71,15 +72,14 @@ const maxOf = (i: number) => Math.max(1, Math.min(MAX_TIMES, props.a.def.shop[i]
       → {{ rewardSummary(s.award, catalog) }}
     </span>
     <span class="small text-muted">{{ done(i) }}/{{ s.limit }}</span>
-    <input
-      v-model.number="times[i]"
-      :data-testid="`times-${a.id}-${i}`"
-      type="number"
-      min="1"
+    <!-- 次数用步进器（界面改版 P3）：0、小数、超过剩余次数都夹回能兑的范围 -->
+    <DtStepper
+      :model-value="timesOf(i) ?? 1"
+      :min="1"
       :max="maxOf(i)"
-      class="form-control form-control-sm"
-      style="width: 4rem"
-      placeholder="1"
+      :testid="`times-${a.id}-${i}`"
+      :disabled="busy || !open"
+      @update:model-value="times[i] = $event"
     />
     <button
       type="button"

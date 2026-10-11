@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    rest1011:
+      'Your home page now shows your shop front, with the door you picked in Look; coins, diamonds, energy and the rest use colorful icons, and facilities and cookware slots have icons too. Confirmations now slide up from the bottom, with red buttons for salvaging and selling; quantities use − and + buttons; the quest list is more compact, with a purple bar beside quests you can claim; cookware presets and bulk processing open in a bottom panel; pages show gray placeholders while loading',
     ia1011:
       "Check-in and daily activity are now the Today tab of Quests; signature dishes and recipe progress are tabs on Recipes; gems are a tab on Cookware; Gary's fund and savings moved to the new Bank in Town; newbie codes and invites are on the Codes page. Tabs are kept in the address, so you can share them and Back keeps your place; leaderboard sub-boards are a dropdown; Today's deal is now called Limited-time deals",
     shell1011:
