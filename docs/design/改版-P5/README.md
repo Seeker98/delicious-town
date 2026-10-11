@@ -22,3 +22,18 @@
 | 法文 | ![](./home-closed-fr-360-light-before.jpg) | ![](./home-closed-fr-360-light-after.jpg) |
 | 英文 | ![](./home-closed-en-360-light-before.jpg) | ![](./home-closed-en-360-light-after.jpg) |
 | 西文 | ![](./home-closed-es-360-light-before.jpg) | ![](./home-closed-es-360-light-after.jpg) |
+
+## 返工后整页（简中 390px，停业；截图时拦截概况接口，补上交易所大宗认购、理财到期、资产，好看提醒行的排版）
+
+用户看过第一版指出：今日块整句加粗、交易所那几行图标文字链接混在一起、“我的店”的“收购”还是右侧文字链接、下面几块完全没改。返工后：
+
+- 今日 2×2 每块一个短标题（签到、主线 / 领主线奖励、今日活跃、新手兑换码），细节写在灰色副行。
+- 活动、交易所（大宗认购）、白食、理财到期、我的店、经营开关都用同一种行：左边图标托盘，标题和灰色副行，右边值或开关，整行可点时右边一个 ›。资产整行去收购，右边写资产数。
+- 餐厅动态、小镇新闻、设施、经营开关、生效的加成都改成卡片外的区块标题。
+- 设施：开了的位置一格一个；没开的收成一排小格子（图形 + “12★”），整页从 1869px 缩到 1718px。
+
+| 浅色 | 深色 |
+|---|---|
+| ![](./home-full-light-0-after.jpg) | ![](./home-full-dark-0-after.jpg) |
+| ![](./home-full-light-1-after.jpg) | ![](./home-full-dark-1-after.jpg) |
+| ![](./home-full-light-2-after.jpg) | ![](./home-full-dark-2-after.jpg) |
