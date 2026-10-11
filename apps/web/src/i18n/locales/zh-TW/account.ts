@@ -32,7 +32,7 @@ export default {
   enterFailed: '進入區服失敗',
   shards: {
     unverified: '郵箱還沒有驗證, 驗證後才能和好友互動。',
-    title: '選擇區服',
+    title: '切換區服',
     closed: '已關閉',
     hasRest: '已開店',
     fresh: '新開',

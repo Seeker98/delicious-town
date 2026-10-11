@@ -2,7 +2,7 @@ import type { Messages } from '../..';
 import { plEn } from '../../helpers';
 
 const friends: Messages['friends'] = {
-  tabs: { friends: 'Friends', requests: 'Requests', find: 'Find', feed: 'Feed' },
+  tabs: { friends: 'My friends', requests: 'Requests', find: 'Find', feed: 'Feed' },
   /** 蟹老板（NPC）的店名、公告：服务器存的是中文，网页按语言换 */
   npcName: 'Mr. Krab',
   npcNotice: 'Welcome to the Krusty Krab!',

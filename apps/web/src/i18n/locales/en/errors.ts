@@ -258,7 +258,7 @@ const errors: Messages['errors'] = {
     no_batch: "This item can't be used in bulk",
     no_points_to_reset: "You haven't spent any attribute points yet",
     not_on_sale: 'Not on sale',
-    no_special: 'No specials today yet',
+    no_special: 'No limited-time deals today yet',
     single: 'You can only buy 1 at a time',
     not_sellable: "This item can't be sold",
     keep_one_plaque: 'You must keep at least 1 plaque',

@@ -121,7 +121,7 @@ const nav: Messages['nav'] = {
   news: {
     daily: 'Diario del pueblo: ',
     title: 'Noticias del pueblo',
-    more: 'Más',
+    more: 'Todo',
     broadcast: '[Anuncio] ',
     empty: 'Aún no hay noticias',
   },

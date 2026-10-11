@@ -3,7 +3,7 @@ import { plFr } from '../../helpers';
 
 const tower: Messages['tower'] = {
   title: 'Tour des chefs',
-  tabs: { tower: 'Tour des chefs', rank: 'Classement des chefs', shop: 'Boutique de renommée' },
+  tabs: { tower: 'Ascension', rank: 'Classement des chefs', shop: 'Boutique de renommée' },
   loadFailed: 'Impossible de charger la Tour des chefs',
   noStrength: (n) => `Pas assez d'énergie (il en faut ${n})`,
   noMoreToday: "Plus de défis aujourd'hui",

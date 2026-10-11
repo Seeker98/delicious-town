@@ -49,7 +49,7 @@ export default {
       society: { name: '协会', sub: '升星 · 兑换' },
       town: { name: '广场', sub: '新闻 · 排行' },
       forum: { name: '论坛', sub: '闲聊 · 攻略' },
-      activities: { name: '限时活动', sub: '限时开放' },
+      activities: { name: '活动', sub: '限时开放' },
     },
   },
   me: {
@@ -74,7 +74,7 @@ export default {
     links: '友情链接',
   },
   links: {
-    activities: '限时活动',
+    activities: '活动',
     exchange: '交易所',
     predict: '事件预测',
     store: '仓库',
@@ -115,9 +115,9 @@ export default {
   announceClose: '知道了',
   announceMore: (n: number) => `等 ${n} 条`,
   activity: {
-    running: (n: number) => `限时活动 ${n} 个进行中`,
+    running: (n: number) => `活动 ${n} 个进行中`,
     claimable: (n: number) => `可领 ${n} 份`,
     view: '查看',
   },
-  news: { daily: '小镇日报: ', title: '小镇新闻', more: '更多', broadcast: '【广播】', empty: '还没有新闻' },
+  news: { daily: '小镇日报: ', title: '小镇新闻', more: '全部', broadcast: '【广播】', empty: '还没有新闻' },
 };

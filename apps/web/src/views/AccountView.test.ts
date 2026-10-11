@@ -7,8 +7,6 @@ import { endpoints } from '../api/endpoints';
 import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
 import AccountView from './AccountView.vue';
-import { useRestaurantStore } from '../stores/restaurant';
-import type { RestaurantDto } from '@dt/shared';
 
 vi.mock('../api/endpoints', () => ({
   endpoints: {

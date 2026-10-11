@@ -64,7 +64,6 @@ const npc: Messages['npc'] = {
     },
     bro13: { label: 'Brother 13', desc: 'Daily chat for horns; trade ingredient vouchers' },
     carmen: { label: 'Carmen', desc: 'Trade mystery ingredient vouchers; a free one on your first visit' },
-    fund: { label: 'Gary', desc: 'Town Development Fund' },
     wealth: {
       label: 'Deposits',
       desc: 'Lock coins for a few days: principal back plus ingredients your street needs',
@@ -75,8 +74,6 @@ const npc: Messages['npc'] = {
     mayor: 'Rare item exchange',
     bro13: 'Ingredient exchange',
     carmen: 'Mystery ingredient exchange',
-    fund: 'Town Development Fund',
-    wealth: 'Deposits',
   },
   /** 镇长页底部：兑换券分给了 13 哥和卡门 */
   ticketsHint: 'Ingredient vouchers: see Brother 13; mystery ingredient vouchers: see Carmen —',

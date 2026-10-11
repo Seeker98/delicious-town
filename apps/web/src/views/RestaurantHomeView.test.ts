@@ -293,7 +293,7 @@ describe('RestaurantHomeView', () => {
     // 问题记录 435：油量右边一个小升级图标，链到油壶升级
     const up = w.get('[data-testid="oil-upgrade"]');
     expect(up.attributes('href')).toBe('/society/oil');
-    expect(up.attributes('aria-label')).toBe('升级油壶');
+    expect(up.attributes('aria-label')).toBe('油壶扩容');
     expect(up.find('i.bi-arrow-up-circle').exists()).toBe(true);
     expect(w.text()).toContain('填一次油');
     expect(w.findAll('[data-testid^="slot-"]')).toHaveLength(2);

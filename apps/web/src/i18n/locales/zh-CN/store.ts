@@ -1,6 +1,6 @@
 /** 仓库和商店（问题记录 272） */
 export default {
-  tabs: { items: '仓库', souvenirs: '纪念品', records: '道具流水' },
+  tabs: { items: '道具', souvenirs: '纪念品', records: '道具流水' },
   /** 仓库分组（道具类型） */
   types: { '0': '消耗品', '1': '道具', '2': '礼包', '3': '设施', '9': '勋章' } as Record<string, string>,
   ranges: {
@@ -31,7 +31,7 @@ export default {
   noRecords: '这段时间没有变动',
   noSouvenirs: '还没有纪念品。参加节日限时活动可以兑换。',
   shop: {
-    tabs: { coin: '银币商店', black: '黑市', special: '今日特价' },
+    tabs: { coin: '银币商店', black: '黑市', special: '限时折扣' },
     buyFailed: '购买失败',
     loadFailed: '读取商店失败',
     max: (n: string) => `最多 ${n}`,

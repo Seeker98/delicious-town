@@ -1,6 +1,6 @@
 /** 橱柜和冰箱（问题记录 272） */
 export default {
-  tabs: { cupboard: '橱柜', fridge: '冰箱' },
+  tabs: { cupboard: '常温', fridge: '冰箱' },
   newBadge: '新',
   summary: (p: {
     used: number;

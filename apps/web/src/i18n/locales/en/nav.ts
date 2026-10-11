@@ -121,7 +121,7 @@ const nav: Messages['nav'] = {
   news: {
     daily: 'Town Daily: ',
     title: 'Town news',
-    more: 'More',
+    more: 'All',
     broadcast: '[Broadcast] ',
     empty: 'No news yet',
   },

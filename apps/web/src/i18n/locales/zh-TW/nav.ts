@@ -50,7 +50,7 @@ export default {
       society: { name: '協會', sub: '升星 · 兌換' },
       town: { name: '廣場', sub: '新聞 · 排行' },
       forum: { name: '論壇', sub: '閒聊 · 攻略' },
-      activities: { name: '限時活動', sub: '限時開放' },
+      activities: { name: '活動', sub: '限時開放' },
     },
   },
   me: {
@@ -75,7 +75,7 @@ export default {
     links: '友情連結',
   },
   links: {
-    activities: '限時活動',
+    activities: '活動',
     exchange: '交易所',
     predict: '事件預測',
     store: '倉庫',
@@ -116,9 +116,9 @@ export default {
   announceClose: '知道了',
   announceMore: (n: number) => `等 ${n} 條`,
   activity: {
-    running: (n: number) => `限時活動 ${n} 個進行中`,
+    running: (n: number) => `活動 ${n} 個進行中`,
     claimable: (n: number) => `可領 ${n} 份`,
     view: '檢視',
   },
-  news: { daily: '小鎮日報: ', title: '小鎮新聞', more: '更多', broadcast: '【廣播】', empty: '還沒有新聞' },
+  news: { daily: '小鎮日報: ', title: '小鎮新聞', more: '全部', broadcast: '【廣播】', empty: '還沒有新聞' },
 };

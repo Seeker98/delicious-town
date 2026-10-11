@@ -1,6 +1,6 @@
-/** 限时活动（问题记录 272） */
+/** 活动（问题记录 272；界面改版 P2b 起叫“活动”） */
 export default {
-  title: '限时活动',
+  title: '活动',
   loadFailed: '读取活动失败',
   opFailed: '操作失败',
   claimed: '已领取',

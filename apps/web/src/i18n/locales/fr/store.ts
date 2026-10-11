@@ -2,7 +2,7 @@ import type { Messages } from '../..';
 import { plFr } from '../../helpers';
 
 const store: Messages['store'] = {
-  tabs: { items: 'Entrepôt', souvenirs: 'Souvenirs', records: 'Historique des objets' },
+  tabs: { items: 'Objets', souvenirs: 'Souvenirs', records: 'Historique des objets' },
   types: { '0': 'Consommables', '1': 'Objets', '2': 'Coffrets', '3': 'Équipements', '9': 'Badges' },
   ranges: {
     '1h': '1 heure',
@@ -32,7 +32,7 @@ const store: Messages['store'] = {
   noRecords: 'Aucun changement sur cette période',
   noSouvenirs: 'Pas encore de souvenirs. On en obtient lors des événements de fête.',
   shop: {
-    tabs: { coin: 'Boutique (pièces)', black: 'Marché noir', special: 'Promo du jour' },
+    tabs: { coin: 'Boutique (pièces)', black: 'Marché noir', special: 'Promos limitées' },
     buyFailed: "Échec de l'achat",
     loadFailed: 'Impossible de charger la boutique',
     max: (n) => `Jusqu'à ${n}`,

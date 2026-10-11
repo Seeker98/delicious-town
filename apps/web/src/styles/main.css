@@ -599,6 +599,15 @@ details.dt-card > summary {
   white-space: nowrap;
   flex-shrink: 0;
 }
+.dt-feed-text {
+  min-width: 0;
+}
+/* 首页动态只占一行（界面改版 P2b） */
+.dt-feed-1line .dt-feed-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 /* 卡片 */
 /* 内边距 8/12 → 6/10、卡片间距 8 → 6（问题记录 439） */
 .dt-card {

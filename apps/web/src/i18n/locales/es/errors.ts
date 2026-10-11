@@ -259,7 +259,7 @@ const errors: Messages['errors'] = {
     no_batch: 'Este objeto no se puede usar en lote',
     no_points_to_reset: 'Todavía no has gastado puntos de atributo',
     not_on_sale: 'No está a la venta',
-    no_special: 'Todavía no hay ofertas hoy',
+    no_special: 'Todavía no hay ofertas limitadas hoy',
     single: 'Solo puedes comprar 1 a la vez',
     not_sellable: 'Este objeto no se puede vender',
     keep_one_plaque: 'Debes conservar al menos 1 placa',

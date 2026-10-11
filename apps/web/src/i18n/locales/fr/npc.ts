@@ -73,7 +73,6 @@ const npc: Messages['npc'] = {
       label: 'Carmen',
       desc: 'Échanger les bons d’ingrédients mystères\u202f; un offert à la première visite',
     },
-    fund: { label: 'Gary', desc: 'Fonds de développement de la ville' },
     wealth: {
       label: 'Placements',
       desc: 'Placez des pièces quelques jours\u202f: capital rendu et ingrédients qui manquent à votre rue',
@@ -84,8 +83,6 @@ const npc: Messages['npc'] = {
     mayor: 'Échange d’objets rares',
     bro13: 'Échange d’ingrédients',
     carmen: 'Échange d’ingrédients mystères',
-    fund: 'Fonds de développement de la ville',
-    wealth: 'Placements',
   },
   /** 镇长页底部：兑换券分给了 13 哥和卡门 */
   ticketsHint:

@@ -1,7 +1,7 @@
 // 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
 /** 倉庫和商店（問題記錄 272） */
 export default {
-  tabs: { items: '倉庫', souvenirs: '紀念品', records: '道具流水' },
+  tabs: { items: '道具', souvenirs: '紀念品', records: '道具流水' },
   /** 倉庫分組（道具類型） */
   types: { '0': '消耗品', '1': '道具', '2': '禮包', '3': '設施', '9': '勳章' } as Record<string, string>,
   ranges: {
@@ -32,7 +32,7 @@ export default {
   noRecords: '這段時間沒有變動',
   noSouvenirs: '還沒有紀念品。參加節日限時活動可以兌換。',
   shop: {
-    tabs: { coin: '銀幣商店', black: '黑市', special: '今日特價' },
+    tabs: { coin: '銀幣商店', black: '黑市', special: '限時折扣' },
     buyFailed: '購買失敗',
     loadFailed: '讀取商店失敗',
     max: (n: string) => `最多 ${n}`,

@@ -2,7 +2,7 @@
 /** 廚塔：挑戰、賽廚榜、聲望商店、好友切磋（問題記錄 272） */
 export default {
   title: '廚塔',
-  tabs: { tower: '廚塔', rank: '賽廚榜', shop: '聲望商店' },
+  tabs: { tower: '挑戰', rank: '賽廚榜', shop: '聲望商店' },
   loadFailed: '讀取廚塔失敗',
   noStrength: (n: number) => `體力不夠 (要 ${n})`,
   noMoreToday: '今天的挑戰次數用完了',

@@ -31,7 +31,7 @@ const account: Messages['account'] = {
   enterFailed: "Impossible d'entrer sur le serveur",
   shards: {
     unverified: "Votre e-mail n'est pas encore vérifié. Vérifiez-le pour interagir avec vos amis.",
-    title: 'Choisir un serveur',
+    title: 'Changer de serveur',
     closed: 'Fermé',
     hasRest: 'Restaurant ouvert',
     fresh: 'Nouveau',

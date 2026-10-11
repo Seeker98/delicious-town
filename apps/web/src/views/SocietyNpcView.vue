@@ -21,8 +21,12 @@ import { useToastStore } from '../stores/toast';
 export type SocietyNpc = 'classroom' | 'mayor' | 'bro13' | 'carmen';
 const props = defineProps<{ npc: SocietyNpc }>();
 const t = useT();
-/** 顶栏标题是 NPC 的页名；返回在顶栏（界面改版 P2a） */
-usePageTitle(() => t.value.npc.titles[props.npc]);
+/** 顶栏标题写“NPC 名 · 功能”，教室只写教室（界面改版 P2b）；返回在顶栏（界面改版 P2a） */
+usePageTitle(() =>
+  props.npc === 'classroom'
+    ? t.value.npc.titles.classroom
+    : `${t.value.npc.links[props.npc].label} · ${t.value.npc.titles[props.npc]}`,
+);
 const toast = useToastStore();
 const restaurant = useRestaurantStore();
 

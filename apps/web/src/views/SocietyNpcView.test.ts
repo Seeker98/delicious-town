@@ -44,6 +44,8 @@ describe('协会里的 NPC 页（问题记录 441、443）', () => {
   it('镇长大胃锅：每天聊天送食材种子（原来的大胃哥）、“告诉镇长嘻哈男孩在哪”、兑换稀有道具；不显示食材券，底下指到 13 哥和卡门', async () => {
     const w = await mountAt('mayor');
     expect(w.get('[data-testid="npc-mayor"]').text()).toContain('镇长大胃锅');
+    // 顶栏标题写“NPC 名 · 功能”（界面改版 P2b）
+    expect(usePageTitleStore().title).toBe('镇长大胃锅 · 稀有道具兑换');
     expect(w.find('[data-testid="talk-bigEater"]').exists()).toBe(true);
     expect(w.text()).toContain('每天聊天送 1~5 级食材和一颗种子');
     expect(w.find('[data-testid="mayor-row"]').exists()).toBe(true);

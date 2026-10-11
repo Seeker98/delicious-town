@@ -22,7 +22,7 @@ export default {
   roundCoin: '银币',
   roundExp: '经验',
   roundOil: '耗油',
-  oilUpgrade: '升级油壶',
+  oilUpgrade: '油壶扩容',
   noGuests: '没有客人',
   income: '收益记录',
   floor: '楼层餐桌',

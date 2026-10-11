@@ -31,7 +31,7 @@ export default {
   enterFailed: '进入区服失败',
   shards: {
     unverified: '邮箱还没有验证, 验证后才能和好友互动。',
-    title: '选择区服',
+    title: '切换区服',
     closed: '已关闭',
     hasRest: '已开店',
     fresh: '新开',

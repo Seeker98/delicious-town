@@ -250,7 +250,7 @@ export default {
     no_batch: '这个道具不能批量使用',
     no_points_to_reset: '还没有加过属性点',
     not_on_sale: '没有在售',
-    no_special: '今天还没有特价',
+    no_special: '今天还没有限时折扣',
     single: '一次只能买 1 个',
     not_sellable: '这个道具不能出售',
     keep_one_plaque: '牌匾至少要留 1 块',

@@ -151,6 +151,9 @@ describe('FriendsView', () => {
     expect(endpoints.friendFeed).toHaveBeenCalled();
     expect(w.text()).toContain('「丙」花 5,000 银币收购了你的餐厅');
     expect(w.find('a[href="/forum/8"]').text()).toContain('丁 回复了你的帖子「攻略」');
+    // 和首页动态同一种行：时间只写月日时分（界面改版 P2b）
+    expect(w.findAll('.dt-feed')).toHaveLength(2);
+    expect(w.get('.dt-feed .dt-feed-time').text()).not.toContain('2026');
     expect(feedSeenAt(5)).toBe('2026-10-09T05:00:00.000Z');
     localStorage.clear();
   });

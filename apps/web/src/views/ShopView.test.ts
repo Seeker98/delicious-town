@@ -122,7 +122,7 @@ describe('ShopView（问题记录：商店不显示最大可购买数量）', ()
     await flushPromises();
     await w
       .findAll('button.nav-link')
-      .find((a) => a.text().includes('特价'))!
+      .find((a) => a.text().includes('限时折扣'))!
       .trigger('click');
     const row = w.find('[data-testid="special-title"]');
     expect(row.classes()).toEqual(expect.arrayContaining(['d-flex', 'align-items-center']));

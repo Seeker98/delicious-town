@@ -1,19 +1,17 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { gameDateTime } from '../utils/format';
 import { RouterLink } from 'vue-router';
 import type { FriendRequestDto, FriendsDto, RestBriefDto, RestLogDto, ThumbTodayDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
 import { useTabQuery } from '../composables/useTabQuery';
+import FeedRow from '../components/FeedRow.vue';
 import GameImg from '../components/GameImg.vue';
 import { errorMessage } from '../i18n/zh-CN';
-import { useCatalogStore } from '../stores/catalog';
 import { useFriendsStore } from '../stores/friends';
 import { useToastStore } from '../stores/toast';
-import { logText } from '../utils/events';
-import { feedLink, markFeedSeen } from '../utils/feed';
+import { markFeedSeen } from '../utils/feed';
 import { useRestaurantStore } from '../stores/restaurant';
 import { restName } from '../utils/npcName';
 
@@ -21,8 +19,6 @@ type Tab = 'friends' | 'requests' | 'find' | 'feed';
 const toast = useToastStore();
 const t = useT();
 const TABS = ['friends', 'requests', 'find', 'feed'] as const;
-const feedTime = (iso: string) => gameDateTime(iso, { hour12: false });
-const catalog = useCatalogStore();
 const friendsStore = useFriendsStore();
 const restStore = useRestaurantStore();
 /** 当前标签写进网址（界面改版 P2b：统一标签页） */
@@ -247,11 +243,7 @@ onMounted(() => show(tab.value));
       </button>
     </div>
     <p v-if="feed.length === 0" class="text-muted small">{{ t.friends.noFeed }}</p>
-    <div v-for="(f, i) in feed" :key="i" class="border-bottom py-1 small">
-      <span class="text-muted me-2">{{ feedTime(f.at) }}</span>
-      <!-- 和首页、个人日志同一套文案：动态里也有收购、老鼠这些不是好友做的事（问题记录 553） -->
-      <RouterLink v-if="feedLink(f)" :to="feedLink(f)!">{{ logText(f, catalog) }}</RouterLink>
-      <template v-else>{{ logText(f, catalog) }}</template>
-    </div>
+    <!-- 和首页动态同一种行（界面改版 P2b）；文案和个人日志同一套：也有收购、老鼠这些不是好友做的事（问题记录 553） -->
+    <FeedRow v-for="(f, i) in feed" :key="i" :item="f" />
   </template>
 </template>
