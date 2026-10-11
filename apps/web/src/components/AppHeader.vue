@@ -32,6 +32,17 @@ watch(
   },
   { immediate: true },
 );
+/**
+ * 直接打开首页以外的页面时餐厅数据还没读（只有首页会读）：游戏内读一次，
+ * 头像、“我”的店铺头、底部导航和小镇的功能开关都靠它（界面改版 P2a 截图自查）
+ */
+watch(
+  () => props.inGame,
+  (inGame) => {
+    if (inGame && !restStore.rest) void restStore.refresh().catch(() => undefined);
+  },
+  { immediate: true },
+);
 function back() {
   if (parent.value) void router.push(parent.value);
 }

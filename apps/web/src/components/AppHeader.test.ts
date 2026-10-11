@@ -5,10 +5,13 @@ import { createMemoryHistory, createRouter, type RouteRecordRaw } from 'vue-rout
 import { endpoints } from '../api/endpoints';
 import { routes } from '../router';
 import { usePageTitleStore } from '../stores/pageTitle';
+import { useRestaurantStore } from '../stores/restaurant';
 import { useSessionStore } from '../stores/session';
 import AppHeader from './AppHeader.vue';
 
-vi.mock('../api/endpoints', () => ({ endpoints: { mailUnread: vi.fn(), serverTime: vi.fn() } }));
+vi.mock('../api/endpoints', () => ({
+  endpoints: { mailUnread: vi.fn(), serverTime: vi.fn(), overview: vi.fn() },
+}));
 
 const stub = { template: '<div/>' };
 /** 用真实路由表（元数据要真的），页面换成空组件 */
@@ -25,9 +28,11 @@ async function mountHeader(path: string, inGame = true) {
 }
 
 beforeEach(() => {
+  vi.clearAllMocks();
   setActivePinia(createPinia());
   vi.mocked(endpoints.mailUnread).mockResolvedValue({ count: 0 });
   vi.mocked(endpoints.serverTime).mockResolvedValue({ now: new Date().toISOString() });
+  vi.mocked(endpoints.overview).mockResolvedValue({ name: '不会玩', disabledFeatures: ['bar'] } as never);
   useSessionStore().me = { restaurantId: 1, role: 'player' } as never;
 });
 
@@ -76,5 +81,18 @@ describe('顶栏（界面改版 P2a，设计 §4.2）', () => {
     await router.push('/bar');
     await flushPromises();
     expect(endpoints.mailUnread).toHaveBeenCalled();
+  });
+
+  it('直接打开首页以外的页面（餐厅数据还没读）：顶栏读一次，头像有字、关掉的功能也认得出（截图自查）', async () => {
+    const { w } = await mountHeader('/map');
+    expect(endpoints.overview).toHaveBeenCalledTimes(1);
+    expect(w.get('[data-testid="me-link"]').text()).toBe('不');
+    expect(useRestaurantStore().featureOn('bar')).toBe(false);
+  });
+
+  it('已经读过餐厅数据就不重复读', async () => {
+    useRestaurantStore().rest = { name: '甲' } as never;
+    await mountHeader('/map');
+    expect(endpoints.overview).not.toHaveBeenCalled();
   });
 });
