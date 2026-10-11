@@ -14,7 +14,7 @@
 
 - 裸色值只能写在 `tokens.css`（`theme.test`）；浅色、深色两套文字对比度 ≥ 4.5。
 - `main.css` 顶层同一个类不定义两次（`mainCss.test`）。
-- 简中文案用半角括号、“: ”“, ”；法文窄空格写 ` ` 转义（用 Edit 工具写，不用 Write/Bash）；繁中最后跑 `pnpm -F @dt/web i18n:tw`。
+- 简中文案用半角括号、“: ”“, ”；法文窄空格写 `\u202f` 转义（用 Edit 工具写，不用 Write/Bash）；繁中最后跑 `pnpm -F @dt/web i18n:tw`。
 - 新的 Bootstrap Icons 符号要跑 `pnpm -F @dt/web icons`。
 - 动效：按下 `scale(0.97)` 120ms；只动 transform 和 opacity；`prefers-reduced-motion` 下去掉位移。
 - 整行可点 ≥ 40px，按钮 ≥ 32px；主操作按钮 46~48px 高。
@@ -289,7 +289,7 @@ const dash = computed(() => `${((pct.value / 100) * C).toFixed(1)} ${C.toFixed(1
 }
 ```
 
-文案 `common.levelRing`：简中 `(lv, pct) => \`等级 ${lv}, 经验 ${pct}%\``；英文 `Level ${lv}, ${pct}% XP`；法文 `Niveau ${lv}, ${pct} % d’expérience`；西文 `Nivel ${lv}, ${pct} % de experiencia`。
+文案 `common.levelRing`：简中 `(lv, pct) => \`等级 ${lv}, 经验 ${pct}%\``；英文 `Level ${lv}, ${pct}% XP`；法文 `Niveau ${lv}, ${pct}\u202f% d’expérience`；西文 `Nivel ${lv}, ${pct} % de experiencia`。
 
 - [ ] **Step 4: 跑测试，确认通过** — 同 Step 2，Expected: PASS。
 - [ ] **Step 5: 提交** — `git commit -m "feat(web): 等级环、资源胶囊、统计块"`
