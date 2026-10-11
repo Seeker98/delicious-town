@@ -38,9 +38,9 @@ describe('BarView', () => {
     expect(w.text()).toContain('fg-panel');
     await w.find('[data-testid="tab-slot"]').trigger('click');
     expect(w.text()).toContain('slot-panel');
-    // 当前标签带 aria-current（PR28 遗留）
-    expect(w.find('[data-testid="tab-slot"]').attributes('aria-current')).toBe('page');
-    expect(w.find('[data-testid="tab-fg"]').attributes('aria-current')).toBeUndefined();
+    // 当前标签带 aria-selected（PR28 遗留；界面改版 P2b 改成统一标签页）
+    expect(w.find('[data-testid="tab-slot"]').attributes('aria-selected')).toBe('true');
+    expect(w.find('[data-testid="tab-fg"]').attributes('aria-selected')).toBe('false');
     expect(localStorage.getItem('dt_bar_tab')).toBe('slot');
     const again = mount(BarView, { global: { stubs } });
     await flushPromises();
@@ -98,10 +98,10 @@ describe('BarView', () => {
     expect(endpoints.bar).toHaveBeenCalledTimes(2);
   });
 
-  it('十个游戏用胶囊标签，选中的高亮；新游戏可以切过去（4C-3、最后一颗糖）', async () => {
+  it('十个游戏用一级标签（界面改版 P2b，原来是胶囊），选中的高亮；新游戏可以切过去（4C-3、最后一颗糖）', async () => {
     const w = mount(BarView, { global: { stubs } });
     await flushPromises();
-    const pills = w.findAll('.dt-pills a');
+    const pills = w.findAll('button[role="tab"]');
     expect(pills.map((p) => p.text())).toEqual([
       '划拳',
       '猜酒杯',

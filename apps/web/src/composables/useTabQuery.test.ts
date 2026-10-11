@@ -79,4 +79,20 @@ describe('useTabQuery（界面改版 P2b，设计 §4.2 第 6 条）', () => {
     await flushPromises();
     expect(router.currentRoute.value.query).toEqual({});
   });
+
+  it('没有路由（单独挂组件的测试）：照样能切换，记住上次的，不报错', async () => {
+    localStorage.setItem('k', 'rank');
+    let tab!: ReturnType<typeof useTabQuery<'news' | 'rank'>>;
+    const C = defineComponent({
+      setup: () => {
+        tab = useTabQuery({ tabs: ['news', 'rank'] as const, storageKey: 'k' });
+        return () => h('div');
+      },
+    });
+    mount(C);
+    expect(tab.value).toBe('rank');
+    tab.value = 'news';
+    expect(tab.value).toBe('news');
+    expect(localStorage.getItem('k')).toBe('news');
+  });
 });

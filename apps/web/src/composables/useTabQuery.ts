@@ -1,5 +1,5 @@
-import { computed, toValue, watch, type MaybeRefOrGetter, type WritableComputedRef } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { computed, inject, ref, toValue, watch, type MaybeRefOrGetter, type WritableComputedRef } from 'vue';
+import { routeLocationKey, routerKey } from 'vue-router';
 
 /**
  * 一级标签页的当前标签（界面改版设计 §4.2 第 6 条）：写进网址 ?tab=（能分享、能后退、刷新不丢），
@@ -17,8 +17,10 @@ export interface TabQueryOptions<T extends string> {
 }
 
 export function useTabQuery<T extends string>(opts: TabQueryOptions<T>): WritableComputedRef<T> {
-  const route = useRoute();
-  const router = useRouter();
+  // 没有路由（单独挂组件的测试）时只在内存里切换，照样记住上次的
+  const route = inject(routeLocationKey, null);
+  const router = inject(routerKey, null);
+  const memory = ref<string | null>(null);
   const param = opts.param ?? 'tab';
   const list = computed(() => toValue(opts.tabs));
   const saved = (): string | null => {
@@ -32,17 +34,19 @@ export function useTabQuery<T extends string>(opts: TabQueryOptions<T>): Writabl
   const valid = (v: unknown): v is T => typeof v === 'string' && list.value.includes(v as T);
   const tab = computed<T>({
     get: () => {
-      const q = route.query[param];
+      const q = route ? route.query[param] : memory.value;
       if (valid(q)) return q;
       const s = saved();
       if (valid(s)) return s;
       return valid(opts.omitWhen) ? opts.omitWhen : (list.value[0] as T);
     },
     set: (v) => {
-      const query = { ...route.query };
-      if (opts.omitWhen !== undefined && v === opts.omitWhen) delete query[param];
-      else query[param] = v;
-      void router.replace({ query });
+      if (route && router) {
+        const query = { ...route.query };
+        if (opts.omitWhen !== undefined && v === opts.omitWhen) delete query[param];
+        else query[param] = v;
+        void router.replace({ query });
+      } else memory.value = v;
       if (opts.storageKey) {
         try {
           localStorage.setItem(opts.storageKey, v);
@@ -54,7 +58,7 @@ export function useTabQuery<T extends string>(opts: TabQueryOptions<T>): Writabl
   });
   // 可用的标签变了（功能关了、数据读回来了），网址里的那个不再可用：改成现在显示的那个
   watch(list, () => {
-    const q = route.query[param];
+    const q = route?.query[param];
     if (typeof q === 'string' && !valid(q) && list.value.length > 0) {
       const shown = tab.value;
       tab.value = shown;
