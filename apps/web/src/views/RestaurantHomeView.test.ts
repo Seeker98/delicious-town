@@ -206,6 +206,8 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.guideCodes).mockResolvedValue([code('ok')]);
     const can = await mountView();
     expect(can.get('[data-testid="guide-hint"]').text()).toContain('有可以领的新手兑换码');
+    // 新手码搬到兑换码页（界面改版 P2b）
+    expect(can.get('[data-testid="guide-hint"]').attributes('href')).toBe('/redeem');
     vi.mocked(endpoints.guideCodes).mockResolvedValue([code('used')]);
     expect((await mountView()).find('[data-testid="guide-hint"]').exists()).toBe(false);
   });

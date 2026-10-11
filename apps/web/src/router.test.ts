@@ -138,6 +138,9 @@ describe('并进别的页面的旧地址（界面改版 P2b）', () => {
     expect(bank.meta?.title?.(zhCN)).toBe('银行');
     expect(routes.find((r) => r.path.startsWith('/society/:npc'))!.path).not.toMatch(/fund|wealth/);
   });
+  it('邀请好友的上一级是兑换码页（入口搬到那里）', () => {
+    expect(routes.find((r) => r.path === '/invite')?.meta?.parent).toBe('/redeem');
+  });
   it('/rest/gem 跳到厨具页的宝石标签', () => {
     expect(routes.find((r) => r.path === '/rest/gem')?.redirect).toBe('/rest/equip?tab=gem');
   });

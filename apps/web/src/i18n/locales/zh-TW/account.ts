@@ -10,8 +10,6 @@ export default {
   verified: '已驗證',
   unverified: '未驗證',
   resend: '重發驗證郵件',
-  inviteCode: '邀請碼',
-  makeInvite: '去邀請頁生成',
   myRests: '我的店',
   noRest: '還沒有開店',
   level: (n: number) => `等級 ${n}`,

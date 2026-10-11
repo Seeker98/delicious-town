@@ -10,8 +10,6 @@ const account: Messages['account'] = {
   verified: 'Verified',
   unverified: 'Not verified',
   resend: 'Resend verification email',
-  inviteCode: 'Invite code',
-  makeInvite: 'Get one on the invite page',
   myRests: 'My restaurants',
   noRest: 'No restaurant yet',
   level: (n) => `Level ${n}`,

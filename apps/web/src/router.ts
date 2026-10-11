@@ -284,7 +284,8 @@ export const routes: RouteRecordRaw[] = [
     path: '/invite',
     name: 'invite',
     component: () => import('./views/InviteView.vue'),
-    meta: { needRestaurant: true, section: 'home', title: T((t) => t.misc.invite.title), parent: '/me' },
+    // 入口在兑换码页（界面改版 P2b，原来在账号页）
+    meta: { needRestaurant: true, section: 'home', title: T((t) => t.misc.invite.title), parent: '/redeem' },
   },
   {
     path: '/mail',

@@ -619,16 +619,16 @@ onBeforeUnmount(() => {
           ><i class="bi bi-piggy-bank me-1"></i>{{ t.home.wealthDue(rest.wealthDue ?? 0) }}</span
         ><span class="dt-go">{{ t.npc.links.wealth.label }}</span></RouterLink
       >
-      <!-- 新手提示（问题记录 150）：有能领的新手码时提示去领；没有时 10 级以前照旧提示看指引 -->
+      <!-- 新手提示（问题记录 150）：有能领的新手码时提示去兑换码页领（界面改版 P2b）；没有时 10 级以前照旧提示看指引 -->
       <RouterLink
         v-if="codesClaimable || rest.level < 10"
-        to="/guide"
+        :to="codesClaimable ? '/redeem' : '/guide'"
         class="dt-todo-row text-reset text-decoration-none"
         data-testid="guide-hint"
         ><span class="flex-fill"
           ><i class="bi bi-lightbulb me-1"></i
           >{{ codesClaimable ? t.home.guideCodes : t.home.guideHint }}</span
-        ><span class="dt-go">{{ t.nav.links.guide }}</span></RouterLink
+        ><span class="dt-go">{{ codesClaimable ? t.nav.links.redeem : t.nav.links.guide }}</span></RouterLink
       >
     </div>
 
