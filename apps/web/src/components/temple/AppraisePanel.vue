@@ -96,7 +96,13 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.common.lo
       <span class="dt-block-more" data-testid="recipes">{{ t.temple.appraise.recipes(o.recipes) }}</span>
     </div>
     <div class="dt-card dt-rows-card">
-      <DtRow v-for="x in o.tools" :key="x.goodsId" class="dt-row-wrap" :data-testid="`tool-${x.goodsId}`">
+      <DtRow
+        v-for="x in o.tools"
+        strong
+        :key="x.goodsId"
+        class="dt-row-wrap"
+        :data-testid="`tool-${x.goodsId}`"
+      >
         <template #icon><DtArt :name="catalog.goodsArt(x.goodsId)" :size="28" /></template>
         <template #title>{{ catalog.goodsName(x.goodsId) }}</template>
         <template #sub

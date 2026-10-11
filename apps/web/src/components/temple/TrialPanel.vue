@@ -340,7 +340,7 @@ const start = async () => {
   <div class="dt-card dt-rows-card">
     <button type="button" class="dt-row is-link" data-testid="trial-help" @click="helpOpen = true">
       <span class="dt-row-main"
-        ><span class="dt-row-title">{{ t.temple.trial.help }}</span
+        ><span class="dt-row-title is-strong">{{ t.temple.trial.help }}</span
         ><span class="dt-row-sub">{{ t.temple.trial.helpSub(trial.worthMax, trial.expMax) }}</span></span
       >
     </button>

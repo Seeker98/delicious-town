@@ -156,7 +156,7 @@ const liveText = computed(() => {
           ><DtArt :name="x === 'novice' ? 'game-candy' : 'game-candy-purple'" :size="28"
         /></span>
         <span class="dt-row-main">
-          <span class="dt-row-title">{{ t.bar.nim.tables[x] }}</span>
+          <span class="dt-row-title is-strong">{{ t.bar.nim.tables[x] }}</span>
           <span class="dt-row-sub">{{ t.bar.nim.tableLine(n.tables[x].cost, kText(n.tables[x].k)) }}</span>
           <span class="dt-row-sub">{{ t.bar.nim.hint(n.tables[x].first, n.tables[x].careless) }}</span>
           <span class="dt-row-sub">{{ t.bar.nim.prize(n.tables[x].renown) }}</span>

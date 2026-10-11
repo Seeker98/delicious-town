@@ -79,7 +79,7 @@ async function go() {
     <h2 class="dt-block-title">{{ t.temple.explore.mapsTitle }}</h2>
   </div>
   <div class="dt-card dt-rows-card">
-    <DtRow v-for="m in data.maps" :key="m.goodsId" :data-testid="`map-${m.goodsId}`">
+    <DtRow v-for="m in data.maps" strong :key="m.goodsId" :data-testid="`map-${m.goodsId}`">
       <template #icon><DtArt :name="catalog.goodsArt(m.goodsId)" :size="28" /></template>
       <template #title>{{ catalog.goodsName(m.goodsId) }}</template>
       <template #sub>{{ t.temple.explore.mapLine(m.num, m.needStrength) }}</template>

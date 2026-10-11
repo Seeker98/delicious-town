@@ -9,7 +9,6 @@ import { useToastStore } from '../../stores/toast';
 import DtRow from '../DtRow.vue';
 import DtSheet from '../DtSheet.vue';
 import DuelResult from './DuelResult.vue';
-import DuelRules from './DuelRules.vue';
 
 /**
  * 赛厨榜（界面改版 P9）：我的名次一张卡、换榜规则一行（点开看名次礼包）；
@@ -39,6 +38,12 @@ function challengeBlock(s: RankSlotDto): string {
   if (d.strength < d.duelStrength) return t.value.tower.noStrength(d.duelStrength);
   return '';
 }
+
+/** 行里写的原因：名次差的规则已经写在榜单标题右边，行里不再重复（P9 用户反馈） */
+const rowBlock = (s: RankSlotDto) => {
+  const why = challengeBlock(s);
+  return why === t.value.tower.rank.top(props.data.rankTop, props.data.rankGap) ? '' : why;
+};
 
 async function act(fn: () => Promise<void>, fallback: string) {
   if (busy.value) return;
@@ -80,22 +85,24 @@ const challenge = (s: RankSlotDto) => {
       <span>{{ t.tower.rank.head(data.left, data.duelStrength) }}</span>
     </span>
   </section>
-  <div class="dt-card dt-rows-card mb-2">
+  <div class="dt-card dt-rows-card dt-rank-weekly">
     <button type="button" class="dt-row is-link" data-testid="rank-weekly" @click="weeklyOpen = true">
       <span class="dt-row-main"
-        ><span class="dt-row-title">{{ t.tower.rank.weeklyTitle }}</span
+        ><span class="dt-row-title is-strong">{{ t.tower.rank.weeklyTitle }}</span
         ><span class="dt-row-sub">{{ t.tower.rank.weekly }}</span></span
       >
     </button>
   </div>
-  <DuelRules :judge-count="data.duelJudges" :weights="data.duelWeights" />
   <div class="dt-block-head">
     <h2 class="dt-block-title">{{ t.tower.rank.listTitle }}</h2>
+    <span class="dt-block-more dt-rank-rule" data-testid="rank-rule">{{
+      t.tower.rank.top(data.rankTop, data.rankGap)
+    }}</span>
   </div>
-  <p class="dt-block-note">{{ t.tower.rank.top(data.rankTop, data.rankGap) }}</p>
   <div class="dt-card dt-rows-card">
     <DtRow
       v-for="s in data.slots"
+      strong
       :key="s.rank"
       :class="{ 'is-me': s.restId !== null && s.restId === myId }"
       :data-testid="`slot-${s.rank}`"
@@ -108,10 +115,10 @@ const challenge = (s: RankSlotDto) => {
           >{{ s.name }}<span class="dt-row-meta">{{ t.tower.rank.level(s.level ?? 0) }}</span
           ><span v-if="s.restId === myId" class="dt-tag dt-tag-primary">{{ t.tower.rank.me }}</span></template
         >
-        <span v-else class="dt-muted">{{ t.tower.rank.empty }}</span>
+        <span v-else class="dt-muted fw-normal">{{ t.tower.rank.empty }}</span>
       </template>
-      <template v-if="canChallenge(s) && challengeBlock(s)" #sub
-        ><span class="text-danger">{{ challengeBlock(s) }}</span></template
+      <template v-if="canChallenge(s) && rowBlock(s)" #sub
+        ><span class="text-danger">{{ rowBlock(s) }}</span></template
       >
       <template v-if="canOccupy(s) || canChallenge(s)" #end>
         <button

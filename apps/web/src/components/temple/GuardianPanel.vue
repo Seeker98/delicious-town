@@ -95,6 +95,7 @@ async function fire() {
   <div class="dt-card dt-rows-card">
     <DtRow
       v-for="m in data.missiles"
+      strong
       :key="m.goodsId"
       class="dt-row-wrap"
       :data-testid="`missile-${m.goodsId}`"

@@ -71,7 +71,13 @@ async function buy() {
     </span>
   </section>
   <div class="dt-card dt-rows-card">
-    <DtRow v-for="x in data.items" :key="x.goodsId" class="dt-row-wrap" :data-testid="`item-${x.goodsId}`">
+    <DtRow
+      v-for="x in data.items"
+      strong
+      :key="x.goodsId"
+      class="dt-row-wrap"
+      :data-testid="`item-${x.goodsId}`"
+    >
       <template #icon><DtArt :name="catalog.goodsArt(x.goodsId)" :size="28" /></template>
       <template #title>{{ catalog.goodsName(x.goodsId) }}</template>
       <template #sub

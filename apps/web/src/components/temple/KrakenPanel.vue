@@ -131,7 +131,7 @@ async function shopAct(fn: () => Promise<TentacleShopDto>, fallback: string) {
     </div>
   </section>
   <div class="dt-card dt-rows-card">
-    <DtRow v-if="k.current" class="dt-row-wrap" data-testid="kraken-current">
+    <DtRow v-if="k.current" strong class="dt-row-wrap" data-testid="kraken-current">
       <template #title>{{
         t.temple.kraken.current(catalog.mcName(k.current.mcId), GRADE_NAMES[k.current.grade] ?? '')
       }}</template>
@@ -185,7 +185,7 @@ async function shopAct(fn: () => Promise<TentacleShopDto>, fallback: string) {
   </div>
   <template v-if="shop">
     <div class="dt-card dt-rows-card">
-      <DtRow v-for="(s, i) in shop.slots" :key="i" :data-testid="`tentacle-slot-${i}`">
+      <DtRow v-for="(s, i) in shop.slots" strong :key="i" :data-testid="`tentacle-slot-${i}`">
         <template #icon><DtArt name="res-fragment" :size="22" /></template>
         <template #title
           >{{ t.temple.kraken.scroll(catalog.mcName(s.mcId))

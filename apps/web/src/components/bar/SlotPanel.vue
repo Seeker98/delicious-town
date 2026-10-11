@@ -167,7 +167,7 @@ async function exchange() {
     <div class="dt-row">
       <span class="dt-row-ico"><DtArt name="res-krab" :size="22" /></span>
       <span class="dt-row-main"
-        ><span class="dt-row-title">{{ t.bar.slot.exchange }}</span
+        ><span class="dt-row-title is-strong">{{ t.bar.slot.exchange }}</span
         ><span class="dt-row-sub">{{ t.bar.slot.exRate(data.krabCoinTickets) }}</span></span
       >
       <span class="dt-row-end"
@@ -179,7 +179,7 @@ async function exchange() {
     <button type="button" class="dt-row is-link" data-testid="slot-pool-open" @click="sheet = 'pool'">
       <span class="dt-row-ico"><DtArt name="food-master" :size="22" /></span>
       <span class="dt-row-main"
-        ><span class="dt-row-title">{{ t.bar.slot.pool }}</span
+        ><span class="dt-row-title is-strong">{{ t.bar.slot.pool }}</span
         ><span class="dt-row-sub" data-testid="slot-rare-every">{{
           t.bar.slot.rareShort(slot.rareEvery)
         }}</span></span
@@ -188,7 +188,7 @@ async function exchange() {
     <button type="button" class="dt-row is-link" data-testid="slot-stats-open" @click="sheet = 'stats'">
       <span class="dt-row-ico"><DtArt name="food-spice" :size="22" /></span>
       <span class="dt-row-main"
-        ><span class="dt-row-title">{{ t.bar.slot.stats }}</span
+        ><span class="dt-row-title is-strong">{{ t.bar.slot.stats }}</span
         ><span class="dt-row-sub" data-testid="slot-stats">{{ statsText }}</span></span
       >
     </button>

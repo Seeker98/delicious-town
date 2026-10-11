@@ -56,7 +56,7 @@ const judges = computed(() => {
   <div class="dt-card dt-rows-card dt-duel-rules-row" v-bind="$attrs">
     <button type="button" class="dt-row is-link" data-testid="duel-rules" @click="open = true">
       <span class="dt-row-main"
-        ><span class="dt-row-title">{{ t.tower.duel.rulesTitle }}</span
+        ><span class="dt-row-title is-strong">{{ t.tower.duel.rulesTitle }}</span
         ><span class="dt-row-sub">{{ t.tower.duel.rulesSub(judgeCount) }}</span></span
       >
     </button>

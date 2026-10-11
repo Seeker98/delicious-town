@@ -51,7 +51,7 @@ describe('RankPanel', () => {
     expect(w.emitted('reload')).toHaveLength(1);
   });
 
-  it('前 8 名不在范围内时灰掉并写明原因；第 10 名可以挑战，显示结果', async () => {
+  it('前 8 名不在范围内时灰掉，原因写在榜单标题右边、行里不重复（P9 用户反馈）；第 10 名可以挑战，显示结果', async () => {
     const w = mountPanel(
       withSlots([
         [1, 5, '甲店'],
@@ -59,7 +59,8 @@ describe('RankPanel', () => {
       ]),
     );
     expect(w.find('[data-testid="rc-1"]').attributes('disabled')).toBeDefined();
-    expect(w.find('[data-testid="slot-1"]').text()).toContain('前 8 名要在榜上、名次相差 3 以内才能挑战');
+    expect(w.get('[data-testid="rank-rule"]').text()).toBe('前 8 名要在榜上、名次相差 3 以内才能挑战');
+    expect(w.find('[data-testid="slot-1"]').text()).not.toContain('前 8 名');
     expect(w.find('[data-testid="occupy-1"]').exists()).toBe(false);
     expect(w.find('[data-testid="rc-10"]').attributes('disabled')).toBeUndefined();
     await w.find('[data-testid="rc-10"]').trigger('click');
@@ -97,10 +98,11 @@ describe('RankPanel', () => {
     expect(w.get('.dt-sheet').findAll('li')).toHaveLength(3);
   });
 
-  it('赛厨规则按赛厨榜接口给的评委数写（backlog 396 审查）', async () => {
-    const w = mountPanel(rankData({ duelJudges: 3 }));
-    expect(w.get('[data-testid="duel-rules"]').text()).toContain('3 位评委投票');
-    await w.get('[data-testid="duel-rules"]').trigger('click');
-    expect(w.get('[data-testid="duel-rules-body"]').text()).toContain('随机请 3 位');
+  it('赛厨榜不再放赛厨规则（挑战页有）；挑战条件写在榜单标题同一行右边（P9 用户反馈）', async () => {
+    const w = mountPanel(rankData({ rankTop: 8, rankGap: 3 }));
+    expect(w.find('[data-testid="duel-rules"]').exists()).toBe(false);
+    const rule = w.get('[data-testid="rank-rule"]');
+    expect(rule.text()).toBe('前 8 名要在榜上、名次相差 3 以内才能挑战');
+    expect(rule.element.parentElement!.classList.contains('dt-block-head')).toBe(true);
   });
 });

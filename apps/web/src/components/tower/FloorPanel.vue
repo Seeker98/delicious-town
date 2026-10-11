@@ -99,7 +99,7 @@ async function go(f: TowerFloorDto, test: boolean) {
       >
         <span :class="['dt-floor-no', { 'is-off': !f.unlocked }]">{{ f.floor }}</span>
         <span class="dt-row-main">
-          <span class="dt-row-title"
+          <span class="dt-row-title is-strong"
             >{{ floorText(f).name
             }}<span :class="['dt-tag', f.unlocked ? 'dt-tag-primary' : 'dt-tag-mute']">{{
               floorText(f).title

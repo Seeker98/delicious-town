@@ -5972,8 +5972,17 @@ button.dt-row {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
-.dt-duel-rules-row {
-  margin: 12px 0 0;
+/* 赛厨规则一行、每周换榜一行：和下面的区块标题拉开（P9 用户反馈：太挤） */
+.dt-duel-rules-row,
+.dt-rank-weekly {
+  margin: 12px 0 18px;
+}
+/* 榜单标题右边的挑战规则：放得下一行，外文长了才折行，都靠右 */
+.dt-rank-rule {
+  flex-shrink: 1;
+  min-width: 0;
+  font-size: 12px;
+  text-align: right;
 }
 .dt-floor-row {
   padding-right: 12px;
