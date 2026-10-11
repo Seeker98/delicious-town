@@ -1352,3 +1352,42 @@ details.dt-card > summary {
     opacity: 0.45;
   }
 }
+/* ---------- 区域头图（界面改版 P3，设计 §5 第 1 条） ---------- */
+/* 店面图按原尺寸靠右，不缩放：门的位置才对得上；左边空出来放叠字 */
+.dt-hero {
+  position: relative;
+  height: 72px;
+  margin: 0 -8px 6px;
+  overflow: hidden;
+  background: var(--dt-soft-primary);
+  border-bottom: 3px solid var(--dt-line-strong);
+}
+.dt-hero-scene {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 320px;
+  height: 72px;
+}
+/* 门洞中心在店面图 x=230、底边 y=69：40px 的门图形放在右 70px、上 32px */
+.dt-hero-door {
+  position: absolute;
+  right: 70px;
+  top: 32px;
+}
+.dt-hero-text {
+  position: absolute;
+  left: 8px;
+  top: 6px;
+  bottom: 6px;
+  display: flex;
+  align-items: center;
+  max-width: calc(100% - 120px);
+}
+.dt-hero-plate {
+  padding: 3px 8px;
+  border-radius: var(--dt-radius-sm);
+  background: color-mix(in srgb, var(--dt-surface) 88%, transparent);
+  color: var(--dt-text);
+  line-height: 1.25;
+}

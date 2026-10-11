@@ -376,7 +376,17 @@ export const holidaysFile = z.object({
 });
 
 export const looksFile = z.object({
-  doors: z.array(z.object({ id: int.min(0), name: z.string().min(1), coin: int.min(0) })).min(1),
+  // art：门的图形名（网页 door-<art>，界面改版 P3 首页头图）
+  doors: z
+    .array(
+      z.object({
+        id: int.min(0),
+        name: z.string().min(1),
+        coin: int.min(0),
+        art: z.string().regex(/^[a-z]+$/),
+      }),
+    )
+    .min(1),
   avatars: z.array(z.object({ id: int.min(1), name: z.string().min(1) })).min(1),
   icons: z.array(
     z.object({

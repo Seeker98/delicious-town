@@ -2251,3 +2251,25 @@ describe('支线“经营”（任务清单第二版，用户定）', () => {
     expect(steps.reduce((s, q) => s + (q.award.coin ?? 0), 0)).toBe(1_380_000);
   });
 });
+
+describe('门的图形（界面改版 P3：首页头图按门显示）', () => {
+  type Door = { id: number; name: string; coin: number; art?: string };
+  const withDoors = (edit: (doors: Door[]) => void) => {
+    const src = source();
+    const looks = structuredClone(src['game/looks']) as { doors: Door[] };
+    edit(looks.doors);
+    return buildBundle({ ...src, 'game/looks': looks });
+  };
+
+  it('真实数据：每扇门都有图形名，不重复', () => {
+    const doors = withDoors(() => undefined).bundle!.looks.doors;
+    expect(doors.every((d) => /^[a-z]+$/.test(d.art))).toBe(true);
+    expect(new Set(doors.map((d) => d.art)).size).toBe(doors.length);
+  });
+
+  it('缺图形名、两扇门图形名重复时报错（Review Focus 3）', () => {
+    const missing = withDoors((d) => delete d[1]!.art).errors;
+    expect(missing.some((e) => e.includes('art'))).toBe(true);
+    expect(withDoors((d) => (d[1]!.art = d[0]!.art)).errors).toContain('looks: duplicate door art wood');
+  });
+});

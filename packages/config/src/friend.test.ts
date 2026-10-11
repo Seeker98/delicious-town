@@ -9,7 +9,7 @@ describe('好友互动的配置', () => {
   it('装扮列表和 friend 数值能加载', () => {
     const { bundle, errors } = buildBundle(source());
     expect(errors).toEqual([]);
-    expect(bundle!.looks.doors[0]).toEqual({ id: 0, name: '木门', coin: 0 });
+    expect(bundle!.looks.doors[0]).toEqual({ id: 0, name: '木门', coin: 0, art: 'wood' });
     expect(bundle!.looks.avatars.length).toBeGreaterThanOrEqual(12);
     expect(bundle!.looks.icons.map((i) => i.key)).toContain('founder');
     expect(bundle!.tuning.friend.maxFriends).toBe(199);
@@ -26,9 +26,9 @@ describe('好友互动的配置', () => {
   it('门 id 重复、0 号门收费、蟹老板的头像不存在时报错', () => {
     const src = source();
     const looks = structuredClone(src['game/looks']) as {
-      doors: Array<{ id: number; name: string; coin: number }>;
+      doors: Array<{ id: number; name: string; coin: number; art: string }>;
     };
-    looks.doors.push({ id: 1, name: '重复', coin: 1 });
+    looks.doors.push({ id: 1, name: '重复', coin: 1, art: 'dup' });
     looks.doors[0]!.coin = 5;
     const tuning = structuredClone(src['game/tuning']) as { friend: { npc: { avatar: number } } };
     tuning.friend.npc.avatar = 999;

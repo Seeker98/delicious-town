@@ -38,7 +38,7 @@ describe('图形（界面改版 P1，设计 §3）', () => {
   });
 
   it('内容图形以分类前缀开头', () => {
-    for (const { name } of CONTENT) expect(name).toMatch(/^(res|food|goods|npc|empty)-/);
+    for (const { name } of CONTENT) expect(name).toMatch(/^(res|food|goods|npc|empty|door)-/);
   });
 
   it('生成的名字表和源文件一致（改了图形要跑 pnpm -F @dt/web art）', () => {
@@ -46,6 +46,26 @@ describe('图形（界面改版 P1，设计 §3）', () => {
     expect([...CONTENT_ART]).toEqual(CONTENT.map((s) => s.name).sort());
     const all = [...UI_ART, ...CONTENT_ART];
     expect(new Set(all).size).toBe(all.length);
+  });
+
+  it('头图（界面改版 P3）：名字规则、320×72、没有脚本和外链', () => {
+    const scenes = readdirSync(join(ROOT, 'scene')).filter((n) => n.endsWith('.svg'));
+    expect(scenes).toContain('restaurant.svg');
+    for (const n of scenes) {
+      const src = readFileSync(join(ROOT, 'scene', n), 'utf8');
+      expect(n.slice(0, -4), n).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
+      expect(src.startsWith('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 72">'), n).toBe(true);
+      expect(src, n).not.toMatch(/<script|<style|href=|<image|<text/i);
+    }
+  });
+
+  it('配置里每扇门都有图形 door-<art>（Review Focus 3）', () => {
+    const looks = JSON.parse(
+      readFileSync(join(ROOT, '../../../../packages/config/data/game/looks.json'), 'utf8'),
+    ) as {
+      doors: Array<{ art: string }>;
+    };
+    for (const d of looks.doors) expect(CONTENT_ART, d.art).toContain(`door-${d.art}`);
   });
 
   it('体积上限：两张雪碧图压缩后合计 ≤ 25KB，加上头图 ≤ 120KB（设计 §3.5）', () => {

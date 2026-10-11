@@ -1274,6 +1274,11 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     doorIds.add(d.id);
   }
   if (looks.doors.find((d) => d.id === 0)?.coin !== 0) errors.push('looks: door 0 must be free');
+  const doorArts = new Set<string>();
+  for (const d of looks.doors) {
+    if (doorArts.has(d.art)) errors.push(`looks: duplicate door art ${d.art}`);
+    doorArts.add(d.art);
+  }
   const avatarIds = new Set<number>();
   for (const a of looks.avatars) {
     if (avatarIds.has(a.id)) errors.push(`looks: duplicate avatar ${a.id}`);

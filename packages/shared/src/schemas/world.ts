@@ -108,7 +108,8 @@ export interface CatalogMcDto {
 }
 
 export interface LooksDto {
-  doors: Array<{ id: number; name: string; coin: number }>;
+  /** art：门的图形名，网页画 door-<art>（界面改版 P3） */
+  doors: Array<{ id: number; name: string; coin: number; art: string }>;
   avatars: Array<{ id: number; name: string }>;
   icons: Array<{ key: string; title: string; desc: string }>;
 }

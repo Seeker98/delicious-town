@@ -28,8 +28,8 @@ describe('RestLookView', () => {
       devices: [],
       looks: {
         doors: [
-          { id: 0, name: '木门', coin: 0 },
-          { id: 1, name: '红漆门', coin: 20000 },
+          { id: 0, name: '木门', coin: 0, art: 'wood' },
+          { id: 1, name: '红漆门', coin: 20000, art: 'red' },
         ],
         avatars: [
           { id: 1, name: '小厨师' },

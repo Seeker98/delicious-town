@@ -53,6 +53,14 @@ export const UI_ART = [
   'slot-spatula',
 ] as const;
 export const CONTENT_ART = [
+  'door-arch',
+  'door-bamboo',
+  'door-glass',
+  'door-iron',
+  'door-krabby',
+  'door-pirate',
+  'door-red',
+  'door-wood',
   'empty-activity',
   'empty-equip',
   'res-coin-gold',

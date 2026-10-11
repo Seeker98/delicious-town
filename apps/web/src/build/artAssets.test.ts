@@ -10,6 +10,10 @@ describe('图形雪碧图不内联（界面改版 P1）', () => {
     expect(inlineLimit(win)).toBe(false);
   });
 
+  it('头图也单独成文件（界面改版 P3，设计 §3.4：懒加载、走缓存）', () => {
+    expect(inlineLimit('/x/apps/web/src/art/scene/restaurant.svg')).toBe(false);
+  });
+
   it('其他资源按 Vite 默认处理', () => {
     expect(inlineLimit('/x/apps/web/src/styles/bootstrap-icons-subset.woff2')).toBeUndefined();
   });
