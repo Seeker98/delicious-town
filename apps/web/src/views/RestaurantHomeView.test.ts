@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { QuestDto, QuestsDto, RestaurantDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useConfirmStore } from '../stores/confirm';
 import { useLocaleStore } from '../stores/locale';
 import { useToastStore } from '../stores/toast';
 import { usePageTitleStore } from '../stores/pageTitle';
@@ -135,6 +136,11 @@ const dto: RestaurantDto = {
   ],
   createdAt: '2026-09-29T00:00:00.000Z',
 };
+
+/** 区块里第一个图形的名字 */
+const artOf = (el: {
+  find: (s: string) => { exists: () => boolean; attributes: (a: string) => string | undefined };
+}) => (el.find('use').exists() ? el.find('use').attributes('href')?.split('#')[1] : undefined);
 
 const mountView = async () => {
   const router = createRouter({
@@ -273,19 +279,19 @@ describe('RestaurantHomeView', () => {
     const visible = line.element.cloneNode(true) as HTMLElement;
     visible.querySelectorAll('.visually-hidden').forEach((x) => x.remove());
     expect(visible.textContent).not.toMatch(/银币|经验|耗油/);
-    for (const [icon, label] of [
-      ['bi-coin', '银币'],
-      ['bi-mortarboard', '经验'],
-      ['bi-droplet', '耗油'],
+    // 界面改版 P3：图标换成彩色扁平图，悬停名字写在外面一层
+    for (const [art, label] of [
+      ['res-coin-silver', '银币'],
+      ['res-exp', '经验'],
+      ['res-oil', '耗油'],
     ]) {
-      const i = line.get(`i.${icon}`);
-      expect(i.attributes('title')).toBe(label);
-      expect(i.attributes('aria-hidden')).toBe('true');
-      expect((i.element.nextElementSibling as HTMLElement).className).toBe('visually-hidden');
-      expect(i.element.nextElementSibling!.textContent).toBe(label);
+      const wrap = line.get(`[title="${label}"]`);
+      expect(artOf(wrap)).toBe(art);
+      expect(wrap.get('svg').attributes('aria-hidden')).toBe('true');
+      expect(wrap.get('.visually-hidden').text()).toBe(label);
     }
     // 经验条上也有同一个图标（手机上没有悬停，靠它认出经验）
-    expect(w.find('[data-testid="exp-text"] i.bi-mortarboard').exists()).toBe(true);
+    expect(artOf(w.get('[data-testid="exp-text"]'))).toBe('res-exp');
     expect(line.text()).toContain('12');
     expect(last.get('[data-testid="last-round-line"] + a').attributes('href')).toBe('/rest/income');
     expect(last.get('[data-testid="last-round-guests"] + a').attributes('href')).toBe('/rest/floor');
@@ -609,7 +615,8 @@ describe('RestaurantHomeView', () => {
     const refuel = w.get('[data-testid="refuel"]');
     expect(refuel.classes()).toContain('dt-link-btn');
     expect(refuel.classes()).not.toContain('btn');
-    expect(refuel.find('i.bi-droplet-fill').exists()).toBe(true); // 添油用实心油滴，和左边油量的空心油滴成对（问题记录 459）
+    // 添油用油滴图形（问题记录 459；界面改版 P3 换成彩色扁平图）
+    expect(artOf(refuel)).toBe('res-oil');
     expect(refuel.element.closest('.row')).not.toBeNull();
     // 设施每行三个（问题记录 577）
     expect(w.find('[data-testid="slot-1"]').element.parentElement!.classList.contains('col-4')).toBe(true);
@@ -966,8 +973,11 @@ describe('RestaurantHomeView', () => {
   it('声望用奖章图标，悬停提示"声望"（问题记录 170）', async () => {
     const w = await mountView();
     const cell = w.find('[title="声望"]');
-    expect(cell.find('i.bi-award').exists()).toBe(true);
-    expect(cell.text()).not.toContain('声望');
+    // 界面改版 P3：奖章换成彩色扁平图；“声望”两个字只给读屏
+    expect(artOf(cell)).toBe('res-prestige');
+    const visible = cell.element.cloneNode(true) as HTMLElement;
+    visible.querySelectorAll('.visually-hidden').forEach((x) => x.remove());
+    expect(visible.textContent).not.toContain('声望');
   });
 
   it('经验条紧跟等级那一行，在食谱、特色菜之前（问题记录 172）', async () => {
@@ -991,7 +1001,7 @@ describe('RestaurantHomeView', () => {
       expect(w.find('[data-testid="refuel"]').attributes('aria-label')).toBe('Fill up (600 coins)');
       expect(w.find('[data-testid="refuel"] .text-truncate').text()).toBe('Fill up');
       expect(w.find('[data-testid="last-round"]').text()).toContain('Last round:');
-      expect(w.get('[data-testid="last-round"] i.bi-coin').attributes('title')).toBe('Coins');
+      expect(w.find('[data-testid="last-round"] [title="Coins"]').exists()).toBe(true);
       expect(w.find('[data-testid="last-round"]').text()).toContain('Regular customer×1');
       expect(w.text()).not.toMatch(/今日待办|经营开关|签到/);
     } finally {
@@ -1127,5 +1137,92 @@ describe('RestaurantHomeView', () => {
     ])
       expect(w.get(sel).classes(), sel).toContain('dt-go');
     expect(w.text()).not.toMatch(/[›→]/);
+  });
+});
+
+describe('首页套用新的页面模式（界面改版 P3）', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    vi.mocked(endpoints.overview).mockResolvedValue(structuredClone(dto));
+    vi.mocked(endpoints.tasks).mockResolvedValue({
+      main: [],
+      lines: [],
+      weekly: null,
+      chapter: null,
+    } as never);
+    vi.mocked(endpoints.activation).mockResolvedValue({ total: 0, signedIn: false, rewards: [] } as never);
+    vi.mocked(endpoints.guideCodes).mockResolvedValue([]);
+  });
+
+  it('状态卡最上面是餐厅头图：街道、星级、等级、停业和称号叠在上面', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...structuredClone(dto), state: 2, door: 1 });
+    const w = await mountView();
+    const card = w.get('[data-testid="home-status"]');
+    const hero = card.get('[data-testid="home-hero"]');
+    expect(card.element.firstElementChild).toBe(hero.element);
+    const plate = hero.get('.dt-hero-plate');
+    expect(plate.text()).toContain('0 星');
+    expect(plate.get('[data-testid="rest-level"]').text()).toBe('1');
+    expect(plate.text()).toContain('停业');
+  });
+
+  it('资源用彩色扁平图（银币、钻石、体力、声望、油），读屏照样读名字', async () => {
+    const w = await mountView();
+    const res = w.get('[data-testid="home-resources"]');
+    const arts = res.findAll('use').map((u) => u.attributes('href')?.split('#')[1]);
+    for (const a of ['res-coin-silver', 'res-diamond', 'res-strength', 'res-prestige', 'res-oil'])
+      expect(arts).toContain(a);
+    for (const i of ['bi-coin', 'bi-gem', 'bi-lightning', 'bi-award', 'bi-droplet'])
+      expect(res.find(`i.${i}`).exists()).toBe(false);
+    expect(res.findAll('.visually-hidden').map((x) => x.text())).toEqual(
+      expect.arrayContaining(['银币', '钻石', '体力', '声望']),
+    );
+  });
+
+  it('设施格子按设施类型配图；区块标题前有图标', async () => {
+    const w = await mountView();
+    expect(artOf(w.get('[data-testid="slot-1"]'))).toBe('fac-poster');
+    expect(artOf(w.get('[data-testid="slot-4"]'))).toBe('fac-mousetrap');
+    expect(artOf(w.get('[data-testid="home-devices"] .dt-card-title'))).toBe('sec-star');
+    expect(artOf(w.get('[data-testid="home-todo"] .dt-card-title'))).toBe('sec-tasks');
+    const newsHead = w.get('[data-testid="home-news-more"]').element.parentElement!;
+    expect(newsHead.querySelector('use')?.getAttribute('href')?.split('#')[1]).toBe('sec-news');
+  });
+
+  it('概况没读回来时是骨架行，不写“加载中”', async () => {
+    vi.mocked(endpoints.overview).mockReturnValue(new Promise(() => undefined));
+    const w = await mountView();
+    expect(w.find('[data-testid="home-skeleton"]').exists()).toBe(true);
+  });
+
+  it('挂了确认面板时开通第二块牌匾走面板，不弹浏览器确认框', async () => {
+    const plaque = {
+      slot: 7,
+      name: '牌匾*',
+      deviceType: 6,
+      needStar: 3,
+      unlocked: false,
+      goodsId: null,
+      expiresAt: null,
+    };
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      ...structuredClone(dto),
+      starLevel: 3,
+      coin: 20_000_000,
+      diamond: 200,
+      devices: [plaque],
+    });
+    const spy = vi.spyOn(window, 'confirm');
+    const store = useConfirmStore();
+    store.hosts = 1;
+    const w = await mountView();
+    await w.get('[data-testid="open-plaque2"]').trigger('click');
+    await flushPromises();
+    expect(spy).not.toHaveBeenCalled();
+    expect(store.current?.danger).toBeFalsy();
+    store.answer(false);
+    await flushPromises();
+    expect(endpoints.openPlaque2).not.toHaveBeenCalled();
+    spy.mockRestore();
   });
 });

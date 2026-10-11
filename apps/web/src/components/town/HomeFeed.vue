@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { RestLogDto } from '@dt/shared';
+import DtArt from '../DtArt.vue';
 import FeedRow from '../FeedRow.vue';
 import { useT } from '../../composables/useT';
 import { feedSeenAt } from '../../utils/feed';
@@ -16,7 +17,7 @@ const isNew = (f: RestLogDto) => seen.value === null || f.at > seen.value;
 <template>
   <div v-if="items.length > 0" class="dt-card my-2 small" data-testid="home-feed">
     <div class="d-flex justify-content-between">
-      <b>{{ t.home.feedTitle }}</b>
+      <b><DtArt name="sec-feed" :size="18" class="me-1 dt-sec-art" />{{ t.home.feedTitle }}</b>
       <RouterLink to="/friends?tab=feed" class="dt-go" data-testid="home-feed-more">{{
         t.nav.news.more
       }}</RouterLink>

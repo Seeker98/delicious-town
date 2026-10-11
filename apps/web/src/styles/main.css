@@ -1391,3 +1391,24 @@ details.dt-card > summary {
   color: var(--dt-text);
   line-height: 1.25;
 }
+/* 状态卡里的头图贴满卡片顶边（界面改版 P3） */
+.dt-card > .dt-hero:first-child {
+  margin: -6px -10px 6px;
+  border-radius: var(--dt-radius-md) var(--dt-radius-md) 0 0;
+}
+.dt-hero-sub {
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-hero-main {
+  font-size: 13px;
+}
+.dt-hero-main b {
+  font-size: 20px;
+}
+.dt-res-ico .dt-art,
+.dt-sec-art,
+.dt-res-grid .dt-art,
+.dt-card-title .dt-art {
+  vertical-align: -3px;
+}
