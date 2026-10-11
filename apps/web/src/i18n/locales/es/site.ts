@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    ia1011:
+      'El registro y la actividad diaria son ahora la pestaña «Hoy» de Misiones; los platos estrella y el progreso de recetas son pestañas de Recetas; las gemas, una pestaña de Utensilios; el fondo y el ahorro de Gary pasan al nuevo «Banco» del pueblo; los códigos de novato y las invitaciones están en la página Códigos. Las pestañas se guardan en la dirección: se pueden compartir y Atrás no pierde el sitio; las subclasificaciones son un desplegable; la Oferta del día ahora se llama Ofertas limitadas',
     shell1011:
       '«Más» ahora es «Pueblo», con los lugares agrupados en Comercio, Ocio y Público. Toca tu avatar arriba a la derecha para «Yo»: info, aspecto, utensilios, almacén, códigos, ajustes y centro de ayuda. Los títulos están en la barra superior y el botón atrás sube un nivel',
     theme1011:

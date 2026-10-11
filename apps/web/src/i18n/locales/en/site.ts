@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    ia1011:
+      "Check-in and daily activity are now the Today tab of Quests; signature dishes and recipe progress are tabs on Recipes; gems are a tab on Cookware; Gary's fund and savings moved to the new Bank in Town; newbie codes and invites are on the Codes page. Tabs are kept in the address, so you can share them and Back keeps your place; leaderboard sub-boards are a dropdown; Today's deal is now called Limited-time deals",
     shell1011:
       '"More" in the bottom bar is now "Town", with places grouped into Trade, Play and Public. Tap your avatar at the top right for "Me": restaurant info, look, cookware, storage, codes, settings and the help center. Page titles moved to the top bar, and the back button goes up one level',
     theme1011:
