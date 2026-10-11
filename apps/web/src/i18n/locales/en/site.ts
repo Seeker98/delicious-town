@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    shell1011:
+      '"More" in the bottom bar is now "Town", with places grouped into Trade, Play and Public. Tap your avatar at the top right for "Me": restaurant info, look, cookware, storage, codes, settings and the help center. Page titles moved to the top bar, and the back button goes up one level',
     theme1011:
       'New amethyst colors, with restyled buttons, inputs and tabs. Dark mode is here: choose Match system, Light or Dark under Appearance in My account',
     wishtree1011:
