@@ -82,6 +82,10 @@ const friends: Messages['friends'] = {
   tables: {
     freeloader: (name) => `Gorrón: ${name ?? 'un amigo'}`,
     floor: (n) => `Planta ${n}`,
+    count: (floor, n) => `Planta ${floor}: ${n} ${plEs(n, 'mesa', 'mesas')}`,
+    eating: (n) => `${n} ${plEs(n, 'comiendo', 'comiendo')}`,
+    roach: (n) => `${n} ${plEs(n, 'cucaracha', 'cucarachas')}`,
+    free: (n) => `${n} ${plEs(n, 'gorrón', 'gorrones')}`,
   },
   flip: {
     title: 'Revolver la despensa',

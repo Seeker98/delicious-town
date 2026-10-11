@@ -40,7 +40,7 @@ describe('TableGrid', () => {
 
 describe('有蟑螂的楼层标出来（问题记录 561）', () => {
   beforeEach(() => setActivePinia(createPinia()));
-  it('楼层按钮上有虫子图标和只数；没有蟑螂的楼层没有', () => {
+  it('楼层胶囊上有红色小标签“蟑螂 N”；没有蟑螂的楼层没有（界面改版 P7）', () => {
     const w = mount(TableGrid, {
       props: {
         tables: [
@@ -54,16 +54,29 @@ describe('有蟑螂的楼层标出来（问题记录 561）', () => {
     expect(w.find('[data-testid="floor-roach-1"]').exists()).toBe(false);
     expect(w.find('[data-testid="floor-roach-3"]').exists()).toBe(false);
     const r = w.get('[data-testid="floor-roach-2"]');
-    expect(r.find('i.bi-bug').exists()).toBe(true);
-    expect(r.text()).toContain('2');
-    // 读屏读“蟑螂 2”，不只在 title 里（backlog 1010）
-    expect(r.get('.visually-hidden').text()).toBe('蟑螂 2');
+    // 标签文字本身就是“蟑螂 2”，读屏照读（backlog 1010）
+    expect(r.classes()).toContain('dt-tag-danger');
+    expect(r.text()).toBe('蟑螂 2');
+  });
+
+  it('格子上面一行汇总这一层：几桌、几桌在吃、几只蟑螂、几桌白食，没有的不写（界面改版 P7）', () => {
+    const w = mount(TableGrid, {
+      props: {
+        tables: [
+          { no: 1, floor: 1, customer: 3, roach: true, roachBy: null },
+          { no: 2, floor: 1, customer: 2 },
+          { no: 3, floor: 1, customer: 1 },
+          { no: 4, floor: 1, customer: 0 },
+        ],
+      },
+    });
+    expect(w.get('[data-testid="floor-summary"]').text()).toBe('1 楼 4 桌 · 2 桌在吃 · 1 只蟑螂');
   });
 });
 
 describe('每桌点的菜（问题记录 559）', () => {
   beforeEach(() => setActivePinia(createPinia()));
-  it('顾客类型下面一行写点的菜或吃的特色菜；都没有时不加这一行', () => {
+  it('格子中间写点的菜或吃的特色菜，下面是顾客类型短标签；都没有时只写顾客类型（界面改版 P7）', () => {
     const catalog = useCatalogStore();
     catalog.dataMap = new Map([['cookbooks:5', { id: 5, name: '宫保鸡丁' }]]) as never;
     catalog.mcMap = new Map([[42, { id: 42, name: '佛跳墙' }]]) as never;
@@ -84,6 +97,8 @@ describe('每桌点的菜（问题记录 559）', () => {
     expect(w.get('[data-testid="table-dish-1"]').text()).toBe('宫保鸡丁');
     expect(w.get('[data-testid="table-dish-2"]').text()).toBe('佛跳墙');
     expect(w.find('[data-testid="table-dish-3"]').exists()).toBe(false);
+    expect(w.get('[data-testid="table-1"] .dt-tag').text()).toBe('挑剔');
+    expect(w.get('[data-testid="table-3"]').text()).toContain('普通顾客');
   });
 
   it('目录里查不到菜名时用各语言的占位名，不显示 #id（backlog 1010）', () => {

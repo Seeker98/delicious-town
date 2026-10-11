@@ -31,6 +31,12 @@ const rest: Messages['rest'] = {
     today: (rounds, coin, exp, oil) =>
       `Hoy: ${rounds} ${plEs(rounds, 'ronda', 'rondas')} · ${coin} monedas · ${exp} EXP · ${oil} de aceite`,
     bonus: 'Bonificaciones',
+    todayTitle: 'Hoy',
+    rounds: (n) => `${n} ${plEs(n, 'ronda', 'rondas')}`,
+    chartTitle: (n) => `Monedas, últimas ${n} rondas`,
+    chartLabel: (n, latest) => `Monedas de las últimas ${n} rondas, la última ${latest}`,
+    bonusHint: 'Utensilios, instalaciones, clima, calle… toca para ver cada uno',
+    newestFirst: 'Lo más reciente primero',
     more: 'Entradas anteriores',
   },
   floor: {
@@ -41,6 +47,7 @@ const rest: Messages['rest'] = {
       `Pidió «${dish}», quería ${req}, el tuyo es ${grade}: ${ok ? 'satisfecho' : 'no satisfecho'}`,
     orderedNone: (req) => `Quería un plato ${req}, pero aún no has aprendido ninguno que puedas servirle`,
     ateSpecial: (name, n) => `Comió la especialidad «${name}» ×${n}`,
+    roachNote: 'Una mesa con cucaracha no recibe clientes hasta que la elimines.',
     kill: 'Aplastar la cucaracha',
     killed: 'Cucaracha aplastada',
     killFailed: 'No se pudo aplastar la cucaracha',

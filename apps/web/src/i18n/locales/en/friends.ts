@@ -82,6 +82,10 @@ const friends: Messages['friends'] = {
   tables: {
     freeloader: (name) => `Freeloading: ${name ?? 'a friend'}`,
     floor: (n) => `Floor ${n}`,
+    count: (floor, n) => `Floor ${floor}: ${n} ${plEn(n, 'table', 'tables')}`,
+    eating: (n) => `${n} eating`,
+    roach: (n) => `${n} ${plEn(n, 'roach', 'roaches')}`,
+    free: (n) => `${n} freeloading`,
   },
   flip: {
     title: 'Raid pantry',

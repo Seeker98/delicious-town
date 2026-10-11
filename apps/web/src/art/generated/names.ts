@@ -1,5 +1,6 @@
 // 由 pnpm -F @dt/web art 生成，不要手改
 export const UI_ART = [
+  'fac-bug',
   'fac-mousetrap',
   'fac-oilsaver',
   'fac-plaque',

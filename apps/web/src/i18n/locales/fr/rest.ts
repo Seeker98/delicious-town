@@ -31,6 +31,12 @@ const rest: Messages['rest'] = {
     today: (rounds, coin, exp, oil) =>
       `Aujourd’hui\u202f: ${rounds} ${plFr(rounds, 'tour', 'tours')} · ${coin} pièces · ${exp} EXP · ${oil} d’huile`,
     bonus: 'Bonus',
+    todayTitle: 'Aujourd’hui',
+    rounds: (n) => `${n} ${plFr(n, 'tour', 'tours')}`,
+    chartTitle: (n) => `Pièces des ${n} derniers tours`,
+    chartLabel: (n, latest) => `Pièces des ${n} derniers tours, dernier tour ${latest}`,
+    bonusHint: 'Ustensiles, installations, météo, rue… touchez pour tout voir',
+    newestFirst: 'Les plus récents d’abord',
     more: 'Entrées plus anciennes',
   },
   floor: {
@@ -41,6 +47,7 @@ const rest: Messages['rest'] = {
       `A commandé «\u202f${dish}\u202f», voulait ${req}, le vôtre est ${grade}\u202f: ${ok ? 'satisfait' : 'pas satisfait'}`,
     orderedNone: (req) => `Voulait un plat ${req}, mais vous n’en avez appris aucun à lui servir`,
     ateSpecial: (name, n) => `A mangé la spécialité «\u202f${name}\u202f»\u202f×\u202f${n}`,
+    roachNote: 'Une table avec un cafard ne reçoit plus de clients tant que vous ne l’avez pas écrasé.',
     kill: 'Écraser le cafard',
     killed: 'Cafard écrasé',
     killFailed: "Impossible d'écraser le cafard",

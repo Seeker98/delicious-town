@@ -1533,34 +1533,99 @@ details.dt-card > summary {
 .dt-table-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 4px;
+  gap: 8px;
 }
-/* 同一排格子一样高、内容靠上（问题记录 585） */
+/* 餐桌格子（界面改版 P7）：左上角桌号，中间点的菜（最多两行），下面顾客类型小标签；同一排一样高（问题记录 585） */
 .dt-table-cell {
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
   width: 100%;
-  height: 100%;
-  min-height: 56px;
-  padding: 4px;
+  min-height: 84px;
+  padding: 16px 4px 6px;
   border: 1px solid var(--dt-line);
-  border-radius: var(--dt-radius-sm);
+  border-radius: var(--dt-radius-md);
   background: var(--dt-surface);
   color: var(--dt-text);
-  font-size: 13px;
+  font: inherit;
+  font-size: 12px;
   text-align: center;
+  transition: transform var(--dt-dur-press) var(--dt-ease-out);
 }
 .dt-table-cell.is-roach {
   background: var(--dt-soft-danger);
+  border-color: transparent;
   color: var(--dt-ink-danger);
 }
 .dt-table-cell.is-freeloader {
   background: var(--dt-soft-warning);
+  border-color: transparent;
+  color: var(--dt-ink-warning);
+}
+.dt-table-cell.is-empty {
+  border-style: dashed;
+  background: transparent;
 }
 .dt-table-cell[aria-pressed='true'] {
   border: 2px solid var(--dt-primary);
-  padding: 3px;
+  padding: 15px 3px 5px;
+}
+.dt-table-cell.is-roach[aria-pressed='true'] {
+  border-color: var(--dt-ink-danger);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dt-table-cell:active {
+    transform: scale(0.97);
+  }
+}
+.dt-table-no {
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-table-cell.is-roach .dt-table-no,
+.dt-table-cell.is-freeloader .dt-table-no {
+  color: inherit;
+}
+.dt-table-main {
+  max-width: 100%;
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.dt-table-who {
+  max-width: 100%;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dt-table-cell.is-empty .dt-table-who {
+  color: var(--dt-muted);
+}
+.dt-table-cell .dt-tag {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* 楼层下面一行汇总：几桌、几桌在吃、几只蟑螂、几桌白食 */
+.dt-table-sum {
+  margin: 2px 4px 10px;
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
 }
 /* 选择胶囊（界面改版 P3：头像、门）：浅紫描边，选中实心紫；和筛选胶囊（正文色实心）区分开 */
 .dt-choice {
@@ -2445,8 +2510,19 @@ details.dt-card > summary {
 .dt-detail-art.is-t3 {
   background: var(--dt-soft-primary);
 }
-.dt-detail-art.is-master {
+.dt-detail-art.is-master,
+.dt-detail-art.is-warn {
   background: var(--dt-soft-warning);
+}
+/* 餐桌面板（P7）：蟑螂红底红图；普通桌托盘里写桌号 */
+.dt-detail-art.is-danger {
+  background: var(--dt-soft-danger);
+  color: var(--dt-ink-danger);
+}
+.dt-detail-no {
+  font-size: 26px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
 }
 .dt-detail-info {
   min-width: 0;
@@ -2589,4 +2665,173 @@ details.dt-card > summary {
 /* 紫底的格子里数量角标换成白底，免得和格子底色混在一起 */
 .dt-bag-cell.is-t3 .dt-bag-num {
   background: var(--dt-surface);
+}
+/* ===== 界面改版 P7：餐厅、厨具、任务、活动、食谱、仓库 ===== */
+/* 状态小标签（设计 §2.6：4px 小方块）：红、绿、紫、灰 */
+.dt-tag-danger,
+.dt-tag-ok,
+.dt-tag-primary,
+.dt-tag-mute {
+  border-radius: var(--dt-radius-xs);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  padding: 0 6px;
+}
+.dt-tag-danger {
+  background: var(--dt-soft-danger);
+  color: var(--dt-ink-danger);
+}
+.dt-tag-ok {
+  background: var(--dt-soft-success);
+  color: var(--dt-ink-success);
+}
+.dt-tag-primary {
+  background: var(--dt-soft-primary);
+  color: var(--dt-ink-primary);
+}
+.dt-tag-mute {
+  background: var(--dt-surface-2);
+  color: var(--dt-muted);
+}
+/* 底部面板两个按钮：次要一份、主要两份宽 */
+.dt-sheet-pair {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 8px;
+  width: 100%;
+}
+.dt-sheet-pair > .btn {
+  min-height: 46px;
+  font-weight: 600;
+}
+/* 折叠卡的摘要带图标、标题和一行灰字（收益“加成”、厨具“怎么算”） */
+.dt-fold-ico {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--dt-plate);
+  color: var(--dt-primary-ink);
+}
+.dt-fold-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dt-text);
+}
+.dt-fold-sub {
+  display: block;
+  font-size: 12px;
+  color: var(--dt-muted);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dt-fold .dt-effects-sum {
+  min-height: 56px;
+  gap: 12px;
+}
+/* “更早的记录”一类：居中一个浅紫胶囊 */
+.dt-more-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+.dt-more-row > .btn {
+  min-width: 140px;
+}
+/* 收益（P7）：今天一张卡片，三个数字、最近几轮银币的小柱状图 */
+.dt-income-today {
+  margin-bottom: 10px;
+  padding: 14px 14px 12px;
+}
+.dt-income-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.dt-income-title {
+  flex: 1 1 auto;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+.dt-income-meta {
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-income-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+.dt-income-stats .dt-stat-label {
+  display: block;
+  font-size: 12px;
+}
+.dt-income-num {
+  display: block;
+  font-size: 17px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.dt-income-chart {
+  margin-top: 14px;
+}
+.dt-income-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 44px;
+}
+.dt-income-bars > i {
+  flex: 1 1 0;
+  border-radius: 2px 2px 0 0;
+  background: var(--dt-line-strong);
+}
+.dt-income-bars > i:last-child {
+  background: var(--dt-primary);
+}
+.dt-income-axis {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-income-card {
+  padding: 0;
+  overflow: hidden;
+}
+.dt-income-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-income-table th {
+  padding: 8px 12px 6px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--dt-muted);
+}
+.dt-income-table td {
+  height: 38px;
+  padding: 0 12px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-income-table td:first-child {
+  color: var(--dt-muted);
+}
+.dt-income-table th + th,
+.dt-income-table td + td {
+  padding-left: 4px;
 }

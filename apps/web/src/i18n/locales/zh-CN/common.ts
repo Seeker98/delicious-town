@@ -3,6 +3,7 @@ export default {
   loading: '加载中……',
   confirm: '确定',
   cancel: '取消',
+  close: '关闭',
   decrease: '减少',
   increase: '增加',
   language: '语言',

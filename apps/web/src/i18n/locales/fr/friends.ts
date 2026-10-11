@@ -83,6 +83,10 @@ const friends: Messages['friends'] = {
   tables: {
     freeloader: (name) => `Pique-assiette\u202f: ${name ?? 'un ami'}`,
     floor: (n) => `Étage ${n}`,
+    count: (floor, n) => `Étage ${floor}\u202f: ${n} ${plFr(n, 'table', 'tables')}`,
+    eating: (n) => `${n} ${plFr(n, 'occupée', 'occupées')}`,
+    roach: (n) => `${n} ${plFr(n, 'cafard', 'cafards')}`,
+    free: (n) => `${n} ${plFr(n, 'pique-assiette', 'pique-assiettes')}`,
   },
   flip: {
     title: 'Fouiller le garde-manger',

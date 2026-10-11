@@ -31,6 +31,12 @@ const rest: Messages['rest'] = {
     today: (rounds, coin, exp, oil) =>
       `Today: ${rounds} ${plEn(rounds, 'round', 'rounds')} · ${coin} coins · ${exp} EXP · ${oil} oil`,
     bonus: 'Bonuses',
+    todayTitle: 'Today',
+    rounds: (n) => `${n} ${plEn(n, 'round', 'rounds')}`,
+    chartTitle: (n) => `Coins, last ${n} rounds`,
+    chartLabel: (n, latest) => `Coins over the last ${n} rounds, latest ${latest}`,
+    bonusHint: 'Gear, facilities, weather, street… tap to see each one',
+    newestFirst: 'Newest first',
     more: 'Older entries',
   },
   floor: {
@@ -41,6 +47,7 @@ const rest: Messages['rest'] = {
       `Ordered "${dish}", wanted ${req}, yours is ${grade}: ${ok ? 'satisfied' : 'not satisfied'}`,
     orderedNone: (req) => `Wanted a ${req} dish, but you haven't learned one you can serve`,
     ateSpecial: (name, n) => `Ate the special "${name}" ×${n}`,
+    roachNote: "A table with a roach can't take customers until you squash it.",
     kill: 'Squash the roach',
     killed: 'Roach squashed',
     killFailed: 'Could not squash the roach',

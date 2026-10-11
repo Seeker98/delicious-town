@@ -30,6 +30,13 @@ export default {
       `今天 ${rounds} 轮 · 银币 ${coin} · 经验 ${exp} · 耗油 ${oil}`,
     bonus: '加成',
     more: '更早的记录',
+    /** 界面改版 P7：今天一张卡片、最近几轮银币的小柱状图、加成折叠卡的摘要 */
+    todayTitle: '今天',
+    rounds: (n: number) => `${n} 轮`,
+    chartTitle: (n: number) => `最近 ${n} 轮银币`,
+    chartLabel: (n: number, latest: string) => `最近 ${n} 轮银币, 最新一轮 ${latest}`,
+    bonusHint: '厨具、设施、天气、街道… 点开看每一项',
+    newestFirst: '最新在上',
   },
   floor: {
     loadFailed: '读取餐桌失败',
@@ -40,6 +47,8 @@ export default {
       `点了「${dish}」, 要${req}, 你的是${grade}, ${ok ? '满意' : '不满意'}`,
     orderedNone: (req: string) => `想点${req}的菜, 但你还没学会能给他做的菜`,
     ateSpecial: (name: string, n: number) => `吃了特色菜「${name}」×${n}`,
+    /** 点开有蟑螂的桌子（界面改版 P7） */
+    roachNote: '有蟑螂的桌子接不了客, 消灭它才能继续接客。',
     kill: '消灭蟑螂',
     killed: '消灭了蟑螂',
     killFailed: '灭蟑螂失败',

@@ -3,6 +3,7 @@ import type { Messages } from '../..';
 const common: Messages['common'] = {
   loading: 'Cargando…',
   confirm: 'Aceptar',
+  close: 'Cerrar',
   cancel: 'Cancelar',
   decrease: 'Disminuir',
   increase: 'Aumentar',

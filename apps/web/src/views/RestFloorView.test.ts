@@ -10,6 +10,9 @@ vi.mock('../api/endpoints', () => ({
   endpoints: { floor: vi.fn(), roachKill: vi.fn(), dineExpel: vi.fn() },
 }));
 
+/** 底部面板用 Teleport：测试里原地渲染 */
+const mountView = () => mount(RestFloorView, { global: { stubs: { teleport: true } } });
+
 describe('RestFloorView', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -48,7 +51,7 @@ describe('RestFloorView', () => {
   });
 
   it('点自己店里的蟑螂消灭', async () => {
-    const w = mount(RestFloorView);
+    const w = mountView();
     await flushPromises();
     await w.find('[data-testid="table-1"]').trigger('click');
     await w.find('[data-testid="act-kill"]').trigger('click');
@@ -57,7 +60,7 @@ describe('RestFloorView', () => {
   });
 
   it('白食满 30 分钟才能请走', async () => {
-    const w = mount(RestFloorView);
+    const w = mountView();
     await flushPromises();
     await w.find('[data-testid="table-3"]').trigger('click');
     expect(w.find('[data-testid="act-expel"]').attributes('disabled')).toBeDefined();
@@ -90,20 +93,21 @@ describe('RestFloorView', () => {
         },
       },
     ]);
-    const w = mount(RestFloorView);
+    const w = mountView();
     await flushPromises();
     await w.find('[data-testid="table-4"]').trigger('click');
     const lines = w.findAll('[data-testid="table-order"]').map((x) => x.text());
     expect(lines).toEqual(['点了「宫保鸡丁」, 要上品, 你的是中品, 不满意', '吃了特色菜「佛跳墙」×1']);
   });
 
-  it('选中桌的详情在卡片里；灭蟑螂是主按钮，赶白食是危险描边', async () => {
-    const w = mount(RestFloorView);
+  it('点一桌从底部弹出面板（界面改版 P7）；灭蟑螂是主按钮，赶白食是危险描边；普通桌没有操作按钮', async () => {
+    const w = mountView();
     await flushPromises();
     await w.get('[data-testid="table-1"]').trigger('click');
-    const card = w.get('[data-testid="table-detail"]');
-    expect(card.classes()).toContain('dt-card');
-    expect(card.get('[data-testid="act-kill"]').classes()).toContain('btn-primary');
+    const dlg = w.get('[role="dialog"]');
+    expect(dlg.text()).toContain('第 1 桌 · 蟑螂');
+    expect(dlg.find('[data-testid="table-detail"]').exists()).toBe(true);
+    expect(dlg.get('[data-testid="act-kill"]').classes()).toContain('btn-primary');
     await w.get('[data-testid="table-2"]').trigger('click');
     expect(w.get('[data-testid="act-expel"]').classes()).toContain('btn-outline-danger');
   });
