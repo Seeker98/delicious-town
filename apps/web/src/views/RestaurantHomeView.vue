@@ -332,12 +332,12 @@ onBeforeUnmount(() => {
     <section class="dt-home-top" data-testid="home-status">
       <HomeScene :door="rest.door" :closed="rest.state === 2" data-testid="home-hero">
         <template #meta>
-          <span
+          <span class="dt-scene-street"
             >{{ catalog.streetName(rest.streetId, rest.streetName) }} ·
             {{ t.home.stars(rest.starLevel) }}</span
           >
           <template v-if="rest.weather">
-            <span aria-hidden="true"> · </span>
+            <span class="dt-scene-sep" aria-hidden="true">·</span>
             <RouterLink to="/weather" class="dt-go">{{
               catalog.weatherName(rest.weather.id, rest.weather.name)
             }}</RouterLink>

@@ -1123,6 +1123,24 @@ describe('RestaurantHomeView', () => {
     expect(rows[2]!.classes()).toContain('dt-nav-row-static');
   });
 
+  it('资源胶囊按内容宽度排、放不下换行，大数字不溢出到旁边的胶囊（P5 终审 I1：银币 12,345,678 时压到体力上）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, coin: 12_345_678 });
+    const w = await mountView();
+    expect(w.get('[data-testid="home-status"] [data-testid="home-level"] + .dt-home-res').exists()).toBe(
+      true,
+    );
+    const css = readCss('main');
+    expect(css).toMatch(/\.dt-home-res \{[^}]*flex-wrap: wrap;/);
+    expect(css).toMatch(/\.dt-home-res > \.dt-res-pill \{[^}]*flex: 1 1 auto;/);
+    expect(css).not.toMatch(/\.dt-home-res > \.dt-res-pill \{[^}]*flex: 1 1 0;/);
+  });
+
+  it('今日块按下缩小只在没开“减少动态效果”时（设计 §2.5，P5 终审）', () => {
+    expect(readCss('main')).toMatch(
+      /@media \(prefers-reduced-motion: no-preference\) \{\s*a\.dt-do:active,\s*button\.dt-do:active:not\(:disabled\) \{\s*transform: scale\(0\.97\);/,
+    );
+  });
+
   it('设施格子的图形放大到 32px（界面改版 P5）', async () => {
     const w = await mountView();
     expect(w.get('[data-testid="slot-1"] svg').attributes('width')).toBe('32');
@@ -1201,6 +1219,7 @@ describe('首页套用新的页面模式（界面改版 P3）', () => {
     const meta = hero.get('.dt-scene-meta');
     expect(meta.text()).toContain('0 星');
     expect(meta.get('a[href="/weather"]').text()).toContain('晴');
+    expect(meta.get('.dt-scene-sep').text()).toBe('·');
     expect(hero.find('a[href="/shards"]').exists()).toBe(true);
     expect(hero.get('[data-testid="scene-closed"]').text()).toBe('停业中');
     const lv = top.get('[data-testid="home-level"]');

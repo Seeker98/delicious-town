@@ -44,7 +44,16 @@ describe('首页场景头图（界面改版 P5，样稿 B）', () => {
     expect(top.element.children[1]!.classList.contains('dt-scene-aside')).toBe(true);
     const css = readCss('main');
     expect(css).toMatch(/\.dt-scene-top \{[^}]*display: flex;/);
-    expect(css).toMatch(/\.dt-scene-meta \{[^}]*min-width: 0;[^}]*text-overflow: ellipsis;/);
+    expect(css).toMatch(/\.dt-scene-meta \{[^}]*min-width: 0;/);
     expect(css).toMatch(/\.dt-scene-aside \{[^}]*flex-shrink: 0;/);
+  });
+
+  it('放不下时先截街道，天气链接不被截掉（P5 终审：西文 360px 天气已经截成“Nublad…”）', () => {
+    const css = readCss('main');
+    expect(css).toMatch(/\.dt-scene-meta \{[^}]*display: flex;/);
+    expect(css).toMatch(/\.dt-scene-street \{[^}]*min-width: 0;[^}]*text-overflow: ellipsis;/);
+    expect(css).toMatch(/\.dt-scene-meta > a \{[^}]*flex-shrink: 0;/);
+    // 弹性行里空格会被吃掉：分隔点两边的间距由样式给（P3 教训：模板里的空格靠不住）
+    expect(css).toMatch(/\.dt-scene-sep \{[^}]*margin: 0 4px;/);
   });
 });

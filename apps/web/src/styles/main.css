@@ -1820,12 +1820,24 @@ details.dt-card > summary {
   font-size: 12px;
 }
 .dt-scene-meta {
+  display: flex;
   flex: 1 1 auto;
   min-width: 0;
   color: var(--dt-muted);
   white-space: nowrap;
+}
+/* 放不下时先截街道，天气链接留着（P5 终审） */
+.dt-scene-street {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.dt-scene-meta > a {
+  flex-shrink: 0;
+}
+.dt-scene-sep {
+  flex-shrink: 0;
+  margin: 0 4px;
 }
 .dt-scene-aside {
   flex-shrink: 0;
@@ -1864,18 +1876,16 @@ details.dt-card > summary {
 .dt-home-exp .dt-art {
   vertical-align: -3px;
 }
-/* 首页资源胶囊一排（界面改版 P5）：四个平分，数字长的银币多占一点 */
+/* 首页资源胶囊一排（界面改版 P5）：按内容宽度排、剩下的平分；数字很大放不下时换到第二行，不压到旁边（P5 终审 I1） */
 .dt-home-res {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   margin: 12px 0 0;
 }
 .dt-home-res > .dt-res-pill {
-  flex: 1 1 0;
+  flex: 1 1 auto;
   justify-content: center;
-}
-.dt-home-res > .dt-res-pill:first-child {
-  flex-grow: 1.4;
 }
 /* 营业状态卡：首页的主角，浮起来的卡片 */
 .dt-home-oil {
@@ -2029,9 +2039,12 @@ details.dt-card > summary {
 .dt-do:last-child:nth-child(odd) {
   grid-column: 1 / -1;
 }
-a.dt-do:active,
-button.dt-do:active:not(:disabled) {
-  transform: scale(0.97);
+/* 按下缩小只在没开“减少动态效果”时（设计 §2.5） */
+@media (prefers-reduced-motion: no-preference) {
+  a.dt-do:active,
+  button.dt-do:active:not(:disabled) {
+    transform: scale(0.97);
+  }
 }
 .dt-do-title {
   font-size: 15px;
