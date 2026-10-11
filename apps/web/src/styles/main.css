@@ -585,6 +585,48 @@ details.dt-card > summary {
 .dt-qty-text {
   min-width: 64px;
 }
+/* 数量步进器（界面改版 P3，设计 §5 第 6 条）：− 数字 +，胶囊外框 */
+.dt-stepper {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  border: 1px solid var(--dt-line-strong);
+  border-radius: var(--dt-radius-pill);
+  background: var(--dt-surface);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.dt-stepper > button {
+  width: 32px;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--dt-primary-ink);
+  font-size: 16px;
+  line-height: 1;
+}
+.dt-stepper > button:disabled {
+  color: var(--dt-disabled-text);
+}
+.dt-stepper > input {
+  width: 48px;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--dt-text);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.dt-stepper > input::-webkit-outer-spin-button,
+.dt-stepper > input::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+.dt-stepper:focus-within {
+  border-color: var(--dt-primary);
+}
 /* 只读的紧凑列表：新闻、流水 */
 .dt-feed {
   display: flex;

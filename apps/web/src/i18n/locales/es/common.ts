@@ -4,6 +4,8 @@ const common: Messages['common'] = {
   loading: 'Cargando…',
   confirm: 'Aceptar',
   cancel: 'Cancelar',
+  decrease: 'Disminuir',
+  increase: 'Aumentar',
   language: 'Idioma',
   appearance: 'Apariencia',
   themeSystem: 'Según el sistema',

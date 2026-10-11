@@ -4,6 +4,8 @@ const common: Messages['common'] = {
   loading: 'Loading…',
   confirm: 'OK',
   cancel: 'Cancel',
+  decrease: 'Decrease',
+  increase: 'Increase',
   language: 'Language',
   appearance: 'Appearance',
   themeSystem: 'Match system',
