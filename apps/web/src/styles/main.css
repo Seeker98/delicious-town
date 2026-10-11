@@ -309,14 +309,16 @@ html {
   overflow-wrap: anywhere;
 }
 /* 食谱列表的紧凑卡片（问题记录：信息密度低） */
+/* 食谱列表的一行（界面改版 P4：卡片里的行，细线分隔） */
 .dt-cb {
   display: flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid var(--dt-line);
-  border-radius: 6px;
-  padding: 4px 8px;
-  margin-bottom: 3px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--dt-line);
+}
+.dt-cb:last-child {
+  border-bottom: 0;
 }
 .dt-cb-foods {
   font-size: 12px;
@@ -1619,4 +1621,33 @@ details.dt-card > summary {
 .dt-quest-bar > div {
   height: 100%;
   background: var(--dt-warning);
+}
+/* 食谱详情的品级行（界面改版 P4） */
+.dt-grade-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--dt-line);
+}
+.dt-grade-row:last-child {
+  border-bottom: 0;
+}
+.dt-grade-row.is-done .dt-grade-name {
+  color: var(--dt-ink-success);
+}
+.dt-grade-name {
+  flex: 0 0 3.5em;
+  white-space: nowrap;
+}
+.dt-grade-foods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  min-width: 0;
+}
+.dt-need {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
 }

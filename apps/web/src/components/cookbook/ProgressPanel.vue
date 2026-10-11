@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import type { CookbookProgressDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import DtSkeleton from '../DtSkeleton.vue';
 import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
@@ -32,7 +33,7 @@ onMounted(async () => {
 
 <template>
   <div v-if="error" class="alert alert-danger">{{ error }}</div>
-  <div v-else-if="!data" class="text-muted small" data-testid="progress-loading">{{ t.common.loading }}</div>
+  <DtSkeleton v-else-if="!data" :rows="6" data-testid="progress-loading" />
   <template v-if="data">
     <ul class="list-unstyled small mb-3" data-testid="progress-summary">
       <li v-for="(g, i) in grades" :key="g">
@@ -48,7 +49,7 @@ onMounted(async () => {
     </ul>
     <div class="small text-muted mb-1">{{ t.cookbook.progress.note }}</div>
     <div class="table-responsive">
-      <table class="table table-sm small text-end align-middle">
+      <table class="table table-sm small text-end align-middle dt-num-table">
         <thead>
           <tr>
             <th class="text-start">{{ t.cookbook.progress.street }}</th>

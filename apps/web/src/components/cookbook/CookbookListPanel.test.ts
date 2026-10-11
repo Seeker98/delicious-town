@@ -150,6 +150,8 @@ describe('CookbookListPanel', () => {
     await flushPromises();
     const card = w.find('[data-testid="cb-194"]');
     expect(card.classes()).toContain('dt-cb');
+    // 界面改版 P4：一张卡片里一行一道菜，不再一行一个带边框的格子
+    expect(card.element.closest('.dt-card')).not.toBeNull();
     expect(card.find('.dt-cb-foods').text()).toContain('1/1');
     expect(card.find('[data-testid="learn-194"]').classes()).toContain('dt-btn-xs');
   });
