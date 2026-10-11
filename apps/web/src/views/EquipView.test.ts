@@ -106,19 +106,17 @@ describe('EquipView', () => {
     vi.mocked(endpoints.equipPresetApply).mockResolvedValue({ skipped: [3] });
   });
 
-  it('属性表放在能左右滑的容器里，不撑宽整页（问题记录 304）', async () => {
+  it('属性不再是表格，每项一根横条（界面改版 P7）：深紫加点、浅紫厨具，按最高的合计算长度；右边合计，下面写加法', async () => {
     const w = await mountView();
-    expect(w.get('[data-testid="attr-table"]').classes()).toContain('table-responsive');
-    expect(w.get('[data-testid="attr-table"]').find('table').exists()).toBe(true);
-  });
-
-  it('属性表每项属性一行、只有加点/厨具/合计三列：英法西文在手机上也不用左右滑（质量期 ④）', async () => {
-    const w = await mountView();
-    const table = w.get('[data-testid="attr-table"] table');
-    expect(table.findAll('thead th')).toHaveLength(4);
-    const rows = table.findAll('tbody tr');
-    expect(rows).toHaveLength(6);
-    expect(rows[0]!.findAll('th, td')).toHaveLength(4);
+    const box = w.get('[data-testid="attr-table"]');
+    expect(box.find('table').exists()).toBe(false);
+    expect(box.findAll('.dt-attr-bar')).toHaveLength(6);
+    const cook = w.get('[data-testid="attr-cook"]');
+    expect(cook.get('.is-a').attributes('style')).toContain('width: 57.14');
+    expect(cook.get('.is-b').attributes('style')).toContain('width: 42.85');
+    expect(cook.get('.dt-attr-bar-total').text()).toBe('7');
+    expect(cook.get('.dt-attr-bar-sum').text()).toBe('4 + 3');
+    expect(cook.get('[role="img"]').attributes('aria-label')).toBe('厨艺 7 (加点 4 + 厨具 3)');
   });
 
   it('显示属性、厨力、5 个部位和套装档位', async () => {
@@ -126,14 +124,18 @@ describe('EquipView', () => {
     expect(w.find('[data-testid="power"]').text()).toBe('7');
     expect(w.find('[data-testid="slot-1"]').text()).toContain('+2');
     expect(w.find('[data-testid="slot-2"]').text()).toContain('空');
-    expect(w.text()).toContain('真爱套装 (3/5)');
-    expect(w.text()).toContain('上座率+5%, 挑剔率+3%');
-    // 赛厨时的厨力（问题记录 417）
-    expect(w.find('[data-testid="duel-power"]').text()).toContain('赛厨时: 进攻 9、防守 8');
-    // 厨具收益加成（问题记录 411）
-    expect(w.find('[data-testid="gear-income"]').text()).toContain(
-      '厨具收益加成: 最终银币 +1.2%、最终经验 +0.75%、特色菜金牌 +0.9%',
-    );
+    const suit = w.get('[data-testid="suit"]');
+    expect(suit.text()).toContain('真爱套装');
+    expect(suit.text()).toContain('3 / 5 件');
+    expect(suit.text()).toContain('上座率+5%, 挑剔率+3%');
+    // 生效的一档打勾，没生效的不打
+    expect(suit.findAll('.dt-equip-tier.is-on')).toHaveLength(1);
+    // 赛厨时的厨力（问题记录 417）：顶部三个数字里的后两个
+    expect(w.get('[data-testid="power-line"]').text()).toContain('赛厨进攻9');
+    expect(w.get('[data-testid="power-line"]').text()).toContain('赛厨防守8');
+    // 厨具收益加成（问题记录 411）：三个数字
+    const income = w.get('[data-testid="gear-income"]').text();
+    for (const s of ['最终银币+1.2%', '最终经验+0.75%', '特色菜金牌+0.9%']) expect(income).toContain(s);
   });
 
   it('部位和操作按钮在最上面，属性表在下面；厨力等三行只写数，说明收在“这些数怎么算”里（问题记录 530）', async () => {
@@ -141,12 +143,12 @@ describe('EquipView', () => {
     const html = w.html();
     expect(html.indexOf('data-testid="slot-1"')).toBeLessThan(html.indexOf('data-testid="attr-table"'));
     expect(html.indexOf('data-testid="open-presets"')).toBeLessThan(html.indexOf('data-testid="attr-table"'));
-    expect(w.get('[data-testid="duel-power"]').text()).toBe('赛厨时: 进攻 9、防守 8');
+    expect(w.get('[data-testid="duel-power"]').text()).toBe('赛厨进攻9');
     expect(w.get('[data-testid="power-line"]').text()).not.toContain('五项之和');
     const notes = w.get('[data-testid="equip-notes"]');
     expect(notes.element.tagName).toBe('DETAILS');
     expect((notes.element as HTMLDetailsElement).open).toBe(false);
-    expect(notes.text()).toContain('这些数怎么算');
+    expect(notes.text()).toContain('厨力、加成这些数怎么算');
     expect(notes.text()).toContain('五项之和');
     expect(notes.text()).toContain('厨塔页显示的是进攻');
     expect(notes.text()).toContain('幸运不算');
@@ -204,7 +206,11 @@ describe('EquipView', () => {
     // 标题在顶栏（界面改版 P2a）；件数留在标题行的位置
     expect(w.get('[data-testid="equip-count"]').text()).toContain('件');
     expect(w.text()).toContain('赛厨的胜负看评委按色香味形养打分');
-    expect(w.find('[data-testid="attr-left"]').text()).toBe('剩余点数 3');
+    // 界面改版 P7：属性卡片底下一行“3 点还没加”，点“加点”弹出面板
+    expect(w.get('#attr-points').text()).toContain('3 点还没加');
+    await w.get('[data-testid="open-points"]').trigger('click');
+    expect(w.get('[data-testid="attr-left"]').element.closest('[role="dialog"]')).not.toBeNull();
+    expect(w.find('[data-testid="attr-left"]').text()).toBe('还剩 3 点');
     await w.find('[data-testid="add-cook"]').setValue('2');
     await w.find('[data-testid="allocate"]').trigger('click');
     await flushPromises();
@@ -212,17 +218,28 @@ describe('EquipView', () => {
     expect(endpoints.equipOverview).toHaveBeenCalledTimes(2);
   });
 
-  it('加点输入框上方写明是哪一项，默认留空；写出加完后的数值（问题记录：不知道加的哪三个）', async () => {
+  it('加点面板一项一行写明是哪一项；写出加完以后的合计（含厨具）（问题记录：不知道加的哪三个；界面改版 P7）', async () => {
     vi.mocked(endpoints.overview).mockResolvedValue({
       attrLeft: 3,
       attrs: { cook: 20, cutting: 5, fire: 0, season: 0, creatives: 0 },
     } as never);
+    vi.mocked(endpoints.equipOverview).mockResolvedValue(
+      overview({
+        attrs: {
+          points: attrs({ cook: 20 }),
+          gear: attrs({ cook: 7 }),
+          total: attrs({ cook: 27, cutting: 5 }),
+          power: 7,
+        },
+      }),
+    );
     const w = await mountView();
+    await w.get('[data-testid="open-points"]').trigger('click');
     expect(w.findAll('[data-testid^="label-"]').map((x) => x.text())).toEqual(['厨艺', '刀工', '火候']);
     // 界面改版 P3：步进器默认 0（每格上方写了是哪一项，原来留空的理由不在了）
     expect((w.find('[data-testid="add-cook"]').element as HTMLInputElement).value).toBe('0');
     await w.find('[data-testid="add-cook"]').setValue('2');
-    expect(w.find('[data-testid="preview-cook"]').text()).toBe('20 → 22');
+    expect(w.find('[data-testid="preview-cook"]').text()).toBe('27 → 29');
     expect(w.find('[data-testid="preview-cutting"]').text()).toBe('5');
   });
 
@@ -232,20 +249,21 @@ describe('EquipView', () => {
       attrs: { cook: 0, cutting: 0, fire: 0, season: 0, creatives: 0 },
     } as never);
     const w = await mountView();
+    await w.get('[data-testid="open-points"]').trigger('click');
     const input = (k: string) => w.find(`[data-testid="add-${k}"]`).element as HTMLInputElement;
     await w.find('[data-testid="add-cook"]').setValue('99');
     expect(input('cook').value).toBe('10');
     await w.find('[data-testid="add-cook"]').setValue('7');
-    expect(w.find('[data-testid="attr-left"]').text()).toBe('剩余点数 3');
+    expect(w.find('[data-testid="attr-left"]').text()).toBe('还剩 3 点');
     await w.find('[data-testid="add-cutting"]').setValue('8');
     expect(input('cutting').value).toBe('3');
-    expect(w.find('[data-testid="attr-left"]').text()).toBe('剩余点数 0');
+    expect(w.find('[data-testid="attr-left"]').text()).toBe('还剩 0 点');
     // 步进器里清空在失焦时才算 0（界面改版 P3）
     await w.find('[data-testid="add-cutting"]').setValue('');
     await w.find('[data-testid="add-cutting"]').trigger('blur');
     await w.find('[data-testid="all-fire"]').trigger('click');
     expect(input('fire').value).toBe('3');
-    expect(w.find('[data-testid="allocate"]').text()).toBe('加点 (10)');
+    expect(w.find('[data-testid="allocate"]').text()).toBe('加 10 点');
     expect(w.find('[data-testid="allocate"]').attributes('disabled')).toBeUndefined();
   });
 
@@ -257,6 +275,7 @@ describe('EquipView', () => {
     let finish!: () => void;
     vi.mocked(endpoints.allocate).mockReturnValue(new Promise((r) => (finish = () => r({} as never))));
     const w = await mountView();
+    await w.get('[data-testid="open-points"]').trigger('click');
     await w.find('[data-testid="add-cook"]').setValue('2');
     await w.find('[data-testid="allocate"]').trigger('click');
     expect(w.find('[data-testid="all-fire"]').attributes('disabled')).toBeDefined();
@@ -279,9 +298,10 @@ describe('EquipView', () => {
     } as never);
     vi.mocked(endpoints.allocate).mockResolvedValue({} as never);
     const w = await mountView();
+    await w.get('[data-testid="open-points"]').trigger('click');
     await w.find('[data-testid="add-cook"]').setValue('');
     await w.find('[data-testid="add-cutting"]').setValue('1');
-    expect(w.find('[data-testid="allocate"]').text()).toBe('加点 (1)');
+    expect(w.find('[data-testid="allocate"]').text()).toBe('加 1 点');
     await w.find('[data-testid="allocate"]').trigger('click');
     await flushPromises();
     expect(endpoints.allocate).toHaveBeenCalledWith({ cook: 0, cutting: 1, fire: 0 });
@@ -312,7 +332,33 @@ describe('EquipView', () => {
       'slot-bottle',
       'slot-hat',
     ]);
+    await w.get('[data-testid="open-points"]').trigger('click');
     expect(w.get('[data-testid="add-cook"]').element.closest('.dt-stepper')).not.toBeNull();
+  });
+
+  it('从餐厅信息“去加点”过来（#attr-points）直接打开加点面板；没有点可加时不打开（界面改版 P7）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      attrLeft: 3,
+      attrs: { cook: 0, cutting: 0, fire: 0, season: 0, creatives: 0 },
+    } as never);
+    const w = await mountView('/rest/equip#attr-points');
+    expect(w.find('[data-testid="attr-points-body"]').exists()).toBe(true);
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      attrLeft: 0,
+      attrs: { cook: 0, cutting: 0, fire: 0, season: 0, creatives: 0 },
+    } as never);
+    const none = await mountView('/rest/equip#attr-points');
+    expect(none.find('[data-testid="attr-points-body"]').exists()).toBe(false);
+  });
+
+  it('穿戴中一个部位一行，名字写全不截成“…”；点一行弹出这个部位的厨具，穿着的排最前（界面改版 P7）', async () => {
+    const w = await mountView();
+    expect(w.get('[data-testid="slot-1"]').classes()).toContain('dt-row');
+    await w.get('[data-testid="slot-1"]').trigger('click');
+    await flushPromises();
+    const dlg = w.get('[role="dialog"]');
+    expect(dlg.text()).toContain('铲');
+    expect(dlg.find('a[href="/rest/equip/3"]').exists()).toBe(true);
   });
 
   it('预设、一键处理放进底部面板；一键处理走确认面板，标成危险操作（界面改版 P3）', async () => {

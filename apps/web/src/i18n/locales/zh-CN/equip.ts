@@ -8,7 +8,26 @@ export default {
   power: '厨力',
   powerNote: '厨力 = 五项之和 + 幸运/2, 只作参考；赛厨的胜负看评委按色香味形养打分',
   /** 厨力等三行的说明收在这里（问题记录 530） */
-  notesTitle: '这些数怎么算',
+  notesTitle: '厨力、加成这些数怎么算',
+  /** 界面改版 P7：顶部三个数字、穿戴中一个部位一行、属性横条、部位面板 */
+  duelAttack: '赛厨进攻',
+  duelDefend: '赛厨防守',
+  wornTitle: '穿戴中',
+  countHint: (n: number) => `共 ${n} 件 · 点一行换装`,
+  suitCount: (count: number, max: number) => `${count} / ${max} 件`,
+  tierNeed: (n: number) => `${n} 件`,
+  partHint: (n: number) => `${n} 件 · 点名字看详情`,
+  locked: '已锁定',
+  wornTag: '穿戴中',
+  attrPlus: (name: string, v: number) => `${name} +${v}`,
+  attrsTitle: '属性',
+  barLabel: (name: string, points: number, gear: number, total: number) =>
+    `${name} ${total} (加点 ${points} + 厨具 ${gear})`,
+  pointsLeftText: '点还没加',
+  incomeTitle: '厨具收益加成',
+  incomeCoin: '最终银币',
+  incomeExp: '最终经验',
+  incomeGold: '特色菜金牌',
   duelNote: '赛厨时的进攻、防守算上了所有幸运加成和套装的进攻、防守加成；厨塔页显示的是进攻这个',
   /** 穿戴厨具（含宝石）的收益加成（问题记录 411） */
   /** 赛厨时的厨力（问题记录 417） */
@@ -52,9 +71,13 @@ export default {
   processFailed: '处理失败',
   loadFailed: '读取厨具失败',
   points: {
-    left: (n: number) => `剩余点数 ${n}`,
-    allocate: (n: number) => `加点 (${n})`,
+    left: (n: number) => `还剩 ${n} 点`,
+    allocate: (n: number) => `加 ${n} 点`,
     all: '全加',
+    open: '加点',
+    title: '加点',
+    note: '中间是加完以后的合计 (含厨具)',
+    clear: '清零',
     failed: '加点失败',
   },
   detail: {

@@ -2973,3 +2973,241 @@ details.dt-card > summary {
   float: none;
   margin: 0;
 }
+/* 厨具（P7）：顶部厨力三个数字、收益加成三个数字，中间竖线隔开 */
+.dt-equip-power {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  padding: 0;
+  overflow: hidden;
+}
+.dt-equip-power > div {
+  min-width: 0;
+  padding: 10px 12px;
+}
+.dt-equip-power > div + div {
+  border-left: 1px solid var(--dt-line);
+}
+.dt-equip-power .dt-stat-label {
+  display: block;
+  font-size: 12px;
+}
+.dt-equip-power b {
+  display: block;
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.dt-equip-power b.is-good {
+  color: var(--dt-ink-success);
+}
+.dt-equip-power b.dt-equip-power-main {
+  font-size: 22px;
+  color: var(--dt-primary-ink);
+}
+/* 穿戴中：一个部位一行，名字写全（最多两行），托盘里是部位图 */
+.dt-equip-row {
+  width: 100%;
+  min-height: 62px;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+}
+.dt-rows-card > .dt-equip-row:first-child {
+  border-top: 0;
+}
+.dt-equip-tray {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--dt-soft-warning);
+  color: var(--dt-ink-warning);
+}
+.dt-equip-tray.is-empty {
+  background: var(--dt-plate);
+  color: var(--dt-muted);
+}
+.dt-equip-name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.dt-equip-name > .dt-tag {
+  margin-left: 6px;
+  vertical-align: 1px;
+}
+.dt-row.is-worn {
+  background: var(--dt-surface-2);
+}
+.dt-equip-link {
+  color: var(--dt-text);
+  text-decoration: none;
+}
+.dt-sheet-list {
+  margin: 0 -16px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-sheet-list > .dt-row {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+.dt-sheet-list > .dt-row:first-child {
+  border-top: 0;
+}
+/* 套装：卡片底部浅底一块，每一档一行，生效的绿色对勾 */
+.dt-equip-suit {
+  padding: 10px 14px 12px;
+  border-top: 1px solid var(--dt-line);
+  background: var(--dt-surface-2);
+}
+.dt-equip-suit-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+.dt-equip-suit-head b {
+  font-weight: 600;
+}
+.dt-equip-tier {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-equip-tier.is-on {
+  color: var(--dt-text);
+}
+.dt-equip-tier > .bi {
+  flex-shrink: 0;
+  color: var(--dt-muted);
+}
+.dt-equip-tier.is-on > .bi {
+  color: var(--dt-ink-success);
+}
+.dt-equip-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.dt-equip-actions > .btn {
+  min-height: 36px;
+  font-weight: 600;
+}
+/* 属性横条：深紫加点、浅紫厨具（详情页再加宝石金）；右边合计，下面一行小字写加法 */
+.dt-equip-legend > i {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin: 0 4px 0 8px;
+  border-radius: 2px;
+}
+.dt-equip-legend > i.is-a,
+.dt-hbar > i.is-a {
+  background: var(--dt-primary);
+}
+.dt-equip-legend > i.is-b,
+.dt-hbar > i.is-b {
+  background: var(--dt-bar-b);
+}
+.dt-equip-legend > i.is-c,
+.dt-hbar > i.is-c {
+  background: var(--dt-bar-c);
+}
+.dt-attr-bars {
+  padding: 0;
+  overflow: hidden;
+}
+.dt-attr-bar {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 48px;
+  align-items: center;
+  column-gap: 10px;
+  padding: 9px 14px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-attr-bar:first-child {
+  border-top: 0;
+}
+.dt-attr-bar-name {
+  font-size: 14px;
+}
+.dt-hbar {
+  display: flex;
+  height: 10px;
+  border-radius: 5px;
+  background: var(--dt-bar-track);
+  overflow: hidden;
+}
+.dt-hbar > i {
+  display: block;
+  height: 100%;
+}
+.dt-attr-bar-total {
+  font-size: 15px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.dt-attr-bar-sum {
+  grid-column: 2;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-attr-points {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-attr-points > span {
+  flex: 1 1 auto;
+}
+.dt-equip-notes {
+  margin: 0;
+  padding: 10px 14px 12px 30px;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+/* 加点面板：一项一行，名字、加完以后的合计、步进器、全加 */
+.dt-points-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.dt-points-head > b {
+  flex-shrink: 0;
+  color: var(--dt-primary-ink);
+}
+.dt-points-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-points-name {
+  width: 44px;
+  flex-shrink: 0;
+}
+.dt-points-val {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 13px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}

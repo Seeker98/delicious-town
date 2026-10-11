@@ -9,7 +9,26 @@ export default {
   power: '廚力',
   powerNote: '廚力 = 五項之和 + 幸運/2, 只作參考；賽廚的勝負看評委按色香味形養打分',
   /** 廚力等三行的說明收在這裡（問題記錄 530） */
-  notesTitle: '這些數怎麼算',
+  notesTitle: '廚力、加成這些數怎麼算',
+  /** 介面改版 P7：頂部三個數字、穿戴中一個部位一行、屬性橫條、部位面板 */
+  duelAttack: '賽廚進攻',
+  duelDefend: '賽廚防守',
+  wornTitle: '穿戴中',
+  countHint: (n: number) => `共 ${n} 件 · 點一行換裝`,
+  suitCount: (count: number, max: number) => `${count} / ${max} 件`,
+  tierNeed: (n: number) => `${n} 件`,
+  partHint: (n: number) => `${n} 件 · 點名字看詳情`,
+  locked: '已鎖定',
+  wornTag: '穿戴中',
+  attrPlus: (name: string, v: number) => `${name} +${v}`,
+  attrsTitle: '屬性',
+  barLabel: (name: string, points: number, gear: number, total: number) =>
+    `${name} ${total} (加點 ${points} + 廚具 ${gear})`,
+  pointsLeftText: '點還沒加',
+  incomeTitle: '廚具收益加成',
+  incomeCoin: '最終銀幣',
+  incomeExp: '最終經驗',
+  incomeGold: '特色菜金牌',
   duelNote: '賽廚時的進攻、防守算上了所有幸運加成和套裝的進攻、防守加成；廚塔頁顯示的是進攻這個',
   /** 穿戴廚具（含寶石）的收益加成（問題記錄 411） */
   /** 賽廚時的廚力（問題記錄 417） */
@@ -53,9 +72,13 @@ export default {
   processFailed: '處理失敗',
   loadFailed: '讀取廚具失敗',
   points: {
-    left: (n: number) => `剩餘點數 ${n}`,
-    allocate: (n: number) => `加點 (${n})`,
+    left: (n: number) => `還剩 ${n} 點`,
+    allocate: (n: number) => `加 ${n} 點`,
     all: '全加',
+    open: '加點',
+    title: '加點',
+    note: '中間是加完以後的合計 (含廚具)',
+    clear: '清零',
     failed: '加點失敗',
   },
   detail: {

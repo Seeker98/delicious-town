@@ -74,6 +74,10 @@
   --dt-scene-hill: #ddd0f1;
   --dt-scene-ground: #cbbbe3;
   --dt-plate: #f6f0fd;
+  /* 横条（界面改版 P7 厨具属性）：a 深紫、b 浅紫、c 宝石金；底槽 */
+  --dt-bar-b: #c9b3ea;
+  --dt-bar-c: #e0a82e;
+  --dt-bar-track: #efeaf5;
   --dt-header-bg: #ffffff;
   --dt-soft-primary: #eee4fb;
   --dt-ink-primary: #5f3499;
@@ -131,6 +135,9 @@
   --dt-scene-hill: #332850;
   --dt-scene-ground: #3d3158;
   --dt-plate: #2a2335;
+  --dt-bar-b: #5e4a80;
+  --dt-bar-c: #c79a2e;
+  --dt-bar-track: #2a2335;
   --dt-header-bg: #211b2a;
   --dt-soft-primary: #382a50;
   --dt-ink-primary: #d2b4f5;
