@@ -42,6 +42,7 @@ const mc: Messages['mc'] = {
   batches: (n) => `${n} ${plEs(n, 'tanda', 'tandas')}`,
   filter: {
     all: 'Todos',
+    allRoads: 'Todas las vías',
     level: (n) => `Nv. ${n}`,
     count: (label, n) => `${label} (${n})`,
     none: 'Nada en estas pestañas',

@@ -44,6 +44,7 @@ export default {
   /** 按级、按道分页（问题记录 414） */
   filter: {
     all: '全部',
+    allRoads: '全部道',
     level: (n: number) => `${n} 级`,
     count: (label: string, n: number) => `${label} (${n})`,
     none: '这一页没有',

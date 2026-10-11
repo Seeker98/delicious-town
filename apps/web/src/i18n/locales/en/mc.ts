@@ -42,6 +42,7 @@ const mc: Messages['mc'] = {
   batches: (n) => `${n} ${n === 1 ? 'batch' : 'batches'}`,
   filter: {
     all: 'All',
+    allRoads: 'All paths',
     level: (n) => `Lv. ${n}`,
     count: (label, n) => `${label} (${n})`,
     none: 'None on these tabs',

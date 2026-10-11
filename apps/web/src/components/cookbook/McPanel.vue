@@ -94,12 +94,18 @@ const allIds = computed(
     ]),
 );
 /** 一排分页：0 道的页不显示（“全部”和选中的那页除外），手机上少占几行 */
-function tabs(keys: Tab[], selected: Tab, name: (x: number) => string, count: (x: Tab) => number) {
+function tabs(
+  keys: Tab[],
+  selected: Tab,
+  name: (x: number) => string,
+  count: (x: Tab) => number,
+  all = t.value.mc.filter.all,
+) {
   return keys
     .map((x) => ({
       key: x,
       n: count(x),
-      label: t.value.mc.filter.count(x === 'all' ? t.value.mc.filter.all : name(x), count(x)),
+      label: t.value.mc.filter.count(x === 'all' ? all : name(x), count(x)),
     }))
     .filter((x) => x.key === 'all' || x.key === selected || x.n > 0);
 }
@@ -117,6 +123,8 @@ const roadTabs = computed(() =>
     road.value,
     (x) => ROAD_NAMES[x] ?? '',
     (x) => [...allIds.value].filter((id) => inRoad(id, x) && inLevel(id, level.value)).length,
+    // 按道是下拉框（界面改版 P7），“全部”写成“全部道”，和旁边按级的“全部”分开
+    t.value.mc.filter.allRoads,
   ),
 );
 /** 已学每页 12 道（界面改版 P7：249 道一次全列出来整页三万像素高）；换筛选回到第一页 */

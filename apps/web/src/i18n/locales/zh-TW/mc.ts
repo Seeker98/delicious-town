@@ -45,6 +45,7 @@ export default {
   /** 按級、按道分頁（問題記錄 414） */
   filter: {
     all: '全部',
+    allRoads: '全部道',
     level: (n: number) => `${n} 級`,
     count: (label: string, n: number) => `${label} (${n})`,
     none: '這一頁沒有',

@@ -25,6 +25,12 @@ export default {
   equipsLink: '厨具页',
   equipsAfter: ' (每件占一格)',
   use: '使用',
+  /** 界面改版 P7：筛选胶囊的读屏名、面板里的数量和按钮 */
+  typeLabel: '按类型',
+  rangeLabel: '时间范围',
+  howMany: '几个',
+  sellFor: (coin: string) => `卖 · ${coin}`,
+  useN: (n: number) => `使用 ${n} 个`,
   useFailed: '使用失败',
   sell: '卖',
   discard: '丢弃',

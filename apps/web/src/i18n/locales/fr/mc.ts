@@ -43,6 +43,7 @@ const mc: Messages['mc'] = {
   batches: (n) => `${n} ${plFr(n, 'fournée', 'fournées')}`,
   filter: {
     all: 'Tous',
+    allRoads: 'Toutes les voies',
     level: (n) => `Niv. ${n}`,
     count: (label, n) => `${label} (${n})`,
     none: 'Rien dans ces onglets',
