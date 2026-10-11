@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    kitchen1011:
+      'Chaque ingrédient a maintenant une petite icône selon son type (viande, poisson, légumes, fruits…), visible dans le placard, le frigo, le marché et le détail des recettes. Le placard est une grille de quatre colonnes avec une carte pour l’ingrédient choisi\u202f; le marché, l’entrepôt et les plats signature règlent les quantités avec − et +, et vendre, jeter ou vider demande d’abord confirmation dans un panneau en bas. Le détail des recettes montre une ligne par niveau, avec les ingrédients manquants en rouge et les niveaux appris cochés\u202f; les pages affichent des blocs gris pendant le chargement et un conseil avec un lien quand elles sont vides',
     rest1011:
       'L’accueil montre maintenant la devanture de votre restaurant, avec la porte choisie dans Apparence\u202f; pièces, diamants, énergie et autres ont des icônes en couleur, et les équipements et emplacements d’ustensiles aussi. Les confirmations s’ouvrent par le bas, avec un bouton rouge pour démonter ou vendre\u202f; les quantités se règlent avec − et +\u202f; la liste des quêtes est plus compacte, avec une barre violette à côté de celles à récupérer\u202f; les préréglages et le traitement en lot des ustensiles s’ouvrent dans un panneau en bas\u202f; les pages affichent des blocs gris pendant le chargement',
     ia1011:
