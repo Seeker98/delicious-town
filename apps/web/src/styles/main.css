@@ -1499,3 +1499,39 @@ details.dt-card > summary {
   flex: 1;
   min-width: 0;
 }
+/* 任务是卡片里的一行（界面改版 P3）：可领的左边紫色竖条，已领的次要色 */
+.dt-quest {
+  position: relative;
+  align-items: flex-start;
+  padding: 6px 0;
+}
+.dt-quest.is-ready {
+  padding-left: 8px;
+}
+.dt-quest.is-ready::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--dt-primary);
+}
+.dt-quest.is-claimed {
+  color: var(--dt-muted);
+}
+.dt-quest > .dt-item-actions {
+  align-self: center;
+}
+.dt-quest-bar {
+  height: 4px;
+  margin-top: 4px;
+  border-radius: 2px;
+  background: var(--dt-surface-2);
+  overflow: hidden;
+}
+.dt-quest-bar > div {
+  height: 100%;
+  background: var(--dt-warning);
+}

@@ -3,6 +3,7 @@ import { claimableTabs, TASK_TABS, type TaskTab } from '../utils/tasks';
 import { computed, onMounted, ref } from 'vue';
 import type { AwardDto, QuestDto, QuestsDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtSkeleton from '../components/DtSkeleton.vue';
 import DtTabs from '../components/DtTabs.vue';
 import QuestCard from '../components/QuestCard.vue';
 import ActivationPanel from '../components/tasks/ActivationPanel.vue';
@@ -70,6 +71,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
     </template>
   </DtTabs>
   <ActivationPanel v-if="tab === 'today'" />
+  <DtSkeleton v-if="!tasks && tab !== 'today'" :rows="5" data-testid="tasks-skeleton" />
   <template v-if="tasks">
     <!-- 主线：当前章 -->
     <section v-if="tab === 'main'" class="dt-card mb-3" data-testid="card-main">

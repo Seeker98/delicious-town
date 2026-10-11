@@ -3,7 +3,7 @@ import type { QuestDto } from '@dt/shared';
 import { useT } from '../composables/useT';
 import { formatNum } from '../utils/format';
 
-/** 一个任务卡片（问题记录 318）：主线、支线当前档、每周任务共用 */
+/** 一个任务（问题记录 318）：主线、支线当前档、每周任务共用；界面改版 P3 起是卡片里的一行，不再一个任务一张卡片 */
 defineProps<{
   quest: QuestDto;
   name: string;
@@ -20,40 +20,35 @@ const pct = (p: number, target: number) => Math.min(100, Math.round((p / Math.ma
 
 <template>
   <div
-    :class="[
-      'border rounded p-2 small mb-1',
-      { 'border-primary dt-task-done': quest.done && !quest.claimed, 'text-muted': quest.claimed },
-    ]"
+    :class="['dt-item dt-quest', { 'is-ready': quest.done && !quest.claimed, 'is-claimed': quest.claimed }]"
     :data-testid="`task-${quest.id}`"
   >
-    <div class="d-flex align-items-center gap-2">
-      <b>{{ name }}</b>
-      <span v-if="quest.claimed" class="ms-auto text-success text-nowrap">{{
-        t.rest.tasks.claimedTask
-      }}</span>
-      <span v-else-if="locked" class="ms-auto text-nowrap">{{ locked }}</span>
-      <!-- 目标为 0 的（每周“领取本周探险图”，问题记录 515）不写进度 -->
-      <span v-else-if="quest.target > 0" class="ms-auto"
-        >{{ formatNum(Math.min(quest.progress, quest.target)) }}/{{ formatNum(quest.target) }}</span
-      >
+    <div class="dt-item-main">
+      <div class="d-flex align-items-baseline gap-2">
+        <b class="dt-shrink">{{ name }}</b>
+        <!-- 目标为 0 的（每周“领取本周探险图”，问题记录 515）不写进度 -->
+        <span v-if="!quest.claimed && !locked && quest.target > 0" class="text-nowrap dt-meta"
+          >{{ formatNum(Math.min(quest.progress, quest.target)) }}/{{ formatNum(quest.target) }}</span
+        >
+      </div>
+      <div class="dt-meta">{{ t.rest.tasks.award(award) }}</div>
+      <!-- 没完成的下面一条细进度条 -->
+      <div v-if="!quest.claimed && !locked && !quest.done" class="dt-quest-bar">
+        <div :style="{ width: `${pct(quest.progress, quest.target)}%` }"></div>
+      </div>
     </div>
-    <div class="text-muted">{{ t.rest.tasks.award(award) }}</div>
-    <template v-if="!quest.claimed && !locked">
+    <div class="dt-item-actions">
+      <span v-if="quest.claimed" class="text-success text-nowrap small">{{ t.rest.tasks.claimedTask }}</span>
+      <span v-else-if="locked" class="text-nowrap small">{{ locked }}</span>
       <button
-        v-if="quest.done"
-        class="btn btn-sm btn-primary mt-1"
+        v-else-if="quest.done"
+        class="btn btn-sm btn-primary"
         :data-testid="`claim-task-${quest.id}`"
         :disabled="busy"
         @click="$emit('claim')"
       >
         {{ t.rest.tasks.claimTask }}
       </button>
-      <div v-else class="progress mt-1" style="height: 6px">
-        <div
-          class="progress-bar bg-warning"
-          :style="{ width: `${pct(quest.progress, quest.target)}%` }"
-        ></div>
-      </div>
-    </template>
+    </div>
   </div>
 </template>

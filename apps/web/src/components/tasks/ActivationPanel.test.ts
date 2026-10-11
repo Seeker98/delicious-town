@@ -228,4 +228,10 @@ describe('ActivationPanel', () => {
     expect(card.find('h6').exists()).toBe(false);
     expect(card.get('.dt-card-title').text()).toBe('今日活跃 120');
   });
+
+  it('还没读回来时是骨架行（界面改版 P3）', async () => {
+    vi.mocked(endpoints.activation).mockReturnValue(new Promise(() => undefined));
+    const w = await mountView();
+    expect(w.find('[data-testid="activation-skeleton"]').exists()).toBe(true);
+  });
 });

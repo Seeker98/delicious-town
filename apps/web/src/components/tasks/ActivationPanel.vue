@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import type { ActivationDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import DtSkeleton from '../DtSkeleton.vue';
 import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
@@ -57,6 +58,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
 </script>
 
 <template>
+  <DtSkeleton v-if="!act" :rows="5" data-testid="activation-skeleton" />
   <section v-if="act" class="dt-card mb-3" data-testid="card-activation">
     <!-- 签到按钮放在标题这一行，不单独占一行（问题记录 530） -->
     <div class="d-flex align-items-center gap-2 mb-2" data-testid="activation-head">
