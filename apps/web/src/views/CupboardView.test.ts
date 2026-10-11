@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
+import { useConfirmStore } from '../stores/confirm';
 import { useLocaleStore } from '../stores/locale';
 import CupboardView from './CupboardView.vue';
 import { SHARED_FOODS } from '@dt/shared';
@@ -280,5 +281,80 @@ describe('CupboardView', () => {
     await flushPromises();
     expect(endpoints.fridge).toHaveBeenCalled();
     expect(w.find('[data-testid="fridge-302"]').exists()).toBe(true);
+  });
+
+  it('格子 4 列，每格上面是食材图，选中的 aria-pressed；数量是步进器（界面改版 P4）', async () => {
+    const w = mount(CupboardView);
+    await flushPromises();
+    expect(w.find('.dt-tile-grid').exists()).toBe(true);
+    const tile = w.get('[data-testid="pick-302"]');
+    expect(tile.get('use').attributes('href')).toMatch(/#food-/);
+    expect(tile.attributes('aria-pressed')).toBe('false');
+    await tile.trigger('click');
+    expect(tile.attributes('aria-pressed')).toBe('true');
+    expect(w.get('input[type="number"]').element.closest('.dt-stepper')).not.toBeNull();
+  });
+
+  it('步进器上限跟着持有：持有 4 个时最多 4，不是固定 100（终审 I2）', async () => {
+    const w = mount(CupboardView);
+    await flushPromises();
+    await w.get('[data-testid="pick-302"]').trigger('click');
+    expect(w.get('[data-testid="picked-card"] input[type="number"]').attributes('max')).toBe('4');
+  });
+
+  it('读取失败时写读取失败，不一直显示骨架行（终审 I4）', async () => {
+    vi.mocked(endpoints.cupboard).mockRejectedValue(new Error('x'));
+    const w = mount(CupboardView);
+    await flushPromises();
+    expect(w.find('[data-testid="cupboard-skeleton"]').exists()).toBe(false);
+    expect(w.get('[data-testid="cupboard-failed"]').text()).toContain('读取橱柜失败');
+  });
+
+  it('橱柜空时是空状态，带去菜场的链接；没读回来时是骨架行（界面改版 P4）', async () => {
+    vi.mocked(endpoints.cupboard).mockReturnValue(new Promise(() => undefined));
+    expect(mount(CupboardView).find('[data-testid="cupboard-skeleton"]').exists()).toBe(true);
+    vi.mocked(endpoints.cupboard).mockResolvedValue({
+      slotsUsed: 0,
+      slots: 100,
+      lockUsed: 0,
+      lockSlots: 15,
+      foodsMaxNum: 999,
+      targetGrade: 5,
+      fridgeCount: 0,
+      fridgeUnread: false,
+      freeHandleLeft: 20,
+      handleMax: 100,
+      items: [],
+    });
+    const w = mount(CupboardView, {
+      global: { stubs: { RouterLink: { props: ['to'], template: '<a :href="to"><slot /></a>' } } },
+    });
+    await flushPromises();
+    const empty = w.get('[data-testid="cupboard-empty"]');
+    expect(empty.get('use').attributes('href')).toContain('#empty-cupboard');
+    expect(empty.get('a').attributes('href')).toBe('/market');
+  });
+
+  it('冰箱每行前面是食材图；解冻走确认面板（界面改版 P4）', async () => {
+    vi.mocked(endpoints.fridge).mockResolvedValue({
+      items: [{ foodsId: 302, num: 5, thawable: 3, thawCoin: 750, streetNeed: 4 }],
+    });
+    vi.mocked(endpoints.thaw).mockResolvedValue({ foodsId: 302, moved: 3, coin: 750 });
+    const spy = vi.spyOn(window, 'confirm');
+    const store = useConfirmStore();
+    store.hosts = 1;
+    const w = mount(CupboardView);
+    await flushPromises();
+    await w.get('[data-testid="tab-fridge"]').trigger('click');
+    await flushPromises();
+    expect(w.get('[data-testid="fridge-302"] use').attributes('href')).toMatch(/#food-/);
+    await w.get('[data-testid="thaw-302"]').trigger('click');
+    await flushPromises();
+    expect(spy).not.toHaveBeenCalled();
+    expect(store.current?.title).toContain('750');
+    store.answer(true);
+    await flushPromises();
+    expect(endpoints.thaw).toHaveBeenCalledWith(302);
+    spy.mockRestore();
   });
 });

@@ -30,8 +30,8 @@ const market: Messages['market'] = {
   ownFree: 'Tu propio género, gratis',
   stockedBy: (name) => `Puesto por ${name}`,
   left: (n) => `Quedan ${n}`,
-  priceLine: (price, left, bought, limit) =>
-    `${price} ${plEs(price, 'moneda', 'monedas')} · quedan ${left} · comprado ${bought}/${limit}`,
+  priceLine: (price, left) => `${price} ${plEs(price, 'moneda', 'monedas')} · quedan ${left}`,
+  limitLine: (bought, limit) => `comprado ${bought}/${limit}`,
   buy: 'Comprar',
   guess: {
     title: 'Apuesta del mercado',

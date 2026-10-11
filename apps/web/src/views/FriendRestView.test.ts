@@ -329,4 +329,17 @@ describe('FriendRestView', () => {
     expect(w.text()).not.toContain('蟹老板');
     await useLocaleStore().set('zh-CN');
   });
+
+  it('门画成门的图形（界面改版 P4：原来请求原版图包、一直显示替代图标），读屏读“门”', async () => {
+    useCatalogStore().looks = {
+      doors: [{ id: 0, name: '木门', coin: 0, art: 'wood' }],
+      avatars: [],
+      icons: [],
+    };
+    const w = await mountView();
+    const door = w.get('[data-testid="friend-door"]');
+    expect(door.get('use').attributes('href')).toContain('#door-wood');
+    expect(door.attributes('aria-label')).toBeTruthy();
+    expect(w.find('img').exists()).toBe(false);
+  });
 });

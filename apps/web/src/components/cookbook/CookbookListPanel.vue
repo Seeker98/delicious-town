@@ -242,32 +242,35 @@ onMounted(async () => {
       {{ t.cookbook.moveHintClose }}
     </button>
   </div>
-  <div v-for="r in list?.items ?? []" :key="r.id" class="dt-cb small" :data-testid="`cb-${r.id}`">
-    <div class="flex-fill" style="min-width: 0">
-      <div class="text-truncate">
-        <RouterLink :to="`/cookbooks/${r.id}`" class="fw-bold">{{
-          catalog.data('cookbooks', r.id)?.name ?? r.name
-        }}</RouterLink>
-        <span class="dt-tag ms-1">{{ GRADE_NAMES[r.grade] }}</span>
+  <!-- 一张卡片里一行一道菜（界面改版 P4：原来一行一个带边框的格子） -->
+  <div v-if="list && list.items.length > 0" class="dt-card">
+    <div v-for="r in list.items" :key="r.id" class="dt-cb small" :data-testid="`cb-${r.id}`">
+      <div class="flex-fill" style="min-width: 0">
+        <div class="text-truncate">
+          <RouterLink :to="`/cookbooks/${r.id}`" class="fw-bold">{{
+            catalog.data('cookbooks', r.id)?.name ?? r.name
+          }}</RouterLink>
+          <span class="dt-tag ms-1">{{ GRADE_NAMES[r.grade] }}</span>
+        </div>
+        <div v-if="r.next" class="dt-cb-foods">
+          <span
+            v-for="f in r.next"
+            :key="f.foodsId"
+            :class="['me-2', f.have >= f.num ? 'text-success' : 'text-danger']"
+          >
+            {{ catalog.foodName(f.foodsId) }} {{ f.have }}/{{ f.num }}
+          </span>
+        </div>
       </div>
-      <div v-if="r.next" class="dt-cb-foods">
-        <span
-          v-for="f in r.next"
-          :key="f.foodsId"
-          :class="['me-2', f.have >= f.num ? 'text-success' : 'text-danger']"
-        >
-          {{ catalog.foodName(f.foodsId) }} {{ f.have }}/{{ f.num }}
-        </span>
-      </div>
+      <button
+        class="btn btn-primary dt-btn-xs"
+        :data-testid="`learn-${r.id}`"
+        :disabled="busy || r.learn === 'z' || r.learn === 'max' || r.learn === 'street'"
+        @click="learn(r.id)"
+      >
+        {{ learnLabel(r) }}
+      </button>
     </div>
-    <button
-      class="btn btn-primary dt-btn-xs"
-      :data-testid="`learn-${r.id}`"
-      :disabled="busy || r.learn === 'z' || r.learn === 'max' || r.learn === 'street'"
-      @click="learn(r.id)"
-    >
-      {{ learnLabel(r) }}
-    </button>
   </div>
   <div v-if="list && list.total > list.pageSize" class="d-flex justify-content-between mt-2">
     <button

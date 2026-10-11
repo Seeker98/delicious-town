@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    kitchen1011:
+      'Cada ingrediente tiene ahora un pequeño icono según su tipo (carne, pescado, verdura, fruta y más), visible en la alacena, la nevera, el mercado y el detalle de recetas. La alacena es una cuadrícula de cuatro columnas con una tarjeta para el ingrediente elegido; el mercado, el almacén y los platos especiales usan − y + para las cantidades, y vender, tirar o desechar pide confirmación en un panel inferior. El detalle de recetas muestra una fila por grado, con los ingredientes que faltan en rojo y los grados aprendidos marcados; las páginas muestran bloques grises mientras cargan y una pista con enlace cuando están vacías',
     rest1011:
       'La portada muestra ahora la fachada de tu restaurante, con la puerta que elegiste en Aspecto; monedas, diamantes, energía y lo demás tienen iconos de color, y también las instalaciones y las ranuras de utensilios. Las confirmaciones salen desde abajo, con botón rojo para desmontar o vender; las cantidades se ajustan con − y +; la lista de misiones es más compacta, con una barra morada junto a las que puedes reclamar; los preajustes y el procesado en lote de utensilios se abren en un panel inferior; las páginas muestran bloques grises mientras cargan',
     ia1011:

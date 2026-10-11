@@ -2,11 +2,16 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { SHARED_FOODS, type CupboardDto, type FridgeDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtEmpty from '../components/DtEmpty.vue';
+import DtSkeleton from '../components/DtSkeleton.vue';
+import DtStepper from '../components/DtStepper.vue';
 import DtTabs from '../components/DtTabs.vue';
+import FoodArt from '../components/FoodArt.vue';
 import { useT } from '../composables/useT';
 import { useTabQuery } from '../composables/useTabQuery';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
+import { useConfirmStore } from '../stores/confirm';
 import { useToastStore } from '../stores/toast';
 import { foodLevelLabel, formatNum } from '../utils/format';
 
@@ -84,16 +89,24 @@ const exchangeMax = computed(() => Math.floor(Math.min(100, pickedItem.value?.nu
 const exchangeN = computed(() =>
   Math.max(2, Math.min(Math.floor((num.value || 2) / 2) * 2, exchangeMax.value)),
 );
+/** 步进器上限：分解、合成、兑换里最多的那个，跟着持有走（终审 I2：原来固定 100，按钮上的数不跟着变） */
+const numMax = computed(() => Math.max(1, decomposeMax.value, exchangeMax.value));
 const composeN = computed(() =>
   Math.max(2, Math.min(Math.floor((num.value || 2) / 2) * 2, composeMax.value)),
 );
 
+/** 读取失败时不再显示骨架行（终审 I4） */
+const failed = ref(false);
 async function load() {
   data.value = await endpoints.cupboard();
 }
-function thaw(f: FridgeDto['items'][number]) {
+const confirm = useConfirmStore();
+async function thaw(f: FridgeDto['items'][number]) {
   const name = catalog.foodName(f.foodsId);
-  if (!window.confirm(t.value.cupboard.thawConfirm(f.thawable, name, formatNum(f.thawCoin)))) return;
+  const yes = await confirm.ask({
+    title: t.value.cupboard.thawConfirm(f.thawable, name, formatNum(f.thawCoin)),
+  });
+  if (!yes) return;
   void run(() => endpoints.thaw(f.foodsId), t.value.cupboard.thawFailed);
 }
 /** 冰箱用到才读；看过就标成已读（橱柜数据读回来后才知道有没有新的） */
@@ -133,14 +146,33 @@ function handle(way: 'compose' | 'decompose') {
 onMounted(() =>
   load()
     .then(() => (tab.value === 'fridge' ? loadFridge() : undefined))
-    .catch((e) => toast.push(errorMessage(e, t.value.cupboard.loadFailed), 'danger')),
+    .catch((e) => {
+      if (!data.value) failed.value = true;
+      toast.push(errorMessage(e, t.value.cupboard.loadFailed), 'danger');
+    }),
 );
 </script>
 
 <template>
   <DtTabs v-model="tab" :tabs="tabItems" />
 
-  <template v-if="tab === 'cupboard' && data">
+  <DtEmpty
+    v-if="tab === 'cupboard' && !data && failed"
+    :title="t.cupboard.loadFailed"
+    data-testid="cupboard-failed"
+  />
+  <DtSkeleton v-else-if="tab === 'cupboard' && !data" :rows="5" data-testid="cupboard-skeleton" />
+  <!-- 橱柜空着：写去哪里买（界面改版 P4） -->
+  <DtEmpty
+    v-else-if="tab === 'cupboard' && data && data.items.length === 0"
+    art="empty-cupboard"
+    :title="t.cupboard.empty.title"
+    :body="t.cupboard.empty.body"
+    to="/market"
+    :link="t.cupboard.empty.link"
+    data-testid="cupboard-empty"
+  />
+  <template v-else-if="tab === 'cupboard' && data">
     <div class="small text-muted mb-2">
       {{
         t.cupboard.summary({
@@ -177,26 +209,22 @@ onMounted(() =>
       </button>
     </div>
     <div v-if="shown.length === 0" class="small text-muted">{{ t.cupboard.levelEmpty }}</div>
-    <div class="row g-1">
-      <div v-for="f in shown" :key="f.foodsId" class="col-4">
+    <!-- 4 列格子（界面改版 P4，设计 §5 第 4 条）：上面食材图，下面名字（最多两行）和数量 -->
+    <div class="dt-tile-grid">
+      <div v-for="f in shown" :key="f.foodsId">
         <button
-          :class="[
-            'btn',
-            'btn-sm',
-            'w-100',
-            'h-100',
-            'border',
-            'dt-tile',
-            picked === f.foodsId ? 'btn-warning' : 'btn-light',
-          ]"
+          type="button"
+          class="dt-tile"
+          :aria-pressed="picked === f.foodsId"
           :data-testid="`pick-${f.foodsId}`"
           @click="pick(f.foodsId)"
         >
-          <div class="d-flex justify-content-center gap-1 align-items-start">
-            <i v-if="f.locked" class="bi bi-lock-fill"></i>
-            <span class="dt-tile-name">{{ catalog.foodName(f.foodsId) }}</span>
-            <span class="dt-tile-num text-nowrap">×{{ f.num }}</span>
-          </div>
+          <span class="dt-tile-art">
+            <FoodArt :id="f.foodsId" :size="28" />
+            <i v-if="f.locked" class="bi bi-lock-fill dt-tile-lock" aria-hidden="true"></i>
+          </span>
+          <span class="dt-tile-name">{{ catalog.foodName(f.foodsId) }}</span>
+          <span class="dt-tile-num">×{{ f.num }}</span>
           <!-- 第二行总是占位，方块一样高（问题记录） -->
           <div class="dt-tile-sub text-muted">
             {{ f.streetNeed > 0 ? t.cupboard.streetNeed(f.streetNeed) : ' ' }}
@@ -204,17 +232,10 @@ onMounted(() =>
         </button>
       </div>
     </div>
-    <div v-if="pickedItem" class="border rounded p-2 mt-2 small">
+    <div v-if="pickedItem" class="dt-card mt-2 small" data-testid="picked-card">
       <div class="d-flex align-items-center gap-2 flex-wrap">
         <b>{{ catalog.foodName(pickedItem.foodsId) }}</b>
-        <input
-          v-model.number="num"
-          type="number"
-          min="1"
-          max="100"
-          class="form-control form-control-sm"
-          style="width: 80px"
-        />
+        <DtStepper v-model="num" :min="1" :max="numMax" />
         <button
           class="btn btn-sm btn-outline-primary"
           data-testid="decompose"
@@ -285,6 +306,7 @@ onMounted(() =>
       class="d-flex align-items-center flex-wrap column-gap-2 border-bottom py-1 small"
       :data-testid="`fridge-${f.foodsId}`"
     >
+      <FoodArt :id="f.foodsId" :size="24" />
       {{ t.common.qty(catalog.foodName(f.foodsId), f.num) }}
       <!-- 和橱柜一样写等级和本街还需几个（问题记录 465） -->
       <span class="text-muted">{{ foodLevelLabel(levelOf(f.foodsId)) }}</span>

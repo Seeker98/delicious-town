@@ -102,4 +102,10 @@ describe('进度一览加载中（backlog）', () => {
     await flushPromises();
     expect(w.get('[data-testid="progress-loading"]').text()).toBe('加载中……');
   });
+
+  it('表格数字等宽（界面改版 P4）', async () => {
+    vi.mocked(endpoints.cookbookProgress).mockResolvedValue(data);
+    const w = await mountView();
+    expect(w.get('table').classes()).toContain('dt-num-table');
+  });
 });

@@ -10,6 +10,7 @@ import type {
 } from '@dt/shared';
 import type { Locale } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { CONTENT_ART, type ArtName } from '../art/generated/names';
 import { activeLocale } from '../i18n';
 import { setNameResolver } from '../i18n/zh-CN';
 import { activeMessages } from '../i18n';
@@ -115,6 +116,14 @@ export const useCatalogStore = defineStore('catalog', {
     },
     foodName(id: number): string {
       return this.foodsMap.get(id)?.name ?? activeMessages().errors.fallbackName.food(id);
+    },
+    /**
+     * 食材的图形（界面改版 P4）：按目录里的类别画 food-<类别>；没写类别（旧目录缓存）、查不到编号、
+     * 网页里还没有这张图（目录比网页新）都画通用图 food-misc
+     */
+    foodArt(id: number): ArtName {
+      const name = `food-${this.foodsMap.get(id)?.art ?? 'misc'}`;
+      return (CONTENT_ART as readonly string[]).includes(name) ? (name as ArtName) : 'food-misc';
     },
     mcName(id: number): string {
       return this.mcMap.get(id)?.name ?? activeMessages().errors.fallbackName.mc(id);

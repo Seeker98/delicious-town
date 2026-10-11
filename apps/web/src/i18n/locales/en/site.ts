@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    kitchen1011:
+      'Every ingredient now has a small icon by type (meat, fish, vegetables, fruit and more), shown in the cupboard, fridge, market and recipe details. The cupboard is a four-column grid with a card for the ingredient you pick; market, storage and signature dishes use − and + for quantities, and selling, discarding or dumping asks first in a panel from the bottom. Recipe details show one row per grade, with missing ingredients in red and learned grades ticked; pages show gray placeholders while loading and a hint with a link when empty',
     rest1011:
       'Your home page now shows your shop front, with the door you picked in Look; coins, diamonds, energy and the rest use colorful icons, and facilities and cookware slots have icons too. Confirmations now slide up from the bottom, with red buttons for salvaging and selling; quantities use − and + buttons; the quest list is more compact, with a purple bar beside quests you can claim; cookware presets and bulk processing open in a bottom panel; pages show gray placeholders while loading',
     ia1011:

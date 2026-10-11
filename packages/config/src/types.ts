@@ -1,3 +1,4 @@
+import type { FoodArt } from './foodArt';
 import type { BundleI18n } from './i18n';
 import type { NewbieCode } from './newbieCodes';
 import type { GoodsUse } from './goodsUse';
@@ -30,6 +31,8 @@ export interface Food {
   /** 0 调料坚果 / 1 肉蛋奶 / 2 蔬果，决定仙贝颜色 */
   type: number | null;
   maxNum: number;
+  /** 配图类别（界面改版 P4，见 foodArt.ts） */
+  art: FoodArt;
   /** 已下架（问题记录 367）：定义保留给已持有的玩家，不再从任何途径产出；没下架的不写 */
   retired?: true;
 }

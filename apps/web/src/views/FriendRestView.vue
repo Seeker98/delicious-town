@@ -8,7 +8,8 @@ import type { FriendRestDto, TableDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { formatNum } from '../utils/format';
 import { useT } from '../composables/useT';
-import GameImg from '../components/GameImg.vue';
+import type { ArtName } from '../art/generated/names';
+import DtArt from '../components/DtArt.vue';
 import ReportButton from '../components/ReportButton.vue';
 import TableGrid from '../components/TableGrid.vue';
 import FriendDuel from '../components/tower/FriendDuel.vue';
@@ -90,18 +91,17 @@ onMounted(() => {
   window.addEventListener('focus', onFocus);
 });
 onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
+/** 门的图形：目录里找不到这扇门、没写图形名时画木门 */
+const doorArt = computed(
+  () => `door-${catalog.looks?.doors.find((d) => d.id === rest.value?.door)?.art || 'wood'}` as ArtName,
+);
 </script>
 
 <template>
   <div v-if="error" class="alert alert-danger">{{ error }}</div>
   <template v-if="rest">
     <div class="d-flex align-items-center mb-2">
-      <GameImg
-        :path="`avatar/${rest.avatar ?? 0}`"
-        :alt="restName(rest.id, rest.name)"
-        fallback-icon="bi-person-circle"
-        class="me-2"
-      />
+      <i class="bi bi-person-circle me-2 dt-mascot-icon" aria-hidden="true"></i>
       <div class="flex-fill">
         <div class="fw-bold">
           {{ restName(rest.id, rest.name) }}
@@ -126,7 +126,8 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
           ><span v-if="rest.state !== 1">{{ t.friends.rest.closed }}</span>
         </div>
       </div>
-      <GameImg :path="`door/${rest.door}`" :alt="t.friends.rest.door" fallback-icon="bi-door-closed" />
+      <!-- 门画成门的图形（界面改版 P4：原来请求原版图包，一直显示替代图标） -->
+      <DtArt :name="doorArt" :size="32" :label="t.friends.rest.door" data-testid="friend-door" />
     </div>
     <!-- 从上到下：称号、公告、收购、厨具（问题记录 571），嘻哈男孩和特色菜在后面；几个框的标题都是加粗 -->
     <div v-if="rest.icons.length > 0" class="mb-2">

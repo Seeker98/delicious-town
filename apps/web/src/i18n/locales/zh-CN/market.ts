@@ -22,8 +22,9 @@ export default {
   ownFree: '自己的货, 免费',
   stockedBy: (name: string) => `${name} 进的货`,
   left: (n: string) => `剩 ${n}`,
-  priceLine: (price: string, left: string, bought: number, limit: number) =>
-    `${price} 银币 · 剩 ${left} · 限购 ${bought}/${limit}`,
+  /** 价格和剩余；限购单独写在名字那一行（界面改版 P4：一行放得下） */
+  priceLine: (price: string, left: string) => `${price} 银币 · 剩 ${left}`,
+  limitLine: (bought: number, limit: number) => `限购 ${bought}/${limit}`,
   buy: '买',
   guess: {
     title: '菜场竞猜',

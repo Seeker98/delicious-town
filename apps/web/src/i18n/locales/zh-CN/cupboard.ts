@@ -14,6 +14,8 @@ export default {
     `格子 ${p.used}/${p.slots} · 锁定 ${p.lockUsed}/${p.lockSlots} · 单种上限 ${p.max} · 今天免体力处理还剩 ${p.free} 次 · 本街目标 ${p.grade} 品`,
   levelCount: (label: string, n: number) => `${label} (${n})`,
   levelEmpty: '这一级没有食材',
+  /** 橱柜空着（界面改版 P4：空状态） */
+  empty: { title: '橱柜是空的', body: '学菜、上菜都要用到食材, 去菜场买一些', link: '去菜场' },
   streetNeed: (n: number) => `本街还需 ${n}`,
   decompose: (n: number) => `分解 ×${n}`,
   compose: (n: number) => `合成 ×${n}`,

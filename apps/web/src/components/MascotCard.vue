@@ -2,17 +2,16 @@
 import { ref, watch } from 'vue';
 import { pickLine, type MascotLine } from '../utils/mascot';
 import { useT } from '../composables/useT';
-import GameImg from './GameImg.vue';
 
 /**
- * 吉祥物 NPC 卡片（菜园姐、雯姐共用）：头像加一句台词，点一下换一句；只说话，不发奖励。
+ * 吉祥物 NPC 卡片（菜园姐、雯姐共用）：图标加一句台词，点一下换一句；只说话，不发奖励（界面改版 P4：原版图包去掉了，头像图形以后画）。
  * ready 第一次变成 true（页面数据到手）时换一句，好让看状态说的话有机会出现。
  * 默认插槽放在卡片右侧（比如菜场的交易所入口，问题记录 246），点它不会换台词
  */
 const props = defineProps<{
   name: string;
-  img: string;
-  fallbackIcon: string;
+  /** 名字前的图标（Bootstrap Icons 类名） */
+  icon: string;
   lines: MascotLine[];
   ready: boolean;
   testid: string;
@@ -41,7 +40,7 @@ watch(
     @keydown.enter.prevent="next"
     @keydown.space.prevent="next"
   >
-    <GameImg :path="img" :alt="name" :fallback-icon="fallbackIcon" class="flex-shrink-0" />
+    <i :class="['bi', icon, 'dt-mascot-icon flex-shrink-0']" aria-hidden="true"></i>
     <div>
       <b>{{ t.common.colon(name) }}</b
       ><span :data-testid="`${testid}-line`" aria-live="polite">{{ line }}</span>

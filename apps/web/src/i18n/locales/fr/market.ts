@@ -31,8 +31,8 @@ const market: Messages['market'] = {
   ownFree: 'Votre propre stock, gratuit',
   stockedBy: (name) => `Mis en rayon par ${name}`,
   left: (n) => `Reste ${n}`,
-  priceLine: (price, left, bought, limit) =>
-    `${price} ${plFr(price, 'pièce', 'pièces')} · reste ${left} · acheté ${bought}/${limit}`,
+  priceLine: (price, left) => `${price} ${plFr(price, 'pièce', 'pièces')} · reste ${left}`,
+  limitLine: (bought, limit) => `acheté ${bought}/${limit}`,
   buy: 'Acheter',
   guess: {
     title: 'Pronostic du marché',

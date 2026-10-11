@@ -14,8 +14,7 @@ const t = useT();
 <template>
   <MascotCard
     :name="t.market.sis.name"
-    img="npc/菜园姐"
-    fallback-icon="bi-flower2"
+    icon="bi-flower2"
     :lines="lines"
     :ready="data !== null"
     testid="garden-sis"

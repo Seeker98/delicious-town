@@ -8,6 +8,12 @@ const cupboard: Messages['cupboard'] = {
     `Huecos ${p.used}/${p.slots} · Bloqueados ${p.lockUsed}/${p.lockSlots} · Máx. ${p.max} de cada uno · Te quedan ${p.free} procesados gratis hoy · Objetivo de la calle: calidad ${p.grade}`,
   levelCount: (label, n) => `${label} (${n})`,
   levelEmpty: 'No hay ingredientes de este nivel',
+  /** 橱柜空着（界面改版 P4：空状态） */
+  empty: {
+    title: 'La estantería está vacía',
+    body: 'Necesitas ingredientes para aprender y cocinar platos. Compra algunos en el mercado',
+    link: 'Ir al mercado',
+  },
   streetNeed: (n) => `La calle necesita ${n}`,
   decompose: (n) => `Descomponer ×${n}`,
   compose: (n) => `Combinar ×${n}`,

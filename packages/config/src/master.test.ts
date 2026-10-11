@@ -68,7 +68,11 @@ describe('主表（重新编号 PR 1）', () => {
 
   it('原始食材转主表：编号、旧编号由调用方给；maxNum 缺省 999，type 缺省 null', () => {
     expect(
-      foodFromRaw({ id: 7, name: '丙', level: 2, coin: 10, odds: 100 }, 'streets', { id: 2001, legacyId: 7 }),
+      foodFromRaw({ id: 7, name: '丙', level: 2, coin: 10, odds: 100 }, 'streets', {
+        id: 2001,
+        legacyId: 7,
+        art: 'veg',
+      }),
     ).toEqual({
       id: 2001,
       legacyId: 7,
@@ -78,6 +82,7 @@ describe('主表（重新编号 PR 1）', () => {
       coin: 10,
       odds: 100,
       maxNum: 999,
+      art: 'veg',
       type: null,
     });
   });

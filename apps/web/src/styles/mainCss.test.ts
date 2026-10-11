@@ -32,6 +32,13 @@ describe('main.css', () => {
     expect(rule).toContain('color: rgba(var(--dt-primary-ink-rgb), var(--bs-text-opacity, 1)) !important');
   });
 
+  it('名字行放不下时右边的小字换到下一行，名字按字折行（终审 I1：菜场法文限购压在名字上）', () => {
+    const at = css.indexOf('.dt-name-row {');
+    expect(at).toBeGreaterThan(-1);
+    const rule = css.slice(at, css.indexOf('}', at));
+    expect(rule).toContain('flex-wrap: wrap');
+  });
+
   it('同一个类不在顶层定义两次，免得后写的悄悄覆盖前面的（问题记录 212：.dt-chip 撞名）', () => {
     const seen = new Map<string, number>();
     for (const s of topLevelSelectors(css)) seen.set(s, (seen.get(s) ?? 0) + 1);

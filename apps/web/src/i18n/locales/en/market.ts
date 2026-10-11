@@ -29,8 +29,8 @@ const market: Messages['market'] = {
   ownFree: 'Your own stock, free',
   stockedBy: (name) => `Stocked by ${name}`,
   left: (n) => `${n} left`,
-  priceLine: (price, left, bought, limit) =>
-    `${price} ${plEn(price, 'coin', 'coins')} · ${left} left · bought ${bought}/${limit}`,
+  priceLine: (price, left) => `${price} ${plEn(price, 'coin', 'coins')} · ${left} left`,
+  limitLine: (bought, limit) => `bought ${bought}/${limit}`,
   buy: 'Buy',
   guess: {
     title: 'Market guessing',

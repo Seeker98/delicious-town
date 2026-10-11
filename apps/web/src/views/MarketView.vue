@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import DtEmpty from '../components/DtEmpty.vue';
+import DtSkeleton from '../components/DtSkeleton.vue';
+import DtStepper from '../components/DtStepper.vue';
+import FoodArt from '../components/FoodArt.vue';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import GardenSis from '../components/market/GardenSis.vue';
 import { computed, onMounted, reactive, ref } from 'vue';
@@ -8,6 +12,7 @@ import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useRestaurantStore } from '../stores/restaurant';
+import { useConfirmStore } from '../stores/confirm';
 import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
 import { formatNum, timeHM } from '../utils/format';
@@ -23,6 +28,8 @@ const data = ref<MarketDto | null>(null);
 const qty = reactive<Record<number, number>>({});
 const picks = ref<number[]>([]);
 const busy = ref(false);
+/** 读取失败时不再显示骨架行（终审 I4） */
+const failed = ref(false);
 const guessOpen = ref(false);
 
 const time = timeHM;
@@ -57,11 +64,15 @@ async function run(fn: () => Promise<unknown>, fallback: string) {
   }
 }
 /** 菜场工作证手动进货（4E-2）：挂 4 种自己的货到日常货架 */
-const manualStock = () => {
+const confirm = useConfirmStore();
+const manualStock = async () => {
   const d = data.value;
   if (!d) return;
-  // 每次至少 100 万、越进越贵，先确认；手动货在下次日常进货时一起下架（PR29 遗留）
-  if (!window.confirm(t.value.market.manualConfirm(formatNum(d.manual.cost), time(d.nextDaily)))) return;
+  // 每次至少 100 万、越进越贵，先确认；手动货在下次日常进货时一起下架（PR29 遗留；界面改版 P4：确认面板）
+  if (
+    !(await confirm.ask({ title: t.value.market.manualConfirm(formatNum(d.manual.cost), time(d.nextDaily)) }))
+  )
+    return;
   return run(async () => {
     const r = await endpoints.marketManualStock();
     toast.push(t.value.market.manualDone(r.renown), 'success');
@@ -101,7 +112,12 @@ function togglePick(id: number) {
   else if (data.value && picks.value.length < data.value.guess.maxPick) picks.value.push(id);
 }
 const joinGuess = () => run(() => endpoints.marketGuess([...picks.value]), t.value.market.guessFailed);
-onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.market.loadFailed), 'danger')));
+onMounted(() =>
+  load().catch((e) => {
+    failed.value = true;
+    toast.push(errorMessage(e, t.value.market.loadFailed), 'danger');
+  }),
+);
 </script>
 
 <template>
@@ -117,7 +133,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.market.lo
     </RouterLink>
   </GardenSis>
   <HiphopCard :place="1" @changed="load" />
-  <template v-if="data">
+  <DtEmpty v-if="!data && failed" :title="t.market.loadFailed" data-testid="market-failed" />
+  <DtSkeleton v-else-if="!data" :rows="6" data-testid="market-skeleton" />
+  <template v-else>
     <section v-for="s in sections" :key="s.key" class="mb-3">
       <!-- 间距放在外层：.dt-section 自带上边距，放在 flex 行里会把标题挤低半行（问题记录 192） -->
       <div class="d-flex align-items-center mt-3 mb-1" :data-testid="`section-head-${s.key}`">
@@ -146,47 +164,55 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.market.lo
         {{ t.market.specialWait(specialWait) }}
       </div>
       <div v-if="data[s.key].length === 0" class="small text-muted">{{ t.market.empty }}</div>
-      <div
-        v-for="it in data[s.key]"
-        :key="it.id"
-        class="d-flex align-items-center gap-2 border-bottom py-1 small"
-        :data-testid="`item-${it.id}`"
-      >
-        <div class="flex-fill">
-          <span>{{ catalog.foodName(it.foodsId) }}</span>
-          <span v-if="it.hot" class="badge bg-danger ms-1">{{ t.market.hot }}</span>
-          <div v-if="it.owner" class="dt-meta" :data-testid="`owner-${it.id}`">
-            {{ it.owner.restId === myRest ? t.market.ownFree : t.market.stockedBy(it.owner.name) }}
+      <!-- 一段一张卡片，每种食材一行，前面是食材图（界面改版 P4） -->
+      <div v-else class="dt-card">
+        <div v-for="it in data[s.key]" :key="it.id" class="dt-item small" :data-testid="`item-${it.id}`">
+          <FoodArt :id="it.foodsId" :size="24" />
+          <div class="dt-item-main">
+            <!-- 放不下时限购换到下一行（终审 I1：法文名字收窄成 0，限购压在名字上） -->
+            <div class="dt-name-row">
+              <span class="dt-name-row-name">{{ catalog.foodName(it.foodsId) }}</span>
+              <span v-if="it.hot" class="badge bg-danger">{{ t.market.hot }}</span>
+              <!-- 限购写在名字这一行右边，价格行才放得下一行（界面改版 P4） -->
+              <span
+                v-if="it.owner?.restId !== myRest"
+                class="dt-meta text-nowrap ms-auto"
+                :data-testid="`limit-${it.id}`"
+                >{{ t.market.limitLine(it.bought, it.limit) }}</span
+              >
+            </div>
+            <div v-if="it.owner" class="dt-meta" :data-testid="`owner-${it.id}`">
+              {{ it.owner.restId === myRest ? t.market.ownFree : t.market.stockedBy(it.owner.name) }}
+            </div>
+            <div v-if="it.owner?.restId === myRest" class="text-muted">
+              {{ t.market.left(formatNum(it.left)) }}
+            </div>
+            <div v-else class="text-muted" :data-testid="`price-${it.id}`">
+              {{ t.market.priceLine(formatNum(it.price), formatNum(it.left)) }}
+            </div>
+            <div v-if="capNote(it)" class="text-danger" :data-testid="`cap-${it.id}`">{{ capNote(it) }}</div>
           </div>
-          <div v-if="it.owner?.restId === myRest" class="text-muted">
-            {{ t.market.left(formatNum(it.left)) }}
-          </div>
-          <div v-else class="text-muted">
-            {{ t.market.priceLine(formatNum(it.price), formatNum(it.left), it.bought, it.limit) }}
-          </div>
-          <div v-if="capNote(it)" class="text-danger" :data-testid="`cap-${it.id}`">{{ capNote(it) }}</div>
+          <DtStepper
+            v-model="qty[it.id]!"
+            :min="1"
+            :max="Math.max(1, it.canBuy)"
+            :testid="`qty-${it.id}`"
+            size="sm"
+            :disabled="it.canBuy < 1"
+          />
+          <button
+            class="btn btn-sm btn-primary"
+            :data-testid="`buy-${it.id}`"
+            :disabled="busy || it.canBuy < 1 || (s.key === 'special' && specialWait > 0)"
+            @click="buy(it)"
+          >
+            {{ t.market.buy }}
+          </button>
         </div>
-        <input
-          v-model.number="qty[it.id]"
-          :data-testid="`qty-${it.id}`"
-          type="number"
-          min="1"
-          :max="Math.max(1, it.canBuy)"
-          class="form-control form-control-sm"
-          style="width: 72px"
-        />
-        <button
-          class="btn btn-sm btn-primary"
-          :data-testid="`buy-${it.id}`"
-          :disabled="busy || it.canBuy < 1 || (s.key === 'special' && specialWait > 0)"
-          @click="buy(it)"
-        >
-          {{ t.market.buy }}
-        </button>
       </div>
     </section>
 
-    <section class="border rounded p-2 small">
+    <section class="dt-card small">
       <div class="d-flex align-items-center">
         <b>{{ t.market.guess.title }}</b>
         <span class="text-muted ms-2">{{ t.market.guess.hint(data.guess.period.slice(-2)) }}</span>
@@ -213,13 +239,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.market.lo
         <button
           v-for="id in data.guess.pool"
           :key="id"
-          :class="[
-            'btn',
-            'btn-sm',
-            'me-1',
-            'mb-1',
-            picks.includes(id) ? 'btn-warning' : 'btn-outline-secondary',
-          ]"
+          type="button"
+          class="dt-choice me-1 mb-1"
+          :aria-pressed="picks.includes(id)"
           :data-testid="`guess-${id}`"
           @click="togglePick(id)"
         >

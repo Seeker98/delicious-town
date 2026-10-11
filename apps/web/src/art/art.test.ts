@@ -2,6 +2,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { describe, expect, it } from 'vitest';
+import { FOOD_ARTS } from '../../../../packages/config/src/foodArt';
 import { CONTENT_ART, UI_ART } from './generated/names';
 
 const ROOT = __dirname;
@@ -66,6 +67,10 @@ describe('图形（界面改版 P1，设计 §3）', () => {
       doors: Array<{ art: string }>;
     };
     for (const d of looks.doors) expect(CONTENT_ART, d.art).toContain(`door-${d.art}`);
+  });
+
+  it('每个食材类别都有图形 food-<类别>，另有通用图 food-misc（界面改版 P4，Review Focus 1）', () => {
+    for (const k of [...FOOD_ARTS, 'misc']) expect(CONTENT_ART, k).toContain(`food-${k}`);
   });
 
   it('体积上限：两张雪碧图压缩后合计 ≤ 25KB，加上头图 ≤ 120KB（设计 §3.5）', () => {

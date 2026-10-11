@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { FOOD_ARTS } from './foodArt';
 
 const int = z.number().int();
 /** 数量门槛：数字，或 "all" = 菜谱总数（构建时换算，问题记录 284） */
@@ -604,6 +605,8 @@ export const masterFood = z
     odds: z.number(),
     maxNum: int,
     type: int.nullable(),
+    /** 配图类别（界面改版 P4）：网页画 food-<art> */
+    art: z.enum(FOOD_ARTS),
   })
   .strict();
 export const masterCookbook = z

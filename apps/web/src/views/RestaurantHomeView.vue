@@ -18,7 +18,6 @@ import AnnounceBanner from '../components/AnnounceBanner.vue';
 import DtArt from '../components/DtArt.vue';
 import DtSkeleton from '../components/DtSkeleton.vue';
 import RestaurantHero from '../components/RestaurantHero.vue';
-import GameImg from '../components/GameImg.vue';
 import HomeFeed from '../components/town/HomeFeed.vue';
 import HomeNews from '../components/town/HomeNews.vue';
 import { useT } from '../composables/useT';
@@ -871,7 +870,7 @@ onBeforeUnmount(() => {
           class="d-flex flex-wrap align-items-center gap-1 border-bottom py-1"
           data-testid="effect-row"
         >
-          <GameImg :path="`goods/${e.name}`" :alt="effectName(e, catalog)" fallback-icon="bi-award" />
+          <i class="bi bi-award" aria-hidden="true"></i>
           <b>{{ effectName(e, catalog) }}</b>
           <span class="flex-fill d-flex flex-wrap gap-1">
             <span
