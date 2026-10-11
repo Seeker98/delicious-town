@@ -390,6 +390,14 @@ describe('仓库套用新控件（界面改版 P4）', () => {
     expect(w.find('[data-testid="store-skeleton"]').exists()).toBe(true);
   });
 
+  it('读取失败时写读取失败，不一直显示骨架行（终审 I4）', async () => {
+    vi.mocked(endpoints.store).mockRejectedValue(new Error('x'));
+    const w = mount(StoreView);
+    await flushPromises();
+    expect(w.find('[data-testid="store-skeleton"]').exists()).toBe(false);
+    expect(w.get('[data-testid="store-failed"]').text()).toContain('读取仓库失败');
+  });
+
   it('卖出走确认面板', async () => {
     vi.mocked(endpoints.store).mockResolvedValue({
       ...structuredClone(data),

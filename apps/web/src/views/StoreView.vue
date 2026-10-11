@@ -67,6 +67,8 @@ const recordTime = (at: string) =>
       })
     : gameTimeOfDay(at);
 
+/** 读取失败时不再显示骨架行（终审 I4） */
+const failed = ref(false);
 async function load() {
   data.value = await endpoints.store(type.value);
   void catalog.refreshIfMissing(data.value.items.map((it) => it.goodsId));
@@ -138,12 +140,18 @@ watch(
   },
   { immediate: true },
 );
-onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.store.loadFailed), 'danger')));
+onMounted(() =>
+  load().catch((e) => {
+    failed.value = true;
+    toast.push(errorMessage(e, t.value.store.loadFailed), 'danger');
+  }),
+);
 </script>
 
 <template>
   <DtTabs v-model="tab" :tabs="tabItems" />
-  <DtSkeleton v-if="tab === 'items' && !data" :rows="5" data-testid="store-skeleton" />
+  <DtEmpty v-if="tab === 'items' && !data && failed" :title="t.store.loadFailed" data-testid="store-failed" />
+  <DtSkeleton v-else-if="tab === 'items' && !data" :rows="5" data-testid="store-skeleton" />
   <template v-if="tab === 'items' && data">
     <div class="d-flex align-items-center mb-2 small">
       <select v-model="type" class="form-select form-select-sm w-auto">

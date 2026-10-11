@@ -295,6 +295,21 @@ describe('CupboardView', () => {
     expect(w.get('input[type="number"]').element.closest('.dt-stepper')).not.toBeNull();
   });
 
+  it('步进器上限跟着持有：持有 4 个时最多 4，不是固定 100（终审 I2）', async () => {
+    const w = mount(CupboardView);
+    await flushPromises();
+    await w.get('[data-testid="pick-302"]').trigger('click');
+    expect(w.get('[data-testid="picked-card"] input[type="number"]').attributes('max')).toBe('4');
+  });
+
+  it('读取失败时写读取失败，不一直显示骨架行（终审 I4）', async () => {
+    vi.mocked(endpoints.cupboard).mockRejectedValue(new Error('x'));
+    const w = mount(CupboardView);
+    await flushPromises();
+    expect(w.find('[data-testid="cupboard-skeleton"]').exists()).toBe(false);
+    expect(w.get('[data-testid="cupboard-failed"]').text()).toContain('读取橱柜失败');
+  });
+
   it('橱柜空时是空状态，带去菜场的链接；没读回来时是骨架行（界面改版 P4）', async () => {
     vi.mocked(endpoints.cupboard).mockReturnValue(new Promise(() => undefined));
     expect(mount(CupboardView).find('[data-testid="cupboard-skeleton"]').exists()).toBe(true);

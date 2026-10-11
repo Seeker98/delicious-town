@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import DtEmpty from '../components/DtEmpty.vue';
 import DtSkeleton from '../components/DtSkeleton.vue';
 import DtStepper from '../components/DtStepper.vue';
 import FoodArt from '../components/FoodArt.vue';
@@ -27,6 +28,8 @@ const data = ref<MarketDto | null>(null);
 const qty = reactive<Record<number, number>>({});
 const picks = ref<number[]>([]);
 const busy = ref(false);
+/** 读取失败时不再显示骨架行（终审 I4） */
+const failed = ref(false);
 const guessOpen = ref(false);
 
 const time = timeHM;
@@ -109,7 +112,12 @@ function togglePick(id: number) {
   else if (data.value && picks.value.length < data.value.guess.maxPick) picks.value.push(id);
 }
 const joinGuess = () => run(() => endpoints.marketGuess([...picks.value]), t.value.market.guessFailed);
-onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.market.loadFailed), 'danger')));
+onMounted(() =>
+  load().catch((e) => {
+    failed.value = true;
+    toast.push(errorMessage(e, t.value.market.loadFailed), 'danger');
+  }),
+);
 </script>
 
 <template>
@@ -125,7 +133,8 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.market.lo
     </RouterLink>
   </GardenSis>
   <HiphopCard :place="1" @changed="load" />
-  <DtSkeleton v-if="!data" :rows="6" data-testid="market-skeleton" />
+  <DtEmpty v-if="!data && failed" :title="t.market.loadFailed" data-testid="market-failed" />
+  <DtSkeleton v-else-if="!data" :rows="6" data-testid="market-skeleton" />
   <template v-else>
     <section v-for="s in sections" :key="s.key" class="mb-3">
       <!-- 间距放在外层：.dt-section 自带上边距，放在 flex 行里会把标题挤低半行（问题记录 192） -->
@@ -160,8 +169,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.market.lo
         <div v-for="it in data[s.key]" :key="it.id" class="dt-item small" :data-testid="`item-${it.id}`">
           <FoodArt :id="it.foodsId" :size="24" />
           <div class="dt-item-main">
-            <div class="d-flex align-items-baseline gap-1">
-              <span class="dt-shrink">{{ catalog.foodName(it.foodsId) }}</span>
+            <!-- 放不下时限购换到下一行（终审 I1：法文名字收窄成 0，限购压在名字上） -->
+            <div class="dt-name-row">
+              <span class="dt-name-row-name">{{ catalog.foodName(it.foodsId) }}</span>
               <span v-if="it.hot" class="badge bg-danger">{{ t.market.hot }}</span>
               <!-- 限购写在名字这一行右边，价格行才放得下一行（界面改版 P4） -->
               <span

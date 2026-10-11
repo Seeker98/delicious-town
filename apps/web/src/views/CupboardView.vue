@@ -89,10 +89,14 @@ const exchangeMax = computed(() => Math.floor(Math.min(100, pickedItem.value?.nu
 const exchangeN = computed(() =>
   Math.max(2, Math.min(Math.floor((num.value || 2) / 2) * 2, exchangeMax.value)),
 );
+/** 步进器上限：分解、合成、兑换里最多的那个，跟着持有走（终审 I2：原来固定 100，按钮上的数不跟着变） */
+const numMax = computed(() => Math.max(1, decomposeMax.value, exchangeMax.value));
 const composeN = computed(() =>
   Math.max(2, Math.min(Math.floor((num.value || 2) / 2) * 2, composeMax.value)),
 );
 
+/** 读取失败时不再显示骨架行（终审 I4） */
+const failed = ref(false);
 async function load() {
   data.value = await endpoints.cupboard();
 }
@@ -142,14 +146,22 @@ function handle(way: 'compose' | 'decompose') {
 onMounted(() =>
   load()
     .then(() => (tab.value === 'fridge' ? loadFridge() : undefined))
-    .catch((e) => toast.push(errorMessage(e, t.value.cupboard.loadFailed), 'danger')),
+    .catch((e) => {
+      if (!data.value) failed.value = true;
+      toast.push(errorMessage(e, t.value.cupboard.loadFailed), 'danger');
+    }),
 );
 </script>
 
 <template>
   <DtTabs v-model="tab" :tabs="tabItems" />
 
-  <DtSkeleton v-if="tab === 'cupboard' && !data" :rows="5" data-testid="cupboard-skeleton" />
+  <DtEmpty
+    v-if="tab === 'cupboard' && !data && failed"
+    :title="t.cupboard.loadFailed"
+    data-testid="cupboard-failed"
+  />
+  <DtSkeleton v-else-if="tab === 'cupboard' && !data" :rows="5" data-testid="cupboard-skeleton" />
   <!-- 橱柜空着：写去哪里买（界面改版 P4） -->
   <DtEmpty
     v-else-if="tab === 'cupboard' && data && data.items.length === 0"
@@ -223,7 +235,7 @@ onMounted(() =>
     <div v-if="pickedItem" class="dt-card mt-2 small" data-testid="picked-card">
       <div class="d-flex align-items-center gap-2 flex-wrap">
         <b>{{ catalog.foodName(pickedItem.foodsId) }}</b>
-        <DtStepper v-model="num" :min="1" :max="100" />
+        <DtStepper v-model="num" :min="1" :max="numMax" />
         <button
           class="btn btn-sm btn-outline-primary"
           data-testid="decompose"

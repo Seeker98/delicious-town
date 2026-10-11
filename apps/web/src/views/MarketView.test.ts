@@ -259,4 +259,20 @@ describe('MarketView', () => {
     expect(row.get('[data-testid="limit-11"]').text()).toMatch(/^限购 \d+\/\d+$/);
     expect(row.get('[data-testid="price-11"]').text()).not.toContain('限购');
   });
+
+  it('名字那一行放不下时限购换到下一行，不压在名字上：名字不收窄成 0（终审 I1：法文 360px 重叠）', async () => {
+    const w = mount(MarketView);
+    await flushPromises();
+    const line = w.get('[data-testid="limit-11"]').element.parentElement!;
+    expect(line.classList.contains('dt-name-row')).toBe(true);
+    expect(line.querySelector('.dt-shrink')).toBeNull();
+  });
+
+  it('读取失败时写读取失败，不一直显示骨架行（终审 I4）', async () => {
+    vi.mocked(endpoints.market).mockRejectedValue(new Error('x'));
+    const w = mount(MarketView);
+    await flushPromises();
+    expect(w.find('[data-testid="market-skeleton"]').exists()).toBe(false);
+    expect(w.get('[data-testid="market-failed"]').text()).toContain('读取菜场失败');
+  });
 });

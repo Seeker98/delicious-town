@@ -1659,3 +1659,13 @@ details.dt-card > summary {
 .dt-mc-row:last-child {
   border-bottom: 0;
 }
+/* 名字一行：名字按字折行，右边的小字（限购）放不下时换到下一行，不压在名字上（终审 I1） */
+.dt-name-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 4px;
+}
+.dt-name-row-name {
+  overflow-wrap: anywhere;
+}
