@@ -67,8 +67,10 @@ describe('RestInfoView', () => {
     const w = await mountView();
     expect(w.get('[data-testid="info-attrs"]').text()).toContain('幸运6');
     expect(w.find('input').exists()).toBe(false);
+    // 界面改版 P7：一句说明，句末是句中链接“去加点”
+    expect(w.get('.dt-attr-note').text()).toBe('这是加点的属性, 不含厨具。还有 3 点没加, 去加点');
     const link = w.find('[data-testid="to-points"]');
-    expect(link.text()).toBe('有 3 点可加'); // 箭头由 .dt-go 加（问题记录 451）
+    expect(link.text()).toBe('去加点');
     expect(link.classes()).toContain('dt-go');
     // 有点可加时直接落到厨具页下面的加点框（530 遗留：加点框挪到下面以后要往下翻）
     expect(link.attributes('href')).toBe('/rest/equip#attr-points');
@@ -100,8 +102,11 @@ describe('餐厅信息套用键值行和只读行（界面改版 P3）', () => {
     setActivePinia(createPinia());
   });
 
-  it('属性、容量是两列键值行（dl）；日志每条一行，时间写月日时分', async () => {
-    vi.mocked(endpoints.overview).mockResolvedValue(rest(0));
+  it('属性是 3×2 小数字块，0 灰掉；容量是一张卡片一行一项（dl）；日志放进卡片、每条一行，时间写月日时分（界面改版 P7）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      ...rest(0),
+      attrs: { ...rest(0).attrs, creatives: 0 },
+    });
     vi.mocked(endpoints.restLog).mockResolvedValue({
       items: [{ type: 'level.up', params: { level: 7 }, at: '2026-10-10T03:28:03.000Z' }],
       nextBefore: null,
@@ -109,15 +114,16 @@ describe('餐厅信息套用键值行和只读行（界面改版 P3）', () => {
     const w = await mountView();
     const attrs = w.get('[data-testid="info-attrs"]');
     expect(attrs.element.tagName).toBe('DL');
-    expect(attrs.classes()).toContain('dt-kv-grid');
+    expect(attrs.classes()).toContain('dt-attr-tiles');
     expect(attrs.findAll('dt').map((x) => x.text())).toContain('厨艺');
+    expect(attrs.findAll('dd.is-zero').map((x) => x.text())).toEqual(['0']);
     expect(w.get('[data-testid="info-capacity"]').element.tagName).toBe('DL');
-    // 每对名字和数值包成一组，按宽度自动排两列或一列：法文名字长，360px 下原来溢出（P3 截图）
-    const pairs = w.findAll('[data-testid="info-capacity"] > .dt-kv-pair');
+    expect(w.get('[data-testid="info-capacity"]').classes()).toContain('dt-card');
+    const pairs = w.findAll('[data-testid="info-capacity"] > .dt-kv-row');
     expect(pairs.length).toBeGreaterThan(5);
     expect(pairs[0]!.findAll('dt')).toHaveLength(1);
     expect(pairs[0]!.findAll('dd')).toHaveLength(1);
-    const row = w.get('.dt-feed');
+    const row = w.get('[data-testid="info-logs"].dt-card > .dt-feed');
     expect(row.get('.dt-feed-time').text()).not.toContain('2026');
   });
 

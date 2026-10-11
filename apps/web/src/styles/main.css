@@ -2835,3 +2835,141 @@ details.dt-card > summary {
 .dt-income-table td + td {
   padding-left: 4px;
 }
+/* 餐厅信息（P7）：属性 3×2 小数字块，0 灰掉；容量一张卡片一行一项 */
+.dt-attr-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+.dt-attr-tiles dd {
+  margin: 0;
+}
+.dt-attr-tiles .dt-stat-label {
+  font-size: 12px;
+  font-weight: 400;
+}
+.dt-stat-value.is-zero {
+  color: var(--dt-muted);
+}
+.dt-attr-note {
+  margin: 8px 2px 0;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-kv-rows {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+.dt-kv-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 46px;
+  padding: 0 14px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-kv-row:first-child {
+  border-top: 0;
+}
+.dt-kv-row > dt {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: 400;
+  color: var(--dt-muted);
+}
+.dt-kv-row > dd {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+/* 装扮（P7）：头像 6 列、门 4 列的选择格子；选中的紫边浅紫底 */
+.dt-avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+}
+.dt-door-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.dt-avatar-tile,
+.dt-door-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 8px 2px 6px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font: inherit;
+  font-size: 12px;
+  transition: transform var(--dt-dur-press) var(--dt-ease-out);
+}
+.dt-door-tile {
+  padding-bottom: 8px;
+}
+.dt-avatar-tile[aria-pressed='true'],
+.dt-door-tile[aria-pressed='true'] {
+  border: 2px solid var(--dt-primary);
+  background: var(--dt-soft-primary);
+  padding: 7px 1px 5px;
+  font-weight: 600;
+}
+.dt-door-tile[aria-pressed='true'] {
+  padding-bottom: 7px;
+}
+.dt-door-tile:disabled[aria-pressed='true'] {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dt-avatar-tile:active:not(:disabled),
+  .dt-door-tile:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+}
+.dt-avatar-name {
+  max-width: 100%;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/* 限定称号：黄底徽章 */
+.dt-title-badge {
+  display: inline-block;
+  padding: 0 8px;
+  border-radius: var(--dt-radius-xs);
+  background: var(--dt-soft-warning);
+  color: var(--dt-ink-warning);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 20px;
+}
+.dt-notice-card {
+  padding: 12px;
+}
+.dt-notice-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+.dt-row-warn {
+  color: var(--dt-ink-warning);
+}
+.dt-row-end.form-switch {
+  padding-left: 0;
+}
+.dt-row-end.form-switch .form-check-input {
+  float: none;
+  margin: 0;
+}
