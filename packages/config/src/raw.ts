@@ -388,7 +388,10 @@ export const looksFile = z.object({
       }),
     )
     .min(1),
-  avatars: z.array(z.object({ id: int.min(1), name: z.string().min(1) })).min(1),
+  // art：头像的图形名（网页 avatar-<art>，界面改版 P7）
+  avatars: z
+    .array(z.object({ id: int.min(1), name: z.string().min(1), art: z.string().regex(/^[a-z]+$/) }))
+    .min(1),
   icons: z.array(
     z.object({
       key: z.string().regex(/^[a-z0-9_-]{1,32}$/),

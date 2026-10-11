@@ -39,7 +39,7 @@ describe('图形（界面改版 P1，设计 §3）', () => {
   });
 
   it('内容图形以分类前缀开头', () => {
-    for (const { name } of CONTENT) expect(name).toMatch(/^(res|food|goods|npc|empty|door)-/);
+    for (const { name } of CONTENT) expect(name).toMatch(/^(res|food|goods|npc|empty|door|avatar)-/);
   });
 
   it('生成的名字表和源文件一致（改了图形要跑 pnpm -F @dt/web art）', () => {
@@ -67,6 +67,13 @@ describe('图形（界面改版 P1，设计 §3）', () => {
       doors: Array<{ art: string }>;
     };
     for (const d of looks.doors) expect(CONTENT_ART, d.art).toContain(`door-${d.art}`);
+  });
+
+  it('配置里每个头像都有图形 avatar-<art>（界面改版 P7）', () => {
+    const looks = JSON.parse(
+      readFileSync(join(ROOT, '../../../../packages/config/data/game/looks.json'), 'utf8'),
+    ) as { avatars: Array<{ art: string }> };
+    for (const a of looks.avatars) expect(CONTENT_ART, a.art).toContain(`avatar-${a.art}`);
   });
 
   it('每个食材类别都有图形 food-<类别>，另有通用图 food-misc（界面改版 P4，Review Focus 1）', () => {

@@ -133,6 +133,12 @@ export const useCatalogStore = defineStore('catalog', {
       const name = `door-${this.looks?.doors.find((d) => d.id === id)?.art || 'wood'}`;
       return (CONTENT_ART as readonly string[]).includes(name) ? (name as ArtName) : 'door-wood';
     },
+    /** 头像的图形（界面改版 P7）：没设头像、查不到、网页里还没有这张图都是 null，页面画首字圆圈 */
+    avatarArt(id: number | null | undefined): ArtName | null {
+      const art = this.looks?.avatars.find((a) => a.id === id)?.art;
+      const name = `avatar-${art}`;
+      return art && (CONTENT_ART as readonly string[]).includes(name) ? (name as ArtName) : null;
+    },
     mcName(id: number): string {
       return this.mcMap.get(id)?.name ?? activeMessages().errors.fallbackName.mc(id);
     },

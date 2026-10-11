@@ -1285,6 +1285,11 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     if (avatarIds.has(a.id)) errors.push(`looks: duplicate avatar ${a.id}`);
     avatarIds.add(a.id);
   }
+  const avatarArts = new Set<string>();
+  for (const a of looks.avatars) {
+    if (avatarArts.has(a.art)) errors.push(`looks: duplicate avatar art ${a.art}`);
+    avatarArts.add(a.art);
+  }
   const iconKeys = new Set<string>();
   for (const i of looks.icons) {
     if (iconKeys.has(i.key)) errors.push(`looks: duplicate icon ${i.key}`);

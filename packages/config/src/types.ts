@@ -405,7 +405,8 @@ export interface ConfigBundle {
 export interface Looks {
   /** art：门的图形名（网页 door-<art>，界面改版 P3） */
   doors: Array<{ id: number; name: string; coin: number; art: string }>;
-  avatars: Array<{ id: number; name: string }>;
+  /** art：头像的图形名，网页画 avatar-<art>（界面改版 P7） */
+  avatars: Array<{ id: number; name: string; art: string }>;
   /** shop：称号商店的限时上架（240-2），游戏日期 [from, to) 可买 */
   icons: Array<{
     key: string;
