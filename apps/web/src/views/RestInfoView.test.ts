@@ -109,9 +109,14 @@ describe('餐厅信息套用键值行和只读行（界面改版 P3）', () => {
     const w = await mountView();
     const attrs = w.get('[data-testid="info-attrs"]');
     expect(attrs.element.tagName).toBe('DL');
-    expect(attrs.classes()).toContain('dt-kv');
+    expect(attrs.classes()).toContain('dt-kv-grid');
     expect(attrs.findAll('dt').map((x) => x.text())).toContain('厨艺');
     expect(w.get('[data-testid="info-capacity"]').element.tagName).toBe('DL');
+    // 每对名字和数值包成一组，按宽度自动排两列或一列：法文名字长，360px 下原来溢出（P3 截图）
+    const pairs = w.findAll('[data-testid="info-capacity"] > .dt-kv-pair');
+    expect(pairs.length).toBeGreaterThan(5);
+    expect(pairs[0]!.findAll('dt')).toHaveLength(1);
+    expect(pairs[0]!.findAll('dd')).toHaveLength(1);
     const row = w.get('.dt-feed');
     expect(row.get('.dt-feed-time').text()).not.toContain('2026');
   });

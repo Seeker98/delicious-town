@@ -1417,16 +1417,30 @@ details.dt-card > summary {
   margin-right: 4px;
 }
 /* ---------- 餐厅：键值两组一排、数字表格、餐桌格子（界面改版 P3） ---------- */
-/* 两组键值一排（餐厅信息的属性、容量）：名字次要色、数值右对齐等宽 */
-.dt-kv.dt-kv-2 {
-  grid-template-columns: max-content minmax(0, 1fr) max-content minmax(0, 1fr);
+/* 键值成对排（餐厅信息的属性、容量）：放得下两列就两列，名字长（法文）自动折行；数值右对齐等宽 */
+.dt-kv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 160px), 1fr));
+  column-gap: 16px;
+  margin: 0;
 }
-.dt-kv.dt-kv-2 > :nth-last-child(-n + 4) {
-  border-bottom: 0;
+.dt-kv-pair {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  border-bottom: 1px solid var(--dt-line);
 }
-.dt-kv.dt-kv-2 > dd {
-  justify-content: flex-end;
-  padding-right: 12px;
+.dt-kv-pair > dt {
+  flex: 1;
+  min-width: 0;
+  font-weight: normal;
+  color: var(--dt-muted);
+  overflow-wrap: anywhere;
+}
+.dt-kv-pair > dd {
+  margin: 0;
+  text-align: right;
   font-variant-numeric: tabular-nums;
 }
 .dt-num-table td {
