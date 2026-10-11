@@ -8951,3 +8951,12 @@ a.dt-entry-row::after {
 .dt-entry-row .dt-row-title {
   font-weight: 600;
 }
+/* 等宽字体里没有中文，占位字会落到宋体：占位字用正文字体（P11 用户反馈） */
+.dt-mono::placeholder {
+  font-family: var(--dt-font-sans);
+  letter-spacing: 0;
+}
+/* 游玩指引每天的事项：地点名加粗（P11 用户反馈） */
+.dt-guide-daily .dt-row-title {
+  font-weight: 600;
+}
