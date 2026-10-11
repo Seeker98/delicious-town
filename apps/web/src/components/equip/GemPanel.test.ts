@@ -2,11 +2,11 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { GemsDto } from '@dt/shared';
-import { endpoints } from '../api/endpoints';
-import { useToastStore } from '../stores/toast';
-import GemView from './GemView.vue';
+import { endpoints } from '../../api/endpoints';
+import { useToastStore } from '../../stores/toast';
+import GemPanel from './GemPanel.vue';
 
-vi.mock('../api/endpoints', () => ({ endpoints: { gems: vi.fn(), gemLevelUp: vi.fn() } }));
+vi.mock('../../api/endpoints', () => ({ endpoints: { gems: vi.fn(), gemLevelUp: vi.fn() } }));
 
 const attrs = { cook: 1, cutting: 0, fire: 0, season: 0, creatives: 0, luck: 0 };
 const data: GemsDto = {
@@ -18,7 +18,7 @@ const data: GemsDto = {
   strength: 100,
 };
 
-describe('GemView', () => {
+describe('GemPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     setActivePinia(createPinia());
@@ -28,7 +28,7 @@ describe('GemView', () => {
 
   it('自己的体力单独一行写“我的体力: N”，不接在规则说明后面（问题记录 532：原来末尾一句“体力 N。”看不懂）', async () => {
     vi.mocked(endpoints.gems).mockResolvedValue({ ...structuredClone(data), strength: 1234 });
-    const w = mount(GemView);
+    const w = mount(GemPanel);
     await flushPromises();
     expect(w.get('[data-testid="gem-strength"]').text()).toBe('我的体力: 1,234');
     expect(w.get('[data-testid="gem-intro"]').text()).not.toContain('体力 1');
@@ -36,7 +36,7 @@ describe('GemView', () => {
   });
 
   it('组数不超过 持有/2；最高阶不能升；结果提示成功、失败和经验', async () => {
-    const w = mount(GemView);
+    const w = mount(GemPanel);
     await flushPromises();
     expect(w.text()).toContain('77.0%');
     expect(w.find('[data-testid="levelup-341"]').attributes('disabled')).toBeDefined();

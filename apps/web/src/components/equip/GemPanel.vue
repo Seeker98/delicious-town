@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue';
 import type { GemItemDto, GemsDto } from '@dt/shared';
-import { endpoints } from '../api/endpoints';
-import { useT } from '../composables/useT';
-import { errorMessage } from '../i18n/zh-CN';
-import { useCatalogStore } from '../stores/catalog';
-import { useToastStore } from '../stores/toast';
-import { formatNum, formatPct } from '../utils/format';
-import { ATTR_KEYS, ATTR_NAMES } from '../utils/labels';
+import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
+import { errorMessage } from '../../i18n/zh-CN';
+import { useCatalogStore } from '../../stores/catalog';
+import { useToastStore } from '../../stores/toast';
+import { formatNum, formatPct } from '../../utils/format';
+import { ATTR_KEYS, ATTR_NAMES } from '../../utils/labels';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();

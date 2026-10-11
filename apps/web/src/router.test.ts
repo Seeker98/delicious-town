@@ -127,6 +127,9 @@ describe('导航元数据（界面改版 P2a，设计 §4.2）', () => {
 });
 
 describe('特色菜、进度一览并进食谱页（界面改版 P2b）', () => {
+  it('/rest/gem 跳到厨具页的宝石标签', () => {
+    expect(routes.find((r) => r.path === '/rest/gem')?.redirect).toBe('/rest/equip?tab=gem');
+  });
   it('/mc 跳到 /cookbooks?tab=mc', () => {
     expect(routes.find((r) => r.path === '/mc')?.redirect).toBe('/cookbooks?tab=mc');
   });

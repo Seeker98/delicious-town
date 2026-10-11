@@ -122,17 +122,9 @@ export const routes: RouteRecordRaw[] = [
       parent: '/rest/equip',
     },
   },
-  {
-    path: '/rest/gem',
-    name: 'gems',
-    component: () => import('./views/GemView.vue'),
-    meta: {
-      needRestaurant: true,
-      section: 'home',
-      title: T((t) => t.equip.gemPage.title),
-      parent: '/rest/equip',
-    },
-  },
+  // 宝石并进厨具页的标签（界面改版 P2b）
+  { path: '/rest/gem', redirect: '/rest/equip?tab=gem' },
+
   // 特色菜并进食谱页的标签（界面改版 P2b）
   { path: '/mc', redirect: '/cookbooks?tab=mc' },
   {
