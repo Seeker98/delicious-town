@@ -1308,3 +1308,47 @@ details.dt-card > summary {
     transform: translateY(100%);
   }
 }
+/* ---------- 空状态、加载骨架（界面改版 P3，设计 §5 第 8 条） ---------- */
+.dt-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 20px 12px;
+  text-align: center;
+}
+.dt-empty-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+.dt-empty-body {
+  margin: 0;
+  max-width: 280px;
+  color: var(--dt-muted);
+  font-size: 13px;
+}
+.dt-skel {
+  padding: 4px 0;
+}
+.dt-skel-row {
+  height: 12px;
+  margin: 12px 0;
+  border-radius: var(--dt-radius-xs);
+  background: var(--dt-surface-2);
+}
+.dt-skel-row:nth-child(3n) {
+  width: 70%;
+}
+.dt-skel-row:nth-child(3n + 1) {
+  width: 90%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dt-skel-row {
+    animation: dt-skel-pulse 1.2s ease-in-out infinite alternate;
+  }
+}
+@keyframes dt-skel-pulse {
+  to {
+    opacity: 0.45;
+  }
+}
