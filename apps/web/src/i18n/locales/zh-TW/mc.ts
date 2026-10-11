@@ -4,6 +4,9 @@ export default {
   title: '特色菜',
   temple: '神殿鑑定',
   classroom: '教室',
+  /** 介面改版 P7：神殿一行的說明、烹製面板標題 */
+  templeSub: '鑑定神秘食譜得到殘卷, 3 張殘卷學會一道',
+  cookTitle: (name: string) => `烹製「${name}」`,
   loadFailed: '讀取特色菜失敗',
   groups: {
     learnable: '可以學習',

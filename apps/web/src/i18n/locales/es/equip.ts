@@ -87,12 +87,15 @@ const equip: Messages['equip'] = {
   detail: {
     noAttrs: 'Sin bonificaciones de atributos',
     minLevel: (lv) => `Nivel ${lv} requerido`,
-    barLabel: (name, base, boost, gem, total) => `${name} ${total} (base ${base} + mejora ${boost} + gemas ${gem})`,
+    barLabel: (name, base, boost, gem, total) =>
+      `${name} ${total} (base ${base} + mejora ${boost} + gemas ${gem})`,
     costLabel: 'Coste',
-    costShort: (essence, have, coin) => `Esencia ×${essence} (tienes ${have}) · ${coin} ${plEs(coin, 'moneda', 'monedas')}`,
+    costShort: (essence, have, coin) =>
+      `Esencia ×${essence} (tienes ${have}) · ${coin} ${plEs(coin, 'moneda', 'monedas')}`,
     stoneTitle: 'Usar piedra de mejora (éxito asegurado)',
     stoneHave: (n) => `Tienes ${n}`,
-    holes: (n, cur, max) => `${n} / ${cur} ${plEs(cur, 'hueco', 'huecos')}${cur < max ? ` · máx. ${max}` : ''}`,
+    holes: (n, cur, max) =>
+      `${n} / ${cur} ${plEs(cur, 'hueco', 'huecos')}${cur < max ? ` · máx. ${max}` : ''}`,
     emptyHole: 'Hueco vacío, toca para engarzar',
     emptyShort: 'Vacío',
     drillShort: '+ hueco',

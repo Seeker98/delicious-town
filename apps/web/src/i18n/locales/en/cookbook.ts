@@ -22,6 +22,7 @@ const cookbook: Messages['cookbook'] = {
   learn: 'Learn',
   upgrade: 'Upgrade',
   useMaster: (level) => `Use level ${level} universal`,
+  streetPick: 'Pick a street',
   counts: (streetLearned, streetTotal, learned, total) =>
     `This street: ${streetLearned}/${streetTotal} learned · ${learned} / ${total} ${plEn(total, 'recipe', 'recipes')} in total`,
   info: (street, level, taste, coin) => `${street} · Difficulty ${level} · Taste ${taste} · Price ${coin}`,

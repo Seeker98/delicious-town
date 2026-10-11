@@ -87,12 +87,15 @@ const equip: Messages['equip'] = {
   detail: {
     noAttrs: 'Aucun bonus de caractéristiques',
     minLevel: (lv) => `Niveau ${lv} requis`,
-    barLabel: (name, base, boost, gem, total) => `${name} ${total} (base ${base} + renforcement ${boost} + gemmes ${gem})`,
+    barLabel: (name, base, boost, gem, total) =>
+      `${name} ${total} (base ${base} + renforcement ${boost} + gemmes ${gem})`,
     costLabel: 'Coût',
-    costShort: (essence, have, coin) => `Essence ×${essence} (${have} en stock) · ${coin} ${plFr(coin, 'pièce', 'pièces')}`,
+    costShort: (essence, have, coin) =>
+      `Essence ×${essence} (${have} en stock) · ${coin} ${plFr(coin, 'pièce', 'pièces')}`,
     stoneTitle: 'Utiliser une pierre de renfort (réussite assurée)',
     stoneHave: (n) => `Vous en avez ${n}`,
-    holes: (n, cur, max) => `${n} / ${cur} ${plFr(cur, 'emplacement', 'emplacements')}${cur < max ? ` · ${max} max` : ''}`,
+    holes: (n, cur, max) =>
+      `${n} / ${cur} ${plFr(cur, 'emplacement', 'emplacements')}${cur < max ? ` · ${max} max` : ''}`,
     emptyHole: 'Emplacement vide, touchez pour sertir',
     emptyShort: 'Vide',
     drillShort: '+ trou',

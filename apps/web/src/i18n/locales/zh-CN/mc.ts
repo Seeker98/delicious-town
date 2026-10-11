@@ -3,6 +3,9 @@ export default {
   title: '特色菜',
   temple: '神殿鉴定',
   classroom: '教室',
+  /** 界面改版 P7：神殿一行的说明、烹制面板标题 */
+  templeSub: '鉴定神秘食谱得到残卷, 3 张残卷学会一道',
+  cookTitle: (name: string) => `烹制「${name}」`,
   loadFailed: '读取特色菜失败',
   groups: {
     learnable: '可以学习',

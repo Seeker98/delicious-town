@@ -57,7 +57,8 @@ function mountView() {
     history: createMemoryHistory(),
     routes: [{ path: '/:p(.*)*', component: McPanel }],
   });
-  return mount(McPanel, { global: { plugins: [router] } });
+  // 烹制面板用 Teleport：测试里原地渲染
+  return mount(McPanel, { global: { plugins: [router], stubs: { teleport: true } } });
 }
 
 describe('McPanel', () => {
@@ -149,8 +150,8 @@ describe('McPanel', () => {
     const w = mountView();
     await flushPromises();
     expect(w.find('[data-testid="learned-1"]').text()).toContain('入门');
-    // 菜名和等级之间要有间隔（问题记录）
-    expect(w.find('[data-testid="learned-1"] b + span').classes()).toContain('ms-1');
+    // 菜名后面等级、道是小标签（界面改版 P7；原来是一段灰字，问题记录：要有间隔）
+    expect(w.find('[data-testid="learned-1"] .dt-row-title .dt-tag').exists()).toBe(true);
     await w.find('[data-testid="cook-1"]').trigger('click');
     await flushPromises();
     expect(w.find('[data-testid="cooknum-10"]').attributes('disabled')).toBeDefined();
@@ -278,7 +279,7 @@ describe('McPanel', () => {
     expect(w.find('[data-testid="mc-level-all"]').text()).toBe('全部 (4)');
     expect(w.find('[data-testid="mc-level-3"]').text()).toBe('3 级 (2)');
     expect(w.find('[data-testid="mc-level-1"]').exists()).toBe(false);
-    expect(w.find('[data-testid="mc-road-1"]').text()).toBe('一道 (3)');
+    expect(w.find('[data-testid="mc-road"] option[value="1"]').text()).toBe('一道 (3)');
     await w.find('[data-testid="mc-level-3"]').trigger('click');
     expect(w.find('[data-testid="mc-level-3"]').attributes('aria-pressed')).toBe('true');
     // 筛选按视觉规范用小号胶囊（问题记录 471），选中的加 active，不用按钮组
@@ -286,16 +287,16 @@ describe('McPanel', () => {
     expect(lv3.classes()).toContain('active');
     expect(lv3.classes()).not.toContain('btn');
     expect(lv3.element.closest('.dt-pills')).not.toBeNull();
-    expect(w.get('[data-testid="mc-road-1"]').element.closest('.dt-pills')).not.toBeNull();
+    expect(w.get('[data-testid="mc-road"]').element.closest('.dt-pills')).not.toBeNull();
     // 选了 3 级以后道的数也跟着变
-    expect(w.find('[data-testid="mc-road-1"]').text()).toBe('一道 (1)');
+    expect(w.find('[data-testid="mc-road"] option[value="1"]').text()).toBe('一道 (1)');
     // 已学一栏这一页没有：标题写 0 / 2，并写明这一页没有
     expect(ids(w, 'learned')).toEqual([]);
     expect(w.text()).toContain('已学 (0 / 2)');
     expect(w.find('[data-testid="mc-learned-none"]').text()).toBe('这一页没有');
     expect(ids(w, 'remnant-num')).toEqual(['remnant-num-3', 'remnant-num-5']);
     expect(w.find('[data-testid="learn-all"]').text()).toBe('全部学会');
-    await w.find('[data-testid="mc-road-2"]').trigger('click');
+    await w.get('[data-testid="mc-road"]').setValue('2');
     expect(ids(w, 'remnant-num')).toEqual(['remnant-num-5']);
     // “全部学会”会学别的页的，按钮上写明总数
     expect(w.find('[data-testid="learn-all"]').text()).toBe('全部学会 (含其他页, 共 2 道)');
@@ -306,7 +307,7 @@ describe('McPanel', () => {
     const w = mountView();
     await flushPromises();
     await w.find('[data-testid="mc-level-3"]').trigger('click');
-    await w.find('[data-testid="mc-road-2"]').trigger('click');
+    await w.get('[data-testid="mc-road"]').setValue('2');
     w.unmount();
     const again = mountView();
     await flushPromises();
@@ -425,5 +426,23 @@ describe('特色菜套用新控件（界面改版 P4）', () => {
     await flushPromises();
     expect(endpoints.mcDump).not.toHaveBeenCalled();
     spy.mockRestore();
+  });
+});
+
+describe('特色菜分页（界面改版 P7：249 道一次全列出来整页三万像素高）', () => {
+  beforeEach(() => setActivePinia(createPinia()));
+  it('已学每页 12 道，可以翻页', async () => {
+    const one = overview.learned[0]!;
+    vi.mocked(endpoints.mc).mockResolvedValue({
+      ...structuredClone(overview),
+      learned: Array.from({ length: 13 }, (_, i) => ({ ...one, mcId: 100 + i })),
+    });
+    const w = mountView();
+    await flushPromises();
+    expect(w.findAll('[data-testid^="learned-"]')).toHaveLength(12);
+    expect(w.get('[data-testid="mc-pager"]').text()).toContain('1 / 2');
+    await w.get('[data-testid="mc-pager"] button:last-child').trigger('click');
+    expect(w.findAll('[data-testid^="learned-"]')).toHaveLength(1);
+    expect(w.get('[data-testid="mc-pager"]').text()).toContain('2 / 2');
   });
 });

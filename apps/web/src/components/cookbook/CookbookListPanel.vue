@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { CookbookListDto, CookbookRowDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import FoodArt from '../FoodArt.vue';
 import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
@@ -193,45 +194,65 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="d-flex flex-wrap gap-2 mb-2">
-    <select v-model.number="street" class="form-select form-select-sm w-auto">
-      <option v-for="s in catalog.streets" :key="s.id" :value="s.id">{{ s.name }}</option>
-    </select>
-    <!-- 一排独立按钮，放不下时换行（问题记录 304：英法西文下按钮组超出手机屏幕） -->
-    <div class="d-flex flex-wrap gap-1" data-testid="cookbook-filters">
-      <button
-        v-for="f in FILTERS"
-        :key="f"
-        :class="['btn btn-sm', filter === f ? 'btn-primary' : 'btn-outline-primary']"
-        :data-testid="`filter-${f}`"
-        @click="filter = f"
-      >
-        {{ t.cookbook.filters[f] }}
-      </button>
+  <!-- 本街一张折叠卡（界面改版 P7）：街名、学会几道和进度条、加成一行摘要；点开看类型、全部加成、为什么是这个加成 -->
+  <details v-if="streetInfo || list" class="dt-card dt-effects dt-cb-street" data-testid="street-card">
+    <summary class="dt-effects-sum dt-cb-street-sum">
+      <span class="dt-effects-sum-text">
+        <span class="dt-cb-street-line"
+          ><b>{{ catalog.streetName(street) }}</b>
+          <span v-if="list" class="dt-meta" data-testid="cookbook-counts">{{
+            t.cookbook.counts(
+              list.streetLearned,
+              list.streetTotal,
+              formatNum(list.learned),
+              formatNum(list.allTotal),
+            )
+          }}</span></span
+        >
+        <span v-if="list" class="dt-quest-bar"
+          ><span :style="{ width: `${(list.streetLearned / Math.max(1, list.streetTotal)) * 100}%` }"></span
+        ></span>
+        <span v-if="streetInfo?.desc" class="dt-fold-sub">{{ t.cookbook.streetDesc(streetInfo.desc) }}</span>
+      </span>
+      <i class="bi bi-chevron-down dt-effects-chev" aria-hidden="true"></i>
+    </summary>
+    <!-- 街道简介（问题记录 380）：类型、加成、为什么是这个加成，按目录取当前语言 -->
+    <div v-if="streetInfo" class="dt-effects-body dt-cb-street-body">
+      <span v-if="streetInfo.focus" class="dt-tag dt-tag-primary me-1" data-testid="street-focus">{{
+        STREET_FOCUS[streetInfo.focus]
+      }}</span>
+      <span v-if="streetInfo.desc" data-testid="street-desc">{{
+        t.cookbook.streetDesc(streetInfo.desc)
+      }}</span>
+      <div v-if="streetInfo.theme" class="dt-meta mt-1" data-testid="street-theme">
+        {{ streetInfo.theme }}
+      </div>
     </div>
-  </div>
-  <!-- 街道简介（问题记录 380）：类型、加成、为什么是这个加成，按目录取当前语言 -->
-  <div v-if="streetInfo && (streetInfo.focus || streetInfo.desc || streetInfo.theme)" class="small mb-1">
-    <span v-if="streetInfo.focus" class="dt-tag dt-tag-lead me-1" data-testid="street-focus">{{
-      STREET_FOCUS[streetInfo.focus]
-    }}</span>
-    <span v-if="streetInfo.desc" data-testid="street-desc">{{ t.cookbook.streetDesc(streetInfo.desc) }}</span>
-    <div v-if="streetInfo.theme" class="text-muted" data-testid="street-theme">{{ streetInfo.theme }}</div>
-  </div>
-  <div v-if="list" class="small text-muted mb-2" data-testid="cookbook-counts">
-    {{
-      t.cookbook.counts(
-        list.streetLearned,
-        list.streetTotal,
-        formatNum(list.learned),
-        formatNum(list.allTotal),
-      )
-    }}
+  </details>
+
+  <!-- 街道选择（原生下拉，样子是胶囊）+ 筛选胶囊，放不下时换行（问题记录 304） -->
+  <div class="dt-pills dt-cb-filters" data-testid="cookbook-filters">
+    <span class="dt-select-pill">
+      <select v-model.number="street" :aria-label="t.cookbook.streetPick">
+        <option v-for="s in catalog.streets" :key="s.id" :value="s.id">{{ s.name }}</option>
+      </select>
+    </span>
+    <button
+      v-for="f in FILTERS"
+      :key="f"
+      type="button"
+      :class="{ active: filter === f }"
+      :aria-pressed="filter === f"
+      :data-testid="`filter-${f}`"
+      @click="filter = f"
+    >
+      {{ t.cookbook.filters[f] }}
+    </button>
   </div>
   <!-- 本街剩下的菜全学会也凑不够下一星（问题记录 378 后续）：提示学得差不多就搬街 -->
   <div
     v-if="hintGap !== null && starNeed && hintClosed !== hintId"
-    class="alert alert-warning small py-2 mb-2 d-flex align-items-start gap-2"
+    class="dt-act-note is-warn dt-cb-hint"
     data-testid="move-hint"
   >
     <div class="flex-fill">
@@ -242,48 +263,71 @@ onMounted(async () => {
       {{ t.cookbook.moveHintClose }}
     </button>
   </div>
-  <!-- 一张卡片里一行一道菜（界面改版 P4：原来一行一个带边框的格子） -->
-  <div v-if="list && list.items.length > 0" class="dt-card">
-    <div v-for="r in list.items" :key="r.id" class="dt-cb small" :data-testid="`cb-${r.id}`">
-      <div class="flex-fill" style="min-width: 0">
-        <div class="text-truncate">
-          <RouterLink :to="`/cookbooks/${r.id}`" class="fw-bold">{{
+  <!-- 一张卡片一行一道菜（界面改版 P7）：左边食材图，名字和品级、所需食材（缺的标红）；
+       右边按能不能学分三档：能学实心“学习”，要用万能食材浅紫胶囊，学不了只放灰色小标签 -->
+  <div v-if="list && list.items.length > 0" class="dt-card dt-rows-card">
+    <div v-for="r in list.items" :key="r.id" class="dt-row dt-cb-row" :data-testid="`cb-${r.id}`">
+      <span class="dt-row-ico dt-cb-ico"><FoodArt :id="r.next?.[0]?.foodsId ?? 0" :size="28" /></span>
+      <span class="dt-row-main">
+        <span class="dt-row-title"
+          ><RouterLink :to="`/cookbooks/${r.id}`" class="dt-cb-name">{{
             catalog.data('cookbooks', r.id)?.name ?? r.name
-          }}</RouterLink>
-          <span class="dt-tag ms-1">{{ GRADE_NAMES[r.grade] }}</span>
-        </div>
-        <div v-if="r.next" class="dt-cb-foods">
-          <span
-            v-for="f in r.next"
-            :key="f.foodsId"
-            :class="['me-2', f.have >= f.num ? 'text-success' : 'text-danger']"
+          }}</RouterLink
+          ><span :class="['dt-tag', r.grade > 0 ? 'dt-tag-primary' : 'dt-tag-mute']">{{
+            GRADE_NAMES[r.grade]
+          }}</span></span
+        >
+        <span v-if="r.next" class="dt-row-sub dt-cb-foods">
+          <template v-for="(f, i) in r.next" :key="f.foodsId"
+            ><template v-if="i > 0"> · </template
+            ><span :class="{ 'dt-miss': f.have < f.num }"
+              >{{ catalog.foodName(f.foodsId) }} {{ f.have }}/{{ f.num }}</span
+            ></template
           >
-            {{ catalog.foodName(f.foodsId) }} {{ f.have }}/{{ f.num }}
-          </span>
-        </div>
-      </div>
+        </span>
+      </span>
       <button
-        class="btn btn-primary dt-btn-xs"
+        v-if="r.learn === '0'"
+        type="button"
+        class="btn btn-sm btn-primary"
         :data-testid="`learn-${r.id}`"
-        :disabled="busy || r.learn === 'z' || r.learn === 'max' || r.learn === 'street'"
+        :disabled="busy"
         @click="learn(r.id)"
       >
         {{ learnLabel(r) }}
       </button>
+      <button
+        v-else-if="r.learn !== 'z' && r.learn !== 'max' && r.learn !== 'street'"
+        type="button"
+        class="btn btn-sm btn-outline-primary dt-cb-master"
+        :data-testid="`learn-${r.id}`"
+        :disabled="busy"
+        @click="learn(r.id)"
+      >
+        {{ learnLabel(r) }}
+      </button>
+      <span
+        v-else
+        :class="['dt-tag', r.learn === 'max' ? 'dt-tag-ok' : 'dt-tag-mute', 'dt-cb-state']"
+        :data-testid="`learn-${r.id}`"
+        >{{ learnLabel(r) }}</span
+      >
     </div>
   </div>
-  <div v-if="list && list.total > list.pageSize" class="d-flex justify-content-between mt-2">
+  <div v-if="list && list.total > list.pageSize" class="dt-pager">
     <button
-      class="btn btn-sm btn-outline-secondary"
+      type="button"
+      class="btn btn-sm btn-light"
       data-testid="prev-page"
       :disabled="page <= 1"
       @click="page -= 1"
     >
       {{ t.common.prevPage }}
     </button>
-    <span class="small">{{ page }} / {{ Math.ceil(list.total / list.pageSize) }}</span>
+    <span class="dt-meta">{{ page }} / {{ Math.ceil(list.total / list.pageSize) }}</span>
     <button
-      class="btn btn-sm btn-outline-secondary"
+      type="button"
+      class="btn btn-sm btn-light"
       data-testid="next-page"
       :disabled="page * list.pageSize >= list.total"
       @click="page += 1"

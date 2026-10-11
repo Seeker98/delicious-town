@@ -22,6 +22,7 @@ const cookbook: Messages['cookbook'] = {
   learn: 'Aprender',
   upgrade: 'Mejorar',
   useMaster: (level) => `Con universal nv. ${level}`,
+  streetPick: 'Elegir calle',
   counts: (streetLearned, streetTotal, learned, total) =>
     `Esta calle: ${streetLearned}/${streetTotal} aprendidas · ${learned} / ${total} ${plEs(total, 'receta', 'recetas')} en total`,
   info: (street, level, taste, coin) => `${street} · Dificultad ${level} · Sabor ${taste} · Precio ${coin}`,

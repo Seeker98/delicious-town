@@ -5,6 +5,8 @@ const mc: Messages['mc'] = {
   title: 'Platos estrella',
   temple: 'Tasación en el templo',
   classroom: 'Aula',
+  templeSub: 'Tasa recetas misteriosas para obtener fragmentos; 3 fragmentos enseñan un plato',
+  cookTitle: (name) => `Cocinar «${name}»`,
   loadFailed: 'No se pudieron cargar los platos estrella',
   groups: {
     learnable: 'Listos para aprender',

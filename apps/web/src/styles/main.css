@@ -1671,14 +1671,6 @@ details.dt-card > summary {
   align-items: center;
   gap: 2px;
 }
-/* 特色菜已学的一行（界面改版 P4） */
-.dt-mc-row {
-  padding: 4px 0;
-  border-bottom: 1px solid var(--dt-line);
-}
-.dt-mc-row:last-child {
-  border-bottom: 0;
-}
 /* 名字一行：名字按字折行，右边的小字（限购）放不下时换到下一行，不压在名字上（终审 I1） */
 .dt-name-row {
   display: flex;
@@ -3511,4 +3503,143 @@ details.dt-card > summary {
   font-size: 12px;
   color: var(--dt-muted);
   font-variant-numeric: tabular-nums;
+}
+/* 食谱（P7）：本街一张折叠卡，下面街道下拉和筛选胶囊，一张卡片一行一道菜 */
+.dt-cb-street {
+  margin-bottom: 10px;
+}
+.dt-cb-street-sum {
+  align-items: flex-start;
+  padding: 10px 14px;
+}
+.dt-cb-street-sum .dt-effects-sum-text {
+  white-space: normal;
+}
+.dt-cb-street-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 8px;
+}
+.dt-cb-street-line > b {
+  font-size: 15px;
+  color: var(--dt-text);
+}
+.dt-cb-street-body {
+  padding: 10px 14px 12px;
+  font-size: 13px;
+}
+.dt-cb-filters {
+  align-items: center;
+}
+/* 原生下拉框做成胶囊样子（读屏、手机上的系统选择器照常） */
+.dt-select-pill {
+  position: relative;
+  display: inline-flex;
+}
+.dt-select-pill > select {
+  appearance: none;
+  height: 32px;
+  padding: 0 28px 0 12px;
+  border: 1px solid var(--dt-line);
+  border-radius: 999px;
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+.dt-select-pill::after {
+  content: '';
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid var(--dt-muted);
+  border-bottom: 1.5px solid var(--dt-muted);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+.dt-cb-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.dt-cb-ico {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+}
+.dt-cb-name {
+  color: var(--dt-text);
+  font-weight: 600;
+  text-decoration: none;
+}
+.dt-cb-row .dt-row-sub {
+  white-space: normal;
+}
+.dt-miss {
+  color: var(--dt-ink-danger);
+  font-weight: 600;
+}
+.dt-cb-master {
+  white-space: nowrap;
+  font-size: 12px;
+}
+.dt-cb-state {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.dt-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+/* 特色菜（P7）：一道一行，名字后面等级、道两个小标签，下面熟练度细条和文字 */
+.dt-mc-row {
+  min-height: 60px;
+}
+.dt-mc-prof {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-mc-bar {
+  flex: 1 1 auto;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--dt-bar-track);
+  overflow: hidden;
+}
+.dt-mc-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--dt-primary);
+}
+.dt-mc-prof > span:last-child {
+  flex-shrink: 0;
+}
+.dt-mc-cookie {
+  padding-left: 0;
+  padding-right: 0;
+  border-top: 1px solid var(--dt-line);
+  cursor: pointer;
+}
+.dt-mc-nums {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.dt-mc-nums > .btn {
+  flex: 1 1 0;
+  min-height: 44px;
+  font-weight: 600;
 }

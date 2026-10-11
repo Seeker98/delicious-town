@@ -5,6 +5,8 @@ const mc: Messages['mc'] = {
   title: 'Signature dishes',
   temple: 'Temple appraisal',
   classroom: 'Classroom',
+  templeSub: 'Appraise mystery recipes for fragments; 3 fragments teach a dish',
+  cookTitle: (name) => `Cook "${name}"`,
   loadFailed: "Couldn't load signature dishes",
   groups: {
     learnable: 'Ready to learn',

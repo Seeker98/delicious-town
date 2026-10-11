@@ -87,12 +87,15 @@ const equip: Messages['equip'] = {
   detail: {
     noAttrs: 'No stat bonuses',
     minLevel: (lv) => `Level ${lv}+`,
-    barLabel: (name, base, boost, gem, total) => `${name} ${total} (base ${base} + upgrade ${boost} + gems ${gem})`,
+    barLabel: (name, base, boost, gem, total) =>
+      `${name} ${total} (base ${base} + upgrade ${boost} + gems ${gem})`,
     costLabel: 'Cost',
-    costShort: (essence, have, coin) => `Essence ×${essence} (have ${have}) · ${coin} ${plEn(coin, 'coin', 'coins')}`,
+    costShort: (essence, have, coin) =>
+      `Essence ×${essence} (have ${have}) · ${coin} ${plEn(coin, 'coin', 'coins')}`,
     stoneTitle: 'Use an upgrade stone (always succeeds)',
     stoneHave: (n) => `You have ${n}`,
-    holes: (n, cur, max) => `${n} / ${cur} ${plEn(cur, 'slot', 'slots')}${cur < max ? ` · up to ${max}` : ''}`,
+    holes: (n, cur, max) =>
+      `${n} / ${cur} ${plEn(cur, 'slot', 'slots')}${cur < max ? ` · up to ${max}` : ''}`,
     emptyHole: 'Empty slot, tap to set a gem',
     emptyShort: 'Empty',
     drillShort: '+ slot',

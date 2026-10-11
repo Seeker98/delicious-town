@@ -3,7 +3,9 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { McOverviewDto, McPreviewDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import DtArt from '../DtArt.vue';
 import DtEmpty from '../DtEmpty.vue';
+import DtSheet from '../DtSheet.vue';
 import DtStepper from '../DtStepper.vue';
 import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
@@ -116,6 +118,14 @@ const roadTabs = computed(() =>
     (x) => ROAD_NAMES[x] ?? '',
     (x) => [...allIds.value].filter((id) => inRoad(id, x) && inLevel(id, level.value)).length,
   ),
+);
+/** 已学每页 12 道（界面改版 P7：249 道一次全列出来整页三万像素高）；换筛选回到第一页 */
+const PAGE = 12;
+const learnedPage = ref(1);
+watch([level, road], () => (learnedPage.value = 1));
+const learnedPages = computed(() => Math.max(1, Math.ceil(sortedLearned.value.length / PAGE)));
+const pagedLearned = computed(() =>
+  sortedLearned.value.slice((learnedPage.value - 1) * PAGE, learnedPage.value * PAGE),
 );
 const sortedLearned = computed(() =>
   [...(o.value?.learned ?? [])].filter((m) => shown(m.mcId)).sort((a, b) => byLevel(a.mcId, b.mcId)),
@@ -235,11 +245,23 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
 
 <template>
   <div v-if="o">
-    <div class="dt-page-meta">
-      <RouterLink to="/temple" class="dt-go">{{ t.mc.temple }}</RouterLink>
-      <RouterLink to="/society/classroom" class="dt-go">{{ t.mc.classroom }}</RouterLink>
+    <!-- 去哪里得到、练熟（界面改版 P7）：整行去别处，不再是右上角两个文字链接 -->
+    <div class="dt-card dt-rows-card mb-2" data-testid="mc-links">
+      <RouterLink to="/temple" class="dt-row is-link">
+        <span class="dt-row-ico"><DtArt name="place-temple" :size="22" /></span>
+        <span class="dt-row-main"
+          ><span class="dt-row-title">{{ t.mc.temple }}</span
+          ><span class="dt-row-sub">{{ t.mc.templeSub }}</span></span
+        >
+      </RouterLink>
+      <RouterLink to="/society/classroom" class="dt-row is-link">
+        <span class="dt-row-ico"><DtArt name="place-society" :size="22" /></span>
+        <span class="dt-row-main"
+          ><span class="dt-row-title">{{ t.mc.classroom }}</span></span
+        >
+      </RouterLink>
     </div>
-    <p v-if="o.star < 1" class="small text-muted">{{ t.mc.needStar }}</p>
+    <p v-if="o.star < 1" class="dt-block-note">{{ t.mc.needStar }}</p>
 
     <div v-if="o.current" class="dt-card mb-2 small d-flex align-items-center" data-testid="mc-current">
       <div class="flex-fill">
@@ -261,9 +283,23 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
       </button>
     </div>
 
-    <!-- 按级、按道分页（问题记录 414）；按视觉规范用小号胶囊（问题记录 471） -->
-    <div v-if="allIds.size > 0" class="mb-2" data-testid="mc-filters">
-      <div class="dt-pills mb-1" role="group" :aria-label="t.mc.filter.levelLabel">
+    <!-- 已学（界面改版 P7）：标题一行；按道是下拉胶囊、按级是一排筛选胶囊（问题记录 414）；一道一行，每页 12 道 -->
+    <section class="dt-block">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">
+          {{
+            filtering
+              ? t.mc.learnedOf(sortedLearned.length, o.learned.length)
+              : t.mc.learned(o.learned.length)
+          }}
+        </h2>
+      </div>
+      <div v-if="allIds.size > 0" class="dt-pills dt-pills-scroll" data-testid="mc-filters">
+        <span class="dt-select-pill">
+          <select v-model="road" :aria-label="t.mc.filter.roadLabel" data-testid="mc-road">
+            <option v-for="x in roadTabs" :key="String(x.key)" :value="x.key">{{ x.label }}</option>
+          </select>
+        </span>
         <button
           v-for="x in levelTabs"
           :key="String(x.key)"
@@ -276,62 +312,41 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
           {{ x.label }}
         </button>
       </div>
-      <div class="dt-pills mb-0" role="group" :aria-label="t.mc.filter.roadLabel">
-        <button
-          v-for="x in roadTabs"
-          :key="String(x.key)"
-          type="button"
-          :class="{ active: road === x.key }"
-          :aria-pressed="road === x.key"
-          :data-testid="`mc-road-${x.key}`"
-          @click="road = x.key"
-        >
-          {{ x.label }}
-        </button>
+      <DtEmpty v-if="o.learned.length === 0" :title="t.mc.noLearned" data-testid="mc-learned-empty" />
+      <div v-else-if="sortedLearned.length === 0" class="dt-block-note" data-testid="mc-learned-none">
+        {{ t.mc.filter.none }}
       </div>
-    </div>
-
-    <h6 class="dt-section">
-      {{
-        filtering ? t.mc.learnedOf(sortedLearned.length, o.learned.length) : t.mc.learned(o.learned.length)
-      }}
-    </h6>
-    <DtEmpty v-if="o.learned.length === 0" :title="t.mc.noLearned" data-testid="mc-learned-empty" />
-    <div v-else-if="sortedLearned.length === 0" class="small text-muted mb-2" data-testid="mc-learned-none">
-      {{ t.mc.filter.none }}
-    </div>
-    <!-- 已学的一张卡片，一道一行（界面改版 P4） -->
-    <div v-if="sortedLearned.length > 0" class="dt-card mb-2">
-      <div
-        v-for="m in sortedLearned"
-        :key="m.mcId"
-        class="dt-mc-row small"
-        :data-testid="`learned-${m.mcId}`"
-      >
-        <div class="d-flex align-items-center">
-          <div class="flex-fill">
-            <b>{{ nameOf(m.mcId) }}</b>
-            <span class="text-muted ms-1">
-              {{
-                t.mc.dishMeta(
-                  dish(m.mcId)?.level,
-                  ROAD_NAMES[dish(m.mcId)?.road ?? 0] ?? '',
-                  catalog.data('proficiency', m.curlevel)?.name ?? m.levelName,
-                )
-              }}
+      <div v-if="sortedLearned.length > 0" class="dt-card dt-rows-card">
+        <div
+          v-for="m in pagedLearned"
+          :key="m.mcId"
+          class="dt-row dt-mc-row"
+          :data-testid="`learned-${m.mcId}`"
+        >
+          <span class="dt-row-main">
+            <span class="dt-row-title"
+              >{{ nameOf(m.mcId)
+              }}<span v-if="dish(m.mcId)?.level" class="dt-tag dt-tag-primary">{{
+                t.mc.filter.level(dish(m.mcId)!.level)
+              }}</span
+              ><span v-if="ROAD_NAMES[dish(m.mcId)?.road ?? 0]" class="dt-tag dt-tag-mute">{{
+                ROAD_NAMES[dish(m.mcId)?.road ?? 0]
+              }}</span></span
+            >
+            <span class="dt-mc-prof">
+              <span class="dt-mc-bar"
+                ><span
+                  :style="{ width: `${m.expNext ? Math.min(100, (m.curexp / m.expNext) * 100) : 100}%` }"
+                ></span
+              ></span>
+              <span
+                >{{ catalog.data('proficiency', m.curlevel)?.name ?? m.levelName }}
+                {{ t.mc.proficiency(formatNum(m.curexp), m.expNext ? formatNum(m.expNext) : null) }}</span
+              >
             </span>
-            <div class="progress mt-1" style="height: 6px">
-              <div
-                class="progress-bar bg-warning"
-                :style="{ width: `${m.expNext ? Math.min(100, (m.curexp / m.expNext) * 100) : 100}%` }"
-              ></div>
-            </div>
-            <div class="text-muted">
-              {{ t.mc.proficiency(formatNum(m.curexp), m.expNext ? formatNum(m.expNext) : null) }}
-            </div>
-          </div>
+          </span>
           <button
-            class="btn btn-sm btn-primary ms-2"
+            class="btn btn-sm btn-outline-primary"
             :data-testid="`cook-${m.mcId}`"
             :disabled="busy || o.current !== null || o.star < 1"
             @click="openCook(m.mcId)"
@@ -339,166 +354,196 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
             {{ t.mc.cook }}
           </button>
         </div>
-        <div
-          v-if="preview && preview.mcId === m.mcId"
-          class="bg-light rounded p-2 mt-1"
-          data-testid="cook-panel"
+      </div>
+      <div v-if="learnedPages > 1" class="dt-pager" data-testid="mc-pager">
+        <button
+          type="button"
+          class="btn btn-sm btn-light"
+          :disabled="learnedPage <= 1"
+          @click="learnedPage -= 1"
         >
-          <div>
-            {{ t.mc.foods
-            }}<span v-for="f in preview.foods" :key="f.foodsId" class="me-2"
-              >{{ catalog.foodName(f.foodsId) }} {{ f.have }}</span
-            >
-          </div>
-          <label class="d-block my-1">
-            <input
+          {{ t.common.prevPage }}
+        </button>
+        <span class="dt-meta">{{ learnedPage }} / {{ learnedPages }}</span>
+        <button
+          type="button"
+          class="btn btn-sm btn-light"
+          :disabled="learnedPage >= learnedPages"
+          @click="learnedPage += 1"
+        >
+          {{ t.common.nextPage }}
+        </button>
+      </div>
+    </section>
+    <!-- 烹制：底部面板写所需食材、幸运饼干开关、做几份 -->
+    <DtSheet
+      :open="!!preview"
+      :title="preview ? t.mc.cookTitle(nameOf(preview.mcId)) : ''"
+      @close="preview = null"
+    >
+      <div v-if="preview" data-testid="cook-panel">
+        <div class="dt-meta mb-2">
+          {{ t.mc.foods
+          }}<span v-for="f in preview.foods" :key="f.foodsId" class="me-2"
+            >{{ catalog.foodName(f.foodsId) }} {{ f.have }}</span
+          >
+        </div>
+        <label class="dt-row dt-mc-cookie">
+          <span class="dt-row-main"
+            ><span class="dt-row-title">{{ t.mc.cookie(preview.cookies) }}</span></span
+          >
+          <span class="dt-row-end form-switch"
+            ><input
               v-model="cookie"
               type="checkbox"
-              class="form-check-input me-1"
+              role="switch"
+              class="form-check-input"
               data-testid="cookie"
               :disabled="preview.cookies === 0"
-            />{{ t.mc.cookie(preview.cookies) }}
-          </label>
-          <div class="d-flex flex-wrap gap-1">
-            <button
-              v-for="c in preview.cookNums"
-              :key="c.n"
-              class="btn btn-sm btn-outline-primary"
-              :data-testid="`cooknum-${c.n}`"
-              :disabled="busy || !c.ok || (cookie && preview.cookies < c.n)"
-              @click="cook(c.n)"
-            >
-              {{ t.mc.batches(c.n) }}
-            </button>
-            <button type="button" class="dt-link-btn" @click="preview = null">{{ t.common.cancel }}</button>
-          </div>
+          /></span>
+        </label>
+        <div class="dt-mc-nums">
+          <button
+            v-for="c in preview.cookNums"
+            :key="c.n"
+            class="btn btn-outline-primary"
+            :data-testid="`cooknum-${c.n}`"
+            :disabled="busy || !c.ok || (cookie && preview.cookies < c.n)"
+            @click="cook(c.n)"
+          >
+            {{ t.mc.batches(c.n) }}
+          </button>
         </div>
       </div>
-    </div>
+    </DtSheet>
 
-    <h6 class="dt-section">{{ t.mc.remnants }}</h6>
-    <!-- 碎片兑换指定残卷（问题记录 415） -->
-    <div v-if="exchangeRows.length > 0" class="mb-2 small" data-testid="mc-exchange">
-      <div class="text-muted mb-1">{{ t.mc.exchange.title(o.fragmentPerRemnant) }}</div>
-      <div
-        v-for="r in exchangeRows"
-        :key="r.level"
-        class="d-flex flex-wrap align-items-center gap-1 py-1 border-bottom"
-        :data-testid="`exchange-${r.level}`"
-      >
-        <span class="me-1">{{ t.mc.exchange.have(r.level, r.num) }}</span>
-        <!-- 没选时停在“选一道菜”；菜名长时下拉框收窄、不挤出屏幕（视觉第三轮） -->
-        <select
-          :value="exPick[r.level] ?? ''"
-          class="form-select form-select-sm dt-shrink"
-          style="flex-basis: 10rem"
-          @change="exPick[r.level] = ($event.target as HTMLSelectElement).value"
-        >
-          <option value="">{{ t.mc.exchange.pick }}</option>
-          <option v-for="m in r.options" :key="m.id" :value="String(m.id)">{{ nameOf(m.id) }}</option>
-        </select>
-        <DtStepper
-          v-if="exMax(r.num) > 1"
-          :model-value="exCount(r.level, r.num)"
-          :min="1"
-          :max="exMax(r.num)"
-          size="sm"
-          :testid="`exchange-num-${r.level}`"
-          @update:model-value="exNum[r.level] = $event"
-        />
-        <button
-          class="btn btn-sm btn-outline-primary"
-          :data-testid="`exchange-go-${r.level}`"
-          :disabled="busy || !exPick[r.level] || r.num < o.fragmentPerRemnant"
-          @click="exchange(r.level, r.num)"
-        >
-          {{ t.mc.exchange.btn(exCount(r.level, r.num)) }}
-        </button>
+    <section class="dt-block">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.mc.remnants }}</h2>
       </div>
-    </div>
-    <DtEmpty v-if="o.remnants.length === 0" :title="t.mc.noRemnants" data-testid="mc-remnants-empty" />
-    <div v-else-if="groups.length === 0" class="small text-muted" data-testid="mc-remnants-none">
-      {{ t.mc.filter.none }}
-    </div>
-    <!-- 残卷按组各一张卡片（界面改版 P4） -->
-    <div v-for="g in groups" :key="g.key" class="dt-card mb-2" :data-testid="`group-${g.key}`">
-      <div class="d-flex align-items-center small fw-bold text-muted mt-1">
-        <span class="flex-fill">{{ t.mc.groupTitle(t.mc.groups[g.key], g.items.length) }}</span>
-        <button
-          v-if="g.key === 'learnable'"
-          class="btn btn-sm btn-primary"
-          data-testid="learn-all"
-          :disabled="busy"
-          @click="learnAll"
+      <!-- 碎片兑换指定残卷（问题记录 415） -->
+      <div v-if="exchangeRows.length > 0" class="mb-2 small" data-testid="mc-exchange">
+        <div class="text-muted mb-1">{{ t.mc.exchange.title(o.fragmentPerRemnant) }}</div>
+        <div
+          v-for="r in exchangeRows"
+          :key="r.level"
+          class="d-flex flex-wrap align-items-center gap-1 py-1 border-bottom"
+          :data-testid="`exchange-${r.level}`"
         >
-          {{ learnableTotal > g.items.length ? t.mc.learnAllTotal(learnableTotal) : t.mc.learnAll }}
-        </button>
-      </div>
-      <div
-        v-for="r in g.items"
-        :key="r.mcId"
-        :class="[
-          'd-flex flex-wrap align-items-center justify-content-end gap-1 border-bottom py-1 small',
-          { 'bg-success-subtle': g.key === 'learnable' },
-        ]"
-      >
-        <!-- 西文“Descomponer”这类长按钮放不下时，按钮换到下一行（视觉第三轮） -->
-        <div class="flex-fill" style="min-width: 45%">
-          <b>{{ nameOf(r.mcId) }}</b
-          >{{ t.common.times }}{{ r.num }}
-          <span class="text-muted">
-            {{
-              t.mc.remnantMeta(
-                dish(r.mcId)?.level,
-                ROAD_NAMES[dish(r.mcId)?.road ?? 0] ?? '',
-                formatNum(dish(r.mcId)?.coin ?? 0),
-              )
-            }}
-          </span>
-          <span v-if="g.key === 'short'" class="text-danger">{{ t.mc.short(LEARN_REMNANTS - r.num) }}</span>
+          <span class="me-1">{{ t.mc.exchange.have(r.level, r.num) }}</span>
+          <!-- 没选时停在“选一道菜”；菜名长时下拉框收窄、不挤出屏幕（视觉第三轮） -->
+          <select
+            :value="exPick[r.level] ?? ''"
+            class="form-select form-select-sm dt-shrink"
+            style="flex-basis: 10rem"
+            @change="exPick[r.level] = ($event.target as HTMLSelectElement).value"
+          >
+            <option value="">{{ t.mc.exchange.pick }}</option>
+            <option v-for="m in r.options" :key="m.id" :value="String(m.id)">{{ nameOf(m.id) }}</option>
+          </select>
+          <DtStepper
+            v-if="exMax(r.num) > 1"
+            :model-value="exCount(r.level, r.num)"
+            :min="1"
+            :max="exMax(r.num)"
+            size="sm"
+            :testid="`exchange-num-${r.level}`"
+            @update:model-value="exNum[r.level] = $event"
+          />
+          <button
+            class="btn btn-sm btn-outline-primary"
+            :data-testid="`exchange-go-${r.level}`"
+            :disabled="busy || !exPick[r.level] || r.num < o.fragmentPerRemnant"
+            @click="exchange(r.level, r.num)"
+          >
+            {{ t.mc.exchange.btn(exCount(r.level, r.num)) }}
+          </button>
         </div>
-        <button
-          v-if="g.key === 'learnable'"
-          class="btn btn-sm btn-primary"
-          :data-testid="`learn-${r.mcId}`"
-          :disabled="busy"
-          @click="act(() => endpoints.mcLearn(r.mcId), t.mc.learnedName(nameOf(r.mcId)), t.mc.learnFailed)"
-        >
-          {{ t.mc.learn }}
-        </button>
-        <DtStepper
-          :model-value="numOf(r.mcId, r.num)"
-          :min="1"
-          :max="r.num"
-          size="sm"
-          :testid="`remnant-num-${r.mcId}`"
-          @update:model-value="qty[r.mcId] = $event"
-        />
-        <button
-          class="btn btn-sm btn-outline-secondary"
-          :data-testid="`sell-${r.mcId}`"
-          :disabled="busy"
-          @click="
-            act(() => endpoints.mcRemnantSell(r.mcId, numOf(r.mcId, r.num)), t.mc.sold, t.mc.sellFailed)
-          "
-        >
-          {{ t.mc.sell }}
-        </button>
-        <button
-          class="btn btn-sm btn-outline-secondary"
-          :data-testid="`decompose-${r.mcId}`"
-          :disabled="busy"
-          @click="
-            act(
-              () => endpoints.mcRemnantDecompose(r.mcId, numOf(r.mcId, r.num)),
-              t.mc.decomposed,
-              t.mc.decomposeFailed,
-            )
-          "
-        >
-          {{ t.mc.decompose }}
-        </button>
       </div>
-    </div>
+      <DtEmpty v-if="o.remnants.length === 0" :title="t.mc.noRemnants" data-testid="mc-remnants-empty" />
+      <div v-else-if="groups.length === 0" class="small text-muted" data-testid="mc-remnants-none">
+        {{ t.mc.filter.none }}
+      </div>
+      <!-- 残卷按组各一张卡片（界面改版 P4） -->
+      <div v-for="g in groups" :key="g.key" class="dt-card mb-2" :data-testid="`group-${g.key}`">
+        <div class="d-flex align-items-center small fw-bold text-muted mt-1">
+          <span class="flex-fill">{{ t.mc.groupTitle(t.mc.groups[g.key], g.items.length) }}</span>
+          <button
+            v-if="g.key === 'learnable'"
+            class="btn btn-sm btn-primary"
+            data-testid="learn-all"
+            :disabled="busy"
+            @click="learnAll"
+          >
+            {{ learnableTotal > g.items.length ? t.mc.learnAllTotal(learnableTotal) : t.mc.learnAll }}
+          </button>
+        </div>
+        <div
+          v-for="r in g.items"
+          :key="r.mcId"
+          :class="[
+            'd-flex flex-wrap align-items-center justify-content-end gap-1 border-bottom py-1 small',
+            { 'bg-success-subtle': g.key === 'learnable' },
+          ]"
+        >
+          <!-- 西文“Descomponer”这类长按钮放不下时，按钮换到下一行（视觉第三轮） -->
+          <div class="flex-fill" style="min-width: 45%">
+            <b>{{ nameOf(r.mcId) }}</b
+            >{{ t.common.times }}{{ r.num }}
+            <span class="text-muted">
+              {{
+                t.mc.remnantMeta(
+                  dish(r.mcId)?.level,
+                  ROAD_NAMES[dish(r.mcId)?.road ?? 0] ?? '',
+                  formatNum(dish(r.mcId)?.coin ?? 0),
+                )
+              }}
+            </span>
+            <span v-if="g.key === 'short'" class="text-danger">{{ t.mc.short(LEARN_REMNANTS - r.num) }}</span>
+          </div>
+          <button
+            v-if="g.key === 'learnable'"
+            class="btn btn-sm btn-primary"
+            :data-testid="`learn-${r.mcId}`"
+            :disabled="busy"
+            @click="act(() => endpoints.mcLearn(r.mcId), t.mc.learnedName(nameOf(r.mcId)), t.mc.learnFailed)"
+          >
+            {{ t.mc.learn }}
+          </button>
+          <DtStepper
+            :model-value="numOf(r.mcId, r.num)"
+            :min="1"
+            :max="r.num"
+            size="sm"
+            :testid="`remnant-num-${r.mcId}`"
+            @update:model-value="qty[r.mcId] = $event"
+          />
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            :data-testid="`sell-${r.mcId}`"
+            :disabled="busy"
+            @click="
+              act(() => endpoints.mcRemnantSell(r.mcId, numOf(r.mcId, r.num)), t.mc.sold, t.mc.sellFailed)
+            "
+          >
+            {{ t.mc.sell }}
+          </button>
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            :data-testid="`decompose-${r.mcId}`"
+            :disabled="busy"
+            @click="
+              act(
+                () => endpoints.mcRemnantDecompose(r.mcId, numOf(r.mcId, r.num)),
+                t.mc.decomposed,
+                t.mc.decomposeFailed,
+              )
+            "
+          >
+            {{ t.mc.decompose }}
+          </button>
+        </div>
+      </div>
+    </section>
   </div>
 </template>

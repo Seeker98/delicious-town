@@ -15,7 +15,9 @@ export default {
   otherStreet: (street: string) => `搬到${street}才能學`,
   learn: '學習',
   upgrade: '升級',
-  useMaster: (level: string) => `用${level}級萬能食材`,
+  useMaster: (level: string) => `用 ${level} 級萬能`,
+  /** 街道下拉框的讀屏名（介面改版 P7） */
+  streetPick: '換街道',
   counts: (streetLearned: number, streetTotal: number, learned: string, total: string) =>
     `本街已學 ${streetLearned}/${streetTotal} · 共學會 ${learned} / ${total} 道`,
   info: (street: string, level: number, taste: string, coin: string) =>
