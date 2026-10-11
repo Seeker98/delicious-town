@@ -95,4 +95,14 @@ describe('useTabQuery（界面改版 P2b，设计 §4.2 第 6 条）', () => {
     expect(tab.value).toBe('news');
     expect(localStorage.getItem('k')).toBe('news');
   });
+
+  it('有路由时切换后立刻读到新值（网址异步更新前，页面里紧接着按新标签读数据）；之后浏览器后退照样跟着网址走', async () => {
+    const { tab, router } = await setup('/x?tab=news', { tabs: TABS });
+    tab.value = 'rank';
+    expect(tab.value).toBe('rank');
+    await flushPromises();
+    await router.push('/x?tab=town');
+    await flushPromises();
+    expect(tab.value).toBe('town');
+  });
 });

@@ -21,6 +21,8 @@ export function useTabQuery<T extends string>(opts: TabQueryOptions<T>): Writabl
   const route = inject(routeLocationKey, null);
   const router = inject(routerKey, null);
   const memory = ref<string | null>(null);
+  /** 刚切换、网址还没更新完时的值：页面紧接着按新标签读数据；网址变了（含浏览器后退）就以网址为准 */
+  const pending = ref<string | null>(null);
   const param = opts.param ?? 'tab';
   const list = computed(() => toValue(opts.tabs));
   const saved = (): string | null => {
@@ -34,6 +36,7 @@ export function useTabQuery<T extends string>(opts: TabQueryOptions<T>): Writabl
   const valid = (v: unknown): v is T => typeof v === 'string' && list.value.includes(v as T);
   const tab = computed<T>({
     get: () => {
+      if (valid(pending.value)) return pending.value;
       const q = route ? route.query[param] : memory.value;
       if (valid(q)) return q;
       const s = saved();
@@ -42,6 +45,7 @@ export function useTabQuery<T extends string>(opts: TabQueryOptions<T>): Writabl
     },
     set: (v) => {
       if (route && router) {
+        pending.value = v;
         const query = { ...route.query };
         if (opts.omitWhen !== undefined && v === opts.omitWhen) delete query[param];
         else query[param] = v;
@@ -56,6 +60,11 @@ export function useTabQuery<T extends string>(opts: TabQueryOptions<T>): Writabl
       }
     },
   });
+  if (route)
+    watch(
+      () => route.query[param],
+      () => (pending.value = null),
+    );
   // 可用的标签变了（功能关了、数据读回来了），网址里的那个不再可用：改成现在显示的那个
   watch(list, () => {
     const q = route?.query[param];
