@@ -1810,22 +1810,26 @@ details.dt-card > summary {
   font-weight: 700;
   white-space: nowrap;
 }
-.dt-scene-meta {
+.dt-scene-top {
   position: absolute;
   left: 12px;
-  right: 88px;
+  right: 12px;
   top: 8px;
+  display: flex;
+  gap: 8px;
   font-size: 12px;
+}
+.dt-scene-meta {
+  flex: 1 1 auto;
+  min-width: 0;
   color: var(--dt-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .dt-scene-aside {
-  position: absolute;
-  right: 12px;
-  top: 8px;
-  font-size: 12px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 /* 等级环往上压进头图 30px；右边称号和经验 */
 .dt-home-level {

@@ -37,7 +37,10 @@ const doorArt = computed(() => catalog.doorArt(props.door));
       <DtArt class="dt-scene-door" :name="doorArt" :size="57" />
       <span v-if="closed" class="dt-scene-closed" data-testid="scene-closed">{{ t.home.closedSign }}</span>
     </div>
-    <div class="dt-scene-meta"><slot name="meta" /></div>
-    <div class="dt-scene-aside"><slot name="aside" /></div>
+    <!-- 左上街道一行、右上入口：同一个弹性行，外文长时街道一行截断，不压在入口上 -->
+    <div class="dt-scene-top">
+      <div class="dt-scene-meta"><slot name="meta" /></div>
+      <div class="dt-scene-aside"><slot name="aside" /></div>
+    </div>
   </div>
 </template>

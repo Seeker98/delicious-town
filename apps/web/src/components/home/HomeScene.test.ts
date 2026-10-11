@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useCatalogStore } from '../../stores/catalog';
+import { readCss } from '../../styles/cssSource';
 import HomeScene from './HomeScene.vue';
 
 describe('首页场景头图（界面改版 P5，样稿 B）', () => {
@@ -31,5 +32,19 @@ describe('首页场景头图（界面改版 P5，样稿 B）', () => {
     expect(w.get('.dt-scene').attributes('style') ?? '').not.toMatch(/#[0-9a-f]{3,6}/i);
     expect(w.get('img.dt-scene-shop').attributes('alt')).toBe('');
     expect(w.get('.dt-scene-meta').text()).toContain('新手街');
+  });
+
+  it('左上的街道一行和右上的入口在同一个弹性行里：外文长时街道一行截断，不压在入口上（西文 360px 截图）', () => {
+    const w = mount(HomeScene, {
+      props: { door: 0, closed: false },
+      slots: { meta: '<span>Calle de los novatos</span>', aside: '<a>Cambiar de servidor</a>' },
+    });
+    const top = w.get('.dt-scene-top');
+    expect(top.element.children[0]!.classList.contains('dt-scene-meta')).toBe(true);
+    expect(top.element.children[1]!.classList.contains('dt-scene-aside')).toBe(true);
+    const css = readCss('main');
+    expect(css).toMatch(/\.dt-scene-top \{[^}]*display: flex;/);
+    expect(css).toMatch(/\.dt-scene-meta \{[^}]*min-width: 0;[^}]*text-overflow: ellipsis;/);
+    expect(css).toMatch(/\.dt-scene-aside \{[^}]*flex-shrink: 0;/);
   });
 });
