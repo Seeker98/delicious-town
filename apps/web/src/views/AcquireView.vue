@@ -72,17 +72,20 @@ async function load() {
 async function run<T>(fn: () => Promise<T>, done: (v: T) => string) {
   if (busy.value) return;
   busy.value = true;
+  let ok = false;
   try {
     toast.push(done(await fn()));
+    ok = true;
     closeAll();
   } catch (e) {
     toast.push(errorMessage(e, t.value.acquire.failed), 'danger');
   } finally {
     busy.value = false;
-    // 成功、失败都重读：价格、老板、挂牌可能都变了
-    view.value = null;
+    // 成功、失败都重读：价格、老板、挂牌可能都变了。失败时不先清空，免得开着的名下店面板闪一下（P8 终审）
+    if (ok) view.value = null;
     await load();
   }
+  return ok;
 }
 
 /** 身价榜、在售点开的那家：先读这家店现在能不能买（身价榜不逐行算原因，计划裁定 1） */
@@ -109,15 +112,17 @@ const targetBlock = computed(() => {
   if (!r) return null;
   return target.value!.way === 'acquire' ? r.acquireBlock : r.listedBlock;
 });
-function buy() {
+async function buy() {
   const x = target.value;
   if (!x?.rest || targetBlock.value) return;
   const r = x.rest;
   const cost = targetCost.value;
-  return run(
+  const ok = await run(
     () => endpoints.acquireBuy(r.restId, x.way, cost),
     () => t.value.acquire.bought(r.name),
   );
+  // 失败多半是身价变了（price_changed）：面板还开着就重读这家店，显示新价（P8 终审 I2）
+  if (!ok && target.value?.brief.restId === r.restId) await openTarget(target.value.brief, target.value.way);
 }
 
 function tend() {

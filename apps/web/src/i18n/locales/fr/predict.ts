@@ -57,7 +57,7 @@ const predict: Messages['predict'] = {
     netCost: 'Investi net',
     sellAllLabel: 'Tout vendre maintenant rapporte environ',
     ifResult: (label) => `Si ${label}`,
-    gotShort: (n) => `gain ${n}`,
+    gotShort: (n) => `reçu ${n}`,
     mineHintShort: 'Montants frais compris',
     tradesHintShort: '20 dernières, anonymes',
     noMine: 'Aucune transaction',

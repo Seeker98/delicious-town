@@ -191,8 +191,11 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
       ['60000', '5', '60000', '4'],
       ['49999', '1', '50000', '1'],
     ]) {
-      await setBid(w, p!, q!);
-      await blurBoth(w);
+      // 一个框打完、失焦再打下一个（测试里 teleport 桩掉后，父组件一更新面板里的步进器就重建，打了一半的字会丢）
+      await el(w, 'bk-price-input').setValue(p!);
+      await el(w, 'bk-price-input').trigger('blur');
+      await el(w, 'bk-qty-input').setValue(q!);
+      await el(w, 'bk-qty-input').trigger('blur');
       expect([value(w, 'bk-price-input'), value(w, 'bk-qty-input')]).toEqual([wantP, wantQ]);
     }
     // 60,000 × 2 份 = 120,000，银币只有 100,000
@@ -214,6 +217,17 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
     expect(disabled(w)).toBe(true);
     await vi.advanceTimersByTimeAsync(3000);
     expect(disabled(w)).toBe(false);
+  });
+
+  it('冷却中关掉面板再打开：倒计时接着走，不从头算（P8 终审 I1）', async () => {
+    vi.useFakeTimers();
+    vi.mocked(endpoints.bulk).mockResolvedValue(data({ mine: mine({ cooldownLeft: 3 }) }));
+    const w = await mountPanel();
+    await openBid(w);
+    await vi.advanceTimersByTimeAsync(2000);
+    await openBid(w);
+    await setBid(w, '60000', '4');
+    expect(el(w, 'bk-submit').text()).toBe('1 秒后可以再出价');
   });
 
   it('我的出价：部分入围写 2 / 4 份和再加价能多入围', async () => {

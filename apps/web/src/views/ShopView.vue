@@ -119,8 +119,11 @@ const sheetBalance = computed(() => {
   return r ? (sheetDiamond.value ? r.diamond : r.coin) : null;
 });
 const specialLeft = computed(() => (special.value ? special.value.stock - special.value.sold : 0));
+/** 限时折扣一次一个：库存还有、银币够（P8 终审：原来不看余额） */
 const canBuy = computed(() =>
-  pickedSpecial.value ? specialLeft.value > 0 : (picked.value?.maxBuy ?? 0) > 0,
+  pickedSpecial.value
+    ? specialLeft.value > 0 && (sheetBalance.value === null || sheetBalance.value >= unit.value)
+    : (picked.value?.maxBuy ?? 0) > 0,
 );
 
 async function buy() {
@@ -201,8 +204,8 @@ async function buy() {
         <template #end>
           <button
             type="button"
-            class="dt-price-btn"
-            :disabled="busy || it.maxBuy === 0"
+            :class="['dt-price-btn', { 'is-off': it.maxBuy === 0 }]"
+            :disabled="busy"
             :aria-label="t.store.shop.open(catalog.goodsName(it.goodsId), formatNum(it.price))"
             :data-testid="`buy-${it.goodsId}`"
             @click="open(it)"

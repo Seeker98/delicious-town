@@ -177,6 +177,23 @@ describe('AcquireView（收购 PR 3）', () => {
     expect(endpoints.acquireRank).toHaveBeenCalledTimes(2);
   });
 
+  it('价格变了：面板还开着就重读这家店，再点按新价收购（P8 终审 I2）', async () => {
+    vi.mocked(endpoints.acquireBuy).mockRejectedValueOnce(
+      new ApiError('INVALID_STATE', { reason: 'price_changed', scope: 'acquire', price: 1_300_000 }),
+    );
+    const w = await mountView();
+    await w.get('[data-testid="acquire-price-2"]').trigger('click');
+    await flushPromises();
+    vi.mocked(endpoints.acquireRest).mockResolvedValue(rest({ price: 1_300_000 }));
+    await w.get('[data-testid="acquire-buy-2"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.acquireRest).toHaveBeenCalledTimes(2);
+    expect(w.get('[data-testid="acquire-split"]').text()).toContain('1,300,000');
+    await w.get('[data-testid="acquire-buy-2"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.acquireBuy).toHaveBeenLastCalledWith(2, 'acquire', 1_300_000);
+  });
+
   it('在售：折扣、挂牌价；买下按挂牌价', async () => {
     const until = new Date(Date.now() + 3 * 3600_000).toISOString();
     const listed = brief({

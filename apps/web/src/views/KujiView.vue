@@ -182,7 +182,7 @@ watch(line, () => {
         :class="['dt-kuji-tier', { 'is-out': x.left === 0 }]"
         :data-testid="`kj-tier-${x.key}`"
       >
-        <span :class="['dt-kuji-badge', { 'is-big': x.big }]">{{ x.key }}</span>
+        <span :class="['dt-kuji-badge', { 'is-big': x.big }]" :aria-label="tierName(x.key)">{{ x.key }}</span>
         <span class="dt-kuji-award"
           >{{ awardText(x.award) }}<span v-if="x.big" class="dt-tag dt-tag-warn ms-1">{{ t.kuji.big }}</span
           ><span v-if="x.icon" class="dt-kuji-icon">{{ iconText(x.icon) }}</span></span

@@ -32,7 +32,7 @@ const spot = ref<HiphopSpotDto>({ here: false });
 const foods = ref<CupboardFoodDto[]>([]);
 const kind = ref<'food' | 'coin' | 'diamond'>('food');
 const foodsId = ref<number | null>(null);
-/** 打赏多少：食材按份、银币按千、钻石按颗起步 */
+/** 打赏多少：食材按份、银币一千一千加、钻石按颗；最少 1（服务端允许打赏 1 银币，P8 终审） */
 const STEP = { food: 1, coin: 1000, diamond: 1 } as const;
 const num = ref(1);
 const open = ref(false);
@@ -163,7 +163,7 @@ async function tip() {
       </template>
       <div class="dt-hiphop-num">
         <span>{{ kind === 'food' ? t.mc.hiphop.numFood : t.mc.hiphop.kinds[kind] }}</span>
-        <DtStepper v-model="num" :min="STEP[kind]" :max="numMax" :step="STEP[kind]" testid="hiphop-num" />
+        <DtStepper v-model="num" :min="1" :max="numMax" :step="STEP[kind]" testid="hiphop-num" size="wide" />
       </div>
       <button
         type="button"

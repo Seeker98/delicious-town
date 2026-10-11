@@ -13,7 +13,7 @@ import { formatNum } from '../utils/format';
 import { predictNote, predictTitle } from '../utils/serverText';
 import { useCatalogStore } from '../stores/catalog';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
-import { predictLeft } from '../utils/predict';
+import { predictLeft, predictReason } from '../utils/predict';
 
 /**
  * 事件预测（238-1 设计 §7.2）：用银币买卖"是/否"份额，系统按公式报价。
@@ -32,16 +32,8 @@ const ended = computed(() =>
     (a, b) => b.closeAt.localeCompare(a.closeAt) || b.id - a.id,
   ),
 );
-const reasonText = computed(() => {
-  const l = list.value;
-  if (!l || !l.reason) return '';
-  const r = t.value.predict.reasons;
-  if (l.reason === 'predict_level') return r.predict_level(l.need.level);
-  if (l.reason === 'predict_age') return r.predict_age(l.need.days);
-  if (l.reason === 'predict_email') return r.predict_email;
-  if (l.reason === 'predict_frozen') return r.predict_frozen;
-  return l.reason;
-});
+const reasonText = computed(() => t.value && predictReason(list.value));
+const failed = ref(false);
 const profit = (e: PredictEventDto) => (e.payout === null ? null : e.payout - e.netCost);
 /** 已结束的结果标签：是 / 否，没判定的写状态（等待判定、已作废）（问题记录 288） */
 const endedTag = (e: PredictEventDto) =>
@@ -67,6 +59,7 @@ async function loadList() {
   try {
     list.value = await endpoints.predictList();
   } catch (e) {
+    failed.value = true;
     toast.push(errorMessage(e, t.value.common.loadFailed), 'danger');
   }
 }
@@ -75,7 +68,8 @@ onMounted(() => void loadList());
 
 <template>
   <HiphopCard :place="11" />
-  <DtSkeleton v-if="!list" :rows="4" />
+  <DtEmpty v-if="!list && failed" :title="t.common.loadFailed" data-testid="pd-failed" />
+  <DtSkeleton v-else-if="!list" :rows="4" />
   <template v-else>
     <div v-if="!list.enabled" class="dt-act-note" data-testid="pd-off">{{ t.predict.off }}</div>
     <div v-if="reasonText" class="dt-act-note is-warn" data-testid="pd-reason">{{ reasonText }}</div>

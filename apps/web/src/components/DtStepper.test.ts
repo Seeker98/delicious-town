@@ -59,6 +59,21 @@ describe('数量步进器（界面改版 P3，设计 §5 第 6 条）', () => {
     expect((input.element as HTMLInputElement).value).toBe('10');
   });
 
+  it('逐字打价格：打到一半低于下限时不跳回下限，失焦后才夹（P8 终审 C1）', async () => {
+    const w = mountIt({ modelValue: 1600, min: 800, max: 3200 });
+    const input = w.get('input');
+    await input.setValue('2');
+    expect((input.element as HTMLInputElement).value).toBe('2');
+    expect(w.emitted('update:modelValue')).toBeUndefined();
+    await input.setValue('25');
+    await input.setValue('250');
+    await input.setValue('2500');
+    expect(last(w)).toBe(2500);
+    await input.setValue('9');
+    await input.trigger('blur');
+    expect(last(w)).toBe(800);
+  });
+
   it('紧凑尺寸（列表行里用，界面改版 P4）：多一个 dt-stepper-sm 类', () => {
     expect(mountIt({ size: 'sm' }).classes()).toContain('dt-stepper-sm');
     expect(mountIt({}).classes()).not.toContain('dt-stepper-sm');

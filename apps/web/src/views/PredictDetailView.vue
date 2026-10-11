@@ -14,7 +14,7 @@ import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 import { formatNum, gameDateTime } from '../utils/format';
 import { predictDesc, predictNote, predictTitle } from '../utils/serverText';
-import { predictLeft } from '../utils/predict';
+import { predictLeft, predictReason } from '../utils/predict';
 
 /**
  * 事件预测详情（界面改版 P8，设计图“事件预测 · 详情页”）：单独一页，能返回、能分享链接。
@@ -32,12 +32,15 @@ const busy = ref(false);
 
 async function load() {
   const want = id.value;
+  failed.value = false;
   try {
     const [l, d] = await Promise.all([endpoints.predictList(), endpoints.predictDetail(want)]);
     if (want !== id.value) return;
     list.value = l;
     detail.value = d;
   } catch (e) {
+    // 换了编号以后旧请求的失败不算（P8 终审）
+    if (want !== id.value) return;
     failed.value = true;
     toast.push(errorMessage(e, t.value.common.loadFailed), 'danger');
   }
@@ -177,6 +180,10 @@ async function submit() {
       {{ t.predict.note(predictNote(ev, catalog)!) }}
     </div>
     <div v-if="!list.enabled" class="dt-act-note mt-2" data-testid="pd-off">{{ t.predict.off }}</div>
+    <!-- 不能参与的原因：从分享链接直接进来也看得到为什么买不了（P8 终审） -->
+    <div v-if="predictReason(list)" class="dt-act-note is-warn mt-2" data-testid="pd-reason">
+      {{ predictReason(list) }}
+    </div>
 
     <section class="dt-card dt-pd-market" data-testid="pd-sec-market">
       <div class="dt-pd-pct">

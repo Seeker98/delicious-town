@@ -231,7 +231,10 @@ async function pick(id: number) {
     book.value = b;
     price.value = Math.min(b.max, Math.max(b.min, b.last ?? b.ref));
   } catch (e) {
-    if (selected.value === id) toast.push(errorMessage(e, t.value.exchange.bookFailed), 'danger');
+    if (selected.value !== id) return;
+    toast.push(errorMessage(e, t.value.exchange.bookFailed), 'danger');
+    // 盘口读不到：关掉面板，免得一直“读取中”（P8 终审）
+    closeBook();
   }
 }
 function closeBook() {
@@ -492,7 +495,14 @@ onMounted(async () => {
               t.exchange.band(formatNum(book.min), formatNum(book.max))
             }}</small></span
           >
-          <DtStepper v-model="price" :min="book.min" :max="book.max" :step="priceStep" testid="ex-price" />
+          <DtStepper
+            v-model="price"
+            :min="book.min"
+            :max="book.max"
+            :step="priceStep"
+            testid="ex-price"
+            size="wide"
+          />
         </div>
         <div class="dt-field-row">
           <span class="dt-field-label"

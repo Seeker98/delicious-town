@@ -75,7 +75,8 @@ describe('HiphopCard', () => {
     // 银币按千起步
     const num = w.get('[data-testid="hiphop-num"]');
     expect((num.element as HTMLInputElement).value).toBe('1000');
-    expect(num.attributes('min')).toBe('1000');
+    // 一千一千加，但最少 1（服务端允许打赏 1 银币，P8 终审）
+    expect(num.attributes('min')).toBe('1');
     await num.setValue(100000);
     await w.find('[data-testid="hiphop-tip"]').trigger('click');
     await flushPromises();

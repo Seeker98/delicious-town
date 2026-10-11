@@ -638,6 +638,10 @@ details.dt-card > summary {
 .dt-stepper-sm > input {
   width: 34px;
 }
+/* 宽的：价格、金额（交易所单价、大宗出价、打赏银币，P8 终审 I4） */
+.dt-stepper-wide > input {
+  width: 88px;
+}
 .dt-stepper:focus-within {
   border-color: var(--dt-primary);
 }
@@ -3826,6 +3830,11 @@ details.dt-card > summary {
   white-space: nowrap;
 }
 /* ===== 界面改版 P8：商店、交易所、收购、一番赏、预测、外卖、银行 ===== */
+/* 买不了的价格按钮（商店）：灰色，但还能点开看说明和原因（P8 终审 I3） */
+.dt-price-btn.is-off {
+  border-color: var(--dt-line);
+  color: var(--dt-muted);
+}
 /* 区块标题里的余额数字（商店“我的银币 118,729”） */
 .dt-shop-bal {
   margin-left: 4px;
@@ -4375,8 +4384,10 @@ button.dt-row {
 }
 .dt-kuji-draws > .btn {
   min-height: 46px;
+  padding-right: 4px;
+  padding-left: 4px;
   font-weight: 700;
-  white-space: nowrap;
+  line-height: 1.2;
 }
 .dt-kuji-buy {
   display: flex;

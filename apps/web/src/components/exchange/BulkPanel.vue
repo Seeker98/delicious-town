@@ -46,12 +46,16 @@ onUnmounted(() => {
 });
 
 /** 输入框按读到的数据重置：改出价填原值，第一次出价填入围门槛和 1 份 */
-function reset() {
+function resetInputs() {
   const d = data.value;
   if (!d?.lot) return;
   price.value = d.mine ? d.mine.price : d.lot.threshold;
   qty.value = d.mine ? d.mine.qty : 1;
-  startCooldown(d.mine?.cooldownLeft ?? 0);
+}
+/** 读到新数据时：输入框重置、冷却按服务端给的重新倒数（只在这时，打开面板不重新倒数，P8 终审 I1） */
+function reset() {
+  resetInputs();
+  startCooldown(data.value?.mine?.cooldownLeft ?? 0);
 }
 async function load() {
   try {
@@ -135,7 +139,7 @@ const reason = computed(() => {
 const canSubmit = computed(() => canBid.value && !busy.value && !reason.value && cooldown.value <= 0);
 
 function openBid() {
-  reset();
+  resetInputs();
   sheet.value = 'bid';
 }
 async function submit() {
@@ -315,6 +319,7 @@ function myResult(r: BulkResultDto): string {
             :min="mine ? mine.price : lot.reserve"
             :step="priceStep"
             testid="bk-price-input"
+            size="wide"
           />
         </div>
         <div class="dt-field-row">

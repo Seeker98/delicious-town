@@ -312,7 +312,12 @@ function result(c: FuturesContractDto): string {
       <div data-testid="fu-mine">
         <div v-if="data.contracts.length === 0" class="dt-detail-note">{{ t.futures.none }}</div>
         <div v-else class="dt-sheet-list">
-          <div v-for="c in data.contracts" :key="c.id" class="dt-row" :data-testid="`fu-c-${c.id}`">
+          <div
+            v-for="c in data.contracts"
+            :key="c.id"
+            class="dt-row dt-row-wrap"
+            :data-testid="`fu-c-${c.id}`"
+          >
             <span class="dt-row-main">
               <span class="dt-row-title">{{
                 t.futures.line(catalog.foodName(c.foodsId), c.qty, formatNum(c.unitPrice))

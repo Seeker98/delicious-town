@@ -70,14 +70,19 @@ describe('ShopView（问题记录：商店不显示最大可购买数量）', ()
     expect(w.get('[data-testid="sheet-buy"]').text()).toBe('买 3 个');
   });
 
-  it('买不了时按钮禁用并写明原因', async () => {
-    const w = mount(ShopView);
+  it('买不了时价格按钮变灰但能点开看说明，面板里写原因、买的按钮灰掉（P8 终审 I3）', async () => {
+    const w = mount(ShopView, { global: { stubs: { teleport: true } } });
     await flushPromises();
-    expect(w.find('[data-testid="buy-86"]').attributes('disabled')).toBeDefined();
+    const btn = w.get('[data-testid="buy-86"]');
+    expect(btn.attributes('disabled')).toBeUndefined();
+    expect(btn.classes()).toContain('is-off');
+    await btn.trigger('click');
+    expect(w.get('[data-testid="sheet-reason"]').text()).toBe('银币不够');
+    expect(w.get('[data-testid="sheet-buy"]').attributes('disabled')).toBeDefined();
     expect(w.find('[data-testid="cap-86"]').text()).toBe('银币不够');
     expect(w.find('[data-testid="cap-52"]').text()).toBe('已达持有上限');
   });
-  it('星级不够时写“x 星可用”，按钮禁用（问题记录 146）', async () => {
+  it('星级不够时写“x 星可用”，价格按钮变灰（问题记录 146）', async () => {
     vi.mocked(endpoints.shop).mockResolvedValue({
       coin: [
         { goodsId: 93201, price: 30000, owned: 0, limit: null, maxBuy: 0, blocked: 'star', needStar: 4 },
@@ -87,7 +92,7 @@ describe('ShopView（问题记录：商店不显示最大可购买数量）', ()
     const w = mount(ShopView);
     await flushPromises();
     expect(w.get('[data-testid="cap-93201"]').text()).toBe('4 星可用');
-    expect(w.get('[data-testid="buy-93201"]').attributes('disabled')).toBeDefined();
+    expect(w.get('[data-testid="buy-93201"]').classes()).toContain('is-off');
   });
   it('每行结构一样：限买 1 个的写"限 1 个"标签；描述在购买面板里写全，限买 1 个的面板没有数量框（问题记录：行高不同、有的没数字框）', async () => {
     vi.mocked(endpoints.shop).mockResolvedValue({
