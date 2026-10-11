@@ -1645,31 +1645,65 @@ details.dt-card > summary {
 /* 食谱详情的品级行（界面改版 P4） */
 .dt-grade-row {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
-  padding: 4px 0;
-  border-bottom: 1px solid var(--dt-line);
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--dt-line);
 }
-.dt-grade-row:last-child {
-  border-bottom: 0;
+.dt-grade-row:first-child {
+  border-top: 0;
 }
 .dt-grade-row.is-done .dt-grade-name {
   color: var(--dt-ink-success);
 }
 .dt-grade-name {
-  flex: 0 0 3.5em;
+  flex: 0 0 4.5em;
+  padding-top: 5px;
+  font-size: 13px;
+  color: var(--dt-muted);
   white-space: nowrap;
 }
 .dt-grade-foods {
   display: flex;
   flex-wrap: wrap;
-  gap: 2px 10px;
+  gap: 6px;
   min-width: 0;
 }
+/* 食谱详情（P7）：食材是带图的小块，缺的红底 */
 .dt-need {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
+  min-height: 30px;
+  padding: 0 10px 0 6px;
+  border: 1px solid var(--dt-line);
+  border-radius: 999px;
+  background: var(--dt-surface-2);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-need > small {
+  font-size: 11px;
+  color: var(--dt-muted);
+}
+.dt-need.is-miss {
+  border-color: transparent;
+  background: var(--dt-soft-danger);
+  color: var(--dt-ink-danger);
+}
+.dt-need.is-miss > small {
+  color: var(--dt-ink-danger);
+}
+.dt-cbi-hero {
+  padding: 14px;
+}
+.dt-cbi-name {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+.dt-cbi-name > .dt-tag {
+  vertical-align: 3px;
 }
 /* 名字一行：名字按字折行，右边的小字（限购）放不下时换到下一行，不压在名字上（终审 I1） */
 .dt-name-row {
@@ -3642,4 +3676,87 @@ details.dt-card > summary {
   flex: 1 1 0;
   min-height: 44px;
   font-weight: 600;
+}
+/* 进度一览（P7）：各品级一行细进度条；街道表放在卡片里，街名一列固定 */
+.dt-grade-bars {
+  padding: 8px 0;
+}
+.dt-grade-bar {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 34px;
+  padding: 0 14px;
+}
+.dt-grade-bar-name {
+  font-size: 13px;
+}
+.dt-grade-bar .dt-hbar {
+  height: 8px;
+}
+.dt-grade-bar-num {
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.dt-progress-card {
+  padding: 0;
+  overflow-x: auto;
+}
+.dt-progress-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-progress-table th,
+.dt-progress-table td {
+  padding: 0 6px;
+  height: 36px;
+  text-align: right;
+  white-space: nowrap;
+}
+.dt-progress-table thead th {
+  height: 32px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--dt-muted);
+  border-bottom: 1px solid var(--dt-line);
+}
+.dt-progress-table tbody tr + tr > * {
+  border-top: 1px solid var(--dt-line);
+}
+.dt-progress-table th:first-child {
+  position: sticky;
+  left: 0;
+  padding-left: 12px;
+  background: var(--dt-surface);
+  text-align: left;
+}
+.dt-progress-table tbody th {
+  font-weight: 500;
+}
+.dt-progress-table td:last-child,
+.dt-progress-table th:last-child {
+  padding-right: 12px;
+}
+.dt-progress-table td.is-zero {
+  color: var(--dt-muted);
+}
+.dt-progress-table td.is-full {
+  color: var(--dt-ink-success);
+  font-weight: 700;
+}
+.dt-progress-table tr.is-current > * {
+  background: var(--dt-soft-primary);
+}
+.dt-progress-table tr.is-current > th {
+  color: var(--dt-ink-primary);
+  font-weight: 700;
+}
+.dt-progress-table tr.is-sum > * {
+  font-weight: 700;
+  border-top: 2px solid var(--dt-line);
 }

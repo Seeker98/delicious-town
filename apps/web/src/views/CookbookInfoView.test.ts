@@ -62,8 +62,21 @@ describe('食谱详情（界面改版 P4）', () => {
     expect(rows[0]!.element.closest('.dt-card')).not.toBeNull();
     const need = rows[1]!.findAll('.dt-need');
     expect(need[0]!.get('use').attributes('href')).toContain('#food-fruit');
-    expect(need[0]!.classes()).toContain('text-danger');
-    expect(need[1]!.classes()).not.toContain('text-danger');
+    // 界面改版 P7：缺的是红底小块
+    expect(need[0]!.classes()).toContain('is-miss');
+    expect(need[1]!.classes()).not.toContain('is-miss');
+    expect(need[0]!.text()).toContain('有 1');
+  });
+
+  it('食材一样、学没学到也一样的相邻品级并成一行，写“普通~中品”（界面改版 P7）', async () => {
+    const same = structuredClone(detail);
+    same.grade = 0;
+    same.grades[1]!.foods = [{ foodsId: 302, num: 1, have: 1 }];
+    vi.mocked(endpoints.cookbookDetail).mockResolvedValue(same);
+    const w = await mountView();
+    const rows = w.findAll('[data-testid^="grade-"]');
+    expect(rows).toHaveLength(1);
+    expect(rows[0]!.get('.dt-grade-name').text()).toBe('普通~中品');
   });
 
   it('已经学到的品级标出来（原来是绿色表格行）', async () => {

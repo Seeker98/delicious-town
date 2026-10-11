@@ -35,47 +35,68 @@ onMounted(async () => {
   <div v-if="error" class="alert alert-danger">{{ error }}</div>
   <DtSkeleton v-else-if="!data" :rows="6" data-testid="progress-loading" />
   <template v-if="data">
-    <ul class="list-unstyled small mb-3" data-testid="progress-summary">
-      <li v-for="(g, i) in grades" :key="g">
-        {{
+    <!-- 各品级一共学到多少（界面改版 P7）：一品级一行细进度条，右边“几 / 共几” -->
+    <section class="dt-card dt-grade-bars" data-testid="progress-summary">
+      <div
+        v-for="(g, i) in grades"
+        :key="g"
+        class="dt-grade-bar"
+        role="img"
+        :aria-label="
           t.cookbook.progress.summary(
             t.labels.grade[g] ?? '',
             formatNum(allRow[i]!),
             formatNum(total),
             formatPct(total ? allRow[i]! / total : 0, { digits: 2 }),
           )
-        }}
-      </li>
-    </ul>
-    <div class="small text-muted mb-1">{{ t.cookbook.progress.note }}</div>
-    <div class="table-responsive">
-      <table class="table table-sm small text-end align-middle dt-num-table">
+        "
+      >
+        <span class="dt-grade-bar-name">{{ t.labels.grade[g] }}</span>
+        <span class="dt-hbar"
+          ><i class="is-a" :style="{ width: `${total ? (allRow[i]! / total) * 100 : 0}%` }"></i
+        ></span>
+        <span class="dt-grade-bar-num">{{ formatNum(allRow[i]!) }} / {{ formatNum(total) }}</span>
+      </div>
+    </section>
+    <div class="dt-block-head mt-3">
+      <h2 class="dt-block-title">{{ t.cookbook.progress.byStreet }}</h2>
+    </div>
+    <p class="dt-block-note">{{ t.cookbook.progress.note }}</p>
+    <!-- 各条街一张表，放在卡片里；第一列街名固定，左右滑看后面的品级；本店所在街浅紫，学满的绿色 -->
+    <div class="dt-card dt-progress-card">
+      <table class="dt-progress-table">
         <thead>
           <tr>
-            <th class="text-start">{{ t.cookbook.progress.street }}</th>
-            <th>{{ t.labels.grade[0] }}</th>
-            <th v-for="g in grades" :key="g">{{ t.labels.grade[g] }}</th>
+            <th scope="col">{{ t.cookbook.progress.street }}</th>
+            <th scope="col">{{ t.labels.grade[0] }}</th>
+            <th v-for="g in grades" :key="g" scope="col">{{ t.labels.grade[g] }}</th>
           </tr>
         </thead>
         <tbody>
           <tr
             v-for="s in data.streets"
             :key="s.streetId"
-            :class="{ 'table-active': s.streetId === data.street }"
+            :class="{ 'is-current': s.streetId === data.street }"
             :data-testid="`progress-street-${s.streetId}`"
           >
-            <th scope="row" class="text-start text-nowrap">
+            <th scope="row">
               {{ catalog.streetName(s.streetId, String(s.streetId)) }}
             </th>
-            <td>{{ formatNum(s.total - (s.atLeast[0] ?? 0)) }}</td>
-            <td v-for="(n, i) in s.atLeast" :key="i" :class="{ 'text-success fw-bold': n === s.total }">
+            <td :class="{ 'is-zero': s.total - (s.atLeast[0] ?? 0) === 0 }">
+              {{ formatNum(s.total - (s.atLeast[0] ?? 0)) }}
+            </td>
+            <td
+              v-for="(n, i) in s.atLeast"
+              :key="i"
+              :class="{ 'is-full': n === s.total, 'is-zero': n === 0 }"
+            >
               {{ formatNum(n) }}
             </td>
           </tr>
-          <tr class="fw-bold">
-            <th scope="row" class="text-start">{{ t.cookbook.progress.all }}</th>
+          <tr class="is-sum">
+            <th scope="row">{{ t.cookbook.progress.all }}</th>
             <td>{{ formatNum(total - (allRow[0] ?? 0)) }}</td>
-            <td v-for="(n, i) in allRow" :key="i" :class="{ 'text-success': n === total }">
+            <td v-for="(n, i) in allRow" :key="i" :class="{ 'is-full': n === total }">
               {{ formatNum(n) }}
             </td>
           </tr>

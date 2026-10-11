@@ -23,6 +23,10 @@ export default {
     `${street} · 难度 ${level} · 口味 ${taste} · 售价 ${coin}`,
   grade: '品级',
   foodsNeeded: '所需食材',
+  /** 界面改版 P7：食谱详情的说明、“有几个”、几个品级并成一行 */
+  missNote: '红色是不够的',
+  haveShort: (n: number) => `有 ${n}`,
+  gradeRange: (from: string, to: string) => `${from}~${to}`,
   /** 食谱进度一览（问题记录：食谱页加进度一览） */
   progress: {
     link: '进度一览',
@@ -30,6 +34,8 @@ export default {
     summary: (grade: string, n: string, total: string, pct: string) =>
       `${grade}及以上: ${n} / ${total} (${pct})`,
     note: '每格是这一品级及以上的道数；当前所在的街高亮, 学满的标绿。',
+    /** 界面改版 P7：街道表格上面的小标题 */
+    byStreet: '各条街',
     street: '街道',
     all: '全部',
     loadFailed: '读取食谱进度失败',

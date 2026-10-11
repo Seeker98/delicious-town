@@ -88,7 +88,8 @@ export default {
     barLabel: (name: string, base: number, boost: number, gem: number, total: number) =>
       `${name} ${total} (基礎 ${base} + 強化 ${boost} + 寶石 ${gem})`,
     costLabel: '消耗',
-    costShort: (essence: number, have: number, coin: string) => `精華 ×${essence} (有 ${have}) · 銀幣 ${coin}`,
+    costShort: (essence: number, have: number, coin: string) =>
+      `精華 ×${essence} (有 ${have}) · 銀幣 ${coin}`,
     stoneTitle: '用強化石, 必定成功',
     stoneHave: (n: number) => `有 ${n} 塊`,
     holes: (n: number, cur: number, max: number) => `${n} / ${cur} 孔${cur < max ? ` · 最多 ${max} 孔` : ''}`,

@@ -62,9 +62,9 @@ describe('食谱进度一览（问题记录：食谱页加进度一览）', () =
   it('当前所在的街高亮；一列学满的格子标绿', async () => {
     const w = await mountView();
     const rows = w.findAll('tbody tr');
-    expect(rows[1]!.classes()).toContain('table-active');
-    expect(rows[0]!.findAll('td')[1]!.classes()).toContain('text-success');
-    expect(rows[0]!.findAll('td')[3]!.classes()).not.toContain('text-success');
+    expect(rows[1]!.classes()).toContain('is-current');
+    expect(rows[0]!.findAll('td')[1]!.classes()).toContain('is-full');
+    expect(rows[0]!.findAll('td')[3]!.classes()).not.toContain('is-full');
   });
 });
 
@@ -106,6 +106,6 @@ describe('进度一览加载中（backlog）', () => {
   it('表格数字等宽（界面改版 P4）', async () => {
     vi.mocked(endpoints.cookbookProgress).mockResolvedValue(data);
     const w = await mountView();
-    expect(w.get('table').classes()).toContain('dt-num-table');
+    expect(w.get('table').classes()).toContain('dt-progress-table');
   });
 });

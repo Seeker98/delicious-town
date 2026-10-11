@@ -24,6 +24,10 @@ export default {
     `${street} · 難度 ${level} · 口味 ${taste} · 售價 ${coin}`,
   grade: '品級',
   foodsNeeded: '所需食材',
+  /** 介面改版 P7：食譜詳情的說明、“有幾個”、幾個品級併成一行 */
+  missNote: '紅色是不夠的',
+  haveShort: (n: number) => `有 ${n}`,
+  gradeRange: (from: string, to: string) => `${from}~${to}`,
   /** 食譜進度一覽（問題記錄：食譜頁加進度一覽） */
   progress: {
     link: '進度一覽',
@@ -31,6 +35,8 @@ export default {
     summary: (grade: string, n: string, total: string, pct: string) =>
       `${grade}及以上: ${n} / ${total} (${pct})`,
     note: '每格是這一品級及以上的道數；當前所在的街高亮, 學滿的標綠。',
+    /** 介面改版 P7：街道表格上面的小標題 */
+    byStreet: '各條街',
     street: '街道',
     all: '全部',
     loadFailed: '讀取食譜進度失敗',
