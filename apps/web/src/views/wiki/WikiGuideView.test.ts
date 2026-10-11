@@ -59,7 +59,7 @@ describe('玩法攻略（问题记录 384）', () => {
 
   it('按节写出三种节奏、每次上线做什么、搬街、花钱、其他玩法，每节逐条列出', async () => {
     const w = await mountGuide();
-    expect(w.get('h5').text()).toBe('玩法攻略');
+    expect(w.find('h5').exists()).toBe(false);
     const sections = w.findAll('[data-testid="guide-section"]');
     expect(sections).toHaveLength(zhCN.wiki.guide.sections.length);
     sections.forEach((s, i) => {
@@ -67,7 +67,8 @@ describe('玩法攻略（问题记录 384）', () => {
       expect(s.findAll('li')).toHaveLength(zhCN.wiki.guide.sections[i]!.items.length);
     });
     expect(sections[0]!.text()).toContain('勤快');
-    expect(w.get('a').attributes('href')).toBe('/wiki');
+    // 返回在顶栏（界面改版 P2a），页面里不再有返回链接
+    expect(w.find('.dt-back').exists()).toBe(false);
   });
 
   it('攻略里的数按开放接口给的默认配置写，不写死（backlog 384）', async () => {

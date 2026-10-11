@@ -9,6 +9,7 @@ import type {
   OpenStreetDto,
 } from '@dt/shared';
 import { useT } from '../../composables/useT';
+import { usePageTitle } from '../../stores/pageTitle';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 import { PART_NAMES } from '../../utils/labels';
@@ -146,6 +147,8 @@ watch([q, filter, rareOnly, street, shown], ([qq, f, rare, s, n]) => {
 
 const streetName = computed(() => new Map(streets.value.map((s) => [s.id, s.name])));
 const w = computed(() => t.value.wiki);
+/** 顶栏标题是类目名（界面改版 P2a） */
+usePageTitle(() => (kind.value ? t.value.wiki.kinds[kind.value] : null));
 
 interface Row {
   id: number;
@@ -250,13 +253,9 @@ const onStreet = (e: Event) => {
 
 <template>
   <div>
-    <RouterLink to="/wiki" class="small dt-back">{{ t.wiki.home }}</RouterLink>
     <div v-if="!kind" class="dt-empty" data-testid="wiki-error">{{ t.wiki.notFound }}</div>
     <template v-else>
-      <h5 class="dt-page-title mt-2">
-        {{ t.wiki.kinds[kind] }}
-        <small class="text-muted">{{ t.wiki.count(matched.length) }}</small>
-      </h5>
+      <div class="dt-page-meta dt-meta">{{ t.wiki.count(matched.length) }}</div>
       <input
         v-model="q"
         type="search"

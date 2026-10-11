@@ -22,6 +22,7 @@ import { useT } from '../composables/useT';
 import type { Messages } from '../i18n';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
+import { usePageTitle } from '../stores/pageTitle';
 import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 import { effectChips } from '../utils/effects';
@@ -38,6 +39,8 @@ const catalog = useCatalogStore();
 const toast = useToastStore();
 const t = useT();
 const rest = computed(() => store.rest);
+/** 顶栏标题是店名（界面改版 P2a） */
+usePageTitle(() => rest.value?.name);
 const error = ref('');
 const busy = ref(false);
 const mainTask = ref<QuestDto | null>(null);
@@ -302,9 +305,8 @@ onBeforeUnmount(() => {
   <div v-if="error" class="alert alert-danger">{{ error }}</div>
   <div v-else-if="!rest" class="text-muted">{{ t.common.loading }}</div>
   <div v-else>
-    <div class="d-flex justify-content-between align-items-center">
-      <h5 class="mb-0" data-testid="rest-name">{{ rest.name }}</h5>
-      <span class="small">
+    <div class="dt-page-meta">
+      <span>
         <RouterLink to="/weather" class="dt-go"
           ><i class="bi bi-cloud-sun"></i>
           {{ rest.weather ? catalog.weatherName(rest.weather.id, rest.weather.name) : '' }}</RouterLink

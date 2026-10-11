@@ -3,10 +3,11 @@ import { computed, ref, onBeforeUnmount, watch } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { OpenCookbookDto, OpenStreetDto } from '@dt/shared';
 import { useT } from '../../composables/useT';
+import { usePageTitle } from '../../stores/pageTitle';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 import { GRADE_NAMES, TASTE_NAMES } from '../../utils/labels';
-import { isNotFound, listBack, useWikiData } from './wiki';
+import { isNotFound, useWikiData } from './wiki';
 
 /** 菜谱详情（问题记录 142）：1~10 品级的食材，食材都是链接 */
 const route = useRoute();
@@ -45,6 +46,8 @@ watch(
   { immediate: true },
 );
 const w = computed(() => t.value.wiki);
+/** 顶栏标题是菜名；返回在顶栏（界面改版 P2a） */
+usePageTitle(() => c.value?.name);
 const street = computed(() => streets.value.find((s) => s.id === c.value?.streetId) ?? null);
 /** 口味用顿号还是逗号跟着语言：简繁中文用顿号 */
 const tastes = computed(() =>
@@ -54,14 +57,10 @@ const tastes = computed(() =>
 
 <template>
   <div>
-    <RouterLink :to="listBack('/wiki/cookbooks', router.options.history.state.back)" class="small dt-back">{{
-      t.wiki.back
-    }}</RouterLink>
     <div v-if="error" class="dt-empty" data-testid="wiki-error">
       {{ error === 'missing' ? t.wiki.notFound : t.wiki.loadFailed }}
     </div>
     <template v-else-if="c">
-      <h5 class="dt-page-title mt-2">{{ c.name }}</h5>
       <p v-if="c.desc" class="small mb-2">{{ c.desc }}</p>
       <dl class="dt-kv small">
         <dt>{{ w.fields.street }}</dt>

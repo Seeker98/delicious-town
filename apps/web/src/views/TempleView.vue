@@ -48,7 +48,6 @@ onMounted(load);
 </script>
 
 <template>
-  <h5>{{ t.temple.title }}</h5>
   <HiphopCard :place="6" @changed="load" />
   <ul class="nav nav-tabs mb-2">
     <li v-for="x in TABS" :key="x" class="nav-item">

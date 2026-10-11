@@ -50,7 +50,7 @@ const rest: Messages['rest'] = {
     expelFailed: 'No se pudo echar',
   },
   look: {
-    title: 'Apariencia',
+    title: 'Aspecto y títulos',
     loadFailed: 'No se pudo cargar la apariencia',
     avatar: 'Avatar',
     noAvatar: 'Aún no tienes avatar (lo necesitas para comer gratis en restaurantes de amigos)',

@@ -176,7 +176,6 @@ onMounted(load);
 
 <template>
   <div>
-    <h5 class="mb-2">{{ t.acquire.title }}</h5>
     <ul class="nav nav-tabs mb-2">
       <li v-for="x in TABS" :key="x" class="nav-item">
         <a

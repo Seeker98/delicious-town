@@ -1,7 +1,7 @@
 // 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
 /** 我的賬號、選擇區服（問題記錄 272） */
 export default {
-  title: '我的賬號',
+  title: '賬號和設定',
   section: '賬號',
   username: '使用者名稱',
   role: { mod: '協管', admin: '管理員' } as Record<string, string>,

@@ -25,7 +25,6 @@ async function submit() {
 </script>
 
 <template>
-  <h5>{{ t.society.rename.title }}</h5>
   <p class="small text-muted">
     {{ t.society.rename.hint }}
   </p>

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    shell1011:
+      '«Más» ahora es «Pueblo», con los lugares agrupados en Comercio, Ocio y Público. Toca tu avatar arriba a la derecha para «Yo»: info, aspecto, utensilios, almacén, códigos, ajustes y centro de ayuda. Los títulos están en la barra superior y el botón atrás sube un nivel',
     theme1011:
       'Nuevos colores amatista, con botones, campos y pestañas renovados. Llega el modo oscuro: elige Según el sistema, Claro u Oscuro en Apariencia, dentro de Mi cuenta',
     wishtree1011:

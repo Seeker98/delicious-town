@@ -44,6 +44,23 @@ describe('文字链接统一（问题记录 451）', () => {
     expect(css).toMatch(/\.dt-back::before\s*\{[^}]*content:\s*'‹\\a0'\s*\/\s*''/);
   });
 
+  it('游戏内页面不再有自己的返回链接和标题行：返回和标题都在顶栏（界面改版 P2a）', () => {
+    // 登录、注册等不在游戏内，没有顶栏返回：它们的卡片标题和“返回登录”保留
+    const OUTSIDE = new Set([
+      'views/LoginView.vue',
+      'views/RegisterView.vue',
+      'views/ForgotPasswordView.vue',
+      'views/ResetPasswordView.vue',
+      'views/CreateRestaurantView.vue',
+      'views/VerifyEmailView.vue',
+      'views/ShardSelectView.vue',
+    ]);
+    const bad = GAME.filter(
+      (f) => !OUTSIDE.has(f.path) && /\bdt-back\b|<h5\b|\bdt-page-title\b/.test(f.tpl),
+    ).map((f) => f.path);
+    expect(bad).toEqual([]);
+  });
+
   it('没加类的链接（句子、列表里的名字）鼠标移上去或键盘选中时显示下划线：不只靠颜色区分（用户 2026-10-07 定）', () => {
     expect(css).toMatch(
       /a:not\(\[class\]\):hover,\s*a:not\(\[class\]\):focus-visible\s*\{[^}]*text-decoration:\s*underline/,

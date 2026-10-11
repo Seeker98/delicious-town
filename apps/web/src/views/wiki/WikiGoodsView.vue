@@ -4,10 +4,11 @@ import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { OpenGiftItem, OpenGoodsDto, OpenSuitDto } from '@dt/shared';
 import WikiExchangeRule from '../../components/wiki/WikiExchangeRule.vue';
 import { useT } from '../../composables/useT';
+import { usePageTitle } from '../../stores/pageTitle';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 import { ATTR_KEYS, ATTR_NAMES, PART_NAMES } from '../../utils/labels';
-import { isNotFound, listBack, useWikiData } from './wiki';
+import { isNotFound, useWikiData } from './wiki';
 
 /** 道具详情（厨具也用这一页，问题记录 142） */
 const route = useRoute();
@@ -59,6 +60,8 @@ watch(
 );
 
 const w = computed(() => t.value.wiki);
+/** 顶栏标题是道具名；类型标签放在第一行（界面改版 P2a） */
+usePageTitle(() => g.value?.name);
 /** 基础属性：只列不为 0 的，范围写 a~b */
 const attrs = computed(() => {
   const r = g.value?.equip?.ranges ?? {};
@@ -119,18 +122,13 @@ const shopPrice = computed(() => {
 
 <template>
   <div>
-    <RouterLink
-      :to="listBack(g?.equip ? '/wiki/equips' : '/wiki/goods', router.options.history.state.back)"
-      class="small dt-back"
-      >{{ t.wiki.back }}</RouterLink
-    >
     <div v-if="error" class="dt-empty" data-testid="wiki-error">
       {{ error === 'missing' ? t.wiki.notFound : t.wiki.loadFailed }}
     </div>
     <template v-else-if="g">
-      <h5 class="dt-page-title mt-2">
-        {{ g.name }} <span class="dt-tag">{{ w.goodsTypes[String(g.type)] }}</span>
-      </h5>
+      <p class="mb-2">
+        <span class="dt-tag">{{ w.goodsTypes[String(g.type)] }}</span>
+      </p>
       <p v-if="g.desc" class="small mb-2">{{ g.desc }}</p>
       <dl class="dt-kv small">
         <dt>{{ w.fields.level }}</dt>

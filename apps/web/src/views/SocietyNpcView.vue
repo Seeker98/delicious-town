@@ -12,6 +12,7 @@ import MayorAsk from '../components/town/MayorAsk.vue';
 import NpcTalk from '../components/town/NpcTalk.vue';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
+import { usePageTitle } from '../stores/pageTitle';
 import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 
@@ -22,6 +23,8 @@ import { useToastStore } from '../stores/toast';
 export type SocietyNpc = 'classroom' | 'mayor' | 'bro13' | 'carmen' | 'fund' | 'wealth';
 const props = defineProps<{ npc: SocietyNpc }>();
 const t = useT();
+/** 顶栏标题是 NPC 的页名；返回在顶栏（界面改版 P2a） */
+usePageTitle(() => t.value.npc.titles[props.npc]);
 const toast = useToastStore();
 const restaurant = useRestaurantStore();
 
@@ -87,8 +90,6 @@ onMounted(() => {
 
 <template>
   <div>
-    <RouterLink to="/society" class="small dt-back">{{ t.society.title }}</RouterLink>
-    <h5 class="mt-1">{{ t.npc.titles[npc] }}</h5>
     <NpcCard v-if="CARD[npc]" :key="npc" :npc="CARD[npc]!" />
     <div v-if="restFailed" class="small text-muted" data-testid="npc-rest-failed">
       {{ t.town.restFailed }}

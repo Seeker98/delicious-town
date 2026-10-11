@@ -43,9 +43,6 @@ function stageText(level: number, s: InviteStatus | null): string | null {
 </script>
 
 <template>
-  <div class="dt-page-title">
-    <h5>{{ t.misc.invite.title }}</h5>
-  </div>
   <template v-if="data">
     <div class="dt-card small mb-2">
       <div class="d-flex align-items-center gap-2 mb-1">

@@ -7,9 +7,6 @@ const t = useT();
 </script>
 
 <template>
-  <div class="dt-page-title">
-    <h5>{{ t.misc.redeem.title }}</h5>
-  </div>
   <RedeemBox />
   <p class="small text-muted">{{ t.misc.redeem.note }}</p>
 </template>

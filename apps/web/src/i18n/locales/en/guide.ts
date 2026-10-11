@@ -114,7 +114,7 @@ const guide: Messages['guide'] = {
     },
     {
       q: 'Where do I use redeem codes? ',
-      a: ['"More → Other → Redeem code", or the redeem box at the top of the mail page.'],
+      a: ['"Me → Codes and invites", or the redeem box at the top of the mail page.'],
     },
     {
       q: 'Do I have to wait for a prediction to be settled? ',

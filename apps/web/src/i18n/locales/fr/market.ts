@@ -46,7 +46,7 @@ const market: Messages['market'] = {
   sis: {
     name: 'Sœur du Potager',
     chat: [
-      'Nouveau\u202f? Jetez d’abord un œil à «\u202fPlus → Autres → Guide\u202f». Il y a aussi un code de bienvenue.',
+      'Nouveau\u202f? Jetez d’abord un œil à «\u202fMoi → Centre d’aide → Guide\u202f». Il y a aussi un code de bienvenue.',
       'Chaque ingrédient a une limite dans le garde-manger, n’en achetez pas trop d’un coup.',
       'La météo influence vos clients. Pensez à regarder le temps du jour.',
       'Les ingrédients universels de niveau 1 et 2 s’échangent contre des rares au garde-manger. À partir du niveau 3, ils servent seulement à remplacer un ingrédient pour apprendre une recette.',

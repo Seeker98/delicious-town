@@ -6,6 +6,7 @@ import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
+import { usePageTitle } from '../stores/pageTitle';
 import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
 import { GRADE_NAMES, TASTE_NAMES } from '../utils/labels';
@@ -17,6 +18,8 @@ const t = useT();
 const d = ref<CookbookDetailDto | null>(null);
 const busy = ref(false);
 const id = Number(route.params.id);
+/** 顶栏标题是食谱名（界面改版 P2a） */
+usePageTitle(() => (d.value ? (catalog.data('cookbooks', d.value.id)?.name ?? d.value.name) : null));
 
 async function load() {
   d.value = await endpoints.cookbookDetail(id);
@@ -37,11 +40,8 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.cookbook.
 
 <template>
   <div v-if="d">
-    <h5>
-      {{ catalog.data('cookbooks', d.id)?.name ?? d.name }}
-      <span class="dt-tag">{{ GRADE_NAMES[d.grade] }}</span>
-    </h5>
     <div class="small text-muted mb-2">
+      <span class="dt-tag dt-tag-lead me-1">{{ GRADE_NAMES[d.grade] }}</span>
       {{
         t.cookbook.info(
           catalog.streetName(d.streetId, d.streetName),

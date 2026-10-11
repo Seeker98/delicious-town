@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { AttrsDto, EquipDetailDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { usePageTitleStore } from '../stores/pageTitle';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 import EquipDetailView from './EquipDetailView.vue';
@@ -193,7 +194,7 @@ describe('EquipDetailView', () => {
       devices: [],
     } as never);
     const { w } = await mountView();
-    expect(w.find('h5').text()).toBe('沉默之度玛的静谧之镬 +2');
+    expect(usePageTitleStore().title).toBe('沉默之度玛的静谧之镬 +2');
     expect(w.find('[data-testid="equip-meta"]').text()).toBe('锅 · 13 级可穿');
     expect(w.find('[data-testid="equip-desc"]').text()).toBe('随机增加25点属性。度玛教徒弟从不开口。');
   });
@@ -240,8 +241,8 @@ describe('EquipDetailView', () => {
     vi.mocked(endpoints.equipDetail).mockResolvedValue(
       detail({ goodsId: 641, name: '玉•大橘之帽', stress: 0 }),
     );
-    const { w } = await mountView();
-    expect(w.find('h5').text()).toBe('玉•大橘之帽');
+    await mountView();
+    expect(usePageTitleStore().title).toBe('玉•大橘之帽');
   });
 
   it('写明强化成功后属性总和到多少；满级不显示（问题记录 120）', async () => {

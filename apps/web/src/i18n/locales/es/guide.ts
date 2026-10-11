@@ -121,7 +121,7 @@ const guide: Messages['guide'] = {
     },
     {
       q: '¿Dónde uso un código? ',
-      a: ['«Más → Otros → Canjear código», o el cuadro de canje en la parte superior del buzón.'],
+      a: ['«Yo → Códigos e invitaciones», o el cuadro de canje en la parte superior del buzón.'],
     },
     {
       q: '¿Hay que esperar al resultado de una predicción? ',

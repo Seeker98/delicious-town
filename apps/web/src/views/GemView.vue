@@ -43,7 +43,6 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.gem
 
 <template>
   <div v-if="g">
-    <h5>{{ t.equip.gemPage.title }}</h5>
     <!-- 自己的体力单独一行（问题记录 532：原来接在规则说明末尾写“体力 N。”，看不懂） -->
     <p class="small text-muted mb-1" data-testid="gem-intro">
       {{ t.equip.gemPage.intro(pct(g.luckRate)) }}

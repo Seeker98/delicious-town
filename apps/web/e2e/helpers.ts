@@ -43,6 +43,6 @@ export async function registerAndOpen(
   const name = `店${id.slice(-5)}`;
   await page.getByPlaceholder('餐厅名称').fill(name);
   await page.getByRole('button', { name: '开张' }).click();
-  await expect(page.getByTestId('rest-name')).toHaveText(name);
+  await expect(page.getByTestId('page-title')).toHaveText(name);
   return { username, name };
 }

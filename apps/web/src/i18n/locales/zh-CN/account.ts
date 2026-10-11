@@ -1,6 +1,6 @@
 /** 我的账号、选择区服（问题记录 272） */
 export default {
-  title: '我的账号',
+  title: '账号和设置',
   section: '账号',
   username: '用户名',
   role: { mod: '协管', admin: '管理员' } as Record<string, string>,

@@ -60,7 +60,6 @@ const hits = computed(() =>
 
 <template>
   <div>
-    <h5 class="dt-page-title">{{ t.wiki.title }}</h5>
     <p class="small text-muted mb-2">{{ t.wiki.intro }}</p>
     <input
       v-model="q"

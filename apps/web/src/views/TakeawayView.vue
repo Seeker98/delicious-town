@@ -66,7 +66,6 @@ const tabs = computed(() =>
 </script>
 
 <template>
-  <h5>{{ t.takeaway.title }}</h5>
   <HiphopCard :place="15" />
   <template v-if="data">
     <OpenPanel v-if="!data.opened" :data="data" @reload="load" />

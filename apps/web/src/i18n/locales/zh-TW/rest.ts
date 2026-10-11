@@ -50,7 +50,7 @@ export default {
     expelFailed: '請走失敗',
   },
   look: {
-    title: '裝扮',
+    title: '裝扮和稱號',
     loadFailed: '讀取裝扮失敗',
     avatar: '頭像',
     noAvatar: '還沒有設定頭像 (去好友店裡白食需要頭像)',

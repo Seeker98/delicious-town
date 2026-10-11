@@ -7,12 +7,15 @@ import NeedChecks from '../components/NeedChecks.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useRestaurantStore } from '../stores/restaurant';
+import { usePageTitle } from '../stores/pageTitle';
 import { useToastStore } from '../stores/toast';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
 const t = useT();
 const need = ref<StarNeedDto | null>(null);
+/** 顶栏标题带当前星级（界面改版 P2a） */
+usePageTitle(() => (need.value ? t.value.society.star.title(need.value.star) : null));
 const busy = ref(false);
 
 async function load() {
@@ -39,7 +42,6 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.common.lo
 
 <template>
   <div v-if="need">
-    <h5>{{ t.society.star.title(need.star) }}</h5>
     <template v-if="need.nextStar">
       <p v-if="!need.available" class="small text-muted">{{ t.society.star.notOpen(need.nextStar) }}</p>
       <NeedChecks :checks="need.checks" />

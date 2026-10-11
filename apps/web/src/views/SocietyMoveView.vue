@@ -50,7 +50,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <h5>{{ t.society.move.title }}</h5>
   <p class="small text-muted">
     {{ t.society.move.hint(rest ? catalog.streetName(rest.streetId, rest.streetName) : '', formatNum(cost)) }}
   </p>

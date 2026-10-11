@@ -1,4 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
+import zhCN from './i18n/locales/zh-CN';
+import { parentPath } from './nav/routeMeta';
+import { ROOT_PATHS } from './nav/sections';
 import { routes, scrollFor } from './router';
 
 describe('routes', () => {
@@ -14,7 +17,7 @@ describe('routes', () => {
       '/wiki/streets/:id(\\d+)',
       '/wiki/:kind',
     ]);
-    for (const r of wiki) expect(r.meta).toEqual({ public: true, gameChrome: true });
+    for (const r of wiki) expect(r.meta).toMatchObject({ public: true, gameChrome: true });
     const eq = routes.find((r) => r.path.startsWith('/wiki/equips'))!;
     expect((eq.redirect as (to: { params: { id: string } }) => string)({ params: { id: '30' } })).toBe(
       '/wiki/goods/30',
@@ -66,9 +69,10 @@ describe('切页面时的滚动位置', () => {
     const el = document.createElement('div');
     el.id = 'attr-points';
     setTimeout(() => document.body.appendChild(el), 50);
+    // 顶栏吸顶 48px（界面改版 P2a 终审 I3）：锚点停在顶栏下面 8px
     expect(await scrollFor(loc('/rest/equip', '#attr-points'), loc('/rest/info'), null)).toEqual({
       el,
-      top: 8,
+      top: 56,
     });
     expect(top).toHaveBeenCalledWith(0, 0);
     el.remove();
@@ -93,5 +97,77 @@ describe('开发用图库（界面改版 P1）', () => {
   it('测试环境（DEV）注册了 /dev/art，不用登录', () => {
     const r = routes.find((x) => x.path === '/dev/art');
     expect(r?.meta).toEqual({ public: true });
+  });
+});
+
+describe('导航元数据（界面改版 P2a，设计 §4.2）', () => {
+  /** 游戏内页面：要开店的，或已开店时显示导航的 */
+  const game = routes.filter((r) => !r.redirect && (r.meta?.needRestaurant || r.meta?.gameChrome));
+  it('每个游戏内页面都有所属入口和标题', () => {
+    for (const r of game) {
+      expect(r.meta?.section, r.path).toBeTruthy();
+      expect(typeof r.meta?.title, r.path).toBe('function');
+      expect(r.meta!.title!(zhCN), r.path).toBeTruthy();
+    }
+  });
+  it('除了底部 6 个入口，每个游戏内页面都有上一级', () => {
+    for (const r of game) {
+      if (ROOT_PATHS.has(r.path)) expect(r.meta?.parent, r.path).toBeUndefined();
+      else expect(r.meta?.parent, r.path).toBeTruthy();
+    }
+  });
+  it('新增小镇、我、帮助中心；旧的“更多”跳到小镇', () => {
+    for (const p of ['/map', '/me', '/help']) expect(routes.some((r) => r.path === p)).toBe(true);
+    expect(routes.find((r) => r.path === '/more')?.redirect).toBe('/map');
+  });
+});
+
+describe('食谱进度一览的返回（终审：带回原来的街、页码；界面改版 P2a 起由顶栏返回负责）', () => {
+  it('上一级是食谱列表，带上原来的查询参数', () => {
+    const r = routes.find((x) => x.path === '/cookbooks/progress')!;
+    const to = {
+      path: '/cookbooks/progress',
+      fullPath: '/cookbooks/progress?street=2&page=3',
+      meta: r.meta,
+      params: {},
+    };
+    expect(parentPath(to as never)).toBe('/cookbooks?street=2&page=3');
+  });
+});
+
+describe('资料库详情的返回（backlog 第 ⑧ 批；界面改版 P2a 起由顶栏返回负责）', () => {
+  const at = (path: string, fullPath = path) => {
+    const r = routes.find((x) => x.path.startsWith(path.replace(/\/\d+$/, '/')) && x.path.includes(':id'))!;
+    return { path: fullPath, fullPath, meta: r.meta, params: { id: '1' } } as never;
+  };
+  it('回到进来前的列表地址（带搜索、筛选）；从别处进来时回列表首页', () => {
+    expect(parentPath(at('/wiki/foods/1001'), '/wiki/foods?f=2&q=%E7%B1%B3')).toBe(
+      '/wiki/foods?f=2&q=%E7%B1%B3',
+    );
+    expect(parentPath(at('/wiki/foods/1001'), '/home')).toBe('/wiki/foods');
+    expect(parentPath(at('/wiki/foods/1001'), null)).toBe('/wiki/foods');
+    expect(parentPath(at('/wiki/cookbooks/5'), '/wiki/cookbooks?street=2')).toBe('/wiki/cookbooks?street=2');
+    expect(parentPath(at('/wiki/streets/3'), undefined)).toBe('/wiki/streets');
+  });
+  it('道具详情：从厨具列表进来回厨具列表，否则回道具列表', () => {
+    expect(parentPath(at('/wiki/goods/30'), '/wiki/equips?part=2')).toBe('/wiki/equips?part=2');
+    expect(parentPath(at('/wiki/goods/30'), '/wiki/goods?q=x')).toBe('/wiki/goods?q=x');
+    expect(parentPath(at('/wiki/goods/30'), null)).toBe('/wiki/goods');
+  });
+});
+
+describe('“我”里的页面属于同一个入口（界面改版 P2a 终审 I4）', () => {
+  it('上一级一路走到 /me 的页面，底部导航都亮“餐厅”（头像就是店名第一个字）', () => {
+    const byPath = new Map(routes.map((r) => [r.path, r]));
+    const chain = (p: string): string[] => {
+      const r = byPath.get(p);
+      const parent = r?.meta?.parent;
+      return typeof parent === 'string' ? [parent, ...chain(parent)] : [];
+    };
+    const under = routes.filter((r) => r.path === '/me' || chain(r.path).includes('/me'));
+    expect(under.map((r) => r.path)).toEqual(
+      expect.arrayContaining(['/me', '/account', '/help', '/store', '/rest/info']),
+    );
+    for (const r of under) expect(r.meta?.section, r.path).toBe('home');
   });
 });

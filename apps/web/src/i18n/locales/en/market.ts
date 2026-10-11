@@ -43,7 +43,7 @@ const market: Messages['market'] = {
   sis: {
     name: 'Garden Sis',
     chat: [
-      'New here? Check "More → Other → Guide" first. There\'s a starter code too.',
+      'New here? Check "Me → Help center → Guide" first. There\'s a starter code too.',
       "Each ingredient has a pantry limit, so don't buy too much at once.",
       "Weather affects your customers. Remember to check today's weather.",
       'Level 1 and 2 universal ingredients can be traded for rare ones in your pantry. Level 3 and up can only stand in when learning recipes.',

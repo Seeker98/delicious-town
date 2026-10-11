@@ -1,7 +1,7 @@
 import type { Messages } from '../..';
 
 const account: Messages['account'] = {
-  title: 'Mon compte',
+  title: 'Compte et réglages',
   section: 'Compte',
   username: "Nom d'utilisateur",
   role: { mod: 'Modérateur', admin: 'Administrateur' },

@@ -32,7 +32,6 @@ const links = computed(() => {
 </script>
 
 <template>
-  <h5>{{ t.society.title }}</h5>
   <HiphopCard :place="4" />
   <!-- 纵向压缩（问题记录 573）：上下留白、卡片间距减半，图标小一号 -->
   <RouterLink

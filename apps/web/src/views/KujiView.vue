@@ -129,7 +129,6 @@ watch(line, () => {
 </script>
 
 <template>
-  <h5>{{ t.kuji.title }}</h5>
   <HiphopCard :place="12" />
   <div class="dt-pills mb-2">
     <button

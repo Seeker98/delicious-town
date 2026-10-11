@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { RouterLink } from 'vue-router';
 import { useT } from '../../composables/useT';
 
 /** 开放接口说明（问题记录 142，设计 §3.6） */
@@ -26,8 +25,6 @@ const example = computed(
 
 <template>
   <div>
-    <RouterLink to="/wiki" class="small dt-back">{{ t.wiki.home }}</RouterLink>
-    <h5 class="dt-page-title mt-2">{{ t.wiki.api.title }}</h5>
     <p class="small">{{ t.wiki.api.intro }}</p>
     <h6 class="dt-section">{{ t.wiki.api.base }}</h6>
     <p class="small mb-1">

@@ -45,7 +45,7 @@ const market: Messages['market'] = {
   sis: {
     name: 'Hermana del Huerto',
     chat: [
-      '¿Eres nuevo? Mira primero «Más → Otros → Guía». También hay un código de bienvenida.',
+      '¿Eres nuevo? Mira primero «Yo → Centro de ayuda → Guía». También hay un código de bienvenida.',
       'Cada ingrediente tiene un límite en la despensa, no compres demasiado de golpe.',
       'El clima afecta a tus clientes. Acuérdate de mirar el tiempo de hoy.',
       'Los ingredientes universales de nivel 1 y 2 se cambian por raros en la despensa. Del nivel 3 en adelante solo sirven para sustituir un ingrediente al aprender recetas.',
