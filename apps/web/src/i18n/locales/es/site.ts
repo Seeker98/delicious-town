@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    play1012:
+      'Bar, Templo y Torre de chefs rehechos: los tres tienen una imagen de cabecera con tus vales, energía o poder de chef; el inicio del bar es una cuadrícula de los diez juegos con las partidas de hoy y las que siguen en curso, cada juego tiene su página, las reglas son una lista corta en Reglas y las recompensas llevan imagen; en el templo, tasar, disparar, explorar y alimentar eligen la cantidad en un panel, y la prueba abre un panel de ingredientes desde las casillas principal y secundaria; la torre muestra un piso por fila, cada piso se abre con su guardián y el equipo del anciano, y los resultados de los duelos y los jueces se abren desde abajo',
     trade1012:
       'Tienda, Bolsa, Adquisiciones, Ichiban Kuji, Predicciones, Reparto y Banco rehechos: la tienda muestra un objeto por fila con filtros y un botón de precio que abre un panel de compra; la bolsa muestra un ingrediente por fila con su variación, y el libro de órdenes y la orden se abren desde abajo, igual que futuros y pujas al por mayor; los rankings de adquisiciones abren un panel con lo que recibe el dueño y el impuesto; el kuji muestra una fila por premio y los resultados en un panel; cada predicción tiene su página con gráfico y tu balance en cada caso; el reparto marca cada requisito y el repartidor se elige en un panel; el chico hip-hop empieza plegado en una fila',
     pages1011:

@@ -7,9 +7,14 @@ import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
+import DtArt from '../DtArt.vue';
+import BarInfo from './BarInfo.vue';
 import { roundGone } from './gone';
 
-/** 一掷千金（问题记录 427-3）：选自己的箱子，一轮轮开别的箱子，银行家报银币买断价 */
+/**
+ * 一掷千金（问题记录 427-3）：选自己的箱子，一轮轮开别的箱子，银行家报银币买断价。
+ * 界面改版 P9：十个箱子两排，开了的写里面是什么；报价是一张琥珀色的卡，成交、不成交两个按钮
+ */
 const props = defineProps<{ data: BarDto }>();
 const emit = defineEmits<{ reload: [] }>();
 const t = useT();
@@ -130,6 +135,18 @@ function resultLines(r: DealDto): string[] {
   ];
 }
 const result = computed(() => (local.value?.result ? resultLines(local.value) : []));
+/** 箱子里写的奖品（格子窄，样式里最多两行） */
+const prizeShort = (p: DealPrizeDto | null | undefined) => (p ? prizeText(p) : '');
+/** 箱子上面一行：选箱子、再开几个、等你回答报价、结束了 */
+const stageHint = computed(() => {
+  const r = local.value;
+  const x = t.value.bar.deal;
+  if (!r) return '';
+  if (r.result) return x.ended;
+  if (r.mine === null) return x.pickHint;
+  if (r.offer !== null) return x.roundDone(r.round + 1);
+  return x.openHint(r.toOpen);
+});
 /** 按轮分开的开箱记录：opened 按开的先后排，前 opens[0] 个是第 1 轮，依次往后（问题记录 467） */
 const roundsOpened = computed(() => {
   const r = local.value;
@@ -153,61 +170,73 @@ function again() {
 </script>
 
 <template>
-  <div ref="root" class="small">
-    <div class="dt-meta mb-2">{{ t.bar.deal.rule(d.count) }}</div>
+  <div ref="root">
+    <BarInfo
+      game="deal"
+      :title="t.bar.deal.title(formatNum(d.cost))"
+      :sub="t.bar.deal.sub(d.played, d.max)"
+    />
     <template v-if="!local">
-      <div class="fw-bold mb-1">{{ t.bar.deal.prizesTitle }}</div>
-      <div class="dt-deal-prizes mb-2">
-        <span v-for="(p, i) in d.prizes" :key="i" class="dt-meta" :data-testid="`deal-prize-${i}`">{{
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.bar.deal.prizesTitle }}</h2>
+        <span class="dt-block-more">{{ t.bar.deal.left(leftToday) }}</span>
+      </div>
+      <div class="dt-chip-list">
+        <span v-for="(p, i) in d.prizes" :key="i" :data-testid="`deal-prize-${i}`">{{
           tablePrizeText(p)
         }}</span>
       </div>
-      <div class="mb-1">{{ leftToday > 0 ? t.bar.deal.left(leftToday) : t.bar.deal.noLeft }}</div>
-      <div v-if="block && leftToday > 0" class="dt-meta text-danger mb-1">{{ block }}</div>
       <button
-        class="btn btn-sm btn-outline-primary"
+        type="button"
+        class="btn btn-primary dt-btn-block dt-bar-go"
         :disabled="busy || !!block"
         data-testid="deal-start"
         @click="run(() => endpoints.barDealStart(), t.bar.startFailed)"
       >
         {{ t.bar.deal.start(formatNum(d.cost)) }}
       </button>
+      <div v-if="block" class="dt-bar-block">{{ block }}</div>
     </template>
     <template v-else>
       <!-- 读屏的固定播报区：刚开出的东西、报价、结果 -->
       <div class="visually-hidden" aria-live="polite" data-testid="deal-live">{{ live }}</div>
-      <div v-if="!local.result" class="mb-1">
-        {{
-          local.mine === null
-            ? t.bar.deal.pickHint
-            : local.toOpen > 0
-              ? t.bar.deal.openHint(local.toOpen)
-              : ''
-        }}
-      </div>
-      <div class="dt-deal-boxes mb-2">
-        <button
-          v-for="i in local.count"
-          :key="i - 1"
-          type="button"
-          :class="[
-            'dt-deal-box',
-            { 'dt-deal-mine': local.mine === i - 1, 'dt-deal-opened': !!openedOf(i - 1) },
-          ]"
-          :disabled="!canClick(i - 1)"
-          :aria-label="t.bar.deal.boxLabel(i, local.result ? allText(i - 1) : boxText(i - 1))"
-          :data-testid="`deal-box-${i - 1}`"
-          @click="clickBox(i - 1)"
-        >
-          <span class="fw-bold">{{ t.bar.deal.box(i) }}</span>
-          <span class="dt-deal-box-text">{{ local.result ? allText(i - 1) : boxText(i - 1) }}</span>
-        </button>
-      </div>
-      <div v-if="local.offer !== null && !local.result" class="dt-note mb-2" data-testid="deal-offer">
-        <div class="fw-bold mb-1">{{ t.bar.deal.offer(formatNum(local.offer)) }}</div>
-        <div class="d-flex flex-wrap gap-1">
+      <section class="dt-card dt-bar-stage">
+        <p class="dt-bar-label">{{ stageHint }}</p>
+        <div class="dt-deal-grid">
           <button
-            class="btn btn-sm btn-primary"
+            v-for="i in local.count"
+            :key="i - 1"
+            type="button"
+            :class="[
+              'dt-deal-box',
+              { 'is-mine': local.mine === i - 1, 'is-open': !!openedOf(i - 1) || !!local.result },
+            ]"
+            :disabled="!canClick(i - 1)"
+            :aria-label="t.bar.deal.boxLabel(i, local.result ? allText(i - 1) : boxText(i - 1))"
+            :data-testid="`deal-box-${i - 1}`"
+            @click="clickBox(i - 1)"
+          >
+            <span v-if="local.mine === i - 1" class="dt-deal-mine">{{ t.bar.deal.mine }}</span>
+            <DtArt v-if="!openedOf(i - 1) && !local.result" name="game-box" :size="28" />
+            <b>{{ t.bar.deal.box(i) }}</b>
+            <span v-if="openedOf(i - 1) || local.result" class="dt-deal-prize">{{
+              local.result ? prizeShort(local.all?.[i - 1]) : prizeShort(openedOf(i - 1))
+            }}</span>
+          </button>
+        </div>
+      </section>
+      <section
+        v-if="local.offer !== null && !local.result"
+        class="dt-bar-result is-warn"
+        data-testid="deal-offer"
+      >
+        <span class="dt-deal-offer-label">{{ t.bar.deal.offerLabel }}</span>
+        <b class="dt-deal-offer">{{ t.bar.deal.coin(formatNum(local.offer)) }}</b>
+        <div class="dt-bar-detail">{{ t.bar.deal.offerNote(local.opens[local.round + 1] ?? 0) }}</div>
+        <div class="dt-bar-pair">
+          <button
+            type="button"
+            class="btn btn-primary"
             :disabled="busy"
             data-testid="deal-yes"
             @click="run(() => endpoints.barDealAnswer(true), t.bar.deal.failed)"
@@ -215,7 +244,8 @@ function again() {
             {{ t.bar.deal.yes }}
           </button>
           <button
-            class="btn btn-sm btn-outline-primary"
+            type="button"
+            class="btn btn-outline-primary"
             :disabled="busy"
             data-testid="deal-no"
             @click="run(() => endpoints.barDealAnswer(false), t.bar.deal.failed)"
@@ -223,39 +253,56 @@ function again() {
             {{ t.bar.deal.no }}
           </button>
         </div>
-      </div>
+      </section>
       <!-- 结束时结果放最前面，开箱记录在后（终审） -->
-      <div
+      <section
         v-if="local.result"
-        :class="['fw-bold mb-2', local.result === 'deal' ? 'text-primary' : 'text-success']"
+        :class="['dt-bar-result', local.result === 'deal' ? 'is-warn' : 'is-ok']"
         data-testid="deal-result"
       >
-        <div v-for="(line, i) in result" :key="i">{{ line }}</div>
-      </div>
-      <template v-if="roundsOpened.length > 0">
-        <div class="fw-bold">{{ t.bar.deal.roundsTitle }}</div>
-        <div class="mb-2">
-          <div v-for="(line, i) in roundsOpened" :key="i" class="dt-meta" :data-testid="`deal-round-${i}`">
-            {{ line }}
-          </div>
-        </div>
-      </template>
+        <b>{{ result[0] }}</b>
+        <div v-for="(line, i) in result.slice(1)" :key="i" class="dt-bar-detail">{{ line }}</div>
+        <button
+          type="button"
+          class="btn btn-outline-primary dt-btn-block"
+          data-testid="deal-again"
+          @click="again"
+        >
+          {{ t.bar.again }}
+        </button>
+      </section>
       <template v-if="!local.result">
-        <div class="fw-bold">{{ t.bar.deal.leftTitle }}</div>
-        <div class="dt-deal-prizes" data-testid="deal-left">
-          <span v-for="(p, i) in local.left" :key="i" class="dt-meta">{{ prizeText(p) }}</span>
+        <div class="dt-block-head">
+          <h2 class="dt-block-title">{{ t.bar.deal.leftTitle }}</h2>
+        </div>
+        <div class="dt-chip-list" data-testid="deal-left">
+          <span v-for="(p, i) in local.left" :key="i">{{ prizeText(p) }}</span>
         </div>
       </template>
       <template v-else>
-        <div class="fw-bold">{{ t.bar.deal.allTitle }}</div>
-        <div class="dt-deal-prizes">
-          <span v-for="(p, i) in local.all ?? []" :key="i" class="dt-meta" :data-testid="`deal-all-${i}`">
-            {{ t.bar.deal.box(i + 1) }} {{ prizeText(p) }}
-          </span>
+        <div class="dt-block-head">
+          <h2 class="dt-block-title">{{ t.bar.deal.allTitle }}</h2>
         </div>
-        <button class="btn btn-sm btn-outline-primary mt-2" data-testid="deal-again" @click="again">
-          {{ t.bar.again }}
-        </button>
+        <div class="dt-chip-list">
+          <span v-for="(p, i) in local.all ?? []" :key="i" :data-testid="`deal-all-${i}`"
+            >{{ t.bar.deal.box(i + 1) }} {{ prizeText(p) }}</span
+          >
+        </div>
+      </template>
+      <template v-if="roundsOpened.length > 0">
+        <div class="dt-block-head">
+          <h2 class="dt-block-title">{{ t.bar.deal.roundsTitle }}</h2>
+        </div>
+        <div class="dt-card dt-rows-card">
+          <div
+            v-for="(line, i) in roundsOpened"
+            :key="i"
+            class="dt-row dt-deal-round"
+            :data-testid="`deal-round-${i}`"
+          >
+            {{ line }}
+          </div>
+        </div>
       </template>
     </template>
   </div>

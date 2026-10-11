@@ -112,6 +112,7 @@ export async function barView(
       max: t.memory.dailyMax,
       flashMs: t.memory.flashMs,
       gapMs: t.memory.gapMs,
+      lengths: t.memory.lengths,
       round: memory ? memoryResume(memory, t.memory, now) : null,
     },
     darts: {

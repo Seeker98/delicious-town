@@ -32,6 +32,8 @@ export interface CatalogGoodsDto {
   equip?: { part: number; minLevel: number; suitId: number; essence: number; maxHole: number };
   /** 宝石：阶数、下一阶 */
   gem?: { level: number; nextId: number | null };
+  /** 单个道具的配图（界面改版 P9）：网页画 goods-<art>；不写就按小类给图 */
+  art?: string;
 }
 
 export interface CatalogFoodDto {

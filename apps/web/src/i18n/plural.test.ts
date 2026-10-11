@@ -21,7 +21,7 @@ describe('英法西的单复数（质量期 ④，backlog #116）', () => {
     expect(en.forum.itemMeta('A', 'now', 1, 1, 0)).toBe('A · now · 1 view · 1 like · 0 replies');
     expect(fr.predict.reasons.predict_age(1)).toContain('au moins 1 jour pour');
     expect(fr.rest.tasks.kujiHint(150, 1)).toContain('1 ticket d');
-    expect(fr.temple.kraken.exchange(1)).toBe('Échanger (1 tentacule)');
+    expect(fr.temple.kraken.tentacles(1)).toBe('1 tentacule');
   });
 
   it('后面的形容词、动词跟着名词变：1 recette a perdu、1 restaurant a participé', () => {

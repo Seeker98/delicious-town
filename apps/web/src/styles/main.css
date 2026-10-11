@@ -763,240 +763,6 @@ details.dt-card > summary {
 .dt-span2 {
   grid-column: span 2;
 }
-/* ---------- 酒吧扩展（子项目 4C-3） ---------- */
-/* 一掷千金（问题记录 427-3）：10 个箱子每行 5 个；名字长时折行，不撑出屏幕 */
-.dt-deal-boxes {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 4px;
-  max-width: 420px;
-}
-.dt-deal-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 0;
-  min-height: 52px;
-  padding: 4px 2px;
-  border: 1px solid var(--dt-line);
-  border-radius: 8px;
-  background: var(--dt-primary-soft);
-  font: inherit;
-  color: inherit;
-  overflow-wrap: anywhere;
-  /* 窄屏时英、法、西的长单词先按语言加连字符断开，不在中间硬断（#192 审查；<html lang> 跟着语言） */
-  hyphens: auto;
-}
-.dt-deal-box:disabled {
-  cursor: default;
-}
-.dt-deal-mine {
-  border-color: var(--dt-primary);
-  border-width: 2px;
-}
-.dt-deal-opened {
-  background: var(--dt-surface);
-  color: var(--dt-muted);
-}
-.dt-deal-box-text {
-  font-size: 12px;
-}
-.dt-deal-prizes {
-  display: flex;
-  flex-wrap: wrap;
-  column-gap: 12px;
-}
-/* 猜酒杯（问题记录 427-5）：一行最多 5 个杯子，列数由面板按杯子数给 */
-.dt-guess-grid {
-  display: grid;
-  gap: 4px;
-  max-width: 420px;
-}
-.dt-guess {
-  hyphens: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 0;
-  min-height: 52px;
-  padding: 4px 2px;
-  border: 1px solid var(--dt-line);
-  border-radius: 8px;
-  background: var(--dt-primary-soft);
-  font: inherit;
-  color: inherit;
-  overflow-wrap: anywhere;
-}
-.dt-guess:disabled {
-  cursor: default;
-}
-/* 不能点、也没翻开的杯子变淡（礼券不够、已经猜过），和能点的分开（#193 审查） */
-.dt-guess:disabled:not(.dt-guess-pick):not(.dt-guess-ball) {
-  opacity: 0.55;
-}
-.dt-guess-pick {
-  border-color: var(--dt-primary);
-  border-width: 2px;
-}
-.dt-guess-ball {
-  background: var(--dt-soft-success);
-  color: var(--dt-ink-success);
-}
-.dt-guess-text {
-  font-size: 12px;
-}
-/* 秘制调料（问题记录 427-2）：4 个空位一行；10 种调料每行 5 个 */
-.dt-spice-slots {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 4px;
-  max-width: 360px;
-}
-.dt-spice-slot {
-  min-width: 0;
-  padding: 2px;
-  overflow-wrap: anywhere;
-  min-height: 32px;
-  border: 1px dashed var(--dt-line);
-  border-radius: 6px;
-  background: var(--dt-surface);
-  font: inherit;
-  color: inherit;
-}
-.dt-spice-kinds {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 4px;
-  max-width: 420px;
-}
-/* 英法西文调料名长：格子可以收窄，名字折行（360 宽时法文撑出屏幕） */
-.dt-spice-kinds > .btn {
-  min-width: 0;
-  padding: 2px;
-  overflow-wrap: anywhere;
-}
-.dt-spice-row {
-  padding: 2px 0;
-  border-bottom: 1px solid var(--dt-line);
-}
-/* 最后一颗糖（问题记录 427-1）：糖果每行 10 颗 */
-.dt-nim-board {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 4px;
-  max-width: 320px;
-}
-.dt-nim-candy {
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: var(--dt-primary);
-}
-/* 魔鬼辣杯：6 个杯子两行 */
-.dt-cups {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-.dt-cup {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 4px;
-  border: 1px solid var(--dt-line);
-  border-radius: 8px;
-  background: var(--dt-surface);
-  font-size: 12px;
-  color: var(--dt-muted);
-}
-.dt-cup i {
-  font-size: 22px;
-  color: var(--dt-primary);
-}
-.dt-cup:disabled {
-  opacity: 1;
-}
-.dt-cup-me {
-  background: var(--dt-soft-success);
-  border-color: var(--dt-fill-success);
-}
-.dt-cup-bar {
-  background: var(--dt-line);
-}
-/* 结束后没喝的杯子变灰（PR28 遗留） */
-.dt-cup-left {
-  opacity: 0.45;
-}
-.dt-cup-spiked {
-  background: var(--dt-soft-danger);
-  border-color: var(--dt-fill-danger);
-  color: var(--dt-ink-danger);
-}
-/* 记忆调酒：8 种配料两行 */
-.dt-mixes {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-/* 触控目标至少 44px（视觉规范） */
-.dt-mix {
-  min-height: 44px;
-  padding: 8px 0;
-  border: 1px solid var(--dt-line);
-  border-radius: 8px;
-  background: var(--dt-surface);
-  font-size: 13px;
-  color: var(--dt-muted);
-}
-.dt-mix:disabled {
-  opacity: 1;
-}
-.dt-mix-on {
-  background: var(--dt-primary);
-  border-color: var(--dt-primary);
-  color: var(--dt-on-primary);
-}
-/* 飞镖：横向靶条，中间三圈，准星是一条竖线（宽度按 tuning 的 0.3 / 0.15 / 0.05 半径） */
-.dt-board {
-  position: relative;
-  height: 44px;
-  border-radius: 8px;
-  background: var(--dt-surface-2);
-  overflow: hidden;
-}
-.dt-board-ring {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-}
-.dt-board-r5 {
-  width: 50%;
-  background: var(--dt-primary-soft);
-}
-.dt-board-r10 {
-  width: 30%;
-  background: color-mix(in srgb, var(--dt-primary) 30%, var(--dt-surface));
-}
-.dt-board-r25 {
-  width: 15%;
-  background: color-mix(in srgb, var(--dt-primary) 60%, var(--dt-surface));
-}
-.dt-board-r50 {
-  width: 5%;
-  background: var(--dt-primary-ink);
-}
-.dt-board-marker {
-  position: absolute;
-  top: 2px;
-  bottom: 2px;
-  width: 3px;
-  margin-left: -1px;
-  background: var(--dt-text);
-  border-radius: 2px;
-}
-
 /* ---------- 嘻哈男孩、排行（子项目 4E-2） ---------- */
 .dt-item-me {
   background: var(--dt-primary-soft);
@@ -4702,4 +4468,1754 @@ button.dt-row {
 /* 行里的主名字加粗（P8 用户反馈：预测已结束的题目、外卖菜名和骑手名、存款的金额和期限、基金档位） */
 .dt-row-title.is-strong {
   font-weight: 600;
+}
+
+/* ---------- 界面改版 P9：玩乐（酒吧、神殿、厨塔） ---------- */
+/* 地方头图：整宽，酒吧首页 196px、神殿和厨塔 120px；图是固定色，深色模式不变 */
+.dt-place-scene {
+  position: relative;
+  height: 120px;
+  margin: -8px -8px 0;
+  overflow: hidden;
+}
+.dt-place-scene.is-tall {
+  height: 196px;
+  margin-bottom: 12px;
+}
+.dt-place-scene.is-bar {
+  background: var(--dt-place-bar);
+}
+.dt-place-scene.is-temple {
+  background: var(--dt-place-temple);
+}
+.dt-place-scene.is-tower {
+  background: var(--dt-place-tower);
+}
+.dt-place-scene-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+}
+.dt-place-chips {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+/* 头图上的数字胶囊：深色半透明底、白字（叠在固定色的图上，两种主题一样） */
+.dt-place-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 10px 0 6px;
+  border-radius: 999px;
+  background: var(--dt-place-chip-bg);
+  color: var(--dt-place-chip-ink);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.dt-place-chip b {
+  font-size: 13px;
+}
+/* 顶栏右边的余额胶囊（酒吧游戏页） */
+.dt-header-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  height: 28px;
+  margin-right: 4px;
+  padding: 0 10px 0 6px;
+  border-radius: 999px;
+  background: var(--dt-bg);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+/* 酒吧首页的游戏格子：两列，图、名字、今天几局；进行中紫框，用完了变淡 */
+.dt-game-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.dt-game-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+  min-height: 112px;
+  padding: 12px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-lg);
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  text-decoration: none;
+  transition: transform var(--dt-dur-press) var(--dt-ease-out);
+}
+.dt-game-tile:active {
+  transform: scale(0.97);
+}
+.dt-game-tile.is-on {
+  border-color: var(--dt-primary);
+  box-shadow: inset 0 0 0 1px var(--dt-primary);
+}
+.dt-game-tile.is-done .dt-game-tile-art,
+.dt-game-tile.is-done .dt-game-tile-name {
+  opacity: 0.5;
+}
+.dt-game-tile-art {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 4px;
+  border-radius: 12px;
+  background: var(--dt-plate);
+}
+.dt-game-tile-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.dt-game-tile-name {
+  font-size: 15px;
+  font-weight: 600;
+}
+.dt-game-tile-meta {
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+/* 游戏页顶上的说明卡：图、花多少、今天几局，右边“玩法 ›”打开分条的规则 */
+.dt-bar-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+}
+.dt-bar-info-art {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--dt-plate);
+}
+.dt-bar-info-main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+.dt-bar-info-main > b {
+  font-weight: 600;
+}
+.dt-bar-info-main > span {
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-bar-info > .dt-link-btn {
+  font-size: 13px;
+  font-weight: 600;
+}
+.dt-bar-info > .dt-link-btn::after {
+  content: '\a0›';
+  content: '\a0›' / '';
+}
+.dt-bar-rules > ul {
+  color: var(--dt-text);
+}
+/* 规则面板、奖池里的小表 */
+.dt-bar-table {
+  width: 100%;
+  margin-top: 12px;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--dt-text);
+}
+.dt-bar-table th {
+  padding: 6px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dt-muted);
+  text-align: left;
+}
+.dt-bar-table td {
+  padding: 8px 4px;
+  border-top: 1px solid var(--dt-line);
+}
+/* 游戏画面的卡片、结果卡（赢了绿底、输了红底、报价琥珀底），结果出现时淡入上移 */
+.dt-bar-stage {
+  margin-bottom: 12px;
+  padding: 16px 12px;
+}
+.dt-bar-result {
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-lg);
+  background: var(--dt-surface);
+  animation: dt-result-in var(--dt-dur-base) var(--dt-ease-out);
+}
+.dt-bar-result > b {
+  display: block;
+  font-size: 15px;
+}
+.dt-bar-result.is-ok {
+  border-color: transparent;
+  background: var(--dt-soft-success);
+}
+.dt-bar-result.is-ok > b {
+  color: var(--dt-ink-success);
+}
+.dt-bar-result.is-bad {
+  border-color: transparent;
+  background: var(--dt-soft-danger);
+}
+.dt-bar-result.is-bad > b {
+  color: var(--dt-ink-danger);
+}
+.dt-bar-result.is-warn {
+  border-color: transparent;
+  background: var(--dt-soft-warning);
+}
+.dt-bar-result > .dt-btn-block {
+  margin-top: 12px;
+}
+@keyframes dt-result-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dt-bar-result {
+    animation-name: dt-fade-in;
+  }
+}
+.dt-bar-detail {
+  margin-top: 4px;
+  font-size: 13px;
+}
+.dt-bar-warn {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--dt-ink-danger);
+}
+.dt-bar-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+.dt-bar-pair > .btn {
+  min-height: 46px;
+  font-weight: 600;
+}
+.dt-bar-label {
+  margin: 0 2px 8px;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-bar-label-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.dt-bar-label-row > .dt-bar-label {
+  flex: 1 1 auto;
+}
+.dt-bar-pick {
+  margin: 14px 0 0;
+  text-align: center;
+}
+.dt-bar-block {
+  margin: -4px 2px 12px;
+  font-size: 12px;
+  color: var(--dt-ink-danger);
+}
+.dt-bar-go {
+  min-height: 48px;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+.dt-bar-go.is-big {
+  min-height: 56px;
+  font-size: 17px;
+}
+.dt-bar-status {
+  margin: 14px 0 0;
+  font-weight: 600;
+  text-align: center;
+}
+.dt-bar-lines {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+/* 轮次、关卡、杯数的进度：已过的打勾，这一轮实心紫 */
+.dt-bar-track {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12px;
+  color: var(--dt-muted);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.dt-bar-track > .is-now {
+  color: var(--dt-text);
+  font-weight: 600;
+}
+.dt-bar-track-dot {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin: 0 auto 4px;
+  border-radius: 50%;
+  background: var(--dt-plate);
+  font-size: 13px;
+  font-weight: 700;
+}
+.dt-bar-track > .is-done .dt-bar-track-dot {
+  background: var(--dt-soft-success);
+  color: var(--dt-ink-success);
+}
+.dt-bar-track > .is-now .dt-bar-track-dot {
+  background: var(--dt-primary);
+  color: var(--dt-on-primary);
+}
+/* 奖励小块：小图、名字×数量、等级角标 */
+.dt-award-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.dt-award-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 30px;
+  padding: 0 10px 0 4px;
+  border-radius: 999px;
+  background: var(--dt-surface);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.dt-award-chip > .dt-tag {
+  margin-left: 2px;
+}
+.dt-award-chip-art {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--dt-plate);
+}
+/* 划拳：两只手放大对着，下面三个出拳大按钮 */
+.dt-fg-vs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+.dt-fg-hand {
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 6px;
+  border-radius: 50%;
+  background: var(--dt-plate);
+  color: var(--dt-muted);
+  font-size: 28px;
+}
+.dt-fg-hand.is-me {
+  background: var(--dt-primary-soft);
+}
+.dt-fg-vs-mid {
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-fg-hands {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.dt-fg-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 104px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-lg);
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  transition: transform var(--dt-dur-press) var(--dt-ease-out);
+}
+.dt-fg-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.dt-fg-btn:disabled {
+  opacity: 0.5;
+}
+/* 猜酒杯：杯子一排，掀开的往上抬、下面露出骰子 */
+.dt-cups {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 10px;
+  margin-top: 14px;
+}
+.dt-cup-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 56px;
+  padding: 4px 2px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--dt-text);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+}
+.dt-cup-pic {
+  position: relative;
+  display: grid;
+  place-items: end center;
+  width: 56px;
+  height: 80px;
+}
+.dt-cup-lid {
+  position: relative;
+  z-index: 1;
+  display: block;
+  transition: transform 220ms var(--dt-ease-out);
+}
+.dt-cup-btn.is-up .dt-cup-lid {
+  transform: translateY(-24px);
+}
+.dt-cup-die {
+  position: absolute;
+  bottom: 0;
+}
+.dt-cup-state {
+  font-size: 11px;
+  color: var(--dt-muted);
+}
+.dt-cup-btn.is-mine .dt-cup-state {
+  color: var(--dt-primary-ink);
+}
+@media (prefers-reduced-motion: reduce) {
+  .dt-cup-lid {
+    transition: none;
+  }
+}
+/* 转数字：上一次转到的数字放大，下面 5 列数字格子 */
+.dt-num-result {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.dt-num-ball {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--dt-soft-warning);
+  color: var(--dt-ink-warning);
+  font-size: 26px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.dt-num-result.is-ok .dt-num-ball {
+  background: var(--dt-surface);
+  color: var(--dt-ink-success);
+}
+.dt-num-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.dt-num-text > .dt-award-chips {
+  margin-top: 6px;
+}
+.dt-num-hint {
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-num-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+.dt-num-btn {
+  height: 44px;
+  border: 1px solid var(--dt-line);
+  border-radius: 12px;
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.dt-num-btn[aria-pressed='true'] {
+  border-color: var(--dt-primary);
+  box-shadow: inset 0 0 0 1px var(--dt-primary);
+  background: var(--dt-primary-soft);
+  color: var(--dt-primary-ink);
+}
+/* 老虎机：红色机身里三个白色转轮 */
+.dt-slot-reels {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 12px;
+  border-radius: 18px;
+  background: var(--dt-slot-body);
+}
+.dt-slot-reel {
+  display: grid;
+  place-items: center;
+  height: 92px;
+  border-radius: 12px;
+  background: var(--dt-slot-reel);
+  color: var(--dt-slot-reel-ink);
+  font-size: 15px;
+  font-weight: 700;
+}
+.dt-slot-reels + .dt-bar-pair {
+  margin-top: 14px;
+}
+/* 魔鬼辣杯：押注表（押注和拿回的张数），开局后 6 个杯子三列 */
+.dt-devil-intro {
+  text-align: center;
+}
+.dt-devil-intro > p {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-devil-shots {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+}
+.dt-devil-table {
+  overflow: hidden;
+}
+.dt-devil-row {
+  display: grid;
+  grid-template-columns: 96px repeat(var(--dt-devil-cols, 3), minmax(0, 1fr));
+  align-items: center;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 12px;
+  border: 0;
+  border-top: 1px solid var(--dt-line);
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font: inherit;
+  font-size: 15px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.dt-devil-row > b {
+  text-align: left;
+}
+.dt-devil-row.is-head {
+  min-height: 36px;
+  border-top: 0;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-devil-row.is-head > span:first-child {
+  text-align: left;
+}
+.dt-devil-row[aria-checked='true'] {
+  background: var(--dt-primary-soft);
+  color: var(--dt-primary-ink);
+}
+.dt-devil-row:disabled {
+  color: var(--dt-muted);
+}
+.dt-devil-cups {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.dt-devil-cup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 112px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-lg);
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  transition: transform var(--dt-dur-press) var(--dt-ease-out);
+}
+.dt-devil-cup:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.dt-devil-cup-state {
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-devil-cup.is-me {
+  border-color: transparent;
+  background: var(--dt-primary-soft);
+}
+.dt-devil-cup.is-me .dt-devil-cup-state {
+  color: var(--dt-primary-ink);
+}
+.dt-devil-cup.is-bar {
+  border-color: transparent;
+  background: var(--dt-bg);
+}
+.dt-devil-cup.is-spiked {
+  border-color: var(--dt-danger);
+  background: var(--dt-soft-danger);
+}
+.dt-devil-cup.is-spiked .dt-devil-cup-state {
+  color: var(--dt-ink-danger);
+}
+.dt-devil-cup.is-left {
+  opacity: 0.45;
+}
+/* 记忆调酒：已选的格子一行，8 种配料四列；闪亮的那一格变紫 */
+.dt-mem-slots {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.dt-mem-slot {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  height: 40px;
+  border: 1.5px dashed var(--dt-line-strong);
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  overflow: hidden;
+}
+.dt-mem-slot.is-full {
+  border: 0;
+  background: var(--dt-primary-soft);
+  color: var(--dt-primary-ink);
+}
+.dt-mem-mixes {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.dt-mem-mix {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  min-height: 80px;
+  border: 1px solid var(--dt-line);
+  border-radius: 14px;
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  transition: transform var(--dt-dur-press) var(--dt-ease-out);
+}
+.dt-mem-mix:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.dt-mem-mix:disabled {
+  color: var(--dt-text);
+}
+.dt-mem-mix.is-on {
+  border-color: var(--dt-primary);
+  background: var(--dt-primary);
+  color: var(--dt-on-primary);
+}
+/* 飞镖：三镖的分数，下面靶条（宽度按区服的 0.5 / 0.3 / 0.15 / 0.05 半径）和摆动的准星 */
+.dt-darts-throws {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.dt-darts-throw {
+  padding: 10px 8px;
+  border-radius: 14px;
+  background: var(--dt-bg);
+  text-align: center;
+}
+.dt-darts-throw > span {
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-darts-throw > b {
+  display: block;
+  font-size: 24px;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+.dt-darts-throw.is-now {
+  background: var(--dt-surface);
+  box-shadow: inset 0 0 0 2px var(--dt-primary);
+}
+.dt-darts-board {
+  position: relative;
+  margin-top: 22px;
+}
+.dt-darts-zones {
+  display: grid;
+  grid-template-columns: 25fr 10fr 7.5fr 5fr 5fr 5fr 7.5fr 10fr 25fr;
+  height: 56px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.dt-darts-zones > span {
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--dt-darts-ink);
+}
+.dt-darts-zones > .is-0 {
+  background: var(--dt-darts-0);
+}
+.dt-darts-zones > .is-5 {
+  background: var(--dt-darts-5);
+}
+.dt-darts-zones > .is-10 {
+  background: var(--dt-darts-10);
+}
+.dt-darts-zones > .is-25 {
+  background: var(--dt-darts-25);
+}
+.dt-darts-zones > .is-50 {
+  background: var(--dt-darts-50);
+  color: var(--dt-darts-50-ink);
+  font-size: 11px;
+}
+/* 准星：一条竖线加上面的小三角；位置每帧改 left（和服务端同一个公式） */
+.dt-darts-marker {
+  position: absolute;
+  top: -6px;
+  bottom: -6px;
+  width: 3px;
+  margin-left: -1.5px;
+  border-radius: 2px;
+  background: var(--dt-text);
+}
+.dt-darts-marker::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -5px;
+  border: 6.5px solid transparent;
+  border-top-color: var(--dt-text);
+}
+.dt-darts-hint {
+  margin: 12px 0 0;
+  text-align: center;
+}
+/* 最后一颗糖：还剩几颗放大，下面糖果堆、每一步的记录 */
+.dt-nim-table {
+  align-items: flex-start;
+}
+.dt-nim-table .dt-row-end {
+  align-self: center;
+}
+.dt-nim-stage {
+  text-align: center;
+}
+.dt-nim-left > span {
+  display: block;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-nim-left > b {
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.dt-nim-left > small {
+  margin-left: 4px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.dt-nim-candies {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px 4px;
+  max-width: 300px;
+  margin: 12px auto 0;
+}
+.dt-nim-log {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+.dt-nim-log > span {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--dt-bg);
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-nim-log > span.is-me {
+  background: var(--dt-primary-soft);
+  color: var(--dt-primary-ink);
+  font-weight: 600;
+}
+.dt-nim-takes {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.dt-nim-takes > .btn {
+  min-height: 48px;
+  font-size: 17px;
+  font-weight: 700;
+}
+/* 秘制调料：每次猜的一行（调料、绿点 A、黄圈 B），下面空位和十种调料 */
+.dt-spice-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-spice-row:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.dt-spice-ix {
+  width: 18px;
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-spice-cells {
+  display: flex;
+  flex: 1 1 auto;
+  gap: 4px;
+  min-width: 0;
+}
+.dt-spice-cells > span {
+  display: block;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 28px;
+  padding: 0 3px;
+  line-height: 28px;
+  text-align: center;
+  text-overflow: ellipsis;
+  border-radius: 8px;
+  background: var(--dt-bg);
+  font-size: 12px;
+  font-weight: 600;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.dt-spice-pegs {
+  display: flex;
+  gap: 3px;
+}
+.dt-spice-pegs > i,
+.dt-spice-legend i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--dt-bar-track);
+}
+.dt-spice-pegs > i.is-a,
+.dt-spice-legend i.is-a {
+  background: var(--dt-success);
+}
+.dt-spice-pegs > i.is-b,
+.dt-spice-legend i.is-b {
+  border: 2px solid var(--dt-warning);
+  background: transparent;
+}
+.dt-spice-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-spice-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.dt-spice-slots {
+  display: grid;
+  gap: 6px;
+}
+.dt-spice-slot {
+  min-width: 0;
+  min-height: 40px;
+  padding: 2px 4px;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  border: 1.5px dashed var(--dt-line-strong);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--dt-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+.dt-spice-slot.is-full {
+  border: 0;
+  background: var(--dt-primary-soft);
+  color: var(--dt-primary-ink);
+}
+.dt-spice-kinds {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  gap: 6px;
+  margin-top: 14px;
+}
+.dt-spice-kind {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  min-height: 40px;
+  padding: 2px 6px;
+  border: 1px solid var(--dt-line);
+  border-radius: 14px;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+.dt-spice-kind > i {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--dt-line-strong);
+}
+.dt-spice-kind:disabled {
+  border-color: transparent;
+  background: var(--dt-bg);
+  color: var(--dt-muted);
+}
+/* 一掷千金：十个箱子两排，自己的紫框加“你的”，开了的写里面是什么 */
+.dt-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.dt-chip-list > span {
+  padding: 4px 10px;
+  border: 1px solid var(--dt-line);
+  border-radius: 999px;
+  background: var(--dt-surface);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-deal-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+.dt-deal-box {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  min-height: 76px;
+  padding: 4px 2px;
+  border: 1px solid var(--dt-line);
+  border-radius: 12px;
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font: inherit;
+  font-size: 12px;
+}
+.dt-deal-box.is-mine {
+  border-color: var(--dt-primary);
+  box-shadow: inset 0 0 0 1px var(--dt-primary);
+  background: var(--dt-primary-soft);
+}
+.dt-deal-box.is-open:not(.is-mine) {
+  border-color: transparent;
+  background: var(--dt-bg);
+  color: var(--dt-muted);
+}
+.dt-deal-mine {
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0 5px;
+  border-radius: 4px;
+  background: var(--dt-primary);
+  color: var(--dt-on-primary);
+  font-size: 11px;
+  line-height: 14px;
+  white-space: nowrap;
+}
+.dt-deal-prize {
+  display: -webkit-box;
+  max-width: 100%;
+  font-size: 11px;
+  line-height: 1.25;
+  text-align: center;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+.dt-deal-offer-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dt-ink-warning);
+}
+.dt-bar-result > .dt-deal-offer {
+  margin-top: 2px;
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-deal-round {
+  min-height: 40px;
+  font-size: 13px;
+}
+/* 说明卡的图换底色：体力琥珀、声望浅紫 */
+.dt-bar-info-art.is-warn {
+  background: var(--dt-soft-warning);
+}
+.dt-bar-info-art.is-primary {
+  background: var(--dt-primary-soft);
+}
+.dt-muted {
+  color: var(--dt-muted);
+}
+/* 面板里的一行勾选（星神之书） */
+.dt-check-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  font-size: 14px;
+}
+.dt-check-row > .form-check-input {
+  margin: 0;
+}
+.dt-appraise-fail {
+  min-height: 44px;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+/* 中性的结果块（发射飞弹）：页面底色，不分输赢 */
+.dt-bar-result.is-plain {
+  border-color: transparent;
+  background: var(--dt-surface-2);
+}
+/* 区块下面的一行说明加一个文字按钮（触手商店刷新） */
+.dt-block-foot {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 8px 2px 0;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-block-foot > span {
+  flex: 1 1 auto;
+}
+.dt-block-foot > .dt-link-btn {
+  font-size: 13px;
+  font-weight: 600;
+}
+/* 守护兽：大头像加粗血条 */
+.dt-guardian {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+  padding: 14px;
+}
+.dt-guardian-art {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 96px;
+  height: 96px;
+  border-radius: 20px;
+  background: var(--dt-plate);
+}
+.dt-guardian-main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+.dt-guardian-main > b {
+  font-size: 16px;
+}
+.dt-guardian-hp {
+  margin: 6px 0;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-guardian-hp > b {
+  font-size: 18px;
+}
+.dt-guardian-bar {
+  display: block;
+  height: 12px;
+  border-radius: 6px;
+  background: var(--dt-bar-track);
+  overflow: hidden;
+}
+.dt-guardian-bar > i {
+  display: block;
+  height: 100%;
+  border-radius: 6px;
+  background: var(--dt-fill-danger);
+}
+.dt-guardian-note {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-shot-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.dt-shot-list > span {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--dt-surface);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.dt-shot-list > .is-crit {
+  background: var(--dt-soft-warning);
+  color: var(--dt-ink-warning);
+}
+.dt-shot-list > .is-miss {
+  color: var(--dt-muted);
+}
+.dt-shot-list + .dt-bar-detail {
+  margin-top: 10px;
+}
+/* 试炼：准备、试炼对象（两条进度）、主辅料两个大格子、预计成功率 */
+.dt-trial-ready {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-trial-prep,
+.dt-trial-target,
+.dt-trial-rate {
+  margin-bottom: 12px;
+  padding: 12px;
+}
+.dt-trial-prep > p {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-trial-opts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+.dt-trial-opt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 12px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-lg);
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font: inherit;
+  text-align: left;
+  transition: transform var(--dt-dur-press) var(--dt-ease-out);
+}
+.dt-trial-opt:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.dt-trial-opt > b {
+  font-size: 15px;
+}
+.dt-trial-opt > span:not(.dt-tag-ok) {
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-trial-opt > .dt-tag-ok {
+  margin-top: 4px;
+}
+.dt-trial-label {
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-trial-dish {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+.dt-trial-dish > b {
+  font-size: 18px;
+}
+.dt-trial-meter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-trial-meter > span:first-child {
+  flex-shrink: 0;
+  min-width: 56px;
+}
+.dt-trial-meter > b {
+  min-width: 76px;
+  color: var(--dt-text);
+  text-align: right;
+}
+.dt-trial-acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.dt-trial-slots {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.dt-trial-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  min-height: 116px;
+  padding: 10px 6px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-lg);
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font: inherit;
+  transition: transform var(--dt-dur-press) var(--dt-ease-out);
+}
+.dt-trial-slot:active {
+  transform: scale(0.97);
+}
+.dt-trial-slot.is-empty {
+  border: 1.5px dashed var(--dt-line-strong);
+  background: transparent;
+}
+.dt-trial-slot-k {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dt-muted);
+}
+.dt-trial-slot-n {
+  max-width: 100%;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dt-trial-slot-n > .dt-tag {
+  margin-left: 4px;
+}
+.dt-trial-slot-sub {
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-trial-slot-plus {
+  margin-top: 8px;
+  font-weight: 600;
+  color: var(--dt-primary-ink);
+}
+.dt-trial-rate-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.dt-trial-rate-head > span {
+  flex: 1 1 auto;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-trial-rate-head > b {
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-trial-rate > .dt-meter {
+  height: 6px;
+  border-radius: 3px;
+}
+.dt-trial-rate-note {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+/* 选食材面板：搜索、按等级分组（可收起）、4 列格子；右上角数量、左上角稀有 */
+.dt-trial-search {
+  margin-bottom: 4px;
+  border-radius: 999px;
+}
+.dt-trial-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin: 12px 0 6px;
+  padding: 0 2px;
+  border: 0;
+  background: none;
+  color: var(--dt-muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+.dt-trial-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+.dt-trial-food {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  padding: 14px 2px 6px;
+  border: 1px solid var(--dt-line);
+  border-radius: 14px;
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+}
+.dt-trial-food:disabled {
+  opacity: 0.4;
+}
+.dt-trial-food.is-on {
+  border-color: var(--dt-primary);
+  box-shadow: inset 0 0 0 1px var(--dt-primary);
+  background: var(--dt-primary-soft);
+}
+.dt-trial-food-rare {
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  padding: 0 4px;
+  border-radius: 4px;
+  background: var(--dt-soft-warning);
+  color: var(--dt-ink-warning);
+  font-size: 11px;
+  line-height: 14px;
+}
+.dt-trial-food-num {
+  position: absolute;
+  top: 3px;
+  right: 6px;
+  font-size: 11px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-trial-food-name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dt-trial-food-role {
+  padding: 0 4px;
+  border-radius: 4px;
+  background: var(--dt-primary);
+  color: var(--dt-on-primary);
+  font-size: 11px;
+  line-height: 14px;
+}
+/* 克拉肯：头像、想吃的菜、投喂时段（正在开放的绿色） */
+.dt-kraken {
+  margin-bottom: 12px;
+  padding: 14px;
+}
+.dt-kraken-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.dt-kraken-ava {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--dt-primary-soft);
+}
+.dt-kraken-dish {
+  font-size: 18px;
+}
+.dt-kraken-tags {
+  display: flex;
+  gap: 4px;
+  margin-top: 2px;
+}
+.dt-kraken-time {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-kraken-hour {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--dt-bg);
+  color: var(--dt-text);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.dt-kraken-hour.is-on {
+  background: var(--dt-soft-success);
+  color: var(--dt-ink-success);
+}
+.dt-kraken-state {
+  margin-left: auto;
+}
+/* 厨塔：三块统计、一层一行（层号方块、守护者、右边挑战），点开的面板和对决结果 */
+.dt-tiles-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.dt-duel-rules-row {
+  margin: 12px 0 0;
+}
+.dt-floor-row {
+  padding-right: 12px;
+}
+.dt-floor-row.is-off .dt-floor-open {
+  opacity: 0.6;
+}
+.dt-floor-open {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+.dt-floor-no {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: var(--dt-primary-soft);
+  color: var(--dt-primary-ink);
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.dt-floor-no.is-off {
+  background: var(--dt-bg);
+  color: var(--dt-muted);
+}
+.dt-floor-no.is-big {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  font-size: 24px;
+}
+.dt-floor-open .dt-row-title > .dt-tag-primary,
+.dt-floor-open .dt-row-title > .dt-tag-mute {
+  margin-left: 6px;
+}
+/* 双方厨力对比（一层的面板、对决结果） */
+.dt-duel-vs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-bg);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.dt-duel-vs > div > span {
+  display: block;
+  font-size: 12px;
+  color: var(--dt-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dt-duel-vs > div > b {
+  font-size: 20px;
+}
+.dt-duel-vs-mid {
+  font-weight: 700;
+  color: var(--dt-muted);
+}
+.dt-elder {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-bg);
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-elder > b {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 14px;
+  color: var(--dt-text);
+}
+.dt-elder-line {
+  padding: 2px 0;
+}
+.dt-elder-line > b {
+  color: var(--dt-text);
+  font-weight: 600;
+}
+.dt-duel-head {
+  text-align: center;
+}
+.dt-duel-head > b {
+  display: block;
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-duel-head > .is-win {
+  color: var(--dt-ink-success);
+}
+.dt-duel-head > .is-lose {
+  color: var(--dt-ink-danger);
+}
+.dt-duel-tags {
+  display: inline-flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+.dt-duel .dt-duel-vs {
+  margin-top: 12px;
+  padding: 10px;
+}
+.dt-duel .dt-duel-vs > div > b {
+  font-size: 17px;
+}
+.dt-duel-items {
+  margin-top: 10px;
+}
+.dt-duel-item {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) 48px 48px;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-duel-item > span:not(.dt-duel-bars) {
+  text-align: right;
+}
+.dt-duel-item > .is-win {
+  font-weight: 700;
+  color: var(--dt-ink-success);
+}
+.dt-duel-bars {
+  display: grid;
+  gap: 3px;
+}
+.dt-duel-bars > i {
+  display: block;
+  height: 6px;
+  border-radius: 3px;
+}
+.dt-duel-bars > .is-me {
+  background: var(--dt-primary);
+}
+.dt-duel-bars > .is-them {
+  background: var(--dt-fill-secondary);
+}
+.dt-duel-dishes {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--dt-muted);
+  text-align: center;
+}
+.dt-duel-judges {
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+.dt-duel-judge {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--dt-line);
+  font-size: 13px;
+}
+.dt-duel-judge:first-child {
+  border-top: 0;
+}
+.dt-duel-ava {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--dt-primary-soft);
+  color: var(--dt-primary-ink);
+  overflow: hidden;
+}
+.dt-duel-say {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.dt-duel-drop {
+  margin-top: 8px;
+  font-weight: 700;
+  color: var(--dt-ink-success);
+}
+/* 名次圆章：前三名金、银、铜，我的名次浅紫 */
+.dt-medal {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--dt-plate);
+  color: var(--dt-muted);
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.dt-medal.is-1 {
+  background: var(--dt-medal-gold);
+  color: var(--dt-medal-gold-ink);
+}
+.dt-medal.is-2 {
+  background: var(--dt-medal-silver);
+  color: var(--dt-medal-silver-ink);
+}
+.dt-medal.is-3 {
+  background: var(--dt-medal-bronze);
+  color: var(--dt-medal-bronze-ink);
+}
+.dt-medal.is-me {
+  width: 44px;
+  height: 44px;
+  background: var(--dt-primary-soft);
+  color: var(--dt-primary-ink);
+  font-size: 17px;
+}
+.dt-row-ico:has(> .dt-medal) {
+  background: none;
+}
+.dt-row.is-me {
+  background: var(--dt-primary-soft);
+}
+.dt-row-meta {
+  margin-left: 6px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--dt-muted);
+}
+.dt-row-title > .dt-tag-primary {
+  margin-left: 6px;
 }

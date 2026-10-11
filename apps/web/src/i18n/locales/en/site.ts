@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    play1012:
+      'Bar, Temple and Chef Tower redone: all three have a scene header with your vouchers, Stamina or chef power; the bar home is a grid of the ten games showing how many you have played today and which game is still in progress, each game has its own page, the rules are a short list under How to play, and rewards show with pictures; in the temple, appraising, firing, exploring and feeding pick the amount in a panel, and the trial opens an ingredient panel from the main and side slots; the tower lists one floor per row, a floor opens with its guardian and elder gear, and duel results and judges open from the bottom',
     trade1012:
       'Shop, Exchange, Acquisitions, Ichiban Kuji, Predictions, Delivery and Bank redone: the shop lists one item per row with type filters and a price button that opens a buy panel; the exchange lists one ingredient per row with its change, and the order book and order form open from the bottom, as do futures and bulk bids; acquisition rankings open a panel showing what the owner gets and the tax; kuji shows one row per prize and results in a panel; each prediction has its own page with a chart and your profit either way; delivery shows each requirement with a tick or cross, and you pick the rider in a panel; the hip-hop boy now starts folded into one row',
     pages1011:

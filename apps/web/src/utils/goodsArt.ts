@@ -1,4 +1,4 @@
-import type { ArtName } from '../art/generated/names';
+import { CONTENT_ART, type ArtName } from '../art/generated/names';
 
 /**
  * 道具小类的编号段（和 packages/config/data/game/goods_groups.json 一致，测试会比对）：
@@ -89,6 +89,7 @@ const ART: Record<string, ArtName> = {
   oilSaver: 'goods-oil',
   mouseTrap: 'goods-trap',
   roach: 'goods-bait',
+  honorStatue: 'goods-statue',
 };
 const PREFIX: Array<[string, ArtName]> = [
   ['gift', 'goods-gift'],
@@ -109,8 +110,11 @@ const GEM_TYPES = ['wisdom', 'ruby', 'topaz', 'sapphire', 'emerald', 'astral'] a
 /**
  * 道具的图形（界面改版 P7 仓库格子）：按编号所在小类给图。
  * 宝石按种类分颜色，一~三阶（原石、灵石、神石）是切面宝石，四~六阶（原玉、灵玉、神玉）是圆润的玉（P7 用户反馈：原来都是一张图）
+ * art：目录里单个道具写的配图（P9：飞弹、探险图、鉴定道具），有这张图就用它
  */
-export function goodsArt(id: number): ArtName {
+export function goodsArt(id: number, art?: string): ArtName {
+  const own = art ? `goods-${art}` : null;
+  if (own && (CONTENT_ART as readonly string[]).includes(own)) return own as ArtName;
   const g = goodsGroup(id);
   if (!g) return 'goods-misc';
   const gem = /^gem([1-6])$/.exec(g);

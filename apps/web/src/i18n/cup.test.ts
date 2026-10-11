@@ -32,10 +32,10 @@ describe('猜酒杯的文案（问题记录 427-5 审查）', () => {
   ] as const)('%s：区服把新闻配到第 1 档、只有 1 轮时用单数', (_l, m, plural) => {
     expect(m.news.render['bar.cup']!('W', { round: 1, cups: 2 }, names)).not.toMatch(plural);
     expect(m.news.render['bar.cup.big']!('W', { round: 1, cups: 2 }, names)).not.toMatch(plural);
-    expect(m.bar.cup.rule(1, 1)).not.toMatch(plural);
+    expect(m.bar.cup.sub(1)).not.toMatch(plural);
   });
 
   it('法文的收手或继续用陈述句提问', () => {
-    expect(fr.bar.cup.won('', 2, 3, 5)).toContain('Vous vous arrêtez');
+    expect(fr.bar.cup.won(2, 3, 5)).toContain('Vous vous arrêtez');
   });
 });

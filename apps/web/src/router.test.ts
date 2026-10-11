@@ -35,6 +35,23 @@ describe('routes', () => {
     expect(guard({ query: {} })).toBe(true);
   });
 
+  it('酒吧十个游戏各一页；旧的 /bar?tab=<游戏> 转到 /bar/<游戏>（界面改版 P9）', () => {
+    const games = ['fg', 'cup', 'num', 'slot', 'devil', 'memory', 'darts', 'nim', 'spice', 'deal'];
+    for (const g of games) {
+      const r = routes.find((x) => x.path === `/bar/${g}`);
+      expect(r, g).toBeDefined();
+      expect(r!.props).toEqual({ game: g });
+      expect(r!.meta).toMatchObject({ needRestaurant: true, parent: '/bar' });
+    }
+    const bar = routes.find((r) => r.path === '/bar')!;
+    const guard = bar.beforeEnter as (to: { query: Record<string, string> }) => unknown;
+    expect(guard({ query: { tab: 'slot' } })).toBe('/bar/slot');
+    expect(guard({ query: { tab: 'deal' } })).toBe('/bar/deal');
+    // 不认识的标签、没有标签：留在酒吧首页
+    expect(guard({ query: { tab: 'poker' } })).toBe(true);
+    expect(guard({ query: {} })).toBe(true);
+  });
+
   it('旧的教室地址跳到协会的教室（问题记录 122、441）', () => {
     expect(routes.find((r) => r.path === '/classroom')?.redirect).toBe('/society/classroom');
   });

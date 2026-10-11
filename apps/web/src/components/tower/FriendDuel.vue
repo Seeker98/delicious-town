@@ -6,6 +6,7 @@ import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useToastStore } from '../../stores/toast';
+import DtSheet from '../DtSheet.vue';
 import DuelResult from './DuelResult.vue';
 import DuelRules from './DuelRules.vue';
 
@@ -15,6 +16,8 @@ const t = useT();
 const info = ref<DuelInfoDto | null>(null);
 const last = ref<DuelResultDto | null>(null);
 const busy = ref(false);
+/** 切磋结果从下面弹出（界面改版 P9，和厨塔一样） */
+const resultOpen = ref(false);
 /** 区服没开放厨塔：整块不显示 */
 const disabled = ref(false);
 
@@ -41,6 +44,7 @@ async function duel() {
   busy.value = true;
   try {
     last.value = await endpoints.friendDuel(props.restId);
+    resultOpen.value = true;
     await load();
   } catch (e) {
     toast.push(errorMessage(e, t.value.tower.friend.failed), 'danger');
@@ -62,7 +66,14 @@ onMounted(load);
       {{ t.tower.friend.btn }}{{ info ? t.tower.friend.left(info.left) : '' }}
     </button>
     <span v-if="block" class="small text-danger ms-1" data-testid="duel-block">{{ block }}</span>
-    <DuelResult v-if="last" :result="last" />
+    <DtSheet :open="resultOpen && !!last" :title="t.tower.duel.resultTitle" @close="resultOpen = false">
+      <DuelResult v-if="last" :result="last" />
+      <template #actions>
+        <button type="button" class="btn btn-light dt-btn-block" @click="resultOpen = false">
+          {{ t.tower.duel.ok }}
+        </button>
+      </template>
+    </DtSheet>
     <!-- 切磋过一次再给规则（问题记录 396），平时只是好友店里的一个按钮 -->
     <DuelRules v-if="last" class="mt-1" :judge-count="last.judgeCount" :weights="last.weights" />
   </div>

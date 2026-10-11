@@ -6,6 +6,7 @@ import { parentPath, routeTitle } from '../nav/routeMeta';
 import { useMailStore } from '../stores/mail';
 import { usePageTitleStore } from '../stores/pageTitle';
 import { useRestaurantStore } from '../stores/restaurant';
+import DtArt from './DtArt.vue';
 import HeaderClock from './HeaderClock.vue';
 
 /**
@@ -71,6 +72,15 @@ function back() {
     </button>
     <h1 class="dt-header-title dt-clamp1" data-testid="page-title">{{ title }}</h1>
     <template v-if="inGame">
+      <!-- 页面的余额胶囊（界面改版 P9：酒吧游戏页） -->
+      <span
+        v-if="pageTitle.chip"
+        class="dt-header-chip"
+        role="img"
+        :aria-label="pageTitle.chip.label"
+        data-testid="header-chip"
+        ><DtArt :name="pageTitle.chip.art" :size="18" />{{ pageTitle.chip.text }}</span
+      >
       <!-- 当前时间（问题记录 348） -->
       <HeaderClock class="dt-header-clock" />
       <RouterLink

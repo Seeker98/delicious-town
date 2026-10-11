@@ -177,6 +177,7 @@ export function createWorldService(d: GameDeps) {
             }
           : {}),
         ...(g.gem ? { gem: { level: g.gem.level, nextId: g.gem.nextId } } : {}),
+        ...(g.art ? { art: g.art } : {}),
       })),
       foods: d.config.bundle.foods.map((f) => ({
         id: f.id,

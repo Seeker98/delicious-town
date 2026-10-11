@@ -6,6 +6,7 @@ import {
   type Router,
   type RouteRecordRaw,
 } from 'vue-router';
+import { BAR_GAMES, isBarGame } from './utils/barGames';
 import { goOrReload, installChunkReload } from './utils/chunkReload';
 import { resolveGuard, type RouteFlags } from './guard';
 import { activeMessages } from './i18n';
@@ -146,7 +147,22 @@ export const routes: RouteRecordRaw[] = [
     name: 'bar',
     component: () => import('./views/BarView.vue'),
     meta: { needRestaurant: true, section: 'map', title: T((t) => t.bar.title), parent: '/map' },
+    // 原来十个游戏是标签（?tab=）：旧链接跳到游戏页（界面改版 P9）
+    beforeEnter: (to) => (isBarGame(to.query.tab) ? `/bar/${to.query.tab}` : true),
   },
+  // 每个游戏单独一页（界面改版 P9）
+  ...BAR_GAMES.map((game) => ({
+    path: `/bar/${game}`,
+    name: `bar-${game}`,
+    component: () => import('./views/BarGameView.vue'),
+    props: { game },
+    meta: {
+      needRestaurant: true,
+      section: 'map' as const,
+      title: T((t) => t.bar.tabs[game]),
+      parent: '/bar',
+    },
+  })),
   {
     path: '/tower',
     name: 'tower',

@@ -11,6 +11,7 @@ import type {
 import type { Locale } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { CONTENT_ART, type ArtName } from '../art/generated/names';
+import { goodsArt } from '../utils/goodsArt';
 import { activeLocale } from '../i18n';
 import { setNameResolver } from '../i18n/zh-CN';
 import { activeMessages } from '../i18n';
@@ -152,6 +153,10 @@ export const useCatalogStore = defineStore('catalog', {
     },
     mc(id: number): CatalogMcDto | undefined {
       return this.mcMap.get(id);
+    },
+    /** 道具配图：目录里单个道具写了 art 就用它，否则按小类（界面改版 P9） */
+    goodsArt(id: number): ArtName {
+      return goodsArt(id, this.goodsMap.get(id)?.art);
     },
     goods(id: number): CatalogGoodsDto | undefined {
       return this.goodsMap.get(id);

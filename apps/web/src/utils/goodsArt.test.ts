@@ -26,6 +26,21 @@ describe('道具图形（界面改版 P7 仓库格子）', () => {
     expect(goodsArt(50001)).toBe('goods-gem-wisdom');
     expect(goodsArt(50506)).toBe('goods-jade-astral');
     expect(goodsArt(99999)).toBe('goods-misc');
+    expect(goodsArt(61603)).toBe('goods-statue');
+  });
+
+  it('目录里单个道具写了 art 就用 goods-<art>；没这张图时退回小类的图（界面改版 P9）', () => {
+    expect(goodsArt(10702, 'missile')).toBe('goods-missile');
+    expect(goodsArt(10702, 'nope')).toBe('goods-scroll');
+  });
+
+  it('配置里每个写了 art 的道具都有图形 goods-<art>（界面改版 P9）', () => {
+    const file = JSON.parse(
+      readFileSync(join(__dirname, '../../../../packages/config/data/master/goods.json'), 'utf8'),
+    ) as { data: Array<{ id: number; art?: string }> };
+    const arts = file.data.filter((g) => g.art);
+    expect(arts.length).toBeGreaterThan(0);
+    for (const g of arts) expect(CONTENT_ART, String(g.id)).toContain(`goods-${g.art}`);
   });
 
   it('每个小类给的图都在雪碧图里（宝石六阶都查）', () => {

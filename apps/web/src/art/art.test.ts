@@ -11,6 +11,7 @@ const svgs = (dir: string) =>
     .filter((n) => n.endsWith('.svg'))
     .map((n) => ({ name: n.slice(0, -4), src: readFileSync(join(ROOT, dir, n), 'utf8') }));
 const UI = svgs('ui');
+const SCENE_SIZE: Record<string, string> = { bar: '390 196', temple: '390 120', tower: '390 120' };
 const CONTENT = svgs('content');
 
 describe('图形（界面改版 P1，设计 §3）', () => {
@@ -39,7 +40,7 @@ describe('图形（界面改版 P1，设计 §3）', () => {
   });
 
   it('内容图形以分类前缀开头', () => {
-    for (const { name } of CONTENT) expect(name).toMatch(/^(res|food|goods|npc|empty|door|avatar)-/);
+    for (const { name } of CONTENT) expect(name).toMatch(/^(res|food|goods|npc|empty|door|avatar|game)-/);
   });
 
   it('生成的名字表和源文件一致（改了图形要跑 pnpm -F @dt/web art）', () => {
@@ -49,13 +50,15 @@ describe('图形（界面改版 P1，设计 §3）', () => {
     expect(new Set(all).size).toBe(all.length);
   });
 
-  it('头图（界面改版 P3）：名字规则、320×72、没有脚本和外链', () => {
+  it('头图（界面改版 P3、P9）：名字规则、尺寸、没有脚本和外链', () => {
     const scenes = readdirSync(join(ROOT, 'scene')).filter((n) => n.endsWith('.svg'));
     expect(scenes).toContain('restaurant.svg');
     for (const n of scenes) {
       const src = readFileSync(join(ROOT, 'scene', n), 'utf8');
       expect(n.slice(0, -4), n).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
-      expect(src.startsWith('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 72">'), n).toBe(true);
+      // 店面 320×72；酒吧首页 390×196，神殿、厨塔 390×120（P9：放在页面顶上整宽）
+      const size = SCENE_SIZE[n.slice(0, -4)] ?? '320 72';
+      expect(src.startsWith(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size}">`), n).toBe(true);
       expect(src, n).not.toMatch(/<script|<style|href=|<image|<text/i);
     }
   });

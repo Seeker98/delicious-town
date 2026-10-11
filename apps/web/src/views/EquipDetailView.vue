@@ -6,7 +6,6 @@ import { endpoints } from '../api/endpoints';
 import type { UiArtName } from '../art/generated/names';
 import DtArt from '../components/DtArt.vue';
 import DtSheet from '../components/DtSheet.vue';
-import { goodsArt } from '../utils/goodsArt';
 import { useT } from '../composables/useT';
 import { activeMessages } from '../i18n';
 import { errorMessage } from '../i18n/zh-CN';
@@ -359,7 +358,7 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, t.value.equip
             :data-testid="`gem-${g.id}`"
             @click="gemSheet = g"
           >
-            <DtArt :name="goodsArt(g.goodsId)" :size="30" />
+            <DtArt :name="catalog.goodsArt(g.goodsId)" :size="30" />
             <span class="dt-hole-lv" aria-hidden="true">{{ g.level }}</span>
           </button>
           <button

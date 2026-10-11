@@ -4,30 +4,46 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import DuelResult from './DuelResult.vue';
 import { duelResult } from './testData';
 
+/** 标题下面的小标签：声望、名次 */
+const tags = (w: ReturnType<typeof mount>) => w.findAll('.dt-duel-tags .dt-tag').map((x) => x.text());
+
 describe('DuelResult', () => {
   beforeEach(() => setActivePinia(createPinia()));
 
   it('胜负和声望；五项并排，赢的一项加粗；奖励', () => {
     const w = mount(DuelResult, { props: { result: duelResult() } });
-    expect(w.find('[data-testid="duel-headline"]').text()).toBe('你赢了 3:1, 声望 +7');
-    const first = w.findAll('tbody tr')[0]!.findAll('td');
-    expect(first[0]!.text()).toBe('20.4');
-    expect(first[0]!.classes()).toContain('fw-bold');
-    expect(first[1]!.classes()).not.toContain('fw-bold');
-    expect(w.text()).toContain('我的店 (厨力 70)');
-    expect(w.find('[data-testid="duel-awards"]').text()).toBe('得到 银币 600');
+    expect(w.find('[data-testid="duel-headline"]').text()).toBe('你赢了 3:1');
+    expect(tags(w)).toEqual(['声望 +7']);
+    const items = w.findAll('[data-testid="duel-item"]');
+    expect(items).toHaveLength(5);
+    expect(items[0]!.find('b').text()).toBe('色');
+    const first = items[0]!.findAll(':scope > span:not(.dt-duel-bars)');
+    // 数字前有读屏用的“我 / 对手”（P9 终审 M8）
+    expect(first[0]!.text()).toBe('我 20.4');
+    expect(first[0]!.classes()).toContain('is-win');
+    expect(first[1]!.text()).toBe('对手 8.1');
+    expect(first[1]!.classes()).not.toContain('is-win');
+    const vs = w.get('.dt-duel-vs').text();
+    expect(vs).toContain('我的店');
+    expect(vs).toContain('厨力 70');
+    expect(w.get('[data-testid="duel-awards"]').text()).toContain('得到');
+    const chips = w.get('[data-testid="duel-awards"]').findAll('[data-testid="award-chip"]');
+    expect(chips.map((x) => x.text())).toEqual(['银币 600']);
   });
 
   it('试打没有声望；赛厨榜写新名次；输了', () => {
     const test = mount(DuelResult, { props: { result: duelResult({ test: true, renown: 0, awards: [] }) } });
     expect(test.find('[data-testid="duel-headline"]').text()).toBe('试打: 赢了 3:1');
+    expect(tags(test)).toEqual([]);
     expect(test.find('[data-testid="duel-awards"]').exists()).toBe(false);
     const rank = mount(DuelResult, { props: { result: duelResult({ renown: 2, rank: 1 }) } });
-    expect(rank.find('[data-testid="duel-headline"]').text()).toBe('你赢了 3:1, 声望 +2, 你现在是第 1 名');
+    expect(rank.find('[data-testid="duel-headline"]').text()).toBe('你赢了 3:1');
+    expect(tags(rank)).toEqual(['声望 +2', '现在第 1 名']);
     const lose = mount(DuelResult, {
       props: { result: duelResult({ win: false, renown: -2, awards: [], votes: [1, 3] }) },
     });
-    expect(lose.find('[data-testid="duel-headline"]').text()).toBe('你输了 1:3, 声望 -2');
+    expect(lose.find('[data-testid="duel-headline"]').text()).toBe('你输了 1:3');
+    expect(tags(lose)).toEqual(['声望 -2']);
   });
 
   it('评委按上场顺序点评：逐项写胜负、比分，这一票给谁（问题记录 396、431）', () => {
@@ -36,9 +52,12 @@ describe('DuelResult', () => {
     const rows = w.findAll('[data-testid="duel-judge"]');
     expect(rows).toHaveLength(4);
     // 老乔（原来的卡门）看色、香；戈登（原来的老穷头）看形、养
-    expect(rows[0]!.text()).toContain('【老乔 点评 我】: 以[色]大获全胜, 以[香]大获全胜, 比分 39.8:16.1');
+    // 头像 + 加粗的名字 + 点评，接着是这一票给谁
+    const say0 = rows[0]!.get('.dt-duel-say');
+    expect(say0.get('b').text()).toBe('老乔');
+    expect(say0.text()).toBe('老乔 以[色]大获全胜, 以[香]大获全胜, 比分 39.8:16.1');
     expect(rows[0]!.text()).toContain('投给你');
-    expect(rows[1]!.text()).toContain('【戈登 点评 我】');
+    expect(rows[1]!.get('.dt-duel-say b').text()).toBe('戈登');
     expect(rows[1]!.text()).toContain('投给对方');
     expect(w.text()).not.toMatch(/卡门|老穷头|总和/);
   });
@@ -103,7 +122,7 @@ describe('DuelResult', () => {
     const w = mount(DuelResult, {
       props: { result: duelResult({ judges: [{ id: 'newbie' as never, me: 12, them: 10 }], votes: [1, 0] }) },
     });
-    expect(w.find('[data-testid="duel-judge"]').text()).toContain('【newbie 点评 我】: 比分 12:10');
+    expect(w.get('[data-testid="duel-judge"] .dt-duel-say').text()).toBe('newbie 比分 12:10');
     expect(w.find('[data-testid="duel-judge"]').text()).not.toContain('undefined');
   });
 
@@ -119,13 +138,14 @@ describe('DuelResult', () => {
 
   it('传了对手的显示名（厨塔楼层的译名）就用它，不用服务器给的中文名（视觉第三轮）', () => {
     const w = mount(DuelResult, { props: { result: duelResult(), themName: 'Restaurant modèle' } });
-    expect(w.find('thead').text()).toContain('Restaurant modèle');
-    expect(w.find('thead').text()).not.toContain('见习模范餐厅');
+    expect(w.get('.dt-duel-vs').text()).toContain('Restaurant modèle');
+    expect(w.get('.dt-duel-vs').text()).not.toContain('见习模范餐厅');
   });
 
   it('票数持平时标题写明按总分定胜负', () => {
     const w = mount(DuelResult, { props: { result: duelResult({ votes: [2, 2] }) } });
-    expect(w.find('[data-testid="duel-headline"]').text()).toBe('你赢了 2:2 (票数相同, 比总分), 声望 +7');
+    expect(w.find('[data-testid="duel-headline"]').text()).toBe('你赢了 2:2 (票数相同, 比总分)');
+    expect(tags(w)).toEqual(['声望 +7']);
   });
 
   it('换了一局结果时评委列表整个重画，动画从头播（同一位评委也重新淡入）', async () => {

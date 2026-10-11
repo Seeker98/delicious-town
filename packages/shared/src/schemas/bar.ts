@@ -102,6 +102,8 @@ export interface BarDto {
     max: number;
     flashMs: number;
     gapMs: number;
+    /** 每关配方几种配料（界面改版 P9：关卡进度条） */
+    lengths: number[];
     /** 进行中的局；本关没答对时带配方和剩余作答毫秒，刷新页面后可以接着玩（终审 I2） */
     round: { level: number; passed: boolean; seq: number[] | null; leftMs: number | null } | null;
   };

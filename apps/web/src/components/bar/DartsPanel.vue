@@ -4,9 +4,9 @@ import type { BarDto, DartsAimDto, DartsThrowDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
-import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
-import { awardText } from './award';
+import AwardChip from './AwardChip.vue';
+import BarInfo from './BarInfo.vue';
 import { roundGone } from './gone';
 
 /** 准星位置：三角波，和服务端 dartX 同一个公式；返回 [-1, 1] */
@@ -15,9 +15,14 @@ function dartX(elapsedMs: number, period: number, phase: number): number {
   return p < 0.5 ? -1 + 4 * p : 3 - 4 * p;
 }
 
+/** 靶条从左到右的分区（和区服数值 rings 一致：半径 0.05/0.15/0.3/0.5 内是 50/25/10/5 分），宽度见样式 */
+const ZONES = [0, 5, 10, 25, 50, 25, 10, 5, 0] as const;
+
+/**
+ * 飞镖（界面改版 P9）：上面三镖的分数，中间靶条和左右摆动的准星，下面整宽的瞄准 / 投掷按钮
+ */
 const props = defineProps<{ data: BarDto }>();
 const emit = defineEmits<{ reload: [] }>();
-const catalog = useCatalogStore();
 const toast = useToastStore();
 const t = useT();
 const busy = ref(false);
@@ -115,81 +120,99 @@ const resultText = computed(() => {
   if (!r?.finished || !r.boss) return '';
   const d = t.value.bar.darts;
   const head = d.head(sum(r.throws), sum(r.boss));
-  if (r.result === 'win') return `${head}${d.win(r.award ? d.got(awardText(r.award, catalog)) : '')}`;
+  if (r.result === 'win') return `${head}${d.win('')}`;
   if (r.result === 'draw') return `${head}${d.draw(r.refund ?? 0)}`;
   return `${head}${d.lose}`;
 });
 </script>
 
 <template>
-  <div class="small">
-    <div class="dt-meta mb-2">
-      {{ t.bar.darts.rule }}
-    </div>
-    <div class="dt-meta mb-2" data-testid="darts-played">
-      {{ t.bar.todayPlayed(data.darts.played, data.darts.max, data.darts.cost) }}
-    </div>
-
-    <div class="dt-board mb-2" role="img" :aria-label="t.bar.darts.board">
-      <div class="dt-board-ring dt-board-r5"></div>
-      <div class="dt-board-ring dt-board-r10"></div>
-      <div class="dt-board-ring dt-board-r25"></div>
-      <div class="dt-board-ring dt-board-r50"></div>
+  <BarInfo
+    game="darts"
+    :title="t.bar.darts.title(data.darts.cost)"
+    :sub="t.bar.darts.sub(data.darts.played, data.darts.max)"
+  />
+  <section class="dt-card dt-bar-stage">
+    <div class="dt-darts-throws" data-testid="darts-throws">
       <div
+        v-for="i in 3"
+        :key="i"
+        :class="['dt-darts-throw', { 'is-now': !!throws && !last?.finished && throws.length === i - 1 }]"
+      >
+        <span>{{ t.bar.darts.nth(i) }}</span>
+        <b>{{ throws && throws[i - 1] !== undefined ? throws[i - 1] : '?' }}</b>
+      </div>
+    </div>
+    <div class="dt-darts-board" role="img" :aria-label="t.bar.darts.board">
+      <div class="dt-darts-zones" aria-hidden="true">
+        <span v-for="(z, i) in ZONES" :key="i" :class="`is-${z}`">{{ z }}</span>
+      </div>
+      <span
         v-if="(aim || last) && !invalid"
-        class="dt-board-marker"
+        class="dt-darts-marker"
         :style="{ left: pct }"
         data-testid="darts-marker"
-      ></div>
+      ></span>
     </div>
-    <div v-if="invalid && !aim" class="text-danger mb-2" aria-live="polite" data-testid="darts-invalid">
+    <p v-if="invalid && !aim" class="dt-bar-block" aria-live="polite" data-testid="darts-invalid">
       {{ t.bar.darts.invalid }}
-    </div>
+    </p>
+    <p v-else-if="aim" class="dt-bar-label dt-darts-hint">{{ t.bar.darts.hint }}</p>
+  </section>
 
-    <div v-if="throws && throws.length > 0" class="mb-2" data-testid="darts-throws">
-      <span v-for="(s, i) in throws" :key="i" class="me-2">{{ t.bar.darts.throwLine(i + 1, s) }}</span>
+  <section
+    v-if="last?.finished"
+    :class="['dt-bar-result', last.result === 'win' ? 'is-ok' : last.result === 'draw' ? '' : 'is-bad']"
+    aria-live="polite"
+    data-testid="darts-result"
+  >
+    <b>{{ resultText }}</b>
+    <div class="dt-bar-detail">{{ t.bar.darts.bossThrows(last.boss?.join(' / ') ?? '') }}</div>
+    <div v-if="last.award" class="dt-award-chips"><AwardChip :award="last.award" /></div>
+    <button
+      type="button"
+      class="btn btn-outline-primary dt-btn-block"
+      data-testid="darts-again"
+      @click="again"
+    >
+      {{ t.bar.again }}
+    </button>
+  </section>
+  <template v-else-if="throws">
+    <button
+      v-if="!aim"
+      type="button"
+      class="btn btn-outline-primary dt-btn-block dt-bar-go"
+      :disabled="busy"
+      data-testid="darts-aim"
+      @click="doAim"
+    >
+      {{ t.bar.darts.aim(throws.length + 1) }}
+    </button>
+    <button
+      v-else
+      type="button"
+      class="btn btn-primary dt-btn-block dt-bar-go is-big"
+      :disabled="busy"
+      data-testid="darts-throw"
+      @click="doThrow"
+    >
+      {{ t.bar.darts.throw }}
+    </button>
+  </template>
+  <template v-else>
+    <button
+      type="button"
+      class="btn btn-primary dt-btn-block dt-bar-go"
+      :disabled="busy || limited || data.tickets < data.darts.cost"
+      data-testid="darts-start"
+      @click="start"
+    >
+      {{ t.bar.darts.start }}
+    </button>
+    <div v-if="limited" class="dt-bar-block">{{ t.bar.noMoreToday }}</div>
+    <div v-else-if="data.tickets < data.darts.cost" class="dt-bar-block">
+      {{ t.bar.noTicketsEach(data.darts.cost) }}
     </div>
-
-    <template v-if="last?.finished">
-      <div
-        :class="[
-          'fw-bold',
-          last.result === 'win' ? 'text-success' : last.result === 'draw' ? '' : 'text-danger',
-        ]"
-        aria-live="polite"
-        data-testid="darts-result"
-      >
-        {{ resultText }}
-      </div>
-      <div class="dt-meta">{{ t.bar.darts.bossThrows(last.boss?.join(' / ') ?? '') }}</div>
-      <button class="btn btn-sm btn-outline-primary mt-2" data-testid="darts-again" @click="again">
-        {{ t.bar.again }}
-      </button>
-    </template>
-    <template v-else-if="throws">
-      <button
-        v-if="!aim"
-        class="btn btn-sm btn-outline-primary"
-        :disabled="busy"
-        data-testid="darts-aim"
-        @click="doAim"
-      >
-        {{ t.bar.darts.aim(throws.length + 1) }}
-      </button>
-      <button v-else class="btn btn-primary" :disabled="busy" data-testid="darts-throw" @click="doThrow">
-        {{ t.bar.darts.throw }}
-      </button>
-    </template>
-    <template v-else>
-      <button
-        class="btn btn-sm btn-primary"
-        :disabled="busy || limited || data.tickets < data.darts.cost"
-        data-testid="darts-start"
-        @click="start"
-      >
-        {{ t.bar.darts.start }}
-      </button>
-      <span v-if="limited" class="text-danger ms-1">{{ t.bar.noMoreToday }}</span>
-    </template>
-  </div>
+  </template>
 </template>

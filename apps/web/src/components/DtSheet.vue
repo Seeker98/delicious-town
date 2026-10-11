@@ -6,7 +6,8 @@ import { nextTick, onBeforeUnmount, ref, useId, watch } from 'vue';
  * Esc、点遮罩关掉；打开时焦点进面板，关掉回到原来的按钮；“减少动态效果”时只淡入不滑动
  */
 /** top：确认面板用，永远压在别的面板上面（P7 终审 C1：后挂载的页面面板会盖住确认面板） */
-const props = defineProps<{ open: boolean; title: string; top?: boolean }>();
+/** focusPanel：打开时焦点放在面板本身，不放进第一个输入框（P9 试炼选料：一打开就弹出手机键盘） */
+const props = defineProps<{ open: boolean; title: string; top?: boolean; focusPanel?: boolean }>();
 const emit = defineEmits<{ close: [] }>();
 const titleId = `dt-sheet-${useId()}`;
 const panel = ref<HTMLElement | null>(null);
@@ -26,7 +27,7 @@ function opened() {
       // 跳过灰掉的：步进器的“−”在数量为 1 时是灰的，聚焦它没用，焦点会留在面板外面（P6 审查 I1）
       'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled)',
     );
-    (first ?? panel.value)?.focus();
+    (props.focusPanel ? panel.value : (first ?? panel.value))?.focus();
   });
 }
 function closed() {

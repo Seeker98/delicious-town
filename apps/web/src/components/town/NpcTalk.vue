@@ -10,7 +10,8 @@ import { rewardText } from '../../utils/rewards';
 import { talkText } from '../../utils/serverText';
 
 /** 和一位 NPC 每天聊一次（雯姐在酒吧，问题记录 453；镇长大胃锅、13 哥在协会，卡门只有一次见面礼，问题记录 441） */
-const props = defineProps<{ talked: boolean; npc: NpcKey }>();
+/** compact：只有一个按钮（界面改版 P9：放进酒吧雯姐卡片右边），label 是按钮上的字 */
+const props = defineProps<{ talked: boolean; npc: NpcKey; compact?: boolean; label?: string }>();
 const emit = defineEmits<{ reload: [] }>();
 const catalog = useCatalogStore();
 const toast = useToastStore();
@@ -41,7 +42,17 @@ async function talk() {
 </script>
 
 <template>
-  <div class="dt-item">
+  <button
+    v-if="compact"
+    type="button"
+    class="btn btn-sm btn-outline-primary text-nowrap"
+    :disabled="busy || talked"
+    :data-testid="`talk-${npc}`"
+    @click="talk"
+  >
+    {{ talked ? t.town.talkedToday : (label ?? t.town.talk) }}
+  </button>
+  <div v-else class="dt-item">
     <div class="dt-item-main">
       <div class="dt-item-title">{{ t.town.npcs[npc].name }}</div>
       <div class="dt-meta">{{ t.town.npcs[npc].desc }}</div>

@@ -39,12 +39,18 @@ describe('第 4a 批酒吧、厨塔按语言（问题记录 272）', () => {
       awards: [],
     } as unknown as DuelResultDto;
     const w = mount(DuelResult, { props: { result } });
-    expect(w.find('[data-testid="duel-headline"]').text()).toBe("You won 3–1, Renown +5, you're now #3");
+    // 界面改版 P9：标题只写比分，声望和新名次是下面的标签
+    expect(w.find('[data-testid="duel-headline"]').text()).toBe('You won 3–1');
+    expect(w.findAll('.dt-duel-tags .dt-tag').map((x) => x.text())).toEqual(['Renown +5', 'Now #3']);
     // 问题记录 431：评委逐项点评，卡门、老穷头换成老乔（Joe）、戈登（Gordon）
-    expect(w.text()).toContain("Joe's verdict: ");
-    expect(w.text()).toContain("Gordon's verdict: ");
+    expect(w.findAll('[data-testid="duel-judge"] .dt-duel-say b').map((x) => x.text())).toEqual([
+      'Joe',
+      'Gordon',
+    ]);
     expect(w.text()).toContain('score 30:20');
-    expect(w.text()).toContain('Me (Chef power 100)');
+    const vs = w.get('.dt-duel-vs').text();
+    expect(vs).toContain('Me');
+    expect(vs).toContain('Chef power 100');
     expect(w.text()).not.toMatch(/[一-鿿]/);
   });
 });

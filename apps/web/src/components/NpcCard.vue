@@ -17,8 +17,12 @@ const ICON: Record<NpcCardKey, string> = {
   fanDao: 'bi-search',
   xiaoKai: 'bi-flag',
 };
-/** 已经画了头像的 NPC（界面改版 P8） */
-const ART: Partial<Record<NpcCardKey, ArtName>> = { gary: 'npc-gary', garyWealth: 'npc-gary' };
+/** 已经画了头像的 NPC（界面改版 P8；P9 加了饭老道） */
+const ART: Partial<Record<NpcCardKey, ArtName>> = {
+  gary: 'npc-gary',
+  garyWealth: 'npc-gary',
+  fanDao: 'npc-fandao',
+};
 const props = defineProps<{ npc: NpcCardKey }>();
 const t = useT();
 const lines = computed(() => t.value.npc[props.npc].lines.map((text) => ({ text, weight: 1 })));

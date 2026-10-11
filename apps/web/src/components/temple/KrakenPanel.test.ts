@@ -26,6 +26,9 @@ const shop = {
   tentacles: 5,
 };
 
+/** 数量面板用 Teleport 挂到 body 上：测试里把 teleport 桩掉，面板内容就留在 wrapper 里（同 ShopView.test） */
+const stubs = { teleport: true };
+
 describe('KrakenPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -56,6 +59,7 @@ describe('KrakenPanel', () => {
 
   it('不在投喂时段：按钮灰掉并写明时段', async () => {
     const w = mount(KrakenPanel, {
+      global: { stubs },
       props: {
         data: templeData({
           kraken: {
@@ -72,12 +76,18 @@ describe('KrakenPanel', () => {
       },
     });
     await flushPromises();
-    expect(w.find('[data-testid="kraken-feed"]').attributes('disabled')).toBeDefined();
-    expect(w.find('[data-testid="block"]').text()).toContain('11~14 点');
+    expect(w.find('[data-testid="kraken-target"]').text()).toBe('秘·仿膳饽饽');
+    expect(w.find('[data-testid="kraken-state"]').text()).toBe('现在不是投喂时间');
+    await w.find('[data-testid="kraken-open"]').trigger('click');
+    expect(w.find('[data-testid="qty-ok"]').attributes('disabled')).toBeDefined();
+    const reason = w.find('[data-testid="qty-reason"]').text();
+    expect(reason).toContain('11~14 点');
+    expect(reason).toContain('17~21 点');
   });
 
   it('投喂份数不超过 剩余 − 1；显示结果；触手商店兑换', async () => {
     const w = mount(KrakenPanel, {
+      global: { stubs },
       props: {
         data: templeData({
           kraken: {
@@ -91,12 +101,19 @@ describe('KrakenPanel', () => {
       },
     });
     await flushPromises();
+    expect(w.find('[data-testid="kraken-current"]').text()).toContain('剩 10 份');
+    await w.find('[data-testid="kraken-open"]').trigger('click');
     await w.find('[data-testid="kraken-num"]').setValue('99');
-    await w.find('[data-testid="kraken-feed"]').trigger('click');
+    await w.find('[data-testid="qty-ok"]').trigger('click');
     await flushPromises();
     expect(endpoints.krakenFeed).toHaveBeenCalledWith(9);
     expect(w.find('[data-testid="kraken-result"]').text()).toContain('好感度 9');
-    expect(w.find('[data-testid="tentacle-1"]').attributes('disabled')).toBeDefined();
+    expect(w.emitted('reload')).toBeTruthy();
+    expect(w.find('[data-testid="tentacles"]').text()).toContain('5');
+    // 兑换过的那张写“已兑换”，没有价格按钮
+    expect(w.find('[data-testid="tentacle-slot-1"]').text()).toContain('已兑换');
+    expect(w.find('[data-testid="tentacle-1"]').exists()).toBe(false);
+    expect(w.find('[data-testid="tentacle-0"]').text()).toContain('4 条');
     await w.find('[data-testid="tentacle-0"]').trigger('click');
     await flushPromises();
     expect(endpoints.tentacleExchange).toHaveBeenCalledWith(0);
