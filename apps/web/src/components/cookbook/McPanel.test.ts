@@ -3,12 +3,12 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { McOverviewDto } from '@dt/shared';
-import { endpoints } from '../api/endpoints';
-import { useCatalogStore } from '../stores/catalog';
-import { useToastStore } from '../stores/toast';
-import McView from './McView.vue';
+import { endpoints } from '../../api/endpoints';
+import { useCatalogStore } from '../../stores/catalog';
+import { useToastStore } from '../../stores/toast';
+import McPanel from './McPanel.vue';
 
-vi.mock('../api/endpoints', () => ({
+vi.mock('../../api/endpoints', () => ({
   endpoints: {
     mc: vi.fn(),
     mcExchange: vi.fn(),
@@ -54,12 +54,12 @@ const overview: McOverviewDto = {
 function mountView() {
   const router = createRouter({
     history: createMemoryHistory(),
-    routes: [{ path: '/:p(.*)*', component: McView }],
+    routes: [{ path: '/:p(.*)*', component: McPanel }],
   });
-  return mount(McView, { global: { plugins: [router] } });
+  return mount(McPanel, { global: { plugins: [router] } });
 }
 
-describe('McView', () => {
+describe('McPanel', () => {
   beforeEach(() => {
     localStorage.clear();
     vi.clearAllMocks();

@@ -3,11 +3,11 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { CookbookProgressDto } from '@dt/shared';
-import { endpoints } from '../api/endpoints';
-import { useCatalogStore } from '../stores/catalog';
-import CookbookProgressView from './CookbookProgressView.vue';
+import { endpoints } from '../../api/endpoints';
+import { useCatalogStore } from '../../stores/catalog';
+import ProgressPanel from './ProgressPanel.vue';
 
-vi.mock('../api/endpoints', () => ({ endpoints: { cookbookProgress: vi.fn() } }));
+vi.mock('../../api/endpoints', () => ({ endpoints: { cookbookProgress: vi.fn() } }));
 
 const data: CookbookProgressDto = {
   maxGrade: 3,
@@ -23,7 +23,7 @@ async function mountView() {
     history: createMemoryHistory(),
     routes: [{ path: '/:p(.*)*', component: {} }],
   });
-  const w = mount(CookbookProgressView, { global: { plugins: [router] } });
+  const w = mount(ProgressPanel, { global: { plugins: [router] } });
   await flushPromises();
   return w;
 }
@@ -98,7 +98,7 @@ describe('进度一览加载中（backlog）', () => {
       history: createMemoryHistory(),
       routes: [{ path: '/:p(.*)*', component: {} }],
     });
-    const w = mount(CookbookProgressView, { global: { plugins: [router] } });
+    const w = mount(ProgressPanel, { global: { plugins: [router] } });
     await flushPromises();
     expect(w.get('[data-testid="progress-loading"]').text()).toBe('加载中……');
   });

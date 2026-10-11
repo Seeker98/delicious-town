@@ -133,12 +133,8 @@ export const routes: RouteRecordRaw[] = [
       parent: '/rest/equip',
     },
   },
-  {
-    path: '/mc',
-    name: 'mc',
-    component: () => import('./views/McView.vue'),
-    meta: { needRestaurant: true, section: 'cookbooks', title: T((t) => t.mc.title), parent: '/cookbooks' },
-  },
+  // 特色菜并进食谱页的标签（界面改版 P2b）
+  { path: '/mc', redirect: '/cookbooks?tab=mc' },
   {
     path: '/temple',
     name: 'temple',
@@ -317,17 +313,10 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/CookbooksView.vue'),
     meta: { needRestaurant: true, section: 'cookbooks', title: T((t) => t.nav.titles.cookbooks) },
   },
+  // 进度一览并进食谱页的标签（界面改版 P2b）：带着原来看的街、页码、筛选
   {
     path: '/cookbooks/progress',
-    name: 'cookbook-progress',
-    component: () => import('./views/CookbookProgressView.vue'),
-    meta: {
-      needRestaurant: true,
-      section: 'cookbooks',
-      title: T((t) => t.cookbook.progress.title),
-      // 回食谱列表时带回原来看的街、页码、筛选（终审）
-      parent: (to) => `/cookbooks${to.fullPath.slice(to.path.length)}`,
-    },
+    redirect: (to) => ({ path: '/cookbooks', query: { ...to.query, tab: 'progress' } }),
   },
   {
     path: '/cookbooks/:id',

@@ -126,16 +126,17 @@ describe('导航元数据（界面改版 P2a，设计 §4.2）', () => {
   });
 });
 
-describe('食谱进度一览的返回（终审：带回原来的街、页码；界面改版 P2a 起由顶栏返回负责）', () => {
-  it('上一级是食谱列表，带上原来的查询参数', () => {
+describe('特色菜、进度一览并进食谱页（界面改版 P2b）', () => {
+  it('/mc 跳到 /cookbooks?tab=mc', () => {
+    expect(routes.find((r) => r.path === '/mc')?.redirect).toBe('/cookbooks?tab=mc');
+  });
+  it('/cookbooks/progress 带着原来的街、页码跳到 tab=progress', () => {
     const r = routes.find((x) => x.path === '/cookbooks/progress')!;
-    const to = {
-      path: '/cookbooks/progress',
-      fullPath: '/cookbooks/progress?street=2&page=3',
-      meta: r.meta,
-      params: {},
-    };
-    expect(parentPath(to as never)).toBe('/cookbooks?street=2&page=3');
+    const go = r.redirect as (to: { query: Record<string, string> }) => unknown;
+    expect(go({ query: { street: '2', page: '3' } })).toEqual({
+      path: '/cookbooks',
+      query: { street: '2', page: '3', tab: 'progress' },
+    });
   });
 });
 

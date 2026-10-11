@@ -24,7 +24,6 @@ export default {
   /** 食谱进度一览（问题记录：食谱页加进度一览） */
   progress: {
     link: '进度一览',
-    title: '食谱进度一览',
     back: '返回食谱',
     summary: (grade: string, n: string, total: string, pct: string) =>
       `${grade}及以上: ${n} / ${total} (${pct})`,

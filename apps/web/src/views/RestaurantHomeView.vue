@@ -491,7 +491,7 @@ onBeforeUnmount(() => {
         >
         <RouterLink
           v-if="showSpecial"
-          to="/mc"
+          to="/cookbooks?tab=mc"
           class="dt-go ms-auto d-flex align-items-center gap-1 dt-min0"
           data-testid="home-special"
           ><i class="bi bi-stars"></i><span class="text-truncate">{{ specialName }}</span

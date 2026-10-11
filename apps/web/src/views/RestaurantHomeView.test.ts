@@ -1066,7 +1066,7 @@ describe('RestaurantHomeView', () => {
     expect(cb.attributes('href')).toBe('/cookbooks');
     const sp = books.get('[data-testid="home-special"]');
     expect(sp.text()).toBe('特色菜: 无');
-    expect(sp.attributes('href')).toBe('/mc');
+    expect(sp.attributes('href')).toBe('/cookbooks?tab=mc');
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, special: { id: 3, level: 5 } });
     const w2 = await mountView();
     const sp2 = w2.get('[data-testid="home-special"]');

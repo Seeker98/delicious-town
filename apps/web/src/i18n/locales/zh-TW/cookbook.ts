@@ -25,7 +25,6 @@ export default {
   /** 食譜進度一覽（問題記錄：食譜頁加進度一覽） */
   progress: {
     link: '進度一覽',
-    title: '食譜進度一覽',
     back: '返回食譜',
     summary: (grade: string, n: string, total: string, pct: string) =>
       `${grade}及以上: ${n} / ${total} (${pct})`,
