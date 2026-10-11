@@ -107,3 +107,20 @@ describe('顶栏可点的地方够大（界面改版 P2a 终审：设计 §8.3 �
     }
   });
 });
+
+describe('P7 用户反馈', () => {
+  it('行里的按钮不被挤窄（中文按钮被挤时一个字一行，像被竖着拉长）', () => {
+    const at = css.indexOf('.dt-row > .btn:not(.dt-cb-master),');
+    expect(at).toBeGreaterThan(-1);
+    const rule = css.slice(at, css.indexOf('}', at));
+    expect(rule).toContain('flex-shrink: 0');
+    expect(rule).toContain('white-space: nowrap');
+  });
+
+  it('危险按钮灰掉时仍是淡红描边，不像普通按钮', () => {
+    const at = css.indexOf('.btn-outline-danger {');
+    const rule = css.slice(at, css.indexOf('}', at));
+    expect(rule).toContain('--bs-btn-disabled-border-color: var(--dt-danger)');
+    expect(rule).toContain('--bs-btn-disabled-opacity: 0.45');
+  });
+});

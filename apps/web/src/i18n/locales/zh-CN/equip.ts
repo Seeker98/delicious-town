@@ -106,6 +106,10 @@ export default {
     rateParts: (base: string, luck: string, weather: string, floor: string) =>
       ` (基础 ${base} + 幸运 ${luck} + 天气 ${weather} + 保底 ${floor})`,
     next: (gain: number, total: number) => `成功后属性总和 +${gain} (到 ${total}, 不含宝石)`,
+    /** 界面改版 P7：强化一块拆成两行；没有回退道具时 */
+    nextGain: (gain: number) => `成功后属性总和 +${gain}`,
+    nextTotal: (total: number) => `到 ${total} (不含宝石)`,
+    noBackItems: (one: string, all: string) => `没有${one}或${all}, 不能回退`,
     cost: (essence: number, have: number, coin: string) =>
       `消耗: 精华 ×${essence} (有 ${have})、银币 ${coin}`,
     useStone: (n: number) => `用强化石 (必定成功, 有 ${n})`,

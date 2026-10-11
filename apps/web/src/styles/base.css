@@ -290,9 +290,11 @@ body {
   --bs-btn-active-color: var(--dt-danger);
   --bs-btn-active-bg: var(--dt-soft-danger);
   --bs-btn-active-border-color: var(--dt-danger);
-  --bs-btn-disabled-color: var(--dt-disabled-text);
+  /* 灰掉时仍是淡红描边（P7 用户反馈：分解、出售被挡住时看着像普通按钮） */
+  --bs-btn-disabled-color: var(--dt-danger);
   --bs-btn-disabled-bg: transparent;
-  --bs-btn-disabled-border-color: var(--dt-disabled-bg);
+  --bs-btn-disabled-border-color: var(--dt-danger);
+  --bs-btn-disabled-opacity: 0.45;
 }
 .btn-danger {
   --bs-btn-color: var(--dt-on-danger);

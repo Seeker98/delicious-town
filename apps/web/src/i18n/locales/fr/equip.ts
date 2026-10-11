@@ -111,6 +111,9 @@ const equip: Messages['equip'] = {
       ` (base ${base} + chance ${luck} + météo ${weather} + garantie ${floor})`,
     next: (gain, total) =>
       `En cas de réussite, total des caractéristiques +${gain} (soit ${total}, hors gemmes)`,
+    nextGain: (gain) => `En cas de réussite, total des caractéristiques +${gain}`,
+    nextTotal: (total) => `Soit ${total} (hors gemmes)`,
+    noBackItems: (one, all) => `Ni ${one} ni ${all}\u202f: impossible de revenir en arrière`,
     cost: (essence, have, coin) =>
       `Coût\u202f: essence\u202f×\u202f${essence} (vous en avez ${have}), ${coin} ${plFr(coin, 'pièce', 'pièces')}`,
     useStone: (n) => `Utiliser une Pierre de renfort (réussite garantie\u202f; vous en avez ${n})`,

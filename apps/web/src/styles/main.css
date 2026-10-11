@@ -3289,6 +3289,26 @@ details.dt-card > summary {
   font: inherit;
   font-size: 12px;
 }
+/* 镶着的宝石右下角写阶数（一~六阶；颜色看种类，石 / 玉看形状） */
+.dt-hole.is-gem {
+  position: relative;
+}
+.dt-hole-lv {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: var(--dt-surface);
+  box-shadow: 0 0 0 1px var(--dt-line);
+  color: var(--dt-text);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  font-variant-numeric: tabular-nums;
+}
 .dt-hole.is-empty {
   border: 2px dashed var(--dt-line-strong);
   background: transparent;
@@ -3809,4 +3829,10 @@ details.dt-card > summary {
 }
 .dt-act-lines .dt-row-main {
   font-size: 14px;
+}
+/* 行里的按钮不被挤窄：中文按钮被挤时一个字一行，看着像被竖着拉长（P7 用户反馈：食谱“升级”、特色菜“倒掉”） */
+.dt-row > .btn:not(.dt-cb-master),
+.dt-row-end > .btn {
+  flex-shrink: 0;
+  white-space: nowrap;
 }

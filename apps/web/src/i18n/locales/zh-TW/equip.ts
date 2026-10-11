@@ -107,6 +107,10 @@ export default {
     rateParts: (base: string, luck: string, weather: string, floor: string) =>
       ` (基礎 ${base} + 幸運 ${luck} + 天氣 ${weather} + 保底 ${floor})`,
     next: (gain: number, total: number) => `成功後屬性總和 +${gain} (到 ${total}, 不含寶石)`,
+    /** 介面改版 P7：強化一塊拆成兩行；沒有回退道具時 */
+    nextGain: (gain: number) => `成功後屬性總和 +${gain}`,
+    nextTotal: (total: number) => `到 ${total} (不含寶石)`,
+    noBackItems: (one: string, all: string) => `沒有${one}或${all}, 不能回退`,
     cost: (essence: number, have: number, coin: string) =>
       `消耗: 精華 ×${essence} (有 ${have})、銀幣 ${coin}`,
     useStone: (n: number) => `用強化石 (必定成功, 有 ${n})`,

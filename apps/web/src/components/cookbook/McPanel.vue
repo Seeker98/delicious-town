@@ -286,7 +286,12 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
           }}{{ o.saleRate !== null && o.saleRate !== 1 ? t.mc.saleRate(formatNum(o.saleRate)) : '' }}
         </div>
       </div>
-      <button class="btn btn-sm btn-outline-danger" data-testid="dump" :disabled="busy" @click="dump">
+      <button
+        class="btn btn-sm btn-outline-danger flex-shrink-0 text-nowrap ms-2"
+        data-testid="dump"
+        :disabled="busy"
+        @click="dump"
+      >
         {{ t.mc.dump }}
       </button>
     </div>

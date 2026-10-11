@@ -103,9 +103,21 @@ export function goodsGroup(id: number): string | null {
   return GOODS_GROUPS.find(([, base, size]) => id >= base && id < base + size)?.[0] ?? null;
 }
 
-/** 道具的图形（界面改版 P7 仓库格子）：按编号所在小类给图 */
+/** 宝石六种颜色（gem1~gem6：智慧、红晶、黄玉、蓝冥、绿玄、天机） */
+const GEM_TYPES = ['wisdom', 'ruby', 'topaz', 'sapphire', 'emerald', 'astral'] as const;
+
+/**
+ * 道具的图形（界面改版 P7 仓库格子）：按编号所在小类给图。
+ * 宝石按种类分颜色，一~三阶（原石、灵石、神石）是切面宝石，四~六阶（原玉、灵玉、神玉）是圆润的玉（P7 用户反馈：原来都是一张图）
+ */
 export function goodsArt(id: number): ArtName {
   const g = goodsGroup(id);
   if (!g) return 'goods-misc';
+  const gem = /^gem([1-6])$/.exec(g);
+  if (gem) {
+    const type = GEM_TYPES[Number(gem[1]) - 1]!;
+    const tier = id % 100;
+    return (tier >= 4 ? `goods-jade-${type}` : `goods-gem-${type}`) as ArtName;
+  }
   return ART[g] ?? PREFIX.find(([p]) => g.startsWith(p))?.[1] ?? 'goods-misc';
 }

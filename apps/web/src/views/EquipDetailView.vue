@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import type { EquipDetailDto, EquipGemDto } from '@dt/shared';
+import { SHARED_GOODS, type EquipDetailDto, type EquipGemDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import type { UiArtName } from '../art/generated/names';
 import DtArt from '../components/DtArt.vue';
@@ -246,9 +246,15 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, t.value.equip
               <text x="32" y="37" text-anchor="middle" class="dt-ring-text">{{ pct(d.rate.total) }}</text>
             </svg>
             <div class="dt-min0">
-              <div v-if="d.next" class="dt-stress-gain" data-testid="stress-next">
-                {{ t.equip.detail.next(d.next.gain, d.next.total) }}
-              </div>
+              <!-- 成功后加多少是标题行（粗），到多少、不含宝石是下面一行灰字（P7 用户反馈） -->
+              <template v-if="d.next">
+                <div class="dt-stress-gain" data-testid="stress-next">
+                  {{ t.equip.detail.nextGain(d.next.gain) }}
+                </div>
+                <div class="dt-meta" data-testid="stress-next-total">
+                  {{ t.equip.detail.nextTotal(d.next.total) }}
+                </div>
+              </template>
               <div class="dt-meta">
                 {{ t.equip.detail.rate
                 }}{{
@@ -297,10 +303,18 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, t.value.equip
           </div>
         </template>
         <div v-else class="dt-row dt-meta">{{ t.equip.detail.maxed }}</div>
-        <div v-if="e.stress > 0 && d.backItems.length > 0" class="dt-row dt-stress-back">
+        <!-- 回退：强化过就一直显示；没有归元石、神秘水晶时写明，按钮灰掉（P7 用户反馈：原来没道具时整行不见了） -->
+        <div v-if="e.stress > 0" class="dt-row dt-stress-back" data-testid="rollback-row">
           <span class="dt-row-main"
             ><span class="dt-row-title">{{ t.equip.detail.rollback }}</span
+            ><span v-if="d.backItems.length === 0" class="dt-row-sub" data-testid="rollback-none">{{
+              t.equip.detail.noBackItems(
+                catalog.goodsName(SHARED_GOODS.backStressOne),
+                catalog.goodsName(SHARED_GOODS.backStressAll),
+              )
+            }}</span
             ><select
+              v-else
               v-model="backPick"
               class="form-select form-select-sm mt-1"
               :aria-label="t.equip.detail.rollback"
@@ -346,6 +360,7 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, t.value.equip
             @click="gemSheet = g"
           >
             <DtArt :name="goodsArt(g.goodsId)" :size="30" />
+            <span class="dt-hole-lv" aria-hidden="true">{{ g.level }}</span>
           </button>
           <button
             v-for="i in freeHoles"

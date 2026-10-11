@@ -110,6 +110,9 @@ const equip: Messages['equip'] = {
     rateParts: (base, luck, weather, floor) =>
       ` (base ${base} + suerte ${luck} + clima ${weather} + garantía ${floor})`,
     next: (gain, total) => `Si sale bien, atributos totales +${gain} (hasta ${total}, sin gemas)`,
+    nextGain: (gain) => `Si sale bien, atributos totales +${gain}`,
+    nextTotal: (total) => `Hasta ${total} (sin gemas)`,
+    noBackItems: (one, all) => `No tienes ${one} ni ${all}, no puedes retroceder`,
     cost: (essence, have, coin) =>
       `Coste: esencia ×${essence} (tienes ${have}), ${coin} ${plEs(coin, 'moneda', 'monedas')}`,
     useStone: (n) => `Usar una Piedra de mejora (éxito seguro; tienes ${n})`,

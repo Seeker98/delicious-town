@@ -266,7 +266,10 @@ describe('EquipDetailView', () => {
 
   it('写明强化成功后属性总和到多少；满级不显示（问题记录 120）', async () => {
     const { w } = await mountView();
-    expect(w.find('[data-testid="stress-next"]').text()).toBe('成功后属性总和 +2 (到 9, 不含宝石)');
+    // P7 用户反馈：加多少是标题行，到多少、不含宝石是下面一行灰字
+    expect(w.find('[data-testid="stress-next"]').text()).toBe('成功后属性总和 +2');
+    expect(w.find('[data-testid="stress-next-total"]').text()).toBe('到 9 (不含宝石)');
+    expect(w.find('[data-testid="stress-next-total"]').classes()).toContain('dt-meta');
     vi.mocked(endpoints.equipDetail).mockResolvedValue({ ...detail(), rate: null, next: null });
     const { w: w2 } = await mountView();
     expect(w2.find('[data-testid="stress-next"]').exists()).toBe(false);
@@ -287,5 +290,26 @@ describe('EquipDetailView', () => {
     await flushPromises();
     expect(endpoints.equipSalvage).not.toHaveBeenCalled();
     spy.mockRestore();
+  });
+
+  it('强化过就一直有回退这一行；没有归元石、神秘水晶时写明、按钮灰掉（P7 用户反馈）', async () => {
+    vi.mocked(endpoints.equipDetail).mockResolvedValue({ ...detail(), backItems: [] });
+    const { w } = await mountView();
+    expect(w.find('[data-testid="rollback-row"]').exists()).toBe(true);
+    expect(w.get('[data-testid="rollback-none"]').text()).toContain('不能回退');
+    expect(w.get('[data-testid="rollback-go"]').attributes('disabled')).toBeDefined();
+    vi.mocked(endpoints.equipDetail).mockResolvedValue({ ...detail({ stress: 0 }), backItems: [] });
+    const { w: fresh } = await mountView();
+    expect(fresh.find('[data-testid="rollback-row"]').exists()).toBe(false);
+  });
+
+  it('镶着的宝石按种类画颜色，右下角写阶数（P7 用户反馈：原来都是一张图）', async () => {
+    vi.mocked(endpoints.equipDetail).mockResolvedValue(
+      detail({ gems: [{ id: 55, goodsId: 50104, level: 4, attrs: attrs({ cook: 1 }) }] }),
+    );
+    const { w } = await mountView();
+    const gem = w.get('[data-testid="gem-55"]');
+    expect(gem.get('.dt-hole-lv').text()).toBe('4');
+    expect(gem.get('use').attributes('href')).toContain('#goods-jade-ruby');
   });
 });
