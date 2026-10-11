@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { gameDateTime } from '../utils/format';
-import { RouterLink, useRoute } from 'vue-router';
+import { RouterLink } from 'vue-router';
 import type { FriendRequestDto, FriendsDto, RestBriefDto, RestLogDto, ThumbTodayDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
+import { useTabQuery } from '../composables/useTabQuery';
 import GameImg from '../components/GameImg.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
@@ -23,8 +25,15 @@ const feedTime = (iso: string) => gameDateTime(iso, { hour12: false });
 const catalog = useCatalogStore();
 const friendsStore = useFriendsStore();
 const restStore = useRestaurantStore();
-const route = useRoute();
-const tab = ref<Tab>('friends');
+/** 当前标签写进网址（界面改版 P2b：统一标签页） */
+const tab = useTabQuery({ tabs: TABS });
+const tabItems = computed(() =>
+  TABS.map((k) => ({
+    key: k,
+    label: t.value.friends.tabs[k],
+    badge: k === 'requests' ? friendsStore.pending : null,
+  })),
+);
 const sort = ref<'level' | 'star' | 'recent'>('level');
 const list = ref<FriendsDto | null>(null);
 const requests = ref<FriendRequestDto[]>([]);
@@ -127,21 +136,12 @@ function returnAll() {
   }, t.value.friends.returnFailed);
 }
 
-// 首页餐厅动态的"更多"带 ?tab=feed 直接进动态卡（问题记录 553）
-onMounted(() => show(route.query.tab === 'feed' ? 'feed' : 'friends'));
+// 地址带 ?tab= 直接打开那个标签（首页餐厅动态的“全部”带 ?tab=feed，问题记录 553）
+onMounted(() => show(tab.value));
 </script>
 
 <template>
-  <ul class="nav nav-tabs mb-2">
-    <li v-for="k in TABS" :key="k" class="nav-item">
-      <button :class="['nav-link', { active: tab === k }]" :data-testid="`tab-${k}`" @click="show(k)">
-        {{ t.friends.tabs[k]
-        }}<span v-if="k === 'requests' && friendsStore.pending > 0" class="badge bg-danger ms-1">{{
-          friendsStore.pending
-        }}</span>
-      </button>
-    </li>
-  </ul>
+  <DtTabs :model-value="tab" :tabs="tabItems" @update:model-value="(k) => show(k as Tab)" />
 
   <template v-if="tab === 'friends' && list">
     <div class="d-flex justify-content-between align-items-center mb-2 small">

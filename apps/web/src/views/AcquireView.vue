@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
-import { RouterLink, useRoute, useRouter } from 'vue-router';
+import { RouterLink } from 'vue-router';
 import type { AcquireBriefDto, AcquireHoldingDto, AcquireInvestRowDto, AcquireViewDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
+import { useTabQuery } from '../composables/useTabQuery';
 import { acquireReason, errorMessage } from '../i18n/zh-CN';
 import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
@@ -14,14 +16,14 @@ import { remainText } from '../utils/remain';
 /** 收购（问题记录 421，设计 §1.5）：身价榜、在售、投资榜、我的 */
 type Tab = 'price' | 'market' | 'invest' | 'mine';
 const TABS: Tab[] = ['price', 'market', 'invest', 'mine'];
-const route = useRoute();
-const router = useRouter();
 const t = useT();
 const toast = useToastStore();
 const session = useSessionStore();
 const me = computed(() => session.me?.restaurantId ?? null);
 
-const tab = ref<Tab>(TABS.includes(route.query.tab as Tab) ? (route.query.tab as Tab) : 'price');
+/** 当前标签写进网址（界面改版 P2b：统一标签页） */
+const tab = useTabQuery({ tabs: TABS });
+const tabItems = computed(() => TABS.map((k) => ({ key: k, label: t.value.acquire.tabs[k] })));
 const view = ref<AcquireViewDto | null>(null);
 const price = ref<AcquireBriefDto[]>([]);
 const invest = ref<AcquireInvestRowDto[]>([]);
@@ -162,10 +164,6 @@ function release(h: AcquireHoldingDto) {
 /** 身价榜、在售里要不要给按钮：自己的、自己名下的不给 */
 const canTry = (b: AcquireBriefDto) => b.restId !== me.value && b.owner?.restId !== me.value;
 
-function pick(x: Tab) {
-  tab.value = x;
-  void router.replace({ query: { ...route.query, tab: x } });
-}
 // 切标签时先回到“读取中”：新数据回来之前不显示上一个标签留下的“没有数据”
 watch(tab, () => {
   loaded.value = false;
@@ -176,17 +174,7 @@ onMounted(load);
 
 <template>
   <div>
-    <ul class="nav nav-tabs mb-2">
-      <li v-for="x in TABS" :key="x" class="nav-item">
-        <a
-          :class="['nav-link', { active: tab === x }]"
-          href="#"
-          :data-testid="`acquire-tab-${x}`"
-          @click.prevent="pick(x)"
-          >{{ t.acquire.tabs[x] }}</a
-        >
-      </li>
-    </ul>
+    <DtTabs v-model="tab" :tabs="tabItems" testid-prefix="acquire-tab-" />
 
     <template v-if="tab === 'price'">
       <div v-if="loaded && price.length === 0" class="dt-empty">{{ t.acquire.rankEmpty }}</div>

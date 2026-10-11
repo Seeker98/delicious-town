@@ -4,7 +4,9 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import { gameDay, SHARED_GOODS, type LedgerRecordDto, type StoreDto, type StoreItemDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
+import { useTabQuery } from '../composables/useTabQuery';
 import GameImg from '../components/GameImg.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
@@ -17,7 +19,17 @@ import { groupStoreItems } from '../utils/storeSort';
 const catalog = useCatalogStore();
 const toast = useToastStore();
 const t = useT();
-const tab = ref<'items' | 'souvenirs' | 'records'>('items');
+/** 当前标签写进网址（界面改版 P2b：统一标签页） */
+const tab = useTabQuery({ tabs: ['items', 'souvenirs', 'records'] as const });
+const tabItems = computed(() =>
+  (['items', 'souvenirs', 'records'] as const).map((k) => ({ key: k, label: t.value.store.tabs[k] })),
+);
+/** 纪念品、流水用到才读 */
+function pickTab(k: string) {
+  tab.value = k as 'items' | 'souvenirs' | 'records';
+  if (k === 'souvenirs') void loadSouvenirs();
+  if (k === 'records') void loadRecords();
+}
 const type = ref<number | undefined>(undefined);
 const data = ref<StoreDto | null>(null);
 const records = ref<LedgerRecordDto[]>([]);
@@ -117,30 +129,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.store.loa
 </script>
 
 <template>
-  <ul class="nav nav-tabs mb-2">
-    <li class="nav-item">
-      <a :class="['nav-link', { active: tab === 'items' }]" href="#" @click.prevent="tab = 'items'">{{
-        t.store.tabs.items
-      }}</a>
-    </li>
-    <li class="nav-item">
-      <a
-        :class="['nav-link', { active: tab === 'souvenirs' }]"
-        href="#"
-        data-testid="tab-souvenirs"
-        @click.prevent="((tab = 'souvenirs'), loadSouvenirs())"
-        >{{ t.store.tabs.souvenirs }}</a
-      >
-    </li>
-    <li class="nav-item">
-      <a
-        :class="['nav-link', { active: tab === 'records' }]"
-        href="#"
-        @click.prevent="((tab = 'records'), loadRecords())"
-        >{{ t.store.tabs.records }}</a
-      >
-    </li>
-  </ul>
+  <DtTabs :model-value="tab" :tabs="tabItems" @update:model-value="pickTab" />
   <template v-if="tab === 'items' && data">
     <div class="d-flex align-items-center mb-2 small">
       <select v-model="type" class="form-select form-select-sm w-auto">

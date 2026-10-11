@@ -192,4 +192,17 @@ describe('FriendsView', () => {
     expect(img.exists()).toBe(true);
     expect(w.find('.dt-friend-avatar').exists()).toBe(false);
   });
+
+  it('地址带 ?tab=requests 直接打开申请（界面改版 P2b：原来只认 feed）', async () => {
+    vi.mocked(endpoints.friendRequests).mockResolvedValue([]);
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/:p(.*)*', component: FriendsView }],
+    });
+    await router.push('/friends?tab=requests');
+    const w = mount(FriendsView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(endpoints.friendRequests).toHaveBeenCalled();
+    expect(w.get('[data-testid="tab-requests"]').attributes('aria-selected')).toBe('true');
+  });
 });

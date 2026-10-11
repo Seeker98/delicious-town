@@ -130,4 +130,17 @@ describe('ForumView', () => {
     expect(w.find('[data-testid="forum-new"]').attributes('disabled')).toBeDefined();
     expect(w.find('[data-testid="forum-wait"]').text()).toMatch(/^(29|30) 秒后可以再发帖$/);
   });
+
+  it('分类是一级标签（界面改版 P2b，原来是胶囊）；地址带 ?tab=guide 直接打开攻略', async () => {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/:p(.*)*', component: ForumView }],
+    });
+    await router.push('/forum?tab=guide');
+    const w = mount(ForumView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(endpoints.forumList).toHaveBeenCalledWith({ tab: 'guide' });
+    expect(w.get('[data-testid="forum-tab-guide"]').attributes('role')).toBe('tab');
+    expect(w.get('[data-testid="forum-tab-guide"]').attributes('aria-selected')).toBe('true');
+  });
 });

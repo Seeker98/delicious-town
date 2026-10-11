@@ -663,6 +663,11 @@ describe('终审 I2：冷静期已过的所得能取出', () => {
       const w2 = mount(ExchangeView, { global: { plugins: [router] } });
       await flushPromises();
       expect(w2.get('[data-testid="ex-tab-bulk"]').classes()).toContain('active');
+      // 切换写进网址（界面改版 P2b：原来只读一次）
+      await w2.get('[data-testid="ex-tab-spot"]').trigger('click');
+      await flushPromises();
+      expect(router.currentRoute.value.query.tab).toBe('spot');
+      expect(w2.get('[data-testid="ex-tab-spot"]').attributes('role')).toBe('tab');
     });
 
     it('区服关了大宗认购：没有这个标签；期货关了、认购开着时照样有标签栏', async () => {

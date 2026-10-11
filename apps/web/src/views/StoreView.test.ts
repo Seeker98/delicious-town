@@ -337,7 +337,7 @@ describe('仓库记录的时间（backlog：选“昨天”“更早”时看不
     const w = mount(StoreView);
     await flushPromises();
     await w
-      .findAll('a.nav-link')
+      .findAll('button.nav-link')
       .find((a) => a.text() === '道具流水')!
       .trigger('click');
     await flushPromises();

@@ -121,7 +121,7 @@ describe('ShopView（问题记录：商店不显示最大可购买数量）', ()
     const w = mount(ShopView);
     await flushPromises();
     await w
-      .findAll('a.nav-link')
+      .findAll('button.nav-link')
       .find((a) => a.text().includes('特价'))!
       .trigger('click');
     const row = w.find('[data-testid="special-title"]');

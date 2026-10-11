@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
 import type { KujiAwardDto, KujiDrawDto, KujiLine, KujiViewDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
+import { useTabQuery } from '../composables/useTabQuery';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
@@ -19,13 +20,16 @@ const result = ref<KujiDrawDto | null>(null);
 const buyNum = ref<number | ''>(1);
 const busy = ref(false);
 /** 普通 / 豪华（240-2）：记在网址的 line 里，刷新后保持 */
-const route = useRoute();
-const router = useRouter();
-const line = computed<KujiLine>(() => (route.query.line === 'deluxe' ? 'deluxe' : 'normal'));
+const line = useTabQuery<KujiLine>({ tabs: ['normal', 'deluxe'], param: 'line', omitWhen: 'normal' });
+const lineItems = computed(() => [
+  { key: 'normal', label: t.value.kuji.lineNormal },
+  { key: 'deluxe', label: t.value.kuji.lineDeluxe },
+]);
 const deluxe = computed(() => line.value === 'deluxe');
-function pickLine(x: KujiLine) {
-  if (x === line.value) return;
-  void router.replace({ query: { ...route.query, line: x === 'deluxe' ? 'deluxe' : undefined } });
+/** 抽签进行中不让切线（原来按钮禁用） */
+function pickLine(x: string) {
+  if (busy.value || x === line.value) return;
+  line.value = x as KujiLine;
 }
 
 const awardText = (a: KujiAwardDto) =>
@@ -130,20 +134,7 @@ watch(line, () => {
 
 <template>
   <HiphopCard :place="12" />
-  <div class="dt-pills mb-2">
-    <button
-      v-for="x in ['normal', 'deluxe'] as const"
-      :key="x"
-      type="button"
-      :class="{ active: line === x }"
-      :aria-pressed="line === x"
-      :data-testid="`kj-line-${x}`"
-      :disabled="busy"
-      @click="pickLine(x)"
-    >
-      {{ x === 'deluxe' ? t.kuji.lineDeluxe : t.kuji.lineNormal }}
-    </button>
-  </div>
+  <DtTabs :model-value="line" :tabs="lineItems" testid-prefix="kj-line-" @update:model-value="pickLine" />
   <div class="small text-muted mb-2">
     {{ t.kuji.rule(data?.pool.total ?? (deluxe ? 20 : 80)) }}
     <span v-if="deluxe" class="d-block" data-testid="kj-deluxe-note">{{ t.kuji.deluxeNote }}</span>

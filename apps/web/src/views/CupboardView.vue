@@ -2,7 +2,9 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { SHARED_FOODS, type CupboardDto, type FridgeDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
+import { useTabQuery } from '../composables/useTabQuery';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
@@ -11,7 +13,20 @@ import { foodLevelLabel, formatNum } from '../utils/format';
 const catalog = useCatalogStore();
 const toast = useToastStore();
 const t = useT();
-const tab = ref<'cupboard' | 'fridge'>('cupboard');
+/** 当前标签写进网址（界面改版 P2b：统一标签页） */
+const tab = useTabQuery({ tabs: ['cupboard', 'fridge'] as const });
+const tabItems = computed(() => [
+  { key: 'cupboard', label: t.value.cupboard.tabs.cupboard },
+  {
+    key: 'fridge',
+    label: t.value.cupboard.tabs.fridge,
+    badge: data.value?.fridgeUnread ? t.value.cupboard.newBadge : null,
+  },
+]);
+function pickTab(k: string) {
+  if (k === 'fridge') void openFridge();
+  else tab.value = 'cupboard';
+}
 const data = ref<CupboardDto | null>(null);
 const fridge = ref<FridgeDto | null>(null);
 const picked = ref<number | null>(null);
@@ -117,24 +132,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.cupboard.
 </script>
 
 <template>
-  <ul class="nav nav-tabs mb-2">
-    <li class="nav-item">
-      <a :class="['nav-link', { active: tab === 'cupboard' }]" href="#" @click.prevent="tab = 'cupboard'">{{
-        t.cupboard.tabs.cupboard
-      }}</a>
-    </li>
-    <li class="nav-item">
-      <a
-        :class="['nav-link', { active: tab === 'fridge' }]"
-        href="#"
-        data-testid="tab-fridge"
-        @click.prevent="openFridge"
-      >
-        {{ t.cupboard.tabs.fridge
-        }}<span v-if="data?.fridgeUnread" class="badge bg-danger ms-1">{{ t.cupboard.newBadge }}</span>
-      </a>
-    </li>
-  </ul>
+  <DtTabs :model-value="tab" :tabs="tabItems" @update:model-value="pickTab" />
 
   <template v-if="tab === 'cupboard' && data">
     <div class="small text-muted mb-2">
