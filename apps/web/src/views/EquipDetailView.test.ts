@@ -7,6 +7,7 @@ import { endpoints } from '../api/endpoints';
 import { usePageTitleStore } from '../stores/pageTitle';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
+import { useConfirmStore } from '../stores/confirm';
 import EquipDetailView from './EquipDetailView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -251,5 +252,22 @@ describe('EquipDetailView', () => {
     vi.mocked(endpoints.equipDetail).mockResolvedValue({ ...detail(), rate: null, next: null });
     const { w: w2 } = await mountView();
     expect(w2.find('[data-testid="stress-next"]').exists()).toBe(false);
+  });
+
+  it('分解走确认面板，标成危险操作；强化、宝石两块各一张卡片（界面改版 P3）', async () => {
+    vi.mocked(endpoints.equipDetail).mockResolvedValue(detail({ gems: [], gem: attrs() }));
+    const spy = vi.spyOn(window, 'confirm');
+    const store = useConfirmStore();
+    store.hosts = 1;
+    const { w } = await mountView();
+    expect(w.get('[data-testid="stress-go"]').element.closest('.dt-card')).not.toBeNull();
+    await w.get('[data-testid="salvage-go"]').trigger('click');
+    await flushPromises();
+    expect(spy).not.toHaveBeenCalled();
+    expect(store.current?.danger).toBe(true);
+    store.answer(false);
+    await flushPromises();
+    expect(endpoints.equipSalvage).not.toHaveBeenCalled();
+    spy.mockRestore();
   });
 });

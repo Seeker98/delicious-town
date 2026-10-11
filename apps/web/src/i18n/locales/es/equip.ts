@@ -18,6 +18,12 @@ const equip: Messages['equip'] = {
   incomeNote:
     'Bonificación del equipo: más atributos de equipo y gemas dan más; la Suerte no cuenta; por punto, la Creatividad es la que más y la Sazón la que menos',
   empty: 'Vacío',
+  /** 一件厨具都没有（界面改版 P3：空状态） */
+  none: {
+    title: 'Aún no tienes utensilios',
+    body: 'Se consiguen en las tasaciones del Templo y en la Torre de chefs',
+    link: 'Ir al Templo',
+  },
   noPieces: 'No hay utensilios para esta ranura',
   needLevel: (lv) => `Requiere nivel ${lv}`,
   wear: 'Equipar',

@@ -48,4 +48,14 @@ describe('GemPanel', () => {
       useToastStore().items.some((x) => x.text.includes('成功 1') && x.text.includes('经验 1,000')),
     ).toBe(true);
   });
+
+  it('组数用步进器；没有宝石时是空状态（界面改版 P3）', async () => {
+    const w = mount(GemPanel);
+    await flushPromises();
+    expect(w.get('[data-testid="levelup-num-44"]').element.closest('.dt-stepper')).not.toBeNull();
+    vi.mocked(endpoints.gems).mockResolvedValue({ ...structuredClone(data), items: [] });
+    const none = mount(GemPanel);
+    await flushPromises();
+    expect(none.get('[data-testid="gem-empty"]').classes()).toContain('dt-empty-state');
+  });
 });

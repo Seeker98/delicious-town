@@ -2,6 +2,8 @@
 import { onMounted, reactive, ref } from 'vue';
 import type { GemItemDto, GemsDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import DtEmpty from '../DtEmpty.vue';
+import DtStepper from '../DtStepper.vue';
 import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
@@ -50,7 +52,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.gem
     <p class="small mb-2" data-testid="gem-strength">
       <i class="bi bi-lightning"></i> {{ t.equip.gemPage.myStrength(formatNum(g.strength)) }}
     </p>
-    <div v-if="g.items.length === 0" class="text-muted small">{{ t.equip.gemPage.empty }}</div>
+    <DtEmpty v-if="g.items.length === 0" :title="t.equip.gemPage.empty" data-testid="gem-empty" />
     <div
       v-for="x in g.items"
       :key="x.goodsId"
@@ -74,14 +76,13 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.gem
           }}
         </div>
       </div>
-      <input
-        v-model.number="nums[x.goodsId]"
-        type="number"
-        min="1"
+      <DtStepper
+        :model-value="numOf(x)"
+        :min="1"
         :max="Math.max(1, maxOf(x))"
-        class="form-control form-control-sm"
-        style="width: 60px"
-        :data-testid="`levelup-num-${x.goodsId}`"
+        :testid="`levelup-num-${x.goodsId}`"
+        :disabled="busy || maxOf(x) < 1"
+        @update:model-value="nums[x.goodsId] = $event"
       />
       <button
         class="btn btn-sm btn-primary"

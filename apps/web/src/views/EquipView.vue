@@ -3,6 +3,10 @@ import { computed, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { EquipDto, EquipOverviewDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import type { UiArtName } from '../art/generated/names';
+import DtArt from '../components/DtArt.vue';
+import DtEmpty from '../components/DtEmpty.vue';
+import DtSheet from '../components/DtSheet.vue';
 import DtTabs from '../components/DtTabs.vue';
 import AttrPoints from '../components/equip/AttrPoints.vue';
 import GemPanel from '../components/equip/GemPanel.vue';
@@ -11,6 +15,7 @@ import { useTabQuery } from '../composables/useTabQuery';
 import { activeMessages } from '../i18n';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
+import { useConfirmStore } from '../stores/confirm';
 import { useToastStore } from '../stores/toast';
 import { formatNum, formatPct } from '../utils/format';
 import { equipName } from '../utils/equipName';
@@ -75,9 +80,25 @@ async function applyPreset(id: number) {
       'info',
     );
 }
+const confirm = useConfirmStore();
+/** 部位格子的图标：1 铲、2 刀、3 锅、4 瓶、5 帽（界面改版 P3） */
+const SLOT_ART: Record<number, UiArtName> = {
+  1: 'slot-spatula',
+  2: 'slot-knife',
+  3: 'slot-pot',
+  4: 'slot-bottle',
+  5: 'slot-hat',
+};
+/** 确认面板和预设面板不叠两层：先收起预设，问完再打开（界面改版 P3） */
 async function deletePreset(id: number) {
-  if (window.confirm(t.value.equip.confirmDelete))
-    await run(() => endpoints.equipPresetDelete(id), t.value.equip.deleteFailed);
+  panel.value = 'none';
+  const yes = await confirm.ask({
+    title: t.value.equip.confirmDelete,
+    ok: t.value.equip.delete,
+    danger: true,
+  });
+  panel.value = 'presets';
+  if (yes) await run(() => endpoints.equipPresetDelete(id), t.value.equip.deleteFailed);
 }
 
 /** 一键处理只能选"未锁定、未穿戴、没强化、没宝石、不在预设"的；出售还要有价格 */
@@ -114,7 +135,17 @@ async function doBatch() {
   if (ids.length === 0) return;
   const salvage = way.value === 'salvage';
   const total = salvage ? String(batchTotal.value) : formatNum(batchTotal.value);
-  if (!window.confirm(t.value.equip.batchConfirm(ids.length, salvage, total))) return;
+  // 确认面板和一键处理面板不叠两层：先收起，取消了再打开（界面改版 P3）
+  panel.value = 'none';
+  const yes = await confirm.ask({
+    title: t.value.equip.batchConfirm(ids.length, salvage, total),
+    ok: t.value.equip.process,
+    danger: true,
+  });
+  if (!yes) {
+    panel.value = 'batch';
+    return;
+  }
   await run(() => endpoints.equipBatch(ids, way.value), t.value.equip.processFailed);
   all.value = await endpoints.equipList();
   picked.value = new Set(candidates.value.map((e) => e.id));
@@ -137,6 +168,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.loa
           :data-testid="`slot-${p}`"
           @click="pick(p)"
         >
+          <DtArt :name="SLOT_ART[p]!" :size="22" />
           <div class="text-muted">{{ PART_NAMES[p] }}</div>
           <div v-if="o.worn[p - 1]">{{ name(o.worn[p - 1]!) }}</div>
           <div v-else class="text-muted">{{ t.equip.empty }}</div>
@@ -144,6 +176,16 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.loa
       </div>
     </div>
 
+    <!-- 一件厨具都没有：写去哪里获得（界面改版 P3） -->
+    <DtEmpty
+      v-if="o.count === 0"
+      art="empty-equip"
+      :title="t.equip.none.title"
+      :body="t.equip.none.body"
+      to="/temple"
+      :link="t.equip.none.link"
+      data-testid="equip-empty"
+    />
     <div v-if="part !== null" class="border rounded p-2 mb-2 small">
       <div v-if="pieces.length === 0" class="text-muted">{{ t.equip.noPieces }}</div>
       <div v-for="e in pieces" :key="e.id" class="d-flex align-items-center gap-1 border-bottom py-1">
@@ -210,74 +252,79 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.loa
       </button>
     </div>
 
-    <div v-if="panel === 'presets'" class="border rounded p-2 small mb-2">
-      <div v-for="p in o.presets" :key="p.id" class="d-flex align-items-center gap-1 border-bottom py-1">
-        <span class="flex-fill">{{ p.name }}</span>
-        <button
-          class="btn btn-sm btn-primary"
-          :disabled="busy"
-          :data-testid="`preset-apply-${p.id}`"
-          @click="applyPreset(p.id)"
-        >
-          {{ t.equip.apply }}
-        </button>
-        <button class="btn btn-sm btn-outline-danger" :disabled="busy" @click="deletePreset(p.id)">
-          {{ t.equip.delete }}
-        </button>
+    <!-- 预设、一键处理是长表单，放进底部面板（界面改版 P3） -->
+    <DtSheet :open="panel === 'presets'" :title="t.equip.presets" @close="panel = 'none'">
+      <div class="small" data-testid="sheet-presets">
+        <div v-for="p in o.presets" :key="p.id" class="d-flex align-items-center gap-1 border-bottom py-1">
+          <span class="flex-fill">{{ p.name }}</span>
+          <button
+            class="btn btn-sm btn-primary"
+            :disabled="busy"
+            :data-testid="`preset-apply-${p.id}`"
+            @click="applyPreset(p.id)"
+          >
+            {{ t.equip.apply }}
+          </button>
+          <button class="btn btn-sm btn-outline-danger" :disabled="busy" @click="deletePreset(p.id)">
+            {{ t.equip.delete }}
+          </button>
+        </div>
+        <div class="d-flex gap-1 mt-2">
+          <input
+            v-model="presetName"
+            maxlength="12"
+            class="form-control form-control-sm"
+            :placeholder="t.equip.presetName"
+            data-testid="preset-name"
+          />
+          <button
+            class="btn btn-sm btn-primary text-nowrap"
+            :disabled="busy"
+            data-testid="preset-save"
+            @click="savePreset"
+          >
+            {{ t.equip.saveCurrent }}
+          </button>
+        </div>
       </div>
-      <div class="d-flex gap-1 mt-2">
-        <input
-          v-model="presetName"
-          maxlength="12"
-          class="form-control form-control-sm"
-          :placeholder="t.equip.presetName"
-          data-testid="preset-name"
-        />
-        <button
-          class="btn btn-sm btn-primary text-nowrap"
-          :disabled="busy"
-          data-testid="preset-save"
-          @click="savePreset"
-        >
-          {{ t.equip.saveCurrent }}
-        </button>
-      </div>
-    </div>
+    </DtSheet>
 
-    <div v-if="panel === 'batch'" class="border rounded p-2 small mb-2">
-      <div class="mb-1">
-        <label class="me-2"
-          ><input v-model="way" type="radio" value="salvage" /> {{ t.equip.salvageWay }}</label
-        >
-        <label><input v-model="way" type="radio" value="sell" /> {{ t.equip.sellWay }}</label>
+    <DtSheet :open="panel === 'batch'" :title="t.equip.batch" @close="panel = 'none'">
+      <div class="small" data-testid="sheet-batch">
+        <div class="mb-1">
+          <label class="me-2"
+            ><input v-model="way" type="radio" value="salvage" /> {{ t.equip.salvageWay }}</label
+          >
+          <label><input v-model="way" type="radio" value="sell" /> {{ t.equip.sellWay }}</label>
+        </div>
+        <div class="text-muted mb-1">{{ t.equip.batchNote }}</div>
+        <div v-for="e in candidates" :key="e.id" :data-testid="`batch-item-${e.id}`">
+          <label
+            ><input type="checkbox" :checked="picked.has(e.id)" @change="toggle(e.id)" /> {{ name(e) }}</label
+          >
+        </div>
+        <div class="d-flex align-items-center mt-2">
+          <span data-testid="batch-total">{{
+            t.equip.batchTotal(
+              way === 'salvage' ? t.equip.essence(batchTotal) : t.equip.coins(formatNum(batchTotal)),
+            )
+          }}</span>
+          <button
+            class="btn btn-sm btn-danger ms-auto"
+            :disabled="busy"
+            data-testid="batch-go"
+            @click="doBatch"
+          >
+            {{ t.equip.process }}
+          </button>
+        </div>
       </div>
-      <div class="text-muted mb-1">{{ t.equip.batchNote }}</div>
-      <div v-for="e in candidates" :key="e.id" :data-testid="`batch-item-${e.id}`">
-        <label
-          ><input type="checkbox" :checked="picked.has(e.id)" @change="toggle(e.id)" /> {{ name(e) }}</label
-        >
-      </div>
-      <div class="d-flex align-items-center mt-2">
-        <span data-testid="batch-total">{{
-          t.equip.batchTotal(
-            way === 'salvage' ? t.equip.essence(batchTotal) : t.equip.coins(formatNum(batchTotal)),
-          )
-        }}</span>
-        <button
-          class="btn btn-sm btn-danger ms-auto"
-          :disabled="busy"
-          data-testid="batch-go"
-          @click="doBatch"
-        >
-          {{ t.equip.process }}
-        </button>
-      </div>
-    </div>
+    </DtSheet>
 
     <!-- 问题记录 530：部位和操作按钮放最上面，属性表和加点放下面 -->
     <!-- 每项属性一行、三列数值：原来属性横排七列，英法西文在手机上要左右滑才看得到后几项（问题记录 304、质量期 ④） -->
     <div class="table-responsive mb-2" data-testid="attr-table">
-      <table class="table table-sm small mb-0">
+      <table class="table table-sm small mb-0 dt-num-table">
         <thead>
           <tr>
             <th></th>

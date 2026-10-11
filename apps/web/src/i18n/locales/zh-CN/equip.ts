@@ -17,6 +17,8 @@ export default {
     `厨具收益加成: 最终银币 ${coin}、最终经验 ${exp}、特色菜金牌 ${gold}`,
   incomeNote: '厨具收益加成: 厨具和宝石的属性越高越多, 幸运不算；同样的点数创意最多、调味最少',
   empty: '空',
+  /** 一件厨具都没有（界面改版 P3：空状态） */
+  none: { title: '还没有厨具', body: '神殿鉴定、厨塔挑战都能得到厨具', link: '去神殿' },
   noPieces: '没有这个部位的厨具',
   needLevel: (lv: number) => `需要 ${lv} 级`,
   wear: '穿戴',

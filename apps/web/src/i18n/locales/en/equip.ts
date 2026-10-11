@@ -18,6 +18,12 @@ const equip: Messages['equip'] = {
   incomeNote:
     'Gear income bonus: higher gear and gem stats give more, Luck doesn’t count; Creativity counts most per point, Seasoning least',
   empty: 'Empty',
+  /** 一件厨具都没有（界面改版 P3：空状态） */
+  none: {
+    title: 'No cookware yet',
+    body: 'Get cookware from Temple appraisals and the Chef Tower',
+    link: 'Go to the Temple',
+  },
   noPieces: 'No cookware for this slot',
   needLevel: (lv) => `Needs level ${lv}`,
   wear: 'Equip',
