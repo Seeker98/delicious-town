@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    rest1011:
+      'La portada muestra ahora la fachada de tu restaurante, con la puerta que elegiste en Aspecto; monedas, diamantes, energía y lo demás tienen iconos de color, y también las instalaciones y las ranuras de utensilios. Las confirmaciones salen desde abajo, con botón rojo para desmontar o vender; las cantidades se ajustan con − y +; la lista de misiones es más compacta, con una barra morada junto a las que puedes reclamar; los preajustes y el procesado en lote de utensilios se abren en un panel inferior; las páginas muestran bloques grises mientras cargan',
     ia1011:
       'El registro y la actividad diaria son ahora la pestaña «Hoy» de Misiones; los platos estrella y el progreso de recetas son pestañas de Recetas; las gemas, una pestaña de Utensilios; el fondo y el ahorro de Gary pasan al nuevo «Banco» del pueblo; los códigos de novato y las invitaciones están en la página Códigos. Las pestañas se guardan en la dirección: se pueden compartir y Atrás no pierde el sitio; las subclasificaciones son un desplegable; la Oferta del día ahora se llama Ofertas limitadas',
     shell1011:
