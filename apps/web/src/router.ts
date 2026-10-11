@@ -31,33 +31,39 @@ export const routes: RouteRecordRaw[] = [
     path: '/login',
     name: 'login',
     component: () => import('./views/LoginView.vue'),
-    meta: { public: true, guestOnly: true },
+    meta: { bare: true, public: true, guestOnly: true },
   },
   {
     path: '/register',
     name: 'register',
     component: () => import('./views/RegisterView.vue'),
-    meta: { public: true, guestOnly: true },
+    meta: { bare: true, public: true, guestOnly: true },
   },
   {
     path: '/verify-email',
     name: 'verify-email',
     component: () => import('./views/VerifyEmailView.vue'),
-    meta: { public: true },
+    meta: { bare: true, public: true },
   },
   {
     path: '/forgot-password',
     name: 'forgot-password',
     component: () => import('./views/ForgotPasswordView.vue'),
-    meta: { public: true, guestOnly: true },
+    meta: { bare: true, public: true, guestOnly: true },
   },
   {
     path: '/reset-password',
     name: 'reset-password',
     component: () => import('./views/ResetPasswordView.vue'),
-    meta: { public: true },
+    meta: { bare: true, public: true },
   },
-  { path: '/shards', name: 'shards', component: () => import('./views/ShardSelectView.vue') },
+  // 切换区服（界面改版 P11）：已开店时有底部导航，返回到“我”；刚登录、还没进过区服时没有返回
+  {
+    path: '/shards',
+    name: 'shards',
+    component: () => import('./views/ShardSelectView.vue'),
+    meta: { gameChrome: true, section: 'home', title: T((t) => t.account.shards.title), parent: '/me' },
+  },
   {
     path: '/account',
     name: 'account',
@@ -68,6 +74,7 @@ export const routes: RouteRecordRaw[] = [
     path: '/create-restaurant',
     name: 'create-restaurant',
     component: () => import('./views/CreateRestaurantView.vue'),
+    meta: { bare: true },
   },
   {
     path: '/',
@@ -289,13 +296,20 @@ export const routes: RouteRecordRaw[] = [
     path: '/guide',
     name: 'guide',
     component: () => import('./views/GuideView.vue'),
-    meta: { gameChrome: true, section: 'home', title: T((t) => t.guide.title), parent: '/help' },
+    // 没登录也能看（界面改版 P11：登录页的胶囊）
+    meta: {
+      public: true,
+      gameChrome: true,
+      section: 'home',
+      title: T((t) => t.guide.title),
+      parent: '/help',
+    },
   },
   {
     path: '/redeem',
     name: 'redeem',
     component: () => import('./views/RedeemView.vue'),
-    meta: { needRestaurant: true, section: 'home', title: T((t) => t.misc.redeem.title), parent: '/me' },
+    meta: { needRestaurant: true, section: 'home', title: T((t) => t.nav.me.redeem), parent: '/me' },
   },
   {
     path: '/invite',

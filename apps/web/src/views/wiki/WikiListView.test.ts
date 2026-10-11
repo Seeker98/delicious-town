@@ -55,10 +55,18 @@ async function mountAt(path: string) {
     ],
   });
   await router.push(path);
-  const w = mount(WikiListView, { global: { plugins: [router] } });
+  // 街道筛选在 Teleport 到 body 的底部面板里：测试里把 teleport 桩掉（界面改版 P11）
+  const w = mount(WikiListView, { global: { plugins: [router], stubs: { teleport: true } } });
   await flushPromises();
   return w;
 }
+/** 选街道（界面改版 P11：原来是下拉框，现在点按钮从底部面板里选一行） */
+const pickStreet = async (w: Awaited<ReturnType<typeof mountAt>>, id: number | null) => {
+  await w.get('[data-testid="wiki-street"]').trigger('click');
+  await w
+    .get(id === null ? '[data-testid="wiki-street-all"]' : `[data-testid="wiki-street-${id}"]`)
+    .trigger('click');
+};
 const rows = (w: Awaited<ReturnType<typeof mountAt>>) =>
   w.findAll('[data-testid^="wiki-row-"]').map((r) => r.attributes('data-testid')!.slice(9));
 
@@ -115,6 +123,7 @@ describe('游戏资料列表（问题记录 142）', () => {
         id: i + 1,
         name: `菜${i + 1}`,
         streetId: i < 100 ? 0 : 14,
+        mainFoodId: null,
         level: 1 + (i % 50),
         coin: 100,
       })),
@@ -124,7 +133,13 @@ describe('游戏资料列表（问题记录 142）', () => {
     expect(w.get('[data-testid="wiki-row-1"]').text()).toContain('湖南街');
     await w.get('[data-testid="wiki-more"]').trigger('click');
     expect(rows(w)).toHaveLength(100);
-    await w.get('[data-testid="wiki-street"]').setValue('14');
+    expect(w.get('.dt-wiki-count').text()).toBe('120 条');
+    expect(w.get('[data-testid="wiki-street"]').text()).toBe('全部街道');
+    await pickStreet(w, 14);
+    // 选好后面板关掉，按钮上写街名，条数跟着变
+    expect(w.find('[data-testid="wiki-street-14"]').exists()).toBe(false);
+    expect(w.get('[data-testid="wiki-street"]').text()).toBe('日本街');
+    expect(w.get('.dt-wiki-count').text()).toBe('20 条');
     expect(rows(w)).toEqual(Array.from({ length: 20 }, (_, i) => String(101 + i)));
     expect(w.find('[data-testid="wiki-more"]').exists()).toBe(false);
   });
@@ -136,6 +151,7 @@ describe('游戏资料列表（问题记录 142）', () => {
         id: i + 1,
         name: `菜${i + 1}`,
         streetId: i < 200 ? 0 : 14,
+        mainFoodId: null,
         level: 1 + (i % 20),
         coin: 100,
       })),
@@ -148,9 +164,9 @@ describe('游戏资料列表（问题记录 142）', () => {
       ],
     });
     await router.push('/wiki/cookbooks');
-    const w = mount(WikiListView, { global: { plugins: [router] } });
+    const w = mount(WikiListView, { global: { plugins: [router], stubs: { teleport: true } } });
     await flushPromises();
-    await w.get('[data-testid="wiki-street"]').setValue('0');
+    await pickStreet(w, 0);
     await w.get('[data-testid="wiki-filter-0"]').trigger('click');
     await w.get('[data-testid="wiki-q"]').setValue('菜');
     await w.get('[data-testid="wiki-more"]').trigger('click');
@@ -166,7 +182,9 @@ describe('游戏资料列表（问题记录 142）', () => {
     expect(rows(back)).toHaveLength(100);
     expect(rows(back)[0]).toBe('1');
     expect(back.get('[data-testid="wiki-filter-0"]').attributes('aria-pressed')).toBe('true');
-    expect((back.get('[data-testid="wiki-street"]').element as HTMLSelectElement).value).toBe('0');
+    expect(back.get('[data-testid="wiki-street"]').text()).toBe('湖南街');
+    await back.get('[data-testid="wiki-street"]').trigger('click');
+    expect(back.get('[data-testid="wiki-street-0"]').attributes('aria-checked')).toBe('true');
     expect((back.get('[data-testid="wiki-q"]').element as HTMLInputElement).value).toBe('菜');
   });
 
@@ -177,6 +195,7 @@ describe('游戏资料列表（问题记录 142）', () => {
         id: i + 1,
         name: `菜${i + 1}`,
         streetId: 0,
+        mainFoodId: null,
         level: 1,
         coin: 1,
       })),
@@ -223,6 +242,7 @@ describe('游戏资料列表（问题记录 142）', () => {
         level: 1,
         coin: 1,
         streetId: 0,
+        mainFoodId: null,
       })),
     });
     const c = await mountAt('/wiki/cookbooks?n=5000');
@@ -238,6 +258,7 @@ describe('游戏资料列表（问题记录 142）', () => {
         level: 1,
         coin: 1,
         streetId: 0,
+        mainFoodId: null,
       })),
     });
     const w = await mountAt('/wiki/cookbooks?n=950');
@@ -252,13 +273,13 @@ describe('游戏资料列表（问题记录 142）', () => {
     vi.mocked(endpoints.openCookbooks).mockResolvedValue({
       ...meta,
       items: [
-        { id: 1, name: '菜1', level: 1, coin: 1, streetId: 0 },
-        { id: 2, name: '菜2', level: 1, coin: 1, streetId: 14 },
+        { id: 1, name: '菜1', level: 1, coin: 1, streetId: 0, mainFoodId: null },
+        { id: 2, name: '菜2', level: 1, coin: 1, streetId: 14, mainFoodId: null },
       ],
     });
     const w = await mountAt('/wiki/cookbooks?street=999');
     expect(rows(w)).toEqual(['1', '2']);
-    expect((w.get('[data-testid="wiki-street"]').element as HTMLSelectElement).value).toBe('');
+    expect(w.get('[data-testid="wiki-street"]').text()).toBe('全部街道');
     // 地址里的显示条数照旧
     setActivePinia(createPinia());
     vi.mocked(endpoints.openCookbooks).mockResolvedValue({
@@ -269,6 +290,7 @@ describe('游戏资料列表（问题记录 142）', () => {
         level: 1,
         coin: 1,
         streetId: 0,
+        mainFoodId: null,
       })),
     });
     expect(rows(await mountAt('/wiki/cookbooks?street=999&n=300'))).toHaveLength(300);
@@ -277,7 +299,7 @@ describe('游戏资料列表（问题记录 142）', () => {
   it('写地址时保留别的参数（和食谱页一样，backlog 第 ⑧ 批审查）', async () => {
     vi.mocked(endpoints.openCookbooks).mockResolvedValue({
       ...meta,
-      items: [{ id: 1, name: '菜1', level: 1, coin: 1, streetId: 0 }],
+      items: [{ id: 1, name: '菜1', level: 1, coin: 1, streetId: 0, mainFoodId: null }],
     });
     const router = createRouter({
       history: createMemoryHistory(),
@@ -287,7 +309,7 @@ describe('游戏资料列表（问题记录 142）', () => {
       ],
     });
     await router.push('/wiki/cookbooks?from=guide');
-    const w = mount(WikiListView, { global: { plugins: [router] } });
+    const w = mount(WikiListView, { global: { plugins: [router], stubs: { teleport: true } } });
     await flushPromises();
     await w.get('[data-testid="wiki-q"]').setValue('菜');
     await flushPromises();
@@ -350,7 +372,7 @@ describe('游戏资料列表（问题记录 142）', () => {
     expect(rows(w)).toEqual(['101']);
   });
 
-  it('无障碍：搜索框、街道下拉有名字，筛选胶囊是按钮并标明是否按下（backlog #115）', async () => {
+  it('无障碍：搜索框、街道按钮有名字，筛选胶囊是按钮并标明是否按下（backlog #115）', async () => {
     vi.mocked(endpoints.openCookbooks).mockResolvedValue({ ...meta, items: [] } as never);
     const w = await mountAt('/wiki/cookbooks');
     expect(w.get('[data-testid="wiki-q"]').attributes('aria-label')).toBeTruthy();

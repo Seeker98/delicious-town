@@ -22,7 +22,13 @@ describe('区服', () => {
     const u = await registerUser(ctx.app);
     const r = await call(ctx.app, 'GET', `${S}/list`, { cookie: u.cookie });
     const item = (r.json.data as Array<{ id: number }>).find((s) => s.id === shardId);
-    expect(item).toMatchObject({ id: shardId, name: '列表服', status: 'open', hasRestaurant: false });
+    expect(item).toMatchObject({
+      id: shardId,
+      name: '列表服',
+      status: 'open',
+      hasRestaurant: false,
+      rest: null,
+    });
   });
 
   it('已关闭的区服：没在里面开店就不列出；开过店的照样列出、标明已关闭（问题记录 190）', async () => {
@@ -36,6 +42,33 @@ describe('区服', () => {
     expect((r.json.data as Array<{ id: number }>).find((x) => x.id === mine)).toMatchObject({
       status: 'closed',
       hasRestaurant: true,
+    });
+  });
+
+  it('开过店的区服带上我的店：店名、等级、头像、星级、街道（界面改版 P11）', async () => {
+    const shardId = await createShard(ctx.deps.db);
+    const p = await playerIn(ctx, shardId);
+    await ctx.deps.db
+      .updateTable('restaurant')
+      .set({ name: '阿婆私房菜', level: 23, avatar: 5, star_level: 2 })
+      .where('id', '=', p.restId)
+      .execute();
+    const street = await ctx.deps.db
+      .selectFrom('restaurant')
+      .select('street_id')
+      .where('id', '=', p.restId)
+      .executeTakeFirstOrThrow();
+    const r = await call(ctx.app, 'GET', `${S}/list`, { cookie: p.cookie });
+    expect((r.json.data as Array<{ id: number }>).find((x) => x.id === shardId)).toMatchObject({
+      hasRestaurant: true,
+      rest: {
+        id: p.restId,
+        name: '阿婆私房菜',
+        level: 23,
+        avatar: 5,
+        starLevel: 2,
+        streetId: street.street_id,
+      },
     });
   });
 

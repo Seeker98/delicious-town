@@ -98,25 +98,22 @@ describe('文字链接统一（问题记录 451）', () => {
     expect(GAME.filter((f) => /‹/.test(f.tpl)).map((f) => f.path)).toEqual([]);
   });
 
-  it('没加样式的入口、返回链接也归到 .dt-go / .dt-back（登录注册、选区服、账号、天气、食谱、游玩指引）', () => {
+  // 界面改版 P11：登录页的游戏资料、游玩指引是胶囊，区服页的账号是整行，验证邮箱的“进入小镇”是按钮，不在这里
+  it('没加样式的入口、返回链接也归到 .dt-go / .dt-back（登录注册、天气、食谱）', () => {
     const want: Array<[string, string]> = [
       ['components/cookbook/CookbookListPanel.vue', 'to="/society/move"'],
       ['views/ForgotPasswordView.vue', 'to="/login"'],
       ['views/LoginView.vue', 'to="/register"'],
       ['views/LoginView.vue', 'to="/forgot-password"'],
-      ['views/LoginView.vue', 'to="/wiki"'],
       ['views/RegisterView.vue', 'to="/login"'],
       ['views/ResetPasswordView.vue', 'to="/login"'],
-      ['views/VerifyEmailView.vue', 'to="/shards"'],
-      ['views/ShardSelectView.vue', 'to="/account"'],
-      ['views/ShardSelectView.vue', 'to="/guide"'],
       ['views/WeatherView.vue', 'to="/town?tab=town"'],
-      ['views/GuideView.vue', 'to="/wiki"'],
     ];
     const bad = want.filter(([path, to]) => {
       const tpl = GAME.find((f) => f.path === path)!.tpl;
-      const tag = tagsOf(tpl, 'RouterLink').find((x) => x.startsWith(`<RouterLink ${to}`));
-      return !tag || !/\bdt-(go|back)\b/.test(tag);
+      // 同一个地址可能有好几处（找回密码发出以后的结果卡里是按钮）：至少有一处是文字链接
+      const tags = tagsOf(tpl, 'RouterLink').filter((x) => x.startsWith(`<RouterLink ${to}`));
+      return !tags.some((tag) => /\bdt-(go|back)\b/.test(tag));
     });
     expect(bad).toEqual([]);
   });

@@ -2,14 +2,19 @@
 import { computed, ref, onBeforeUnmount, watch } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { OpenCookbookDto, OpenStreetDto } from '@dt/shared';
+import WikiEntry from '../../components/wiki/WikiEntry.vue';
 import { useT } from '../../composables/useT';
+import { useCatalogStore } from '../../stores/catalog';
 import { usePageTitle } from '../../stores/pageTitle';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 import { GRADE_NAMES, TASTE_NAMES } from '../../utils/labels';
 import { isNotFound, useWikiData } from './wiki';
 
-/** 菜谱详情（问题记录 142）：1~10 品级的食材，食材都是链接 */
+/**
+ * 食谱词条（问题记录 142；界面改版 P11 报刊风）：大图用主料的图，名字下面写菜系和口味；
+ * 资料表写街道、推荐等级、售价；各品级食材左边品级名、右边食材链接×数量，放不下自动换行
+ */
 const route = useRoute();
 const router = useRouter();
 const t = useT();
@@ -19,6 +24,7 @@ const streets = ref<OpenStreetDto[]>([]);
 const error = ref<'' | 'missing' | 'failed'>('');
 
 const toast = useToastStore();
+const catalog = useCatalogStore();
 /** 读取序号：先打开 A 再打开 B，A 晚到的结果不盖掉 B（backlog #115） */
 let seq = 0;
 // 离开页面后，旧请求的结果和失败提示都不要了（质量期 ①b 终审）
@@ -53,6 +59,16 @@ const street = computed(() => streets.value.find((s) => s.id === c.value?.street
 const tastes = computed(() =>
   (c.value?.taste ?? []).map((x) => TASTE_NAMES[x] ?? '').join(t.value.events.sep),
 );
+/** 第一行分类：食谱 · 菜系 · 口味 */
+const kick = computed(() =>
+  [
+    w.value.kinds.cookbooks,
+    street.value?.cookName ?? '',
+    tastes.value ? w.value.fields.tasteOf(tastes.value) : '',
+  ]
+    .filter(Boolean)
+    .join(' · '),
+);
 </script>
 
 <template>
@@ -60,39 +76,37 @@ const tastes = computed(() =>
     <div v-if="error" class="dt-empty" data-testid="wiki-error">
       {{ error === 'missing' ? t.wiki.notFound : t.wiki.loadFailed }}
     </div>
-    <template v-else-if="c">
-      <p v-if="c.desc" class="small mb-2">{{ c.desc }}</p>
-      <dl class="dt-kv small">
+    <WikiEntry
+      v-else-if="c"
+      :art="c.mainFoodId ? catalog.foodArt(c.mainFoodId) : 'food-misc'"
+      :name="c.name"
+      :kick="kick"
+    >
+      <dl class="dt-entry-dl">
         <dt>{{ w.fields.street }}</dt>
         <dd>
           <RouterLink :to="`/wiki/streets/${c.streetId}`" data-testid="wiki-street-link">{{
             street?.name ?? c.streetId
           }}</RouterLink>
         </dd>
-        <dt>{{ w.fields.level }}</dt>
-        <dd>{{ w.fields.recommend(c.level) }}</dd>
+        <dt>{{ w.fields.recommendLabel }}</dt>
+        <dd>{{ w.level(c.level) }}</dd>
         <dt>{{ w.fields.price }}</dt>
         <dd>{{ w.coin(formatNum(c.coin)) }}</dd>
-        <template v-if="tastes">
-          <dt>{{ w.fields.taste }}</dt>
-          <dd>{{ tastes }}</dd>
-        </template>
       </dl>
-      <h6 class="dt-section">{{ w.sections.grades }}</h6>
-      <dl class="dt-kv small" data-testid="wiki-grades">
+      <h3 class="dt-entry-h">{{ w.sections.grades }}</h3>
+      <dl class="dt-entry-grades" data-testid="wiki-grades">
         <template v-for="g in c.grades" :key="g.grade">
           <dt>{{ GRADE_NAMES[g.grade] }}</dt>
           <dd>
-            <span class="dt-wiki-foods">
-              <!-- 长食材名可以折行，只有数量不和名字断开 -->
-              <span v-for="f in g.foods" :key="f.foodsId"
-                ><RouterLink :to="`/wiki/foods/${f.foodsId}`">{{ f.name }}</RouterLink>
-                <span class="text-nowrap">{{ t.common.times + f.num }}</span></span
-              >
-            </span>
+            <!-- 长食材名可以折行，只有数量不和名字断开 -->
+            <span v-for="f in g.foods" :key="f.foodsId"
+              ><RouterLink :to="`/wiki/foods/${f.foodsId}`">{{ f.name }}</RouterLink
+              ><span class="text-nowrap">{{ t.common.times + f.num }}</span></span
+            >
           </dd>
         </template>
       </dl>
-    </template>
+    </WikiEntry>
   </div>
 </template>

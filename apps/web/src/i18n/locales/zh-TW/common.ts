@@ -12,6 +12,11 @@ export default {
   themeSystem: '跟隨系統',
   themeLight: '淺色',
   themeDark: '深色',
+  /** 語言面板裡每種語言下面的小字（介面改版 P11）：用現在的語言再寫一遍 */
+  langNames: { 'zh-CN': '簡體中文', 'zh-TW': '繁體中文', en: '英語', fr: '法語', es: '西班牙語' } as Record<
+    string,
+    string
+  >,
   loadFailed: '讀取失敗',
   langLoadFailed: '切換語言失敗, 請檢查網路後再試',
   offline: '網路斷了, 連上後再點一次',

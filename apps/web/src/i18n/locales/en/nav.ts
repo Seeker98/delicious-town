@@ -64,7 +64,8 @@ const nav: Messages['nav'] = {
     shard: 'Switch server',
     help: 'Help center',
     admin: 'Admin',
-    headLine: (user: string, street: string) => `${user} · ${street}`,
+    headLine: (user, shard, street, star) =>
+      `${user} · ${shard ? `${shard} · ` : ''}${street} · ${star} ${star === 1 ? 'star' : 'stars'}`,
   },
   help: {
     guide: 'Guide',
@@ -73,6 +74,12 @@ const nav: Messages['nav'] = {
     api: 'Open API',
     changelog: 'Update log',
     links: 'Links',
+    guideSub: 'Start here after opening: day one, the daily routine, common questions',
+    wikiSub: 'Items, ingredients, recipes, cookware, streets',
+    wikiSubCount: (n) => `Items, ingredients, recipes, cookware, streets: ${n} entries`,
+    wikiGuideSub: 'The three paces, what to spend on first',
+    apiSub: 'For players building small tools',
+    changelogSub: (day, head) => `${day}: ${head}`,
   },
   links: {
     activities: 'Events',

@@ -3,11 +3,36 @@ import type { Messages } from '../..';
 const site: Messages['site'] = {
   changelogTitle: 'Registro de cambios',
   linksTitle: 'Enlaces',
-  linksEmpty: 'Todavía no hay enlaces.',
+  linksEmpty: 'Aún no hay enlaces',
+  linksEmptyBody: '¿Hiciste un sitio sobre el pueblo? Avísales a los administradores en el foro',
   linksLoadFailed: 'No se pudieron cargar los enlaces',
   clockTitle: 'Hora actual (hora de Pekín)',
+  newMark: 'Nuevo',
+  clTotal: (n) => `${n} ${n === 1 ? 'entrada' : 'entradas'}`,
+  clLatest: (d) => `Última: ${d}`,
+  clMore: (n) => `Ver ${n} ${n === 1 ? 'día' : 'días'} más`,
+  clColon: ': ',
+  monthDay: (m, d) =>
+    new Date(Date.UTC(2000, m - 1, d)).toLocaleDateString('es', {
+      timeZone: 'UTC',
+      month: 'long',
+      day: 'numeric',
+    }),
+  ymd: (y, m, d) =>
+    new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('es', {
+      timeZone: 'UTC',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }),
+  monthShort: (m) =>
+    new Date(Date.UTC(2000, m - 1, 1)).toLocaleDateString('es', { timeZone: 'UTC', month: 'short' }),
+  weekday: (w) =>
+    new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    account1012:
+      'Inicio de sesión, cuenta, centro de ayuda y biblioteca rediseñados: las páginas de entrada y registro muestran la puerta del pueblo, cada campo tiene su título y su propia línea de error, y el ojo muestra la contraseña; cada servidor es una tarjeta con tu restaurante; idioma, apariencia y contraseña se cambian en paneles; las recompensas de los códigos tienen imágenes y tu código de invitación está en un recuadro punteado; el centro de ayuda son mosaicos y la guía se pliega; el registro de cambios y la biblioteca parecen un periódico, las listas tienen imágenes y las fichas de objetos, ingredientes, recetas y calles se leen como un pequeño manual',
     social1012:
       'Gremio, Plaza, Foro, Amigos y Correo rediseñados: el Gremio y la Plaza tienen imagen de cabecera, y el alcalde, el Hermano 13 y Carmen tienen retrato en una fila que muestra con quién has charlado hoy; subir estrella y ampliar el bidón dicen qué falta, y cambiar de nombre o mudarse se hace en un panel; responde al alcalde tocando un sitio, elige cantidades de objetos raros en un panel y los ingredientes misteriosos de Carmen en una cuadrícula; un panel para elegir especialidad y certificado al dar clase; el diario del pueblo parece un periódico, los anuncios y el martillo de Thor usan paneles y las clasificaciones tienen medallas y avatares; los temas del foro son tarjetas, la respuesta va abajo y editar/borrar están en «⋯»; las filas de amigos indican comida gratis, huecos de despensa y cucarachas, el restaurante de un amigo usa tu misma cabecera con una cuadrícula de acciones y mesas que se pueden tocar; los adjuntos del correo tienen iconos y cada correo se abre en un panel',
     play1012:

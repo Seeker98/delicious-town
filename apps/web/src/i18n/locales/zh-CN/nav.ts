@@ -63,7 +63,8 @@ export default {
     shard: '切换区服',
     help: '帮助中心',
     admin: '管理后台',
-    headLine: (user: string, street: string) => `${user} · ${street}`,
+    headLine: (user: string, shard: string, street: string, star: number) =>
+      `${user} · ${shard ? `${shard} · ` : ''}${street} · ${star} 星`,
   },
   help: {
     guide: '游玩指引',
@@ -72,6 +73,13 @@ export default {
     api: '开放接口',
     changelog: '更新记录',
     links: '友情链接',
+    /** 界面改版 P11：图块里一句话写里面有什么 */
+    guideSub: '刚开店先看这里: 第一天做什么、每天的固定事项、常见问题',
+    wikiSub: '道具、食材、食谱、厨具、街道',
+    wikiSubCount: (n: string) => `道具、食材、食谱、厨具、街道, ${n} 条`,
+    wikiGuideSub: '三种节奏怎么玩、钱先花在哪',
+    apiSub: '给想做小工具的玩家',
+    changelogSub: (day: string, head: string) => `${day}: ${head}`,
   },
   links: {
     activities: '活动',

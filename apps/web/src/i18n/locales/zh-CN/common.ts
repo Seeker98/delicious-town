@@ -11,6 +11,11 @@ export default {
   themeSystem: '跟随系统',
   themeLight: '浅色',
   themeDark: '深色',
+  /** 语言面板里每种语言下面的小字（界面改版 P11）：用现在的语言再写一遍 */
+  langNames: { 'zh-CN': '简体中文', 'zh-TW': '繁体中文', en: '英语', fr: '法语', es: '西班牙语' } as Record<
+    string,
+    string
+  >,
   loadFailed: '读取失败',
   langLoadFailed: '切换语言失败, 请检查网络后再试',
   offline: '网络断了, 连上后再点一次',

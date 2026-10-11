@@ -6,7 +6,9 @@
 :root {
   --dt-font-sans:
     system-ui, -apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
-  --dt-font-serif: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', STSong, SimSun, serif;
+  /* 西文在前（界面改版 P11 法文审查）：宋体里的西文撇号、字母是全角宽度 */
+  --dt-font-serif:
+    'Times New Roman', Times, 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', STSong, SimSun, serif;
   --dt-space-1: 4px;
   --dt-space-2: 8px;
   --dt-space-3: 12px;
@@ -46,6 +48,16 @@
   --dt-place-plaza: #fce3c8;
   --dt-place-chip-bg: rgba(23, 19, 29, 0.74);
   --dt-place-chip-ink: #ffffff;
+  /* 登录注册的头图（界面改版 P11）：左上的“美味小镇”、右上的语言胶囊；外观面板里浅色、深色的小色板 */
+  --dt-scene-brand: #4a2a12;
+  --dt-scene-chip-bg: rgba(255, 255, 255, 0.88);
+  --dt-scene-chip-ink: #221a2e;
+  --dt-swatch-light-bg: #f4f1f8;
+  --dt-swatch-light-surface: #ffffff;
+  --dt-swatch-light-primary: #7442b8;
+  --dt-swatch-dark-bg: #17131d;
+  --dt-swatch-dark-surface: #211b2a;
+  --dt-swatch-dark-primary: #b48bea;
   --dt-slot-body: #e5483b;
   --dt-slot-reel: #ffffff;
   --dt-slot-reel-ink: #6e6680;
@@ -142,6 +154,8 @@
   --dt-paper-ink: #2a2118;
   --dt-paper-rule: #d9ccb0;
   --dt-paper-sub: #7a6a52;
+  /* 纸上的格子、大图托盘（资料库，P11） */
+  --dt-paper-card: rgba(255, 255, 255, 0.55);
 }
 [data-theme='dark'] {
   color-scheme: dark;
@@ -206,4 +220,5 @@
   --dt-paper-ink: #f0e6d2;
   --dt-paper-rule: #4a3f2c;
   --dt-paper-sub: #b7a684;
+  --dt-paper-card: rgba(0, 0, 0, 0.18);
 }

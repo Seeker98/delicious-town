@@ -156,9 +156,14 @@ describe('游戏资料详情（问题记录 142）', () => {
       }),
     );
     const w = await mountAt(WikiGoodsView, '/wiki/goods/:id', '/wiki/goods/30');
+    // 界面改版 P11：部位和等级门槛挪到名字下面那一行分类里
+    const kick = w.get('[data-testid="wiki-entry"] .dt-entry-kick').text();
+    expect(kick).toContain('厨具');
+    expect(kick).toContain('铲');
+    expect(kick).toContain('10 级可以穿');
+    expect(w.get('.dt-entry-name').text()).toBe('见习之铲');
     const eq = w.get('[data-testid="wiki-equip"]');
-    expect(eq.text()).toContain('铲');
-    expect(eq.text()).toContain('10 级可以穿');
+    expect(eq.element.tagName).toBe('DL');
     expect(eq.text()).toContain('见习套装');
     expect(eq.text()).toContain('厨艺 2~4');
     expect(eq.text()).not.toContain('刀工');
@@ -311,22 +316,25 @@ describe('游戏资料详情（问题记录 142）', () => {
       type: 2,
       maxNum: 99,
       seed: { id: 5, harvestNum: 20 },
-      cookbooks: [{ id: 1, name: '南煎丸子', streetId: 0, grade: 3 }],
+      cookbooks: [{ id: 1, name: '南煎丸子', streetId: 0, grade: 3, mainFoodId: 239 }],
       mysterious: [{ id: 7, name: '佛跳墙' }],
     };
     vi.mocked(endpoints.openFood).mockResolvedValue(food);
     const w = await mountAt(WikiFoodView, '/wiki/foods/:id', '/wiki/foods/239');
-    expect(w.text()).toContain('稀有');
+    // 稀有写在名字下面那一行分类里（界面改版 P11）
+    expect(w.get('.dt-entry-kick').text()).toContain('稀有');
     expect(w.text()).toContain('菜园能种出来, 每次收获 20 个');
     const cb = w.get('[data-testid="wiki-cookbooks"]');
-    expect(cb.text()).toContain('用到它的食谱 (1 道)');
+    // 小标题后面小字写几道（界面改版 P11）
+    expect(cb.get('h3.dt-entry-h').text()).toContain('用到它的食谱');
+    expect(cb.get('h3.dt-entry-h small').text()).toBe('1 道');
     expect(cb.text()).toContain('湖南街');
     expect(cb.text()).toContain('上品起');
     expect(hrefs(w, '[data-testid="wiki-cookbooks"]')).toEqual(['/wiki/cookbooks/1']);
     expect(w.get('[data-testid="wiki-mysterious"]').text()).toContain('佛跳墙');
   });
 
-  it('菜谱：街道链接、推荐等级、口味、描述；各品级食材带链接', async () => {
+  it('菜谱：名字下面写食谱 · 菜系 · 口味；资料表写街道链接、推荐等级、售价；各品级食材带链接', async () => {
     const cb: OpenCookbookDto = {
       ...meta,
       id: 1,
@@ -334,6 +342,7 @@ describe('游戏资料详情（问题记录 142）', () => {
       streetId: 0,
       level: 5,
       coin: 120,
+      mainFoodId: 239,
       taste: [2, 5],
       desc: '湘菜, 口味咸鲜',
       grades: Array.from({ length: 10 }, (_, i) => ({
@@ -343,9 +352,14 @@ describe('游戏资料详情（问题记录 142）', () => {
     };
     vi.mocked(endpoints.openCookbook).mockResolvedValue(cb);
     const w = await mountAt(WikiCookbookView, '/wiki/cookbooks/:id', '/wiki/cookbooks/1');
-    expect(w.text()).toContain('推荐 5 级');
-    expect(w.text()).toContain('甘、咸');
-    expect(w.text()).toContain('湘菜, 口味咸鲜');
+    expect(w.get('.dt-entry-name').text()).toBe('南煎丸子');
+    expect(w.get('.dt-entry-kick').text()).toBe('食谱 · 湘菜 · 口味甘、咸');
+    // 资料表：左边标签、右边内容
+    const dl = w.get('dl.dt-entry-dl');
+    expect(dl.findAll('dt').map((x) => x.text())).toEqual(['街道', '推荐等级', '售价']);
+    expect(dl.findAll('dd').map((x) => x.text())).toEqual(['湖南街', '5 级', '120 银币']);
+    // 界面改版 P11：描述那一段去掉了（和分类行重复）
+    expect(w.text()).not.toContain('湘菜, 口味咸鲜');
     expect(w.get('[data-testid="wiki-street-link"]').attributes('href')).toBe('/wiki/streets/0');
     const g = w.get('[data-testid="wiki-grades"]');
     expect(g.text()).toContain('天馔');
@@ -357,15 +371,16 @@ describe('游戏资料详情（问题记录 142）', () => {
     vi.mocked(endpoints.openCookbooks).mockResolvedValue({
       ...meta,
       items: [
-        { id: 1, name: '南煎丸子', streetId: 0, level: 5, coin: 120 },
-        { id: 2, name: '寿司', streetId: 14, level: 5, coin: 120 },
+        { id: 1, name: '南煎丸子', streetId: 0, level: 5, coin: 120, mainFoodId: 239 },
+        { id: 2, name: '寿司', streetId: 14, level: 5, coin: 120, mainFoodId: null },
       ],
     });
     const w = await mountAt(WikiStreetView, '/wiki/streets/:id', '/wiki/streets/0');
-    expect(w.text()).toContain('湘菜');
     expect(w.text()).toContain('湘菜售价 +5%');
-    // 街道类型和为什么是这个加成（问题记录 380、378 方案 C）
-    expect(w.get('[data-testid="wiki-street-focus"]').text()).toBe('均衡街');
+    // 菜系和街道类型写在名字下面那一行分类里（问题记录 378 方案 C；界面改版 P11）
+    expect(w.get('.dt-entry-kick').text()).toBe('街道 · 湘菜 · 均衡街');
+    expect(w.find('[data-testid="wiki-street-focus"]').exists()).toBe(false);
+    // 为什么是这个加成（问题记录 380）
     expect(w.get('[data-testid="wiki-street-theme"]').text()).toBe('湘菜香辣下饭');
     expect(w.get('[data-testid="wiki-medal"]').attributes('href')).toBe('/wiki/goods/140');
     expect(hrefs(w, '[data-testid="wiki-street-cookbooks"]')).toEqual(['/wiki/cookbooks/1']);
@@ -400,6 +415,7 @@ describe('食材、菜谱详情：晚到的旧请求不盖新页面（backlog #1
     coin: 1,
     taste: [],
     desc: null,
+    mainFoodId: null,
     grades: [],
   });
 

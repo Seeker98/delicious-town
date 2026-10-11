@@ -9,7 +9,8 @@ describe('图标字体子集', () => {
 
   it('代码里用到的图标都在子集里', () => {
     const names = usedIconNames(__dirname);
-    expect(names.length).toBeGreaterThan(50);
+    // 只防扫描坏掉：界面改版里不少图标换成了 SVG，用到的越来越少（P11 后 42 个）
+    expect(names.length).toBeGreaterThan(30);
     const missing = names.filter((n) => !css.includes(`.${n}::before`));
     expect(missing, '运行 pnpm -F @dt/web icons 重新生成').toEqual([]);
   });

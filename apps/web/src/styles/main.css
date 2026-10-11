@@ -679,21 +679,6 @@ details.dt-card > summary {
 .dt-card + .dt-card {
   margin-top: 6px;
 }
-/* 游戏资料首页的类目卡片：两列网格，卡片之间不再叠上边距（问题记录 142） */
-.dt-wiki-kinds {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-.dt-wiki-kinds > .dt-card {
-  margin-top: 0;
-}
-/* 菜谱各品级的食材：每种食材一段，不在中间断行 */
-.dt-wiki-foods {
-  display: flex;
-  flex-wrap: wrap;
-  column-gap: 8px;
-}
 /* 标签页里的二级分类 */
 .dt-pills {
   display: flex;
@@ -967,24 +952,13 @@ details.dt-card > summary {
   content: '›' / '';
   color: var(--dt-muted);
 }
+/* “我”的店铺头（界面改版 P11）：头像 + 店名和等级 + 一行灰字 */
 .dt-me-head {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 4px 4px;
-}
-.dt-me-avatar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--dt-primary-soft);
-  color: var(--dt-primary-ink);
-  font-size: 18px;
-  font-weight: 600;
+  gap: 14px;
+  margin-top: 4px;
+  padding: 16px;
 }
 /* 一级标签栏吸顶（界面改版设计 §4.2 第 7 条）：滚动时停在 48px 顶栏下面；负外边距让底色铺满 .dt-main 的左右内边距 */
 .dt-tabs-bar {
@@ -7612,4 +7586,1368 @@ a.dt-reply-name {
   line-height: 1.7;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
+}
+
+/* ---------- 帮助和账号（界面改版 P11）：登录注册、开店、区服 ---------- */
+/* 没有顶栏的页面（meta.bare）：头图贴着页面顶上，左右不留边 */
+.dt-main-bare {
+  padding: 0 0 24px;
+}
+/* 游戏外页面的头图：登录 220px，注册、找回密码等矮版 150px（同一张图往下裁），开店页的空店 170px */
+.dt-auth-scene {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+  background: var(--dt-scene-sky);
+}
+.dt-auth-scene.is-short {
+  height: 150px;
+}
+.dt-auth-scene.is-newshop {
+  height: 170px;
+  background: var(--dt-place-society);
+}
+.dt-auth-scene-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+.dt-auth-scene.is-short .dt-auth-scene-img {
+  object-position: center 68%;
+}
+.dt-auth-brand {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--dt-scene-brand);
+}
+.dt-auth-chip {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 10px 0 12px;
+  border: 0;
+  border-radius: var(--dt-radius-pill);
+  background: var(--dt-scene-chip-bg);
+  color: var(--dt-scene-chip-ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+.dt-auth-chip .dt-art-ui {
+  color: var(--dt-scene-chip-ink);
+}
+.dt-auth-chip > .bi {
+  font-size: 11px;
+}
+.dt-auth-chip.is-static {
+  padding: 0 12px;
+}
+/* 表单卡往上压进头图 28px */
+.dt-auth-card {
+  position: relative;
+  margin: -28px 16px 0;
+  padding: 20px 18px 18px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-sheet);
+  background: var(--dt-surface);
+  box-shadow: var(--dt-shadow-card);
+}
+.dt-auth-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+.dt-auth-sub {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+/* 服务端的错、读失败：卡片顶上一条红底提示 */
+.dt-auth-error {
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  border-radius: var(--dt-radius-sm);
+  background: var(--dt-soft-danger);
+  color: var(--dt-ink-danger);
+  font-size: 13px;
+}
+.dt-auth-submit {
+  min-height: 48px;
+  margin-top: 18px;
+}
+.dt-auth-links {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 14px 0 0;
+  font-size: 14px;
+}
+.dt-auth-links.is-center {
+  justify-content: center;
+  gap: 4px;
+  color: var(--dt-muted);
+}
+/* 卡片下面不用登录也能看的入口；游玩指引顶上的两个入口也是这种胶囊 */
+.dt-auth-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 18px 16px 0;
+}
+.dt-guide-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 2px 0 0;
+}
+.dt-auth-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px 0 10px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-pill);
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+.dt-auth-pill:active {
+  transform: scale(0.97);
+}
+/* 一格：上面标签，下面输入框，再下面说明或红字 */
+.dt-auth-optional {
+  margin-left: 4px;
+  font-weight: 400;
+  color: var(--dt-muted);
+}
+.dt-field.is-bad {
+  border-color: var(--dt-danger);
+  box-shadow: 0 0 0 3px var(--dt-soft-danger);
+}
+.dt-field-eye {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-right: -6px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--dt-muted);
+  font-size: 17px;
+}
+.dt-field-eye[aria-pressed='true'] {
+  color: var(--dt-primary-ink);
+}
+.dt-field-hint {
+  display: flex;
+  gap: 8px;
+  margin: 5px 2px 0;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-field-hint > span:first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.dt-field-hint.is-bad {
+  color: var(--dt-ink-danger);
+}
+/* 结果卡：圆圈 + 粗体一句 + 灰字说明 + 按钮 */
+.dt-auth-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding-top: 8px;
+  text-align: center;
+}
+.dt-auth-result > b {
+  font-size: 18px;
+}
+.dt-auth-result > span:not(.dt-auth-ring) {
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-auth-result > .btn {
+  align-self: stretch;
+  margin-top: 12px;
+}
+.dt-auth-ring {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--dt-surface-2);
+  color: var(--dt-muted);
+  font-size: 30px;
+  font-weight: 800;
+}
+.dt-auth-ring.is-ok {
+  background: var(--dt-soft-success);
+  color: var(--dt-ink-success);
+}
+.dt-auth-ring.is-ok .dt-art-ui {
+  color: var(--dt-ink-success);
+}
+.dt-auth-ring.is-bad {
+  background: var(--dt-soft-danger);
+  color: var(--dt-ink-danger);
+}
+.dt-auth-street {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+.dt-auth-street-art {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--dt-surface);
+}
+/* 外观面板每行右边的三格小色板 */
+.dt-theme-swatch {
+  display: flex;
+  width: 56px;
+  height: 40px;
+  overflow: hidden;
+  border: 1px solid var(--dt-line);
+  border-radius: 10px;
+}
+.dt-theme-swatch > i {
+  flex: 1 1 0;
+}
+.dt-theme-swatch.is-system > i:nth-child(1),
+.dt-theme-swatch.is-light > i:nth-child(1) {
+  background: var(--dt-swatch-light-bg);
+}
+.dt-theme-swatch.is-system > i:nth-child(2),
+.dt-theme-swatch.is-light > i:nth-child(2) {
+  background: var(--dt-swatch-light-surface);
+}
+.dt-theme-swatch.is-system > i:nth-child(3),
+.dt-theme-swatch.is-dark > i:nth-child(2) {
+  background: var(--dt-swatch-dark-surface);
+}
+.dt-theme-swatch.is-light > i:nth-child(3) {
+  background: var(--dt-swatch-light-primary);
+}
+.dt-theme-swatch.is-dark > i:nth-child(1) {
+  background: var(--dt-swatch-dark-bg);
+}
+.dt-theme-swatch.is-dark > i:nth-child(3) {
+  background: var(--dt-swatch-dark-primary);
+}
+/* 琥珀底的提示条：邮箱没验证（区服页） */
+.dt-warn-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-soft-warning);
+  color: var(--dt-ink-warning);
+  font-size: 13px;
+}
+.dt-warn-bar > span {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.dt-warn-bar-btn {
+  flex-shrink: 0;
+  height: 30px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--dt-radius-pill);
+  background: var(--dt-surface);
+  color: var(--dt-ink-warning);
+  font-size: 13px;
+  font-weight: 600;
+}
+/* 区服卡片：名字和状态、开服第几天、我在这个服的店 */
+.dt-shard {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+  border: 1px solid var(--dt-line);
+  border-radius: 18px;
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  text-align: left;
+}
+.dt-shard:not(:disabled):active {
+  transform: scale(0.98);
+}
+.dt-shard.is-here {
+  border-color: var(--dt-primary);
+  box-shadow: inset 0 0 0 1px var(--dt-primary);
+}
+.dt-shard.is-off {
+  opacity: 0.55;
+}
+.dt-shard-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.dt-shard-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 17px;
+}
+.dt-shard-sub {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-shard-me {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-bg);
+}
+.dt-shard-ava {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border-radius: 12px;
+}
+.dt-shard-chev {
+  flex-shrink: 0;
+  font-size: 18px;
+  color: var(--dt-muted);
+}
+.dt-shard-go {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: var(--dt-radius-pill);
+  background: var(--dt-primary-soft);
+  color: var(--dt-primary-ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+.dt-shard-foot {
+  margin-top: 18px;
+}
+/* 退出登录：红字，图标托盘浅红 */
+.dt-row.dt-row-danger {
+  width: 100%;
+  border-right: 0;
+  border-bottom: 0;
+  border-left: 0;
+  background: transparent;
+  color: var(--dt-ink-danger);
+  text-align: left;
+}
+.dt-row:first-child.dt-row-danger {
+  border-top: 0;
+}
+.dt-row-danger > .dt-row-ico {
+  background: var(--dt-soft-danger);
+}
+.dt-row-danger .dt-art-ui {
+  color: var(--dt-ink-danger);
+}
+/* “我”的店铺头、账号卡 */
+.dt-me-ava {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  border-radius: 18px;
+}
+.dt-acct-ava {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  overflow: hidden;
+  border-radius: 18px;
+  background: var(--dt-primary-soft);
+}
+.dt-me-name,
+.dt-acct-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 20px;
+  font-weight: 700;
+}
+.dt-acct-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+}
+/* 卡片外的小灰字分组标题（我、账号和设置） */
+.dt-group-title {
+  margin: 18px 6px 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dt-muted);
+}
+/* 设置行：按钮也是一整行，图标在浅紫托盘里、实心 */
+.dt-set-row {
+  width: 100%;
+  min-height: 56px;
+  border-right: 0;
+  border-bottom: 0;
+  border-left: 0;
+  background: transparent;
+  font-size: 15px;
+  text-align: left;
+}
+.dt-set-row:first-child {
+  border-top: 0;
+}
+.dt-set-row .dt-row-title {
+  font-size: 15px;
+  font-weight: 400;
+}
+.dt-set-ic {
+  background: var(--dt-primary-soft);
+}
+.dt-set-ic .dt-art-ui {
+  fill-opacity: 1;
+}
+/* 兑换码：输入框和按钮一行，结果绿底带奖励胶囊 */
+.dt-redeem-box {
+  padding: 14px;
+}
+.dt-redeem-row {
+  display: flex;
+  gap: 8px;
+}
+.dt-redeem-go {
+  flex-shrink: 0;
+  min-height: 46px;
+  padding: 0 20px;
+}
+.dt-redeem-done {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: var(--dt-radius-sm);
+  background: var(--dt-soft-success);
+  color: var(--dt-ink-success);
+  font-size: 13px;
+}
+.dt-mono {
+  font-family: ui-monospace, Consolas, monospace;
+  letter-spacing: 0.5px;
+}
+/* 新手兑换码、邀请入口、友情链接：左边 44px 的图 */
+.dt-code-art {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  align-self: flex-start;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--dt-bg);
+}
+.dt-code-art.is-sm {
+  align-self: center;
+  width: 36px;
+  height: 36px;
+}
+.dt-code-row {
+  align-items: flex-start;
+}
+.dt-code-row.is-off > .dt-code-art,
+.dt-code-row.is-off > .dt-row-main {
+  opacity: 0.6;
+}
+.dt-code-row .dt-row-title .dt-tag {
+  margin-left: 6px;
+}
+.dt-invite-entry {
+  min-height: 64px;
+}
+.dt-invite-entry > .dt-code-art {
+  align-self: center;
+}
+/* 邀请好友：码放虚线框里，规则三格 */
+.dt-invite-code {
+  padding: 16px;
+  text-align: center;
+}
+.dt-invite-label {
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-invite-box {
+  margin-top: 8px;
+  padding: 14px;
+  border: 2px dashed var(--dt-primary);
+  border-radius: var(--dt-radius-lg);
+  background: var(--dt-primary-soft);
+}
+.dt-invite-box > b {
+  font-size: 26px;
+  letter-spacing: 4px;
+  color: var(--dt-primary-ink);
+}
+.dt-invite-btns {
+  grid-template-columns: 1fr 1fr;
+  margin-top: 12px;
+}
+.dt-invite-btns > .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+}
+.dt-invite-btns .dt-art-ui {
+  color: currentColor;
+}
+.dt-invite-link {
+  margin-top: 10px;
+  text-align: left;
+  word-break: break-all;
+}
+.dt-invite-month {
+  margin-top: 12px;
+  padding: 14px;
+}
+.dt-invite-month-head {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+.dt-invite-month-head > b {
+  flex: 1 1 auto;
+  font-size: 15px;
+}
+.dt-invite-month-head > span {
+  font-weight: 700;
+}
+.dt-invite-month > .dt-meter {
+  height: 6px;
+}
+.dt-invite-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 12px;
+  text-align: center;
+}
+.dt-invite-steps > .dt-sum {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 8px 4px;
+}
+.dt-invite-steps span {
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-invite-steps b {
+  font-size: 13px;
+}
+.dt-invite-st.is-ok {
+  color: var(--dt-ink-success);
+}
+.dt-invite-st.is-warn {
+  color: var(--dt-ink-warning);
+}
+.dt-invite-st.is-bad {
+  color: var(--dt-ink-danger);
+}
+
+/* ---------- 帮助中心、游玩指引、更新记录、友情链接（P11） ---------- */
+.dt-help-hero {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 4px;
+  padding: 14px;
+  border-radius: var(--dt-radius-lg);
+  background: var(--dt-primary-soft);
+  color: var(--dt-text);
+}
+.dt-help-hero::after {
+  content: '›';
+  content: '›' / '';
+  flex-shrink: 0;
+  font-size: 18px;
+  color: var(--dt-muted);
+}
+.dt-help-hero-art {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  background: var(--dt-surface);
+}
+.dt-help-hero-title {
+  display: block;
+  font-size: 17px;
+}
+.dt-help-hero-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-help-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+.dt-help-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--dt-line);
+  border-radius: 18px;
+  background: var(--dt-surface);
+  color: var(--dt-text);
+}
+.dt-help-tile:active,
+.dt-help-hero:active {
+  transform: scale(0.98);
+}
+.dt-help-tile > b {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+}
+.dt-help-tile > span:last-child {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--dt-muted);
+}
+.dt-help-tile-art {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--dt-bg);
+}
+/* 游玩指引：能收起的卡片 */
+.dt-fold-card {
+  margin-top: 10px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 18px;
+}
+.dt-fold-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 0;
+  background: transparent;
+  color: var(--dt-text);
+  text-align: left;
+}
+.dt-fold-head > b {
+  flex: 1 1 auto;
+  font-size: 16px;
+}
+.dt-fold-head > .bi {
+  color: var(--dt-muted);
+}
+.dt-fold-art {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--dt-bg);
+}
+.dt-fold-body {
+  border-top: 1px solid var(--dt-line);
+}
+.dt-guide-list {
+  margin: 0;
+  padding: 12px 14px 14px 34px;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.dt-guide-list > li {
+  margin: 4px 0;
+}
+.dt-guide-daily .dt-row-sub {
+  white-space: normal;
+}
+.dt-guide-more {
+  display: block;
+  width: 100%;
+  padding: 10px 0 12px;
+  border-top: 1px solid var(--dt-line);
+  font-size: 13px;
+  text-align: center;
+}
+.dt-guide-qa {
+  padding: 12px 14px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-guide-qa:first-child {
+  border-top: 0;
+}
+.dt-guide-qa > b {
+  display: block;
+  font-size: 14px;
+}
+.dt-guide-qa > p {
+  margin: 3px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--dt-muted);
+}
+/* 报刊风的报头（更新记录、资料库）：小字刊名、宋体大标题、双线，下面一行左右两段小字 */
+.dt-paper-mast2 {
+  padding: 14px 0 10px;
+  border-bottom: 3px double var(--dt-paper-rule);
+  text-align: center;
+}
+.dt-paper-kick {
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--dt-paper-sub);
+}
+.dt-paper-head {
+  margin: 2px 0 0;
+  font-family: var(--dt-font-serif);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.dt-paper-head.is-sm {
+  font-size: 26px;
+}
+/* 中文报头字距拉开；西文不拉（法文一行放不下） */
+.dt-paper-head:lang(zh) {
+  letter-spacing: 6px;
+}
+.dt-paper-head.is-sm:lang(zh) {
+  letter-spacing: 4px;
+}
+.dt-paper-dateline {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 5px;
+  border-top: 1px solid var(--dt-paper-rule);
+  font-size: 11px;
+  color: var(--dt-paper-sub);
+  font-variant-numeric: tabular-nums;
+}
+.dt-paper-btn {
+  display: block;
+  width: 100%;
+  min-height: 40px;
+  margin-top: 12px;
+  border: 1px solid var(--dt-paper-rule);
+  border-radius: var(--dt-radius-pill);
+  background: transparent;
+  color: var(--dt-paper-ink);
+  font-size: 14px;
+  font-weight: 600;
+}
+/* 更新记录：一天一栏，左边大号日期 */
+.dt-cl {
+  padding: 4px 16px 12px;
+}
+.dt-cl-day {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--dt-paper-rule);
+}
+.dt-cl-date {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: 46px;
+  font-family: var(--dt-font-serif);
+  font-size: 11px;
+  text-align: center;
+  color: var(--dt-paper-sub);
+}
+.dt-cl-date > b {
+  font-size: 24px;
+  line-height: 1;
+  color: var(--dt-paper-ink);
+}
+.dt-cl-items {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding-left: 16px;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.dt-cl-items > li {
+  margin: 2px 0;
+}
+.dt-cl-head {
+  font-family: var(--dt-font-serif);
+  font-size: 15px;
+}
+.dt-cl-new {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 0 5px;
+  border-radius: 3px;
+  background: var(--dt-danger);
+  color: var(--dt-on-danger);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 16px;
+  vertical-align: 2px;
+}
+/* 友情链接：右边外链小图标 */
+.dt-link-row {
+  min-height: 60px;
+}
+.dt-link-ext {
+  flex-shrink: 0;
+  color: var(--dt-primary-ink);
+}
+
+/* ---------- 资料库（P11 报刊风） ---------- */
+/* 整页米色纸（深色是深褐纸）：首页、专栏 */
+.dt-paper-page {
+  min-height: calc(100vh - 56px);
+  margin: -8px -8px 0;
+  padding: 0 16px 24px;
+  background: var(--dt-paper);
+  color: var(--dt-paper-ink);
+}
+.dt-wiki-search {
+  margin-top: 12px;
+}
+.dt-paper-page .dt-search-box {
+  border-color: var(--dt-paper-rule);
+}
+.dt-paper-sect {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 0 6px;
+  font-family: var(--dt-font-serif);
+  font-size: 16px;
+  font-weight: 700;
+}
+.dt-paper-sect::before,
+.dt-paper-sect::after {
+  content: '';
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--dt-paper-rule);
+}
+.dt-wiki-kinds {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.dt-wiki-kind {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--dt-paper-rule);
+  border-radius: var(--dt-radius-lg);
+  background: var(--dt-paper-card);
+  color: var(--dt-paper-ink);
+}
+.dt-wiki-kind:active {
+  transform: scale(0.98);
+}
+.dt-wiki-kind.is-wide {
+  grid-column: span 2;
+}
+.dt-wiki-kind > span:last-child {
+  min-width: 0;
+}
+.dt-wiki-kind b {
+  display: block;
+  overflow-wrap: anywhere;
+  font-family: var(--dt-font-serif);
+  font-size: 17px;
+}
+.dt-wiki-kind-count {
+  font-size: 12px;
+  color: var(--dt-paper-sub);
+  font-variant-numeric: tabular-nums;
+}
+.dt-wiki-kind-art {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--dt-paper-rule);
+  border-radius: 12px;
+  background: var(--dt-paper);
+}
+/* 专栏：宋体标题的目录行 */
+.dt-wiki-col {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px dotted var(--dt-paper-rule);
+  color: var(--dt-paper-ink);
+}
+.dt-wiki-col:last-child {
+  border-bottom: 0;
+}
+.dt-wiki-col::after {
+  content: '›';
+  content: '›' / '';
+  flex-shrink: 0;
+  font-size: 18px;
+  color: var(--dt-paper-sub);
+}
+.dt-wiki-col b {
+  display: block;
+  font-family: var(--dt-font-serif);
+  font-size: 16px;
+}
+.dt-wiki-col span > span {
+  display: block;
+  font-size: 12px;
+  color: var(--dt-paper-sub);
+}
+/* 首页搜索结果：按类分组 */
+.dt-wiki-group {
+  margin: 14px 4px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dt-paper-sub);
+}
+.dt-wiki-more {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  text-align: center;
+}
+/* 列表一行：44px 图 */
+.dt-wiki-row {
+  min-height: 60px;
+}
+.dt-wiki-art {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--dt-bg);
+}
+.dt-wiki-row .dt-row-title .dt-tag {
+  margin-left: 6px;
+}
+.dt-ink-warn {
+  color: var(--dt-ink-warning);
+}
+.dt-wiki-pills {
+  margin-top: 8px;
+}
+.dt-wiki-count {
+  margin: 4px 2px 4px;
+  text-align: right;
+}
+/* 整宽的选择胶囊（食谱的街道）：点开底部面板 */
+.dt-wide-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 36px;
+  margin-top: 8px;
+  padding: 0 14px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-pill);
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+/* 词条：米色纸卡，大图 + 宋体名字，双线分隔 */
+.dt-entry {
+  padding: 16px;
+  border-radius: 18px;
+}
+.dt-entry-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 12px;
+  border-bottom: 3px double var(--dt-paper-rule);
+}
+.dt-entry-art {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 76px;
+  height: 76px;
+  border-radius: 18px;
+  background: var(--dt-paper-card);
+}
+.dt-entry-name {
+  margin: 0;
+  font-family: var(--dt-font-serif);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+.dt-entry-kick {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--dt-paper-sub);
+}
+.dt-entry-rare {
+  display: inline-block;
+  padding: 0 4px;
+  border-radius: var(--dt-radius-xs);
+  background: var(--dt-soft-warning);
+  color: var(--dt-ink-warning);
+  font-size: 11px;
+  font-weight: 700;
+}
+.dt-entry-desc {
+  margin: 12px 0 4px;
+  font-size: 14px;
+  line-height: 1.75;
+  text-indent: 2em;
+}
+.dt-entry-dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  margin: 8px 0 0;
+  font-size: 14px;
+}
+.dt-entry-dl > dt {
+  padding: 7px 14px 7px 0;
+  border-bottom: 1px dotted var(--dt-paper-rule);
+  font-weight: 400;
+  color: var(--dt-paper-sub);
+  white-space: nowrap;
+}
+.dt-entry-dl > dd {
+  margin: 0;
+  padding: 7px 0;
+  border-bottom: 1px dotted var(--dt-paper-rule);
+  font-variant-numeric: tabular-nums;
+}
+.dt-entry-h {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 16px 0 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--dt-paper-rule);
+  font-family: var(--dt-font-serif);
+  font-size: 17px;
+  font-weight: 700;
+}
+.dt-entry-h > small {
+  font-family: var(--dt-font-sans);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--dt-paper-sub);
+}
+.dt-entry-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px dotted var(--dt-paper-rule);
+  color: var(--dt-paper-ink);
+}
+a.dt-entry-row::after {
+  content: '›';
+  content: '›' / '';
+  flex-shrink: 0;
+  color: var(--dt-paper-sub);
+}
+.dt-entry-row .dt-row-sub {
+  color: var(--dt-paper-sub);
+}
+.dt-entry-p {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+.dt-entry-note {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--dt-paper-sub);
+}
+.dt-entry-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dt-entry-list > li {
+  margin: 3px 0;
+}
+.dt-entry-list > li.is-none {
+  margin-left: -18px;
+  list-style: none;
+  color: var(--dt-paper-sub);
+}
+.dt-entry-table {
+  overflow-x: auto;
+}
+.dt-entry-table table,
+.dt-paper-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-entry-table td {
+  padding: 6px 2px;
+  border-bottom: 1px dotted var(--dt-paper-rule);
+  text-align: center;
+}
+.dt-entry-table td.is-head {
+  font-size: 12px;
+  color: var(--dt-paper-sub);
+}
+/* 食谱各品级食材：左边品级名，右边食材×数量，放不下换行 */
+.dt-entry-grades {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  margin: 0;
+  font-size: 13px;
+}
+.dt-entry-grades > dt {
+  padding: 6px 0;
+  border-bottom: 1px dotted var(--dt-paper-rule);
+  font-weight: 400;
+  color: var(--dt-paper-sub);
+}
+.dt-entry-grades > dd {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin: 0;
+  padding: 6px 0;
+  border-bottom: 1px dotted var(--dt-paper-rule);
+}
+/* 专栏文章（玩法攻略、开放接口） */
+.dt-paper-lead {
+  margin: 12px 0 0;
+  font-size: 15px;
+  line-height: 1.8;
+  text-indent: 2em;
+}
+.dt-paper-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.dt-paper-toc > button {
+  padding: 4px 10px;
+  border: 1px solid var(--dt-paper-rule);
+  border-radius: var(--dt-radius-pill);
+  background: transparent;
+  color: var(--dt-paper-ink);
+  font-size: 12px;
+}
+.dt-paper-h {
+  margin: 18px 0 6px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--dt-paper-rule);
+  font-family: var(--dt-font-serif);
+  font-size: 19px;
+  font-weight: 700;
+}
+.dt-paper-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 15px;
+  line-height: 1.75;
+}
+.dt-paper-list > li {
+  margin: 4px 0;
+}
+.dt-col-p {
+  margin: 6px 0;
+  font-size: 14px;
+  line-height: 1.75;
+}
+.dt-paper-table td {
+  padding: 8px 0;
+  border-bottom: 1px dotted var(--dt-paper-rule);
+  vertical-align: top;
+  text-align: left;
+}
+.dt-paper-table th {
+  width: 30%;
+  padding: 8px 10px 8px 0;
+  border-bottom: 1px dotted var(--dt-paper-rule);
+  vertical-align: top;
+  text-align: left;
+  font-weight: 700;
+}
+.dt-paper-table.is-api th {
+  width: 50%;
+  font-weight: 400;
+}
+.dt-paper-table thead th {
+  font-size: 12px;
+  color: var(--dt-paper-sub);
+}
+.dt-code {
+  margin: 0;
+  padding: 10px 12px;
+  overflow-x: auto;
+  border-radius: 12px;
+  background: var(--dt-bg);
+  color: var(--dt-text);
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre;
+}
+.dt-code-base {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dt-code-base > code {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--dt-text);
+}
+.dt-code-base > .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.dt-code-path {
+  color: var(--dt-primary-ink);
+  font-size: 12px;
+  word-break: break-all;
+}
+/* 表单的标签：深色加粗（登录注册、改密码、兑换码）；输入框浅紫底，点进去变白 */
+.dt-auth-field > .dt-field-label-top {
+  margin-top: 14px;
+  font-weight: 600;
+  color: var(--dt-text);
+}
+.dt-redeem-box > .dt-field-label-top {
+  margin-top: 0;
+  font-weight: 600;
+  color: var(--dt-text);
+}
+.dt-auth-field > .dt-field {
+  background: var(--dt-bg);
+}
+.dt-redeem-row > .dt-field {
+  flex: 1 1 auto;
+  min-width: 0;
+  background: var(--dt-bg);
+}
+.dt-auth-field > .dt-field:focus-within,
+.dt-redeem-row > .dt-field:focus-within {
+  background: var(--dt-surface);
+}
+.dt-auth-links .dt-go {
+  font-weight: 600;
+}
+.dt-auth-result > .btn-light {
+  --bs-btn-bg: var(--dt-bg);
+  --bs-btn-border-color: transparent;
+}
+/* “我”的分组：行高 52px */
+.dt-me-group > .dt-nav-row {
+  gap: 12px;
+  min-height: 52px;
+  padding: 0 14px;
+  font-size: 15px;
+}
+.dt-acct-ava .dt-art-ui {
+  fill-opacity: 1;
+}
+.dt-invite-month + .dt-block-head {
+  margin-top: 18px;
+}
+/* 词条里的链接：紫色点状下划线；一整行的食谱不画下划线 */
+.dt-entry a {
+  color: var(--dt-primary-ink);
+}
+.dt-entry a.dt-entry-row {
+  color: var(--dt-paper-ink);
+  text-decoration: none;
+}
+/* 邀请的好友一行：60px 高，圆头像 40px；还没开店的画浅底人形 */
+.dt-invitee {
+  min-height: 60px;
+}
+.dt-invitee > .dt-row-ava {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--dt-bg);
+  color: var(--dt-muted);
+}
+.dt-invitee > .dt-row-ava .dt-art-ui {
+  color: var(--dt-muted);
+  fill-opacity: 1;
+}
+.dt-guide-list .dt-go,
+.dt-guide-qa .dt-go {
+  font-weight: 600;
+}
+.dt-entry-row .dt-row-title {
+  font-weight: 600;
 }

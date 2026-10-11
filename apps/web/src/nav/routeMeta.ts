@@ -11,6 +11,8 @@ export interface NavMeta {
   parent?: string | ((to: RouteLocationNormalizedLoaded, back: unknown) => string);
   /** 页面有场景头图：顶栏用天空底色、不画底线（界面改版 P5） */
   scene?: boolean;
+  /** 没有顶栏：登录注册、开店这些游戏外的页面，头图就是页头（界面改版 P11） */
+  bare?: boolean;
 }
 declare module 'vue-router' {
   interface RouteMeta extends NavMeta, RouteFlags {

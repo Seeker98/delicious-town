@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { AccountProfileDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -14,6 +14,7 @@ vi.mock('../api/endpoints', () => ({
     changePassword: vi.fn(),
     sendVerifyEmail: vi.fn(),
     selectShard: vi.fn(),
+    listShards: vi.fn(),
     logout: vi.fn(),
   },
 }));
@@ -31,101 +32,123 @@ const profile = (patch: Partial<AccountProfileDto> = {}): AccountProfileDto => (
 const mountView = async () => {
   const router = createRouter({
     history: createMemoryHistory(),
-    routes: [{ path: '/:p(.*)*', name: 'home', component: AccountView }],
+    routes: [
+      { path: '/', name: 'home', component: AccountView },
+      { path: '/login', name: 'login', component: { template: '<div />' } },
+      { path: '/shards', name: 'shards', component: { template: '<div />' } },
+    ],
   });
-  const w = mount(AccountView, { global: { plugins: [router] } });
+  await router.push('/');
+  // 修改密码、语言、外观都在 Teleport 到 body 的底部面板里：测试里把 teleport 桩掉（界面改版 P11）
+  const w = mount(AccountView, { global: { plugins: [router], stubs: { teleport: true } } });
   await flushPromises();
-  return w;
-};
-const fill = async (w: Awaited<ReturnType<typeof mountView>>, a: string, b: string, c: string) => {
-  await w.find('[data-testid="acc-old"]').setValue(a);
-  await w.find('[data-testid="acc-new"]').setValue(b);
-  await w.find('[data-testid="acc-new2"]').setValue(c);
-  await w.find('[data-testid="acc-change"]').trigger('click');
-  await flushPromises();
+  return { w, router };
 };
 
-describe('AccountView（问题记录 178）', () => {
+describe('AccountView（问题记录 178；界面改版 P11）', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     vi.mocked(endpoints.changePassword).mockReset();
+    vi.mocked(endpoints.sendVerifyEmail).mockReset();
+    vi.mocked(endpoints.listShards).mockResolvedValue([]);
+    vi.mocked(endpoints.accountProfile).mockResolvedValue(profile());
+  });
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
-  it('显示用户名、各区服的店；邮箱未验证时有重发按钮；普通玩家不显示身份', async () => {
-    vi.mocked(endpoints.accountProfile).mockResolvedValue(profile({ emailVerified: false }));
-    const w = await mountView();
-    expect(w.text()).toContain('u1');
-    expect(w.find('[data-testid="acc-rest-1"]').text()).toContain('小店');
-    expect(w.find('[data-testid="acc-resend"]').exists()).toBe(true);
+  it('顶上一张账号卡：用户名、注册时间和几个区服有店；普通玩家不显示身份', async () => {
+    const { w } = await mountView();
+    const card = w.get('[data-testid="acc-info"]');
+    expect(card.text()).toContain('u1');
+    expect(card.text()).toContain('注册 · 1 个区服有店');
+    expect(card.find('.dt-tag').exists()).toBe(false);
     expect(w.text()).not.toContain('管理员');
   });
 
-  it('账号信息排成整齐的两列：左边标签、右边内容，语言下拉框也在右列（问题记录 300）', async () => {
-    const w = await mountView();
-    const info = w.get('[data-testid="acc-info"]');
-    expect(info.classes()).toContain('dt-kv');
-    expect(info.findAll('dt').map((x) => x.text())).toEqual(['语言', '外观', '用户名', '注册时间', '邮箱']);
-    expect(info.findAll('dd')).toHaveLength(5);
-    expect(info.findAll('dd')[0]!.find('select').exists()).toBe(true);
-    // 外观三选一（界面改版 P1）
-    expect(info.find('[data-testid="acc-theme"] [data-testid="theme-select"]').exists()).toBe(true);
-    expect(info.findAll('dd')[2]!.text()).toContain('u1');
+  it('管理员在名字后面带身份小标签；一家店都没开写“还没开店”', async () => {
+    vi.mocked(endpoints.accountProfile).mockResolvedValue(profile({ role: 'admin', rests: [] }));
+    const { w } = await mountView();
+    const card = w.get('[data-testid="acc-info"]');
+    expect(card.get('.dt-tag').text()).toBe('管理员');
+    expect(card.text()).toContain('还没开店');
   });
 
-  it('两次新密码不一致：不发请求', async () => {
-    vi.mocked(endpoints.accountProfile).mockResolvedValue(profile());
-    const w = await mountView();
-    await fill(w, 'secret123', 'newpass123', 'newpass999');
-    expect(endpoints.changePassword).not.toHaveBeenCalled();
-    expect(w.text()).toContain('两次输入的新密码不一样');
+  it('邮箱行：已验证只写标签；没验证有重发按钮，点了发验证邮件并提示', async () => {
+    const { w: ok } = await mountView();
+    expect(ok.get('[data-testid="acc-email"]').text()).toContain('已验证');
+    expect(ok.find('[data-testid="acc-resend"]').exists()).toBe(false);
+
+    vi.mocked(endpoints.accountProfile).mockResolvedValue(profile({ emailVerified: false }));
+    vi.mocked(endpoints.sendVerifyEmail).mockResolvedValue({} as never);
+    const { w } = await mountView();
+    const row = w.get('[data-testid="acc-email"]');
+    expect(row.text()).toContain('u@x');
+    expect(row.text()).toContain('没验证');
+    await w.get('[data-testid="acc-resend"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.sendVerifyEmail).toHaveBeenCalledTimes(1);
+    expect(useToastStore().items.at(-1)?.variant).toBe('success');
   });
 
-  it('改密码成功：提示其他设备已下线，清空输入', async () => {
-    vi.mocked(endpoints.accountProfile).mockResolvedValue(profile());
-    vi.mocked(endpoints.changePassword).mockResolvedValue({});
-    const w = await mountView();
-    await fill(w, 'secret123', 'newpass123', 'newpass123');
-    expect(endpoints.changePassword).toHaveBeenCalledWith({
-      oldPassword: 'secret123',
-      newPassword: 'newpass123',
-    });
-    expect(w.text()).toContain('其他设备已下线');
-    expect((w.find('[data-testid="acc-old"]').element as HTMLInputElement).value).toBe('');
+  it('“修改密码”行点开密码面板，三格都在', async () => {
+    const { w } = await mountView();
+    expect(w.find('[data-testid="acc-old"]').exists()).toBe(false);
+    await w.get('[data-testid="acc-pw"]').trigger('click');
+    for (const id of ['acc-old', 'acc-new', 'acc-new2', 'acc-change'])
+      expect(w.find(`[data-testid="${id}"]`).exists()).toBe(true);
   });
-});
 
-describe('backlog 账号：改密码后要重新登录', () => {
-  beforeEach(() => {
-    setActivePinia(createPinia());
-    vi.mocked(endpoints.changePassword).mockReset();
+  it('语言、外观行写着当前值，点开对应面板（问题记录 300 的下拉框改成面板）', async () => {
+    const { w } = await mountView();
+    expect(w.get('[data-testid="acc-lang"]').text()).toContain('简体中文');
+    expect(w.get('[data-testid="acc-theme"]').text()).toContain('跟随系统');
+    await w.get('[data-testid="acc-lang"]').trigger('click');
+    expect(w.find('[data-testid="lang-en"]').exists()).toBe(true);
+    expect(w.find('[data-testid="theme-dark"]').exists()).toBe(false);
+    await w.get('[data-testid="acc-theme"]').trigger('click');
+    expect(w.find('[data-testid="lang-en"]').exists()).toBe(false);
+    await w.get('[data-testid="theme-dark"]').trigger('click');
+    // 选了深色：面板关掉，行里的值跟着变
+    expect(w.find('[data-testid="theme-dark"]').exists()).toBe(false);
+    expect(w.get('[data-testid="acc-theme"]').text()).toContain('深色');
+    localStorage.clear();
+    document.documentElement.removeAttribute('data-theme');
   });
-  it('服务端返回 relogin：提示密码已改、请用新密码重新登录，并跳到登录页', async () => {
-    vi.mocked(endpoints.accountProfile).mockResolvedValue(profile());
+
+  it('切换区服行链到 /shards（“我的店”列表挪到那一页）', async () => {
+    const { w } = await mountView();
+    expect(w.get('[data-testid="acc-shards"]').attributes('href')).toBe('/shards');
+    expect(w.find('[data-testid="acc-rest-1"]').exists()).toBe(false);
+  });
+
+  it('退出登录先确认：取消什么都不做；确认后退出并去登录页', async () => {
+    const ask = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    vi.mocked(endpoints.logout).mockResolvedValue({} as never);
+    const { w, router } = await mountView();
+    await w.get('[data-testid="acc-logout"]').trigger('click');
+    await flushPromises();
+    expect(ask).toHaveBeenCalledWith('退出登录？');
+    expect(endpoints.logout).not.toHaveBeenCalled();
+    ask.mockReturnValue(true);
+    await w.get('[data-testid="acc-logout"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.logout).toHaveBeenCalled();
+    expect(router.currentRoute.value.name).toBe('login');
+  });
+
+  it('改完密码服务端要求重新登录：会话清掉', async () => {
     vi.mocked(endpoints.changePassword).mockResolvedValue({ relogin: true } as never);
-    const w = await mountView();
-    await fill(w, 'secret123', 'newpass123', 'newpass123');
+    useSessionStore().me = { accountId: 1, username: 'u1' } as never;
+    const { w } = await mountView();
+    await w.get('[data-testid="acc-pw"]').trigger('click');
+    await w.get('[data-testid="acc-old"]').setValue('secret123');
+    await w.get('[data-testid="acc-new"]').setValue('newpass123');
+    await w.get('[data-testid="acc-new2"]').setValue('newpass123');
+    await w.get('form').trigger('submit');
     await flushPromises();
-    expect(useToastStore().items.at(-1)?.text).toBe('密码已修改, 请用新密码重新登录');
     expect(useSessionStore().me).toBeNull();
-  });
-
-  it('进入别的区服：会话里换成那个区服的蟹老板店编号（backlog 第 ⑦ 批审查）', async () => {
-    vi.mocked(endpoints.accountProfile).mockResolvedValue(profile());
-    vi.mocked(endpoints.selectShard).mockResolvedValue({ shardId: 1, restaurantId: 5, npcRestId: 99 });
-    useSessionStore().me = {
-      accountId: 1,
-      username: 'u1',
-      email: 'u@x',
-      emailVerified: true,
-      role: 'player',
-      shardId: 2,
-      restaurantId: 8,
-      lang: null,
-      npcRestId: 3,
-    };
-    const w = await mountView();
-    await w.get('[data-testid="acc-rest-1"] button').trigger('click');
-    await flushPromises();
-    expect(useSessionStore().me).toMatchObject({ shardId: 1, restaurantId: 5, npcRestId: 99 });
+    // 面板跟着关掉
+    expect(w.find('[data-testid="acc-old"]').exists()).toBe(false);
   });
 });

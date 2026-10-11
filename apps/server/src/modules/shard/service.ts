@@ -79,7 +79,18 @@ export function createShardService(d: {
         .leftJoin('restaurant', (join) =>
           join.onRef('restaurant.shard_id', '=', 'shard.id').on('restaurant.account_id', '=', accountId),
         )
-        .select(['shard.id', 'shard.name', 'shard.status', 'shard.opened_at', 'restaurant.id as rest_id'])
+        .select([
+          'shard.id',
+          'shard.name',
+          'shard.status',
+          'shard.opened_at',
+          'restaurant.id as rest_id',
+          'restaurant.name as rest_name',
+          'restaurant.level as rest_level',
+          'restaurant.avatar as rest_avatar',
+          'restaurant.star_level as rest_star',
+          'restaurant.street_id as rest_street',
+        ])
         // 已关闭的区服只给在里面开过店的人看（问题记录 190：测试区服关掉后不该出现在列表里）
         .where((eb) => eb.or([eb('shard.status', '=', 'open'), eb('restaurant.id', 'is not', null)]))
         .orderBy('shard.id')
@@ -90,6 +101,17 @@ export function createShardService(d: {
         status: r.status,
         openedAt: r.opened_at.toISOString(),
         hasRestaurant: r.rest_id !== null,
+        rest:
+          r.rest_id === null
+            ? null
+            : {
+                id: r.rest_id,
+                name: r.rest_name ?? '',
+                level: r.rest_level ?? 0,
+                avatar: r.rest_avatar ?? null,
+                starLevel: r.rest_star ?? 0,
+                streetId: r.rest_street ?? 0,
+              },
       }));
     },
 

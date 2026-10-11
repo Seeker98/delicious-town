@@ -48,7 +48,7 @@ export function createInviteService(d: GameDeps) {
             eb
               .selectFrom('restaurant as r')
               .innerJoin('shard as s', 's.id', 'r.shard_id')
-              .select(['r.name', 'r.level', 's.name as shard_name'])
+              .select(['r.name', 'r.level', 'r.avatar', 's.name as shard_name'])
               .whereRef('r.account_id', '=', 'a.id')
               .where('r.npc', '=', false)
               .orderBy('r.level', 'desc')
@@ -57,7 +57,7 @@ export function createInviteService(d: GameDeps) {
               .as('best'),
           (join) => join.onTrue(),
         )
-        .select(['best.name', 'best.level', 'best.shard_name', 'a.email_verified_at'])
+        .select(['best.name', 'best.level', 'best.avatar', 'best.shard_name', 'a.email_verified_at'])
         .select(stageOf('lv10').as('lv10'))
         .select(stageOf('lv30').as('lv30'))
         .where('a.invited_by', '=', ctx.accountId)
@@ -74,6 +74,7 @@ export function createInviteService(d: GameDeps) {
           restName: r.name ?? null,
           shardName: r.shard_name ?? null,
           level: r.level ?? null,
+          avatar: r.avatar ?? null,
           verified: r.email_verified_at !== null,
           lv10: r.lv10,
           lv30: r.lv30,

@@ -3,11 +3,36 @@ import type { Messages } from '../..';
 const site: Messages['site'] = {
   changelogTitle: 'Update log',
   linksTitle: 'Links',
-  linksEmpty: 'No links yet.',
+  linksEmpty: 'No links yet',
+  linksEmptyBody: 'Built a site about the town? Tell the admins on the forum',
   linksLoadFailed: 'Failed to load links',
   clockTitle: 'Current time (Beijing time)',
+  newMark: 'New',
+  clTotal: (n) => `${n} ${n === 1 ? 'entry' : 'entries'}`,
+  clLatest: (d) => `Latest: ${d}`,
+  clMore: (n) => `Show ${n} more ${n === 1 ? 'day' : 'days'}`,
+  clColon: ': ',
+  monthDay: (m, d) =>
+    new Date(Date.UTC(2000, m - 1, d)).toLocaleDateString('en', {
+      timeZone: 'UTC',
+      month: 'long',
+      day: 'numeric',
+    }),
+  ymd: (y, m, d) =>
+    new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('en', {
+      timeZone: 'UTC',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }),
+  monthShort: (m) =>
+    new Date(Date.UTC(2000, m - 1, 1)).toLocaleDateString('en', { timeZone: 'UTC', month: 'short' }),
+  weekday: (w) =>
+    new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    account1012:
+      'Login, account, help center and library redesigned: login and sign-up pages show the town gate, every field has a label and its own error line, and the eye button shows your password; each server is a card that shows your restaurant there; language, appearance and password are changed in panels on the account page; redeem rewards come with pictures and your invite code sits in a dashed box; the help center is a set of tiles and the play guide folds up; the update log and the library look like a newspaper, library lists have pictures, and item, ingredient, recipe and street pages read like a little handbook',
     social1012:
       'Guild, Plaza, Forum, Friends and Mail redesigned: the Guild and Plaza have scene headers, and the Mayor, Brother 13 and Carmen now have portraits in a row that shows who you have chatted with today; star-up and oil tank list exactly what is missing, and renaming and moving happen in a panel; tell the Mayor where the Hip-hop Boy is by tapping a place, pick rare item amounts in a panel and Carmen\'s mystery ingredients from a grid; teaching a class uses a panel to pick the dish and certificate; the Town Daily looks like a newspaper, broadcasts and the Thor hammer use panels, and rankings show medals and avatars; forum posts are tidy cards with the reply box at the bottom and edit/delete under "⋯"; friend rows show free meals, cupboard slots and roaches, friend restaurants share your home header with a two-column action grid and tappable tables; mail attachments show icons and each mail opens in a panel',
     play1012:

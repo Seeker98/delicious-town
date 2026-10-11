@@ -12,6 +12,13 @@ const common: Messages['common'] = {
   themeSystem: 'Comme le système',
   themeLight: 'Clair',
   themeDark: 'Sombre',
+  langNames: {
+    'zh-CN': 'Chinois simplifié',
+    'zh-TW': 'Chinois traditionnel',
+    en: 'Anglais',
+    fr: 'Français',
+    es: 'Espagnol',
+  } as Record<string, string>,
   loadFailed: 'Échec du chargement',
   langLoadFailed: 'Impossible de changer de langue. Vérifiez votre connexion et réessayez.',
   offline: 'Hors ligne\u202f: réessayez une fois connecté',
