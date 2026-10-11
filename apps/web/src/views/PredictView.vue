@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { predictPercent, type PredictDetailDto, type PredictEventDto, type PredictListDto } from '@dt/shared';
-import PredictDetailCard from '../components/predict/PredictDetailCard.vue';
+import { RouterLink } from 'vue-router';
+import { predictPercent, type PredictEventDto, type PredictListDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtEmpty from '../components/DtEmpty.vue';
+import DtSheet from '../components/DtSheet.vue';
+import DtSkeleton from '../components/DtSkeleton.vue';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useToastStore } from '../stores/toast';
@@ -10,15 +13,17 @@ import { formatNum } from '../utils/format';
 import { predictNote, predictTitle } from '../utils/serverText';
 import { useCatalogStore } from '../stores/catalog';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
-import { serverNowMs } from '../utils/serverNow';
+import { predictLeft } from '../utils/predict';
 
-/** 事件预测（238-1 设计 §7.2）：用银币买卖"是/否"份额，系统按公式报价 */
+/**
+ * 事件预测（238-1 设计 §7.2）：用银币买卖"是/否"份额，系统按公式报价。
+ * 界面改版 P8：列表一行一个事件（标题、概率条、剩余时间、我的持仓），点了进详情页 /predict/编号
+ */
 const toast = useToastStore();
 const t = useT();
 const catalog = useCatalogStore();
 const list = ref<PredictListDto | null>(null);
-const detail = ref<PredictDetailDto | null>(null);
-const selected = ref<number | null>(null);
+const helpOpen = ref(false);
 
 const open = computed(() => list.value?.events.filter((e) => e.status === 'open') ?? []);
 /** 已结束的按截止时间从新到旧（问题记录 449）；同一时间编号大的在前 */
@@ -27,8 +32,6 @@ const ended = computed(() =>
     (a, b) => b.closeAt.localeCompare(a.closeAt) || b.id - a.id,
   ),
 );
-/** 详情只展开在被点的那一行下面（问题记录 264）；新详情读回来之前不显示上一个的 */
-const shown = (id: number) => selected.value === id && detail.value?.event.id === id;
 const reasonText = computed(() => {
   const l = list.value;
   if (!l || !l.reason) return '';
@@ -42,13 +45,8 @@ const reasonText = computed(() => {
 const profit = (e: PredictEventDto) => (e.payout === null ? null : e.payout - e.netCost);
 /** 已结束的结果标签：是 / 否，没判定的写状态（等待判定、已作废）（问题记录 288） */
 const endedTag = (e: PredictEventDto) =>
-  e.status === 'resolved'
-    ? e.outcome
-      ? t.value.predict.yes
-      : t.value.predict.no
-    : t.value.predict.status[e.status];
-const endedTagClass = (e: PredictEventDto) =>
-  e.status === 'resolved' ? (e.outcome ? 'text-success' : 'text-danger') : 'text-muted';
+  e.status === 'resolved' ? t.value.predict.result(!!e.outcome) : t.value.predict.status[e.status];
+const endedTagClass = (e: PredictEventDto) => (e.status === 'resolved' ? 'dt-tag-primary' : 'dt-tag-mute');
 /** 已结束的超过 5 个先收起（问题记录 288） */
 const ENDED_SHOWN = 5;
 const endedAll = ref(false);
@@ -64,13 +62,6 @@ const helpItems = computed(() => {
   );
 });
 const signed = (n: number) => `${n > 0 ? '+' : ''}${formatNum(n)}`;
-const leftText = (closeAt: string) => {
-  const ms = new Date(closeAt).getTime() - serverNowMs();
-  const p = t.value.predict;
-  if (ms <= 0) return p.closedAt;
-  const m = Math.floor(ms / 60_000);
-  return m >= 60 ? p.leftHm(Math.floor(m / 60), m % 60) : p.leftM(m);
-};
 
 async function loadList() {
   try {
@@ -79,128 +70,111 @@ async function loadList() {
     toast.push(errorMessage(e, t.value.common.loadFailed), 'danger');
   }
 }
-async function loadDetail(id: number) {
-  try {
-    const d = await endpoints.predictDetail(id);
-    if (selected.value === id) detail.value = d;
-  } catch (e) {
-    toast.push(errorMessage(e, t.value.common.loadFailed), 'danger');
-  }
-}
-/** 点一行展开详情，再点一次收起 */
-async function pick(id: number) {
-  if (selected.value === id) {
-    selected.value = null;
-    detail.value = null;
-    return;
-  }
-  selected.value = id;
-  await loadDetail(id);
-}
-async function refresh() {
-  await loadList();
-  if (selected.value !== null) await loadDetail(selected.value);
-}
 onMounted(() => void loadList());
 </script>
 
 <template>
   <HiphopCard :place="11" />
-  <div class="small text-muted mb-2">
-    {{ t.predict.intro }}
-  </div>
-  <!-- 玩法说明整页一份，默认收起（问题记录 288：以前每张详情卡里各一份） -->
-  <details v-if="list" class="small mb-2" data-testid="pd-help">
-    <summary>{{ t.predict.detail.help }}</summary>
-    <ul class="mb-0 ps-3">
-      <li v-for="(x, i) in helpItems" :key="i">{{ x }}</li>
-    </ul>
-  </details>
-  <div v-if="list && !list.enabled" class="alert alert-secondary py-1 small" data-testid="pd-off">
-    {{ t.predict.off }}
-  </div>
-  <div v-if="reasonText" class="alert alert-warning py-1 small" data-testid="pd-reason">{{ reasonText }}</div>
-
-  <h6 class="dt-section">{{ t.predict.running }}</h6>
-  <div v-if="list && open.length === 0" class="small text-muted mb-3">{{ t.predict.noRunning }}</div>
-  <template v-for="e in open" :key="e.id">
-    <button
-      type="button"
-      :class="['dt-card w-100 text-start mb-2', e.id === selected ? 'border-primary' : '']"
-      :data-testid="`pd-event-${e.id}`"
-      @click="pick(e.id)"
-    >
-      <div class="d-flex align-items-center gap-2">
-        <span class="flex-fill dt-card-title"
-          >{{ predictTitle(e)
-          }}<span v-if="e.auto" class="dt-tag ms-1 fw-normal" :data-testid="`pd-auto-${e.id}`">{{
-            t.predict.auto
-          }}</span></span
+  <DtSkeleton v-if="!list" :rows="4" />
+  <template v-else>
+    <div v-if="!list.enabled" class="dt-act-note" data-testid="pd-off">{{ t.predict.off }}</div>
+    <div v-if="reasonText" class="dt-act-note is-warn" data-testid="pd-reason">{{ reasonText }}</div>
+    <div class="dt-card dt-rows-card">
+      <!-- 玩法说明整页一份，点开从下面弹出（问题记录 288） -->
+      <button type="button" class="dt-row is-link" data-testid="pd-help" @click="helpOpen = true">
+        <span class="dt-row-main"
+          ><span class="dt-row-title">{{ t.predict.detail.help }}</span
+          ><span class="dt-row-sub">{{ t.predict.helpSub }}</span></span
         >
-        <span class="text-success small text-nowrap">{{ t.predict.yesPct(predictPercent(e.price)) }}</span>
-        <i :class="['bi', e.id === selected ? 'bi-chevron-up' : 'bi-chevron-down', 'text-muted']" />
-      </div>
-      <!-- 是/否概率条（问题记录 288） -->
-      <div class="progress my-1" style="height: 4px" :data-testid="`pd-bar-${e.id}`">
-        <div
-          class="progress-bar bg-success"
-          data-testid="pd-bar-yes"
-          :style="{ width: `${predictPercent(e.price)}%` }"
-        ></div>
-        <div class="progress-bar bg-danger" :style="{ width: `${100 - predictPercent(e.price)}%` }"></div>
-      </div>
-      <div class="small text-muted">
-        {{ leftText(e.closeAt) }}
-        <span v-if="e.yes > 0 || e.no > 0">{{ t.predict.holding(e.yes, e.no) }}</span>
-      </div>
-    </button>
-    <PredictDetailCard v-if="shown(e.id) && list" :detail="detail!" :list="list" @refresh="refresh" />
-  </template>
-
-  <template v-if="ended.length > 0">
-    <h6 class="dt-section">{{ t.predict.ended }}</h6>
-    <!-- 已结束：小卡片，标出结果和我的盈亏；超过 5 个先收起（问题记录 288） -->
-    <template v-for="e in endedShown" :key="e.id">
-      <div
-        role="button"
-        :class="['dt-card small mb-2', e.id === selected ? 'border-primary' : '']"
-        :data-testid="`pd-ended-${e.id}`"
-        @click="pick(e.id)"
-      >
-        <div class="d-flex align-items-center gap-2">
-          <span class="flex-fill dt-card-title">{{ predictTitle(e) }}</span>
-          <span :class="['dt-tag', endedTagClass(e)]" data-testid="pd-ended-tag">{{ endedTag(e) }}</span>
-        </div>
-        <span class="text-muted">{{ t.predict.endedHold(e.yes, e.no) }}</span>
-        <span
-          v-if="profit(e) !== null"
-          data-testid="pd-ended-profit"
-          :class="profit(e)! >= 0 ? 'text-success' : 'text-danger'"
-          >{{ t.predict.profit(signed(profit(e)!)) }}</span
-        >
-        <div v-if="predictNote(e, catalog)" class="text-muted" :data-testid="`pd-ended-note-${e.id}`">
-          {{ t.predict.note(predictNote(e, catalog)!) }}
-        </div>
-      </div>
-      <PredictDetailCard
-        v-if="shown(e.id) && list"
-        class="mt-1"
-        :detail="detail!"
-        :list="list"
-        @refresh="refresh"
-      />
-    </template>
-    <!-- .dt-link-btn 的字号跟着外层走：外面包一层 small -->
-    <div v-if="ended.length > ENDED_SHOWN" class="small">
-      <button
-        type="button"
-        class="dt-link-btn"
-        data-testid="pd-ended-more"
-        :aria-expanded="endedAll"
-        @click="endedAll = !endedAll"
-      >
-        {{ endedAll ? t.predict.endedLess : t.predict.endedMore(ended.length) }}
       </button>
     </div>
+
+    <section class="dt-block">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.predict.running }}</h2>
+        <span class="dt-block-more">{{ open.length }}</span>
+      </div>
+      <DtEmpty v-if="open.length === 0" :title="t.predict.noRunning" />
+      <div v-else class="dt-card dt-rows-card">
+        <RouterLink
+          v-for="e in open"
+          :key="e.id"
+          :to="`/predict/${e.id}`"
+          class="dt-pd-ev"
+          :data-testid="`pd-event-${e.id}`"
+        >
+          <span class="dt-pd-ev-head">
+            <span class="dt-pd-ev-title"
+              >{{ predictTitle(e)
+              }}<span v-if="e.auto" class="dt-tag-primary" :data-testid="`pd-auto-${e.id}`">{{
+                t.predict.auto
+              }}</span></span
+            >
+            <span class="dt-pd-ev-pct">{{ t.predict.yesPct(predictPercent(e.price)) }}</span>
+          </span>
+          <!-- 是/否概率条（问题记录 288） -->
+          <span class="dt-pd-split" :data-testid="`pd-bar-${e.id}`"
+            ><i data-testid="pd-bar-yes" :style="{ width: `${predictPercent(e.price)}%` }"></i
+          ></span>
+          <span class="dt-row-sub"
+            >{{ predictLeft(e.closeAt)
+            }}<template v-if="e.yes > 0 || e.no > 0">{{ t.predict.holding(e.yes, e.no) }}</template></span
+          >
+        </RouterLink>
+      </div>
+    </section>
+
+    <section v-if="ended.length > 0" class="dt-block">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.predict.ended }}</h2>
+      </div>
+      <!-- 已结束：标出结果和我的盈亏；超过 5 个先收起（问题记录 288） -->
+      <div class="dt-card dt-rows-card">
+        <RouterLink
+          v-for="e in endedShown"
+          :key="e.id"
+          :to="`/predict/${e.id}`"
+          class="dt-row is-link dt-row-wrap"
+          :data-testid="`pd-ended-${e.id}`"
+        >
+          <span class="dt-row-main">
+            <span class="dt-row-title">{{ predictTitle(e) }}</span>
+            <span class="dt-row-sub"
+              ><span :class="endedTagClass(e)" data-testid="pd-ended-tag">{{ endedTag(e) }}</span
+              >{{ t.predict.endedHold(e.yes, e.no)
+              }}<span
+                v-if="profit(e) !== null"
+                data-testid="pd-ended-profit"
+                :class="profit(e)! >= 0 ? 'text-success' : 'text-danger'"
+                >{{ t.predict.profit(signed(profit(e)!)) }}</span
+              ></span
+            >
+            <span v-if="predictNote(e, catalog)" class="dt-row-sub" :data-testid="`pd-ended-note-${e.id}`">{{
+              t.predict.note(predictNote(e, catalog)!)
+            }}</span>
+          </span>
+        </RouterLink>
+      </div>
+      <div v-if="ended.length > ENDED_SHOWN" class="dt-more-row">
+        <button
+          type="button"
+          class="btn btn-light"
+          data-testid="pd-ended-more"
+          :aria-expanded="endedAll"
+          @click="endedAll = !endedAll"
+        >
+          {{ endedAll ? t.predict.endedLess : t.predict.endedMore(ended.length) }}
+        </button>
+      </div>
+    </section>
+
+    <DtSheet :open="helpOpen" :title="t.predict.detail.help" @close="helpOpen = false">
+      <div class="dt-help">
+        <p>{{ t.predict.intro }}</p>
+        <ul>
+          <li v-for="(x, i) in helpItems" :key="i">{{ x }}</li>
+        </ul>
+      </div>
+    </DtSheet>
   </template>
 </template>

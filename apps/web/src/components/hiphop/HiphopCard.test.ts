@@ -18,6 +18,13 @@ const spot: HiphopSpotDto = {
   myWeekWorth: 1234,
   closeAt: '2026-10-01T14:00:00.000Z',
 };
+/** 界面改版 P8：卡片默认收起成一行，点开才是打赏 */
+const mountOpen = async (props: Record<string, unknown>) => {
+  const w = mount(HiphopCard, { props });
+  await flushPromises();
+  await w.get('[data-testid="hiphop-toggle"]').trigger('click');
+  return w;
+};
 const tipDto = (patch: Partial<HiphopTipDto> = {}): HiphopTipDto => ({
   worth: 20_000,
   exp: 476,
@@ -54,12 +61,22 @@ describe('HiphopCard', () => {
     vi.mocked(endpoints.hiphopTip).mockResolvedValue(tipDto());
     const w = mount(HiphopCard, { props: { place: 1 } });
     await flushPromises();
-    const card = w.find('[data-testid="hiphop-card"]');
-    expect(card.text()).toContain('食材101');
-    expect(card.text()).toContain('你有 30 份');
-    expect(card.text()).toContain('50,000');
+    // 收起时一行写想要什么，打赏的控件不显示
+    const want = w.get('[data-testid="hiphop-want"]');
+    expect(want.text()).toContain('食材101');
+    expect(want.text()).toContain('你有 30 份');
+    expect(w.find('[data-testid="hiphop-tip"]').exists()).toBe(false);
+    const toggle = w.get('[data-testid="hiphop-toggle"]');
+    expect(toggle.attributes('aria-expanded')).toBe('false');
+    await toggle.trigger('click');
+    expect(toggle.attributes('aria-expanded')).toBe('true');
+    expect(w.get('[data-testid="hiphop-card"]').text()).toContain('50,000');
     await w.find('[data-testid="hiphop-kind-coin"]').trigger('click');
-    await w.find('[data-testid="hiphop-num"]').setValue(100000);
+    // 银币按千起步
+    const num = w.get('[data-testid="hiphop-num"]');
+    expect((num.element as HTMLInputElement).value).toBe('1000');
+    expect(num.attributes('min')).toBe('1000');
+    await num.setValue(100000);
     await w.find('[data-testid="hiphop-tip"]').trigger('click');
     await flushPromises();
     expect(endpoints.hiphopTip).toHaveBeenCalledWith({ place: 1, kind: 'coin', num: 100000 });
@@ -72,8 +89,7 @@ describe('HiphopCard', () => {
   it('食材打赏默认选他想要的那种；餐厅地点带上店号', async () => {
     vi.mocked(endpoints.hiphopSpot).mockResolvedValue({ ...spot, place: 9, restId: 77 });
     vi.mocked(endpoints.hiphopTip).mockResolvedValue(tipDto({ exp: 0, reply: 'wanted' }));
-    const w = mount(HiphopCard, { props: { restId: 77 } });
-    await flushPromises();
+    const w = await mountOpen({ restId: 77 });
     expect(endpoints.hiphopSpot).toHaveBeenCalledWith({ restId: 77 });
     await w.find('[data-testid="hiphop-num"]').setValue(10);
     await w.find('[data-testid="hiphop-tip"]').trigger('click');
@@ -93,8 +109,7 @@ describe('HiphopCard', () => {
     vi.mocked(endpoints.hiphopTip).mockResolvedValue(
       tipDto({ exp: 0, reply: 'krab', krabCoin: 3, rainbow: true, tickets: 2 }),
     );
-    const w = mount(HiphopCard, { props: { place: 1 } });
-    await flushPromises();
+    const w = await mountOpen({ place: 1 });
     await w.find('[data-testid="hiphop-num"]').setValue(10);
     await w.find('[data-testid="hiphop-tip"]').trigger('click');
     await flushPromises();
@@ -113,8 +128,7 @@ describe('HiphopCard', () => {
 
   it('橱柜里没有他想要的食材：不默认选别的（给别的食材不算价值，会白扣），写明并要求先选；一样都没有就禁用（终审 I1）', async () => {
     vi.mocked(endpoints.hiphopSpot).mockResolvedValue({ ...spot, food: { id: 555, level: 2 } });
-    const w = mount(HiphopCard, { props: { place: 1 } });
-    await flushPromises();
+    const w = await mountOpen({ place: 1 });
     expect(
       (
         w.find('[data-testid="hiphop-food"]').element as HTMLSelectElement
@@ -128,8 +142,7 @@ describe('HiphopCard', () => {
     await w.find('[data-testid="hiphop-food"]').setValue('102');
     expect(w.find('[data-testid="hiphop-tip"]').attributes('disabled')).toBeUndefined();
     vi.mocked(endpoints.cupboard).mockResolvedValue({ items: [] } as never);
-    const empty = mount(HiphopCard, { props: { place: 1 } });
-    await flushPromises();
+    const empty = await mountOpen({ place: 1 });
     expect(empty.find('[data-testid="hiphop-no-food"]').text()).toBe(
       '橱柜里没有食材, 可以改用银币或钻石打赏',
     );

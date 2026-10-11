@@ -135,6 +135,8 @@ export const CONTENT_ART = [
   'goods-trap',
   'goods-trophy',
   'goods-voucher',
+  'npc-gary',
+  'npc-hiphop',
   'res-coin-gold',
   'res-coin-silver',
   'res-diamond',

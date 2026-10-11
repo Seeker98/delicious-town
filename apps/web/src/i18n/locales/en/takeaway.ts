@@ -13,6 +13,14 @@ const takeaway: Messages['takeaway'] = {
   noCoin: (n) => `Not enough coins (need ${n})`,
   noDiamond: (n) => `Not enough diamonds (need ${n})`,
   open: {
+    needsTitle: 'Requirements',
+    starNeed: (n) => `Restaurant ${n}★ or higher`,
+    nowStar: (n) => `Now ${n}★`,
+    renownNeed: (n) => `Renown ${n} or more, spent when opening`,
+    nowNum: (n) => `Now ${n}`,
+    have: (tickets, coin, diamond) => `Delivery tickets ${tickets} · coins ${coin} · diamonds ${diamond}`,
+    met: 'Met',
+    unmet: 'Not met',
     needStar: (n) => `Your restaurant needs ${n}★ to open takeaway`,
     noRenown: (n) => `Not enough Renown (need ${n})`,
     noTicket: 'No takeaway tickets',
@@ -28,6 +36,12 @@ const takeaway: Messages['takeaway'] = {
     byCoin: 'Open with coins and diamonds',
   },
   orders: {
+    refreshTitle: 'Private refresh',
+    refreshSub: 'Get private orders only you can take',
+    refreshCost: (cost) => `${cost} coins`,
+    title: 'Orders',
+    freeRiders: (free, total) => `Free riders ${free} / ${total}`,
+    whichRider: 'Which rider',
     notLearned: "You haven't learned this dish",
     noRenown: (n) => `Not enough Renown (need ${n})`,
     noFoods: 'Not enough ingredients',
@@ -69,6 +83,8 @@ const takeaway: Messages['takeaway'] = {
     rider: (name) => `Rider ${name}`,
     claim: 'Claim',
     droneBtn: (n) => `Drone (${n} ${plEn(n, 'diamond', 'diamonds')})`,
+    arrivedTitle: (n) => `${n} delivered`,
+    onWayTitle: 'On the way',
   },
   riders: {
     reasons: {
@@ -97,6 +113,10 @@ const takeaway: Messages['takeaway'] = {
     noFriends: 'No friends yet',
     cand: (name, level, star) => `${name} (Lv. ${level} · ${star}★)`,
     hire: 'Hire',
+    mineTitle: 'My riders',
+    countShort: (n, cap) => `${n} / ${cap}`,
+    capNote: 'The cap grows as your own rider levels up',
+    candSub: (level, star) => `Lv ${level} · ${star}★`,
   },
 };
 export default takeaway;

@@ -13,8 +13,12 @@ vi.mock('../api/endpoints', () => ({
     shopBuy: vi.fn(),
     shopBuyBlack: vi.fn(),
     shopBuySpecial: vi.fn(),
+    overview: vi.fn(),
   },
 }));
+
+/** 购买面板用 Teleport 挂到 body 上：测试里把 teleport 桩掉，面板内容就留在 wrapper 里（界面改版 P8） */
+const mountView = () => mount(ShopView, { global: { stubs: { teleport: true } } });
 
 const dto: ShopDto = {
   coin: [
@@ -35,13 +39,35 @@ describe('ShopView（问题记录：商店不显示最大可购买数量）', ()
   });
 
   it('显示最多能买几个；填的数超过上限时按上限买', async () => {
-    const w = mount(ShopView);
+    const w = mountView();
     await flushPromises();
-    expect(w.find('[data-testid="cap-13"]').text()).toBe('最多 3');
-    await w.find('[data-testid="qty-13"]').setValue('9');
+    expect(w.find('[data-testid="info-13"]').text()).toContain('最多 3');
+    // 能买的不挂原因标签
+    expect(w.find('[data-testid="cap-13"]').exists()).toBe(false);
+    // 界面改版 P8：点价格按钮弹出购买面板，数量在面板里选
+    expect(w.find('[data-testid="shop-sheet"]').exists()).toBe(false);
     await w.find('[data-testid="buy-13"]').trigger('click');
+    expect(w.find('[data-testid="shop-sheet"]').exists()).toBe(true);
+    const qty = w.get('[data-testid="qty-sheet"]');
+    expect(qty.attributes('min')).toBe('1');
+    expect(qty.attributes('max')).toBe('3');
+    await qty.setValue('9');
+    expect((qty.element as HTMLInputElement).value).toBe('3');
+    expect(w.get('[data-testid="sheet-total"]').text()).toBe('3,000 银币');
+    await w.get('[data-testid="sheet-buy"]').trigger('click');
     await flushPromises();
     expect(endpoints.shopBuy).toHaveBeenCalledWith(13, 3);
+    // 买完面板关掉
+    expect(w.find('[data-testid="shop-sheet"]').exists()).toBe(false);
+  });
+
+  it('面板里“最多”一键填满上限', async () => {
+    const w = mountView();
+    await flushPromises();
+    await w.get('[data-testid="buy-13"]').trigger('click');
+    await w.get('[data-testid="qty-max"]').trigger('click');
+    expect((w.get('[data-testid="qty-sheet"]').element as HTMLInputElement).value).toBe('3');
+    expect(w.get('[data-testid="sheet-buy"]').text()).toBe('买 3 个');
   });
 
   it('买不了时按钮禁用并写明原因', async () => {
@@ -63,7 +89,7 @@ describe('ShopView（问题记录：商店不显示最大可购买数量）', ()
     expect(w.get('[data-testid="cap-93201"]').text()).toBe('4 星可用');
     expect(w.get('[data-testid="buy-93201"]').attributes('disabled')).toBeDefined();
   });
-  it('每行结构一样：限买 1 个的在数量框的位置写"限 1 个"；名字、价格、描述各一行，点名字展开描述（问题记录：行高不同、有的没数字框）', async () => {
+  it('每行结构一样：限买 1 个的写"限 1 个"标签；描述在购买面板里写全，限买 1 个的面板没有数量框（问题记录：行高不同、有的没数字框）', async () => {
     vi.mocked(endpoints.shop).mockResolvedValue({
       coin: [
         { goodsId: 99, price: 5, owned: 0, limit: 1, maxBuy: 1, blocked: null },
@@ -71,28 +97,34 @@ describe('ShopView（问题记录：商店不显示最大可购买数量）', ()
       ],
       black: [],
     });
+    const longDesc = '很长的描述'.repeat(20);
     useCatalogStore().goodsMap = new Map([
-      [99, { id: 99, name: '长描述道具', desc: '很长的描述'.repeat(20) } as CatalogGoodsDto],
+      [99, { id: 99, name: '长描述道具', desc: longDesc } as CatalogGoodsDto],
     ]);
-    const w = mount(ShopView);
+    const w = mountView();
     await flushPromises();
-    expect(w.findAll('.dt-item')).toHaveLength(4);
-    expect(w.find('[data-testid="qty-99"]').exists()).toBe(false);
-    expect(w.find('[data-testid="qty-hint-99"]').text()).toBe('限 1 个');
-    const desc = w.find('[data-testid="desc-99"]');
-    expect(desc.classes()).toContain('dt-clamp1');
-    expect(w.find('[data-testid="info-99"]').classes()).toContain('dt-clamp1');
-    await w.find('[data-testid="name-99"]').trigger('click');
-    expect(w.find('[data-testid="desc-99"]').classes()).not.toContain('dt-clamp1');
+    // 每件一行，每行都有信息行和价格按钮
+    for (const id of [99, 13, 86, 52]) {
+      expect(w.find(`[data-testid="item-${id}"]`).exists()).toBe(true);
+      expect(w.find(`[data-testid="item-${id}"] [data-testid="info-${id}"]`).exists()).toBe(true);
+      expect(w.find(`[data-testid="item-${id}"] [data-testid="buy-${id}"]`).exists()).toBe(true);
+    }
+    expect(w.get('[data-testid="cap-99"]').text()).toBe('限 1 个');
+    await w.get('[data-testid="buy-99"]').trigger('click');
+    expect(w.get('[data-testid="sheet-desc"]').text()).toBe(longDesc);
+    expect(w.find('[data-testid="qty-sheet"]').exists()).toBe(false);
+    await w.get('[data-testid="sheet-buy"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.shopBuy).toHaveBeenCalledWith(99, 1);
   });
 
-  it('价格那一行把"最多几个"放最前面，截断时不会丢（审查）', async () => {
-    const w = mount(ShopView);
+  it('信息行写"最多几个"，截断时不会丢（审查）', async () => {
+    const w = mountView();
     await flushPromises();
-    expect(w.find('[data-testid="info-13"]').text()).toMatch(/^最多 3/);
+    expect(w.find('[data-testid="info-13"]').text()).toContain('最多 3');
   });
 
-  it('名称可以用键盘展开描述（PR27 遗留）', async () => {
+  it('价格按钮是真按钮，键盘能打开面板看描述；读屏念名字和价格（PR27 遗留）', async () => {
     vi.mocked(endpoints.shop).mockResolvedValue({
       coin: [{ goodsId: 99, price: 5, owned: 0, limit: 1, maxBuy: 1, blocked: null }],
       black: [],
@@ -100,15 +132,16 @@ describe('ShopView（问题记录：商店不显示最大可购买数量）', ()
     useCatalogStore().goodsMap = new Map([
       [99, { id: 99, name: '长描述道具', desc: '很长的描述'.repeat(20) } as CatalogGoodsDto],
     ]);
-    const w = mount(ShopView);
+    const w = mountView();
     await flushPromises();
-    const name = w.find('[data-testid="name-99"]');
-    expect(name.attributes('tabindex')).toBe('0');
-    await name.trigger('keydown', { key: 'Enter' });
-    expect(w.find('[data-testid="desc-99"]').classes()).not.toContain('dt-clamp1');
+    const btn = w.get('[data-testid="buy-99"]');
+    expect(btn.element.tagName).toBe('BUTTON');
+    expect(btn.attributes('aria-label')).toBe('买长描述道具, 5');
+    await btn.trigger('click');
+    expect(w.get('[data-testid="sheet-desc"]').text()).toContain('很长的描述');
   });
 
-  it('特价：名字和折扣标签在同一行垂直居中（问题记录 118）', async () => {
+  it('特价：名字和折扣标签在同一行（问题记录 118）；点价格在面板里抢购 1 个', async () => {
     vi.mocked(endpoints.shopSpecial).mockResolvedValue({
       day: '2026-10-01',
       goodsId: 13,
@@ -118,14 +151,23 @@ describe('ShopView（问题记录：商店不显示最大可购买数量）', ()
       stock: 5,
       sold: 0,
     });
-    const w = mount(ShopView);
+    vi.mocked(endpoints.shopBuySpecial).mockResolvedValue({} as never);
+    const w = mountView();
     await flushPromises();
     await w
       .findAll('button.nav-link')
       .find((a) => a.text().includes('限时折扣'))!
       .trigger('click');
-    const row = w.find('[data-testid="special-title"]');
-    expect(row.classes()).toEqual(expect.arrayContaining(['d-flex', 'align-items-center']));
-    expect(row.text()).toContain('五折');
+    const title = w.get('[data-testid="special-title"]');
+    expect(title.text()).toContain('五折');
+    // 折扣标签就在名字那个元素里，和名字同一行
+    expect(title.get('.dt-tag-danger').text()).toBe('五折');
+    await w.get('[data-testid="special-buy"]').trigger('click');
+    expect(w.get('[data-testid="sheet-total"]').text()).toBe('100 银币');
+    expect(w.find('[data-testid="qty-sheet"]').exists()).toBe(false);
+    await w.get('[data-testid="sheet-buy"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.shopBuySpecial).toHaveBeenCalledWith(1);
+    expect(endpoints.shopBuy).not.toHaveBeenCalled();
   });
 });

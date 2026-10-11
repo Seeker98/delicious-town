@@ -65,6 +65,28 @@ const store: Messages['store'] = {
     specialLine: (price, left, stock) =>
       `${price} ${plEs(price, 'moneda', 'monedas')} · quedan ${left}/${stock}`,
     grab: '¡Lo quiero!',
+    myCoin: 'Mis monedas',
+    myDiamond: 'Mis diamantes',
+    catLabel: 'Filtrar por tipo',
+    cats: {
+      card: 'Tarjetas y vales',
+      growth: 'Estrellas y aceite',
+      forge: 'Mejoras y gemas',
+      temple: 'Templo y especialidades',
+      promo: 'Carteles y trofeos',
+      facility: 'Equipamiento',
+      equip: 'Utensilios',
+      other: 'Otros',
+    },
+    open: (name, price) => `Comprar ${name}, ${price}`,
+    specialTitle: 'Oferta de hoy',
+    specialNoon: 'Nueva oferta cada día a mediodía',
+    left: (left, stock) => `Quedan ${left}/${stock}`,
+    howMany: '¿Cuántos?',
+    unit: 'Precio unitario',
+    total: 'Total',
+    after: 'Te quedan',
+    buyN: (n) => `Comprar ${n}`,
   },
 };
 export default store;

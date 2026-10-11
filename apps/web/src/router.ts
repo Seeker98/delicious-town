@@ -361,6 +361,13 @@ export const routes: RouteRecordRaw[] = [
     meta: { needRestaurant: true, section: 'map', title: T((t) => t.predict.title), parent: '/map' },
   },
   {
+    // 事件详情单独一页（界面改版 P8）：行情、持仓、买卖、记录
+    path: '/predict/:id(\\d+)',
+    name: 'predict-detail',
+    component: () => import('./views/PredictDetailView.vue'),
+    meta: { needRestaurant: true, section: 'map', title: T((t) => t.predict.title), parent: '/predict' },
+  },
+  {
     path: '/shop',
     name: 'shop',
     component: () => import('./views/ShopView.vue'),

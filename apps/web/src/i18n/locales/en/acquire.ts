@@ -59,5 +59,23 @@ const acquire: Messages['acquire'] = {
   homeOwned: (name) => `Your restaurant is owned by "${name}"`,
   homeLink: 'Tend or buy back',
   cardTitle: 'Acquisition',
+  ownerTag: (name) => `Owner ${name}`,
+  listedTag: (pct) => `Listed ${pct}`,
+  leftLine: (left) => `${left} left`,
+  coinUnit: 'coins',
+  rulesTitle: 'Acquisition rules',
+  rulesSub: (got, tax) => `Previous owner gets ${got}, ${tax} is tax; owned restaurants pay daily dividends`,
+  holdingsTitle: 'Restaurants I own',
+  holdCount: (n, max) => `${n} / ${max}`,
+  visit: 'Visit the restaurant',
+  youPay: 'You pay',
+  sellerGot: (name, pct) => `"${name}" gets (${pct})`,
+  taxLine: (pct) => `Tax (${pct})`,
+  afterHold: 'Owned after buying',
+  rateLabel: 'List at what share of its value',
+  listPrice: 'Listing price',
+  listGot: 'You get about',
+  listNote: (days) =>
+    `Based on today's value, which changes daily; delisted automatically after ${days} ${days === 1 ? 'day' : 'days'}.`,
 };
 export default acquire;

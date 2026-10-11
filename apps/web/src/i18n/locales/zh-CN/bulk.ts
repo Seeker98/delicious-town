@@ -63,6 +63,15 @@ export default {
     coin: '银币不够冻结',
   },
   bid: '出价',
+  /** 界面改版 P8：批次卡片、出价面板 */
+  groupedTag: (ok: boolean): string => (ok ? '已成团' : '还没成团'),
+  statPrice: '预计成交价',
+  statThreshold: '入围门槛',
+  demandLine: (demand: number, qty: number, ratio: string) => `认购 ${demand} / ${qty} 份 · ${ratio} 倍`,
+  biddersLine: (n: number) => `${n} 人参与`,
+  sheetTitle: (raise: boolean, name: string) => `${raise ? '改出价' : '出价'} · ${name}`,
+  mineNow: (price: string, qty: number) => `现在 ${price} × ${qty} 份 · 只能加价、加份数`,
+  reserveLine: (n: string) => `起拍价 ${n}`,
   raise: '改出价',
   cooldown: (n: number) => `${n} 秒后可以再出价`,
   confirm: (total: string, extra: string, qty: number) =>

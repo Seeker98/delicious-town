@@ -17,6 +17,8 @@ const fund: Messages['fund'] = {
   iconLine: (title) => `Plus the limited title "${title}", expiring with the medal`,
   days: (n) => `Term: ${n} ${plEn(n, 'day', 'days')}`,
   deposit: 'Deposit',
+  tiersTitle: 'Make a deposit',
+  oneAtATime: 'Claim or withdraw first to deposit again.',
   notEnough: 'Not enough coins',
   depositConfirm: (tier, coin, back, days) =>
     `Deposit ${coin} ${plEn(coin, 'coin', 'coins')} into the Town Development Fund (${tier})?\nIt matures in ${days} ${plEn(days, 'day', 'days')}: claim ${back} ${plEn(back, 'coin', 'coins')} and a medal. Withdrawing early returns only part of it and no medal.`,

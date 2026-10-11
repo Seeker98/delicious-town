@@ -12,6 +12,16 @@ export default {
     '每種食材全區服每天有額度, 每人每天合計也有上限, 每天 0 點重置。',
   ],
   personLeft: (n: number, max: number) => `我今天還能訂 ${n} 份 (每天 ${max} 份)`,
+  /** 介面改版 P8：額度一行、食材一行、下單面板 */
+  quotaTitle: '我今天還能訂',
+  quotaUnit: (max: number) => `${max} 份`,
+  leftLine: (left: number) => `今天還剩 ${left} 份`,
+  sheetTitle: (name: string) => `訂${name}`,
+  lockLine: (price: string, left: number) => `單價鎖定 ${price} · 今天還剩 ${left} 份`,
+  sumTotal: '總價',
+  sumDeposit: '現在付定金',
+  sumBalance: '到期扣尾款',
+  sumDue: '到期時間',
   off: '本區服現在不能下期貨單, 已有的單到期照常交割',
   blocked: {
     exchange_level: (n: number) => `店鋪 ${n} 級才能下期貨單`,

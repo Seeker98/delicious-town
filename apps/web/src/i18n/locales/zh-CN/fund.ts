@@ -12,6 +12,9 @@ export default {
   iconLine: (title: string) => `附限时称号「${title}」, 和勋章同时到期`,
   days: (n: number) => `存期 ${n} 天`,
   deposit: '存入',
+  /** 界面改版 P8 */
+  tiersTitle: '存一笔',
+  oneAtATime: '领取或提前取出后才能再存。',
   notEnough: '银币不够',
   depositConfirm: (tier: string, coin: string, back: string, days: number) =>
     `确认向小镇发展基金存入 ${coin} 银币 (${tier})？\n${days} 天后到期, 可领回 ${back} 银币和勋章；提前取出只退一部分, 没有勋章。`,

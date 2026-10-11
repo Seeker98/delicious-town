@@ -35,14 +35,17 @@ const view = (p: Partial<KujiViewDto> = {}): KujiViewDto => ({
   ...p,
 });
 
-/** 页面读网址里的 line（240-2 豪华一番赏），挂载时要装路由 */
+/**
+ * 页面读网址里的 line（240-2 豪华一番赏），挂载时要装路由；
+ * 抽签结果面板用 Teleport 挂到 body 上：测试里把 teleport 桩掉，面板内容留在 wrapper 里（界面改版 P8）
+ */
 async function mountWithRouter(path: string) {
   const router = createRouter({
     history: createMemoryHistory(),
     routes: [{ path: '/:p(.*)*', component: { template: '<p/>' } }],
   });
   await router.push(path);
-  const w = mount(KujiView, { global: { plugins: [router] } });
+  const w = mount(KujiView, { global: { plugins: [router], stubs: { teleport: true } } });
   await flushPromises();
   return { w, router };
 }
@@ -67,9 +70,11 @@ describe('KujiView（一番赏设计 §7.2）', () => {
     await flushPromises();
     expect(w.get('[data-testid="kj-pool"]').text()).toContain('第 2 池');
     expect(w.get('[data-testid="kj-pool"]').text()).toContain('剩 79 / 80');
-    expect(w.get('[data-testid="kj-pool"] .dt-card-title').text()).toContain('第 2 池');
+    // 界面改版 P8：奖池卡头一行写第几池（粗体）和剩余
+    expect(w.get('[data-testid="kj-pool"] .dt-kuji-pool-head b').text()).toContain('第 2 池');
     const a = w.get('[data-testid="kj-tier-A"]');
-    expect(a.classes()).toContain('opacity-50');
+    expect(a.classes()).toContain('is-out');
+    expect(w.get('[data-testid="kj-tier-F"]').classes()).not.toContain('is-out');
     expect(a.text()).toContain('一番赏 A 赏手办');
     expect(a.text()).toContain('钻石 300');
     expect(w.get('[data-testid="kj-last"]').text()).toContain('钻石 200');
@@ -82,7 +87,10 @@ describe('KujiView（一番赏设计 §7.2）', () => {
     expect(w.get('[data-testid="kj-draw-1"]').attributes('disabled')).toBeUndefined();
     expect(w.get('[data-testid="kj-draw-5"]').attributes('disabled')).toBeDefined();
     await w.get('[data-testid="kj-buy-num"]').setValue('3');
-    expect(w.text()).toContain('共 60,000 银币');
+    // 界面改版 P8：总价写在买券按钮上（银币图标 + 金额），读屏念“共 … 银币”
+    const buy = w.get('[data-testid="kj-buy"]');
+    expect(buy.text()).toBe('60,000');
+    expect(buy.attributes('aria-label')).toContain('共 60,000 银币');
   });
 
   it('抽签：显示结果；得最后赏单独提示', async () => {
@@ -96,11 +104,34 @@ describe('KujiView（一番赏设计 §7.2）', () => {
     await w.get('[data-testid="kj-draw-1"]').trigger('click');
     await flushPromises();
     expect(endpoints.kujiDraw).toHaveBeenCalledWith(1);
-    const r = w.get('[data-testid="kj-result"]').text();
-    expect(r).toContain('F 赏');
-    expect(r).toContain('银币 5,000');
-    expect(r).toContain('最后赏');
+    // 界面改版 P8：结果从下面弹出，每张一行（赏级徽章 + 奖品）
+    const r = w.get('[data-testid="kj-result"]');
+    expect(r.get('.dt-kuji-badge').text()).toBe('F');
+    expect(r.text()).toContain('银币 5,000');
+    expect(r.get('[data-testid="kj-last-won"]').text()).toContain('最后赏');
+    expect(r.get('[data-testid="kj-last-won"]').text()).toContain('钻石 200');
     expect(w.get('[data-testid="kj-tickets"]').text()).toContain('2');
+    await w.get('[data-testid="kj-result-ok"]').trigger('click');
+    expect(w.find('[data-testid="kj-result"]').exists()).toBe(false);
+  });
+
+  it('抽到大赏：结果里的徽章用实色；没得最后赏不写最后赏', async () => {
+    vi.mocked(endpoints.kujiDraw).mockResolvedValue({
+      draws: [
+        { tier: 'A', award: { diamond: 300 } },
+        { tier: 'F', award: { coin: 5000 } },
+      ],
+      last: null,
+      view: view({ tickets: 1 }),
+    });
+    const { w } = await mountWithRouter('/kuji');
+    await w.get('[data-testid="kj-draw-1"]').trigger('click');
+    await flushPromises();
+    const badges = w.findAll('[data-testid="kj-result"] .dt-kuji-badge');
+    expect(badges.map((b) => b.text())).toEqual(['A', 'F']);
+    expect(badges[0]!.classes()).toContain('is-big');
+    expect(badges[1]!.classes()).not.toContain('is-big');
+    expect(w.find('[data-testid="kj-last-won"]').exists()).toBe(false);
   });
 
   it('看板显示本月主题（问题记录 274）', async () => {
@@ -166,19 +197,31 @@ describe('backlog 一番赏：页面', () => {
     expect(b.text()).toContain('3');
   });
 
-  it('买券数量超过今天还能买的：不显示总价，按钮禁用，提示还能买几张', async () => {
+  it('买券数量超过今天还能买的：步进器退回上限，不显示超出的总价（界面改版 P8 改成步进器）', async () => {
     const w = await show({ buyLeft: 4 });
     await w.get('[data-testid="kj-buy-num"]').setValue('5');
-    expect(w.get('[data-testid="kj-buy"]').attributes('disabled')).toBeDefined();
-    expect(w.get('[data-testid="kj-buy-hint"]').text()).toContain('今天最多还能买 4 张');
+    expect((w.get('[data-testid="kj-buy-num"]').element as HTMLInputElement).value).toBe('4');
+    expect(w.get('[data-testid="kj-buy"]').text()).toBe('80,000');
     expect(w.text()).not.toContain('100,000');
+    expect(w.get('[data-testid="kj-buy"]').attributes('disabled')).toBeUndefined();
+    expect(w.find('[data-testid="kj-buy-hint"]').exists()).toBe(false);
   });
 
-  it('买券数量填小数：提示要填整数，按钮禁用', async () => {
-    const w = await show({});
-    await w.get('[data-testid="kj-buy-num"]').setValue('1.5');
+  it('今天买满了：步进器和买券按钮禁用，提示还能买 0 张', async () => {
+    const w = await show({ buyLeft: 0 });
+    expect(w.get('[data-testid="kj-buy-num"]').attributes('disabled')).toBeDefined();
     expect(w.get('[data-testid="kj-buy"]').attributes('disabled')).toBeDefined();
-    expect(w.get('[data-testid="kj-buy-hint"]').text()).toContain('整数');
+    expect(w.get('[data-testid="kj-buy-hint"]').text()).toContain('今天最多还能买 0 张');
+  });
+
+  it('买券数量填小数：步进器取整，不会按小数下单', async () => {
+    const w = await show({});
+    const input = w.get('[data-testid="kj-buy-num"]');
+    await input.setValue('2.5');
+    expect(w.get('[data-testid="kj-buy"]').text()).toBe('40,000');
+    await input.trigger('blur');
+    expect((input.element as HTMLInputElement).value).toBe('2');
+    expect(w.find('[data-testid="kj-buy-hint"]').exists()).toBe(false);
   });
 
   it('显示银币余额', async () => {

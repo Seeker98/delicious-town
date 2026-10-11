@@ -27,6 +27,10 @@ const wealth: Messages['wealth'] = {
   totalFull: (total) => `Tus depósitos ya llegan al límite de ${total} monedas`,
   notEnough: 'No tienes monedas suficientes',
   deposit: 'Depositar',
+  tiersTitle: 'Hacer un depósito',
+  termLabel: 'Plazo',
+  termDays: (days) => `${days} ${days === 1 ? 'día' : 'días'}`,
+  withdrawShort: 'Retirar antes',
   depositConfirm: (amount, days, packs, pack, earlyPct) =>
     `¿Depositar ${amount} monedas?\nVence en ${days} ${plEs(days, 'día', 'días')}: recuperas todo el capital y recibes «${pack}» ×${packs}. Retirar antes solo devuelve el ${earlyPct}\u00a0% y sin paquetes.`,
   deposited: 'Depositado',

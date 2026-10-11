@@ -18,6 +18,8 @@ const fund: Messages['fund'] = {
   iconLine: (title) => `Incluye el título temporal «${title}», que vence con la medalla`,
   days: (n) => `Plazo: ${n} ${plEs(n, 'día', 'días')}`,
   deposit: 'Depositar',
+  tiersTitle: 'Hacer un depósito',
+  oneAtATime: 'Cobra o retira antes de volver a depositar.',
   notEnough: 'No tienes monedas suficientes',
   depositConfirm: (tier, coin, back, days) =>
     `¿Depositar ${coin} ${plEs(coin, 'moneda', 'monedas')} en el Fondo de Desarrollo (${tier})?\nVence en ${days} ${plEs(days, 'día', 'días')}: recuperarás ${back} ${plEs(back, 'moneda', 'monedas')} y una medalla. Si retiras antes solo recuperas una parte y sin medalla.`,

@@ -59,6 +59,28 @@ const store: Messages['store'] = {
     specialLine: (price, left, stock) =>
       `${price} ${plFr(price, 'pièce', 'pièces')} · reste ${left}/${stock}`,
     grab: 'Je prends',
+    myCoin: 'Mes pièces',
+    myDiamond: 'Mes diamants',
+    catLabel: 'Filtrer par type',
+    cats: {
+      card: 'Cartes et tickets',
+      growth: 'Étoiles et huile',
+      forge: 'Renforts et gemmes',
+      temple: 'Temple et spécialités',
+      promo: 'Affiches et trophées',
+      facility: 'Équipements',
+      equip: 'Ustensiles',
+      other: 'Autres',
+    },
+    open: (name, price) => `Acheter ${name}, ${price}`,
+    specialTitle: 'Promo du jour',
+    specialNoon: 'Nouvelle promo chaque jour à midi',
+    left: (left, stock) => `${left}/${stock} restants`,
+    howMany: 'Combien',
+    unit: 'Prix unitaire',
+    total: 'Total',
+    after: 'Reste après',
+    buyN: (n) => `Acheter ${n}`,
   },
 };
 export default store;

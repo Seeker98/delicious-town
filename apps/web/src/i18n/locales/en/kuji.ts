@@ -33,6 +33,7 @@ const kuji: Messages['kuji'] = {
   buyPrefix: 'Buy',
   buyTotal: (coin) => `tickets for ${coin} ${plEn(coin, 'coin', 'coins')}`,
   buy: 'Buy tickets',
+  buyAria: (n, coin) => `Buy ${n} for ${coin} coins`,
   buyLeft: (n) => `${n} more today`,
   buyMax: (n) => `You can buy at most ${n} more today`,
   buyInt: 'Enter a whole number',
@@ -44,5 +45,6 @@ const kuji: Messages['kuji'] = {
   recent: 'Recent big prizes',
   noRecent: 'Nobody has won a big prize yet',
   recentLine: (name, tier) => `${name} won ${tier}`,
+  ok: 'OK',
 };
 export default kuji;

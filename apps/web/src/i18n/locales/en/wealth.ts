@@ -26,6 +26,10 @@ const wealth: Messages['wealth'] = {
   totalFull: (total) => `Your deposits have reached the ${total}-coin limit`,
   notEnough: 'Not enough coins',
   deposit: 'Deposit',
+  tiersTitle: 'Make a deposit',
+  termLabel: 'Term',
+  termDays: (days) => `${days} ${days === 1 ? 'day' : 'days'}`,
+  withdrawShort: 'Withdraw early',
   depositConfirm: (amount, days, packs, pack, earlyPct) =>
     `Deposit ${amount} coins?\nIt matures in ${days} ${plEn(days, 'day', 'days')}: full principal back plus "${pack}" ×${packs}. Withdrawing early returns only ${earlyPct}% and no packs.`,
   deposited: 'Deposited',

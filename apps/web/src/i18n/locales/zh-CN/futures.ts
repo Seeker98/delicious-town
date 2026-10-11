@@ -11,6 +11,16 @@ export default {
     '每种食材全区服每天有额度, 每人每天合计也有上限, 每天 0 点重置。',
   ],
   personLeft: (n: number, max: number) => `我今天还能订 ${n} 份 (每天 ${max} 份)`,
+  /** 界面改版 P8：额度一行、食材一行、下单面板 */
+  quotaTitle: '我今天还能订',
+  quotaUnit: (max: number) => `${max} 份`,
+  leftLine: (left: number) => `今天还剩 ${left} 份`,
+  sheetTitle: (name: string) => `订${name}`,
+  lockLine: (price: string, left: number) => `单价锁定 ${price} · 今天还剩 ${left} 份`,
+  sumTotal: '总价',
+  sumDeposit: '现在付定金',
+  sumBalance: '到期扣尾款',
+  sumDue: '到期时间',
   off: '本区服现在不能下期货单, 已有的单到期照常交割',
   blocked: {
     exchange_level: (n: number) => `店铺 ${n} 级才能下期货单`,

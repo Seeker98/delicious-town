@@ -6,10 +6,13 @@ import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
+import DtEmpty from '../DtEmpty.vue';
+import { useConfirmStore } from '../../stores/confirm';
 
 const props = defineProps<{ data: TakeawayDto }>();
 const emit = defineEmits<{ reload: [] }>();
 const toast = useToastStore();
+const confirm = useConfirmStore();
 const t = useT();
 const busy = ref(false);
 const cands = ref<RiderCandidateDto[]>([]);
@@ -53,14 +56,14 @@ function hire(c: RiderCandidateDto) {
     toast.push(t.value.takeaway.riders.hired(c.name));
   }, t.value.takeaway.riders.hireFailed);
 }
-function dismiss(r: TakeawayRiderDto) {
+async function dismiss(r: TakeawayRiderDto) {
   if (r.busy > 0) return;
-  if (
-    !window.confirm(
-      t.value.takeaway.riders.dismissConfirm(r.name, formatNum(r.dismissCoin), formatNum(r.dismissExp)),
-    )
-  )
-    return;
+  const yes = await confirm.ask({
+    title: t.value.takeaway.riders.dismissConfirm(r.name, formatNum(r.dismissCoin), formatNum(r.dismissExp)),
+    ok: t.value.takeaway.riders.dismiss,
+    danger: true,
+  });
+  if (!yes) return;
   return run(
     () => endpoints.takeawayDismiss(r.id).then(() => undefined),
     t.value.takeaway.riders.dismissFailed,
@@ -69,19 +72,36 @@ function dismiss(r: TakeawayRiderDto) {
 </script>
 
 <template>
-  <div class="small">
-    <div class="mb-2">{{ t.takeaway.riders.count(data.riders.length, data.riderCap) }}</div>
-    <div v-for="r in data.riders" :key="r.id" class="border rounded p-2 mb-1" :data-testid="`rider-${r.id}`">
-      <div class="d-flex align-items-center gap-1">
-        <b>{{ r.name }}{{ r.self ? t.takeaway.riders.self : '' }}</b>
-        <span class="dt-tag">{{ t.takeaway.riders.level(r.level) }}</span>
-        <span class="ms-auto">{{ t.takeaway.riders.busy(r.busy, r.maxNum) }}</span>
-      </div>
-      <div class="text-muted">
-        {{ t.takeaway.riders.exp(formatNum(r.exp), formatNum(r.needExp)) }} · {{ attrs(r) }}
-      </div>
-      <div v-if="!r.self" class="d-flex align-items-center gap-2 mt-1">
+  <div>
+    <div class="dt-block-head mt-0">
+      <h2 class="dt-block-title">{{ t.takeaway.riders.mineTitle }}</h2>
+      <span class="dt-block-more">{{ t.takeaway.riders.countShort(data.riders.length, data.riderCap) }}</span>
+    </div>
+    <div class="dt-block-note">{{ t.takeaway.riders.capNote }}</div>
+    <div class="dt-card dt-rows-card">
+      <div
+        v-for="r in data.riders"
+        :key="r.id"
+        class="dt-row dt-row-wrap dt-ta-rider"
+        :data-testid="`rider-${r.id}`"
+      >
+        <span class="dt-row-main">
+          <span class="dt-row-title"
+            >{{ r.name }}{{ r.self ? t.takeaway.riders.self : ''
+            }}<span class="dt-tag-primary">{{ t.takeaway.riders.level(r.level) }}</span
+            ><span class="dt-tag-mute">{{ t.takeaway.riders.busy(r.busy, r.maxNum) }}</span></span
+          >
+          <span class="dt-row-bar"
+            ><span class="dt-meter"
+              ><i :style="{ width: `${(r.exp / Math.max(1, r.needExp)) * 100}%` }"></i></span
+            >{{ t.takeaway.riders.exp(formatNum(r.exp), formatNum(r.needExp)) }}</span
+          >
+          <span class="dt-row-sub">{{ attrs(r) }}</span>
+          <span v-if="!r.self && r.busy > 0" class="dt-row-sub">{{ t.takeaway.riders.delivering }}</span>
+        </span>
         <button
+          v-if="!r.self"
+          type="button"
           class="btn btn-sm btn-outline-danger"
           :data-testid="`dismiss-${r.id}`"
           :disabled="busy || r.busy > 0"
@@ -89,29 +109,35 @@ function dismiss(r: TakeawayRiderDto) {
         >
           {{ t.takeaway.riders.dismiss }}
         </button>
-        <span v-if="r.busy > 0" class="text-danger">{{ t.takeaway.riders.delivering }}</span>
       </div>
     </div>
-    <h6 class="mt-3">{{ t.takeaway.riders.hireTitle }}</h6>
-    <div v-if="cands.length === 0" class="text-muted">{{ t.takeaway.riders.noFriends }}</div>
-    <div
-      v-for="c in cands"
-      :key="c.restId"
-      class="d-flex flex-wrap align-items-center gap-2 border-bottom py-1"
-      :data-testid="`cand-${c.restId}`"
-    >
-      <span class="flex-fill">{{ t.takeaway.riders.cand(c.name, c.level, c.star) }}</span>
-      <button
-        class="btn btn-sm btn-outline-primary"
-        :data-testid="`hire-${c.restId}`"
-        :disabled="busy || !!hireBlock(c)"
-        @click="hire(c)"
-      >
-        {{ t.takeaway.riders.hire }}
-      </button>
-      <span v-if="hireBlock(c)" class="text-danger" :data-testid="`hire-why-${c.restId}`">{{
-        hireBlock(c)
-      }}</span>
-    </div>
+    <section class="dt-block">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.takeaway.riders.hireTitle }}</h2>
+      </div>
+      <DtEmpty v-if="cands.length === 0" :title="t.takeaway.riders.noFriends" />
+      <div v-else class="dt-card dt-rows-card">
+        <div v-for="c in cands" :key="c.restId" class="dt-row dt-row-wrap" :data-testid="`cand-${c.restId}`">
+          <span class="dt-row-main">
+            <span class="dt-row-title">{{ c.name }}</span>
+            <span class="dt-row-sub"
+              >{{ t.takeaway.riders.candSub(c.level, c.star)
+              }}<span v-if="hireBlock(c)" class="dt-tag-mute ms-1" :data-testid="`hire-why-${c.restId}`">{{
+                hireBlock(c)
+              }}</span></span
+            >
+          </span>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-primary"
+            :data-testid="`hire-${c.restId}`"
+            :disabled="busy || !!hireBlock(c)"
+            @click="hire(c)"
+          >
+            {{ t.takeaway.riders.hire }}
+          </button>
+        </div>
+      </div>
+    </section>
   </div>
 </template>

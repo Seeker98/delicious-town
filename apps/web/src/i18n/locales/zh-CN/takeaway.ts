@@ -11,6 +11,16 @@ export default {
   noCoin: (n: string) => `银币不够 (要 ${n})`,
   noDiamond: (n: number) => `钻石不够 (要 ${n})`,
   open: {
+    /** 界面改版 P8：开通条件逐条打勾 */
+    needsTitle: '开通条件',
+    starNeed: (n: number) => `餐厅 ${n} 星以上`,
+    nowStar: (n: number) => `现在 ${n} 星`,
+    renownNeed: (n: string) => `声望 ${n} 以上, 开通时扣掉`,
+    nowNum: (n: string) => `现在 ${n}`,
+    have: (tickets: number, coin: string, diamond: string) =>
+      `持有外卖券 ${tickets} 张 · 银币 ${coin} · 钻石 ${diamond}`,
+    met: '已满足',
+    unmet: '没满足',
     needStar: (n: number) => `餐厅 ${n} 星才能开通`,
     noRenown: (n: string) => `声望不够 (要 ${n})`,
     noTicket: '没有外卖券',
@@ -24,6 +34,13 @@ export default {
     byCoin: '用银币和钻石开通',
   },
   orders: {
+    /** 界面改版 P8：私人刷新一行、接单面板 */
+    refreshTitle: '私人刷新',
+    refreshSub: '刷出只有你能接的私人单',
+    refreshCost: (cost: string) => `${cost} 银币`,
+    title: '外卖单',
+    freeRiders: (free: number, total: number) => `空闲骑手 ${free} / ${total}`,
+    whichRider: '派哪个骑手',
     notLearned: '还没学会这道菜',
     noRenown: (n: number) => `声望不够 (要 ${n})`,
     noFoods: '食材不够',
@@ -65,6 +82,8 @@ export default {
     rider: (name: string) => `骑手 ${name}`,
     claim: '领取',
     droneBtn: (n: number) => `无人机 (${n} 钻石)`,
+    arrivedTitle: (n: number) => `送到 ${n} 单`,
+    onWayTitle: '在路上',
   },
   riders: {
     reasons: {
@@ -93,5 +112,10 @@ export default {
     noFriends: '还没有好友',
     cand: (name: string, level: number, star: number) => `${name} (${level} 级 · ${star} 星)`,
     hire: '雇佣',
+    /** 界面改版 P8 */
+    mineTitle: '我的骑手',
+    countShort: (n: number, cap: number) => `${n} / ${cap}`,
+    capNote: '自己这个骑手升级后上限会增加',
+    candSub: (level: number, star: number) => `${level} 级 · ${star} 星`,
   },
 };

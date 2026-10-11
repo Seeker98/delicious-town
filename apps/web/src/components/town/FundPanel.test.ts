@@ -72,7 +72,12 @@ describe('FundPanel（240-2）', () => {
     vi.mocked(endpoints.fundWithdraw).mockResolvedValue(base);
     const w = mount(FundPanel);
     await flushPromises();
-    expect(w.find('[data-testid="fund-tier-C"]').exists()).toBe(false);
+    // 界面改版 P8：各档一直列着，存着的时候存入按钮都灰掉（一次只能存一笔）
+    expect(w.find('[data-testid="fund-tier-C"]').exists()).toBe(true);
+    expect(w.get('[data-testid="fund-deposit-C"]').attributes('disabled')).toBeDefined();
+    expect(w.get('[data-testid="fund-deposit-B"]').attributes('disabled')).toBeDefined();
+    // 存着时钱不够也不挂“银币不够”（灰掉是因为已有存款）
+    expect(w.get('[data-testid="fund-tier-B"]').text()).not.toContain('银币不够');
     expect(w.find('[data-testid="fund-claim"]').exists()).toBe(false);
     const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
     await w.get('[data-testid="fund-withdraw"]').trigger('click');

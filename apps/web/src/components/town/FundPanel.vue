@@ -2,6 +2,8 @@
 import { onMounted, ref } from 'vue';
 import type { FundViewDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import DtArt from '../DtArt.vue';
+import { useConfirmStore } from '../../stores/confirm';
 import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
@@ -10,9 +12,18 @@ import { formatNum } from '../../utils/format';
 import { newsTime } from '../../utils/news';
 import { remainText } from '../../utils/remain';
 
-/** 小镇发展基金（240-2）：存一笔银币，到期领回九成加经验勋章，提前取出只退七成 */
+/**
+ * 小镇发展基金（240-2）：存一笔银币，到期领回九成加经验勋章，提前取出只退七成。
+ * 界面改版 P8：我的存款一张卡（领取 / 提前取出），下面三档一行一档，存着的时候灰掉
+ */
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const confirm = useConfirmStore();
+/** 确认文案第一行做标题，其余做正文 */
+const ask = async (text: string, danger = false) => {
+  const [title = '', ...body] = text.split('\n');
+  return confirm.ask({ title, body: body.join('\n'), danger });
+};
 const t = useT();
 const data = ref<FundViewDto | null>(null);
 const busy = ref(false);
@@ -47,12 +58,11 @@ const medalIcon = (medal: number) => data.value?.tiers.find((x) => x.medal === m
 /** 存款的勋章加成：按勋章找档（存入后运营改了档位 key 也能找到） */
 const medalRate = (medal: number) => data.value?.tiers.find((x) => x.medal === medal)?.expRate ?? 0;
 
-function deposit(x: FundViewDto['tiers'][number]) {
+async function deposit(x: FundViewDto['tiers'][number]) {
   const d = data.value;
   if (!d) return;
   const f = t.value.fund;
-  if (!window.confirm(f.depositConfirm(tierName(x.key), formatNum(x.coin), formatNum(x.back), d.days)))
-    return;
+  if (!(await ask(f.depositConfirm(tierName(x.key), formatNum(x.coin), formatNum(x.back), d.days)))) return;
   return act(
     () => endpoints.fundDeposit(x.key),
     () => f.deposited(tierName(x.key)),
@@ -64,11 +74,11 @@ function claim() {
     () => t.value.fund.claimed,
   );
 }
-function withdraw() {
+async function withdraw() {
   const dep = data.value?.deposit;
   if (!dep) return;
   const f = t.value.fund;
-  if (!window.confirm(f.withdrawConfirm(formatNum(dep.early), formatNum(dep.back)))) return;
+  if (!(await ask(f.withdrawConfirm(formatNum(dep.early), formatNum(dep.back)), true))) return;
   return act(
     () => endpoints.fundWithdraw(),
     () => f.withdrawn(formatNum(dep.early)),
@@ -80,70 +90,80 @@ onMounted(load);
 <template>
   <div data-testid="fund-panel">
     <template v-if="data">
-      <p class="small text-muted mb-2">
-        {{ t.fund.rule(data.days, pct(data.returnRate), pct(data.earlyRate)) }}
-      </p>
-      <p class="small mb-2">{{ t.fund.myCoin(formatNum(data.coin)) }}</p>
-      <template v-if="data.deposit">
-        <div class="fw-bold small mb-1">{{ t.fund.mine }}</div>
-        <div class="dt-item" data-testid="fund-mine">
-          <div class="dt-item-main">
-            <div class="dt-item-title">
-              {{ t.fund.depositLine(tierName(data.deposit.tier), formatNum(data.deposit.coin)) }}
-            </div>
-            <div class="small text-muted">
-              {{
-                t.fund.medalLine(
-                  catalog.goodsName(data.deposit.medal),
-                  pct(data.deposit.expRate ?? medalRate(data.deposit.medal)),
-                )
-              }}
-            </div>
-            <div v-if="medalIcon(data.deposit.medal)" class="small text-muted">
-              {{ t.fund.iconLine(iconTitle(medalIcon(data.deposit.medal)!)) }}
-            </div>
-            <div class="small">
-              {{ t.fund.maturesAt(newsTime(data.deposit.maturesAt)) }}
-              <span v-if="data.deposit.mature" class="text-success">{{ t.fund.mature }}</span>
-              <span v-else class="text-muted">{{ remainText(data.deposit.maturesAt) }}</span>
-            </div>
-          </div>
+      <div class="dt-block-note">{{ t.fund.rule(data.days, pct(data.returnRate), pct(data.earlyRate)) }}</div>
+      <section v-if="data.deposit" class="dt-block">
+        <div class="dt-block-head">
+          <h2 class="dt-block-title">{{ t.fund.mine }}</h2>
         </div>
-        <button
-          v-if="data.deposit.mature"
-          class="btn btn-sm btn-primary mt-2"
-          :disabled="busy"
-          data-testid="fund-claim"
-          @click="claim"
-        >
-          {{ t.fund.claim(formatNum(data.deposit.back)) }}
-        </button>
-        <button
-          v-else
-          class="btn btn-sm btn-outline-danger mt-2"
-          :disabled="busy"
-          data-testid="fund-withdraw"
-          @click="withdraw"
-        >
-          {{ t.fund.withdraw(formatNum(data.deposit.early)) }}
-        </button>
-      </template>
-      <template v-else>
-        <div v-for="x in data.tiers" :key="x.key" class="dt-item" :data-testid="`fund-tier-${x.key}`">
-          <div class="dt-item-main">
-            <div class="dt-item-title">{{ tierName(x.key) }}</div>
-            <div class="small">{{ t.fund.tierLine(formatNum(x.coin), formatNum(x.back)) }}</div>
-            <div class="small text-muted">
-              {{ t.fund.medalLine(catalog.goodsName(x.medal), pct(x.expRate)) }} ·
-              {{ t.fund.days(data.days) }}
-            </div>
-            <div v-if="x.icon" class="small text-muted">{{ t.fund.iconLine(iconTitle(x.icon)) }}</div>
-            <div v-if="data.coin < x.coin" class="small text-danger">{{ t.fund.notEnough }}</div>
+        <div class="dt-card dt-bank-mine" data-testid="fund-mine">
+          <div class="dt-bank-mine-head">
+            <b>{{ t.fund.depositLine(tierName(data.deposit.tier), formatNum(data.deposit.coin)) }}</b>
+            <span v-if="data.deposit.mature" class="dt-tag-ok">{{ t.fund.mature }}</span>
+            <span v-else class="dt-tag-mute">{{ remainText(data.deposit.maturesAt) }}</span>
           </div>
-          <div class="dt-item-actions">
+          <div class="dt-meta">
+            {{
+              t.fund.medalLine(
+                catalog.goodsName(data.deposit.medal),
+                pct(data.deposit.expRate ?? medalRate(data.deposit.medal)),
+              )
+            }}
+          </div>
+          <div v-if="medalIcon(data.deposit.medal)" class="dt-meta">
+            {{ t.fund.iconLine(iconTitle(medalIcon(data.deposit.medal)!)) }}
+          </div>
+          <div class="dt-meta">{{ t.fund.maturesAt(newsTime(data.deposit.maturesAt)) }}</div>
+          <button
+            v-if="data.deposit.mature"
+            type="button"
+            class="btn btn-primary dt-btn-block mt-3"
+            :disabled="busy"
+            data-testid="fund-claim"
+            @click="claim"
+          >
+            {{ t.fund.claim(formatNum(data.deposit.back)) }}
+          </button>
+          <button
+            v-else
+            type="button"
+            class="btn btn-outline-danger dt-btn-block mt-3"
+            :disabled="busy"
+            data-testid="fund-withdraw"
+            @click="withdraw"
+          >
+            {{ t.fund.withdraw(formatNum(data.deposit.early)) }}
+          </button>
+        </div>
+      </section>
+      <section class="dt-block">
+        <div class="dt-block-head">
+          <h2 class="dt-block-title">{{ t.fund.tiersTitle }}</h2>
+          <span class="dt-block-more">{{ t.fund.myCoin(formatNum(data.coin)) }}</span>
+        </div>
+        <div class="dt-card dt-rows-card">
+          <div
+            v-for="x in data.tiers"
+            :key="x.key"
+            class="dt-row dt-row-wrap"
+            :data-testid="`fund-tier-${x.key}`"
+          >
+            <span class="dt-row-ico"><DtArt name="res-medal" :size="24" /></span>
+            <span class="dt-row-main">
+              <span class="dt-row-title">{{ tierName(x.key) }}</span>
+              <span class="dt-row-sub">{{ t.fund.tierLine(formatNum(x.coin), formatNum(x.back)) }}</span>
+              <span class="dt-row-sub"
+                >{{ t.fund.medalLine(catalog.goodsName(x.medal), pct(x.expRate)) }} ·
+                {{ t.fund.days(data.days) }}</span
+              >
+              <span v-if="x.icon" class="dt-row-sub">{{ t.fund.iconLine(iconTitle(x.icon)) }}</span>
+              <span v-if="!data.deposit && data.coin < x.coin" class="dt-row-sub"
+                ><span class="dt-tag-danger">{{ t.fund.notEnough }}</span></span
+              >
+            </span>
             <button
-              class="btn btn-sm btn-primary"
-              :disabled="busy || data.coin < x.coin"
+              type="button"
+              class="btn btn-sm btn-outline-primary"
+              :disabled="busy || !!data.deposit || data.coin < x.coin"
               :data-testid="`fund-deposit-${x.key}`"
               @click="deposit(x)"
             >
@@ -151,7 +171,8 @@ onMounted(load);
             </button>
           </div>
         </div>
-      </template>
+        <div v-if="data.deposit" class="dt-block-note mt-2">{{ t.fund.oneAtATime }}</div>
+      </section>
     </template>
   </div>
 </template>

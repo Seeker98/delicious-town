@@ -43,6 +43,11 @@ export default {
     '7 級食材系統不收, 已有的庫存照樣賣。',
   ] as string[],
   search: '搜尋食材',
+  /** 介面改版 P8：上面卡片的規則一行、篩選和買賣切換的讀屏名 */
+  rulesTitle: '交易規則和系統報價',
+  rulesSub: '掛單價在當天參考價的一半到兩倍之間',
+  filterLabel: '篩選',
+  sideLabel: '買還是賣',
   saleTag: (n: number) => `賣 ${n}`,
   buyTag: (n: number) => `收 ${n}`,
   legendSale: '賣 N',

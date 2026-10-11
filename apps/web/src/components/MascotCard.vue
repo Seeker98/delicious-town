@@ -1,22 +1,25 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
+import type { ArtName } from '../art/generated/names';
 import { pickLine, type MascotLine } from '../utils/mascot';
-import { useT } from '../composables/useT';
+import DtArt from './DtArt.vue';
 
 /**
- * 吉祥物 NPC 卡片（菜园姐、雯姐共用）：图标加一句台词，点一下换一句；只说话，不发奖励（界面改版 P4：原版图包去掉了，头像图形以后画）。
+ * 吉祥物 NPC 卡片（菜园姐、雯姐共用）：头像加一句台词，点一下换一句；只说话，不发奖励。
+ * 界面改版 P8：圆形头像（有图用图，没画的先用图标），名字一行、台词一行。
  * ready 第一次变成 true（页面数据到手）时换一句，好让看状态说的话有机会出现。
  * 默认插槽放在卡片右侧（比如菜场的交易所入口，问题记录 246），点它不会换台词
  */
 const props = defineProps<{
   name: string;
-  /** 名字前的图标（Bootstrap Icons 类名） */
+  /** 名字前的图标（Bootstrap Icons 类名）：没有头像图时用 */
   icon: string;
+  /** 头像图（界面改版 P8：盖乐瑞、嘻哈男孩先画了） */
+  art?: ArtName;
   lines: MascotLine[];
   ready: boolean;
   testid: string;
 }>();
-const t = useT();
 const line = ref('');
 const next = () => {
   line.value = pickLine(props.lines, line.value || null);
@@ -32,7 +35,7 @@ watch(
 
 <template>
   <div
-    class="d-flex align-items-center gap-2 border rounded p-2 mb-2 small"
+    class="dt-card dt-mascot"
     role="button"
     tabindex="0"
     :data-testid="testid"
@@ -40,12 +43,13 @@ watch(
     @keydown.enter.prevent="next"
     @keydown.space.prevent="next"
   >
-    <i :class="['bi', icon, 'dt-mascot-icon flex-shrink-0']" aria-hidden="true"></i>
-    <div>
-      <b>{{ t.common.colon(name) }}</b
-      ><span :data-testid="`${testid}-line`" aria-live="polite">{{ line }}</span>
+    <span v-if="art" class="dt-npc-ava"><DtArt :name="art" :size="40" /></span>
+    <span v-else class="dt-mascot-ico" aria-hidden="true"><i :class="['bi', icon]"></i></span>
+    <div class="dt-mascot-text">
+      <b>{{ name }}</b>
+      <span :data-testid="`${testid}-line`" aria-live="polite">{{ line }}</span>
     </div>
-    <div v-if="$slots.default" class="ms-auto flex-shrink-0" @click.stop @keydown.enter.stop>
+    <div v-if="$slots.default" class="dt-mascot-end" @click.stop @keydown.enter.stop>
       <slot />
     </div>
   </div>

@@ -61,5 +61,23 @@ const acquire: Messages['acquire'] = {
   homeOwned: (name) => `Votre restaurant appartient à «\u202f${name}\u202f»`,
   homeLink: "S'en occuper ou se racheter",
   cardTitle: 'Rachat',
+  ownerTag: (name) => `Patron ${name}`,
+  listedTag: (pct) => `En vente ${pct}`,
+  leftLine: (left) => `encore ${left}`,
+  coinUnit: 'pièces',
+  rulesTitle: 'Règles du rachat',
+  rulesSub: (got, tax) => `L’ancien patron reçoit ${got}, ${tax} de taxe\u202f; dividendes chaque jour`,
+  holdingsTitle: 'Mes restaurants',
+  holdCount: (n, max) => `${n} / ${max}`,
+  visit: 'Voir le restaurant',
+  youPay: 'Vous payez',
+  sellerGot: (name, pct) => `«\u202f${name}\u202f» reçoit (${pct})`,
+  taxLine: (pct) => `Taxe (${pct})`,
+  afterHold: 'Restaurants après achat',
+  rateLabel: 'Mettre en vente à quelle part de sa valeur',
+  listPrice: 'Prix de vente',
+  listGot: 'Vous recevrez environ',
+  listNote: (days) =>
+    `Selon la valeur d’aujourd’hui, qui change chaque jour\u202f; retiré automatiquement après ${days} jours.`,
 };
 export default acquire;

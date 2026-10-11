@@ -13,6 +13,9 @@ export default {
   iconLine: (title: string) => `附限時稱號「${title}」, 和勳章同時到期`,
   days: (n: number) => `存期 ${n} 天`,
   deposit: '存入',
+  /** 介面改版 P8 */
+  tiersTitle: '存一筆',
+  oneAtATime: '領取或提前取出後才能再存。',
   notEnough: '銀幣不夠',
   depositConfirm: (tier: string, coin: string, back: string, days: number) =>
     `確認向小鎮發展基金存入 ${coin} 銀幣 (${tier})？\n${days} 天后到期, 可領回 ${back} 銀幣和勳章；提前取出只退一部分, 沒有勳章。`,

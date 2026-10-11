@@ -65,6 +65,10 @@ const me = (p: Partial<ExchangeMeDto> = {}): ExchangeMeDto => ({
   holdHours: 24,
   ...p,
 });
+/** 盘口、我的挂单、规则都在 Teleport 到 body 的底部面板里：测试里把 teleport 桩掉，内容留在 wrapper 里（界面改版 P8） */
+const mountView = () => mount(ExchangeView, { global: { stubs: { teleport: true } } });
+const inputValue = (w: ReturnType<typeof mountView>, id: string) =>
+  (w.get(`[data-testid="${id}"]`).element as HTMLInputElement).value;
 
 describe('ExchangeView（156-1 设计 §8）', () => {
   beforeEach(() => {
@@ -96,26 +100,29 @@ describe('ExchangeView（156-1 设计 §8）', () => {
   });
 
   it('食材按等级分组；选中后显示盘口、参考价和允许范围', async () => {
-    const w = mount(ExchangeView);
+    const w = mountView();
     await flushPromises();
     expect(w.find('[data-testid="ex-food-12"]').text()).toContain('藏红花');
     await w.find('[data-testid="ex-food-11"]').trigger('click');
     await flushPromises();
     expect(endpoints.tradeBook).toHaveBeenCalledWith(11);
     expect(w.find('[data-testid="ex-book"]').text()).toContain('1,010');
-    expect(w.find('[data-testid="ex-book"]').text()).toContain('参考价 1,000');
+    // 参考价放在面板头上（界面改版 P8）
+    expect(w.get('[data-testid="ex-sheet"] .dt-detail-sub').text()).toContain('参考价 1,000');
     expect(w.find('[data-testid="ex-band"]').text()).toContain('500 ~ 2,000');
+    // 单价先填最新成交价（界面改版 P8）
+    expect(inputValue(w, 'ex-price')).toBe('1100');
   });
 
   it('最新成交价放在盘口卖档和买档中间（backlog 156-1）；没有成交时写还没有成交', async () => {
-    const w = mount(ExchangeView);
+    const w = mountView();
     await flushPromises();
     await w.find('[data-testid="ex-food-11"]').trigger('click');
     await flushPromises();
-    const rows = w.findAll('[data-testid="ex-book"] tr').map((r) => r.attributes('data-testid'));
+    const rows = w.findAll('[data-testid="ex-book"] > *').map((r) => r.attributes('data-testid'));
     expect(rows).toEqual(['ex-ask-1020', 'ex-ask-1010', 'ex-last', 'ex-bid-990']);
     expect(w.get('[data-testid="ex-last"]').text()).toBe('最新成交 1,100');
-    expect(w.get('[data-testid="ex-book"] .d-flex').text()).not.toContain('最新');
+    expect(w.get('[data-testid="ex-sheet"] .dt-detail-sub').text()).not.toContain('最新');
     vi.mocked(endpoints.tradeBook).mockResolvedValue({ ...book, last: null });
     await w.find('[data-testid="ex-food-12"]').trigger('click');
     await flushPromises();
@@ -149,18 +156,19 @@ describe('ExchangeView（156-1 设计 §8）', () => {
         ],
       }),
     );
-    const w = mount(ExchangeView);
+    const w = mountView();
     await flushPromises();
     await w.get('[data-testid="ex-food-11"]').trigger('click');
     await flushPromises();
     const sysAsk = w.get('[data-testid="ex-ask-sys-1300"]');
-    expect(sysAsk.text()).toContain('系统');
-    expect(sysAsk.classes()).toContain('text-primary');
-    expect(w.get('[data-testid="ex-bid-sys-700"]').text()).toContain('系统');
+    expect(sysAsk.text()).toContain('系统卖');
+    expect(w.get('[data-testid="ex-bid-sys-700"]').text()).toContain('系统收');
     expect(w.get('[data-testid="ex-ask-1010"]').text()).not.toContain('系统');
     await w.get('[data-testid="ex-bid-sys-700"]').trigger('click');
-    expect((w.get('[data-testid="ex-price"]').element as HTMLInputElement).value).toBe('700');
-    expect(w.text()).toContain(' (系统)');
+    expect(inputValue(w, 'ex-price')).toBe('700');
+    // 成交记录在“近 7 天成交”面板里（界面改版 P8）
+    await w.get('[data-testid="ex-trades-open"]').trigger('click');
+    expect(w.get('[data-testid="ex-trades"]').text()).toContain(' (系统)');
   });
 
   it('卖给系统（问题记录 244）：兜底档写"系统兜底收"、点它不填进挂单单价；按钮弹出数量和到手金额；提交按系统价卖', async () => {
@@ -172,14 +180,18 @@ describe('ExchangeView（156-1 设计 §8）', () => {
       order: { id: 9, side: 'sell', foodsId: 11, price: 380, qty: 3, filled: 3, status: 'filled' },
       fills: [{ price: 380, qty: 3, held: false }],
     } as never);
-    const w = mount(ExchangeView);
+    const w = mountView();
     await flushPromises();
     await w.get('[data-testid="ex-food-11"]').trigger('click');
     await flushPromises();
     const row = w.get('[data-testid="ex-bid-sys-380"]');
     expect(row.text()).toContain('系统兜底收');
     await row.trigger('click');
-    expect((w.get('[data-testid="ex-price"]').element as HTMLInputElement).value).toBe('');
+    // 单价还是打开时填的最新成交价，没换成兜底价
+    expect(inputValue(w, 'ex-price')).toBe('1100');
+    // “卖给系统”只在卖出时出现（界面改版 P8）
+    expect(w.find('[data-testid="ex-sell-sys"]').exists()).toBe(false);
+    await w.get('[data-testid="ex-side-sell"]').trigger('click');
     await w.get('[data-testid="ex-sell-sys"]').trigger('click');
     await w.get('[data-testid="ex-sys-qty"]').setValue('3');
     // 380 × 3 = 1140，手续费 5% 向下取整 57，到手 1083
@@ -197,14 +209,14 @@ describe('ExchangeView（156-1 设计 §8）', () => {
     } catch {
       // 忽略
     }
-    const w = mount(ExchangeView);
+    const w = mountView();
     await flushPromises();
+    // 在售、在收是行里的小标签（界面改版 P8：原来是绿框）
     const sale = w.get('[data-testid="ex-food-11"]');
-    expect(sale.classes()).toContain('dt-on-sale');
-    expect(sale.text()).toContain('卖 6');
+    expect(sale.get('.dt-tag-ok').text()).toBe('卖 6');
     const buy = w.get('[data-testid="ex-food-12"]');
-    expect(buy.classes()).not.toContain('dt-on-sale');
-    expect(buy.text()).toContain('收 3');
+    expect(buy.find('.dt-tag-ok').exists()).toBe(false);
+    expect(buy.get('.dt-tag-primary').text()).toBe('收 3');
     expect(w.get('[data-testid="ex-food-13"]').text()).not.toMatch(/卖|收/);
     expect(w.get('[data-testid="ex-legend"]').text()).toContain('卖');
     // 不再写"绿框"（问题记录 306：太突兀）
@@ -234,7 +246,7 @@ describe('ExchangeView（156-1 设计 §8）', () => {
       weather: [],
       devices: [],
     } as never);
-    const w = mount(ExchangeView);
+    const w = mountView();
     await flushPromises();
     await w.get('[data-testid="ex-search"]').setValue('CREME');
     expect(w.find('[data-testid="ex-food-12"]').exists()).toBe(true);
@@ -242,16 +254,18 @@ describe('ExchangeView（156-1 设计 §8）', () => {
   });
 
   it('交易所说明里写清楚系统报价怎么算（问题记录 250）', async () => {
-    const w = mount(ExchangeView);
+    const w = mountView();
     await flushPromises();
-    const help = w.get('[data-testid="ex-sys-help"]').text();
+    // 规则一行点开面板（界面改版 P8）
+    await w.get('[data-testid="ex-sys-help"]').trigger('click');
+    const help = w.get('[data-testid="ex-help"]').text();
     expect(help).toContain('参考价 × 0.7');
     expect(help).toContain('一天内不变');
     expect(help).toContain('兜底');
   });
 
   it('点盘口的价格填进表单；下单显示预计花费；提交后刷新并提示成交', async () => {
-    const w = mount(ExchangeView);
+    const w = mountView();
     await flushPromises();
     await w.find('[data-testid="ex-food-11"]').trigger('click');
     await flushPromises();
@@ -266,7 +280,7 @@ describe('ExchangeView（156-1 设计 §8）', () => {
   });
 
   it('卖出时显示扣手续费后的所得', async () => {
-    const w = mount(ExchangeView);
+    const w = mountView();
     await flushPromises();
     await w.find('[data-testid="ex-food-11"]').trigger('click');
     await flushPromises();
@@ -278,7 +292,7 @@ describe('ExchangeView（156-1 设计 §8）', () => {
 
   it('不满足门槛时表单禁用并写明原因', async () => {
     vi.mocked(endpoints.tradeMe).mockResolvedValue(me({ eligible: false, reason: 'exchange_level' }));
-    const w = mount(ExchangeView);
+    const w = mountView();
     await flushPromises();
     await w.find('[data-testid="ex-food-11"]').trigger('click');
     await flushPromises();
@@ -289,9 +303,13 @@ describe('ExchangeView（156-1 设计 §8）', () => {
   it('撤单和全部取出', async () => {
     vi.mocked(endpoints.tradeCancel).mockResolvedValue({} as never);
     vi.mocked(endpoints.tradeWithdraw).mockResolvedValue({ coin: 950, foods: [], left: [] } as never);
-    const w = mount(ExchangeView);
+    const w = mountView();
     await flushPromises();
     expect(w.find('[data-testid="ex-wallet"]').text()).toContain('950');
+    // 我的挂单在面板里（界面改版 P8）
+    expect(w.get('[data-testid="ex-orders-open"]').text()).toContain('1');
+    await w.get('[data-testid="ex-orders-open"]').trigger('click');
+    expect(w.get('[data-testid="ex-orders"]').text()).toContain('松露 1,500 × 3 (已成交 1)');
     await w.find('[data-testid="ex-cancel-5"]').trigger('click');
     await flushPromises();
     expect(endpoints.tradeCancel).toHaveBeenCalledWith(5);
@@ -323,29 +341,33 @@ describe('终审：交易所页的选食材和取出提示', () => {
     vi.mocked(endpoints.tradeMe).mockResolvedValue(me());
   });
 
-  it('快速连点两种食材：先点的盘口后回来也不会覆盖后点的；换食材时清空单价', async () => {
+  it('快速连点两种食材：先点的盘口后回来也不会覆盖后点的；换食材时单价换成新食材的最新成交价', async () => {
     let resolveA!: (v: ExchangeBookDto) => void;
     vi.mocked(endpoints.tradeBook)
       .mockImplementationOnce(() => new Promise((r) => (resolveA = r)))
       .mockResolvedValueOnce({ ...book, foodsId: 12, ref: 4000, min: 2000, max: 8000 });
-    const w = mount(ExchangeView);
+    const w = mountView();
     await flushPromises();
     await w.find('[data-testid="ex-food-11"]').trigger('click');
     await w.find('[data-testid="ex-food-12"]').trigger('click');
     await flushPromises();
+    // 最新成交 1,100 低于这一种的下限：夹到 2,000
+    expect(inputValue(w, 'ex-price')).toBe('2000');
     await w.find('[data-testid="ex-price"]').setValue('3000');
     resolveA(book);
     await flushPromises();
     expect(w.find('[data-testid="ex-band"]').text()).toContain('2,000 ~ 8,000');
+    expect(inputValue(w, 'ex-price')).toBe('3000');
     vi.mocked(endpoints.tradeBook).mockResolvedValueOnce(book);
     await w.find('[data-testid="ex-food-11"]').trigger('click');
     await flushPromises();
-    expect((w.find('[data-testid="ex-price"]').element as HTMLInputElement).value).toBe('');
+    // 不沿用上一种填的 3,000（界面改版 P8：改成填最新成交价，原来是清空）
+    expect(inputValue(w, 'ex-price')).toBe('1100');
   });
 
   it('读盘口失败时提示', async () => {
     vi.mocked(endpoints.tradeBook).mockRejectedValue(new Error('x'));
-    const w = mount(ExchangeView);
+    const w = mountView();
     await flushPromises();
     await w.find('[data-testid="ex-food-11"]').trigger('click');
     await flushPromises();
@@ -358,7 +380,7 @@ describe('终审：交易所页的选食材和取出提示', () => {
       foods: [{ foodsId: 11, num: 2 }],
       left: [{ foodsId: 11, num: 3 }],
     } as never);
-    const w = mount(ExchangeView);
+    const w = mountView();
     await flushPromises();
     await w.find('[data-testid="ex-withdraw"]').trigger('click');
     await flushPromises();
@@ -386,7 +408,7 @@ describe('交易所页的防作弊提示（156-2）', () => {
 
   it('被冻结：顶部提示原因，下单和取出禁用', async () => {
     vi.mocked(endpoints.tradeMe).mockResolvedValue(me({ frozen: { reason: '对倒' } }));
-    const w = mount(ExchangeView);
+    const w = mountView();
     await flushPromises();
     await w.find('[data-testid="ex-food-11"]').trigger('click');
     await flushPromises();
@@ -405,7 +427,7 @@ describe('交易所页的防作弊提示（156-2）', () => {
         ],
       }),
     );
-    const w = mount(ExchangeView);
+    const w = mountView();
     await flushPromises();
     const text = w.find('[data-testid="ex-holds"]').text();
     expect(text).toContain('1,200');
@@ -419,7 +441,7 @@ describe('交易所页的防作弊提示（156-2）', () => {
       order: me().orders[0]!,
       fills: [{ price: 1010, qty: 2, held: true }],
     } as never);
-    const w = mount(ExchangeView);
+    const w = mountView();
     await flushPromises();
     await w.find('[data-testid="ex-food-11"]').trigger('click');
     await flushPromises();
@@ -451,7 +473,7 @@ describe('backlog 长尾第 3 批：交易所页面不写死数字', () => {
     vi.mocked(endpoints.tradeBook).mockResolvedValue(book);
   });
   const open = async () => {
-    const w = mount(ExchangeView);
+    const w = mountView();
     await flushPromises();
     await w.find('[data-testid="ex-food-11"]').trigger('click');
     await flushPromises();
@@ -462,11 +484,13 @@ describe('backlog 长尾第 3 批：交易所页面不写死数字', () => {
     vi.mocked(endpoints.tradeMe).mockResolvedValue(me({ maxQty: 50 }));
     const w = await open();
     await w.find('[data-testid="ex-price"]').setValue('1000');
-    await w.find('[data-testid="ex-qty"]').setValue('60');
-    expect(w.find('[data-testid="ex-submit"]').attributes('disabled')).toBeDefined();
-    await w.find('[data-testid="ex-qty"]').setValue('50');
-    expect(w.find('[data-testid="ex-submit"]').attributes('disabled')).toBeUndefined();
     expect(w.find('[data-testid="ex-qty"]').attributes('max')).toBe('50');
+    expect(w.get('[data-testid="ex-sheet"]').text()).toContain('最多 50');
+    // 步进器：超过上限马上退回上限（界面改版 P8：原来是按钮灰掉）
+    await w.find('[data-testid="ex-qty"]').setValue('60');
+    expect(inputValue(w, 'ex-qty')).toBe('50');
+    expect(w.find('[data-testid="ex-estimate"]').text()).toContain('50,000');
+    expect(w.find('[data-testid="ex-submit"]').attributes('disabled')).toBeUndefined();
   });
 
   it('等级不够时写明现在几级', async () => {
@@ -537,7 +561,7 @@ describe('终审 I2：冷静期已过的所得能取出', () => {
         ],
       }),
     );
-    const w = mount(ExchangeView);
+    const w = mountView();
     await flushPromises();
     expect(w.find('[data-testid="ex-withdraw"]').attributes('disabled')).toBeUndefined();
     expect(w.find('[data-testid="ex-holds-ready"]').text()).toContain('松露×2');
@@ -583,7 +607,7 @@ describe('终审 I2：冷静期已过的所得能取出', () => {
     });
 
     it('默认现货；点期货切过去，现货的盘口不显示', async () => {
-      const w = mount(ExchangeView);
+      const w = mountView();
       await flushPromises();
       expect(w.find('[data-testid="ex-search"]').exists()).toBe(true);
       await w.get('[data-testid="ex-tab-futures"]').trigger('click');
@@ -606,11 +630,11 @@ describe('终审 I2：冷静期已过的所得能取出', () => {
 
     it('本区服关了期货：没有进行中的单时不显示期货标签，有就显示', async () => {
       useRestaurantStore().rest = { id: 1, disabledFeatures: ['futures'] } as never;
-      let w = mount(ExchangeView);
+      let w = mountView();
       await flushPromises();
       expect(w.find('[data-testid="ex-tab-futures"]').exists()).toBe(false);
       vi.mocked(endpoints.futures).mockResolvedValue(fut(true));
-      w = mount(ExchangeView);
+      w = mountView();
       await flushPromises();
       expect(w.find('[data-testid="ex-tab-futures"]').exists()).toBe(true);
     });
@@ -649,7 +673,7 @@ describe('终审 I2：冷静期已过的所得能取出', () => {
     });
 
     it('开着时有大宗认购标签，点了切过去；地址带 ?tab=bulk 直接打开', async () => {
-      const w = mount(ExchangeView);
+      const w = mountView();
       await flushPromises();
       await w.get('[data-testid="ex-tab-bulk"]').trigger('click');
       await flushPromises();
@@ -672,11 +696,11 @@ describe('终审 I2：冷静期已过的所得能取出', () => {
 
     it('区服关了大宗认购：没有这个标签；期货关了、认购开着时照样有标签栏', async () => {
       useRestaurantStore().rest = { id: 1, disabledFeatures: ['bulk'] } as never;
-      const w = mount(ExchangeView);
+      const w = mountView();
       await flushPromises();
       expect(w.find('[data-testid="ex-tab-bulk"]').exists()).toBe(false);
       useRestaurantStore().rest = { id: 1, disabledFeatures: ['futures'] } as never;
-      const w2 = mount(ExchangeView);
+      const w2 = mountView();
       await flushPromises();
       expect(w2.find('[data-testid="ex-tab-futures"]').exists()).toBe(false);
       expect(w2.find('[data-testid="ex-tab-bulk"]').exists()).toBe(true);

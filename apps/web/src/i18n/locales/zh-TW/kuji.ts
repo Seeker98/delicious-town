@@ -31,6 +31,8 @@ export default {
   buyPrefix: '買',
   buyTotal: (coin: string) => `張, 共 ${coin} 銀幣`,
   buy: '買券',
+  /** 買券價格按鈕的讀屏名（介面改版 P8） */
+  buyAria: (n: number, coin: string) => `買 ${n} 張, 共 ${coin} 銀幣`,
   buyLeft: (n: number) => `今天還能買 ${n} 張`,
   /** 買券數量不對時的提示、銀幣餘額（backlog 一番賞） */
   buyMax: (n: number) => `今天最多還能買 ${n} 張`,
@@ -43,4 +45,6 @@ export default {
   recent: '最近的大賞',
   noRecent: '還沒有人抽中大賞',
   recentLine: (name: string, tier: string) => `${name} 抽中了 ${tier}`,
+  /** 介面改版 P8：結果面板的按鈕 */
+  ok: '好的',
 };
