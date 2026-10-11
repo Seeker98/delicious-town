@@ -5,6 +5,7 @@ import { SHARED_GOODS, type StoreDto } from '@dt/shared';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
+import { useConfirmStore } from '../stores/confirm';
 import StoreView from './StoreView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -364,5 +365,93 @@ describe('仓库记录的时间（backlog：选“昨天”“更早”时看不
     vi.mocked(endpoints.store).mockClear();
     await open('/store?tab=souvenirs');
     expect(vi.mocked(endpoints.store).mock.calls.length).toBeGreaterThanOrEqual(2);
+  });
+});
+
+describe('仓库套用新控件（界面改版 P4）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    vi.mocked(endpoints.store).mockResolvedValue(structuredClone(data));
+  });
+
+  it('数量是紧凑步进器；道具在卡片里一行一种', async () => {
+    const w = mount(StoreView);
+    await flushPromises();
+    const input = w.get('input[type="number"]');
+    expect(input.element.closest('.dt-stepper-sm')).not.toBeNull();
+    expect(input.element.closest('.dt-card')).not.toBeNull();
+  });
+
+  it('没读回来时是骨架行', async () => {
+    vi.mocked(endpoints.store).mockReturnValue(new Promise(() => undefined));
+    const w = mount(StoreView);
+    await flushPromises();
+    expect(w.find('[data-testid="store-skeleton"]').exists()).toBe(true);
+  });
+
+  it('卖出走确认面板', async () => {
+    vi.mocked(endpoints.store).mockResolvedValue({
+      ...structuredClone(data),
+      items: [
+        {
+          goodsId: 18,
+          type: 0,
+          num: 30,
+          expiresAt: null,
+          usable: false,
+          batch: false,
+          maxUse: 0,
+          sellPrice: 2800,
+        },
+      ],
+    });
+    const spy = vi.spyOn(window, 'confirm');
+    const store = useConfirmStore();
+    store.hosts = 1;
+    const w = mount(StoreView);
+    await flushPromises();
+    await w
+      .findAll('button')
+      .find((b) => b.text() === '卖')!
+      .trigger('click');
+    await flushPromises();
+    expect(spy).not.toHaveBeenCalled();
+    expect(store.current?.title).toContain('2,800');
+    store.answer(false);
+    await flushPromises();
+    expect(endpoints.sell).not.toHaveBeenCalled();
+    spy.mockRestore();
+  });
+
+  it('流水每条一行（只读行）；没有流水、没有纪念品时是空状态', async () => {
+    vi.mocked(endpoints.storeRecords).mockResolvedValue([
+      { kind: 'coin', itemId: null, delta: 100, source: 'shop.sell', at: new Date().toISOString() },
+    ]);
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/:p(.*)*', component: StoreView }],
+    });
+    await router.push('/store?tab=records');
+    const w = mount(StoreView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(w.get('[data-testid="record-time-0"]').element.closest('.dt-feed')).not.toBeNull();
+    vi.mocked(endpoints.storeRecords).mockResolvedValue([] as never);
+    const router2 = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/:p(.*)*', component: StoreView }],
+    });
+    await router2.push('/store?tab=records');
+    const empty = mount(StoreView, { global: { plugins: [router2] } });
+    await flushPromises();
+    expect(empty.get('[data-testid="records-empty"]').classes()).toContain('dt-empty-state');
+    const router3 = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/:p(.*)*', component: StoreView }],
+    });
+    await router3.push('/store?tab=souvenirs');
+    const none = mount(StoreView, { global: { plugins: [router3] } });
+    await flushPromises();
+    expect(none.get('[data-testid="souvenirs-empty"]').classes()).toContain('dt-empty-state');
   });
 });

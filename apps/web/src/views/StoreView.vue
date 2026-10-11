@@ -4,11 +4,15 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import { gameDay, SHARED_GOODS, type LedgerRecordDto, type StoreDto, type StoreItemDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtEmpty from '../components/DtEmpty.vue';
+import DtSkeleton from '../components/DtSkeleton.vue';
+import DtStepper from '../components/DtStepper.vue';
 import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
 import { useTabQuery } from '../composables/useTabQuery';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
+import { useConfirmStore } from '../stores/confirm';
 import { useToastStore } from '../stores/toast';
 import { recordLabel } from '../utils/events';
 import { formatNum, gameDateTime, gameTimeOfDay } from '../utils/format';
@@ -91,6 +95,9 @@ async function run(fn: () => Promise<unknown>, fallback: string) {
 }
 /** 填的数超过上限时按上限算（使用：单次上限 maxUse；出售：持有数） */
 const useN = (it: StoreItemDto) => Math.max(1, Math.min(qty[it.goodsId] ?? 1, it.maxUse));
+/** 步进器的上限：能批量使用的按一次最多用几个，能卖的按持有（界面改版 P4） */
+const qtyMax = (it: StoreItemDto) =>
+  it.batch && it.usable ? Math.max(1, Math.min(it.num, it.maxUse)) : it.num;
 /** 信息行的各段：只有一段时不带分隔点（终审：开头多一个点） */
 function metaParts(it: StoreItemDto): Array<{ text: string; danger: boolean }> {
   const out: Array<{ text: string; danger: boolean }> = [];
@@ -102,15 +109,18 @@ function metaParts(it: StoreItemDto): Array<{ text: string; danger: boolean }> {
   return out;
 }
 const sellN = (it: StoreItemDto) => Math.max(1, Math.min(Math.floor(qty[it.goodsId] ?? 1), it.num));
-/** 卖出、丢弃收不回来，先确认（问题记录 128） */
-function sell(it: StoreItemDto) {
+const confirm = useConfirmStore();
+/** 卖出、丢弃收不回来，先确认（问题记录 128；界面改版 P4：确认面板，丢弃是危险操作） */
+async function sell(it: StoreItemDto) {
   const n = sellN(it);
   const coin = n * (it.sellPrice ?? 0);
-  if (!window.confirm(t.value.store.sellConfirm(n, catalog.goodsName(it.goodsId), formatNum(coin)))) return;
+  const title = t.value.store.sellConfirm(n, catalog.goodsName(it.goodsId), formatNum(coin));
+  if (!(await confirm.ask({ title, ok: t.value.store.sell }))) return;
   void run(() => endpoints.sell(it.goodsId, n), t.value.store.sellFailed);
 }
-function discard(it: StoreItemDto) {
-  if (!window.confirm(t.value.store.discardConfirm(catalog.goodsName(it.goodsId)))) return;
+async function discard(it: StoreItemDto) {
+  const title = t.value.store.discardConfirm(catalog.goodsName(it.goodsId));
+  if (!(await confirm.ask({ title, ok: t.value.store.discard, danger: true }))) return;
   void run(() => endpoints.discard(it.goodsId), t.value.store.discardFailed);
 }
 /** 剩余时间显示到分钟（backlog 6B-2，和设施、效果一致） */
@@ -133,6 +143,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.store.loa
 
 <template>
   <DtTabs v-model="tab" :tabs="tabItems" />
+  <DtSkeleton v-if="tab === 'items' && !data" :rows="5" data-testid="store-skeleton" />
   <template v-if="tab === 'items' && data">
     <div class="d-flex align-items-center mb-2 small">
       <select v-model="type" class="form-select form-select-sm w-auto">
@@ -149,54 +160,56 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.store.loa
       <h6 v-if="type === undefined" class="dt-group-label" :data-testid="`store-group-${g.type}`">
         {{ typeLabel(g.type) }}
       </h6>
-      <div v-for="it in g.items" :key="it.goodsId" class="dt-item">
-        <div class="dt-item-main">
-          <!-- 只截名字，数量总是显示；剩余时间、单价放第二行（审查、视觉规范） -->
-          <div class="d-flex gap-1">
-            <span class="dt-item-title">{{ catalog.goodsName(it.goodsId) }}</span>
-            <span class="dt-store-num text-nowrap">×{{ formatNum(it.num) }}</span>
+      <!-- 每组一张卡片，一种道具一行（界面改版 P4；道具图形在 P5） -->
+      <div class="dt-card mb-2">
+        <div v-for="it in g.items" :key="it.goodsId" class="dt-item">
+          <div class="dt-item-main">
+            <!-- 只截名字，数量总是显示；剩余时间、单价放第二行（审查、视觉规范） -->
+            <div class="d-flex gap-1">
+              <span class="dt-item-title">{{ catalog.goodsName(it.goodsId) }}</span>
+              <span class="dt-store-num text-nowrap">×{{ formatNum(it.num) }}</span>
+            </div>
+            <div v-if="metaParts(it).length > 0" class="dt-meta">
+              <template v-for="(p, i) in metaParts(it)" :key="i"
+                ><span v-if="i > 0"> · </span
+                ><span :class="{ 'text-danger': p.danger }">{{ p.text }}</span></template
+              >
+            </div>
           </div>
-          <div v-if="metaParts(it).length > 0" class="dt-meta">
-            <template v-for="(p, i) in metaParts(it)" :key="i"
-              ><span v-if="i > 0"> · </span
-              ><span :class="{ 'text-danger': p.danger }">{{ p.text }}</span></template
+          <div class="dt-item-actions">
+            <DtStepper
+              v-if="it.batch || it.sellPrice !== null"
+              :model-value="it.batch && it.usable ? useN(it) : sellN(it)"
+              :min="1"
+              :max="qtyMax(it)"
+              size="sm"
+              @update:model-value="qty[it.goodsId] = $event"
+            />
+            <button
+              v-if="it.usable"
+              class="btn btn-sm btn-primary"
+              :disabled="busy || it.maxUse === 0"
+              @click="run(() => endpoints.useGoods(it.goodsId, it.batch ? useN(it) : 1), t.store.useFailed)"
             >
+              {{ t.store.use }}
+            </button>
+            <button
+              v-if="it.sellPrice !== null"
+              class="btn btn-sm btn-outline-secondary"
+              :disabled="busy"
+              @click="sell(it)"
+            >
+              {{ t.store.sell }}
+            </button>
+            <button
+              v-if="it.goodsId === SHARED_GOODS.starPromoHonor"
+              class="btn btn-sm btn-outline-danger"
+              :disabled="busy"
+              @click="discard(it)"
+            >
+              <i class="bi bi-trash"></i> {{ t.store.discard }}
+            </button>
           </div>
-        </div>
-        <div class="dt-item-actions">
-          <input
-            v-if="it.batch || it.sellPrice !== null"
-            v-model.number="qty[it.goodsId]"
-            type="number"
-            min="1"
-            :max="it.num"
-            class="form-control form-control-sm dt-qty"
-            @change="qty[it.goodsId] = it.batch && it.usable ? useN(it) : sellN(it)"
-          />
-          <button
-            v-if="it.usable"
-            class="btn btn-sm btn-primary"
-            :disabled="busy || it.maxUse === 0"
-            @click="run(() => endpoints.useGoods(it.goodsId, it.batch ? useN(it) : 1), t.store.useFailed)"
-          >
-            {{ t.store.use }}
-          </button>
-          <button
-            v-if="it.sellPrice !== null"
-            class="btn btn-sm btn-outline-secondary"
-            :disabled="busy"
-            @click="sell(it)"
-          >
-            {{ t.store.sell }}
-          </button>
-          <button
-            v-if="it.goodsId === SHARED_GOODS.starPromoHonor"
-            class="btn btn-sm btn-outline-danger"
-            :disabled="busy"
-            @click="discard(it)"
-          >
-            <i class="bi bi-trash"></i> {{ t.store.discard }}
-          </button>
         </div>
       </div>
     </template>
@@ -205,17 +218,18 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.store.loa
     <select v-model="range" class="form-select form-select-sm w-auto mb-2">
       <option v-for="r in RANGES" :key="r" :value="r">{{ t.store.ranges[r] }}</option>
     </select>
-    <div v-for="(r, i) in records" :key="i" class="d-flex border-bottom py-1 small">
-      <span class="text-muted me-2" :data-testid="`record-time-${i}`">{{ recordTime(r.at) }}</span>
-      {{ recordName(r) }}
-      <b :class="['ms-auto', r.delta >= 0 ? 'text-success' : 'text-danger']"
+    <!-- 每条一行（只读行，界面改版 P4） -->
+    <div v-for="(r, i) in records" :key="i" class="dt-feed">
+      <span class="dt-feed-time" :data-testid="`record-time-${i}`">{{ recordTime(r.at) }}</span>
+      <span class="dt-feed-text flex-fill">{{ recordName(r) }}</span>
+      <b :class="['text-nowrap', r.delta >= 0 ? 'text-success' : 'text-danger']"
         >{{ r.delta >= 0 ? '+' : '' }}{{ formatNum(r.delta) }}</b
       >
     </div>
-    <div v-if="records.length === 0" class="dt-empty">{{ t.store.noRecords }}</div>
+    <DtEmpty v-if="records.length === 0" :title="t.store.noRecords" data-testid="records-empty" />
   </template>
   <template v-if="tab === 'souvenirs'">
-    <div v-if="souvenirs.length === 0" class="text-muted small">{{ t.store.noSouvenirs }}</div>
+    <DtEmpty v-if="souvenirs.length === 0" :title="t.store.noSouvenirs" data-testid="souvenirs-empty" />
     <div
       v-for="it in souvenirs"
       :key="it.goodsId"
