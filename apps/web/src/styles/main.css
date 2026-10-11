@@ -79,6 +79,9 @@ html {
   position: relative;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
   flex-shrink: 0;
   color: var(--dt-muted);
   font-size: 20px;
@@ -89,8 +92,8 @@ html {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: var(--dt-primary-soft);
   color: var(--dt-primary-ink);

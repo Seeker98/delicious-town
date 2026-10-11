@@ -30,7 +30,7 @@ test('登录页选 English 后注册开店，首页英文，刷新后不变，�
   const name = `店${id.slice(-5)}`;
   await page.getByPlaceholder('Restaurant name').fill(name);
   await page.getByRole('button', { name: 'Open' }).click();
-  await expect(page.getByTestId('rest-name')).toHaveText(name);
+  await expect(page.getByTestId('page-title')).toHaveText(name);
   await expect(page.getByTestId('home-todo')).toContainText("Today's to-do");
   await expect(page.getByTestId('home-switches')).toContainText('Business settings');
 

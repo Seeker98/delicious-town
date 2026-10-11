@@ -60,7 +60,7 @@ export const routes: RouteRecordRaw[] = [
     path: '/account',
     name: 'account',
     component: () => import('./views/AccountView.vue'),
-    meta: { gameChrome: true, section: 'map', title: T((t) => t.account.title), parent: '/me' },
+    meta: { gameChrome: true, section: 'home', title: T((t) => t.account.title), parent: '/me' },
   },
   {
     path: '/create-restaurant',
@@ -186,7 +186,7 @@ export const routes: RouteRecordRaw[] = [
     path: '/wiki',
     name: 'wiki',
     component: () => import('./views/wiki/WikiHomeView.vue'),
-    meta: { public: true, gameChrome: true, section: 'map', title: T((t) => t.wiki.title), parent: '/help' },
+    meta: { public: true, gameChrome: true, section: 'home', title: T((t) => t.wiki.title), parent: '/help' },
   },
   {
     path: '/wiki/guide',
@@ -195,7 +195,7 @@ export const routes: RouteRecordRaw[] = [
     meta: {
       public: true,
       gameChrome: true,
-      section: 'map',
+      section: 'home',
       title: T((t) => t.wiki.guide.title),
       parent: '/help',
     },
@@ -207,7 +207,7 @@ export const routes: RouteRecordRaw[] = [
     meta: {
       public: true,
       gameChrome: true,
-      section: 'map',
+      section: 'home',
       title: T((t) => t.wiki.api.title),
       parent: '/help',
     },
@@ -219,7 +219,7 @@ export const routes: RouteRecordRaw[] = [
     meta: {
       public: true,
       gameChrome: true,
-      section: 'map',
+      section: 'home',
       title: T((t) => t.nav.titles.wikiItem),
       parent: (_to, back) =>
         typeof back === 'string' && back.startsWith('/wiki/equips')
@@ -235,7 +235,7 @@ export const routes: RouteRecordRaw[] = [
     meta: {
       public: true,
       gameChrome: true,
-      section: 'map',
+      section: 'home',
       title: T((t) => t.nav.titles.wikiItem),
       parent: (_to, back) => listBack('/wiki/foods', back),
     },
@@ -247,7 +247,7 @@ export const routes: RouteRecordRaw[] = [
     meta: {
       public: true,
       gameChrome: true,
-      section: 'map',
+      section: 'home',
       title: T((t) => t.nav.titles.wikiItem),
       parent: (_to, back) => listBack('/wiki/cookbooks', back),
     },
@@ -259,7 +259,7 @@ export const routes: RouteRecordRaw[] = [
     meta: {
       public: true,
       gameChrome: true,
-      section: 'map',
+      section: 'home',
       title: T((t) => t.nav.titles.wikiItem),
       parent: (_to, back) => listBack('/wiki/streets', back),
     },
@@ -268,38 +268,38 @@ export const routes: RouteRecordRaw[] = [
     path: '/wiki/:kind',
     name: 'wiki-list',
     component: () => import('./views/wiki/WikiListView.vue'),
-    meta: { public: true, gameChrome: true, section: 'map', title: T((t) => t.wiki.title), parent: '/wiki' },
+    meta: { public: true, gameChrome: true, section: 'home', title: T((t) => t.wiki.title), parent: '/wiki' },
   },
   // 更新记录、友情链接（问题记录 348）
   {
     path: '/changelog',
     name: 'changelog',
     component: () => import('./views/ChangelogView.vue'),
-    meta: { gameChrome: true, section: 'map', title: T((t) => t.site.changelogTitle), parent: '/help' },
+    meta: { gameChrome: true, section: 'home', title: T((t) => t.site.changelogTitle), parent: '/help' },
   },
   {
     path: '/links',
     name: 'links',
     component: () => import('./views/LinksView.vue'),
-    meta: { gameChrome: true, section: 'map', title: T((t) => t.site.linksTitle), parent: '/help' },
+    meta: { gameChrome: true, section: 'home', title: T((t) => t.site.linksTitle), parent: '/help' },
   },
   {
     path: '/guide',
     name: 'guide',
     component: () => import('./views/GuideView.vue'),
-    meta: { gameChrome: true, section: 'map', title: T((t) => t.guide.title), parent: '/help' },
+    meta: { gameChrome: true, section: 'home', title: T((t) => t.guide.title), parent: '/help' },
   },
   {
     path: '/redeem',
     name: 'redeem',
     component: () => import('./views/RedeemView.vue'),
-    meta: { needRestaurant: true, section: 'map', title: T((t) => t.misc.redeem.title), parent: '/me' },
+    meta: { needRestaurant: true, section: 'home', title: T((t) => t.misc.redeem.title), parent: '/me' },
   },
   {
     path: '/invite',
     name: 'invite',
     component: () => import('./views/InviteView.vue'),
-    meta: { needRestaurant: true, section: 'map', title: T((t) => t.misc.invite.title), parent: '/me' },
+    meta: { needRestaurant: true, section: 'home', title: T((t) => t.misc.invite.title), parent: '/me' },
   },
   {
     path: '/mail',
@@ -515,13 +515,13 @@ export const routes: RouteRecordRaw[] = [
     path: '/me',
     name: 'me',
     component: () => import('./views/MeView.vue'),
-    meta: { needRestaurant: true, section: 'map', title: T((t) => t.nav.titles.me), parent: '/' },
+    meta: { needRestaurant: true, section: 'home', title: T((t) => t.nav.titles.me), parent: '/' },
   },
   {
     path: '/help',
     name: 'help',
     component: () => import('./views/HelpView.vue'),
-    meta: { gameChrome: true, section: 'map', title: T((t) => t.nav.titles.help), parent: '/me' },
+    meta: { gameChrome: true, section: 'home', title: T((t) => t.nav.titles.help), parent: '/me' },
   },
   { path: '/more', redirect: '/map' },
   {
@@ -599,7 +599,8 @@ export async function scrollFor(
   if (to.hash) {
     window.scrollTo(0, 0);
     const el = await waitUntil(() => document.querySelector(to.hash), wait);
-    return el && current() ? { el, top: 8 } : false;
+    // 顶栏吸顶 48px（界面改版 P2a）：停在顶栏下面 8px
+    return el && current() ? { el, top: 56 } : false;
   }
   return to.path !== from.path ? { top: 0 } : false;
 }

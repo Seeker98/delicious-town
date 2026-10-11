@@ -69,9 +69,10 @@ describe('切页面时的滚动位置', () => {
     const el = document.createElement('div');
     el.id = 'attr-points';
     setTimeout(() => document.body.appendChild(el), 50);
+    // 顶栏吸顶 48px（界面改版 P2a 终审 I3）：锚点停在顶栏下面 8px
     expect(await scrollFor(loc('/rest/equip', '#attr-points'), loc('/rest/info'), null)).toEqual({
       el,
-      top: 8,
+      top: 56,
     });
     expect(top).toHaveBeenCalledWith(0, 0);
     el.remove();
@@ -152,5 +153,21 @@ describe('资料库详情的返回（backlog 第 ⑧ 批；界面改版 P2a 起�
     expect(parentPath(at('/wiki/goods/30'), '/wiki/equips?part=2')).toBe('/wiki/equips?part=2');
     expect(parentPath(at('/wiki/goods/30'), '/wiki/goods?q=x')).toBe('/wiki/goods?q=x');
     expect(parentPath(at('/wiki/goods/30'), null)).toBe('/wiki/goods');
+  });
+});
+
+describe('“我”里的页面属于同一个入口（界面改版 P2a 终审 I4）', () => {
+  it('上一级一路走到 /me 的页面，底部导航都亮“餐厅”（头像就是店名第一个字）', () => {
+    const byPath = new Map(routes.map((r) => [r.path, r]));
+    const chain = (p: string): string[] => {
+      const r = byPath.get(p);
+      const parent = r?.meta?.parent;
+      return typeof parent === 'string' ? [parent, ...chain(parent)] : [];
+    };
+    const under = routes.filter((r) => r.path === '/me' || chain(r.path).includes('/me'));
+    expect(under.map((r) => r.path)).toEqual(
+      expect.arrayContaining(['/me', '/account', '/help', '/store', '/rest/info']),
+    );
+    for (const r of under) expect(r.meta?.section, r.path).toBe('home');
   });
 });

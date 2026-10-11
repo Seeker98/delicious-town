@@ -81,3 +81,17 @@ describe('颜色只读令牌（界面改版 P1）', () => {
     expect(Math.min(...sizes)).toBeGreaterThanOrEqual(11);
   });
 });
+
+describe('顶栏可点的地方够大（界面改版 P2a 终审：设计 §8.3 按钮至少 32px）', () => {
+  it('返回、邮件、“我”都至少 32×32', () => {
+    for (const sel of ['.dt-header-back', '.dt-header-icon', '.dt-header-me']) {
+      const at = css.indexOf(`${sel} {`);
+      expect(at, sel).toBeGreaterThan(-1);
+      const rule = css.slice(at, css.indexOf('}', at));
+      const w = Number(/min-width:\s*(\d+)px/.exec(rule)?.[1] ?? /\bwidth:\s*(\d+)px/.exec(rule)?.[1] ?? 0);
+      const h = Number(/min-height:\s*(\d+)px/.exec(rule)?.[1] ?? /\bheight:\s*(\d+)px/.exec(rule)?.[1] ?? 0);
+      expect(w, sel).toBeGreaterThanOrEqual(32);
+      expect(h, sel).toBeGreaterThanOrEqual(32);
+    }
+  });
+});

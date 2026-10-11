@@ -19,7 +19,12 @@ const t = useT();
 const pageTitle = usePageTitleStore();
 const restStore = useRestaurantStore();
 /** 上一级：详情页按浏览器历史里的上一页回到原来的列表（带搜索、筛选） */
-const parent = computed(() => (props.inGame ? parentPath(route, router.options.history.state.back) : null));
+const parent = computed(() => {
+  const p = parentPath(route, router.options.history.state.back);
+  if (props.inGame || !p) return p;
+  // 没登录看公开页（资料库）：上一级也是公开页才给返回，不把人带去要登录的页面（终审 I1）
+  return router.resolve(p).meta.public ? p : null;
+});
 const title = computed(() => pageTitle.title ?? routeTitle(route.meta, t.value) ?? t.value.nav.appName);
 /** 头像：店名第一个字 */
 const initial = computed(() => [...(restStore.rest?.name ?? '')][0] ?? '');

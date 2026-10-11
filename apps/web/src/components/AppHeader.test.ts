@@ -95,4 +95,14 @@ describe('顶栏（界面改版 P2a，设计 §4.2）', () => {
     await mountHeader('/map');
     expect(endpoints.overview).not.toHaveBeenCalled();
   });
+
+  it('没登录看资料库详情：上一级也是公开页时有返回（终审 I1）；资料库首页的上一级是帮助中心，不显示', async () => {
+    useSessionStore().me = null;
+    const a = await mountHeader('/wiki/foods/1', false);
+    await a.w.get('[data-testid="back"]').trigger('click');
+    await flushPromises();
+    expect(a.router.currentRoute.value.path).toBe('/wiki/foods');
+    const b = await mountHeader('/wiki', false);
+    expect(b.w.find('[data-testid="back"]').exists()).toBe(false);
+  });
 });
