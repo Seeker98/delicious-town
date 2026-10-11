@@ -11,6 +11,9 @@ export default {
   capShared: (shared: number, can: number) =>
     `同一網路或裝置本輪已買 ${shared} 份 (限購按店、裝置、網路分別算), 最多再買 ${can}`,
   capSlots: '櫥櫃格子滿了, 先騰出一格',
+  /** 受限時行裡的短標籤（完整原因在購買面板裡） */
+  capShort: (n: string) => `最多再買 ${n}`,
+  capNone: '買不了',
   capFull: (max: number) => `櫥櫃裡已經放滿了 (單種上限 ${max})`,
   capRoom: (max: number, have: number, room: number) => `櫥櫃單種上限 ${max}, 已有 ${have}, 最多再買 ${room}`,
   guessFailed: '競猜失敗',

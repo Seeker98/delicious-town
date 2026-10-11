@@ -2393,8 +2393,9 @@ details.dt-card > summary {
   right: 5px;
   padding: 0 6px;
   border-radius: 999px;
-  background: var(--dt-text);
-  color: var(--dt-bg);
+  /* 用户 2026-10-11：浅紫底深紫字，和整套配色一致（原来黑底白字太抢眼） */
+  background: var(--dt-soft-primary);
+  color: var(--dt-ink-primary);
   font-size: 11px;
   font-weight: 700;
   line-height: 17px;
@@ -2492,10 +2493,6 @@ details.dt-card > summary {
 .dt-row-wrap .dt-row-sub {
   white-space: normal;
 }
-.dt-row-warn {
-  display: block;
-  color: var(--dt-ink-danger);
-}
 /* 名字后面的等级角标、热门标签（设计 §1.1 第 6 条：1 级不标，2 级起按等级上色） */
 .dt-row-title .dt-tag {
   margin-left: 6px;
@@ -2588,4 +2585,8 @@ details.dt-card > summary {
 .dt-bag-cell.is-master .dt-bag-need,
 .dt-bag-cell.is-master .dt-bag-lock {
   color: var(--dt-ink-warning);
+}
+/* 紫底的格子里数量角标换成白底，免得和格子底色混在一起 */
+.dt-bag-cell.is-t3 .dt-bag-num {
+  background: var(--dt-surface);
 }

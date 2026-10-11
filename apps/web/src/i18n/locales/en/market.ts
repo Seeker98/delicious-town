@@ -17,6 +17,8 @@ const market: Messages['market'] = {
   capShared: (shared, can) =>
     `Your network or device already bought ${shared} this round (limits count per restaurant, device and network). You can buy ${can} more`,
   capSlots: 'Your pantry has no free slots. Clear one first',
+  capShort: (n) => `Max ${n} more`,
+  capNone: "Can't buy",
   capFull: (max) => `Your pantry is full for this ingredient (max ${max} each)`,
   capRoom: (max, have, room) => `Pantry max is ${max} each; you have ${have}, so you can buy ${room} more`,
   guessFailed: 'Guess failed',

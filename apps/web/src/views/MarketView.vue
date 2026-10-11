@@ -231,16 +231,20 @@ onMounted(() =>
                 t.market.limitLine(it.bought, it.limit)
               }}</span></template
             >
-            <span v-if="capNote(it)" class="dt-row-warn" :data-testid="`cap-${it.id}`">{{
-              capNote(it)
-            }}</span>
+            <!-- 受限时行里只写一个短标签，完整原因点价格按钮在购买面板里看（用户 2026-10-11：默认折叠，不破坏一致性） -->
+            <span
+              v-if="capNote(it)"
+              :class="['dt-tag', 'ms-1', { 'dt-tag-warn': it.canBuy > 0 }]"
+              :data-testid="`cap-${it.id}`"
+              >{{ it.canBuy > 0 ? t.market.capShort(formatNum(it.canBuy)) : t.market.capNone }}</span
+            >
           </template>
           <template #end>
             <button
               type="button"
               class="dt-price-btn"
               :data-testid="`buy-${it.id}`"
-              :disabled="busy || it.canBuy < 1 || (s.key === 'special' && specialWait > 0)"
+              :disabled="busy || (it.canBuy < 1 && !capNote(it)) || (s.key === 'special' && specialWait > 0)"
               :aria-label="t.market.sheet.open(catalog.foodName(it.foodsId), priceText(it))"
               @click="openBuy(it)"
             >
@@ -319,7 +323,9 @@ onMounted(() =>
           </div>
         </div>
       </div>
-      <div v-if="capNote(buying)" class="dt-detail-note text-danger">{{ capNote(buying) }}</div>
+      <div v-if="capNote(buying)" class="dt-detail-note text-danger" data-testid="buy-reason">
+        {{ capNote(buying) }}
+      </div>
       <div class="dt-detail-qty">
         <span>{{ t.market.sheet.qty }}</span>
         <DtStepper

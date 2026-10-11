@@ -10,6 +10,9 @@ export default {
   capShared: (shared: number, can: number) =>
     `同一网络或设备本轮已买 ${shared} 份 (限购按店、设备、网络分别算), 最多再买 ${can}`,
   capSlots: '橱柜格子满了, 先腾出一格',
+  /** 受限时行里的短标签（完整原因在购买面板里） */
+  capShort: (n: string) => `最多再买 ${n}`,
+  capNone: '买不了',
   capFull: (max: number) => `橱柜里已经放满了 (单种上限 ${max})`,
   capRoom: (max: number, have: number, room: number) => `橱柜单种上限 ${max}, 已有 ${have}, 最多再买 ${room}`,
   guessFailed: '竞猜失败',

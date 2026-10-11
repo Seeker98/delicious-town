@@ -146,7 +146,7 @@ describe('MarketView', () => {
     expect(endpoints.marketGuess).toHaveBeenCalledWith([101, 102]);
   });
 
-  it('最多能买几个按限购、库存、橱柜单种上限取小，写明原因（问题记录：显示 1000 实际只能买 996）', async () => {
+  it('最多能买几个按限购、库存、橱柜单种上限取小；行里只写短标签，完整原因在购买面板里（问题记录：显示 1000 实际只能买 996；用户 2026-10-11：默认折叠）', async () => {
     vi.mocked(endpoints.market).mockResolvedValue({
       ...view,
       daily: [
@@ -156,25 +156,47 @@ describe('MarketView', () => {
     });
     const w = mountView();
     await flushPromises();
-    expect(w.find('[data-testid="cap-11"]').text()).toContain('橱柜单种上限 999, 已有 3, 最多再买 996');
+    // 行里：还能买时一个浅黄小标签“最多再买 N”，不再整句红字
+    const cap = w.get('[data-testid="cap-11"]');
+    expect(cap.text()).toBe('最多再买 996');
+    expect(cap.classes()).toEqual(expect.arrayContaining(['dt-tag', 'dt-tag-warn']));
+    expect(w.get('[data-testid="item-11"]').text()).not.toContain('橱柜单种上限');
     await openBuy(w, 11);
+    expect(w.get('[data-testid="buy-reason"]').text()).toContain('橱柜单种上限 999, 已有 3, 最多再买 996');
     await w.find('[data-testid="qty-sheet"]').setValue(2000);
     await w.find('[data-testid="buy-confirm"]').trigger('click');
     await flushPromises();
     expect(endpoints.marketBuy).toHaveBeenLastCalledWith(11, 996);
-    expect(w.find('[data-testid="buy-12"]').attributes('disabled')).toBeDefined();
-    expect(w.find('[data-testid="cap-12"]').text()).toContain('已经放满了');
+    // 一个都买不了：灰色小标签“买不了”，价格按钮照样能点开看原因，确认按钮灰掉
+    expect(w.get('[data-testid="cap-12"]').text()).toBe('买不了');
+    expect(w.get('[data-testid="cap-12"]').classes()).not.toContain('dt-tag-warn');
+    expect(w.get('[data-testid="buy-12"]').attributes('disabled')).toBeUndefined();
+    await openBuy(w, 12);
+    expect(w.get('[data-testid="buy-reason"]').text()).toContain('已经放满了');
+    expect(w.get('[data-testid="buy-confirm"]').attributes('disabled')).toBeDefined();
   });
 
-  it('同一网络或设备已经买满时写明原因、按钮灰掉（问题记录：显示 0/1000 却提示限购已满）', async () => {
+  it('同一网络或设备已经买满：行里写“买不了”，点开看原因（问题记录：显示 0/1000 却提示限购已满）', async () => {
     vi.mocked(endpoints.market).mockResolvedValue({
       ...view,
       daily: [{ ...view.daily[0]!, sharedBought: 1000, canBuy: 0 }],
     });
     const w = mountView();
     await flushPromises();
-    expect(w.find('[data-testid="buy-11"]').attributes('disabled')).toBeDefined();
-    expect(w.find('[data-testid="cap-11"]').text()).toContain('同一网络或设备本轮已买 1000 份');
+    expect(w.get('[data-testid="cap-11"]').text()).toBe('买不了');
+    await openBuy(w, 11);
+    expect(w.get('[data-testid="buy-reason"]').text()).toContain('同一网络或设备本轮已买 1000 份');
+  });
+
+  it('自己买满了限购（没有别的原因）：不另加标签，价格按钮灰掉', async () => {
+    vi.mocked(endpoints.market).mockResolvedValue({
+      ...view,
+      daily: [{ ...view.daily[0]!, bought: view.daily[0]!.limit, canBuy: 0 }],
+    });
+    const w = mountView();
+    await flushPromises();
+    expect(w.find('[data-testid="cap-11"]').exists()).toBe(false);
+    expect(w.get('[data-testid="buy-11"]').attributes('disabled')).toBeDefined();
   });
 
   it('手动进货（4E-2）：有菜场工作证时显示按钮和费用；进货后刷新', async () => {

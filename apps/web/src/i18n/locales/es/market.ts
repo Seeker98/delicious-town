@@ -17,6 +17,8 @@ const market: Messages['market'] = {
   capShared: (shared, can) =>
     `Tu red o dispositivo ya compró ${shared} en esta ronda (el límite cuenta por restaurante, dispositivo y red). Puedes comprar ${can} más`,
   capSlots: 'Tu despensa no tiene huecos libres. Libera uno primero',
+  capShort: (n) => `Máx. ${n} más`,
+  capNone: 'No disponible',
   capFull: (max) => `Tu despensa está llena de este ingrediente (máx. ${max} de cada uno)`,
   capRoom: (max, have, room) =>
     `Máx. ${max} de cada ingrediente; tienes ${have}, así que puedes comprar ${room} más`,

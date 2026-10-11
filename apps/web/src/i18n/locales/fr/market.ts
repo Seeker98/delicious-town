@@ -17,6 +17,8 @@ const market: Messages['market'] = {
   capShared: (shared, can) =>
     `Votre réseau ou appareil en a déjà acheté ${shared} ce tour-ci (limite par restaurant, appareil et réseau). Vous pouvez encore en acheter ${can}`,
   capSlots: "Votre garde-manger n'a plus d'emplacement libre. Libérez-en un d'abord",
+  capShort: (n) => `Encore ${n} max`,
+  capNone: 'Indisponible',
   capFull: (max) => `Votre garde-manger est plein pour cet ingrédient (max ${max} chacun)`,
   capRoom: (max, have, room) =>
     `Max ${max} par ingrédient\u202f; vous en avez ${have}, vous pouvez donc en acheter ${room} de plus`,
