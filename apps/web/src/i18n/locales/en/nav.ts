@@ -11,6 +11,7 @@ const nav: Messages['nav'] = {
   },
   /** 顶栏标题：没有现成标题键的页面（界面改版 P2a） */
   titles: {
+    bank: 'Bank',
     floor: 'Floors and tables',
     income: 'Income log',
     info: 'Restaurant info',
@@ -35,6 +36,7 @@ const nav: Messages['nav'] = {
   map: {
     groups: { trade: 'Trade', play: 'Play', public: 'Public' },
     places: {
+      bank: { name: 'Bank', sub: 'Fund · Savings' },
       shop: { name: 'Shop', sub: 'Coin shop · Black market' },
       exchange: { name: 'Exchange', sub: 'Spot · Futures · Bulk' },
       acquire: { name: 'Acquisitions', sub: 'Values · Tending' },

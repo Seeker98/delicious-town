@@ -23,7 +23,7 @@ const hrefs = (w: Awaited<ReturnType<typeof mountView>>) => w.findAll('a').map((
 describe('协会（问题记录 441、443）', () => {
   beforeEach(() => setActivePinia(createPinia()));
 
-  it('原来的四项之外，多了教室、镇长大胃锅、13 哥、卡门、盖乐瑞', async () => {
+  it('原来的四项之外，多了教室、镇长大胃锅、13 哥、卡门；盖乐瑞搬去了银行（界面改版 P2b）', async () => {
     const w = await mountView();
     expect(hrefs(w)).toEqual([
       '/society/star',
@@ -34,28 +34,15 @@ describe('协会（问题记录 441、443）', () => {
       '/society/mayor',
       '/society/bro13',
       '/society/carmen',
-      '/society/fund',
-      '/society/wealth',
     ]);
     expect(w.text()).toContain('镇长大胃锅');
-    expect(w.text()).toContain('盖乐瑞');
+    expect(w.text()).not.toContain('盖乐瑞');
   });
 
   it('区服关掉的功能对应的入口不显示：广场关了没有三位兑换的 NPC，神秘食谱关了没有教室，基金关了没有盖乐瑞', async () => {
     useRestaurantStore().rest = { disabledFeatures: ['town', 'mysterious', 'fund', 'wealth'] } as never;
     const w = await mountView();
     expect(hrefs(w)).toEqual(['/society/star', '/society/oil', '/society/rename', '/society/move']);
-  });
-});
-
-describe('理财入口（理财设计 §3.4）', () => {
-  beforeEach(() => setActivePinia(createPinia()));
-
-  it('挨着盖乐瑞（发展基金）；只关理财时没有理财入口，基金还在', async () => {
-    useRestaurantStore().rest = { disabledFeatures: ['wealth'] } as never;
-    const w = await mountView();
-    expect(hrefs(w)).toContain('/society/fund');
-    expect(hrefs(w)).not.toContain('/society/wealth');
   });
 });
 

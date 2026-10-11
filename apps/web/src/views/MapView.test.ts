@@ -22,4 +22,9 @@ describe('小镇（界面改版 P2a，设计 §4.1）', () => {
     expect(w.find('[data-testid="place-bar"]').exists()).toBe(false);
     expect(w.find('[data-testid="place-kuji"]').exists()).toBe(false);
   });
+  it('买卖里有银行（界面改版 P2b）；基金、理财都关时不显示', () => {
+    expect(mountMap().get('[data-testid="place-bank"]').text()).toContain('银行');
+    expect(mountMap(['fund']).find('[data-testid="place-bank"]').exists()).toBe(true);
+    expect(mountMap(['fund', 'wealth']).find('[data-testid="place-bank"]').exists()).toBe(false);
+  });
 });

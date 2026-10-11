@@ -21,7 +21,8 @@ const T = (f: (t: Messages) => string) => f;
 const TOWN_MOVED: Record<string, string> = {
   exchange: '/society/mayor',
   classroom: '/society/classroom',
-  fund: '/society/fund',
+  // 基金后来又搬到银行（界面改版 P2b）
+  fund: '/bank?tab=fund',
 };
 
 export const routes: RouteRecordRaw[] = [
@@ -375,9 +376,18 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/SocietyView.vue'),
     meta: { needRestaurant: true, section: 'map', title: T((t) => t.society.title), parent: '/map' },
   },
-  // 从广场搬过来的教室、三位兑换 NPC、发展基金（问题记录 441、443）
+  // 盖乐瑞的基金、理财搬到银行（界面改版 P2b）
+  { path: '/society/fund', redirect: '/bank?tab=fund' },
+  { path: '/society/wealth', redirect: '/bank?tab=wealth' },
   {
-    path: '/society/:npc(classroom|mayor|bro13|carmen|fund|wealth)',
+    path: '/bank',
+    name: 'bank',
+    component: () => import('./views/BankView.vue'),
+    meta: { needRestaurant: true, section: 'map', title: T((t) => t.nav.titles.bank), parent: '/map' },
+  },
+  // 从广场搬过来的教室、三位兑换 NPC（问题记录 441、443）
+  {
+    path: '/society/:npc(classroom|mayor|bro13|carmen)',
     name: 'society-npc',
     component: () => import('./views/SocietyNpcView.vue'),
     props: true,

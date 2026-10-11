@@ -29,7 +29,8 @@ describe('routes', () => {
     const guard = town.beforeEnter as (to: { query: Record<string, string> }) => unknown;
     expect(guard({ query: { tab: 'exchange' } })).toBe('/society/mayor');
     expect(guard({ query: { tab: 'classroom' } })).toBe('/society/classroom');
-    expect(guard({ query: { tab: 'fund' } })).toBe('/society/fund');
+    // 基金后来又搬到银行（界面改版 P2b）
+    expect(guard({ query: { tab: 'fund' } })).toBe('/bank?tab=fund');
     expect(guard({ query: { tab: 'news' } })).toBe(true);
     expect(guard({ query: {} })).toBe(true);
   });
@@ -126,7 +127,17 @@ describe('导航元数据（界面改版 P2a，设计 §4.2）', () => {
   });
 });
 
-describe('特色菜、进度一览并进食谱页（界面改版 P2b）', () => {
+describe('并进别的页面的旧地址（界面改版 P2b）', () => {
+  it('银行：协会的基金、理财旧地址跳过去；在小镇下面', () => {
+    expect(routes.find((r) => r.path === '/society/fund')?.redirect).toBe('/bank?tab=fund');
+    expect(routes.find((r) => r.path === '/society/wealth')?.redirect).toBe('/bank?tab=wealth');
+    const bank = routes.find((r) => r.path === '/bank')!;
+    expect(bank.meta?.section).toBe('map');
+    expect(bank.meta?.parent).toBe('/map');
+    expect(bank.meta?.needRestaurant).toBe(true);
+    expect(bank.meta?.title?.(zhCN)).toBe('银行');
+    expect(routes.find((r) => r.path.startsWith('/society/:npc'))!.path).not.toMatch(/fund|wealth/);
+  });
   it('/rest/gem 跳到厨具页的宝石标签', () => {
     expect(routes.find((r) => r.path === '/rest/gem')?.redirect).toBe('/rest/equip?tab=gem');
   });

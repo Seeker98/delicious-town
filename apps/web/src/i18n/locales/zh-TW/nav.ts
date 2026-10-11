@@ -11,6 +11,7 @@ export default {
   },
   /** 頂欄標題：沒有現成標題鍵的頁面（介面改版 P2a） */
   titles: {
+    bank: '銀行',
     floor: '樓層餐桌',
     income: '收益記錄',
     info: '餐廳資訊',
@@ -35,6 +36,7 @@ export default {
   map: {
     groups: { trade: '買賣', play: '玩樂', public: '公共' },
     places: {
+      bank: { name: '銀行', sub: '基金 · 理財' },
       shop: { name: '商店', sub: '銀幣商店 · 黑市' },
       exchange: { name: '交易所', sub: '現貨 · 期貨 · 大宗' },
       acquire: { name: '收購', sub: '身價榜 · 打理' },

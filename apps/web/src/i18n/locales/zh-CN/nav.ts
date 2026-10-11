@@ -10,6 +10,7 @@ export default {
   },
   /** 顶栏标题：没有现成标题键的页面（界面改版 P2a） */
   titles: {
+    bank: '银行',
     floor: '楼层餐桌',
     income: '收益记录',
     info: '餐厅信息',
@@ -34,6 +35,7 @@ export default {
   map: {
     groups: { trade: '买卖', play: '玩乐', public: '公共' },
     places: {
+      bank: { name: '银行', sub: '基金 · 理财' },
       shop: { name: '商店', sub: '银币商店 · 黑市' },
       exchange: { name: '交易所', sub: '现货 · 期货 · 大宗' },
       acquire: { name: '收购', sub: '身价榜 · 打理' },

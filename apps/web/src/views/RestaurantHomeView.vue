@@ -612,7 +612,7 @@ onBeforeUnmount(() => {
       <!-- 到期没领的理财（理财设计 §3.4）；旧服务端没有 wealthDue -->
       <RouterLink
         v-if="(rest.wealthDue ?? 0) > 0"
-        to="/society/wealth"
+        to="/bank?tab=wealth"
         class="dt-todo-row text-reset text-decoration-none"
         data-testid="home-wealth-row"
         ><span class="flex-fill"

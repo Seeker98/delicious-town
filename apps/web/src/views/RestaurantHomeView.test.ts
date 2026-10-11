@@ -240,7 +240,7 @@ describe('RestaurantHomeView', () => {
     const w = await mountView();
     const row = w.get('[data-testid="home-wealth-row"]');
     expect(row.text()).toContain('理财到期 2 笔');
-    expect(row.attributes('href')).toBe('/society/wealth');
+    expect(row.attributes('href')).toBe('/bank?tab=wealth');
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, wealthDue: 0 });
     expect((await mountView()).find('[data-testid="home-wealth-row"]').exists()).toBe(false);
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, wealthDue: undefined });
