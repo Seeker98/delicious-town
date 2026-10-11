@@ -81,6 +81,17 @@ function back() {
         data-testid="header-chip"
         ><DtArt :name="pageTitle.chip.art" :size="18" />{{ pageTitle.chip.text }}</span
       >
+      <!-- 页面的“更多”按钮（界面改版 P10） -->
+      <button
+        v-if="pageTitle.menu"
+        type="button"
+        class="dt-header-icon"
+        :aria-label="pageTitle.menu.label"
+        data-testid="header-menu"
+        @click="pageTitle.menu.open()"
+      >
+        <i class="bi bi-three-dots" aria-hidden="true"></i>
+      </button>
       <!-- 当前时间（问题记录 348） -->
       <HeaderClock class="dt-header-clock" />
       <RouterLink

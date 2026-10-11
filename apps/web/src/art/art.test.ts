@@ -11,7 +11,13 @@ const svgs = (dir: string) =>
     .filter((n) => n.endsWith('.svg'))
     .map((n) => ({ name: n.slice(0, -4), src: readFileSync(join(ROOT, dir, n), 'utf8') }));
 const UI = svgs('ui');
-const SCENE_SIZE: Record<string, string> = { bar: '390 196', temple: '390 120', tower: '390 120' };
+const SCENE_SIZE: Record<string, string> = {
+  bar: '390 196',
+  temple: '390 120',
+  tower: '390 120',
+  society: '390 120',
+  plaza: '390 120',
+};
 const CONTENT = svgs('content');
 
 describe('图形（界面改版 P1，设计 §3）', () => {
@@ -40,7 +46,8 @@ describe('图形（界面改版 P1，设计 §3）', () => {
   });
 
   it('内容图形以分类前缀开头', () => {
-    for (const { name } of CONTENT) expect(name).toMatch(/^(res|food|goods|npc|empty|door|avatar|game)-/);
+    for (const { name } of CONTENT)
+      expect(name).toMatch(/^(res|food|goods|npc|empty|door|avatar|game|weather|town)-/);
   });
 
   it('生成的名字表和源文件一致（改了图形要跑 pnpm -F @dt/web art）', () => {
@@ -56,7 +63,7 @@ describe('图形（界面改版 P1，设计 §3）', () => {
     for (const n of scenes) {
       const src = readFileSync(join(ROOT, 'scene', n), 'utf8');
       expect(n.slice(0, -4), n).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
-      // 店面 320×72；酒吧首页 390×196，神殿、厨塔 390×120（P9：放在页面顶上整宽）
+      // 店面 320×72；酒吧首页 390×196，神殿、厨塔、协会、广场 390×120（P9、P10：放在页面顶上整宽）
       const size = SCENE_SIZE[n.slice(0, -4)] ?? '320 72';
       expect(src.startsWith(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size}">`), n).toBe(true);
       expect(src, n).not.toMatch(/<script|<style|href=|<image|<text/i);

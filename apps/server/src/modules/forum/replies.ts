@@ -103,6 +103,7 @@ export async function createReply(
     replyTo: b.replyTo ?? null,
     restId: o.rest.id,
     restName: o.rest.name,
+    avatar: o.rest.avatar,
     anonymous: b.anonymous,
     content,
     createdAt: o.now.toISOString(),

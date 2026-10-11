@@ -16,6 +16,18 @@ export default {
   claimed: '· 已領取',
   broken: '· 附件已失效, 請聯絡運營',
   items: (text: string) => `附件: ${text}`,
+  expires: (n: number) => `還剩 ${n} 天`,
+  /** 介面改版 P10 */
+  redeemSub: '輸兌換碼領獎勵',
+  listTitle: '郵件',
+  countLine: (n: number, can: number) => (can > 0 ? `${n} 封 · ${can} 封可領` : `${n} 封`),
+  openLabel: (title: string) => `開啟郵件: ${title}`,
+  iconMark: '稱',
+  needLevelTag: (n: number) => `需 ${n} 級`,
+  claimedTag: '已領取',
+  brokenTag: '附件失效',
+  emptyBody: '活動獎勵、排行禮包、管理員補償都會發到這裡',
+  itemsTitle: '附件',
   redeem: {
     placeholder: '輸入兌換碼',
     label: '兌換碼',

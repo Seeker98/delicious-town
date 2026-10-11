@@ -3,6 +3,11 @@ import { plFr } from '../../helpers';
 
 const forum: Messages['forum'] = {
   title: 'Forum',
+  whoWhen: (name, when) => `${name} · ${when}`,
+  readN: (n) => `${n} ${n === 1 ? 'lecture' : 'lectures'}`,
+  upN: (n) => `${n} j'aime`,
+  downN: (n) => `${n} je n'aime pas`,
+  replyN: (n) => `${n} ${n === 1 ? 'réponse' : 'réponses'}`,
   tabs: { all: 'Tout', chat: 'Discussion', guide: 'Guides', feedback: 'Suggestions', featured: 'Sélection' },
   categories: { chat: 'Discussion', guide: 'Guides', feedback: 'Suggestions' },
   loadFailed: 'Impossible de charger le forum',
@@ -16,6 +21,14 @@ const forum: Messages['forum'] = {
   itemMeta: (name, when, read, up, reply) =>
     `${name} · ${when} · ${read} ${plFr(read, 'vue', 'vues')} · ${up} j'aime · ${reply} ${plFr(reply, 'réponse', 'réponses')}`,
   post: {
+    more: "Plus d'actions",
+    menuTitle: 'Ce sujet',
+    byFloor: 'Par ordre',
+    noReplies: 'Pas encore de réponse',
+    writeReply: 'Écrire une réponse…',
+    replyToCancel: 'Ne plus répondre à ce message',
+    readsNote: 'Qui l’a lu et combien de fois',
+    adminTag: 'Admin',
     loadFailed: 'Impossible de charger le sujet',
     opFailed: "L'action a échoué",
     featuredReward: "Mis en avant. L'auteur a reçu la récompense.",
@@ -48,6 +61,10 @@ const forum: Messages['forum'] = {
     verifyToReply: 'Vérifiez votre e-mail pour répondre',
   },
   edit: {
+    category: 'Catégorie',
+    titleLabel: 'Titre',
+    contentLabel: 'Texte',
+    note: 'Texte brut uniquement.',
     newTitle: 'Nouveau sujet',
     editTitle: 'Modifier le sujet',
     titlePlaceholder: 'Titre (40 caractères max)',

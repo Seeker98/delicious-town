@@ -56,6 +56,7 @@ const npc: Messages['npc'] = {
       'Las recompensas sin reclamar llegan al correo cuando termina el evento.',
     ],
   },
+  carmenGift: 'Regalo de bienvenida',
   links: {
     classroom: { label: 'Aula', desc: 'Enseñar, aprender y aprender a escondidas platos estrella' },
     mayor: {

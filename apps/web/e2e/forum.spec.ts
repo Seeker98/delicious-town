@@ -13,15 +13,17 @@ test('论坛：发攻略帖 → 点赞 → 回复一楼 → 回复 #1 → 删除
 
   await page.goto('/forum');
   await page.getByTestId('forum-new').click();
-  await page.getByTestId('edit-cat-guide').check();
+  await page.getByTestId('edit-cat-guide').click();
   await page.getByTestId('edit-title').fill(title);
   await page.getByTestId('edit-content').fill('第一行\n第二行');
   await page.getByTestId('edit-submit').click();
   await expect(page.getByTestId('post-body')).toContainText('第二行');
 
   await page.getByTestId('post-up').click();
-  await expect(page.getByTestId('post-up')).toHaveClass(/active/);
+  await expect(page.getByTestId('post-up')).toHaveAttribute('aria-pressed', 'true');
 
+  // 回复从底部“回复”打开面板（界面改版 P10）
+  await page.getByTestId('reply-open').click();
   await page.getByTestId('reply-content').fill('一楼');
   await page.getByTestId('reply-submit').click();
   await expect(page.getByTestId('reply-1')).toContainText('一楼');
@@ -44,8 +46,9 @@ test('论坛：发攻略帖 → 点赞 → 回复一楼 → 回复 #1 → 删除
   await page.getByTestId('reply-submit').click();
   await expect(page.getByTestId('reply-2')).toContainText('回复 #1');
 
-  page.once('dialog', (d) => void d.accept());
+  // 删除用页面里的确认面板（界面改版 P10）
   await page.getByTestId('reply-delete-2').click();
+  await page.getByTestId('confirm-ok').click();
   await expect(page.getByTestId('reply-2')).toContainText('该回复已删除');
 
   await page.goto('/forum');

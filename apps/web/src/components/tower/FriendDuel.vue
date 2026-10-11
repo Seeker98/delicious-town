@@ -10,6 +10,7 @@ import DtSheet from '../DtSheet.vue';
 import DuelResult from './DuelResult.vue';
 import DuelRules from './DuelRules.vue';
 
+/** 好友餐厅操作块里的一格（界面改版 P10）：名字、今天还能几次或为什么不能比；结果和规则从下面弹出 */
 const props = defineProps<{ restId: number }>();
 const toast = useToastStore();
 const t = useT();
@@ -56,25 +57,27 @@ onMounted(load);
 </script>
 
 <template>
-  <div v-if="!disabled" data-testid="friend-duel">
-    <button
-      class="btn btn-sm btn-outline-primary"
-      data-testid="act-duel"
-      :disabled="busy || !info || !!block"
-      @click="duel"
-    >
-      {{ t.tower.friend.btn }}{{ info ? t.tower.friend.left(info.left) : '' }}
-    </button>
-    <span v-if="block" class="small text-danger ms-1" data-testid="duel-block">{{ block }}</span>
-    <DtSheet :open="resultOpen && !!last" :title="t.tower.duel.resultTitle" @close="resultOpen = false">
-      <DuelResult v-if="last" :result="last" />
-      <template #actions>
-        <button type="button" class="btn btn-light dt-btn-block" @click="resultOpen = false">
-          {{ t.tower.duel.ok }}
-        </button>
-      </template>
-    </DtSheet>
-    <!-- 切磋过一次再给规则（问题记录 396），平时只是好友店里的一个按钮 -->
-    <DuelRules v-if="last" class="mt-1" :judge-count="last.judgeCount" :weights="last.weights" />
-  </div>
+  <button
+    v-if="!disabled"
+    type="button"
+    :class="['dt-do', { 'is-off': !!block }]"
+    data-testid="act-duel"
+    :disabled="busy || !info || !!block"
+    @click="duel"
+  >
+    <span class="dt-do-title">{{ t.tower.friend.tile }}</span>
+    <span class="dt-do-sub" :data-testid="block ? 'duel-block' : 'duel-left'">{{
+      block || (info ? t.tower.friend.leftN(info.left) : '')
+    }}</span>
+  </button>
+  <DtSheet :open="resultOpen && !!last" :title="t.tower.duel.resultTitle" @close="resultOpen = false">
+    <DuelResult v-if="last" :result="last" />
+    <!-- 切磋过一次再给规则（问题记录 396） -->
+    <DuelRules v-if="last" class="mt-2" :judge-count="last.judgeCount" :weights="last.weights" />
+    <template #actions>
+      <button type="button" class="btn btn-light dt-btn-block" @click="resultOpen = false">
+        {{ t.tower.duel.ok }}
+      </button>
+    </template>
+  </DtSheet>
 </template>

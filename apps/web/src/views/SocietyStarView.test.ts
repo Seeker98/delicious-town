@@ -44,6 +44,45 @@ describe('SocietyStarView', () => {
     const w = mount(SocietyStarView);
     await flushPromises();
     expect(w.find('[data-testid="star-up"]').attributes('disabled')).toBeDefined();
-    expect(w.text()).toContain('暂未开放');
+    expect(w.get('[data-testid="star-reason"]').text()).toBe('8 星暂未开放');
+  });
+
+  it('条件不够时按钮灰掉，下面红字写第一项不够的差多少；条件清单不够的排前（界面改版 P10）', async () => {
+    vi.mocked(endpoints.starNeed).mockResolvedValue({
+      star: 2,
+      nextStar: 3,
+      available: true,
+      ok: false,
+      award: null,
+      checks: [
+        { key: 'level', need: 20, have: 25, ok: true },
+        { key: 'cookbooks', need: 30, have: 28, ok: false },
+      ],
+    });
+    const w = mount(SocietyStarView);
+    await flushPromises();
+    expect(w.get('[data-testid="star-up"]').attributes('disabled')).toBeDefined();
+    expect(w.get('[data-testid="star-reason"]').text()).toBe('已学食谱还差 2');
+    expect(w.text()).toContain('还差 1 项');
+    expect(
+      w
+        .findAll('[data-testid="need-checks"] > [data-testid^="need-"]')
+        .map((r) => r.attributes('data-testid')),
+    ).toEqual(['need-cookbooks', 'need-level']);
+  });
+
+  it('最高星：写已经是最高星级，没有按钮下的原因', async () => {
+    vi.mocked(endpoints.starNeed).mockResolvedValue({
+      star: 9,
+      nextStar: null,
+      available: true,
+      ok: false,
+      award: null,
+      checks: [],
+    });
+    const w = mount(SocietyStarView);
+    await flushPromises();
+    expect(w.get('[data-testid="star-max"]').text()).toBe('已经是最高星级');
+    expect(w.find('[data-testid="star-reason"]').exists()).toBe(false);
   });
 });

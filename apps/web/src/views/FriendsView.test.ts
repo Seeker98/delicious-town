@@ -19,6 +19,8 @@ vi.mock('../api/endpoints', () => ({
     thumbsToday: vi.fn(),
     thumbsReturnAll: vi.fn(),
     overview: vi.fn(),
+    // 头像图要目录里的外观表（界面改版 P10）：一直不回，不影响这里
+    catalog: vi.fn(() => new Promise(() => {})),
   },
 }));
 
@@ -109,7 +111,9 @@ describe('FriendsView', () => {
     await w.find('[data-testid="apply-4"]').trigger('click');
     await flushPromises();
     expect(endpoints.friendApply).toHaveBeenCalledWith(4);
-    expect(w.find('[data-testid="apply-4"]').text()).toBe('已申请');
+    // 申请过换成“已申请”标签，按钮不再显示（界面改版 P10）
+    expect(w.find('[data-testid="apply-4"]').exists()).toBe(false);
+    expect(w.get('[data-testid="found-4"]').text()).toContain('已申请');
   });
 
   it('好友列表还在读时点"动态"：动态照样读出来（好友 e2e 偶发失败的原因）', async () => {
@@ -178,20 +182,21 @@ describe('FriendsView', () => {
     localStorage.clear();
   });
 
-  it('好友行紧凑：店名、等级、状态在同一行（问题记录 168）', async () => {
+  it('好友行紧凑：店名、等级在同一行，状态写成小标签（问题记录 168；界面改版 P10）', async () => {
     const w = mountView();
     await flushPromises();
-    const line = w.find('[data-testid^="friend-row-"] .dt-friend-line');
-    expect(line.exists()).toBe(true);
+    const row = w.get('[data-testid^="friend-row-"]');
+    const line = row.get('.dt-row-title');
     expect(line.text()).toContain('蟹老板');
-    expect(line.text()).toContain('级');
-    expect(line.text()).toContain('蟑螂 3');
+    expect(line.text()).toContain('60 级');
+    expect(row.get('.dt-friend-tags').text()).toContain('蟑螂 3');
   });
 
   it('好友行头像不被压缩、不再单独放大（问题记录 179）', async () => {
     const w = mountView();
     await flushPromises();
-    const img = w.find('[data-testid^="friend-row-"] .flex-shrink-0');
+    // .dt-friend-ava 固定 40px、flex-shrink: 0（界面改版 P10）
+    const img = w.find('[data-testid^="friend-row-"] .dt-friend-ava');
     expect(img.exists()).toBe(true);
     expect(w.find('.dt-friend-avatar').exists()).toBe(false);
   });

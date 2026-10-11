@@ -1,7 +1,7 @@
 import { createPinia, setActivePinia } from 'pinia';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { useLocaleStore } from '../stores/locale';
-import { awardText, rewardSummary } from './reward';
+import { awardText, rewardChips, rewardSummary } from './reward';
 
 /** 附件摘要里的称号（定制称号设计 四） */
 const names = {
@@ -74,5 +74,55 @@ describe('任务、活跃奖励的文字 awardText（backlog B6：活跃按钮�
       ),
     ).toBe('银币 1,200、经验 5,000、钻石 2、声望 3、G7×2、F9×1');
     expect(awardText({ diamond: 5 }, names)).toBe('钻石 5');
+  });
+});
+
+describe('邮件附件拆成小胶囊 rewardChips（界面改版 P10：邮箱）', () => {
+  beforeEach(() => setActivePinia(createPinia()));
+
+  const chipNames = {
+    ...names,
+    goodsArt: () => 'goods-card' as const,
+    foodArt: () => 'food-misc' as const,
+  };
+
+  it('每样一枚：图 + 名字×数量；顺序和文字同附件摘要', () => {
+    const i = {
+      coin: 1000,
+      diamond: 2,
+      exp: 30,
+      goods: [{ id: 5, num: 3 }],
+      foods: [{ id: 8, num: 1 }],
+      hats: [{ tier: 'jade' as const, name: '大橘' }],
+    };
+    expect(rewardChips(i, chipNames)).toEqual([
+      { art: 'res-coin-silver', text: '银币 1,000' },
+      { art: 'res-diamond', text: '钻石 2' },
+      { art: 'res-exp', text: '经验 30' },
+      { art: 'goods-card', text: 'G5×3' },
+      { art: 'food-misc', text: 'F8×1' },
+      { art: 'slot-hat', text: '玉•大橘之帽' },
+    ]);
+    expect(
+      rewardChips(i, chipNames)
+        .map((c) => c.text)
+        .join('、'),
+    ).toBe(rewardSummary(i, names));
+  });
+
+  it('称号没有图；配置称号用目录里的名字，已过期写明', () => {
+    expect(rewardChips({ icons: [{ key: 'chef', title: '金牌大厨' }] }, chipNames)).toEqual([
+      { art: null, text: '称号「CHEF」' },
+    ]);
+    expect(rewardChips(expired, chipNames)).toEqual([{ art: null, text: '称号「过期了」已过期' }]);
+  });
+
+  it('限时称号写明有效期，和附件摘要一样（定制称号设计 四）', () => {
+    expect(rewardChips(items, chipNames).map((c) => c.text)).toEqual(rewardSummary(items, names).split('、'));
+    expect(rewardChips(items, chipNames)[1]).toEqual({ art: null, text: '称号「🍜面霸」 (领取后 7 天)' });
+  });
+
+  it('什么都没有时为空', () => {
+    expect(rewardChips({}, chipNames)).toEqual([]);
   });
 });

@@ -24,7 +24,8 @@ test('后台建兑换码 → 玩家在邮箱页兑换；带邀请链接注册的
     data: { code, maxUses: 1, items: { coin: 4321 }, note: 'e2e' },
   });
   expect(made.ok()).toBe(true);
-  await page.goto('/mail');
+  // 兑换码输入框在兑换码页（邮箱只留一个链接过去）
+  await page.goto('/redeem');
   await page.getByTestId('redeem-input').fill(code.toLowerCase());
   await page.getByTestId('redeem-go').click();
   await expect(page.getByText('兑换成功: 银币 4,321')).toBeVisible();

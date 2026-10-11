@@ -33,7 +33,7 @@ export async function registerAndOpen(
   await page.getByPlaceholder('密码', { exact: true }).fill('secret123');
   await page.getByPlaceholder('确认密码').fill('secret123');
   await page.getByPlaceholder('邮箱').fill(email);
-  if (opts.inviteCode) await page.getByPlaceholder('邀请码（可不填）').fill(opts.inviteCode);
+  if (opts.inviteCode) await page.getByPlaceholder('邀请码 (可不填)').fill(opts.inviteCode);
   await page.getByRole('button', { name: '注册' }).click();
   await expect(page).toHaveURL(/\/shards/);
   await page.goto(await mailLink(request, email));

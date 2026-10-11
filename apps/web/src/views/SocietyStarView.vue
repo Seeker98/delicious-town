@@ -1,25 +1,40 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import type { StarNeedDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
-import { useT } from '../composables/useT';
+import AwardChip from '../components/bar/AwardChip.vue';
+import DtArt from '../components/DtArt.vue';
+import DtEmpty from '../components/DtEmpty.vue';
+import DtSkeleton from '../components/DtSkeleton.vue';
 import NeedChecks from '../components/NeedChecks.vue';
+import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
+import { usePageTitle } from '../stores/pageTitle';
 import { useCatalogStore } from '../stores/catalog';
 import { useRestaurantStore } from '../stores/restaurant';
-import { usePageTitle } from '../stores/pageTitle';
 import { useToastStore } from '../stores/toast';
+import { needReason } from '../utils/needs';
 
-const catalog = useCatalogStore();
+/**
+ * 升星（界面改版 P10）：上面“现在 → 升星后”对比卡，下面条件清单（不够的排前、红字）、奖励小胶囊，
+ * 整宽按钮；不能升时按钮灰掉、下面一行红字写还差什么
+ */
 const toast = useToastStore();
+const catalog = useCatalogStore();
 const t = useT();
 const need = ref<StarNeedDto | null>(null);
-/** 顶栏标题带当前星级（界面改版 P2a） */
-usePageTitle(() => (need.value ? t.value.society.star.title(need.value.star) : null));
+const failed = ref(false);
+usePageTitle(() => t.value.society.links.star.label);
 const busy = ref(false);
 
 async function load() {
-  need.value = await endpoints.starNeed();
+  try {
+    need.value = await endpoints.starNeed();
+    failed.value = false;
+  } catch (e) {
+    failed.value = true;
+    toast.push(errorMessage(e, t.value.common.loadFailed), 'danger');
+  }
 }
 async function starUp() {
   busy.value = true;
@@ -37,24 +52,77 @@ async function starUp() {
     busy.value = false;
   }
 }
-onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.common.loadFailed), 'danger')));
+onMounted(load);
+
+const missing = computed(() => need.value?.checks.filter((c) => !c.ok).length ?? 0);
+/** 按钮下面的原因：没开放、还差几项 */
+const reason = computed(() => {
+  const n = need.value;
+  if (!n?.nextStar || n.ok) return '';
+  if (!n.available) return t.value.society.star.notOpen(n.nextStar);
+  return needReason(n.checks, t.value, (id) => catalog.goodsName(id));
+});
+const awards = computed(() =>
+  (need.value?.award?.goods ?? []).map((g) => ({
+    kind: 'goods' as const,
+    id: g.id,
+    num: g.num,
+    lucky: false,
+  })),
+);
 </script>
 
 <template>
-  <div v-if="need">
+  <template v-if="need">
+    <div class="dt-card dt-up-hero" data-testid="star-hero">
+      <div class="dt-up-side">
+        <DtArt name="town-star" :size="48" />
+        <b>{{ t.society.star.stars(need.star) }}</b>
+        <span>{{ t.society.up.now }}</span>
+      </div>
+      <template v-if="need.nextStar">
+        <span class="dt-up-arrow" aria-hidden="true">→</span>
+        <div class="dt-up-side">
+          <DtArt name="town-star" :size="56" />
+          <b>{{ t.society.star.stars(need.nextStar) }}</b>
+          <span>{{ t.society.up.after }}</span>
+        </div>
+      </template>
+    </div>
     <template v-if="need.nextStar">
-      <p v-if="!need.available" class="small text-muted">{{ t.society.star.notOpen(need.nextStar) }}</p>
-      <NeedChecks :checks="need.checks" />
-      <div v-if="need.award" class="small mb-2">
-        {{ t.society.star.award }}
-        <span v-for="g in need.award.goods ?? []" :key="g.id" class="dt-tag me-1">{{
-          t.common.qty(catalog.goodsName(g.id), g.num)
+      <div class="dt-block-head mt-3">
+        <h2 class="dt-block-title">{{ t.society.star.checksTitle }}</h2>
+        <span class="dt-block-more">{{
+          missing > 0 ? t.society.up.missing(missing) : t.society.up.allOk
         }}</span>
       </div>
+      <NeedChecks :checks="need.checks" />
+      <template v-if="awards.length > 0">
+        <div class="dt-block-head mt-3">
+          <h2 class="dt-block-title">{{ t.society.star.awardTitle }}</h2>
+        </div>
+        <div class="dt-card dt-up-awards" data-testid="star-award">
+          <AwardChip v-for="a in awards" :key="a.id" :award="a" />
+        </div>
+      </template>
     </template>
-    <p v-else class="small text-muted">{{ t.society.star.maxed }}</p>
-    <button class="btn btn-primary w-100" data-testid="star-up" :disabled="busy || !need.ok" @click="starUp">
-      {{ t.society.star.btn(need.nextStar ?? need.star) }}
+    <div v-else class="dt-card dt-up-max mt-3" data-testid="star-max">{{ t.society.star.maxed }}</div>
+    <button
+      v-if="need.nextStar"
+      type="button"
+      class="btn btn-primary dt-btn-block mt-4"
+      data-testid="star-up"
+      :disabled="busy || !need.ok"
+      @click="starUp"
+    >
+      {{ t.society.star.btn(need.nextStar) }}
     </button>
-  </div>
+    <p v-if="reason" class="dt-up-reason" data-testid="star-reason">{{ reason }}</p>
+  </template>
+  <DtEmpty v-else-if="failed" :title="t.common.loadFailed"
+    ><button type="button" class="btn btn-sm btn-outline-primary" @click="load">
+      {{ t.town.retry }}
+    </button></DtEmpty
+  >
+  <DtSkeleton v-else :rows="5" />
 </template>

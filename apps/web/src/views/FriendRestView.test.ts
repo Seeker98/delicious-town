@@ -6,6 +6,7 @@ import type { FriendRestDto, RestaurantDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
 import { useLocaleStore } from '../stores/locale';
+import { usePageTitleStore } from '../stores/pageTitle';
 import { useRestaurantStore } from '../stores/restaurant';
 import { useSessionStore } from '../stores/session';
 import FriendRestView from './FriendRestView.vue';
@@ -62,9 +63,16 @@ async function mountView() {
     routes: [{ path: '/friends/:restId', component: FriendRestView }],
   });
   await router.push('/friends/2');
-  const w = mount(FriendRestView, { global: { plugins: [router] } });
+  // 点桌子、公告、厨具、收购、顶栏“⋯”都从下面弹出（DtSheet 用 Teleport 挂到 body）：测试里桩掉（界面改版 P10）
+  const w = mount(FriendRestView, { global: { plugins: [router], stubs: { teleport: true } } });
   await flushPromises();
   return w;
+}
+
+/** 顶栏右边的“⋯”在 AppHeader 里：这里直接调页面登记的 open（界面改版 P10） */
+async function openMenu() {
+  usePageTitleStore().menu!.open();
+  await flushPromises();
 }
 
 describe('FriendRestView', () => {
@@ -111,15 +119,17 @@ describe('FriendRestView', () => {
     expect(w.text()).toContain('欢迎光临');
   });
 
-  it('等级那一行最前面是所在街道；目录里没有这条街时不写（问题记录 571）', async () => {
+  it('店头左上角最前面是所在街道；目录里没有这条街时不写（问题记录 571；界面改版 P10 等级挪到等级环里）', async () => {
     useCatalogStore().streets = [{ id: 3, name: '川菜街' }] as never;
     vi.mocked(endpoints.friendDetail).mockResolvedValue(detail({ streetId: 3 }));
-    expect((await mountView()).get('[data-testid="friend-info"]').text()).toMatch(/^川菜街 · 5 级 · 0 星/);
+    const w = await mountView();
+    expect(w.get('[data-testid="friend-street"]').text()).toBe('川菜街 · 0 星');
+    expect(w.get('[data-testid="friend-level"]').text()).toBe('5');
     vi.mocked(endpoints.friendDetail).mockResolvedValue(detail({ streetId: 99 }));
-    expect((await mountView()).get('[data-testid="friend-info"]').text()).toMatch(/^5 级 · 0 星/);
+    expect((await mountView()).get('[data-testid="friend-street"]').text()).toBe('0 星');
   });
 
-  it('从上到下：称号、公告、收购、厨具（问题记录 571）；公告和厨具框左上角是加粗的标题，和收购一致', async () => {
+  it('从上到下：称号、公告、厨具、收购（问题记录 571；界面改版 P10 收成“店里”几行）；每行左边是加粗的标题', async () => {
     vi.mocked(endpoints.acquireRest).mockResolvedValue({
       restId: 2,
       name: '乙店',
@@ -140,13 +150,14 @@ describe('FriendRestView', () => {
     );
     const w = await mountView();
     const pos = (id: string) => w.html().indexOf(`data-testid="${id}"`);
-    const order = ['icon-tag', 'friend-notice', 'acquire-card', 'friend-equips'].map(pos);
+    const order = ['icon-tag', 'friend-notice', 'friend-equips', 'friend-acquire'].map(pos);
     expect(order.every((x) => x > -1)).toBe(true);
     expect([...order].sort((a, b) => a - b)).toEqual(order);
     const notice = w.get('[data-testid="friend-notice"]');
-    expect(notice.get('.fw-bold').text()).toBe('公告');
+    expect(notice.get('.dt-row-title.is-strong').text()).toBe('公告');
     expect(notice.text()).toContain('欢迎光临');
-    expect(w.get('[data-testid="friend-equips"] .fw-bold').text()).toBe('厨具');
+    expect(w.get('[data-testid="friend-equips"] .dt-row-title.is-strong').text()).toBe('厨具');
+    expect(w.get('[data-testid="friend-acquire"] .dt-row-title.is-strong').text()).toBe('收购');
   });
 
   it('点蟑螂可以消灭', async () => {
@@ -175,7 +186,11 @@ describe('FriendRestView', () => {
   it('好友店的蟑螂：写今天还能灭几只；灭够了换成说明，不放按钮（问题记录 374）', async () => {
     const w = await mountView();
     await w.find('[data-testid="table-2"]').trigger('click');
-    expect(w.get('[data-testid="kill-left"]').text()).toBe('今天在这家店还能灭 3 只蟑螂');
+    // 面板里先说明蟑螂的影响，后面接今天还能灭几只（界面改版 P10）
+    expect(w.get('[data-testid="kill-left"]').text()).toBe(
+      '有蟑螂的桌子接不了客, 消灭它才能继续接客。 今天在这家店还能灭 3 只蟑螂',
+    );
+    expect(w.find('[data-testid="act-kill"]').exists()).toBe(true);
     vi.mocked(endpoints.friendDetail).mockResolvedValue(detail({ killLeft: 0 }));
     const done = await mountView();
     await done.find('[data-testid="table-2"]').trigger('click');
@@ -203,8 +218,12 @@ describe('FriendRestView', () => {
       detail({ equips: [{ part: 1, goodsId: 30, stress: 3, name: null }] }),
     );
     const w = await mountView();
-    expect(w.find('[data-testid="friend-equips"]').text()).toContain('铲');
-    expect(w.find('[data-testid="friend-equips"]').text()).toContain('+3');
+    // “店里”一行写件数和最高强化，点开面板看每件（界面改版 P10）
+    expect(w.get('[data-testid="friend-equips"]').text()).toContain('1 件 · 最高 +3');
+    await w.get('[data-testid="friend-equips"]').trigger('click');
+    const list = w.get('[data-testid="friend-equips-list"]');
+    expect(list.text()).toContain('铲');
+    expect(list.text()).toContain('+3');
   });
 
   it('厨具每个部位一行，按部位排好，强化等级单独标出（问题记录 323）', async () => {
@@ -217,12 +236,14 @@ describe('FriendRestView', () => {
       }),
     );
     const w = await mountView();
-    const rows = w.findAll('[data-testid^="friend-equip-"]');
+    await w.get('[data-testid="friend-equips"]').trigger('click');
+    const rows = w.findAll('[data-testid="friend-equips-list"] [data-testid^="friend-equip-"]');
     expect(rows.map((r) => r.attributes('data-testid'))).toEqual(['friend-equip-1', 'friend-equip-3']);
-    expect(rows[0]!.find('span').text()).toBe('铲');
-    expect(rows[0]!.find('.badge').text()).toBe('+10');
+    // 部位写在副行，强化等级是行尾的小标签（界面改版 P10）
+    expect(rows[0]!.get('.dt-row-sub').text()).toBe('铲');
+    expect(rows[0]!.get('.dt-row-end .dt-tag').text()).toBe('+10');
     expect(rows[1]!.text()).toContain('大锅');
-    expect(rows[1]!.find('.badge').exists()).toBe(false);
+    expect(rows[1]!.find('.dt-row-end').exists()).toBe(false);
   });
 
   it('厨具一栏英文：标题不带冒号，部位按英文（#111 终审）', async () => {
@@ -235,9 +256,10 @@ describe('FriendRestView', () => {
       );
       const w = await mountView();
       const box = w.get('[data-testid="friend-equips"]');
-      expect(box.find('.fw-bold').text()).toBe('Cookware');
+      expect(box.get('.dt-row-title').text()).toBe('Cookware');
       expect(box.text()).not.toMatch(/[:：]/);
-      expect(w.get('[data-testid="friend-equip-1"]').find('span').text()).toBe('Spatula');
+      await box.trigger('click');
+      expect(w.get('[data-testid="friend-equip-1"] .dt-row-sub').text()).toBe('Spatula');
     } finally {
       await useLocaleStore().set('zh-CN');
     }
@@ -257,8 +279,9 @@ describe('FriendRestView', () => {
       detail({ special: { mcId: 1, grade: 3, leftNum: 18, price: 40, eaten: true } }),
     );
     const w2 = await mountView();
-    expect(w2.find('[data-testid="act-taste"]').attributes('disabled')).toBeDefined();
-    expect(w2.find('[data-testid="act-taste"]').text()).toBe('已品尝');
+    // 吃过换成“已品尝”标签，不再是按钮（界面改版 P10）
+    expect(w2.get('[data-testid="act-taste"]').element.tagName).not.toBe('BUTTON');
+    expect(w2.get('[data-testid="act-taste"]').text()).toBe('已品尝');
   });
 
   it('好友页有"去它的菜园"链接', async () => {
@@ -274,17 +297,24 @@ describe('FriendRestView', () => {
     expect(npc.find('[data-testid="act-duel"]').exists()).toBe(false);
   });
 
-  it('别人店的店名、公告旁有举报（子项目 6B-1）', async () => {
+  it('别人店的店名、公告有举报（子项目 6B-1）：店名在顶栏“⋯”里，公告在点开的公告面板里（界面改版 P10）', async () => {
     vi.mocked(endpoints.friendDetail).mockResolvedValue(detail());
     const w = await mountView();
+    await openMenu();
     expect(w.find('[data-testid="rest-name-report-open"]').exists()).toBe(true);
+    expect(w.find('[data-testid="remove-friend"]').exists()).toBe(true);
+    await w.get('[data-testid="friend-notice"]').trigger('click');
     expect(w.find('[data-testid="notice-report-open"]').exists()).toBe(true);
   });
 
-  it('蟹老板（NPC 店）的店名、公告旁没有举报（backlog 6B-1：点了会被拒）', async () => {
+  it('蟹老板（NPC 店）的店名、公告没有举报（backlog 6B-1：点了会被拒）', async () => {
     vi.mocked(endpoints.friendDetail).mockResolvedValue(detail({ npc: true }));
     const w = await mountView();
+    // 蟹老板不能举报也不能删：顶栏不放“⋯”
+    expect(usePageTitleStore().menu).toBeNull();
     expect(w.find('[data-testid="rest-name-report-open"]').exists()).toBe(false);
+    await w.get('[data-testid="friend-notice"]').trigger('click');
+    expect(w.find('[data-testid="friend-notice-body"]').exists()).toBe(true);
     expect(w.find('[data-testid="notice-report-open"]').exists()).toBe(false);
   });
 
@@ -304,15 +334,18 @@ describe('FriendRestView', () => {
       acquireBlock: null,
       listedBlock: 'not_listed',
     });
+    // “店里”的收购一行，点开面板才是收购卡片（界面改版 P10）
     const w = await mountView();
+    await w.get('[data-testid="friend-acquire"]').trigger('click');
+    await flushPromises();
     expect(w.find('[data-testid="acquire-card"]').exists()).toBe(true);
     vi.mocked(endpoints.friendDetail).mockResolvedValue(detail({ npc: true }));
-    expect((await mountView()).find('[data-testid="acquire-card"]').exists()).toBe(false);
+    expect((await mountView()).find('[data-testid="friend-acquire"]').exists()).toBe(false);
     vi.mocked(endpoints.friendDetail).mockResolvedValue(detail({ id: 1 }));
-    expect((await mountView()).find('[data-testid="acquire-card"]').exists()).toBe(false);
+    expect((await mountView()).find('[data-testid="friend-acquire"]').exists()).toBe(false);
     vi.mocked(endpoints.friendDetail).mockResolvedValue(detail());
     useRestaurantStore().rest = { disabledFeatures: ['acquire'] } as unknown as RestaurantDto;
-    expect((await mountView()).find('[data-testid="acquire-card"]').exists()).toBe(false);
+    expect((await mountView()).find('[data-testid="friend-acquire"]').exists()).toBe(false);
   });
 
   it('蟹老板的店：英文界面写 Mr. Krab 和英文公告（服务器给的是中文）', async () => {
@@ -330,16 +363,17 @@ describe('FriendRestView', () => {
     await useLocaleStore().set('zh-CN');
   });
 
-  it('门画成门的图形（界面改版 P4：原来请求原版图包、一直显示替代图标），读屏读“门”', async () => {
+  it('门画成门的图形（界面改版 P4：原来请求原版图包、一直显示替代图标）', async () => {
     useCatalogStore().looks = {
       doors: [{ id: 0, name: '木门', coin: 0, art: 'wood' }],
       avatars: [],
       icons: [],
     };
     const w = await mountView();
-    const door = w.get('[data-testid="friend-door"]');
+    // 店头和自己首页同一个场景（界面改版 P10）：门是场景里的装饰图，读屏不念
+    const door = w.get('[data-testid="friend-hero"] .dt-scene-door');
     expect(door.get('use').attributes('href')).toContain('#door-wood');
-    expect(door.attributes('aria-label')).toBeTruthy();
-    expect(w.find('img').exists()).toBe(false);
+    // 唯一的位图是场景的店面插画，门不再用原版图包
+    expect(w.findAll('img').map((x) => x.classes())).toEqual([['dt-scene-shop']]);
   });
 });

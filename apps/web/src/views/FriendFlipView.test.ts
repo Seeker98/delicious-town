@@ -53,7 +53,7 @@ describe('FriendFlipView：同一家店每人每天的格数（问题记录 374�
   it('写出今天在这家店还能翻几格', async () => {
     vi.mocked(endpoints.flipSlots).mockResolvedValue({ slots: 5, cooling: [], todayTimes: 2, hostLeft: 1 });
     const w = await mountView();
-    expect(w.get('[data-testid="host-left"]').text()).toBe('今天在这家店还能翻 1 格');
+    expect(w.get('[data-testid="host-left"]').text()).toBe('还能翻 1 格');
     expect(w.find('[data-testid="slot-1"]').attributes('disabled')).toBeUndefined();
   });
 

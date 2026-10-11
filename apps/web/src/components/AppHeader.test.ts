@@ -70,6 +70,21 @@ describe('顶栏（界面改版 P2a，设计 §4.2）', () => {
     expect(w.get('[data-testid="page-title"]').text()).toBe('新手怎么赚钱');
   });
 
+  it('页面写了“更多”菜单才显示 ⋯ 按钮；点了交给页面打开（界面改版 P10）', async () => {
+    const { w } = await mountHeader('/forum/3');
+    expect(w.find('[data-testid="header-menu"]').exists()).toBe(false);
+    const open = vi.fn();
+    usePageTitleStore().menu = { label: '更多操作', open };
+    await flushPromises();
+    const btn = w.get('[data-testid="header-menu"]');
+    expect(btn.attributes('aria-label')).toBe('更多操作');
+    await btn.trigger('click');
+    expect(open).toHaveBeenCalledTimes(1);
+    usePageTitleStore().menu = null;
+    await flushPromises();
+    expect(w.find('[data-testid="header-menu"]').exists()).toBe(false);
+  });
+
   it('标题一行截断，不把右边的邮件、“我”挤出去', async () => {
     const { w } = await mountHeader('/bar');
     expect(w.get('[data-testid="page-title"]').classes()).toContain('dt-clamp1');

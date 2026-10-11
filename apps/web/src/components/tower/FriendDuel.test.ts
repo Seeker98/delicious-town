@@ -24,7 +24,8 @@ describe('FriendDuel', () => {
     const w = mount(FriendDuel, { props: { restId: 2 }, global: { stubs: { teleport: true } } });
     await flushPromises();
     expect(endpoints.duelInfo).toHaveBeenCalledWith(2);
-    expect(w.find('[data-testid="act-duel"]').text()).toBe('切磋 (今天还能 10 次)');
+    expect(w.get('[data-testid="act-duel"]').text()).toContain('好友对决');
+    expect(w.get('[data-testid="duel-left"]').text()).toBe('今天还能比 10 次');
     expect(w.find('[data-testid="duel-result"]').exists()).toBe(false);
     vi.mocked(endpoints.duelInfo).mockResolvedValue({ left: 9, spar: 1, strength: 95, duelStrength: 5 });
     await w.find('[data-testid="act-duel"]').trigger('click');
@@ -34,7 +35,7 @@ describe('FriendDuel', () => {
     expect(w.get('.dt-sheet-title').text()).toBe('对决结果');
     expect(w.find('[data-testid="duel-result"]').text()).toContain('乙店');
     expect(endpoints.duelInfo).toHaveBeenCalledTimes(2);
-    expect(w.find('[data-testid="act-duel"]').text()).toBe('切磋 (今天还能 9 次)');
+    expect(w.get('[data-testid="duel-left"]').text()).toBe('今天还能比 9 次');
     // 关掉结果面板
     await w.get('.dt-sheet-actions button').trigger('click');
     expect(w.find('[data-testid="duel-result"]').exists()).toBe(false);
@@ -55,7 +56,7 @@ describe('FriendDuel', () => {
     vi.mocked(endpoints.duelInfo).mockRejectedValue(new ApiError('FEATURE_DISABLED', { feature: 'tower' }));
     const w = mount(FriendDuel, { props: { restId: 2 } });
     await flushPromises();
-    expect(w.find('[data-testid="friend-duel"]').exists()).toBe(false);
+    expect(w.find('[data-testid="act-duel"]').exists()).toBe(false);
     expect(useToastStore().items).toHaveLength(0);
   });
 });

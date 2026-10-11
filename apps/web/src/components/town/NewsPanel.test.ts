@@ -36,6 +36,10 @@ afterAll(() => {
   config.global.stubs = rest as typeof config.global.stubs;
 });
 
+/** 广播面板 Teleport 到 body：测试里把 teleport 桩掉（界面改版 P10） */
+const mountIt = (data: ReturnType<typeof townData>) =>
+  mount(NewsPanel, { props: { data }, global: { stubs: { teleport: true } } });
+
 describe('NewsPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -46,12 +50,14 @@ describe('NewsPanel', () => {
     vi.mocked(endpoints.townNews)
       .mockResolvedValueOnce({ items: [item(9, 'town.broadcast', { text: '你好' }), item(8)], hasMore: true })
       .mockResolvedValueOnce({ items: [item(3)], hasMore: false });
-    const w = mount(NewsPanel, { props: { data: townData() } });
+    const w = mountIt(townData());
     await flushPromises();
     const rows = w.findAll('[data-testid="news-row"]');
     expect(rows).toHaveLength(2);
     expect(rows[0]!.text()).toContain('小王的店: 你好');
-    expect(rows[0]!.classes()).toContain('text-primary');
+    // 界面改版 P10：广播行整行浅底、内容加粗（.is-broadcast）
+    expect(rows[0]!.classes()).toContain('is-broadcast');
+    expect(rows[1]!.classes()).not.toContain('is-broadcast');
     await w.find('[data-testid="news-more"]').trigger('click');
     await flushPromises();
     expect(endpoints.townNews).toHaveBeenLastCalledWith(8);
@@ -62,28 +68,37 @@ describe('NewsPanel', () => {
   it('广播：发送后清空输入、通知刷新、重新读第一页', async () => {
     vi.mocked(endpoints.townNews).mockResolvedValue({ items: [], hasMore: false });
     vi.mocked(endpoints.townBroadcast).mockResolvedValue({ text: '大家好' });
-    const w = mount(NewsPanel, { props: { data: townData() } });
+    const w = mountIt(townData());
     await flushPromises();
+    expect(w.get('[data-testid="bc-horns"]').text()).toBe('喇叭 2 个, 每次用 1 个');
+    // 界面改版 P10：点“广播”弹出面板再写；空的不能发
+    expect(w.find('[data-testid="bc-input"]').exists()).toBe(false);
+    await w.get('[data-testid="bc-open"]').trigger('click');
+    expect(w.get('[data-testid="bc-send"]').attributes('disabled')).toBeDefined();
     await w.find('[data-testid="bc-input"]').setValue('大家好');
+    expect(w.get('[data-testid="bc-send"]').attributes('disabled')).toBeUndefined();
     await w.find('[data-testid="bc-send"]').trigger('click');
     await flushPromises();
     expect(endpoints.townBroadcast).toHaveBeenCalledWith('大家好');
-    expect((w.find('[data-testid="bc-input"]').element as HTMLInputElement).value).toBe('');
+    // 发完面板关掉；再打开时输入框是空的
+    expect(w.find('[data-testid="bc-input"]').exists()).toBe(false);
+    await w.get('[data-testid="bc-open"]').trigger('click');
+    expect((w.find('[data-testid="bc-input"]').element as HTMLTextAreaElement).value).toBe('');
     expect(w.emitted('reload')).toHaveLength(1);
     expect(endpoints.townNews).toHaveBeenCalledTimes(2);
   });
 
-  it('没有喇叭或星级不够时按钮灰掉并写明原因', async () => {
+  it('没有喇叭或星级不够时不能广播并写明原因', async () => {
     vi.mocked(endpoints.townNews).mockResolvedValue({ items: [], hasMore: false });
-    const w = mount(NewsPanel, {
-      props: { data: townData({ broadcast: { horns: 0, readyAt: null, minStar: 1, maxLen: 64 } }) },
-    });
+    const w = mountIt(townData({ broadcast: { horns: 0, readyAt: null, minStar: 1, maxLen: 64 } }));
     await flushPromises();
     expect(w.find('[data-testid="bc-block"]').text()).toBe('没有喇叭 (去协会和 13 哥聊天可以拿到)');
-    expect(w.find('[data-testid="bc-send"]').attributes('disabled')).toBeDefined();
-    const low = mount(NewsPanel, { props: { data: townData({ star: 0 }) } });
+    // 界面改版 P10：不能广播时不给打开面板的按钮
+    expect(w.find('[data-testid="bc-open"]').exists()).toBe(false);
+    const low = mountIt(townData({ star: 0 }));
     await flushPromises();
     expect(low.find('[data-testid="bc-block"]').text()).toBe('餐厅 1 星才能广播');
+    expect(low.find('[data-testid="bc-open"]').exists()).toBe(false);
   });
 
   describe('冷却按服务器时间倒计时（终审 I1）', () => {
@@ -97,26 +112,28 @@ describe('NewsPanel', () => {
         now: '2026-09-30T04:00:00.000Z',
         broadcast: { horns: 2, readyAt: '2026-09-30T04:00:02.000Z', minStar: 1, maxLen: 64 },
       });
-      const w = mount(NewsPanel, { props: { data } });
+      const w = mountIt(data);
       await flushPromises();
-      await w.find('[data-testid="bc-input"]').setValue('你好');
       expect(w.find('[data-testid="bc-block"]').text()).toBe('广播冷却中, 还要等 2 秒');
-      expect(w.find('[data-testid="bc-send"]').attributes('disabled')).toBeDefined();
+      expect(w.find('[data-testid="bc-open"]').exists()).toBe(false);
       vi.advanceTimersByTime(1000);
       await nextTick();
       expect(w.find('[data-testid="bc-block"]').text()).toBe('广播冷却中, 还要等 1 秒');
       vi.advanceTimersByTime(1000);
       await nextTick();
       expect(w.find('[data-testid="bc-block"]').exists()).toBe(false);
+      await w.get('[data-testid="bc-open"]').trigger('click');
+      await w.find('[data-testid="bc-input"]').setValue('你好');
       expect(w.find('[data-testid="bc-send"]').attributes('disabled')).toBeUndefined();
     });
   });
 
   it('新闻用紧凑行（问题记录 104：垂直留空太大）', async () => {
     vi.mocked(endpoints.townNews).mockResolvedValue({ items: [item(1)], hasMore: false });
-    const w = mount(NewsPanel, { props: { data: townData() } });
+    const w = mountIt(townData());
     await flushPromises();
-    expect(w.find('[data-testid="news-row"]').classes()).toContain('dt-feed');
+    // 界面改版 P10：新闻在一张卡片里一行一条（.dt-news-row，原来是 .dt-feed）
+    expect(w.find('[data-testid="news-row"]').classes()).toContain('dt-news-row');
   });
 
   it('新闻页的广播带【广播】前缀（终审 I6）', async () => {
@@ -124,7 +141,7 @@ describe('NewsPanel', () => {
       items: [item(9, 'town.broadcast', { text: '你好' })],
       hasMore: false,
     });
-    const w = mount(NewsPanel, { props: { data: townData() } });
+    const w = mountIt(townData());
     await flushPromises();
     expect(w.find('[data-testid="news-row"]').text()).toContain('【广播】小王的店: 你好');
   });
@@ -133,7 +150,7 @@ describe('NewsPanel', () => {
     vi.mocked(endpoints.townNews).mockResolvedValueOnce({ items: [item(9)], hasMore: true });
     let release: (v: { items: NewsDto[]; hasMore: boolean }) => void = () => {};
     vi.mocked(endpoints.townNews).mockImplementationOnce(() => new Promise((r) => (release = r)));
-    const w = mount(NewsPanel, { props: { data: townData() } });
+    const w = mountIt(townData());
     await flushPromises();
     await w.find('[data-testid="news-more"]').trigger('click');
     await w.find('[data-testid="news-more"]').trigger('click');
@@ -146,8 +163,9 @@ describe('NewsPanel', () => {
   it('广播失败后也通知刷新', async () => {
     vi.mocked(endpoints.townNews).mockResolvedValue({ items: [], hasMore: false });
     vi.mocked(endpoints.townBroadcast).mockRejectedValue(new Error('x'));
-    const w = mount(NewsPanel, { props: { data: townData() } });
+    const w = mountIt(townData());
     await flushPromises();
+    await w.get('[data-testid="bc-open"]').trigger('click');
     await w.find('[data-testid="bc-input"]').setValue('大家好');
     await w.find('[data-testid="bc-send"]').trigger('click');
     await flushPromises();
@@ -164,9 +182,10 @@ describe('NewsPanel', () => {
         hasMore: true,
       });
     vi.mocked(endpoints.townBroadcast).mockResolvedValue({ text: '刚发的' });
-    const w = mount(NewsPanel, { props: { data: townData() } });
+    const w = mountIt(townData());
     await flushPromises();
     await w.find('[data-testid="news-more"]').trigger('click');
+    await w.get('[data-testid="bc-open"]').trigger('click');
     await w.find('[data-testid="bc-input"]').setValue('刚发的');
     await w.find('[data-testid="bc-send"]').trigger('click');
     await flushPromises();
@@ -198,7 +217,7 @@ describe('NewsPanel', () => {
       ],
       hasMore: false,
     });
-    const w = mount(NewsPanel, { props: { data: townData() } });
+    const w = mountIt(townData());
     await flushPromises();
     expect(w.find('[data-testid="news-report-9-open"]').exists()).toBe(true);
     expect(w.find('[data-testid="news-report-8-open"]').exists()).toBe(false);
@@ -221,12 +240,15 @@ describe('NewsPanel', () => {
       items: [item(9, 'town.broadcast', { text: '你好' })],
       hasMore: false,
     });
-    const w = mount(NewsPanel, { props: { data: townData() } });
+    const w = mountIt(townData());
     await flushPromises();
     const row = w.find('[data-testid="news-row"]');
+    // 界面改版 P10：加粗由样式 .dt-news-row.is-broadcast .dt-news-text 管，只落在内容上；时间是另一个 span
+    expect(row.classes()).toContain('is-broadcast');
     expect(row.classes()).not.toContain('fw-bold');
-    expect(row.find('.dt-feed-time').classes()).not.toContain('fw-bold');
-    expect(row.find('[data-testid="news-text"]').classes()).toContain('fw-bold');
+    expect(row.find('.dt-news-time').classes()).not.toContain('dt-news-text');
+    expect(row.find('[data-testid="news-text"] .dt-news-time').exists()).toBe(false);
+    expect(row.find('[data-testid="news-text"]').classes()).toContain('dt-news-text');
     expect(w.find('[data-testid="news-report-9-open"]').classes()).toContain('dt-link-btn'); // 跟正文同字号、同行高（问题记录 196；451 起统一用 .dt-link-btn）
   });
 
@@ -235,10 +257,10 @@ describe('NewsPanel', () => {
       items: [item(9, 'kuji.big', { tier: 'A', pool: 1, seq: 1 })],
       hasMore: false,
     });
-    const w = mount(NewsPanel, { props: { data: townData() } });
+    const w = mountIt(townData());
     await flushPromises();
     const row = w.get('[data-testid="news-row"]');
-    expect(row.classes()).toContain('text-primary');
+    expect(row.classes()).toContain('is-broadcast');
     expect(row.get('[data-testid="news-text"]').text()).toContain('【广播】');
     expect(row.find('[data-testid="news-report-9"]').exists()).toBe(false);
   });
@@ -260,7 +282,7 @@ describe('小镇新闻里的店名能点（问题记录 567）', () => {
       hasMore: false,
     });
     useSessionStore().me = { restaurantId: 5 } as never;
-    const w = mount(NewsPanel, { props: { data: townData() } });
+    const w = mountIt(townData());
     await flushPromises();
     const rows = w.findAll('[data-testid="news-row"]');
     const links = (i: number) =>

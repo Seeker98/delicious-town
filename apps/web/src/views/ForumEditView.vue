@@ -65,39 +65,56 @@ async function submit() {
 </script>
 
 <template>
-  <div class="mb-2">
-    <label v-for="c in FORUM_CATEGORIES" :key="c" class="me-3 small">
-      <input v-model="category" type="radio" :value="c" :data-testid="`edit-cat-${c}`" />
-      {{ t.forum.categories[c] }}
-    </label>
-  </div>
-  <input
-    v-model="title"
-    class="form-control form-control-sm mb-1"
-    :placeholder="t.forum.edit.titlePlaceholder"
-    data-testid="edit-title"
-  />
-  <div :class="['dt-meta', 'mb-2', { 'text-danger': titleLen > TITLE_MAX }]" data-testid="edit-title-count">
-    {{ titleLen }}/{{ TITLE_MAX }}
-  </div>
-  <textarea
-    v-model="content"
-    class="form-control form-control-sm mb-1"
-    rows="10"
-    :placeholder="t.forum.edit.contentPlaceholder"
-    data-testid="edit-content"
-  ></textarea>
-  <div class="d-flex align-items-center">
-    <span :class="['dt-meta', { 'text-danger': contentLen > CONTENT_MAX }]"
-      >{{ contentLen }}/{{ CONTENT_MAX }}</span
-    >
+  <!-- 发帖、编辑（界面改版 P10）：分类分段、标题框、正文框各带字数，整宽“发布” -->
+  <div class="dt-field-label-top mt-0" id="dt-forum-cat">{{ t.forum.edit.category }}</div>
+  <div class="dt-seg" role="radiogroup" aria-labelledby="dt-forum-cat">
     <button
-      class="btn btn-sm btn-primary ms-auto"
-      :disabled="busy || !ok"
-      data-testid="edit-submit"
-      @click="submit"
+      v-for="c in FORUM_CATEGORIES"
+      :key="c"
+      type="button"
+      role="radio"
+      :aria-checked="category === c"
+      :aria-pressed="category === c"
+      :data-testid="`edit-cat-${c}`"
+      @click="category = c"
     >
-      {{ t.forum.edit.publish }}
+      {{ t.forum.categories[c] }}
     </button>
   </div>
+  <label class="dt-field-label-top" for="dt-forum-title">{{ t.forum.edit.titleLabel }}</label>
+  <div :class="['dt-field', { 'is-over': titleLen > TITLE_MAX }]">
+    <input
+      id="dt-forum-title"
+      v-model="title"
+      class="dt-field-input"
+      :placeholder="t.forum.edit.titlePlaceholder"
+      data-testid="edit-title"
+    />
+  </div>
+  <div :class="['dt-area-count', { 'is-over': titleLen > TITLE_MAX }]" data-testid="edit-title-count">
+    {{ titleLen }} / {{ TITLE_MAX }}
+  </div>
+  <label class="dt-field-label-top mt-2" for="dt-forum-content">{{ t.forum.edit.contentLabel }}</label>
+  <div class="dt-area">
+    <textarea
+      id="dt-forum-content"
+      v-model="content"
+      rows="12"
+      :placeholder="t.forum.edit.contentPlaceholder"
+      data-testid="edit-content"
+    ></textarea>
+  </div>
+  <div :class="['dt-area-count', { 'is-over': contentLen > CONTENT_MAX }]">
+    {{ contentLen }} / {{ CONTENT_MAX }}
+  </div>
+  <button
+    type="button"
+    class="btn btn-primary dt-btn-block mt-3"
+    :disabled="busy || !ok"
+    data-testid="edit-submit"
+    @click="submit"
+  >
+    {{ t.forum.edit.publish }}
+  </button>
+  <p class="dt-block-note mt-2">{{ t.forum.edit.note }}</p>
 </template>

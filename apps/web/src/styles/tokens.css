@@ -41,6 +41,9 @@
   --dt-place-bar: #3b2160;
   --dt-place-temple: #dcc8f6;
   --dt-place-tower: #2e1a4a;
+  /* 协会、广场的头图底色（界面改版 P10） */
+  --dt-place-society: #cfe6f2;
+  --dt-place-plaza: #fce3c8;
   --dt-place-chip-bg: rgba(23, 19, 29, 0.74);
   --dt-place-chip-ink: #ffffff;
   --dt-slot-body: #e5483b;
@@ -134,6 +137,11 @@
   --dt-success-soft: var(--dt-soft-success);
   --dt-danger-soft: var(--dt-soft-danger);
   --dt-warning-soft: var(--dt-soft-warning);
+  /* 小镇日报的报纸（界面改版 P10）：米色纸、深褐字、双线 */
+  --dt-paper: #fbf6ea;
+  --dt-paper-ink: #2a2118;
+  --dt-paper-rule: #d9ccb0;
+  --dt-paper-sub: #7a6a52;
 }
 [data-theme='dark'] {
   color-scheme: dark;
@@ -194,4 +202,8 @@
   --dt-success-soft: var(--dt-soft-success);
   --dt-danger-soft: var(--dt-soft-danger);
   --dt-warning-soft: var(--dt-soft-warning);
+  --dt-paper: #2a2419;
+  --dt-paper-ink: #f0e6d2;
+  --dt-paper-rule: #4a3f2c;
+  --dt-paper-sub: #b7a684;
 }

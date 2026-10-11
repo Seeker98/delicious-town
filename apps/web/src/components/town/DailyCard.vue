@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { DailyDto } from '@dt/shared';
 import { ApiError } from '../../api/client';
@@ -20,6 +20,8 @@ const locale = useLocaleStore();
 const toast = useToastStore();
 const rest = useRestaurantStore();
 const data = ref<DailyDto | null>(null);
+/** 界面改版 P10：默认只显示前两段，“读全文”在卡里展开；换一天收起 */
+const full = ref(false);
 /** 区服没开日报：整张卡片不显示 */
 const off = ref(false);
 
@@ -58,57 +60,82 @@ const paras = computed(() =>
  * （刚开日报、或 00:10 前；backlog）
  */
 const prevDay = computed(() => data.value?.days.find((d) => d < data.value!.day));
+watch(
+  () => data.value?.day,
+  () => {
+    full.value = false;
+  },
+);
 const nextDay = computed(() =>
   data.value ? [...data.value.days].reverse().find((d) => d > data.value!.day) : undefined,
 );
 </script>
 
 <template>
-  <div v-if="!off && rest.featureOn('daily') && data" class="dt-card mb-2" data-testid="daily-card">
-    <div class="d-flex justify-content-between align-items-center mb-1">
-      <b>
-        <i class="bi bi-newspaper"></i> {{ t.town.daily.title }}
-        <span class="dt-meta ms-1">{{ data.day }}</span>
-      </b>
-      <span class="d-flex gap-1">
-        <button
-          class="btn btn-sm btn-outline-secondary py-0"
-          :disabled="!prevDay"
-          :title="t.town.daily.prev"
-          data-testid="daily-prev"
-          @click="load(prevDay)"
-        >
-          <i class="bi bi-chevron-left"></i>
-        </button>
-        <button
-          class="btn btn-sm btn-outline-secondary py-0"
-          :disabled="!nextDay"
-          :title="t.town.daily.next"
-          data-testid="daily-next"
-          @click="load(nextDay)"
-        >
-          <i class="bi bi-chevron-right"></i>
-        </button>
-      </span>
-    </div>
-    <h6 class="fw-bold mb-1" data-testid="daily-title">{{ title }}</h6>
-    <div v-if="article && lang.englishOnly" class="dt-meta mb-1" data-testid="daily-english-only">
+  <!-- 报刊风（界面改版 P10）：米色纸、宋体报头和标题、双线、首行缩进；默认两段，“读全文”展开 -->
+  <article v-if="!off && rest.featureOn('daily') && data" class="dt-paper" data-testid="daily-card">
+    <header class="dt-paper-mast">
+      <b>{{ t.town.daily.title }}</b>
+      <span class="dt-paper-day">{{ data.day }}</span>
+      <button
+        type="button"
+        class="dt-paper-nav"
+        :disabled="!prevDay"
+        :aria-label="t.town.daily.prev"
+        data-testid="daily-prev"
+        @click="load(prevDay)"
+      >
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </button>
+      <button
+        type="button"
+        class="dt-paper-nav"
+        :disabled="!nextDay"
+        :aria-label="t.town.daily.next"
+        data-testid="daily-next"
+        @click="load(nextDay)"
+      >
+        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+      </button>
+    </header>
+    <h3 class="dt-paper-title" data-testid="daily-title">{{ title }}</h3>
+    <div v-if="article && lang.englishOnly" class="dt-paper-sub" data-testid="daily-english-only">
       {{ t.town.daily.englishOnly }}
     </div>
     <template v-if="article">
-      <p v-for="(p, i) in paras" :key="i" class="mb-2 small" data-testid="daily-para">
+      <p
+        v-for="(p, i) in full ? paras : paras.slice(0, 2)"
+        :key="i"
+        class="dt-paper-p"
+        data-testid="daily-para"
+      >
         <template v-for="(s, j) in p" :key="j">
           <RouterLink v-if="s.kind === 'rest'" :to="`/friends/${s.id}`">{{ s.text }}</RouterLink>
           <template v-else>{{ s.text }}</template>
         </template>
       </p>
+      <button
+        v-if="paras.length > 2"
+        type="button"
+        class="dt-paper-more"
+        :aria-expanded="full"
+        data-testid="daily-more"
+        @click="full = !full"
+      >
+        {{ full ? t.town.daily.less : t.town.daily.more }}
+      </button>
     </template>
     <template v-else-if="data.fallback.length > 0">
-      <div class="dt-meta mb-1">{{ t.town.daily.pending }}</div>
-      <div v-for="n in data.fallback" :key="n.id" class="small dt-clamp1" data-testid="daily-fallback">
+      <div class="dt-paper-sub">{{ t.town.daily.pending }}</div>
+      <div
+        v-for="n in data.fallback"
+        :key="n.id"
+        class="dt-paper-line dt-clamp1"
+        data-testid="daily-fallback"
+      >
         {{ newsText(n, catalog) }}
       </div>
     </template>
-    <div v-else class="dt-empty">{{ t.town.daily.none }}</div>
-  </div>
+    <div v-else class="dt-paper-sub">{{ t.town.daily.none }}</div>
+  </article>
 </template>

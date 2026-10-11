@@ -122,6 +122,9 @@ export default {
     failed: '切磋失敗',
     btn: '切磋',
     left: (n: number) => ` (今天還能 ${n} 次)`,
+    /** 好友餐廳操作塊裡的一格（介面改版 P10） */
+    tile: '好友對決',
+    leftN: (n: number) => `今天還能比 ${n} 次`,
   },
   rank: {
     loadFailed: '讀取賽廚榜失敗',

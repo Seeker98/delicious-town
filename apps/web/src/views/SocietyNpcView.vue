@@ -88,7 +88,35 @@ onMounted(() => {
 
 <template>
   <div>
-    <NpcCard v-if="CARD[npc]" :key="npc" :npc="CARD[npc]!" />
+    <!-- NPC 大头像卡（界面改版 P10）：右边是每天聊天、卡门的见面礼；教室没有 NPC -->
+    <NpcCard v-if="CARD[npc]" :key="npc" :npc="CARD[npc]!" large>
+      <template v-if="town && on">
+        <NpcTalk
+          v-if="npc === 'mayor'"
+          :talked="town.talked.bigEater"
+          npc="bigEater"
+          compact
+          @reload="loadTown"
+        />
+        <NpcTalk
+          v-else-if="npc === 'bro13'"
+          :talked="town.talked.bro13"
+          npc="bro13"
+          compact
+          @reload="loadTown"
+        />
+        <!-- 见面礼：原来大胃哥第一次聊天送的神秘食材兑换券（问题记录 441），领过就不再显示 -->
+        <NpcTalk
+          v-else-if="npc === 'carmen' && !town.bigEaterGift"
+          :talked="town.talked.carmen"
+          npc="carmen"
+          compact
+          primary
+          :label="t.npc.carmenGift"
+          @reload="loadTown"
+        />
+      </template>
+    </NpcCard>
     <div v-if="restFailed" class="small text-muted" data-testid="npc-rest-failed">
       {{ t.town.restFailed }}
       <button type="button" class="dt-link-btn" data-testid="npc-rest-retry" @click="loadRest">
@@ -106,35 +134,18 @@ onMounted(() => {
           </button>
         </div>
         <template v-if="npc === 'mayor'">
-          <!-- 原来广场的大胃哥（问题记录 441：游戏里只有大胃锅，就是镇长），每天聊天送食材和种子 -->
-          <template v-if="town">
-            <NpcTalk :talked="town.talked.bigEater" npc="bigEater" @reload="loadTown" />
-            <MayorAsk :data="town" @reload="loadTown" />
-          </template>
+          <MayorAsk v-if="town" :data="town" @reload="loadTown" />
           <ExchangePanel part="goods" />
           <!-- 原来同一页里的兑换券分给了 13 哥和卡门 -->
-          <p class="small text-muted mt-2" data-testid="mayor-tickets-hint">
+          <p class="dt-block-note mt-1" data-testid="mayor-tickets-hint">
             {{ t.npc.ticketsHint }}
             <RouterLink to="/society/bro13">{{ t.npc.bro13.name }}</RouterLink>
             ·
             <RouterLink to="/society/carmen">{{ t.npc.carmen.name }}</RouterLink>
           </p>
         </template>
-        <template v-else-if="npc === 'bro13'">
-          <NpcTalk v-if="town" :talked="town.talked.bro13" npc="bro13" @reload="loadTown" />
-          <h6 class="dt-section">{{ t.town.exchange.tickets }}</h6>
-          <ExchangePanel part="level" />
-        </template>
-        <template v-else-if="npc === 'carmen'">
-          <!-- 见面礼：原来大胃哥第一次聊天送的神秘食材兑换券（问题记录 441），领过就不再显示 -->
-          <NpcTalk
-            v-if="town && !town.bigEaterGift"
-            :talked="town.talked.carmen"
-            npc="carmen"
-            @reload="loadTown"
-          />
-          <ExchangePanel part="mystery" />
-        </template>
+        <ExchangePanel v-else-if="npc === 'bro13'" part="level" />
+        <ExchangePanel v-else-if="npc === 'carmen'" part="mystery" />
       </template>
     </template>
   </div>

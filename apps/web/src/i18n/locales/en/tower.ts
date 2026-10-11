@@ -104,6 +104,8 @@ const tower: Messages['tower'] = {
     go: (n) => `Challenge · ${n} Stamina`,
   },
   friend: {
+    tile: 'Friend duel',
+    leftN: (n) => `${n} left today`,
     loadFailed: "Couldn't load your duels",
     noMore: 'No duels with them left today',
     failed: 'Duel failed',

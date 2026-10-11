@@ -74,6 +74,8 @@ export interface ForumReplyDto {
   /** 匿名回复对他人为 null / '匿名'；管理员和本人看到真名 */
   restId: number | null;
   restName: string;
+  /** 回复者头像（界面改版 P10）；匿名对他人隐藏时、没设头像时为 null */
+  avatar: number | null;
   anonymous: boolean;
   /** 已删除时为空串 */
   content: string;
@@ -83,7 +85,8 @@ export interface ForumReplyDto {
 }
 
 export interface ForumPostDetailDto {
-  post: ForumPostItemDto & { content: string; editedAt: string | null };
+  /** avatar：作者头像（界面改版 P10），没设为 null */
+  post: ForumPostItemDto & { content: string; editedAt: string | null; avatar: number | null };
   mine: ForumReaction | null;
   can: { edit: boolean; delete: boolean; admin: boolean; reads: boolean; reply: boolean };
   replies: ForumReplyDto[];

@@ -7,6 +7,8 @@ import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import { matchText } from '../../utils/match';
+import DtArt from '../DtArt.vue';
+import FoodArt from '../FoodArt.vue';
 
 /** part：只显示 N 级券（13 哥）或神秘券（卡门，问题记录 441）；不传两样都显示 */
 const props = defineProps<{ data: TownExchangeDto; part?: 'level' | 'mystery' }>();
@@ -62,7 +64,8 @@ function setNum(id: number, raw: string) {
 }
 const step = (id: number, d: 1 | -1) => setNum(id, String((nums[id] ?? 0) + d));
 
-const mystery = ref('');
+/** 卡门：点一格选一种神秘食材（界面改版 P10：原来是下拉框） */
+const mystery = ref<number | null>(null);
 
 async function run(fn: () => Promise<TicketResultDto>) {
   if (busy.value) return;
@@ -76,7 +79,7 @@ async function run(fn: () => Promise<TicketResultDto>) {
       'success',
     );
     clearNums();
-    mystery.value = '';
+    mystery.value = null;
     emit('reload');
   } catch (e) {
     toast.push(errorMessage(e, t.value.town.ticket.failed), 'danger');
@@ -88,47 +91,55 @@ async function run(fn: () => Promise<TicketResultDto>) {
 </script>
 
 <template>
-  <div class="small">
-    <template v-if="part !== 'mystery'">
-      <div class="dt-pills mb-1" role="group" :aria-label="t.town.ticket.levelLabel">
-        <button
-          v-for="l in LEVELS"
-          :key="l"
-          type="button"
-          :class="{ active: level === l }"
-          :aria-pressed="level === l"
-          :data-testid="`lt-level-${l}`"
-          @click="level = l"
-        >
-          {{ t.town.ticket.levelPill(l, tickets(l)) }}
-        </button>
-      </div>
-      <div class="text-muted mb-1">{{ t.town.ticket.rule }}</div>
+  <!-- 13 哥的食材兑换券（界面改版 P10）：等级胶囊、搜索、一种食材一行（选了才有减号和数量），底部吸住一条“已选 / 兑换” -->
+  <template v-if="part !== 'mystery'">
+    <div class="dt-block-head mt-3">
+      <h2 class="dt-block-title">{{ t.town.ticket.levelTitle }}</h2>
+      <span class="dt-block-more">{{ t.town.ticket.rule }}</span>
+    </div>
+    <div class="dt-pills" role="group" :aria-label="t.town.ticket.levelLabel">
+      <button
+        v-for="l in LEVELS"
+        :key="l"
+        type="button"
+        :class="{ active: level === l }"
+        :aria-pressed="level === l"
+        :data-testid="`lt-level-${l}`"
+        @click="level = l"
+      >
+        {{ t.town.ticket.levelPill(l, tickets(l)) }}
+      </button>
+    </div>
+    <label class="dt-search-box mt-2">
+      <i class="bi bi-search" aria-hidden="true"></i>
       <input
         v-model="q"
         type="search"
-        class="form-control form-control-sm mb-1"
         :placeholder="t.town.ticket.search"
+        :aria-label="t.town.ticket.search"
         data-testid="lt-search"
       />
-      <!-- 列表限高、自己滚动，兑换按钮一直在列表下面看得到 -->
-      <div class="dt-card dt-ticket-list py-0" data-testid="lt-list">
-        <div v-if="shown.length === 0" class="text-muted py-2">{{ t.town.ticket.noMatch }}</div>
-        <div v-for="id in shown" :key="id" class="dt-ticket-row" :data-testid="`lt-food-${id}`">
-          <div class="flex-fill dt-ticket-name">
-            <div class="dt-clamp1">{{ catalog.foodName(id) }}</div>
-            <div class="dt-meta">
-              {{ t.town.ticket.foodHave(haveOf(id))
-              }}<span v-if="shortOf(id) > 0" class="badge text-bg-warning ms-1">{{
-                t.town.ticket.short(shortOf(id))
-              }}</span>
-            </div>
-          </div>
-          <!-- 选上以后才出现减号和数量（数量可以直接填）；+ 一直是同一个按钮，点了焦点不丢（终审） -->
+    </label>
+    <div class="dt-card dt-rows-card mt-2" data-testid="lt-list">
+      <div v-if="shown.length === 0" class="dt-row">
+        <span class="dt-row-sub">{{ t.town.ticket.noMatch }}</span>
+      </div>
+      <div v-for="id in shown" :key="id" class="dt-row" :data-testid="`lt-food-${id}`">
+        <span class="dt-row-ico"><FoodArt :id="id" :size="28" /></span>
+        <span class="dt-row-main">
+          <span class="dt-row-title is-strong">{{ catalog.foodName(id) }}</span>
+          <span class="dt-row-sub"
+            >{{ t.town.ticket.foodHave(haveOf(id))
+            }}<span v-if="shortOf(id) > 0" class="dt-tag dt-tag-warn ms-1">{{
+              t.town.ticket.short(shortOf(id))
+            }}</span></span
+          >
+        </span>
+        <!-- 选上以后才出现减号和数量（数量可以直接填）；+ 一直是同一个按钮，点了焦点不丢（终审） -->
+        <span :class="['dt-ticket-step', { 'is-on': !!nums[id] }]">
           <template v-if="nums[id]">
             <button
               type="button"
-              class="btn btn-sm btn-outline-secondary"
               :disabled="busy"
               :aria-label="t.town.ticket.subOne(catalog.foodName(id))"
               :data-testid="`lt-minus-${id}`"
@@ -142,7 +153,6 @@ async function run(fn: () => Promise<TicketResultDto>) {
               min="0"
               :max="roomFor(id)"
               inputmode="numeric"
-              class="form-control form-control-sm dt-ticket-num"
               :disabled="busy"
               :aria-label="t.town.ticket.numOf(catalog.foodName(id))"
               :data-testid="`lt-num-${id}`"
@@ -152,7 +162,6 @@ async function run(fn: () => Promise<TicketResultDto>) {
           <button
             :ref="(el) => setPlusEl(id, el)"
             type="button"
-            class="btn btn-sm btn-outline-primary"
             :disabled="busy || total >= have"
             :aria-label="t.town.ticket.addOne(catalog.foodName(id))"
             :data-testid="`lt-add-${id}`"
@@ -160,68 +169,60 @@ async function run(fn: () => Promise<TicketResultDto>) {
           >
             <i class="bi bi-plus-lg" aria-hidden="true"></i>
           </button>
-        </div>
+        </span>
       </div>
-      <div class="d-flex align-items-center gap-2 mt-1">
-        <span aria-live="polite" data-testid="lt-picked">{{ t.town.ticket.picked(total, have) }}</span>
-        <button
-          class="btn btn-sm btn-primary ms-auto"
-          :disabled="busy || total === 0 || total > have"
-          data-testid="lt-go"
-          @click="run(() => endpoints.townLevelTicket(level, picks))"
-        >
-          {{ t.town.ticket.go(total) }}
-        </button>
-      </div>
-    </template>
+    </div>
+    <p class="dt-block-note mt-2">{{ t.town.ticket.sortNote }}</p>
+    <div class="dt-sticky-bar" data-testid="lt-bar">
+      <span class="dt-sticky-bar-main">
+        <b aria-live="polite" data-testid="lt-picked">{{ t.town.ticket.picked(total, have) }}</b>
+        <span v-if="have > 0 && total >= have">{{ t.town.ticket.usedUp }}</span>
+      </span>
+      <button
+        type="button"
+        class="btn btn-primary"
+        :disabled="busy || total === 0 || total > have"
+        data-testid="lt-go"
+        @click="run(() => endpoints.townLevelTicket(level, picks))"
+      >
+        {{ t.town.ticket.go(total) }}
+      </button>
+    </div>
+  </template>
 
-    <template v-if="part !== 'level'">
-      <div :class="['d-flex align-items-center gap-1', part === 'mystery' ? '' : 'mt-3']">
-        <b>{{ t.town.ticket.mystery }}</b>
-        <span>{{ t.town.ticket.have(data.mysteryTickets) }}</span>
-      </div>
-      <div class="d-flex align-items-center gap-1 mt-1">
-        <!-- 下拉框占剩下的宽度、可以收窄：法文食材名长，原来把右边的按钮挤出屏幕（质量期 ④） -->
-        <select v-model="mystery" class="form-select form-select-sm dt-shrink" data-testid="mt-food">
-          <option value="">{{ t.town.ticket.pickMystery }}</option>
-          <option v-for="id in data.mysteryFoods" :key="id" :value="String(id)">
-            {{ catalog.foodName(id) }}
-          </option>
-        </select>
-        <button
-          class="btn btn-sm btn-primary flex-shrink-0"
-          :disabled="busy || data.mysteryTickets === 0 || mystery === ''"
-          data-testid="mt-go"
-          @click="run(() => endpoints.townMysteryTicket(Number(mystery)))"
-        >
-          {{ t.town.ticket.btn }}
-        </button>
-      </div>
-    </template>
-  </div>
+  <!-- 卡门的神秘食材兑换券（界面改版 P10）：4 列格子点一格选中，下面整宽按钮写清换什么 -->
+  <template v-if="part !== 'level'">
+    <div :class="['dt-block-head', part === 'mystery' ? 'mt-3' : 'mt-4']">
+      <h2 class="dt-block-title">{{ t.town.ticket.mystery }}</h2>
+      <span class="dt-block-more" data-testid="mt-have">{{ t.town.ticket.have(data.mysteryTickets) }}</span>
+    </div>
+    <p class="dt-block-note">{{ t.town.ticket.mysteryNote }}</p>
+    <div class="dt-bag" role="group" :aria-label="t.town.ticket.pickMystery" data-testid="mt-grid">
+      <button
+        v-for="id in data.mysteryFoods"
+        :key="id"
+        type="button"
+        class="dt-bag-cell is-t3"
+        :aria-pressed="mystery === id"
+        :data-testid="`mt-food-${id}`"
+        @click="mystery = id"
+      >
+        <span v-if="haveOf(id) > 0" class="dt-bag-num" aria-hidden="true">{{ haveOf(id) }}</span>
+        <FoodArt :id="id" :size="40" />
+        <span class="dt-bag-name">{{ catalog.foodName(id) }}</span>
+      </button>
+    </div>
+    <button
+      type="button"
+      class="btn btn-primary dt-btn-block mt-3"
+      :disabled="busy || data.mysteryTickets === 0 || mystery === null"
+      data-testid="mt-go"
+      @click="mystery !== null && run(() => endpoints.townMysteryTicket(mystery!))"
+    >
+      <DtArt name="res-ticket" :size="18" class="me-1" />{{
+        mystery === null ? t.town.ticket.pickMystery : t.town.ticket.mysteryGo(catalog.foodName(mystery))
+      }}
+    </button>
+    <p v-if="data.mysteryTickets === 0" class="dt-up-reason">{{ t.town.ticket.noMystery }}</p>
+  </template>
 </template>
-
-<style scoped>
-.dt-ticket-list {
-  max-height: 18rem;
-  overflow-y: auto;
-}
-.dt-ticket-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 0;
-  border-bottom: 1px dashed var(--dt-line);
-}
-.dt-ticket-row:last-child {
-  border-bottom: 0;
-}
-/* 名字能缩，长名字截断，不把加减按钮挤出去（终审） */
-.dt-ticket-name {
-  min-width: 0;
-}
-.dt-ticket-num {
-  width: 3.5rem;
-  text-align: center;
-}
-</style>

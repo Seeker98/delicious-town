@@ -5,6 +5,7 @@ const wishtree: Messages['wishtree'] = {
   wishFailed: 'Impossible de faire un vœu',
   intro: 'Chaque jour, l’arbre donne un objet, et un des restaurants qui ont fait un vœu le remporte.',
   helpTitle: 'Comment fonctionne l’Arbre à vœux',
+  helpSub: (hour) => `Tirage chaque jour à ${hour}h\u202f; un restaurant remporte l'objet et un titre`,
   help: (hour, minLevel, titleDays, titleName) => [
     `Tirage chaque jour à ${hour}\u202fh, et l’arbre donne un nouvel objet au même moment, le même pour tout le serveur`,
     `Les restaurants de niveau ${minLevel} ou plus peuvent faire 1 vœu par tour, gratuitement`,
@@ -14,7 +15,8 @@ const wishtree: Messages['wishtree'] = {
   off: 'L’Arbre à vœux n’est pas encore ouvert sur ce serveur',
   today: 'Aujourd’hui, l’arbre donne',
   entries: (n) => `${n} ${n === 1 ? 'vœu' : 'vœux'} pour l’instant`,
-  drawAt: (time) => `Tirage\u202f: ${time}`,
+  drawAtLeft: (time, left) => `Tirage\u202f: ${time} (${left})`,
+  free: (level) => `Un vœu gratuit par tour dès le niveau ${level}`,
   wish: 'Faire un vœu',
   wished: 'Vœu fait, en attente du tirage',
   need: (level) => `Votre restaurant doit être niveau ${level} pour faire un vœu`,
@@ -23,9 +25,10 @@ const wishtree: Messages['wishtree'] = {
   recentTitle: 'Tours récents',
   noRecent: 'Aucun tirage pour l’instant',
   empty: 'Personne n’a fait de vœu',
-  winner: (name, n) => `${name} a gagné (${n} ${n === 1 ? 'vœu' : 'vœux'})`,
-  mine: 'Vous avez gagné\u202f! Le lot est dans votre boîte aux lettres',
-  lost: (award) => `Pas gagné, vous recevez ${award}`,
-  pending: 'Pas gagné. Votre lot de consolation arrive',
+  recentTitleLine: (day, prize) => `${day} · ${prize}`,
+  winnerTail: (n) => ` a gagné · ${n} ${n === 1 ? 'vœu' : 'vœux'}`,
+  mineTag: 'Gagné',
+  lostTag: (award) => `Raté · ${award}`,
+  pendingTag: 'Raté · lot en route',
 };
 export default wishtree;

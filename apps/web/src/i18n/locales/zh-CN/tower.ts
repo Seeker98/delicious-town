@@ -121,6 +121,9 @@ export default {
     failed: '切磋失败',
     btn: '切磋',
     left: (n: number) => ` (今天还能 ${n} 次)`,
+    /** 好友餐厅操作块里的一格（界面改版 P10） */
+    tile: '好友对决',
+    leftN: (n: number) => `今天还能比 ${n} 次`,
   },
   rank: {
     loadFailed: '读取赛厨榜失败',

@@ -49,7 +49,9 @@ test('嘻哈男孩、镇长问答、排行', async ({ page, request }) => {
     // 镇长问答搬到协会的镇长大胃锅（问题记录 441）
     await page.goto('/society/mayor');
     await page.getByTestId('mayor-open').click();
+    // 选地点后要点确认才告诉镇长（界面改版 P10）
     await page.getByTestId('mayor-1').click();
+    await page.getByTestId('mayor-ok').click();
     await expect(page.getByText('谢谢你, 我现在就去找他')).toBeVisible();
 
     await page.goto('/town?tab=rank');

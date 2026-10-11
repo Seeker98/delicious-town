@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { defineComponent, h, nextTick, ref } from 'vue';
-import { usePageChip, usePageTitle, usePageTitleStore } from './pageTitle';
+import { usePageChip, usePageMenu, usePageTitle, usePageTitleStore } from './pageTitle';
 
 beforeEach(() => setActivePinia(createPinia()));
 
@@ -36,5 +36,26 @@ describe('动态标题（界面改版 P2a）', () => {
     expect(s.chip?.label).toBe('礼券 11');
     w.unmount();
     expect(s.chip).toBeNull();
+  });
+
+  it('“更多”按钮（界面改版 P10）：页面写进去，跟着变，没有可做的事时不显示；离开页面清掉', async () => {
+    const can = ref(true);
+    const open = vi.fn();
+    const C = defineComponent({
+      setup: () => (usePageMenu(() => (can.value ? { label: '更多操作', open } : null)), () => h('div')),
+    });
+    const w = mount(C);
+    const s = usePageTitleStore();
+    expect(s.menu?.label).toBe('更多操作');
+    s.menu!.open();
+    expect(open).toHaveBeenCalledTimes(1);
+    can.value = false;
+    await nextTick();
+    expect(s.menu).toBeNull();
+    can.value = true;
+    await nextTick();
+    expect(s.menu).not.toBeNull();
+    w.unmount();
+    expect(s.menu).toBeNull();
   });
 });

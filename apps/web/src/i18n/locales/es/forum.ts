@@ -3,6 +3,11 @@ import { plEs } from '../../helpers';
 
 const forum: Messages['forum'] = {
   title: 'Foro',
+  whoWhen: (name, when) => `${name} · ${when}`,
+  readN: (n) => `${n} ${n === 1 ? 'lectura' : 'lecturas'}`,
+  upN: (n) => `${n} me gusta`,
+  downN: (n) => `${n} no me gusta`,
+  replyN: (n) => `${n} ${n === 1 ? 'respuesta' : 'respuestas'}`,
   tabs: { all: 'Todo', chat: 'Charla', guide: 'Guías', feedback: 'Sugerencias', featured: 'Destacados' },
   categories: { chat: 'Charla', guide: 'Guías', feedback: 'Sugerencias' },
   loadFailed: 'No se pudo cargar el foro',
@@ -16,6 +21,14 @@ const forum: Messages['forum'] = {
   itemMeta: (name, when, read, up, reply) =>
     `${name} · ${when} · ${read} ${plEs(read, 'vista', 'vistas')} · ${up} me gusta · ${reply} ${plEs(reply, 'respuesta', 'respuestas')}`,
   post: {
+    more: 'Más acciones',
+    menuTitle: 'Este tema',
+    byFloor: 'Por orden',
+    noReplies: 'Aún no hay respuestas',
+    writeReply: 'Escribe una respuesta…',
+    replyToCancel: 'No responder a este mensaje',
+    readsNote: 'Quién lo leyó y cuántas veces',
+    adminTag: 'Admin',
     loadFailed: 'No se pudo cargar el tema',
     opFailed: 'No se pudo completar la acción',
     featuredReward: 'Destacado. El autor recibió la recompensa.',
@@ -49,6 +62,10 @@ const forum: Messages['forum'] = {
     verifyToReply: 'Verifica tu correo para responder',
   },
   edit: {
+    category: 'Categoría',
+    titleLabel: 'Título',
+    contentLabel: 'Texto',
+    note: 'Solo texto plano.',
     newTitle: 'Nuevo tema',
     editTitle: 'Editar tema',
     titlePlaceholder: 'Título (máx. 40 caracteres)',

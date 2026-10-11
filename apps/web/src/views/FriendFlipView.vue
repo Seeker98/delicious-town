@@ -8,6 +8,8 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 import { serverNowMs } from '../utils/serverNow';
+import DtArt from '../components/DtArt.vue';
+import DtSheet from '../components/DtSheet.vue';
 
 const route = useRoute();
 const toast = useToastStore();
@@ -15,7 +17,9 @@ const t = useT();
 const catalog = useCatalogStore();
 const restId = computed(() => Number(route.params.restId));
 const data = ref<FlipSlotsDto | null>(null);
-const result = ref('');
+/** 刚翻的一格和结果（界面改版 P10：结果卡按好坏上色） */
+const last = ref<{ slot: number; r: FlipResultDto } | null>(null);
+const rulesOpen = ref(false);
 const busy = ref(false);
 
 const coolOf = (slot: number) => data.value?.cooling.find((c) => c.slotNo === slot) ?? null;
@@ -23,7 +27,7 @@ function left(until: string): string {
   const ms = Math.max(0, Date.parse(until) - serverNowMs());
   const h = Math.floor(ms / 3600_000);
   const m = Math.floor((ms % 3600_000) / 60_000);
-  return t.value.friends.flip.left(h, m);
+  return h === 0 ? t.value.friends.flip.leftMin(m) : t.value.friends.flip.left(h, m);
 }
 
 function describe(r: FlipResultDto): string {
@@ -56,7 +60,7 @@ async function flip(slot: number) {
   if (busy.value) return;
   busy.value = true;
   try {
-    result.value = describe(await endpoints.flip(restId.value, slot));
+    last.value = { slot, r: await endpoints.flip(restId.value, slot) };
     await load();
   } catch (e) {
     toast.push(errorMessage(e, t.value.friends.flip.failed), 'danger');
@@ -71,28 +75,66 @@ onMounted(load);
 </script>
 
 <template>
-  <p class="small text-muted">
-    {{ t.friends.flip.rule }}<span v-if="data">{{ t.friends.flip.today(data.todayTimes) }}</span
-    >{{ t.friends.flip.end }}
-  </p>
-  <!-- 同一家店每人每天的格数（问题记录 374）；不限时不写 -->
-  <p v-if="data && data.hostLeft !== null" class="small" data-testid="host-left">
-    {{ data.hostLeft > 0 ? t.friends.flip.hostLeft(data.hostLeft) : t.friends.flip.hostDone }}
-  </p>
-  <div v-if="result" class="alert alert-info small py-2" data-testid="flip-result">{{ result }}</div>
-  <div v-if="data" class="row g-1">
-    <div v-for="slot in data.slots" :key="slot" class="col-3">
-      <button
-        class="btn btn-outline-secondary w-100 small"
-        :data-testid="`slot-${slot}`"
-        :disabled="busy || coolOf(slot) !== null || data.hostLeft === 0"
-        @click="flip(slot)"
+  <!-- 翻橱柜（界面改版 P10）：上面一张卡写今天还能翻几格、翻了几次，右边“怎么算”；刚翻的结果一张卡；橱柜 4 列格子 -->
+  <div class="dt-card dt-bar-info" data-testid="flip-info">
+    <span class="dt-bar-info-art"><DtArt name="town-cupboard" :size="32" /></span>
+    <span class="dt-bar-info-main">
+      <b>{{ t.friends.flip.cardTitle }}</b>
+      <span v-if="data" class="num"
+        ><template v-if="data.hostLeft !== null"
+          ><span data-testid="host-left">{{
+            data.hostLeft > 0 ? t.friends.flip.hostLeftShort(data.hostLeft) : t.friends.flip.hostDone
+          }}</span>
+          · </template
+        >{{ t.friends.flip.todayN(data.todayTimes) }}</span
       >
-        <div>{{ slot }}</div>
-        <div v-if="coolOf(slot)" class="text-muted" style="font-size: 0.7rem">
-          {{ left(coolOf(slot)!.until) }}
-        </div>
-      </button>
-    </div>
+    </span>
+    <button type="button" class="dt-link-btn" data-testid="flip-rules" @click="rulesOpen = true">
+      {{ t.friends.flip.how }}
+    </button>
   </div>
+  <section
+    v-if="last"
+    :class="[
+      'dt-bar-result mt-2',
+      last.r.outcome === 'caught'
+        ? 'is-bad'
+        : last.r.outcome === 'food' || last.r.outcome === 'ticket'
+          ? 'is-ok'
+          : 'is-plain',
+    ]"
+    data-testid="flip-result"
+    aria-live="polite"
+  >
+    <b>{{ t.friends.flip.slotN(last.slot) }}</b>
+    <span>{{ describe(last.r) }}</span>
+  </section>
+  <div v-if="data" class="dt-flip-grid mt-3" role="group" :aria-label="t.friends.flip.title">
+    <button
+      v-for="slot in data.slots"
+      :key="slot"
+      type="button"
+      :class="['dt-flip-cell', { 'is-cool': coolOf(slot) !== null, 'is-last': last?.slot === slot }]"
+      :data-testid="`slot-${slot}`"
+      :disabled="busy || coolOf(slot) !== null || data.hostLeft === 0"
+      :aria-label="
+        coolOf(slot) ? t.friends.flip.coolLabel(slot, left(coolOf(slot)!.until)) : t.friends.flip.slotN(slot)
+      "
+      @click="flip(slot)"
+    >
+      <span class="dt-flip-no" aria-hidden="true">{{ slot }}</span>
+      <DtArt name="town-cupboard" :size="30" />
+      <span v-if="coolOf(slot)" class="dt-flip-time" aria-hidden="true">{{ left(coolOf(slot)!.until) }}</span>
+    </button>
+  </div>
+  <DtSheet :open="rulesOpen" :title="t.friends.flip.how" @close="rulesOpen = false">
+    <div class="dt-help">
+      <p>{{ t.friends.flip.rule }}{{ t.friends.flip.end }}</p>
+    </div>
+    <template #actions>
+      <button type="button" class="btn btn-light dt-btn-block" @click="rulesOpen = false">
+        {{ t.common.close }}
+      </button>
+    </template>
+  </DtSheet>
 </template>

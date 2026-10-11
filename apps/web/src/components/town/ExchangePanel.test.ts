@@ -15,6 +15,10 @@ vi.mock('../../api/endpoints', () => ({
   },
 }));
 
+/** 数量面板 Teleport 到 body：测试里把 teleport 桩掉（界面改版 P10） */
+const mountIt = (props: { part?: 'goods' | 'level' | 'mystery' } = {}) =>
+  mount(ExchangePanel, { props, global: { stubs: { teleport: true } } });
+
 describe('ExchangePanel', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -23,23 +27,28 @@ describe('ExchangePanel', () => {
   });
 
   it('请求时带上是哪位 NPC 的页（backlog 1010：只有 13 哥的页查本街需求）', async () => {
-    mount(ExchangePanel);
+    mountIt();
     await flushPromises();
     expect(endpoints.townExchange).toHaveBeenLastCalledWith('goods');
-    mount(ExchangePanel, { props: { part: 'level' } });
+    mountIt({ part: 'level' });
     await flushPromises();
     expect(endpoints.townExchange).toHaveBeenLastCalledWith('level');
   });
 
   it('按分类显示；材料不够、次数用完的灰掉并写明', async () => {
-    const w = mount(ExchangePanel);
+    const w = mountIt();
     await flushPromises();
     expect(w.findAll('[data-testid^="ex-row-"]')).toHaveLength(3);
-    expect(w.find('[data-testid="ex-2"]').attributes('disabled')).toBeDefined();
+    // 界面改版 P10：兑不了的行没有按钮，右边换成灰色小标签写明原因
+    expect(w.find('[data-testid="ex-2"]').exists()).toBe(false);
+    expect(w.get('[data-testid="ex-block-2"]').text()).toBe('材料不够');
     expect(w.find('[data-testid="ex-row-2"]').text()).toContain('限兑 1 次, 已兑 0 次');
-    expect(w.find('[data-testid="ex-3"]').attributes('disabled')).toBeDefined();
+    expect(w.find('[data-testid="ex-3"]').exists()).toBe(false);
+    expect(w.get('[data-testid="ex-block-3"]').text()).toBe('已兑完');
     expect(w.find('[data-testid="ex-row-3"]').text()).toContain('已兑完');
+    expect(w.get('[data-testid="cat-bg"]').attributes('aria-pressed')).toBe('true');
     await w.find('[data-testid="cat-dt"]').trigger('click');
+    expect(w.get('[data-testid="cat-dt"]').attributes('aria-pressed')).toBe('true');
     expect(w.findAll('[data-testid^="ex-row-"]')).toHaveLength(1);
   });
 
@@ -64,7 +73,7 @@ describe('ExchangePanel', () => {
         ],
       }),
     );
-    const w = mount(ExchangePanel);
+    const w = mountIt();
     await flushPromises();
     expect(w.findAll('[data-testid^="ex-row-"]').map((x) => x.attributes('data-testid'))).toEqual([
       'ex-row-14',
@@ -88,37 +97,41 @@ describe('ExchangePanel', () => {
     vi.mocked(endpoints.townExchange).mockResolvedValue(
       exchangeData({ items: [row(21, 3, 5), row(22, 2, 5), row(23, 9, 1)] }),
     );
-    const w = mount(ExchangePanel);
+    const w = mountIt();
     await flushPromises();
     const order = () => w.findAll('[data-testid^="ex-row-"]').map((x) => x.attributes('data-testid'));
     const before = order();
     expect(before).toEqual(['ex-row-22', 'ex-row-21', 'ex-row-23']);
-    await w.get('[data-testid="ex-num-22"]').setValue(9);
+    // 界面改版 P10：份数在点“兑换”弹出的面板里选
+    await w.get('[data-testid="ex-22"]').trigger('click');
+    await w.get('[data-testid="ex-qty"]').setValue(9);
     expect(order()).toEqual(before);
   });
 
   it('兑换多份后重新读取', async () => {
     vi.mocked(endpoints.townExchangeDo).mockResolvedValue({ goodsId: 139, num: 2 });
-    const w = mount(ExchangePanel);
+    const w = mountIt();
     await flushPromises();
-    await w.find('[data-testid="ex-num-1"]').setValue(2);
     await w.find('[data-testid="ex-1"]').trigger('click');
+    await w.find('[data-testid="ex-qty"]').setValue(2);
+    await w.find('[data-testid="qty-ok"]').trigger('click');
     await flushPromises();
     expect(endpoints.townExchangeDo).toHaveBeenCalledWith(1, 2);
     expect(endpoints.townExchange).toHaveBeenCalledTimes(2);
+    // 兑换成功后面板关掉
+    expect(w.find('[data-testid="qty-ok"]').exists()).toBe(false);
   });
 
-  it('和商店一样：一行一项，数量框和按钮在右侧操作区，点名称展开说明（问题记录 104）', async () => {
-    const w = mount(ExchangePanel);
+  it('和商店一样：一行一项，按钮在右侧操作区（问题记录 104；界面改版 P10 份数挪进面板）', async () => {
+    const w = mountIt();
     await flushPromises();
     const row = w.find('[data-testid="ex-row-1"]');
-    expect(row.classes()).toContain('dt-item');
-    expect(row.find('.dt-item-actions [data-testid="ex-num-1"]').exists()).toBe(true);
-    expect(row.find('.dt-item-actions [data-testid="ex-1"]').exists()).toBe(true);
+    expect(row.classes()).toContain('dt-row');
+    expect(row.find('.dt-row-end [data-testid="ex-1"]').exists()).toBe(true);
   });
 
-  it('不能兑的原因单独一行，不会被截断（终审 I1）；点名称展开说明', async () => {
-    const w = mount(ExchangePanel);
+  it('不能兑的原因单独一行，不会被截断（终审 I1）', async () => {
+    const w = mountIt();
     await flushPromises();
     const reason = w.find('[data-testid="ex-block-2"]');
     expect(reason.text()).toBe('材料不够');
@@ -126,7 +139,7 @@ describe('ExchangePanel', () => {
     expect(w.find('[data-testid="ex-block-1"]').exists()).toBe(false);
   });
 
-  it('说明默认一行，点名称展开（终审 I6）', async () => {
+  it('道具说明写在兑换面板里（终审 I6；界面改版 P10：原来点名称展开），能兑几份、消耗和得到写在合计里', async () => {
     useCatalogStore().goodsMap = new Map([
       [
         139,
@@ -143,31 +156,28 @@ describe('ExchangePanel', () => {
         },
       ],
     ]);
-    const w = mount(ExchangePanel);
+    const w = mountIt();
     await flushPromises();
-    expect(w.find('[data-testid="ex-desc-1"]').classes()).toContain('dt-clamp1');
-    await w.find('[data-testid="ex-row-1"] .dt-item-title').trigger('click');
-    expect(w.find('[data-testid="ex-desc-1"]').classes()).not.toContain('dt-clamp1');
+    expect(w.text()).not.toContain('很长的说明');
+    await w.get('[data-testid="ex-1"]').trigger('click');
+    expect(w.text()).toContain('很长的说明');
+    expect(w.text()).toContain('兑换 神秘食材随机劵');
+    // 材料 5 个、一份 2 个：最多 2 份
+    expect(w.get('[data-testid="qty-max"]').text()).toContain('2');
+    await w.get('[data-testid="qty-max"]').trigger('click');
+    expect(w.get('[data-testid="qty-ok"]').text()).toBe('兑换 2 份');
+    expect(w.get('[data-testid="qty-sum"]').text()).toContain('消耗道具180×4');
+    expect(w.get('[data-testid="qty-sum"]').text()).toContain('得到神秘食材随机劵×2');
+    expect(w.get('[data-testid="qty-sum"]').text()).toContain('换完剩道具180×1');
   });
 
   it('兑换失败后也重新读取', async () => {
     vi.mocked(endpoints.townExchangeDo).mockRejectedValue(new Error('x'));
-    const w = mount(ExchangePanel);
+    const w = mountIt();
     await flushPromises();
     await w.find('[data-testid="ex-1"]').trigger('click');
+    await w.find('[data-testid="qty-ok"]').trigger('click');
     await flushPromises();
     expect(endpoints.townExchange).toHaveBeenCalledTimes(2);
-  });
-
-  it('名称可以用键盘展开说明（PR27 遗留）', async () => {
-    useCatalogStore().goodsMap = new Map([
-      [139, { id: 139, name: '神秘食材随机劵', desc: '很长的说明' } as never],
-    ]);
-    const w = mount(ExchangePanel);
-    await flushPromises();
-    const name = w.find('[data-testid="ex-row-1"] .dt-item-title');
-    expect(name.attributes('tabindex')).toBe('0');
-    await name.trigger('keydown', { key: 'Enter' });
-    expect(w.find('[data-testid="ex-desc-1"]').classes()).not.toContain('dt-clamp1');
   });
 });

@@ -155,6 +155,16 @@ describe('并进别的页面的旧地址（界面改版 P2b）', () => {
     expect(bank.meta?.title?.(zhCN)).toBe('银行');
     expect(routes.find((r) => r.path.startsWith('/society/:npc'))!.path).not.toMatch(/fund|wealth/);
   });
+  it('协会的改名、搬家改成面板：旧地址跳回协会并打开对应面板（界面改版 P10）', () => {
+    expect(routes.find((r) => r.path === '/society/rename')?.redirect).toEqual({
+      path: '/society',
+      query: { sheet: 'rename' },
+    });
+    expect(routes.find((r) => r.path === '/society/move')?.redirect).toEqual({
+      path: '/society',
+      query: { sheet: 'move' },
+    });
+  });
   it('邀请好友的上一级是兑换码页（入口搬到那里）', () => {
     expect(routes.find((r) => r.path === '/invite')?.meta?.parent).toBe('/redeem');
   });

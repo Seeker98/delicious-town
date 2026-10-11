@@ -19,6 +19,8 @@ const props = defineProps<{
   lines: MascotLine[];
   ready: boolean;
   testid: string;
+  /** 大头像（界面改版 P10：协会 NPC 页，56px、台词加「」） */
+  large?: boolean;
 }>();
 const line = ref('');
 const next = () => {
@@ -35,7 +37,7 @@ watch(
 
 <template>
   <div
-    class="dt-card dt-mascot"
+    :class="['dt-card dt-mascot', { 'is-large': large }]"
     role="button"
     tabindex="0"
     :data-testid="testid"
@@ -43,7 +45,7 @@ watch(
     @keydown.enter.prevent="next"
     @keydown.space.prevent="next"
   >
-    <span v-if="art" class="dt-npc-ava"><DtArt :name="art" :size="40" /></span>
+    <span v-if="art" class="dt-npc-ava"><DtArt :name="art" :size="large ? 56 : 40" /></span>
     <span v-else class="dt-mascot-ico" aria-hidden="true"><i :class="['bi', icon]"></i></span>
     <div class="dt-mascot-text">
       <b>{{ name }}</b>

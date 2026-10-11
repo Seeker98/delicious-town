@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    social1012:
+      'Guild, Plaza, Forum, Friends and Mail redesigned: the Guild and Plaza have scene headers, and the Mayor, Brother 13 and Carmen now have portraits in a row that shows who you have chatted with today; star-up and oil tank list exactly what is missing, and renaming and moving happen in a panel; tell the Mayor where the Hip-hop Boy is by tapping a place, pick rare item amounts in a panel and Carmen\'s mystery ingredients from a grid; teaching a class uses a panel to pick the dish and certificate; the Town Daily looks like a newspaper, broadcasts and the Thor hammer use panels, and rankings show medals and avatars; forum posts are tidy cards with the reply box at the bottom and edit/delete under "⋯"; friend rows show free meals, cupboard slots and roaches, friend restaurants share your home header with a two-column action grid and tappable tables; mail attachments show icons and each mail opens in a panel',
     play1012:
       'Bar, Temple and Chef Tower redone: all three have a scene header with your vouchers, Stamina or chef power; the bar home is a grid of the ten games showing how many you have played today and which game is still in progress, each game has its own page, the rules are a short list under How to play, and rewards show with pictures; in the temple, appraising, firing, exploring and feeding pick the amount in a panel, and the trial opens an ingredient panel from the main and side slots; the tower lists one floor per row, a floor opens with its guardian and elder gear, and duel results and judges open from the bottom',
     trade1012:

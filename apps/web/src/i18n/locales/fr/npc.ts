@@ -56,6 +56,7 @@ const npc: Messages['npc'] = {
       'Les récompenses non réclamées sont envoyées par courrier à la fin de l’événement.',
     ],
   },
+  carmenGift: 'Cadeau de bienvenue',
   links: {
     classroom: {
       label: 'Classe',

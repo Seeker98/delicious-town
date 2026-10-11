@@ -25,6 +25,18 @@ describe('DtTabs（界面改版 P2b）', () => {
     expect(w.emitted('update:modelValue')).toEqual([['b']]);
   });
 
+  it('标签栏右边的 end 插槽（界面改版 P10：广场的“论坛 ›”）；没有插槽时不留位置', () => {
+    const w = mount(DtTabs, {
+      props: { modelValue: 'a', tabs: TABS },
+      slots: { end: '<a href="/forum">论坛</a>' },
+    });
+    expect(w.get('.dt-tabs-bar').classes()).toContain('has-end');
+    expect(w.get('.dt-tabs-end a').text()).toBe('论坛');
+    const plain = mount(DtTabs, { props: { modelValue: 'a', tabs: TABS } });
+    expect(plain.get('.dt-tabs-bar').classes()).not.toContain('has-end');
+    expect(plain.find('.dt-tabs-end').exists()).toBe(false);
+  });
+
   it('只有一个标签时不显示标签栏', () => {
     const w = mount(DtTabs, { props: { modelValue: 'a', tabs: [TABS[0]!] } });
     expect(w.find('ul').exists()).toBe(false);

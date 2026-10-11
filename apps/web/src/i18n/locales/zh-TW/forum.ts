@@ -12,6 +12,12 @@ export default {
   empty: '還沒有帖子',
   pinned: '置頂',
   featured: '精',
+  /** 介面改版 P10 */
+  whoWhen: (name: string, when: string) => `${name} · ${when}`,
+  readN: (n: number) => `閱讀 ${n}`,
+  upN: (n: number) => `贊 ${n}`,
+  downN: (n: number) => `踩 ${n}`,
+  replyN: (n: number) => `回覆 ${n}`,
   itemMeta: (name: string, when: string, read: number, up: number, reply: number) =>
     `${name} · ${when} · 閱讀 ${read} · 贊 ${up} · 回覆 ${reply}`,
   post: {
@@ -45,6 +51,15 @@ export default {
     anonymous: '匿名',
     replyWait: (s: number) => `${s} 秒後可以再回復`,
     verifyToReply: '驗證郵箱後才能回覆',
+    /** 介面改版 P10 */
+    more: '更多操作',
+    menuTitle: '這篇帖子',
+    byFloor: '按樓層',
+    noReplies: '還沒有回覆',
+    writeReply: '寫回復…',
+    replyToCancel: '不回覆這一層',
+    readsNote: '誰讀了幾次',
+    adminTag: '管理員',
   },
   edit: {
     newTitle: '發帖',
@@ -52,6 +67,10 @@ export default {
     titlePlaceholder: '標題 (最多 40 字)',
     contentPlaceholder: '正文 (純文字, 最多 5000 字)',
     publish: '釋出',
+    category: '分類',
+    titleLabel: '標題',
+    contentLabel: '正文',
+    note: '只支援純文字。',
     failed: '釋出失敗',
   },
 };
