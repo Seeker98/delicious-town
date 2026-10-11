@@ -1126,7 +1126,7 @@ describe('RestaurantHomeView', () => {
   it('资源胶囊按内容宽度排、放不下换行，大数字不溢出到旁边的胶囊（P5 终审 I1：银币 12,345,678 时压到体力上）', async () => {
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, coin: 12_345_678 });
     const w = await mountView();
-    expect(w.get('[data-testid="home-status"] [data-testid="home-level"] + .dt-home-res').exists()).toBe(
+    expect(w.find('[data-testid="home-status"] [data-testid="home-level"] + .dt-home-res').exists()).toBe(
       true,
     );
     const css = readCss('main');
