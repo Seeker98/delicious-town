@@ -3,6 +3,11 @@ import { plEn } from '../../helpers';
 
 const forum: Messages['forum'] = {
   title: 'Forum',
+  whoWhen: (name, when) => `${name} · ${when}`,
+  readN: (n) => `${n} reads`,
+  upN: (n) => `${n} likes`,
+  downN: (n) => `${n} dislikes`,
+  replyN: (n) => `${n} replies`,
   tabs: { all: 'All', chat: 'Chat', guide: 'Guides', feedback: 'Feedback', featured: 'Featured' },
   categories: { chat: 'Chat', guide: 'Guides', feedback: 'Feedback' },
   loadFailed: "Couldn't load the forum",
@@ -16,6 +21,14 @@ const forum: Messages['forum'] = {
   itemMeta: (name, when, read, up, reply) =>
     `${name} · ${when} · ${read} ${plEn(read, 'view', 'views')} · ${up} ${plEn(up, 'like', 'likes')} · ${reply} ${plEn(reply, 'reply', 'replies')}`,
   post: {
+    more: 'More actions',
+    menuTitle: 'This post',
+    byFloor: 'Oldest first',
+    noReplies: 'No replies yet',
+    writeReply: 'Write a reply…',
+    replyToCancel: 'Stop replying to this floor',
+    readsNote: 'Who read it and how often',
+    adminTag: 'Admin',
     loadFailed: "Couldn't load the post",
     opFailed: 'Action failed',
     featuredReward: 'Featured. The author got the featured reward.',
@@ -48,6 +61,10 @@ const forum: Messages['forum'] = {
     verifyToReply: 'Verify your email to reply',
   },
   edit: {
+    category: 'Category',
+    titleLabel: 'Title',
+    contentLabel: 'Text',
+    note: 'Plain text only.',
     newTitle: 'New post',
     editTitle: 'Edit post',
     titlePlaceholder: 'Title (up to 40 characters)',

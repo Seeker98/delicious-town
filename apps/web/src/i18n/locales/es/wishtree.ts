@@ -5,6 +5,7 @@ const wishtree: Messages['wishtree'] = {
   wishFailed: 'No se pudo pedir el deseo',
   intro: 'Cada día el árbol da un objeto, y uno de los restaurantes que pidieron un deseo se lo lleva.',
   helpTitle: 'Cómo funciona el Árbol de los deseos',
+  helpSub: (hour) => `Sorteo diario a las ${hour}:00; un restaurante se lleva el objeto y un título`,
   help: (hour, minLevel, titleDays, titleName) => [
     `El sorteo es cada día a las ${hour}:00 y a la vez el árbol da un objeto nuevo, igual para todo el servidor`,
     `Los restaurantes de nivel ${minLevel} o más pueden pedir 1 deseo por ronda, gratis`,
@@ -14,7 +15,8 @@ const wishtree: Messages['wishtree'] = {
   off: 'El Árbol de los deseos aún no está abierto en este servidor',
   today: 'Hoy el árbol da',
   entries: (n) => `${n} ${n === 1 ? 'deseo' : 'deseos'} hasta ahora`,
-  drawAt: (time) => `Sorteo: ${time}`,
+  drawAtLeft: (time, left) => `Sorteo: ${time} (${left})`,
+  free: (level) => `Un deseo gratis por ronda desde el nivel ${level}`,
   wish: 'Pedir un deseo',
   wished: 'Deseo pedido, esperando el sorteo',
   need: (level) => `Tu restaurante necesita nivel ${level} para pedir un deseo`,
@@ -23,9 +25,10 @@ const wishtree: Messages['wishtree'] = {
   recentTitle: 'Rondas recientes',
   noRecent: 'Aún no ha habido sorteos',
   empty: 'Nadie pidió un deseo',
-  winner: (name, n) => `Ganó ${name} (${n} ${n === 1 ? 'deseo' : 'deseos'})`,
-  mine: '¡Ganaste! El premio está en tu buzón',
-  lost: (award) => `No ganaste, recibiste ${award}`,
-  pending: 'No ganaste. Tu premio de consolación llegará enseguida',
+  recentTitleLine: (day, prize) => `${day} · ${prize}`,
+  winnerTail: (n) => ` ganó · ${n} ${n === 1 ? 'deseo' : 'deseos'}`,
+  mineTag: 'Ganaste',
+  lostTag: (award) => `No ganaste · ${award}`,
+  pendingTag: 'No ganaste · premio en camino',
 };
 export default wishtree;

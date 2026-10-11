@@ -70,7 +70,7 @@ describe('BarView', () => {
     expect(w.get('[data-testid="bar-wenjie-line"]').text()).not.toBe('');
   });
 
-  it('和雯姐每天聊一次搬到了酒吧：聊了提示台词和奖励，重新读取；聊过的变灰（问题记录 453）', async () => {
+  it('和雯姐每天聊一次搬到了酒吧：聊了提示台词和奖励，重新读取；聊过的写绿色小标签（问题记录 453；界面改版 P10）', async () => {
     vi.mocked(endpoints.townTalk).mockResolvedValue({
       npc: 'wenjie',
       talk: 'wenjie',
@@ -87,7 +87,11 @@ describe('BarView', () => {
     expect(endpoints.bar).toHaveBeenCalledTimes(2);
     vi.mocked(endpoints.bar).mockResolvedValue(barData({ wenjieTalked: true }));
     const { w: again } = await mountBar();
-    expect(again.get('[data-testid="talk-wenjie"]').attributes('disabled')).toBeDefined();
+    // 聊过了不放灰掉的按钮，写“今天聊过了”小标签（界面改版 P10）
+    const done = again.get('[data-testid="talk-wenjie"]');
+    expect(done.element.tagName).toBe('SPAN');
+    expect(done.classes()).toContain('dt-tag-ok');
+    expect(done.text()).toBe('今天聊过了');
   });
 
   it('区服关了小镇（聊天走小镇的接口）：酒吧不显示和雯姐聊天（终审）', async () => {

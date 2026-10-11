@@ -17,13 +17,16 @@ const ICON: Record<NpcCardKey, string> = {
   fanDao: 'bi-search',
   xiaoKai: 'bi-flag',
 };
-/** 已经画了头像的 NPC（界面改版 P8；P9 加了饭老道） */
+/** 已经画了头像的 NPC（界面改版 P8；P9 加了饭老道，P10 加了协会的三位） */
 const ART: Partial<Record<NpcCardKey, ArtName>> = {
+  mayor: 'npc-mayor',
+  bro13: 'npc-bro13',
+  carmen: 'npc-carmen',
   gary: 'npc-gary',
   garyWealth: 'npc-gary',
   fanDao: 'npc-fandao',
 };
-const props = defineProps<{ npc: NpcCardKey }>();
+const props = defineProps<{ npc: NpcCardKey; large?: boolean }>();
 const t = useT();
 const lines = computed(() => t.value.npc[props.npc].lines.map((text) => ({ text, weight: 1 })));
 </script>
@@ -36,5 +39,9 @@ const lines = computed(() => t.value.npc[props.npc].lines.map((text) => ({ text,
     :lines="lines"
     :ready="true"
     :testid="`npc-${npc}`"
-  />
+    :large="large"
+  >
+    <!-- 右边的按钮（界面改版 P10：协会 NPC 的聊天、见面礼） -->
+    <template v-if="$slots.default" #default><slot /></template>
+  </MascotCard>
 </template>

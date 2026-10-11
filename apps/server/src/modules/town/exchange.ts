@@ -60,9 +60,16 @@ export async function exchangeView(
       .where('id', '=', restId)
       .executeTakeFirstOrThrow();
     const { needMap } = await streetNeeds(db, config, restId, rest.street_id, tuning.rest.cookbookMaxGrade);
-    for (const [id, r] of await foodsMap(db, restId)) if (r.num > 0 && listed.has(id)) foodHave[id] = r.num;
     for (const [id, n] of needMap) if (n > 0 && listed.has(id)) streetNeed[id] = n;
   }
+  // 卡门的格子写每种神秘食材有几个（界面改版 P10）；镇长的页还是不查
+  const mysteryFoods = mysteryFoodIds(config, town);
+  const wanted = new Set<number>([
+    ...(part === undefined || part === 'level' ? listed : []),
+    ...(part === undefined || part === 'mystery' ? mysteryFoods : []),
+  ]);
+  if (wanted.size > 0)
+    for (const [id, r] of await foodsMap(db, restId)) if (r.num > 0 && wanted.has(id)) foodHave[id] = r.num;
   return {
     items: list.map((e) => ({
       id: e.id,
@@ -78,7 +85,7 @@ export async function exchangeView(
     levelFoods,
     foodHave,
     streetNeed,
-    mysteryFoods: mysteryFoodIds(config, town),
+    mysteryFoods,
     maxNum: town.exchangeMaxNum,
   };
 }

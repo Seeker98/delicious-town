@@ -46,8 +46,8 @@ describe('协会里的 NPC 页（问题记录 441、443）', () => {
     expect(w.get('[data-testid="npc-mayor"]').text()).toContain('镇长大胃锅');
     // 顶栏标题写“NPC 名 · 功能”（界面改版 P2b）
     expect(usePageTitleStore().title).toBe('镇长大胃锅 · 稀有道具兑换');
-    expect(w.find('[data-testid="talk-bigEater"]').exists()).toBe(true);
-    expect(w.text()).toContain('每天聊天送 1~5 级食材和一颗种子');
+    // 聊天按钮放进 NPC 大头像卡右边（界面改版 P10：只有按钮，不再写每天送什么）
+    expect(w.get('[data-testid="npc-mayor"]').get('[data-testid="talk-bigEater"]').text()).toBe('聊天');
     expect(w.find('[data-testid="mayor-row"]').exists()).toBe(true);
     expect(
       w
@@ -57,7 +57,7 @@ describe('协会里的 NPC 页（问题记录 441、443）', () => {
     ).toEqual(['/society/bro13', '/society/carmen']);
     expect(w.findAll('[data-testid^="ex-row-"]').length).toBeGreaterThan(0);
     expect(w.find('[data-testid="lt-level-1"]').exists()).toBe(false);
-    expect(w.find('[data-testid="mt-food"]').exists()).toBe(false);
+    expect(w.find('[data-testid="mt-grid"]').exists()).toBe(false);
   });
 
   it('13 哥：每天聊天送喇叭，食材兑换券换食材；不显示稀有道具和神秘食材券', async () => {
@@ -66,20 +66,47 @@ describe('协会里的 NPC 页（问题记录 441、443）', () => {
     expect(w.find('[data-testid="talk-bro13"]').exists()).toBe(true);
     expect(w.find('[data-testid="lt-level-1"]').exists()).toBe(true);
     expect(w.find('[data-testid^="ex-row-"]').exists()).toBe(false);
-    expect(w.find('[data-testid="mt-food"]').exists()).toBe(false);
+    expect(w.find('[data-testid="mt-grid"]').exists()).toBe(false);
   });
 
   it('卡门：神秘食材兑换券换神秘食材；没领过见面礼时有“见面礼”，领过就没有（问题记录 441）', async () => {
     const w = await mountAt('carmen');
     expect(w.get('[data-testid="npc-carmen"]').text()).toContain('卡门');
-    expect(w.find('[data-testid="mt-food"]').exists()).toBe(true);
+    expect(w.find('[data-testid="mt-grid"]').exists()).toBe(true);
     expect(w.find('[data-testid="lt-level-1"]').exists()).toBe(false);
     expect(w.find('[data-testid^="ex-row-"]').exists()).toBe(false);
-    expect(w.find('[data-testid="talk-carmen"]').exists()).toBe(true);
-    expect(w.text()).toContain('见面礼: 神秘食材兑换券 (每家店一次)');
+    // 见面礼是 NPC 卡右边的实心按钮（界面改版 P10）
+    const gift = w.get('[data-testid="npc-carmen"]').get('[data-testid="talk-carmen"]');
+    expect(gift.text()).toBe('领见面礼');
+    expect(gift.classes()).toContain('btn-primary');
     vi.mocked(endpoints.town).mockResolvedValue(townData({ bigEaterGift: true }));
     const got = await mountAt('carmen');
     expect(got.find('[data-testid="talk-carmen"]').exists()).toBe(false);
+  });
+
+  it('今天聊过了：NPC 卡右边写绿色小标签，不放灰掉的按钮（界面改版 P10）', async () => {
+    vi.mocked(endpoints.town).mockResolvedValue(
+      townData({ talked: { bigEater: true, wenjie: false, bro13: true, carmen: false } }),
+    );
+    for (const [npc, key] of [
+      ['mayor', 'bigEater'],
+      ['bro13', 'bro13'],
+    ] as const) {
+      const tag = (await mountAt(npc)).get(`[data-testid="talk-${key}"]`);
+      expect(tag.element.tagName).toBe('SPAN');
+      expect(tag.classes()).toContain('dt-tag-ok');
+      expect(tag.text()).toBe('今天聊过了');
+    }
+  });
+
+  it('点聊天调接口，然后重读广场数据', async () => {
+    vi.mocked(endpoints.townTalk).mockResolvedValue({ talk: 'hi', rewards: [] } as never);
+    const w = await mountAt('bro13');
+    expect(endpoints.town).toHaveBeenCalledTimes(1);
+    await w.get('[data-testid="talk-bro13"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.townTalk).toHaveBeenCalledWith('bro13');
+    expect(endpoints.town).toHaveBeenCalledTimes(2);
   });
 
   it('教室页不请求广场数据', async () => {

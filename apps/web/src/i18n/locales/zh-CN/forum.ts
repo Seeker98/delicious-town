@@ -11,6 +11,12 @@ export default {
   empty: '还没有帖子',
   pinned: '置顶',
   featured: '精',
+  /** 界面改版 P10 */
+  whoWhen: (name: string, when: string) => `${name} · ${when}`,
+  readN: (n: number) => `阅读 ${n}`,
+  upN: (n: number) => `赞 ${n}`,
+  downN: (n: number) => `踩 ${n}`,
+  replyN: (n: number) => `回复 ${n}`,
   itemMeta: (name: string, when: string, read: number, up: number, reply: number) =>
     `${name} · ${when} · 阅读 ${read} · 赞 ${up} · 回复 ${reply}`,
   post: {
@@ -44,6 +50,15 @@ export default {
     anonymous: '匿名',
     replyWait: (s: number) => `${s} 秒后可以再回复`,
     verifyToReply: '验证邮箱后才能回复',
+    /** 界面改版 P10 */
+    more: '更多操作',
+    menuTitle: '这篇帖子',
+    byFloor: '按楼层',
+    noReplies: '还没有回复',
+    writeReply: '写回复…',
+    replyToCancel: '不回复这一层',
+    readsNote: '谁读了几次',
+    adminTag: '管理员',
   },
   edit: {
     newTitle: '发帖',
@@ -51,6 +66,10 @@ export default {
     titlePlaceholder: '标题 (最多 40 字)',
     contentPlaceholder: '正文 (纯文字, 最多 5000 字)',
     publish: '发布',
+    category: '分类',
+    titleLabel: '标题',
+    contentLabel: '正文',
+    note: '只支持纯文字。',
     failed: '发布失败',
   },
 };

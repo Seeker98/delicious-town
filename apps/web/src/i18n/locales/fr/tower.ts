@@ -107,6 +107,8 @@ const tower: Messages['tower'] = {
     go: (n) => `Défier · ${n} énergie`,
   },
   friend: {
+    tile: 'Duel amical',
+    leftN: (n) => `Encore ${n} aujourd'hui`,
     loadFailed: 'Impossible de charger les duels',
     noMore: "Plus de duels contre lui aujourd'hui",
     failed: 'Échec du duel',

@@ -56,6 +56,7 @@ const npc: Messages['npc'] = {
       'Unclaimed rewards are mailed to you after the event ends.',
     ],
   },
+  carmenGift: 'Welcome gift',
   links: {
     classroom: { label: 'Classroom', desc: 'Teach, learn and sneak-learn signature dishes' },
     mayor: {

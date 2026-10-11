@@ -15,6 +15,18 @@ export default {
   claimed: '· 已领取',
   broken: '· 附件已失效, 请联系运营',
   items: (text: string) => `附件: ${text}`,
+  expires: (n: number) => `还剩 ${n} 天`,
+  /** 界面改版 P10 */
+  redeemSub: '输兑换码领奖励',
+  listTitle: '邮件',
+  countLine: (n: number, can: number) => (can > 0 ? `${n} 封 · ${can} 封可领` : `${n} 封`),
+  openLabel: (title: string) => `打开邮件: ${title}`,
+  iconMark: '称',
+  needLevelTag: (n: number) => `需 ${n} 级`,
+  claimedTag: '已领取',
+  brokenTag: '附件失效',
+  emptyBody: '活动奖励、排行礼包、管理员补偿都会发到这里',
+  itemsTitle: '附件',
   redeem: {
     placeholder: '输入兑换码',
     label: '兑换码',

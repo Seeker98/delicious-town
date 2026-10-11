@@ -108,10 +108,24 @@ describe('TicketPanel', () => {
     vi.mocked(endpoints.townMysteryTicket).mockResolvedValue({ foods: [{ foodsId: 702, num: 1 }] });
     const w = mount(TicketPanel, { props: { data: exchangeData() } });
     expect(w.find('[data-testid="mt-go"]').attributes('disabled')).toBeDefined();
-    await w.find('[data-testid="mt-food"]').setValue('702');
+    expect(w.get('[data-testid="mt-go"]').text()).toBe('先点一种神秘食材');
+    // 界面改版 P10：原来是下拉框，现在点一格选中
+    await w.find('[data-testid="mt-food-702"]').trigger('click');
+    expect(w.get('[data-testid="mt-food-702"]').attributes('aria-pressed')).toBe('true');
+    expect(w.get('[data-testid="mt-food-701"]').attributes('aria-pressed')).toBe('false');
+    expect(w.find('[data-testid="mt-go"]').attributes('disabled')).toBeUndefined();
+    expect(w.get('[data-testid="mt-go"]').text()).toMatch(/^用 1 张换 /);
     await w.find('[data-testid="mt-go"]').trigger('click');
     await flushPromises();
     expect(endpoints.townMysteryTicket).toHaveBeenCalledWith(702);
+    // 换完清掉选择
+    expect(w.get('[data-testid="mt-food-702"]').attributes('aria-pressed')).toBe('false');
+
+    // 没有券时选了也不能换，并写明
+    const none = mount(TicketPanel, { props: { data: exchangeData({ mysteryTickets: 0 }) } });
+    await none.find('[data-testid="mt-food-701"]').trigger('click');
+    expect(none.find('[data-testid="mt-go"]').attributes('disabled')).toBeDefined();
+    expect(none.text()).toContain('没有神秘食材兑换券');
   });
 
   it('兑换请求进行中加减、数量都不能动：兑换完会清空，点了也会被盖掉（491 遗留）', async () => {
@@ -145,9 +159,13 @@ describe('TicketPanel', () => {
   it('part：只显示 N 级券（13 哥）或只显示神秘券（卡门，问题记录 441）', () => {
     const level = mount(TicketPanel, { props: { data: exchangeData(), part: 'level' } });
     expect(level.find('[data-testid="lt-level-1"]').exists()).toBe(true);
-    expect(level.find('[data-testid="mt-food"]').exists()).toBe(false);
+    expect(level.find('[data-testid="lt-bar"]').exists()).toBe(true);
+    expect(level.find('[data-testid="mt-grid"]').exists()).toBe(false);
+    expect(level.find('[data-testid="mt-go"]').exists()).toBe(false);
     const mystery = mount(TicketPanel, { props: { data: exchangeData(), part: 'mystery' } });
     expect(mystery.find('[data-testid="lt-level-1"]').exists()).toBe(false);
-    expect(mystery.find('[data-testid="mt-food"]').exists()).toBe(true);
+    expect(mystery.find('[data-testid="lt-bar"]').exists()).toBe(false);
+    expect(mystery.find('[data-testid="mt-food-701"]').exists()).toBe(true);
+    expect(mystery.find('[data-testid="mt-go"]').exists()).toBe(true);
   });
 });

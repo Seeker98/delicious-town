@@ -54,6 +54,52 @@ describe('DailyCard', () => {
     expect(w.find('[data-testid="daily-english-only"]').exists()).toBe(false);
   });
 
+  it('界面改版 P10：默认只显示前两段，“读全文”展开、“收起”收回；换一天收起；不到三段不出按钮', async () => {
+    const long = `第一段。
+
+第二段。
+
+第三段。
+
+第四段。`;
+    vi.mocked(endpoints.townDaily)
+      .mockResolvedValueOnce(
+        dto({ article: { 'zh-CN': art('长稿', long), en: art('Long', long), 'zh-TW': art('長稿', long) } }),
+      )
+      .mockResolvedValueOnce(
+        dto({
+          day: '2026-10-07',
+          article: { 'zh-CN': art('长稿', long), en: art('Long', long), 'zh-TW': art('長稿', long) },
+        }),
+      );
+    const w = mountCard();
+    await flushPromises();
+    const texts = () => w.findAll('[data-testid="daily-para"]').map((p) => p.text());
+    expect(texts()).toEqual(['第一段。', '第二段。']);
+    const more = () => w.get('[data-testid="daily-more"]');
+    expect(more().text()).toBe('读全文 ›');
+    expect(more().attributes('aria-expanded')).toBe('false');
+    await more().trigger('click');
+    expect(texts()).toEqual(['第一段。', '第二段。', '第三段。', '第四段。']);
+    expect(more().text()).toBe('收起');
+    expect(more().attributes('aria-expanded')).toBe('true');
+    await more().trigger('click');
+    expect(texts()).toHaveLength(2);
+    // 展开后换一天：收起
+    await more().trigger('click');
+    await w.get('[data-testid="daily-prev"]').trigger('click');
+    await flushPromises();
+    expect(texts()).toHaveLength(2);
+    expect(more().attributes('aria-expanded')).toBe('false');
+
+    // 只有两段：没有“读全文”
+    vi.mocked(endpoints.townDaily).mockResolvedValueOnce(dto());
+    const short = mountCard();
+    await flushPromises();
+    expect(short.findAll('[data-testid="daily-para"]')).toHaveLength(2);
+    expect(short.find('[data-testid="daily-more"]').exists()).toBe(false);
+  });
+
   it('没发布：显示当日要闻（那一天的要闻，不是今天的）', async () => {
     vi.mocked(endpoints.townDaily).mockResolvedValue(dto({ article: null, fallback: [news(1), news(2)] }));
     const w = mountCard();

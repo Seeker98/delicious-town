@@ -25,4 +25,21 @@ describe('MascotCard', () => {
     await w.get('[data-testid="m"]').trigger('click');
     expect(w.get('[data-testid="m-line"]').text()).not.toBe(before);
   });
+
+  it('large：大头像（界面改版 P10：协会 NPC 页），卡片带 is-large；默认是 40px', () => {
+    const props = {
+      name: '卡门',
+      icon: 'bi-stars',
+      art: 'npc-carmen' as const,
+      lines: [{ text: 'a', weight: 1 }],
+      ready: true,
+      testid: 'm',
+    };
+    const big = mount(MascotCard, { props: { ...props, large: true } });
+    expect(big.get('[data-testid="m"]').classes()).toContain('is-large');
+    expect(big.get('.dt-npc-ava svg').attributes('width')).toBe('56');
+    const small = mount(MascotCard, { props });
+    expect(small.get('[data-testid="m"]').classes()).not.toContain('is-large');
+    expect(small.get('.dt-npc-ava svg').attributes('width')).toBe('40');
+  });
 });

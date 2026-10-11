@@ -43,7 +43,7 @@ describe('FriendExchangeView', () => {
     expect(w.find('[data-testid="mine-13"]').attributes('disabled')).toBeDefined();
     await w.find('[data-testid="theirs-11"]').trigger('click');
     await w.find('[data-testid="mine-12"]').trigger('click');
-    expect(w.find('[data-testid="confirm"]').text()).toContain('手续费 20');
+    expect(w.get('[data-testid="exchange-bar"]').text()).toContain('手续费 20');
     await w.find('[data-testid="confirm"]').trigger('click');
     await flushPromises();
     expect(endpoints.exchange).toHaveBeenCalledWith({ restId: 2, giveFoodsId: 12, takeFoodsId: 11 });

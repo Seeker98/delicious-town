@@ -1,5 +1,5 @@
 /*! Bootstrap Icons v1.13.1 | Copyright 2019-2024 The Bootstrap Authors | MIT License | https://github.com/twbs/icons/blob/main/LICENSE */
-/* 由 scripts/gen-icons.mjs 生成，别手改：只含网页用到的 52 个图标 */
+/* 由 scripts/gen-icons.mjs 生成，别手改：只含网页用到的 51 个图标 */
 
 @font-face {
   font-display: block;
@@ -22,6 +22,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.bi-arrow-left-right::before { content: "\f12b"; }
 .bi-arrow-up-circle::before { content: "\f13a"; }
 .bi-bank::before { content: "\f62e"; }
 .bi-basket::before { content: "\f180"; }
@@ -30,7 +31,7 @@
 .bi-box-seam::before { content: "\f1c7"; }
 .bi-braces::before { content: "\f1c9"; }
 .bi-bug::before { content: "\f1dc"; }
-.bi-chat-square-text::before { content: "\f264"; }
+.bi-chat-square::before { content: "\f265"; }
 .bi-check-circle::before { content: "\f26b"; }
 .bi-check-lg::before { content: "\f633"; }
 .bi-check2::before { content: "\f272"; }
@@ -42,13 +43,11 @@
 .bi-clock::before { content: "\f293"; }
 .bi-compass::before { content: "\f2d1"; }
 .bi-cup-hot::before { content: "\f7eb"; }
-.bi-cup-straw::before { content: "\f2df"; }
 .bi-dash-lg::before { content: "\f63b"; }
 .bi-dot::before { content: "\f309"; }
-.bi-droplet-half::before { content: "\f30c"; }
-.bi-easel::before { content: "\f310"; }
 .bi-envelope::before { content: "\f32f"; }
 .bi-exclamation-triangle::before { content: "\f33b"; }
+.bi-eye::before { content: "\f341"; }
 .bi-flag::before { content: "\f3cc"; }
 .bi-flower2::before { content: "\f3ce"; }
 .bi-gift::before { content: "\f3ec"; }
@@ -60,17 +59,17 @@
 .bi-lock::before { content: "\f47b"; }
 .bi-lock-fill::before { content: "\f47a"; }
 .bi-megaphone::before { content: "\f484"; }
-.bi-newspaper::before { content: "\f4a3"; }
 .bi-pencil::before { content: "\f4cb"; }
 .bi-person-badge::before { content: "\f4d3"; }
-.bi-person-circle::before { content: "\f4d7"; }
+.bi-person-dash::before { content: "\f4d9"; }
+.bi-pin-angle::before { content: "\f4eb"; }
 .bi-plus-lg::before { content: "\f64d"; }
 .bi-search::before { content: "\f52a"; }
-.bi-signpost::before { content: "\f54a"; }
 .bi-signpost-2::before { content: "\f546"; }
 .bi-star::before { content: "\f588"; }
 .bi-stars::before { content: "\f589"; }
+.bi-three-dots::before { content: "\f5d4"; }
 .bi-ticket-perforated::before { content: "\f6ca"; }
 .bi-tools::before { content: "\f5db"; }
-.bi-x-circle::before { content: "\f623"; }
+.bi-trash::before { content: "\f5de"; }
 .bi-x-lg::before { content: "\f659"; }

@@ -36,7 +36,11 @@ test('后台发单店邮件 → 玩家在邮箱领取，银币到账', async ({ 
   await page.goto('/mail');
   await expect(page.getByText('e2e 测试邮件')).toBeVisible();
   await expect(page.getByTestId('mail-link')).toContainText('1');
-  await page.locator('[data-testid^="mail-claim-"]').first().click();
-  await expect(page.locator('[data-testid^="mail-delete-"]').first()).toBeVisible();
+  const row = page.getByTestId('mail-list').locator('.dt-mail-row', { hasText: 'e2e 测试邮件' });
+  await row.locator('[data-testid^="mail-claim-"]').click();
+  // 领过的邮件这一行写“已领取”，删除在点开的面板里（界面改版 P10）
+  await expect(row).toContainText('已领取');
+  await row.locator('[data-testid^="mail-title-"]').click();
+  await expect(page.getByTestId('mail-sheet-delete')).toBeVisible();
   expect((await overview()).coin).toBe(before.coin + 1234);
 });

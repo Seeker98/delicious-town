@@ -13,7 +13,7 @@ defineEmits<{ 'update:modelValue': [key: string] }>();
 </script>
 
 <template>
-  <div v-if="tabs.length > 1" class="dt-tabs-bar">
+  <div v-if="tabs.length > 1" :class="['dt-tabs-bar', { 'has-end': !!$slots.end }]">
     <ul class="nav nav-tabs" role="tablist">
       <li v-for="x in tabs" :key="x.key" class="nav-item" role="presentation">
         <button
@@ -29,5 +29,7 @@ defineEmits<{ 'update:modelValue': [key: string] }>();
         </button>
       </li>
     </ul>
+    <!-- 标签栏右边的一个链接（界面改版 P10：广场的“论坛 ›”） -->
+    <span v-if="$slots.end" class="dt-tabs-end"><slot name="end" /></span>
   </div>
 </template>

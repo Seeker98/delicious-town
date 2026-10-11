@@ -119,6 +119,8 @@ export interface LeaderboardRowDto {
   rank: number;
   restId: number;
   name: string;
+  /** 头像（界面改版 P10），没设为 null */
+  avatar: number | null;
   value: number;
 }
 

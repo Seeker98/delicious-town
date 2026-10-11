@@ -3,6 +3,8 @@ import { computed, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { FriendRequestDto, FriendsDto, RestBriefDto, RestLogDto, ThumbTodayDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtArt from '../components/DtArt.vue';
+import DtEmpty from '../components/DtEmpty.vue';
 import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
 import { useTabQuery } from '../composables/useTabQuery';
@@ -13,6 +15,9 @@ import { useToastStore } from '../stores/toast';
 import { markFeedSeen } from '../utils/feed';
 import { useRestaurantStore } from '../stores/restaurant';
 import { restName } from '../utils/npcName';
+import { restAva } from '../utils/restAva';
+import { useCatalogStore } from '../stores/catalog';
+import { gameDateTime } from '../utils/format';
 
 type Tab = 'friends' | 'requests' | 'find' | 'feed';
 const toast = useToastStore();
@@ -38,6 +43,18 @@ const street = ref<RestBriefDto[]>([]);
 const feed = ref<RestLogDto[]>([]);
 const thumbs = ref<ThumbTodayDto[]>([]);
 const busy = ref(false);
+const catalog = useCatalogStore();
+// 头像图要目录里的外观表
+void catalog.load();
+/** 头像（界面改版 P10）：蟹老板画蟹老板，别的店画它选的头像 */
+const ava = (id: number, avatar: number | null) => restAva(id, avatar, (x) => catalog.avatarArt(x));
+const when = (iso: string) =>
+  gameDateTime(iso, { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+/** 找好友页“同街道的餐厅”右边写我在哪条街 */
+const streetLabel = computed(() => {
+  const r = restStore.rest;
+  return r ? catalog.streetName(r.streetId, r.streetName) : '';
+});
 
 async function run(fn: () => Promise<void>, fallback: string) {
   if (busy.value) return;
@@ -138,106 +155,180 @@ watch(tab, (k) => void show(k), { immediate: true });
 <template>
   <DtTabs v-model="tab" :tabs="tabItems" />
 
+  <!-- 我的好友（界面改版 P10）：头像、加粗店名和等级星级，能做的事写成小标签；整行点进好友餐厅 -->
   <template v-if="tab === 'friends' && list">
-    <div class="d-flex justify-content-between align-items-center mb-2 small">
-      <span>{{ t.friends.count(list.count, list.max) }}</span>
-      <select v-model="sort" class="form-select form-select-sm w-auto" @change="show('friends')">
-        <option value="level">{{ t.friends.sorts.level }}</option>
-        <option value="star">{{ t.friends.sorts.star }}</option>
-        <option value="recent">{{ t.friends.sorts.recent }}</option>
-      </select>
+    <div class="dt-friends-head">
+      <b>{{ t.friends.count(list.count, list.max) }}</b>
+      <span class="dt-select-pill">
+        <select
+          v-model="sort"
+          :aria-label="t.friends.sortLabel"
+          data-testid="friend-sort"
+          @change="show('friends')"
+        >
+          <option value="level">{{ t.friends.sorts.level }}</option>
+          <option value="star">{{ t.friends.sorts.star }}</option>
+          <option value="recent">{{ t.friends.sorts.recent }}</option>
+        </select>
+      </span>
     </div>
-    <p v-if="list.items.length === 0" class="text-muted small">{{ t.friends.noFriends }}</p>
-    <RouterLink
-      v-for="f in list.items"
-      :key="f.id"
-      :to="`/friends/${f.id}`"
-      class="d-flex align-items-center border-bottom px-1 py-1 text-decoration-none"
-      :data-testid="`friend-row-${f.id}`"
+    <DtEmpty
+      v-if="list.items.length === 0"
+      art="empty-friends"
+      :title="t.friends.emptyTitle"
+      :body="t.friends.emptyBody"
+      data-testid="friends-empty"
+      ><button type="button" class="btn btn-sm btn-outline-primary" @click="tab = 'find'">
+        {{ t.friends.tabs.find }}
+      </button></DtEmpty
     >
-      <i class="bi bi-person-circle me-1 flex-shrink-0" aria-hidden="true"></i>
-      <!-- 问题记录 168：店名、等级、状态压到一行 -->
-      <div class="flex-fill dt-friend-line small">
-        <b>{{ restName(f.id, f.name) }}</b>
-        <span class="text-muted ms-1">{{ t.friends.levelStar(f.level, f.star) }}</span>
-        <span v-if="f.roaches > 0" class="text-muted ms-2">{{ t.friends.roaches(f.roaches) }}</span>
-        <span v-if="f.dineSeat" class="text-muted ms-2">{{ t.friends.canDine }}</span>
-        <span v-if="f.flipReady > 0" class="text-muted ms-2">{{ t.friends.canFlip(f.flipReady) }}</span>
-      </div>
-    </RouterLink>
+    <div v-else class="dt-card dt-rows-card">
+      <RouterLink
+        v-for="f in list.items"
+        :key="f.id"
+        :to="`/friends/${f.id}`"
+        class="dt-row is-link dt-friend-row"
+        :data-testid="`friend-row-${f.id}`"
+      >
+        <span class="dt-friend-ava"><DtArt :name="ava(f.id, f.avatar)" :size="40" /></span>
+        <span class="dt-row-main">
+          <span class="dt-row-title is-strong"
+            >{{ restName(f.id, f.name)
+            }}<span class="dt-row-meta">{{ t.friends.levelStar(f.level, f.star) }}</span></span
+          >
+          <span v-if="f.roaches > 0 || f.dineSeat || f.flipReady > 0" class="dt-friend-tags">
+            <span v-if="f.roaches > 0" class="dt-tag dt-tag-danger">{{ t.friends.roaches(f.roaches) }}</span>
+            <span v-if="f.dineSeat" class="dt-tag dt-tag-ok">{{ t.friends.canDine }}</span>
+            <span v-if="f.flipReady > 0" class="dt-tag dt-tag-primary">{{
+              t.friends.canFlip(f.flipReady)
+            }}</span>
+          </span>
+          <span v-else class="dt-row-sub">{{ t.friends.nothing }}</span>
+        </span>
+      </RouterLink>
+    </div>
   </template>
 
   <template v-if="tab === 'requests'">
-    <p v-if="requests.length === 0" class="text-muted small">{{ t.friends.noRequests }}</p>
-    <div
-      v-for="r in requests"
-      :key="r.id"
-      class="d-flex align-items-center border rounded p-2 mb-1"
-      :data-testid="`request-${r.id}`"
-    >
-      <div class="flex-fill">
-        {{ restName(r.id, r.name) }} <span class="text-muted small">{{ t.friends.level(r.level) }}</span>
+    <div v-if="requests.length === 0" class="dt-card dt-up-max">{{ t.friends.noRequests }}</div>
+    <div v-else class="dt-card dt-rows-card">
+      <div v-for="r in requests" :key="r.id" class="dt-row dt-friend-row" :data-testid="`request-${r.id}`">
+        <span class="dt-friend-ava"><DtArt :name="ava(r.id, r.avatar)" :size="40" /></span>
+        <span class="dt-row-main">
+          <span class="dt-row-title is-strong"
+            >{{ restName(r.id, r.name)
+            }}<span class="dt-row-meta">{{ t.friends.levelStar(r.level, r.star) }}</span></span
+          >
+          <span class="dt-row-sub">{{ t.friends.appliedAt(when(r.at)) }}</span>
+        </span>
+        <span class="dt-row-end dt-friend-acts">
+          <button
+            type="button"
+            class="btn btn-sm btn-light"
+            :disabled="busy"
+            :data-testid="`reject-${r.id}`"
+            @click="respond(r, false)"
+          >
+            {{ t.friends.reject }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-primary"
+            :data-testid="`accept-${r.id}`"
+            :disabled="busy"
+            @click="respond(r, true)"
+          >
+            {{ t.friends.accept }}
+          </button>
+        </span>
       </div>
-      <button
-        class="btn btn-sm btn-primary me-1"
-        :data-testid="`accept-${r.id}`"
-        :disabled="busy"
-        @click="respond(r, true)"
-      >
-        {{ t.friends.accept }}
-      </button>
-      <button class="btn btn-sm btn-outline-secondary" :disabled="busy" @click="respond(r, false)">
-        {{ t.friends.reject }}
-      </button>
     </div>
   </template>
 
   <template v-if="tab === 'find'">
-    <form class="d-flex mb-2" data-testid="search-form" @submit.prevent="search">
-      <input
-        v-model="q"
-        class="form-control me-1"
-        :placeholder="t.friends.searchPlaceholder"
-        maxlength="20"
-        data-testid="search-input"
-      />
-      <button class="btn btn-primary text-nowrap" :disabled="busy">{{ t.friends.search }}</button>
+    <form class="dt-forum-bar" data-testid="search-form" @submit.prevent="search">
+      <label class="dt-search-box">
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <input
+          v-model="q"
+          type="search"
+          :placeholder="t.friends.searchPlaceholder"
+          :aria-label="t.friends.searchPlaceholder"
+          maxlength="20"
+          data-testid="search-input"
+        />
+      </label>
+      <button type="submit" class="btn btn-primary dt-forum-new" :disabled="busy">
+        {{ t.friends.search }}
+      </button>
     </form>
-    <div v-for="(group, gi) in [found, street]" :key="gi">
-      <h6 v-if="gi === 1 && street.length > 0" class="mt-3">{{ t.friends.sameStreet }}</h6>
-      <div v-for="r in group" :key="r.id" class="d-flex align-items-center border rounded p-2 mb-1">
-        <RouterLink :to="`/friends/${r.id}`" class="flex-fill text-decoration-none">
-          {{ restName(r.id, r.name) }}
-          <span class="text-muted small">{{ t.friends.levelStar(r.level, r.star) }}</span>
-        </RouterLink>
-        <span v-if="r.isFriend" class="small text-muted">{{ t.friends.alreadyFriend }}</span>
-        <button
-          v-else
-          class="btn btn-sm btn-outline-primary"
-          :data-testid="`apply-${r.id}`"
-          :disabled="busy || r.requested"
-          @click="apply(r)"
-        >
-          {{ r.requested ? t.friends.requested : t.friends.addFriend }}
-        </button>
+    <template v-for="(group, gi) in [found, street]" :key="gi">
+      <div v-if="gi === 1 && street.length > 0" class="dt-block-head mt-3">
+        <h2 class="dt-block-title">{{ t.friends.sameStreet }}</h2>
+        <span class="dt-block-more">{{ streetLabel }}</span>
       </div>
-    </div>
+      <div v-if="group.length > 0" :class="['dt-card dt-rows-card', { 'mt-2': gi === 0 }]">
+        <div v-for="r in group" :key="r.id" class="dt-row dt-friend-row" :data-testid="`found-${r.id}`">
+          <span class="dt-friend-ava"><DtArt :name="ava(r.id, r.avatar)" :size="40" /></span>
+          <span class="dt-row-main">
+            <RouterLink :to="`/friends/${r.id}`" class="dt-row-title is-strong dt-friend-link"
+              >{{ restName(r.id, r.name)
+              }}<span class="dt-row-meta">{{ t.friends.levelStar(r.level, r.star) }}</span></RouterLink
+            >
+          </span>
+          <span class="dt-row-end">
+            <span v-if="r.isFriend" class="dt-tag dt-tag-ok">{{ t.friends.alreadyFriend }}</span>
+            <span v-else-if="r.requested" class="dt-tag dt-tag-mute">{{ t.friends.requested }}</span>
+            <button
+              v-else
+              type="button"
+              class="btn btn-sm btn-outline-primary"
+              :data-testid="`apply-${r.id}`"
+              :disabled="busy"
+              @click="apply(r)"
+            >
+              {{ t.friends.addFriend }}
+            </button>
+          </span>
+        </div>
+      </div>
+    </template>
   </template>
 
   <template v-if="tab === 'feed'">
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <span class="small">{{ t.friends.thumbsToday(thumbs.length) }}</span>
+    <div class="dt-card dt-thumbs" data-testid="thumbs-card">
+      <span v-if="thumbs.length > 0" class="dt-thumbs-avas" aria-hidden="true">
+        <span v-for="x in thumbs.slice(0, 3)" :key="x.restId" class="dt-thumbs-ava"
+          ><DtArt :name="ava(x.restId, x.avatar)" :size="32"
+        /></span>
+      </span>
+      <span class="dt-thumbs-main">
+        <b>{{ t.friends.thumbsToday(thumbs.length) }}</b>
+        <span v-if="thumbs.length > 0">{{
+          t.friends.returnedN(thumbs.filter((x) => x.returned).length)
+        }}</span>
+      </span>
+      <span v-if="thumbs.length > 0 && thumbs.every((x) => x.returned)" class="dt-tag dt-tag-ok">{{
+        t.friends.allReturned
+      }}</span>
       <button
+        v-else-if="thumbs.length > 0"
+        type="button"
         class="btn btn-sm btn-outline-primary"
         data-testid="return-all"
-        :disabled="busy || thumbs.every((x) => x.returned)"
+        :disabled="busy"
         @click="returnAll"
       >
         {{ t.friends.returnAll }}
       </button>
     </div>
-    <p v-if="feed.length === 0" class="text-muted small">{{ t.friends.noFeed }}</p>
+    <div class="dt-block-head mt-3">
+      <h2 class="dt-block-title">{{ t.friends.feedTitle }}</h2>
+    </div>
+    <div v-if="feed.length === 0" class="dt-card dt-up-max">{{ t.friends.noFeed }}</div>
     <!-- 和首页动态同一种行（界面改版 P2b）；文案和个人日志同一套：也有收购、老鼠这些不是好友做的事（问题记录 553） -->
-    <FeedRow v-for="(f, i) in feed" :key="i" :item="f" />
+    <div v-else class="dt-card dt-list-card">
+      <FeedRow v-for="(f, i) in feed" :key="i" :item="f" />
+    </div>
   </template>
 </template>

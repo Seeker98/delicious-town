@@ -82,6 +82,22 @@ describe('回复（设计文档 §2.2）', () => {
     expect((await seen(m)).restId).toBe(b.restaurantId);
   });
 
+  it('头像（界面改版 P10）：帖子和回复带头像，匿名回复对他人不给头像', async () => {
+    const { a, b, c, id } = await setup();
+    await t.db
+      .updateTable('restaurant')
+      .set({ avatar: 3 })
+      .where('id', 'in', [a.restaurantId, b.restaurantId])
+      .execute();
+    await reply(b, id, '实名');
+    later();
+    await reply(b, id, '悄悄话', { anonymous: true });
+    const d = (await f().detail(c, id)).data;
+    expect(d.post.avatar).toBe(3);
+    expect(d.replies.map((x) => x.avatar)).toEqual([3, null]);
+    expect((await f().detail(b, id)).data.replies.map((x) => x.avatar)).toEqual([3, 3]);
+  });
+
   it('删回复：本人和管理员可以，别人不行；删后保留楼层、内容为空', async () => {
     const { a, b, c, id } = await setup();
     const m = await newRestaurant(t, { shardId: a.shardId });

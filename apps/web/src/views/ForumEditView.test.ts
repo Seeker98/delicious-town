@@ -33,10 +33,12 @@ describe('ForumEditView', () => {
   it('新建：选分类、填标题正文后发布，跳到详情', async () => {
     vi.mocked(endpoints.forumCreate).mockResolvedValue({ id: 12 });
     const { w, router } = await mountAt('/forum/new');
-    await w.find('[data-testid="edit-cat-guide"]').setValue(true);
+    // 分类是分段按钮（界面改版 P10，原来是单选框）
+    await w.find('[data-testid="edit-cat-guide"]').trigger('click');
+    expect(w.find('[data-testid="edit-cat-guide"]').attributes('aria-checked')).toBe('true');
     await w.find('[data-testid="edit-title"]').setValue('新手攻略');
     await w.find('[data-testid="edit-content"]').setValue('第一步');
-    expect(w.text()).toContain('3/5000');
+    expect(w.text()).toContain('3 / 5000');
     await w.find('[data-testid="edit-submit"]').trigger('click');
     await flushPromises();
     expect(endpoints.forumCreate).toHaveBeenCalledWith({
@@ -71,10 +73,10 @@ describe('ForumEditView', () => {
     const { w } = await mountAt('/forum/new');
     await w.find('[data-testid="edit-title"]').setValue('😀'.repeat(40));
     await w.find('[data-testid="edit-content"]').setValue('正文');
-    expect(w.find('[data-testid="edit-title-count"]').text()).toBe('40/40');
+    expect(w.find('[data-testid="edit-title-count"]').text()).toBe('40 / 40');
     expect(w.find('[data-testid="edit-submit"]').attributes('disabled')).toBeUndefined();
     await w.find('[data-testid="edit-title"]').setValue('a'.repeat(41));
-    expect(w.find('[data-testid="edit-title-count"]').classes()).toContain('text-danger');
+    expect(w.find('[data-testid="edit-title-count"]').classes()).toContain('is-over');
     expect(w.find('[data-testid="edit-submit"]').attributes('disabled')).toBeDefined();
   });
 });

@@ -32,6 +32,8 @@ test('举报公告 → 管理员处理 → 公告清空、举报人收到结果�
   await registerAndOpen(page, request);
   await page.goto(`/friends/${bRest!.id}`);
   await expect(page.getByText(notice)).toBeVisible();
+  // 公告是一行，点开面板里才有举报（界面改版 P10）
+  await page.getByTestId('friend-notice').click();
   await page.getByTestId('notice-report-open').click();
   await page.getByTestId('notice-report-reason-ad').check();
   await page.getByTestId('notice-report-submit').click();
@@ -52,8 +54,11 @@ test('举报公告 → 管理员处理 → 公告清空、举报人收到结果�
   await page.goto('/mail');
   await expect(page.getByText('举报结果')).toBeVisible();
   await page.goto(`/friends/${bRest!.id}`);
-  await expect(page.getByTestId('rest-name-report-open')).toBeVisible();
+  // 公告清空后没有公告一行；举报店名在顶栏“⋯”的面板里（界面改版 P10）
+  await expect(page.getByTestId('friend-notice')).toHaveCount(0);
   await expect(page.getByText(notice)).toHaveCount(0);
+  await page.getByTestId('header-menu').click();
+  await expect(page.getByTestId('rest-name-report-open')).toBeVisible();
   await ctxB.close();
   await ctxC.close();
 });

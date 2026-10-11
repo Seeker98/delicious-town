@@ -61,7 +61,9 @@ describe('ForumView', () => {
     expect(endpoints.forumList).toHaveBeenCalledWith({ tab: 'all' });
     expect(w.find('[data-testid="forum-item-1"]').text()).toContain('置顶');
     expect(w.find('[data-testid="forum-item-3"]').text()).toContain('精');
-    expect(w.find('[data-testid="forum-item-2"]').text()).toContain('阅读 3');
+    // 阅读数改成眼睛图标 + 数字，“阅读 3”写在读屏说法里（界面改版 P10）
+    const item2 = w.find('[data-testid="forum-item-2"]');
+    expect(item2.find('[aria-label="阅读 3"]').text()).toBe('3');
   });
 
   it('切标签、搜索都重新加载；加载更多带上游标并追加', async () => {

@@ -430,18 +430,9 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/SocietyOilView.vue'),
     meta: { needRestaurant: true, section: 'map', title: T((t) => t.society.title), parent: '/society' },
   },
-  {
-    path: '/society/rename',
-    name: 'society-rename',
-    component: () => import('./views/SocietyRenameView.vue'),
-    meta: { needRestaurant: true, section: 'map', title: T((t) => t.society.title), parent: '/society' },
-  },
-  {
-    path: '/society/move',
-    name: 'society-move',
-    component: () => import('./views/SocietyMoveView.vue'),
-    meta: { needRestaurant: true, section: 'map', title: T((t) => t.society.title), parent: '/society' },
-  },
+  // 改名、搬家改成协会首页的面板（界面改版 P10）：旧地址（食谱页的搬家提示）带 ?sheet= 打开面板
+  { path: '/society/rename', redirect: { path: '/society', query: { sheet: 'rename' } } },
+  { path: '/society/move', redirect: { path: '/society', query: { sheet: 'move' } } },
   {
     path: '/weather',
     name: 'weather',

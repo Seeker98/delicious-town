@@ -27,13 +27,16 @@ test('小镇：广播 → 和雯姐聊天 → 镇长兑换', async ({ page, requ
 
     await page.goto('/town');
     await page.getByTestId('tab-news').click();
+    // 广播是一行，点“发广播”从下面弹出面板（界面改版 P10）
+    await page.getByTestId('bc-open').click();
     await page.getByTestId('bc-input').fill('端到端测试的广播');
     const sent = page.waitForResponse((r) => r.url().includes('/api/v1/town/broadcast'));
     await page.getByTestId('bc-send').click();
     expect((await sent).ok()).toBe(true);
     await expect(page.getByTestId('news-row').first()).toContainText('端到端测试的广播');
 
-    await page.getByTestId('tab-town').click();
+    // 雯姐搬到了酒吧（问题记录 453）；聊过后按钮换成“今天聊过了”小标签（界面改版 P10）
+    await page.goto('/bar');
     await page.getByTestId('talk-wenjie').click();
     await expect(page.getByTestId('talk-wenjie')).toHaveText('今天聊过了');
 
@@ -42,7 +45,9 @@ test('小镇：广播 → 和雯姐聊天 → 镇长兑换', async ({ page, requ
     const done = page.waitForResponse(
       (r) => r.url().endsWith('/api/v1/town/exchange') && r.request().method() === 'POST',
     );
+    // 点“兑换”从下面弹出选份数的面板，确认才兑换（界面改版 P10）
     await page.getByTestId('ex-1').click();
+    await page.getByTestId('qty-ok').click();
     expect((await done).ok()).toBe(true);
     await expect(page.getByTestId('ex-row-1')).toContainText('有 3');
   } finally {

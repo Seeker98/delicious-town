@@ -11,7 +11,14 @@ import { talkText } from '../../utils/serverText';
 
 /** 和一位 NPC 每天聊一次（雯姐在酒吧，问题记录 453；镇长大胃锅、13 哥在协会，卡门只有一次见面礼，问题记录 441） */
 /** compact：只有一个按钮（界面改版 P9：放进酒吧雯姐卡片右边），label 是按钮上的字 */
-const props = defineProps<{ talked: boolean; npc: NpcKey; compact?: boolean; label?: string }>();
+/** primary：实心紫按钮（卡门的见面礼，界面改版 P10） */
+const props = defineProps<{
+  talked: boolean;
+  npc: NpcKey;
+  compact?: boolean;
+  label?: string;
+  primary?: boolean;
+}>();
 const emit = defineEmits<{ reload: [] }>();
 const catalog = useCatalogStore();
 const toast = useToastStore();
@@ -42,15 +49,19 @@ async function talk() {
 </script>
 
 <template>
+  <!-- 聊过了写绿色小标签，不放灰掉的按钮（视觉规范 §11 状态小标签） -->
+  <span v-if="compact && talked" class="dt-tag dt-tag-ok text-nowrap" :data-testid="`talk-${npc}`">{{
+    t.town.talkedToday
+  }}</span>
   <button
-    v-if="compact"
+    v-else-if="compact"
     type="button"
-    class="btn btn-sm btn-outline-primary text-nowrap"
-    :disabled="busy || talked"
+    :class="['btn btn-sm text-nowrap', primary ? 'btn-primary' : 'btn-outline-primary']"
+    :disabled="busy"
     :data-testid="`talk-${npc}`"
     @click="talk"
   >
-    {{ talked ? t.town.talkedToday : (label ?? t.town.talk) }}
+    {{ label ?? t.town.talk }}
   </button>
   <div v-else class="dt-item">
     <div class="dt-item-main">

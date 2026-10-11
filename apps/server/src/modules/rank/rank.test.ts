@@ -48,6 +48,18 @@ async function rests(n: number, shardId?: number): Promise<RestCtx[]> {
 }
 
 describe('排行榜（设计文档 §2.6）', () => {
+  it('每行带头像（界面改版 P10）：没设的是 null', async () => {
+    const [a, b] = await rests(2);
+    await t.db.updateTable('restaurant').set({ avatar: 5 }).where('id', '=', b!.restaurantId).execute();
+    await income(a!.restaurantId, 1, 100, gameTime(DAY, 10));
+    await income(b!.restaurantId, 1, 200, gameTime(DAY, 10));
+    const r = await board(a!, 'income.coin.today');
+    expect(r.rows.map((x) => [x.restId, x.avatar])).toEqual([
+      [b!.restaurantId, 5],
+      [a!.restaurantId, null],
+    ]);
+  });
+
   it('收益今日：只算今天；NPC 和封禁账号不上榜', async () => {
     const [a, b, c] = await rests(3);
     const npc = await newRestaurant(t, { shardId: a!.shardId, patch: { npc: true } });

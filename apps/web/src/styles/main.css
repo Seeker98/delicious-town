@@ -744,44 +744,12 @@ details.dt-card > summary {
   grid-template-columns: 1fr 1fr;
   gap: 4px;
 }
-/* 选食材填数量的小格子（食材兑换券） */
-.dt-pick-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
-}
-.dt-pick {
-  border: 1px solid var(--dt-line);
-  border-radius: 6px;
-  padding: 4px 6px;
-  font-size: 12px;
-  min-width: 0;
-}
-.dt-pick input {
-  margin-top: 2px;
-}
 .dt-span2 {
   grid-column: span 2;
 }
 /* ---------- 嘻哈男孩、排行（子项目 4E-2） ---------- */
-.dt-item-me {
-  background: var(--dt-primary-soft);
-  border-radius: 6px;
-}
-.dt-rank-no {
-  width: 2rem;
-  flex-shrink: 0;
-  font-weight: 700;
-  color: var(--dt-primary-ink);
-  text-align: center;
-}
 
 /* ---------- 论坛（子项目 4E-3） ---------- */
-/* 正文是纯文字：保留换行，长串自动折行 */
-.dt-post-body {
-  white-space: pre-wrap;
-  word-break: break-word;
-}
 
 /* 顶栏邮箱未读数（子项目 6A） */
 /* 首页经验条（问题记录 212）：柔和的橙色，不再是亮黄色大块 */
@@ -6227,4 +6195,1421 @@ button.dt-row {
 }
 .dt-row-title > .dt-tag-primary {
   margin-left: 6px;
+}
+
+/* ---------- 公共和社交（界面改版 P10）：协会、NPC、教室 ---------- */
+.dt-place-scene.is-society {
+  background: var(--dt-place-society);
+}
+.dt-place-scene.is-plaza {
+  background: var(--dt-place-plaza);
+}
+/* 协会首页三位 NPC：一排三格，圆头像、名字、一行用途、今天的状态小标签 */
+.dt-npc-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.dt-npc-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 12px 6px 10px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-lg);
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  text-align: center;
+  text-decoration: none;
+}
+.dt-npc-tile:active {
+  background: var(--dt-surface-2);
+}
+.dt-npc-tile > b {
+  max-width: 100%;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.dt-npc-tile-ava {
+  display: block;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.dt-npc-tile-desc {
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--dt-muted);
+}
+/* NPC 页的大头像卡：56px，台词加「」 */
+.dt-mascot.is-large .dt-npc-ava {
+  width: 56px;
+  height: 56px;
+}
+.dt-mascot.is-large .dt-mascot-text > span::before {
+  content: '「';
+}
+.dt-mascot.is-large .dt-mascot-text > span::after {
+  content: '」';
+}
+/* 行首的圆头像（镇长页“嘻哈男孩今天在哪”）、面板头的大头像 */
+.dt-row-ava {
+  width: 36px;
+  height: 36px;
+}
+.dt-sheet-ava {
+  width: 56px;
+  height: 56px;
+}
+.dt-row-sub-wrap {
+  white-space: normal;
+}
+/* 升星、扩油：“现在 → 升级后”对比卡 */
+.dt-up-hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 18px 12px;
+}
+.dt-up-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.dt-up-side > b {
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-up-side > span {
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-up-arrow {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--dt-primary-ink);
+}
+.dt-up-awards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 12px;
+}
+.dt-up-max {
+  padding: 14px;
+  color: var(--dt-muted);
+  text-align: center;
+}
+.dt-up-reason {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--dt-ink-danger);
+  text-align: center;
+}
+/* 条件清单一行：圆圈 ✓ / !、名字、现有 / 要求 */
+.dt-check-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 6px 14px;
+  border-top: 1px solid var(--dt-line);
+  font-size: 14px;
+}
+.dt-check-line:first-child {
+  border-top: 0;
+}
+.dt-check-mark {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 800;
+}
+.dt-check-mark.is-ok {
+  background: var(--dt-soft-success);
+  color: var(--dt-ink-success);
+}
+.dt-check-mark.is-bad {
+  background: var(--dt-soft-danger);
+  color: var(--dt-ink-danger);
+}
+.dt-check-name {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.dt-check-have {
+  font-variant-numeric: tabular-nums;
+}
+.dt-check-need {
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+/* 面板里的输入框（改名）：圆角框、右边字数；超了字数变红 */
+.dt-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 14px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-surface);
+}
+.dt-field:focus-within {
+  border-color: var(--dt-primary);
+  box-shadow: 0 0 0 3px var(--dt-primary-soft);
+}
+.dt-field-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--dt-text);
+  font-size: 15px;
+  outline: none;
+}
+.dt-field-count {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-field.is-over .dt-field-count {
+  color: var(--dt-ink-danger);
+}
+.dt-field-label-top {
+  display: block;
+  margin: 16px 2px 6px;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-field-select {
+  min-height: 46px;
+  border-radius: var(--dt-radius-md);
+  font-weight: 600;
+}
+/* 搬家：选中街道后的浅紫框 */
+.dt-move-pick {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-soft-primary);
+  font-size: 14px;
+}
+.dt-move-theme {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+/* 面板里“选一个”的行（PickRow）：单选圈 + 图 + 名字一行说明 + 右边价格或小标签 */
+.dt-pick {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 60px;
+  padding: 8px 14px;
+  border: 0;
+  border-top: 1px solid var(--dt-line);
+  background: transparent;
+  color: var(--dt-text);
+  text-align: left;
+}
+.dt-pick:first-child {
+  border-top: 0;
+}
+.dt-pick.is-on {
+  background: var(--dt-soft-primary);
+}
+.dt-pick:disabled {
+  opacity: 0.55;
+}
+.dt-pick-rad {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--dt-line-strong);
+  border-radius: 50%;
+  background: var(--dt-surface);
+}
+.dt-pick.is-on .dt-pick-rad {
+  border-color: var(--dt-primary);
+}
+.dt-pick.is-on .dt-pick-rad::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--dt-primary);
+}
+.dt-pick-art {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--dt-plate);
+}
+.dt-pick.is-on .dt-pick-art {
+  background: var(--dt-surface);
+}
+.dt-pick-main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+.dt-pick-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+.dt-pick-sub {
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-pick-end {
+  flex-shrink: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.dt-pick-have {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--dt-muted);
+}
+/* 镇长问答的地点：换行胶囊，选中实心紫 */
+.dt-place-picks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.dt-place-pick {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--dt-radius-pill);
+  background: var(--dt-surface-2);
+  color: var(--dt-text);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.dt-place-pick[aria-checked='true'] {
+  background: var(--dt-primary);
+  color: var(--dt-on-primary);
+}
+/* 页面底部吸住的一条（13 哥兑换、好友换食材）：停在底部导航上面 */
+.dt-sticky-bar {
+  position: sticky;
+  bottom: calc(57px + env(safe-area-inset-bottom, 0px));
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px -8px 0;
+  padding: 10px 16px;
+  border-top: 1px solid var(--dt-line);
+  background: var(--dt-surface);
+}
+.dt-sticky-bar-main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  font-variant-numeric: tabular-nums;
+}
+.dt-sticky-bar-main > span {
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+/* 搜索框（带放大镜的胶囊） */
+.dt-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-pill);
+  background: var(--dt-surface);
+  color: var(--dt-muted);
+}
+.dt-search-box:focus-within {
+  border-color: var(--dt-primary);
+}
+.dt-search-box > input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--dt-text);
+  font-size: 14px;
+  outline: none;
+}
+/* 13 哥一行右边：没选是一个 +，选了变成“− 数量 +”胶囊 */
+.dt-ticket-step {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  border-radius: var(--dt-radius-pill);
+}
+.dt-ticket-step.is-on {
+  background: var(--dt-surface-2);
+}
+.dt-ticket-step > button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--dt-text);
+}
+.dt-ticket-step:not(.is-on) > button {
+  background: var(--dt-primary-soft);
+  color: var(--dt-primary-ink);
+}
+.dt-ticket-step > button:disabled {
+  opacity: 0.4;
+}
+.dt-ticket-step > input {
+  width: 32px;
+  border: 0;
+  background: transparent;
+  color: var(--dt-text);
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.dt-ticket-step > input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+/* 教室：我的课卡片、一行的学和偷学 */
+.dt-class-mine {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+}
+.dt-class-mine-art {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-soft-success);
+}
+.dt-class-mine-main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+.dt-class-mine > .btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.dt-class-mine-main > span {
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-class-acts {
+  display: inline-flex;
+  gap: 6px;
+}
+
+/* ---------- 广场（界面改版 P10）：标签栏右边的链接、日报、新闻、居民、排行、许愿树 ---------- */
+/* 顶栏右边的“更多”按钮（P10）：和邮件图标一样，没有框 */
+button.dt-header-icon {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.dt-tabs-bar.has-end {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dt-tabs-bar.has-end > .nav-tabs {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.dt-tabs-end {
+  flex-shrink: 0;
+  font-size: 13px;
+  white-space: nowrap;
+}
+/* 标签栏右边的“论坛 ›”：和区块标题右边的链接一样，不画下划线，后面加 ›（读屏不读） */
+.dt-tabs-link {
+  color: var(--dt-primary-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+.dt-tabs-link::after {
+  content: ' ›';
+  content: ' ›' / '';
+}
+/* 小镇日报：报刊风——米色纸、宋体报头和标题、双线、首行缩进 */
+.dt-paper {
+  padding: 14px 16px 12px;
+  border: 1px solid var(--dt-paper-rule);
+  border-radius: var(--dt-radius-lg);
+  background: var(--dt-paper);
+  color: var(--dt-paper-ink);
+}
+.dt-paper-mast {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 3px double var(--dt-paper-rule);
+}
+.dt-paper-mast > b {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--dt-font-serif);
+  font-size: 22px;
+  letter-spacing: 4px;
+}
+.dt-paper-day {
+  font-size: 12px;
+  color: var(--dt-paper-sub);
+  font-variant-numeric: tabular-nums;
+}
+.dt-paper-nav {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--dt-paper-rule);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--dt-paper-ink);
+  font-size: 13px;
+}
+.dt-paper-nav:disabled {
+  opacity: 0.35;
+}
+.dt-paper-title {
+  margin: 10px 0 6px;
+  font-family: var(--dt-font-serif);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.dt-paper-p {
+  margin: 0 0 8px;
+  font-size: 14px;
+  line-height: 1.7;
+  text-indent: 2em;
+}
+.dt-paper a {
+  color: inherit;
+  text-decoration: underline dotted;
+  text-decoration-color: var(--dt-paper-sub);
+  text-underline-offset: 3px;
+}
+.dt-paper-sub {
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: var(--dt-paper-sub);
+}
+.dt-paper-line {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.dt-paper-more {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 8px 0 0;
+  border: 0;
+  border-top: 1px solid var(--dt-paper-rule);
+  background: transparent;
+  color: var(--dt-paper-sub);
+  font-size: 13px;
+}
+/* 新闻一行：左边时间、右边内容；广播浅紫底加粗 */
+.dt-news-list {
+  padding: 0;
+  overflow: hidden;
+}
+.dt-news-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--dt-line);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.dt-news-row:first-child {
+  border-top: 0;
+}
+.dt-news-row.is-broadcast {
+  background: var(--dt-soft-primary);
+}
+.dt-news-row.is-broadcast .dt-news-text {
+  font-weight: 700;
+}
+.dt-news-time {
+  flex-shrink: 0;
+  min-width: 38px;
+  white-space: nowrap;
+  padding-top: 2px;
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-news-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+/* 面板里的多行输入（广播、回复） */
+.dt-area {
+  display: block;
+  padding: 10px 14px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-surface);
+}
+.dt-area:focus-within {
+  border-color: var(--dt-primary);
+  box-shadow: 0 0 0 3px var(--dt-primary-soft);
+}
+.dt-area > textarea {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--dt-text);
+  font-size: 15px;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+}
+.dt-area-count {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--dt-muted);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.dt-area-count.is-over {
+  color: var(--dt-ink-danger);
+}
+/* 居民：蟹老板的钱袋（大头像卡，不换台词）、今天的星愿 */
+.dt-krab {
+  cursor: default;
+}
+/* 蟹老板这一行是说明, 不是台词: 不加「」 */
+.dt-mascot.is-large.dt-krab .dt-mascot-text > span::before,
+.dt-mascot.is-large.dt-krab .dt-mascot-text > span::after {
+  content: none;
+}
+.dt-krab-hint {
+  display: block;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-bless {
+  padding: 14px;
+}
+.dt-bless-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.dt-bless-art {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--dt-soft-warning);
+}
+.dt-bless-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.dt-bless-main > b {
+  font-size: 16px;
+}
+.dt-bless-main > span {
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-bless-feast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-surface-2);
+}
+.dt-bless-feast-main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-bless-feast-main > b {
+  font-size: 13px;
+  color: var(--dt-text);
+}
+.dt-pick-price {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+/* 排行：大类横滑胶囊下面一行小类下拉和更新时间；一行名次圆章、头像、店名、数值 */
+.dt-rank-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.dt-rank-meta-text {
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-rank-row {
+  min-height: 48px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+.dt-rank-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.dt-rank-ava {
+  display: block;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.dt-rank-value {
+  color: var(--dt-text);
+  font-variant-numeric: tabular-nums;
+}
+.dt-rank-me {
+  background: var(--dt-soft-primary);
+  border-top-color: transparent;
+}
+.dt-rank-me > .dt-medal.is-me {
+  width: 36px;
+  height: 36px;
+  background: var(--dt-surface);
+  font-size: 13px;
+}
+/* 许愿树：奖品大卡 */
+.dt-wish {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  text-align: center;
+}
+.dt-wish-tree {
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  border-radius: 22px;
+  background: var(--dt-soft-success);
+}
+.dt-wish-label {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-wish-prize {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.dt-wish-prize > b {
+  font-size: 20px;
+}
+.dt-wish-prize-art {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--dt-plate);
+}
+.dt-wish-meta {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-wish-done {
+  margin-top: 12px;
+  font-weight: 600;
+  color: var(--dt-ink-success);
+}
+.dt-wish-free {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+
+/* ---------- 论坛、好友、好友餐厅、邮箱（界面改版 P10） ---------- */
+/* 搜索框和右边一个按钮一行（论坛发帖、找好友） */
+.dt-forum-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dt-forum-bar > .dt-search-box {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.dt-forum-new {
+  flex-shrink: 0;
+  min-height: 40px;
+  border-radius: var(--dt-radius-pill);
+  white-space: nowrap;
+}
+/* 论坛列表：一帖一块，标题加粗、摘要一行、底下作者和三个数 */
+.dt-forum-list {
+  padding: 0;
+  overflow: hidden;
+}
+.dt-forum-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  border-top: 1px solid var(--dt-line);
+  color: var(--dt-text);
+  text-decoration: none;
+}
+.dt-forum-item:first-child {
+  border-top: 0;
+}
+.dt-forum-item:active {
+  background: var(--dt-surface-2);
+}
+.dt-forum-item.is-pinned {
+  background: var(--dt-surface-2);
+}
+.dt-forum-title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.dt-forum-title > .dt-tag {
+  margin-right: 4px;
+}
+.dt-forum-excerpt {
+  overflow: hidden;
+  font-size: 13px;
+  color: var(--dt-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dt-forum-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-forum-who {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dt-forum-nums {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 12px;
+  font-variant-numeric: tabular-nums;
+}
+/* 帖子：标签、大标题、作者一行、正文卡、赞踩胶囊 */
+.dt-post-tags {
+  display: flex;
+  gap: 4px;
+}
+.dt-post-title {
+  margin: 8px 0 0;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.dt-post-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+.dt-post-ava {
+  display: block;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  width: 40px;
+  height: 40px;
+}
+.dt-post-author-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.dt-post-name {
+  font-weight: 600;
+  color: var(--dt-text);
+  text-decoration: underline dotted;
+  text-decoration-color: var(--dt-muted);
+  text-underline-offset: 3px;
+}
+.dt-post-meta {
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-post-body {
+  margin-top: 12px;
+  padding: 14px 16px;
+  font-size: 15px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.dt-post-cheers {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.dt-cheer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-pill);
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.dt-cheer[aria-pressed='true'] {
+  border-color: var(--dt-primary);
+  background: var(--dt-primary-soft);
+  color: var(--dt-primary-ink);
+}
+.dt-post-reads {
+  margin-top: 10px;
+  padding: 10px 14px;
+}
+.dt-post-reads-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+/* 回复：一楼一行，头像、名字楼层时间、引用一行、内容、回复和举报 */
+.dt-reply-list {
+  padding: 0;
+  overflow: hidden;
+}
+.dt-reply {
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-reply:first-child {
+  border-top: 0;
+}
+.dt-reply-ava {
+  display: block;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  width: 32px;
+  height: 32px;
+}
+.dt-reply-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.dt-reply-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-reply-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dt-text);
+}
+a.dt-reply-name {
+  text-decoration: underline dotted;
+  text-decoration-color: var(--dt-muted);
+  text-underline-offset: 3px;
+}
+.dt-reply-to {
+  color: var(--dt-primary-ink);
+}
+.dt-reply-quote {
+  margin-top: 4px;
+  padding: 2px 0 2px 8px;
+  border-left: 3px solid var(--dt-line);
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-reply-body {
+  margin-top: 3px;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.dt-reply-ops {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 4px;
+  font-size: 12px;
+}
+.dt-reply-ops .dt-link-btn {
+  color: var(--dt-muted);
+  font-size: 12px;
+}
+/* 帖子页底部的“写回复…”一条 */
+.dt-reply-bar {
+  margin-top: 16px;
+}
+.dt-reply-open {
+  flex: 1 1 auto;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--dt-radius-pill);
+  background: var(--dt-surface-2);
+  color: var(--dt-muted);
+  font-size: 14px;
+  text-align: left;
+}
+.dt-reply-target {
+  display: flex;
+}
+.dt-reply-target > .dt-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 4px 0 10px;
+}
+.dt-tag-x {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font-size: 11px;
+}
+.dt-reply-sheet-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+.dt-reply-sheet-foot > .dt-check-row {
+  flex: 1 1 auto;
+  margin-top: 0;
+}
+.dt-reply-sheet-foot > .dt-area-count {
+  margin-top: 0;
+}
+/* 面板里的操作菜单（帖子、好友餐厅的“⋯”）：一项一行 */
+.dt-menu {
+  display: flex;
+  flex-direction: column;
+}
+.dt-menu-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 0 4px;
+  border: 0;
+  border-top: 1px solid var(--dt-line);
+  background: transparent;
+  color: var(--dt-text);
+  font-size: 15px;
+  text-align: left;
+}
+.dt-menu-row:first-child {
+  border-top: 0;
+}
+.dt-menu-row > .bi {
+  width: 20px;
+  color: var(--dt-muted);
+  text-align: center;
+}
+.dt-menu-row.is-danger,
+.dt-menu-row.is-danger > .bi {
+  color: var(--dt-ink-danger);
+}
+.dt-menu-row.is-static {
+  cursor: default;
+}
+.dt-menu-note {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+/* 好友列表：头像、名字和等级、能做的事小标签 */
+.dt-friends-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-friends-head > b {
+  flex: 1 1 auto;
+}
+.dt-friend-row {
+  min-height: 64px;
+}
+.dt-friend-ava {
+  display: block;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  width: 40px;
+  height: 40px;
+}
+.dt-friend-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 3px;
+}
+.dt-friend-acts {
+  display: inline-flex;
+  gap: 6px;
+}
+.dt-friend-link {
+  color: var(--dt-text);
+  text-decoration: none;
+}
+/* 动态：今天谁给我点赞（头像叠一摞）和一键回赞 */
+.dt-thumbs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+}
+.dt-thumbs-avas {
+  display: flex;
+  flex-shrink: 0;
+}
+.dt-thumbs-avas > .dt-thumbs-ava {
+  display: block;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  width: 32px;
+  height: 32px;
+  margin-left: -8px;
+  border: 2px solid var(--dt-surface);
+  box-sizing: content-box;
+}
+.dt-thumbs-avas > .dt-thumbs-ava:first-child {
+  margin-left: 0;
+}
+.dt-thumbs-main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+.dt-thumbs-main > span {
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+/* 好友餐厅：店名、声望获赞一行、称号一排 */
+.dt-friend-name {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+.dt-friend-meta {
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-friend-icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+.dt-friend-notice {
+  font-size: 15px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+/* 操作块：两列，整块可点；is-primary 是最常做的事（紫色实心），is-done 是今天做过了（浅绿），is-off 做不了 */
+.dt-do-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.dt-do {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  min-height: 64px;
+  padding: 10px 14px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-lg);
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  text-align: left;
+  text-decoration: none;
+}
+.dt-do:active:not(:disabled) {
+  background: var(--dt-surface-2);
+}
+.dt-do-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+.dt-do-sub {
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-do.is-primary {
+  border-color: var(--dt-primary);
+  background: var(--dt-primary);
+  color: var(--dt-on-primary);
+}
+.dt-do.is-primary:active {
+  background: var(--dt-primary-hover);
+}
+.dt-do.is-primary .dt-do-sub {
+  color: var(--dt-on-primary);
+  opacity: 0.85;
+}
+.dt-do.is-done {
+  border-color: transparent;
+  background: var(--dt-soft-success);
+}
+.dt-do.is-done .dt-do-title {
+  color: var(--dt-ink-success);
+}
+.dt-do.is-off .dt-do-title {
+  color: var(--dt-muted);
+}
+.dt-do.is-off .dt-do-sub {
+  color: var(--dt-ink-danger);
+}
+.dt-table-note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dt-table-no-big {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--dt-primary-ink);
+}
+/* 翻橱柜：4 列橱柜格子，左上角格号；冷却中变灰写还要多久 */
+.dt-flip-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+.dt-flip-cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  min-height: 64px;
+  padding: 14px 2px 6px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-surface);
+  color: var(--dt-text);
+}
+.dt-flip-cell.is-cool {
+  opacity: 0.45;
+}
+.dt-flip-cell.is-last {
+  border-color: var(--dt-primary);
+  box-shadow: inset 0 0 0 1px var(--dt-primary);
+}
+.dt-flip-no {
+  position: absolute;
+  top: 3px;
+  left: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--dt-muted);
+}
+.dt-flip-time {
+  font-size: 11px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+/* 邮箱：一封一行，没读的加粗加紫点，附件小胶囊；右边领取或删除 */
+.dt-mail-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 14px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-mail-row:first-child {
+  border-top: 0;
+}
+.dt-mail-open {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px 0 12px 14px;
+  border: 0;
+  background: transparent;
+  color: var(--dt-text);
+  text-align: left;
+}
+.dt-mail-ico {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--dt-plate);
+}
+.dt-mail-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--dt-surface);
+  border-radius: 50%;
+  background: var(--dt-primary);
+}
+.dt-mail-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.dt-mail-title {
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+.dt-mail-row.is-unread .dt-mail-title {
+  font-weight: 700;
+}
+.dt-mail-meta {
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-mail-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+.dt-mail-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 24px;
+  padding: 0 8px 0 3px;
+  border-radius: var(--dt-radius-pill);
+  background: var(--dt-surface-2);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.dt-mail-chip.is-big {
+  min-height: 30px;
+  padding: 0 10px 0 4px;
+  font-size: 13px;
+}
+.dt-mail-chip-art {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+.dt-mail-chip-art > b {
+  font-size: 11px;
+  color: var(--dt-ink-warning);
+}
+.dt-mail-act {
+  flex-shrink: 0;
+}
+.dt-mail-body {
+  margin-top: 14px;
+  font-size: 15px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }

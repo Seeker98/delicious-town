@@ -40,9 +40,25 @@ export function createRankService(d: GameDeps) {
       }
       const rows = await hit.rows;
       const mine = rows.find((r) => r.restId === ctx.restaurantId);
+      const top = rows.slice(0, t.top);
+      // 头像（界面改版 P10）：只查上榜的这几家，不进缓存（换了头像马上能看到）
+      const ids = top.map((r) => r.restId);
+      const avatars = new Map(
+        ids.length > 0
+          ? (
+              await d.db.selectFrom('restaurant').select(['id', 'avatar']).where('id', 'in', ids).execute()
+            ).map((r) => [r.id, r.avatar] as const)
+          : [],
+      );
       return {
         key,
-        rows: rows.slice(0, t.top).map(({ rank, restId, name, value }) => ({ rank, restId, name, value })),
+        rows: top.map(({ rank, restId, name, value }) => ({
+          rank,
+          restId,
+          name,
+          avatar: avatars.get(restId) ?? null,
+          value,
+        })),
         me: mine ? { rank: mine.rank, value: mine.value } : null,
         updatedAt: new Date(hit.at).toISOString(),
       };

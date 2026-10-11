@@ -5,6 +5,7 @@ const wishtree: Messages['wishtree'] = {
   wishFailed: 'Failed to make a wish',
   intro: 'Every day the tree bears one item, and one restaurant that made a wish takes it home.',
   helpTitle: 'How the Wishing Tree works',
+  helpSub: (hour) => `Draw daily at ${hour}:00; one restaurant takes the item and a title`,
   help: (hour, minLevel, titleDays, titleName) => [
     `The draw is at ${hour}:00 every day, and the tree bears a new item at the same time — the same for the whole server`,
     `Restaurants at level ${minLevel} or above can make 1 wish per round, for free`,
@@ -14,7 +15,8 @@ const wishtree: Messages['wishtree'] = {
   off: 'The Wishing Tree is not open on this server yet',
   today: 'Today the tree bears',
   entries: (n) => `${n} ${n === 1 ? 'wish' : 'wishes'} so far`,
-  drawAt: (time) => `Draw at ${time}`,
+  drawAtLeft: (time, left) => `Draw at ${time} (${left})`,
+  free: (level) => `One free wish per round from level ${level}`,
   wish: 'Make a wish',
   wished: 'Wish made, waiting for the draw',
   need: (level) => `Your restaurant must be level ${level} to make a wish`,
@@ -23,9 +25,10 @@ const wishtree: Messages['wishtree'] = {
   recentTitle: 'Recent rounds',
   noRecent: 'No draws yet',
   empty: 'Nobody made a wish',
-  winner: (name, n) => `${name} won (${n} ${n === 1 ? 'wish' : 'wishes'})`,
-  mine: 'You won! The prize is in your mailbox',
-  lost: (award) => `You didn't win, and got ${award}`,
-  pending: "You didn't win. Your consolation reward is on its way",
+  recentTitleLine: (day, prize) => `${day} · ${prize}`,
+  winnerTail: (n) => ` won · ${n} ${n === 1 ? 'wish' : 'wishes'}`,
+  mineTag: 'You won',
+  lostTag: (award) => `Missed · ${award}`,
+  pendingTag: 'Missed · reward on its way',
 };
 export default wishtree;

@@ -30,10 +30,14 @@ describe('MayorAsk', () => {
           mayor: { answered: false, hiphopOut: false, hour: 13 },
         }),
       },
+      global: { stubs: { teleport: true } },
     });
-    expect(w.get('[data-testid="mayor-open"]').attributes('disabled')).toBeDefined();
+    // 界面改版 P10：还没出来时按钮换成小标签
+    expect(w.find('[data-testid="mayor-open"]').exists()).toBe(false);
+    expect(w.get('[data-testid="mayor-wait"]').text()).toBe('13 点出来');
     vi.advanceTimersByTime(60_000);
     await nextTick();
+    expect(w.find('[data-testid="mayor-wait"]').exists()).toBe(false);
     expect(w.get('[data-testid="mayor-open"]').attributes('disabled')).toBeUndefined();
     // 服务端每几秒才生成当天的嘻哈男孩记录：过 15 秒再读，免得读到的还是没出来
     expect(w.emitted('reload')).toBeUndefined();
@@ -49,7 +53,9 @@ describe('MayorAsk', () => {
       props: { data: townData({ mayor: { answered: false, hiphopOut: false, hour: 13 } }) },
     });
     expect(w.get('[data-testid="mayor-row"]').text()).toContain('嘻哈男孩 13 点出来, 到时再来告诉镇长');
-    expect(w.get('[data-testid="mayor-open"]').attributes('disabled')).toBeDefined();
+    // 界面改版 P10：按钮换成小标签，点不了
+    expect(w.find('[data-testid="mayor-open"]').exists()).toBe(false);
+    expect(w.get('[data-testid="mayor-wait"]').text()).toBe('13 点出来');
   });
 
   it('镇长问答：服务端还没更新、不带嘻哈男孩状态时照旧可以问，不写 undefined（终审）', () => {
@@ -66,7 +72,7 @@ describe('MayorAsk', () => {
 
   it('镇长问答：区服关掉的功能对应的地点不列出来（问题记录 256：嘻哈男孩不会去那里）', async () => {
     useRestaurantStore().rest = { disabledFeatures: ['kuji', 'temple'] } as never;
-    const w = mount(MayorAsk, { props: { data: townData() } });
+    const w = mount(MayorAsk, { props: { data: townData() }, global: { stubs: { teleport: true } } });
     await w.find('[data-testid="mayor-open"]').trigger('click');
     expect(w.find('[data-testid="mayor-12"]').exists()).toBe(false);
     expect(w.find('[data-testid="mayor-6"]').exists()).toBe(false);
@@ -80,15 +86,24 @@ describe('MayorAsk', () => {
       talk: 'mayorRight',
       rewards: [{ kind: 'goods', id: 231, num: 1 }],
     });
-    const w = mount(MayorAsk, { props: { data: townData() } });
+    const w = mount(MayorAsk, { props: { data: townData() }, global: { stubs: { teleport: true } } });
     expect(w.find('[data-testid="mayor-3"]').exists()).toBe(false);
     await w.find('[data-testid="mayor-open"]').trigger('click');
     expect(
       w.findAll('[data-testid^="mayor-"]').filter((b) => /mayor-\d/.test(b.attributes('data-testid')!)),
     ).toHaveLength(13);
+    // 界面改版 P10：先选地点再确认，没选时确认灰掉
+    expect(w.get('[data-testid="mayor-ok"]').attributes('disabled')).toBeDefined();
+    expect(w.get('[data-testid="mayor-ok"]').text()).toBe('先选地点');
     await w.find('[data-testid="mayor-3"]').trigger('click');
+    expect(endpoints.townMayor).not.toHaveBeenCalled();
+    expect(w.get('[data-testid="mayor-3"]').attributes('aria-checked')).toBe('true');
+    expect(w.get('[data-testid="mayor-ok"]').text()).toBe(`就是${w.get('[data-testid="mayor-3"]').text()}`);
+    await w.get('[data-testid="mayor-ok"]').trigger('click');
     await flushPromises();
     expect(endpoints.townMayor).toHaveBeenCalledWith(3);
+    // 答完面板关掉
+    expect(w.find('[data-testid="mayor-ok"]').exists()).toBe(false);
     expect(useToastStore().items.at(-1)!.text).toBe(
       '镇长大胃锅: 谢谢你, 我现在就去找他, 好好弥补他！ 获得 道具231×1',
     );
@@ -99,5 +114,6 @@ describe('MayorAsk', () => {
     });
     expect(done.find('[data-testid="mayor-open"]').exists()).toBe(false);
     expect(done.text()).toContain('今天已经告诉过镇长了');
+    expect(done.get('[data-testid="mayor-done"]').text()).toBe('告诉过了');
   });
 });

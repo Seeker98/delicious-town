@@ -1,6 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { nextTick } from 'vue';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { ForumPostDetailDto, ForumReplyDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -31,6 +32,7 @@ const reply = (floor: number, patch: Partial<ForumReplyDto> = {}): ForumReplyDto
   createdAt: '2026-10-01T04:00:00.000Z',
   deleted: false,
   canDelete: true,
+  avatar: null,
   ...patch,
 });
 const detail = (patch: Partial<ForumPostDetailDto> = {}): ForumPostDetailDto => ({
@@ -51,6 +53,7 @@ const detail = (patch: Partial<ForumPostDetailDto> = {}): ForumPostDetailDto => 
     featured: false,
     content: '<img src=x onerror=alert(1)>\n第二行',
     editedAt: null,
+    avatar: null,
   },
   mine: null,
   can: { edit: false, delete: false, admin: false, reads: false, reply: true },
@@ -71,9 +74,18 @@ async function mountView() {
     ],
   });
   await router.push('/forum/5');
-  const w = mount(ForumPostView, { global: { plugins: [router] } });
+  // 菜单、回复都在 Teleport 到 body 的底部面板里：测试里把 teleport 桩掉（界面改版 P10）
+  const w = mount(ForumPostView, { global: { plugins: [router], stubs: { teleport: true } } });
   await flushPromises();
   return { w, router };
+}
+
+/** 顶栏“⋯”（按钮在 AppHeader 里）：直接调页面登记的 open，打开帖子菜单面板（界面改版 P10） */
+async function openMenu() {
+  const menu = usePageTitleStore().menu;
+  expect(menu).not.toBeNull();
+  menu!.open();
+  await nextTick();
 }
 
 describe('ForumPostView', () => {
@@ -84,9 +96,11 @@ describe('ForumPostView', () => {
   });
   afterEach(() => vi.restoreAllMocks());
 
-  it('帖子标题显示在顶栏（界面改版 P2a）', async () => {
-    await mountView();
-    expect(usePageTitleStore().title).toBe('攻略');
+  it('帖子标题大字显示在正文上面，顶栏只放“⋯”菜单（界面改版 P10；原来 P2a 标题在顶栏）', async () => {
+    const { w } = await mountView();
+    expect(w.find('[data-testid="post-title"]').text()).toBe('攻略');
+    expect(usePageTitleStore().title).toBeNull();
+    expect(usePageTitleStore().menu?.label).toBe('更多操作');
   });
 
   it('正文按纯文字显示：HTML 不会被当成标签，换行保留', async () => {
@@ -100,11 +114,12 @@ describe('ForumPostView', () => {
   it('点赞后更新计数和我的态度；没有管理权限时不显示置顶', async () => {
     vi.mocked(endpoints.forumReact).mockResolvedValue({ mine: 'up', up: 1, down: 0 });
     const { w } = await mountView();
+    await openMenu();
     expect(w.find('[data-testid="post-pin"]').exists()).toBe(false);
     await w.find('[data-testid="post-up"]').trigger('click');
     await flushPromises();
     expect(endpoints.forumReact).toHaveBeenCalledWith(5, 'up');
-    expect(w.find('[data-testid="post-up"]').classes()).toContain('active');
+    expect(w.find('[data-testid="post-up"]').attributes('aria-pressed')).toBe('true');
     expect(w.find('[data-testid="post-up"]').text()).toContain('1');
   });
 
@@ -119,6 +134,10 @@ describe('ForumPostView', () => {
     await w.find('[data-testid="reply-submit"]').trigger('click');
     await flushPromises();
     expect(endpoints.forumReply).toHaveBeenCalledWith(5, { content: '同意', replyTo: 2, anonymous: false });
+    // 发完面板收起；底部“写回复…”再打开，这次不带楼层
+    expect(w.find('[data-testid="reply-content"]').exists()).toBe(false);
+    await w.find('[data-testid="reply-open"]').trigger('click');
+    expect(w.find('[data-testid="reply-target"]').exists()).toBe(false);
     await w.find('[data-testid="reply-content"]').setValue('悄悄说');
     await w.find('[data-testid="reply-anon"]').setValue(true);
     await w.find('[data-testid="reply-submit"]').trigger('click');
@@ -158,9 +177,12 @@ describe('ForumPostView', () => {
       items: [{ restId: 8, name: '老李', times: 3, lastDay: '2026-10-01', reaction: 'up' }],
     });
     const { w } = await mountView();
+    await openMenu();
+    expect(w.find('[data-testid="post-feature"]').exists()).toBe(true);
     await w.find('[data-testid="post-pin"]').trigger('click');
     await flushPromises();
     expect(endpoints.forumAdmin).toHaveBeenCalledWith(5, 'pin');
+    await openMenu();
     await w.find('[data-testid="post-reads"]').trigger('click');
     await flushPromises();
     expect(w.text()).toContain('老李 · 读了 3 次');
@@ -168,6 +190,7 @@ describe('ForumPostView', () => {
   it('回复成功后直接追加到列表，不重新读详情（终审 I1：避免刷新阅读时间）', async () => {
     vi.mocked(endpoints.forumReply).mockResolvedValue(reply(4, { content: '新回复' }));
     const { w } = await mountView();
+    await w.find('[data-testid="reply-open"]').trigger('click');
     await w.find('[data-testid="reply-content"]').setValue('新回复');
     await w.find('[data-testid="reply-submit"]').trigger('click');
     await flushPromises();
@@ -184,6 +207,9 @@ describe('ForumPostView', () => {
       }),
     );
     const { w } = await mountView();
+    expect(w.find('[data-testid="reply-open"]').text()).toMatch(/^(44|45) 秒后可以再回复$/);
+    await w.find('[data-testid="reply-open"]').trigger('click');
+    await w.find('[data-testid="reply-content"]').setValue('还想说');
     expect(w.find('[data-testid="reply-submit"]').attributes('disabled')).toBeDefined();
     expect(w.find('[data-testid="reply-wait"]').text()).toMatch(/^(44|45) 秒后可以再回复$/);
   });
@@ -204,6 +230,7 @@ describe('ForumPostView', () => {
       detail({ replies: [reply(1, { restId: 9, canDelete: false }), reply(2)] }),
     );
     const { w } = await mountView();
+    await openMenu();
     expect(w.find('[data-testid="post-report-open"]').exists()).toBe(true);
     expect(w.find('[data-testid="reply-report-1-open"]').exists()).toBe(true);
     expect(w.find('[data-testid="reply-report-2-open"]').exists()).toBe(false);
@@ -218,7 +245,9 @@ describe('ForumPostView', () => {
       lang: null,
       npcRestId: null,
     };
+    w.unmount();
     const { w: w2 } = await mountView();
+    await openMenu();
     expect(w2.find('[data-testid="post-report-open"]').exists()).toBe(false);
   });
 });

@@ -119,7 +119,7 @@ export async function loadReplies(o: Op, postId: number, admin: boolean): Promis
     .selectFrom('forum_reply as x')
     .innerJoin('restaurant as r', 'r.id', 'x.rest_id')
     .selectAll('x')
-    .select('r.name as rest_name')
+    .select(['r.name as rest_name', 'r.avatar as rest_avatar'])
     .where('x.post_id', '=', postId)
     .orderBy('x.floor')
     .execute();
@@ -132,6 +132,7 @@ export async function loadReplies(o: Op, postId: number, admin: boolean): Promis
       replyTo: x.reply_to,
       restId: visible ? x.rest_id : null,
       restName: visible ? x.rest_name : '匿名',
+      avatar: visible ? x.rest_avatar : null,
       anonymous: x.anonymous,
       content: deleted ? '' : x.content,
       createdAt: x.created_at.toISOString(),
@@ -168,13 +169,11 @@ export async function postDetail(o: Op, ctx: RestCtx, id: number): Promise<Forum
   }
   const admin = await isAdmin(o.tx, ctx.accountId);
   const author = post.rest_id === o.rest.id;
-  const restName = (
-    await o.tx
-      .selectFrom('restaurant')
-      .select('name')
-      .where('id', '=', post.rest_id)
-      .executeTakeFirstOrThrow()
-  ).name;
+  const writer = await o.tx
+    .selectFrom('restaurant')
+    .select(['name', 'avatar'])
+    .where('id', '=', post.rest_id)
+    .executeTakeFirstOrThrow();
   const mine = await o.tx
     .selectFrom('forum_reaction')
     .select('kind')
@@ -184,7 +183,8 @@ export async function postDetail(o: Op, ctx: RestCtx, id: number): Promise<Forum
   const locked = post.pinned_at !== null || post.featured_at !== null;
   return {
     post: {
-      ...toItem(post, restName, t.excerpt),
+      ...toItem(post, writer.name, t.excerpt),
+      avatar: writer.avatar,
       content: post.content,
       editedAt: post.edited_at?.toISOString() ?? null,
     },

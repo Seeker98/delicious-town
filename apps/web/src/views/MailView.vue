@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { RouterLink } from 'vue-router';
 import { gameDateTime } from '../utils/format';
 import type { MailDto, RewardItems } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -9,11 +8,18 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useMailStore } from '../stores/mail';
 import { useToastStore } from '../stores/toast';
-import { rewardSummary } from '../utils/reward';
+import { rewardChips, rewardSummary } from '../utils/reward';
+import DtArt from '../components/DtArt.vue';
+import DtEmpty from '../components/DtEmpty.vue';
+import DtRow from '../components/DtRow.vue';
+import DtSheet from '../components/DtSheet.vue';
 import { mailBody, mailTitle } from '../utils/serverText';
 import { serverNowMs } from '../utils/serverNow';
 
-/** 邮箱（子项目 6A）：领取附件、一键全领、删除；顶部是兑换码输入框（6A-2） */
+/**
+ * 邮箱（子项目 6A；界面改版 P10）：上面一行去兑换码页；一封一行（没读的加粗、紫点，附件写成小胶囊，右边领取或删除），
+ * 点一封从下面弹出正文
+ */
 const catalog = useCatalogStore();
 const toast = useToastStore();
 const t = useT();
@@ -40,7 +46,10 @@ async function load() {
     if (mine === seq) toast.push(errorMessage(e, t.value.mail.loadFailed), 'danger');
   }
 }
-onMounted(() => void load());
+onMounted(() => {
+  void catalog.load();
+  void load();
+});
 
 const hasItems = (m: MailDto) => m.items !== null && Object.keys(m.items).length > 0;
 const claimable = (m: MailDto) => hasItems(m) && !m.claimed && !m.broken;
@@ -70,9 +79,20 @@ async function run(fn: () => Promise<unknown>, fallback: string) {
   }
 }
 
-async function toggle(m: MailDto) {
-  open.value = open.value === m.id ? null : m.id;
-  if (open.value === m.id && !m.read) {
+const opened = computed(() => items.value.find((m) => m.id === open.value) ?? null);
+const chips = (m: MailDto) =>
+  m.items
+    ? rewardChips(m.items, {
+        goodsName: (id) => catalog.goodsName(id),
+        foodName: (id) => catalog.foodName(id),
+        goodsArt: (id) => catalog.goodsArt(id),
+        foodArt: (id) => catalog.foodArt(id),
+        icon: (key) => catalog.icon(key),
+      })
+    : [];
+async function show(m: MailDto) {
+  open.value = m.id;
+  if (!m.read) {
     m.read = true;
     try {
       await endpoints.mailRead(m.id);
@@ -91,7 +111,11 @@ const claim = (m: MailDto) =>
   run(async () => {
     warnExpired([(await endpoints.mailClaim(m.id)).items]);
   }, t.value.mail.claimFailed);
-const remove = (m: MailDto) => run(() => endpoints.mailDelete(m.id), t.value.mail.deleteFailed);
+const remove = (m: MailDto) =>
+  run(async () => {
+    await endpoints.mailDelete(m.id);
+    if (open.value === m.id) open.value = null;
+  }, t.value.mail.deleteFailed);
 const claimAll = () =>
   run(async () => {
     const r = await endpoints.mailClaimAll();
@@ -101,70 +125,163 @@ const claimAll = () =>
 </script>
 
 <template>
-  <div class="dt-page-meta">
+  <!-- 兑换码只留在兑换码页（界面改版 P2b）；这里一行入口 -->
+  <div class="dt-card dt-rows-card">
+    <DtRow
+      to="/redeem"
+      strong
+      :title="t.misc.redeem.title"
+      :sub="t.mail.redeemSub"
+      data-testid="mail-to-redeem"
+    >
+      <template #icon><DtArt name="res-ticket" :size="26" /></template>
+    </DtRow>
+  </div>
+  <div class="dt-block-head mt-3">
+    <h2 class="dt-block-title">{{ t.mail.listTitle }}</h2>
+    <span v-if="loaded && items.length > 0" class="dt-block-more">{{
+      t.mail.countLine(items.length, items.filter((m) => claimable(m) && !levelLow(m)).length)
+    }}</span>
     <button
-      class="btn btn-sm btn-primary"
-      :disabled="busy || !anyClaimable"
+      v-if="anyClaimable"
+      type="button"
+      class="btn btn-sm btn-outline-primary"
+      :disabled="busy"
       data-testid="mail-claim-all"
       @click="claimAll"
     >
       {{ t.mail.claimAll }}
     </button>
   </div>
-  <!-- 兑换码只留在兑换码页（界面改版 P2b） -->
-  <p class="small mb-2" data-testid="mail-to-redeem">
-    <RouterLink to="/redeem" class="dt-go">{{ t.misc.redeem.title }}</RouterLink>
-  </p>
-  <div v-if="notice" class="alert alert-warning py-1 small" role="status">{{ notice }}</div>
-  <div v-if="loaded && items.length === 0" class="dt-empty">{{ t.mail.empty }}</div>
-  <div v-for="m in items" :key="m.id" class="dt-card small mb-2" :data-testid="`mail-${m.id}`">
-    <div class="d-flex align-items-center gap-2">
+  <div v-if="notice" class="dt-block-note text-danger" role="status">{{ notice }}</div>
+  <DtEmpty
+    v-if="loaded && items.length === 0"
+    art="empty-mail"
+    :title="t.mail.empty"
+    :body="t.mail.emptyBody"
+  />
+  <div v-else-if="items.length > 0" class="dt-card dt-rows-card" data-testid="mail-list">
+    <div
+      v-for="m in items"
+      :key="m.id"
+      :class="['dt-mail-row', { 'is-unread': !m.read }]"
+      :data-testid="`mail-${m.id}`"
+    >
       <button
         type="button"
-        class="btn btn-link p-0 text-reset text-start flex-fill text-decoration-none"
-        :class="{ 'fw-bold': !m.read }"
-        :aria-expanded="open === m.id"
+        class="dt-mail-open"
+        :aria-label="t.mail.openLabel(mailTitle(m))"
         :data-testid="`mail-title-${m.id}`"
-        @click="toggle(m)"
+        @click="show(m)"
       >
-        {{ mailTitle(m) }}
+        <span class="dt-mail-ico"
+          ><DtArt
+            :name="hasItems(m) && !m.claimed ? 'goods-gift' : m.read ? 'town-mail-open' : 'town-mail'"
+            :size="24" /><span v-if="!m.read" class="dt-mail-dot"></span
+        ></span>
+        <span class="dt-mail-main">
+          <span class="dt-mail-title">{{ mailTitle(m) }}</span>
+          <span class="dt-mail-meta">{{ sentAt(m) }}{{ t.mail.daysLeft(daysLeft(m)) }}</span>
+          <span v-if="hasItems(m)" class="dt-mail-chips">
+            <span v-for="(c, i) in chips(m)" :key="i" class="dt-mail-chip"
+              ><span class="dt-mail-chip-art"
+                ><DtArt v-if="c.art" :name="c.art" :size="16" /><b v-else aria-hidden="true">{{
+                  t.mail.iconMark
+                }}</b></span
+              >{{ c.text }}</span
+            >
+          </span>
+        </span>
       </button>
-      <button
-        v-if="claimable(m)"
-        class="btn btn-sm btn-primary"
-        :disabled="busy || levelLow(m)"
-        :data-testid="`mail-claim-${m.id}`"
-        @click="claim(m)"
-      >
-        {{ t.mail.claim }}
-      </button>
-      <button
-        v-else
-        class="btn btn-sm btn-outline-secondary"
-        :disabled="busy"
-        :data-testid="`mail-delete-${m.id}`"
-        @click="remove(m)"
-      >
-        {{ t.mail.delete }}
-      </button>
-    </div>
-    <div class="dt-meta">
-      {{ sentAt(m) }}{{ t.mail.daysLeft(daysLeft(m)) }}
-      <span v-if="claimable(m) && levelLow(m)" class="text-danger">{{
-        t.mail.needLevel(m.minLevel ?? 0)
-      }}</span>
-      <span v-if="m.claimed">{{ t.mail.claimed }}</span>
-      <span v-else-if="m.broken" class="text-danger">{{ t.mail.broken }}</span>
-    </div>
-    <div v-if="hasItems(m)" class="dt-meta">{{ t.mail.items(rewardSummary(m.items!, catalog)) }}</div>
-    <div v-if="open === m.id" class="mt-1 dt-mail-body" :data-testid="`mail-body-${m.id}`">
-      {{ mailBody(m) }}
+      <span class="dt-mail-act">
+        <button
+          v-if="claimable(m) && !levelLow(m)"
+          type="button"
+          class="btn btn-sm btn-primary"
+          :disabled="busy"
+          :data-testid="`mail-claim-${m.id}`"
+          @click="claim(m)"
+        >
+          {{ t.mail.claim }}
+        </button>
+        <span v-else-if="claimable(m)" class="dt-tag dt-tag-danger" :data-testid="`mail-level-${m.id}`">{{
+          t.mail.needLevelTag(m.minLevel ?? 0)
+        }}</span>
+        <span v-else-if="m.claimed" class="dt-tag dt-tag-ok">{{ t.mail.claimedTag }}</span>
+        <span v-else-if="m.broken" class="dt-tag dt-tag-danger">{{ t.mail.brokenTag }}</span>
+        <button
+          v-else
+          type="button"
+          class="btn btn-sm btn-light"
+          :disabled="busy"
+          :data-testid="`mail-delete-${m.id}`"
+          @click="remove(m)"
+        >
+          {{ t.mail.delete }}
+        </button>
+      </span>
     </div>
   </div>
-</template>
 
-<style scoped>
-.dt-mail-body {
-  white-space: pre-wrap;
-}
-</style>
+  <!-- 点一封从下面弹出：正文、附件、领取或删除 -->
+  <DtSheet :open="!!opened" :title="opened ? mailTitle(opened) : ''" @close="open = null">
+    <template v-if="opened">
+      <div class="dt-detail-head">
+        <span class="dt-detail-art"
+          ><DtArt :name="hasItems(opened) && !opened.claimed ? 'goods-gift' : 'town-mail-open'" :size="52"
+        /></span>
+        <div class="dt-detail-info">
+          <div>{{ sentAt(opened) }}</div>
+          <div class="dt-detail-sub">{{ t.mail.expires(daysLeft(opened)) }}</div>
+        </div>
+      </div>
+      <div class="dt-mail-body" :data-testid="`mail-body-${opened.id}`">{{ mailBody(opened) }}</div>
+      <template v-if="hasItems(opened)">
+        <div class="dt-field-label-top">{{ t.mail.itemsTitle }}</div>
+        <div class="dt-award-chips">
+          <span v-for="(c, i) in chips(opened)" :key="i" class="dt-mail-chip is-big"
+            ><span class="dt-mail-chip-art"
+              ><DtArt v-if="c.art" :name="c.art" :size="20" /><b v-else aria-hidden="true">{{
+                t.mail.iconMark
+              }}</b></span
+            >{{ c.text }}</span
+          >
+        </div>
+        <p v-if="opened.claimed" class="dt-detail-note">{{ t.mail.claimedTag }}</p>
+        <p v-else-if="opened.broken" class="dt-detail-note text-danger">{{ t.mail.broken }}</p>
+        <p v-else-if="levelLow(opened)" class="dt-detail-note text-danger">
+          {{ t.mail.needLevel(opened.minLevel ?? 0) }}
+        </p>
+      </template>
+    </template>
+    <template #actions>
+      <div v-if="opened && claimable(opened)" class="dt-sheet-pair">
+        <button type="button" class="btn btn-light" :disabled="busy" @click="remove(opened)">
+          {{ t.mail.delete }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          :disabled="busy || levelLow(opened)"
+          data-testid="mail-sheet-claim"
+          @click="claim(opened)"
+        >
+          {{ t.mail.claim }}
+        </button>
+      </div>
+      <div v-else class="dt-sheet-pair">
+        <button type="button" class="btn btn-light" @click="open = null">{{ t.common.close }}</button>
+        <button
+          v-if="opened"
+          type="button"
+          class="btn btn-outline-danger"
+          :disabled="busy"
+          data-testid="mail-sheet-delete"
+          @click="remove(opened)"
+        >
+          {{ t.mail.delete }}
+        </button>
+      </div>
+    </template>
+  </DtSheet>
+</template>
