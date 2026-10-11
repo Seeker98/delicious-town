@@ -110,10 +110,11 @@ html {
 .dt-main {
   padding: 8px;
 }
-.game-img {
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
+/* 吉祥物、好友卡片名字前的图标（界面改版 P4：原来是原版图包的头像位置） */
+.dt-mascot-icon {
+  font-size: 22px;
+  line-height: 1;
+  color: var(--dt-primary-ink);
 }
 .dt-main-nav {
   padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));

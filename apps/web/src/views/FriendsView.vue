@@ -7,7 +7,6 @@ import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
 import { useTabQuery } from '../composables/useTabQuery';
 import FeedRow from '../components/FeedRow.vue';
-import GameImg from '../components/GameImg.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useFriendsStore } from '../stores/friends';
 import { useToastStore } from '../stores/toast';
@@ -156,12 +155,7 @@ watch(tab, (k) => void show(k), { immediate: true });
       class="d-flex align-items-center border-bottom px-1 py-1 text-decoration-none"
       :data-testid="`friend-row-${f.id}`"
     >
-      <GameImg
-        :path="`avatar/${f.avatar ?? 0}`"
-        :alt="restName(f.id, f.name)"
-        fallback-icon="bi-person-circle"
-        class="me-1 flex-shrink-0"
-      />
+      <i class="bi bi-person-circle me-1 flex-shrink-0" aria-hidden="true"></i>
       <!-- 问题记录 168：店名、等级、状态压到一行 -->
       <div class="flex-fill dt-friend-line small">
         <b>{{ restName(f.id, f.name) }}</b>

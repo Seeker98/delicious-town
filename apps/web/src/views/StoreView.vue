@@ -7,7 +7,6 @@ import { endpoints } from '../api/endpoints';
 import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
 import { useTabQuery } from '../composables/useTabQuery';
-import GameImg from '../components/GameImg.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
@@ -223,11 +222,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.store.loa
       class="d-flex gap-2 border-bottom py-2"
       :data-testid="`souvenir-${it.goodsId}`"
     >
-      <GameImg
-        :path="`goods/${catalog.goodsName(it.goodsId)}`"
-        :alt="catalog.goodsName(it.goodsId)"
-        fallback-icon="bi-gift"
-      />
+      <i class="bi bi-gift" aria-hidden="true"></i>
       <div class="flex-fill">
         <div>
           <b>{{ catalog.goodsName(it.goodsId) }}</b

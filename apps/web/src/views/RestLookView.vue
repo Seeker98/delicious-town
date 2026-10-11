@@ -2,7 +2,6 @@
 import { computed, onMounted, ref } from 'vue';
 import type { MyLooksDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
-import GameImg from '../components/GameImg.vue';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
@@ -80,7 +79,7 @@ onMounted(async () => {
         :disabled="busy"
         @click="act(() => endpoints.setAvatar(a.id), t.rest.look.avatarSet, t.rest.look.avatarFailed)"
       >
-        <GameImg :path="`avatar/${a.id}`" :alt="a.name" fallback-icon="bi-person-circle" /> {{ a.name }}
+        <i class="bi bi-person-circle" aria-hidden="true"></i> {{ a.name }}
       </button>
     </div>
 
