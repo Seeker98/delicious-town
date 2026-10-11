@@ -48,85 +48,144 @@ function lockText(i: ActItem): string | null {
   if (i.blocked === 'noActivity') return x.noActivity;
   return null;
 }
-const ORDER = { open: 0, locked: 1, done: 2 } as const;
+/** 排序（界面改版 P7）：做了一部分的排最前，再是没做的，没开放的排后；做满的收进折叠行 */
+const rank = (i: ActItem) => (stateOf(i) === 'locked' ? 2 : i.count > 0 ? 0 : 1);
 const items = computed(() =>
-  [...(act.value?.items ?? [])].sort((a, b) => ORDER[stateOf(a)] - ORDER[stateOf(b)]),
+  (act.value?.items ?? []).filter((i) => stateOf(i) !== 'done').sort((a, b) => rank(a) - rank(b)),
 );
-const pct = (count: number, limit: number) => Math.min(100, Math.round((count / Math.max(1, limit)) * 100));
+const done = computed(() => (act.value?.items ?? []).filter((i) => stateOf(i) === 'done'));
+const itemName = (i: ActItem) => catalog.data('activation', i.id)?.name ?? i.name;
+/** 锁定原因去掉前面的锁符号（行里另画锁图标） */
+const lockReason = (i: ActItem) => (lockText(i) ?? '').replace(/^🔒\s*/u, '');
+/** 活跃进度条：档位按最高一档的点数排在条上 */
+const maxPoints = computed(() => Math.max(1, ...(act.value?.rewards ?? []).map((r) => r.points)));
+const at = (p: number) => `${Math.min(100, (p / maxPoints.value) * 100)}%`;
 
 onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.tasks.loadFailed), 'danger')));
 </script>
 
 <template>
   <DtSkeleton v-if="!act" :rows="5" data-testid="activation-skeleton" />
-  <section v-if="act" class="dt-card mb-3" data-testid="card-activation">
-    <!-- 签到按钮放在标题这一行，不单独占一行（问题记录 530） -->
-    <div class="d-flex align-items-center gap-2 mb-2" data-testid="activation-head">
-      <span class="dt-card-title flex-fill">{{ t.rest.tasks.today(act.total) }}</span>
-      <button
-        class="btn btn-sm btn-primary text-nowrap"
-        data-testid="signin"
-        :disabled="busy || act.signedIn"
-        @click="run(() => endpoints.signIn(), t.rest.tasks.signInFailed)"
+  <template v-if="act">
+    <!-- 今日活跃（界面改版 P7）：一条进度条，档位节点在条上；下面一档一行，到了的直接领奖 -->
+    <section class="dt-card dt-act-card" data-testid="card-activation">
+      <div class="dt-act-head" data-testid="activation-head">
+        <span class="dt-act-total"
+          ><span class="dt-stat-label">{{ t.rest.tasks.actTitle }}</span> <b>{{ act.total }}</b
+          ><span class="dt-meta"> / {{ maxPoints }}</span></span
+        >
+        <span v-if="act.signedIn" class="dt-tag dt-tag-ok" data-testid="signin">{{
+          t.rest.tasks.signedIn
+        }}</span>
+        <button
+          v-else
+          class="btn btn-sm btn-primary text-nowrap"
+          data-testid="signin"
+          :disabled="busy"
+          @click="run(() => endpoints.signIn(), t.rest.tasks.signInFailed)"
+        >
+          {{ t.rest.tasks.signIn }}
+        </button>
+      </div>
+      <div
+        class="dt-act-track"
+        role="progressbar"
+        :aria-valuenow="act.total"
+        aria-valuemin="0"
+        :aria-valuemax="maxPoints"
+        :aria-label="t.rest.tasks.actTitle"
       >
-        {{ act.signedIn ? t.rest.tasks.signedIn : t.rest.tasks.signIn }}
-      </button>
-    </div>
-    <div class="d-flex flex-wrap gap-1 mb-2">
-      <button
+        <span class="dt-act-rail"></span>
+        <span class="dt-act-fill" :style="{ width: at(act.total) }"></span>
+        <template v-for="r in act.rewards" :key="r.points">
+          <span
+            :class="['dt-act-node', { 'is-on': act.total >= r.points }]"
+            :style="{ left: at(r.points) }"
+          ></span>
+          <span
+            :class="['dt-act-mark', { 'is-on': act.total >= r.points }]"
+            :style="{ left: at(r.points) }"
+            >{{ r.points }}</span
+          >
+        </template>
+      </div>
+      <div
         v-for="r in act.rewards"
         :key="r.points"
-        :class="[
-          'btn btn-sm',
-          r.claimed
-            ? 'btn-light text-muted'
-            : act.total >= r.points
-              ? 'btn-primary'
-              : 'btn-outline-secondary',
-        ]"
-        :data-testid="`claim-${r.points}`"
-        :disabled="busy || r.claimed || act.total < r.points"
-        @click="run(() => endpoints.claimActivation(r.points), t.rest.tasks.claimFailed)"
+        :class="['dt-act-tier', { 'is-ready': !r.claimed && act.total >= r.points }]"
+        :data-testid="`tier-${r.points}`"
       >
-        <template v-if="r.claimed">{{ t.rest.tasks.claimed(r.points) }}</template>
-        <template v-else-if="act.total >= r.points">{{
-          t.rest.tasks.claim(r.points, r.multiplier > 1)
-        }}</template>
-        <template v-else>{{ t.rest.tasks.need(r.points, r.points - act.total) }}</template>
-        <!-- 这一档送什么写在按钮里（backlog B6），领了才知道不方便 -->
-        <div class="opacity-75" :data-testid="`claim-award-${r.points}`">
-          {{ awardText(r.award, catalog) }}
-        </div>
-      </button>
-    </div>
-    <!-- 哪一档另送一番赏券（backlog 一番赏）：按钮上只写点数，送券写在这里 -->
-    <div v-if="act.kujiTicket" class="small text-muted mb-2" data-testid="act-kuji-hint">
-      {{ t.rest.tasks.kujiHint(act.kujiTicket.points, act.kujiTicket.num) }}
-    </div>
-    <div class="dt-act-grid small">
-      <div
-        v-for="i in items"
-        :key="i.id"
-        :class="[
-          'dt-act',
-          { 'dt-act-done': stateOf(i) === 'done', 'dt-act-locked': stateOf(i) === 'locked' },
-        ]"
-        :data-testid="`act-${i.id}`"
-      >
-        <div class="d-flex align-items-center gap-1">
-          <span class="dt-clamp2">{{ catalog.data('activation', i.id)?.name ?? i.name }}</span>
-          <span v-if="stateOf(i) === 'done'" class="ms-auto text-success text-nowrap">{{
-            t.rest.tasks.full
+        <span :class="['dt-act-pt', { 'is-on': act.total >= r.points }]">{{ r.points }}</span>
+        <span class="dt-row-main">
+          <!-- 这一档送什么（backlog B6），领了才知道不方便 -->
+          <span class="dt-row-title" :data-testid="`claim-award-${r.points}`">{{
+            awardText(r.award, catalog)
           }}</span>
-          <span v-else-if="stateOf(i) !== 'locked'" class="ms-auto text-nowrap"
+          <span v-if="act.kujiTicket?.points === r.points || r.multiplier > 1" class="dt-row-sub"
+            ><template v-if="r.multiplier > 1">{{ t.rest.tasks.double }}</template
+            ><template v-if="act.kujiTicket?.points === r.points">{{
+              t.rest.tasks.kujiTier(act.kujiTicket.num)
+            }}</template></span
+          >
+        </span>
+        <span v-if="r.claimed" class="dt-tag dt-tag-ok" :data-testid="`claim-${r.points}`">{{
+          t.rest.tasks.claimedShort
+        }}</span>
+        <button
+          v-else-if="act.total >= r.points"
+          class="btn btn-sm btn-primary"
+          :data-testid="`claim-${r.points}`"
+          :disabled="busy"
+          @click="run(() => endpoints.claimActivation(r.points), t.rest.tasks.claimFailed)"
+        >
+          {{ t.rest.tasks.claimTask }}
+        </button>
+        <span v-else class="dt-tag dt-tag-mute" :data-testid="`claim-${r.points}`">{{
+          t.rest.tasks.needShort(r.points - act.total)
+        }}</span>
+      </div>
+    </section>
+
+    <!-- 做什么能加活跃：一张卡片一行一件；做了一部分的排最前，没开放的灰掉写原因，做满的收起来 -->
+    <section class="dt-block">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.rest.tasks.doTitle }}</h2>
+      </div>
+      <div class="dt-card dt-rows-card">
+        <div
+          v-for="i in items"
+          :key="i.id"
+          :class="['dt-row', { 'is-locked': stateOf(i) === 'locked' }]"
+          :data-testid="`act-${i.id}`"
+        >
+          <span class="dt-row-main">
+            <span class="dt-row-title">{{ itemName(i) }}</span>
+            <span class="dt-row-sub"
+              ><template v-if="stateOf(i) === 'locked'"
+                ><i class="bi bi-lock-fill" aria-hidden="true"></i> {{ lockReason(i) }} · </template
+              >{{ t.rest.tasks.per(i.points) }}</span
+            >
+          </span>
+          <span v-if="stateOf(i) !== 'locked'" :class="['dt-act-count', { 'is-on': i.count > 0 }]"
             >{{ i.count }}/{{ i.limit }}</span
           >
         </div>
-        <!-- 锁定原因（注册天数、邮箱、没有活动）英法西文很长：单独一行放在进度条的位置，不挤名字（视觉第三轮） -->
-        <div v-if="stateOf(i) === 'locked'" class="dt-act-lock">{{ lockText(i) }}</div>
-        <div v-else class="dt-act-bar"><div :style="{ width: `${pct(i.count, i.limit)}%` }"></div></div>
-        <div class="dt-act-pts">{{ t.rest.tasks.per(i.points) }}</div>
+        <details v-if="done.length > 0" class="dt-act-done" data-testid="act-done">
+          <summary class="dt-effects-sum">
+            <span class="dt-effects-sum-text">{{
+              t.rest.tasks.doneFold(done.length, done.map(itemName).join(t.events.sep))
+            }}</span>
+            <i class="bi bi-chevron-down dt-effects-chev" aria-hidden="true"></i>
+          </summary>
+          <div v-for="i in done" :key="i.id" class="dt-row" :data-testid="`act-${i.id}`">
+            <span class="dt-row-main"
+              ><span class="dt-row-title">{{ itemName(i) }}</span
+              ><span class="dt-row-sub">{{ t.rest.tasks.per(i.points) }}</span></span
+            >
+            <span class="dt-tag dt-tag-ok">{{ t.rest.tasks.fullShort }}</span>
+          </div>
+        </details>
       </div>
-    </div>
-  </section>
+    </section>
+  </template>
 </template>

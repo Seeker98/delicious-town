@@ -146,6 +146,17 @@ const rest: Messages['rest'] = {
     weeklyFull: (text) => `Completion bonus: ${text}`,
     claimWeeklyFull: 'Claim',
     weeklyFullClaimed: '✓ Claimed',
+    actTitle: 'Activity today',
+    double: 'Doubled ',
+    kujiTier: (num) => `Plus ${num} lottery ${plEn(num, 'ticket', 'tickets')}`,
+    claimedShort: 'Claimed',
+    needShort: (n) => `${n} to go`,
+    doTitle: 'Ways to earn activity',
+    doneFold: (n, names) => `${n} maxed out · ${names}`,
+    fullShort: 'Maxed',
+    chapterNo: (n) => `Chapter ${n}`,
+    chapterAwardLabel: 'Chapter reward',
+    weeklyFullLabel: 'All-done reward',
   },
 };
 export default rest;

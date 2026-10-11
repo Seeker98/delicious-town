@@ -11,19 +11,20 @@ const progress = (key: string) => props.a.counters[key] ?? 0;
 </script>
 
 <template>
-  <div
-    v-for="(g, i) in a.def.goals"
-    :key="i"
-    class="d-flex flex-wrap align-items-center gap-2 border-bottom py-1 small"
-  >
-    <span class="flex-fill">{{ t.activity.goalLine(actionName(g.key), g.target) }}</span>
-    <span class="small text-muted">{{ Math.min(progress(g.key), g.target) }}/{{ g.target }}</span>
-    <RewardButton
-      :activity-id="a.id"
-      :reward="a.rewards[i]!"
-      :state="a.state"
-      :busy="busy"
-      @claim="$emit('claim', $event)"
-    />
+  <!-- 一张卡片一行一个目标（界面改版 P7）：名字和进度，右边奖励和状态 -->
+  <div class="dt-rows-card dt-act-lines">
+    <div v-for="(g, i) in a.def.goals" :key="i" class="dt-row dt-row-wrap">
+      <span class="dt-row-main"
+        ><span class="dt-row-title">{{ t.activity.goalLine(actionName(g.key), g.target) }}</span
+        ><span class="dt-row-sub">{{ Math.min(progress(g.key), g.target) }}/{{ g.target }}</span></span
+      >
+      <RewardButton
+        :activity-id="a.id"
+        :reward="a.rewards[i]!"
+        :state="a.state"
+        :busy="busy"
+        @claim="$emit('claim', $event)"
+      />
+    </div>
   </div>
 </template>

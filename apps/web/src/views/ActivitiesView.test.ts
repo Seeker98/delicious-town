@@ -103,11 +103,12 @@ describe('ActivitiesView', () => {
     expect(card.text()).toContain('签到');
     expect(card.text()).toContain('3/3');
     expect(card.text()).toContain('还剩 2 天');
-    // 卡片标题和正文同字号、粗 600，不比正文大一号（问题记录 278）
-    expect(card.find('.dt-card-title').exists()).toBe(true);
-    expect(card.find('b').exists()).toBe(false);
-    // 目标行和正文同字号（14px），不比卡片标题还大
-    for (const row of card.findAll('.border-bottom')) expect(row.classes()).toContain('small');
+    // 界面改版 P7：标题一行，类型（签到绿色）、剩余时间是小标签；目标一行一个
+    expect(card.get('.dt-act-detail-title').text()).toBe(goals.title);
+    expect(card.findAll('.dt-act-detail-head .dt-tag').map((x) => x.text())[0]).toBe('签到');
+    expect(card.findAll('.dt-act-detail-head .dt-tag')[1]!.text()).toContain('还剩 2 天');
+    expect(card.get('.dt-act-detail-head .dt-tag').classes()).toContain('dt-tag-ok');
+    expect(card.findAll('.dt-act-lines > .dt-row').length).toBeGreaterThan(0);
     await card.find('[data-testid="claim-1-g0"]').trigger('click');
     await flushPromises();
     expect(endpoints.activityClaim).toHaveBeenCalledWith(1, 'g0');
@@ -122,10 +123,9 @@ describe('ActivitiesView', () => {
     expect(cellsEl).toHaveLength(9);
     expect(cellsEl[0]!.classes()).toContain('dt-cell-done');
     expect(cellsEl[4]!.classes()).not.toContain('dt-cell-done');
-    // 连线奖励行 14px，不比上面格子里的字大（问题记录 278）
-    const lines = w.find('[data-testid="activity-2"]').findAll('.border-bottom');
+    // 连线奖励（界面改版 P7）：一张卡片一行一条，达成的加粗
+    const lines = w.find('[data-testid="activity-2"]').findAll('.dt-act-lines > .dt-row');
     expect(lines.length).toBeGreaterThan(0);
-    for (const row of lines) expect(row.classes()).toContain('small');
     expect(w.find('[data-testid="claim-2-r0"]').exists()).toBe(true);
   });
 
@@ -576,20 +576,23 @@ describe('问题记录 226：活动条 + 详情', () => {
   const cards = (w: ReturnType<typeof mount>) =>
     w.findAll('[data-testid^="activity-"]').map((c) => c.attributes('data-testid'));
 
-  it('活动条列出全部活动（类型、状态、可领数），详情只显示选中的一个；点击切换', async () => {
+  it('活动条是一排筛选胶囊，写名字和可领数；类型、剩余时间写在详情卡片头上（界面改版 P7）；详情只显示选中的一个；点击切换', async () => {
     vi.mocked(endpoints.activities).mockResolvedValue({ items: [pass, goals, grid], level: 10 });
     const w = mount(ActivitiesView);
     await flushPromises();
     const tab = w.find('[data-testid="act-tab-2"]');
-    expect(tab.text()).toContain('九宫格');
-    expect(tab.text()).toContain('还剩 2 天');
-    expect(tab.text()).toContain('可领 4');
-    expect(w.find('[data-testid="act-tab-1"]').text()).toContain('签到');
+    expect(tab.element.closest('.dt-pills')).not.toBeNull();
+    expect(tab.text()).toContain(grid.title);
+    expect(tab.get('.dt-tag').text()).toBe('可领 4');
     // 默认选中第一个有奖可领的：战令排在最前，也有 1 份可领
     expect(cards(w)).toEqual(['activity-3']);
     await w.find('[data-testid="act-tab-2"]').trigger('click');
     expect(cards(w)).toEqual(['activity-2']);
     expect(w.find('[data-testid="act-tab-2"]').attributes('aria-selected')).toBe('true');
+    expect(w.find('[data-testid="act-tab-2"]').classes()).toContain('active');
+    const head = w.get('[data-testid="activity-2"] .dt-act-detail-head').text();
+    expect(head).toContain('九宫格');
+    expect(head).toContain('还剩 2 天');
   });
 
   it('默认选中有奖可领的那个，不管排在第几', async () => {

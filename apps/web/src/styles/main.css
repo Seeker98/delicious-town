@@ -273,51 +273,6 @@ html {
 .dt-equip-name {
   overflow-wrap: anywhere;
 }
-.dt-act-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 4px;
-}
-.dt-act {
-  border: 1px solid var(--dt-line);
-  border-radius: 6px;
-  padding: 4px 8px;
-  background: var(--dt-surface);
-  min-width: 0;
-}
-.dt-act-bar {
-  height: 4px;
-  background: var(--dt-surface-2);
-  border-radius: 2px;
-  margin: 3px 0 2px;
-  overflow: hidden;
-}
-.dt-act-bar > div {
-  height: 100%;
-  background: var(--dt-fill-primary);
-}
-.dt-act-pts {
-  font-size: 11px;
-  color: var(--dt-muted);
-}
-.dt-act-done {
-  background: var(--dt-soft-success);
-  border-color: var(--dt-fill-success);
-}
-.dt-act-done .dt-act-bar > div {
-  background: var(--dt-fill-success);
-}
-.dt-act-locked {
-  background: var(--dt-surface-2);
-  color: var(--dt-muted);
-}
-/* 锁定原因（注册天数、邮箱、没有限时活动）在英法西文里很长：单独一行，放在进度条的位置 */
-.dt-act-lock {
-  font-size: 12px;
-  line-height: 1.25;
-  margin: 2px 0;
-  overflow-wrap: anywhere;
-}
 /* 食谱列表的紧凑卡片（问题记录：信息密度低） */
 /* 食谱列表的一行（界面改版 P4：卡片里的行，细线分隔） */
 .dt-cb {
@@ -1087,21 +1042,46 @@ details.dt-card > summary {
 /* 限时活动九宫格（148-1） */
 .dt-grid-board {
   display: grid;
-  gap: 4px;
+  gap: 6px;
   margin-bottom: 8px;
 }
 /* 列宽用 minmax(0, 1fr)，格子里的长单词可以断开，不把宫格撑出屏幕（问题记录 304） */
 .dt-grid-cell {
-  border: 1px solid var(--bs-border-color);
-  border-radius: 6px;
-  padding: 4px;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
   min-width: 0;
+  min-height: 76px;
+  padding: 8px 4px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-sm);
+  background: var(--dt-surface-2);
+  text-align: center;
   overflow-wrap: anywhere;
 }
 .dt-cell-done {
-  background: var(--bs-success-bg-subtle);
-  border-color: var(--bs-success-border-subtle);
+  background: var(--dt-soft-success);
+  border-color: transparent;
+}
+/* 格子里：名字最多两行，下面进度（做满打勾）、奖励 */
+.dt-grid-name {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.dt-grid-count {
+  font-size: 11px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-cell-done .dt-grid-count {
+  color: var(--dt-ink-success);
 }
 
 /* 活动条（问题记录 226）：手机上横向滑动，宽屏自动换行 */
@@ -1661,42 +1641,6 @@ details.dt-card > summary {
 .dt-switch-row .form-check-label {
   flex: 1;
   min-width: 0;
-}
-/* 任务是卡片里的一行（界面改版 P3）：可领的左边紫色竖条，已领的次要色 */
-.dt-quest {
-  position: relative;
-  align-items: flex-start;
-  padding: 6px 0;
-}
-.dt-quest.is-ready {
-  padding-left: 8px;
-}
-.dt-quest.is-ready::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 6px;
-  bottom: 6px;
-  width: 3px;
-  border-radius: 2px;
-  background: var(--dt-primary);
-}
-.dt-quest.is-claimed {
-  color: var(--dt-muted);
-}
-.dt-quest > .dt-item-actions {
-  align-self: center;
-}
-.dt-quest-bar {
-  height: 4px;
-  margin-top: 4px;
-  border-radius: 2px;
-  background: var(--dt-surface-2);
-  overflow: hidden;
-}
-.dt-quest-bar > div {
-  height: 100%;
-  background: var(--dt-warning);
 }
 /* 食谱详情的品级行（界面改版 P4） */
 .dt-grade-row {
@@ -2668,29 +2612,39 @@ details.dt-card > summary {
 }
 /* ===== 界面改版 P7：餐厅、厨具、任务、活动、食谱、仓库 ===== */
 /* 状态小标签（设计 §2.6：4px 小方块）：红、绿、紫、灰 */
-.dt-tag-danger,
-.dt-tag-ok,
-.dt-tag-primary,
+.dt-tag-danger {
+  border-radius: var(--dt-radius-xs);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  padding: 0 6px;
+  background: var(--dt-soft-danger);
+  color: var(--dt-ink-danger);
+}
+.dt-tag-ok {
+  border-radius: var(--dt-radius-xs);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  padding: 0 6px;
+  background: var(--dt-soft-success);
+  color: var(--dt-ink-success);
+}
+.dt-tag-primary {
+  border-radius: var(--dt-radius-xs);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  padding: 0 6px;
+  background: var(--dt-soft-primary);
+  color: var(--dt-ink-primary);
+}
 .dt-tag-mute {
   border-radius: var(--dt-radius-xs);
   font-size: 11px;
   font-weight: 600;
   line-height: 18px;
   padding: 0 6px;
-}
-.dt-tag-danger {
-  background: var(--dt-soft-danger);
-  color: var(--dt-ink-danger);
-}
-.dt-tag-ok {
-  background: var(--dt-soft-success);
-  color: var(--dt-ink-success);
-}
-.dt-tag-primary {
-  background: var(--dt-soft-primary);
-  color: var(--dt-ink-primary);
-}
-.dt-tag-mute {
   background: var(--dt-surface-2);
   color: var(--dt-muted);
 }
@@ -2912,18 +2866,12 @@ details.dt-card > summary {
   font-size: 12px;
   transition: transform var(--dt-dur-press) var(--dt-ease-out);
 }
-.dt-door-tile {
-  padding-bottom: 8px;
-}
 .dt-avatar-tile[aria-pressed='true'],
 .dt-door-tile[aria-pressed='true'] {
   border: 2px solid var(--dt-primary);
   background: var(--dt-soft-primary);
   padding: 7px 1px 5px;
   font-weight: 600;
-}
-.dt-door-tile[aria-pressed='true'] {
-  padding-bottom: 7px;
 }
 .dt-door-tile:disabled[aria-pressed='true'] {
   opacity: 1;
@@ -3005,7 +2953,7 @@ details.dt-card > summary {
   color: var(--dt-primary-ink);
 }
 /* 穿戴中：一个部位一行，名字写全（最多两行），托盘里是部位图 */
-.dt-equip-row {
+.dt-gear-row {
   width: 100%;
   min-height: 62px;
   border-left: 0;
@@ -3015,7 +2963,7 @@ details.dt-card > summary {
   font: inherit;
   text-align: left;
 }
-.dt-rows-card > .dt-equip-row:first-child {
+.dt-rows-card > .dt-gear-row:first-child {
   border-top: 0;
 }
 .dt-equip-tray {
@@ -3032,7 +2980,7 @@ details.dt-card > summary {
   background: var(--dt-plate);
   color: var(--dt-muted);
 }
-.dt-equip-name {
+.dt-gear-name {
   font-weight: 600;
   overflow-wrap: anywhere;
   display: -webkit-box;
@@ -3040,7 +2988,7 @@ details.dt-card > summary {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.dt-equip-name > .dt-tag {
+.dt-gear-name > .dt-tag {
   margin-left: 6px;
   vertical-align: 1px;
 }
@@ -3247,15 +3195,14 @@ details.dt-card > summary {
 .dt-ring {
   flex-shrink: 0;
 }
-.dt-ring-track,
-.dt-ring-fill {
+.dt-ring-track {
   fill: none;
   stroke-width: 7;
-}
-.dt-ring-track {
   stroke: var(--dt-bar-track);
 }
 .dt-ring-fill {
+  fill: none;
+  stroke-width: 7;
   stroke: var(--dt-primary);
   stroke-linecap: round;
 }
@@ -3315,4 +3262,253 @@ details.dt-card > summary {
   .dt-hole:active:not(:disabled) {
     transform: scale(0.97);
   }
+}
+.dt-rows-card > .dt-kv-rows {
+  border-top: 1px solid var(--dt-line);
+}
+/* 任务·今日（P7）：活跃进度条，档位节点和数字在条上；下面一档一行 */
+.dt-act-card {
+  padding: 0;
+  overflow: hidden;
+}
+.dt-act-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 14px 0;
+}
+.dt-act-total {
+  flex: 1 1 auto;
+  font-variant-numeric: tabular-nums;
+}
+.dt-act-total > b {
+  margin-left: 4px;
+  font-size: 22px;
+}
+.dt-act-track {
+  position: relative;
+  display: block;
+  height: 30px;
+  margin: 14px 20px 6px;
+}
+.dt-act-rail {
+  position: absolute;
+  left: 0;
+  top: 4px;
+  height: 8px;
+  border-radius: 4px;
+  right: 0;
+  background: var(--dt-bar-track);
+}
+.dt-act-fill {
+  position: absolute;
+  left: 0;
+  top: 4px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--dt-primary);
+}
+.dt-act-node {
+  position: absolute;
+  top: 2px;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  border-radius: 50%;
+  background: var(--dt-surface);
+  box-shadow: inset 0 0 0 2px var(--dt-line-strong);
+}
+.dt-act-node.is-on {
+  top: 0;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  background: var(--dt-primary);
+  box-shadow: 0 0 0 3px var(--dt-surface);
+}
+.dt-act-mark {
+  position: absolute;
+  top: 18px;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-act-mark.is-on {
+  font-weight: 700;
+  color: var(--dt-primary-ink);
+}
+.dt-act-tier {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 6px 14px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-act-tier.is-ready {
+  background: var(--dt-surface-2);
+}
+.dt-act-pt {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--dt-surface-2);
+  color: var(--dt-muted);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.dt-act-pt.is-on {
+  background: var(--dt-primary);
+  color: var(--dt-on-primary);
+}
+.dt-act-tier .dt-row-sub,
+.dt-quest .dt-row-sub {
+  white-space: normal;
+}
+.dt-act-count {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-act-count.is-on {
+  font-weight: 600;
+  color: var(--dt-primary-ink);
+}
+.dt-row.is-locked .dt-row-title {
+  color: var(--dt-muted);
+}
+.dt-act-done {
+  border-top: 1px solid var(--dt-line);
+}
+.dt-act-done[open] .dt-effects-chev {
+  transform: rotate(180deg);
+}
+/* 主线、每周、支线：卡片头写名字和进度条，一行一个任务，卡片底写奖励 */
+.dt-quest-card + .dt-quest-card {
+  margin-top: 10px;
+}
+.dt-quest-head {
+  padding: 12px 14px 10px;
+}
+.dt-quest-head-line {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.dt-quest-head-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+.dt-quest-head-count {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-quest-bar {
+  display: block;
+  height: 6px;
+  margin-top: 8px;
+  border-radius: 3px;
+  background: var(--dt-bar-track);
+  overflow: hidden;
+}
+.dt-quest-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--dt-primary);
+}
+.dt-quest-card > .dt-quest {
+  border-top: 1px solid var(--dt-line);
+}
+.dt-quest.is-ready {
+  background: var(--dt-surface-2);
+}
+.dt-quest.is-claimed .dt-row-title {
+  color: var(--dt-muted);
+}
+.dt-quest-foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 6px 14px;
+  border-top: 1px solid var(--dt-line);
+  background: var(--dt-surface-2);
+  color: var(--dt-primary-ink);
+}
+.dt-quest-foot .dt-row-title {
+  color: var(--dt-text);
+}
+/* 活动（P7）：活动条是一排能横滑的筛选胶囊；详情卡片头一行标题和两个小标签 */
+.dt-pills-scroll {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.dt-pills-scroll::-webkit-scrollbar {
+  display: none;
+}
+.dt-pills-scroll > button {
+  flex-shrink: 0;
+}
+.dt-act-detail {
+  padding: 14px 12px 12px;
+}
+.dt-act-detail-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.dt-act-detail-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+.dt-act-detail-body {
+  margin: 4px 0 12px;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-act-note {
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  border-radius: var(--dt-radius-sm);
+  background: var(--dt-surface-2);
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-act-note.is-warn {
+  background: var(--dt-soft-warning);
+  color: var(--dt-ink-warning);
+}
+.dt-act-sub {
+  font-size: 15px;
+}
+.dt-act-lines {
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-sm);
+}
+.dt-act-lines > .dt-row {
+  min-height: 46px;
+}
+.dt-act-lines > .dt-row.is-ready {
+  background: var(--dt-surface-2);
+}
+.dt-reward-text {
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
 }

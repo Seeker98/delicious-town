@@ -227,7 +227,7 @@ onMounted(async () => {
           v-for="p in [1, 2, 3, 4, 5]"
           :key="p"
           type="button"
-          class="dt-row is-link dt-equip-row"
+          class="dt-row is-link dt-gear-row"
           :data-testid="`slot-${p}`"
           @click="pick(p)"
         >
@@ -236,7 +236,7 @@ onMounted(async () => {
           /></span>
           <span class="dt-row-main">
             <template v-if="o.worn[p - 1]">
-              <span class="dt-row-title dt-equip-name"
+              <span class="dt-row-title dt-gear-name"
                 >{{ equipName(catalog, o.worn[p - 1]!)
                 }}<span v-if="o.worn[p - 1]!.stress > 0" class="dt-tag dt-tag-primary"
                   >+{{ o.worn[p - 1]!.stress }}</span
@@ -306,10 +306,10 @@ onMounted(async () => {
       <div class="dt-meta mb-2">{{ t.equip.partHint(pieces.length) }}</div>
       <div v-if="pieces.length === 0" class="dt-meta">{{ t.equip.noPieces }}</div>
       <div v-else class="dt-sheet-list" data-testid="part-pieces">
-        <div v-for="e in sortedPieces" :key="e.id" :class="['dt-row', 'dt-equip-row', { 'is-worn': e.worn }]">
+        <div v-for="e in sortedPieces" :key="e.id" :class="['dt-row', 'dt-gear-row', { 'is-worn': e.worn }]">
           <span class="dt-equip-tray"><DtArt :name="SLOT_ART[e.part]!" :size="26" /></span>
           <RouterLink :to="`/rest/equip/${e.id}`" class="dt-row-main dt-equip-link">
-            <span class="dt-row-title dt-equip-name"
+            <span class="dt-row-title dt-gear-name"
               >{{ equipName(catalog, e)
               }}<span v-if="e.stress > 0" class="dt-tag dt-tag-primary">+{{ e.stress }}</span
               ><i v-if="e.locked" class="bi bi-lock-fill ms-1 dt-meta" :aria-label="t.equip.locked"></i

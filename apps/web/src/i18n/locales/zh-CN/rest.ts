@@ -150,5 +150,17 @@ export default {
     weeklyFull: (text: string) => `全完成奖励: ${text}`,
     claimWeeklyFull: '领取',
     weeklyFullClaimed: '✓ 已领取',
+    /** 界面改版 P7：今日活跃的进度条和档位行、任务行、章和支线卡片头 */
+    actTitle: '今日活跃',
+    double: '奖励翻倍 ',
+    kujiTier: (num: number) => `另送一番赏抽赏券 ×${num}`,
+    claimedShort: '已领',
+    needShort: (n: number) => `还差 ${n}`,
+    doTitle: '做什么能加活跃',
+    doneFold: (n: number, names: string) => `已做满 ${n} 项 · ${names}`,
+    fullShort: '已满',
+    chapterNo: (n: number) => `第 ${n} 章`,
+    chapterAwardLabel: '章末奖励',
+    weeklyFullLabel: '全完成奖励',
   },
 };

@@ -151,5 +151,17 @@ export default {
     weeklyFull: (text: string) => `全完成獎勵: ${text}`,
     claimWeeklyFull: '領取',
     weeklyFullClaimed: '✓ 已領取',
+    /** 介面改版 P7：今日活躍的進度條和檔位行、任務行、章和支線卡片頭 */
+    actTitle: '今日活躍',
+    double: '獎勵翻倍 ',
+    kujiTier: (num: number) => `另送一番賞抽賞券 ×${num}`,
+    claimedShort: '已領',
+    needShort: (n: number) => `還差 ${n}`,
+    doTitle: '做什麼能加活躍',
+    doneFold: (n: number, names: string) => `已做滿 ${n} 項 · ${names}`,
+    fullShort: '已滿',
+    chapterNo: (n: number) => `第 ${n} 章`,
+    chapterAwardLabel: '章末獎勵',
+    weeklyFullLabel: '全完成獎勵',
   },
 };

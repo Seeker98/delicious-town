@@ -118,6 +118,8 @@ export default {
     d1: '對角線 ↙',
     row: (n: number) => `第 ${n} 行`,
     col: (n: number) => `第 ${n} 列`,
+    /** 介面改版 P7：九宮格下面一塊 */
+    linesTitle: '連線獎勵',
   },
   pass: {
     points: (n: number) => `積分 ${n}`,

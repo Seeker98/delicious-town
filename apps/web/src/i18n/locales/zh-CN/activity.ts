@@ -117,6 +117,8 @@ export default {
     d1: '对角线 ↙',
     row: (n: number) => `第 ${n} 行`,
     col: (n: number) => `第 ${n} 列`,
+    /** 界面改版 P7：九宫格下面一块 */
+    linesTitle: '连线奖励',
   },
   pass: {
     points: (n: number) => `积分 ${n}`,

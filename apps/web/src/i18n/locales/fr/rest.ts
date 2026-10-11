@@ -147,6 +147,17 @@ const rest: Messages['rest'] = {
     weeklyFull: (text) => `Bonus de fin\u202f: ${text}`,
     claimWeeklyFull: 'Récupérer',
     weeklyFullClaimed: '✓ Récupéré',
+    actTitle: 'Activité du jour',
+    double: 'Doublée ',
+    kujiTier: (num) => `Plus ${num} ${plFr(num, 'ticket', 'tickets')} de loterie`,
+    claimedShort: 'Récupéré',
+    needShort: (n) => `Encore ${n}`,
+    doTitle: 'Comment gagner de l’activité',
+    doneFold: (n, names) => `${n} au maximum · ${names}`,
+    fullShort: 'Au max',
+    chapterNo: (n) => `Chapitre ${n}`,
+    chapterAwardLabel: 'Récompense du chapitre',
+    weeklyFullLabel: 'Récompense finale',
   },
 };
 export default rest;
