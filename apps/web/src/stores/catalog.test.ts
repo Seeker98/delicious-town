@@ -153,3 +153,29 @@ describe('第 8c 批：任务、厨塔各层等按 id 取名字（问题记录 2
     expect(c.data('tasks', 1)).toBeUndefined();
   });
 });
+
+describe('食材配图（界面改版 P4，Review Focus 2）', () => {
+  beforeEach(() => setActivePinia(createPinia()));
+  const food = (id: number, art?: string) => ({
+    id,
+    name: '食材' + id,
+    level: 1,
+    odds: 70,
+    coin: 1,
+    type: 2,
+    ...(art ? { art } : {}),
+  });
+
+  it('按目录里的类别画 food-<类别>；没写类别（旧目录缓存）、查不到编号、网页里没有这张图（新目录旧网页）都画通用图', () => {
+    const c = useCatalogStore();
+    c.foodsMap = new Map([
+      [1, food(1, 'grain')],
+      [2, food(2)],
+      [3, food(3, 'durian')],
+    ]);
+    expect(c.foodArt(1)).toBe('food-grain');
+    expect(c.foodArt(2)).toBe('food-misc');
+    expect(c.foodArt(3)).toBe('food-misc');
+    expect(c.foodArt(999)).toBe('food-misc');
+  });
+});
