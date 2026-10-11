@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    ia1011:
+      'Le pointage et l’activité du jour deviennent l’onglet «\u202fAujourd’hui\u202f» des quêtes\u202f; plats signature et progression des recettes sont des onglets de Recettes\u202f; les gemmes, un onglet des Ustensiles\u202f; le fonds et l’épargne de Gary passent à la nouvelle «\u202fBanque\u202f» en ville\u202f; codes débutant et invitations sont sur la page Codes. Les onglets sont gardés dans l’adresse\u202f: on peut les partager et Retour garde votre place\u202f; les sous-classements sont un menu déroulant\u202f; la Promo du jour s’appelle désormais Promos limitées',
     shell1011:
       '«\u202fPlus\u202f» devient «\u202fVille\u202f», avec les lieux classés en Commerce, Loisirs et Public. Touchez votre avatar en haut à droite pour «\u202fMoi\u202f»\u202f: infos, tenue, ustensiles, entrepôt, codes, réglages et centre d’aide. Les titres sont dans la barre du haut et le bouton retour remonte d’un niveau',
     theme1011:

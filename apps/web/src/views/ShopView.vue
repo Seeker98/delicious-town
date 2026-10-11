@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
-import { onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import type { BuyBlock, ShopDto, ShopItemDto, ShopSpecialDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
+import { useTabQuery } from '../composables/useTabQuery';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
@@ -12,7 +14,11 @@ import { formatNum } from '../utils/format';
 const catalog = useCatalogStore();
 const toast = useToastStore();
 const t = useT();
-const tab = ref<'coin' | 'black' | 'special'>('coin');
+/** 当前标签写进网址（界面改版 P2b：统一标签页） */
+const tab = useTabQuery({ tabs: ['coin', 'black', 'special'] as const });
+const tabItems = computed(() =>
+  (['coin', 'black', 'special'] as const).map((k) => ({ key: k, label: t.value.store.shop.tabs[k] })),
+);
 const shop = ref<ShopDto | null>(null);
 const special = ref<ShopSpecialDto | null>(null);
 const qty = reactive<Record<string, number>>({});
@@ -65,23 +71,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.store.sho
 
 <template>
   <HiphopCard :place="2" @changed="load" />
-  <ul class="nav nav-tabs mb-2">
-    <li class="nav-item">
-      <a :class="['nav-link', { active: tab === 'coin' }]" href="#" @click.prevent="tab = 'coin'">{{
-        t.store.shop.tabs.coin
-      }}</a>
-    </li>
-    <li class="nav-item">
-      <a :class="['nav-link', { active: tab === 'black' }]" href="#" @click.prevent="tab = 'black'">{{
-        t.store.shop.tabs.black
-      }}</a>
-    </li>
-    <li class="nav-item">
-      <a :class="['nav-link', { active: tab === 'special' }]" href="#" @click.prevent="tab = 'special'">{{
-        t.store.shop.tabs.special
-      }}</a>
-    </li>
-  </ul>
+  <DtTabs v-model="tab" :tabs="tabItems" />
   <template v-if="shop && tab !== 'special'">
     <div v-for="it in tab === 'coin' ? shop.coin : shop.black" :key="it.goodsId" class="dt-item">
       <div class="dt-item-main">

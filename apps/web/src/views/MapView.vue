@@ -13,8 +13,8 @@ interface Place {
   key: PlaceKey;
   to: string;
   art: UiArtName;
-  /** 所属的区服功能；关掉时不显示（问题记录 248） */
-  feature?: string;
+  /** 所属的区服功能；关掉时不显示（问题记录 248）。几个功能时全关才不显示 */
+  feature?: string | string[];
 }
 const GROUPS: Array<{ key: keyof Messages['nav']['map']['groups']; places: Place[] }> = [
   {
@@ -23,6 +23,8 @@ const GROUPS: Array<{ key: keyof Messages['nav']['map']['groups']; places: Place
       { key: 'shop', to: '/shop', art: 'place-shop', feature: 'shop' },
       { key: 'exchange', to: '/exchange', art: 'place-exchange', feature: 'exchange' },
       { key: 'acquire', to: '/acquire', art: 'place-acquire', feature: 'acquire' },
+      // 盖乐瑞的基金、理财（界面改版 P2b：原来在协会）
+      { key: 'bank', to: '/bank', art: 'place-bank', feature: ['fund', 'wealth'] },
       { key: 'kuji', to: '/kuji', art: 'place-kuji', feature: 'kuji' },
       // 事件预测关掉后入口保留：页面只能查看持仓和结算结果（backlog 238-1）
       { key: 'predict', to: '/predict', art: 'place-predict' },
@@ -53,7 +55,7 @@ const restStore = useRestaurantStore();
 const groups = computed(() =>
   GROUPS.map((g) => ({
     ...g,
-    places: g.places.filter((p) => !p.feature || restStore.featureOn(p.feature)),
+    places: g.places.filter((p) => !p.feature || [p.feature].flat().some((f) => restStore.featureOn(f))),
   })).filter((g) => g.places.length > 0),
 );
 </script>

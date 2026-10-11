@@ -2,10 +2,12 @@
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import BarWenjie from '../components/bar/BarWenjie.vue';
 import NpcTalk from '../components/town/NpcTalk.vue';
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import type { BarDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
+import { useTabQuery } from '../composables/useTabQuery';
 import CupPanel from '../components/bar/CupPanel.vue';
 import DartsPanel from '../components/bar/DartsPanel.vue';
 import DevilPanel from '../components/bar/DevilPanel.vue';
@@ -23,18 +25,12 @@ import { useRestaurantStore } from '../stores/restaurant';
 type Tab = 'fg' | 'cup' | 'num' | 'slot' | 'devil' | 'memory' | 'darts' | 'nim' | 'spice' | 'deal';
 const TABS: readonly Tab[] = ['fg', 'cup', 'num', 'slot', 'devil', 'memory', 'darts', 'nim', 'spice', 'deal'];
 const KEY = 'dt_bar_tab';
-function savedTab(): Tab {
-  try {
-    const v = localStorage.getItem(KEY);
-    return TABS.includes(v as Tab) ? (v as Tab) : 'fg';
-  } catch {
-    return 'fg';
-  }
-}
 const toast = useToastStore();
 const restStore = useRestaurantStore();
 const t = useT();
-const tab = ref<Tab>(savedTab());
+/** 当前标签写进网址、记住上次看的（界面改版 P2b：统一标签页） */
+const tab = useTabQuery({ tabs: TABS, storageKey: KEY });
+const tabItems = computed(() => TABS.map((k) => ({ key: k, label: t.value.bar.tabs[k] })));
 const data = ref<BarDto | null>(null);
 
 async function load() {
@@ -44,13 +40,7 @@ async function load() {
     toast.push(errorMessage(e, t.value.bar.loadFailed), 'danger');
   }
 }
-watch(tab, (v) => {
-  try {
-    localStorage.setItem(KEY, v);
-  } catch {
-    // 存储不可用时忽略
-  }
-});
+
 onMounted(load);
 </script>
 
@@ -69,19 +59,8 @@ onMounted(load);
     @reload="load"
   />
   <HiphopCard :place="3" @changed="load" />
-  <!-- 七个游戏放不下一排标签页，用可换行的胶囊（视觉规范 §5） -->
-  <div class="dt-pills">
-    <a
-      v-for="x in TABS"
-      :key="x"
-      :class="{ active: tab === x }"
-      :aria-current="tab === x ? 'page' : undefined"
-      href="#"
-      :data-testid="`tab-${x}`"
-      @click.prevent="tab = x"
-      >{{ t.bar.tabs[x] }}</a
-    >
-  </div>
+  <!-- 十个游戏是一级标签，放不下时横向滑动（界面改版 P2b：原来是胶囊） -->
+  <DtTabs v-model="tab" :tabs="tabItems" />
   <!-- 切游戏时保留面板状态：记忆调酒、飞镖进行中的局不会因为切标签丢掉（终审 I2） -->
   <KeepAlive v-if="data">
     <FgPanel v-if="tab === 'fg'" :data="data" @reload="load" />

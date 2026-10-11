@@ -2,7 +2,7 @@ import type { Messages } from '../..';
 import { plEn } from '../../helpers';
 
 const cupboard: Messages['cupboard'] = {
-  tabs: { cupboard: 'Pantry', fridge: 'Fridge' },
+  tabs: { cupboard: 'Shelf', fridge: 'Fridge' },
   newBadge: 'New',
   summary: (p) =>
     `Slots ${p.used}/${p.slots} · Locked ${p.lockUsed}/${p.lockSlots} · Max ${p.max} each · ${p.free} free handlings left today · Street target: grade ${p.grade}`,

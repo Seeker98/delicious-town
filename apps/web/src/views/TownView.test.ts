@@ -99,22 +99,20 @@ describe('TownView', () => {
     expect(w.findAll('.nav-link').map((x) => x.text())).toEqual(['新闻', '居民', '排行', '许愿树']);
   });
 
-  it.each([
-    ['exchange', '/society/mayor'],
-    ['classroom', '/society/classroom'],
-    ['fund', '/society/fund'],
-  ])('旧链接 ?tab=%s 转到协会 %s（问题记录 441）', async (tab, to) => {
+  // 旧链接 ?tab=exchange|classroom|fund 转到协会、银行：由路由的 beforeEnter 处理，测试在 router.test.ts（界面改版 P2b）
+
+  it('没带参数进来、切换标签：也写进网址（界面改版 P2b：标签统一写进网址，能分享、后退）', async () => {
     const router = createRouter({
       history: createMemoryHistory(),
-      routes: [
-        { path: '/town', component: TownView },
-        { path: '/society/:npc', component: { template: '<div />' } },
-      ],
+      routes: [{ path: '/town', component: TownView }],
     });
-    await router.push(`/town?tab=${tab}`);
-    mount(TownView, { global: { plugins: [router] } });
+    await router.push('/town');
+    const w = mount(TownView, { global: { plugins: [router] } });
     await flushPromises();
-    expect(router.currentRoute.value.path).toBe(to);
+    await w.find('[data-testid="tab-town"]').trigger('click');
+    await flushPromises();
+    expect(router.currentRoute.value.query.tab).toBe('town');
+    expect(w.find('[data-testid="tab-town"]').attributes('role')).toBe('tab');
   });
 
   it('上次停在已经搬走的标签（存的是 exchange）：打开新闻', async () => {

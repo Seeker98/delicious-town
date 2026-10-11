@@ -206,6 +206,8 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.guideCodes).mockResolvedValue([code('ok')]);
     const can = await mountView();
     expect(can.get('[data-testid="guide-hint"]').text()).toContain('有可以领的新手兑换码');
+    // 新手码搬到兑换码页（界面改版 P2b）
+    expect(can.get('[data-testid="guide-hint"]').attributes('href')).toBe('/redeem');
     vi.mocked(endpoints.guideCodes).mockResolvedValue([code('used')]);
     expect((await mountView()).find('[data-testid="guide-hint"]').exists()).toBe(false);
   });
@@ -240,7 +242,7 @@ describe('RestaurantHomeView', () => {
     const w = await mountView();
     const row = w.get('[data-testid="home-wealth-row"]');
     expect(row.text()).toContain('理财到期 2 笔');
-    expect(row.attributes('href')).toBe('/society/wealth');
+    expect(row.attributes('href')).toBe('/bank?tab=wealth');
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, wealthDue: 0 });
     expect((await mountView()).find('[data-testid="home-wealth-row"]').exists()).toBe(false);
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, wealthDue: undefined });
@@ -291,7 +293,7 @@ describe('RestaurantHomeView', () => {
     // 问题记录 435：油量右边一个小升级图标，链到油壶升级
     const up = w.get('[data-testid="oil-upgrade"]');
     expect(up.attributes('href')).toBe('/society/oil');
-    expect(up.attributes('aria-label')).toBe('升级油壶');
+    expect(up.attributes('aria-label')).toBe('油壶扩容');
     expect(up.find('i.bi-arrow-up-circle').exists()).toBe(true);
     expect(w.text()).toContain('填一次油');
     expect(w.findAll('[data-testid^="slot-"]')).toHaveLength(2);
@@ -488,7 +490,7 @@ describe('RestaurantHomeView', () => {
     expect(main.find('i.bi-flag').exists()).toBe(true);
     expect(main.text()).toContain('主线: 填一次油');
     // 还没完成时右边是任务入口（问题记录：“更多”里的任务入口去掉，从首页主线那一行进）
-    expect(main.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks');
+    expect(main.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks?tab=main');
     expect(w.get('[data-testid="dine-card"]').find('i.bi-cup-hot').exists()).toBe(true);
     expect(w.get('[data-testid="guide-hint"]').find('i.bi-lightbulb').exists()).toBe(true);
     for (const row of w.get('[data-testid="home-todo"]').findAll('.dt-todo-row'))
@@ -590,7 +592,7 @@ describe('RestaurantHomeView', () => {
     expect(todo.find('[data-testid="main-task"]').exists()).toBe(true);
     const act = todo.get('[data-testid="home-activation"]');
     expect(act.text()).toContain('今日活跃 18');
-    expect(act.attributes('href')).toBe('/rest/activation');
+    expect(act.attributes('href')).toBe('/rest/tasks?tab=today');
     // 顺序：餐厅 → 待办 → 小镇动态 → 设施
     const pos = (sel: string) => w.html().indexOf(sel);
     expect(pos('data-testid="home-status"')).toBeLessThan(pos('data-testid="home-todo"'));
@@ -804,7 +806,7 @@ describe('RestaurantHomeView', () => {
     l = await link(quests([quest()], { weekly: weekly(false), lines: [line] }));
     expect(l.attributes('href')).toBe('/rest/tasks?tab=side');
     l = await link(quests([quest()], { lines: [{ ...line, lockedStar: 2 }] }));
-    expect(l.attributes('href')).toBe('/rest/tasks');
+    expect(l.attributes('href')).toBe('/rest/tasks?tab=main');
     expect(l.find('[data-testid="home-tasks-gift"]').exists()).toBe(false);
     l = await link(quests([quest({ progress: 1, done: true })], { weekly: weekly(true), lines: [line] }));
     expect(l.attributes('href')).toBe('/rest/tasks?tab=main');
@@ -831,17 +833,17 @@ describe('RestaurantHomeView', () => {
     );
     w = await mountView();
     expect(w.get('[data-testid="main-task"]').text()).toContain('分配属性点');
-    expect(w.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks');
+    expect(w.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks?tab=main');
     expect(w.find('[data-testid="home-tasks-gift"]').exists()).toBe(false);
     // 主线全做完：这一行写已全部完成，右边照样有任务入口（终审 C1：每周和支线还要从这里进）
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([], { chapter: null, allMainDone: true }));
     w = await mountView();
     expect(w.get('[data-testid="main-task"]').text()).toContain('主线已全部完成');
-    expect(w.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks');
+    expect(w.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks?tab=main');
     // 任务读不到时也留着入口
     vi.mocked(endpoints.tasks).mockRejectedValue(new Error('x'));
     w = await mountView();
-    expect(w.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks');
+    expect(w.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks?tab=main');
   });
 
   it('区服关掉任务功能时首页不放任务入口（终审：原来“更多”里的入口看功能开关）', async () => {
@@ -1019,7 +1021,7 @@ describe('RestaurantHomeView', () => {
     expect(signed.get('.visually-hidden').text()).toBe('已签到');
     const act = row.get('[data-testid="home-activation"]');
     expect(act.text()).toContain('今日活跃 10');
-    expect(act.attributes('href')).toBe('/rest/activation');
+    expect(act.attributes('href')).toBe('/rest/tasks?tab=today');
     // 问题记录 445：不再写签到领到了什么
     expect(w.find('[data-testid="home-signin-gift"]').exists()).toBe(false);
   });
@@ -1066,7 +1068,7 @@ describe('RestaurantHomeView', () => {
     expect(cb.attributes('href')).toBe('/cookbooks');
     const sp = books.get('[data-testid="home-special"]');
     expect(sp.text()).toBe('特色菜: 无');
-    expect(sp.attributes('href')).toBe('/mc');
+    expect(sp.attributes('href')).toBe('/cookbooks?tab=mc');
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, special: { id: 3, level: 5 } });
     const w2 = await mountView();
     const sp2 = w2.get('[data-testid="home-special"]');

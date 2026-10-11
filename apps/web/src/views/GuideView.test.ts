@@ -55,11 +55,11 @@ describe('GuideView（问题记录 150）', () => {
     expect(links).toEqual(expect.arrayContaining(['/bar', '/society/mayor', '/rest/tasks?tab=weekly']));
   });
 
-  it('五块内容都在', async () => {
+  it('四块内容都在（新手码搬去了兑换码页）', async () => {
     useSessionStore().me = me(1);
     vi.mocked(endpoints.guideCodes).mockResolvedValue([]);
     const w = await mountView();
-    for (const k of ['codes', 'start', 'daily', 'faq', 'rules'])
+    for (const k of ['start', 'daily', 'faq', 'rules'])
       expect(w.find(`[data-testid="guide-${k}"]`).exists()).toBe(true);
   });
 
@@ -72,34 +72,12 @@ describe('GuideView（问题记录 150）', () => {
     expect(faq).toContain('止损');
   });
 
-  it('没开店：不请求新手码，提示开店后可以领（Review Focus 3）', async () => {
-    useSessionStore().me = me(null);
-    const w = await mountView();
-    expect(endpoints.guideCodes).not.toHaveBeenCalled();
-    expect(w.text()).toContain('开店后可以领');
-  });
-
-  it('四种状态：可领有按钮，点了领取并刷新；其他显示文字', async () => {
+  it('新手兑换码搬到兑换码页：这里只留一条链接（界面改版 P2b）', async () => {
     useSessionStore().me = me(1);
-    vi.mocked(endpoints.guideCodes).mockResolvedValue([
-      { code: 'XINSHOU', minLevel: 1, items: { coin: 50000 }, state: 'ok' },
-      { code: 'XINSHOU10', minLevel: 10, items: { coin: 1 }, state: 'level' },
-      { code: 'OLD', minLevel: 1, items: { coin: 1 }, state: 'used' },
-      { code: 'GONE', minLevel: 1, items: { coin: 1 }, state: 'off' },
-      { code: 'WAIT', minLevel: 1, items: { coin: 1 }, state: 'unavailable' },
-    ]);
-    vi.mocked(endpoints.redeem).mockResolvedValue({ code: 'XINSHOU', items: { coin: 50000 } });
     const w = await mountView();
-    expect(w.text()).toContain('10 级可领');
-    expect(w.text()).toContain('已领');
-    expect(w.text()).toContain('已结束');
-    // 没同步进库或区服关了兑换码（backlog 新手码）
-    expect(w.text()).toContain('暂时不可用');
-    expect(w.find('[data-testid="guide-redeem-XINSHOU10"]').exists()).toBe(false);
-    await w.find('[data-testid="guide-redeem-XINSHOU"]').trigger('click');
-    await flushPromises();
-    expect(endpoints.redeem).toHaveBeenCalledWith('XINSHOU');
-    expect(endpoints.guideCodes).toHaveBeenCalledTimes(2);
+    expect(w.find('[data-testid="guide-codes"]').exists()).toBe(false);
+    expect(w.get('[data-testid="guide-to-redeem"]').attributes('href')).toBe('/redeem');
+    expect(endpoints.guideCodes).not.toHaveBeenCalled();
   });
 });
 

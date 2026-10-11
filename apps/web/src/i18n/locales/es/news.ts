@@ -88,7 +88,7 @@ const news: Messages['news'] = {
     'rest.move': (w, p, x) => `${w} se mudó a ${x.streetName(num(p.to))}`,
     'rest.rename': (_w, p) => `${str(p.from)} ahora se llama ${str(p.to)}`,
     'restaurant.open': (w) => `${w} abrió sus puertas`,
-    'shop.special': (_w, p, x) => `Oferta del día en la tienda: ${x.goodsName(num(p.goodsId))}`,
+    'shop.special': (_w, p, x) => `Oferta limitada en la tienda: ${x.goodsName(num(p.goodsId))}`,
     'star.up': (w, p) => `${w} alcanzó ${num(p.star)} ${plEs(num(p.star), 'estrella', 'estrellas')}`,
     'takeaway.customer': (w, p, x) =>
       `${w} se encontró con ${x.goodsName(num(p.goodsId))} repartiendo a domicilio`,

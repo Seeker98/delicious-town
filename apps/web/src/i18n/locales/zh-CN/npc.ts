@@ -58,7 +58,6 @@ export default {
     mayor: { label: '镇长大胃锅', desc: '每天聊天送食材和种子；兑换稀有道具；告诉他嘻哈男孩在哪' },
     bro13: { label: '13 哥', desc: '每天聊天送喇叭；食材兑换券换食材' },
     carmen: { label: '卡门', desc: '神秘食材兑换券换神秘食材；第一次来送一张' },
-    fund: { label: '盖乐瑞', desc: '小镇发展基金' },
     wealth: { label: '理财', desc: '锁银币几天, 到期领回本金, 再拿本街缺的食材' },
   },
   /** 页面标题 */
@@ -67,8 +66,6 @@ export default {
     mayor: '稀有道具兑换',
     bro13: '食材兑换',
     carmen: '神秘食材兑换',
-    fund: '小镇发展基金',
-    wealth: '理财',
   },
   /** 镇长页底部：兑换券分给了 13 哥和卡门 */
   ticketsHint: '食材兑换券找 13 哥, 神秘食材兑换券找卡门: ',

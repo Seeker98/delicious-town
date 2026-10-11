@@ -251,7 +251,7 @@ export default {
     no_batch: '這個道具不能批次使用',
     no_points_to_reset: '還沒有加過屬性點',
     not_on_sale: '沒有在售',
-    no_special: '今天還沒有特價',
+    no_special: '今天還沒有限時折扣',
     single: '一次只能買 1 個',
     not_sellable: '這個道具不能出售',
     keep_one_plaque: '牌匾至少要留 1 塊',

@@ -4,7 +4,7 @@ type Seg = string | { to: string; text: string };
 /** 游玩指引（问题记录 150、272） */
 export default {
   title: '游玩指引',
-  wikiHint: '想查道具、食材、菜谱？看游戏资料',
+  wikiHint: '想查道具、食材、食谱？看游戏资料',
   codes: '新手兑换码',
   codesNoRest: '进入区服、开店后可以领。每家店每个码领一次。',
   codesNote: '每家店每个码领一次, 等级够了就能领。',
@@ -20,7 +20,7 @@ export default {
   start: '开店第一天',
   startItems: [
     [
-      '餐厅会自己营业: 每过一轮结算一次, 按餐桌来客人。餐桌越多、学会的菜越多、菜谱品级越高, 收入和经验越高。',
+      '餐厅会自己营业: 每过一轮结算一次, 按餐桌来客人。餐桌越多、学会的菜越多、食谱品级越高, 收入和经验越高。',
     ],
     ['营业要耗油, 油用完就停业, 记得在首页加油。'],
     [
@@ -48,7 +48,7 @@ export default {
   daily: '每天的固定事项',
   dailyItems: [
     { to: '/', text: '首页签到: 每天一次, 送一个签到礼包' },
-    { to: '/rest/activation', text: '今日活跃: 做日常任务攒活跃度, 领活跃奖励' },
+    { to: '/rest/tasks?tab=today', text: '今日活跃: 做日常任务攒活跃度, 领活跃奖励' },
     { to: '/town', text: '广场: 摇一摇蟹老板的钱袋' },
     {
       to: '/society/mayor',

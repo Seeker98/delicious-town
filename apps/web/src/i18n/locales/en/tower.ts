@@ -3,7 +3,7 @@ import { plEn } from '../../helpers';
 
 const tower: Messages['tower'] = {
   title: 'Chef Tower',
-  tabs: { tower: 'Chef Tower', rank: 'Chef ranking', shop: 'Renown shop' },
+  tabs: { tower: 'Climb', rank: 'Chef ranking', shop: 'Renown shop' },
   loadFailed: "Couldn't load the Chef Tower",
   noStrength: (n) => `Not enough Stamina (need ${n})`,
   noMoreToday: 'No challenges left today',

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import { RouterLink } from 'vue-router';
 import { gameDateTime } from '../utils/format';
 import type { MailDto, RewardItems } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
-import RedeemBox from '../components/RedeemBox.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useMailStore } from '../stores/mail';
@@ -111,7 +111,10 @@ const claimAll = () =>
       {{ t.mail.claimAll }}
     </button>
   </div>
-  <RedeemBox @redeemed="load" />
+  <!-- 兑换码只留在兑换码页（界面改版 P2b） -->
+  <p class="small mb-2" data-testid="mail-to-redeem">
+    <RouterLink to="/redeem" class="dt-go">{{ t.misc.redeem.title }}</RouterLink>
+  </p>
   <div v-if="notice" class="alert alert-warning py-1 small" role="status">{{ notice }}</div>
   <div v-if="loaded && items.length === 0" class="dt-empty">{{ t.mail.empty }}</div>
   <div v-for="m in items" :key="m.id" class="dt-card small mb-2" :data-testid="`mail-${m.id}`">

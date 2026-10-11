@@ -29,7 +29,6 @@ const cookbook: Messages['cookbook'] = {
   foodsNeeded: 'Ingredientes necesarios',
   progress: {
     link: 'Resumen de progreso',
-    title: 'Progreso de recetas',
     back: 'Volver a recetas',
     summary: (grade, n, total, pct) => `${grade} o mejor: ${n} / ${total} (${pct})`,
     note: 'Cada casilla cuenta las recetas de esta calidad o mejor; tu calle actual aparece resaltada y las casillas completas, en verde.',

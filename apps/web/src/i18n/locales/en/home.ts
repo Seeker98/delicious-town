@@ -24,7 +24,7 @@ const home: Messages['home'] = {
   roundCoin: 'Coins',
   roundExp: 'EXP',
   roundOil: 'Oil used',
-  oilUpgrade: 'Upgrade oil can',
+  oilUpgrade: 'Expand oil tank',
   noGuests: 'No guests',
   income: 'Income log',
   floor: 'Floors & tables',

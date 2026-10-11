@@ -67,7 +67,6 @@ const npc: Messages['npc'] = {
       label: 'Carmen',
       desc: 'Cambiar vales de ingredientes misteriosos; uno gratis en la primera visita',
     },
-    fund: { label: 'Gary', desc: 'Fondo de Desarrollo del Pueblo' },
     wealth: {
       label: 'Depósitos',
       desc: 'Deposita monedas unos días: recuperas el capital y recibes ingredientes que le faltan a tu calle',
@@ -78,8 +77,6 @@ const npc: Messages['npc'] = {
     mayor: 'Intercambio de objetos raros',
     bro13: 'Intercambio de ingredientes',
     carmen: 'Intercambio de ingredientes misteriosos',
-    fund: 'Fondo de Desarrollo del Pueblo',
-    wealth: 'Depósitos',
   },
   /** 镇长页底部：兑换券分给了 13 哥和卡门 */
   ticketsHint: 'Vales de ingredientes: el Hermano 13; vales de ingredientes misteriosos: Carmen —',

@@ -1,7 +1,7 @@
 /** 厨塔：挑战、赛厨榜、声望商店、好友切磋（问题记录 272） */
 export default {
   title: '厨塔',
-  tabs: { tower: '厨塔', rank: '赛厨榜', shop: '声望商店' },
+  tabs: { tower: '挑战', rank: '赛厨榜', shop: '声望商店' },
   loadFailed: '读取厨塔失败',
   noStrength: (n: number) => `体力不够 (要 ${n})`,
   noMoreToday: '今天的挑战次数用完了',

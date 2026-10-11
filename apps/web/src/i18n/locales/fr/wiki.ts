@@ -100,7 +100,7 @@ const wiki: Messages['wiki'] = {
     note: 'Seul le contenu possible est listé, pas les probabilités.',
   },
   sources: {
-    special: 'Promo du jour (au hasard chaque jour)',
+    special: 'Promos limitées (au hasard chaque jour)',
     black: (n) => `Marché noir\u202f: ${n} diamants`,
     award: 'Récompenses aléatoires de la Tour des chefs, du bar, etc.',
     gemFromBefore: 'Amélioration de gemme\u202f: deux ',

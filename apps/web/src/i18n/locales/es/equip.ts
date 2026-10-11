@@ -27,7 +27,7 @@ const equip: Messages['equip'] = {
   unwearAll: 'Quitar todo',
   suitName: (name, count, max) => `${name} (${count}/${max})`,
   suitTier: (need, desc) => `${need} ${plEs(need, 'pieza', 'piezas')}: ${desc}`,
-  gem: 'Gemas',
+  tabs: { equip: 'Equipo', gem: 'Gemas' },
   presets: 'Preajustes',
   batch: 'Limpieza rápida',
   apply: 'Aplicar',
@@ -111,7 +111,6 @@ const equip: Messages['equip'] = {
     drillFailed: 'No se pudo abrir el engarce',
   },
   gemPage: {
-    title: 'Gemas',
     intro: (luck) =>
       `Dos gemas del mismo rango se combinan en una del rango siguiente; cada par cuesta tanta energía como su rango. Un fallo aún tiene un ${luck} de rescate por suerte, y cada par fallido da rango × 1.000 EXP.`,
     myStrength: (n) => `Mi energía: ${n}`,

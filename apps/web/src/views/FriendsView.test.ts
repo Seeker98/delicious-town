@@ -151,6 +151,9 @@ describe('FriendsView', () => {
     expect(endpoints.friendFeed).toHaveBeenCalled();
     expect(w.text()).toContain('「丙」花 5,000 银币收购了你的餐厅');
     expect(w.find('a[href="/forum/8"]').text()).toContain('丁 回复了你的帖子「攻略」');
+    // 和首页动态同一种行：时间只写月日时分（界面改版 P2b）
+    expect(w.findAll('.dt-feed')).toHaveLength(2);
+    expect(w.get('.dt-feed .dt-feed-time').text()).not.toContain('2026');
     expect(feedSeenAt(5)).toBe('2026-10-09T05:00:00.000Z');
     localStorage.clear();
   });
@@ -191,5 +194,36 @@ describe('FriendsView', () => {
     const img = w.find('[data-testid^="friend-row-"] .flex-shrink-0');
     expect(img.exists()).toBe(true);
     expect(w.find('.dt-friend-avatar').exists()).toBe(false);
+  });
+
+  it('地址带 ?tab=requests 直接打开申请（界面改版 P2b：原来只认 feed）', async () => {
+    vi.mocked(endpoints.friendRequests).mockResolvedValue([]);
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/:p(.*)*', component: FriendsView }],
+    });
+    await router.push('/friends?tab=requests');
+    const w = mount(FriendsView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(endpoints.friendRequests).toHaveBeenCalled();
+    expect(w.get('[data-testid="tab-requests"]').attributes('aria-selected')).toBe('true');
+  });
+
+  it('在动态卡时点底部导航“好友”（同一页面换了网址）：切回好友列表并读出来（终审 I3）', async () => {
+    vi.mocked(endpoints.friendFeed).mockResolvedValue({ items: [] } as never);
+    vi.mocked(endpoints.thumbsToday).mockResolvedValue([]);
+    useRestaurantStore().rest = { id: 5 } as never;
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/:p(.*)*', component: FriendsView }],
+    });
+    await router.push('/friends?tab=feed');
+    const w = mount(FriendsView, { global: { plugins: [router] } });
+    await flushPromises();
+    vi.mocked(endpoints.friendList).mockClear();
+    await router.push('/friends');
+    await flushPromises();
+    expect(endpoints.friendList).toHaveBeenCalled();
+    expect(w.get('[data-testid="tab-friends"]').attributes('aria-selected')).toBe('true');
   });
 });

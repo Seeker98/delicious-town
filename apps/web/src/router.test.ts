@@ -29,13 +29,18 @@ describe('routes', () => {
     const guard = town.beforeEnter as (to: { query: Record<string, string> }) => unknown;
     expect(guard({ query: { tab: 'exchange' } })).toBe('/society/mayor');
     expect(guard({ query: { tab: 'classroom' } })).toBe('/society/classroom');
-    expect(guard({ query: { tab: 'fund' } })).toBe('/society/fund');
+    // 基金后来又搬到银行（界面改版 P2b）
+    expect(guard({ query: { tab: 'fund' } })).toBe('/bank?tab=fund');
     expect(guard({ query: { tab: 'news' } })).toBe(true);
     expect(guard({ query: {} })).toBe(true);
   });
 
   it('旧的教室地址跳到协会的教室（问题记录 122、441）', () => {
     expect(routes.find((r) => r.path === '/classroom')?.redirect).toBe('/society/classroom');
+  });
+
+  it('旧的签到和活跃页跳到任务页的“今日”（界面改版 P2b）', () => {
+    expect(routes.find((r) => r.path === '/rest/activation')?.redirect).toBe('/rest/tasks?tab=today');
   });
 });
 
@@ -122,16 +127,33 @@ describe('导航元数据（界面改版 P2a，设计 §4.2）', () => {
   });
 });
 
-describe('食谱进度一览的返回（终审：带回原来的街、页码；界面改版 P2a 起由顶栏返回负责）', () => {
-  it('上一级是食谱列表，带上原来的查询参数', () => {
+describe('并进别的页面的旧地址（界面改版 P2b）', () => {
+  it('银行：协会的基金、理财旧地址跳过去；在小镇下面', () => {
+    expect(routes.find((r) => r.path === '/society/fund')?.redirect).toBe('/bank?tab=fund');
+    expect(routes.find((r) => r.path === '/society/wealth')?.redirect).toBe('/bank?tab=wealth');
+    const bank = routes.find((r) => r.path === '/bank')!;
+    expect(bank.meta?.section).toBe('map');
+    expect(bank.meta?.parent).toBe('/map');
+    expect(bank.meta?.needRestaurant).toBe(true);
+    expect(bank.meta?.title?.(zhCN)).toBe('银行');
+    expect(routes.find((r) => r.path.startsWith('/society/:npc'))!.path).not.toMatch(/fund|wealth/);
+  });
+  it('邀请好友的上一级是兑换码页（入口搬到那里）', () => {
+    expect(routes.find((r) => r.path === '/invite')?.meta?.parent).toBe('/redeem');
+  });
+  it('/rest/gem 跳到厨具页的宝石标签', () => {
+    expect(routes.find((r) => r.path === '/rest/gem')?.redirect).toBe('/rest/equip?tab=gem');
+  });
+  it('/mc 跳到 /cookbooks?tab=mc', () => {
+    expect(routes.find((r) => r.path === '/mc')?.redirect).toBe('/cookbooks?tab=mc');
+  });
+  it('/cookbooks/progress 带着原来的街、页码跳到 tab=progress', () => {
     const r = routes.find((x) => x.path === '/cookbooks/progress')!;
-    const to = {
-      path: '/cookbooks/progress',
-      fullPath: '/cookbooks/progress?street=2&page=3',
-      meta: r.meta,
-      params: {},
-    };
-    expect(parentPath(to as never)).toBe('/cookbooks?street=2&page=3');
+    const go = r.redirect as (to: { query: Record<string, string> }) => unknown;
+    expect(go({ query: { street: '2', page: '3' } })).toEqual({
+      path: '/cookbooks',
+      query: { street: '2', page: '3', tab: 'progress' },
+    });
   });
 });
 

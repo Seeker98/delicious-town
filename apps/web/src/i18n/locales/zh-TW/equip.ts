@@ -27,7 +27,7 @@ export default {
   unwearAll: '全部卸下',
   suitName: (name: string, count: number, max: number) => `${name} (${count}/${max})`,
   suitTier: (need: number, desc: string) => `${need} 件: ${desc}`,
-  gem: '寶石',
+  tabs: { equip: '裝備', gem: '寶石' },
   presets: '預設',
   batch: '一鍵處理',
   apply: '套用',
@@ -111,7 +111,6 @@ export default {
     drillFailed: '打孔失敗',
   },
   gemPage: {
-    title: '寶石',
     intro: (luck: string) =>
       `兩顆同階合成一顆下一階, 每組耗體力 = 階數；失敗時還有 ${luck} 的幸運補救, 失敗的每組得 階數×1,000 經驗。`,
     myStrength: (n: string) => `我的體力: ${n}`,

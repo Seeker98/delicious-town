@@ -83,7 +83,7 @@ export default {
     'rest.move': (w, p, x) => `${w}搬到了${x.streetName(num(p.to))}`,
     'rest.rename': (_w, p) => `${str(p.from)} 改名为 ${str(p.to)}`,
     'restaurant.open': (w) => `${w}开业了`,
-    'shop.special': (_w, p, x) => `商店今日特价: ${x.goodsName(num(p.goodsId))}`,
+    'shop.special': (_w, p, x) => `商店限时折扣: ${x.goodsName(num(p.goodsId))}`,
     'star.up': (w, p) => `${w}升到了 ${num(p.star)} 星`,
     'takeaway.customer': (w, p, x) => `${w}送外卖时遇到了${x.goodsName(num(p.goodsId))}`,
     'temple.explore.rare': (w, p, x) =>

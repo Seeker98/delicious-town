@@ -261,9 +261,22 @@ describe('backlog 一番赏：页面', () => {
     expect(w.get('[data-testid="kj-pool"]').text()).toContain('剩 20 / 20');
     expect(w.get('[data-testid="kj-tickets"]').text()).toContain('豪华签券');
 
-    // 抽签还没返回时，切换按钮禁用
+    // 抽签还没返回时不能切线：点了不切（界面改版 P2b：标签不再做成禁用按钮）
     vi.mocked(endpoints.kujiDraw).mockReturnValue(new Promise(() => undefined));
     await w.get('[data-testid="kj-draw-1"]').trigger('click');
-    expect(w.get('[data-testid="kj-line-normal"]').attributes('disabled')).toBeDefined();
+    await w.get('[data-testid="kj-line-normal"]').trigger('click');
+    await flushPromises();
+    expect(w.get('[data-testid="kj-line-deluxe"]').attributes('aria-selected')).toBe('true');
+  });
+
+  it('普通、豪华是一级标签（界面改版 P2b）；网址照旧，豪华写 ?line=deluxe、普通不写', async () => {
+    const { w, router } = await mountWithRouter('/kuji');
+    expect(w.get('[data-testid="kj-line-normal"]').attributes('role')).toBe('tab');
+    await w.get('[data-testid="kj-line-deluxe"]').trigger('click');
+    await flushPromises();
+    expect(router.currentRoute.value.query).toEqual({ line: 'deluxe' });
+    await w.get('[data-testid="kj-line-normal"]').trigger('click');
+    await flushPromises();
+    expect(router.currentRoute.value.query).toEqual({});
   });
 });

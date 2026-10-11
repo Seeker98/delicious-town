@@ -68,7 +68,7 @@ describe('首页餐厅动态（问题记录 553）', () => {
     const dots = (restId: number) =>
       mountIt(items, restId)
         .findAll('[data-testid="home-feed-row"]')
-        .map((r) => r.find('[data-testid="home-feed-new"]').exists());
+        .map((r) => r.find('[data-testid="feed-new"]').exists());
     expect(dots(7)).toEqual([true, true]);
     markFeedSeen(7, [items[1]!]);
     expect(dots(7)).toEqual([true, false]);

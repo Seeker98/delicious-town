@@ -3,7 +3,7 @@ import { plEs } from '../../helpers';
 
 const tower: Messages['tower'] = {
   title: 'Torre de chefs',
-  tabs: { tower: 'Torre de chefs', rank: 'Clasificación de chefs', shop: 'Tienda de renombre' },
+  tabs: { tower: 'Ascenso', rank: 'Clasificación de chefs', shop: 'Tienda de renombre' },
   loadFailed: 'No se pudo cargar la Torre de chefs',
   noStrength: (n) => `No tienes suficiente energía (necesitas ${n})`,
   noMoreToday: 'Hoy no te quedan desafíos',

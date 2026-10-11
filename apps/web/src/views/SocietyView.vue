@@ -19,14 +19,11 @@ const links = computed(() => {
     { to: '/society/oil', icon: 'bi-droplet-half', ...s.oil },
     { to: '/society/rename', icon: 'bi-pencil', ...s.rename },
     { to: '/society/move', icon: 'bi-signpost', ...s.move },
-    // 从广场搬过来的（问题记录 441、443）：区服关掉的功能不显示入口
+    // 从广场搬过来的（问题记录 441、443）：区服关掉的功能不显示入口；盖乐瑞的基金、理财搬去了银行（界面改版 P2b）
     { to: '/society/classroom', icon: 'bi-easel', feature: 'mysterious', ...n.classroom },
     { to: '/society/mayor', icon: 'bi-person-badge', feature: 'town', ...n.mayor },
     { to: '/society/bro13', icon: 'bi-megaphone', feature: 'town', ...n.bro13 },
     { to: '/society/carmen', icon: 'bi-stars', feature: 'town', ...n.carmen },
-    { to: '/society/fund', icon: 'bi-bank', feature: 'fund', ...n.fund },
-    // 食材理财（理财设计 §3.4）：挨着发展基金
-    { to: '/society/wealth', icon: 'bi-piggy-bank', feature: 'wealth', ...n.wealth },
   ].filter((l) => !('feature' in l) || restaurant.featureOn(l.feature));
 });
 </script>

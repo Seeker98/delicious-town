@@ -29,7 +29,6 @@ const cookbook: Messages['cookbook'] = {
   foodsNeeded: 'Ingrédients requis',
   progress: {
     link: 'Vue d’ensemble',
-    title: 'Progression des recettes',
     back: 'Retour aux recettes',
     summary: (grade, n, total, pct) => `${grade} ou mieux\u202f: ${n} / ${total} (${pct})`,
     note: 'Chaque case compte les recettes de cette qualité ou mieux\u202f; votre rue actuelle est mise en évidence et les cases complètes sont en vert.',

@@ -11,10 +11,10 @@ const nav: Messages['nav'] = {
   },
   /** 顶栏标题：没有现成标题键的页面（界面改版 P2a） */
   titles: {
+    bank: 'Banque',
     floor: 'Étages et tables',
     income: 'Journal des revenus',
     info: 'Infos du restaurant',
-    activation: 'Pointage et activité',
     tasks: 'Quêtes',
     cookbooks: 'Recettes',
     cupboard: 'Garde-manger',
@@ -36,6 +36,7 @@ const nav: Messages['nav'] = {
   map: {
     groups: { trade: 'Commerce', play: 'Loisirs', public: 'Public' },
     places: {
+      bank: { name: 'Banque', sub: 'Fonds · Épargne' },
       shop: { name: 'Boutique', sub: 'Boutique · Marché noir' },
       exchange: { name: 'Bourse', sub: 'Comptant · À terme · En gros' },
       acquire: { name: 'Rachats', sub: 'Valeurs · Entretien' },
@@ -120,7 +121,7 @@ const nav: Messages['nav'] = {
   news: {
     daily: 'Journal de la ville\u202f: ',
     title: 'Nouvelles de la ville',
-    more: 'Plus',
+    more: 'Tout',
     broadcast: '[Annonce] ',
     empty: 'Pas encore de nouvelles',
   },

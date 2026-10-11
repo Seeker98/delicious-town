@@ -100,8 +100,7 @@ describe('文字链接统一（问题记录 451）', () => {
 
   it('没加样式的入口、返回链接也归到 .dt-go / .dt-back（登录注册、选区服、账号、天气、食谱、游玩指引）', () => {
     const want: Array<[string, string]> = [
-      ['views/AccountView.vue', 'to="/invite"'],
-      ['views/CookbooksView.vue', 'to="/society/move"'],
+      ['components/cookbook/CookbookListPanel.vue', 'to="/society/move"'],
       ['views/ForgotPasswordView.vue', 'to="/login"'],
       ['views/LoginView.vue', 'to="/register"'],
       ['views/LoginView.vue', 'to="/forgot-password"'],

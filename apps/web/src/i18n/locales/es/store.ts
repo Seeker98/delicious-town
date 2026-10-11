@@ -2,7 +2,7 @@ import type { Messages } from '../..';
 import { plEs } from '../../helpers';
 
 const store: Messages['store'] = {
-  tabs: { items: 'Almacén', souvenirs: 'Recuerdos', records: 'Registro de objetos' },
+  tabs: { items: 'Objetos', souvenirs: 'Recuerdos', records: 'Registro de objetos' },
   types: {
     '0': 'Consumibles',
     '1': 'Objetos',
@@ -38,7 +38,7 @@ const store: Messages['store'] = {
   noRecords: 'No hubo cambios en este periodo',
   noSouvenirs: 'Aún no tienes recuerdos. Se consiguen en los eventos de festividades.',
   shop: {
-    tabs: { coin: 'Tienda (monedas)', black: 'Mercado negro', special: 'Oferta del día' },
+    tabs: { coin: 'Tienda (monedas)', black: 'Mercado negro', special: 'Ofertas limitadas' },
     buyFailed: 'No se pudo comprar',
     loadFailed: 'No se pudo cargar la tienda',
     max: (n) => `Hasta ${n}`,

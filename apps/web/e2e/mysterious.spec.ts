@@ -42,7 +42,7 @@ test('特色菜：鉴定 → 学会 → 烹制 → 倒掉', async ({ page, reque
   await page.getByTestId('appraise').click();
   await expect(page.getByTestId('results')).toContainText('残卷');
 
-  await page.goto('/mc');
+  await page.goto('/cookbooks?tab=mc');
   await page.getByTestId('learn-1').click();
   await expect(page.getByTestId('learned-1')).toContainText('秘·仿膳饽饽');
   await page.getByTestId('cook-1').click();

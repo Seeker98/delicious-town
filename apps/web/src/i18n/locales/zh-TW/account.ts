@@ -10,8 +10,6 @@ export default {
   verified: '已驗證',
   unverified: '未驗證',
   resend: '重發驗證郵件',
-  inviteCode: '邀請碼',
-  makeInvite: '去邀請頁生成',
   myRests: '我的店',
   noRest: '還沒有開店',
   level: (n: number) => `等級 ${n}`,
@@ -34,7 +32,7 @@ export default {
   enterFailed: '進入區服失敗',
   shards: {
     unverified: '郵箱還沒有驗證, 驗證後才能和好友互動。',
-    title: '選擇區服',
+    title: '切換區服',
     closed: '已關閉',
     hasRest: '已開店',
     fresh: '新開',

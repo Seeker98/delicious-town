@@ -20,7 +20,7 @@ test('登录页选 English 后注册开店，首页英文，刷新后不变，�
   await page.getByPlaceholder('Email').fill(email);
   await page.getByRole('button', { name: 'Sign up' }).click();
   await expect(page).toHaveURL(/\/shards/);
-  await expect(page.getByRole('heading', { name: 'Choose a server' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Switch server' })).toBeVisible();
 
   await page.goto(await mailLink(request, email));
   await expect(page.getByText('Email verified!')).toBeVisible();

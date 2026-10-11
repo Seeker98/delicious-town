@@ -26,6 +26,8 @@ describe('TempleView（标签页）', () => {
     const w = mount(TempleView, { global: { stubs } });
     await flushPromises();
     expect(w.text()).toContain('appraise-panel');
+    // 统一标签页（界面改版 P2b）：按钮式、选中的 aria-selected
+    expect(w.get('[data-testid="tab-appraise"]').attributes('aria-selected')).toBe('true');
     expect(endpoints.temple).not.toHaveBeenCalled();
     await w.find('[data-testid="tab-guardian"]').trigger('click');
     await flushPromises();

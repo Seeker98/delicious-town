@@ -2,20 +2,15 @@
 import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { RestLogDto } from '@dt/shared';
+import FeedRow from '../FeedRow.vue';
 import { useT } from '../../composables/useT';
-import { useCatalogStore } from '../../stores/catalog';
-import { logText } from '../../utils/events';
-import { feedLink, feedSeenAt } from '../../utils/feed';
-import { gameDateTime } from '../../utils/format';
+import { feedSeenAt } from '../../utils/feed';
 
 /** 首页餐厅动态（问题记录 553）：最近 3 天最新的几条；没有就不显示。比上次在好友页看过的更新的加小圆点 */
 const props = defineProps<{ items: RestLogDto[]; restId: number }>();
-const catalog = useCatalogStore();
 const t = useT();
 const seen = computed(() => feedSeenAt(props.restId));
 const isNew = (f: RestLogDto) => seen.value === null || f.at > seen.value;
-const when = (iso: string) =>
-  gameDateTime(iso, { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
 </script>
 
 <template>
@@ -26,20 +21,14 @@ const when = (iso: string) =>
         t.nav.news.more
       }}</RouterLink>
     </div>
-    <div v-for="(f, i) in items" :key="i" class="dt-clamp1" data-testid="home-feed-row">
-      <span v-if="isNew(f)" class="dt-feed-new text-danger me-1" data-testid="home-feed-new"
-        ><i class="bi bi-circle-fill" aria-hidden="true"></i
-        ><span class="visually-hidden">{{ t.home.feedNew }}</span></span
-      ><span class="text-muted me-1">{{ when(f.at) }}</span>
-      <RouterLink v-if="feedLink(f)" :to="feedLink(f)!">{{ logText(f, catalog) }}</RouterLink>
-      <template v-else>{{ logText(f, catalog) }}</template>
-    </div>
+    <!-- 和好友页动态同一种行（界面改版 P2b）；首页只占一行，长的截断 -->
+    <FeedRow
+      v-for="(f, i) in items"
+      :key="i"
+      :item="f"
+      :show-new="isNew(f)"
+      class="dt-feed-1line"
+      data-testid="home-feed-row"
+    />
   </div>
 </template>
-
-<style scoped>
-.dt-feed-new {
-  font-size: 0.45rem;
-  vertical-align: middle;
-}
-</style>

@@ -20,6 +20,7 @@ vi.mock('../api/endpoints', () => ({
     equipPresetSave: vi.fn(),
     equipPresetApply: vi.fn(),
     equipPresetDelete: vi.fn(),
+    gems: vi.fn(),
   },
 }));
 
@@ -77,11 +78,12 @@ const overview = (patch: Partial<EquipOverviewDto> = {}): EquipOverviewDto => ({
   ...patch,
 });
 
-async function mountView() {
+async function mountView(path = '/') {
   const router = createRouter({
     history: createMemoryHistory(),
     routes: [{ path: '/:p(.*)*', component: EquipView }],
   });
+  await router.push(path);
   const w = mount(EquipView, { global: { plugins: [router] } });
   await flushPromises();
   return w;
@@ -278,5 +280,16 @@ describe('EquipView', () => {
     await w.find('[data-testid="allocate"]').trigger('click');
     await flushPromises();
     expect(endpoints.allocate).toHaveBeenCalledWith({ cook: 0, cutting: 1, fire: 0 });
+  });
+
+  it('两个标签：装备、宝石；?tab=gem 打开宝石，不再有宝石按钮（界面改版 P2b）', async () => {
+    vi.mocked(endpoints.gems).mockResolvedValue({ items: [], luckRate: 0.17, strength: 10 });
+    const w = await mountView('/rest/equip?tab=gem');
+    expect(w.findAll('[role="tab"]').map((x) => x.text())).toEqual(['装备', '宝石']);
+    expect(w.find('[data-testid="gem-intro"]').exists()).toBe(true);
+    expect(w.find('[data-testid="slot-1"]').exists()).toBe(false);
+    const eq = await mountView('/rest/equip');
+    expect(eq.find('[data-testid="slot-1"]').exists()).toBe(true);
+    expect(eq.find('a[href="/rest/gem"]').exists()).toBe(false);
   });
 });

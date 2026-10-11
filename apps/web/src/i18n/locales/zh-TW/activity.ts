@@ -1,7 +1,7 @@
 // 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
-/** 限時活動（問題記錄 272） */
+/** 活動（問題記錄 272；介面改版 P2b 起叫“活動”） */
 export default {
-  title: '限時活動',
+  title: '活動',
   loadFailed: '讀取活動失敗',
   opFailed: '操作失敗',
   claimed: '已領取',

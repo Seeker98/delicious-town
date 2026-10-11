@@ -11,10 +11,10 @@ export default {
   },
   /** 頂欄標題：沒有現成標題鍵的頁面（介面改版 P2a） */
   titles: {
+    bank: '銀行',
     floor: '樓層餐桌',
     income: '收益記錄',
     info: '餐廳資訊',
-    activation: '簽到和今日活躍',
     tasks: '任務',
     cookbooks: '食譜',
     cupboard: '櫥櫃',
@@ -36,6 +36,7 @@ export default {
   map: {
     groups: { trade: '買賣', play: '玩樂', public: '公共' },
     places: {
+      bank: { name: '銀行', sub: '基金 · 理財' },
       shop: { name: '商店', sub: '銀幣商店 · 黑市' },
       exchange: { name: '交易所', sub: '現貨 · 期貨 · 大宗' },
       acquire: { name: '收購', sub: '身價榜 · 打理' },
@@ -49,7 +50,7 @@ export default {
       society: { name: '協會', sub: '升星 · 兌換' },
       town: { name: '廣場', sub: '新聞 · 排行' },
       forum: { name: '論壇', sub: '閒聊 · 攻略' },
-      activities: { name: '限時活動', sub: '限時開放' },
+      activities: { name: '活動', sub: '限時開放' },
     },
   },
   me: {
@@ -74,7 +75,7 @@ export default {
     links: '友情連結',
   },
   links: {
-    activities: '限時活動',
+    activities: '活動',
     exchange: '交易所',
     predict: '事件預測',
     store: '倉庫',
@@ -115,9 +116,9 @@ export default {
   announceClose: '知道了',
   announceMore: (n: number) => `等 ${n} 條`,
   activity: {
-    running: (n: number) => `限時活動 ${n} 個進行中`,
+    running: (n: number) => `活動 ${n} 個進行中`,
     claimable: (n: number) => `可領 ${n} 份`,
     view: '檢視',
   },
-  news: { daily: '小鎮日報: ', title: '小鎮新聞', more: '更多', broadcast: '【廣播】', empty: '還沒有新聞' },
+  news: { daily: '小鎮日報: ', title: '小鎮新聞', more: '全部', broadcast: '【廣播】', empty: '還沒有新聞' },
 };

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import type { CookbookProgressDto } from '@dt/shared';
-import { endpoints } from '../api/endpoints';
-import { useT } from '../composables/useT';
-import { errorMessage } from '../i18n/zh-CN';
-import { useCatalogStore } from '../stores/catalog';
-import { formatNum, formatPct } from '../utils/format';
+import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
+import { errorMessage } from '../../i18n/zh-CN';
+import { useCatalogStore } from '../../stores/catalog';
+import { formatNum, formatPct } from '../../utils/format';
 
 /** 食谱进度一览（问题记录：食谱页加进度一览，参考 data/食谱进度一览-alu.txt）：每格是这一品级及以上的道数 */
 const t = useT();

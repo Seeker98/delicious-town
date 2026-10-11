@@ -7,8 +7,6 @@ import { endpoints } from '../api/endpoints';
 import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
 import AccountView from './AccountView.vue';
-import { useRestaurantStore } from '../stores/restaurant';
-import type { RestaurantDto } from '@dt/shared';
 
 vi.mock('../api/endpoints', () => ({
   endpoints: {
@@ -66,26 +64,12 @@ describe('AccountView（问题记录 178）', () => {
     const w = await mountView();
     const info = w.get('[data-testid="acc-info"]');
     expect(info.classes()).toContain('dt-kv');
-    expect(info.findAll('dt').map((x) => x.text())).toEqual([
-      '语言',
-      '外观',
-      '用户名',
-      '注册时间',
-      '邮箱',
-      '邀请码',
-    ]);
-    expect(info.findAll('dd')).toHaveLength(6);
+    expect(info.findAll('dt').map((x) => x.text())).toEqual(['语言', '外观', '用户名', '注册时间', '邮箱']);
+    expect(info.findAll('dd')).toHaveLength(5);
     expect(info.findAll('dd')[0]!.find('select').exists()).toBe(true);
     // 外观三选一（界面改版 P1）
     expect(info.find('[data-testid="acc-theme"] [data-testid="theme-select"]').exists()).toBe(true);
     expect(info.findAll('dd')[2]!.text()).toContain('u1');
-  });
-
-  it('当前区服关了邀请：不显示邀请码这一行（#189 遗留：它是唯一入口）', async () => {
-    useRestaurantStore().rest = { disabledFeatures: ['invite'] } as unknown as RestaurantDto;
-    const w = await mountView();
-    const info = w.get('[data-testid="acc-info"]');
-    expect(info.findAll('dt').map((x) => x.text())).toEqual(['语言', '外观', '用户名', '注册时间', '邮箱']);
   });
 
   it('两次新密码不一致：不发请求', async () => {

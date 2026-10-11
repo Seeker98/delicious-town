@@ -170,8 +170,8 @@ describe('游戏资料详情（问题记录 142）', () => {
     expect(src.text()).toContain('蟹黄堡×2');
     expect(src.text()).toContain('每人限兑 1 次');
     expect(hrefs(w, '[data-testid="wiki-sources"]')).toContain('/wiki/goods/180');
-    // 今日特价、钻石黑市、随机奖励、宝石升阶（视觉第三轮）
-    expect(src.text()).toContain('今日特价');
+    // 限时折扣（原来叫今日特价，界面改版 P2b）、钻石黑市、随机奖励、宝石升阶（视觉第三轮）
+    expect(src.text()).toContain('限时折扣');
     expect(src.text()).toContain('钻石黑市: 12 钻石');
     expect(src.text()).toContain('随机奖励');
     expect(src.text()).toContain('两颗[一阶]•天机原石');
@@ -300,7 +300,7 @@ describe('游戏资料详情（问题记录 142）', () => {
     expect(useToastStore().items).toEqual([]);
   });
 
-  it('食材：属性、菜园种子、用到它的菜谱（带街道和最低品级、链接）、特色菜', async () => {
+  it('食材：属性、菜园种子、用到它的食谱（带街道和最低品级、链接）、特色菜', async () => {
     const food: OpenFoodDto = {
       ...meta,
       id: 239,
@@ -319,7 +319,7 @@ describe('游戏资料详情（问题记录 142）', () => {
     expect(w.text()).toContain('稀有');
     expect(w.text()).toContain('菜园能种出来, 每次收获 20 个');
     const cb = w.get('[data-testid="wiki-cookbooks"]');
-    expect(cb.text()).toContain('用到它的菜谱 (1 道)');
+    expect(cb.text()).toContain('用到它的食谱 (1 道)');
     expect(cb.text()).toContain('湖南街');
     expect(cb.text()).toContain('上品起');
     expect(hrefs(w, '[data-testid="wiki-cookbooks"]')).toEqual(['/wiki/cookbooks/1']);

@@ -59,7 +59,6 @@ export default {
     mayor: { label: '鎮長大胃鍋', desc: '每天聊天送食材和種子；兌換稀有道具；告訴他嘻哈男孩在哪' },
     bro13: { label: '13 哥', desc: '每天聊天送喇叭；食材兌換券換食材' },
     carmen: { label: '卡門', desc: '神秘食材兌換券換神秘食材；第一次來送一張' },
-    fund: { label: '蓋樂瑞', desc: '小鎮發展基金' },
     wealth: { label: '理財', desc: '鎖銀幣幾天, 到期領回本金, 再拿本街缺的食材' },
   },
   /** 頁面標題 */
@@ -68,8 +67,6 @@ export default {
     mayor: '稀有道具兌換',
     bro13: '食材兌換',
     carmen: '神秘食材兌換',
-    fund: '小鎮發展基金',
-    wealth: '理財',
   },
   /** 鎮長頁底部：兌換券分給了 13 哥和卡門 */
   ticketsHint: '食材兌換券找 13 哥, 神秘食材兌換券找卡門: ',

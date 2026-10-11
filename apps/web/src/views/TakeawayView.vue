@@ -2,7 +2,9 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { TakeawayDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
+import { useTabQuery } from '../composables/useTabQuery';
 import DeliveriesPanel from '../components/takeaway/DeliveriesPanel.vue';
 import OpenPanel from '../components/takeaway/OpenPanel.vue';
 import OrdersPanel from '../components/takeaway/OrdersPanel.vue';
@@ -13,17 +15,11 @@ import HiphopCard from '../components/hiphop/HiphopCard.vue';
 
 type Tab = 'orders' | 'deliveries' | 'riders';
 const KEY = 'dt_takeaway_tab';
-function savedTab(): Tab {
-  try {
-    const v = localStorage.getItem(KEY);
-    return v === 'deliveries' || v === 'riders' ? v : 'orders';
-  } catch {
-    return 'orders';
-  }
-}
+const TABS: readonly Tab[] = ['orders', 'deliveries', 'riders'];
 const toast = useToastStore();
 const t = useT();
-const tab = ref<Tab>(savedTab());
+/** 当前标签写进网址、记住上次看的（界面改版 P2b：统一标签页） */
+const tab = useTabQuery({ tabs: TABS, storageKey: KEY });
 const data = ref<TakeawayDto | null>(null);
 
 /** 读取序号：几次读取同时进行时只采用最新一次的结果 */
@@ -40,15 +36,8 @@ async function load() {
 /** 停在页面上时每分钟重新读取，倒计时和"已送到"跟着更新（终审 I2） */
 let timer: ReturnType<typeof setInterval> | undefined;
 onBeforeUnmount(() => clearInterval(timer));
-watch(tab, (v) => {
-  try {
-    localStorage.setItem(KEY, v);
-  } catch {
-    // 存储不可用时忽略
-  }
-  // 切标签时重新读取：旧面板卸载后收不到它发出的刷新通知（比如接单后马上切到配送中）
-  void load();
-});
+// 切标签时重新读取：旧面板卸载后收不到它发出的刷新通知（比如接单后马上切到配送中）
+watch(tab, () => void load());
 onMounted(() => {
   void load();
   timer = setInterval(() => void load(), 60_000);
@@ -70,17 +59,7 @@ const tabs = computed(() =>
   <template v-if="data">
     <OpenPanel v-if="!data.opened" :data="data" @reload="load" />
     <template v-else>
-      <ul class="nav nav-tabs mb-2">
-        <li v-for="x in tabs" :key="x.key" class="nav-item">
-          <a
-            :class="['nav-link', { active: tab === x.key }]"
-            href="#"
-            :data-testid="`tab-${x.key}`"
-            @click.prevent="tab = x.key"
-            >{{ x.label }}</a
-          >
-        </li>
-      </ul>
+      <DtTabs v-model="tab" :tabs="tabs" />
       <OrdersPanel v-if="tab === 'orders'" :data="data" @reload="load" />
       <DeliveriesPanel v-else-if="tab === 'deliveries'" :data="data" @reload="load" />
       <RidersPanel v-else :data="data" @reload="load" />

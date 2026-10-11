@@ -2,7 +2,7 @@ import type { Messages } from '../..';
 import { plFr } from '../../helpers';
 
 const cupboard: Messages['cupboard'] = {
-  tabs: { cupboard: 'Garde-manger', fridge: 'Frigo' },
+  tabs: { cupboard: 'Étagère', fridge: 'Frigo' },
   newBadge: 'Nouveau',
   summary: (p) =>
     `Emplacements ${p.used}/${p.slots} · Verrouillés ${p.lockUsed}/${p.lockSlots} · Max ${p.max} chacun · ${p.free} ${plFr(p.free, 'traitement gratuit restant', 'traitements gratuits restants')} aujourd'hui · Objectif de la rue\u202f: qualité ${p.grade}`,

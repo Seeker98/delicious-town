@@ -50,7 +50,8 @@ const mainChapter = ref<QuestsDto['chapter']>(null);
 const mainAllDone = ref(false);
 /** 任务页第一个有奖励可领的卡（问题记录 555）；读不到任务时为 null */
 const claimTab = ref<TaskTab | null>(null);
-const tasksTo = computed(() => (claimTab.value ? `/rest/tasks?tab=${claimTab.value}` : '/rest/tasks'));
+/** 没有能领的进主线：任务页不带 ?tab 时是“今日”（界面改版 P2b） */
+const tasksTo = computed(() => `/rest/tasks?tab=${claimTab.value ?? 'main'}`);
 /** 首页交易所一行的文字（问题记录 591） */
 const exchangeRowText = computed(() => {
   const b = rest.value?.exchangeHint?.bulk;
@@ -490,7 +491,7 @@ onBeforeUnmount(() => {
         >
         <RouterLink
           v-if="showSpecial"
-          to="/mc"
+          to="/cookbooks?tab=mc"
           class="dt-go ms-auto d-flex align-items-center gap-1 dt-min0"
           data-testid="home-special"
           ><i class="bi bi-stars"></i><span class="text-truncate">{{ specialName }}</span
@@ -536,7 +537,7 @@ onBeforeUnmount(() => {
         </span>
         <RouterLink
           v-if="activeTotal !== null"
-          to="/rest/activation"
+          to="/rest/tasks?tab=today"
           class="dt-go ms-auto d-inline-block py-1"
           data-testid="home-activation"
           >{{ t.home.activation(activeTotal)
@@ -611,23 +612,23 @@ onBeforeUnmount(() => {
       <!-- 到期没领的理财（理财设计 §3.4）；旧服务端没有 wealthDue -->
       <RouterLink
         v-if="(rest.wealthDue ?? 0) > 0"
-        to="/society/wealth"
+        to="/bank?tab=wealth"
         class="dt-todo-row text-reset text-decoration-none"
         data-testid="home-wealth-row"
         ><span class="flex-fill"
           ><i class="bi bi-piggy-bank me-1"></i>{{ t.home.wealthDue(rest.wealthDue ?? 0) }}</span
         ><span class="dt-go">{{ t.npc.links.wealth.label }}</span></RouterLink
       >
-      <!-- 新手提示（问题记录 150）：有能领的新手码时提示去领；没有时 10 级以前照旧提示看指引 -->
+      <!-- 新手提示（问题记录 150）：有能领的新手码时提示去兑换码页领（界面改版 P2b）；没有时 10 级以前照旧提示看指引 -->
       <RouterLink
         v-if="codesClaimable || rest.level < 10"
-        to="/guide"
+        :to="codesClaimable ? '/redeem' : '/guide'"
         class="dt-todo-row text-reset text-decoration-none"
         data-testid="guide-hint"
         ><span class="flex-fill"
           ><i class="bi bi-lightbulb me-1"></i
           >{{ codesClaimable ? t.home.guideCodes : t.home.guideHint }}</span
-        ><span class="dt-go">{{ t.nav.links.guide }}</span></RouterLink
+        ><span class="dt-go">{{ codesClaimable ? t.nav.links.redeem : t.nav.links.guide }}</span></RouterLink
       >
     </div>
 

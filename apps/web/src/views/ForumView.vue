@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { gameDateTime } from '../utils/format';
 import { RouterLink, useRouter } from 'vue-router';
-import { FORUM_TABS, type ForumListDto, type ForumPostItemDto, type ForumTab } from '@dt/shared';
+import { FORUM_TABS, type ForumListDto, type ForumPostItemDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
+import { useTabQuery } from '../composables/useTabQuery';
 import { errorMessage } from '../i18n/zh-CN';
 import { useToastStore } from '../stores/toast';
 import { useCountdown } from '../utils/countdown';
@@ -14,7 +16,9 @@ const TABS = FORUM_TABS;
 const t = useT();
 const toast = useToastStore();
 const router = useRouter();
-const tab = ref<ForumTab>('all');
+/** 当前标签写进网址（界面改版 P2b：统一标签页） */
+const tab = useTabQuery({ tabs: TABS });
+const tabItems = computed(() => TABS.map((k) => ({ key: k, label: t.value.forum.tabs[k] })));
 const q = ref('');
 const searched = ref('');
 const pinned = ref<ForumPostItemDto[]>([]);
@@ -87,18 +91,8 @@ onMounted(() => void load());
       </button>
     </span>
   </div>
-  <div class="dt-pills mb-2">
-    <a
-      v-for="x in TABS"
-      :key="x"
-      href="#"
-      :class="{ active: tab === x }"
-      :aria-current="tab === x ? 'true' : undefined"
-      :data-testid="`forum-tab-${x}`"
-      @click.prevent="tab = x"
-      >{{ t.forum.tabs[x] }}</a
-    >
-  </div>
+  <!-- 分类是一级标签（界面改版 P2b，原来是胶囊） -->
+  <DtTabs v-model="tab" :tabs="tabItems" testid-prefix="forum-tab-" />
   <input
     v-model="q"
     type="search"

@@ -21,7 +21,8 @@ const T = (f: (t: Messages) => string) => f;
 const TOWN_MOVED: Record<string, string> = {
   exchange: '/society/mayor',
   classroom: '/society/classroom',
-  fund: '/society/fund',
+  // 基金后来又搬到银行（界面改版 P2b）
+  fund: '/bank?tab=fund',
 };
 
 export const routes: RouteRecordRaw[] = [
@@ -91,12 +92,8 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/RestInfoView.vue'),
     meta: { needRestaurant: true, section: 'home', title: T((t) => t.nav.titles.info), parent: '/me' },
   },
-  {
-    path: '/rest/activation',
-    name: 'activation',
-    component: () => import('./views/RestActivationView.vue'),
-    meta: { needRestaurant: true, section: 'home', title: T((t) => t.nav.titles.activation), parent: '/' },
-  },
+  // 签到和今日活跃并进任务页的“今日”标签（界面改版 P2b）
+  { path: '/rest/activation', redirect: '/rest/tasks?tab=today' },
   {
     path: '/rest/tasks',
     name: 'tasks',
@@ -126,23 +123,11 @@ export const routes: RouteRecordRaw[] = [
       parent: '/rest/equip',
     },
   },
-  {
-    path: '/rest/gem',
-    name: 'gems',
-    component: () => import('./views/GemView.vue'),
-    meta: {
-      needRestaurant: true,
-      section: 'home',
-      title: T((t) => t.equip.gemPage.title),
-      parent: '/rest/equip',
-    },
-  },
-  {
-    path: '/mc',
-    name: 'mc',
-    component: () => import('./views/McView.vue'),
-    meta: { needRestaurant: true, section: 'cookbooks', title: T((t) => t.mc.title), parent: '/cookbooks' },
-  },
+  // 宝石并进厨具页的标签（界面改版 P2b）
+  { path: '/rest/gem', redirect: '/rest/equip?tab=gem' },
+
+  // 特色菜并进食谱页的标签（界面改版 P2b）
+  { path: '/mc', redirect: '/cookbooks?tab=mc' },
   {
     path: '/temple',
     name: 'temple',
@@ -299,7 +284,8 @@ export const routes: RouteRecordRaw[] = [
     path: '/invite',
     name: 'invite',
     component: () => import('./views/InviteView.vue'),
-    meta: { needRestaurant: true, section: 'home', title: T((t) => t.misc.invite.title), parent: '/me' },
+    // 入口在兑换码页（界面改版 P2b，原来在账号页）
+    meta: { needRestaurant: true, section: 'home', title: T((t) => t.misc.invite.title), parent: '/redeem' },
   },
   {
     path: '/mail',
@@ -321,17 +307,10 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/CookbooksView.vue'),
     meta: { needRestaurant: true, section: 'cookbooks', title: T((t) => t.nav.titles.cookbooks) },
   },
+  // 进度一览并进食谱页的标签（界面改版 P2b）：带着原来看的街、页码、筛选
   {
     path: '/cookbooks/progress',
-    name: 'cookbook-progress',
-    component: () => import('./views/CookbookProgressView.vue'),
-    meta: {
-      needRestaurant: true,
-      section: 'cookbooks',
-      title: T((t) => t.cookbook.progress.title),
-      // 回食谱列表时带回原来看的街、页码、筛选（终审）
-      parent: (to) => `/cookbooks${to.fullPath.slice(to.path.length)}`,
-    },
+    redirect: (to) => ({ path: '/cookbooks', query: { ...to.query, tab: 'progress' } }),
   },
   {
     path: '/cookbooks/:id',
@@ -398,9 +377,18 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/SocietyView.vue'),
     meta: { needRestaurant: true, section: 'map', title: T((t) => t.society.title), parent: '/map' },
   },
-  // 从广场搬过来的教室、三位兑换 NPC、发展基金（问题记录 441、443）
+  // 盖乐瑞的基金、理财搬到银行（界面改版 P2b）
+  { path: '/society/fund', redirect: '/bank?tab=fund' },
+  { path: '/society/wealth', redirect: '/bank?tab=wealth' },
   {
-    path: '/society/:npc(classroom|mayor|bro13|carmen|fund|wealth)',
+    path: '/bank',
+    name: 'bank',
+    component: () => import('./views/BankView.vue'),
+    meta: { needRestaurant: true, section: 'map', title: T((t) => t.nav.titles.bank), parent: '/map' },
+  },
+  // 从广场搬过来的教室、三位兑换 NPC（问题记录 441、443）
+  {
+    path: '/society/:npc(classroom|mayor|bro13|carmen)',
     name: 'society-npc',
     component: () => import('./views/SocietyNpcView.vue'),
     props: true,

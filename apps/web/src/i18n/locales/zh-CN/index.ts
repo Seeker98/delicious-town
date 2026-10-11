@@ -19,6 +19,7 @@ import kuji from './kuji';
 import site from './site';
 import fund from './fund';
 import wealth from './wealth';
+import bank from './bank';
 import bulk from './bulk';
 import wishtree from './wishtree';
 import futures from './futures';
@@ -78,6 +79,7 @@ const zhCN = {
   site,
   fund,
   wealth,
+  bank,
   bulk,
   wishtree,
   futures,

@@ -3,8 +3,11 @@ import { computed, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { EquipDto, EquipOverviewDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtTabs from '../components/DtTabs.vue';
 import AttrPoints from '../components/equip/AttrPoints.vue';
+import GemPanel from '../components/equip/GemPanel.vue';
 import { useT } from '../composables/useT';
+import { useTabQuery } from '../composables/useTabQuery';
 import { activeMessages } from '../i18n';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
@@ -16,6 +19,10 @@ import { ATTR_KEYS, ATTR_NAMES, PART_NAMES } from '../utils/labels';
 const catalog = useCatalogStore();
 const toast = useToastStore();
 const t = useT();
+/** 两个标签：装备、宝石（界面改版 P2b：宝石原来单独一页 /rest/gem） */
+const TABS = ['equip', 'gem'] as const;
+const tab = useTabQuery({ tabs: TABS });
+const tabItems = computed(() => TABS.map((k) => ({ key: k, label: t.value.equip.tabs[k] })));
 /** 收益加成的百分比：+1.25%（最多两位小数，按语言写小数点） */
 const pctText = (x: number) => formatPct(x, { digits: 2, sign: true });
 const o = ref<EquipOverviewDto | null>(null);
@@ -117,7 +124,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.loa
 </script>
 
 <template>
-  <div v-if="o">
+  <DtTabs v-model="tab" :tabs="tabItems" />
+  <GemPanel v-if="tab === 'gem'" />
+  <div v-else-if="o">
     <div class="dt-page-meta dt-meta" data-testid="equip-count">{{ t.equip.count(o.count) }}</div>
     <div class="row g-1 mb-2">
       <div v-for="p in [1, 2, 3, 4, 5]" :key="p" class="col">
@@ -182,7 +191,6 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.loa
     </div>
 
     <div class="d-flex flex-wrap gap-1 my-2">
-      <RouterLink to="/rest/gem" class="btn btn-sm btn-outline-primary">{{ t.equip.gem }}</RouterLink>
       <button
         class="btn btn-sm btn-outline-primary"
         data-testid="open-presets"

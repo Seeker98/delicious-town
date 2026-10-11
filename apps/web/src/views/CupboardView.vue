@@ -2,7 +2,9 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { SHARED_FOODS, type CupboardDto, type FridgeDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
+import { useTabQuery } from '../composables/useTabQuery';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
@@ -11,7 +13,17 @@ import { foodLevelLabel, formatNum } from '../utils/format';
 const catalog = useCatalogStore();
 const toast = useToastStore();
 const t = useT();
-const tab = ref<'cupboard' | 'fridge'>('cupboard');
+/** 当前标签写进网址（界面改版 P2b：统一标签页） */
+const tab = useTabQuery({ tabs: ['cupboard', 'fridge'] as const });
+const tabItems = computed(() => [
+  { key: 'cupboard', label: t.value.cupboard.tabs.cupboard },
+  {
+    key: 'fridge',
+    label: t.value.cupboard.tabs.fridge,
+    badge: data.value?.fridgeUnread ? t.value.cupboard.newBadge : null,
+  },
+]);
+
 const data = ref<CupboardDto | null>(null);
 const fridge = ref<FridgeDto | null>(null);
 const picked = ref<number | null>(null);
@@ -84,11 +96,16 @@ function thaw(f: FridgeDto['items'][number]) {
   if (!window.confirm(t.value.cupboard.thawConfirm(f.thawable, name, formatNum(f.thawCoin)))) return;
   void run(() => endpoints.thaw(f.foodsId), t.value.cupboard.thawFailed);
 }
-async function openFridge() {
-  tab.value = 'fridge';
+/** 冰箱用到才读；看过就标成已读（橱柜数据读回来后才知道有没有新的） */
+async function loadFridge() {
   fridge.value = await endpoints.fridge();
   if (data.value?.fridgeUnread) await endpoints.readFridge();
 }
+const fridgeFailed = (e: unknown) => toast.push(errorMessage(e, t.value.cupboard.loadFailed), 'danger');
+// 切到冰箱时读；网址直接带 ?tab=fridge 时在橱柜读回来后读（终审 I2：刷新、后退、分享的链接原来是空白）
+watch(tab, (k) => {
+  if (k === 'fridge') loadFridge().catch(fridgeFailed);
+});
 async function run(fn: () => Promise<unknown>, fallback: string) {
   busy.value = true;
   try {
@@ -113,28 +130,15 @@ function handle(way: 'compose' | 'decompose') {
     toast.push(t.value.cupboard.handleResult(r.success, r.chances, !!r.strengthUsed), 'info');
   }, t.value.cupboard.handleFailed);
 }
-onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.cupboard.loadFailed), 'danger')));
+onMounted(() =>
+  load()
+    .then(() => (tab.value === 'fridge' ? loadFridge() : undefined))
+    .catch((e) => toast.push(errorMessage(e, t.value.cupboard.loadFailed), 'danger')),
+);
 </script>
 
 <template>
-  <ul class="nav nav-tabs mb-2">
-    <li class="nav-item">
-      <a :class="['nav-link', { active: tab === 'cupboard' }]" href="#" @click.prevent="tab = 'cupboard'">{{
-        t.cupboard.tabs.cupboard
-      }}</a>
-    </li>
-    <li class="nav-item">
-      <a
-        :class="['nav-link', { active: tab === 'fridge' }]"
-        href="#"
-        data-testid="tab-fridge"
-        @click.prevent="openFridge"
-      >
-        {{ t.cupboard.tabs.fridge
-        }}<span v-if="data?.fridgeUnread" class="badge bg-danger ms-1">{{ t.cupboard.newBadge }}</span>
-      </a>
-    </li>
-  </ul>
+  <DtTabs v-model="tab" :tabs="tabItems" />
 
   <template v-if="tab === 'cupboard' && data">
     <div class="small text-muted mb-2">

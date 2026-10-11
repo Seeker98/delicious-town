@@ -27,7 +27,7 @@ const equip: Messages['equip'] = {
   unwearAll: 'Remove all',
   suitName: (name, count, max) => `${name} (${count}/${max})`,
   suitTier: (need, desc) => `${need} ${plEn(need, 'piece', 'pieces')}: ${desc}`,
-  gem: 'Gems',
+  tabs: { equip: 'Gear', gem: 'Gems' },
   presets: 'Presets',
   batch: 'Bulk clear-out',
   apply: 'Apply',
@@ -112,7 +112,6 @@ const equip: Messages['equip'] = {
     drillFailed: 'Could not drill',
   },
   gemPage: {
-    title: 'Gems',
     intro: (luck) =>
       `Two gems of the same tier combine into one of the next tier; each pair costs Stamina equal to its tier. A failure still has a ${luck} lucky save, and each failed pair gives tier × 1,000 EXP.`,
     myStrength: (n) => `My Stamina: ${n}`,

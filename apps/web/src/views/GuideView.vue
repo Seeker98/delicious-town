@@ -1,45 +1,13 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
-import type { GuideCodeDto } from '@dt/shared';
-import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
-import { errorMessage } from '../i18n/zh-CN';
-import { useCatalogStore } from '../stores/catalog';
 import { useSessionStore } from '../stores/session';
-import { useToastStore } from '../stores/toast';
-import { rewardSummary } from '../utils/reward';
 
-/** 游玩指引（问题记录 150）：内容在各语言的 guide.ts 里，改了要发版；新手码从服务端读状态 */
+/** 游玩指引（问题记录 150）：内容在各语言的 guide.ts 里，改了要发版；新手码搬到兑换码页（界面改版 P2b） */
 const session = useSessionStore();
-const catalog = useCatalogStore();
-const toast = useToastStore();
 const t = useT();
-const codes = ref<GuideCodeDto[]>([]);
-const busy = ref(false);
 const hasRest = computed(() => Boolean(session.me?.restaurantId));
-
-async function load() {
-  if (!hasRest.value) return;
-  codes.value = await endpoints.guideCodes();
-}
-async function take(code: string) {
-  if (busy.value) return;
-  busy.value = true;
-  try {
-    const r = await endpoints.redeem(code);
-    toast.push(t.value.guide.took(rewardSummary(r.items, catalog)), 'success');
-  } catch (e) {
-    toast.push(errorMessage(e, t.value.guide.takeFailed), 'danger');
-  } finally {
-    busy.value = false;
-    await load().catch(() => undefined);
-  }
-}
-onMounted(() => {
-  void catalog.load().catch(() => undefined);
-  load().catch((e) => toast.push(errorMessage(e, t.value.guide.loadFailed), 'danger'));
-});
 </script>
 
 <template>
@@ -50,41 +18,13 @@ onMounted(() => {
     >
   </p>
 
-  <details open class="mb-2" data-testid="guide-codes">
-    <summary class="dt-section">{{ t.guide.codes }}</summary>
-    <p v-if="!hasRest" class="small text-muted mb-1">{{ t.guide.codesNoRest }}</p>
-    <template v-else>
-      <p class="small text-muted mb-1">{{ t.guide.codesNote }}</p>
-      <div v-for="c in codes" :key="c.code" class="dt-item">
-        <div class="dt-item-main">
-          <div>
-            <b>{{ c.code }}</b> <span class="small text-muted">{{ t.guide.minLevel(c.minLevel) }}</span>
-          </div>
-          <div class="dt-meta">{{ rewardSummary(c.items, catalog) }}</div>
-        </div>
-        <div class="dt-item-actions">
-          <button
-            v-if="c.state === 'ok'"
-            type="button"
-            class="btn btn-sm btn-primary"
-            :disabled="busy"
-            :data-testid="`guide-redeem-${c.code}`"
-            @click="take(c.code)"
-          >
-            {{ t.guide.take }}
-          </button>
-          <span v-else-if="c.state === 'level'" class="small text-muted">{{
-            t.guide.minLevel(c.minLevel)
-          }}</span>
-          <span v-else-if="c.state === 'used'" class="small text-success">{{ t.guide.taken }}</span>
-          <span v-else-if="c.state === 'unavailable'" class="small text-muted">{{
-            t.guide.unavailable
-          }}</span>
-          <span v-else class="small text-muted">{{ t.guide.ended }}</span>
-        </div>
-      </div>
-    </template>
-  </details>
+  <!-- 新手兑换码在兑换码页（界面改版 P2b）；没开店时照旧说开店后可以领 -->
+  <p class="small mb-2">
+    <RouterLink v-if="hasRest" to="/redeem" class="dt-go text-wrap" data-testid="guide-to-redeem"
+      ><i class="bi bi-ticket-perforated me-1"></i>{{ t.guide.codes }}</RouterLink
+    >
+    <span v-else class="text-muted">{{ t.guide.codesNoRest }}</span>
+  </p>
 
   <details open class="mb-2" data-testid="guide-start">
     <summary class="dt-section">{{ t.guide.start }}</summary>

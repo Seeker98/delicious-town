@@ -27,7 +27,7 @@ const equip: Messages['equip'] = {
   unwearAll: 'Tout retirer',
   suitName: (name, count, max) => `${name} (${count}/${max})`,
   suitTier: (need, desc) => `${need} ${plFr(need, 'pièce', 'pièces')}\u202f: ${desc}`,
-  gem: 'Gemmes',
+  tabs: { equip: 'Équipement', gem: 'Gemmes' },
   presets: 'Préréglages',
   batch: 'Tri rapide',
   apply: 'Appliquer',
@@ -113,7 +113,6 @@ const equip: Messages['equip'] = {
     drillFailed: 'Impossible de percer',
   },
   gemPage: {
-    title: 'Gemmes',
     intro: (luck) =>
       `Deux gemmes du même rang en donnent une du rang suivant\u202f; chaque paire coûte autant d'énergie que son rang. Un échec a encore ${luck} de chance d'être rattrapé, et chaque paire ratée rapporte rang\u202f×\u202f1\u202f000 EXP.`,
     myStrength: (n) => `Mon énergie\u202f: ${n}`,

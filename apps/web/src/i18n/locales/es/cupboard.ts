@@ -2,7 +2,7 @@ import type { Messages } from '../..';
 import { plEs } from '../../helpers';
 
 const cupboard: Messages['cupboard'] = {
-  tabs: { cupboard: 'Despensa', fridge: 'Nevera' },
+  tabs: { cupboard: 'Estante', fridge: 'Nevera' },
   newBadge: 'Nuevo',
   summary: (p) =>
     `Huecos ${p.used}/${p.slots} · Bloqueados ${p.lockUsed}/${p.lockSlots} · Máx. ${p.max} de cada uno · Te quedan ${p.free} procesados gratis hoy · Objetivo de la calle: calidad ${p.grade}`,

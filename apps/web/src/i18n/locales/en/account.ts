@@ -10,8 +10,6 @@ const account: Messages['account'] = {
   verified: 'Verified',
   unverified: 'Not verified',
   resend: 'Resend verification email',
-  inviteCode: 'Invite code',
-  makeInvite: 'Get one on the invite page',
   myRests: 'My restaurants',
   noRest: 'No restaurant yet',
   level: (n) => `Level ${n}`,
@@ -33,7 +31,7 @@ const account: Messages['account'] = {
   enterFailed: "Couldn't enter the server",
   shards: {
     unverified: "Your email isn't verified yet. Verify it to interact with friends.",
-    title: 'Choose a server',
+    title: 'Switch server',
     closed: 'Closed',
     hasRest: 'Has restaurant',
     fresh: 'New',

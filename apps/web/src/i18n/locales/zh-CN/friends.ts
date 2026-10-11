@@ -1,6 +1,6 @@
 /** 好友列表、好友餐厅、翻橱柜、换食材、餐桌、举报（问题记录 272） */
 export default {
-  tabs: { friends: '好友', requests: '申请', find: '找好友', feed: '动态' },
+  tabs: { friends: '我的好友', requests: '申请', find: '找好友', feed: '动态' },
   /** 蟹老板（NPC）的店名、公告：服务器存的是中文，网页按语言换 */
   npcName: '蟹老板',
   npcNotice: '欢迎光临蟹黄堡！',
@@ -100,7 +100,7 @@ export default {
     hostDone: '今天在这家店已经翻够了, 明天再来',
   },
   exchange: {
-    title: '交换食材',
+    title: '换食材',
     rule: '用 2 个同等级的食材换对方 1 个；只能换 5 级以内的食材。',
     loadFailed: '读取食材失败',
     caught: '太不走运了！偷换食材被抓住了',

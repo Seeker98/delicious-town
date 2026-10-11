@@ -1,6 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, getActivePinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { createMemoryHistory, createRouter } from 'vue-router';
 import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
 import { useLocaleStore } from '../stores/locale';
@@ -264,5 +265,20 @@ describe('CupboardView', () => {
     } finally {
       await useLocaleStore().set('zh-CN');
     }
+  });
+
+  it('直接打开 ?tab=fridge（刷新、后退、分享的链接）：冰箱照样读出来（终审 I2）', async () => {
+    vi.mocked(endpoints.fridge).mockResolvedValue({
+      items: [{ foodsId: 302, num: 5, thawable: 3, thawCoin: 750, streetNeed: 4 }],
+    });
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/:p(.*)*', component: CupboardView }],
+    });
+    await router.push('/cupboard?tab=fridge');
+    const w = mount(CupboardView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(endpoints.fridge).toHaveBeenCalled();
+    expect(w.find('[data-testid="fridge-302"]').exists()).toBe(true);
   });
 });

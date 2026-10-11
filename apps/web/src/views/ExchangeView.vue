@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, inject, onMounted, ref } from 'vue';
-import { routeLocationKey } from 'vue-router';
+import { computed, onMounted, ref } from 'vue';
 import type { ExchangeBookDto, ExchangeFoodDto, ExchangeMeDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
+import { useTabQuery } from '../composables/useTabQuery';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
@@ -23,10 +24,7 @@ const restStore = useRestaurantStore();
  * 现货、期货、大宗认购三个标签（期货设计 §10、大宗认购设计 §3.3）；地址带 ?tab=futures / ?tab=bulk 直接打开。
  * 测试里没有路由时按现货
  */
-const route = inject(routeLocationKey, null);
 type Tab = 'spot' | 'futures' | 'bulk';
-const q = route?.query.tab;
-const tab = ref<Tab>(q === 'futures' || q === 'bulk' ? q : 'spot');
 /** 本区服关了期货时，有进行中的单才显示期货标签（只看我的期货单） */
 const futuresOpen = ref(false);
 const showFutures = computed(() => restStore.featureOn('futures') || futuresOpen.value);
@@ -37,6 +35,9 @@ const tabs = computed<Tab[]>(() => [
   ...(showFutures.value ? (['futures'] as const) : []),
   ...(showBulk.value ? (['bulk'] as const) : []),
 ]);
+/** 当前标签写进网址（界面改版 P2b：统一标签页） */
+const tab = useTabQuery({ tabs });
+const tabItems = computed(() => tabs.value.map((k) => ({ key: k, label: tabName(k) })));
 const tabName = (k: Tab) =>
   k === 'spot' ? t.value.futures.tabSpot : k === 'futures' ? t.value.futures.tabFutures : t.value.bulk.tab;
 onMounted(() => {
@@ -281,18 +282,7 @@ onMounted(async () => {
 
 <template>
   <HiphopCard :place="10" />
-  <ul v-if="tabs.length > 1" class="nav nav-tabs mb-2 small">
-    <li v-for="k in tabs" :key="k" class="nav-item">
-      <button
-        type="button"
-        :class="['nav-link', { active: tab === k }]"
-        :data-testid="`ex-tab-${k}`"
-        @click="tab = k"
-      >
-        {{ tabName(k) }}
-      </button>
-    </li>
-  </ul>
+  <DtTabs v-model="tab" :tabs="tabItems" testid-prefix="ex-tab-" />
   <FuturesPanel v-if="tab === 'futures' && showFutures" />
   <BulkPanel v-else-if="tab === 'bulk' && showBulk" />
   <template v-else>

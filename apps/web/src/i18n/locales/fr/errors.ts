@@ -258,7 +258,7 @@ const errors: Messages['errors'] = {
     no_batch: 'Cet objet ne peut pas être utilisé en lot',
     no_points_to_reset: "Vous n'avez encore dépensé aucun point d'attribut",
     not_on_sale: 'Pas en vente',
-    no_special: "Pas encore de promotions aujourd'hui",
+    no_special: "Pas encore de promos limitées aujourd'hui",
     single: 'Vous ne pouvez en acheter qu’un à la fois',
     not_sellable: 'Cet objet ne peut pas être vendu',
     keep_one_plaque: 'Vous devez garder au moins 1 plaque',

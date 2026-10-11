@@ -1,7 +1,7 @@
 // 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
 /** 好友列表、好友餐廳、翻櫥櫃、換食材、餐桌、舉報（問題記錄 272） */
 export default {
-  tabs: { friends: '好友', requests: '申請', find: '找好友', feed: '動態' },
+  tabs: { friends: '我的好友', requests: '申請', find: '找好友', feed: '動態' },
   /** 蟹老闆（NPC）的店名、公告：伺服器存的是中文，網頁按語言換 */
   npcName: '蟹老闆',
   npcNotice: '歡迎光臨蟹黃堡！',
@@ -101,7 +101,7 @@ export default {
     hostDone: '今天在這家店已經翻夠了, 明天再來',
   },
   exchange: {
-    title: '交換食材',
+    title: '換食材',
     rule: '用 2 個同等級的食材換對方 1 個；只能換 5 級以內的食材。',
     loadFailed: '讀取食材失敗',
     caught: '太不走運了！偷換食材被抓住了',

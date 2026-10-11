@@ -1,4 +1,4 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { flushPromises, mount, RouterLinkStub } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { MailDto } from '@dt/shared';
@@ -55,7 +55,7 @@ describe('MailView', () => {
   });
 
   it('列出邮件：附件摘要（含命名帽子）、剩余天数；领取后重新读取', async () => {
-    const w = mount(MailView);
+    const w = mount(MailView, { global: { stubs: { RouterLink: RouterLinkStub } } });
     await flushPromises();
     expect(w.text()).toContain('开服礼');
     expect(w.text()).toContain('银币 100');
@@ -69,7 +69,7 @@ describe('MailView', () => {
 
   it('等级不够时领取按钮禁用并写明要几级；展开正文时标记已读，换行保留', async () => {
     vi.mocked(endpoints.mail).mockResolvedValue({ items: [mail({ minLevel: 10 })], unread: 1, level: 5 });
-    const w = mount(MailView);
+    const w = mount(MailView, { global: { stubs: { RouterLink: RouterLinkStub } } });
     await flushPromises();
     const btn = w.find('[data-testid="mail-claim-1"]');
     expect(btn.attributes('disabled')).toBeDefined();
@@ -87,7 +87,7 @@ describe('MailView', () => {
       level: 5,
     });
     vi.mocked(endpoints.mailClaimAll).mockResolvedValue({ claimed: 0, failed: 1, items: [] });
-    const w = mount(MailView);
+    const w = mount(MailView, { global: { stubs: { RouterLink: RouterLinkStub } } });
     await flushPromises();
     expect(w.find('[data-testid="mail-delete-2"]').exists()).toBe(true);
     await w.find('[data-testid="mail-claim-all"]').trigger('click');
@@ -98,7 +98,7 @@ describe('MailView', () => {
   it('等级按邮箱接口返回的当前等级判断，不依赖餐厅 store 是否加载（终审 I1）', async () => {
     useRestaurantStore().rest = null;
     vi.mocked(endpoints.mail).mockResolvedValue({ items: [mail({ minLevel: 10 })], unread: 1, level: 12 });
-    const w = mount(MailView);
+    const w = mount(MailView, { global: { stubs: { RouterLink: RouterLinkStub } } });
     await flushPromises();
     expect(w.find('[data-testid="mail-claim-1"]').attributes('disabled')).toBeUndefined();
     expect(w.text()).not.toContain('需 10 级');
@@ -110,7 +110,7 @@ describe('MailView', () => {
       unread: 0,
       level: 5,
     });
-    const w = mount(MailView);
+    const w = mount(MailView, { global: { stubs: { RouterLink: RouterLinkStub } } });
     await flushPromises();
     expect(w.find('[data-testid="mail-claim-9"]').exists()).toBe(false);
     expect(w.find('[data-testid="mail-delete-9"]').exists()).toBe(true);
@@ -121,7 +121,7 @@ describe('MailView', () => {
   it('领到的称号已过期：领取后提示（单封、一键都提示；定制称号设计 四）', async () => {
     const expired = { key: 'c9', title: '过期了', until: '2026-10-01T00:00:00Z', expired: true as const };
     vi.mocked(endpoints.mailClaim).mockResolvedValue({ id: 1, items: { icons: [expired] } });
-    const w = mount(MailView);
+    const w = mount(MailView, { global: { stubs: { RouterLink: RouterLinkStub } } });
     await flushPromises();
     await w.find('[data-testid="mail-claim-1"]').trigger('click');
     await flushPromises();
@@ -135,5 +135,12 @@ describe('MailView', () => {
     await w.find('[data-testid="mail-claim-all"]').trigger('click');
     await flushPromises();
     expect(useToastStore().items.map((x) => x.text)).toContain('称号「过期了」已过期');
+  });
+
+  it('兑换码只留在兑换码页：这里没有兑换框，只有一条链接（界面改版 P2b）', async () => {
+    const w = mount(MailView, { global: { stubs: { RouterLink: RouterLinkStub } } });
+    await flushPromises();
+    expect(w.find('[data-testid="redeem-input"]').exists()).toBe(false);
+    expect(w.get('[data-testid="mail-to-redeem"]').findComponent(RouterLinkStub).props('to')).toBe('/redeem');
   });
 });

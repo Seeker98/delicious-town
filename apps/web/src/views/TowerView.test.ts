@@ -26,6 +26,7 @@ describe('TowerView', () => {
     await flushPromises();
     expect(endpoints.tower).toHaveBeenCalledTimes(1);
     expect(w.text()).toContain('floor-panel');
+    expect(w.get('[data-testid="tab-tower"]').attributes('role')).toBe('tab');
     await w.find('[data-testid="tab-rank"]').trigger('click');
     expect(w.text()).toContain('rank-panel');
     expect(localStorage.getItem('dt_tower_tab')).toBe('rank');

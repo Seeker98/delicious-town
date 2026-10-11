@@ -26,7 +26,7 @@ export default {
   unwearAll: '全部卸下',
   suitName: (name: string, count: number, max: number) => `${name} (${count}/${max})`,
   suitTier: (need: number, desc: string) => `${need} 件: ${desc}`,
-  gem: '宝石',
+  tabs: { equip: '装备', gem: '宝石' },
   presets: '预设',
   batch: '一键处理',
   apply: '套用',
@@ -110,7 +110,6 @@ export default {
     drillFailed: '打孔失败',
   },
   gemPage: {
-    title: '宝石',
     intro: (luck: string) =>
       `两颗同阶合成一颗下一阶, 每组耗体力 = 阶数；失败时还有 ${luck} 的幸运补救, 失败的每组得 阶数×1,000 经验。`,
     myStrength: (n: string) => `我的体力: ${n}`,

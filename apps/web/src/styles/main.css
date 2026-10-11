@@ -599,6 +599,15 @@ details.dt-card > summary {
   white-space: nowrap;
   flex-shrink: 0;
 }
+.dt-feed-text {
+  min-width: 0;
+}
+/* 首页动态只占一行（界面改版 P2b） */
+.dt-feed-1line .dt-feed-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 /* 卡片 */
 /* 内边距 8/12 → 6/10、卡片间距 8 → 6（问题记录 439） */
 .dt-card {
@@ -1163,4 +1172,13 @@ details.dt-card > summary {
   color: var(--dt-primary-ink);
   font-size: 18px;
   font-weight: 600;
+}
+/* 一级标签栏吸顶（界面改版设计 §4.2 第 7 条）：滚动时停在 48px 顶栏下面；负外边距让底色铺满 .dt-main 的左右内边距 */
+.dt-tabs-bar {
+  position: sticky;
+  top: 48px;
+  z-index: 10;
+  margin: 0 -8px 8px;
+  padding: 0 8px;
+  background: var(--dt-surface);
 }
