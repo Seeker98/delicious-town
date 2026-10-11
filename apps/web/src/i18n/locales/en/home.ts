@@ -110,6 +110,7 @@ const home: Messages['home'] = {
     failed: 'Unlock failed',
   },
   pick: 'Choose a facility to place',
+  pickCurrent: (name, remain) => `Now placed: ${name}, ${remain}`,
   noChoices: 'You have no facilities that fit here. You can buy them in the shop.',
   switches: 'Business settings',
   promo: 'Big sale',

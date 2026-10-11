@@ -115,6 +115,7 @@ export default {
     failed: '开通失败',
   },
   pick: '选择要摆放的设施',
+  pickCurrent: (name: string, remain: string) => `现在摆着: ${name}, ${remain}`,
   noChoices: '仓库里没有能放在这里的设施, 可以去商店买。',
   switches: '经营开关',
   promo: '大促活动',

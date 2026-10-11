@@ -301,6 +301,32 @@ describe('RestaurantHomeView', () => {
     expect(w.text()).toContain('幸运+36');
   });
 
+  it('摆了设施的格子：道具名一行、剩余时间单独一行不被截掉；点开换设施的面板先写现在摆的是什么（P5 返工）', async () => {
+    const future = new Date(Date.now() + 3 * 86_400_000 + 3_600_000).toISOString();
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      ...dto,
+      devices: [
+        {
+          slot: 1,
+          name: '宣传海报',
+          deviceType: 1,
+          needStar: 0,
+          unlocked: true,
+          goodsId: 13,
+          expiresAt: future,
+        },
+      ],
+    });
+    vi.mocked(endpoints.devices).mockResolvedValue({ slots: dto.devices, store: [] } as never);
+    const w = await mountView();
+    const remain = w.get('[data-testid="slot-1"] [data-testid="fac-remain"]');
+    expect(remain.text()).toMatch(/^剩余 3 天/);
+    expect(remain.classes()).not.toContain('dt-clamp1');
+    await w.get('[data-testid="slot-1"]').trigger('click');
+    await flushPromises();
+    expect(w.get('[data-testid="pick-current"]').text()).toMatch(/^现在摆着: .+, 剩余 3 天/);
+  });
+
   it('替换还没到期的设施要先确认（替换后不退还）', async () => {
     const future = new Date(Date.now() + 3 * 86_400_000).toISOString();
     vi.mocked(endpoints.overview).mockResolvedValue({

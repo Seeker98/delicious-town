@@ -116,6 +116,7 @@ export default {
     failed: '開通失敗',
   },
   pick: '選擇要擺放的設施',
+  pickCurrent: (name: string, remain: string) => `現在擺著: ${name}, ${remain}`,
   noChoices: '倉庫裡沒有能放在這裡的設施, 可以去商店買。',
   switches: '經營開關',
   promo: '大促活動',

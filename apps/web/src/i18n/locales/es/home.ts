@@ -110,6 +110,7 @@ const home: Messages['home'] = {
     failed: 'No se pudo desbloquear',
   },
   pick: 'Elige una instalación para colocar',
+  pickCurrent: (name, remain) => `Ahora: ${name}, ${remain}`,
   noChoices: 'No tienes instalaciones que encajen aquí. Puedes comprarlas en la tienda.',
   switches: 'Ajustes del negocio',
   promo: 'Gran oferta',

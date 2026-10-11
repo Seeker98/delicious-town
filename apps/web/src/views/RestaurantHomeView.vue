@@ -198,6 +198,8 @@ const lockedDevices = computed(() => (rest.value?.devices ?? []).filter((d) => !
 /** 没开的设施位的全称：名字 + 几星开放（小格子里只写“12★”，全称给悬停和读屏） */
 const lockedLabel = (d: { slot: number; name: string; needStar: number }) =>
   `${catalog.deviceName(d.slot) ?? d.name} · ${d.slot === PLAQUE2_SLOT && plaque2Offer.value ? t.value.home.notOpened : t.value.home.starOpen(needStarOf(d))}`;
+/** 正在换的那个设施位（面板上写现在摆的是什么、还剩多久） */
+const pickingDevice = computed(() => rest.value?.devices.find((d) => d.slot === pickingSlot.value) ?? null);
 const choices = computed(() => {
   const slot = options.value?.slots.find((s) => s.slot === pickingSlot.value);
   if (!slot || !options.value) return [];
@@ -644,9 +646,13 @@ onBeforeUnmount(() => {
             ><DtArt v-if="DEVICE_ART[d.deviceType]" :name="DEVICE_ART[d.deviceType]!" :size="28"
           /></span>
           <span class="dt-fac-name dt-clamp1">{{ catalog.deviceName(d.slot) ?? d.name }}</span>
-          <span v-if="d.goodsId" class="dt-fac-state is-on dt-clamp1"
-            >{{ catalog.goodsName(d.goodsId) }} · {{ expiresText(d.expiresAt) }}</span
-          >
+          <!-- 摆了设施：道具名一行（太长截断，全称给悬停），剩余时间单独一行，不被截掉 -->
+          <template v-if="d.goodsId">
+            <span class="dt-fac-goods dt-clamp1" :title="catalog.goodsName(d.goodsId)">{{
+              catalog.goodsName(d.goodsId)
+            }}</span>
+            <span class="dt-fac-state is-on" data-testid="fac-remain">{{ expiresText(d.expiresAt) }}</span>
+          </template>
           <span v-else class="dt-fac-state">{{ t.home.empty }}</span>
         </button>
       </div>
@@ -695,6 +701,11 @@ onBeforeUnmount(() => {
         <div class="d-flex justify-content-between mb-2" data-testid="pick-head">
           <b>{{ t.home.pick }}</b>
           <button type="button" class="dt-link-btn" @click="pickingSlot = null">{{ t.common.cancel }}</button>
+        </div>
+        <div v-if="pickingDevice?.goodsId" class="dt-pick-current" data-testid="pick-current">
+          {{
+            t.home.pickCurrent(catalog.goodsName(pickingDevice.goodsId), expiresText(pickingDevice.expiresAt))
+          }}
         </div>
         <div v-if="choices.length === 0" class="text-muted">{{ t.home.noChoices }}</div>
         <!-- 星级不够的高档海报奖杯变灰，写几星可用（backlog 146） -->
@@ -784,60 +795,63 @@ onBeforeUnmount(() => {
       <div class="dt-block-head">
         <h2 class="dt-block-title">{{ t.home.effects }}</h2>
       </div>
-      <details class="dt-card dt-effects small" data-testid="effects">
+      <!-- 收起时一行摘要，右边一个会转的箭头；展开后按来源分组，每条一行：名字和剩余时间一行，加成标签换到下一行 -->
+      <details class="dt-card dt-effects" data-testid="effects">
         <summary class="dt-effects-sum">
-          {{ t.home.effectsCount(rest.effects.length + rest.boosts.length, effectsSummary) }}
+          <span class="dt-effects-sum-text">{{
+            t.home.effectsCount(rest.effects.length + rest.boosts.length, effectsSummary)
+          }}</span>
+          <i class="bi bi-chevron-down dt-effects-chev" aria-hidden="true"></i>
         </summary>
-        <!-- 正在生效的全服加成活动（问题记录 294）：直接改区服数值，不是加成来源，单独一组 -->
-        <template v-if="rest.boosts.length > 0">
-          <div class="text-muted mt-1" data-testid="effect-group">{{ t.home.groups.activity }}</div>
-          <div
-            v-for="b in rest.boosts"
-            :key="`boost-${b.id}`"
-            class="d-flex flex-wrap align-items-center gap-1 border-bottom py-1"
-            data-testid="boost-row"
+        <div class="dt-effects-body">
+          <!-- 正在生效的全服加成活动（问题记录 294）：直接改区服数值，不是加成来源，单独一组 -->
+          <template v-if="rest.boosts.length > 0">
+            <div class="dt-effects-group" data-testid="effect-group">{{ t.home.groups.activity }}</div>
+            <div v-for="b in rest.boosts" :key="`boost-${b.id}`" class="dt-effect" data-testid="boost-row">
+              <div class="dt-effect-head">
+                <span class="dt-effect-name">{{ b.title }}</span>
+                <span class="dt-effect-time">{{ expiresText(b.endsAt) }}</span>
+              </div>
+              <div class="dt-effect-chips">
+                <span v-for="i in b.items" :key="i.key" class="dt-chip dt-chip-good"
+                  >{{ t.activity.boosts[i.key] ?? i.key }} ×{{ i.factor }}</span
+                >
+              </div>
+            </div>
+          </template>
+          <template v-for="g in effectGroups" :key="g.type">
+            <div class="dt-effects-group" data-testid="effect-group">{{ t.home.groups[g.type] }}</div>
+            <div
+              v-for="e in g.items"
+              :key="`${e.sourceType}-${e.sourceId}`"
+              class="dt-effect"
+              data-testid="effect-row"
+            >
+              <div class="dt-effect-head">
+                <span class="dt-effect-name">{{ effectName(e, catalog) }}</span>
+                <span class="dt-effect-time">{{ effectExpires(e) }}</span>
+              </div>
+              <div class="dt-effect-chips">
+                <span
+                  v-for="c in effectChips(e.effects)"
+                  :key="c.text"
+                  :class="['dt-chip', c.good ? 'dt-chip-good' : 'dt-chip-bad']"
+                  >{{ c.text }}</span
+                >
+              </div>
+            </div>
+          </template>
+          <button
+            v-if="rest.effects.length > EFFECTS_SHOWN"
+            type="button"
+            class="dt-effects-more"
+            data-testid="effects-more"
+            :aria-expanded="effectsAll"
+            @click="effectsAll = !effectsAll"
           >
-            <i class="bi bi-megaphone"></i>
-            <b>{{ b.title }}</b>
-            <span class="flex-fill d-flex flex-wrap gap-1">
-              <span v-for="i in b.items" :key="i.key" class="dt-chip dt-chip-good"
-                >{{ t.activity.boosts[i.key] ?? i.key }} ×{{ i.factor }}</span
-              >
-            </span>
-            <span class="text-muted text-nowrap ms-auto">{{ expiresText(b.endsAt) }}</span>
-          </div>
-        </template>
-        <template v-for="g in effectGroups" :key="g.type">
-          <div class="text-muted mt-1" data-testid="effect-group">{{ t.home.groups[g.type] }}</div>
-          <div
-            v-for="e in g.items"
-            :key="`${e.sourceType}-${e.sourceId}`"
-            class="d-flex flex-wrap align-items-center gap-1 border-bottom py-1"
-            data-testid="effect-row"
-          >
-            <i class="bi bi-award" aria-hidden="true"></i>
-            <b>{{ effectName(e, catalog) }}</b>
-            <span class="flex-fill d-flex flex-wrap gap-1">
-              <span
-                v-for="c in effectChips(e.effects)"
-                :key="c.text"
-                :class="['dt-chip', c.good ? 'dt-chip-good' : 'dt-chip-bad']"
-                >{{ c.text }}</span
-              >
-            </span>
-            <span class="text-muted text-nowrap ms-auto">{{ effectExpires(e) }}</span>
-          </div>
-        </template>
-        <button
-          v-if="rest.effects.length > EFFECTS_SHOWN"
-          type="button"
-          class="dt-link-btn d-block mt-1"
-          data-testid="effects-more"
-          :aria-expanded="effectsAll"
-          @click="effectsAll = !effectsAll"
-        >
-          {{ effectsAll ? t.home.collapse : t.home.expandAll(rest.effects.length) }}
-        </button>
+            {{ effectsAll ? t.home.collapse : t.home.expandAll(rest.effects.length) }}
+          </button>
+        </div>
       </details>
     </section>
   </div>

@@ -410,8 +410,9 @@ html {
 /* 加成标签：有利绿色、不利红色 */
 .dt-chip {
   font-size: 11px;
-  padding: 0 5px;
-  border-radius: 8px;
+  padding: 1px 6px;
+  border-radius: var(--dt-radius-xs);
+  line-height: 1.5;
 }
 .dt-chip-good {
   background: var(--dt-soft-success);
@@ -2145,11 +2146,6 @@ details.dt-card > summary {
 .dt-fac-state.is-on {
   color: var(--dt-ink-success);
 }
-/* 生效的加成：卡片里一行摘要，点开看全部 */
-.dt-effects-sum {
-  color: var(--dt-muted);
-  cursor: pointer;
-}
 /* 没开的设施位：一排小格子，图形 + 几星开放 */
 .dt-fac-locked {
   display: grid;
@@ -2211,4 +2207,102 @@ details.dt-card > summary {
   background: var(--dt-surface);
   color: var(--dt-primary-ink);
   text-decoration: none;
+}
+/* 设施格子：摆了东西时道具名一行、剩余时间一行 */
+.dt-fac-goods {
+  max-width: 100%;
+  font-size: 11px;
+  color: var(--dt-text);
+}
+.dt-pick-current {
+  margin: -4px 0 8px;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+/* 生效的加成（P5 返工）：收起时一行摘要和一个会转的箭头；展开后按来源分组，每条名字和剩余时间一行、标签换行 */
+.dt-effects {
+  padding: 0;
+  overflow: hidden;
+}
+.dt-effects-sum {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 14px;
+  list-style: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-effects-sum::-webkit-details-marker {
+  display: none;
+}
+.dt-effects-sum-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dt-effects-chev {
+  flex-shrink: 0;
+  transition: transform var(--dt-dur-base) var(--dt-ease-out);
+}
+.dt-effects[open] .dt-effects-chev {
+  transform: rotate(180deg);
+}
+.dt-effects-body {
+  border-top: 1px solid var(--dt-line);
+}
+.dt-effects-group {
+  padding: 10px 14px 2px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dt-muted);
+}
+.dt-effect {
+  padding: 6px 14px 8px;
+}
+.dt-effect + .dt-effect {
+  border-top: 1px solid var(--dt-line);
+}
+.dt-effect-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.dt-effect-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+.dt-effect-time {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-effect-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+.dt-effects-more {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  border: 0;
+  border-top: 1px solid var(--dt-line);
+  background: transparent;
+  color: var(--dt-primary-ink);
+  font: inherit;
+  font-size: 13px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dt-effects-chev {
+    transition: none;
+  }
 }

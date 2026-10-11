@@ -111,6 +111,7 @@ const home: Messages['home'] = {
     failed: 'Échec du déblocage',
   },
   pick: 'Choisir un équipement à installer',
+  pickCurrent: (name, remain) => `Actuellement\u202f: ${name}, ${remain}`,
   noChoices: "Vous n'avez aucun équipement adapté. Vous pouvez en acheter à la boutique.",
   switches: 'Réglages du restaurant',
   promo: 'Grande promo',
