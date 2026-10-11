@@ -61,6 +61,16 @@ html {
   color: var(--dt-muted);
   font-size: 18px;
 }
+/* 底部导航的 6 个根页面：大标题（界面改版 P5，设计 §1.1 第 7 条） */
+.dt-header-root .dt-header-title {
+  font-size: 22px;
+  font-weight: 700;
+}
+/* 有场景头图的页面（meta.scene）：顶栏和天空同色、不画底线，像头图的一部分 */
+.dt-header-scene {
+  background: var(--dt-scene-sky);
+  border-bottom-color: transparent;
+}
 .dt-header-title {
   flex: 1 1 auto;
   min-width: 0;
@@ -708,7 +718,7 @@ details.dt-card > summary {
 .dt-card {
   background: var(--dt-surface);
   border: 1px solid var(--dt-line);
-  border-radius: var(--dt-radius-md);
+  border-radius: var(--dt-radius-lg);
   padding: 6px 10px;
 }
 .dt-card + .dt-card {
@@ -1304,7 +1314,7 @@ details.dt-card > summary {
   padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
   background: var(--dt-surface);
   color: var(--dt-text);
-  border-radius: var(--dt-radius-md) var(--dt-radius-md) 0 0;
+  border-radius: var(--dt-radius-sheet) var(--dt-radius-sheet) 0 0;
   box-shadow: var(--dt-shadow-float);
 }
 .dt-sheet:focus {

@@ -54,7 +54,11 @@ function back() {
 </script>
 
 <template>
-  <header class="dt-header">
+  <!-- 根页面大标题、场景页面天空底色（界面改版 P5） -->
+  <header
+    class="dt-header"
+    :class="{ 'dt-header-root': inGame && !parent, 'dt-header-scene': !!route.meta.scene }"
+  >
     <button
       v-if="parent"
       type="button"

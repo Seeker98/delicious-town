@@ -72,7 +72,8 @@ export const routes: RouteRecordRaw[] = [
     path: '/',
     name: 'home',
     component: () => import('./views/RestaurantHomeView.vue'),
-    meta: { needRestaurant: true, section: 'home', title: T((t) => t.nav.tabs.rest) },
+    // 有场景头图：顶栏用天空底色（界面改版 P5）
+    meta: { needRestaurant: true, section: 'home', scene: true, title: T((t) => t.nav.tabs.rest) },
   },
   {
     path: '/rest/floor',
