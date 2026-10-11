@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import sceneUrl from '../art/scene/restaurant.svg?url';
-import type { ArtName } from '../art/generated/names';
 import { useCatalogStore } from '../stores/catalog';
 import DtArt from './DtArt.vue';
 
@@ -12,9 +11,7 @@ import DtArt from './DtArt.vue';
 const props = defineProps<{ door: number }>();
 const catalog = useCatalogStore();
 // 目录里找不到这扇门（旧目录缓存、目录还没读到）就画木门，不空着（Review Focus 3）
-const doorArt = computed(
-  () => `door-${catalog.looks?.doors.find((d) => d.id === props.door)?.art ?? 'wood'}` as ArtName,
-);
+const doorArt = computed(() => catalog.doorArt(props.door));
 </script>
 
 <template>

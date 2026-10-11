@@ -17,7 +17,8 @@ import ActivityBanner from '../components/ActivityBanner.vue';
 import AnnounceBanner from '../components/AnnounceBanner.vue';
 import DtArt from '../components/DtArt.vue';
 import DtSkeleton from '../components/DtSkeleton.vue';
-import RestaurantHero from '../components/RestaurantHero.vue';
+import DtLevelRing from '../components/DtLevelRing.vue';
+import HomeScene from '../components/home/HomeScene.vue';
 import HomeFeed from '../components/town/HomeFeed.vue';
 import HomeNews from '../components/town/HomeNews.vue';
 import { useT } from '../composables/useT';
@@ -325,252 +326,251 @@ onBeforeUnmount(() => {
   <div v-if="error" class="alert alert-danger">{{ error }}</div>
   <DtSkeleton v-else-if="!rest" :rows="6" data-testid="home-skeleton" />
   <div v-else>
-    <div class="dt-page-meta">
-      <span>
-        <RouterLink to="/weather" class="dt-go"
-          ><i class="bi bi-cloud-sun"></i>
-          {{ rest.weather ? catalog.weatherName(rest.weather.id, rest.weather.name) : '' }}</RouterLink
+    <!-- 首页最上面（界面改版 P5，样稿 B）：场景头图、等级环和称号、资源、营业状态 -->
+    <section class="dt-home-top" data-testid="home-status">
+      <HomeScene :door="rest.door" :closed="rest.state === 2" data-testid="home-hero">
+        <template #meta>
+          <span
+            >{{ catalog.streetName(rest.streetId, rest.streetName) }} ·
+            {{ t.home.stars(rest.starLevel) }}</span
+          >
+          <template v-if="rest.weather">
+            <span aria-hidden="true"> · </span>
+            <RouterLink to="/weather" class="dt-go">{{
+              catalog.weatherName(rest.weather.id, rest.weather.name)
+            }}</RouterLink>
+          </template>
+        </template>
+        <template #aside>
+          <RouterLink to="/shards" class="dt-go">{{ t.nav.links.shards }}</RouterLink>
+        </template>
+      </HomeScene>
+      <!-- 等级环往上压进头图；右边称号和经验数字（经验条换成等级环） -->
+      <div class="dt-home-level" data-testid="home-level">
+        <DtLevelRing :level="rest.level" :percent="expPercent"
+          ><span data-testid="rest-level">{{ rest.level }}</span></DtLevelRing
         >
-        <RouterLink to="/shards" class="dt-go ms-2">{{ t.nav.links.shards }}</RouterLink>
-      </span>
-    </div>
-    <AnnounceBanner :items="announcements" />
-    <!-- 被收购时（问题记录 421）：归谁所有，去收购页打理、赎身 -->
-    <div
-      v-if="rest.acquireOwner"
-      class="alert alert-info py-1 px-2 small mt-2 mb-0"
-      data-testid="home-acquired"
-    >
-      {{ t.acquire.homeOwned(rest.acquireOwner.name) }}
-      <RouterLink to="/acquire?tab=mine" class="dt-go ms-1">{{ t.acquire.homeLink }}</RouterLink>
-    </div>
-    <HiphopCard :rest-id="rest.id" class="mt-2" @changed="load" />
-    <div v-if="rest.isPlanktonHost" class="alert alert-warning py-2 small" data-testid="plankton">
-      <div>
-        <b>{{ t.home.plankton.title }}</b
-        >{{ t.home.plankton.body1 }}<b>{{ t.home.plankton.bold }}</b
-        >{{ t.home.plankton.body2 }}
-      </div>
-      <button
-        class="btn btn-sm btn-outline-dark ms-1"
-        :disabled="busy"
-        @click="act(() => endpoints.drivePlankton('strength'), t.home.plankton.failed)"
-      >
-        {{ t.home.plankton.byStrength }}
-      </button>
-      <button
-        class="btn btn-sm btn-outline-dark ms-1"
-        :disabled="busy"
-        @click="act(() => endpoints.drivePlankton('book'), t.home.plankton.failed)"
-      >
-        {{ t.home.plankton.byBook }}
-      </button>
-    </div>
-
-    <!-- 首页第一屏三张卡（问题记录 280）：餐厅、今日待办、小镇动态 -->
-    <div class="dt-card my-2 small" data-testid="home-status">
-      <!-- 餐厅头图取代原来的第一行（界面改版 P3）：街道、星级、等级、停业和称号叠在店面左边，门跟装扮里选的一样 -->
-      <RestaurantHero :door="rest.door" data-testid="home-hero">
-        <div class="dt-hero-sub">
-          {{ catalog.streetName(rest.streetId, rest.streetName) }} · {{ t.home.stars(rest.starLevel) }}
-        </div>
-        <div class="dt-hero-main">
-          {{ t.home.level }} <b data-testid="rest-level">{{ rest.level }}</b>
-        </div>
-        <!-- 停业、称号一行放不下就藏起来，不换行（终审 I4：换成几行会把头图上的字顶出去） -->
-        <div v-if="rest.state === 2 || rest.icons.length > 0" class="dt-hero-tags">
-          <span v-if="rest.state === 2" class="badge bg-danger">{{ t.home.closed }}</span>
-          <!-- 弹性盒按行高居中：按文字基线对齐时底色框比文字低约 1 像素（问题记录 563） -->
-          <span v-if="rest.icons.length > 0" class="d-inline-flex align-items-center" data-testid="my-icons">
-            <IconTag v-for="i in rest.icons" :key="i.key" :title="catalog.icon(i.key)?.title ?? i.title" />
-          </span>
-        </div>
-      </RestaurantHero>
-      <!-- 经验条紧跟等级那一行（问题记录 172：原来卡在资源数字和油量中间） -->
-      <div
-        class="progress my-2 position-relative"
-        role="progressbar"
-        :aria-valuenow="expPercent"
-        aria-valuemin="0"
-        aria-valuemax="100"
-      >
-        <div class="progress-bar dt-exp-bar" data-testid="exp-bar" :style="{ width: `${expPercent}%` }"></div>
-        <!-- 数字盖在整条进度条上居中，不跟着橙色部分的宽度走 -->
-        <span
-          data-testid="exp-text"
-          class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center small text-dark"
-          ><DtArt name="res-exp" :size="14" class="me-1" />{{ formatNum(rest.exp) }}/{{
-            formatNum(rest.expToNext)
-          }}</span
-        >
-      </div>
-      <!-- 资源用彩色扁平图（界面改版 P3），名字给读屏 -->
-      <div class="row g-1 dt-res-grid" data-testid="home-resources">
-        <div class="col-6">
-          <span class="dt-res-ico"
-            ><DtArt name="res-coin-silver" :size="16" /><span class="visually-hidden">{{
-              t.events.kind.coin
-            }}</span></span
-          >
-          <b data-testid="rest-coin">{{ formatNum(rest.coin) }}</b>
-        </div>
-        <div class="col-6">
-          <span class="dt-res-ico"
-            ><DtArt name="res-diamond" :size="16" /><span class="visually-hidden">{{
-              t.events.kind.diamond
-            }}</span></span
-          >
-          <span>{{ formatNum(rest.diamond) }}</span>
-        </div>
-        <!-- 体力、声望也按千分位（问题记录 296：体力很多时只有它没分隔） -->
-        <!-- 图标和数字之间留一个空格，和银币、油一致（问题记录 298：这行太长被格式化折成两行时，空格被模板吞掉） -->
-        <div class="col-6">
-          <span class="dt-res-ico"
-            ><DtArt name="res-strength" :size="16" /><span class="visually-hidden">{{
-              t.events.kind.strength
-            }}</span></span
-          >
-          <span data-testid="rest-strength">{{ strengthText }}</span>
-        </div>
-        <div class="col-6" :title="t.home.renown">
-          <span class="dt-res-ico"
-            ><DtArt name="res-prestige" :size="16" /><span class="visually-hidden">{{
-              t.events.kind.renown
-            }}</span></span
-          >
-          <span data-testid="rest-renown">{{ formatNum(rest.renown) }}</span>
-        </div>
-        <!-- 油和加满在同一个网格里，按钮紧凑，行高和上面一致（280 反馈） -->
-        <div class="col-6">
-          <span class="dt-res-ico"
-            ><DtArt name="res-oil" :size="16" /><span class="visually-hidden">{{
-              t.events.kind.oil
-            }}</span></span
-          >
-          <span>{{ formatNum(rest.oil) }}/{{ formatNum(rest.oilMax) }}</span>
-          <!-- 油壶升级的入口（问题记录 435） -->
-          <RouterLink
-            to="/society/oil"
-            class="d-inline-block px-1 text-decoration-none"
-            :title="t.home.oilUpgrade"
-            :aria-label="t.home.oilUpgrade"
-            data-testid="oil-upgrade"
-            ><i class="bi bi-arrow-up-circle"></i
-          ></RouterLink>
-        </div>
-        <!-- 加油用图标加文字链接，不用按钮，行高和上面两行一样（问题记录 447） -->
-        <div class="col-6">
-          <!-- 看得见的是“加满/加油”和银币数，整句放读屏标签和悬停提示；名字放不下才截断，数字不截（审查 I1） -->
-          <button
-            type="button"
-            class="dt-link-btn d-inline-flex align-items-center gap-1 mw-100"
-            data-testid="refuel"
-            :title="refuelText"
-            :aria-label="refuelText"
-            :disabled="busy || refuelCost <= 0"
-            @click="act(() => endpoints.refuel(), t.home.refuelFailed)"
-          >
-            <DtArt name="res-oil" :size="14" /><span class="text-truncate">{{
-              t.home.refuelShort(refuelCost >= refuelNeed)
+        <div class="dt-home-level-main">
+          <!-- 称号多时不换行，放不下的藏起来（终审 I4）；弹性盒按行高居中（问题记录 563） -->
+          <div v-if="rest.icons.length > 0" class="dt-home-tags">
+            <span class="d-inline-flex align-items-center" data-testid="my-icons">
+              <IconTag v-for="i in rest.icons" :key="i.key" :title="catalog.icon(i.key)?.title ?? i.title" />
+            </span>
+          </div>
+          <span class="dt-home-exp" data-testid="exp-text"
+            ><DtArt name="res-exp" :size="14" class="me-1" />{{ formatNum(rest.exp) }}/{{
+              formatNum(rest.expToNext)
             }}</span
-            ><span class="flex-shrink-0"
-              ><DtArt name="res-coin-silver" :size="14" class="me-1" />{{ formatNum(refuelCost) }}</span
-            >
-          </button>
-        </div>
-      </div>
-      <!-- 上一轮（问题记录 433）：银币、经验、耗油用图标，悬停写名字；两个入口各放在一行的右边 -->
-      <!-- 还没结算过也显示这块：楼层页能灭蟑螂、赶白食，入口不能没有（问题记录 447 去掉了“更多”里的入口） -->
-      <div class="border-top mt-2 pt-1" data-testid="last-round">
-        <div v-if="!rest.lastRound" class="d-flex flex-wrap align-items-center gap-2">
-          <span class="dt-shrink text-muted">{{ t.home.noRound }}</span>
-          <RouterLink to="/rest/income" class="dt-go">{{ t.home.income }}</RouterLink>
-          <RouterLink to="/rest/floor" class="dt-go"
-            ><template v-if="hasRoach"
-              ><i class="bi bi-bug text-danger me-1" aria-hidden="true" data-testid="home-floor-roach"></i
-              ><span class="visually-hidden">{{ t.home.hasRoach }}</span></template
-            >{{ t.home.floor }}</RouterLink
-          >
-        </div>
-        <div v-if="rest.lastRound" class="d-flex align-items-center gap-2">
-          <!-- 每一项不拆开，放不下时整项换到下一行（法文“收益记录”长，原来被挤出屏幕） -->
-          <span class="dt-shrink" data-testid="last-round-line"
-            >{{ t.home.lastRound }}
-            <span class="text-nowrap"
-              ><span :title="t.home.roundCoin"
-                ><DtArt name="res-coin-silver" :size="14" /><span class="visually-hidden">{{
-                  t.home.roundCoin
-                }}</span></span
-              >
-              {{ formatNum(rest.lastRound.coin) }}</span
-            >
-            <span class="text-nowrap ms-1"
-              ><span :title="t.home.roundExp"
-                ><DtArt name="res-exp" :size="14" /><span class="visually-hidden">{{
-                  t.home.roundExp
-                }}</span></span
-              >
-              {{ formatNum(rest.lastRound.exp) }}</span
-            >
-            <span class="text-nowrap ms-1"
-              ><span :title="t.home.roundOil"
-                ><DtArt name="res-oil" :size="14" /><span class="visually-hidden">{{
-                  t.home.roundOil
-                }}</span></span
-              >
-              {{ formatNum(rest.lastRound.oil) }}</span
-            ></span
-          >
-          <RouterLink to="/rest/income" class="dt-go">{{ t.home.income }}</RouterLink>
-        </div>
-        <div v-if="rest.lastRound" class="d-flex align-items-center gap-2">
-          <span class="dt-shrink text-muted dt-clamp1" data-testid="last-round-guests">{{
-            customers || t.home.noGuests
-          }}</span>
-          <RouterLink to="/rest/floor" class="dt-go"
-            ><template v-if="hasRoach"
-              ><i class="bi bi-bug text-danger me-1" aria-hidden="true" data-testid="home-floor-roach"></i
-              ><span class="visually-hidden">{{ t.home.hasRoach }}</span></template
-            >{{ t.home.floor }}</RouterLink
           >
         </div>
       </div>
-      <!-- 食谱数、在售特色菜（问题记录 447）：原来的厨具、仓库、商店入口 -->
-      <!-- 左边食谱数不换行，右边特色菜占剩下的宽度，放不下才截断（菜名长时几级不被挤掉） -->
+      <AnnounceBanner :items="announcements" />
+      <!-- 被收购时（问题记录 421）：归谁所有，去收购页打理、赎身 -->
       <div
-        v-if="showBooks || showSpecial"
-        class="border-top mt-2 pt-1 d-flex align-items-center gap-3"
-        data-testid="home-books"
+        v-if="rest.acquireOwner"
+        class="alert alert-info py-1 px-2 small mt-2 mb-0"
+        data-testid="home-acquired"
       >
-        <RouterLink v-if="showBooks" to="/cookbooks" class="dt-go flex-shrink-0" data-testid="home-cookbooks"
-          ><i class="bi bi-journal-text"></i>
-          {{
-            t.home.cookbooks(formatNum(rest.cookbooks.learned), formatNum(rest.cookbooks.total))
-          }}</RouterLink
-        >
-        <RouterLink
-          v-if="showSpecial"
-          to="/cookbooks?tab=mc"
-          class="dt-go ms-auto d-flex align-items-center gap-1 dt-min0"
-          data-testid="home-special"
-          ><i class="bi bi-stars"></i><span class="text-truncate">{{ specialName }}</span
-          ><span v-if="rest.special" class="flex-shrink-0">{{
-            t.home.specialLevel(rest.special.level)
-          }}</span></RouterLink
-        >
+        {{ t.acquire.homeOwned(rest.acquireOwner.name) }}
+        <RouterLink to="/acquire?tab=mine" class="dt-go ms-1">{{ t.acquire.homeLink }}</RouterLink>
       </div>
-      <!-- 资产：名下的店身价合计，和投资榜一样；收购的入口从“更多”挪到这里（问题记录 447） -->
-      <div
-        v-if="rest.assets !== null"
-        class="border-top mt-2 pt-1 d-flex align-items-center gap-2"
-        data-testid="home-assets"
-      >
-        <span class="dt-shrink"
-          ><i class="bi bi-briefcase"></i> {{ t.home.assets(formatNum(rest.assets)) }}</span
+      <HiphopCard :rest-id="rest.id" class="mt-2" @changed="load" />
+      <div v-if="rest.isPlanktonHost" class="alert alert-warning py-2 small" data-testid="plankton">
+        <div>
+          <b>{{ t.home.plankton.title }}</b
+          >{{ t.home.plankton.body1 }}<b>{{ t.home.plankton.bold }}</b
+          >{{ t.home.plankton.body2 }}
+        </div>
+        <button
+          class="btn btn-sm btn-outline-dark ms-1"
+          :disabled="busy"
+          @click="act(() => endpoints.drivePlankton('strength'), t.home.plankton.failed)"
         >
-        <RouterLink to="/acquire" class="dt-go">{{ t.nav.links.acquire }}</RouterLink>
+          {{ t.home.plankton.byStrength }}
+        </button>
+        <button
+          class="btn btn-sm btn-outline-dark ms-1"
+          :disabled="busy"
+          @click="act(() => endpoints.drivePlankton('book'), t.home.plankton.failed)"
+        >
+          {{ t.home.plankton.byBook }}
+        </button>
       </div>
-    </div>
+
+      <!-- 资源、上一轮、食谱（P5 后续任务再拆） -->
+      <div class="dt-card my-2 small" data-testid="home-card">
+        <!-- 资源用彩色扁平图（界面改版 P3），名字给读屏 -->
+        <div class="row g-1 dt-res-grid" data-testid="home-resources">
+          <div class="col-6">
+            <span class="dt-res-ico"
+              ><DtArt name="res-coin-silver" :size="16" /><span class="visually-hidden">{{
+                t.events.kind.coin
+              }}</span></span
+            >
+            <b data-testid="rest-coin">{{ formatNum(rest.coin) }}</b>
+          </div>
+          <div class="col-6">
+            <span class="dt-res-ico"
+              ><DtArt name="res-diamond" :size="16" /><span class="visually-hidden">{{
+                t.events.kind.diamond
+              }}</span></span
+            >
+            <span>{{ formatNum(rest.diamond) }}</span>
+          </div>
+          <!-- 体力、声望也按千分位（问题记录 296：体力很多时只有它没分隔） -->
+          <!-- 图标和数字之间留一个空格，和银币、油一致（问题记录 298：这行太长被格式化折成两行时，空格被模板吞掉） -->
+          <div class="col-6">
+            <span class="dt-res-ico"
+              ><DtArt name="res-strength" :size="16" /><span class="visually-hidden">{{
+                t.events.kind.strength
+              }}</span></span
+            >
+            <span data-testid="rest-strength">{{ strengthText }}</span>
+          </div>
+          <div class="col-6" :title="t.home.renown">
+            <span class="dt-res-ico"
+              ><DtArt name="res-prestige" :size="16" /><span class="visually-hidden">{{
+                t.events.kind.renown
+              }}</span></span
+            >
+            <span data-testid="rest-renown">{{ formatNum(rest.renown) }}</span>
+          </div>
+          <!-- 油和加满在同一个网格里，按钮紧凑，行高和上面一致（280 反馈） -->
+          <div class="col-6">
+            <span class="dt-res-ico"
+              ><DtArt name="res-oil" :size="16" /><span class="visually-hidden">{{
+                t.events.kind.oil
+              }}</span></span
+            >
+            <span>{{ formatNum(rest.oil) }}/{{ formatNum(rest.oilMax) }}</span>
+            <!-- 油壶升级的入口（问题记录 435） -->
+            <RouterLink
+              to="/society/oil"
+              class="d-inline-block px-1 text-decoration-none"
+              :title="t.home.oilUpgrade"
+              :aria-label="t.home.oilUpgrade"
+              data-testid="oil-upgrade"
+              ><i class="bi bi-arrow-up-circle"></i
+            ></RouterLink>
+          </div>
+          <!-- 加油用图标加文字链接，不用按钮，行高和上面两行一样（问题记录 447） -->
+          <div class="col-6">
+            <!-- 看得见的是“加满/加油”和银币数，整句放读屏标签和悬停提示；名字放不下才截断，数字不截（审查 I1） -->
+            <button
+              type="button"
+              class="dt-link-btn d-inline-flex align-items-center gap-1 mw-100"
+              data-testid="refuel"
+              :title="refuelText"
+              :aria-label="refuelText"
+              :disabled="busy || refuelCost <= 0"
+              @click="act(() => endpoints.refuel(), t.home.refuelFailed)"
+            >
+              <DtArt name="res-oil" :size="14" /><span class="text-truncate">{{
+                t.home.refuelShort(refuelCost >= refuelNeed)
+              }}</span
+              ><span class="flex-shrink-0"
+                ><DtArt name="res-coin-silver" :size="14" class="me-1" />{{ formatNum(refuelCost) }}</span
+              >
+            </button>
+          </div>
+        </div>
+        <!-- 上一轮（问题记录 433）：银币、经验、耗油用图标，悬停写名字；两个入口各放在一行的右边 -->
+        <!-- 还没结算过也显示这块：楼层页能灭蟑螂、赶白食，入口不能没有（问题记录 447 去掉了“更多”里的入口） -->
+        <div class="border-top mt-2 pt-1" data-testid="last-round">
+          <div v-if="!rest.lastRound" class="d-flex flex-wrap align-items-center gap-2">
+            <span class="dt-shrink text-muted">{{ t.home.noRound }}</span>
+            <RouterLink to="/rest/income" class="dt-go">{{ t.home.income }}</RouterLink>
+            <RouterLink to="/rest/floor" class="dt-go"
+              ><template v-if="hasRoach"
+                ><i class="bi bi-bug text-danger me-1" aria-hidden="true" data-testid="home-floor-roach"></i
+                ><span class="visually-hidden">{{ t.home.hasRoach }}</span></template
+              >{{ t.home.floor }}</RouterLink
+            >
+          </div>
+          <div v-if="rest.lastRound" class="d-flex align-items-center gap-2">
+            <!-- 每一项不拆开，放不下时整项换到下一行（法文“收益记录”长，原来被挤出屏幕） -->
+            <span class="dt-shrink" data-testid="last-round-line"
+              >{{ t.home.lastRound }}
+              <span class="text-nowrap"
+                ><span :title="t.home.roundCoin"
+                  ><DtArt name="res-coin-silver" :size="14" /><span class="visually-hidden">{{
+                    t.home.roundCoin
+                  }}</span></span
+                >
+                {{ formatNum(rest.lastRound.coin) }}</span
+              >
+              <span class="text-nowrap ms-1"
+                ><span :title="t.home.roundExp"
+                  ><DtArt name="res-exp" :size="14" /><span class="visually-hidden">{{
+                    t.home.roundExp
+                  }}</span></span
+                >
+                {{ formatNum(rest.lastRound.exp) }}</span
+              >
+              <span class="text-nowrap ms-1"
+                ><span :title="t.home.roundOil"
+                  ><DtArt name="res-oil" :size="14" /><span class="visually-hidden">{{
+                    t.home.roundOil
+                  }}</span></span
+                >
+                {{ formatNum(rest.lastRound.oil) }}</span
+              ></span
+            >
+            <RouterLink to="/rest/income" class="dt-go">{{ t.home.income }}</RouterLink>
+          </div>
+          <div v-if="rest.lastRound" class="d-flex align-items-center gap-2">
+            <span class="dt-shrink text-muted dt-clamp1" data-testid="last-round-guests">{{
+              customers || t.home.noGuests
+            }}</span>
+            <RouterLink to="/rest/floor" class="dt-go"
+              ><template v-if="hasRoach"
+                ><i class="bi bi-bug text-danger me-1" aria-hidden="true" data-testid="home-floor-roach"></i
+                ><span class="visually-hidden">{{ t.home.hasRoach }}</span></template
+              >{{ t.home.floor }}</RouterLink
+            >
+          </div>
+        </div>
+        <!-- 食谱数、在售特色菜（问题记录 447）：原来的厨具、仓库、商店入口 -->
+        <!-- 左边食谱数不换行，右边特色菜占剩下的宽度，放不下才截断（菜名长时几级不被挤掉） -->
+        <div
+          v-if="showBooks || showSpecial"
+          class="border-top mt-2 pt-1 d-flex align-items-center gap-3"
+          data-testid="home-books"
+        >
+          <RouterLink
+            v-if="showBooks"
+            to="/cookbooks"
+            class="dt-go flex-shrink-0"
+            data-testid="home-cookbooks"
+            ><i class="bi bi-journal-text"></i>
+            {{
+              t.home.cookbooks(formatNum(rest.cookbooks.learned), formatNum(rest.cookbooks.total))
+            }}</RouterLink
+          >
+          <RouterLink
+            v-if="showSpecial"
+            to="/cookbooks?tab=mc"
+            class="dt-go ms-auto d-flex align-items-center gap-1 dt-min0"
+            data-testid="home-special"
+            ><i class="bi bi-stars"></i><span class="text-truncate">{{ specialName }}</span
+            ><span v-if="rest.special" class="flex-shrink-0">{{
+              t.home.specialLevel(rest.special.level)
+            }}</span></RouterLink
+          >
+        </div>
+        <!-- 资产：名下的店身价合计，和投资榜一样；收购的入口从“更多”挪到这里（问题记录 447） -->
+        <div
+          v-if="rest.assets !== null"
+          class="border-top mt-2 pt-1 d-flex align-items-center gap-2"
+          data-testid="home-assets"
+        >
+          <span class="dt-shrink"
+            ><i class="bi bi-briefcase"></i> {{ t.home.assets(formatNum(rest.assets)) }}</span
+          >
+          <RouterLink to="/acquire" class="dt-go">{{ t.nav.links.acquire }}</RouterLink>
+        </div>
+      </div>
+    </section>
 
     <div class="dt-card my-2 small dt-todo" data-testid="home-todo">
       <div class="dt-card-title mb-1">

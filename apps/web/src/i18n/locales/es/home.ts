@@ -16,6 +16,7 @@ const home: Messages['home'] = {
   stars: (n) => `${n}★`,
   level: 'Nivel',
   closed: 'Cerrado',
+  closedSign: 'Cerrado',
   renown: 'Renombre',
   refuel: (full, cost) => `${full ? 'Llenar' : 'Echar aceite'} (${cost} ${plEs(cost, 'moneda', 'monedas')})`,
   refuelShort: (full) => (full ? 'Llenar' : 'Echar aceite'),

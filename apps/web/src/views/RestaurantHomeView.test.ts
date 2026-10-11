@@ -418,11 +418,12 @@ describe('RestaurantHomeView', () => {
     }
   });
 
-  it('经验数字显示在整条进度条上，不在橙色部分里（刚升级时橙色很短也看得见）', async () => {
+  it('经验数字写在等级环旁边，不压在进度上（界面改版 P5：经验条换成等级环）', async () => {
     const w = await mountView();
     const text = w.find('[data-testid="exp-text"]');
     expect(text.text()).toBe('0/500');
-    expect(w.find('.progress-bar').find('[data-testid="exp-text"]').exists()).toBe(false);
+    expect(text.element.closest('.dt-level-ring')).toBeNull();
+    expect(w.find('.progress-bar').exists()).toBe(false);
   });
 
   it('痞老板驻留时写明他的坏处（问题记录：看不出痞老板有没有负面效果）', async () => {
@@ -448,9 +449,9 @@ describe('RestaurantHomeView', () => {
     expect(w.get('[data-testid="my-icons"]').classes()).toEqual(
       expect.arrayContaining(['d-inline-flex', 'align-items-center']),
     );
-    // 经验条也不再用亮黄色（问题记录 212）
-    expect(w.find('[data-testid="exp-bar"]').classes()).toContain('dt-exp-bar');
-    expect(w.find('[data-testid="exp-bar"]').classes()).not.toContain('bg-warning');
+    // 经验条换成等级环（界面改版 P5），紫色进度，不用亮黄色（问题记录 212）
+    expect(w.find('[data-testid="exp-bar"]').exists()).toBe(false);
+    expect(w.get('.dt-level-ring').attributes('aria-label')).toBe('等级 1, 经验 0%');
   });
 
   it('被收购时提示归谁所有，链到收购页“我的”（收购 PR 3）；没被收购不显示', async () => {
@@ -1159,18 +1160,28 @@ describe('首页套用新的页面模式（界面改版 P3）', () => {
     vi.mocked(endpoints.guideCodes).mockResolvedValue([]);
   });
 
-  it('状态卡最上面是餐厅头图：街道、星级、等级、停业和称号叠在上面', async () => {
-    vi.mocked(endpoints.overview).mockResolvedValue({ ...structuredClone(dto), state: 2, door: 1 });
+  it('首页最上面是场景头图：街道、星级、天气在天空上，停业挂在招牌上；下面是等级环、称号、经验（界面改版 P5）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      ...structuredClone(dto),
+      state: 2,
+      door: 1,
+      icons: [{ key: 'founder', title: '开服元老' }],
+    });
     const w = await mountView();
-    const card = w.get('[data-testid="home-status"]');
-    const hero = card.get('[data-testid="home-hero"]');
-    expect(card.element.firstElementChild).toBe(hero.element);
-    const plate = hero.get('.dt-hero-plate');
-    expect(plate.text()).toContain('0 星');
-    expect(plate.get('[data-testid="rest-level"]').text()).toBe('1');
-    expect(plate.text()).toContain('停业');
-    // 称号多时不换行（终审 I4：换成三四行会把头图上的字顶出去截掉），放不下的藏起来
-    expect(plate.get('.dt-hero-tags').classes()).not.toContain('flex-wrap');
+    const top = w.get('[data-testid="home-status"]');
+    const hero = top.get('[data-testid="home-hero"]');
+    expect(top.element.firstElementChild).toBe(hero.element);
+    const meta = hero.get('.dt-scene-meta');
+    expect(meta.text()).toContain('0 星');
+    expect(meta.get('a[href="/weather"]').text()).toContain('晴');
+    expect(hero.find('a[href="/shards"]').exists()).toBe(true);
+    expect(hero.get('[data-testid="scene-closed"]').text()).toBe('停业中');
+    const lv = top.get('[data-testid="home-level"]');
+    expect(lv.get('[data-testid="rest-level"]').text()).toBe('1');
+    expect(lv.get('[data-testid="my-icons"]').text()).toContain('开服元老');
+    expect(lv.get('[data-testid="exp-text"]').text()).toBe('0/500');
+    // 称号多时不换行，放不下的藏起来（终审 I4）
+    expect(lv.get('.dt-home-tags').classes()).not.toContain('flex-wrap');
   });
 
   it('资源用彩色扁平图（银币、钻石、体力、声望、油），读屏照样读名字', async () => {

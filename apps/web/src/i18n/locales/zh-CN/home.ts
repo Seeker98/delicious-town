@@ -14,6 +14,8 @@ export default {
   stars: (n: number) => `${n} 星`,
   level: '等级',
   closed: '停业',
+  /** 首页头图招牌下挂的牌子（界面改版 P5） */
+  closedSign: '停业中',
   renown: '声望',
   refuel: (full: boolean, cost: string) => `${full ? '加满' : '加油'} (${cost} 银币)`,
   refuelShort: (full: boolean): string => (full ? '加满' : '加油'),

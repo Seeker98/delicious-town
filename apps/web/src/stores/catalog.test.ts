@@ -178,4 +178,21 @@ describe('食材配图（界面改版 P4，Review Focus 2）', () => {
     expect(c.foodArt(3)).toBe('food-misc');
     expect(c.foodArt(999)).toBe('food-misc');
   });
+
+  it('门的图形：按目录里的门画 door-<款式>；没有目录、查不到这扇门、网页里没有这张图都画木门（P4 终审遗留）', () => {
+    const c = useCatalogStore();
+    expect(c.doorArt(1)).toBe('door-wood');
+    c.looks = {
+      doors: [
+        { id: 1, art: 'red' },
+        { id: 2, art: 'marble' },
+        { id: 3, art: '' },
+      ],
+      icons: [],
+    } as never;
+    expect(c.doorArt(1)).toBe('door-red');
+    expect(c.doorArt(2)).toBe('door-wood');
+    expect(c.doorArt(3)).toBe('door-wood');
+    expect(c.doorArt(999)).toBe('door-wood');
+  });
 });
