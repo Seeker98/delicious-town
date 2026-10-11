@@ -12,6 +12,7 @@ import { activeMessages } from './i18n';
 import { useSessionStore } from './stores/session';
 import { useToastStore } from './stores/toast';
 import type { Messages } from './i18n';
+import { listBack } from './nav/routeMeta';
 
 /** 路由标题：取当前语言文案的函数（界面改版 P2a）；包一层只为类型推断 */
 const T = (f: (t: Messages) => string) => f;
@@ -220,7 +221,10 @@ export const routes: RouteRecordRaw[] = [
       gameChrome: true,
       section: 'map',
       title: T((t) => t.nav.titles.wikiItem),
-      parent: '/wiki',
+      parent: (_to, back) =>
+        typeof back === 'string' && back.startsWith('/wiki/equips')
+          ? listBack('/wiki/equips', back)
+          : listBack('/wiki/goods', back),
     },
   },
   { path: '/wiki/equips/:id(\\d+)', redirect: (to) => `/wiki/goods/${String(to.params.id)}` },
@@ -233,7 +237,7 @@ export const routes: RouteRecordRaw[] = [
       gameChrome: true,
       section: 'map',
       title: T((t) => t.nav.titles.wikiItem),
-      parent: '/wiki',
+      parent: (_to, back) => listBack('/wiki/foods', back),
     },
   },
   {
@@ -245,7 +249,7 @@ export const routes: RouteRecordRaw[] = [
       gameChrome: true,
       section: 'map',
       title: T((t) => t.nav.titles.wikiItem),
-      parent: '/wiki',
+      parent: (_to, back) => listBack('/wiki/cookbooks', back),
     },
   },
   {
@@ -257,7 +261,7 @@ export const routes: RouteRecordRaw[] = [
       gameChrome: true,
       section: 'map',
       title: T((t) => t.nav.titles.wikiItem),
-      parent: '/wiki',
+      parent: (_to, back) => listBack('/wiki/streets', back),
     },
   },
   {
@@ -325,7 +329,8 @@ export const routes: RouteRecordRaw[] = [
       needRestaurant: true,
       section: 'cookbooks',
       title: T((t) => t.cookbook.progress.title),
-      parent: '/cookbooks',
+      // 回食谱列表时带回原来看的街、页码、筛选（终审）
+      parent: (to) => `/cookbooks${to.fullPath.slice(to.path.length)}`,
     },
   },
   {

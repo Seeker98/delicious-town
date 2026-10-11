@@ -6,6 +6,7 @@ import type { WorldDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
 import WeatherView from './WeatherView.vue';
+import { usePageTitleStore } from '../stores/pageTitle';
 
 vi.mock('../api/endpoints', () => ({ endpoints: { weather: vi.fn() } }));
 
@@ -52,14 +53,14 @@ describe('WeatherView：天气名、说明、蟹老板的街按目录显示（�
       ],
     });
     const text = (await mountView()).text();
-    expect(text).toContain('Sunny');
+    expect(usePageTitleStore().title).toBe('Sunny');
     expect(text).toContain('Business: occupancy +3%');
     expect(text).toContain('Guangdong Street');
   });
 
   it('目录还没读到时用服务端给的名字', async () => {
     const text = (await mountView()).text();
-    expect(text).toContain('晴');
+    expect(usePageTitleStore().title).toBe('晴');
     expect(text).toContain('经营: 上座率+3%');
     expect(text).toContain('广东街');
   });

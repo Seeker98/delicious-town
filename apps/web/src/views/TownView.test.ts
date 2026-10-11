@@ -94,7 +94,8 @@ describe('TownView', () => {
 
   it('页面叫"广场"；标签是新闻、居民、排行、许愿树（问题记录 441：教室、兑换、发展基金搬到协会）', async () => {
     const w = await mountAt('/town?tab=news');
-    expect(w.find('h5').text()).toBe('广场');
+    // 标题“广场”在顶栏（路由元数据，界面改版 P2a）
+    expect(w.find('h5').exists()).toBe(false);
     expect(w.findAll('.nav-link').map((x) => x.text())).toEqual(['新闻', '居民', '排行', '许愿树']);
   });
 

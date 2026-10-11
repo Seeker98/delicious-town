@@ -60,7 +60,6 @@ onMounted(async () => {
 </script>
 
 <template>
-  <h5>{{ t.rest.look.title }}</h5>
   <template v-if="mine">
     <h6 class="dt-section mt-0">{{ t.rest.look.avatar }}</h6>
     <p v-if="mine.avatar === null" class="small text-danger">{{ t.rest.look.noAvatar }}</p>

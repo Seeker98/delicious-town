@@ -22,7 +22,7 @@ test('注册 → 验证邮箱 → 选区服 → 开店；同一账号在二服�
   await expect(page).toHaveURL(/\/create-restaurant/);
   await page.getByPlaceholder('餐厅名称').fill(`一店${id.slice(-4)}`);
   await page.getByRole('button', { name: '开张' }).click();
-  await expect(page.getByTestId('rest-name')).toHaveText(`一店${id.slice(-4)}`);
+  await expect(page.getByTestId('page-title')).toHaveText(`一店${id.slice(-4)}`);
   await expect(page.getByTestId('rest-level')).toHaveText('1');
   await expect(page.getByTestId('rest-coin')).toHaveText('100,000');
 
@@ -30,12 +30,12 @@ test('注册 → 验证邮箱 → 选区服 → 开店；同一账号在二服�
   await page.getByRole('button', { name: /二服/ }).click();
   await page.getByPlaceholder('餐厅名称').fill(`二店${id.slice(-4)}`);
   await page.getByRole('button', { name: '开张' }).click();
-  await expect(page.getByTestId('rest-name')).toHaveText(`二店${id.slice(-4)}`);
+  await expect(page.getByTestId('page-title')).toHaveText(`二店${id.slice(-4)}`);
   await expect(page.getByTestId('rest-coin')).toHaveText('100,000');
 
   await page.getByRole('link', { name: '切换区服' }).click();
   await page.getByRole('button', { name: /一服/ }).click();
-  await expect(page.getByTestId('rest-name')).toHaveText(`一店${id.slice(-4)}`);
+  await expect(page.getByTestId('page-title')).toHaveText(`一店${id.slice(-4)}`);
 
   const hasHorizontalScroll = await page.evaluate(
     () => document.documentElement.scrollWidth > window.innerWidth,

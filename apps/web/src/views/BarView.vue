@@ -55,11 +55,8 @@ onMounted(load);
 </script>
 
 <template>
-  <div class="dt-page-title">
-    <h5>{{ t.bar.title }}</h5>
-    <span v-if="data" class="dt-meta" data-testid="bar-wallet">{{
-      t.bar.wallet(data.tickets, data.krabCoins)
-    }}</span>
+  <div v-if="data" class="dt-page-meta dt-meta" data-testid="bar-wallet">
+    {{ t.bar.wallet(data.tickets, data.krabCoins) }}
   </div>
   <BarWenjie :data="data" />
   <!-- 雯姐每天聊一次（问题记录 453：从广场搬到酒吧） -->

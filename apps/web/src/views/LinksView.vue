@@ -21,9 +21,6 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="dt-page-title">
-    <h5>{{ t.site.linksTitle }}</h5>
-  </div>
   <template v-if="links">
     <p v-if="links.length === 0" class="small text-muted" data-testid="links-empty">
       {{ t.site.linksEmpty }}

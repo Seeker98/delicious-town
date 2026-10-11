@@ -5,6 +5,7 @@ import { createMemoryHistory, createRouter } from 'vue-router';
 import type { ForumPostDetailDto, ForumReplyDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useSessionStore } from '../stores/session';
+import { usePageTitleStore } from '../stores/pageTitle';
 import ForumPostView from './ForumPostView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -82,6 +83,11 @@ describe('ForumPostView', () => {
     vi.mocked(endpoints.forumPost).mockResolvedValue(detail());
   });
   afterEach(() => vi.restoreAllMocks());
+
+  it('帖子标题显示在顶栏（界面改版 P2a）', async () => {
+    await mountView();
+    expect(usePageTitleStore().title).toBe('攻略');
+  });
 
   it('正文按纯文字显示：HTML 不会被当成标签，换行保留', async () => {
     const { w } = await mountView();

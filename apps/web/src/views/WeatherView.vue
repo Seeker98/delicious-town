@@ -6,6 +6,7 @@ import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
+import { usePageTitle } from '../stores/pageTitle';
 import { describeEffects } from '../utils/effects';
 import { timeHM } from '../utils/format';
 
@@ -13,6 +14,10 @@ const t = useT();
 /** 天气名、说明、街道名按目录取，跟着语言走（问题记录 272） */
 const catalog = useCatalogStore();
 const world = ref<WorldDto | null>(null);
+/** 顶栏标题是当前天气（界面改版 P2a） */
+usePageTitle(() =>
+  world.value ? catalog.weatherName(world.value.weather.id, world.value.weather.name) : null,
+);
 const error = ref('');
 /** 天气说明：按语言取，取不到用服务端给的 */
 const note = computed(() =>
@@ -30,7 +35,6 @@ onMounted(async () => {
 <template>
   <div v-if="error" class="alert alert-danger">{{ error }}</div>
   <div v-if="world">
-    <h5><i class="bi bi-cloud-sun"></i> {{ catalog.weatherName(world.weather.id, world.weather.name) }}</h5>
     <p v-if="note" class="small dt-weather-note" data-testid="weather-note">{{ note }}</p>
     <p class="small text-muted">
       <!-- 天气说明里已经写了经营效果，不再按效果重复一遍（backlog #116）；没有说明时才按效果写 -->

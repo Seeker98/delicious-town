@@ -101,8 +101,7 @@ const claimAll = () =>
 </script>
 
 <template>
-  <div class="dt-page-title">
-    <h5>{{ t.mail.title }}</h5>
+  <div class="dt-page-meta">
     <button
       class="btn btn-sm btn-primary"
       :disabled="busy || !anyClaimable"

@@ -383,20 +383,19 @@ html {
     padding-right: 0.5rem;
   }
 }
-/* 页面标题：18px 粗体，右侧可放一行次要信息 */
-.dt-page-title {
+/*
+ * 页面标题在顶栏（界面改版 P2a）；原来标题行右侧的东西（钱包、全部领取、链接）单独一行靠右
+ */
+.dt-page-meta {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
-  margin: 2px 0 6px;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 0 0 6px;
+  font-size: 13px;
 }
-.dt-page-title h5 {
-  font-size: 18px;
-  font-weight: 600;
-  margin: 0;
-}
-/* h5 只用作页面标题：没包在 .dt-page-title 里的也按页面标题的规格（问题记录 278） */
+/* h5 只剩登录、注册等卡片标题和菜园页在用（问题记录 278 的规格） */
 h5 {
   font-size: 18px;
   font-weight: 600;

@@ -80,9 +80,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="dt-page-title">
-    <h5>{{ t.town.title }}</h5>
-    <RouterLink to="/forum" class="small dt-go" data-testid="town-forum"
+  <div class="dt-page-meta">
+    <RouterLink to="/forum" class="dt-go" data-testid="town-forum"
       ><i class="bi bi-chat-square-text"></i> {{ t.town.forum }}</RouterLink
     >
   </div>

@@ -5,12 +5,17 @@ import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import NeedChecks from '../components/NeedChecks.vue';
 import { errorMessage } from '../i18n/zh-CN';
+import { usePageTitle } from '../stores/pageTitle';
 import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
 
 const toast = useToastStore();
 const t = useT();
 const need = ref<OilNeedDto | null>(null);
+/** 顶栏标题带当前等级和上限（界面改版 P2a） */
+usePageTitle(() =>
+  need.value ? t.value.society.oil.title(need.value.oilLevel, formatNum(need.value.oilMax)) : null,
+);
 const busy = ref(false);
 
 async function load() {
@@ -33,7 +38,6 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.common.lo
 
 <template>
   <div v-if="need">
-    <h5>{{ t.society.oil.title(need.oilLevel, formatNum(need.oilMax)) }}</h5>
     <template v-if="need.nextLevel">
       <p class="small">{{ t.society.oil.next(need.nextLevel, formatNum(need.nextOilMax ?? 0)) }}</p>
       <NeedChecks :checks="need.checks" />

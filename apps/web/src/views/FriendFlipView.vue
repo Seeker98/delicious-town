@@ -71,7 +71,6 @@ onMounted(load);
 </script>
 
 <template>
-  <h5>{{ t.friends.flip.title }}</h5>
   <p class="small text-muted">
     {{ t.friends.flip.rule }}<span v-if="data">{{ t.friends.flip.today(data.todayTimes) }}</span
     >{{ t.friends.flip.end }}

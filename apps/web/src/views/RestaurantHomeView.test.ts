@@ -6,6 +6,7 @@ import type { QuestDto, QuestsDto, RestaurantDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useLocaleStore } from '../stores/locale';
 import { useToastStore } from '../stores/toast';
+import { usePageTitleStore } from '../stores/pageTitle';
 import RestaurantHomeView from './RestaurantHomeView.vue';
 import { setServerOffset } from '../utils/serverNow';
 
@@ -175,7 +176,7 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.tasks).mockRejectedValue(new Error('x'));
     const w = await mountView();
     expect(w.find('.alert-danger').exists()).toBe(false);
-    expect(w.find('[data-testid="rest-name"]').exists()).toBe(true);
+    expect(w.find('[data-testid="rest-level"]').exists()).toBe(true);
     vi.mocked(endpoints.dineCurrent).mockRejectedValue(new Error('x'));
     const w2 = await mountView();
     expect(w2.find('.alert-danger').exists()).toBe(true);
@@ -258,7 +259,8 @@ describe('RestaurantHomeView', () => {
 
   it('显示概况、本轮收益、主线任务、设施位和加成', async () => {
     const w = await mountView();
-    expect(w.find('[data-testid="rest-name"]').text()).toBe('开张大吉店');
+    // 店名在顶栏（界面改版 P2a）
+    expect(usePageTitleStore().title).toBe('开张大吉店');
     expect(w.findAll('a').some((a) => a.text() === '切换区服')).toBe(true);
     expect(w.find('[data-testid="rest-level"]').text()).toBe('1');
     expect(w.find('[data-testid="rest-coin"]').text()).toBe('100,000');

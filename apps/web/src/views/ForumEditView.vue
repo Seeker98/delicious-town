@@ -5,6 +5,7 @@ import { FORUM_CATEGORIES, type ForumCategory } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
+import { usePageTitle } from '../stores/pageTitle';
 import { useToastStore } from '../stores/toast';
 
 /** 发帖和编辑（子项目 4E-3 设计文档 §5） */
@@ -13,6 +14,8 @@ const router = useRouter();
 const toast = useToastStore();
 const t = useT();
 const editId = computed(() => (route.params.id ? Number(route.params.id) : null));
+/** 顶栏标题：发新帖 / 编辑（界面改版 P2a） */
+usePageTitle(() => (editId.value === null ? t.value.forum.edit.newTitle : t.value.forum.edit.editTitle));
 const category = ref<ForumCategory>('chat');
 const title = ref('');
 const content = ref('');
@@ -62,9 +65,6 @@ async function submit() {
 </script>
 
 <template>
-  <div class="dt-page-title">
-    <h5>{{ editId === null ? t.forum.edit.newTitle : t.forum.edit.editTitle }}</h5>
-  </div>
   <div class="mb-2">
     <label v-for="c in FORUM_CATEGORIES" :key="c" class="me-3 small">
       <input v-model="category" type="radio" :value="c" :data-testid="`edit-cat-${c}`" />

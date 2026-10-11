@@ -25,9 +25,6 @@ const dayText = (d: string) =>
 </script>
 
 <template>
-  <div class="dt-page-title">
-    <h5>{{ t.site.changelogTitle }}</h5>
-  </div>
   <section v-for="d in days" :key="d.date" class="dt-card my-2 small" :data-testid="`cl-day-${d.date}`">
     <div class="dt-card-title mb-1">{{ dayText(d.date) }}</div>
     <ul class="mb-0 ps-3">

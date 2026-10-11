@@ -5,6 +5,7 @@ import { createMemoryHistory, createRouter } from 'vue-router';
 import { endpoints } from '../api/endpoints';
 import { exchangeData, townData } from '../components/town/testData';
 import SocietyNpcView, { type SocietyNpc } from './SocietyNpcView.vue';
+import { usePageTitleStore } from '../stores/pageTitle';
 
 vi.mock('../api/endpoints', () => ({
   endpoints: {
@@ -111,7 +112,7 @@ describe('协会里的 NPC 页（问题记录 441、443）', () => {
 
   it('教室', async () => {
     const w = await mountAt('classroom');
-    expect(w.find('h5').text()).toBe('教室');
+    expect(usePageTitleStore().title).toBe('教室');
     expect(w.find('[data-testid="classroom-panel"]').exists()).toBe(true);
   });
 

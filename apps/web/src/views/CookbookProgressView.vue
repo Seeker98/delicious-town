@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
 import type { CookbookProgressDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
@@ -10,7 +9,6 @@ import { formatNum, formatPct } from '../utils/format';
 
 /** 食谱进度一览（问题记录：食谱页加进度一览，参考 data/食谱进度一览-alu.txt）：每格是这一品级及以上的道数 */
 const t = useT();
-const route = useRoute();
 const catalog = useCatalogStore();
 const data = ref<CookbookProgressDto | null>(null);
 const error = ref('');
@@ -33,16 +31,6 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="d-flex align-items-center gap-2 mb-2">
-    <h6 class="mb-0">{{ t.cookbook.progress.title }}</h6>
-    <!-- 返回上一级用 dt-back；带回原来看的街、页码、筛选（终审） -->
-    <RouterLink
-      :to="{ path: '/cookbooks', query: route.query }"
-      class="small dt-back"
-      data-testid="progress-back"
-      >{{ t.cookbook.progress.back }}</RouterLink
-    >
-  </div>
   <div v-if="error" class="alert alert-danger">{{ error }}</div>
   <div v-else-if="!data" class="text-muted small" data-testid="progress-loading">{{ t.common.loading }}</div>
   <template v-if="data">

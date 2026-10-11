@@ -76,7 +76,6 @@ onMounted(load);
 </script>
 
 <template>
-  <h5>{{ t.friends.exchange.title }}</h5>
   <p class="small text-muted">{{ t.friends.exchange.rule }}</p>
   <div class="btn-group btn-group-sm mb-2">
     <button

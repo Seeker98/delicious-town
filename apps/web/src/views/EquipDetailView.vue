@@ -7,6 +7,7 @@ import { useT } from '../composables/useT';
 import { activeMessages } from '../i18n';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
+import { usePageTitle } from '../stores/pageTitle';
 import { useToastStore } from '../stores/toast';
 import { formatNum, formatPct } from '../utils/format';
 import { equipName } from '../utils/equipName';
@@ -52,6 +53,10 @@ async function run<T>(fn: () => Promise<T>, fallback: string, reload = true): Pr
 }
 
 const e = computed(() => d.value?.equip ?? null);
+/** 顶栏标题：厨具名，强化过的后面加 +N（界面改版 P2a） */
+usePageTitle(() =>
+  e.value ? equipName(catalog, e.value) + (e.value.stress > 0 ? ` +${e.value.stress}` : '') : null,
+);
 /** 厨具说明（含背景故事，问题记录 134） */
 const desc = computed(() => (e.value ? (catalog.goods(e.value.goodsId)?.desc ?? '') : ''));
 const freeHoles = computed(() => (e.value ? e.value.curHole - e.value.gems.length : 0));
@@ -111,10 +116,7 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, t.value.equip
 
 <template>
   <div v-if="d && e">
-    <!-- 名字一行、部位和等级要求一行，不再挤在同一行里字号不一、底部对齐（问题记录 130） -->
-    <h5 class="mb-1">
-      {{ equipName(catalog, e) }} <span v-if="e.stress > 0" class="text-success">+{{ e.stress }}</span>
-    </h5>
+    <!-- 名字在顶栏；部位和等级要求一行（问题记录 130） -->
     <div class="dt-meta mb-1" data-testid="equip-meta">
       {{ t.equip.detail.meta(PART_NAMES[e.part] ?? '', e.minLevel, e.worn) }}
     </div>

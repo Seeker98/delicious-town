@@ -118,9 +118,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.loa
 
 <template>
   <div v-if="o">
-    <h5>
-      {{ t.equip.title }} <small class="text-muted">{{ t.equip.count(o.count) }}</small>
-    </h5>
+    <div class="dt-page-meta dt-meta" data-testid="equip-count">{{ t.equip.count(o.count) }}</div>
     <div class="row g-1 mb-2">
       <div v-for="p in [1, 2, 3, 4, 5]" :key="p" class="col">
         <div

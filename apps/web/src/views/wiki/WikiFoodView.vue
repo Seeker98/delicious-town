@@ -3,10 +3,11 @@ import { computed, ref, onBeforeUnmount, watch } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { OpenFoodDto, OpenStreetDto } from '@dt/shared';
 import { useT } from '../../composables/useT';
+import { usePageTitle } from '../../stores/pageTitle';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 import { GRADE_NAMES } from '../../utils/labels';
-import { isNotFound, listBack, useWikiData } from './wiki';
+import { isNotFound, useWikiData } from './wiki';
 
 /** 食材详情（问题记录 142）：用到它的菜谱一次显示 50 道 */
 const PAGE = 50;
@@ -48,21 +49,20 @@ watch(
   { immediate: true },
 );
 const w = computed(() => t.value.wiki);
+/** 顶栏标题是食材名；稀有/普通的标签放在第一行（界面改版 P2a） */
+usePageTitle(() => f.value?.name);
 const streetName = computed(() => new Map(streets.value.map((s) => [s.id, s.name])));
 </script>
 
 <template>
   <div>
-    <RouterLink :to="listBack('/wiki/foods', router.options.history.state.back)" class="small dt-back">{{
-      t.wiki.back
-    }}</RouterLink>
     <div v-if="error" class="dt-empty" data-testid="wiki-error">
       {{ error === 'missing' ? t.wiki.notFound : t.wiki.loadFailed }}
     </div>
     <template v-else-if="f">
-      <h5 class="dt-page-title mt-2">
-        {{ f.name }} <span class="dt-tag">{{ f.rare ? w.rare : w.common }}</span>
-      </h5>
+      <p class="mb-2">
+        <span class="dt-tag">{{ f.rare ? w.rare : w.common }}</span>
+      </p>
       <dl class="dt-kv small">
         <dt>{{ w.fields.level }}</dt>
         <dd>

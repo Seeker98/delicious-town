@@ -105,7 +105,6 @@ onMounted(() => void loadList());
 </script>
 
 <template>
-  <h5>{{ t.predict.title }}</h5>
   <HiphopCard :place="11" />
   <div class="small text-muted mb-2">
     {{ t.predict.intro }}

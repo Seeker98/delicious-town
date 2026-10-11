@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { RouterLink } from 'vue-router';
 import type { OpenGuideNumbers } from '@dt/shared';
 import { useT } from '../../composables/useT';
 import { useWikiData } from './wiki';
@@ -36,8 +35,6 @@ const shown = (items: readonly Item[]) =>
 
 <template>
   <div>
-    <RouterLink to="/wiki" class="small dt-back">{{ t.wiki.home }}</RouterLink>
-    <h5 class="dt-page-title mt-2">{{ t.wiki.guide.title }}</h5>
     <p class="small">{{ t.wiki.guide.intro }}</p>
     <section v-for="s in t.wiki.guide.sections" :key="s.title" class="mb-3" data-testid="guide-section">
       <h6 class="dt-section">{{ s.title }}</h6>

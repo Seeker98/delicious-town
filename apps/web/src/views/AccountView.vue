@@ -79,9 +79,6 @@ async function logout() {
 </script>
 
 <template>
-  <div class="dt-page-title">
-    <h5>{{ t.account.title }}</h5>
-  </div>
   <div v-if="msg" :class="['alert', 'py-1', 'small', msg.ok ? 'alert-success' : 'alert-danger']">
     {{ msg.text }}
   </div>

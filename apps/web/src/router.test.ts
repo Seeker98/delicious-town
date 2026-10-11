@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import zhCN from './i18n/locales/zh-CN';
+import { parentPath } from './nav/routeMeta';
 import { ROOT_PATHS } from './nav/sections';
 import { routes, scrollFor } from './router';
 
@@ -117,5 +118,39 @@ describe('导航元数据（界面改版 P2a，设计 §4.2）', () => {
   it('新增小镇、我、帮助中心；旧的“更多”跳到小镇', () => {
     for (const p of ['/map', '/me', '/help']) expect(routes.some((r) => r.path === p)).toBe(true);
     expect(routes.find((r) => r.path === '/more')?.redirect).toBe('/map');
+  });
+});
+
+describe('食谱进度一览的返回（终审：带回原来的街、页码；界面改版 P2a 起由顶栏返回负责）', () => {
+  it('上一级是食谱列表，带上原来的查询参数', () => {
+    const r = routes.find((x) => x.path === '/cookbooks/progress')!;
+    const to = {
+      path: '/cookbooks/progress',
+      fullPath: '/cookbooks/progress?street=2&page=3',
+      meta: r.meta,
+      params: {},
+    };
+    expect(parentPath(to as never)).toBe('/cookbooks?street=2&page=3');
+  });
+});
+
+describe('资料库详情的返回（backlog 第 ⑧ 批；界面改版 P2a 起由顶栏返回负责）', () => {
+  const at = (path: string, fullPath = path) => {
+    const r = routes.find((x) => x.path.startsWith(path.replace(/\/\d+$/, '/')) && x.path.includes(':id'))!;
+    return { path: fullPath, fullPath, meta: r.meta, params: { id: '1' } } as never;
+  };
+  it('回到进来前的列表地址（带搜索、筛选）；从别处进来时回列表首页', () => {
+    expect(parentPath(at('/wiki/foods/1001'), '/wiki/foods?f=2&q=%E7%B1%B3')).toBe(
+      '/wiki/foods?f=2&q=%E7%B1%B3',
+    );
+    expect(parentPath(at('/wiki/foods/1001'), '/home')).toBe('/wiki/foods');
+    expect(parentPath(at('/wiki/foods/1001'), null)).toBe('/wiki/foods');
+    expect(parentPath(at('/wiki/cookbooks/5'), '/wiki/cookbooks?street=2')).toBe('/wiki/cookbooks?street=2');
+    expect(parentPath(at('/wiki/streets/3'), undefined)).toBe('/wiki/streets');
+  });
+  it('道具详情：从厨具列表进来回厨具列表，否则回道具列表', () => {
+    expect(parentPath(at('/wiki/goods/30'), '/wiki/equips?part=2')).toBe('/wiki/equips?part=2');
+    expect(parentPath(at('/wiki/goods/30'), '/wiki/goods?q=x')).toBe('/wiki/goods?q=x');
+    expect(parentPath(at('/wiki/goods/30'), null)).toBe('/wiki/goods');
   });
 });

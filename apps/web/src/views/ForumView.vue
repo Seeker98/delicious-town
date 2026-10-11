@@ -71,8 +71,7 @@ onMounted(() => void load());
 </script>
 
 <template>
-  <div class="dt-page-title">
-    <h5>{{ t.forum.title }}</h5>
+  <div class="dt-page-meta">
     <span class="d-flex align-items-center gap-2">
       <small v-if="me && !me.canPost" class="dt-meta">{{ t.forum.verifyToPost }}</small>
       <small v-else-if="postWait > 0" class="dt-meta" data-testid="forum-wait">{{

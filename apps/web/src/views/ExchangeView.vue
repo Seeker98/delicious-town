@@ -280,7 +280,6 @@ onMounted(async () => {
 </script>
 
 <template>
-  <h5>{{ t.exchange.title }}</h5>
   <HiphopCard :place="10" />
   <ul v-if="tabs.length > 1" class="nav nav-tabs mb-2 small">
     <li v-for="k in tabs" :key="k" class="nav-item">

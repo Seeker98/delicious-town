@@ -10,6 +10,7 @@ import WikiCookbookView from './WikiCookbookView.vue';
 import WikiFoodView from './WikiFoodView.vue';
 import WikiGoodsView from './WikiGoodsView.vue';
 import WikiStreetView from './WikiStreetView.vue';
+import { usePageTitleStore } from '../../stores/pageTitle';
 
 vi.mock('../../api/endpoints', () => ({
   endpoints: {
@@ -105,7 +106,7 @@ describe('游戏资料详情（问题记录 142）', () => {
       }),
     );
     const w = await mountAt(WikiGoodsView, '/wiki/goods/:id', '/wiki/goods/115');
-    expect(w.get('h5').text()).toContain('每日签到礼包');
+    expect(usePageTitleStore().title).toBe('每日签到礼包');
     const gift = w.get('[data-testid="wiki-gift"]');
     expect(gift.text()).toContain('神秘礼券×20');
     expect(gift.text()).toContain('随机一件 7 级道具×1');
@@ -264,7 +265,7 @@ describe('游戏资料详情（问题记录 142）', () => {
       }),
     );
     const w = await mountAt(WikiGoodsView, '/wiki/goods/:id', '/wiki/goods/30');
-    expect(w.text()).toContain('见习锅铲');
+    expect(usePageTitleStore().title).toBe('见习锅铲');
     expect(w.find('[data-testid="wiki-suit"]').exists()).toBe(false);
     expect(useToastStore().items).toEqual([]);
   });
@@ -277,10 +278,10 @@ describe('游戏资料详情（问题记录 142）', () => {
     const w = await mountAt(WikiGoodsView, '/wiki/goods/:id', '/wiki/goods/1');
     await w.vm.$router.push('/wiki/goods/2');
     await flushPromises();
-    expect(w.text()).toContain('乙道具');
+    expect(usePageTitleStore().title).toBe('乙道具');
     slow(goods({ id: 1, name: '甲道具' }));
     await flushPromises();
-    expect(w.text()).toContain('乙道具');
+    expect(usePageTitleStore().title).toBe('乙道具');
     expect(w.text()).not.toContain('甲道具');
   });
 
@@ -402,28 +403,7 @@ describe('食材、菜谱详情：晚到的旧请求不盖新页面（backlog #1
     grades: [],
   });
 
-  it('“返回列表”回到进来前的列表地址（带搜索、筛选）；从别处进来时回列表首页（backlog 第 ⑧ 批）', async () => {
-    vi.mocked(endpoints.openFood).mockResolvedValue(food(1001, '大米'));
-    const mountWithBack = async (back: string | null) => {
-      const history = createMemoryHistory();
-      // 内存历史不记上一页：模拟浏览器历史里的 state.back
-      Object.defineProperty(history, 'state', { get: () => ({ back }) });
-      const router = createRouter({
-        history,
-        routes: [
-          { path: '/wiki/foods/:id', component: WikiFoodView },
-          { path: '/:p(.*)', component: { template: '<div />' } },
-        ],
-      });
-      await router.push('/wiki/foods/1001');
-      const w = mount(WikiFoodView, { global: { plugins: [router] } });
-      await flushPromises();
-      return w.find('a').attributes('href');
-    };
-    expect(await mountWithBack('/wiki/foods?f=2&q=%E7%B1%B3')).toBe('/wiki/foods?f=2&q=%E7%B1%B3');
-    expect(await mountWithBack('/home')).toBe('/wiki/foods');
-    expect(await mountWithBack(null)).toBe('/wiki/foods');
-  });
+  // “返回列表”回到进来前的列表地址：界面改版 P2a 起由顶栏返回负责，测试在 router.test.ts
 
   it('旧链接（重新编号前的编号）：接口跳到新编号后，地址栏也换成新编号（设计 §5）', async () => {
     vi.mocked(endpoints.openGoodsDetail).mockResolvedValue(goods({ id: 10001, name: '神秘礼券' }));
@@ -435,7 +415,7 @@ describe('食材、菜谱详情：晚到的旧请求不盖新页面（backlog #1
     expect(f.vm.$router.currentRoute.value.fullPath).toBe('/wiki/foods/1001');
     const c = await mountAt(WikiCookbookView, '/wiki/cookbooks/:id', '/wiki/cookbooks/1');
     expect(c.vm.$router.currentRoute.value.fullPath).toBe('/wiki/cookbooks/106001');
-    expect(c.text()).toContain('南煎丸子');
+    expect(usePageTitleStore().title).toBe('南煎丸子');
   });
 
   it('食材', async () => {
@@ -448,7 +428,7 @@ describe('食材、菜谱详情：晚到的旧请求不盖新页面（backlog #1
     await flushPromises();
     slow(food(1, '甲食材'));
     await flushPromises();
-    expect(w.text()).toContain('乙食材');
+    expect(usePageTitleStore().title).toBe('乙食材');
     expect(w.text()).not.toContain('甲食材');
   });
 
@@ -462,7 +442,7 @@ describe('食材、菜谱详情：晚到的旧请求不盖新页面（backlog #1
     await flushPromises();
     slow(cookbook(1, '甲菜'));
     await flushPromises();
-    expect(w.text()).toContain('乙菜');
+    expect(usePageTitleStore().title).toBe('乙菜');
     expect(w.text()).not.toContain('甲菜');
     vi.mocked(endpoints.openCookbook).mockRejectedValue(new Error('net'));
     await w.vm.$router.push('/wiki/cookbooks/3');

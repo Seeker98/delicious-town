@@ -7,6 +7,7 @@ import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import ReportButton from '../components/ReportButton.vue';
 import { errorMessage } from '../i18n/zh-CN';
+import { usePageTitle } from '../stores/pageTitle';
 import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
 import { useCountdown } from '../utils/countdown';
@@ -20,6 +21,8 @@ const t = useT();
 const myRest = computed(() => useSessionStore().me?.restaurantId ?? null);
 const id = computed(() => Number(route.params.id));
 const data = ref<ForumPostDetailDto | null>(null);
+/** 顶栏标题是帖子标题；返回在顶栏（界面改版 P2a） */
+usePageTitle(() => data.value?.post.title);
 const reads = ref<ForumReadsDto | null>(null);
 const busy = ref(false);
 const content = ref('');
@@ -112,10 +115,6 @@ async function submit() {
 
 <template>
   <template v-if="data">
-    <div class="dt-page-title">
-      <h5 class="mb-0">{{ data.post.title }}</h5>
-      <RouterLink to="/forum" class="small dt-back">{{ t.forum.post.back }}</RouterLink>
-    </div>
     <div class="dt-meta mb-2">
       <span class="badge bg-light text-dark border me-1">{{ t.forum.categories[data.post.category] }}</span>
       <span v-if="data.post.pinned" class="badge bg-danger me-1">{{ t.forum.pinned }}</span>
