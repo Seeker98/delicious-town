@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    pages1011:
+      'Restaurant pages redone: all 12 avatars now have pictures, and avatars and doors are picture tiles; the gear page lists one slot per row with the full name, stats are bars (dark purple for points, light purple for gear), and swapping gear and assigning points open from the bottom; gear details show an upgrade-chance ring and gem slots; Today in Quests is one activity bar with its tiers, and quests are rows in one card; recipes show one of three buttons depending on whether you can learn them, and specials show 12 per page; the storage is now a grid with a panel for each item; tapping a table opens a panel, and Income has a small chart of the last 30 rounds',
     market1011:
       'The cupboard is now a backpack grid: big icons, the count in the corner, level 2+ and universal ingredients tinted, and tapping a slot opens a panel with what you hold, the street goal, quantity and decompose, combine, exchange or lock; the fridge is one row per ingredient. The market lists one ingredient per row with its level after the name and a price button that opens a buy panel with quick 10 / 100 / max picks, the total and your balance, and a warning when coins run short',
     home1011b:

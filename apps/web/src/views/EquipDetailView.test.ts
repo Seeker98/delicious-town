@@ -87,7 +87,10 @@ async function mountView() {
   });
   await router.push('/rest/equip/7');
   // 底部面板（宝石）用 Teleport：测试里原地渲染
-  const w = mount({ template: '<RouterView />' }, { global: { plugins: [router], stubs: { teleport: true } } });
+  const w = mount(
+    { template: '<RouterView />' },
+    { global: { plugins: [router], stubs: { teleport: true } } },
+  );
   await flushPromises();
   return { w, router };
 }
@@ -205,7 +208,11 @@ describe('EquipDetailView', () => {
     const { w } = await mountView();
     expect(usePageTitleStore().title).toBe('沉默之度玛的静谧之镬 +2');
     // 界面改版 P7：名字下面一排小标签
-    expect(w.findAll('[data-testid="equip-meta"] .dt-tag').map((x) => x.text())).toEqual(['+2', '锅', '13 级可穿']);
+    expect(w.findAll('[data-testid="equip-meta"] .dt-tag').map((x) => x.text())).toEqual([
+      '+2',
+      '锅',
+      '13 级可穿',
+    ]);
     expect(w.find('[data-testid="equip-desc"]').text()).toBe('随机增加25点属性。度玛教徒弟从不开口。');
   });
 
