@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import DtEmpty from '../components/DtEmpty.vue';
+import DtSkeleton from '../components/DtSkeleton.vue';
 import { formatNum, gameDateTime } from '../utils/format';
 import { RouterLink } from 'vue-router';
 import type { RestLogDto } from '@dt/shared';
@@ -34,16 +36,22 @@ onMounted(async () => {
     logsState.value = 'failed';
   }
 });
+/** 日志时间只写月日时分（界面改版 P3：和动态一样） */
+const logTime = (iso: string) =>
+  gameDateTime(iso, { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
 </script>
 
 <template>
-  <div v-if="rest">
+  <DtSkeleton v-if="!rest" :rows="6" data-testid="info-skeleton" />
+  <div v-else>
     <h6 class="dt-section mt-0">{{ t.rest.info.attrs }}</h6>
-    <div class="row g-1 small align-items-center">
-      <div v-for="k in ATTR_KEYS" :key="k" class="col-6">
-        {{ ATTR_NAMES[k] }} {{ k === 'luck' ? rest.luck : rest.attrs[k] }}
-      </div>
-    </div>
+    <!-- 两列键值行（界面改版 P3） -->
+    <dl class="dt-kv dt-kv-2 small mb-1" data-testid="info-attrs">
+      <template v-for="k in ATTR_KEYS" :key="k">
+        <dt>{{ ATTR_NAMES[k] }}</dt>
+        <dd>{{ k === 'luck' ? rest.luck : rest.attrs[k] }}</dd>
+      </template>
+    </dl>
     <RouterLink
       :to="rest.attrLeft > 0 ? '/rest/equip#attr-points' : '/rest/equip'"
       class="small dt-go"
@@ -51,31 +59,39 @@ onMounted(async () => {
       >{{ rest.attrLeft > 0 ? t.rest.info.toPoints(rest.attrLeft) : t.rest.info.toEquip }}</RouterLink
     >
     <h6 class="dt-section">{{ t.rest.info.capacity }}</h6>
-    <div class="row g-1 small">
-      <div class="col-6">{{ t.rest.info.tableNum }} {{ rest.tableNum }}</div>
-      <div class="col-6">{{ t.rest.info.cupboardNum }} {{ rest.cupboardNum }}</div>
-      <div class="col-6">{{ t.rest.info.foodsMaxNum }} {{ rest.foodsMaxNum }}</div>
-      <div class="col-6">{{ t.rest.info.foodsLockNum }} {{ rest.foodsLockNum }}</div>
-      <div class="col-6">{{ t.rest.info.storeNum }} {{ rest.storeNum }}</div>
-      <div class="col-6">{{ t.rest.info.oil(rest.oilLevel) }}</div>
+    <dl class="dt-kv dt-kv-2 small" data-testid="info-capacity">
+      <dt>{{ t.rest.info.tableNum }}</dt>
+      <dd>{{ rest.tableNum }}</dd>
+      <dt>{{ t.rest.info.cupboardNum }}</dt>
+      <dd>{{ rest.cupboardNum }}</dd>
+      <dt>{{ t.rest.info.foodsMaxNum }}</dt>
+      <dd>{{ rest.foodsMaxNum }}</dd>
+      <dt>{{ t.rest.info.foodsLockNum }}</dt>
+      <dd>{{ rest.foodsLockNum }}</dd>
+      <dt>{{ t.rest.info.storeNum }}</dt>
+      <dd>{{ rest.storeNum }}</dd>
+      <dt>{{ t.rest.info.oilLabel }}</dt>
+      <dd>{{ t.rest.info.oilLevel(rest.oilLevel) }}</dd>
       <!-- 累计获赞（问题记录 553） -->
-      <div v-if="typeof rest.thumbs === 'number'" class="col-6" data-testid="info-thumbs">
-        {{ t.rest.info.thumbs(formatNum(rest.thumbs)) }}
-      </div>
-    </div>
+      <template v-if="typeof rest.thumbs === 'number'">
+        <dt>{{ t.rest.info.thumbsLabel }}</dt>
+        <dd data-testid="info-thumbs">{{ formatNum(rest.thumbs) }}</dd>
+      </template>
+    </dl>
     <h6 class="dt-section">{{ t.rest.info.logs }}</h6>
-    <div v-if="logsState === 'ok' && logs.length === 0" class="dt-empty" data-testid="logs-empty">
-      {{ t.rest.info.noLogs }}
-    </div>
+    <DtEmpty
+      v-if="logsState === 'ok' && logs.length === 0"
+      :title="t.rest.info.noLogs"
+      data-testid="logs-empty"
+    />
     <div v-else-if="logsState === 'failed'" class="dt-empty" data-testid="logs-failed">
       {{ t.rest.info.logsFailed }}
     </div>
-    <ul class="list-unstyled small">
-      <li v-for="(l, i) in logs" :key="i">
-        <span class="text-muted">{{ gameDateTime(l.at) }}</span>
-        {{ logText(l, catalog) }}
-      </li>
-    </ul>
+    <!-- 每条一行，时间写月日时分（界面改版 P3） -->
+    <div v-for="(l, i) in logs" :key="i" class="dt-feed">
+      <span class="dt-feed-time">{{ logTime(l.at) }}</span>
+      <span class="dt-feed-text">{{ logText(l, catalog) }}</span>
+    </div>
     <button v-if="next" class="btn btn-sm btn-outline-secondary w-100" @click="moreLogs">
       {{ t.rest.info.moreLogs }}
     </button>

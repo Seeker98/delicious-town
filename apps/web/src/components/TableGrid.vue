@@ -29,12 +29,14 @@ function label(x: TableDto): string {
 </script>
 
 <template>
-  <!-- 一排独立按钮，楼层多时换行（问题记录 314：按钮组超出手机屏幕） -->
-  <div v-if="floors.length > 1" class="d-flex flex-wrap gap-1 mb-2" data-testid="floor-tabs">
+  <!-- 楼层是筛选胶囊，多时换行（问题记录 314；界面改版 P3：原来是一排按钮） -->
+  <div v-if="floors.length > 1" class="dt-pills" data-testid="floor-tabs">
     <button
       v-for="f in floors"
       :key="f"
-      :class="['btn btn-sm', f === floor ? 'btn-primary' : 'btn-outline-primary']"
+      type="button"
+      :class="{ active: f === floor }"
+      :aria-pressed="f === floor"
       @click="floor = f"
     >
       {{ t.friends.tables.floor(f)
@@ -48,14 +50,13 @@ function label(x: TableDto): string {
       >
     </button>
   </div>
-  <div class="row g-1">
-    <div v-for="x in shown" :key="x.no" class="col-3">
+  <!-- 餐桌格子（界面改版 P3）：4 列，同一排一样高（问题记录 585），蟑螂、白食各有标记 -->
+  <div class="dt-table-grid">
+    <div v-for="x in shown" :key="x.no">
       <button
         type="button"
-        :class="[
-          'w-100 h-100 d-flex flex-column justify-content-start border rounded p-1 small text-center bg-transparent',
-          { 'border-primary border-2': selected === x.no, 'text-danger': x.customer === 3 },
-        ]"
+        :class="['dt-table-cell', { 'is-roach': x.customer === 3, 'is-freeloader': x.customer === 9 }]"
+        :aria-pressed="selected === x.no"
         :data-testid="`table-${x.no}`"
         @click="emit('pick', x)"
       >

@@ -96,4 +96,15 @@ describe('RestFloorView', () => {
     const lines = w.findAll('[data-testid="table-order"]').map((x) => x.text());
     expect(lines).toEqual(['点了「宫保鸡丁」, 要上品, 你的是中品, 不满意', '吃了特色菜「佛跳墙」×1']);
   });
+
+  it('选中桌的详情在卡片里；灭蟑螂是主按钮，赶白食是危险描边', async () => {
+    const w = mount(RestFloorView);
+    await flushPromises();
+    await w.get('[data-testid="table-1"]').trigger('click');
+    const card = w.get('[data-testid="table-detail"]');
+    expect(card.classes()).toContain('dt-card');
+    expect(card.get('[data-testid="act-kill"]').classes()).toContain('btn-primary');
+    await w.get('[data-testid="table-2"]').trigger('click');
+    expect(w.get('[data-testid="act-expel"]').classes()).toContain('btn-outline-danger');
+  });
 });
