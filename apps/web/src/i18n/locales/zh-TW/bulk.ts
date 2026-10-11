@@ -64,6 +64,15 @@ export default {
     coin: '銀幣不夠凍結',
   },
   bid: '出價',
+  /** 介面改版 P8：批次卡片、出價面板 */
+  groupedTag: (ok: boolean): string => (ok ? '已成團' : '還沒成團'),
+  statPrice: '預計成交價',
+  statThreshold: '入圍門檻',
+  demandLine: (demand: number, qty: number, ratio: string) => `認購 ${demand} / ${qty} 份 · ${ratio} 倍`,
+  biddersLine: (n: number) => `${n} 人參與`,
+  sheetTitle: (raise: boolean, name: string) => `${raise ? '改出價' : '出價'} · ${name}`,
+  mineNow: (price: string, qty: number) => `現在 ${price} × ${qty} 份 · 只能加價、加份數`,
+  reserveLine: (n: string) => `起拍價 ${n}`,
   raise: '改出價',
   cooldown: (n: number) => `${n} 秒後可以再出價`,
   confirm: (total: string, extra: string, qty: number) =>

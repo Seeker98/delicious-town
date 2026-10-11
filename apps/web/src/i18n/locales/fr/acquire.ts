@@ -6,8 +6,12 @@ const acquire: Messages['acquire'] = {
   tabs: { price: 'Valorisations', market: 'En vente', invest: 'Investisseurs', mine: 'Les miens' },
   loadFailed: 'Impossible de charger les rachats',
   failed: "L'action a échoué",
-  rule: (got, tax, max, div, bonus, days) =>
-    `Pour racheter le restaurant d'un autre, vous payez sa valorisation\u202f: l'ancien propriétaire (ou le restaurant lui-même s'il était indépendant) reçoit ${got} et ${tax} part en taxe. Vous pouvez posséder jusqu'à ${max} restaurants. Chaque jour, un restaurant racheté verse à son propriétaire un dividende de ${div} des pièces de règlement de la veille, et ${bonus} de plus les jours où il s'est occupé du propriétaire. Un restaurant racheté peut se racheter à sa valorisation\u202f; il ne peut alors plus être racheté pendant ${days} jours.`,
+  ruleItems: (got, tax, max, div, bonus, days) => [
+    `Pour racheter le restaurant d'un autre, vous payez sa valorisation\u202f: l'ancien propriétaire (ou le restaurant lui-même s'il était indépendant) reçoit ${got} et ${tax} part en taxe`,
+    `Vous pouvez posséder jusqu'à ${max} restaurants`,
+    `Chaque jour, un restaurant racheté verse à son propriétaire un dividende de ${div} des pièces de règlement de la veille, et ${bonus} de plus les jours où il s'est occupé du propriétaire`,
+    `Un restaurant racheté peut se racheter à sa valorisation\u202f; il ne peut alors plus être racheté pendant ${days} jours`,
+  ],
   price: (coin) => `Valorisation ${coin}`,
   heat: (h) => `Cote ${h}`,
   owner: (name) => `Propriétaire\u202f: ${name}`,
@@ -61,5 +65,23 @@ const acquire: Messages['acquire'] = {
   homeOwned: (name) => `Votre restaurant appartient à «\u202f${name}\u202f»`,
   homeLink: "S'en occuper ou se racheter",
   cardTitle: 'Rachat',
+  ownerTag: (name) => `Patron ${name}`,
+  listedTag: (pct) => `En vente ${pct}`,
+  leftLine: (left) => `encore ${left}`,
+  coinUnit: 'pièces',
+  rulesTitle: 'Règles du rachat',
+  rulesSub: (got, tax) => `L’ancien patron reçoit ${got}, ${tax} de taxe\u202f; dividendes chaque jour`,
+  holdingsTitle: 'Mes restaurants',
+  holdCount: (n, max) => `${n} / ${max}`,
+  visit: 'Voir le restaurant',
+  youPay: 'Vous payez',
+  sellerGot: (name, pct) => `«\u202f${name}\u202f» reçoit (${pct})`,
+  taxLine: (pct) => `Taxe (${pct})`,
+  afterHold: 'Restaurants après achat',
+  rateLabel: 'Mettre en vente à quelle part de sa valeur',
+  listPrice: 'Prix de vente',
+  listGot: 'Vous recevrez environ',
+  listNote: (days) =>
+    `Selon la valeur d’aujourd’hui, qui change chaque jour\u202f; retiré automatiquement après ${days} jours.`,
 };
 export default acquire;

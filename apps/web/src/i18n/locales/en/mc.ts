@@ -95,6 +95,7 @@ const mc: Messages['mc'] = {
     noWant: "You don't have what he wants. Other ingredients don't count toward the tip value",
     numFood: 'Servings',
     tip: 'Tip',
+    kindLabel: 'Tip with',
   },
 };
 export default mc;

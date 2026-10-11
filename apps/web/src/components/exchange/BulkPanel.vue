@@ -2,21 +2,32 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import type { BulkDto, BulkResultDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import DtEmpty from '../DtEmpty.vue';
+import DtSheet from '../DtSheet.vue';
+import DtStepper from '../DtStepper.vue';
+import FoodArt from '../FoodArt.vue';
 import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
+import { useConfirmStore } from '../../stores/confirm';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 import { newsTime } from '../../utils/news';
 
-/** 交易所的大宗认购标签（大宗认购设计 §3.3）：当前批次、出价、我的出价、最近结果 */
+/**
+ * 交易所的大宗认购标签（大宗认购设计 §3.3）：当前批次、出价、我的出价、最近结果。
+ * 界面改版 P8：批次一张卡片（成交价和门槛、认购进度、收盘时间、我的出价），出价在底部面板里
+ */
 const catalog = useCatalogStore();
+const confirm = useConfirmStore();
 const toast = useToastStore();
 const t = useT();
 const data = ref<BulkDto | null>(null);
-const price = ref<number | ''>('');
-const qty = ref<number | ''>(1);
+const price = ref(0);
+const qty = ref(1);
 const busy = ref(false);
+/** 出价面板、怎么算面板 */
+const sheet = ref<'bid' | 'help' | null>(null);
 /** 还要等几秒才能再出价（服务端给初值，这里每秒减） */
 const cooldown = ref(0);
 let timer: ReturnType<typeof setInterval> | undefined;
@@ -35,12 +46,16 @@ onUnmounted(() => {
 });
 
 /** 输入框按读到的数据重置：改出价填原值，第一次出价填入围门槛和 1 份 */
-function reset() {
+function resetInputs() {
   const d = data.value;
   if (!d?.lot) return;
   price.value = d.mine ? d.mine.price : d.lot.threshold;
   qty.value = d.mine ? d.mine.qty : 1;
-  startCooldown(d.mine?.cooldownLeft ?? 0);
+}
+/** 读到新数据时：输入框重置、冷却按服务端给的重新倒数（只在这时，打开面板不重新倒数，P8 终审 I1） */
+function reset() {
+  resetInputs();
+  startCooldown(data.value?.mine?.cooldownLeft ?? 0);
 }
 async function load() {
   try {
@@ -63,11 +78,8 @@ const blockedText = computed(() => {
   if (d.blocked === 'exchange_age') return b.exchange_age(d.needDays);
   return b[d.blocked];
 });
-/** 输入框里的正整数；空、0、小数时为 0 */
-const int = (v: number | '') => {
-  const n = Number(v);
-  return v !== '' && Number.isInteger(n) && n >= 1 ? n : 0;
-};
+/** 步进器里的正整数；不是整数或小于 1 时为 0 */
+const int = (v: number) => (Number.isInteger(v) && v >= 1 ? v : 0);
 const p = computed(() => int(price.value));
 const q = computed(() => int(qty.value));
 const ceilClean = (x: number) => Math.ceil(Math.round(x * 1e6) / 1e6);
@@ -75,6 +87,8 @@ const ceilClean = (x: number) => Math.ceil(Math.round(x * 1e6) / 1e6);
 const minRaise = computed(() =>
   mine.value && data.value ? ceilClean(mine.value.price * (1 + data.value.minRaise)) : 0,
 );
+/** 单价步进：按起拍价的量级，2,640 一步 10 */
+const priceStep = computed(() => Math.max(1, 10 ** (String(Math.round(lot.value?.reserve ?? 1)).length - 3)));
 const total = computed(() => p.value * q.value);
 const extra = computed(() => total.value - (mine.value?.frozen ?? 0));
 /** 我的入围情况；没全中时接一句“再加价可以多入围”（拼成一句，免得模板换行带出空格） */
@@ -102,6 +116,7 @@ const estimateText = computed(() => {
   return b.estimateAll(formatNum(unit), formatNum(unit * q.value));
 });
 const ratio = (demand: number, n: number) => (Math.round((demand / n) * 10) / 10).toString();
+const pctOf = (n: number, of: number) => `${Math.min(100, Math.round((n / Math.max(1, of)) * 100))}%`;
 
 /** 不能提交的原因；能提交为空（服务端同样检查，这里只是提前提示） */
 const reason = computed(() => {
@@ -123,19 +138,29 @@ const reason = computed(() => {
 });
 const canSubmit = computed(() => canBid.value && !busy.value && !reason.value && cooldown.value <= 0);
 
+function openBid() {
+  resetInputs();
+  sheet.value = 'bid';
+}
 async function submit() {
   const l = lot.value;
   if (!l || !canSubmit.value) return;
+  const [title = '', ...body] = t.value.bulk
+    .confirm(formatNum(total.value), formatNum(Math.max(0, extra.value)), q.value)
+    .split('\n');
   if (
-    !window.confirm(
-      t.value.bulk.confirm(formatNum(total.value), formatNum(Math.max(0, extra.value)), q.value),
-    )
+    !(await confirm.ask({
+      title,
+      body: body.join('\n'),
+      ok: mine.value ? t.value.bulk.raise : t.value.bulk.bid,
+    }))
   )
     return;
   busy.value = true;
   try {
     data.value = await endpoints.bulkBid({ lotId: l.id, price: p.value, qty: q.value });
     toast.push(t.value.bulk.bidDone, 'success');
+    sheet.value = null;
     reset();
   } catch (e) {
     toast.push(errorMessage(e, t.value.bulk.bidFailed), 'danger');
@@ -165,120 +190,190 @@ function myResult(r: BulkResultDto): string {
 
 <template>
   <div v-if="data">
-    <div class="small text-muted mb-2">{{ t.bulk.intro }}</div>
-    <details class="small text-muted mb-2" data-testid="bk-help">
-      <summary>{{ t.bulk.helpTitle }}</summary>
-      <ul class="mb-0 ps-3">
-        <li
-          v-for="(x, i) in t.bulk.help(
-            lot?.cap ?? 0,
-            lot?.groupQty ?? 0,
-            Math.round(data.minRaise * 100),
-            data.cooldownSec,
-            data.closeWindowMin,
-            data.openHour,
-            data.blindMin,
-          )"
-          :key="i"
-        >
-          {{ x }}
-        </li>
-      </ul>
-    </details>
-    <div v-if="!data.enabled" class="alert alert-secondary py-1 small" data-testid="bk-off">
-      {{ t.bulk.off }}
-    </div>
-    <div v-else-if="!lot" class="dt-empty small" data-testid="bk-none">{{ t.bulk.none(data.openHour) }}</div>
-    <template v-if="lot">
-      <div class="dt-card mb-2 small" data-testid="bk-lot">
-        <div class="fw-bold mb-1">{{ t.bulk.food(catalog.foodName(lot.foodsId), lot.level) }}</div>
-        <div>{{ t.bulk.lotLine(lot.qty, formatNum(lot.reserve), lot.cap) }}</div>
-        <div data-testid="bk-price">{{ t.bulk.price(formatNum(lot.price)) }}</div>
-        <div data-testid="bk-threshold">{{ t.bulk.threshold(formatNum(lot.threshold)) }}</div>
-        <div data-testid="bk-demand">{{ t.bulk.demand(ratio(lot.demand, lot.qty), lot.bidders) }}</div>
-        <div data-testid="bk-grouped" :class="lot.grouped ? 'text-success' : 'text-muted'">
-          {{ t.bulk.grouped(lot.grouped, lot.groupQty) }}
+    <div v-if="!data.enabled" class="dt-act-note" data-testid="bk-off">{{ t.bulk.off }}</div>
+    <DtEmpty v-else-if="!lot" :title="t.bulk.none(data.openHour)" data-testid="bk-none" />
+    <section v-if="lot" class="dt-card dt-rows-card" data-testid="bk-lot">
+      <div class="dt-row">
+        <span class="dt-row-ico"><FoodArt :id="lot.foodsId" :size="28" /></span>
+        <span class="dt-row-main">
+          <span class="dt-row-title dt-bulk-name">{{
+            t.bulk.food(catalog.foodName(lot.foodsId), lot.level)
+          }}</span>
+          <span class="dt-row-sub">{{ t.bulk.lotLine(lot.qty, formatNum(lot.reserve), lot.cap) }}</span>
+        </span>
+        <span :class="lot.grouped ? 'dt-tag-ok' : 'dt-tag dt-tag-warn'" data-testid="bk-grouped-tag">{{
+          t.bulk.groupedTag(lot.grouped)
+        }}</span>
+      </div>
+      <div class="dt-bulk-sec dt-bulk-stats">
+        <div data-testid="bk-price">
+          <span>{{ t.bulk.statPrice }}</span
+          ><b>{{ formatNum(lot.price) }}</b>
         </div>
-        <div class="text-muted">{{ t.bulk.ends(newsTime(lot.endsAt), data.closeWindowMin) }}</div>
-        <div v-if="lot.blindAt" class="text-warning-emphasis" data-testid="bk-blind">
-          {{ t.bulk.blindNote(newsTime(lot.blindAt)) }}
+        <div data-testid="bk-threshold">
+          <span>{{ t.bulk.statThreshold }}</span
+          ><b>{{ formatNum(lot.threshold) }}</b>
         </div>
       </div>
-
-      <div v-if="mine" class="dt-card mb-2 small" data-testid="bk-mine">
-        <div class="fw-bold mb-1">{{ t.bulk.mineTitle }}</div>
-        <div>{{ t.bulk.mineLine(formatNum(mine.price), mine.qty, formatNum(mine.frozen)) }}</div>
-        <!-- 停更期间不公布入围情况（won 为 null）：灰字，免得看着像没入围 -->
-        <div
-          :class="mine.won === null ? 'text-muted' : mine.won === mine.qty ? 'text-success' : 'text-danger'"
-          data-testid="bk-mine-status"
-        >
-          {{ mineStatus }}
+      <div class="dt-bulk-sec">
+        <div class="dt-bulk-demand" data-testid="bk-demand">
+          <span>{{ t.bulk.demandLine(lot.demand, lot.qty, ratio(lot.demand, lot.qty)) }}</span>
+          <span class="dt-meta">{{ t.bulk.biddersLine(lot.bidders) }}</span>
         </div>
-        <div v-if="mine.estimate !== null" class="text-muted">
-          {{ t.bulk.estimate(formatNum(mine.estimate)) }}
+        <div class="dt-bulk-bar" aria-hidden="true">
+          <b :style="{ width: pctOf(lot.demand, lot.qty) }"></b
+          ><i :style="{ left: pctOf(lot.groupQty, lot.qty) }"></i>
         </div>
+        <div class="dt-meta" data-testid="bk-grouped">{{ t.bulk.grouped(lot.grouped, lot.groupQty) }}</div>
       </div>
-
-      <div v-if="blockedText" class="alert alert-warning py-1 small" data-testid="bk-blocked">
-        {{ blockedText }}
+      <div class="dt-bulk-sec dt-bulk-ends">
+        <i class="bi bi-clock" aria-hidden="true"></i>
+        <span>{{ t.bulk.ends(newsTime(lot.endsAt), data.closeWindowMin) }}</span>
       </div>
-      <div v-else-if="canBid" class="dt-card mb-3 small" data-testid="bk-form">
-        <div class="d-flex align-items-center gap-2 mb-1">
-          <label class="text-nowrap" for="bk-price">{{ t.bulk.priceLabel }}</label>
-          <input
-            id="bk-price"
-            v-model.number="price"
-            type="number"
-            :min="lot.reserve"
-            class="form-control form-control-sm"
-            style="width: 8rem"
-            data-testid="bk-price-input"
-          />
-          <label class="text-nowrap" for="bk-qty">{{ t.bulk.qtyLabel }}</label>
-          <input
-            id="bk-qty"
-            v-model.number="qty"
-            type="number"
-            min="1"
-            :max="lot.cap"
-            class="form-control form-control-sm"
-            style="width: 5rem"
-            data-testid="bk-qty-input"
-          />
+      <div v-if="lot.blindAt" class="dt-bulk-sec text-warning-emphasis" data-testid="bk-blind">
+        {{ t.bulk.blindNote(newsTime(lot.blindAt)) }}
+      </div>
+      <div class="dt-bulk-sec">
+        <div v-if="mine" class="dt-bulk-mine" data-testid="bk-mine">
+          <div class="dt-bulk-mine-head">
+            <span class="dt-row-main"
+              ><span class="dt-meta">{{ t.bulk.mineTitle }}</span
+              ><b>{{ t.bulk.mineLine(formatNum(mine.price), mine.qty, formatNum(mine.frozen)) }}</b></span
+            >
+            <span
+              :class="
+                mine.won === null ? 'dt-tag-mute' : mine.won === mine.qty ? 'dt-tag-ok' : 'dt-tag-danger'
+              "
+              data-testid="bk-mine-status"
+              >{{ mineStatus }}</span
+            >
+          </div>
+          <div v-if="mine.estimate !== null" class="dt-meta">
+            {{ t.bulk.estimate(formatNum(mine.estimate)) }}
+          </div>
         </div>
-        <div v-if="mine" class="text-muted" data-testid="bk-min-raise">
-          {{ t.bulk.minRaise(formatNum(minRaise)) }}
+        <div v-if="blockedText" class="dt-act-note is-warn mb-0" data-testid="bk-blocked">
+          {{ blockedText }}
         </div>
-        <div data-testid="bk-freeze">
-          {{ t.bulk.freeze(formatNum(total), formatNum(Math.max(0, extra)), !!mine) }}
-          {{ t.bulk.settleNote }}
-          {{ estimateText }}
-        </div>
-        <div class="text-muted" data-testid="bk-partial-hint">{{ t.bulk.partialHint }}</div>
-        <div v-if="reason" class="text-danger" data-testid="bk-reason">{{ reason }}</div>
         <button
+          v-else-if="canBid"
           type="button"
-          class="btn btn-sm btn-primary mt-1"
-          :disabled="!canSubmit"
-          data-testid="bk-submit"
-          @click="submit"
+          class="btn btn-primary dt-btn-block"
+          data-testid="bk-open"
+          @click="openBid"
         >
-          {{ cooldown > 0 ? t.bulk.cooldown(cooldown) : mine ? t.bulk.raise : t.bulk.bid }}
+          {{ mine ? t.bulk.raise : t.bulk.bid }}
         </button>
       </div>
-    </template>
-
-    <h6 class="dt-section">{{ t.bulk.recentTitle }}</h6>
-    <div v-if="data.recent.length === 0" class="small text-muted">{{ t.bulk.noRecent }}</div>
-    <div
-      v-for="r in data.recent"
-      :key="r.id"
-      class="small border-bottom py-1"
-      :data-testid="`bk-recent-${r.id}`"
-    >
-      <div>{{ resultLine(r) }}</div>
-      <div v-if="r.mine" class="text-muted">{{ myResult(r) }}</div>
+    </section>
+    <div class="dt-card dt-rows-card mt-3">
+      <button type="button" class="dt-row is-link" data-testid="bk-help" @click="sheet = 'help'">
+        <span class="dt-row-main"
+          ><span class="dt-row-title">{{ t.bulk.helpTitle }}</span
+          ><span class="dt-row-sub">{{ t.bulk.intro }}</span></span
+        >
+      </button>
     </div>
+
+    <section class="dt-block">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.bulk.recentTitle }}</h2>
+      </div>
+      <DtEmpty v-if="data.recent.length === 0" :title="t.bulk.noRecent" />
+      <div v-else class="dt-card dt-rows-card">
+        <div
+          v-for="r in data.recent"
+          :key="r.id"
+          class="dt-row dt-row-wrap"
+          :data-testid="`bk-recent-${r.id}`"
+        >
+          <span class="dt-row-main">
+            <span class="dt-row-title">{{ resultLine(r) }}</span>
+            <span v-if="r.mine" class="dt-row-sub">{{ myResult(r) }}</span>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <DtSheet
+      :open="sheet === 'bid' && !!lot"
+      :title="lot ? t.bulk.sheetTitle(!!mine, catalog.foodName(lot.foodsId)) : ''"
+      @close="sheet = null"
+    >
+      <div v-if="lot" data-testid="bk-form">
+        <div class="dt-detail-sub">
+          {{
+            mine
+              ? t.bulk.mineNow(formatNum(mine.price), mine.qty)
+              : t.bulk.lotLine(lot.qty, formatNum(lot.reserve), lot.cap)
+          }}
+        </div>
+        <div class="dt-field-row">
+          <span class="dt-field-label"
+            ><b>{{ t.bulk.priceLabel }}</b
+            ><small v-if="mine" data-testid="bk-min-raise">{{ t.bulk.minRaise(formatNum(minRaise)) }}</small
+            ><small v-else>{{ t.bulk.reserveLine(formatNum(lot.reserve)) }}</small></span
+          >
+          <DtStepper
+            v-model="price"
+            :min="mine ? mine.price : lot.reserve"
+            :step="priceStep"
+            testid="bk-price-input"
+            size="wide"
+          />
+        </div>
+        <div class="dt-field-row">
+          <span class="dt-field-label"
+            ><b>{{ t.bulk.qtyLabel }}</b
+            ><small>{{ t.bulk.reasons.cap(lot.cap) }}</small></span
+          >
+          <DtStepper v-model="qty" :min="mine ? mine.qty : 1" :max="lot.cap" testid="bk-qty-input" />
+        </div>
+        <div class="dt-sum dt-bulk-freeze" data-testid="bk-freeze">
+          <div class="dt-bulk-freeze-main">
+            {{ t.bulk.freeze(formatNum(total), formatNum(Math.max(0, extra)), !!mine) }}
+          </div>
+          <div class="dt-meta">{{ estimateText }} {{ t.bulk.settleNote }}</div>
+        </div>
+        <div class="dt-detail-note" data-testid="bk-partial-hint">{{ t.bulk.partialHint }}</div>
+        <div v-if="reason" class="dt-detail-note text-danger" data-testid="bk-reason">{{ reason }}</div>
+      </div>
+      <template v-if="lot" #actions>
+        <div class="dt-sheet-pair">
+          <button type="button" class="btn btn-light" @click="sheet = null">{{ t.common.cancel }}</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            :disabled="!canSubmit"
+            data-testid="bk-submit"
+            @click="submit"
+          >
+            {{ cooldown > 0 ? t.bulk.cooldown(cooldown) : mine ? t.bulk.raise : t.bulk.bid }}
+          </button>
+        </div>
+      </template>
+    </DtSheet>
+
+    <DtSheet :open="sheet === 'help'" :title="t.bulk.helpTitle" @close="sheet = null">
+      <div class="dt-help">
+        <p>{{ t.bulk.intro }}</p>
+        <ul>
+          <li
+            v-for="(x, i) in t.bulk.help(
+              lot?.cap ?? 0,
+              lot?.groupQty ?? 0,
+              Math.round(data.minRaise * 100),
+              data.cooldownSec,
+              data.closeWindowMin,
+              data.openHour,
+              data.blindMin,
+            )"
+            :key="i"
+          >
+            {{ x }}
+          </li>
+        </ul>
+      </div>
+    </DtSheet>
   </div>
 </template>

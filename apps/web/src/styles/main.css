@@ -121,11 +121,6 @@ html {
   padding: 8px;
 }
 /* 吉祥物、好友卡片名字前的图标（界面改版 P4：原来是原版图包的头像位置） */
-.dt-mascot-icon {
-  font-size: 22px;
-  line-height: 1;
-  color: var(--dt-primary-ink);
-}
 .dt-main-nav {
   padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
 }
@@ -643,6 +638,10 @@ details.dt-card > summary {
 .dt-stepper-sm > input {
   width: 34px;
 }
+/* 宽的：价格、金额（交易所单价、大宗出价、打赏银币，P8 终审 I4） */
+.dt-stepper-wide > input {
+  width: 88px;
+}
 .dt-stepper:focus-within {
   border-color: var(--dt-primary);
 }
@@ -999,12 +998,6 @@ details.dt-card > summary {
 }
 
 /* ---------- 嘻哈男孩、排行（子项目 4E-2） ---------- */
-.dt-hiphop {
-  border-left: 4px solid var(--dt-primary);
-}
-.dt-hiphop-num {
-  width: 8rem;
-}
 .dt-item-me {
   background: var(--dt-primary-soft);
   border-radius: 6px;
@@ -3835,4 +3828,878 @@ details.dt-card > summary {
 .dt-row-end > .btn {
   flex-shrink: 0;
   white-space: nowrap;
+}
+/* ===== 界面改版 P8：商店、交易所、收购、一番赏、预测、外卖、银行 ===== */
+/* 买不了的价格按钮（商店）：灰色，但还能点开看说明和原因（P8 终审 I3） */
+.dt-price-btn.is-off {
+  border-color: var(--dt-line);
+  color: var(--dt-muted);
+}
+/* 区块标题里的余额数字（商店“我的银币 118,729”） */
+.dt-shop-bal {
+  margin-left: 4px;
+  font-variant-numeric: tabular-nums;
+}
+/* 行里的细进度条（剩余库存、配送进度）：4px 高，紫色填充 */
+.dt-meter {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 48px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--dt-bar-track);
+  overflow: hidden;
+}
+.dt-meter > i {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--dt-primary);
+}
+.dt-row-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 220px;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+/* 行副行里的状态标签和后面的字隔开 */
+.dt-row-sub > [class^='dt-tag'] {
+  margin-right: 4px;
+}
+.dt-row-title [class^='dt-tag-'],
+.dt-pd-ev-title > [class^='dt-tag-'],
+.dt-pd-title > [class^='dt-tag-'] {
+  margin-left: 6px;
+  vertical-align: 2px;
+  white-space: nowrap;
+}
+/* 面板里的合计框：浅底圆角，一行左灰字右数字 */
+.dt-sum {
+  margin: 14px 0 0;
+  padding: 8px 12px;
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-bg);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-sum > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 3px 0;
+}
+.dt-sum dt {
+  font-weight: 400;
+  color: var(--dt-muted);
+}
+.dt-sum dd {
+  margin: 0;
+  text-align: right;
+}
+.dt-sum b {
+  font-size: 15px;
+}
+/* 分段切换（买入 / 卖出、打赏什么）：浅底胶囊，选中的一段白底加阴影 */
+.dt-seg {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--dt-radius-pill);
+  background: var(--dt-bg);
+}
+.dt-seg > button {
+  min-height: 36px;
+  padding: 2px 8px;
+  border: 0;
+  border-radius: var(--dt-radius-pill);
+  background: transparent;
+  color: var(--dt-muted);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.2;
+}
+.dt-seg > button[aria-pressed='true'] {
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font-weight: 700;
+  box-shadow: var(--dt-shadow-card);
+}
+.dt-seg > button small {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+}
+/* NPC 头像：圆形，图本身带底色 */
+.dt-npc-ava {
+  display: block;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+/* 嘻哈男孩（P8）：收起时一行；点开下面是打赏 */
+.dt-hiphop-head {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+}
+.dt-hiphop.is-open .dt-effects-chev {
+  transform: rotate(180deg);
+}
+.dt-hiphop-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 14px 14px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-hiphop-num {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+/* 整行可点的按钮行（打开面板，不跳页）：和链接行同样子 */
+button.dt-row {
+  width: 100%;
+  border-right: 0;
+  border-bottom: 0;
+  border-left: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+}
+/* 警示条（交易所被冻结） */
+.dt-act-note.is-danger {
+  background: var(--dt-soft-danger);
+  color: var(--dt-ink-danger);
+}
+/* 搜索框：胶囊 */
+.dt-search {
+  min-height: 40px;
+  margin: 14px 0 10px;
+  border-radius: var(--dt-radius-pill);
+}
+/* 面板里的说明：灰字、列表 */
+.dt-help {
+  font-size: 14px;
+  color: var(--dt-muted);
+}
+.dt-help > p {
+  margin-bottom: 8px;
+}
+.dt-help > ul {
+  margin: 0;
+  padding-left: 18px;
+}
+.dt-help li + li {
+  margin-top: 6px;
+}
+/* 现货一行右边：价格和涨跌 */
+.dt-ex-price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
+}
+.dt-ex-price small {
+  font-size: 11px;
+  font-weight: 600;
+}
+.dt-ex-price .is-up {
+  color: var(--dt-ink-success);
+}
+.dt-ex-price .is-down {
+  color: var(--dt-ink-danger);
+}
+/* 盘口：卖档绿、收档紫，后面一条按数量的浅色深度条；中间一行最新成交 */
+.dt-book {
+  margin-top: 14px;
+  padding: 6px 0;
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-bg);
+  font-variant-numeric: tabular-nums;
+}
+.dt-book-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(64px, auto) 1fr auto;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 30px;
+  padding: 0 12px;
+  border: 0;
+  background: transparent;
+  color: var(--dt-muted);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+}
+.dt-book-row > i {
+  position: absolute;
+  top: 3px;
+  right: 0;
+  bottom: 3px;
+  border-radius: 4px 0 0 4px;
+}
+.dt-book-row > span,
+.dt-book-row > b {
+  position: relative;
+}
+.dt-book-row.is-ask > i {
+  background: var(--dt-soft-success);
+}
+.dt-book-row.is-ask > b {
+  color: var(--dt-ink-success);
+}
+.dt-book-row.is-bid > i {
+  background: var(--dt-soft-primary);
+}
+.dt-book-row.is-bid > b {
+  color: var(--dt-ink-primary);
+}
+.dt-book-qty {
+  text-align: right;
+}
+.dt-book-mid {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 12px;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-book-mid::before,
+.dt-book-mid::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--dt-line);
+}
+/* 面板里的一项输入：左边名字和一行灰字（范围、上限），右边步进器 */
+.dt-field-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+.dt-field-label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.dt-field-label > b {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+}
+.dt-field-label > small {
+  display: block;
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-ex-estimate {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--dt-muted);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.dt-ex-estimate:empty {
+  display: none;
+}
+.dt-ex-sys {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--dt-line);
+}
+/* 额度一行（期货“我今天还能订”）：左边名字，右边大数字 / 上限，下面一条细进度条 */
+.dt-quota-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.dt-quota-head > .dt-row-title {
+  flex: 1 1 auto;
+}
+.dt-quota-num {
+  font-size: 13px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-quota-num > b {
+  font-size: 16px;
+  color: var(--dt-text);
+}
+/* 大宗认购批次卡片（P8）：几段之间细线隔开；成交价和门槛两个大数字并排 */
+.dt-bulk-name {
+  font-size: 16px;
+  font-weight: 700;
+}
+.dt-bulk-sec {
+  padding: 12px 14px;
+  border-top: 1px solid var(--dt-line);
+  font-size: 13px;
+}
+.dt-bulk-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-bulk-stats span {
+  display: block;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-bulk-stats b {
+  font-size: 22px;
+}
+.dt-bulk-demand {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-bulk-bar {
+  position: relative;
+  height: 8px;
+  margin: 8px 0 4px;
+  border-radius: 4px;
+  background: var(--dt-bar-track);
+}
+.dt-bulk-bar > b {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: 4px;
+  background: var(--dt-primary);
+}
+/* 成团线 */
+.dt-bulk-bar > i {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--dt-text);
+}
+.dt-bulk-ends {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--dt-muted);
+}
+.dt-bulk-mine {
+  margin-bottom: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-bulk-mine-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dt-bulk-mine-head .dt-row-main > span {
+  display: block;
+}
+.dt-bulk-freeze {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dt-bulk-freeze-main {
+  font-size: 14px;
+}
+/* 榜单名次（收购身价榜、投资榜）：前三名金色 */
+.dt-rank-badge {
+  flex-shrink: 0;
+  width: 24px;
+  font-weight: 700;
+  color: var(--dt-muted);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.dt-rank-badge.is-top {
+  color: var(--dt-ink-warning);
+}
+.dt-row-ico > .dt-rank-badge {
+  width: auto;
+}
+/* 在售一行右边：挂牌价和单位 */
+.dt-acq-cost {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
+}
+.dt-acq-cost small {
+  font-size: 11px;
+  color: var(--dt-muted);
+}
+/* 被收购时：打理、赎身两个按钮一排 */
+.dt-acq-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 14px 12px;
+}
+.dt-acq-actions > .btn {
+  flex: 1 1 0;
+  min-height: 40px;
+  white-space: nowrap;
+}
+.dt-num {
+  font-variant-numeric: tabular-nums;
+}
+/* 一番赏（P8）：主题卡浅紫底；奖池卡头一段进度和规则，各赏一行（字母徽章、奖品、剩几张） */
+.dt-kuji-theme {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 12px;
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-soft-primary);
+  font-size: 13px;
+}
+.dt-kuji-theme b {
+  color: var(--dt-ink-primary);
+  font-size: 14px;
+}
+.dt-kuji-theme-art {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: var(--dt-surface);
+}
+.dt-kuji-pool {
+  padding: 12px 14px;
+}
+.dt-kuji-pool-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.dt-kuji-pool-head > b {
+  flex: 1 1 auto;
+}
+.dt-kuji-pool-head > span {
+  font-size: 13px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-kuji-tier {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--dt-line);
+  font-size: 14px;
+}
+.dt-kuji-tier.is-out {
+  opacity: 0.5;
+}
+.dt-kuji-badge {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 8px;
+  border-radius: 10px;
+  background: var(--dt-bg);
+  color: var(--dt-text);
+  font-size: 15px;
+  font-weight: 800;
+}
+.dt-kuji-badge.is-big {
+  background: var(--dt-primary);
+  color: var(--dt-on-primary);
+}
+.dt-kuji-badge.is-last {
+  background: var(--dt-soft-warning);
+  color: var(--dt-ink-warning);
+  font-size: 12px;
+}
+.dt-kuji-award {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-top: 6px;
+}
+.dt-kuji-icon {
+  display: block;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-kuji-count {
+  flex-shrink: 0;
+  padding-top: 6px;
+  font-size: 13px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-kuji-play {
+  margin-top: 12px;
+  padding: 12px 14px;
+}
+.dt-kuji-play-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-kuji-play-head > span:first-child {
+  flex: 1 1 auto;
+}
+.dt-kuji-draws {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+.dt-kuji-draws > .btn {
+  min-height: 46px;
+  padding-right: 4px;
+  padding-left: 4px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.dt-kuji-buy {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--dt-line);
+}
+/* 事件预测（P8）：列表一行（标题和概率、概率条、剩余时间）；详情页大号概率、走势、持仓 */
+.dt-pd-ev {
+  display: block;
+  padding: 12px 14px;
+  border-top: 1px solid var(--dt-line);
+  color: var(--dt-text);
+  text-decoration: none;
+}
+.dt-pd-ev:first-child {
+  border-top: 0;
+}
+.dt-pd-ev:active {
+  background: var(--dt-surface-2);
+}
+.dt-pd-ev-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.dt-pd-ev-head::after {
+  content: '›';
+  content: '›' / '';
+  flex-shrink: 0;
+  color: var(--dt-muted);
+}
+.dt-pd-ev-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: 600;
+}
+.dt-pd-ev-pct {
+  flex-shrink: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--dt-ink-primary);
+  font-variant-numeric: tabular-nums;
+}
+/* 是 / 否概率条：紫色是“是”，底槽是“否” */
+.dt-pd-split {
+  display: block;
+  height: 6px;
+  margin: 8px 0 6px;
+  border-radius: 3px;
+  background: var(--dt-bar-track);
+  overflow: hidden;
+}
+.dt-pd-split > i {
+  display: block;
+  height: 100%;
+  background: var(--dt-primary);
+}
+.dt-pd-title {
+  margin: 4px 0 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.dt-pd-meta {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-pd-market {
+  margin-top: 14px;
+  padding: 12px 14px;
+}
+.dt-pd-pct {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-pd-pct > b {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--dt-ink-primary);
+}
+.dt-pd-pct > span {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--dt-muted);
+}
+.dt-pd-market .dt-pd-split {
+  height: 8px;
+  border-radius: 4px;
+}
+.dt-pd-chart {
+  display: block;
+  width: 100%;
+  height: 120px;
+  margin-top: 10px;
+}
+.dt-pd-grid {
+  fill: none;
+  stroke: var(--dt-line);
+  stroke-width: 1;
+}
+.dt-pd-line {
+  fill: none;
+  stroke: var(--dt-primary);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.dt-pd-dot {
+  fill: var(--dt-primary);
+}
+.dt-pd-hold {
+  padding: 12px 14px;
+  font-size: 14px;
+}
+.dt-pd-hold-main {
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.dt-pd-hold .dt-sum {
+  margin-top: 10px;
+}
+.dt-pd-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 14px 0 8px;
+}
+.dt-pd-buy {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.dt-pd-buy > .btn,
+.dt-pd-actions > .btn {
+  min-height: 46px;
+  font-weight: 700;
+}
+.dt-pd-segs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+/* 外卖（P8）：没开通时的介绍卡、条件打勾；外卖单要的食材一行；接单面板的骑手单选 */
+.dt-ta-intro {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+}
+.dt-ta-intro > p {
+  flex: 1 1 auto;
+  margin: 0;
+}
+.dt-ta-intro-art {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: var(--dt-soft-primary);
+  color: var(--dt-primary-ink);
+}
+.dt-check {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 13px;
+}
+.dt-check.is-ok {
+  background: var(--dt-soft-success);
+  color: var(--dt-ink-success);
+}
+.dt-check.is-no {
+  background: var(--dt-soft-danger);
+  color: var(--dt-ink-danger);
+}
+.dt-ta-open-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+.dt-ta-open-btns > .btn {
+  min-height: 48px;
+  font-weight: 600;
+}
+.dt-ta-why {
+  font-size: 13px;
+  color: var(--dt-ink-danger);
+  text-align: center;
+}
+.dt-ta-foods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  margin-top: 4px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-ta-foods > .is-short {
+  font-weight: 600;
+  color: var(--dt-ink-danger);
+}
+.dt-radio-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+.dt-radio {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 12px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-md);
+  cursor: pointer;
+}
+.dt-radio:has(input:checked) {
+  border-color: var(--dt-primary);
+  box-shadow: inset 0 0 0 1px var(--dt-primary);
+}
+.dt-radio.is-off {
+  color: var(--dt-muted);
+  cursor: default;
+}
+.dt-radio > input {
+  accent-color: var(--dt-primary);
+}
+.dt-ta-rider {
+  align-items: flex-start;
+}
+.dt-ta-rider > .btn {
+  margin-top: 4px;
+}
+/* NPC 卡片（P8）：圆形头像、名字一行、台词一行；点一下换一句 */
+.dt-mascot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+}
+.dt-mascot-ico {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--dt-soft-primary);
+  color: var(--dt-primary-ink);
+  font-size: 20px;
+}
+.dt-mascot-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 13px;
+}
+.dt-mascot-text > b {
+  display: block;
+  font-size: 14px;
+}
+.dt-mascot-end {
+  flex-shrink: 0;
+}
+/* 银行（P8）：我的存款卡、存一笔卡 */
+.dt-bank-mine {
+  padding: 12px 14px;
+}
+.dt-bank-mine-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+  font-variant-numeric: tabular-nums;
+}
+.dt-bank-mine-head > b {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+/* 两行字的分段（存期 + 补给包名）：圆角小一些 */
+.dt-seg-tall {
+  border-radius: var(--dt-radius-md);
+}
+.dt-seg-tall > button {
+  min-height: 48px;
+  border-radius: var(--dt-radius-sm);
+}
+/* 好友餐厅页的头像图标（P10 再改） */
+.dt-mascot-icon {
+  font-size: 22px;
+  line-height: 1;
+  color: var(--dt-primary-ink);
+}
+/* 行里的主名字加粗（P8 用户反馈：预测已结束的题目、外卖菜名和骑手名、存款的金额和期限、基金档位） */
+.dt-row-title.is-strong {
+  font-weight: 600;
 }

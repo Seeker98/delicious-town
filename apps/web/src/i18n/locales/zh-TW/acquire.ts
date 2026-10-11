@@ -5,8 +5,13 @@ export default {
   tabs: { price: '身價榜', market: '在售', invest: '投資榜', mine: '我的' },
   loadFailed: '讀取收購資訊失敗',
   failed: '操作失敗',
-  rule: (got: string, tax: string, max: number, div: string, bonus: string, days: number) =>
-    `收購別人的餐廳要付它的身價: 原主人 (沒被收購的店是它自己) 得 ${got}, ${tax} 是稅；名下最多 ${max} 家。被收購的店每天給老闆分紅, 是前一天結算銀幣的 ${div}, 替老闆打理過的那天再多 ${bonus}。被收購的店可以按身價贖身, 贖身後 ${days} 天內不能再被收購。`,
+  /** 收購規則（介面改版 P8 使用者反饋：一條一行，不寫成一整段） */
+  ruleItems: (got: string, tax: string, max: number, div: string, bonus: string, days: number) => [
+    `收購別人的餐廳要付它的身價: 原主人 (沒被收購的店是它自己) 得 ${got}, ${tax} 是稅`,
+    `名下最多 ${max} 家`,
+    `被收購的店每天給老闆分紅, 是前一天結算銀幣的 ${div}；替老闆打理過的那天再多 ${bonus}`,
+    `被收購的店可以按身價贖身, 贖身後 ${days} 天內不能再被收購`,
+  ],
   price: (coin: string) => `身價 ${coin}`,
   heat: (h: string) => `熱度 ${h}`,
   owner: (name: string) => `老闆: ${name}`,
@@ -60,4 +65,22 @@ export default {
   homeOwned: (name: string) => `你的餐廳歸「${name}」所有`,
   homeLink: '打理、贖身',
   cardTitle: '收購',
+  /** 介面改版 P8：整行點開的面板、名下的店面板、規則一行 */
+  ownerTag: (name: string) => `老闆 ${name}`,
+  listedTag: (pct: string) => `掛牌 ${pct}`,
+  leftLine: (left: string) => `還剩 ${left}`,
+  coinUnit: '銀幣',
+  rulesTitle: '收購規則',
+  rulesSub: (got: string, tax: string) => `原主人得 ${got}, ${tax} 是稅; 被收購的店每天給老闆分紅`,
+  holdingsTitle: '名下的店',
+  holdCount: (n: number, max: number) => `${n} / ${max} 家`,
+  visit: '去店裡看看',
+  youPay: '你付',
+  sellerGot: (name: string, pct: string) => `「${name}」得 (${pct})`,
+  taxLine: (pct: string) => `稅 (${pct})`,
+  afterHold: '收購後名下',
+  rateLabel: '按身價的多少掛牌',
+  listPrice: '掛牌價',
+  listGot: '別人買下時你約得',
+  listNote: (days: number) => `按現在的身價算, 身價每天會變; ${days} 天后自動撤下。`,
 };

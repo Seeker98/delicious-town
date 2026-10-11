@@ -30,6 +30,8 @@ export default {
   buyPrefix: '买',
   buyTotal: (coin: string) => `张, 共 ${coin} 银币`,
   buy: '买券',
+  /** 买券价格按钮的读屏名（界面改版 P8） */
+  buyAria: (n: number, coin: string) => `买 ${n} 张, 共 ${coin} 银币`,
   buyLeft: (n: number) => `今天还能买 ${n} 张`,
   /** 买券数量不对时的提示、银币余额（backlog 一番赏） */
   buyMax: (n: number) => `今天最多还能买 ${n} 张`,
@@ -42,4 +44,6 @@ export default {
   recent: '最近的大赏',
   noRecent: '还没有人抽中大赏',
   recentLine: (name: string, tier: string) => `${name} 抽中了 ${tier}`,
+  /** 界面改版 P8：结果面板的按钮 */
+  ok: '好的',
 };

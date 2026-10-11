@@ -49,11 +49,25 @@ const data = (p: Partial<FuturesDto> = {}): FuturesDto => ({
   ...p,
 });
 
+/** 下单、我的期货单、怎么算都在 Teleport 到 body 的底部面板里：测试里把 teleport 桩掉（界面改版 P8） */
 async function mountPanel() {
-  const w = mount(FuturesPanel);
+  const w = mount(FuturesPanel, { global: { stubs: { teleport: true } } });
   await flushPromises();
   return w;
 }
+type W = Awaited<ReturnType<typeof mountPanel>>;
+/** 食材一行：价格按钮所在的那一行 */
+const rowOf = (w: W, id: number) =>
+  w.get(`[data-testid="fu-food-${id}"]`).element.closest('.dt-row')!.textContent ?? '';
+/** 下单面板里“总价”“现在付定金”这些合计：标签和数分开写 */
+const sum = (w: W, label: string) =>
+  w
+    .get('[data-testid="fu-order-box"]')
+    .findAll('.dt-sum > div')
+    .find((x) => x.get('dt').text() === label)!
+    .get('dd')
+    .text();
+const qtyValue = (w: W) => (w.get('[data-testid="fu-qty"]').element as HTMLInputElement).value;
 
 describe('FuturesPanel（期货设计 §10）', () => {
   beforeEach(() => {
@@ -76,11 +90,15 @@ describe('FuturesPanel（期货设计 §10）', () => {
 
   it('按等级分组列出食材：单价、今天还剩；订完的灰掉；顶部写我今天还能订几份', async () => {
     const w = await mountPanel();
-    expect(w.get('[data-testid="fu-person"]').text()).toBe('我今天还能订 48 份 (每天 50 份)');
-    expect(w.get('[data-testid="fu-food-31"]').text()).toContain('火腿');
+    // 额度一行：标题和“剩几 / 每天几份”分开写（界面改版 P8）
+    const person = w.get('[data-testid="fu-person"]');
+    expect(person.get('.dt-row-title').text()).toBe('我今天还能订');
+    expect(person.get('.dt-quota-num').text()).toBe('48 / 50 份');
+    expect(rowOf(w, 31)).toContain('火腿');
     expect(w.get('[data-testid="fu-food-31"]').text()).toContain('10,800');
-    expect(w.get('[data-testid="fu-food-31"]').text()).toContain('今天还剩 98 份');
+    expect(rowOf(w, 31)).toContain('今天还剩 98 份');
     expect(w.get('[data-testid="fu-food-21"]').attributes('disabled')).toBeDefined();
+    expect(rowOf(w, 21)).toContain('今天订完了');
   });
 
   it('筛选：稀有、普通、本街要的、搜名字', async () => {
@@ -103,28 +121,41 @@ describe('FuturesPanel（期货设计 §10）', () => {
     await w.get('[data-testid="fu-food-31"]').trigger('click');
     const qty = w.get('[data-testid="fu-qty"]');
     expect(qty.attributes('max')).toBe('48');
+    expect(w.get('[data-testid="fu-max"]').text()).toBe('最多 48');
     await qty.setValue('2');
-    const box = w.get('[data-testid="fu-order-box"]').text();
-    expect(box).toContain('总价 21,600 银币');
-    expect(box).toContain('定金 6,480');
-    expect(box).toContain('尾款 15,120');
-    expect(box).toContain('到期时间');
-    expect(box).toContain('都算违约, 定金不退');
+    expect(sum(w, '总价')).toBe('21,600');
+    expect(sum(w, '现在付定金')).toBe('6,480');
+    expect(sum(w, '到期扣尾款')).toBe('15,120');
+    expect(sum(w, '到期时间')).not.toBe('');
+    expect(w.get('[data-testid="fu-order-box"]').text()).toContain('都算违约, 定金不退');
     await w.get('[data-testid="fu-order"]').trigger('click');
     await flushPromises();
     expect(endpoints.futuresOrder).toHaveBeenCalledWith({ foodsId: 31, qty: 2, unitPrice: 10800 });
     expect(endpoints.futures).toHaveBeenCalledTimes(2);
   });
 
-  it('数量填 0、清空或超过上限：下单按钮不能点（终审：原来按 1 份下单）', async () => {
+  it('数量填 0、清空或超过上限：步进器夹回 1 到上限，框里写的就是下单的份数；一份都订不了时下单按钮不能点（终审：原来按 1 份下单）', async () => {
+    vi.mocked(endpoints.futuresOrder).mockResolvedValue(contract({}));
     const w = await mountPanel();
     await w.get('[data-testid="fu-food-31"]').trigger('click');
-    for (const v of ['0', '', '49']) {
+    // 界面改版 P8 换成步进器：0 和空的失焦后回到 1，超过上限马上退回上限
+    for (const v of ['0', '']) {
       await w.get('[data-testid="fu-qty"]').setValue(v);
-      expect(w.get('[data-testid="fu-order"]').attributes('disabled')).toBeDefined();
+      await w.get('[data-testid="fu-qty"]').trigger('blur');
+      expect(qtyValue(w)).toBe('1');
     }
-    await w.get('[data-testid="fu-qty"]').setValue('48');
+    await w.get('[data-testid="fu-qty"]').setValue('49');
+    expect(qtyValue(w)).toBe('48');
     expect(w.get('[data-testid="fu-order"]').attributes('disabled')).toBeUndefined();
+    await w.get('[data-testid="fu-order"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.futuresOrder).toHaveBeenCalledWith({ foodsId: 31, qty: 48, unitPrice: 10800 });
+    // 今天的个人额度用完：步进器和下单按钮都灰掉
+    vi.mocked(endpoints.futures).mockResolvedValue(data({ personLeft: 0 }));
+    const none = await mountPanel();
+    await none.get('[data-testid="fu-food-31"]').trigger('click');
+    expect(none.get('[data-testid="fu-qty"]').attributes('disabled')).toBeDefined();
+    expect(none.get('[data-testid="fu-order"]').attributes('disabled')).toBeDefined();
   });
 
   it('价格变了：提示并刷新', async () => {
@@ -143,6 +174,11 @@ describe('FuturesPanel（期货设计 §10）', () => {
     vi.mocked(endpoints.futuresCancel).mockResolvedValue(contract({ status: 'cancelled' }));
     const ask = vi.spyOn(window, 'confirm').mockReturnValue(true);
     const w = await mountPanel();
+    // 上面卡片写进行中的单数和第一张单（界面改版 P8），点开看全部
+    const open = w.get('[data-testid="fu-mine-open"]');
+    expect(open.get('.dt-row-value').text()).toBe('1');
+    expect(open.text()).toContain('尾款 15,120 银币');
+    await open.trigger('click');
     expect(w.get('[data-testid="fu-c-1"]').text()).toContain('火腿×2');
     expect(w.get('[data-testid="fu-c-1"]').text()).toContain('尾款 15,120 银币');
     expect(w.get('[data-testid="fu-c-2"]').text()).toContain('已交割 (1 份进了交易所账户)');
@@ -160,6 +196,8 @@ describe('FuturesPanel（期货设计 §10）', () => {
     let w = await mountPanel();
     expect(w.find('[data-testid="fu-foods"]').exists()).toBe(false);
     expect(w.get('[data-testid="fu-off"]').text()).toContain('已有的单到期照常交割');
+    expect(w.find('[data-testid="fu-person"]').exists()).toBe(false);
+    await w.get('[data-testid="fu-mine-open"]').trigger('click');
     expect(w.find('[data-testid="fu-c-1"]').exists()).toBe(true);
     vi.mocked(endpoints.futures).mockResolvedValue(data({ blocked: 'exchange_level' }));
     w = await mountPanel();

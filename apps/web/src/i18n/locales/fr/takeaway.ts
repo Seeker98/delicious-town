@@ -13,6 +13,14 @@ const takeaway: Messages['takeaway'] = {
   noCoin: (n) => `Pas assez de pièces (il en faut ${n})`,
   noDiamond: (n) => `Pas assez de diamants (il en faut ${n})`,
   open: {
+    needsTitle: 'Conditions',
+    starNeed: (n) => `Restaurant ${n}★ ou plus`,
+    nowStar: (n) => `Actuellement ${n}★`,
+    renownNeed: (n) => `Renommée ${n} ou plus, dépensée à l’ouverture`,
+    nowNum: (n) => `Actuellement ${n}`,
+    have: (tickets, coin, diamond) => `Tickets livraison ${tickets} · pièces ${coin} · diamants ${diamond}`,
+    met: 'Remplie',
+    unmet: 'Non remplie',
     needStar: (n) => `Il faut ${n}★ pour ouvrir la vente à emporter`,
     noRenown: (n) => `Pas assez de renommée (il en faut ${n})`,
     noTicket: 'Pas de ticket de vente à emporter',
@@ -28,6 +36,12 @@ const takeaway: Messages['takeaway'] = {
     byCoin: 'Ouvrir avec pièces et diamants',
   },
   orders: {
+    refreshTitle: 'Actualisation privée',
+    refreshSub: 'Des commandes privées rien que pour vous',
+    refreshCost: (cost) => `${cost} pièces`,
+    title: 'Commandes',
+    freeRiders: (free, total) => `Livreurs libres ${free} / ${total}`,
+    whichRider: 'Quel livreur',
     notLearned: "Vous n'avez pas appris ce plat",
     noRenown: (n) => `Pas assez de renommée (il en faut ${n})`,
     noFoods: "Pas assez d'ingrédients",
@@ -69,6 +83,8 @@ const takeaway: Messages['takeaway'] = {
     rider: (name) => `Livreur ${name}`,
     claim: 'Récupérer',
     droneBtn: (n) => `Drone (${n} ${plFr(n, 'diamant', 'diamants')})`,
+    arrivedTitle: (n) => `${n} ${plFr(n, 'livrée', 'livrées')}`,
+    onWayTitle: 'En route',
   },
   riders: {
     reasons: {
@@ -97,6 +113,10 @@ const takeaway: Messages['takeaway'] = {
     noFriends: "Pas encore d'amis",
     cand: (name, level, star) => `${name} (niv. ${level} · ${star}★)`,
     hire: 'Embaucher',
+    mineTitle: 'Mes livreurs',
+    countShort: (n, cap) => `${n} / ${cap}`,
+    capNote: 'La limite augmente quand votre propre livreur monte de niveau',
+    candSub: (level, star) => `Niv. ${level} · ${star}★`,
   },
 };
 export default takeaway;

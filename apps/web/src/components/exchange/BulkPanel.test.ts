@@ -3,6 +3,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { BulkDto, BulkLotDto, BulkMineDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import { useToastStore } from '../../stores/toast';
 import BulkPanel from './BulkPanel.vue';
 
 vi.mock('../../api/endpoints', () => ({
@@ -52,11 +53,33 @@ const data = (p: Partial<BulkDto> = {}): BulkDto => ({
   recent: [],
   ...p,
 });
-const el = (w: ReturnType<typeof mount>, id: string) => w.get(`[data-testid="${id}"]`);
-const disabled = (w: ReturnType<typeof mount>) => el(w, 'bk-submit').attributes('disabled') !== undefined;
-async function setBid(w: ReturnType<typeof mount>, price: string, qty: string) {
+/** 出价、怎么算都在 Teleport 到 body 的底部面板里：测试里把 teleport 桩掉（界面改版 P8） */
+async function mountPanel() {
+  const w = mount(BulkPanel, { global: { stubs: { teleport: true } } });
+  await flushPromises();
+  return w;
+}
+type W = Awaited<ReturnType<typeof mountPanel>>;
+const el = (w: W, id: string) => w.get(`[data-testid="${id}"]`);
+const disabled = (w: W) => el(w, 'bk-submit').attributes('disabled') !== undefined;
+const value = (w: W, id: string) => (el(w, id).element as HTMLInputElement).value;
+async function setBid(w: W, price: string, qty: string) {
   await el(w, 'bk-price-input').setValue(price);
   await el(w, 'bk-qty-input').setValue(qty);
+}
+/** 失焦：步进器把空的、低于下限的夹回范围 */
+async function blurBoth(w: W) {
+  await el(w, 'bk-price-input').trigger('blur');
+  await el(w, 'bk-qty-input').trigger('blur');
+}
+/** 出价表单在面板里：点“出价 / 改出价”打开 */
+async function openBid(w: W) {
+  await el(w, 'bk-open').trigger('click');
+}
+/** “怎么算”面板的说明条目 */
+async function helpText(w: W) {
+  await el(w, 'bk-help').trigger('click');
+  return w.get('.dt-help').text();
 }
 
 describe('BulkPanel（大宗认购设计 §3.3）', () => {
@@ -69,17 +92,21 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
 
   it('批次看板：份数、起拍价、预计成交价、入围门槛、认购倍数、成团、随机收盘的说明', async () => {
     vi.mocked(endpoints.bulk).mockResolvedValue(data());
-    const w = mount(BulkPanel);
-    await flushPromises();
+    const w = await mountPanel();
     const text = el(w, 'bk-lot').text();
-    expect(text).toContain('10');
-    expect(text).toContain('50,000');
-    expect(el(w, 'bk-price').text()).toContain('55,000');
-    expect(el(w, 'bk-threshold').text()).toContain('55,001');
-    expect(el(w, 'bk-demand').text()).toContain('1.2');
+    expect(text).toContain('共 10 份');
+    expect(text).toContain('起拍价 50,000');
+    // 标签和数分开写（界面改版 P8）
+    expect(el(w, 'bk-price').get('span').text()).toBe('预计成交价');
+    expect(el(w, 'bk-price').get('b').text()).toBe('55,000');
+    expect(el(w, 'bk-threshold').get('span').text()).toBe('入围门槛');
+    expect(el(w, 'bk-threshold').get('b').text()).toBe('55,001');
+    expect(el(w, 'bk-demand').text()).toContain('认购 12 / 10 份 · 1.2 倍');
+    expect(el(w, 'bk-demand').text()).toContain('3 人参与');
     expect(el(w, 'bk-grouped').text()).toContain('已成团');
+    expect(el(w, 'bk-grouped-tag').text()).toBe('已成团');
     expect(text).toContain('最后 5 分钟');
-    expect(el(w, 'bk-help').text()).toContain('4 份');
+    expect(await helpText(w)).toContain('每人最多认购 4 份');
   });
 
   it('第一次出价：单价默认填入围门槛、份数 1；写冻结金额、部分入围提醒；确认后提交', async () => {
@@ -87,10 +114,11 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
     vi.mocked(endpoints.bulkBid).mockResolvedValue(
       data({ mine: mine({ price: 60_000, qty: 2, frozen: 120_000 }) }),
     );
-    const w = mount(BulkPanel);
-    await flushPromises();
-    expect((el(w, 'bk-price-input').element as HTMLInputElement).value).toBe('55001');
-    expect((el(w, 'bk-qty-input').element as HTMLInputElement).value).toBe('1');
+    const w = await mountPanel();
+    expect(el(w, 'bk-open').text()).toBe('出价');
+    await openBid(w);
+    expect(value(w, 'bk-price-input')).toBe('55001');
+    expect(value(w, 'bk-qty-input')).toBe('1');
     await setBid(w, '60000', '2');
     expect(el(w, 'bk-freeze').text()).toContain('120,000');
     expect(el(w, 'bk-partial-hint').text()).toContain('部分');
@@ -101,14 +129,18 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
     await flushPromises();
     expect(confirm.mock.calls[1]![0]).toContain('120,000');
     expect(endpoints.bulkBid).toHaveBeenCalledWith({ lotId: 7, price: 60_000, qty: 2 });
+    // 提交成功后面板关上，卡片上写我的出价
+    expect(w.find('[data-testid="bk-form"]').exists()).toBe(false);
     expect(el(w, 'bk-mine').text()).toContain('60,000');
   });
 
   it('改出价：默认填原值，写至少加到多少；降价、减份数、没改、加价不到 1% 时不能提交；只补冻差额', async () => {
     vi.mocked(endpoints.bulk).mockResolvedValue(data({ mine: mine() }));
-    const w = mount(BulkPanel);
-    await flushPromises();
-    expect((el(w, 'bk-price-input').element as HTMLInputElement).value).toBe('55000');
+    const w = await mountPanel();
+    expect(el(w, 'bk-open').text()).toBe('改出价');
+    await openBid(w);
+    expect(value(w, 'bk-price-input')).toBe('55000');
+    expect(value(w, 'bk-qty-input')).toBe('4');
     expect(el(w, 'bk-min-raise').text()).toContain('55,550');
     expect(disabled(w)).toBe(true);
     for (const [p, q] of [
@@ -120,6 +152,12 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
       await setBid(w, p!, q!);
       expect(disabled(w)).toBe(true);
     }
+    // 步进器的下限是原来的单价和份数：降价、减份数失焦后退回原值（界面改版 P8）
+    await setBid(w, '54000', '3');
+    await blurBoth(w);
+    expect(value(w, 'bk-price-input')).toBe('55000');
+    expect(value(w, 'bk-qty-input')).toBe('4');
+    expect(el(w, 'bk-reason').text()).toBe('还没改出价');
     await setBid(w, '55550', '4');
     expect(disabled(w)).toBe(false);
     expect(el(w, 'bk-freeze').text()).toContain('2,200');
@@ -129,54 +167,72 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
     vi.mocked(endpoints.bulk).mockResolvedValue(
       data({ lot: lot({ qty: 10, demand: 2, price: 2_000, threshold: 1_000, reserve: 1_000 }) }),
     );
-    const w = mount(BulkPanel);
-    await flushPromises();
+    const w = await mountPanel();
+    await openBid(w);
     await setBid(w, '1500', '2');
     expect(el(w, 'bk-freeze').text()).toContain('约付 3,000');
     expect(el(w, 'bk-freeze').text()).not.toContain('4,000');
     vi.mocked(endpoints.bulk).mockResolvedValue(data());
-    const full = mount(BulkPanel);
-    await flushPromises();
+    const full = await mountPanel();
+    await openBid(full);
     await setBid(full, '52000', '2');
     expect(el(full, 'bk-freeze').text()).toContain('照现在的出价不入围');
   });
 
-  it('输入为空、0、小数、超上限、低于起拍价、冻结差额超过银币时不能提交，写原因', async () => {
+  it('输入为空、0、小数、超上限、低于起拍价：步进器夹回合法值；冻结差额超过银币时不能提交，写原因', async () => {
     vi.mocked(endpoints.bulk).mockResolvedValue(data({ coin: 100_000 }));
-    const w = mount(BulkPanel);
-    await flushPromises();
-    for (const [p, q] of [
-      ['', '1'],
-      ['60000', '0'],
-      ['60000.5', '1'],
-      ['60000', '5'],
-      ['49999', '1'],
-      ['60000', '2'],
+    const w = await mountPanel();
+    await openBid(w);
+    // 界面改版 P8 换成步进器：不合法的输入失焦后夹回范围，提交的总是框里的数
+    for (const [p, q, wantP, wantQ] of [
+      ['', '1', '50000', '1'],
+      ['60000', '0', '60000', '1'],
+      ['60000.5', '1', '60000', '1'],
+      ['60000', '5', '60000', '4'],
+      ['49999', '1', '50000', '1'],
     ]) {
-      await setBid(w, p!, q!);
-      expect(disabled(w)).toBe(true);
-      expect(w.find('[data-testid="bk-reason"]').exists()).toBe(true);
+      // 一个框打完、失焦再打下一个（测试里 teleport 桩掉后，父组件一更新面板里的步进器就重建，打了一半的字会丢）
+      await el(w, 'bk-price-input').setValue(p!);
+      await el(w, 'bk-price-input').trigger('blur');
+      await el(w, 'bk-qty-input').setValue(q!);
+      await el(w, 'bk-qty-input').trigger('blur');
+      expect([value(w, 'bk-price-input'), value(w, 'bk-qty-input')]).toEqual([wantP, wantQ]);
     }
+    // 60,000 × 2 份 = 120,000，银币只有 100,000
+    await setBid(w, '60000', '2');
+    expect(disabled(w)).toBe(true);
+    expect(el(w, 'bk-reason').text()).toBe('银币不够冻结');
     await setBid(w, '60000', '1');
     expect(disabled(w)).toBe(false);
+    expect(w.find('[data-testid="bk-reason"]').exists()).toBe(false);
   });
 
   it('冷却中：按钮写还要等几秒、不能提交，到 0 后可以', async () => {
     vi.useFakeTimers();
     vi.mocked(endpoints.bulk).mockResolvedValue(data({ mine: mine({ cooldownLeft: 3 }) }));
-    const w = mount(BulkPanel);
-    await flushPromises();
+    const w = await mountPanel();
+    await openBid(w);
     await setBid(w, '60000', '4');
-    expect(el(w, 'bk-submit').text()).toContain('3');
+    expect(el(w, 'bk-submit').text()).toBe('3 秒后可以再出价');
     expect(disabled(w)).toBe(true);
     await vi.advanceTimersByTimeAsync(3000);
     expect(disabled(w)).toBe(false);
   });
 
+  it('冷却中关掉面板再打开：倒计时接着走，不从头算（P8 终审 I1）', async () => {
+    vi.useFakeTimers();
+    vi.mocked(endpoints.bulk).mockResolvedValue(data({ mine: mine({ cooldownLeft: 3 }) }));
+    const w = await mountPanel();
+    await openBid(w);
+    await vi.advanceTimersByTimeAsync(2000);
+    await openBid(w);
+    await setBid(w, '60000', '4');
+    expect(el(w, 'bk-submit').text()).toBe('1 秒后可以再出价');
+  });
+
   it('我的出价：部分入围写 2 / 4 份和再加价能多入围', async () => {
     vi.mocked(endpoints.bulk).mockResolvedValue(data({ mine: mine() }));
-    const w = mount(BulkPanel);
-    await flushPromises();
+    const w = await mountPanel();
     const t = el(w, 'bk-mine').text();
     expect(t).toContain('入围 2 / 4 份, 再加价可以多入围');
     expect(t).toContain('再加价');
@@ -186,13 +242,13 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
 
   it('门槛不够：写原因、不能出价；没有进行中的批次：写几点开', async () => {
     vi.mocked(endpoints.bulk).mockResolvedValue(data({ blocked: 'exchange_level' }));
-    const w = mount(BulkPanel);
-    await flushPromises();
+    const w = await mountPanel();
     expect(el(w, 'bk-blocked').text()).toContain('20');
+    // 出价表单在面板里，打开面板的按钮也没有（界面改版 P8）
+    expect(w.find('[data-testid="bk-open"]').exists()).toBe(false);
     expect(w.find('[data-testid="bk-submit"]').exists()).toBe(false);
     vi.mocked(endpoints.bulk).mockResolvedValue(data({ lot: null }));
-    const w2 = mount(BulkPanel);
-    await flushPromises();
+    const w2 = await mountPanel();
     expect(el(w2, 'bk-none').text()).toContain('20');
   });
 
@@ -227,8 +283,7 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
         ],
       }),
     );
-    const w = mount(BulkPanel);
-    await flushPromises();
+    const w = await mountPanel();
     const ok = el(w, 'bk-recent-5').text();
     expect(ok).toContain('53,000');
     expect(ok).toContain('1.2');
@@ -243,24 +298,26 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
         mine: mine({ won: null, estimate: null }),
       }),
     );
-    const w = mount(BulkPanel);
-    await flushPromises();
+    const w = await mountPanel();
     expect(el(w, 'bk-blind').text()).toContain('收盘后公布');
     const m = el(w, 'bk-mine').text();
     expect(m).toContain('收盘后公布');
     expect(m).not.toContain('入围 2');
-    // 不公布不等于没入围：不用红字（终审）
-    expect(el(w, 'bk-mine-status').classes()).not.toContain('text-danger');
-    expect(el(w, 'bk-mine-status').classes()).toContain('text-muted');
+    // 不公布不等于没入围：不用红字（终审）；界面改版 P8 换成灰色小标签
+    expect(el(w, 'bk-mine-status').classes()).not.toContain('dt-tag-danger');
+    expect(el(w, 'bk-mine-status').classes()).toContain('dt-tag-mute');
+    expect(m).not.toContain('照现在收盘约付');
+    await openBid(w);
     expect(el(w, 'bk-freeze').text()).toContain('收盘后公布');
-    expect(el(w, 'bk-help').text()).toContain('最后 60 分钟');
+    expect(await helpText(w)).toContain('最后 60 分钟');
   });
 
   it('区服不停更（blindMin 0）：说明里没有停更这一条', async () => {
     vi.mocked(endpoints.bulk).mockResolvedValue(data({ blindMin: 0 }));
-    const w = mount(BulkPanel);
-    await flushPromises();
-    expect(el(w, 'bk-help').text()).not.toContain('停更');
+    const w = await mountPanel();
+    const help = await helpText(w);
+    expect(help).toContain('随时可能收盘');
+    expect(help).not.toContain('停更');
     expect(w.find('[data-testid="bk-blind"]').exists()).toBe(false);
   });
 
@@ -268,11 +325,12 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
     vi.mocked(endpoints.bulk).mockResolvedValue(data());
     vi.mocked(endpoints.bulkBid).mockRejectedValue(new Error('x'));
     vi.spyOn(window, 'confirm').mockReturnValue(true);
-    const w = mount(BulkPanel);
-    await flushPromises();
+    const w = await mountPanel();
+    await openBid(w);
     await setBid(w, '60000', '1');
     await el(w, 'bk-submit').trigger('click');
     await flushPromises();
+    expect(useToastStore().items.at(-1)!.text).toBe('出价失败');
     expect(endpoints.bulk).toHaveBeenCalledTimes(2);
   });
 });

@@ -42,6 +42,11 @@ export default {
     '7 级食材系统不收, 已有的库存照样卖。',
   ] as string[],
   search: '搜索食材',
+  /** 界面改版 P8：上面卡片的规则一行、筛选和买卖切换的读屏名 */
+  rulesTitle: '交易规则和系统报价',
+  rulesSub: '挂单价在当天参考价的一半到两倍之间',
+  filterLabel: '筛选',
+  sideLabel: '买还是卖',
   saleTag: (n: number) => `卖 ${n}`,
   buyTag: (n: number) => `收 ${n}`,
   legendSale: '卖 N',

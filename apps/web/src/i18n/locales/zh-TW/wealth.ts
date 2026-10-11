@@ -24,6 +24,11 @@ export default {
   totalFull: (total: string) => `存著的合計已經到了 ${total} 銀幣的上限`,
   notEnough: '銀幣不夠',
   deposit: '存入',
+  /** 介面改版 P8 */
+  tiersTitle: '存一筆',
+  termLabel: '存期',
+  termDays: (days: number) => `${days} 天`,
+  withdrawShort: '提前取出',
   depositConfirm: (amount: string, days: number, packs: number, pack: string, earlyPct: number) =>
     `確認存入 ${amount} 銀幣？\n${days} 天后到期, 本金全退, 另得「${pack}」×${packs}；提前取出只退 ${earlyPct}%, 沒有補給包。`,
   deposited: '已存入',

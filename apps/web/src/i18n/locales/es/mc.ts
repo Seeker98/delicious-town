@@ -95,6 +95,7 @@ const mc: Messages['mc'] = {
     noWant: 'No tienes lo que quiere. Otros ingredientes no cuentan para el valor de la propina',
     numFood: 'Raciones',
     tip: 'Dar propina',
+    kindLabel: 'Dar propina con',
   },
 };
 export default mc;

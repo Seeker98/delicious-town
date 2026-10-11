@@ -18,6 +18,8 @@ const fund: Messages['fund'] = {
   iconLine: (title) => `Avec le titre temporaire «\u202f${title}\u202f», qui expire avec la médaille`,
   days: (n) => `Durée\u202f: ${n} ${plFr(n, 'jour', 'jours')}`,
   deposit: 'Déposer',
+  tiersTitle: 'Faire un dépôt',
+  oneAtATime: 'Récupérez ou retirez d’abord pour déposer à nouveau.',
   notEnough: 'Pas assez de pièces',
   depositConfirm: (tier, coin, back, days) =>
     `Déposer ${coin} ${plFr(coin, 'pièce', 'pièces')} dans le Fonds de développement (${tier})\u202f?\nÉchéance dans ${days} ${plFr(days, 'jour', 'jours')}\u202f: vous récupérerez ${back} ${plFr(back, 'pièce', 'pièces')} et une médaille. Un retrait anticipé n'en rend qu'une partie, sans médaille.`,

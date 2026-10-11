@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    trade1012:
+      'Shop, Exchange, Acquisitions, Ichiban Kuji, Predictions, Delivery and Bank redone: the shop lists one item per row with type filters and a price button that opens a buy panel; the exchange lists one ingredient per row with its change, and the order book and order form open from the bottom, as do futures and bulk bids; acquisition rankings open a panel showing what the owner gets and the tax; kuji shows one row per prize and results in a panel; each prediction has its own page with a chart and your profit either way; delivery shows each requirement with a tick or cross, and you pick the rider in a panel; the hip-hop boy now starts folded into one row',
     pages1011:
       'Restaurant pages redone: all 12 avatars now have pictures, and avatars and doors are picture tiles; the gear page lists one slot per row with the full name, stats are bars (dark purple for points, light purple for gear), and swapping gear and assigning points open from the bottom; gear details show an upgrade-chance ring and gem slots; Today in Quests is one activity bar with its tiers, and quests are rows in one card; recipes show one of three buttons depending on whether you can learn them, and specials show 12 per page; the storage is now a grid with a panel for each item; tapping a table opens a panel, and Income has a small chart of the last 30 rounds',
     market1011:

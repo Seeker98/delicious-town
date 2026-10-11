@@ -27,6 +27,10 @@ const wealth: Messages['wealth'] = {
   totalFull: (total) => `Vos placements ont atteint la limite de ${total} pièces`,
   notEnough: 'Pas assez de pièces',
   deposit: 'Placer',
+  tiersTitle: 'Faire un placement',
+  termLabel: 'Durée',
+  termDays: (days) => `${days} ${days === 1 ? 'jour' : 'jours'}`,
+  withdrawShort: 'Retirer avant',
   depositConfirm: (amount, days, packs, pack, earlyPct) =>
     `Placer ${amount} pièces\u202f?\nÉchéance dans ${days} ${plFr(days, 'jour', 'jours')}\u202f: tout le capital revient, plus «\u202f${pack}\u202f»\u202f×\u202f${packs}. Un retrait anticipé ne rend que ${earlyPct}\u202f%, sans colis.`,
   deposited: 'Placement effectué',

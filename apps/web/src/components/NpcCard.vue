@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useT } from '../composables/useT';
+import type { ArtName } from '../art/generated/names';
 import MascotCard from './MascotCard.vue';
 
 /** 功能页上的 NPC（问题记录 441、443）：头像加一句台词，点一下换一句；只说话 */
@@ -16,11 +17,20 @@ const ICON: Record<NpcCardKey, string> = {
   fanDao: 'bi-search',
   xiaoKai: 'bi-flag',
 };
+/** 已经画了头像的 NPC（界面改版 P8） */
+const ART: Partial<Record<NpcCardKey, ArtName>> = { gary: 'npc-gary', garyWealth: 'npc-gary' };
 const props = defineProps<{ npc: NpcCardKey }>();
 const t = useT();
 const lines = computed(() => t.value.npc[props.npc].lines.map((text) => ({ text, weight: 1 })));
 </script>
 
 <template>
-  <MascotCard :name="t.npc[npc].name" :icon="ICON[npc]" :lines="lines" :ready="true" :testid="`npc-${npc}`" />
+  <MascotCard
+    :name="t.npc[npc].name"
+    :icon="ICON[npc]"
+    :art="ART[npc]"
+    :lines="lines"
+    :ready="true"
+    :testid="`npc-${npc}`"
+  />
 </template>

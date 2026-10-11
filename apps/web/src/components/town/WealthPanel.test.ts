@@ -56,11 +56,14 @@ describe('WealthPanel（理财设计 §3.4）', () => {
   it('默认 3 天、1 档：写到期得 1 个包、还能存 10,000,000；确认后存入 (3, 1000000)', async () => {
     vi.mocked(endpoints.wealth).mockResolvedValue(view());
     vi.mocked(endpoints.wealthDeposit).mockResolvedValue(view({ deposits: [dep({ coin: M, packs: 1 })] }));
-    const w = mount(WealthPanel);
+    const w = mount(WealthPanel, { global: { stubs: { teleport: true } } });
     await flushPromises();
     expect(btn(w, 'we-left').text()).toContain('10,000,000');
     expect(btn(w, 'we-summary').text()).toContain('×1');
-    expect(btn(w, 'we-help').text()).toContain('95%');
+    // 界面改版 P8：“怎么算”收进一行，点开面板看规则（提前取出退 95%）
+    expect(w.find('.dt-sheet').exists()).toBe(false);
+    await btn(w, 'we-help').trigger('click');
+    expect(w.get('.dt-sheet .dt-help').text()).toContain('95%');
     const confirm = vi.spyOn(window, 'confirm').mockReturnValueOnce(false).mockReturnValueOnce(true);
     await btn(w, 'we-deposit').trigger('click');
     expect(endpoints.wealthDeposit).not.toHaveBeenCalled();
@@ -73,20 +76,35 @@ describe('WealthPanel（理财设计 §3.4）', () => {
     expect(w.find('[data-testid="we-d-7"]').exists()).toBe(true);
   });
 
-  it('数量为空、0、小数、超过还能存的、超过银币时不能存（Review Focus 5）', async () => {
+  it('数量为空、0、小数、超过还能存的都按 1 ~ 还能存的夹住；超过银币、一档都存不了时不能存（Review Focus 5）', async () => {
     vi.mocked(endpoints.wealth).mockResolvedValue(
       view({ deposits: [dep({ coin: 9 * M })], coin: 1_500_000 }),
     );
     const w = mount(WealthPanel);
     await flushPromises();
     expect(disabled(w)).toBe(false);
+    // 界面改版 P8：数量是步进器，打错的数失焦后夹回范围里，按夹后的数存（确认框里写金额）
+    const qty = btn(w, 'we-qty');
     for (const v of ['', '0', '1.5']) {
-      await btn(w, 'we-qty').setValue(v);
-      expect(disabled(w)).toBe(true);
+      await qty.setValue(v);
+      await qty.trigger('blur');
+      expect((qty.element as HTMLInputElement).value).toBe('1');
+      expect(btn(w, 'we-summary').text()).toContain('1,000,000');
+      expect(disabled(w)).toBe(false);
     }
-    await btn(w, 'we-qty').setValue('2');
-    expect(disabled(w)).toBe(true);
+    // 超过还能存的：马上退回上限 (还能存 1 档)
+    await qty.setValue('2');
+    expect((qty.element as HTMLInputElement).value).toBe('1');
+    expect(btn(w, 'we-summary').text()).toContain('1,000,000');
     expect(btn(w, 'we-left').text()).toContain('1,000,000');
+    // 合计满了：数量框灰掉，写原因，不能存
+    vi.mocked(endpoints.wealth).mockResolvedValue(view({ deposits: [dep({ coin: 10 * M })] }));
+    const full = mount(WealthPanel);
+    await flushPromises();
+    expect(btn(full, 'we-qty').attributes('disabled')).toBeDefined();
+    expect(btn(full, 'we-blocked').text()).toContain('10,000,000');
+    expect(full.find('[data-testid="we-summary"]').exists()).toBe(false);
+    expect(disabled(full)).toBe(true);
     vi.mocked(endpoints.wealth).mockResolvedValue(view({ coin: 1_500_000 }));
     const w2 = mount(WealthPanel);
     await flushPromises();

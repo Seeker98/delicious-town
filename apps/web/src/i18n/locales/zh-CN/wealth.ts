@@ -23,6 +23,11 @@ export default {
   totalFull: (total: string) => `存着的合计已经到了 ${total} 银币的上限`,
   notEnough: '银币不够',
   deposit: '存入',
+  /** 界面改版 P8 */
+  tiersTitle: '存一笔',
+  termLabel: '存期',
+  termDays: (days: number) => `${days} 天`,
+  withdrawShort: '提前取出',
   depositConfirm: (amount: string, days: number, packs: number, pack: string, earlyPct: number) =>
     `确认存入 ${amount} 银币？\n${days} 天后到期, 本金全退, 另得「${pack}」×${packs}；提前取出只退 ${earlyPct}%, 没有补给包。`,
   deposited: '已存入',

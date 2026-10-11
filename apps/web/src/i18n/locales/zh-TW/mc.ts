@@ -98,5 +98,6 @@ export default {
     noWant: '你沒有他想要的食材, 給別的食材不算打賞價值',
     numFood: '份數',
     tip: '打賞',
+    kindLabel: '打賞什麼',
   },
 };

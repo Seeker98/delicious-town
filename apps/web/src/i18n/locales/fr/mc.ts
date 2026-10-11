@@ -98,6 +98,7 @@ const mc: Messages['mc'] = {
       "Vous n'avez pas ce qu'il veut. Les autres ingrédients ne comptent pas dans la valeur du pourboire",
     numFood: 'Parts',
     tip: 'Donner',
+    kindLabel: 'Donner quoi',
   },
 };
 export default mc;
