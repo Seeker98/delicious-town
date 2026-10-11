@@ -120,12 +120,21 @@ async function sell(it: StoreItemDto) {
   const n = sellN(it);
   const coin = n * (it.sellPrice ?? 0);
   const title = t.value.store.sellConfirm(n, catalog.goodsName(it.goodsId), formatNum(coin));
-  if (!(await confirm.ask({ title, ok: t.value.store.sell }))) return;
+  // 先收起道具面板再问，取消了再打开（和厨具页一样，不叠两层面板）
+  picked.value = null;
+  if (!(await confirm.ask({ title, ok: t.value.store.sell }))) {
+    picked.value = it.goodsId;
+    return;
+  }
   void run(() => endpoints.sell(it.goodsId, n), t.value.store.sellFailed);
 }
 async function discard(it: StoreItemDto) {
   const title = t.value.store.discardConfirm(catalog.goodsName(it.goodsId));
-  if (!(await confirm.ask({ title, ok: t.value.store.discard, danger: true }))) return;
+  picked.value = null;
+  if (!(await confirm.ask({ title, ok: t.value.store.discard, danger: true }))) {
+    picked.value = it.goodsId;
+    return;
+  }
   void run(() => endpoints.discard(it.goodsId), t.value.store.discardFailed);
 }
 /** 点一格弹出面板（界面改版 P7，和橱柜一样）；道具用完、卖完不在了就收起 */
@@ -161,6 +170,8 @@ watch(range, () => void loadRecords());
 watch(
   tab,
   (k) => {
+    // 换标签收起道具面板（浏览器前进后退回来时不自己弹出来）
+    picked.value = null;
     if (k === 'souvenirs') void loadSouvenirs();
     if (k === 'records') void loadRecords();
   },

@@ -302,7 +302,13 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
           }}
         </h2>
       </div>
-      <div v-if="allIds.size > 0" class="dt-pills dt-pills-scroll" data-testid="mc-filters">
+      <div
+        v-if="allIds.size > 0"
+        class="dt-pills dt-pills-scroll"
+        role="group"
+        :aria-label="t.mc.filter.levelLabel"
+        data-testid="mc-filters"
+      >
         <span class="dt-select-pill">
           <select v-model="road" :aria-label="t.mc.filter.roadLabel" data-testid="mc-road">
             <option v-for="x in roadTabs" :key="String(x.key)" :value="x.key">{{ x.label }}</option>

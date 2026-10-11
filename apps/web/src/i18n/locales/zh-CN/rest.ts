@@ -5,7 +5,7 @@ export default {
     toPoints: (n: number) => `有 ${n} 点可加`,
     toEquip: '厨具与加点',
     /** 属性下面一句（界面改版 P7） */
-    attrsNote: '这是加点的属性, 不含厨具。',
+    attrsNote: '这些是不含厨具的属性。',
     pointsLeft: (n: number) => `还有 ${n} 点没加, `,
     goPoints: '去加点',
     capacity: '容量',
@@ -152,7 +152,7 @@ export default {
     weeklyFullClaimed: '✓ 已领取',
     /** 界面改版 P7：今日活跃的进度条和档位行、任务行、章和支线卡片头 */
     actTitle: '今日活跃',
-    double: '奖励翻倍 ',
+    double: '奖励翻倍',
     kujiTier: (num: number) => `另送一番赏抽赏券 ×${num}`,
     claimedShort: '已领',
     needShort: (n: number) => `还差 ${n}`,

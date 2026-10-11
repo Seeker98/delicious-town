@@ -39,6 +39,20 @@ describe('底部面板（界面改版 P3，设计 §5 第 6、7 条）', () => {
     expect(d.text()).toContain('正文');
   });
 
+  it('确认面板（top）有 is-top，层级压在页面自己的面板上面（P7 终审 C1）', () => {
+    const stubs = { teleport: true };
+    expect(
+      mount(DtSheet, { props: { open: true, title: 'x', top: true }, global: { stubs } })
+        .get('.dt-sheet-wrap')
+        .classes(),
+    ).toContain('is-top');
+    expect(
+      mount(DtSheet, { props: { open: true, title: 'x' }, global: { stubs } })
+        .get('.dt-sheet-wrap')
+        .classes(),
+    ).not.toContain('is-top');
+  });
+
   it('按 Esc、点遮罩都是关掉', async () => {
     const w = mount(DtSheet, { props: { open: true, title: 't' }, global: { stubs: { teleport: true } } });
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));

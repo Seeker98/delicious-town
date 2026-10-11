@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { EquipDto, EquipOverviewDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import type { UiArtName } from '../art/generated/names';
@@ -41,6 +41,7 @@ const picked = ref(new Set<number>());
 const way = ref<'salvage' | 'sell'>('salvage');
 const busy = ref(false);
 const route = useRoute();
+const router = useRouter();
 const restStore = useRestaurantStore();
 /** 还没加的属性点；加点放在底部面板里（界面改版 P7） */
 const pointsLeft = computed(() => restStore.rest?.attrLeft ?? 0);
@@ -191,6 +192,8 @@ onMounted(async () => {
   if (route.hash === '#attr-points') {
     await restStore.refresh().catch(() => undefined);
     if (pointsLeft.value > 0) pointsOpen.value = true;
+    // 打开过就把锚点去掉：从厨具详情返回时不再自己弹出来（P7 终审）
+    void router.replace({ hash: '' });
   }
 });
 </script>

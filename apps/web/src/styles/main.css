@@ -1280,6 +1280,10 @@ details.dt-card > summary {
   flex-direction: column;
   justify-content: flex-end;
 }
+/* 确认面板永远在最上面（P7 终审 C1：后挂载的页面面板会盖住先挂载的确认面板） */
+.dt-sheet-wrap.is-top {
+  z-index: 1070;
+}
 .dt-sheet-scrim {
   position: absolute;
   inset: 0;
@@ -1657,11 +1661,12 @@ details.dt-card > summary {
   color: var(--dt-ink-success);
 }
 .dt-grade-name {
-  flex: 0 0 4.5em;
+  flex: 0 0 auto;
+  max-width: 40%;
+  min-width: 4.5em;
   padding-top: 5px;
   font-size: 13px;
   color: var(--dt-muted);
-  white-space: nowrap;
 }
 .dt-grade-foods {
   display: flex;
@@ -3501,6 +3506,13 @@ details.dt-card > summary {
 .dt-pills-scroll > button {
   flex-shrink: 0;
 }
+/* 宽屏上鼠标不好横滑：换行（原来活动条在 768px 起换行，P7 终审） */
+@media (min-width: 768px) {
+  .dt-pills-scroll {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}
 .dt-act-detail {
   padding: 14px 12px 12px;
 }
@@ -3631,13 +3643,17 @@ details.dt-card > summary {
   color: var(--dt-ink-danger);
   font-weight: 600;
 }
+/* 外文按钮、标签长（“Déménagez dans … pour l'apprendre”）：最多占四成宽，放不下就折行，不把菜名挤没（P7 终审 I2） */
 .dt-cb-master {
-  white-space: nowrap;
+  max-width: 40%;
   font-size: 12px;
+  white-space: normal;
+  line-height: 1.25;
 }
 .dt-cb-state {
-  flex-shrink: 0;
-  white-space: nowrap;
+  max-width: 40%;
+  white-space: normal;
+  text-align: right;
 }
 .dt-pager {
   display: flex;

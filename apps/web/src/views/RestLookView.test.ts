@@ -240,4 +240,36 @@ describe('RestLookView', () => {
     expect(endpoints.iconBuy).toHaveBeenCalledWith('oct26_l');
     spy.mockRestore();
   });
+
+  it('点开关以后那一行不挪位置（P7 终审 I3：原来按展示中在前重排，刚关掉的会跳到后面、被收起）', async () => {
+    const icon = (id: number, shown: boolean) => ({
+      id,
+      key: `k${id}`,
+      title: `图标${id}`,
+      desc: '',
+      shown,
+      expiresAt: null,
+    });
+    vi.mocked(endpoints.myLooks).mockResolvedValue({
+      door: 0,
+      ownedDoors: [0],
+      avatar: 1,
+      notice: '',
+      icons: [icon(1, false), icon(2, true)],
+    });
+    const w = mount(RestLookView);
+    await flushPromises();
+    const order = () => w.findAll('[role="switch"]').map((x) => x.attributes('data-testid'));
+    expect(order()).toEqual(['icon-2', 'icon-1']);
+    vi.mocked(endpoints.myLooks).mockResolvedValue({
+      door: 0,
+      ownedDoors: [0],
+      avatar: 1,
+      notice: '',
+      icons: [icon(1, true), icon(2, false)],
+    });
+    await w.get('[data-testid="icon-2"]').trigger('change');
+    await flushPromises();
+    expect(order()).toEqual(['icon-2', 'icon-1']);
+  });
 });

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import type { MyLooksDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import DtArt from '../components/DtArt.vue';
@@ -54,9 +54,28 @@ const shownCount = computed(() => mine.value?.icons.filter((i) => i.shown).lengt
 /** 展示中的排前面；超过 8 个时只列展示中的和前几个没展示的，其余收起（界面改版 P7） */
 const ICON_ROWS = 8;
 const iconsAll = ref(false);
+/**
+ * 顺序只在第一次读到时按“展示中在前”排好，之后开关不重排（P7 终审 I3：一点开关那一行就跳走、可能被收起）；
+ * 新得到的图标接在后面
+ */
+const iconOrder = ref<number[]>([]);
+watch(
+  () => mine.value?.icons,
+  (list) => {
+    if (!list) return;
+    const known = new Set(iconOrder.value);
+    if (iconOrder.value.length === 0)
+      iconOrder.value = [...list.filter((i) => i.shown), ...list.filter((i) => !i.shown)].map((i) => i.id);
+    else iconOrder.value = [...iconOrder.value, ...list.filter((i) => !known.has(i.id)).map((i) => i.id)];
+  },
+);
 const iconsSorted = computed(() => {
   const list = mine.value?.icons ?? [];
-  return [...list.filter((i) => i.shown), ...list.filter((i) => !i.shown)];
+  const pos = (id: number) => {
+    const i = iconOrder.value.indexOf(id);
+    return i < 0 ? Number.MAX_SAFE_INTEGER : i;
+  };
+  return [...list].sort((a, b) => pos(a.id) - pos(b.id));
 });
 const iconsVisible = computed(() =>
   iconsAll.value || iconsSorted.value.length <= ICON_ROWS

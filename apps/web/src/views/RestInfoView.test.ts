@@ -68,7 +68,7 @@ describe('RestInfoView', () => {
     expect(w.get('[data-testid="info-attrs"]').text()).toContain('幸运6');
     expect(w.find('input').exists()).toBe(false);
     // 界面改版 P7：一句说明，句末是句中链接“去加点”
-    expect(w.get('.dt-attr-note').text()).toBe('这是加点的属性, 不含厨具。还有 3 点没加, 去加点');
+    expect(w.get('.dt-attr-note').text()).toBe('这些是不含厨具的属性。还有 3 点没加, 去加点');
     const link = w.find('[data-testid="to-points"]');
     expect(link.text()).toBe('去加点');
     expect(link.classes()).toContain('dt-go');
