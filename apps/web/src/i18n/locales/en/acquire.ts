@@ -6,8 +6,12 @@ const acquire: Messages['acquire'] = {
   tabs: { price: 'Valuations', market: 'For sale', invest: 'Investors', mine: 'Mine' },
   loadFailed: 'Failed to load acquisitions',
   failed: 'Action failed',
-  rule: (got, tax, max, div, bonus, days) =>
-    `To acquire someone's restaurant you pay its valuation: the previous owner (or the restaurant itself, if it was independent) gets ${got} and ${tax} goes to tax. You can own up to ${max} restaurants. Every day an acquired restaurant pays its owner a dividend of ${div} of the previous day's settlement coins, plus ${bonus} more on days it tended for the owner. An acquired restaurant can buy itself back at its valuation, and then can't be acquired again for ${days} days.`,
+  ruleItems: (got, tax, max, div, bonus, days) => [
+    `To acquire someone's restaurant you pay its valuation: the previous owner (or the restaurant itself, if it was independent) gets ${got} and ${tax} goes to tax`,
+    `You can own up to ${max} restaurants`,
+    `Every day an acquired restaurant pays its owner a dividend of ${div} of the previous day's settlement coins, plus ${bonus} more on days it tended for the owner`,
+    `An acquired restaurant can buy itself back at its valuation, and then can't be acquired again for ${days} days`,
+  ],
   price: (coin) => `Valuation ${coin}`,
   heat: (h) => `Heat ${h}`,
   owner: (name) => `Owner: ${name}`,

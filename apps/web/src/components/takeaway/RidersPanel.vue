@@ -86,7 +86,7 @@ async function dismiss(r: TakeawayRiderDto) {
         :data-testid="`rider-${r.id}`"
       >
         <span class="dt-row-main">
-          <span class="dt-row-title"
+          <span class="dt-row-title is-strong"
             >{{ r.name }}{{ r.self ? t.takeaway.riders.self : ''
             }}<span class="dt-tag-primary">{{ t.takeaway.riders.level(r.level) }}</span
             ><span class="dt-tag-mute">{{ t.takeaway.riders.busy(r.busy, r.maxNum) }}</span></span
@@ -119,7 +119,7 @@ async function dismiss(r: TakeawayRiderDto) {
       <div v-else class="dt-card dt-rows-card">
         <div v-for="c in cands" :key="c.restId" class="dt-row dt-row-wrap" :data-testid="`cand-${c.restId}`">
           <span class="dt-row-main">
-            <span class="dt-row-title">{{ c.name }}</span>
+            <span class="dt-row-title is-strong">{{ c.name }}</span>
             <span class="dt-row-sub"
               >{{ t.takeaway.riders.candSub(c.level, c.star)
               }}<span v-if="hireBlock(c)" class="dt-tag-mute ms-1" :data-testid="`hire-why-${c.restId}`">{{

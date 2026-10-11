@@ -5,8 +5,13 @@ export default {
   tabs: { price: '身價榜', market: '在售', invest: '投資榜', mine: '我的' },
   loadFailed: '讀取收購資訊失敗',
   failed: '操作失敗',
-  rule: (got: string, tax: string, max: number, div: string, bonus: string, days: number) =>
-    `收購別人的餐廳要付它的身價: 原主人 (沒被收購的店是它自己) 得 ${got}, ${tax} 是稅；名下最多 ${max} 家。被收購的店每天給老闆分紅, 是前一天結算銀幣的 ${div}, 替老闆打理過的那天再多 ${bonus}。被收購的店可以按身價贖身, 贖身後 ${days} 天內不能再被收購。`,
+  /** 收購規則（介面改版 P8 使用者反饋：一條一行，不寫成一整段） */
+  ruleItems: (got: string, tax: string, max: number, div: string, bonus: string, days: number) => [
+    `收購別人的餐廳要付它的身價: 原主人 (沒被收購的店是它自己) 得 ${got}, ${tax} 是稅`,
+    `名下最多 ${max} 家`,
+    `被收購的店每天給老闆分紅, 是前一天結算銀幣的 ${div}；替老闆打理過的那天再多 ${bonus}`,
+    `被收購的店可以按身價贖身, 贖身後 ${days} 天內不能再被收購`,
+  ],
   price: (coin: string) => `身價 ${coin}`,
   heat: (h: string) => `熱度 ${h}`,
   owner: (name: string) => `老闆: ${name}`,

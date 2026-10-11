@@ -100,7 +100,7 @@ function gains(r: TakeawayClaimDto): string {
       <div class="dt-card dt-rows-card">
         <div v-for="d in arrived" :key="d.id" class="dt-row dt-row-wrap" :data-testid="`delivery-${d.id}`">
           <span class="dt-row-main">
-            <span class="dt-row-title"
+            <span class="dt-row-title is-strong"
               >{{ dishName(d) }}<span class="dt-tag-mute">{{ TAKEAWAY_GRADES[d.grade] }}</span
               ><span v-if="d.private" class="dt-tag-primary">{{ t.takeaway.private }}</span
               ><span v-if="d.double" class="dt-tag-primary">{{ t.takeaway.deliveries.double }}</span
@@ -127,7 +127,7 @@ function gains(r: TakeawayClaimDto): string {
       <div class="dt-card dt-rows-card">
         <div v-for="d in onWay" :key="d.id" class="dt-row dt-row-wrap" :data-testid="`delivery-${d.id}`">
           <span class="dt-row-main">
-            <span class="dt-row-title"
+            <span class="dt-row-title is-strong"
               >{{ dishName(d) }}<span class="dt-tag-mute">{{ TAKEAWAY_GRADES[d.grade] }}</span
               ><span v-if="d.private" class="dt-tag-primary">{{ t.takeaway.private }}</span
               ><span v-if="d.double" class="dt-tag-primary">{{ t.takeaway.deliveries.double }}</span></span

@@ -6,8 +6,12 @@ const acquire: Messages['acquire'] = {
   tabs: { price: 'Valoraciones', market: 'En venta', invest: 'Inversores', mine: 'Lo mío' },
   loadFailed: 'No se pudieron cargar las adquisiciones',
   failed: 'La acción falló',
-  rule: (got, tax, max, div, bonus, days) =>
-    `Para adquirir el restaurante de otro pagas su valoración: el dueño anterior (o el propio restaurante, si era independiente) recibe el ${got} y el ${tax} es impuesto. Puedes tener hasta ${max} restaurantes. Cada día un restaurante adquirido paga a su dueño un dividendo del ${div} de las monedas de liquidación del día anterior, y un ${bonus} más los días en que atendió al dueño. Un restaurante adquirido puede recomprarse por su valoración y después no puede volver a ser adquirido durante ${days} días.`,
+  ruleItems: (got, tax, max, div, bonus, days) => [
+    `Para adquirir el restaurante de otro pagas su valoración: el dueño anterior (o el propio restaurante, si era independiente) recibe el ${got} y el ${tax} es impuesto`,
+    `Puedes tener hasta ${max} restaurantes`,
+    `Cada día un restaurante adquirido paga a su dueño un dividendo del ${div} de las monedas de liquidación del día anterior, y un ${bonus} más los días en que atendió al dueño`,
+    `Un restaurante adquirido puede recomprarse por su valoración y después no puede volver a ser adquirido durante ${days} días`,
+  ],
   price: (coin) => `Valoración ${coin}`,
   heat: (h) => `Popularidad ${h}`,
   owner: (name) => `Dueño: ${name}`,

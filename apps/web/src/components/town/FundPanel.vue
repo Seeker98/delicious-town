@@ -149,7 +149,7 @@ onMounted(load);
           >
             <span class="dt-row-ico"><DtArt name="res-medal" :size="24" /></span>
             <span class="dt-row-main">
-              <span class="dt-row-title">{{ tierName(x.key) }}</span>
+              <span class="dt-row-title is-strong">{{ tierName(x.key) }}</span>
               <span class="dt-row-sub">{{ t.fund.tierLine(formatNum(x.coin), formatNum(x.back)) }}</span>
               <span class="dt-row-sub"
                 >{{ t.fund.medalLine(catalog.goodsName(x.medal), pct(x.expRate)) }} ·

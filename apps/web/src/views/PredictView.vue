@@ -132,7 +132,7 @@ onMounted(() => void loadList());
           :data-testid="`pd-ended-${e.id}`"
         >
           <span class="dt-row-main">
-            <span class="dt-row-title">{{ predictTitle(e) }}</span>
+            <span class="dt-row-title is-strong">{{ predictTitle(e) }}</span>
             <span class="dt-row-sub"
               ><span :class="endedTagClass(e)" data-testid="pd-ended-tag">{{ endedTag(e) }}</span
               >{{ t.predict.endedHold(e.yes, e.no)

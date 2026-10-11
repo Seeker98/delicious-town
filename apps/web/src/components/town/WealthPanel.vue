@@ -199,7 +199,7 @@ onMounted(load);
             :data-testid="`we-d-${x.id}`"
           >
             <span class="dt-row-main">
-              <span class="dt-row-title"
+              <span class="dt-row-title is-strong"
                 >{{ t.wealth.line(formatNum(x.coin), x.days)
                 }}<span v-if="x.mature" class="dt-tag-ok">{{ t.wealth.mature }}</span></span
               >

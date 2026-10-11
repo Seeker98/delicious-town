@@ -4699,3 +4699,7 @@ button.dt-row {
   line-height: 1;
   color: var(--dt-primary-ink);
 }
+/* 行里的主名字加粗（P8 用户反馈：预测已结束的题目、外卖菜名和骑手名、存款的金额和期限、基金档位） */
+.dt-row-title.is-strong {
+  font-weight: 600;
+}

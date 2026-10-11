@@ -532,18 +532,21 @@ onMounted(load);
 
     <DtSheet :open="ruleOpen" :title="t.acquire.rulesTitle" @close="ruleOpen = false">
       <div v-if="view" class="dt-help" data-testid="acquire-rule">
-        <p>
-          {{
-            t.acquire.rule(
+        <ul>
+          <li
+            v-for="(x, i) in t.acquire.ruleItems(
               pct(1 - view.taxRate),
               pct(view.taxRate),
               view.maxHoldings,
               pct(view.dividendRate),
               pct(view.tendBonus),
               view.protectDays,
-            )
-          }}
-        </p>
+            )"
+            :key="i"
+          >
+            {{ x }}
+          </li>
+        </ul>
       </div>
     </DtSheet>
   </div>

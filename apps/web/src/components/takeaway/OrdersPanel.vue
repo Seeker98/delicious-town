@@ -126,7 +126,7 @@ function refresh() {
       <div v-else class="dt-card dt-rows-card">
         <div v-for="o in data.orders" :key="o.id" class="dt-row dt-row-wrap" :data-testid="`order-${o.id}`">
           <span class="dt-row-main">
-            <span class="dt-row-title"
+            <span class="dt-row-title is-strong"
               >{{ dishName(o) }}<span class="dt-tag-mute">{{ TAKEAWAY_GRADES[o.grade] }}</span
               ><span v-if="o.private" class="dt-tag-primary">{{ t.takeaway.private }}</span></span
             >

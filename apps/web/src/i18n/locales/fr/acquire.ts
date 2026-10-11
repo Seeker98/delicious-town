@@ -6,8 +6,12 @@ const acquire: Messages['acquire'] = {
   tabs: { price: 'Valorisations', market: 'En vente', invest: 'Investisseurs', mine: 'Les miens' },
   loadFailed: 'Impossible de charger les rachats',
   failed: "L'action a échoué",
-  rule: (got, tax, max, div, bonus, days) =>
-    `Pour racheter le restaurant d'un autre, vous payez sa valorisation\u202f: l'ancien propriétaire (ou le restaurant lui-même s'il était indépendant) reçoit ${got} et ${tax} part en taxe. Vous pouvez posséder jusqu'à ${max} restaurants. Chaque jour, un restaurant racheté verse à son propriétaire un dividende de ${div} des pièces de règlement de la veille, et ${bonus} de plus les jours où il s'est occupé du propriétaire. Un restaurant racheté peut se racheter à sa valorisation\u202f; il ne peut alors plus être racheté pendant ${days} jours.`,
+  ruleItems: (got, tax, max, div, bonus, days) => [
+    `Pour racheter le restaurant d'un autre, vous payez sa valorisation\u202f: l'ancien propriétaire (ou le restaurant lui-même s'il était indépendant) reçoit ${got} et ${tax} part en taxe`,
+    `Vous pouvez posséder jusqu'à ${max} restaurants`,
+    `Chaque jour, un restaurant racheté verse à son propriétaire un dividende de ${div} des pièces de règlement de la veille, et ${bonus} de plus les jours où il s'est occupé du propriétaire`,
+    `Un restaurant racheté peut se racheter à sa valorisation\u202f; il ne peut alors plus être racheté pendant ${days} jours`,
+  ],
   price: (coin) => `Valorisation ${coin}`,
   heat: (h) => `Cote ${h}`,
   owner: (name) => `Propriétaire\u202f: ${name}`,
