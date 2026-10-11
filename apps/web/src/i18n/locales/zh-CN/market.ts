@@ -26,6 +26,21 @@ export default {
   priceLine: (price: string, left: string) => `${price} 银币 · 剩 ${left}`,
   limitLine: (bought: number, limit: number) => `限购 ${bought}/${limit}`,
   buy: '买',
+  /** 购买面板（界面改版 P6） */
+  sheet: {
+    open: (name: string, price: string) => `买${name}, ${price}`,
+    free: '免费',
+    each: (price: string) => `每个 ${price} 银币`,
+    have: (n: string) => `橱柜里有 ${n}`,
+    canBuy: (n: string) => `最多能买 ${n}`,
+    qty: '买几个',
+    max: (n: string) => `最多 ${n}`,
+    total: '合计',
+    coin: '银币',
+    balance: (n: string) => `余 ${n}`,
+    short: '银币不够',
+    confirm: (n: number) => `买 ${n} 个`,
+  },
   guess: {
     title: '菜场竞猜',
     hint: (hour: string) => `猜下一轮日常菜场 (${hour} 点) 上什么菜`,

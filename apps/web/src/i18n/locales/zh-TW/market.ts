@@ -27,6 +27,21 @@ export default {
   priceLine: (price: string, left: string) => `${price} 銀幣 · 剩 ${left}`,
   limitLine: (bought: number, limit: number) => `限購 ${bought}/${limit}`,
   buy: '買',
+  /** 購買面板（介面改版 P6） */
+  sheet: {
+    open: (name: string, price: string) => `買${name}, ${price}`,
+    free: '免費',
+    each: (price: string) => `每個 ${price} 銀幣`,
+    have: (n: string) => `櫥櫃裡有 ${n}`,
+    canBuy: (n: string) => `最多能買 ${n}`,
+    qty: '買幾個',
+    max: (n: string) => `最多 ${n}`,
+    total: '合計',
+    coin: '銀幣',
+    balance: (n: string) => `餘 ${n}`,
+    short: '銀幣不夠',
+    confirm: (n: number) => `買 ${n} 個`,
+  },
   guess: {
     title: '菜場競猜',
     hint: (hour: string) => `猜下一輪日常菜場 (${hour} 點) 上什麼菜`,

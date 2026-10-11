@@ -43,6 +43,8 @@ export interface MarketDto {
   /** 橱柜单种食材上限；橱柜格子是否满了 */
   foodsMaxNum: number;
   cupboardFull: boolean;
+  /** 玩家银币（界面改版 P6：购买面板写余额、最多能买几个也看银币）；旧服务端没有 */
+  coin?: number;
   /** 手动进货：是否持有有效的菜场工作证、本次费用 */
   manual: { hasCard: boolean; cost: number };
   guess: {

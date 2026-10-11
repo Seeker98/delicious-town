@@ -25,6 +25,10 @@ vi.mock('../api/endpoints', () => ({
   },
 }));
 
+/** 详情面板用 Teleport 挂到 body 上：测试里把 teleport 桩掉，面板内容就留在 wrapper 里（界面改版 P6） */
+const mountView = (global: Record<string, unknown> = {}) =>
+  mount(CupboardView, { global: { ...global, stubs: { teleport: true, ...(global.stubs as object) } } });
+
 describe('CupboardView', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -61,7 +65,7 @@ describe('CupboardView', () => {
   });
 
   it('选择食材后可以分解', async () => {
-    const w = mount(CupboardView);
+    const w = mountView();
     await flushPromises();
     await w.find('[data-testid="pick-302"]').trigger('click');
     await w.find('[data-testid="decompose"]').trigger('click');
@@ -74,7 +78,7 @@ describe('CupboardView', () => {
       ...(await endpoints.cupboard()),
       items: [{ foodsId: 302, num: 7, locked: false, streetNeed: 0 }],
     });
-    const w = mount(CupboardView);
+    const w = mountView();
     await flushPromises();
     await w.find('[data-testid="pick-302"]').trigger('click');
     expect(w.text()).toContain('最多分解 7, 合成 6');
@@ -116,20 +120,20 @@ describe('CupboardView', () => {
       ],
     });
     localStorage.clear();
-    const w = mount(CupboardView);
+    const w = mountView();
     await flushPromises();
     expect(w.find('[data-testid="level-all"]').text()).toContain('全部 (2)');
     expect(w.find('[data-testid="level-1"]').text()).toContain('1 级 (1)');
     await w.find('[data-testid="level-2"]').trigger('click');
     expect(w.find('[data-testid="pick-302"]').exists()).toBe(true);
     expect(w.find('[data-testid="pick-101"]').exists()).toBe(false);
-    const w2 = mount(CupboardView);
+    const w2 = mountView();
     await flushPromises();
     expect(w2.find('[data-testid="pick-101"]').exists()).toBe(false);
     await w2.find('[data-testid="level-all"]').trigger('click');
     expect(w2.find('[data-testid="pick-101"]').exists()).toBe(true);
   });
-  it('方块统一两行：没有"本街还需"的第二行也占位（问题记录：方块高度不一）', async () => {
+  it('方块统一两行：没有"本街还需"的第二行也占位（问题记录：方块高度不一）（界面改版 P6）', async () => {
     vi.mocked(endpoints.cupboard).mockResolvedValue({
       slotsUsed: 2,
       slots: 100,
@@ -146,24 +150,24 @@ describe('CupboardView', () => {
         { foodsId: 101, num: 9, locked: false, streetNeed: 0 },
       ],
     });
-    const w = mount(CupboardView);
+    const w = mountView();
     await flushPromises();
     for (const id of [302, 101]) {
       const tile = w.find(`[data-testid="pick-${id}"]`);
-      expect(tile.classes()).toContain('dt-tile');
-      expect(tile.find('.dt-tile-sub').exists()).toBe(true);
+      expect(tile.classes()).toContain('dt-bag-cell');
+      expect(tile.find('.dt-bag-need').exists()).toBe(true);
     }
-    expect(w.find('[data-testid="pick-302"] .dt-tile-sub').text()).toBe('本街还需 3');
-    expect(w.find('[data-testid="pick-101"] .dt-tile-sub').text()).toBe('');
+    expect(w.find('[data-testid="pick-302"] .dt-bag-need').text()).toBe('需 3');
+    expect(w.find('[data-testid="pick-101"] .dt-bag-need').text()).toBe('');
     // 名字太长时只截名字，数量总是显示
-    expect(w.find('[data-testid="pick-101"] .dt-tile-num').text()).toBe('×9');
+    expect(w.find('[data-testid="pick-101"] .dt-bag-num').text()).toBe('9');
   });
 
-  it('食材名不截断：不再用 text-truncate（问题记录 138）', async () => {
-    const w = mount(CupboardView);
+  it('食材名不截断：不再用 text-truncate（问题记录 138）（界面改版 P6）', async () => {
+    const w = mountView();
     await flushPromises();
     expect(w.find('[data-testid="pick-302"] .text-truncate').exists()).toBe(false);
-    expect(w.find('[data-testid="pick-302"] .dt-tile-name').text()).toBe('葡萄');
+    expect(w.find('[data-testid="pick-302"] .dt-bag-name').text()).toBe('葡萄');
   });
 
   it('选中万能食材时写明能否兑换稀有食材（问题记录 140）', async () => {
@@ -183,7 +187,7 @@ describe('CupboardView', () => {
         { foodsId: M1 + 2, num: 4, locked: false, streetNeed: 0 },
       ],
     });
-    const w = mount(CupboardView);
+    const w = mountView();
     await flushPromises();
     await w.find(`[data-testid="pick-${M1}"]`).trigger('click');
     expect(w.find('[data-testid="master-rule"]').text()).toContain('2 个一级万能食材换 1 个随机二级稀有食材');
@@ -206,7 +210,7 @@ describe('CupboardView', () => {
       items: [{ foodsId: M1 + 1, num: 300, locked: false, streetNeed: 0 }],
     });
     vi.mocked(endpoints.exchangeMaster).mockResolvedValue({ gained: [] });
-    const w = mount(CupboardView);
+    const w = mountView();
     await flushPromises();
     await w.find(`[data-testid="pick-${M1 + 1}"]`).trigger('click');
     await w.find('input[type="number"]').setValue(100);
@@ -228,7 +232,7 @@ describe('CupboardView', () => {
     });
     vi.mocked(endpoints.thaw).mockResolvedValue({ foodsId: 302, moved: 3, coin: 750 });
     const confirm = vi.spyOn(window, 'confirm').mockReturnValueOnce(false).mockReturnValueOnce(true);
-    const w = mount(CupboardView);
+    const w = mountView();
     await flushPromises();
     await w.find('[data-testid="tab-fridge"]').trigger('click');
     await flushPromises();
@@ -248,18 +252,22 @@ describe('CupboardView', () => {
     expect(w.find('[data-testid="thaw-303"]').attributes('disabled')).toBeDefined();
     confirm.mockRestore();
   });
-  it('切到英语后橱柜页是英文（问题记录 272）', async () => {
+  it('切到英语后橱柜页是英文（问题记录 272）（界面改版 P6）', async () => {
     const pinia = getActivePinia()!;
     await useLocaleStore().set('en');
     // 加载语言包期间别的计时器可能把活动 Pinia 换成旧的（见 LangSelect.test），挂载前换回来
     setActivePinia(pinia);
     try {
-      const w = mount(CupboardView);
+      const w = mountView();
       await flushPromises();
-      expect(w.text()).toContain('Slots 1/100 · Locked 0/15 · Max 999 each');
+      const meta = w.get('[data-testid="cupboard-meta"]').text();
+      expect(meta).toContain('Slots 1/100');
+      expect(meta).toContain('Locked 0/15');
+      expect(meta).toContain('max 999 per ingredient');
       expect(w.find('[data-testid="level-all"]').text()).toBe('All (1)');
       expect(w.find('[data-testid="level-2"]').text()).toBe('Level 2 (1)');
-      expect(w.text()).toContain('Street needs 3');
+      expect(w.get('[data-testid="pick-302"] .dt-bag-need').text()).toBe('Need 3');
+      expect(w.get('[data-testid="pick-302"]').attributes('aria-label')).toContain('Street needs 3');
       await w.find('[data-testid="pick-302"]').trigger('click');
       expect(w.find('[data-testid="decompose"]').text()).toBe('Break down ×1');
       expect(w.text()).not.toMatch(/格子|分解|本街/);
@@ -277,17 +285,18 @@ describe('CupboardView', () => {
       routes: [{ path: '/:p(.*)*', component: CupboardView }],
     });
     await router.push('/cupboard?tab=fridge');
-    const w = mount(CupboardView, { global: { plugins: [router] } });
+    const w = mountView({ plugins: [router] });
     await flushPromises();
     expect(endpoints.fridge).toHaveBeenCalled();
     expect(w.find('[data-testid="fridge-302"]').exists()).toBe(true);
   });
 
-  it('格子 4 列，每格上面是食材图，选中的 aria-pressed；数量是步进器（界面改版 P4）', async () => {
-    const w = mount(CupboardView);
+  it('格子 4 列，每格上面是食材图，选中的 aria-pressed；数量是步进器（界面改版 P4）（界面改版 P6）', async () => {
+    const w = mountView();
     await flushPromises();
-    expect(w.find('.dt-tile-grid').exists()).toBe(true);
+    expect(w.find('.dt-bag').exists()).toBe(true);
     const tile = w.get('[data-testid="pick-302"]');
+    expect(tile.classes()).toContain('dt-bag-cell');
     expect(tile.get('use').attributes('href')).toMatch(/#food-/);
     expect(tile.attributes('aria-pressed')).toBe('false');
     await tile.trigger('click');
@@ -295,8 +304,69 @@ describe('CupboardView', () => {
     expect(w.get('input[type="number"]').element.closest('.dt-stepper')).not.toBeNull();
   });
 
+  it('点一格从底部弹出详情，再点同一格或按 Esc 关掉（界面改版 P6）', async () => {
+    const w = mountView();
+    await flushPromises();
+    expect(w.find('[data-testid="picked-card"]').exists()).toBe(false);
+    const tile = w.get('[data-testid="pick-302"]');
+    await tile.trigger('click');
+    expect(w.find('[data-testid="picked-card"]').exists()).toBe(true);
+    expect(w.find('.dt-sheet').exists()).toBe(true);
+    // 再点同一格：关掉
+    await tile.trigger('click');
+    expect(w.find('[data-testid="picked-card"]').exists()).toBe(false);
+    expect(tile.attributes('aria-pressed')).toBe('false');
+    // 按 Esc：关掉
+    await tile.trigger('click');
+    expect(w.find('[data-testid="picked-card"]').exists()).toBe(true);
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    await flushPromises();
+    expect(w.find('[data-testid="picked-card"]').exists()).toBe(false);
+    expect(tile.attributes('aria-pressed')).toBe('false');
+    w.unmount();
+  });
+
+  it('等级不允许时分解、合成按钮不出现；万能食材才有兑换（界面改版 P6）', async () => {
+    useCatalogStore().apply({
+      version: 'test',
+      goods: [],
+      foods: [
+        { id: 302, name: '葡萄', level: 2, odds: 100, coin: 1000, type: 2 },
+        { id: 101, name: '大米', level: 1, odds: 100, coin: 100, type: 2 },
+        { id: 701, name: '龙虾', level: 5, odds: 100, coin: 100, type: 2 },
+      ],
+      streets: [],
+      weather: [],
+      devices: [],
+    });
+    vi.mocked(endpoints.cupboard).mockResolvedValue({
+      ...(await endpoints.cupboard()),
+      items: [
+        { foodsId: 101, num: 4, locked: false, streetNeed: 0 },
+        { foodsId: 701, num: 4, locked: false, streetNeed: 0 },
+        { foodsId: 302, num: 4, locked: false, streetNeed: 0 },
+      ],
+    });
+    const w = mountView();
+    await flushPromises();
+    // 1 级：不能分解，能合成
+    await w.get('[data-testid="pick-101"]').trigger('click');
+    expect(w.find('[data-testid="decompose"]').exists()).toBe(false);
+    expect(w.find('[data-testid="compose"]').exists()).toBe(true);
+    expect(w.find('[data-testid="exchange"]').exists()).toBe(false);
+    // 5 级：能分解，不能合成
+    await w.get('[data-testid="pick-701"]').trigger('click');
+    expect(w.find('[data-testid="decompose"]').exists()).toBe(true);
+    expect(w.find('[data-testid="compose"]').exists()).toBe(false);
+    // 2 级：都能
+    await w.get('[data-testid="pick-302"]').trigger('click');
+    expect(w.find('[data-testid="decompose"]').exists()).toBe(true);
+    expect(w.find('[data-testid="compose"]').exists()).toBe(true);
+    expect(w.find('[data-testid="lock"]').exists()).toBe(true);
+  });
+
   it('步进器上限跟着持有：持有 4 个时最多 4，不是固定 100（终审 I2）', async () => {
-    const w = mount(CupboardView);
+    const w = mountView();
     await flushPromises();
     await w.get('[data-testid="pick-302"]').trigger('click');
     expect(w.get('[data-testid="picked-card"] input[type="number"]').attributes('max')).toBe('4');
@@ -304,7 +374,7 @@ describe('CupboardView', () => {
 
   it('读取失败时写读取失败，不一直显示骨架行（终审 I4）', async () => {
     vi.mocked(endpoints.cupboard).mockRejectedValue(new Error('x'));
-    const w = mount(CupboardView);
+    const w = mountView();
     await flushPromises();
     expect(w.find('[data-testid="cupboard-skeleton"]').exists()).toBe(false);
     expect(w.get('[data-testid="cupboard-failed"]').text()).toContain('读取橱柜失败');
@@ -312,7 +382,7 @@ describe('CupboardView', () => {
 
   it('橱柜空时是空状态，带去菜场的链接；没读回来时是骨架行（界面改版 P4）', async () => {
     vi.mocked(endpoints.cupboard).mockReturnValue(new Promise(() => undefined));
-    expect(mount(CupboardView).find('[data-testid="cupboard-skeleton"]').exists()).toBe(true);
+    expect(mountView().find('[data-testid="cupboard-skeleton"]').exists()).toBe(true);
     vi.mocked(endpoints.cupboard).mockResolvedValue({
       slotsUsed: 0,
       slots: 100,
@@ -326,9 +396,7 @@ describe('CupboardView', () => {
       handleMax: 100,
       items: [],
     });
-    const w = mount(CupboardView, {
-      global: { stubs: { RouterLink: { props: ['to'], template: '<a :href="to"><slot /></a>' } } },
-    });
+    const w = mountView({ stubs: { RouterLink: { props: ['to'], template: '<a :href="to"><slot /></a>' } } });
     await flushPromises();
     const empty = w.get('[data-testid="cupboard-empty"]');
     expect(empty.get('use').attributes('href')).toContain('#empty-cupboard');
@@ -343,7 +411,7 @@ describe('CupboardView', () => {
     const spy = vi.spyOn(window, 'confirm');
     const store = useConfirmStore();
     store.hosts = 1;
-    const w = mount(CupboardView);
+    const w = mountView();
     await flushPromises();
     await w.get('[data-testid="tab-fridge"]').trigger('click');
     await flushPromises();

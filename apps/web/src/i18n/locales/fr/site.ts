@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    market1011:
+      'Le placard devient une grille de sac\u202f: grandes icônes, quantité dans le coin, ingrédients de niveau 2 et plus et universels teintés\u202f; touchez une case pour un panneau avec la quantité possédée, l’objectif de la rue et les actions décomposer, combiner, échanger ou verrouiller\u202f; le frigo affiche une ligne par ingrédient. Le marché montre une ligne par ingrédient avec son niveau après le nom et un bouton prix qui ouvre un panneau d’achat\u202f: choix rapides 10 / 100 / max, total et solde, et un avertissement si les pièces manquent',
     home1011b:
       'Nouvelle mise en page de l’accueil\u202f: devanture plus grande, avec un panneau «\u202fFermé\u202f» quand l’huile est épuisée\u202f; le niveau s’affiche dans un anneau d’expérience\u202f; l’huile et le plein sont dans une carte d’état en haut, avec le plein en un geste quand le restaurant est fermé\u202f; le dernier tour montre trois grands chiffres\u202f; pointage, quête principale, activité du jour et conseils débutant deviennent de grandes tuiles 2×2, le pointage en violet tant qu’il n’est pas fait\u202f; recettes, plat signature et patrimoine sont regroupés sous «\u202fMon restaurant\u202f»\u202f; les pages principales ont des titres plus grands',
     kitchen1011:

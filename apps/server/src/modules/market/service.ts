@@ -302,7 +302,7 @@ export function createMarketService(d: GameDeps, world: WorldService) {
           .execute(),
         d.db
           .selectFrom('restaurant')
-          .select(['foods_max_num', 'cupboard_num'])
+          .select(['foods_max_num', 'cupboard_num', 'coin'])
           .where('id', '=', ctx.restaurantId)
           .executeTakeFirstOrThrow(),
         foodsMap(d.db, ctx.restaurantId),
@@ -403,6 +403,8 @@ export function createMarketService(d: GameDeps, world: WorldService) {
         specialCooldownMin: Math.round(t.specialIpCooldownSec / 60),
         foodsMaxNum: rest.foods_max_num,
         cupboardFull,
+        // 玩家银币：购买面板写余额、按银币算最多能买几个（界面改版 P6）
+        coin: rest.coin,
         manual: {
           hasCard: (await validNum(d.db, ctx.restaurantId, GOODS.marketJobHonor, now)) > 0,
           cost: manualCost(await getDaily(d.db, ctx.restaurantId, 'market.manual', gameDay(now)), t),

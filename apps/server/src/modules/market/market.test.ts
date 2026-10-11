@@ -75,6 +75,8 @@ describe('日常菜场', () => {
     const view = await m().view(ctx);
     const it0 = view.daily.find((x) => x.id === item!.id)!;
     expect(view.foodsMaxNum).toBe(999);
+    // 界面改版 P6：购买面板要写余额、按银币算最多能买几个（P4 终审 I3）
+    expect(view.coin).toBe(100_000_000);
     expect(it0.have).toBe(3);
     expect(it0.canBuy).toBe(Math.min(it0.limit - it0.bought, it0.left, 996));
     await expect(

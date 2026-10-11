@@ -7,6 +7,16 @@ const cupboard: Messages['cupboard'] = {
   summary: (p) =>
     `Slots ${p.used}/${p.slots} · Locked ${p.lockUsed}/${p.lockSlots} · Max ${p.max} each · ${p.free} free handlings left today · Street target: grade ${p.grade}`,
   levelCount: (label, n) => `${label} (${n})`,
+  meta: {
+    slots: (used, all) => `Slots ${used}/${all}`,
+    lock: (used, all) => `Locked ${used}/${all}`,
+    rules: (free, max, grade) =>
+      `${free} free ${plEn(free, 'process', 'processes')} left today · max ${max} per ingredient · street goal grade ${grade}`,
+  },
+  needShort: (n) => `Need ${n}`,
+  have: (n) => `You have ${n}`,
+  howMany: 'How many',
+  locked: 'Locked',
   levelEmpty: 'No ingredients at this level',
   /** 橱柜空着（界面改版 P4：空状态） */
   empty: {
