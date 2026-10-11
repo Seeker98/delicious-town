@@ -8,6 +8,12 @@ const cupboard: Messages['cupboard'] = {
     `Emplacements ${p.used}/${p.slots} · Verrouillés ${p.lockUsed}/${p.lockSlots} · Max ${p.max} chacun · ${p.free} ${plFr(p.free, 'traitement gratuit restant', 'traitements gratuits restants')} aujourd'hui · Objectif de la rue\u202f: qualité ${p.grade}`,
   levelCount: (label, n) => `${label} (${n})`,
   levelEmpty: 'Aucun ingrédient de ce niveau',
+  /** 橱柜空着（界面改版 P4：空状态） */
+  empty: {
+    title: 'L’étagère est vide',
+    body: 'Il faut des ingrédients pour apprendre et cuisiner des plats. Achetez-en au marché',
+    link: 'Aller au marché',
+  },
   streetNeed: (n) => `La rue en demande ${n}`,
   decompose: (n) => `Décomposer ×${n}`,
   compose: (n) => `Combiner ×${n}`,

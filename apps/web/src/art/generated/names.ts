@@ -62,6 +62,7 @@ export const CONTENT_ART = [
   'door-red',
   'door-wood',
   'empty-activity',
+  'empty-cupboard',
   'empty-equip',
   'food-allium',
   'food-bean',

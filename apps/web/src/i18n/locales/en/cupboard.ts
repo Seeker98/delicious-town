@@ -8,6 +8,12 @@ const cupboard: Messages['cupboard'] = {
     `Slots ${p.used}/${p.slots} · Locked ${p.lockUsed}/${p.lockSlots} · Max ${p.max} each · ${p.free} free handlings left today · Street target: grade ${p.grade}`,
   levelCount: (label, n) => `${label} (${n})`,
   levelEmpty: 'No ingredients at this level',
+  /** 橱柜空着（界面改版 P4：空状态） */
+  empty: {
+    title: 'Nothing on the shelf yet',
+    body: 'You need ingredients to learn and cook dishes. Buy some at the market',
+    link: 'Go to the market',
+  },
   streetNeed: (n) => `Street needs ${n}`,
   decompose: (n) => `Break down ×${n}`,
   compose: (n) => `Combine ×${n}`,

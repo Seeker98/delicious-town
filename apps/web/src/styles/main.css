@@ -327,8 +327,48 @@ html {
   flex-shrink: 0;
 }
 /* 橱柜方块：统一两行（问题记录：方块高度不一） */
+/* 橱柜格子（界面改版 P4）：4 列，上面食材图，下面名字和数量；选中紫边浅紫底 */
+.dt-tile-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+}
 .dt-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  width: 100%;
+  height: 100%;
+  min-height: 72px;
+  padding: 4px 2px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-sm);
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font-size: 12px;
   line-height: 1.3;
+  text-align: center;
+}
+.dt-tile[aria-pressed='true'] {
+  border-color: var(--dt-primary);
+  background: var(--dt-primary-soft);
+}
+.dt-tile-art {
+  position: relative;
+  line-height: 0;
+}
+.dt-tile-lock {
+  position: absolute;
+  right: -6px;
+  bottom: -2px;
+  font-size: 11px;
+  line-height: 1;
+  color: var(--dt-muted);
+}
+.dt-tile-num {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 .dt-tile-sub {
   font-size: 11px;
@@ -700,7 +740,7 @@ details.dt-card > summary {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-/* 橱柜方块里的食材名：万能食材的等级在名字末尾，最多三行（问题记录 138、100） */
+/* 橱柜方块里的食材名：万能食材的等级在名字末尾，最多三行（问题记录 138、100；法文“Ingrédient universel niveau 1”两行放不下） */
 .dt-tile-name {
   overflow-wrap: anywhere;
   display: -webkit-box;
