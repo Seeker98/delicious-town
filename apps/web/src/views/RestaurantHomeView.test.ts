@@ -407,10 +407,15 @@ describe('RestaurantHomeView', () => {
     expect(w.get('[data-testid="rest-renown"]').text()).toBe('12,345');
   });
 
-  it('体力、声望的图标和数字之间有空格，和银币、油一致（问题记录 298）', async () => {
+  it('体力、声望的图标和数字之间有间距，和银币、油一致（问题记录 298）', async () => {
     const w = await mountView();
-    for (const id of ['rest-coin', 'rest-strength', 'rest-renown'])
-      expect(w.get(`[data-testid="${id}"]`).element.previousSibling?.textContent, id).toBe(' ');
+    // 界面改版 P3：间距由图标外层 .dt-res-ico 的右边距给，不靠空格（模板折行时空格会被吞掉，298 就是这么来的）
+    for (const id of ['rest-coin', 'rest-strength', 'rest-renown']) {
+      let prev = w.get(`[data-testid="${id}"]`).element.previousSibling;
+      while (prev && prev.nodeType === Node.TEXT_NODE && !prev.textContent?.trim())
+        prev = prev.previousSibling;
+      expect((prev as HTMLElement | null)?.classList.contains('dt-res-ico'), id).toBe(true);
+    }
   });
 
   it('经验数字显示在整条进度条上，不在橙色部分里（刚升级时橙色很短也看得见）', async () => {

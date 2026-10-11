@@ -427,7 +427,7 @@ onBeforeUnmount(() => {
               t.events.kind.diamond
             }}</span></span
           >
-          {{ formatNum(rest.diamond) }}
+          <span>{{ formatNum(rest.diamond) }}</span>
         </div>
         <!-- 体力、声望也按千分位（问题记录 296：体力很多时只有它没分隔） -->
         <!-- 图标和数字之间留一个空格，和银币、油一致（问题记录 298：这行太长被格式化折成两行时，空格被模板吞掉） -->
@@ -454,7 +454,7 @@ onBeforeUnmount(() => {
               t.events.kind.oil
             }}</span></span
           >
-          {{ formatNum(rest.oil) }}/{{ formatNum(rest.oilMax) }}
+          <span>{{ formatNum(rest.oil) }}/{{ formatNum(rest.oilMax) }}</span>
           <!-- 油壶升级的入口（问题记录 435） -->
           <RouterLink
             to="/society/oil"

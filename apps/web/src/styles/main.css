@@ -1412,3 +1412,7 @@ details.dt-card > summary {
 .dt-card-title .dt-art {
   vertical-align: -3px;
 }
+/* 资源图标和数字之间的间距（问题记录 298：不靠空格，模板折行时空格会被吞掉） */
+.dt-res-ico {
+  margin-right: 4px;
+}
