@@ -321,6 +321,22 @@ describe('MarketView', () => {
     expect(endpoints.marketBuy).toHaveBeenLastCalledWith(11, 4);
   });
 
+  it('特价菜打开购买面板时数量默认就是最多能买的（用户 2026-10-11）；日常菜默认 1', async () => {
+    const special = { ...view.daily[0]!, id: 21, shelf: 1 as const, price: 100, canBuy: 3 };
+    vi.mocked(endpoints.market).mockResolvedValue({ ...structuredClone(view), coin: 1e9, special: [special] });
+    const w = mountView();
+    await flushPromises();
+    await openBuy(w, 21);
+    expect((w.get('[data-testid="qty-sheet"]').element as HTMLInputElement).value).toBe('3');
+    expect(w.get('[data-testid="buy-confirm"]').text()).toContain('3');
+    w.unmount();
+    vi.mocked(endpoints.market).mockResolvedValue({ ...structuredClone(view), coin: 1e9 });
+    const d = mountView();
+    await flushPromises();
+    await openBuy(d, 11);
+    expect((d.get('[data-testid="qty-sheet"]').element as HTMLInputElement).value).toBe('1');
+  });
+
   it('一次最多买 1000 个（服务端的上限），“最多”不超过它（P6 审查）', async () => {
     vi.mocked(endpoints.market).mockResolvedValue({
       ...structuredClone(view),

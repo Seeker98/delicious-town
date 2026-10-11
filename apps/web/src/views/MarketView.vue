@@ -103,7 +103,8 @@ const buying = ref<MarketItemDto | null>(null);
 const buyNum = ref(1);
 function openBuy(it: MarketItemDto) {
   buying.value = it;
-  buyNum.value = 1;
+  // 特价菜默认填满能买的（用户 2026-10-11：特价通常就几份，省得一个个加）；日常菜默认 1 个
+  buyNum.value = it.shelf === 1 ? Math.max(1, maxBuy(it)) : 1;
 }
 const buyMax = computed(() => (buying.value ? maxBuy(buying.value) : 0));
 const buyNumClamped = computed(() => Math.max(1, Math.min(buyNum.value || 1, Math.max(1, buyMax.value))));
