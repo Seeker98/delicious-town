@@ -5,6 +5,7 @@ import type { DB, RestaurantRow } from '../db/schema';
 import { withRestaurant } from '../db/tx';
 import { recordLedger, type LedgerEntry } from '../modules/ledger/ledger';
 import { postNews } from '../modules/news/news';
+import { levelUpTables } from '../modules/store/levelTables';
 import type { GameDeps, RestCtx } from './deps';
 
 /** 可以通过 setRest 修改的餐厅列（加成缓存由 effects 模块自己维护） */
@@ -87,8 +88,17 @@ export function opNews(op: Op, type: string, params: Record<string, unknown> = {
   op.news.push({ type, params });
 }
 
+/** gainExp 在 op.cache 里记下这个操作升级多出的餐桌上限，flushOp 写回前统一摆桌 */
+export const LEVEL_TABLES_KEY = 'levelUpTables';
+
 /** 把快照的改动、流水、日志、新闻写进数据库（仍在同一事务里） */
 export async function flushOp(op: Op): Promise<void> {
+  // 这个操作里升了级：先自动摆餐桌（会扣银币、写动态），再一起写回
+  const levels = op.cache.get(LEVEL_TABLES_KEY) as number | undefined;
+  if (levels) {
+    op.cache.delete(LEVEL_TABLES_KEY);
+    await levelUpTables(op, levels);
+  }
   if (op.touched.size > 0) {
     const patch: Record<string, unknown> = {};
     for (const col of op.touched) {

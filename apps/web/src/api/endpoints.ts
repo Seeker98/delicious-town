@@ -241,7 +241,7 @@ export const endpoints = {
   starNeed: () => api.get<StarNeedDto>('/api/v1/growth/star'),
   oilNeed: () => api.get<OilNeedDto>('/api/v1/growth/oil'),
   devices: () => api.get<DeviceOptionsDto>('/api/v1/growth/devices'),
-  allocate: (b: { cook: number; cutting: number; fire: number }) =>
+  allocate: (b: { cook: number; cutting: number; fire: number; season: number }) =>
     api.post<AttrResultDto>('/api/v1/growth/allocate', b),
   refuel: () => api.post<{ oil: number }>('/api/v1/growth/refuel'),
   starUp: () => api.post<{ star: number }>('/api/v1/growth/star-up'),

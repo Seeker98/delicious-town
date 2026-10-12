@@ -313,7 +313,9 @@ export const towerEldersFile = z.object({
         floor: int.min(1),
         level: int.min(1),
         stress: int.min(0),
-        points: z.object({ cook: int.min(0), cutting: int.min(0), fire: int.min(0) }).strict(),
+        points: z
+          .object({ cook: int.min(0), cutting: int.min(0), fire: int.min(0), season: int.min(0).default(0) })
+          .strict(),
         pieces: z
           .array(z.object({ id: int, base: elderAttrsSchema, gain: elderAttrsSchema }).strict())
           .min(1),

@@ -45,7 +45,7 @@ const floor = (n: number, patch: Partial<TowerFloorDto> = {}): TowerFloorDto => 
   elder: {
     level: 8,
     stress: 3,
-    points: { cook: 0, cutting: 21, fire: 0 },
+    points: { cook: 0, cutting: 21, fire: 0, season: 0 },
     pieces: [
       { id: 40001, attrs: { cook: 2, cutting: 5, fire: 0, season: 0, creatives: 0, luck: 0 } },
       { id: 40002, attrs: { cook: 0, cutting: 2, fire: 3, season: 0, creatives: 0, luck: 0 } },

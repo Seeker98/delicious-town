@@ -85,47 +85,38 @@ async function go(f: TowerFloorDto, test: boolean) {
     <span class="dt-block-more">{{ t.tower.floor.listTap }}</span>
   </div>
   <div class="dt-card dt-rows-card">
-    <div
+    <!-- 整行点开长老面板，试打、挑战都在面板里（用户 2026-10-12：行上不再放挑战按钮）；今天打满的层右边写累了，不放 › -->
+    <button
       v-for="f in data.floors"
       :key="f.floor"
-      :class="['dt-row', 'dt-row-wrap', 'dt-floor-row', { 'is-off': !f.unlocked }]"
-      :data-testid="`floor-${f.floor}`"
+      type="button"
+      :class="[
+        'dt-row',
+        'dt-row-wrap',
+        'dt-floor-open',
+        { 'is-off': !f.unlocked, 'is-link': !(f.unlocked && f.left <= 0) },
+      ]"
+      :data-testid="`floor-open-${f.floor}`"
+      @click="openNo = f.floor"
     >
-      <button
-        type="button"
-        class="dt-floor-open"
-        :data-testid="`floor-open-${f.floor}`"
-        @click="openNo = f.floor"
-      >
-        <span :class="['dt-floor-no', { 'is-off': !f.unlocked }]">{{ f.floor }}</span>
-        <span class="dt-row-main">
-          <span class="dt-row-title is-strong"
-            >{{ floorText(f).name
-            }}<span :class="['dt-tag', f.unlocked ? 'dt-tag-primary' : 'dt-tag-mute']">{{
-              floorText(f).title
-            }}</span></span
-          >
-          <span class="dt-row-sub"
-            >{{ t.tower.floor.power(f.power) }} ·
-            <span v-if="lockText(f)" class="text-danger" :data-testid="`block-${f.floor}`">{{
-              lockText(f)
-            }}</span
-            ><template v-else>{{ t.tower.floor.leftToday(f.left, f.maxTimes) }}</template></span
-          >
-        </span>
-      </button>
+      <span :class="['dt-floor-no', { 'is-off': !f.unlocked }]">{{ f.floor }}</span>
+      <span class="dt-row-main">
+        <span class="dt-row-title is-strong"
+          >{{ floorText(f).name
+          }}<span :class="['dt-tag', f.unlocked ? 'dt-tag-primary' : 'dt-tag-mute']">{{
+            floorText(f).title
+          }}</span></span
+        >
+        <span class="dt-row-sub"
+          >{{ t.tower.floor.power(f.power) }} ·
+          <span v-if="lockText(f)" class="text-danger" :data-testid="`block-${f.floor}`">{{
+            lockText(f)
+          }}</span
+          ><template v-else>{{ t.tower.floor.leftToday(f.left, f.maxTimes) }}</template></span
+        >
+      </span>
       <span v-if="f.unlocked && f.left <= 0" class="dt-tag-mute">{{ t.tower.floor.tiredTag }}</span>
-      <button
-        v-else-if="f.unlocked"
-        type="button"
-        class="btn btn-sm btn-outline-primary"
-        :data-testid="`tc-${f.floor}`"
-        :disabled="busy || !!blockOf(f, false)"
-        @click="go(f, false)"
-      >
-        {{ t.tower.challenge }}
-      </button>
-    </div>
+    </button>
   </div>
 
   <DtSheet

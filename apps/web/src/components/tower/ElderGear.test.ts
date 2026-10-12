@@ -12,7 +12,7 @@ describe('ElderGear（问题记录 408）', () => {
     const box = w.get('[data-testid="elder-gear"]');
     expect(box.find('b').text()).toBe('长老装备 · 8 级 · 全套强化 +3');
     expect(box.text()).toContain('正式挑战打赢有 20% 掉一件');
-    expect(w.find('[data-testid="elder-points"]').text()).toBe('加点: 厨艺 0、刀工 21、火候 0');
+    expect(w.find('[data-testid="elder-points"]').text()).toBe('加点: 厨艺 0、刀工 21、火候 0、调味 0');
     const pieces = w.findAll('[data-testid="elder-piece"]');
     expect(pieces).toHaveLength(2);
     // 名字后面带强化等级（加粗），再写属性；只列不为 0 的属性

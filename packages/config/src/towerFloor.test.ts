@@ -52,7 +52,7 @@ const elder: ElderInput = {
   floor: 1,
   level: 3,
   stress: 2,
-  points: { cook: 2, cutting: 0, fire: 4 },
+  points: { cook: 2, cutting: 0, fire: 4, season: 0 },
   pieces: [
     { id: 1, base: attrs({ cook: 10 }), gain: attrs({ season: 5 }) },
     { id: 2, base: attrs({ cutting: 10 }), gain: attrs({ cutting: 3, luck: 2 }) },
@@ -75,10 +75,16 @@ describe('赛厨长老（问题记录 408）', () => {
     expect(elderErrors(elder, ctx)).toEqual([]);
   });
 
-  it('加点总数要等于每级点数 × (等级 − 1)，而且只能加厨艺、刀工、火候', () => {
-    expect(elderErrors({ ...elder, points: { cook: 1, cutting: 0, fire: 4 } }, ctx)).toEqual([
+  it('加点总数要等于每级点数 × (等级 − 1)：厨艺、刀工、火候、调味加起来', () => {
+    expect(elderErrors({ ...elder, points: { cook: 1, cutting: 0, fire: 4, season: 0 } }, ctx)).toEqual([
       'tower_elders floor 1: points sum 5, expected 6',
     ]);
+    expect(elderErrors({ ...elder, points: { cook: 1, cutting: 0, fire: 3, season: 2 } }, ctx)).toEqual([]);
+  });
+
+  it('调味也能加点（用户 2026-10-12）：加在调味上的点算进属性', () => {
+    const e = { ...elder, points: { cook: 2, cutting: 0, fire: 1, season: 3 } };
+    expect(elderAttrs(e, ctx).attrs).toMatchObject({ fire: 4, season: 11 });
   });
 
   it('固定属性的厨具基础必须和配置一样；随机属性的厨具基础总和等于 total、每项在范围内', () => {

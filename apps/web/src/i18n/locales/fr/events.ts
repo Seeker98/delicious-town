@@ -137,6 +137,19 @@ const events: Messages['events'] = {
     'equip.stress': (p, names) =>
       `Renforcement de ${names.goodsName(n(p, 'goodsId'))} à +${n(p, 'to')}\u202f: ${p.success ? 'réussi' : 'raté'}`,
     'level.up': (p) => `Le restaurant passe au niveau ${n(p, 'to')}`,
+    'table.auto': (p, names) => {
+      const extra = [
+        n(p, 'store') > 0
+          ? `${n(p, 'store')}\u202f×\u202f${names.goodsName(n(p, 'goodsId'))} pris dans l'entrepôt`
+          : '',
+        n(p, 'coin') > 0 ? `${formatNum(n(p, 'coin'))} pièces dépensées` : '',
+      ].filter(Boolean);
+      return `Niveau supérieur\u202f: ${n(p, 'num')} ${plFr(n(p, 'num'), 'table installée', 'tables installées')} automatiquement${extra.length ? ` (${extra.join(', ')})` : ''}`;
+    },
+    'table.autoFail': (p, names) =>
+      p.reason === 'full'
+        ? `Niveau supérieur\u202f: +${n(p, 'num')} à la limite de tables, mais vos étages sont pleins, aucune table installée. Gagnez une étoile, puis achetez ${names.goodsName(n(p, 'goodsId'))} à la boutique`
+        : `Niveau supérieur\u202f: +${n(p, 'num')} à la limite de tables, mais il manquait ${formatNum(n(p, 'price'))} pièces, aucune table installée. Achetez ${names.goodsName(n(p, 'goodsId'))} à la boutique plus tard`,
     'star.up': (p) => `Le restaurant atteint ${n(p, 'star')} ${plFr(n(p, 'star'), 'étoile', 'étoiles')}`,
     'oil.expand': (p) =>
       `Bidon d'huile agrandi au niveau ${n(p, 'level')} (max ${formatNum(n(p, 'oilMax'))})`,
@@ -146,7 +159,7 @@ const events: Messages['events'] = {
     'rest.move': () => 'Le restaurant a déménagé',
     'mouse.escape': () => "Une souris est passée, mais par chance rien n'est arrivé",
     'mouse.trap': (p) =>
-      `La tapette a attrapé une souris\u202f: ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce obtenue', 'pièces obtenues')}`,
+      `Une souris venue voler vos ingrédients s’est fait prendre dans la tapette\u202f: ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce obtenue', 'pièces obtenues')}`,
     'mouse.steal': (p, names) =>
       `Une souris a volé ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'num')}`,
     'mouse.nothing': () => "Une souris est passée mais n'a rien volé",

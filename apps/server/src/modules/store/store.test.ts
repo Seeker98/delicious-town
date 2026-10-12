@@ -120,13 +120,18 @@ describe('使用道具（规格书 07 §7.4）', () => {
     expect(await goodsNum(t, ctx.restaurantId, gid('新手大礼包'))).toBe(0);
   });
 
-  it('洗点卡：返还已加的点；没加过点时报错', async () => {
+  it('洗点卡：返还已加的点（调味也算）；没加过点时报错', async () => {
     const ctx = await newRestaurant(t, {
-      patch: { attr_left: 1, attr_cook: 2, attr_fire: 1 },
+      patch: { attr_left: 1, attr_cook: 2, attr_fire: 1, attr_season: 3 },
       goods: { [GOODS.resetAttrCard]: 2 },
     });
     await s().use(ctx, { goodsId: GOODS.resetAttrCard, num: 1 });
-    expect(await restRow(t, ctx.restaurantId)).toMatchObject({ attr_left: 4, attr_cook: 0, attr_fire: 0 });
+    expect(await restRow(t, ctx.restaurantId)).toMatchObject({
+      attr_left: 7,
+      attr_cook: 0,
+      attr_fire: 0,
+      attr_season: 0,
+    });
     await expect(s().use(ctx, { goodsId: GOODS.resetAttrCard, num: 1 })).rejects.toMatchObject({
       code: 'INVALID_STATE',
     });

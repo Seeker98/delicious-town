@@ -31,6 +31,14 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    season1012:
+      "L'Assaisonnement peut maintenant recevoir des points, comme la Cuisine, la Découpe et la Maîtrise du feu\u202f; une carte de réinitialisation les rend aussi. Les anciens de la tour en mettent aussi dans l'Assaisonnement\u202f: chaque étage a été rééquilibré et n'est pas plus facile qu'avant",
+    tables1012:
+      "En montant de niveau, la nouvelle table s'installe toute seule\u202f: une Table A de l'entrepôt d'abord, sinon achetée au prix de la boutique. S'il manque des pièces ou si les étages sont pleins, rien n'est débité et le fil du restaurant explique pourquoi",
+    tower1012:
+      "Dans la tour, touchez un étage pour ouvrir le panneau de l'ancien\u202f; essais et défis s'y trouvent, les lignes n'ont plus de bouton de défi",
+    mousetrap1012:
+      "Les tapettes attrapent désormais les souris venues voler vos ingrédients avec la probabilité indiquée, comme pour les amis qui fouillent votre garde-manger (avant, votre chance était vérifiée d'abord, et plus elle était haute, moins la tapette servait). Les descriptions et le fil du restaurant le précisent",
     cupboard1012:
       "Le garde-manger devient une liste, un ingrédient par ligne\u202f: une petite image, le niveau après le nom, ce que la rue demande encore en dessous et la quantité à droite. Une barre de recherche filtre par nom, sur l'étagère comme dans le frigo",
     thumbs1012:

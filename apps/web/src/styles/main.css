@@ -5807,24 +5807,19 @@ button.dt-row {
   font-size: 12px;
   text-align: right;
 }
-.dt-floor-row {
-  padding-right: 12px;
-}
-.dt-floor-row.is-off .dt-floor-open {
-  opacity: 0.6;
-}
+/* 厨塔一层一行：整行是按钮，点开长老面板（用户 2026-10-12：行上不再放挑战按钮） */
 .dt-floor-open {
-  display: flex;
-  flex: 1 1 auto;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-  padding: 0;
+  width: 100%;
+  padding-right: 12px;
   border: 0;
+  border-top: 1px solid var(--dt-line);
   background: none;
-  color: inherit;
   font: inherit;
   text-align: left;
+}
+.dt-floor-open.is-off > .dt-floor-no,
+.dt-floor-open.is-off > .dt-row-main {
+  opacity: 0.6;
 }
 .dt-floor-no {
   display: grid;

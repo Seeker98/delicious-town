@@ -33,8 +33,9 @@ test('厨塔：试打 → 挑战 1 层 → 赛厨榜占位 → 声望商店兑�
     await expect(page.getByTestId('duel-headline')).toContainText('试打: 赢了');
     await page.getByTestId('duel-close').click();
     await expect(page.getByTestId('duel-result')).toHaveCount(0);
-    // 挑战直接点那一行的按钮；标题只写胜负和票数，声望写在下面的小标签里
-    await page.getByTestId('tc-1').click();
+    // 挑战也在点开那一层的面板里（用户 2026-10-12：行上不再放挑战按钮）；标题只写胜负和票数，声望写在下面的小标签里
+    await page.getByTestId('floor-open-1').click();
+    await page.getByTestId('tc-sheet-1').click();
     await expect(page.getByTestId('duel-headline')).toHaveText(/^你赢了 \d:\d( \(票数相同, 比总分\))?$/);
     await expect(page.locator('.dt-duel-tags .dt-tag')).toContainText(['声望 +7']);
     await page.getByTestId('duel-close').click();

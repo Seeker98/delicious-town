@@ -47,7 +47,8 @@ describe('打赏（设计文档 §2.2）', () => {
       fresh: true,
       reply: 'wanted',
     });
-    expect((await restRow(t, a.restaurantId)).coin).toBe(9_000_000);
+    // 打赏的经验让店升了两级，自动花 5000 × 2 银币摆了两张餐桌（用户 2026-10-12）
+    expect((await restRow(t, a.restaurantId)).coin).toBe(9_000_000 - 10_000);
     const rows = await t.db
       .selectFrom('hiphop_tip')
       .selectAll()

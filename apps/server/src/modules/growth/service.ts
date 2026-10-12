@@ -56,13 +56,15 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
   return {
     world,
 
-    allocate(ctx: RestCtx, b: { cook: number; cutting: number; fire: number }) {
+    allocate(ctx: RestCtx, b: { cook: number; cutting: number; fire: number; season?: number }) {
       return op(ctx, 'attr.allocate', async (o) => {
-        const sum = b.cook + b.cutting + b.fire;
+        const season = b.season ?? 0;
+        const sum = b.cook + b.cutting + b.fire + season;
         if (sum > o.rest.attr_left) throw notEnough('attrPoint', sum, o.rest.attr_left);
         setRest(o, 'attr_cook', o.rest.attr_cook + b.cook);
         setRest(o, 'attr_cutting', o.rest.attr_cutting + b.cutting);
         setRest(o, 'attr_fire', o.rest.attr_fire + b.fire);
+        setRest(o, 'attr_season', o.rest.attr_season + season);
         setRest(o, 'attr_left', o.rest.attr_left - sum);
         await emitAction(o, 'attr.allocate');
         return attrs(o.rest);

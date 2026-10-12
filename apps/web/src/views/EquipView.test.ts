@@ -214,7 +214,7 @@ describe('EquipView', () => {
     await w.find('[data-testid="add-cook"]').setValue('2');
     await w.find('[data-testid="allocate"]').trigger('click');
     await flushPromises();
-    expect(endpoints.allocate).toHaveBeenCalledWith({ cook: 2, cutting: 0, fire: 0 });
+    expect(endpoints.allocate).toHaveBeenCalledWith({ cook: 2, cutting: 0, fire: 0, season: 0 });
     expect(endpoints.equipOverview).toHaveBeenCalledTimes(2);
   });
 
@@ -235,12 +235,21 @@ describe('EquipView', () => {
     );
     const w = await mountView();
     await w.get('[data-testid="open-points"]').trigger('click');
-    expect(w.findAll('[data-testid^="label-"]').map((x) => x.text())).toEqual(['厨艺', '刀工', '火候']);
+    // 调味和另外三项一样能加（用户 2026-10-12）
+    expect(w.findAll('[data-testid^="label-"]').map((x) => x.text())).toEqual([
+      '厨艺',
+      '刀工',
+      '火候',
+      '调味',
+    ]);
     // 界面改版 P3：步进器默认 0（每格上方写了是哪一项，原来留空的理由不在了）
     expect((w.find('[data-testid="add-cook"]').element as HTMLInputElement).value).toBe('0');
     await w.find('[data-testid="add-cook"]').setValue('2');
     expect(w.find('[data-testid="preview-cook"]').text()).toBe('27 → 29');
     expect(w.find('[data-testid="preview-cutting"]').text()).toBe('5');
+    await w.find('[data-testid="add-season"]').setValue('1');
+    expect(w.find('[data-testid="preview-season"]').text()).toBe('0 → 1');
+    expect(w.find('[data-testid="attr-left"]').text()).toBe('还剩 0 点');
   });
 
   it('每格最多填剩下的点数，超了自动退回；剩余点数跟着输入减少；“全加”把剩下的都填进这一格（问题记录 557）', async () => {
@@ -304,7 +313,7 @@ describe('EquipView', () => {
     expect(w.find('[data-testid="allocate"]').text()).toBe('加 1 点');
     await w.find('[data-testid="allocate"]').trigger('click');
     await flushPromises();
-    expect(endpoints.allocate).toHaveBeenCalledWith({ cook: 0, cutting: 1, fire: 0 });
+    expect(endpoints.allocate).toHaveBeenCalledWith({ cook: 0, cutting: 1, fire: 0, season: 0 });
   });
 
   it('两个标签：装备、宝石；?tab=gem 打开宝石，不再有宝石按钮（界面改版 P2b）', async () => {

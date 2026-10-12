@@ -3,9 +3,10 @@ import type { DeviceSlotDto } from './restaurant';
 
 const points = z.number().int().min(0).max(10000);
 
+/** 加点：厨艺、刀工、火候、调味（用户 2026-10-12 加调味；旧网页不带调味时按 0 算） */
 export const allocateBody = z
-  .object({ cook: points, cutting: points, fire: points })
-  .refine((b) => b.cook + b.cutting + b.fire > 0, { message: 'empty' });
+  .object({ cook: points, cutting: points, fire: points, season: points.default(0) })
+  .refine((b) => b.cook + b.cutting + b.fire + b.season > 0, { message: 'empty' });
 export const toggleBody = z.object({ on: z.boolean() });
 export const cookfoodsBody = z.object({ flag: z.number().int().min(0).max(10) });
 export const placeDeviceBody = z.object({

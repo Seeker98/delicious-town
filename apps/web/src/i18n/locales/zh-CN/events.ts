@@ -135,6 +135,13 @@ export default {
     'equip.stress': (p, names) =>
       `${names.goodsName(n(p, 'goodsId'))}强化到 +${n(p, 'to')}${p.success ? '成功' : '失败'}`,
     'level.up': (p) => `餐厅升到了 ${n(p, 'to')} 级`,
+    /** 升级自动摆餐桌（用户 2026-10-12）：用了仓库的几张、花了多少银币；没买成写原因和去哪买 */
+    'table.auto': (p, names) =>
+      `升级后自动摆上 ${n(p, 'num')} 张餐桌${n(p, 'store') > 0 ? `, 用了仓库里的${names.goodsName(n(p, 'goodsId'))} ×${n(p, 'store')}` : ''}${n(p, 'coin') > 0 ? `, 花了 ${formatNum(n(p, 'coin'))} 银币` : ''}`,
+    'table.autoFail': (p, names) =>
+      p.reason === 'full'
+        ? `升级后餐桌上限 +${n(p, 'num')}, 但楼层已经摆满, 没买成；升星后去商店买${names.goodsName(n(p, 'goodsId'))}`
+        : `升级后餐桌上限 +${n(p, 'num')}, 但银币不够 ${formatNum(n(p, 'price'))}, 没买成；攒够后去商店买${names.goodsName(n(p, 'goodsId'))}`,
     'star.up': (p) => `餐厅升到了 ${n(p, 'star')} 星`,
     'oil.expand': (p) => `油壶扩容到 ${n(p, 'level')} 级 (上限 ${formatNum(n(p, 'oilMax'))})`,
     'rest.closed': () => '油用光了, 餐厅停业',
@@ -142,7 +149,7 @@ export default {
     'rest.rename': (p) => `餐厅改名为「${String(p.to ?? '')}」`,
     'rest.move': () => '餐厅搬家了',
     'mouse.escape': () => '老鼠来了, 幸运地躲过一劫',
-    'mouse.trap': (p) => `捕鼠夹抓到了老鼠, 得到 ${formatNum(n(p, 'coin'))} 银币`,
+    'mouse.trap': (p) => `老鼠来偷食材, 被老鼠夹夹住了, 得到 ${formatNum(n(p, 'coin'))} 银币`,
     'mouse.steal': (p, names) => `老鼠偷走了 ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')}`,
     'mouse.nothing': () => '老鼠来了, 什么也没偷到',
     'mouse.map': () => '老鼠留下了一张探险图',

@@ -10,8 +10,8 @@ export interface ElderInput {
   floor: number;
   level: number;
   stress: number;
-  /** 等级属性点：和玩家一样只能加厨艺、刀工、火候 */
-  points: { cook: number; cutting: number; fire: number };
+  /** 等级属性点：和玩家一样加厨艺、刀工、火候、调味（用户 2026-10-12 加调味） */
+  points: { cook: number; cutting: number; fire: number; season: number };
   pieces: Array<{ id: number; base: EquipAttrs; gain: EquipAttrs }>;
   /** 打赢时可能掉的厨具 */
   drops: number[];
@@ -77,7 +77,7 @@ export function elderLevelErrors(
 export function elderErrors(e: ElderInput, ctx: ElderContext): string[] {
   const out: string[] = [];
   const at = `tower_elders floor ${e.floor}`;
-  const points = e.points.cook + e.points.cutting + e.points.fire;
+  const points = e.points.cook + e.points.cutting + e.points.fire + e.points.season;
   const want = ctx.attrPerLevel * (e.level - 1);
   if (points !== want) out.push(`${at}: points sum ${points}, expected ${want}`);
   const parts = new Set<number>();
@@ -140,7 +140,7 @@ export function elderAttrs(e: ElderInput, ctx: ElderContext): { attrs: EquipAttr
     cook: e.points.cook,
     cutting: e.points.cutting,
     fire: e.points.fire,
-    season: 0,
+    season: e.points.season,
     creatives: 0,
     luck: 0,
   };

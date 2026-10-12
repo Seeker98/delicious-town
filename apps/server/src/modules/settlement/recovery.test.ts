@@ -130,4 +130,23 @@ describe('老鼠捣乱（规格书 01 §1.9）', () => {
     expect(coin).toBeGreaterThanOrEqual(100);
     expect(coin).toBeLessThanOrEqual(300);
   });
+
+  it('老鼠夹先判，和好友翻橱柜一样按夹子的概率夹住：店主运气再高也不会先被判成“躲过一劫”', async () => {
+    const shardId = await alwaysMouseShard();
+    const ctx = await newRestaurant(t, {
+      shardId,
+      patch: { coin: 0, level: 10, luck: 100_000_000 },
+      foods: { [fid('大米')]: 5 },
+    });
+    await t.db
+      .updateTable('restaurant')
+      .set({ effect_agg: JSON.stringify({ trapRate: 1 }), effect_dirty: false })
+      .where('id', '=', ctx.restaurantId)
+      .execute();
+    for (let i = 0; i < 5; i++)
+      expect(await mouseRound(t.game.deps, shardId, `trap-${i}`, new Date())).toMatchObject({
+        trapped: 1,
+        escaped: 0,
+      });
+  });
 });

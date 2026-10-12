@@ -137,6 +137,17 @@ const events: Messages['events'] = {
     'equip.stress': (p, names) =>
       `Refuerzo de ${names.goodsName(n(p, 'goodsId'))} a +${n(p, 'to')}: ${p.success ? 'éxito' : 'fallo'}`,
     'level.up': (p) => `El restaurante subió al nivel ${n(p, 'to')}`,
+    'table.auto': (p, names) => {
+      const extra = [
+        n(p, 'store') > 0 ? `usaste ${n(p, 'store')} ${names.goodsName(n(p, 'goodsId'))} del almacén` : '',
+        n(p, 'coin') > 0 ? `gastaste ${formatNum(n(p, 'coin'))} monedas` : '',
+      ].filter(Boolean);
+      return `Subida de nivel: ${n(p, 'num')} ${plEs(n(p, 'num'), 'mesa colocada', 'mesas colocadas')} automáticamente${extra.length ? ` (${extra.join(', ')})` : ''}`;
+    },
+    'table.autoFail': (p, names) =>
+      p.reason === 'full'
+        ? `Subida de nivel: el límite de mesas sube ${n(p, 'num')}, pero tus plantas están llenas y no se colocó ninguna mesa. Consigue una estrella y compra ${names.goodsName(n(p, 'goodsId'))} en la tienda`
+        : `Subida de nivel: el límite de mesas sube ${n(p, 'num')}, pero no tenías ${formatNum(n(p, 'price'))} monedas y no se colocó ninguna mesa. Compra ${names.goodsName(n(p, 'goodsId'))} en la tienda cuando puedas`,
     'star.up': (p) => `El restaurante alcanzó ${n(p, 'star')} ${plEs(n(p, 'star'), 'estrella', 'estrellas')}`,
     'oil.expand': (p) =>
       `Bidón de aceite ampliado al nivel ${n(p, 'level')} (máx. ${formatNum(n(p, 'oilMax'))})`,
@@ -146,7 +157,7 @@ const events: Messages['events'] = {
     'rest.move': () => 'El restaurante se mudó',
     'mouse.escape': () => 'Vino un ratón, pero por suerte no pasó nada',
     'mouse.trap': (p) =>
-      `La ratonera atrapó un ratón: obtuviste ${formatNum(n(p, 'coin'))} ${plEs(formatNum(n(p, 'coin')), 'moneda', 'monedas')}`,
+      `Un ratón vino a robar ingredientes y cayó en la ratonera: obtuviste ${formatNum(n(p, 'coin'))} ${plEs(formatNum(n(p, 'coin')), 'moneda', 'monedas')}`,
     'mouse.steal': (p, names) => `Un ratón robó ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')}`,
     'mouse.nothing': () => 'Vino un ratón pero no robó nada',
     'mouse.map': () => 'Un ratón dejó un mapa de exploración',

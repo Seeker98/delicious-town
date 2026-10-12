@@ -31,6 +31,14 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    season1012:
+      'La Sazón ya puede recibir puntos como la Cocina, el Corte y el Control del fuego, y la tarjeta de reinicio también los devuelve. Los ancianos de la torre también reparten puntos a la Sazón; cada planta se reequilibró y no es más fácil que antes',
+    tables1012:
+      'Al subir de nivel, la nueva mesa se coloca sola: primero una Mesa A del almacén y, si no hay, se compra al precio de la tienda. Si faltan monedas o las plantas están llenas, no se cobra nada y las novedades del restaurante explican por qué',
+    tower1012:
+      'En la torre, toca una planta para abrir el panel del anciano; las pruebas y los desafíos están ahí y las filas ya no tienen botón de desafío',
+    mousetrap1012:
+      'Las ratoneras ahora atrapan a los ratones que vienen a robar ingredientes con la probabilidad que indican, igual que a los amigos que revuelven tu despensa (antes se comprobaba primero tu suerte, y cuanta más tenías, menos servía la ratonera). Las descripciones y las novedades del restaurante lo explican',
     cupboard1012:
       'La despensa ahora es una lista, un ingrediente por fila: una imagen pequeña, el nivel tras el nombre, lo que aún pide la calle debajo y la cantidad a la derecha. Un buscador filtra por nombre, en el estante y en la nevera',
     thumbs1012:

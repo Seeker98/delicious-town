@@ -85,8 +85,8 @@ export interface TowerElderDto {
   level: number;
   /** 每件厨具都强化到这一级 */
   stress: number;
-  /** 等级属性点 */
-  points: { cook: number; cutting: number; fire: number };
+  /** 等级属性点（用户 2026-10-12：调味也能加） */
+  points: { cook: number; cutting: number; fire: number; season: number };
   /** 每件厨具的属性（基础 + 强化） */
   pieces: Array<{ id: number; attrs: AttrsDto }>;
   /** 被挑战时的属性：加点 + 厨具，算上套装和防守加成 */

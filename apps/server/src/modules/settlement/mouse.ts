@@ -24,14 +24,15 @@ async function visit(op: Op): Promise<{ outcome: Outcome; map: boolean }> {
   const agg = await opAgg(op);
   const { sum, rate } = await opLuck(op);
   let outcome: Outcome;
-  if (op.rng.chance(rate / mt.luckDivisor)) {
-    outcome = 'escaped';
-    restLog(op, 'mouse.escape');
-  } else if (op.rng.chance(agg.trapRate ?? 0)) {
+  // 老鼠夹先判，和好友翻橱柜一样按夹子的概率夹住（用户 2026-10-12：原来先判店主运气躲过，运气越高夹子越不起作用）
+  if (op.rng.chance(agg.trapRate ?? 0)) {
     outcome = 'trapped';
     const coin = Math.floor(op.rest.level * mt.trapCoinPerLevel * (0.5 + op.rng.next()) + sum);
     gainCoin(op, coin, { source: 'mouse.trap', event: false });
     restLog(op, 'mouse.trap', { coin });
+  } else if (op.rng.chance(rate / mt.luckDivisor)) {
+    outcome = 'escaped';
+    restLog(op, 'mouse.escape');
   } else {
     const foods = await op.tx
       .selectFrom('cupboard_food')

@@ -158,7 +158,7 @@
     "tuning.mouse.rateBase": "老鼠出现的基础概率（每轮）",
     "tuning.mouse.ratePerStar": "每颗星减少的老鼠出现概率",
     "tuning.mouse.newbieFactor": "新手街老鼠概率倍数（倍）",
-    "tuning.mouse.luckDivisor": "放了捕鼠夹时抓到老鼠的概率 = 老鼠概率 ÷ 这个值",
+    "tuning.mouse.luckDivisor": "老鼠夹没夹住时, 店主幸运让老鼠空跑一趟的概率 = 幸运率 ÷ 这个值",
     "tuning.mouse.trapCoinPerLevel": "抓到老鼠的银币奖励按等级 × 这个值浮动（银币）",
     "tuning.growth.plaque2Star": "开通二楼牌匾需要的星级（星）",
     "tuning.growth.plaque2Coin": "开通二楼牌匾花费的银币（银币）",

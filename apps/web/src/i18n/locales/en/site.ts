@@ -31,6 +31,14 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    season1012:
+      'Seasoning can now take attribute points like Cooking, Knife skills and Heat control, and a Respec Card refunds them too. Tower elders also put points into Seasoning; every floor was rebalanced and is no easier than before',
+    tables1012:
+      'Leveling up now sets up the new table for you: it uses a Table A from storage first, otherwise buys one at the shop price. If you are short on coins or your floors are full, nothing is charged and the restaurant feed says why',
+    tower1012:
+      'In the tower, tap a floor to open the elder panel; test runs and challenges are both there, and the rows no longer have a challenge button',
+    mousetrap1012:
+      'Mousetraps now catch mice after your ingredients at the chance written on the trap, just like friends raiding your pantry (before, your luck was checked first, so the higher it was the less the trap did). Item descriptions and the restaurant feed say so',
     cupboard1012:
       'The cupboard is now a list, one ingredient per row: a small picture, the level after the name, what the street still needs under it and the amount on the right. A search box filters by name, on the shelf and in the fridge',
     thumbs1012:
