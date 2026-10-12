@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    thumbs1012:
+      "Tout rendre ne signale plus d'échec quand vous aviez mis un pouce à quelqu'un avant qu'il vous en mette un\u202f: c'est déjà compté comme rendu",
     account1012:
       "Connexion, compte, centre d'aide et bibliothèque repensés\u202f: la porte de la ville en tête des pages de connexion et d'inscription, chaque champ a son titre et sa propre ligne d'erreur, et l'œil affiche le mot de passe\u202f; chaque serveur est une carte avec votre restaurant\u202f; langue, apparence et mot de passe se changent dans des panneaux\u202f; les récompenses des codes ont des images et le code d'invitation est dans un cadre pointillé\u202f; le centre d'aide passe en tuiles et le guide se replie\u202f; le journal des mises à jour et la bibliothèque prennent un air de journal, les listes ont des images et les fiches d'objets, d'ingrédients, de recettes et de rues se lisent comme un petit carnet",
     social1012:

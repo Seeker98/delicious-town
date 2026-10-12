@@ -3,7 +3,7 @@ import { testConfig } from '../../../test/config';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { eventCount } from '../../../test/quests';
-import { listActiveEffects } from '../effects/service';
+import { getEffectAgg, listActiveEffects } from '../effects/service';
 import { grantGoods } from '../store/grant';
 import { GOODS } from '@dt/config';
 import { gid } from '../../../test/items';
@@ -211,6 +211,27 @@ describe('开关', () => {
     await grant(ctx.restaurantId, GOODS.apolloStatue);
     await g().setCte(ctx, true);
     expect((await restRow(t, ctx.restaurantId)).cte_on).toBe(true);
+  });
+});
+
+describe('痞老板勋章的加成（问题记录 597）', () => {
+  it('店里有痞老板勋章：加成页列出它（上座率 +50%、挑剔率 -120%、每桌耗油 +5），结算用的加成汇总也算进去', async () => {
+    const ctx = await newRestaurant(t);
+    const before = await getEffectAgg(t.db, ctx.restaurantId, t.clock.now, config, {
+      tuning: config.tuning,
+      features: {},
+    });
+    await grant(ctx.restaurantId, GOODS.plankton);
+    const buffs = await t.game.restaurant.buffs(ctx);
+    const src = buffs.sources.find((s) => s.sourceId === GOODS.plankton);
+    expect(src).toMatchObject({ sourceType: 'honor', effects: { atRate: 0.5, spRate: -1.2, oilValue: 5 } });
+    const after = await getEffectAgg(t.db, ctx.restaurantId, t.clock.now, config, {
+      tuning: config.tuning,
+      features: {},
+    });
+    expect((after.atRate ?? 0) - (before.atRate ?? 0)).toBeCloseTo(0.5);
+    expect((after.spRate ?? 0) - (before.spRate ?? 0)).toBeCloseTo(-1.2);
+    expect((after.oilValue ?? 0) - (before.oilValue ?? 0)).toBeCloseTo(5);
   });
 });
 

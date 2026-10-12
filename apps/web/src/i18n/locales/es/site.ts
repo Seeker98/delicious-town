@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    thumbs1012:
+      'Devolver todos ya no marca un fallo cuando le diste me gusta a alguien antes de que te lo diera a ti: ya cuenta como devuelto',
     account1012:
       'Inicio de sesión, cuenta, centro de ayuda y biblioteca rediseñados: las páginas de entrada y registro muestran la puerta del pueblo, cada campo tiene su título y su propia línea de error, y el ojo muestra la contraseña; cada servidor es una tarjeta con tu restaurante; idioma, apariencia y contraseña se cambian en paneles; las recompensas de los códigos tienen imágenes y tu código de invitación está en un recuadro punteado; el centro de ayuda son mosaicos y la guía se pliega; el registro de cambios y la biblioteca parecen un periódico, las listas tienen imágenes y las fichas de objetos, ingredientes, recetas y calles se leen como un pequeño manual',
     social1012:

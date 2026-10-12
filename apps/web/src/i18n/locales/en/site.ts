@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    thumbs1012:
+      'Return all no longer reports a failure when you gave someone a thumbs-up before they gave you one: that already counts as returned',
     account1012:
       'Login, account, help center and library redesigned: login and sign-up pages show the town gate, every field has a label and its own error line, and the eye button shows your password; each server is a card that shows your restaurant there; language, appearance and password are changed in panels on the account page; redeem rewards come with pictures and your invite code sits in a dashed box; the help center is a set of tiles and the play guide folds up; the update log and the library look like a newspaper, library lists have pictures, and item, ingredient, recipe and street pages read like a little handbook',
     social1012:

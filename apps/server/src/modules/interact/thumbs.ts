@@ -50,9 +50,25 @@ export function createThumbs(d: GameDeps) {
             .executeTakeFirst();
           if (byIp) throw new AppError(ErrorCode.ALREADY_DONE, 400, { what: 'thumb_ip' });
         }
+        // 对方今天已经先赞过我：我这一赞对对方来说就是回赞过了（问题记录 601：以前记成没回赞，
+        // 对方一键回赞时又去点一次，被“今天已赞过”挡下，显示回赞失败）
+        const theyFirst = await me.tx
+          .selectFrom('thumb')
+          .select('to_rest')
+          .where('day', '=', day)
+          .where('from_rest', '=', them.rest.id)
+          .where('to_rest', '=', me.rest.id)
+          .executeTakeFirst();
         await me.tx
           .insertInto('thumb')
-          .values({ day, from_rest: me.rest.id, to_rest: them.rest.id, ip, created_at: me.now })
+          .values({
+            day,
+            from_rest: me.rest.id,
+            to_rest: them.rest.id,
+            ip,
+            created_at: me.now,
+            returned: theyFirst !== undefined,
+          })
           .execute();
         const count = await incrementDaily(me.tx, me.rest.id, 'thumbs.given', 1, day);
         const rewarded = count <= t.rewardTimes;
@@ -85,32 +101,57 @@ export function createThumbs(d: GameDeps) {
     up,
 
     async today(ctx: RestCtx): Promise<ThumbTodayDto[]> {
+      const day = gameDay(d.now());
       const rows = await d.db
         .selectFrom('thumb as t')
         .innerJoin('restaurant as r', 'r.id', 't.from_rest')
         .select(['r.id', 'r.name', 'r.avatar', 't.created_at', 't.returned'])
-        .where('t.day', '=', gameDay(d.now()))
+        .where('t.day', '=', day)
         .where('t.to_rest', '=', ctx.restaurantId)
         .orderBy('t.created_at')
         .execute();
+      // 今天我已经赞过的店也算回赞过（问题记录 601 的旧数据）
+      const mine = new Set(
+        (
+          await d.db
+            .selectFrom('thumb')
+            .select('to_rest')
+            .where('day', '=', day)
+            .where('from_rest', '=', ctx.restaurantId)
+            .execute()
+        ).map((x) => x.to_rest),
+      );
       return rows.map((r) => ({
         restId: r.id,
         name: r.name,
         avatar: r.avatar,
         at: r.created_at.toISOString(),
-        returned: r.returned,
+        returned: r.returned || mine.has(r.id),
       }));
     },
 
     /** 逐家回赞，各自独立事务；失败的列出错误码，不影响其他 */
     async returnAll(ctx: RestCtx): Promise<OpResult<ReturnAllDto>> {
+      const day = gameDay(d.now());
+      // 今天我已经赞过的店不算没回赞（旧数据里“我先赞、对方后赞”记成了没回赞，问题记录 601）
       const pending = await d.db
-        .selectFrom('thumb')
-        .select('from_rest')
-        .where('day', '=', gameDay(d.now()))
-        .where('to_rest', '=', ctx.restaurantId)
-        .where('returned', '=', false)
-        .orderBy('created_at')
+        .selectFrom('thumb as t')
+        .select('t.from_rest')
+        .where('t.day', '=', day)
+        .where('t.to_rest', '=', ctx.restaurantId)
+        .where('t.returned', '=', false)
+        .where(({ not, exists, selectFrom }) =>
+          not(
+            exists(
+              selectFrom('thumb as mine')
+                .select('mine.to_rest')
+                .where('mine.day', '=', day)
+                .where('mine.from_rest', '=', ctx.restaurantId)
+                .whereRef('mine.to_rest', '=', 't.from_rest'),
+            ),
+          ),
+        )
+        .orderBy('t.created_at')
         .execute();
       const data: ReturnAllDto = { ok: [], failed: [] };
       const events: GameEvent[] = [];
