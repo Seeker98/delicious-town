@@ -99,12 +99,11 @@ const server: Messages['server'] = {
         `${day}, ${hour}:00: el estante diario no tuvo ingredientes raros de nivel ${level}`,
     },
     weather: {
-      title: (hour, type) => `¿El clima automático de hoy a las ${hour}:00 será de tipo ${type}?`,
+      title: (hour, type) => `¿Tras el cambio de hoy a las ${hour}:00, el tiempo será de tipo ${type}?`,
       desc: (hour) =>
-        `Según el clima que elige el sistema a las ${hour}:00; los cambios posteriores con el Martillo de Thor no cuentan.`,
-      note: (day, hour, weather, type) => `${day}, ${hour}:00: el clima automático fue ${weather} (${type})`,
-      hammer: (weather) =>
-        `; luego alguien lo cambió a ${weather} con el Martillo de Thor, lo cual no cuenta`,
+        `Según el tiempo del cambio de las ${hour}:00; los cambios posteriores con la brújula celeste o los palillos del tiempo no cuentan.`,
+      note: (day, hour, weather, type) => `${day}, ${hour}:00: el tiempo pasó a ${weather} (${type})`,
+      hammer: (weather) => `; luego alguien lo cambió a ${weather} con un objeto, lo cual no cuenta`,
       types: ['', 'soleado', 'lluvia', 'nieve', 'viento/arena/niebla'],
     },
     stats: {

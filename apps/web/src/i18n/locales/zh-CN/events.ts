@@ -243,6 +243,8 @@ export default {
     'town.mysteryTicket': (p, names) => `用神秘食材券换到 ${names.foodName(n(p, 'foodsId'))}`,
     'town.feast': () => '参加了广场宴席',
     'town.hammer': () => '敲了天气锤, 改变了天气',
+    'weather.tool': (p, names) =>
+      `用${names.goodsName(n(p, 'goodsId'))}把${names.weatherName?.(n(p, 'from')) ?? ''}改成了${names.weatherName?.(n(p, 'to')) ?? ''}`,
     'town.mayor': (p) => (p.right ? '答对了镇长大胃锅的问题' : '答错了镇长大胃锅的问题'),
     'town.shake': (p) => `摇钱树摇到银币 ${formatNum(n(p, 'coin'))}`,
     'town.talk': () => '和小镇居民聊了天',

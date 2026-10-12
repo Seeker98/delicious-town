@@ -150,6 +150,13 @@ const guide: Messages['guide'] = {
         '.',
       ],
     },
+    {
+      q: '¿Cómo cambia el tiempo? ¿Cómo puedo cambiarlo?',
+      a: [
+        'El tiempo cambia cada 4 horas (1:00, 5:00, 9:00, 13:00, 17:00, 21:00) y sigue al tiempo actual: el buen tiempo tiende a quedarse, nunca nieva justo después del sol y la lluvia fuerte llega poco a poco desde la llovizna. Los tiempos especiales (tormenta eléctrica, lluvia ácida, helada, huracán, arcoíris) solo llegan tras sus señales previas. La página del tiempo muestra la probabilidad de cada tipo en el próximo cambio.',
+        'Para cambiarlo, usa una brújula celeste (eliges un tipo; el alcalde cambia 1 por semana y también sale en el último premio del Ichiban Kuji y en el árbol de los deseos) o los palillos del tiempo (agitas dos y te quedas con uno; la tienda vende 1 al día). Dura 1 hora para todo el pueblo. Cada jugador puede usar uno cada 4 horas y nadie más puede cambiarlo en la hora siguiente. Los restaurantes de 0 estrellas no se ven afectados por el tiempo.',
+      ],
+    },
   ],
   rules: 'Normas del juego',
   rulesItems: [

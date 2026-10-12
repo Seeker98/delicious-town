@@ -35,6 +35,17 @@ describe('ExchangePanel', () => {
     expect(endpoints.townExchange).toHaveBeenLastCalledWith('level');
   });
 
+  it('每周限兑的写“每周”（天气改版：司天罗盘 2 个蟹黄堡，每周 1 次）', async () => {
+    const d = exchangeData();
+    vi.mocked(endpoints.townExchange).mockResolvedValue({
+      ...d,
+      items: d.items.map((x) => (x.id === 2 ? { ...x, weekly: true } : x)),
+    });
+    const w = mountIt();
+    await flushPromises();
+    expect(w.get('[data-testid="ex-row-2"]').text()).toContain('每周限兑 1 次, 本周已兑 0 次');
+  });
+
   it('按分类显示；材料不够、次数用完的灰掉并写明', async () => {
     const w = mountIt();
     await flushPromises();

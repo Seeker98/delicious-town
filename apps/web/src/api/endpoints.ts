@@ -41,7 +41,9 @@ import type {
   SpiceDto,
   DealDto,
   FeastResultDto,
-  HammerResultDto,
+  LotsDrawDto,
+  WeatherToolResultDto,
+  WeatherToolsDto,
   NewsPageDto,
   DailyDto,
   NpcKey,
@@ -516,8 +518,12 @@ export const endpoints = {
     api.post<ForumAdminDto>(`/api/v1/forum/posts/${id}/admin`, { action }),
   hiphopSpot: (q: { place: number } | { restId: number }) => api.get<HiphopSpotDto>(`/api/v1/hiphop${qs(q)}`),
   hiphopTip: (b: HiphopTipBody) => api.post<HiphopTipDto>('/api/v1/hiphop/tip', b),
-  townHammer: (body: { mode: 'coin'; type: number } | { mode: 'diamond' }) =>
-    api.post<HammerResultDto>('/api/v1/town/hammer', body),
+  /** 司天罗盘、晴雨签（天气改版） */
+  weatherTools: () => api.get<WeatherToolsDto>('/api/v1/world/weather/tools'),
+  weatherCompass: (type: number) => api.post<WeatherToolResultDto>('/api/v1/world/weather/compass', { type }),
+  weatherLots: () => api.post<LotsDrawDto>('/api/v1/world/weather/lots', {}),
+  weatherLotsPick: (index: number) =>
+    api.post<WeatherToolResultDto>('/api/v1/world/weather/lots/pick', { index }),
   townExchangeDo: (id: number, num: number) =>
     api.post<TownExchangeResultDto>('/api/v1/town/exchange', { id, num }),
   townLevelTicket: (level: number, picks: Array<{ foodsId: number; num: number }>) =>

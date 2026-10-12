@@ -30,8 +30,6 @@ export default {
     bro13: { name: '13 哥', desc: '每天聊天送喇叭' },
     carmen: { name: '卡门', desc: '见面礼: 神秘食材兑换券 (每家店一次)' },
   },
-  /** 雷神锤能换的天气大类（下标 = 类型） */
-  weatherTypes: ['', '晴类', '雨类', '雪冰类', '风沙雾类'],
   said: (name: string, talk: string, rewards: string) => `${name}: ${talk} 获得 ${rewards}`,
   mayorName: '镇长大胃锅',
   /** 镇长大胃锅页上的问答标题（问题记录 441） */
@@ -53,12 +51,6 @@ export default {
   feastFailed: '共飨失败',
   wished: (name: string) => `许愿得到星愿: ${name}`,
   wishFailed: '许愿失败',
-  hammerNeed: '持有雷神锤才能使用',
-  hammerCool: (time: string) => `冷却到 ${time}`,
-  hammerTown: (s: number) => `刚换过天气, ${s} 秒后才能再换`,
-  hammerDone: (from: string, to: string, gift: string, num: number) =>
-    `${from}转${to}了, 获得 ${gift}×${num}`,
-  hammerFailed: '换天气失败',
   talkedToday: '今天聊过了',
   talk: '聊天',
   mayorAnswered: '今天已经告诉过镇长了',
@@ -88,23 +80,11 @@ export default {
   noWish: '今天还没有人许愿。第一个许愿的人决定今天全镇的星愿',
   needLamp: '持有神灯才能许愿',
   wish: '许愿',
-  hammer: '雷神锤',
   weatherNow: '当前天气: ',
-  hammerHint: (coin: string, diamond: number) =>
-    `换成某一类天气: 每次 ${coin} 银币；召唤特殊天气: 每次 ${diamond} 钻石`,
-  hammerSpecial: '召唤特殊天气',
-  /** 换天气面板（界面改版 P10） */
-  weatherIs: (name: string) => `现在是 ${name}`,
-  hammerOpen: '换天气',
-  hammerSheetSub: '全镇的天气一起变',
-  hammerPickLabel: '换成哪种天气',
-  hammerTypeSub: '随机换成这一类里的一种',
-  hammerSpecialName: '特殊天气',
-  hammerSpecialSub: '随机召唤一种特殊天气',
-  hammerNote: '换完得到一份小礼物；用完要冷却一阵。',
-  hammerPickFirst: '先选一种天气',
-  hammerGo: (type: string, coin: string) => `换成${type} · ${coin}`,
-  hammerGoSpecial: (diamond: number) => `召唤特殊天气 · ${diamond} 钻`,
+  /** 广场改天气的入口（天气改版：雷神锤换成司天罗盘、晴雨签，在天气页用） */
+  weatherTool: '改天气',
+  weatherToolSub: (name: string) => `现在是 ${name} · 司天罗盘、晴雨签在天气页用`,
+  toWeather: '去天气页',
   news: {
     loadFailed: '读取新闻失败',
     needStar: (n: number) => `餐厅 ${n} 星才能广播`,
@@ -316,6 +296,7 @@ export default {
     have: (n: number) => ` (有 ${n})`,
     times: (times: number, used: number) => `限兑 ${times} 次, 已兑 ${used} 次`,
     unlimited: '不限次数',
+    weekly: (times: number, used: number) => `每周限兑 ${times} 次, 本周已兑 ${used} 次`,
     btn: '兑换',
     tickets: '兑换券',
     /** 兑换面板（界面改版 P10） */

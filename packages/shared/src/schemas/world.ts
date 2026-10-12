@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 /** 街道类型（问题记录 378 方案 C）：银币街、均衡街、经验街 */
 export type StreetFocus = 'coin' | 'balanced' | 'exp';
 
@@ -10,8 +12,34 @@ export interface WeatherDto {
   until: string;
 }
 
+/** 天气四大类：1 晴、2 雨、3 雪冰、4 风沙雾 */
+export type WeatherTypeKey = '1' | '2' | '3' | '4';
+
+/** 道具盖着的天气（天气改版设计 §2）：谁用什么盖的、到几点；底下的自然天气照常变 */
+export interface WeatherCoverDto {
+  goodsId: number;
+  byRestId: number | null;
+  byName: string | null;
+  until: string;
+  /** 底下的自然天气 */
+  natural: { id: number; name: string };
+}
+
+/** 预报（设计 §1.6）：下一轮几点、各大类的概率（只给四类，不给具体天气） */
+export interface WeatherForecastDto {
+  at: string;
+  types: Record<WeatherTypeKey, number>;
+  /** 一天的换天时间（整点）、现在这一轮是几点开始的；旧服务端没有 */
+  hours?: number[];
+  current?: number;
+}
+
 export interface WorldDto {
+  /** 现在生效的天气（盖着时是盖的那个） */
   weather: WeatherDto;
+  /** 旧服务端没有下面两项 */
+  cover?: WeatherCoverDto | null;
+  forecast?: WeatherForecastDto;
   krabStreet: number;
   krabStreetName: string;
   holidayMultiplier: number;
@@ -63,7 +91,8 @@ export interface CatalogDto {
     focus: StreetFocus | null;
   }>;
   /** note 是天气效果说明（问题记录 272 起按语言；旧缓存里没有） */
-  weather: Array<{ id: number; name: string; note?: string }>;
+  /** type 大类、special 特殊天气（天气改版：天气页按它画图）；旧缓存没有 */
+  weather: Array<{ id: number; name: string; note?: string; type?: number; special?: boolean }>;
   devices: Array<{ id: number; name: string; deviceType: number; needStar: number }>;
   /** 门、头像、个性图标；旧缓存里没有 */
   looks?: LooksDto;
@@ -117,4 +146,41 @@ export interface LooksDto {
   /** art：头像的图形名，网页画 avatar-<art>（界面改版 P7） */
   avatars: Array<{ id: number; name: string; art: string }>;
   icons: Array<{ key: string; title: string; desc: string }>;
+}
+
+/** 司天罗盘、晴雨签（天气改版设计 §2） */
+export const compassBody = z.object({ type: z.number().int().min(1).max(4) });
+export const lotsPickBody = z.object({ index: z.number().int().min(0).max(1) });
+
+export interface WeatherToolsDto {
+  /** 服务器现在的时间（倒计时按它对时） */
+  now: string;
+  /** 持有几个 */
+  compass: number;
+  lots: number;
+  compassGoodsId: number;
+  lotsGoodsId: number;
+  /** 我的冷却结束时间（两件共用） */
+  readyAt: string | null;
+  /** 别人盖着天气、或者别人摇了签还没选：这个时间以前谁都不能改 */
+  lockedUntil: string | null;
+  /** 我摇出来还没选的两支签 */
+  pendingLots: { choices: number[]; until: string } | null;
+  /** 司天罗盘四类各能换出哪些天气、概率多少；选不了的类是空数组 */
+  compassOptions: Array<{ type: number; weathers: Array<{ id: number; p: number }> }>;
+  /** 每人冷却几小时、盖多久（分钟）、签多久不选按第一支（秒）：规则说明按它写 */
+  cooldownHours: number;
+  coverMinutes: number;
+  lotsSec: number;
+}
+
+export interface WeatherToolResultDto {
+  from: number;
+  to: number;
+  until: string;
+}
+
+export interface LotsDrawDto {
+  choices: number[];
+  until: string;
 }

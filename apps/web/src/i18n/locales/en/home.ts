@@ -14,6 +14,11 @@ const home: Messages['home'] = {
     failed: "Couldn't drive him away",
   },
   stars: (n) => `${n}★`,
+  forecast: (hour, type, same, sure) =>
+    `${sure ? 'Likely' : 'Maybe'} ${same ? 'still' : ''} ${type.toLowerCase()} after ${hour}:00`.replace(
+      '  ',
+      ' ',
+    ),
   level: 'Level',
   closed: 'Closed',
   closedSign: 'Closed',

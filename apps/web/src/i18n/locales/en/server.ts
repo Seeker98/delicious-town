@@ -93,12 +93,11 @@ const server: Messages['server'] = {
       no: (day, hour, level) => `${day}, ${hour}:00: the daily shelf had no level-${level} rare ingredients`,
     },
     weather: {
-      title: (hour, type) => `Will the automatic weather change at ${hour}:00 today be ${type}?`,
+      title: (hour, type) => `Will the weather after the ${hour}:00 change today be ${type}?`,
       desc: (hour) =>
-        `Based on the weather the system picks at ${hour}:00; changes made afterwards with Thor's Hammer don't count.`,
-      note: (day, hour, weather, type) =>
-        `${day}, ${hour}:00: the automatic weather was ${weather} (${type})`,
-      hammer: (weather) => `; someone later changed it to ${weather} with Thor's Hammer, which doesn't count`,
+        `Based on the weather at the ${hour}:00 change; changes made afterwards with a Sky Compass or Weather Lots don't count.`,
+      note: (day, hour, weather, type) => `${day}, ${hour}:00: the weather changed to ${weather} (${type})`,
+      hammer: (weather) => `; someone later changed it to ${weather} with an item, which doesn't count`,
       types: ['', 'sunny', 'rainy', 'snowy', 'windy/sandy/foggy'],
     },
     stats: {

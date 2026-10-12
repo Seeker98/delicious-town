@@ -94,11 +94,11 @@ export default {
       no: (day: string, hour: number, level: number) => `${day} ${hour} 點日常貨架沒有 ${level} 級稀有食材`,
     },
     weather: {
-      title: (hour: number, type: string) => `今天 ${hour} 點自動輪換的天氣是${type}類嗎`,
-      desc: (hour: number) => `以 ${hour} 點系統自動輪換出的天氣為準, 之後有人用雷神錘改的不算。`,
+      title: (hour: number, type: string) => `今天 ${hour} 點換天后是${type}類天氣嗎`,
+      desc: (hour: number) => `以 ${hour} 點換天時的天氣為準, 之後有人用司天羅盤、晴雨籤改的不算。`,
       note: (day: string, hour: number, weather: string, type: string) =>
-        `${day} ${hour} 點自動輪換的天氣是${weather} (${type}類)`,
-      hammer: (weather: string) => `；之後有人用雷神錘改成了${weather}, 按題目規則不算`,
+        `${day} ${hour} 點換天后是${weather} (${type}類)`,
+      hammer: (weather: string) => `；之後有人用道具改成了${weather}, 按題目規則不算`,
       /** 天氣大類（下標 = 類型） */
       types: ['', '晴', '雨', '雪', '風沙霧霾'],
     },

@@ -163,6 +163,26 @@ export interface Weather {
   note: string;
 }
 
+/**
+ * 天气马尔可夫链（天气改版设计 §1，game/weather_chain.json）：键都是编号的字符串。
+ * score 经营分模型；stay 按经营分从高到低分档；intensity 雨类、雪冰类的强度；counter 日夜对应天气；
+ * precursors 特殊天气 → [前兆, 相对系数]；rainbow 虹（从哪类转到哪类时出）；compassBanned 司天罗盘不出的天气；
+ * types 类型矩阵；spk 特殊天气系数；q 类型内权重
+ */
+export interface WeatherChain {
+  note: string;
+  score: { at: number; sp: number; k: number; perTable: number };
+  stay: Array<{ min: number; p: number }>;
+  intensity: Record<string, number>;
+  counter: Array<[number, number]>;
+  precursors: Record<string, Array<[number, number]>>;
+  rainbow: { id: number; from: number; to: number };
+  compassBanned: number[];
+  types: Record<string, Record<string, number>>;
+  spk: Record<string, number>;
+  q: Record<string, number>;
+}
+
 export interface Device {
   id: number;
   name: string;
@@ -360,6 +380,7 @@ export interface ConfigBundle {
   incomeActions: IncomeAction[];
   slotAwards: SlotAward[];
   towerFloors: TowerFloor[];
+  weatherChain: WeatherChain;
   renownShop: RenownShopItem[];
   weather: Weather[];
   devices: Device[];
@@ -512,6 +533,8 @@ export interface GoodsExchange {
   need: Array<{ goodsId: number; num: number }>;
   /** 每人累计限兑次数；-1 不限 */
   times: number;
+  /** times 按周算（周一 0 点重置，天气改版：司天罗盘） */
+  weekly: boolean;
   /** 兑换后写新闻 */
   news: boolean;
 }

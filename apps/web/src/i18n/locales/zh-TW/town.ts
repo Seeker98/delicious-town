@@ -31,8 +31,6 @@ export default {
     bro13: { name: '13 哥', desc: '每天聊天送喇叭' },
     carmen: { name: '卡門', desc: '見面禮: 神秘食材兌換券 (每家店一次)' },
   },
-  /** 雷神錘能換的天氣大類（下標 = 類型） */
-  weatherTypes: ['', '晴類', '雨類', '雪冰類', '風沙霧類'],
   said: (name: string, talk: string, rewards: string) => `${name}: ${talk} 獲得 ${rewards}`,
   mayorName: '鎮長大胃鍋',
   /** 鎮長大胃鍋頁上的問答標題（問題記錄 441） */
@@ -54,12 +52,6 @@ export default {
   feastFailed: '共饗失敗',
   wished: (name: string) => `許願得到星願: ${name}`,
   wishFailed: '許願失敗',
-  hammerNeed: '持有雷神錘才能使用',
-  hammerCool: (time: string) => `冷卻到 ${time}`,
-  hammerTown: (s: number) => `剛換過天氣, ${s} 秒後才能再換`,
-  hammerDone: (from: string, to: string, gift: string, num: number) =>
-    `${from}轉${to}了, 獲得 ${gift}×${num}`,
-  hammerFailed: '換天氣失敗',
   talkedToday: '今天聊過了',
   talk: '聊天',
   mayorAnswered: '今天已經告訴過鎮長了',
@@ -89,23 +81,11 @@ export default {
   noWish: '今天還沒有人許願。第一個許願的人決定今天全鎮的星願',
   needLamp: '持有神燈才能許願',
   wish: '許願',
-  hammer: '雷神錘',
   weatherNow: '當前天氣: ',
-  hammerHint: (coin: string, diamond: number) =>
-    `換成某一類天氣: 每次 ${coin} 銀幣；召喚特殊天氣: 每次 ${diamond} 鑽石`,
-  hammerSpecial: '召喚特殊天氣',
-  /** 換天氣面板（介面改版 P10） */
-  weatherIs: (name: string) => `現在是 ${name}`,
-  hammerOpen: '換天氣',
-  hammerSheetSub: '全鎮的天氣一起變',
-  hammerPickLabel: '換成哪種天氣',
-  hammerTypeSub: '隨機換成這一類裡的一種',
-  hammerSpecialName: '特殊天氣',
-  hammerSpecialSub: '隨機召喚一種特殊天氣',
-  hammerNote: '換完得到一份小禮物；用完要冷卻一陣。',
-  hammerPickFirst: '先選一種天氣',
-  hammerGo: (type: string, coin: string) => `換成${type} · ${coin}`,
-  hammerGoSpecial: (diamond: number) => `召喚特殊天氣 · ${diamond} 鑽`,
+  /** 廣場改天氣的入口（天氣改版：雷神錘換成司天羅盤、晴雨籤，在天氣頁用） */
+  weatherTool: '改天氣',
+  weatherToolSub: (name: string) => `現在是 ${name} · 司天羅盤、晴雨簽在天氣頁用`,
+  toWeather: '去天氣頁',
   news: {
     loadFailed: '讀取新聞失敗',
     needStar: (n: number) => `餐廳 ${n} 星才能廣播`,
@@ -317,6 +297,7 @@ export default {
     have: (n: number) => ` (有 ${n})`,
     times: (times: number, used: number) => `限兌 ${times} 次, 已兌 ${used} 次`,
     unlimited: '不限次數',
+    weekly: (times: number, used: number) => `每週限兌 ${times} 次, 本週已兌 ${used} 次`,
     btn: '兌換',
     tickets: '兌換券',
     /** 兌換面板（介面改版 P10） */

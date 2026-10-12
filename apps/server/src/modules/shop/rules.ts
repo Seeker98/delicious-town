@@ -12,6 +12,8 @@ export interface BuyState {
   storeFull: boolean;
   /** 餐厅星级 */
   star: number;
+  /** 每日限购今天还能买几个；不限购为 undefined */
+  dailyLeft?: number;
 }
 
 /** 一次最多能买几个，和买不了的原因（与 buy 里的 assertBuyable 同一套规则） */
@@ -25,9 +27,11 @@ export function buyCap(g: Goods, s: BuyState, maxBuy: number): { max: number; bl
   // 不可叠放的道具一次只能买 1 个，也受持有上限限制（问题记录 136：教师证买完按钮不变灰）
   const cap = plaque || honor ? 1 : Math.min(g.stackable ? maxBuy : 1, g.maxNum - s.owned);
   if (cap <= 0) return { max: 0, blocked: 'max' };
+  if (s.dailyLeft !== undefined && s.dailyLeft <= 0) return { max: 0, blocked: 'daily' };
+  const capped = s.dailyLeft === undefined ? cap : Math.min(cap, s.dailyLeft);
   const newKind = !honor && (g.type === GOODS_TYPE.equip || s.owned === 0);
   if (newKind && s.storeFull) return { max: 0, blocked: 'store' };
-  const afford = s.price > 0 ? Math.floor(s.money / s.price) : cap;
+  const afford = s.price > 0 ? Math.floor(s.money / s.price) : capped;
   if (afford <= 0) return { max: 0, blocked: 'money' };
-  return { max: Math.min(cap, afford), blocked: null };
+  return { max: Math.min(capped, afford), blocked: null };
 }

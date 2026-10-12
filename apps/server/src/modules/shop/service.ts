@@ -1,6 +1,7 @@
-import { goodsEffectHours, GOODS_TYPE, takesStoreSlot, type Goods } from '@dt/config';
+import { goodsEffectHours, GOODS_TYPE, takesStoreSlot, type Goods, type Tuning } from '@dt/config';
 import {
   ErrorCode,
+  gameDay,
   latestSlot,
   seededRng,
   type ShopDto,
@@ -15,6 +16,7 @@ import { invalidState, limitReached, requirement } from '../../core/errors';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import { gainCoin, spendCoin, spendDiamond } from '../../core/resources';
 import { AppError } from '../../http/errors';
+import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { postNews } from '../news/news';
 import {
   assertStoreRoom,
@@ -42,6 +44,11 @@ async function assertBuyable(o: Op, g: Goods, num: number): Promise<void> {
   if (!plaque && !honor && have + num > g.maxNum) throw limitReached('max', { max: g.maxNum });
   await assertStoreRoom(o, g.id);
 }
+
+/** 每日限购的计数键（daily_counter，天气改版：晴雨签每天 1 个） */
+const dailyKey = (goodsId: number) => `shop.buy:${goodsId}`;
+const dailyLimitOf = (o: { tuning: Tuning }, goodsId: number) =>
+  new Map(o.tuning.shop.dailyLimit).get(goodsId);
 
 export function createShopService(d: GameDeps) {
   const op = <T>(ctx: RestCtx, source: string, fn: (o: Op) => Promise<T>): Promise<OpResult<T>> =>
@@ -80,12 +87,18 @@ export function createShopService(d: GameDeps) {
         rows.filter((r) => r.num > 0 && takesStoreSlot(d.config.goods.get(r.goods_id))).length +
         (await looseEquipCount(d.db, ctx.restaurantId));
       const storeFull = kinds >= rest.store_num;
+      const limits = new Map(tuning.shop.dailyLimit);
+      const bought = new Map<number, number>();
+      for (const id of limits.keys())
+        bought.set(id, await getDaily(d.db, ctx.restaurantId, dailyKey(id), gameDay(now)));
       const limitOf = (g: Goods) => (isPlaque(g) || g.type === GOODS_TYPE.honor || !g.stackable ? 1 : null);
       const row = (g: Goods, price: number, money: number): ShopItemDto => {
         const have = owned.get(g.id) ?? 0;
+        const limit = limits.get(g.id);
+        const left = limit === undefined ? undefined : Math.max(0, limit - (bought.get(g.id) ?? 0));
         const cap = buyCap(
           g,
-          { owned: have, money, price, storeFull, star: rest.star_level },
+          { owned: have, money, price, storeFull, star: rest.star_level, dailyLeft: left },
           tuning.shop.maxBuy,
         );
         return {
@@ -96,6 +109,7 @@ export function createShopService(d: GameDeps) {
           maxBuy: cap.max,
           blocked: cap.blocked,
           ...(g.needStar ? { needStar: g.needStar } : {}),
+          ...(limit !== undefined ? { daily: { limit, left: left! } } : {}),
         };
       };
       const coin = d.config.bundle.goods
@@ -153,6 +167,13 @@ export function createShopService(d: GameDeps) {
         const g = o.config.requireGoods(b.goodsId);
         if (!g.onSale || g.coin <= 0) throw invalidState('not_on_sale', { goodsId: g.id });
         await assertBuyable(o, g, b.num);
+        const limit = dailyLimitOf(o, g.id);
+        if (limit !== undefined) {
+          const day = gameDay(o.now);
+          const used = await getDaily(o.tx, o.rest.id, dailyKey(g.id), day);
+          if (used + b.num > limit) throw limitReached('shop_daily', { max: limit, used });
+          await incrementDaily(o.tx, o.rest.id, dailyKey(g.id), b.num, day);
+        }
         spendCoin(o, g.coin * b.num);
         await grantGoodsOp(o, g.id, b.num);
         await emitAction(o, 'shop.buy');

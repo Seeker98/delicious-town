@@ -35,7 +35,7 @@ import { usePageTitle } from '../stores/pageTitle';
 import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 import { effectChips } from '../utils/effects';
-import { formatNum } from '../utils/format';
+import { formatNum, timeHM } from '../utils/format';
 import { questTitle } from '../utils/questName';
 import { serverNowMs } from '../utils/serverNow';
 import { remainText } from '../utils/remain';
@@ -174,6 +174,15 @@ async function act(fn: () => Promise<unknown>, fallback: string) {
   }
 }
 
+/** 天气后面一句预报（天气改版）：“17 点后多半还是雨”；旧服务端没有预报就不写 */
+const weatherForecast = computed(() => {
+  const w = rest.value?.weather;
+  const f = w?.forecast;
+  if (!w || !f) return null;
+  const type = t.value.misc.weather.types[f.type] ?? '';
+  const cur = catalog.weather(w.id)?.type;
+  return t.value.home.forecast(Number(timeHM(f.at).slice(0, 2)), type, cur === f.type, f.p >= 0.5);
+});
 const expPercent = computed(() =>
   rest.value ? Math.min(100, Math.floor((rest.value.exp / rest.value.expToNext) * 100)) : 0,
 );
@@ -345,6 +354,9 @@ onBeforeUnmount(() => {
             <RouterLink to="/weather" class="dt-go">{{
               catalog.weatherName(rest.weather.id, rest.weather.name)
             }}</RouterLink>
+            <span v-if="weatherForecast" class="dt-scene-fc" data-testid="home-forecast"
+              >· {{ weatherForecast }}</span
+            >
           </template>
         </template>
         <template #aside>

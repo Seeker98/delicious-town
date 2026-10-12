@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    weather1012:
+      "Refonte de la météo\u202f: elle change toutes les 4 heures et suit le temps actuel, et la page météo affiche la prévision du prochain changement et un petit guide. Le Marteau de Thor est remplacé par la boussole céleste (choisir un type\u202f; le maire en échange 1 par semaine, et on en trouve au dernier lot de l'Ichiban Kuji et à l'arbre à vœux) et les bâtonnets du temps (en tirer deux, en garder un\u202f; 1 par jour à la boutique). Les deux durent 1 heure, et personne ne peut rechanger la météo dans l'heure qui suit",
     season1012:
       "L'Assaisonnement peut maintenant recevoir des points, comme la Cuisine, la Découpe et la Maîtrise du feu\u202f; une carte de réinitialisation les rend aussi. Les anciens de la tour en mettent aussi dans l'Assaisonnement\u202f: chaque étage a été rééquilibré et n'est pas plus facile qu'avant",
     tables1012:

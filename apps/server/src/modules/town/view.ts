@@ -34,7 +34,7 @@ export async function townView(d: GameDeps, world: WorldService, ctx: RestCtx): 
       .execute(),
     d.db
       .selectFrom('town_rest')
-      .select(['hammer_at', 'broadcast_at', 'big_eater_gift'])
+      .select(['broadcast_at', 'big_eater_gift'])
       .where('rest_id', '=', restId)
       .executeTakeFirst(),
     d.db
@@ -44,20 +44,15 @@ export async function townView(d: GameDeps, world: WorldService, ctx: RestCtx): 
       .where('day', '=', day)
       .where('rest_id', '=', restId)
       .executeTakeFirst(),
-    goodsCounts(d.db, restId, [GOODS.horn, GOODS.thorHammer, GOODS.magicLamp], now),
+    goodsCounts(d.db, restId, [GOODS.horn, GOODS.magicLamp], now),
     world.ensure(ctx.shardId, now),
     todayBless(d.db, d.config, ctx.shardId, now),
     hiphopDay(d.db, ctx.shardId, now),
     activationPoints(d.db, d.config, restId, day),
   ]);
   const counters = new Map(counterRows.map((r) => [r.key, r.count]));
-  // 新区服要等 ensure 建好 world_state 那一行再读；许愿的店名要等今天的星愿
-  const [ws, blessRest] = await Promise.all([
-    d.db
-      .selectFrom('world_state')
-      .select('weather_changed_at')
-      .where('shard_id', '=', ctx.shardId)
-      .executeTakeFirstOrThrow(),
+  // 许愿的店名要等今天的星愿
+  const [blessRest] = await Promise.all([
     today
       ? d.db.selectFrom('restaurant').select('name').where('id', '=', today.restId).executeTakeFirst()
       : undefined,
@@ -82,13 +77,6 @@ export async function townView(d: GameDeps, world: WorldService, ctx: RestCtx): 
       readyAt: later(tr?.broadcast_at ?? null, t.broadcast.cooldownSec * 1000, now),
       minStar: t.broadcast.minStar,
       maxLen: t.broadcast.maxLen,
-    },
-    hammer: {
-      has: (goods.get(GOODS.thorHammer) ?? 0) > 0,
-      readyAt: later(tr?.hammer_at ?? null, t.hammer.cooldownHours * 3600_000, now),
-      townReadyAt: later(ws.weather_changed_at, t.hammer.gapSec * 1000, now),
-      coin: t.hammer.coin,
-      diamond: t.hammer.diamond,
     },
     weather: { id: snap.weather.id, name: snap.weather.name, until: snap.weatherUntil.toISOString() },
     bless: {

@@ -1,30 +1,44 @@
 import type { Kysely } from 'kysely';
-import type { I18nEntry, I18nTable, Weather } from '@dt/config';
+import { GOODS, type I18nEntry, type I18nTable, type Weather } from '@dt/config';
 import {
   CATALOG_DATA_KINDS,
   gameParts,
+  latestSlot,
+  nextSlot,
   seededRng,
   type CatalogDataEntry,
   type CatalogDataKind,
   type CatalogDto,
+  type LotsDrawDto,
   type Locale,
   type Slot,
+  type WeatherToolResultDto,
+  type WeatherToolsDto,
   type WorldDto,
 } from '@dt/shared';
-import type { GameDeps } from '../../core/deps';
+import type { GameDeps, RestCtx } from '../../core/deps';
+import { runOp } from '../../core/op';
 import type { DB } from '../../db/schema';
 import { postNews } from '../news/news';
-import { rollKrabStreet, rollWeather } from './rules';
+import { chainRow, pickRow, typeShares } from './chain';
+import { isNight, rollKrabStreet, rollWeather } from './rules';
+import { compassUse, lotsDraw, lotsPick, toolsView } from './tools';
 import { gameSeed } from '../../core/seed';
 
 export interface WorldSnapshot {
+  /** 现在生效的天气：道具盖着时是盖的那个，否则是自然天气 */
   weather: Weather;
+  /** 生效的天气到几点 */
   weatherUntil: Date;
+  /** 天气链的状态（底下的自然天气）和它到几点（下一次换天） */
+  natural: Weather;
+  naturalUntil: Date;
+  cover: { weather: Weather; until: Date; by: number | null; goodsId: number } | null;
+  /** 晴雨签摇出来还没选的两支 */
+  lot: { by: number; choices: number[]; until: Date } | null;
   krabStreet: number;
   planktonRestId: number | null;
 }
-
-const WEATHER_MS = 2 * 3600_000;
 
 export function createWorldService(d: GameDeps) {
   let catalog: CatalogDto | null = null;
@@ -40,6 +54,50 @@ export function createWorldService(d: GameDeps) {
     return db.selectFrom('world_state').selectAll().where('shard_id', '=', shardId).executeTakeFirst();
   }
 
+  /** 这一刻所在那一轮的结束时间（下一个换天时间） */
+  async function slotEnd(shardId: number, now: Date): Promise<Date> {
+    const { tuning } = await d.shards.settings(shardId);
+    return nextSlot(now, tuning.world.weatherHours).start;
+  }
+
+  /**
+   * 晴雨签摇了、到时间还没选：按第一支盖上（设计 §2.3），从到时的那一刻起算 1 小时。
+   * 谁先读到谁写；条件更新保证只写一次，写成功的那一个发新闻
+   */
+  async function settleLots(db: Kysely<DB>, shardId: number, now: Date): Promise<void> {
+    const row = await read(db, shardId);
+    if (!row?.lot_until || row.lot_until > now || !row.lot_choices?.length) return;
+    const { tuning } = await d.shards.settings(shardId);
+    const to = row.lot_choices[0]!;
+    const until = new Date(row.lot_until.getTime() + tuning.world.tool.coverMinutes * 60_000);
+    const r = await db
+      .updateTable('world_state')
+      .set({
+        cover_weather_id: to,
+        cover_until: until,
+        cover_by: row.lot_by,
+        cover_goods: GOODS.weatherLots,
+        lot_by: null,
+        lot_choices: null,
+        lot_until: null,
+        updated_at: now,
+      })
+      .where('shard_id', '=', shardId)
+      .where('lot_until', '=', row.lot_until)
+      .executeTakeFirst();
+    if (Number(r.numUpdatedRows) === 0) return;
+    await postNews(
+      db,
+      {
+        shardId,
+        type: 'weather.tool',
+        restId: row.lot_by ?? undefined,
+        params: { goodsId: GOODS.weatherLots, from: row.weather_id, to, auto: true },
+      },
+      row.lot_until,
+    );
+  }
+
   /** 取区服小镇状态；新区服第一次访问时创建。玩家事务里调用时传 o.tx，不能另向连接池要连接 */
   async function ensure(shardId: number, now: Date = d.now(), db: Kysely<DB> = d.db): Promise<WorldSnapshot> {
     let row = await read(db, shardId);
@@ -52,7 +110,7 @@ export function createWorldService(d: GameDeps) {
         .values({
           shard_id: shardId,
           weather_id: w.id,
-          weather_until: new Date(now.getTime() + WEATHER_MS),
+          weather_until: await slotEnd(shardId, now),
           krab_street: rollKrabStreet(tuning.world, rng),
           updated_at: now,
         })
@@ -60,31 +118,80 @@ export function createWorldService(d: GameDeps) {
         .execute();
       row = (await read(db, shardId))!;
     }
+    if (row.lot_until && row.lot_until <= now) {
+      await settleLots(db, shardId, now);
+      row = (await read(db, shardId))!;
+    }
+    const natural = weatherOf(row.weather_id);
+    const cover =
+      row.cover_weather_id !== null && row.cover_until && row.cover_until > now
+        ? {
+            weather: weatherOf(row.cover_weather_id),
+            until: row.cover_until,
+            by: row.cover_by,
+            goodsId: row.cover_goods ?? 0,
+          }
+        : null;
     return {
-      weather: weatherOf(row.weather_id),
-      weatherUntil: row.weather_until,
+      weather: cover?.weather ?? natural,
+      weatherUntil: cover?.until ?? row.weather_until,
+      natural,
+      naturalUntil: row.weather_until,
+      cover,
+      lot:
+        row.lot_until && row.lot_until > now && row.lot_by !== null && row.lot_choices
+          ? { by: row.lot_by, choices: row.lot_choices, until: row.lot_until }
+          : null,
       krabStreet: row.krab_street,
       planktonRestId: row.plankton_rest_id,
     };
   }
 
+  /** 预报（设计 §1.6）：从这一刻的自然天气，下一轮各大类的概率 */
+  async function forecast(
+    shardId: number,
+    s: WorldSnapshot,
+  ): Promise<{ at: Date; types: Record<string, number> }> {
+    const { tuning } = await d.shards.settings(shardId);
+    const next = nextSlot(new Date(s.naturalUntil.getTime() - 1), tuning.world.weatherHours);
+    const row = chainRow(
+      d.config.bundle.weatherChain,
+      d.config.weather,
+      s.natural.id,
+      isNight(next.hour, tuning.world),
+    );
+    const t = typeShares(row, d.config.weather);
+    return { at: s.naturalUntil, types: { 1: t[1], 2: t[2], 3: t[3], 4: t[4] } };
+  }
+
+  const op = <T>(ctx: RestCtx, source: string, fn: Parameters<typeof runOp<T>>[3]) =>
+    runOp<T>(d, ctx, { feature: 'world', source }, fn);
+
   return {
     ensure,
+    forecast,
 
+    /**
+     * 换天（设计 §1.2）：按底下的自然天气走天气链，用这一轮的种子抽，持续到下一个换天时间。
+     * 道具盖着时底下照常换，生效的还是盖着的；新闻写自然天气的变化
+     */
     async changeWeather(shardId: number, slot: Slot, now: Date): Promise<{ from: number; to: number }> {
       const before = await ensure(shardId, now);
       const { tuning } = await d.shards.settings(shardId);
-      const w = rollWeather(
-        d.config,
-        slot.hour,
-        tuning.world,
-        seededRng(gameSeed(shardId, 'weather', slot.key)),
+      const rng = seededRng(gameSeed(shardId, 'weather', slot.key));
+      const row = chainRow(
+        d.config.bundle.weatherChain,
+        d.config.weather,
+        before.natural.id,
+        isNight(slot.hour, tuning.world),
       );
+      // 链的数据缺了（配置坏了）退回原来的独立抽，天气不会卡住
+      const to = pickRow(row, rng) ?? rollWeather(d.config, slot.hour, tuning.world, rng).id;
       await d.db
         .updateTable('world_state')
         .set({
-          weather_id: w.id,
-          weather_until: new Date(slot.start.getTime() + WEATHER_MS),
+          weather_id: to,
+          weather_until: nextSlot(slot.start, tuning.world.weatherHours).start,
           weather_changed_at: now,
           updated_at: now,
         })
@@ -92,10 +199,18 @@ export function createWorldService(d: GameDeps) {
         .execute();
       await postNews(
         d.db,
-        { shardId, type: 'weather.change', params: { from: before.weather.id, to: w.id } },
+        {
+          shardId,
+          type: 'weather.change',
+          params: {
+            from: before.natural.id,
+            to,
+            ...(before.cover ? { cover: before.cover.weather.id } : {}),
+          },
+        },
         now,
       );
-      return { from: before.weather.id, to: w.id };
+      return { from: before.natural.id, to };
     },
 
     async changeKrabStreet(shardId: number, slot: Slot, now: Date): Promise<{ street: number }> {
@@ -126,6 +241,13 @@ export function createWorldService(d: GameDeps) {
     async view(shardId: number): Promise<WorldDto> {
       const now = d.now();
       const s = await ensure(shardId, now);
+      const fc = await forecast(shardId, s);
+      const { tuning } = await d.shards.settings(shardId);
+      const byName = s.cover?.by
+        ? ((
+            await d.db.selectFrom('restaurant').select('name').where('id', '=', s.cover.by).executeTakeFirst()
+          )?.name ?? null)
+        : null;
       return {
         weather: {
           id: s.weather.id,
@@ -135,11 +257,58 @@ export function createWorldService(d: GameDeps) {
           note: s.weather.note,
           until: s.weatherUntil.toISOString(),
         },
+        cover: s.cover
+          ? {
+              goodsId: s.cover.goodsId,
+              byRestId: s.cover.by,
+              byName,
+              until: s.cover.until.toISOString(),
+              natural: { id: s.natural.id, name: s.natural.name },
+            }
+          : null,
+        forecast: {
+          at: fc.at.toISOString(),
+          types: { '1': fc.types[1]!, '2': fc.types[2]!, '3': fc.types[3]!, '4': fc.types[4]! },
+          hours: tuning.world.weatherHours,
+          current: latestSlot(now, tuning.world.weatherHours).hour,
+        },
         krabStreet: s.krabStreet,
         krabStreetName: d.config.streets.get(s.krabStreet)?.name ?? '',
         holidayMultiplier: d.config.holidayMultiplier(now),
         planktonRestId: s.planktonRestId,
       };
+    },
+
+    /** 天气页的道具状态（天气改版设计 §2） */
+    async tools(ctx: RestCtx): Promise<WeatherToolsDto> {
+      const now = d.now();
+      const s = await ensure(ctx.shardId, now);
+      const { tuning } = await d.shards.settings(ctx.shardId);
+      return toolsView(d, ctx.restaurantId, s, tuning, now);
+    },
+
+    /** 司天罗盘：选一类 */
+    compass(ctx: RestCtx, b: { type: number }) {
+      return op<WeatherToolResultDto>(ctx, 'weather.compass', async (o) => {
+        const s = await ensure(o.shardId, o.now, o.tx);
+        return compassUse(o, s, b.type);
+      });
+    },
+
+    /** 晴雨签：摇两支 */
+    drawLots(ctx: RestCtx) {
+      return op<LotsDrawDto>(ctx, 'weather.lots', async (o) => {
+        const s = await ensure(o.shardId, o.now, o.tx);
+        return lotsDraw(o, s);
+      });
+    },
+
+    /** 晴雨签：挑一支 */
+    pickLot(ctx: RestCtx, b: { index: number }) {
+      return op<WeatherToolResultDto>(ctx, 'weather.lots', async (o) => {
+        const s = await ensure(o.shardId, o.now, o.tx);
+        return lotsPick(o, s, b.index);
+      });
     },
 
     /** 道具目录：按语言缓存（问题记录 272）；没翻译的回退到简中 */
@@ -196,7 +365,13 @@ export function createWorldService(d: GameDeps) {
         theme: s.theme,
         focus: s.focus,
       })),
-      weather: d.config.bundle.weather.map((w) => ({ id: w.id, name: w.name, note: w.note })),
+      weather: d.config.bundle.weather.map((w) => ({
+        id: w.id,
+        name: w.name,
+        note: w.note,
+        type: w.type,
+        special: w.special,
+      })),
       devices: d.config.bundle.devices.map((x) => ({
         id: x.id,
         name: x.name,

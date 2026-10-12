@@ -1253,6 +1253,8 @@ describe('首页套用新的页面模式（界面改版 P3）', () => {
     const meta = hero.get('.dt-scene-meta');
     expect(meta.text()).toContain('0 星');
     expect(meta.get('a[href="/weather"]').text()).toContain('晴');
+    // 天气改版：天气后面一句预报（旧服务端没有预报就不写）
+    expect(meta.find('[data-testid="home-forecast"]').exists()).toBe(false);
     expect(meta.get('.dt-scene-sep').text()).toBe('·');
     expect(hero.find('a[href="/shards"]').exists()).toBe(true);
     expect(hero.get('[data-testid="scene-closed"]').text()).toBe('停业中');

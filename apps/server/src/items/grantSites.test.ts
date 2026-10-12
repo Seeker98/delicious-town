@@ -63,7 +63,6 @@ const KNOWN: Record<string, string[]> = {
   // 摇一摇彩蛋：GOODS.krabBurger、GOODS.krabCoin（rules.ts，数量来自区服数值）
   'modules/town/shake.ts': ['egg.goodsId'],
   // 雷神锤、镇长、和 NPC 聊天：按条件二选一的 GOODS 常量
-  'modules/town/hammer.ts': ['gift'],
   'modules/town/mayor.ts': ['goodsId'],
   'modules/town/talk.ts': ['goodsId'],
 };

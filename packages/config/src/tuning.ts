@@ -227,6 +227,8 @@ export const tuningSchema = z.object({
     /** 有钻石价的道具卖店价不超过 钻石价 × 这个数（经济分析 2026-10-08：一番赏的钻石买鞋带卖店） */
     diamondSellCoin: int.min(1),
     maxBuy: int.min(1),
+    /** 每人每天限买几个：[道具, 个数]（天气改版：晴雨签每天 1 个） */
+    dailyLimit: z.array(z.tuple([int, int.min(1)])).default([]),
   }),
   store: z.object({ maxBatch: int.min(1) }),
   world: z.object({
@@ -238,6 +240,8 @@ export const tuningSchema = z.object({
     krabStreetMax: int,
     nightWeatherOdds: z.array(z.tuple([int, num])),
     dayWeightScale: num,
+    /** 司天罗盘、晴雨签（天气改版设计 §2）：每人冷却、盖多久、签多久不选按第一支 */
+    tool: z.object({ cooldownHours: num.min(0), coverMinutes: int.min(1), lotsSec: int.min(1) }),
   }),
   friend: z.object({
     requireVerifiedEmail: z.boolean(),
@@ -757,12 +761,6 @@ export const tuningSchema = z.object({
       limitIp: z.boolean(),
       limitDevice: z.boolean(),
       krabDailyCoin: int.min(0),
-    }),
-    hammer: z.object({
-      cooldownHours: num.min(0),
-      gapSec: int.min(0),
-      coin: int.min(0),
-      diamond: int.min(0),
     }),
     bless: z.object({ lampCoinBonus: num.min(0) }),
     news: z.object({ pageSize: int.min(1).max(200) }),

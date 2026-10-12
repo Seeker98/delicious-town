@@ -64,7 +64,11 @@ describe('一番赏配置（设计 §3、§4）', () => {
     expect(k.maxPools).toBe(3);
     for (const tier of k.tiers) expect(tier.award.goods ?? []).toEqual([]);
     // 最后赏默认只多给 1 个蟹黄堡（问题记录 515），当月手办开池时另外追加
-    expect(k.last.award.goods).toEqual([{ id: GOODS.krabBurger, num: 1 }]);
+    // 天气改版：最后赏多一个司天罗盘（用户 2026-10-12）
+    expect(k.last.award.goods).toEqual([
+      { id: GOODS.krabBurger, num: 1 },
+      { id: GOODS.compass, num: 1 },
+    ]);
   });
 
   it('月度主题校验：缺月份、重复月份报错', () => {

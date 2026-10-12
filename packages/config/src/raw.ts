@@ -281,6 +281,8 @@ export const rawGoodsExchange = z.object({
   num: int.min(1),
   needGoods: z.array(z.object({ type: z.literal('goods'), id: int, num: int.min(1) })).min(1),
   times: int,
+  /** 1 = times 是每周限兑次数（周一 0 点重置） */
+  weekly: int.optional(),
   newsflag: int,
 });
 export const rawRenownShop = z.object({
@@ -303,6 +305,23 @@ export const rawTowerFloor = z.object({
 });
 const elderAttrsSchema = z
   .object({ cook: int, cutting: int, fire: int, season: int, creatives: int, luck: int })
+  .strict();
+/** 天气马尔可夫链（天气改版设计 §1）：apps/server/src/sim/weatherChain.ts 生成 */
+const prob = z.number().min(0);
+export const weatherChainFile = z
+  .object({
+    note: z.string(),
+    score: z.object({ at: z.number(), sp: z.number(), k: z.number(), perTable: z.number() }).strict(),
+    stay: z.array(z.object({ min: z.number(), p: prob }).strict()).min(1),
+    intensity: z.record(z.string(), int),
+    counter: z.array(z.tuple([int, int])),
+    precursors: z.record(z.string(), z.array(z.tuple([int, prob]))),
+    rainbow: z.object({ id: int, from: int, to: int }).strict(),
+    compassBanned: z.array(int),
+    types: z.record(z.string(), z.record(z.string(), prob)),
+    spk: z.record(z.string(), prob),
+    q: z.record(z.string(), prob),
+  })
   .strict();
 /** 赛厨长老（问题记录 408）：apps/server/src/sim/elders.ts 生成 */
 export const towerEldersFile = z.object({
@@ -554,6 +573,7 @@ export const equipLoreFile = z
 
 /** 主表（重新编号 PR 1）：道具、食材、菜谱的定义只在 data/master 下；src = 来历，新街道导入按它整块替换 */
 const goodsSrc = z.enum([
+  'weather',
   'original',
   'lore',
   'streets',

@@ -143,12 +143,13 @@
     "guessBonusHours": [12, 18],
     "manualCost": 1000000, "manualKinds": 4, "manualStock": 1000, "manualPersonMax": 99, "manualShare": 0.25
   },
-  "shop": { "sellRate": 0.7, "specialHour": 12, "specialFallbackGoods": 30201, "discardable": [60202], "noSell": [10006, 10110, 10210, 10704, 10705, 10706, 10707, 10801, 10802, 10803, 10804, 10805, 10806], "diamondSellCoin": 2000, "maxBuy": 999 },
+  "shop": { "sellRate": 0.7, "specialHour": 12, "specialFallbackGoods": 30201, "discardable": [60202], "noSell": [10006, 10110, 10210, 10704, 10705, 10706, 10707, 10801, 10802, 10803, 10804, 10805, 10806], "diamondSellCoin": 2000, "maxBuy": 999, "dailyLimit": [[10420, 1]] },
   "store": { "maxBatch": 99 },
   "world": {
-    "weatherHours": [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23],
+    "weatherHours": [1, 5, 9, 13, 17, 21],
     "nightFrom": 21,
-    "nightTo": 5,
+    "nightTo": 4,
+    "tool": { "cooldownHours": 4, "coverMinutes": 60, "lotsSec": 60 },
     "krabHour": 9,
     "krabStreetMin": 1,
     "krabStreetMax": 29,
@@ -373,7 +374,6 @@
       "base": 8000, "rand": 5000, "eggMod": 100, "eggTail": 88, "burgerEvery": 8, "burgerNum": 1, "krabCoinNum": 8,
       "limitIp": false, "limitDevice": false, "krabDailyCoin": 10000000
     },
-    "hammer": { "cooldownHours": 6, "gapSec": 90, "coin": 100000, "diamond": 8 },
     "bless": { "lampCoinBonus": 0.1 },
     "news": { "pageSize": 50 },
     "rareExchange": false,
@@ -421,7 +421,7 @@
       { "key": "E", "count": 15, "award": { "coin": 15000 } },
       { "key": "F", "count": 50, "award": { "coin": 5000 } }
     ],
-    "last": { "award": { "diamond": 200, "goods": [{ "id": 10005, "num": 1 }] }, "icon": "kuji_last", "news": "broadcast" },
+    "last": { "award": { "diamond": 200, "goods": [{ "id": 10005, "num": 1 }, { "id": 10419, "num": 1 }] }, "icon": "kuji_last", "news": "broadcast" },
     "deluxe": {
       "price": 300000,
       "dailyBuy": 10,
@@ -433,7 +433,7 @@
         { "key": "C", "count": 5, "award": { "coin": 100000 } },
         { "key": "D", "count": 12, "award": { "coin": 50000 } }
       ],
-      "last": { "award": { "diamond": 50, "goods": [{ "id": 10005, "num": 1 }] }, "icon": "kuji_dx_last", "news": "broadcast" }
+      "last": { "award": { "diamond": 50, "goods": [{ "id": 10005, "num": 1 }, { "id": 10419, "num": 1 }] }, "icon": "kuji_dx_last", "news": "broadcast" }
     }
   },
   "scarcity": { "needBase": 0.05, "needLuckFactor": 0.6, "needMax": 0.3 },
@@ -475,7 +475,8 @@
       { "goods": 10005, "num": 1, "weight": 15 },
       { "goods": 10403, "num": 1, "weight": 15 },
       { "goods": 10416, "num": 1, "weight": 15 },
-      { "goods": 10205, "num": 5, "weight": 20 }
+      { "goods": 10205, "num": 5, "weight": 20 },
+      { "goods": 10419, "num": 1, "weight": 5 }
     ]
   },
   "acquire": {

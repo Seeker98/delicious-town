@@ -38,6 +38,13 @@ export interface ActiveBoostDto {
   endsAt: string;
 }
 
+/** 首页的天气：现在的天气，和预报里概率最大的一类（天气改版：首页写“17 点后多半还是雨”）；旧服务端没有 forecast */
+export interface WeatherBriefDto {
+  id: number;
+  name: string;
+  forecast?: { at: string; type: number; p: number };
+}
+
 export interface RestaurantDto {
   id: number;
   shardId: number;
@@ -78,7 +85,7 @@ export interface RestaurantDto {
   plaque2Cost: { star: number; coin: number; diamond: number };
   devices: DeviceSlotDto[];
   lastRound: RoundSummaryDto | null;
-  weather: { id: number; name: string } | null;
+  weather: WeatherBriefDto | null;
   isPlanktonHost: boolean;
   /** 展示中的个性图标 */
   icons: Array<{ key: string; title: string }>;

@@ -2,7 +2,7 @@ import type { Kysely } from 'kysely';
 import type { DB } from '../../../db/schema';
 
 /**
- * 那一轮周期任务（job_run）的开始和跑完时间；没跑完（功能关着、worker 漏跑、出错）为 null。
+ * 那一轮周期任务（job_run）的开始和跑完时间、任务返回的统计（天气：换成了什么）；没跑完（功能关着、worker 漏跑、出错）为 null。
  * 自动题判定前先确认那一轮真的刷新过，免得按种子算出一个没出现过的结果（backlog 238-2）
  */
 export async function finishedRound(
@@ -10,16 +10,16 @@ export async function finishedRound(
   shardId: number,
   job: string,
   period: string,
-): Promise<{ startedAt: Date; finishedAt: Date } | null> {
+): Promise<{ startedAt: Date; finishedAt: Date; stats: Record<string, unknown> } | null> {
   const r = await db
     .selectFrom('job_run')
-    .select(['started_at', 'finished_at'])
+    .select(['started_at', 'finished_at', 'stats'])
     .where('shard_id', '=', shardId)
     .where('job', '=', job)
     .where('period', '=', period)
     .where('finished_at', 'is not', null)
     .executeTakeFirst();
-  return r?.finished_at ? { startedAt: r.started_at, finishedAt: r.finished_at } : null;
+  return r?.finished_at ? { startedAt: r.started_at, finishedAt: r.finished_at, stats: r.stats ?? {} } : null;
 }
 
 /** 那一轮跑完的时间；没跑完为 null */

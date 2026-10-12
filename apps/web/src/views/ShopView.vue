@@ -78,6 +78,7 @@ function reason(it: ShopItemDto): string {
     max: s.why.max,
     owned: s.why.owned,
     store: s.why.store,
+    daily: s.why.daily,
   };
   return it.blocked ? why[it.blocked] : s.why.other;
 }
@@ -195,6 +196,9 @@ async function buy() {
             :class="it.blocked === 'star' ? 'dt-tag dt-tag-warn' : 'dt-tag-danger'"
             :data-testid="`cap-${it.goodsId}`"
             >{{ reason(it) }}</span
+          ><span v-else-if="it.daily" class="dt-tag-mute" :data-testid="`cap-${it.goodsId}`">{{
+            t.store.shop.dailyLimit(it.daily.limit)
+          }}</span
           ><span v-else-if="it.limit === 1" class="dt-tag-mute" :data-testid="`cap-${it.goodsId}`">{{
             t.store.shop.limitOne
           }}</span>

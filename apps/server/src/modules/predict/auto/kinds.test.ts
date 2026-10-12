@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { GOODS } from '@dt/config';
 import { addDays, gameTime, seededRng, slotKey } from '@dt/shared';
 import { createShard } from '../../../../test/fixtures';
 import { createTestGame, newRestaurant, type TestGame } from '../../../../test/game';
@@ -200,20 +201,21 @@ describe('菜场（238-2 设计 §4.3）', () => {
 });
 
 describe('天气（238-2 设计 §4.4）', () => {
-  it('出题：时段在出题 3 小时之后，截止在整点前 5 分钟，时段结束后判定', async () => {
+  it('出题：时段在出题 3 小时之后，截止在整点前 5 分钟，下一次换天（4 小时后）判定', async () => {
     const shardId = await createShard(t.db);
+    await t.game.world.ensure(shardId, at0);
     const dr = (await weather.create(await ctx(shardId)))!;
     const { hour, type } = dr.params as { hour: number; type: number };
     expect(gameTime(DAY, hour).getTime() - at0.getTime()).toBeGreaterThanOrEqual(3 * 3_600_000);
     expect(dr.closeAt).toEqual(new Date(gameTime(DAY, hour).getTime() - 5 * 60_000));
-    expect(dr.resolveAt).toEqual(new Date(gameTime(DAY, hour).getTime() + 2 * 3_600_000));
+    expect(dr.resolveAt).toEqual(new Date(gameTime(DAY, hour).getTime() + 4 * 3_600_000));
     expect([1, 2, 3, 4]).toContain(type);
-    expect(dr.description).toContain('雷神锤');
+    expect(dr.description).toContain('司天罗盘');
   });
 
-  it('判定：按自动轮换判；雷神锤改过时判定依据写明（Review Focus 3）', async () => {
+  it('判定：按换天时的自然天气判；罗盘、签改过时判定依据写明（Review Focus 3）', async () => {
     const shardId = await createShard(t.db);
-    const hour = 15;
+    const hour = 17;
     const period = slotKey(DAY, hour);
     const slot = { key: period, day: DAY, hour, start: gameTime(DAY, hour) };
     const { to } = await t.game.world.changeWeather(shardId, slot, gameTime(DAY, hour));
@@ -222,7 +224,7 @@ describe('天气（238-2 设计 §4.4）', () => {
     const r = (await weather.resolve(await rctx(shardId), { hour, type: auto.type, period }))!;
     expect(r.outcome).toBe(true);
     expect(r.note).toBe(
-      `11月3日 ${hour} 点自动轮换的天气是${auto.name} (${['', '晴', '雨', '雪', '风沙雾霾'][auto.type]}类)`,
+      `11月3日 ${hour} 点换天后是${auto.name} (${['', '晴', '雨', '雪', '风沙雾霾'][auto.type]}类)`,
     );
     expect(r.noteParams).toEqual({ day: DAY, hour, weather: to, type: auto.type });
     const other = [...t.deps.config.weather.values()].find((x) => !x.special && x.type !== auto.type)!;
@@ -230,15 +232,15 @@ describe('天气（238-2 设计 §4.4）', () => {
       .insertInto('news')
       .values({
         shard_id: shardId,
-        type: 'weather.change',
-        params: JSON.stringify({ from: to, to: other.id, by: 1 }),
+        type: 'weather.tool',
+        params: JSON.stringify({ goodsId: GOODS.compass, from: to, to: other.id }),
         created_at: new Date(gameTime(DAY, hour).getTime() + 600_000),
       })
       .execute();
     const r2 = (await weather.resolve(await rctx(shardId), { hour, type: auto.type, period }))!;
     expect(r2.outcome).toBe(true);
-    expect(r2.note).toBe(`${r.note}；之后有人用雷神锤改成了${other.name}, 按题目规则不算`);
-    expect(r2.noteParams).toEqual({ day: DAY, hour, weather: to, type: auto.type, hammerTo: other.id });
+    expect(r2.note).toBe(`${r.note}；之后有人用道具改成了${other.name}, 按题目规则不算`);
+    expect(r2.noteParams).toEqual({ day: DAY, hour, weather: to, type: auto.type, coverTo: other.id });
   });
 });
 
@@ -310,9 +312,9 @@ describe('判定边界（backlog 238-2）', () => {
     expect(r).toMatchObject({ outcome: true, noteParams: { day: tomorrow, hour: 9, street } });
   });
 
-  it('天气：那一轮没跑过返回 null；轮换之前用的雷神锤会被轮换覆盖，不写进判定依据', async () => {
+  it('天气：那一轮没跑过返回 null；换天之前用的道具不写进判定依据', async () => {
     const shardId = await createShard(t.db);
-    const hour = 15;
+    const hour = 17;
     const period = slotKey(DAY, hour);
     const start = gameTime(DAY, hour);
     const { to } = await t.game.world.changeWeather(shardId, { key: period, day: DAY, hour, start }, start);
@@ -323,19 +325,19 @@ describe('判定边界（backlog 238-2）', () => {
       .insertInto('news')
       .values({
         shard_id: shardId,
-        type: 'weather.change',
-        params: JSON.stringify({ from: to, to: other.id, by: 1 }),
+        type: 'weather.tool',
+        params: JSON.stringify({ goodsId: GOODS.compass, from: to, to: other.id }),
         created_at: new Date(start.getTime() + 10_000),
       })
       .execute();
     await ran(shardId, 'weather', period, new Date(start.getTime() + 30_000));
     const r = (await weather.resolve(await rctx(shardId), { hour, type, period }))!;
-    expect(r.noteParams).not.toHaveProperty('hammerTo');
+    expect(r.noteParams).not.toHaveProperty('coverTo');
   });
 
-  it('天气：轮换任务开始后、写完成时间前用的雷神锤也写进判定依据（天气在任务开始时就换了，质量期 ②）', async () => {
+  it('天气：换天任务开始后、写完成时间前用的道具也写进判定依据（天气在任务开始时就换了，质量期 ②）', async () => {
     const shardId = await createShard(t.db);
-    const hour = 15;
+    const hour = 17;
     const period = slotKey(DAY, hour);
     const start = gameTime(DAY, hour);
     const { to } = await t.game.world.changeWeather(shardId, { key: period, day: DAY, hour, start }, start);
@@ -355,13 +357,13 @@ describe('判定边界（backlog 238-2）', () => {
       .insertInto('news')
       .values({
         shard_id: shardId,
-        type: 'weather.change',
-        params: JSON.stringify({ from: to, to: other.id, by: 1 }),
+        type: 'weather.tool',
+        params: JSON.stringify({ goodsId: GOODS.compass, from: to, to: other.id }),
         created_at: new Date(start.getTime() + 60_000),
       })
       .execute();
     const r = (await weather.resolve(await rctx(shardId), { hour, type, period }))!;
-    expect(r.noteParams).toMatchObject({ hammerTo: other.id });
+    expect(r.noteParams).toMatchObject({ coverTo: other.id });
   });
 
   it('菜场：货架被下一轮清掉时按种子重算那一轮的系统进货；那一轮没跑过返回 null', async () => {

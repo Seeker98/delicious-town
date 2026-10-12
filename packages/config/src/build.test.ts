@@ -193,7 +193,7 @@ describe('buildBundle（真实数据）', () => {
     const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     expect(bundle!.foods).toHaveLength(336); // 313 + 新街道 23 种（问题记录 284）
-    expect(bundle!.goods).toHaveLength(726); // 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件 + 一到五级食材随机券 5 张（问题记录 331）+ 豪华签券 1 张（240-2） + 基金勋章 3 枚（240-2） + 后期海报奖杯 8 个（146）+ 天机石 6 阶（419）+ 街市补给包 5 个（理财）
+    expect(bundle!.goods).toHaveLength(728); // 天气改版 司天罗盘、晴雨签 2 件 + 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件 + 一到五级食材随机券 5 张（问题记录 331）+ 豪华签券 1 张（240-2） + 基金勋章 3 枚（240-2） + 后期海报奖杯 8 个（146）+ 天机石 6 阶（419）+ 街市补给包 5 个（理财）
     expect(bundle!.cookbooks).toHaveLength(3810);
     expect(bundle!.streets).toHaveLength(30);
     expect(bundle!.starNeed).toHaveLength(12);
@@ -838,17 +838,20 @@ describe('小镇（子项目 4E-1）', () => {
   it('镇长兑换和星愿类型化', () => {
     const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
-    // 73 条里 36 条换到的是 2026-10-08 下架的道具，构建时自动去掉（问题记录 501）
+    // 74 条里 37 条换到的是下架的道具（2026-10-08 一批、天气改版的雷神锤），构建时自动去掉（问题记录 501）
     expect(bundle!.goodsExchange).toHaveLength(37);
-    expect(bundle!.goodsExchange[1]).toEqual({
-      id: 10,
+    // 雷神锤换成司天罗盘：2 个蟹黄堡，每周 1 次（天气改版，用户 2026-10-12）
+    expect(bundle!.goodsExchange.find((e) => e.goodsId === gid('司天罗盘'))).toEqual({
+      id: 74,
       category: 'bg',
-      goodsId: gid('雷神锤'),
+      goodsId: gid('司天罗盘'),
       num: 1,
-      need: [{ goodsId: gid('蟹黄堡'), num: 8 }],
+      need: [{ goodsId: gid('蟹黄堡'), num: 2 }],
       times: 1,
-      news: true,
+      weekly: true,
+      news: false,
     });
+    expect(bundle!.goodsExchange.some((e) => e.goodsId === gid('雷神锤'))).toBe(false);
     expect(bundle!.bless).toHaveLength(12);
     expect(bundle!.bless[0]).toEqual({
       id: 1,
@@ -2139,13 +2142,13 @@ describe('支线扩充 B：其他模块（docs/superpowers/specs/2026-10-08-side
   });
 
   // 支线一次只显示一档：要花大钱、要钻石或道具、要别人配合的档放后面，不挡容易做的（终审）
-  it('小镇：先镇长问答，再基金（存 100 万）、周榜，要道具的雷神锤、神灯最后', () => {
+  it('小镇：先镇长问答，再基金（存 100 万）、周榜，要道具的改天气（罗盘或签）、神灯最后', () => {
     expect(conds('town').slice(3)).toEqual([
       ['town.mayor.right', 10],
       ['town.mayor.right', 50],
       ['fund.deposit', 1],
       ['hiphop.top5', 1],
-      ['town.hammer', 1],
+      ['weather.tool', 1],
       ['town.wish', 1],
     ]);
   });
@@ -2203,7 +2206,7 @@ describe('支线扩充 B：其他模块（docs/superpowers/specs/2026-10-08-side
 
   it('新键按前缀归到对应功能', () => {
     const f = (key: string) => b.quests.find((q) => q.cond.key === key)!.feature;
-    expect(f('town.hammer')).toBe('town');
+    expect(f('weather.tool')).toBe('world');
     expect(f('fund.deposit')).toBe('fund');
     expect(f('gem.level3')).toBe('equip');
     expect(f('collection.plaques')).toBe('store');

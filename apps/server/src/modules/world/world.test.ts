@@ -6,7 +6,8 @@ import { createShard } from '../../../test/fixtures';
 import { createTestGame, type TestGame } from '../../../test/game';
 import { call, createTestApp, registerUser, type TestContext } from '../../../test/helpers';
 import { runDueJobs } from '../../worker/periodic';
-import { hammerPool, isNight, rollWeather, weatherPool } from './rules';
+import { chainRow, pickRow } from './chain';
+import { isNight, weatherPool } from './rules';
 import { catalogCompressions, pickEncoding } from './routes';
 
 const config = testConfig();
@@ -23,8 +24,17 @@ afterAll(async () => {
 });
 
 describe('天气规则（规格书 12 §12.1）', () => {
-  it('21~5 点是夜间', () => {
-    expect([20, 21, 23, 0, 5, 6].map((h) => isNight(h, w))).toEqual([false, true, true, true, true, false]);
+  it('21~4 点是夜间（天气改版：换天 21、1 点是夜间两轮，5 点起是白天）', () => {
+    expect([20, 21, 23, 0, 1, 4, 5, 6].map((h) => isNight(h, w))).toEqual([
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false,
+    ]);
   });
   it('夜间池：夜间和全天天气，不含特殊天气；白天池不含夜间天气', () => {
     const night = weatherPool(config, true, w).items;
@@ -46,13 +56,17 @@ describe('WorldService', () => {
     expect(a.krabStreet).toBeLessThanOrEqual(29);
   });
 
-  it('换天气：同一区服同一时点结果固定，并发新闻', async () => {
+  it('换天气：按天气链和这一轮的种子，结果固定，并发新闻', async () => {
     const shardId = await createShard(t.db);
     const slot = latestSlot(gameTime('2026-09-30', 23, 10), w.weatherHours);
+    const from = (await t.game.world.ensure(shardId, slot.start)).natural.id;
     const r = await t.game.world.changeWeather(shardId, slot, slot.start);
-    const expected = rollWeather(config, 23, w, seededRng(hashSeed(shardId, 'weather', slot.key)));
-    expect(r.to).toBe(expected.id);
-    expect((await t.game.world.ensure(shardId)).weather.id).toBe(expected.id);
+    const expected = pickRow(
+      chainRow(config.bundle.weatherChain, config.weather, from, isNight(slot.hour, w)),
+      seededRng(hashSeed(shardId, 'weather', slot.key)),
+    );
+    expect(r).toEqual({ from, to: expected });
+    expect((await t.game.world.ensure(shardId, slot.start)).weather.id).toBe(expected);
     const news = await t.db.selectFrom('news').selectAll().where('shard_id', '=', shardId).execute();
     expect(news.map((n) => n.type)).toContain('weather.change');
   });
@@ -90,7 +104,7 @@ describe('接口', () => {
 
   it('目录接口不需要登录', async () => {
     const r = await call(http.app, 'GET', '/api/v1/world/catalog');
-    expect(r.json.data.goods).toHaveLength(726); // 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件 + 食材随机券 5 张（问题记录 331）+ 豪华签券 1 张（240-2） + 基金勋章 3 枚（240-2） + 后期海报奖杯 8 个（146）+ 天机石 6 阶（419）
+    expect(r.json.data.goods).toHaveLength(728); // 天气改版 司天罗盘、晴雨签 2 件 + 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件 + 食材随机券 5 张（问题记录 331）+ 豪华签券 1 张（240-2） + 基金勋章 3 枚（240-2） + 后期海报奖杯 8 个（146）+ 天机石 6 阶（419）
     expect(r.json.data.foods).toHaveLength(336); // 313 + 新街道 23 种（问题记录 284）
     expect(r.json.data.version).toBe(config.version);
   });
@@ -171,26 +185,5 @@ describe('接口', () => {
       focus: 'coin',
     });
     expect(zh.json.data.streets.find((s: { id: number }) => s.id === 0)).toMatchObject({ focus: null });
-  });
-});
-
-describe('雷神锤天气池（4E-1 设计文档 裁定 15）', () => {
-  it('白天按类型筛，含该类型的特殊天气，排除当前天气', () => {
-    const ids = hammerPool(config, 12, w, { mode: 'coin', type: 1 }, 1).items.map((x) => x.id);
-    expect(ids).toEqual(expect.arrayContaining([2, 3, 6]));
-    expect(ids).not.toContain(1);
-    for (const id of ids) expect(config.weather.get(id)!.type).toBe(1);
-    for (const id of ids) expect([1, 3]).toContain(config.weather.get(id)!.daytime);
-  });
-  it('钻石只在特殊天气里抽；夜间只剩全天的特殊天气', () => {
-    const day = hammerPool(config, 12, w, { mode: 'diamond' }, 1).items.map((x) => x.id);
-    expect(day.sort((a, b) => a - b)).toEqual([6, 7, 18, 24, 27]);
-    const night = hammerPool(config, 23, w, { mode: 'diamond' }, 7).items.map((x) => x.id);
-    expect(night.sort((a, b) => a - b)).toEqual([18, 24, 27]);
-  });
-  it('夜间按类型筛时包括夜间专属天气', () => {
-    const ids = hammerPool(config, 23, w, { mode: 'coin', type: 1 }, 28).items.map((x) => x.id);
-    expect(ids).toEqual(expect.arrayContaining([2, 29, 31]));
-    expect(ids).not.toContain(1);
   });
 });

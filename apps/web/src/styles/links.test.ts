@@ -107,7 +107,6 @@ describe('文字链接统一（问题记录 451）', () => {
       ['views/LoginView.vue', 'to="/forgot-password"'],
       ['views/RegisterView.vue', 'to="/login"'],
       ['views/ResetPasswordView.vue', 'to="/login"'],
-      ['views/WeatherView.vue', 'to="/town?tab=town"'],
     ];
     const bad = want.filter(([path, to]) => {
       const tpl = GAME.find((f) => f.path === path)!.tpl;

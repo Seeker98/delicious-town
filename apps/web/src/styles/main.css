@@ -8836,3 +8836,278 @@ a.dt-entry-row::after {
 .dt-guide-daily .dt-row-title {
   font-weight: 600;
 }
+/* ===== 天气改版（设计图 Wx-A~Wx-D）：天气页、司天罗盘、晴雨签 ===== */
+.dt-wx-hero {
+  padding: 14px;
+}
+.dt-wx-hero-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.dt-wx-hero-art {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: var(--dt-soft-primary);
+}
+.dt-wx-hero-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.dt-wx-hero-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+.dt-wx-hero-when {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--dt-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dt-wx-fx {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.dt-wx-fx > li {
+  display: flex;
+  gap: 6px;
+}
+.dt-wx-fx > li::before {
+  content: '';
+  flex-shrink: 0;
+  width: 4px;
+  height: 4px;
+  margin-top: 8px;
+  border-radius: 2px;
+  background: var(--dt-primary);
+}
+.dt-wx-fx-k {
+  flex-shrink: 0;
+  color: var(--dt-muted);
+}
+.dt-wx-zero {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-wx-cover {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--dt-soft-primary);
+  color: var(--dt-ink-primary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.dt-wx-how {
+  margin-top: 8px;
+  padding: 12px 14px;
+}
+.dt-wx-how-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dt-wx-how-head > b {
+  flex: 1 1 auto;
+  font-size: 15px;
+}
+.dt-wx-link {
+  padding: 6px 0;
+  border: 0;
+  background: none;
+  color: var(--dt-ink-primary);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+.dt-wx-how > ol {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.dt-wx-how li + li {
+  margin-top: 4px;
+}
+.dt-wx-fc {
+  padding: 12px 14px;
+}
+.dt-wx-slots {
+  display: flex;
+  gap: 4px;
+  margin: 2px 0 12px;
+}
+.dt-wx-slots > span {
+  flex: 1 1 0;
+  border-radius: 8px;
+  background: var(--dt-bg);
+  color: var(--dt-muted);
+  font-size: 12px;
+  line-height: 24px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.dt-wx-slots > .is-now {
+  background: var(--dt-soft-primary);
+  color: var(--dt-ink-primary);
+  font-weight: 700;
+}
+.dt-wx-slots > .is-next {
+  box-shadow: inset 0 0 0 1px var(--dt-primary);
+  color: var(--dt-ink-primary);
+  font-weight: 700;
+}
+.dt-wx-bar {
+  display: grid;
+  grid-template-columns: 24px minmax(56px, auto) minmax(0, 1fr) 40px;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+}
+.dt-wx-bar-name {
+  font-size: 13px;
+}
+.dt-wx-meter {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--dt-line);
+  overflow: hidden;
+}
+.dt-wx-meter > i {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--dt-primary);
+}
+.dt-wx-bar-pct {
+  font-size: 13px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.dt-wx-fc-note {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-wx-tool {
+  min-height: 64px;
+}
+.dt-wx-tool-art {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--dt-bg);
+}
+.dt-wx-tool .dt-row-title > .dt-tag {
+  margin-left: 6px;
+}
+.dt-wx-tool > .btn {
+  flex-shrink: 0;
+}
+.dt-wx-tool-foot {
+  margin: 0;
+  padding: 10px 14px;
+  border-top: 1px solid var(--dt-line);
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-wx-tool-foot.is-warn {
+  border-top: 0;
+  background: var(--dt-soft-warning);
+  color: var(--dt-ink-warning);
+}
+.dt-wx-krab {
+  margin-top: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+}
+.dt-wx-krab > p {
+  margin: 0;
+}
+.dt-wx-krab > p + p {
+  margin-top: 6px;
+}
+.dt-wx-sheet-sub {
+  margin: -4px 0 10px;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+/* 晴雨签：两张签并排，选中的紫边浅紫底 */
+.dt-wx-lots {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.dt-wx-lot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 14px 10px 12px;
+  border: 1px solid var(--dt-line);
+  border-radius: 16px;
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font: inherit;
+  text-align: center;
+  transition: transform var(--dt-dur-press) var(--dt-ease-out);
+}
+.dt-wx-lot.is-on {
+  border-color: var(--dt-primary);
+  box-shadow: inset 0 0 0 1px var(--dt-primary);
+  background: var(--dt-soft-primary);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dt-wx-lot:active {
+    transform: scale(0.97);
+  }
+}
+.dt-wx-lot-no {
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-wx-lot-name {
+  margin: 4px 0 2px;
+  font-size: 18px;
+}
+.dt-wx-lot-fx {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--dt-muted);
+}
+.dt-wx-lots-actions {
+  width: 100%;
+}
+.dt-wx-countdown {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--dt-muted);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+/* 首页抬头天气后面的预报（天气改版） */
+.dt-scene-fc {
+  margin-left: 4px;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+/* 天气页的小标题和上面的卡片隔开（设计图 Wx-A） */
+.dt-wx > .dt-block-head {
+  margin-top: 18px;
+}

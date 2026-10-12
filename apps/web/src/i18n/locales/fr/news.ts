@@ -115,7 +115,11 @@ const news: Messages['news'] = {
     'weather.change': (w, p, x) =>
       p.by !== undefined
         ? `${w} a utilisé le marteau de Thor\u202f: ${x.weatherName(num(p.from))} laisse place à ${x.weatherName(num(p.to))}`
-        : `Le temps change\u202f: ${x.weatherName(num(p.from))} laisse place à ${x.weatherName(num(p.to))}`,
+        : p.cover !== undefined
+          ? `Le temps change\u202f: ${x.weatherName(num(p.from))} laisse place à ${x.weatherName(num(p.to))} (la météo ${x.weatherName(num(p.cover))} posée par un objet tient toujours)`
+          : `Le temps change\u202f: ${x.weatherName(num(p.from))} laisse place à ${x.weatherName(num(p.to))}`,
+    'weather.tool': (w, p, x) =>
+      `${w} a utilisé ${x.goodsName(num(p.goodsId))}\u202f: ${x.weatherName(num(p.from))} devient ${x.weatherName(num(p.to))} pendant 1 heure`,
     'town.broadcast': (w, p) => `${w}\u202f: ${str(p.text)}`,
     'town.bless': (w, p) => `${w} a fait un vœu et reçu\u202f: ${str(p.blessName) || str(p.name)}`,
     'town.shake.lucky': (w, p, x) =>

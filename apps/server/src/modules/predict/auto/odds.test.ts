@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { seededRng } from '@dt/shared';
+import { gameTime, seededRng } from '@dt/shared';
 import { testConfig } from '../../../../test/config';
 import { rollShelf } from '../../market/rules';
-import { weatherPool, isNight } from '../../world/rules';
-import { clampP, marketRareChance, weatherTypeShares, WEATHER_TYPE_NAMES } from './odds';
+import { chainTypeShares, clampP, marketRareChance, WEATHER_TYPE_NAMES } from './odds';
+import { chainRow, typeShares } from '../../world/chain';
 
 const config = testConfig();
 const mt = config.tuning.market;
@@ -28,23 +28,24 @@ describe('菜场稀有食材概率估算（238-2 设计 §4.3）', () => {
   });
 });
 
-describe('天气类型占比（238-2 设计 §4.4）', () => {
-  it('白天、夜间各类占比和为 1，和天气池权重一致', () => {
-    for (const hour of [13, 23]) {
-      const shares = weatherTypeShares(config, w, hour);
-      const sum = [...shares.values()].reduce((s, x) => s + x, 0);
-      expect(sum).toBeCloseTo(1, 9);
-      const pool = weatherPool(config, isNight(hour, w), w);
-      const rain = pool.items.filter((x) => x.type === 2);
-      const rainW = rain.reduce(
-        (s, x) => s + (pool.prefix[pool.items.indexOf(x)]! - (pool.prefix[pool.items.indexOf(x) - 1] ?? 0)),
-        0,
-      );
-      expect(shares.get(2) ?? 0).toBeCloseTo(rainW / pool.total, 9);
-    }
+describe('天气类型占比（天气改版设计 §1.8：从当前自然天气沿链推）', () => {
+  const chain = config.bundle.weatherChain;
+  const sunny = [...config.weather.values()].find((x) => x.name === '晴')!.id;
+  it('下一次换天：等于当前那一行按大类加总；晴天下一轮没有雪冰；各类加起来是 1', () => {
+    const now = gameTime('2026-11-03', 12, 10);
+    const next = gameTime('2026-11-03', 13);
+    const shares = chainTypeShares(config, w, sunny, now, next);
+    const want = typeShares(chainRow(chain, config.weather, sunny, false), config.weather);
+    for (const t of [1, 2, 3, 4] as const) expect(shares.get(t) ?? 0).toBeCloseTo(want[t], 9);
+    expect(shares.get(3) ?? 0).toBe(0);
+    expect([...shares.values()].reduce((x, y) => x + y, 0)).toBeCloseTo(1, 9);
+  });
+  it('往后推几轮：晴天两轮之后才可能下雪；概率和仍是 1', () => {
+    const shares = chainTypeShares(config, w, sunny, gameTime('2026-11-03', 6), gameTime('2026-11-03', 17));
+    expect(shares.get(3) ?? 0).toBeGreaterThan(0);
+    expect([...shares.values()].reduce((x, y) => x + y, 0)).toBeCloseTo(1, 9);
     expect(WEATHER_TYPE_NAMES[2]).toBe('雨');
   });
-
   it('概率夹在 5%~95%', () => {
     expect(clampP(0.01)).toBe(0.05);
     expect(clampP(0.99)).toBe(0.95);

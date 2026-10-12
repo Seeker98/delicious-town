@@ -244,6 +244,15 @@ export interface WorldStateTable {
   plankton_rest_id: Nullable<number>;
   updated_at: TsDefault;
   weather_changed_at: TsNullable;
+  /** 道具盖上的天气（天气改版设计 §2）：weather_id 是底下的自然天气 */
+  cover_weather_id: Nullable<number>;
+  cover_until: TsNullable;
+  cover_by: Nullable<number>;
+  cover_goods: Nullable<number>;
+  /** 晴雨签摇出、还没选的两支；lot_until 到了没选按第一支 */
+  lot_by: Nullable<number>;
+  lot_choices: ColumnType<number[] | null, string | null | undefined, string | null>;
+  lot_until: TsNullable;
 }
 
 export interface MarketItemTable {
@@ -772,7 +781,8 @@ export interface TownBlessTable {
 
 export interface TownRestTable {
   rest_id: number;
-  hammer_at: TsNullable;
+  /** 司天罗盘、晴雨签共用的每人冷却：上次用的时间 */
+  tool_at: TsNullable;
   broadcast_at: TsNullable;
   big_eater_gift: Default<boolean>;
 }
@@ -792,6 +802,8 @@ export interface TownExchangeUseTable {
   rest_id: number;
   exchange_id: number;
   times: number;
+  /** 每周限兑的兑换项记是哪一周（weekStart）；不限周的是空串 */
+  week: Default<string>;
 }
 
 export interface TakeawayStateTable {

@@ -133,6 +133,7 @@ const errors: Messages['errors'] = {
     shake_device: () => 'Someone on the same network or device has already shaken it today',
     bar_daily: (p) =>
       `You've played this game ${s(p.max)} ${plEn(s(p.max), 'time', 'times')} today. Come back tomorrow.`,
+    shop_daily: (p) => `You can buy ${String(p.max)} of this per day; you already have today`,
     town_exchange: (p) =>
       `Each player can exchange this ${s(p.max)} ${plEn(s(p.max), 'time', 'times')} (used ${s(p.used)})`,
     max: (p) => `You can hold at most ${s(p.max)}`,
@@ -257,6 +258,8 @@ const errors: Messages['errors'] = {
     other_street: 'You can only learn or upgrade dishes of the street you are on; move there first',
     no_batch: "This item can't be used in bulk",
     no_points_to_reset: "You haven't spent any attribute points yet",
+    compass_type: "The current weather can't turn into this type",
+    no_lots: 'The lots timed out; lot 1 was used',
     not_on_sale: 'Not on sale',
     no_special: 'No limited-time deals today yet',
     single: 'You can only buy 1 at a time',
@@ -440,9 +443,9 @@ const errors: Messages['errors'] = {
     forumPostCooldown: (seconds) => `You're posting too fast. Try again in ${seconds} s.`,
     forumReplyCooldown: (seconds) => `You're replying too fast. Try again in ${seconds} s.`,
     broadcastCooldown: (seconds) => `Broadcast is cooling down. Wait ${seconds} s.`,
-    weatherGap: (seconds) => `The weather was just changed. Try again in ${seconds} s.`,
-    hammer: (minutes) =>
-      `Thor's Hammer is cooling down. Wait ${minutes >= 60 ? `${Math.floor(minutes / 60)} h ${minutes % 60} min` : `${minutes} min`}.`,
+    weatherLock: (minutes) => `Someone just changed the weather. Try again in ${minutes} min.`,
+    weatherTool: (minutes) =>
+      `Your compass and lots are cooling down. Wait ${minutes >= 60 ? `${Math.floor(minutes / 60)} h ${minutes % 60} min` : `${minutes} min`}.`,
     marketSpecial: (minutes, wait) =>
       `Specials can only be grabbed once per ${minutes} ${plEn(minutes, 'minute', 'minutes')} from the same network. Wait ${wait} min.`,
     notEnough: (what, need, have) => `Not enough ${what} (need ${need}, have ${have})`,

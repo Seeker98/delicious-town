@@ -294,3 +294,24 @@ describe('钻石黑市的星级门槛（backlog 146）', () => {
     expect(await goodsNum(g, high.restaurantId, poster)).toBe(1);
   });
 });
+
+describe('每日限购（天气改版：晴雨签每天 1 个）', () => {
+  it('买满当天的数就买不了，列表写剩几个；第二天重新算', async () => {
+    t.clock.set(gameTime('2026-09-30', 12));
+    const ctx = await newRestaurant(t, { patch: { coin: 1_000_000 } });
+    const row = async () => (await shop().items(ctx)).coin.find((x) => x.goodsId === GOODS.weatherLots)!;
+    expect(await row()).toMatchObject({ daily: { limit: 1, left: 1 }, maxBuy: 1, blocked: null });
+    await expect(shop().buy(ctx, { goodsId: GOODS.weatherLots, num: 2 })).rejects.toMatchObject({
+      code: 'LIMIT_REACHED',
+    });
+    await shop().buy(ctx, { goodsId: GOODS.weatherLots, num: 1 });
+    expect(await row()).toMatchObject({ daily: { limit: 1, left: 0 }, maxBuy: 0, blocked: 'daily' });
+    await expect(shop().buy(ctx, { goodsId: GOODS.weatherLots, num: 1 })).rejects.toMatchObject({
+      code: 'LIMIT_REACHED',
+      params: { what: 'shop_daily', max: 1 },
+    });
+    t.clock.set(gameTime('2026-10-01', 12));
+    await shop().buy(ctx, { goodsId: GOODS.weatherLots, num: 1 });
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.weatherLots)).toBe(2);
+  });
+});

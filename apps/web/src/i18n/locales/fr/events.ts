@@ -271,6 +271,8 @@ const events: Messages['events'] = {
       `A obtenu ${names.foodName(n(p, 'foodsId'))} avec un bon d'ingrédient mystère`,
     'town.feast': () => 'A participé au festin sur la place',
     'town.hammer': () => 'A frappé avec le marteau météo et changé le temps',
+    'weather.tool': (p, names) =>
+      `A utilisé ${names.goodsName(n(p, 'goodsId'))}\u202f: ${names.weatherName?.(n(p, 'from')) ?? ''} devient ${names.weatherName?.(n(p, 'to')) ?? ''}`,
     'town.mayor': (p) =>
       p.right
         ? 'A bien répondu à la question du Maire Grosse Marmite'

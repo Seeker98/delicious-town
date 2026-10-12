@@ -133,6 +133,7 @@ const errors: Messages['errors'] = {
     shake_device: () => "Quelqu'un sur le même réseau ou appareil l'a déjà secoué aujourd'hui",
     bar_daily: (p) =>
       `Vous avez joué ${s(p.max)} ${plFr(s(p.max), 'partie', 'parties')} aujourd'hui. Revenez demain.`,
+    shop_daily: (p) => `Achat limité à ${s(p.max)} par jour\u202f; déjà fait aujourd'hui`,
     town_exchange: (p) => `Chaque joueur peut échanger cet objet ${s(p.max)} fois (déjà ${s(p.used)})`,
     max: (p) => `Vous pouvez en posséder au plus ${s(p.max)}`,
     friends: (p) => `Votre liste d'amis est pleine (${s(p.max)} au plus)`,
@@ -257,6 +258,8 @@ const errors: Messages['errors'] = {
     other_street: "Seuls les plats de votre rue peuvent être appris ou améliorés\u202f; déménagez d'abord",
     no_batch: 'Cet objet ne peut pas être utilisé en lot',
     no_points_to_reset: "Vous n'avez encore dépensé aucun point d'attribut",
+    compass_type: 'La météo actuelle ne peut pas passer à ce type',
+    no_lots: 'Les bâtonnets ont expiré\u202f: le bâtonnet 1 a été utilisé',
     not_on_sale: 'Pas en vente',
     no_special: "Pas encore de promos limitées aujourd'hui",
     single: 'Vous ne pouvez en acheter qu’un à la fois',
@@ -444,9 +447,9 @@ const errors: Messages['errors'] = {
     forumPostCooldown: (seconds) => `Vous publiez trop vite. Réessayez dans ${seconds} s.`,
     forumReplyCooldown: (seconds) => `Vous répondez trop vite. Réessayez dans ${seconds} s.`,
     broadcastCooldown: (seconds) => `Annonce en recharge. Attendez ${seconds} s.`,
-    weatherGap: (seconds) => `La météo vient de changer. Réessayez dans ${seconds} s.`,
-    hammer: (minutes) =>
-      `Le marteau de Thor est en recharge. Attendez ${minutes >= 60 ? `${Math.floor(minutes / 60)} h ${minutes % 60} min` : `${minutes} min`}.`,
+    weatherLock: (minutes) => `Quelqu'un vient de changer la météo. Réessayez dans ${minutes} min.`,
+    weatherTool: (minutes) =>
+      `Boussole et bâtonnets en recharge. Attendez ${minutes >= 60 ? `${Math.floor(minutes / 60)} h ${minutes % 60} min` : `${minutes} min`}.`,
     marketSpecial: (minutes, wait) =>
       `Les promotions ne peuvent être prises qu'une fois par période de ${minutes} min depuis un même réseau. Attendez ${wait} min.`,
     notEnough: (what, need, have) => `${what} insuffisant(e)s (il en faut ${need}, vous en avez ${have})`,

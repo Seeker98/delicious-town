@@ -7,7 +7,8 @@ import { AppError } from '../../http/errors';
 import { activationTotal } from '../task/rules';
 
 export interface TownRestState {
-  hammer_at: Date | null;
+  /** 司天罗盘、晴雨签共用的每人冷却：上次用的时间 */
+  tool_at: Date | null;
   broadcast_at: Date | null;
   big_eater_gift: boolean;
 }
@@ -21,7 +22,7 @@ export async function townRest(o: Op): Promise<TownRestState> {
     .execute();
   return o.tx
     .selectFrom('town_rest')
-    .select(['hammer_at', 'broadcast_at', 'big_eater_gift'])
+    .select(['tool_at', 'broadcast_at', 'big_eater_gift'])
     .where('rest_id', '=', o.rest.id)
     .executeTakeFirstOrThrow();
 }

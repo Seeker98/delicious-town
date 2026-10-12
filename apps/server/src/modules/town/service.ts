@@ -15,12 +15,10 @@ import { withRestaurants } from '../../db/tx';
 import { readDaily } from '../daily/read';
 import { listNews } from '../news/news';
 import { npcIdOf } from '../npc/npc';
-import type { HammerPick } from '../world/rules';
 import type { WorldService } from '../world/service';
 import { feast, wish } from './bless';
 import { broadcast } from './broadcast';
 import { doExchange, exchangeView, useLevelTicket, useMysteryTicket } from './exchange';
-import { useHammer } from './hammer';
 import { shake } from './shake';
 import { askMayor } from './mayor';
 import { talk } from './talk';
@@ -72,12 +70,6 @@ export function createTownService(d: GameDeps, world: WorldService) {
     },
     feast(ctx: RestCtx, b: { foodsId?: number }) {
       return op(ctx, 'town.feast', (o) => feast(o, b.foodsId));
-    },
-    hammer(ctx: RestCtx, pick: HammerPick) {
-      return op(ctx, 'town.hammer', async (o) => {
-        await world.ensure(o.shardId, o.now, o.tx);
-        return useHammer(o, pick);
-      });
     },
     /** 和蟹老板店一起按店号顺序加锁（计划裁定：避免和好友互动的锁顺序相反） */
     async shake(ctx: RestCtx): Promise<OpResult<ShakeResultDto>> {

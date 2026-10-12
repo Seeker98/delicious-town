@@ -48,6 +48,7 @@ export default {
       max: '已達持有上限',
       owned: '已經擁有',
       store: '倉庫滿了',
+      daily: '今天買過了',
       other: '買不了',
       /** 後期海報獎盃按星級可用（問題記錄 146） */
       star: (n: number) => `${n} 星可用`,
@@ -55,6 +56,7 @@ export default {
     price: (price: string, diamond: boolean) => `${price} ${diamond ? '鑽石' : '銀幣'}`,
     owned: (n: number) => `已有 ${n}`,
     limitOne: '限 1 個',
+    dailyLimit: (n: number) => `每天限 ${n} 個`,
     buy: '買',
     specialSoon: '今天中午 12 點上新',
     /** 特價折扣檔名：簡中用服務端給的原名（九折、八折……），其他語言按減了多少顯示 */

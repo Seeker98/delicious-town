@@ -168,6 +168,15 @@ describe('新闻文案', () => {
     expect(newsText(n('weather.change', { from: 1, to: 13 }, null), names)).toBe('天气变了: 晴转暴雨');
   });
 
+  it('天气改版：罗盘、签改天气写谁用的什么；换天时道具还盖着写出来', () => {
+    expect(newsText(n('weather.tool', { goodsId: 10419, from: 1, to: 13 }), names)).toBe(
+      `小王的店用${names.goodsName(10419)}把晴改成了暴雨, 持续 1 小时`,
+    );
+    expect(newsText(n('weather.change', { from: 1, to: 13, cover: 1 }, null), names)).toBe(
+      '天气变了: 晴转暴雨 (道具改的晴还盖着)',
+    );
+  });
+
   it('店不存在时用新闻里记下的名字，都没有时写"某家餐厅"；未知类型不报错', () => {
     expect(newsText(n('star.up', { star: 2, name: '旧名' }, null), names)).toBe('旧名升到了 2 星');
     expect(newsText(n('star.up', { star: 2 }, null), names)).toBe('某家餐厅升到了 2 星');

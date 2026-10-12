@@ -6,7 +6,6 @@ import {
   townExchangeBody,
   townExchangeQuery,
   townFeastBody,
-  townHammerBody,
   townLevelTicketBody,
   townMysteryTicketBody,
   townNewsQuery,
@@ -42,9 +41,6 @@ export function townRoutes(svc: TownService): FastifyPluginAsync {
     r.post('/town/wish', async (req) => okOp(await svc.wish(restCtxOf(req))));
     r.post('/town/feast', async (req) =>
       okOp(await svc.feast(restCtxOf(req), parse(townFeastBody, req.body ?? {}))),
-    );
-    r.post('/town/hammer', async (req) =>
-      okOp(await svc.hammer(restCtxOf(req), parse(townHammerBody, req.body))),
     );
     r.post('/town/shake', async (req) => okOp(await svc.shake(restCtxOf(req))));
     r.post('/town/mayor', async (req) =>

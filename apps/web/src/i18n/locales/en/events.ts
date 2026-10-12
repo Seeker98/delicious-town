@@ -266,6 +266,8 @@ const events: Messages['events'] = {
       `Used a Mystery Ingredient Voucher for ${names.foodName(n(p, 'foodsId'))}`,
     'town.feast': () => 'Joined the feast at the square',
     'town.hammer': () => 'Struck the weather hammer and changed the weather',
+    'weather.tool': (p, names) =>
+      `Used ${names.goodsName(n(p, 'goodsId'))}: ${names.weatherName?.(n(p, 'from')) ?? ''} became ${names.weatherName?.(n(p, 'to')) ?? ''}`,
     'town.mayor': (p) =>
       p.right ? "Answered Mayor Big Pot's question correctly" : "Got Mayor Big Pot's question wrong",
     'town.shake': (p) =>

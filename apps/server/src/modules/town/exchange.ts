@@ -1,6 +1,13 @@
-import { sql, type Kysely } from 'kysely';
+import type { Kysely } from 'kysely';
 import { GOODS, type GameConfig, type Tuning } from '@dt/config';
-import type { TicketResultDto, TownExchangeDto, TownExchangePart, TownExchangeResultDto } from '@dt/shared';
+import {
+  gameDay,
+  weekStart,
+  type TicketResultDto,
+  type TownExchangeDto,
+  type TownExchangePart,
+  type TownExchangeResultDto,
+} from '@dt/shared';
 import { invalidState, limitReached } from '../../core/errors';
 import { opNews, restLog, type Op } from '../../core/op';
 import type { DB } from '../../db/schema';
@@ -43,10 +50,15 @@ export async function exchangeView(
   const have = await goodsCounts(db, restId, [...ids], now);
   const usedRows = await db
     .selectFrom('town_exchange_use')
-    .select(['exchange_id', 'times'])
+    .select(['exchange_id', 'times', 'week'])
     .where('rest_id', '=', restId)
     .execute();
-  const used = new Map(usedRows.map((r) => [r.exchange_id, r.times]));
+  // 每周限兑的项只算这一周兑的（天气改版：司天罗盘）
+  const week = weekStart(gameDay(now));
+  const weekly = new Set(list.filter((e) => e.weekly).map((e) => e.id));
+  const used = new Map(
+    usedRows.map((r) => [r.exchange_id, weekly.has(r.exchange_id) && r.week !== week ? 0 : r.times]),
+  );
   // 13 哥的食材兑换券页按“本街要的 → 我没有的 → 其他”排（问题记录 491）：每种我有几个、本街还要几个
   const levelFoods = levels.map((l) => levelFoodIds(config, town, l));
   const listed = new Set(levelFoods.flat());
@@ -79,6 +91,7 @@ export async function exchangeView(
       need: e.need.map((n) => ({ goodsId: n.goodsId, num: n.num, have: have.get(n.goodsId) ?? 0 })),
       times: e.times,
       used: used.get(e.id) ?? 0,
+      weekly: e.weekly,
     })),
     levelTickets: levels.map((l) => have.get(GOODS.levelTicketBase + l) ?? 0),
     mysteryTickets: have.get(GOODS.mysteryFoodExchange) ?? 0,
@@ -96,13 +109,15 @@ export async function doExchange(o: Op, id: number, num: number): Promise<TownEx
   if (!e) throw invalidState('no_exchange');
   const max = o.tuning.town.exchangeMaxNum;
   if (num > max) throw limitReached('batch', { max });
+  const week = e.weekly ? weekStart(gameDay(o.now)) : '';
   const row = await o.tx
     .selectFrom('town_exchange_use')
-    .select('times')
+    .select(['times', 'week'])
     .where('rest_id', '=', o.rest.id)
     .where('exchange_id', '=', id)
     .executeTakeFirst();
-  const used = row?.times ?? 0;
+  // 每周限兑：记的不是这一周就从 0 算
+  const used = row && row.week === week ? row.times : 0;
   if (e.times > 0 && used + num > e.times) throw limitReached('town_exchange', { max: e.times, used });
   await assertStoreRoom(o, e.goodsId);
   for (const n of e.need) await consumeGoods(o, n.goodsId, n.num * num);
@@ -110,12 +125,8 @@ export async function doExchange(o: Op, id: number, num: number): Promise<TownEx
   await grantGoodsOp(o, e.goodsId, got);
   await o.tx
     .insertInto('town_exchange_use')
-    .values({ rest_id: o.rest.id, exchange_id: id, times: num })
-    .onConflict((oc) =>
-      oc
-        .columns(['rest_id', 'exchange_id'])
-        .doUpdateSet({ times: sql<number>`town_exchange_use.times + ${num}` }),
-    )
+    .values({ rest_id: o.rest.id, exchange_id: id, times: num, week })
+    .onConflict((oc) => oc.columns(['rest_id', 'exchange_id']).doUpdateSet({ times: used + num, week }))
     .execute();
   if (e.news) opNews(o, 'town.exchange', { exchangeId: id, goodsId: e.goodsId, num: got });
   restLog(o, 'town.exchange', { exchangeId: id, num });
