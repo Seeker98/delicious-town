@@ -242,6 +242,51 @@ describe('区服数值（HTTP）', () => {
     expect(r.status).toBe(404);
   });
 
+  it('已存的覆盖里有代码删掉的键（如 PR③ 删的 tuning.hiphop）：保存时自动去掉，不再 400；新写的未知键照样 400', async () => {
+    const shardId = await createShard(ctx.deps.db);
+    const stale = { tuning: { hiphop: { requireVerifiedEmail: true }, settlement: { expMultiplier: 3 } } };
+    await ctx.deps.db
+      .insertInto('shard_config')
+      .values({ shard_id: shardId, version: 1, override: JSON.stringify(stale), updated_at: new Date() })
+      .execute();
+    const save = (override: unknown, version: number) =>
+      call(ctx.app, 'POST', `${S}/${shardId}/override`, {
+        cookie: admin.cookie,
+        body: { override, note: 'x', version },
+      });
+    // 后台整份发回（带着旧键）也能存，存下来的不再有它
+    const ok = await save({ tuning: { ...stale.tuning, settlement: { expMultiplier: 4 } } }, 1);
+    expect(ok.status).toBe(200);
+    const now = await call(ctx.app, 'GET', `${S}/${shardId}/settings`, { cookie: admin.cookie });
+    expect(now.json.data.override).toEqual(mult(4));
+    // 原来没有的未知键还是拒绝
+    const typo = await save({ tuning: { hiphop: { x: 1 }, settlement: { expMultiplier: 4 } } }, 2);
+    expect(typo.status).toBe(400);
+    expect(typo.json.params.issues[0].path).toBe('tuning.hiphop');
+  });
+
+  it('回滚到带着已删键的历史版本：去掉这些键再存', async () => {
+    const shardId = await createShard(ctx.deps.db);
+    await ctx.deps.db
+      .insertInto('shard_config_history')
+      .values({
+        shard_id: shardId,
+        version: 7,
+        override: JSON.stringify({
+          tuning: { hiphop: { requireVerifiedEmail: true }, settlement: { expMultiplier: 6 } },
+        }),
+        note: '旧版本',
+      })
+      .execute();
+    const rb = await call(ctx.app, 'POST', `${S}/${shardId}/rollback`, {
+      cookie: admin.cookie,
+      body: { version: 7, note: '回滚' },
+    });
+    expect(rb.status).toBe(200);
+    const now = await call(ctx.app, 'GET', `${S}/${shardId}/settings`, { cookie: admin.cookie });
+    expect(now.json.data.override).toEqual(mult(6));
+  });
+
   it('回滚：取历史版本再保存一版；历史版本在当前结构下不合法时 400（Review Focus 5）', async () => {
     const shardId = await createShard(ctx.deps.db);
     const save = (version: number, m: number) =>
