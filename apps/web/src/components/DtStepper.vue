@@ -14,8 +14,18 @@ const props = withDefaults(
     disabled?: boolean;
     /** 紧凑尺寸：列表行里用（界面改版 P4，菜场一行放不下普通尺寸）；宽的放价格、金额（P8 终审 I4） */
     size?: 'sm' | 'wide';
+    /** 中间数字框的读屏名字（backlog P3：原来没有，读屏只听到“减少 / 增加”）；不传时读“数量” */
+    label?: string;
   }>(),
-  { min: 0, max: Number.MAX_SAFE_INTEGER, step: 1, testid: undefined, disabled: false, size: undefined },
+  {
+    min: 0,
+    max: Number.MAX_SAFE_INTEGER,
+    step: 1,
+    testid: undefined,
+    disabled: false,
+    size: undefined,
+    label: undefined,
+  },
 );
 const emit = defineEmits<{ 'update:modelValue': [n: number] }>();
 const t = useT();
@@ -81,6 +91,7 @@ watch(
       :max="max"
       :value="draft ?? modelValue"
       :disabled="disabled"
+      :aria-label="label ?? t.common.quantity"
       :data-testid="testid"
       @input="onInput"
       @blur="onBlur"

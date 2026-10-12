@@ -17,7 +17,6 @@ const home: Messages['home'] = {
   forecast: (hour, type, same, sure) =>
     `${sure ? 'Seguramente' : 'Quizá'} ${same ? 'siga ' : ''}${type.toLowerCase()} después de las ${hour}:00`,
   level: 'Nivel',
-  closed: 'Cerrado',
   closedSign: 'Cerrado',
   renown: 'Renombre',
   refuel: (full, cost) => `${full ? 'Llenar' : 'Echar aceite'} (${cost} ${plEs(cost, 'moneda', 'monedas')})`,
@@ -28,7 +27,6 @@ const home: Messages['home'] = {
   noCoinHint: 'No tienes monedas para comprar aceite',
   statusOpen: 'Abierto',
   oilFull: 'Aceite lleno',
-  lastRound: 'Última ronda:',
   roundTitle: 'Última ronda',
   todayTitle: 'Hoy',
   signInTodo: 'Aún no hoy',

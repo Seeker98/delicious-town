@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { sql } from 'kysely';
 import { gameTime } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
@@ -182,6 +183,41 @@ describe('收盘结算（大宗认购设计 §1.4）', () => {
     expect(await food(a)).toBe(2);
     expect((await wallet(t, a)).foods[FOOD()]).toBe(3);
     expect(await coin(a)).toBe(M - 250_000);
+  });
+
+  it('某一批收盘一直失败：记日志、跳过，同区服别的批次照常收盘、结算（backlog）', async () => {
+    const shardId = await createShard(t.db);
+    const bad = await mkLot(shardId, { qty: 4, group: 1 });
+    const good = await mkLot(shardId, { qty: 4, group: 1 });
+    const [a, b] = await players(shardId, 2);
+    await mkBid(bad, shardId, a!, 50_000, 2, 1);
+    await mkBid(good, shardId, b!, 50_000, 2, 1);
+    // 只让 bad 这一批的收盘写不进去（触发器按批次号过滤，不影响别的测试）
+    const fn = sql.raw(`test_fail_bulk_close_${bad}`);
+    await sql`create function ${fn}() returns trigger language plpgsql as $$
+      begin
+        if new.id = ${sql.raw(bad)} and new.status <> 'open' then raise exception 'test bulk close fail'; end if;
+        return new;
+      end $$`.execute(t.db);
+    await sql`create trigger ${fn} before update on bulk_lot for each row execute function ${fn}()`.execute(
+      t.db,
+    );
+    try {
+      const errors: object[] = [];
+      const log = { error: (o: object) => errors.push(o) };
+      expect(await closeDue(t.game.deps, shardId, t.clock.now, log)).toBe(1);
+      expect(errors).toEqual([expect.objectContaining({ lotId: bad })]);
+      expect((await lotRow(bad)).status).toBe('open');
+      expect((await lotRow(good)).status).toBe('settled');
+      expect(await payOut(t.game.deps, shardId, t.clock.now)).toEqual({ done: 1, failed: 0 });
+      expect(await food(b!)).toBe(2);
+    } finally {
+      await sql`drop trigger if exists ${fn} on bulk_lot`.execute(t.db);
+      await sql`drop function if exists ${fn}()`.execute(t.db);
+    }
+    // 修好以后下一轮补上
+    expect(await closeDue(t.game.deps, shardId, t.clock.now)).toBe(1);
+    expect((await lotRow(bad)).status).toBe('settled');
   });
 
   it('重跑不重复结算；某家失败下一轮只补这一家（Review Focus 3）', async () => {

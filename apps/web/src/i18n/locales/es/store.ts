@@ -88,6 +88,8 @@ const store: Messages['store'] = {
     unit: 'Precio unitario',
     total: 'Total',
     after: 'Te quedan',
+    /** 余额不够时“买完剩”换成还差多少（backlog P8） */
+    short: 'Te faltan',
     buyN: (n) => `Comprar ${n}`,
   },
 };

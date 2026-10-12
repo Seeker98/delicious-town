@@ -68,6 +68,40 @@ describe('useTabQuery（界面改版 P2b，设计 §4.2 第 6 条）', () => {
     expect(router.currentRoute.value.query.tab).toBe('spot');
   });
 
+  it('网址里是不存在的标签：改正网址，不写进“上次看的”（backlog P2b）', async () => {
+    const { tab, router } = await setup('/x?tab=xyz&page=2', { tabs: TABS, storageKey: 'k' });
+    expect(tab.value).toBe('news');
+    expect(router.currentRoute.value.query).toEqual({ tab: 'news', page: '2' });
+    expect(localStorage.getItem('k')).toBeNull();
+  });
+
+  it('标签列表变了自动改回第一个：不写进“上次看的”；要的标签又出现时切回去（backlog P2b：期货冷启动）', async () => {
+    const on = ref(true);
+    const tabs = computed(() => (on.value ? ['spot', 'futures'] : ['spot']));
+    const { tab, router } = await setup('/x?tab=futures', { tabs, storageKey: 'k' });
+    on.value = false;
+    await flushPromises();
+    expect(tab.value).toBe('spot');
+    expect(localStorage.getItem('k')).toBeNull();
+    on.value = true;
+    await flushPromises();
+    expect(tab.value).toBe('futures');
+    expect(router.currentRoute.value.query.tab).toBe('futures');
+  });
+
+  it('自动改掉以后玩家自己切过标签：要的标签再出现也不切回去', async () => {
+    const on = ref(true);
+    const tabs = computed(() => (on.value ? ['spot', 'bulk', 'futures'] : ['spot', 'bulk']));
+    const { tab } = await setup('/x?tab=futures', { tabs });
+    on.value = false;
+    await flushPromises();
+    tab.value = 'bulk';
+    await flushPromises();
+    on.value = true;
+    await flushPromises();
+    expect(tab.value).toBe('bulk');
+  });
+
   it('自定参数名、默认值不写进网址（一番赏 ?line=）', async () => {
     const { tab, router } = await setup('/x?line=deluxe', {
       tabs: ['normal', 'deluxe'],

@@ -15,9 +15,10 @@ const BATCH = 500;
 
 /**
  * 第一段（大宗认购设计 §1.4）：到了收盘时刻还是 open 的批次，锁住批次行，按出价算成交价和每家中几份，
- * 写进批次和每条出价，改状态。出价时对批次行拿共享锁，这里拿排他锁：正在提交的出价先提交，之后的出价看到状态已变
+ * 写进批次和每条出价，改状态。出价时对批次行拿共享锁，这里拿排他锁：正在提交的出价先提交，之后的出价看到状态已变。
+ * 每批单独 try：某一批一直失败时记日志、跳过，别的批次和后面的第二段（退款、发货）照常（backlog）
  */
-export async function closeDue(d: GameDeps, shardId: number, now: Date): Promise<number> {
+export async function closeDue(d: GameDeps, shardId: number, now: Date, log: Log = NO_LOG): Promise<number> {
   const due = await d.db
     .selectFrom('bulk_lot')
     .select('id')
@@ -27,50 +28,54 @@ export async function closeDue(d: GameDeps, shardId: number, now: Date): Promise
     .execute();
   let n = 0;
   for (const { id } of due) {
-    const closed = await d.db.transaction().execute(async (tx) => {
-      const lot = await tx
-        .selectFrom('bulk_lot')
-        .selectAll()
-        .where('id', '=', id)
-        .forUpdate()
-        .executeTakeFirst();
-      if (!lot || lot.status !== 'open') return false;
-      const bids = await tx.selectFrom('bulk_bid').selectAll().where('lot_id', '=', id).execute();
-      const a = allocate(
-        lot.qty,
-        bids.map((b) => ({ restId: b.rest_id, price: Number(b.price), qty: b.qty, rankedAt: b.ranked_at })),
-      );
-      const ok = a.demand >= lot.group_qty && a.price !== null;
-      await tx
-        .updateTable('bulk_lot')
-        .set({
-          status: ok ? 'settled' : 'failed',
-          price: ok ? a.price : null,
-          sold: ok ? a.sold : 0,
-          settled_at: now,
-        })
-        .where('id', '=', id)
-        .execute();
-      for (const b of bids)
-        await tx
-          .updateTable('bulk_bid')
-          .set({ won: ok ? (a.won.get(b.rest_id) ?? 0) : 0 })
-          .where('lot_id', '=', id)
-          .where('rest_id', '=', b.rest_id)
-          .execute();
-      if (ok)
-        await postNews(
-          tx,
-          {
-            shardId,
-            type: 'bulk.deal',
-            params: { foodsId: lot.foods_id, sold: a.sold, price: a.price, demand: a.demand, qty: lot.qty },
-          },
-          now,
+    try {
+      const closed = await d.db.transaction().execute(async (tx) => {
+        const lot = await tx
+          .selectFrom('bulk_lot')
+          .selectAll()
+          .where('id', '=', id)
+          .forUpdate()
+          .executeTakeFirst();
+        if (!lot || lot.status !== 'open') return false;
+        const bids = await tx.selectFrom('bulk_bid').selectAll().where('lot_id', '=', id).execute();
+        const a = allocate(
+          lot.qty,
+          bids.map((b) => ({ restId: b.rest_id, price: Number(b.price), qty: b.qty, rankedAt: b.ranked_at })),
         );
-      return true;
-    });
-    if (closed) n++;
+        const ok = a.demand >= lot.group_qty && a.price !== null;
+        await tx
+          .updateTable('bulk_lot')
+          .set({
+            status: ok ? 'settled' : 'failed',
+            price: ok ? a.price : null,
+            sold: ok ? a.sold : 0,
+            settled_at: now,
+          })
+          .where('id', '=', id)
+          .execute();
+        for (const b of bids)
+          await tx
+            .updateTable('bulk_bid')
+            .set({ won: ok ? (a.won.get(b.rest_id) ?? 0) : 0 })
+            .where('lot_id', '=', id)
+            .where('rest_id', '=', b.rest_id)
+            .execute();
+        if (ok)
+          await postNews(
+            tx,
+            {
+              shardId,
+              type: 'bulk.deal',
+              params: { foodsId: lot.foods_id, sold: a.sold, price: a.price, demand: a.demand, qty: lot.qty },
+            },
+            now,
+          );
+        return true;
+      });
+      if (closed) n++;
+    } catch (err) {
+      log.error({ err, shardId, lotId: id }, 'bulk close failed');
+    }
   }
   return n;
 }

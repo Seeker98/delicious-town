@@ -169,7 +169,7 @@ describe('同一排格子一样高（问题记录 585）', () => {
 
 describe('餐桌格子（界面改版 P3）', () => {
   beforeEach(() => setActivePinia(createPinia()));
-  it('每桌一个格子；有蟑螂、有白食的桌各有标记；选中的 aria-pressed', () => {
+  it('每桌一个格子；有蟑螂、有白食的桌各有标记；正在看的那桌 is-picked，点开的是面板不是开关（backlog P3）', () => {
     const w = mount(TableGrid, {
       props: {
         selected: 2,
@@ -182,8 +182,10 @@ describe('餐桌格子（界面改版 P3）', () => {
     });
     expect(w.get('[data-testid="table-1"]').classes()).toContain('is-roach');
     expect(w.get('[data-testid="table-2"]').classes()).toContain('is-freeloader');
-    expect(w.get('[data-testid="table-2"]').attributes('aria-pressed')).toBe('true');
-    expect(w.get('[data-testid="table-3"]').attributes('aria-pressed')).toBe('false');
+    expect(w.get('[data-testid="table-2"]').classes()).toContain('is-picked');
+    expect(w.get('[data-testid="table-3"]').classes()).not.toContain('is-picked');
+    expect(w.get('[data-testid="table-3"]').attributes('aria-pressed')).toBeUndefined();
+    expect(w.get('[data-testid="table-3"]').attributes('aria-haspopup')).toBe('dialog');
     expect(w.find('.border-primary').exists()).toBe(false);
   });
 });

@@ -46,9 +46,13 @@ describe('底部导航（界面改版 P2a，设计 §4.1）', () => {
 
   it('按所属入口高亮：在食谱详情页“食谱”亮，在酒吧“小镇”亮', async () => {
     const a = await mountNav('/cookbooks/12');
-    expect(a.get('[data-testid="tab-cookbooks"]').attributes('aria-current')).toBe('page');
+    // 详情页只说明属于这个入口，不是入口页本身（backlog P2a）
+    expect(a.get('[data-testid="tab-cookbooks"]').attributes('aria-current')).toBe('true');
+    expect(
+      (await mountNav('/cookbooks')).get('[data-testid="tab-cookbooks"]').attributes('aria-current'),
+    ).toBe('page');
     const b = await mountNav('/bar');
-    expect(b.get('[data-testid="tab-map"]').attributes('aria-current')).toBe('page');
+    expect(b.get('[data-testid="tab-map"]').attributes('aria-current')).toBe('true');
     expect(b.get('[data-testid="tab-home"]').attributes('aria-current')).toBeUndefined();
   });
 

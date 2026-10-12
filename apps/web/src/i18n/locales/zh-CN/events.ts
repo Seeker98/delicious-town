@@ -30,10 +30,10 @@ function predictNet(p: P): string {
   return `, 本局盈亏 ${d > 0 ? '+' : ''}${formatNum(d)}`;
 }
 
-/** 好友动态的一行文案（服务端只存结构化参数） */
 /** 食材等级的写法（交换食材的动态，问题记录 587） */
 const lvText = (lv: number | undefined) => (lv === undefined ? '' : ` (${lv} 级)`);
 
+/** 好友动态的一行文案（服务端只存结构化参数） */
 function describeFeed(
   item: RestLogDto,
   foodName: (id: number) => string,

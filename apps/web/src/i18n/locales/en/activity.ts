@@ -33,8 +33,6 @@ const activity: Messages['activity'] = {
     coop: 'Team-up',
     signin: 'Check-in',
   },
-  stripExchange: (left) => `Exchange period ${left}`,
-  stripSettling: 'Settling',
   claimable: (n) => `${n} to claim`,
   actions: {
     signin: 'Check in',

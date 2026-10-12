@@ -7,6 +7,8 @@ const common: Messages['common'] = {
   cancel: 'Annuler',
   decrease: 'Diminuer',
   increase: 'Augmenter',
+  /** 步进器中间数字框的读屏名字（没传 label 时，backlog P3） */
+  quantity: 'Quantité',
   language: 'Langue',
   appearance: 'Apparence',
   themeSystem: 'Comme le système',

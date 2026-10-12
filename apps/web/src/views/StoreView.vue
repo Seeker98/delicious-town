@@ -32,7 +32,8 @@ const tabItems = computed(() =>
 
 const type = ref<number | undefined>(undefined);
 const data = ref<StoreDto | null>(null);
-const records = ref<LedgerRecordDto[]>([]);
+/** 还没读回来是 null，显示骨架行（backlog P4：原来初值是空数组，先闪一下“没有记录”） */
+const records = ref<LedgerRecordDto[] | null>(null);
 const range = ref('1h');
 const qty = reactive<Record<number, number>>({});
 const busy = ref(false);
@@ -44,7 +45,9 @@ const GOODS_TYPE_SOUVENIR = 10;
 /** 按仓库接口给的类型判断（问题记录 276）：前端目录可能比服务器旧，不能靠它分类 */
 const isSouvenir = (it: StoreItemDto) => it.type === GOODS_TYPE_SOUVENIR;
 /** 纪念品标签页单独按类型读取：仓库页选了别的类型筛选时，已读的数据里没有纪念品 */
-const souvenirs = ref<StoreItemDto[]>([]);
+const souvenirs = ref<StoreItemDto[] | null>(null);
+/** 点一格纪念品弹出面板看全部说明（backlog P7：格子里说明截成两行，长的看不全） */
+const pickedSouvenir = ref<StoreItemDto | null>(null);
 /** 仓库排序（问题记录 186）：按类型分组，组内先看剩余时间，再按拼音 */
 const groups = computed(() =>
   data.value
@@ -77,14 +80,21 @@ async function load() {
 }
 async function loadSouvenirs() {
   try {
-    souvenirs.value = (await endpoints.store(GOODS_TYPE_SOUVENIR)).items.filter(isSouvenir);
-    await catalog.refreshIfMissing(souvenirs.value.map((it) => it.goodsId));
+    const items = (await endpoints.store(GOODS_TYPE_SOUVENIR)).items.filter(isSouvenir);
+    await catalog.refreshIfMissing(items.map((it) => it.goodsId));
+    souvenirs.value = items;
   } catch (e) {
+    souvenirs.value ??= [];
     toast.push(errorMessage(e, t.value.store.souvenirsFailed), 'danger');
   }
 }
 async function loadRecords() {
-  records.value = await endpoints.storeRecords(range.value);
+  try {
+    records.value = await endpoints.storeRecords(range.value);
+  } catch (e) {
+    records.value ??= [];
+    toast.push(errorMessage(e, t.value.store.loadFailed), 'danger');
+  }
 }
 async function run(fn: () => Promise<unknown>, fallback: string) {
   busy.value = true;
@@ -201,7 +211,7 @@ onMounted(() =>
           :aria-label="t.store.used(data.kinds, data.storeNum)"
           ><span :style="{ width: `${usedPct}%` }"></span
         ></span>
-        <span class="dt-cup-slots-label" data-testid="store-used">{{
+        <span class="dt-cup-slots-label" aria-hidden="true" data-testid="store-used">{{
           t.store.used(data.kinds, data.storeNum)
         }}</span>
       </div>
@@ -240,8 +250,8 @@ onMounted(() =>
           v-for="it in g.items"
           :key="it.goodsId"
           type="button"
-          class="dt-bag-cell"
-          :aria-pressed="picked === it.goodsId"
+          :class="['dt-bag-cell', { 'is-picked': picked === it.goodsId }]"
+          aria-haspopup="dialog"
           :aria-label="cellLabel(it)"
           :data-testid="`store-item-${it.goodsId}`"
           @click="pick(it.goodsId)"
@@ -350,7 +360,8 @@ onMounted(() =>
       </button>
     </div>
     <!-- 每条一行（只读行）：时间 + 文字，右边增减 -->
-    <div v-if="records.length > 0" class="dt-card dt-list-card">
+    <DtSkeleton v-if="records === null" :rows="4" data-testid="records-skeleton" />
+    <div v-else-if="records.length > 0" class="dt-card dt-list-card">
       <div v-for="(r, i) in records" :key="i" class="dt-feed">
         <span class="dt-feed-time" :data-testid="`record-time-${i}`">{{ recordTime(r.at) }}</span>
         <span class="dt-feed-text flex-fill">{{ recordName(r) }}</span>
@@ -359,23 +370,47 @@ onMounted(() =>
         >
       </div>
     </div>
-    <DtEmpty v-if="records.length === 0" :title="t.store.noRecords" data-testid="records-empty" />
+    <DtEmpty v-else :title="t.store.noRecords" data-testid="records-empty" />
   </template>
   <template v-if="tab === 'souvenirs'">
-    <DtEmpty v-if="souvenirs.length === 0" :title="t.store.noSouvenirs" data-testid="souvenirs-empty" />
-    <!-- 纪念品也是格子，名字下面一行说明（只看，不能用） -->
+    <DtSkeleton v-if="souvenirs === null" :rows="3" data-testid="souvenirs-skeleton" />
+    <DtEmpty v-else-if="souvenirs.length === 0" :title="t.store.noSouvenirs" data-testid="souvenirs-empty" />
+    <!-- 纪念品也是格子，名字下面一行说明（只看，不能用）；点一格弹出面板看全部说明 -->
     <div v-else class="dt-bag">
-      <div
+      <button
         v-for="it in souvenirs"
         :key="it.goodsId"
+        type="button"
         class="dt-bag-cell"
+        aria-haspopup="dialog"
         :data-testid="`souvenir-${it.goodsId}`"
+        @click="pickedSouvenir = it"
       >
         <span v-if="it.num > 1" class="dt-bag-num">{{ formatNum(it.num) }}</span>
         <DtArt :name="catalog.goodsArt(it.goodsId)" :size="36" />
         <span class="dt-bag-name">{{ catalog.goodsName(it.goodsId) }}</span>
         <span class="dt-bag-need dt-clamp2">{{ catalog.goodsMap.get(it.goodsId)?.desc }}</span>
-      </div>
+      </button>
     </div>
+    <DtSheet
+      :open="!!pickedSouvenir"
+      :title="pickedSouvenir ? catalog.goodsName(pickedSouvenir.goodsId) : ''"
+      @close="pickedSouvenir = null"
+    >
+      <div v-if="pickedSouvenir" class="dt-detail" data-testid="souvenir-sheet">
+        <div class="dt-detail-head">
+          <span class="dt-detail-art"
+            ><DtArt :name="catalog.goodsArt(pickedSouvenir.goodsId)" :size="52"
+          /></span>
+          <div class="dt-detail-info">
+            <div>{{ t.store.tabs.souvenirs }}</div>
+            <div class="dt-detail-sub">{{ t.store.shop.owned(pickedSouvenir.num) }}</div>
+          </div>
+        </div>
+        <p v-if="catalog.goodsMap.get(pickedSouvenir.goodsId)?.desc" class="dt-detail-note">
+          {{ catalog.goodsMap.get(pickedSouvenir.goodsId)?.desc }}
+        </p>
+      </div>
+    </DtSheet>
   </template>
 </template>

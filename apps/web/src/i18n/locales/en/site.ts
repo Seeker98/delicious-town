@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    fix1013b:
+      'More small fixes: the shop shows how many coins you are short instead of “0 left”; souvenirs in storage open to show their full description; maxed dishes in the recipe list get their ingredient picture, the pager sits inside the card and recipe details line up the ingredients of every grade; savings terms show how many packs you get per amount deposited; a failed Bulk Subscription bid keeps what you typed, and the bid panel refreshes every 30 seconds while open; screen readers name the quantity box and no longer read tiles that open a panel as toggles',
     home1013:
       'A more compact home page: last round’s coins, EXP and oil sit in one card with the floor, My shop is now three small tiles, town news shows 2 lines, and fixtures fit four per row with locked slots summed up in one line. Tap the coins, Stamina, diamonds, renown or level ring under the banner to see what it is, how to get it and where to use it',
     fix1013:

@@ -6,6 +6,8 @@ export default {
   close: '关闭',
   decrease: '减少',
   increase: '增加',
+  /** 步进器中间数字框的读屏名字（没传 label 时，backlog P3） */
+  quantity: '数量',
   language: '语言',
   appearance: '外观',
   themeSystem: '跟随系统',

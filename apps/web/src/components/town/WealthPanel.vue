@@ -10,7 +10,7 @@ import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useConfirmStore } from '../../stores/confirm';
 import { useToastStore } from '../../stores/toast';
-import { formatNum } from '../../utils/format';
+import { formatNum, shortNum } from '../../utils/format';
 import { newsTime } from '../../utils/news';
 import { remainText } from '../../utils/remain';
 import { serverNowMs } from '../../utils/serverNow';
@@ -154,7 +154,10 @@ onMounted(load);
               :data-testid="`we-term-${x.days}`"
               @click="term = x.days"
             >
-              {{ t.wealth.termDays(x.days) }}<small>{{ catalog.goodsName(x.goodsId) }}</small>
+              {{ t.wealth.termDays(x.days) }}<small>{{ catalog.goodsName(x.goodsId) }}</small
+              ><small :data-testid="`we-rate-${x.days}`">{{
+                t.wealth.termRate(shortNum(data.unit), x.perUnit)
+              }}</small>
             </button>
           </div>
           <div class="dt-field-row">

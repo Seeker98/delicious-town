@@ -84,6 +84,8 @@ export default {
     unit: '单价',
     total: '共',
     after: '买完剩',
+    /** 余额不够时“买完剩”换成还差多少（backlog P8） */
+    short: '还差',
     buyN: (n: number) => `买 ${n} 个`,
   },
 };

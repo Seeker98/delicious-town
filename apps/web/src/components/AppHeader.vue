@@ -45,7 +45,7 @@ watch(
 watch(
   () => props.inGame,
   (inGame) => {
-    if (inGame && !restStore.rest) void restStore.refresh().catch(() => undefined);
+    if (inGame && !restStore.rest) void restStore.load().catch(() => undefined);
   },
   { immediate: true },
 );

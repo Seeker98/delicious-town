@@ -3,7 +3,7 @@ import { GOODS, SPONSOR_HATS, createGameConfig } from '@dt/config';
 import { testConfig } from '../../../test/config';
 import { runSystemOp } from '../../core/op';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
-import { checkNestedItems, checkRewardItems, grantRewardOp } from './reward';
+import { checkNestedItems, checkRewardItems, grantRewardOp, lockRewardIcons } from './reward';
 import { fid, gid } from '../../../test/items';
 
 let t: TestGame;
@@ -97,5 +97,32 @@ describe('下架的道具、食材不能再写进后台奖励（问题记录 367
         checkNestedItems(config, { rewards: [{ goods: [{ id: gid('高级节油器'), num: 1 }] }] }, 'def'),
       ),
     ).toEqual([{ path: 'def.rewards.0.goods.0.id', message: 'retired' }]);
+  });
+});
+
+describe('事务里锁定制称号（backlog）', () => {
+  it('不存在、已停用的都拒绝；报错字段默认是附件里的位置，可以换成后台直接发的 key', async () => {
+    const [ok, off] = await t.db
+      .insertInto('custom_icon')
+      .values([{ title: '锁称号-可用' }, { title: '锁称号-停用', retired: true }])
+      .returning('id')
+      .execute();
+    const lock = (keys: string[], pathOf?: (n: number) => string) =>
+      t.db
+        .transaction()
+        .execute((tx) => lockRewardIcons(tx, { icons: keys.map((key) => ({ key })) }, pathOf));
+    await expect(lock([`c${ok!.id}`])).resolves.toBeUndefined();
+    await expect(lock([`c${ok!.id}`, `c${off!.id}`, 'c999999999'])).rejects.toMatchObject({
+      code: 'VALIDATION_FAILED',
+      params: {
+        issues: [
+          { path: 'items.icons.1.key', message: 'retired' },
+          { path: 'items.icons.2.key', message: 'unknown' },
+        ],
+      },
+    });
+    await expect(lock([`c${off!.id}`], () => 'key')).rejects.toMatchObject({
+      params: { issues: [{ path: 'key', message: 'retired' }] },
+    });
   });
 });

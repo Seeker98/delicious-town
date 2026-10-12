@@ -7,6 +7,8 @@ export default {
   close: '關閉',
   decrease: '減少',
   increase: '增加',
+  /** 步進器中間數字框的讀屏名字（沒傳 label 時，backlog P3） */
+  quantity: '數量',
   language: '語言',
   appearance: '外觀',
   themeSystem: '跟隨系統',

@@ -93,23 +93,32 @@ export async function checkRewardIcons(
 
 /**
  * 在发邮件、建兑换码的事务里锁住附件里的定制称号（for share），和删称号互斥（backlog 1010）：
- * 删除先提交时这里查不到，整个拒绝；这里先锁住时删除等提交后再查引用
+ * 删除先提交时这里查不到，整个拒绝；这里先锁住时删除等提交后再查引用。
+ * 事务外检查过以后才停用的也拒绝（backlog：原来只查在不在）；pathOf 是报错的字段（后台直接发称号时是 key）
  */
 export async function lockRewardIcons(
   tx: Kysely<DB>,
   items: { icons?: Array<{ key: string }> } | null,
+  pathOf: (n: number) => string = (n) => `items.icons.${n}.key`,
 ): Promise<void> {
   const ids = (items?.icons ?? []).map((i) => customId(i.key));
   const want = [...new Set(ids.filter((x): x is number => x !== null))];
   if (want.length === 0) return;
-  const found = new Set(
-    (await tx.selectFrom('custom_icon').select('id').where('id', 'in', want).forShare().execute()).map(
-      (r) => r.id,
-    ),
+  const found = new Map(
+    (
+      await tx
+        .selectFrom('custom_icon')
+        .select(['id', 'retired'])
+        .where('id', 'in', want)
+        .forShare()
+        .execute()
+    ).map((r) => [r.id, r.retired]),
   );
-  const bad = ids.flatMap((id, n) =>
-    id !== null && !found.has(id) ? [{ path: `items.icons.${n}.key`, message: 'unknown' }] : [],
-  );
+  const bad = ids.flatMap((id, n) => {
+    if (id === null) return [];
+    if (!found.has(id)) return [{ path: pathOf(n), message: 'unknown' }];
+    return found.get(id) ? [{ path: pathOf(n), message: 'retired' }] : [];
+  });
   if (bad.length > 0) throw new AppError(ErrorCode.VALIDATION_FAILED, 400, { issues: bad });
 }
 

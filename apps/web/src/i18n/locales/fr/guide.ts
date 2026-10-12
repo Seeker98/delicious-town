@@ -137,7 +137,7 @@ const guide: Messages['guide'] = {
       a: [
         "Le pack de pointage quotidien peut en contenir\u202f; les récompenses d'activité de 100 et 120 points\u202f; ",
         { to: '/rest/tasks?tab=weekly', text: 'les quêtes hebdomadaires' },
-        '\u202f; les packs du classement des chefs\u202f; les prix A, B, C et Dernier Prix de l’Ichiban Kuji\u202f; les amis invités qui atteignent les niv. 10 et 30\u202f; un message du forum mis en avant\u202f; les récompenses d’événements et les codes cadeaux.',
+        '\u202f; les packs du classement des chefs\u202f; les prix A, B, C et Dernier Prix de l’Ichiban Kuji\u202f; les amis invités qui atteignent les deux niveaux indiqués sur la page d’invitation\u202f; un message du forum mis en avant\u202f; les récompenses d’événements et les codes cadeaux.',
       ],
     },
     {

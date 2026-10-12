@@ -229,7 +229,10 @@ onMounted(() =>
     <!-- 格子用了多少画成进度条；其余规则一行灰字（界面改版 P6） -->
     <div class="dt-cup-meta" data-testid="cupboard-meta">
       <div class="dt-cup-slots">
-        <span class="dt-cup-slots-label">{{ t.cupboard.meta.slots(data.slotsUsed, data.slots) }}</span>
+        <!-- 进度条自己带同一句读屏名字，看得见的这句不再读一遍（backlog P6） -->
+        <span class="dt-cup-slots-label" aria-hidden="true">{{
+          t.cupboard.meta.slots(data.slotsUsed, data.slots)
+        }}</span>
         <span
           class="dt-cup-slotbar"
           role="progressbar"
@@ -302,8 +305,8 @@ onMounted(() =>
         v-for="f in rows"
         :key="f.foodsId"
         type="button"
-        class="dt-cup-row"
-        :aria-pressed="picked === f.foodsId"
+        :class="['dt-cup-row', { 'is-picked': picked === f.foodsId }]"
+        aria-haspopup="dialog"
         :aria-label="cellLabel(f)"
         :data-testid="`pick-${f.foodsId}`"
         @click="pick(f.foodsId)"

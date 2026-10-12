@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { BULK_PRICE_MAX, type BulkDto, type BulkResultDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import DtEmpty from '../DtEmpty.vue';
@@ -43,6 +43,7 @@ function startCooldown(n: number) {
 }
 onUnmounted(() => {
   if (timer) clearInterval(timer);
+  if (refresher) clearInterval(refresher);
 });
 
 /** 输入框按读到的数据重置：改出价填原值，第一次出价填入围门槛和 1 份 */
@@ -52,20 +53,33 @@ function resetInputs() {
   price.value = d.mine ? d.mine.price : d.lot.threshold;
   qty.value = d.mine ? d.mine.qty : 1;
 }
-/** 读到新数据时：输入框重置、冷却按服务端给的重新倒数（只在这时，打开面板不重新倒数，P8 终审 I1） */
-function reset() {
-  resetInputs();
+/**
+ * 读到新数据时：输入框重置、冷却按服务端给的重新倒数（只在这时，打开面板不重新倒数，P8 终审 I1）。
+ * keepInputs：出价失败后重读、面板开着时定时刷新，玩家填的数不动（backlog 大宗认购）
+ */
+function reset(keepInputs = false) {
+  if (!keepInputs) resetInputs();
   startCooldown(data.value?.mine?.cooldownLeft ?? 0);
 }
-async function load() {
+async function load(keepInputs = false) {
   try {
     data.value = await endpoints.bulk();
-    reset();
+    reset(keepInputs);
   } catch (e) {
     toast.push(errorMessage(e, t.value.bulk.loadFailed), 'danger');
   }
 }
-onMounted(load);
+onMounted(() => load());
+/** 出价面板开着时每 30 秒重读一次：最后几分钟预计成交价、入围门槛变得快（backlog 大宗认购） */
+const REFRESH_MS = 30_000;
+let refresher: ReturnType<typeof setInterval> | undefined;
+watch(
+  () => sheet.value === 'bid',
+  (open) => {
+    if (refresher) clearInterval(refresher);
+    refresher = open ? setInterval(() => void load(true), REFRESH_MS) : undefined;
+  },
+);
 
 const lot = computed(() => data.value?.lot ?? null);
 const mine = computed(() => data.value?.mine ?? null);
@@ -165,8 +179,8 @@ async function submit() {
     reset();
   } catch (e) {
     toast.push(errorMessage(e, t.value.bulk.bidFailed), 'danger');
-    // 被拒多半是状态变了（收盘了、别人改了价、冷却没到）：重新读取
-    await load();
+    // 被拒多半是状态变了（收盘了、别人改了价、冷却没到）：重新读取，填的数留着
+    await load(true);
   } finally {
     busy.value = false;
   }

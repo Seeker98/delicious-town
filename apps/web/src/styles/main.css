@@ -42,7 +42,8 @@ html {
   align-items: center;
   gap: 10px;
   height: 48px;
-  padding: 0 10px 0 8px;
+  /* 横屏刘海屏：左右让出安全区（backlog P2a） */
+  padding: 0 max(10px, env(safe-area-inset-right, 0px)) 0 max(8px, env(safe-area-inset-left, 0px));
   background: var(--dt-header-bg);
   border-bottom: 1px solid var(--dt-line);
 }
@@ -327,11 +328,10 @@ h5 {
 }
 
 /*
- * 文字链接统一（问题记录 445）：都是品牌色、没有下划线。
- * .dt-go 去别的页面，末尾由样式加一个 ›（读屏不读）；文案里不再自己写箭头。
- * .dt-link-btn 在本页做一件事（签到、加油），不加箭头；用 <button> 写，样子和链接一样，行高跟着文字走。
+ * 文字链接（问题记录 445；P5 返工，设计 §2.6 句中链接）：
+ * .dt-go 句中去别的页面：紫字 + 点状下划线，不加箭头；“文字 ›”只留给整行去别处。
+ * .dt-link-btn 在本页做一件事（签到、加油）：用 <button> 写，样子和链接一样，行高跟着文字走。
  */
-/* 去别处的文字链接（P5 返工，设计 §2.6 句中链接）：紫字 + 点状下划线；“文字 ›”只留给整行去别处 */
 .dt-go {
   color: var(--dt-primary-ink);
   text-decoration: underline dotted;
@@ -1043,11 +1043,12 @@ details.dt-card > summary {
   border-style: dashed;
   background: transparent;
 }
-.dt-table-cell[aria-pressed='true'] {
+/* 正在看的那桌（面板开着）；点格子打开的是面板，不是开关，所以不用 aria-pressed（backlog P3） */
+.dt-table-cell.is-picked {
   border: 2px solid var(--dt-primary);
   padding: 15px 3px 5px;
 }
-.dt-table-cell.is-roach[aria-pressed='true'] {
+.dt-table-cell.is-roach.is-picked {
   border-color: var(--dt-ink-danger);
 }
 @media (prefers-reduced-motion: no-preference) {
@@ -1142,10 +1143,19 @@ details.dt-card > summary {
   min-width: 0;
 }
 /* 食谱详情的品级行（界面改版 P4） */
+/* 各行的品级名一列等宽（取最长的那个，最多 40%），食材起点对齐；子网格不支持的浏览器每行各算各的（backlog P4） */
+.dt-grade-rows {
+  display: grid;
+  grid-template-columns: fit-content(40%) minmax(0, 1fr);
+  column-gap: 12px;
+}
 .dt-grade-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: fit-content(40%) minmax(0, 1fr);
+  grid-template-columns: subgrid;
+  align-items: start;
+  column-gap: 12px;
   padding: 10px 14px;
   border-top: 1px solid var(--dt-line);
 }
@@ -1156,8 +1166,6 @@ details.dt-card > summary {
   color: var(--dt-ink-success);
 }
 .dt-grade-name {
-  flex: 0 0 auto;
-  max-width: 40%;
   min-width: 4.5em;
   padding-top: 5px;
   font-size: 13px;
@@ -2015,7 +2023,8 @@ details.dt-card > summary {
   border-color: transparent;
   background: var(--dt-soft-warning);
 }
-.dt-bag-cell[aria-pressed='true'] {
+.dt-bag-cell[aria-pressed='true'],
+.dt-bag-cell.is-picked {
   border-color: var(--dt-primary);
   box-shadow: inset 0 0 0 1px var(--dt-primary);
 }
@@ -2130,7 +2139,7 @@ details.dt-card > summary {
 .dt-cup-row:active {
   background: var(--dt-surface-2);
 }
-.dt-cup-row[aria-pressed='true'] {
+.dt-cup-row.is-picked {
   background: var(--dt-soft-primary);
 }
 .dt-cup-tray {
@@ -3417,6 +3426,12 @@ details.dt-card > summary {
   justify-content: center;
   gap: 16px;
   margin-top: 12px;
+}
+/* 卡片里最下面一行的翻页（食谱列表，backlog P4） */
+.dt-pager.is-in-card {
+  margin-top: 0;
+  padding: 8px 14px;
+  border-top: 1px solid var(--dt-line);
 }
 /* 特色菜（P7）：一道一行，名字后面等级、道两个小标签，下面熟练度细条和文字 */
 .dt-mc-row {

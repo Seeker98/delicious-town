@@ -73,7 +73,8 @@ export function createCookbookService(d: GameDeps) {
   ): CookbookRowDto {
     const c = d.config.requireCookbook(id);
     const grade = gradeOf(levels, d.config.cookbookIndex.slotOf, id);
-    if (grade >= max) return { id, name: c.name, grade, next: null, learn: 'max' };
+    const art = mergeNeed(needOf(id, 1))[0]?.foodsId;
+    if (grade >= max) return { id, name: c.name, grade, next: null, learn: 'max', art };
     const need = mergeNeed(needOf(id, grade + 1));
     return {
       id,
@@ -81,6 +82,7 @@ export function createCookbookService(d: GameDeps) {
       grade,
       next: need.map((n) => ({ foodsId: n.foodsId, num: n.num, have: have(n.foodsId) })),
       learn: c.streetId !== street ? 'street' : learnTypeOf(planLearn(need, have, levelOfFood)),
+      art,
     };
   }
 

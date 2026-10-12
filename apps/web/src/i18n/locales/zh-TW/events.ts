@@ -31,10 +31,10 @@ function predictNet(p: P): string {
   return `, 本局盈虧 ${d > 0 ? '+' : ''}${formatNum(d)}`;
 }
 
-/** 好友動態的一行文案（服務端只存結構化引數） */
 /** 食材等級的寫法（交換食材的動態，問題記錄 587） */
 const lvText = (lv: number | undefined) => (lv === undefined ? '' : ` (${lv} 級)`);
 
+/** 好友動態的一行文案（服務端只存結構化引數） */
 function describeFeed(
   item: RestLogDto,
   foodName: (id: number) => string,

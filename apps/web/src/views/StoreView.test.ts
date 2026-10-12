@@ -321,6 +321,36 @@ describe('StoreView 纪念品（148-2）', () => {
     expect(w.find('[data-testid="souvenir-90009"]').text()).toContain('小红旗徽章');
     expect(w.find('[data-testid="souvenir-90009"]').text()).toContain('国庆纪念品');
     expect(w.text()).not.toContain('喇叭');
+    // 格子是按钮，点开面板看全部说明（backlog P7：格子里截成两行）
+    const cell = w.get('[data-testid="souvenir-90009"]');
+    expect(cell.element.tagName).toBe('BUTTON');
+    await cell.trigger('click');
+    expect(w.get('[data-testid="souvenir-sheet"]').text()).toContain('别在围裙上的小红旗。（国庆纪念品）');
+    expect(w.get('[data-testid="souvenir-sheet"]').text()).toContain('已有 150');
+  });
+
+  it('纪念品、流水还没读回来时是骨架行，不先闪“没有”（backlog P4）', async () => {
+    vi.mocked(endpoints.storeRecords).mockReturnValue(new Promise(() => {}));
+    const w = mountView();
+    await flushPromises();
+    vi.mocked(endpoints.store).mockReturnValue(new Promise(() => {}));
+    await w.get('[data-testid="tab-souvenirs"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="souvenirs-skeleton"]').exists()).toBe(true);
+    expect(w.find('[data-testid="souvenirs-empty"]').exists()).toBe(false);
+    await w.get('[data-testid="tab-records"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="records-skeleton"]').exists()).toBe(true);
+    expect(w.find('[data-testid="records-empty"]').exists()).toBe(false);
+  });
+
+  it('流水读失败：不一直转，写“没有记录”并提示', async () => {
+    vi.mocked(endpoints.storeRecords).mockRejectedValue(new Error('x'));
+    const w = mountView();
+    await w.get('[data-testid="tab-records"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="records-skeleton"]').exists()).toBe(false);
+    expect(w.find('[data-testid="records-empty"]').exists()).toBe(true);
   });
 });
 

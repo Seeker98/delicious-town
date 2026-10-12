@@ -28,6 +28,8 @@ const wealth: Messages['wealth'] = {
   deposit: 'Deposit',
   tiersTitle: 'Make a deposit',
   termLabel: 'Term',
+  /** 期限按钮第三行：每多少银币得几个（backlog 理财：原来只写包名） */
+  termRate: (unit, per) => `${per} per ${unit}`,
   termDays: (days) => `${days} ${days === 1 ? 'day' : 'days'}`,
   withdrawShort: 'Withdraw early',
   depositConfirm: (amount, days, packs, pack, earlyPct) =>

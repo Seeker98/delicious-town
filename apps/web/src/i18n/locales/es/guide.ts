@@ -137,7 +137,7 @@ const guide: Messages['guide'] = {
       a: [
         'El pack de registro diario puede traer algunos; los premios de actividad de 100 y 120 puntos; ',
         { to: '/rest/tasks?tab=weekly', text: 'las misiones semanales' },
-        '; los packs de la clasificación de chefs; los premios A, B, C y Último premio del Ichiban Kuji; los amigos invitados que llegan a nv. 10 y 30; un mensaje del foro destacado; los premios de eventos y los códigos.',
+        '; los packs de la clasificación de chefs; los premios A, B, C y Último premio del Ichiban Kuji; los amigos invitados que llegan a los dos niveles indicados en la página de invitación; un mensaje del foro destacado; los premios de eventos y los códigos.',
       ],
     },
     {

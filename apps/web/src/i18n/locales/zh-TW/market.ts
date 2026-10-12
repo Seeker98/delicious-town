@@ -26,10 +26,8 @@ export default {
   ownFree: '自己的貨, 免費',
   stockedBy: (name: string) => `${name} 進的貨`,
   left: (n: string) => `剩 ${n}`,
-  /** 價格和剩餘；限購單獨寫在名字那一行（介面改版 P4：一行放得下） */
-  priceLine: (price: string, left: string) => `${price} 銀幣 · 剩 ${left}`,
+  /** 限購單獨寫在名字那一行（介面改版 P4：一行放得下） */
   limitLine: (bought: number, limit: number) => `限購 ${bought}/${limit}`,
-  buy: '買',
   /** 購買面板（介面改版 P6） */
   sheet: {
     open: (name: string, price: string) => `買${name}, ${price}`,

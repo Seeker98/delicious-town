@@ -33,9 +33,7 @@ const market: Messages['market'] = {
   ownFree: 'Votre propre stock, gratuit',
   stockedBy: (name) => `Mis en rayon par ${name}`,
   left: (n) => `Reste ${n}`,
-  priceLine: (price, left) => `${price} ${plFr(price, 'pièce', 'pièces')} · reste ${left}`,
   limitLine: (bought, limit) => `acheté ${bought}/${limit}`,
-  buy: 'Acheter',
   sheet: {
     open: (name, price) => `Acheter ${name}, ${price}`,
     free: 'Gratuit',

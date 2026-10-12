@@ -16,7 +16,6 @@ export default {
   forecast: (hour: number, type: string, same: boolean, sure: boolean) =>
     `${hour} 点后${sure ? '多半' : '可能'}${same ? '还是' : '转'}${type}`,
   level: '等级',
-  closed: '停业',
   /** 首页头图招牌下挂的牌子（界面改版 P5） */
   closedSign: '停业中',
   renown: '声望',
@@ -29,7 +28,6 @@ export default {
   noCoinHint: '没有银币, 加不了油',
   statusOpen: '营业中',
   oilFull: '油是满的',
-  lastRound: '上一轮: ',
   /** 首页区块标题、签到块（界面改版 P5） */
   roundTitle: '上一轮',
   todayTitle: '今日',

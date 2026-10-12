@@ -34,8 +34,6 @@ const activity: Messages['activity'] = {
     coop: 'Effort commun',
     signin: 'Pointage',
   },
-  stripExchange: (left) => `Période d'échange ${left}`,
-  stripSettling: 'Clôture en cours',
   claimable: (n) => `${n} à récupérer`,
   actions: {
     signin: 'Pointer',

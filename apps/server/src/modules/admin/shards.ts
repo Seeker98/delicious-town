@@ -133,6 +133,7 @@ export function createAdminShards(game: Game, log?: WarnLog) {
     // 食材理财（理财设计 §3.1）：和配置构建同一套检查
     const wealth = wealthErrors(resolved.tuning.wealth, {
       packIds: new Set([...config.goods.values()].filter((g) => g.use?.kind === 'needFood').map((g) => g.id)),
+      maxNumOf: (id) => config.goods.get(id)?.maxNum,
     });
     if (wealth.length > 0)
       throw new AppError(ErrorCode.INVALID_CONFIG, 400, {

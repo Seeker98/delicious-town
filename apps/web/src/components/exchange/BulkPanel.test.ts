@@ -328,7 +328,7 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
     expect(w.find('[data-testid="bk-blind"]').exists()).toBe(false);
   });
 
-  it('出价失败：报错并重读', async () => {
+  it('出价失败：报错并重读，填的数不清掉（backlog 大宗认购）', async () => {
     vi.mocked(endpoints.bulk).mockResolvedValue(data());
     vi.mocked(endpoints.bulkBid).mockRejectedValue(new Error('x'));
     vi.spyOn(window, 'confirm').mockReturnValue(true);
@@ -339,5 +339,26 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
     await flushPromises();
     expect(useToastStore().items.at(-1)!.text).toBe('出价失败');
     expect(endpoints.bulk).toHaveBeenCalledTimes(2);
+    expect(value(w, 'bk-price-input')).toBe('60000');
+  });
+
+  it('出价面板开着时每 30 秒重读一次，填的数不动；关上就不读了（backlog 大宗认购）', async () => {
+    vi.useFakeTimers();
+    try {
+      vi.mocked(endpoints.bulk).mockResolvedValue(data());
+      const w = await mountPanel();
+      await openBid(w);
+      await setBid(w, '60000', '2');
+      vi.mocked(endpoints.bulk).mockResolvedValue(data({ lot: lot({ price: 58_000 }) }));
+      await vi.advanceTimersByTimeAsync(30_000);
+      expect(endpoints.bulk).toHaveBeenCalledTimes(2);
+      expect(value(w, 'bk-price-input')).toBe('60000');
+      expect(value(w, 'bk-qty-input')).toBe('2');
+      w.unmount();
+      await vi.advanceTimersByTimeAsync(60_000);
+      expect(endpoints.bulk).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

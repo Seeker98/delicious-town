@@ -314,9 +314,14 @@ async function buy() {
             <b data-testid="sheet-total">{{ t.store.shop.price(formatNum(total), sheetDiamond) }}</b>
           </dd>
         </div>
-        <div v-if="sheetBalance !== null">
+        <!-- 余额不够时不写“买完剩 0”，写还差多少（backlog P8） -->
+        <div v-if="sheetBalance !== null && sheetBalance >= total">
           <dt>{{ t.store.shop.after }}</dt>
-          <dd>{{ t.store.shop.price(formatNum(Math.max(0, sheetBalance - total)), sheetDiamond) }}</dd>
+          <dd>{{ t.store.shop.price(formatNum(sheetBalance - total), sheetDiamond) }}</dd>
+        </div>
+        <div v-else-if="sheetBalance !== null" data-testid="sheet-short">
+          <dt>{{ t.store.shop.short }}</dt>
+          <dd class="text-danger">{{ t.store.shop.price(formatNum(total - sheetBalance), sheetDiamond) }}</dd>
         </div>
       </dl>
     </div>

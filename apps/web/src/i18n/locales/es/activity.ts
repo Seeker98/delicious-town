@@ -34,8 +34,6 @@ const activity: Messages['activity'] = {
     coop: 'Esfuerzo común',
     signin: 'Registro',
   },
-  stripExchange: (left) => `Periodo de canje ${left}`,
-  stripSettling: 'Cerrando',
   claimable: (n) => `${n} por reclamar`,
   actions: {
     signin: 'Registrarse',
