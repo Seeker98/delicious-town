@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    home1013:
+      'Accueil plus compact\u202f: les pièces, l’EXP et l’huile du dernier tour sont dans une seule carte avec les tables, «\u202fMon restaurant\u202f» tient en trois petites cases, les nouvelles du village affichent 2 lignes et les équipements tiennent à quatre par ligne, les emplacements verrouillés résumés en une ligne. Touchez les pièces, l’énergie, les diamants, la renommée ou l’anneau de niveau sous la bannière pour savoir ce que c’est, comment l’obtenir et à quoi ça sert',
     fix1013:
       'Petites corrections\u202f: un restaurant fermé rouvre dès qu’il reçoit de l’huile, quelle qu’en soit la source\u202f; le marché débite exactement le prix unitaire affiché, garde le panneau ouvert si l’achat échoue et réactive les offres spéciales à la fin du délai\u202f; les commandes de contrats à terme sont limitées à ce que vos pièces couvrent en acompte\u202f; l’épargne et le fonds de développement passent à «\u202fRécupérer\u202f» à l’échéance même page ouverte\u202f; l’arbre à vœux affiche les derniers tours par date de tirage\u202f; les bons de la machine à sous ont des séparateurs de milliers',
     handle1013:

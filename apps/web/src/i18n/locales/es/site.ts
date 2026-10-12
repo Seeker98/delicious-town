@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    home1013:
+      'Inicio más compacto: las monedas, la EXP y el aceite de la última ronda van en una sola tarjeta con las mesas, Mi local pasa a tres casillas pequeñas, las noticias del pueblo muestran 2 líneas y las instalaciones van de cuatro en cuatro, con las bloqueadas resumidas en una línea. Toca las monedas, la energía, los diamantes, el renombre o el anillo de nivel bajo el banner para ver qué es, cómo conseguirlo y para qué sirve',
     fix1013:
       'Pequeños arreglos: un restaurante cerrado vuelve a abrir en cuanto recibe aceite, venga de donde venga; el mercado cobra exactamente el precio unitario mostrado, mantiene el panel abierto si la compra falla y reactiva las ofertas al terminar la espera; los pedidos de futuros se limitan a lo que tus monedas cubren de señal; los ahorros y el fondo de desarrollo pasan a Cobrar al vencer aunque tengas la página abierta; el árbol de los deseos muestra las últimas rondas por fecha de sorteo; los vales de la tragaperras llevan separador de miles',
     handle1013:

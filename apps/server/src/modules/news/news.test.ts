@@ -33,7 +33,7 @@ describe('新闻读取（设计文档 §3.1）', () => {
     expect(next.map((n) => n.type)).toEqual(['star.up']);
   });
 
-  it('头条：最新 3 条非广播 + 最新 1 条广播', async () => {
+  it('头条：最新 2 条非广播 + 最新 1 条广播（首页只列 2 条，问题记录 619）', async () => {
     const a = await newRestaurant(t);
     const s = a.shardId;
     await postNews(t.db, {
@@ -50,7 +50,7 @@ describe('新闻读取（设计文档 §3.1）', () => {
       params: { text: '新' },
     });
     const h = await headlines(t.db, s);
-    expect(h.news.map((n) => n.params.star)).toEqual([4, 3, 2]);
+    expect(h.news.map((n) => n.params.star)).toEqual([4, 3]);
     expect(h.broadcast).toMatchObject({ type: 'town.broadcast', params: { text: '新' } });
     expect((await headlines(t.db, (await newRestaurant(t)).shardId)).broadcast).toBeNull();
   });

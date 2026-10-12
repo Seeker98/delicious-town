@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    home1013:
+      'A more compact home page: last round’s coins, EXP and oil sit in one card with the floor, My shop is now three small tiles, town news shows 2 lines, and fixtures fit four per row with locked slots summed up in one line. Tap the coins, Stamina, diamonds, renown or level ring under the banner to see what it is, how to get it and where to use it',
     fix1013:
       'Small fixes: a closed restaurant now reopens however it gets oil; the market charges exactly the unit price shown, keeps the panel open if a purchase fails, and re-enables special items when the cooldown ends; futures orders are capped at what your coins can cover as deposit; savings and the development fund switch to Claim when they mature while the page is open; the wishing tree lists recent rounds by draw date; slot machine voucher counts now have thousands separators',
     handle1013:

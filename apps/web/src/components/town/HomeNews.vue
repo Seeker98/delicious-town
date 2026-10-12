@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
-import type { HeadlinesDto } from '@dt/shared';
+import type { HeadlinesDto, NewsDto } from '@dt/shared';
 import { useT } from '../../composables/useT';
 import { useCatalogStore } from '../../stores/catalog';
 import { useLocaleStore } from '../../stores/locale';
@@ -24,6 +24,17 @@ const daily = computed(() => {
   const title = d.title[dailyLang(locale.locale).lang];
   return dailyPlain(title, d.rests, catalogNames(catalog), t.value.town.daily.closed);
 });
+/** 首页最多列几条（问题记录 619：原来日报、广播、新闻最多 5 条）；按日报、广播、新闻的先后取 */
+const SHOWN = 2;
+type Line = { key: string; kind: 'daily' } | { key: string; kind: 'broadcast' | 'news'; n: NewsDto };
+const lines = computed<Line[]>(() => {
+  const out: Line[] = [];
+  if (daily.value) out.push({ key: 'daily', kind: 'daily' });
+  const b = props.headlines.broadcast;
+  if (b) out.push({ key: `b${b.id}`, kind: 'broadcast', n: b });
+  for (const n of props.headlines.news) out.push({ key: `n${n.id}`, kind: 'news', n });
+  return out.slice(0, SHOWN);
+});
 </script>
 
 <template>
@@ -34,20 +45,22 @@ const daily = computed(() => {
       <span class="dt-block-more">{{ t.nav.news.more }}</span>
     </RouterLink>
     <div class="dt-card dt-list-card small">
-      <div v-if="daily" class="dt-list-line dt-clamp1" data-testid="home-daily">
-        <RouterLink to="/town?tab=news" class="fw-bold">{{ t.nav.news.daily }}{{ daily }}</RouterLink>
-      </div>
-      <!-- 和餐厅动态同一种只读行：时间 + 文字（P5 返工：原来新闻没有时间、动态有，两块不一致） -->
-      <div v-if="headlines.broadcast" class="dt-feed dt-feed-1line" data-testid="home-broadcast">
-        <span class="dt-feed-time">{{ when(headlines.broadcast.createdAt) }}</span
-        ><span class="dt-feed-text text-primary fw-bold"
-          >{{ t.nav.news.broadcast }}{{ newsText(headlines.broadcast, catalog) }}</span
-        >
-      </div>
-      <div v-for="n in headlines.news" :key="n.id" class="dt-feed dt-feed-1line" data-testid="home-news">
-        <span class="dt-feed-time">{{ when(n.createdAt) }}</span
-        ><span class="dt-feed-text">{{ newsText(n, catalog) }}</span>
-      </div>
+      <template v-for="l in lines" :key="l.key">
+        <div v-if="l.kind === 'daily'" class="dt-list-line dt-clamp1" data-testid="home-daily">
+          <RouterLink to="/town?tab=news" class="fw-bold">{{ t.nav.news.daily }}{{ daily }}</RouterLink>
+        </div>
+        <!-- 和餐厅动态同一种只读行：时间 + 文字（P5 返工：原来新闻没有时间、动态有，两块不一致） -->
+        <div v-else-if="l.kind === 'broadcast'" class="dt-feed dt-feed-1line" data-testid="home-broadcast">
+          <span class="dt-feed-time">{{ when(l.n.createdAt) }}</span
+          ><span class="dt-feed-text text-primary fw-bold"
+            >{{ t.nav.news.broadcast }}{{ newsText(l.n, catalog) }}</span
+          >
+        </div>
+        <div v-else class="dt-feed dt-feed-1line" data-testid="home-news">
+          <span class="dt-feed-time">{{ when(l.n.createdAt) }}</span
+          ><span class="dt-feed-text">{{ newsText(l.n, catalog) }}</span>
+        </div>
+      </template>
       <div
         v-if="!daily && !headlines.broadcast && headlines.news.length === 0"
         class="dt-list-line text-muted"
