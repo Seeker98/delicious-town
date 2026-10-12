@@ -216,7 +216,7 @@ function result(c: FuturesContractDto): string {
             <div v-for="f in list" :key="f.foodsId" class="dt-row">
               <span class="dt-row-ico"><FoodArt :id="f.foodsId" :size="28" /></span>
               <span class="dt-row-main">
-                <span class="dt-row-title">{{ catalog.foodName(f.foodsId) }}</span>
+                <span class="dt-row-title is-strong">{{ catalog.foodName(f.foodsId) }}</span>
                 <span class="dt-row-sub"
                   ><span v-if="f.left === 0" class="dt-tag-mute">{{ t.futures.soldOut }}</span
                   ><template v-else>{{ t.futures.leftLine(f.left) }}</template></span

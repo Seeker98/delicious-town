@@ -21,7 +21,7 @@ import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import type { WorldService } from '../world/service';
 import { addFoods, cupboardSlotsUsed, foodsMap, subFoods } from './foods';
 import { streetNeeds as streetNeedsOf } from './needs';
-import { composePool, handleTargetLevel, runHandle, type HandleWay } from './rules';
+import { composePool, handleStrength, handleTargetLevel, runHandle, type HandleWay } from './rules';
 
 const HANDLE_KEY = 'foods.handle';
 
@@ -201,7 +201,9 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
         if (o.rest.coin <= 0) throw notEnough('coin', 1, o.rest.coin);
         await subFoods(o, b.foodsId, b.num);
         const used = await incrementDaily(o.tx, o.rest.id, HANDLE_KEY, 1, gameDay(o.now));
-        const strengthUsed = used > freeHandles(o.rest.star_level, o.tuning.cupboard) ? 1 : 0;
+        // 免体力次数以内一次处理多少个都不扣；用完以后合成出几个、分解几个扣几点（2026-10-13）
+        const strengthUsed =
+          used > freeHandles(o.rest.star_level, o.tuning.cupboard) ? handleStrength(b.way, b.num) : 0;
         spendStrength(o, strengthUsed);
         const snap = await world.ensure(o.shardId, o.now, o.tx);
         const agg = await opAgg(o);

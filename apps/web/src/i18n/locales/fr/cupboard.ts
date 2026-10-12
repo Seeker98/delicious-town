@@ -41,9 +41,13 @@ const cupboard: Messages['cupboard'] = {
   masterHigh:
     "Les ingrédients universels de niveau 3 et plus ne s'échangent pas contre des rares. Ils servent seulement à remplacer un ingrédient manquant du même niveau pour apprendre une recette.",
   handleHint: (decomposeMax, composeMax) =>
-    `Jusqu'à ${decomposeMax} par décomposition, ${composeMax} par combinaison (nombre pair). Décomposer\u202f: 1 → 2 chances d'obtenir un ingrédient de niveau inférieur. Combiner\u202f: 2 → 1 chance d'obtenir un ingrédient de niveau supérieur, jamais un ingrédient déjà plein dans le garde-manger.`,
-  handleResult: (success, chances, strengthUsed) =>
-    `${success}/${chances} ${plFr(chances, 'réussite', 'réussites')}${strengthUsed ? ', 1 énergie utilisée' : ''}`,
+    `Jusqu'à ${decomposeMax} par décomposition, ${composeMax} par combinaison (nombre pair). Décomposer\u202f: 1 → 2 chances d'obtenir un ingrédient de niveau inférieur. Combiner\u202f: 2 → 1 chance d'obtenir un ingrédient de niveau supérieur, jamais un ingrédient déjà plein dans le garde-manger. Dans vos traitements gratuits du jour, un traitement ne coûte pas d’énergie quelle que soit la quantité\u202f; ensuite, chaque ingrédient décomposé ou obtenu coûte 1 énergie.`,
+  handleResult: (success, chances, strength) =>
+    `${success}/${chances} ${plFr(chances, 'réussite', 'réussites')}${strength > 0 ? `, ${strength}\u202f${plFr(strength, 'énergie utilisée', 'énergies utilisées')}` : ''}`,
+  paidHead: 'Plus de traitement gratuit aujourd’hui\u202f: ',
+  paidDecompose: (n) => `décomposer ${n} coûte ${n}\u202f${plFr(n, 'énergie', 'énergies')}`,
+  paidCompose: (n, out) =>
+    `combiner ${n} (donne ${out}) coûte ${out}\u202f${plFr(out, 'énergie', 'énergies')}`,
   handleFailed: 'Échec',
   exchangeFailed: "Échec de l'échange",
   loadFailed: 'Impossible de charger le garde-manger',

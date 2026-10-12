@@ -9,6 +9,14 @@ export function handleTargetLevel(way: HandleWay, level: number): number | null 
   return level >= 1 && level <= 4 ? level + 1 : null;
 }
 
+/**
+ * 免体力次数用完以后一次处理要几点体力（2026-10-13 用户定）：合成出几个算几次、分解几个算几次。
+ * 合成 num 个出 num ÷ 2 个，分解 num 个就是 num 次；免体力次数以内一次处理多少个都不扣
+ */
+export function handleStrength(way: HandleWay, num: number): number {
+  return way === 'compose' ? Math.floor(num / 2) : num;
+}
+
 export interface HandleInput {
   way: HandleWay;
   num: number;

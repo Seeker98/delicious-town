@@ -140,15 +140,41 @@ describe('合成分解', () => {
     expect(gained).toBe(r.data.success);
   });
 
-  it('超过当天免体力次数后每次 1 体力（按北京时间的日期）', async () => {
-    const ctx = await newRestaurant(t, { patch: { coin: 1000, strength: 10 }, foods: { [fid('葡萄')]: 2 } });
+  it('免体力次数用完后：分解几个扣几点、合成出几个扣几点体力（2026-10-13；按北京时间的日期）', async () => {
+    const ctx = await newRestaurant(t, {
+      patch: { coin: 1000, strength: 20 },
+      foods: { [fid('葡萄')]: 5, [fid('大米')]: 6 },
+    });
     await t.db
       .insertInto('daily_counter')
       .values({ rest_id: ctx.restaurantId, day: gameDay(t.clock.now), key: 'foods.handle', count: 20 })
       .execute();
-    const r = await c().handle(ctx, { foodsId: fid('葡萄'), way: 'decompose', num: 1 });
-    expect(r.data.strengthUsed).toBe(1);
-    expect((await restRow(t, ctx.restaurantId)).strength).toBe(9);
+    const d = await c().handle(ctx, { foodsId: fid('葡萄'), way: 'decompose', num: 3 });
+    expect(d.data.strengthUsed).toBe(3);
+    expect((await restRow(t, ctx.restaurantId)).strength).toBe(17);
+    const m = await c().handle(ctx, { foodsId: fid('大米'), way: 'compose', num: 6 });
+    expect(m.data.strengthUsed).toBe(3);
+    expect((await restRow(t, ctx.restaurantId)).strength).toBe(14);
+  });
+
+  it('免体力次数以内一次处理再多也不扣体力', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 1000, strength: 5 }, foods: { [fid('葡萄')]: 50 } });
+    const r = await c().handle(ctx, { foodsId: fid('葡萄'), way: 'decompose', num: 50 });
+    expect(r.data.strengthUsed).toBe(0);
+    expect((await restRow(t, ctx.restaurantId)).strength).toBe(5);
+  });
+
+  it('体力不够这次要扣的：报错，食材和次数都不动', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 1000, strength: 2 }, foods: { [fid('葡萄')]: 3 } });
+    await t.db
+      .insertInto('daily_counter')
+      .values({ rest_id: ctx.restaurantId, day: gameDay(t.clock.now), key: 'foods.handle', count: 20 })
+      .execute();
+    await expect(c().handle(ctx, { foodsId: fid('葡萄'), way: 'decompose', num: 3 })).rejects.toMatchObject({
+      code: 'NOT_ENOUGH',
+    });
+    expect((await foodNum(t, ctx.restaurantId, fid('葡萄'))).num).toBe(3);
+    expect((await restRow(t, ctx.restaurantId)).strength).toBe(2);
   });
 
   it('不能处理的等级、合成数量是奇数、没有银币时报错', async () => {

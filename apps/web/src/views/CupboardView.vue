@@ -172,6 +172,16 @@ async function run(fn: () => Promise<unknown>, fallback: string) {
     busy.value = false;
   }
 }
+/** 免体力次数用完以后（2026-10-13）：这次分解、合成各要几点体力，写在面板里 */
+const paidNote = computed(() => {
+  if (!data.value || data.value.freeHandleLeft > 0) return null;
+  const m = t.value.cupboard;
+  const parts = [
+    canDecompose.value && decomposeMax.value >= 1 ? m.paidDecompose(decomposeN.value) : '',
+    canCompose.value && composeMax.value >= 2 ? m.paidCompose(composeN.value, composeN.value / 2) : '',
+  ].filter(Boolean);
+  return parts.length > 0 ? m.paidHead + parts.join(', ') : null;
+});
 function pick(id: number) {
   picked.value = picked.value === id ? null : id;
   num.value = 1;
@@ -181,7 +191,9 @@ function handle(way: 'compose' | 'decompose') {
   return run(async () => {
     const n = way === 'compose' ? composeN.value : decomposeN.value;
     const r = await endpoints.handleFoods({ foodsId, way, num: n });
-    toast.push(t.value.cupboard.handleResult(r.success, r.chances, !!r.strengthUsed), 'info');
+    toast.push(t.value.cupboard.handleResult(r.success, r.chances, r.strengthUsed), 'info');
+    // 处理完关掉面板，结果提示不被面板挡住（2026-10-13）
+    picked.value = null;
   }, t.value.cupboard.handleFailed);
 }
 onMounted(() =>
@@ -346,6 +358,7 @@ onMounted(() =>
         {{ MASTER_RULE[pickedItem.foodsId] }}
       </div>
       <div class="dt-detail-note">{{ t.cupboard.handleHint(decomposeMax, composeMax) }}</div>
+      <div v-if="paidNote" class="dt-detail-note dt-cup-paid" data-testid="handle-paid">{{ paidNote }}</div>
     </div>
     <template #actions>
       <div v-if="pickedItem" class="dt-cup-actions">

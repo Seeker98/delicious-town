@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    handle1013:
+      'Procesado en la despensa: dentro de tus procesados gratis del día, cada vez no cuesta energía sin importar la cantidad; después, cada ingrediente que obtengas combinando o que descompongas cuesta 1 de energía (antes, 1 por vez). El panel se cierra al terminar para que el resultado no quede tapado',
     picky1012:
       'Ajuste de los clientes exigentes: piden un plato de tu calle 9 de cada 10 veces y de otras calles 1 de cada 10, sin depender ya de las estrellas; con 30 o más platos de tu calle aprendidos siempre eligen uno que sabes cocinar, con menos pueden pedir uno que no has aprendido y marcharse, y esa mesa no da ingresos; si tu calidad no llega, quedan insatisfechos pero pagan la mitad del precio del plato (antes, una pequeña tarifa base); la tasa de exigentes sube un 2\u00a0% por estrella (antes un 6\u00a0%) y lo que pase del 30\u00a0% cuenta solo un tercio',
     jobcard1012:
