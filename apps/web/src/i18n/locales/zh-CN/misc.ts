@@ -16,8 +16,13 @@ export default {
     /** 天气改版（天气改版设计）：顶部天气卡、怎么玩、预报、改天气 */
     slot: (from: string, to: string, next: number) => `${from} ~ ${to} · ${next} 点换天`,
     coverSlot: (from: string, to: string, natural: string) => `${from} ~ ${to} · 之后回到${natural}`,
-    cover: (who: string, item: string, natural: string, now: string, minutes: number, next: number) =>
-      `${who} 用${item}把${natural}换成了${now}, 还剩 ${minutes} 分钟。底下的天气照常变化, ${next} 点会换天。`,
+    /** 谁用什么把天气盖了：人名、剩余时间加粗（设计图 Wx-B）；{ b } 是加粗的一段 */
+    cover: (who: string, item: string, natural: string, now: string, minutes: number, next: number) => [
+      { b: who },
+      ` 用${item}把${natural}换成了${now}, 还剩 `,
+      { b: `${minutes} 分钟` },
+      `。底下的天气照常变化, ${next} 点会换天。`,
+    ],
     someone: '有人',
     how: {
       title: '天气怎么玩',

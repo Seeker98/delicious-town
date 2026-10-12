@@ -16,8 +16,12 @@ const misc: Messages['misc'] = {
     holiday: (n) => `It's a holiday: Delicious Ticket drop rate ×${n}`,
     slot: (from, to, next) => `${from} – ${to} · changes at ${next}:00`,
     coverSlot: (from, to, natural) => `${from} – ${to} · then back to ${natural}`,
-    cover: (who, item, natural, now, minutes, next) =>
-      `${who} used a ${item} to turn ${natural} into ${now}: ${minutes} ${minutes === 1 ? 'minute' : 'minutes'} left. The weather underneath keeps changing as usual; next change at ${next}:00.`,
+    cover: (who, item, natural, now, minutes, next) => [
+      { b: who },
+      ` used a ${item} to turn ${natural} into ${now}: `,
+      { b: `${minutes} min` },
+      ` left. The weather underneath keeps changing as usual; next change at ${next}:00.`,
+    ],
     someone: 'Someone',
     how: {
       title: 'How the weather works',

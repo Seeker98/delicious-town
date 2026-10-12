@@ -9014,9 +9014,6 @@ a.dt-entry-row::after {
   border-radius: 12px;
   background: var(--dt-bg);
 }
-.dt-wx-tool .dt-row-title > .dt-tag {
-  margin-left: 6px;
-}
 .dt-wx-tool > .btn {
   flex-shrink: 0;
 }
@@ -9110,4 +9107,19 @@ a.dt-entry-row::after {
 /* 天气页的小标题和上面的卡片隔开（设计图 Wx-A） */
 .dt-wx > .dt-block-head {
   margin-top: 18px;
+}
+/* 盖着时的说明：人名、剩余时间用正文色加粗（设计图 Wx-B） */
+.dt-wx-cover > b {
+  color: var(--dt-text);
+}
+/* “持有 N”小标签：灰字浅底，不跟着标题加粗变黑（设计图 Wx-A，用户反馈） */
+.dt-wx-tool .dt-row-title > .dt-tag {
+  margin-left: 6px;
+  background: var(--dt-bg);
+  color: var(--dt-muted);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  padding: 0 6px;
+  border-radius: var(--dt-radius-xs);
 }

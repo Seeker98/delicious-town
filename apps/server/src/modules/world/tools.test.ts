@@ -194,3 +194,26 @@ describe('预报（设计 §1.6）', () => {
     expect(home.forecast).toEqual({ at: v.forecast!.at, type: Number(top[0]), p: top[1] });
   });
 });
+
+describe('换天时间按配置现算（用户反馈：上线时库里还是两小时制写的到期时间）', () => {
+  it('库里记的到期时间不对时，天气页、预报、首页都按换天时间算（14 点 → 13~17 点，下一轮 17 点）', async () => {
+    const a = await withTools();
+    await setWeather(t, a.shardId, id('霾'));
+    // 旧的两小时制会写成 15 点到期
+    await t.db
+      .updateTable('world_state')
+      .set({ weather_until: gameTime(DAY, 15) })
+      .where('shard_id', '=', a.shardId)
+      .execute();
+    t.clock.set(gameTime(DAY, 14));
+    const s = await t.game.world.ensure(a.shardId, t.clock.now);
+    expect(s.naturalUntil).toEqual(gameTime(DAY, 17));
+    const v = await t.game.world.view(a.shardId);
+    expect(v.weather.until).toBe(gameTime(DAY, 17).toISOString());
+    expect(v.forecast!.at).toBe(gameTime(DAY, 17).toISOString());
+    expect(v.forecast!.current).toBe(13);
+    expect((await t.game.restaurant.overview(a.restaurantId)).weather!.forecast!.at).toBe(
+      gameTime(DAY, 17).toISOString(),
+    );
+  });
+});

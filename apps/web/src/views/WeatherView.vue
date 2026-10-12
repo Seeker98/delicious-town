@@ -181,7 +181,12 @@ onMounted(load);
           <div class="dt-wx-zero">{{ t.misc.weather.zeroStarLine }}</div>
         </div>
       </div>
-      <p v-if="head.cover" class="dt-wx-cover" data-testid="weather-cover">{{ head.cover }}</p>
+      <p v-if="head.cover" class="dt-wx-cover" data-testid="weather-cover">
+        <template v-for="(x, i) in head.cover" :key="i"
+          ><b v-if="typeof x !== 'string'">{{ x.b }}</b
+          ><template v-else>{{ x }}</template></template
+        >
+      </p>
     </section>
 
     <!-- 天气怎么玩：三行，可以收起 -->

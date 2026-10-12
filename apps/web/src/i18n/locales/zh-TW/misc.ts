@@ -17,8 +17,13 @@ export default {
     /** 天氣改版（天氣改版設計）：頂部天氣卡、怎麼玩、預報、改天氣 */
     slot: (from: string, to: string, next: number) => `${from} ~ ${to} · ${next} 點換天`,
     coverSlot: (from: string, to: string, natural: string) => `${from} ~ ${to} · 之後回到${natural}`,
-    cover: (who: string, item: string, natural: string, now: string, minutes: number, next: number) =>
-      `${who} 用${item}把${natural}換成了${now}, 還剩 ${minutes} 分鐘。底下的天氣照常變化, ${next} 點會換天。`,
+    /** 誰用什麼把天氣蓋了：人名、剩餘時間加粗（設計圖 Wx-B）；{ b } 是加粗的一段 */
+    cover: (who: string, item: string, natural: string, now: string, minutes: number, next: number) => [
+      { b: who },
+      ` 用${item}把${natural}換成了${now}, 還剩 `,
+      { b: `${minutes} 分鐘` },
+      `。底下的天氣照常變化, ${next} 點會換天。`,
+    ],
     someone: '有人',
     how: {
       title: '天氣怎麼玩',

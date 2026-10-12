@@ -123,6 +123,9 @@ export function createWorldService(d: GameDeps) {
       row = (await read(db, shardId))!;
     }
     const natural = weatherOf(row.weather_id);
+    // 自然天气到下一个换天时间为止：按区服的换天时间现算，不用库里记的 weather_until
+    // （上线、改了换天时间时库里还是旧的，用户反馈：天气页写了不存在的 19 点）
+    const naturalUntil = await slotEnd(shardId, now);
     const cover =
       row.cover_weather_id !== null && row.cover_until && row.cover_until > now
         ? {
@@ -134,9 +137,9 @@ export function createWorldService(d: GameDeps) {
         : null;
     return {
       weather: cover?.weather ?? natural,
-      weatherUntil: cover?.until ?? row.weather_until,
+      weatherUntil: cover?.until ?? naturalUntil,
       natural,
-      naturalUntil: row.weather_until,
+      naturalUntil,
       cover,
       lot:
         row.lot_until && row.lot_until > now && row.lot_by !== null && row.lot_choices

@@ -16,8 +16,12 @@ const misc: Messages['misc'] = {
     holiday: (n) => `Hoy es festivo: probabilidad de Vale Delicioso ×${n}`,
     slot: (from, to, next) => `${from} – ${to} · cambia a las ${next}:00`,
     coverSlot: (from, to, natural) => `${from} – ${to} · luego vuelve a ${natural}`,
-    cover: (who, item, natural, now, minutes, next) =>
-      `${who} usó ${item} para cambiar ${natural} por ${now}: quedan ${minutes} min. El tiempo de fondo sigue cambiando; el próximo cambio es a las ${next}:00.`,
+    cover: (who, item, natural, now, minutes, next) => [
+      { b: who },
+      ` usó ${item} para cambiar ${natural} por ${now}: quedan `,
+      { b: `${minutes} min` },
+      `. El tiempo de fondo sigue cambiando; el próximo cambio es a las ${next}:00.`,
+    ],
     someone: 'Alguien',
     how: {
       title: 'Cómo funciona el tiempo',

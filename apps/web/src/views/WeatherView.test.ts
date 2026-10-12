@@ -202,6 +202,11 @@ describe('天气页（天气改版，设计图 Wx-A、Wx-B）', () => {
     expect(w.get('[data-testid="weather-cover"]').text()).toBe(
       '阿福小馆 用司天罗盘把中雨换成了多云, 还剩 42 分钟。底下的天气照常变化, 17 点会换天。',
     );
+    // 设计图 Wx-B：人名和剩余时间加粗（用户反馈）
+    expect(w.findAll('[data-testid="weather-cover"] b').map((x) => x.text())).toEqual([
+      '阿福小馆',
+      '42 分钟',
+    ]);
     expect(w.get('[data-testid="compass-open"]').attributes('disabled')).toBeDefined();
     expect(w.get('[data-testid="tool-foot"]').classes()).toContain('is-warn');
     expect(w.get('[data-testid="tool-foot"]').text()).toBe(
