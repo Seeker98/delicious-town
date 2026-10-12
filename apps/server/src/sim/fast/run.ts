@@ -194,8 +194,11 @@ export function runFast(
     const today = gameDay(now);
     for (const x of runners) {
       if (x.bot.rest.day !== today) {
-        x.bot.rest.daily.clear();
-        x.bot.rest.day = today;
+        const r = x.bot.rest;
+        r.bestDayCoin = Math.max(r.bestDayCoin, r.daily.get('settle.coin') ?? 0);
+        r.bestRounds = Math.max(r.bestRounds, r.daily.get('settle.rounds') ?? 0);
+        r.daily.clear();
+        r.day = today;
       }
     }
     advanceWorld(world, config, tuning, now, SIM_SHARD_ID);

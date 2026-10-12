@@ -145,5 +145,8 @@ export function settleGuesses(
       const bonus = c.config.bundle.guessBonus.find((b) => hits >= b.minHits);
       if (bonus) grantAward(c, r, bonus.award, 'market.guess');
     }
+    // 支线“菜场竞猜”（问题记录 515）
+    if (hits >= 3) action(c, r, 'market.guess.hit3');
+    if (hits >= 5) action(c, r, 'market.guess.hit5');
   }
 }

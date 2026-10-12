@@ -55,7 +55,11 @@ async function fast(): Promise<void> {
       : o.side
         ? fromInvocation(o.side)
         : new URL('./fast/side-income.json', import.meta.url);
-  const side = sidePath ? loadSideTable(JSON.parse(readFileSync(sidePath, 'utf8')), config) : null;
+  if (o.ops && !sidePath) throw new Error('--ops 要和旁支产出表一起用，不能配 --side none');
+  const opsRows = o.ops
+    ? (JSON.parse(readFileSync(new URL('./fast/side-income-ops.json', import.meta.url), 'utf8')) as unknown)
+    : undefined;
+  const side = sidePath ? loadSideTable(JSON.parse(readFileSync(sidePath, 'utf8')), config, opsRows) : null;
   const results = await runVariants(
     variants,
     {
@@ -79,7 +83,7 @@ async function fast(): Promise<void> {
     days: o.days,
     bots: o.bots,
     seed: o.seed,
-    side: sidePath ? String(sidePath) : null,
+    side: sidePath ? `${String(sidePath)}${o.ops ? ' + 运营发放' : ''}` : null,
   });
   for (const r of results) console.log(`${r.name}：用时 ${Math.round(r.elapsedMs / 1000)} 秒`);
   console.log(`报告：${files[0]}`);

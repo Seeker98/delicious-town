@@ -26,6 +26,11 @@ export const SIDE_SOURCES = [
   'temple',
   'takeaway',
   'equip',
+  // 2026-10-12 按线上核对加的：没模拟的玩法的支线任务、厨具一键卖、黑市金币袋、运营发放（只在 --ops 时算）
+  'quest',
+  'equipSell',
+  'black',
+  'ops',
 ] as const;
 export type SideSource = (typeof SIDE_SOURCES)[number];
 
@@ -86,11 +91,22 @@ function knownEffectKeys(config: GameConfig): Set<string> {
   return keys;
 }
 
-/** 加载并校验；出错时抛 Error，信息带行号 */
-export function loadSideTable(json: unknown, config: GameConfig): SideTable {
+/**
+ * 加载并校验；出错时抛 Error，信息带行号。extra 是追加的行（--ops 的运营发放表，格式 { rows: [...] }），
+ * 参与度用主表的
+ */
+export function loadSideTable(json: unknown, config: GameConfig, extra?: unknown): SideTable {
   const t = tableSchema.parse(json);
+  const more =
+    extra === undefined
+      ? []
+      : z
+          .object({ rows: z.array(z.unknown()) })
+          .strict()
+          .parse(extra).rows;
   const keys = knownEffectKeys(config);
-  const rows = t.rows.map((raw, i) => {
+  const rows = [...t.rows, ...more].map((raw, k) => {
+    const i = k < t.rows.length ? String(k) : `追加 ${k - t.rows.length}`;
     const p = rowSchema.safeParse(raw);
     if (!p.success) throw new Error(`rows[${i}]: ${p.error.issues.map((x) => x.message).join('；')}`);
     for (const g of p.data.goods ?? [])

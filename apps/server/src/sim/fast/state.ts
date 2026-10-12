@@ -71,6 +71,13 @@ export interface FastRest {
   daily: Map<string, number>;
   day: string;
   planktonCooldownUntil: Date | null;
+  /** 历史单日最高的结算银币、轮数（rest_income_best，支线“经营”）：跨天时把前一天的并进来 */
+  bestDayCoin: number;
+  bestRounds: number;
+  /** 连续签到（signin_streak，支线“签到和活跃”） */
+  signinDay: string;
+  signinStreak: number;
+  signinBest: number;
 }
 
 export interface Income {
@@ -146,5 +153,10 @@ export function newFastRest(id: number, config: GameConfig, settings: ShardSetti
     daily: new Map(),
     day: '',
     planktonCooldownUntil: null,
+    bestDayCoin: 0,
+    bestRounds: 0,
+    signinDay: '',
+    signinStreak: 0,
+    signinBest: 0,
   };
 }
