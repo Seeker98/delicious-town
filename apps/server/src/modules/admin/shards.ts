@@ -36,6 +36,34 @@ const isPlain = (v: unknown): v is Record<string, unknown> =>
 const asObject = (v: unknown): Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v) ? (v as Record<string, unknown>) : {};
 
+const hasPath = (o: unknown, path: string): boolean => {
+  let v: unknown = o;
+  for (const k of path.split('.')) {
+    if (!isPlain(v) || !(k in v)) return false;
+    v = v[k];
+  }
+  return true;
+};
+
+/** 去掉这些路径，删空了的上层一起去掉（返回新对象，不改原来的） */
+function withoutPaths(o: Record<string, unknown>, paths: string[]): Record<string, unknown> {
+  const out = structuredClone(o);
+  for (const path of paths) {
+    const keys = path.split('.');
+    const chain: Array<Record<string, unknown>> = [out];
+    for (const k of keys.slice(0, -1)) {
+      const next = chain.at(-1)![k];
+      if (!isPlain(next)) break;
+      chain.push(next);
+    }
+    if (chain.length !== keys.length) continue;
+    delete chain.at(-1)![keys.at(-1)!];
+    for (let i = chain.length - 1; i > 0 && Object.keys(chain[i]!).length === 0; i--)
+      delete chain[i - 1]![keys[i - 1]!];
+  }
+  return out;
+}
+
 export function createAdminShards(game: Game, log?: WarnLog) {
   const { db, redis, config } = game.app;
 
@@ -163,6 +191,17 @@ export function createAdminShards(game: Game, log?: WarnLog) {
     action: 'shard.override' | 'shard.rollback',
   ): Promise<{ version: number }> {
     await assertShard(shardId);
+    // 代码删掉的键（比如天气改版 PR③ 删的 tuning.hiphop）：已经存在覆盖里的、回滚的历史版本里的，保存时自动去掉；
+    // 这次新写进来的未知键仍按拼错拒绝
+    const stored = await db
+      .selectFrom('shard_config')
+      .select('override')
+      .where('shard_id', '=', shardId)
+      .executeTakeFirst();
+    const stale = unknownPaths(override).filter(
+      (path) => action === 'shard.rollback' || hasPath(stored?.override, path),
+    );
+    if (stale.length > 0) override = withoutPaths(override, stale);
     validate(override);
     const version = await db.transaction().execute(async (tx) => {
       const cur = await tx
