@@ -46,6 +46,8 @@ export interface FuturesDto {
   foods: FuturesFoodDto[];
   personDaily: number;
   personLeft: number;
+  /** 店里现有银币：下单框按它算最多付得起几份定金（backlog 期货） */
+  coin: number;
   deliverHours: number;
   depositRate: number;
   /** 持有期货交易员时 personDaily、depositRate 是证上的；base 区服原值，card 起作用的工作证（天气改版 PR③） */

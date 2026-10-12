@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue';
-import type { BulkDto, BulkResultDto } from '@dt/shared';
+import { BULK_PRICE_MAX, type BulkDto, type BulkResultDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import DtEmpty from '../DtEmpty.vue';
 import DtSheet from '../DtSheet.vue';
@@ -125,6 +125,7 @@ const reason = computed(() => {
   if (!d || !l) return '';
   const r = t.value.bulk.reasons;
   if (p.value < 1 || q.value < 1) return r.invalid;
+  if (p.value > BULK_PRICE_MAX) return r.priceMax(formatNum(BULK_PRICE_MAX));
   if (p.value < l.reserve) return r.reserve(formatNum(l.reserve));
   if (q.value > l.cap) return r.cap(l.cap);
   const m = mine.value;
@@ -360,8 +361,8 @@ function myResult(r: BulkResultDto): string {
         <ul>
           <li
             v-for="(x, i) in t.bulk.help(
-              lot?.cap ?? 0,
-              lot?.groupQty ?? 0,
+              lot?.cap ?? null,
+              lot?.groupQty ?? null,
               Math.round(data.minRaise * 100),
               data.cooldownSec,
               data.closeWindowMin,

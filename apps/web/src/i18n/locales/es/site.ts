@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    fix1013:
+      'Pequeños arreglos: un restaurante cerrado vuelve a abrir en cuanto recibe aceite, venga de donde venga; el mercado cobra exactamente el precio unitario mostrado, mantiene el panel abierto si la compra falla y reactiva las ofertas al terminar la espera; los pedidos de futuros se limitan a lo que tus monedas cubren de señal; los ahorros y el fondo de desarrollo pasan a Cobrar al vencer aunque tengas la página abierta; el árbol de los deseos muestra las últimas rondas por fecha de sorteo; los vales de la tragaperras llevan separador de miles',
     handle1013:
       'Procesado en la despensa: dentro de tus procesados gratis del día, cada vez no cuesta energía sin importar la cantidad; después, cada ingrediente que obtengas combinando o que descompongas cuesta 1 de energía (antes, 1 por vez). El panel se cierra al terminar para que el resultado no quede tapado',
     picky1012:

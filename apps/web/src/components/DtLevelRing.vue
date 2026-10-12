@@ -5,7 +5,10 @@ import { useT } from '../composables/useT';
 /** 等级环（界面改版 P5，样稿 B）：外圈是经验进度，中间是等级；百分比夹在 0~100 */
 const props = withDefaults(defineProps<{ level: number; percent: number; size?: number }>(), { size: 72 });
 const t = useT();
-const pct = computed(() => Math.max(0, Math.min(100, Math.round(props.percent))));
+/** 收到 NaN、Infinity 时按 0（backlog P5：读屏原来读“经验 NaN%”） */
+const pct = computed(() =>
+  Number.isFinite(props.percent) ? Math.max(0, Math.min(100, Math.round(props.percent))) : 0,
+);
 const R = 30;
 const C = 2 * Math.PI * R;
 const dash = computed(() => `${((pct.value / 100) * C).toFixed(1)} ${C.toFixed(1)}`);

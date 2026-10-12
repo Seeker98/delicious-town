@@ -14,6 +14,7 @@ import { formatNum } from '../../utils/format';
 import { newsTime } from '../../utils/news';
 import { remainText } from '../../utils/remain';
 import { serverNowMs } from '../../utils/serverNow';
+import { useNow } from '../../composables/useNow';
 
 /**
  * 食材理财（理财设计 §3.4）：锁银币几天，到期本金全退加街市补给包；提前取出退一部分、没有包。
@@ -73,6 +74,10 @@ const n = computed(() =>
 );
 const amount = computed(() => n.value * (data.value?.unit ?? 0));
 const packs = computed(() => n.value * (pick.value?.perUnit ?? 0));
+/** 到期了没有：服务端给的 mature，或页面开着时已经过了到期时间（backlog 理财：原来还显示“提前取出”） */
+const nowMs = useNow();
+const isMature = (x: { mature: boolean; maturesAt: string }) =>
+  x.mature || nowMs.value >= Date.parse(x.maturesAt);
 const dueAt = computed(() =>
   newsTime(new Date(serverNowMs() + (pick.value?.days ?? 0) * 86_400_000).toISOString()),
 );
@@ -201,16 +206,16 @@ onMounted(load);
             <span class="dt-row-main">
               <span class="dt-row-title is-strong"
                 >{{ t.wealth.line(formatNum(x.coin), x.days)
-                }}<span v-if="x.mature" class="dt-tag-ok">{{ t.wealth.mature }}</span></span
+                }}<span v-if="isMature(x)" class="dt-tag-ok">{{ t.wealth.mature }}</span></span
               >
               <span class="dt-row-sub">{{ t.wealth.packLine(packName(x.goodsId), x.packs) }}</span>
               <span class="dt-row-sub"
                 >{{ t.wealth.dueAt(newsTime(x.maturesAt))
-                }}<template v-if="!x.mature"> · {{ remainText(x.maturesAt) }}</template></span
+                }}<template v-if="!isMature(x)"> · {{ remainText(x.maturesAt) }}</template></span
               >
             </span>
             <button
-              v-if="x.mature"
+              v-if="isMature(x)"
               type="button"
               class="btn btn-sm btn-primary"
               :disabled="busy"

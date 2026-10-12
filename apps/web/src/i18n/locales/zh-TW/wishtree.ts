@@ -30,4 +30,6 @@ export default {
   mineTag: '你中了',
   lostTag: (award: string) => `沒中 · ${award}`,
   pendingTag: '沒中 · 安慰獎馬上發',
+  /** 開獎時店被封號，跳過了 */
+  skippedTag: '沒中 · 開獎時賬號被封, 沒有安慰獎',
 };

@@ -21,7 +21,11 @@ const full = computed(() => need.value === 0);
 /** 能加满（银币够）写“加满”，不够写“加油” */
 const fillsUp = computed(() => cost.value >= need.value);
 const pct = computed(() =>
-  props.rest.oilMax > 0 ? Math.min(100, Math.round((props.rest.oil / props.rest.oilMax) * 100)) : 0,
+  props.rest.oilMax > 0 ? Math.min(100, Math.floor((props.rest.oil / props.rest.oilMax) * 100)) : 0,
+);
+/** 停业时那一行提示：没有银币时写清楚加不了油（backlog P5），否则写“加满就能继续营业” */
+const closedHint = computed(() =>
+  cost.value <= 0 && !full.value ? t.value.home.noCoinHint : t.value.home.statusClosedHint,
 );
 const label = computed(() =>
   full.value ? t.value.home.oilFull : t.value.home.refuel(fillsUp.value, formatNum(cost.value)),
@@ -49,7 +53,7 @@ const label = computed(() =>
             data-testid="oil-upgrade"
             ><i class="bi bi-arrow-up-circle" aria-hidden="true"></i
           ></RouterLink>
-          <span v-if="closed" class="dt-home-oil-hint">{{ t.home.statusClosedHint }}</span>
+          <span v-if="closed" class="dt-home-oil-hint" data-testid="oil-closed-hint">{{ closedHint }}</span>
         </div>
         <div
           v-if="!closed"
@@ -93,8 +97,13 @@ const label = computed(() =>
       :disabled="busy || cost <= 0"
       @click="$emit('refuel')"
     >
-      <span class="text-truncate">{{ t.home.refuelShort(fillsUp) }}</span
-      ><span class="flex-shrink-0"><DtArt name="res-coin-silver" :size="16" />{{ formatNum(cost) }}</span>
+      <template v-if="full">{{ t.home.oilFull }}</template>
+      <template v-else
+        ><span class="text-truncate">{{ t.home.refuelShort(fillsUp) }}</span
+        ><span class="flex-shrink-0"
+          ><DtArt name="res-coin-silver" :size="16" />{{ formatNum(cost) }}</span
+        ></template
+      >
     </button>
   </section>
 </template>

@@ -1,5 +1,11 @@
 import { sql, type Kysely } from 'kysely';
-import { ErrorCode, type WishTreeAwardDto, type WishTreeResultDto, type WishTreeDto } from '@dt/shared';
+import {
+  ErrorCode,
+  gameDay,
+  type WishTreeAwardDto,
+  type WishTreeResultDto,
+  type WishTreeDto,
+} from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, requirement } from '../../core/errors';
 import { featureAvailable } from '../../core/features';
@@ -48,6 +54,7 @@ async function viewOf(
       'w.day',
       'w.goods_id',
       'w.num',
+      'w.ends_at',
       'w.status',
       'w.entries',
       'w.winner_rest_id',
@@ -55,6 +62,7 @@ async function viewOf(
       'e.rest_id as mine',
       'e.won',
       'e.award',
+      'e.settled_at',
     ])
     .where('w.shard_id', '=', shardId)
     .where('w.status', '!=', 'open')
@@ -64,12 +72,21 @@ async function viewOf(
   const recent: WishTreeResultDto[] = rows.map((x) => ({
     id: Number(x.id),
     day: x.day,
+    drawDay: gameDay(x.ends_at),
     goodsId: x.goods_id,
     num: x.num,
     status: x.status === 'drawn' ? 'drawn' : 'empty',
     entries: x.entries ?? 0,
     winner: x.winner_rest_id === null ? null : { restId: x.winner_rest_id, name: x.winner_name },
-    mine: x.mine === null ? null : { won: !!x.won, award: (x.award ?? null) as WishTreeAwardDto | null },
+    mine:
+      x.mine === null
+        ? null
+        : {
+            won: !!x.won,
+            award: (x.award ?? null) as WishTreeAwardDto | null,
+            // 开奖时被封号跳过：记了处理时间、没中、也没有安慰奖
+            skipped: !x.won && x.award === null && x.settled_at !== null,
+          },
   }));
   return {
     enabled,

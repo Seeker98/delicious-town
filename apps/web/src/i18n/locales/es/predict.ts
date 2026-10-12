@@ -81,6 +81,7 @@ const predict: Messages['predict'] = {
     estimate: (buy, total, fee, pct) =>
       `${buy ? 'Coste estimado' : 'Ingreso estimado'} ${total} ${plEs(total, 'moneda', 'monedas')} (comisión ${fee} incluida); «Sí» quedará al ${pct}\u00a0% tras la operación`,
     enterQty: 'Escribe cuántas participaciones (no puedes vender más de las que tienes)',
+    noHold: 'No tienes participaciones de este lado para vender',
     own: 'Tú creaste esta pregunta, así que no puedes operar en ella',
     summary: 'Balance de esta predicción',
     summaryLine: (bought, sold, fees, net) =>

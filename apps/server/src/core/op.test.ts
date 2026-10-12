@@ -2,7 +2,7 @@ import { GOODS } from '@dt/config';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createTestGame, newRestaurant, restRow, type TestGame } from '../../test/game';
 import { runOp } from './op';
-import { gainCoin, gainExp, spendCoin } from './resources';
+import { gainCoin, gainExp, gainOil, spendCoin } from './resources';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -14,6 +14,24 @@ const run = <T>(ctx: Parameters<typeof runOp>[1], fn: Parameters<typeof runOp<T>
   runOp(t.game.deps, ctx, { feature: 'restaurant', source: 'test' }, fn);
 
 describe('runOp', () => {
+  it('停业的店不管从哪儿加了油都恢复营业，记一条重新开门（2026-10-13：原来只有两个加油接口会开门）', async () => {
+    const ctx = await newRestaurant(t, {
+      patch: { oil: 0, oil_max: 1000, state: 2, state_reason: 'no_oil' },
+    });
+    await run(ctx, async (op) => {
+      gainOil(op, 30);
+    });
+    const r = await restRow(t, ctx.restaurantId);
+    expect([r.state, r.state_reason, r.oil]).toEqual([1, null, 30]);
+    const logs = await t.db
+      .selectFrom('rest_log')
+      .select('type')
+      .where('rest_id', '=', ctx.restaurantId)
+      .where('type', '=', 'rest.reopen')
+      .execute();
+    expect(logs).toHaveLength(1);
+  });
+
   it('资源变化一次写回；流水带上操作时间；返回得失提示', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 1000 } });
     t.clock.set(new Date('2026-09-30T02:00:00Z'));

@@ -32,7 +32,7 @@ const deposit = (o: Partial<FundDepositDto> = {}): FundDepositDto => ({
   coin: 1_000_000,
   medal: 93101,
   startedAt: '2026-10-05T00:00:00.000Z',
-  maturesAt: '2026-10-12T00:00:00.000Z',
+  maturesAt: '2099-10-12T00:00:00.000Z',
   mature: false,
   back: 900_000,
   early: 700_000,

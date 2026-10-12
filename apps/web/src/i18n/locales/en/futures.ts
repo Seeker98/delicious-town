@@ -35,6 +35,7 @@ const futures: Messages['futures'] = {
   level: (n) => `Level ${n}`,
   foodLine: (price, left) => `${price} coins · ${left} left today`,
   soldOut: 'Sold out today',
+  noCoin: (need) => `Not enough coins for the deposit on 1 (needs ${need})`,
   empty: 'No ingredients match',
   qty: 'Quantity',
   total: (s) => `Total ${s} coins`,

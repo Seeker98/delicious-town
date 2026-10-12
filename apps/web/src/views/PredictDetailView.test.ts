@@ -388,6 +388,15 @@ describe('backlog 238-1：事件合约页', () => {
     expect(s.get('[data-testid="pd-submit"]').attributes('disabled')).toBeDefined();
   });
 
+  it('卖出时切到一份都没有的那一边：写“没有持有”，不是“请输入份数”（backlog P8）', async () => {
+    // 详情里持有“是” 4 份、“否” 0 份
+    const w = await open(list({}));
+    const sheet = await openTrade(w, 'pd-sell');
+    await sheet.get('[data-testid="pd-side-no"]').trigger('click');
+    expect(w.get('[data-testid="pd-limit"]').text()).toContain('没有持有');
+    expect(w.get('[data-testid="pd-submit"]').attributes('disabled')).toBeDefined();
+  });
+
   it('买入后持有超过上限：提示还能买几份', async () => {
     // 详情里已持有"是" 4 份
     const w = await open(list({ maxHold: 10 }));

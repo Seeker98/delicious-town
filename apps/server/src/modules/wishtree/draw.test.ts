@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { gameTime, seededRng } from '@dt/shared';
+import { gameDay, gameTime, seededRng } from '@dt/shared';
 import { createShard, failRestLog } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import { consoleDue, drawDue } from './draw';
@@ -143,6 +143,13 @@ describe('开奖（许愿树设计 §1.1、§3.2）', () => {
       .execute();
     expect(badRows).toHaveLength(5);
     for (const e of badRows) expect([e.won, e.award, e.settled_at !== null]).toEqual([false, null, true]);
+    // 解封后看最近结果：写“跳过了”，不再一直等安慰奖；按开奖那天显示（backlog 许愿树）
+    await t.db.updateTable('account').set({ banned_at: null }).where('id', '=', bad.accountId).execute();
+    const v = await t.game.wishtree.view(bad);
+    expect(v.recent[0]!.mine).toEqual({ won: false, award: null, skipped: true });
+    expect(v.recent[0]!.drawDay).toBe(gameDay(new Date(t.clock.now.getTime() - 60_000)));
+    const okView = await t.game.wishtree.view(ok);
+    expect(okView.recent[0]!.mine!.skipped).toBe(false);
 
     const only = await createShard(t.db);
     const b2 = await newRestaurant(t, { shardId: only });

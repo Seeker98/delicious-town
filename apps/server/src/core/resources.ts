@@ -86,12 +86,21 @@ export function gainRenown(op: Op, n: number, opts: GainOptions = {}): void {
   recordChange(op, 'renown', n, opts);
 }
 
-/** 加油，不超过油上限；返回实际加了多少 */
+/**
+ * 加油，不超过油上限；返回实际加了多少。
+ * 停业的店有油了就恢复营业（设计文档裁定 9）：不管是自己加油、好友加油，还是道具、邮件给的油（2026-10-13，
+ * 原来只有两处加油接口会开门，用道具加满的店结算一直跳过、页面上加油按钮又灰着）
+ */
 export function gainOil(op: Op, n: number, opts: GainOptions = {}): number {
   const add = Math.max(0, Math.min(n, op.rest.oil_max - op.rest.oil));
   if (add === 0) return 0;
   setRest(op, 'oil', op.rest.oil + add);
   recordChange(op, 'oil', add, opts);
+  if (op.rest.state === 2 && op.rest.oil > 0) {
+    setRest(op, 'state', 1);
+    setRest(op, 'state_reason', null);
+    restLog(op, 'rest.reopen');
+  }
   return add;
 }
 

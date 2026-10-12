@@ -64,7 +64,9 @@ const tasksTo = computed(() => `/rest/tasks?tab=${claimTab.value ?? 'main'}`);
 const exchangeRowText = computed(() => {
   const b = rest.value?.exchangeHint?.bulk;
   const h = t.value.home;
-  return b ? h.row.bulkSub(catalog.foodName(b.foodsId), b.level, b.qty, b.demand) : h.row.exchangeSub;
+  if (b) return h.row.bulkSub(catalog.foodName(b.foodsId), b.level, b.qty, b.demand);
+  // 区服关了期货时不写“期货点名订货”
+  return store.featureOn('futures') ? h.row.exchangeSub : h.row.exchangeSubSpot;
 });
 const chapterName = (c: NonNullable<QuestsDto['chapter']>) => catalog.data('chapters', c.id)?.name ?? c.name;
 /** "主线：第 2 章 小店经营"：拼成一段，模板里换行不会在冒号后多出空格 */

@@ -10,6 +10,7 @@ import GardenSis from '../components/market/GardenSis.vue';
 import { computed, onMounted, ref } from 'vue';
 import { MARKET_BUY_MAX, type MarketDto, type MarketItemDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useNow } from '../composables/useNow';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
@@ -18,7 +19,6 @@ import { useConfirmStore } from '../stores/confirm';
 import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
 import { foodLevelLabel, formatNum, timeHM } from '../utils/format';
-import { serverNowMs } from '../utils/serverNow';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
@@ -40,11 +40,13 @@ const sections = [
   { key: 'special', next: 'nextSpecial' },
 ] as const;
 
+/** 页面上的“现在”：每 15 秒走一次，特价冷却到点后价格按钮自己恢复（backlog P6） */
+const nowMs = useNow();
 /** 特价同一网络的购买间隔（规格书 06；问题记录：买第二个只提示"操作太快"） */
 const specialWait = computed(() => {
   const until = data.value?.specialCooldownUntil;
   if (!until) return 0;
-  return Math.max(0, Math.ceil((new Date(until).getTime() - serverNowMs()) / 60_000));
+  return Math.max(0, Math.ceil((new Date(until).getTime() - nowMs.value) / 60_000));
 });
 const sectionNote = (key: string) =>
   key === 'special' && data.value ? t.value.market.specialNote(data.value.specialCooldownMin) : '';
@@ -97,11 +99,19 @@ function maxBuy(it: MarketItemDto): number {
   // 一次最多 1000 个（接口的上限，P6 审查）
   return Math.max(0, Math.min(it.canBuy, byCoin, MARKET_BUY_MAX));
 }
-/** 购买面板：点价格按钮弹出 */
-const buying = ref<MarketItemDto | null>(null);
+/**
+ * 购买面板：点价格按钮弹出。只记编号、从最新数据里查（backlog P6：原来记的是打开那一刻的整条数据，
+ * 跨过进货时间再买会被服务端拦）；进货后这一项不在了，面板自己关掉
+ */
+const buyingId = ref<number | null>(null);
+const buying = computed<MarketItemDto | null>(() => {
+  const d = data.value;
+  if (!d || buyingId.value === null) return null;
+  return [...d.daily, ...d.special, ...d.premium].find((x) => x.id === buyingId.value) ?? null;
+});
 const buyNum = ref(1);
 function openBuy(it: MarketItemDto) {
-  buying.value = it;
+  buyingId.value = it.id;
   // 特价菜默认填满能买的（用户 2026-10-11：特价通常就几份，省得一个个加）；日常菜默认 1 个
   buyNum.value = it.shelf === 1 ? Math.max(1, maxBuy(it)) : 1;
 }
@@ -126,8 +136,11 @@ const buy = () => {
   const it = buying.value;
   if (!it) return;
   const n = buyNumClamped.value;
-  buying.value = null;
-  return run(() => endpoints.marketBuy(it.id, n), t.value.market.buyFailed);
+  // 买成功了再关面板（backlog P6：原来先关，买失败时选好的数量就没了）
+  return run(async () => {
+    await endpoints.marketBuy(it.id, n);
+    buyingId.value = null;
+  }, t.value.market.buyFailed);
 };
 /**
  * 能买的数量被别的限制压低时写明原因（问题记录：显示能买 1000，实际只能买 996；显示 0/1000 却提示限购已满）。
@@ -280,6 +293,9 @@ onMounted(() =>
           <div v-if="data.guess.last" class="text-muted">
             {{ t.market.guess.last(data.guess.last.hits ?? 0) }}
           </div>
+          <div v-else-if="data.guess.joined" class="text-muted" data-testid="guess-waiting">
+            {{ t.market.guess.waiting }}
+          </div>
           <template v-if="!data.guess.joined">
             <div class="text-muted mb-2">
               {{ t.market.guess.rule(data.guess.maxPick, data.guess.cost) }}
@@ -312,7 +328,7 @@ onMounted(() =>
   </template>
 
   <!-- 购买面板（界面改版 P6，设计 §1.1 第 5 条）：大图、单价、最多能买；数量和快捷 10 / 100 / 最多；合计和余额 -->
-  <DtSheet :open="!!buying" :title="buying ? catalog.foodName(buying.foodsId) : ''" @close="buying = null">
+  <DtSheet :open="!!buying" :title="buying ? catalog.foodName(buying.foodsId) : ''" @close="buyingId = null">
     <div v-if="buying" data-testid="buy-sheet">
       <div class="dt-detail-head">
         <span :class="['dt-detail-art', lvClass(buying.foodsId)]"
@@ -320,7 +336,9 @@ onMounted(() =>
         /></span>
         <div class="dt-detail-info">
           <div>
-            {{ isOwn(buying) ? t.market.sheet.free : t.market.sheet.each(formatNum(buying.price)) }}
+            {{
+              isOwn(buying) ? t.market.sheet.free : t.market.sheet.each(formatNum(buying.price), buying.price)
+            }}
           </div>
           <div class="dt-detail-sub">
             {{ t.market.sheet.have(formatNum(buying.have)) }} · {{ t.market.sheet.canBuy(formatNum(buyMax)) }}
@@ -356,7 +374,7 @@ onMounted(() =>
       <div class="dt-buy-total" data-testid="buy-total">
         <span>{{ t.market.sheet.total }}</span>
         <span
-          ><b>{{ formatNum(buyTotal) }}</b> {{ t.market.sheet.coin
+          ><b>{{ formatNum(buyTotal) }}</b> {{ t.market.sheet.coin(buyTotal)
           }}<template v-if="data?.coin !== undefined">
             · {{ t.market.sheet.balance(formatNum(data.coin)) }}</template
           ></span

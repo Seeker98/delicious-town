@@ -175,7 +175,7 @@ export function createFuturesService(d: GameDeps) {
     const enabled = featureAvailable(s, 'futures') && featureAvailable(s, 'exchange');
     const rest = await d.db
       .selectFrom('restaurant')
-      .select('level')
+      .select(['level', 'coin'])
       .where('id', '=', ctx.restaurantId)
       .executeTakeFirstOrThrow();
     const blocked =
@@ -230,6 +230,7 @@ export function createFuturesService(d: GameDeps) {
       foods,
       personDaily: perk.personDaily,
       personLeft: Math.max(0, perk.personDaily - mine),
+      coin: Number(rest.coin),
       deliverHours: t.deliverHours,
       depositRate: perk.depositRate,
       base: { personDaily: t.personDaily, depositRate: t.depositRate },

@@ -30,5 +30,6 @@ const wishtree: Messages['wishtree'] = {
   mineTag: 'Ganaste',
   lostTag: (award) => `No ganaste · ${award}`,
   pendingTag: 'No ganaste · premio en camino',
+  skippedTag: 'No ganaste · cuenta suspendida en el sorteo, sin premio de consolación',
 };
 export default wishtree;

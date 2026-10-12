@@ -9,7 +9,9 @@ const bulk: Messages['bulk'] = {
   help: (cap, group, raisePct, cooldown, windowMin, openHour, blindMin) => [
     `Cada día a las ${openHour}:00 sale un lote nuevo, que dura un día`,
     'Las unidades se reparten de mayor a menor precio (a igual precio, gana la puja anterior); la puja de la última unidad repartida es el precio único que pagan todos',
-    `Como máximo ${cap} ${plEs(cap, 'unidad', 'unidades')} por jugador en este lote; si en total se pujan menos de ${group}, el lote fracasa y se devuelve todo`,
+    cap === null || group === null
+      ? 'Cada lote tiene un máximo por jugador y un mínimo total; si no se llega, el lote fracasa y se devuelve todo'
+      : `Como máximo ${cap} ${plEs(cap, 'unidad', 'unidades')} por jugador en este lote; si en total se pujan menos de ${group}, el lote fracasa y se devuelve todo`,
     'Al pujar se congela precio × cantidad; tras el cierre pagas el precio final y se devuelve el resto',
     `Las pujas solo pueden subir: precio y cantidad solo aumentan, y cada subida de precio es de al menos el ${raisePct}\u00a0%`,
     `El lote puede cerrarse en cualquier momento de los últimos ${windowMin} minutos y las pujas posteriores no cuentan; tras cada puja hay que esperar ${cooldown} ${plEs(cooldown, 'segundo', 'segundos')}`,
@@ -63,6 +65,7 @@ const bulk: Messages['bulk'] = {
     same: 'Tu puja no ha cambiado',
     raise: (n) => `Sube el precio al menos a ${n}`,
     coin: 'No tienes monedas suficientes para congelar',
+    priceMax: (n) => `El precio unitario puede ser como máximo ${n}`,
   },
   bid: 'Pujar',
   groupedTag: (ok) => (ok ? 'Grupo formado' : 'Aún sin formar'),

@@ -34,6 +34,8 @@ const pctText = (x: number) => formatPct(x, { digits: 2, sign: true });
 const o = ref<EquipOverviewDto | null>(null);
 const part = ref<number | null>(null);
 const pieces = ref<EquipDto[]>([]);
+/** pieces 是哪个部位的（backlog P7：读完再显示，快速换部位时丢掉过期的响应，不先写“0 件”） */
+const piecesFor = ref<number | null>(null);
 const panel = ref<'none' | 'presets' | 'batch'>('none');
 const presetName = ref('');
 const all = ref<EquipDto[]>([]);
@@ -67,11 +69,19 @@ const sortedPieces = computed(() => [...pieces.value].sort((a, b) => Number(b.wo
 function closePart() {
   part.value = null;
   pieces.value = [];
+  piecesFor.value = null;
+}
+/** 读一个部位的厨具；读回来时已经换了部位就丢掉 */
+async function loadPart(p: number) {
+  const list = await endpoints.equipList(p);
+  if (part.value !== p) return;
+  pieces.value = list;
+  piecesFor.value = p;
 }
 
 async function load() {
   o.value = await endpoints.equipOverview();
-  if (part.value !== null) pieces.value = await endpoints.equipList(part.value);
+  if (part.value !== null) await loadPart(part.value);
 }
 async function run(fn: () => Promise<unknown>, fallback: string): Promise<boolean> {
   busy.value = true;
@@ -89,8 +99,10 @@ async function run(fn: () => Promise<unknown>, fallback: string): Promise<boolea
 const name = (e: EquipDto) => `${equipName(catalog, e)}${e.stress > 0 ? ` +${e.stress}` : ''}`;
 
 async function pick(p: number) {
-  part.value = part.value === p ? null : p;
-  pieces.value = part.value === null ? [] : await endpoints.equipList(p);
+  if (part.value === p) return closePart();
+  part.value = p;
+  piecesFor.value = null;
+  await loadPart(p);
 }
 
 async function savePreset() {
@@ -306,9 +318,10 @@ onMounted(async () => {
 
     <!-- 点一个部位：这个部位的厨具一行一件，名字进详情，右边穿戴或卸下 -->
     <DtSheet :open="part !== null" :title="part !== null ? (PART_NAMES[part] ?? '') : ''" @close="closePart">
-      <div class="dt-meta mb-2">{{ t.equip.partHint(pieces.length) }}</div>
-      <div v-if="pieces.length === 0" class="dt-meta">{{ t.equip.noPieces }}</div>
-      <div v-else class="dt-sheet-list" data-testid="part-pieces">
+      <div v-if="piecesFor !== part" class="dt-meta" data-testid="part-loading">{{ t.common.loading }}</div>
+      <div v-else class="dt-meta mb-2">{{ t.equip.partHint(pieces.length) }}</div>
+      <div v-if="piecesFor === part && pieces.length === 0" class="dt-meta">{{ t.equip.noPieces }}</div>
+      <div v-else-if="piecesFor === part" class="dt-sheet-list" data-testid="part-pieces">
         <div v-for="e in sortedPieces" :key="e.id" :class="['dt-row', 'dt-gear-row', { 'is-worn': e.worn }]">
           <span class="dt-equip-tray"><DtArt :name="SLOT_ART[e.part]!" :size="26" /></span>
           <RouterLink :to="`/rest/equip/${e.id}`" class="dt-row-main dt-equip-link">

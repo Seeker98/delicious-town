@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import JobCardNote from '../JobCardNote.vue';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import type { FundViewDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import DtArt from '../DtArt.vue';
 import { useConfirmStore } from '../../stores/confirm';
+import { useNow } from '../../composables/useNow';
 import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
@@ -86,6 +87,12 @@ async function withdraw() {
   );
 }
 onMounted(load);
+/** 到期了没有：服务端给的 mature，或页面开着时已经过了到期时间（backlog 理财：发展基金同样） */
+const nowMs = useNow();
+const depositMature = computed(() => {
+  const x = data.value?.deposit;
+  return !!x && (x.mature || nowMs.value >= Date.parse(x.maturesAt));
+});
 </script>
 
 <template>
@@ -100,7 +107,7 @@ onMounted(load);
         <div class="dt-card dt-bank-mine" data-testid="fund-mine">
           <div class="dt-bank-mine-head">
             <b>{{ t.fund.depositLine(tierName(data.deposit.tier), formatNum(data.deposit.coin)) }}</b>
-            <span v-if="data.deposit.mature" class="dt-tag-ok">{{ t.fund.mature }}</span>
+            <span v-if="depositMature" class="dt-tag-ok">{{ t.fund.mature }}</span>
             <span v-else class="dt-tag-mute">{{ remainText(data.deposit.maturesAt) }}</span>
           </div>
           <div class="dt-meta">
@@ -116,7 +123,7 @@ onMounted(load);
           </div>
           <div class="dt-meta">{{ t.fund.maturesAt(newsTime(data.deposit.maturesAt)) }}</div>
           <button
-            v-if="data.deposit.mature"
+            v-if="depositMature"
             type="button"
             class="btn btn-primary dt-btn-block mt-3"
             :disabled="busy"

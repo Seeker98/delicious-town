@@ -167,6 +167,24 @@ describe('EquipView', () => {
     expect(endpoints.equipWear).toHaveBeenCalledWith(3);
   });
 
+  it('部位面板读完再列：读的时候写加载中，不写“0 件”；快速换部位时丢掉上一个部位过期的结果（backlog P7）', async () => {
+    let first: (v: ReturnType<typeof piece>[]) => void = () => {};
+    vi.mocked(endpoints.equipList)
+      .mockImplementationOnce(() => new Promise((r) => (first = r)))
+      .mockResolvedValueOnce([piece({ id: 9, goodsId: 30 })]);
+    const w = await mountView();
+    await w.find('[data-testid="slot-1"]').trigger('click');
+    expect(w.find('[data-testid="part-loading"]').exists()).toBe(true);
+    expect(w.find('[data-testid="part-pieces"]').exists()).toBe(false);
+    // 换到部位 2，它先读回来；部位 1 的结果后到，要丢掉
+    await w.find('[data-testid="slot-2"]').trigger('click');
+    await flushPromises();
+    first([piece({ id: 2, goodsId: 47 }), piece({ id: 3, goodsId: 30 })]);
+    await flushPromises();
+    expect(w.find('[data-testid="wear-9"]').exists()).toBe(true);
+    expect(w.find('[data-testid="wear-2"]').exists()).toBe(false);
+  });
+
   it('预设：保存当前、套用（提示留空的部位）', async () => {
     const w = await mountView();
     await w.find('[data-testid="open-presets"]').trigger('click');

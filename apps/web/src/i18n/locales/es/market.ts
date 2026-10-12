@@ -38,13 +38,13 @@ const market: Messages['market'] = {
   sheet: {
     open: (name, price) => `Comprar ${name}, ${price}`,
     free: 'Gratis',
-    each: (price) => `${price} monedas c/u`,
+    each: (price, n) => `${price} ${plEs(n, 'moneda', 'monedas')} c/u`,
     have: (n) => `${n} en la despensa`,
     canBuy: (n) => `hasta ${n}`,
     qty: 'Cuántos',
     max: (n) => `Máx. ${n}`,
     total: 'Total',
-    coin: 'monedas',
+    coin: (n) => plEs(n, 'moneda', 'monedas'),
     balance: (n) => `quedan ${n}`,
     short: 'No tienes monedas suficientes',
     confirm: (n) => `Comprar ${n}`,
@@ -53,6 +53,7 @@ const market: Messages['market'] = {
     title: 'Apuesta del mercado',
     hint: (hour) => `Adivina qué venderá el próximo mercado diario (${hour}:00)`,
     last: (n) => `La última vez acertaste ${n}`,
+    waiting: 'Ya hiciste tu apuesta; el resultado sale con la próxima reposición diaria',
     joined: (list) => `Apostado: ${list}`,
     rule: (max, cost) =>
       `Elige hasta ${max}, cuesta ${cost} ${plEs(cost, 'vale misterioso', 'vales misteriosos')}`,

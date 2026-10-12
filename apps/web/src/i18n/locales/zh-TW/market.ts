@@ -34,13 +34,14 @@ export default {
   sheet: {
     open: (name: string, price: string) => `買${name}, ${price}`,
     free: '免費',
-    each: (price: string) => `每個 ${price} 銀幣`,
+    /** n：單價數值，英、法、西按它分單複數（backlog P6） */
+    each: (price: string, _n: number) => `每個 ${price} 銀幣`,
     have: (n: string) => `櫥櫃裡有 ${n}`,
     canBuy: (n: string) => `最多能買 ${n}`,
     qty: '買幾個',
     max: (n: string) => `最多 ${n}`,
     total: '合計',
-    coin: '銀幣',
+    coin: (_n: number) => '銀幣',
     balance: (n: string) => `餘 ${n}`,
     short: '銀幣不夠',
     confirm: (n: number) => `買 ${n} 個`,
@@ -49,6 +50,8 @@ export default {
     title: '菜場競猜',
     hint: (hour: string) => `猜下一輪日常菜場 (${hour} 點) 上什麼菜`,
     last: (n: number) => `上次猜中 ${n} 種`,
+    /** 報了名、又沒有上期結果時（backlog P6：原來展開是空的） */
+    waiting: '這一輪已經押好了, 下次日常進貨時開獎',
     joined: (list: string) => `已報名: ${list}`,
     rule: (max: number, cost: number) => `最多選 ${max} 種, 花 ${cost} 張神秘禮券`,
     join: (n: number) => `報名 (${n} 種)`,

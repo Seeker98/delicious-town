@@ -80,6 +80,7 @@ const predict: Messages['predict'] = {
     estimate: (buy, total, fee, pct) =>
       `${buy ? 'Estimated cost' : 'Estimated return'} ${total} ${plEn(total, 'coin', 'coins')} (fee ${fee} included); "Yes" will be at ${pct}% after the trade`,
     enterQty: "Enter the number of shares (you can't sell more than you hold)",
+    noHold: "You don't hold any shares on this side to sell",
     own: 'You created this question, so you can’t trade on it',
     summary: 'P/L for this event',
     summaryLine: (bought, sold, fees, net) =>

@@ -53,4 +53,9 @@ describe('统计块（界面改版 P5）', () => {
     expect(plain.classes()).not.toContain('is-good');
     expect(plain.classes()).not.toContain('is-bad');
   });
+
+  it('收到 NaN 时按 0，读屏不读“NaN%”（backlog P5）', () => {
+    const w = mount(DtLevelRing, { props: { level: 3, percent: Number.NaN } });
+    expect(w.attributes('aria-label')).not.toContain('NaN');
+  });
 });

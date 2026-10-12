@@ -9,7 +9,9 @@ const bulk: Messages['bulk'] = {
   help: (cap, group, raisePct, cooldown, windowMin, openHour, blindMin) => [
     `A new lot opens every day at ${openHour}:00 and runs for a day`,
     'Units go to the highest prices first (earlier bids win ties); the bid on the last unit handed out is the single price everyone pays',
-    `Up to ${cap} ${plEn(cap, 'unit', 'units')} per player in this lot; if fewer than ${group} units are bid in total, the lot fails and everyone is refunded`,
+    cap === null || group === null
+      ? 'Each lot has a per-player cap and a minimum total; if fewer units are bid in total, the lot fails and everyone is refunded'
+      : `Up to ${cap} ${plEn(cap, 'unit', 'units')} per player in this lot; if fewer than ${group} units are bid in total, the lot fails and everyone is refunded`,
     'Bidding freezes unit price × quantity; after the close you pay the final price and the rest is refunded',
     `Bids can only go up: price and quantity can only increase, by at least ${raisePct}% each time you raise the price`,
     `The lot can close at any moment in the last ${windowMin} minutes, and bids after the close don't count; after each bid you must wait ${cooldown} ${plEn(cooldown, 'second', 'seconds')}`,
@@ -62,6 +64,7 @@ const bulk: Messages['bulk'] = {
     same: 'Your bid is unchanged',
     raise: (n) => `Raise the price to at least ${n}`,
     coin: 'Not enough coins to freeze',
+    priceMax: (n) => `The unit price can be at most ${n}`,
   },
   bid: 'Bid',
   groupedTag: (ok) => (ok ? 'Group formed' : 'Not formed yet'),
