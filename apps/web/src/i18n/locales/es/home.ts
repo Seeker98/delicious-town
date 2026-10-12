@@ -14,6 +14,8 @@ const home: Messages['home'] = {
     failed: 'No se pudo echarlo',
   },
   stars: (n) => `${n}★`,
+  forecast: (hour, type, same, sure) =>
+    `${sure ? 'Seguramente' : 'Quizá'} ${same ? 'siga ' : ''}${type.toLowerCase()} después de las ${hour}:00`,
   level: 'Nivel',
   closed: 'Cerrado',
   closedSign: 'Cerrado',

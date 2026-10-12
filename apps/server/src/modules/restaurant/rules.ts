@@ -1,6 +1,7 @@
 import type { Insertable } from 'kysely';
 import type { GameConfig, RestaurantDefaults } from '@dt/config';
 import {
+  type WeatherBriefDto,
   levelUpExp,
   type ActiveBoostDto,
   type DeviceSlotDto,
@@ -63,7 +64,7 @@ export function newRestaurantValues(
 export interface OverviewExtra {
   devices: DeviceSlotDto[];
   lastRound: RoundSummaryDto | null;
-  weather: { id: number; name: string } | null;
+  weather: WeatherBriefDto | null;
   isPlanktonHost: boolean;
   /** 展示中的个性图标（问题记录：自己看不到称号） */
   icons: Array<{ key: string; title: string }>;

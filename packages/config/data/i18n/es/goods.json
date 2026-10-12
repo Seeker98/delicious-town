@@ -183,6 +183,14 @@
     "name": "Galleta de la suerte",
     "desc": "Una galleta del juego de adivinar del mercado; sube el valor final de los platos estrella que cocinas (al azar, [6 − estrellas del restaurante / 2])"
   },
+  "10419": {
+    "name": "Brújula celeste",
+    "desc": "Réplica del perdido Martillo de Thor hecha por la estación meteorológica del pueblo, mucho menos imponente: señalas una dirección (un tipo de tiempo), el destino elige el tiempo exacto y todo el pueblo lo tiene durante 1 hora. Se usa en la página del tiempo"
+  },
+  "10420": {
+    "name": "Palillos del tiempo",
+    "desc": "Todavía más a la suerte que la brújula celeste: agita dos palillos, quédate con uno y el tiempo del pueblo cambia durante 1 hora. Los palillos siempre siguen el tiempo actual y de vez en cuando sale un tiempo especial. Se usa en la página del tiempo"
+  },
   "10501": {
     "name": "Vale de mejora del bidón (básico)",
     "desc": "Vale importante para mejorar el bidón de aceite"

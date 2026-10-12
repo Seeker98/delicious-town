@@ -33,7 +33,20 @@ export async function setWeather(t: TestGame, shardId: number, weatherId: number
       krab_street: 0,
       updated_at: t.clock.now,
     })
-    .onConflict((oc) => oc.column('shard_id').doUpdateSet({ weather_id: weatherId, weather_until: until }))
+    // 天气改版：这是自然天气；顺手去掉道具盖着的天气和没选的签
+    .onConflict((oc) =>
+      oc.column('shard_id').doUpdateSet({
+        weather_id: weatherId,
+        weather_until: until,
+        cover_weather_id: null,
+        cover_until: null,
+        cover_by: null,
+        cover_goods: null,
+        lot_by: null,
+        lot_choices: null,
+        lot_until: null,
+      }),
+    )
     .execute();
 }
 

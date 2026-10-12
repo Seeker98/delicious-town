@@ -35,7 +35,8 @@ describe('迁移 0014', () => {
     await db.insertInto('town_rest').values({ rest_id: a }).execute();
     expect(
       await db.selectFrom('town_rest').selectAll().where('rest_id', '=', a).executeTakeFirstOrThrow(),
-    ).toEqual({ rest_id: a, hammer_at: null, broadcast_at: null, big_eater_gift: false });
+      // 0068（天气改版）把 hammer_at 改名 tool_at
+    ).toEqual({ rest_id: a, tool_at: null, broadcast_at: null, big_eater_gift: false });
   });
 
   it('摇钱包：同店同一天只有一条；IP 和设备可以重复（开发期限制可关）', async () => {

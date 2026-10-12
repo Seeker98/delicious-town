@@ -135,6 +135,7 @@ const errors: Messages['errors'] = {
     shake_device: () => 'Alguien en la misma red o dispositivo ya lo sacudió hoy',
     bar_daily: (p) =>
       `Hoy ya has jugado ${s(p.max)} ${plEs(s(p.max), 'partida', 'partidas')} a este juego. Vuelve mañana.`,
+    shop_daily: (p) => `Límite de ${String(p.max)} al día; ya lo compraste hoy`,
     town_exchange: (p) =>
       `Cada jugador puede canjear esto ${s(p.max)} ${plEs(s(p.max), 'vez', 'veces')} (usadas ${s(p.used)})`,
     max: (p) => `Puedes tener como máximo ${s(p.max)}`,
@@ -258,6 +259,8 @@ const errors: Messages['errors'] = {
     other_street: 'Solo puedes aprender o mejorar platos de tu calle; múdate allí primero',
     no_batch: 'Este objeto no se puede usar en lote',
     no_points_to_reset: 'Todavía no has gastado puntos de atributo',
+    compass_type: 'El tiempo actual no puede pasar a este tipo',
+    no_lots: 'Los palillos caducaron; se usó el palillo 1',
     not_on_sale: 'No está a la venta',
     no_special: 'Todavía no hay ofertas limitadas hoy',
     single: 'Solo puedes comprar 1 a la vez',
@@ -443,9 +446,9 @@ const errors: Messages['errors'] = {
     forumPostCooldown: (seconds) => `Publicas demasiado rápido. Inténtalo en ${seconds} s.`,
     forumReplyCooldown: (seconds) => `Respondes demasiado rápido. Inténtalo en ${seconds} s.`,
     broadcastCooldown: (seconds) => `El anuncio se está recargando. Espera ${seconds} s.`,
-    weatherGap: (seconds) => `El tiempo acaba de cambiar. Inténtalo en ${seconds} s.`,
-    hammer: (minutes) =>
-      `El martillo de Thor se está recargando. Espera ${minutes >= 60 ? `${Math.floor(minutes / 60)} h ${minutes % 60} min` : `${minutes} min`}.`,
+    weatherLock: (minutes) => `Alguien acaba de cambiar el tiempo. Inténtalo en ${minutes} min.`,
+    weatherTool: (minutes) =>
+      `La brújula y los palillos se están recargando. Espera ${minutes >= 60 ? `${Math.floor(minutes / 60)} h ${minutes % 60} min` : `${minutes} min`}.`,
     marketSpecial: (minutes, wait) =>
       `Las ofertas solo se pueden coger una vez cada ${minutes} ${plEs(minutes, 'minuto', 'minutos')} desde la misma red. Espera ${wait} min.`,
     notEnough: (what, need, have) => `No tienes suficiente: ${what} (necesitas ${need}, tienes ${have})`,

@@ -1,7 +1,6 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { flushPromises, mount, RouterLinkStub } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { nextTick } from 'vue';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { endpoints } from '../../api/endpoints';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
@@ -21,7 +20,7 @@ vi.mock('../../api/endpoints', () => ({
 
 /** 换天气、选食材面板 Teleport 到 body：测试里把 teleport 桩掉（界面改版 P10） */
 const mountIt = (data: ReturnType<typeof townData>) =>
-  mount(TownPanel, { props: { data }, global: { stubs: { teleport: true } } });
+  mount(TownPanel, { props: { data }, global: { stubs: { teleport: true, RouterLink: RouterLinkStub } } });
 
 describe('TownPanel', () => {
   beforeEach(() => {
@@ -102,78 +101,12 @@ describe('TownPanel', () => {
     expect(w.find('[data-testid="bless-reward"]').text()).toBe('银币 200,000 (持有神灯多领 10%)');
   });
 
-  it('雷神锤：选类型用银币，或用钻石；冷却中全部灰掉', async () => {
-    vi.mocked(endpoints.townHammer).mockResolvedValue({
-      from: 1,
-      to: 13,
-      gift: { goodsId: 19, num: 1 },
-      cooldownUntil: '2026-09-30T10:00:00.000Z',
-    });
+  it('改天气（天气改版）：雷神锤换成一行入口，写现在的天气，点了去天气页用司天罗盘、晴雨签', () => {
     const w = mountIt(townData());
-    // 界面改版 P10：点“换天气”弹出面板，一类天气一行，选一行再确认
-    expect(w.find('[data-testid="hammer-2"]').exists()).toBe(false);
-    await w.find('[data-testid="hammer-open"]').trigger('click');
-    expect(w.get('[data-testid="hammer-ok"]').attributes('disabled')).toBeDefined();
-    expect(w.get('[data-testid="hammer-ok"]').text()).toBe('先选一种天气');
-    await w.find('[data-testid="hammer-2"]').trigger('click');
-    expect(endpoints.townHammer).not.toHaveBeenCalled();
-    expect(w.get('[data-testid="hammer-2"]').attributes('aria-checked')).toBe('true');
-    expect(w.get('[data-testid="hammer-ok"]').text()).toBe('换成雨类 · 100,000');
-    await w.find('[data-testid="hammer-ok"]').trigger('click');
-    await flushPromises();
-    expect(endpoints.townHammer).toHaveBeenCalledWith({ mode: 'coin', type: 2 });
-    // 换完面板关掉
-    expect(w.find('[data-testid="hammer-ok"]').exists()).toBe(false);
-    await w.find('[data-testid="hammer-open"]').trigger('click');
-    await w.find('[data-testid="hammer-diamond"]').trigger('click');
-    expect(w.get('[data-testid="hammer-ok"]').text()).toBe('召唤特殊天气 · 8 钻');
-    await w.find('[data-testid="hammer-ok"]').trigger('click');
-    await flushPromises();
-    expect(endpoints.townHammer).toHaveBeenLastCalledWith({ mode: 'diamond' });
-    const cool = mountIt(
-      townData({
-        hammer: {
-          has: true,
-          readyAt: '2026-09-30T10:00:00.000Z',
-          townReadyAt: null,
-          coin: 100000,
-          diamond: 8,
-        },
-      }),
-    );
-    // 冷却中不给打开面板，写明冷却到几点
-    expect(cool.find('[data-testid="hammer-open"]').exists()).toBe(false);
-    expect(cool.get('[data-testid="hammer-block"]').text()).toMatch(/^冷却到 \d{2}:\d{2}$/);
-    // 没有锤子：写明要持有
-    const none = mountIt(
-      townData({ hammer: { has: false, readyAt: null, townReadyAt: null, coin: 100000, diamond: 8 } }),
-    );
-    expect(none.find('[data-testid="hammer-open"]').exists()).toBe(false);
-    expect(none.get('[data-testid="hammer-block"]').text()).toBe('持有雷神锤才能使用');
-  });
-
-  describe('冷却按服务器时间倒计时（终审 I1）', () => {
-    afterEach(() => vi.useRealTimers());
-    it('全镇 90 秒间隔结束后换天气按钮自己恢复', async () => {
-      vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'Date'] });
-      vi.setSystemTime(new Date('2026-09-30T04:00:00.000Z'));
-      const data = townData({
-        hammer: {
-          has: true,
-          readyAt: null,
-          townReadyAt: '2026-09-30T04:00:03.000Z',
-          coin: 100000,
-          diamond: 8,
-        },
-      });
-      const w = mountIt(data);
-      expect(w.find('[data-testid="hammer-block"]').text()).toBe('刚换过天气, 3 秒后才能再换');
-      expect(w.find('[data-testid="hammer-open"]').exists()).toBe(false);
-      vi.advanceTimersByTime(3000);
-      await nextTick();
-      expect(w.find('[data-testid="hammer-block"]').exists()).toBe(false);
-      expect(w.find('[data-testid="hammer-open"]').exists()).toBe(true);
-    });
+    const row = w.getComponent(RouterLinkStub);
+    expect(row.props('to')).toBe('/weather');
+    expect(row.text()).toContain('现在是 晴 · 司天罗盘、晴雨签在天气页用');
+    expect(w.find('[data-testid="hammer-open"]').exists()).toBe(false);
   });
 
   it('钱包的按钮放在右侧操作区，和说明文字分开（问题记录 110）', () => {

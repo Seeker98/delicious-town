@@ -99,13 +99,13 @@ const server: Messages['server'] = {
     },
     weather: {
       title: (hour, type) =>
-        `La météo tirée automatiquement aujourd'hui à ${hour} h sera-t-elle de type ${type}\u202f?`,
+        `Après le changement de ${hour} h aujourd'hui, la météo sera-t-elle de type ${type}\u202f?`,
       desc: (hour) =>
-        `Selon la météo tirée par le système à ${hour} h\u202f; les changements faits ensuite avec le Marteau de Thor ne comptent pas.`,
+        `Selon la météo du changement de ${hour} h\u202f; les changements faits ensuite avec la boussole céleste ou les bâtonnets du temps ne comptent pas.`,
       note: (day, hour, weather, type) =>
-        `${day}, ${hour} h\u202f: la météo automatique était ${weather} (${type})`,
+        `${day}, ${hour} h\u202f: la météo est passée à ${weather} (${type})`,
       hammer: (weather) =>
-        `\u202f; quelqu'un l'a ensuite changée en ${weather} avec le Marteau de Thor, ce qui ne compte pas`,
+        `\u202f; quelqu'un l'a ensuite changée en ${weather} avec un objet, ce qui ne compte pas`,
       types: ['', 'ensoleillé', 'pluie', 'neige', 'vent/sable/brouillard'],
     },
     stats: {

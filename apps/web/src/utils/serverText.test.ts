@@ -80,7 +80,18 @@ describe('服务端代码 → 文字（问题记录 272）', () => {
         },
         names,
       ),
-    ).toBe('11月3日 15 点自动轮换的天气是天气2 (雨类)；之后有人用雷神锤改成了天气5, 按题目规则不算');
+    ).toBe('11月3日 15 点换天后是天气2 (雨类)；之后有人用道具改成了天气5, 按题目规则不算');
+    // 天气改版：罗盘、签盖的写在 coverTo
+    expect(
+      predictNote(
+        {
+          kind: 'weather',
+          resultNote: '旧',
+          resultParams: { day: '2026-11-03', hour: 17, weather: 2, type: 2, coverTo: 5 },
+        },
+        names,
+      ),
+    ).toBe('11月3日 17 点换天后是天气2 (雨类)；之后有人用道具改成了天气5, 按题目规则不算');
     expect(
       predictNote(
         {

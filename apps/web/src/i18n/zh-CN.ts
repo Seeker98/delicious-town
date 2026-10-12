@@ -39,9 +39,10 @@ export function errorText(code: string, params: Record<string, unknown> = {}): s
   if (code === 'COOLDOWN' && what === 'forum_post') return sp.forumPostCooldown(Number(params.seconds));
   if (code === 'COOLDOWN' && what === 'forum_reply') return sp.forumReplyCooldown(Number(params.seconds));
   if (code === 'COOLDOWN' && what === 'broadcast') return sp.broadcastCooldown(Number(params.seconds));
-  if (code === 'COOLDOWN' && what === 'weather_gap') return sp.weatherGap(Number(params.seconds));
-  if (code === 'COOLDOWN' && what === 'hammer')
-    return sp.hammer(Math.ceil(Number(params.seconds ?? 60) / 60));
+  if (code === 'COOLDOWN' && what === 'weather_lock')
+    return sp.weatherLock(Math.ceil(Number(params.seconds ?? 60) / 60));
+  if (code === 'COOLDOWN' && what === 'weather_tool')
+    return sp.weatherTool(Math.ceil(Number(params.seconds ?? 60) / 60));
   if (code === 'COOLDOWN' && what === 'market_special')
     return sp.marketSpecial(Number(params.minutes ?? 10), Math.ceil(Number(params.seconds ?? 60) / 60));
   if (code === 'NOT_ENOUGH') {

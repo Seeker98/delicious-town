@@ -134,7 +134,11 @@ async function go() {
               }}{{ t.town.exchange.have(m.have) }}</span
             ></span
           ><span class="d-block">{{
-            x.times > 0 ? t.town.exchange.times(x.times, x.used) : t.town.exchange.unlimited
+            x.times > 0
+              ? x.weekly
+                ? t.town.exchange.weekly(x.times, x.used)
+                : t.town.exchange.times(x.times, x.used)
+              : t.town.exchange.unlimited
           }}</span></template
         >
         <template #end>

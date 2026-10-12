@@ -21,6 +21,7 @@ import { listActiveEffects } from '../effects/service';
 import { shownEffects } from '../effects/aggregate';
 import { equipOff } from '../equip/power';
 import { headlines } from '../news/news';
+
 import { eligibilityOf } from '../exchange/eligibility';
 import { todayBless } from '../town/bless';
 import { recordLedger } from '../ledger/ledger';
@@ -34,6 +35,16 @@ import type { WorldService } from '../world/service';
 import { buffsOf, deviceSlots, feedPage, incomePage, lastRound, logPage, restNames, tableDto } from './reads';
 import { emptyCookbookLevels, initialTables, newRestaurantValues, toRestaurantDto } from './rules';
 import { iconDefs } from '../icons/defs';
+
+/** 预报里概率最大的一类（一样大取编号小的） */
+function topForecast(f: { at: Date; types: Record<string, number> }): {
+  at: string;
+  type: number;
+  p: number;
+} {
+  const [type, p] = Object.entries(f.types).sort((a, b) => b[1] - a[1] || Number(a[0]) - Number(b[0]))[0]!;
+  return { at: f.at.toISOString(), type: Number(type), p };
+}
 
 export interface RestaurantDeps {
   db: Kysely<DB>;
@@ -228,7 +239,11 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
     const dto = toRestaurantDto(row, tables.tables, shownEffects(effects, equipOff(settings)), d.config, {
       devices,
       lastRound: last,
-      weather: { id: snap.weather.id, name: snap.weather.name },
+      weather: {
+        id: snap.weather.id,
+        name: snap.weather.name,
+        forecast: topForecast(await world.forecast(row.shard_id, snap)),
+      },
       isPlanktonHost: snap.planktonRestId === restId,
       icons,
       plaque2Cost: { star: growth.plaque2Star, coin: growth.plaque2Coin, diamond: growth.plaque2Diamond },

@@ -4,6 +4,10 @@ import { plFr } from '../../helpers';
 const town: Messages['town'] = {
   title: 'Place',
   forum: 'Forum',
+  weatherTool: 'Changer la météo',
+  weatherToolSub: (name) =>
+    `Actuellement\u202f: ${name} · boussole et bâtonnets s'utilisent sur la page météo`,
+  toWeather: 'Aller à la page météo',
   chips: { horns: 'Cornes', bless: 'Vœu' },
   tabs: {
     news: 'Nouvelles',
@@ -41,7 +45,6 @@ const town: Messages['town'] = {
       desc: 'Cadeau de bienvenue\u202f: un bon d’ingrédient mystère (une fois par restaurant)',
     },
   },
-  weatherTypes: ['', 'Ensoleillé', 'Pluie', 'Neige et glace', 'Vent, sable et brouillard'],
   said: (name, talk, rewards) => `${name}\u202f: ${talk} Vous recevez ${rewards}`,
   mayorName: 'Maire Grosse Marmite',
   /** 镇长大胃锅页上的问答标题（问题记录 441） */
@@ -63,12 +66,6 @@ const town: Messages['town'] = {
   feastFailed: 'Impossible de participer au festin',
   wished: (name) => `Votre vœu est exaucé\u202f: ${name}`,
   wishFailed: 'Impossible de faire un vœu',
-  hammerNeed: 'Il faut le marteau de Thor',
-  hammerCool: (time) => `Recharge jusqu'à ${time}`,
-  hammerTown: (s) => `Le temps vient de changer. Réessayez dans ${s} s`,
-  hammerDone: (from, to, gift, num) =>
-    `${from} laisse place à ${to}. Vous recevez ${gift}\u202f×\u202f${num}`,
-  hammerFailed: 'Impossible de changer le temps',
   talkedToday: "Déjà discuté aujourd'hui",
   talk: 'Discuter',
   mayorAnswered: "Vous avez déjà répondu au maire aujourd'hui",
@@ -98,22 +95,7 @@ const town: Messages['town'] = {
   noWish: "Personne n'a fait de vœu aujourd'hui. Le premier vœu décide du vœu de toute la ville",
   needLamp: 'Il faut la lampe magique pour faire un vœu',
   wish: 'Faire un vœu',
-  hammer: 'Marteau de Thor',
   weatherNow: 'Météo actuelle\u202f: ',
-  hammerHint: (coin, diamond) =>
-    `Passer à un type de météo\u202f: ${coin} ${plFr(coin, 'pièce', 'pièces')} à chaque fois. Invoquer une météo spéciale\u202f: ${diamond} ${plFr(diamond, 'diamant', 'diamants')} à chaque fois`,
-  hammerSpecial: 'Invoquer une météo spéciale',
-  weatherIs: (name) => `Actuellement\u202f: ${name}`,
-  hammerOpen: 'Changer',
-  hammerSheetSub: 'Toute la ville change de météo',
-  hammerPickLabel: 'Passer à',
-  hammerTypeSub: 'Une météo au hasard de ce type',
-  hammerSpecialName: 'Météo spéciale',
-  hammerSpecialSub: 'Invoque une météo spéciale au hasard',
-  hammerNote: 'Vous recevez un petit cadeau\u202f; le marteau doit ensuite refroidir.',
-  hammerPickFirst: "Choisissez d'abord une météo",
-  hammerGo: (type, coin) => `${type} · ${coin}`,
-  hammerGoSpecial: (diamond) => `Météo spéciale · ${diamond} ${diamond === 1 ? 'diamant' : 'diamants'}`,
   news: {
     title: 'Nouvelles de la ville',
     linkNote: 'Touchez un nom pour visiter',
@@ -332,6 +314,7 @@ const town: Messages['town'] = {
     have: (n) => ` (vous en avez ${n})`,
     times: (times, used) => `Limite ${times}, utilisé ${used}`,
     unlimited: 'Sans limite',
+    weekly: (times, used) => `${times} par semaine, utilisé ${used} cette semaine`,
     btn: 'Échanger',
     tickets: 'Bons',
   },

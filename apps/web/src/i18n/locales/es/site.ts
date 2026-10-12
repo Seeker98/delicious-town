@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    weather1012:
+      'Cambios en el tiempo: ahora cambia cada 4 horas y sigue al tiempo actual, y la página del tiempo muestra la previsión del próximo cambio y una guía breve. El Martillo de Thor se sustituye por la brújula celeste (eliges un tipo; el alcalde cambia 1 por semana y también sale en el último premio del Ichiban Kuji y en el árbol de los deseos) y los palillos del tiempo (agitas dos y te quedas con uno; 1 al día en la tienda). Ambos duran 1 hora y nadie más puede cambiar el tiempo en la hora siguiente',
     season1012:
       'La Sazón ya puede recibir puntos como la Cocina, el Corte y el Control del fuego, y la tarjeta de reinicio también los devuelve. Los ancianos de la torre también reparten puntos a la Sazón; cada planta se reequilibró y no es más fácil que antes',
     tables1012:

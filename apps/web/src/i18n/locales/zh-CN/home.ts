@@ -12,6 +12,9 @@ export default {
     failed: '赶走失败',
   },
   stars: (n: number) => `${n} 星`,
+  /** 首页抬头天气后面的预报（天气改版）：下一轮概率最大的一类，过半写“多半”，不到一半写“可能” */
+  forecast: (hour: number, type: string, same: boolean, sure: boolean) =>
+    `${hour} 点后${sure ? '多半' : '可能'}${same ? '还是' : '转'}${type}`,
   level: '等级',
   closed: '停业',
   /** 首页头图招牌下挂的牌子（界面改版 P5） */

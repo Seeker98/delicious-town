@@ -14,6 +14,8 @@ const home: Messages['home'] = {
     failed: 'Impossible de le chasser',
   },
   stars: (n) => `${n}★`,
+  forecast: (hour, type, same, sure) =>
+    `${sure ? 'Sans doute' : 'Peut-être'} ${same ? 'toujours ' : ''}${type.toLowerCase()} après ${hour} h`,
   level: 'Niveau',
   closed: 'Fermé',
   closedSign: 'Fermé',

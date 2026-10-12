@@ -134,6 +134,7 @@ export default {
     shake_device: () => '同一網路或裝置今天已經搖過了',
     bar_daily: (p) => `這個遊戲今天已經玩了 ${String(p.max)} 局, 明天再來`,
     town_exchange: (p) => `這一項每人限兌 ${String(p.max)} 次 (已兌 ${String(p.used)} 次)`,
+    shop_daily: (p) => `這件每天限買 ${String(p.max)} 個, 今天買過了`,
     max: (p) => `最多持有 ${String(p.max)} 個`,
     friends: (p) => `好友已滿 (最多 ${String(p.max)} 個)`,
     target_friends: () => '對方的好友已滿',
@@ -250,6 +251,8 @@ export default {
     other_street: '只能學、升級所在街道的菜, 先搬到那條街',
     no_batch: '這個道具不能批次使用',
     no_points_to_reset: '還沒有加過屬性點',
+    compass_type: '現在的天氣轉不到這一類',
+    no_lots: '籤已經過時, 按第一支用掉了',
     not_on_sale: '沒有在售',
     no_special: '今天還沒有限時折扣',
     single: '一次只能買 1 個',
@@ -435,9 +438,10 @@ export default {
     forumPostCooldown: (seconds: number) => `發帖太快了, ${seconds} 秒後再試`,
     forumReplyCooldown: (seconds: number) => `回覆太快了, ${seconds} 秒後再試`,
     broadcastCooldown: (seconds: number) => `廣播冷卻中, 還要等 ${seconds} 秒`,
-    weatherGap: (seconds: number) => `剛換過天氣, ${seconds} 秒後才能再換`,
-    hammer: (minutes: number) =>
-      `雷神錘冷卻中, 還要等 ${minutes >= 60 ? `${Math.floor(minutes / 60)} 小時 ${minutes % 60} 分鐘` : `${minutes} 分鐘`}`,
+    /** 天氣改版：別人改的天氣還蓋著 / 我的羅盤、籤還在冷卻 */
+    weatherLock: (minutes: number) => `別人剛改過天氣, ${minutes} 分鐘後才能再改`,
+    weatherTool: (minutes: number) =>
+      `羅盤、晴雨籤冷卻中, 還要等 ${minutes >= 60 ? `${Math.floor(minutes / 60)} 小時 ${minutes % 60} 分鐘` : `${minutes} 分鐘`}`,
     marketSpecial: (minutes: number, wait: number) =>
       `特價菜同一網路 ${minutes} 分鐘內只能搶一次, 還要等 ${wait} 分鐘`,
     notEnough: (what: string, need: string, have: string) => `${what}不夠 (需要 ${need}, 現有 ${have})`,

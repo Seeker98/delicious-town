@@ -115,10 +115,13 @@ describe('外卖的错误文案', () => {
 describe('小镇错误文案（4E-1）', () => {
   it('冷却、已做过、上限、状态', () => {
     expect(errorText('COOLDOWN', { what: 'broadcast', seconds: 12 })).toBe('广播冷却中, 还要等 12 秒');
-    expect(errorText('COOLDOWN', { what: 'hammer', seconds: 3700 })).toBe(
-      '雷神锤冷却中, 还要等 1 小时 2 分钟',
+    // 天气改版：罗盘、晴雨签的每人冷却；别人改的天气还盖着
+    expect(errorText('COOLDOWN', { what: 'weather_tool', seconds: 3700 })).toBe(
+      '罗盘、晴雨签冷却中, 还要等 1 小时 2 分钟',
     );
-    expect(errorText('COOLDOWN', { what: 'weather_gap', seconds: 30 })).toBe('刚换过天气, 30 秒后才能再换');
+    expect(errorText('COOLDOWN', { what: 'weather_lock', seconds: 1500 })).toBe(
+      '别人刚改过天气, 25 分钟后才能再改',
+    );
     expect(errorText('ALREADY_DONE', { what: 'talk' })).toBe('今天已经聊过了');
     expect(errorText('ALREADY_DONE', { what: 'wish' })).toBe('今天已经有人许过愿了');
     expect(errorText('LIMIT_REACHED', { what: 'town_exchange', max: 1, used: 1 })).toBe(

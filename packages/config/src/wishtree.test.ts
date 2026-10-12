@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { GOODS } from './ids';
 import { buildBundle } from './build';
 import { defaultDataDir, readSourceDir } from './source';
 
@@ -10,7 +11,9 @@ describe('许愿树配置（许愿树设计 §2）', () => {
     expect(errors).toEqual([]);
     const w = bundle!.tuning.wishTree;
     expect(w).toMatchObject({ hour: 20, minLevel: 10, titleDays: 3, consolationLevel: 1 });
-    expect(w.prizes).toHaveLength(7);
+    // 天气改版加司天罗盘，权重 5（用户 2026-10-12）
+    expect(w.prizes).toHaveLength(8);
+    expect(w.prizes.at(-1)).toEqual({ goods: GOODS.compass, num: 1, weight: 5 });
     expect(bundle!.looks.icons.find((i) => i.key === 'wish_tree')?.title).toBe('许愿成真');
   });
 

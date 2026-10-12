@@ -108,7 +108,12 @@ export default {
     'weather.change': (w, p, x) =>
       p.by !== undefined
         ? `${w}使用雷神锤, ${x.weatherName(num(p.from))}转${x.weatherName(num(p.to))}了`
-        : `天气变了: ${x.weatherName(num(p.from))}转${x.weatherName(num(p.to))}`,
+        : p.cover !== undefined
+          ? `天气变了: ${x.weatherName(num(p.from))}转${x.weatherName(num(p.to))} (道具改的${x.weatherName(num(p.cover))}还盖着)`
+          : `天气变了: ${x.weatherName(num(p.from))}转${x.weatherName(num(p.to))}`,
+    /** 司天罗盘、晴雨签（天气改版）；auto = 签摇了没选, 按第一支 */
+    'weather.tool': (w, p, x) =>
+      `${w}用${x.goodsName(num(p.goodsId))}把${x.weatherName(num(p.from))}改成了${x.weatherName(num(p.to))}, 持续 1 小时`,
     'town.broadcast': (w, p) => `${w}: ${str(p.text)}`,
     'town.bless': (w, p) => `${w}许愿得到星愿: ${str(p.blessName) || str(p.name)}`,
     'town.shake.lucky': (w, p, x) =>

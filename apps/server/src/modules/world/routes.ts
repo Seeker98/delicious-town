@@ -3,10 +3,11 @@ import { promisify } from 'node:util';
 import { brotliCompress, constants as zlibConstants, gzip } from 'node:zlib';
 import type { FastifyPluginAsync } from 'fastify';
 import { z } from 'zod';
-import { ErrorCode, localeSchema, type Locale } from '@dt/shared';
+import { compassBody, ErrorCode, localeSchema, lotsPickBody, type Locale } from '@dt/shared';
+import { restCtxOf } from '../../core/deps';
 import { parse } from '../../http/validate';
 import { AppError } from '../../http/errors';
-import { ok } from '../../http/reply';
+import { ok, okOp } from '../../http/reply';
 import { requireAccount } from '../../security/session';
 import { etagMatches } from '../open/routes';
 import type { WorldService } from './service';
@@ -87,6 +88,15 @@ export function worldRoutes(world: WorldService): FastifyPluginAsync {
       if (shardId === null) throw new AppError(ErrorCode.NO_SHARD_SELECTED, 400);
       return ok(await world.view(shardId));
     });
+    /** 司天罗盘、晴雨签（天气改版设计 §2） */
+    r.get('/weather/tools', async (req) => ok(await world.tools(restCtxOf(req))));
+    r.post('/weather/compass', async (req) =>
+      okOp(await world.compass(restCtxOf(req), parse(compassBody, req.body))),
+    );
+    r.post('/weather/lots', async (req) => okOp(await world.drawLots(restCtxOf(req))));
+    r.post('/weather/lots/pick', async (req) =>
+      okOp(await world.pickLot(restCtxOf(req), parse(lotsPickBody, req.body))),
+    );
     /** 道具目录：?lang= 按语言返回名字（问题记录 272）；带 ETag，没变时回 304（质量期 ③） */
     // 自己压缩、缓存压好的正文，不走全局压缩
     r.get('/catalog', { compress: false }, async (req, reply) => {

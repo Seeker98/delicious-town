@@ -183,6 +183,14 @@
     "name": "Fortune Cookie",
     "desc": "A cookie from the market guessing game; raises the final value of signature dishes you cook (random, [6 − restaurant stars / 2])"
   },
+  "10419": {
+    "name": "Sky Compass",
+    "desc": "A replica of the lost Thor’s Hammer built by the town weather station, far less overbearing: you point a direction (a type of weather), fate picks the exact weather, and the whole town gets it for 1 hour. Use it on the weather page"
+  },
+  "10420": {
+    "name": "Weather Lots",
+    "desc": "Even more down to luck than the Sky Compass: shake out two weather lots, keep one, and the town’s weather changes for 1 hour. The lots always follow the current weather, and now and then a special weather turns up. Use it on the weather page"
+  },
   "10501": {
     "name": "Basic Oil Tank Upgrade Voucher",
     "desc": "An important voucher for upgrading your oil tank"

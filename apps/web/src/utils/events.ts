@@ -11,6 +11,8 @@ export interface Names {
   foodLevel?(id: number): number | undefined;
   mcName?(id: number): string;
   seedName?(id: number): string;
+  /** 天气名（天气改版：用罗盘、签改天气的动态） */
+  weatherName?(id: number): string;
 }
 
 /** 合并同类型、同物品、同幸运标记的事件（一次得到很多东西时不刷屏），保持首次出现的顺序 */

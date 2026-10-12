@@ -244,6 +244,8 @@ export default {
     'town.mysteryTicket': (p, names) => `用神秘食材券換到 ${names.foodName(n(p, 'foodsId'))}`,
     'town.feast': () => '參加了廣場宴席',
     'town.hammer': () => '敲了天氣錘, 改變了天氣',
+    'weather.tool': (p, names) =>
+      `用${names.goodsName(n(p, 'goodsId'))}把${names.weatherName?.(n(p, 'from')) ?? ''}改成了${names.weatherName?.(n(p, 'to')) ?? ''}`,
     'town.mayor': (p) => (p.right ? '答對了鎮長大胃鍋的問題' : '答錯了鎮長大胃鍋的問題'),
     'town.shake': (p) => `搖錢樹搖到銀幣 ${formatNum(n(p, 'coin'))}`,
     'town.talk': () => '和小鎮居民聊了天',

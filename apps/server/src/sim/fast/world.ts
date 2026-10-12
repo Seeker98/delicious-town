@@ -2,7 +2,8 @@ import type { GameConfig, Tuning } from '@dt/config';
 import { gameParts, hashSeed, latestSlot, seededRng, type Rng } from '@dt/shared';
 import { buildGlobals } from '../../modules/settlement/globals';
 import type { SettleGlobals } from '../../modules/settlement/types';
-import { rollKrabStreet, rollWeather } from '../../modules/world/rules';
+import { chainRow, pickRow } from '../../modules/world/chain';
+import { isNight, rollKrabStreet, rollWeather } from '../../modules/world/rules';
 import type { FastRest } from './state';
 
 /** 模拟区服的世界状态（world/service.ts 的快照） */
@@ -38,7 +39,15 @@ export function advanceWorld(
   if (minute >= 4) return;
   if (tuning.world.weatherHours.includes(hour)) {
     const slot = latestSlot(now, tuning.world.weatherHours);
-    const x = rollWeather(config, slot.hour, tuning.world, seededRng(hashSeed(shardId, 'weather', slot.key)));
+    // 天气改版：和 world/service 一样按天气链从上一轮的自然天气转
+    const rng = seededRng(hashSeed(shardId, 'weather', slot.key));
+    const row = chainRow(
+      config.bundle.weatherChain,
+      config.weather,
+      w.weatherId,
+      isNight(slot.hour, tuning.world),
+    );
+    const x = config.weather.get(pickRow(row, rng) ?? 0) ?? rollWeather(config, slot.hour, tuning.world, rng);
     w.weather = x.effects;
     w.weatherId = x.id;
   }

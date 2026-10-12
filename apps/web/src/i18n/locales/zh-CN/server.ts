@@ -93,11 +93,11 @@ export default {
       no: (day: string, hour: number, level: number) => `${day} ${hour} 点日常货架没有 ${level} 级稀有食材`,
     },
     weather: {
-      title: (hour: number, type: string) => `今天 ${hour} 点自动轮换的天气是${type}类吗`,
-      desc: (hour: number) => `以 ${hour} 点系统自动轮换出的天气为准, 之后有人用雷神锤改的不算。`,
+      title: (hour: number, type: string) => `今天 ${hour} 点换天后是${type}类天气吗`,
+      desc: (hour: number) => `以 ${hour} 点换天时的天气为准, 之后有人用司天罗盘、晴雨签改的不算。`,
       note: (day: string, hour: number, weather: string, type: string) =>
-        `${day} ${hour} 点自动轮换的天气是${weather} (${type}类)`,
-      hammer: (weather: string) => `；之后有人用雷神锤改成了${weather}, 按题目规则不算`,
+        `${day} ${hour} 点换天后是${weather} (${type}类)`,
+      hammer: (weather: string) => `；之后有人用道具改成了${weather}, 按题目规则不算`,
       /** 天气大类（下标 = 类型） */
       types: ['', '晴', '雨', '雪', '风沙雾霾'],
     },

@@ -54,6 +54,8 @@ export const NEWS_TYPES: readonly string[] = [
   'tower.shop.rare',
   'tower.elder',
   'weather.change',
+  /** 司天罗盘、晴雨签改了天气（天气改版） */
+  'weather.tool',
   'town.broadcast',
   'town.bless',
   'town.shake.lucky',

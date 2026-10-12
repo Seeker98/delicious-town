@@ -7,15 +7,73 @@ export default {
   weather: {
     loadFailed: '读取天气失败',
     noEffect: '对经营没有影响',
-    zeroStar: ' (0 星餐厅不受天气影响)',
     zeroStarLine: '0 星餐厅不受天气影响',
     until: (time: string) => `持续到 ${time}`,
     /** 蟹老板所在街道：前半句、街名（加粗）、后半句 */
     krabPre: '蟹老板今天在 ',
     krabPost: ': 在这条街营业, 遇到神秘顾客的机会更大。',
     holiday: (n: number) => `今天是节日, 美味券掉落概率 ×${n}`,
-    hammer: '持有雷神锤可以换天气: ',
-    toSquare: '去广场',
+    /** 天气改版（天气改版设计）：顶部天气卡、怎么玩、预报、改天气 */
+    slot: (from: string, to: string, next: number) => `${from} ~ ${to} · ${next} 点换天`,
+    coverSlot: (from: string, to: string, natural: string) => `${from} ~ ${to} · 之后回到${natural}`,
+    /** 谁用什么把天气盖了：人名、剩余时间加粗（设计图 Wx-B）；{ b } 是加粗的一段 */
+    cover: (who: string, item: string, natural: string, now: string, minutes: number, next: number) => [
+      { b: who },
+      ` 用${item}把${natural}换成了${now}, 还剩 `,
+      { b: `${minutes} 分钟` },
+      `。底下的天气照常变化, ${next} 点会换天。`,
+    ],
+    someone: '有人',
+    how: {
+      title: '天气怎么玩',
+      fold: '收起',
+      unfold: '展开',
+      lines: (hours: number[]) => [
+        `天气每 4 小时换一次 (${hours.join('、')} 点), 顺着现在的天气慢慢变: 晴天不会直接下雪, 雨要一级一级下大。`,
+        '下面的预报是下一轮各类天气的概率。',
+        '天气不好时, 用司天罗盘 (选一类) 或晴雨签 (二选一) 改 1 小时, 全镇都按改后的天气经营。',
+      ],
+    },
+    forecast: {
+      title: '预报',
+      next: (time: string) => `下一轮 ${time}`,
+      note: '天气会顺着现在的走, 不会一下子从晴天跳到下雪。',
+    },
+    /** 天气四大类（下标 = 类型） */
+    types: ['', '晴', '雨', '雪冰', '风沙雾'],
+    tools: {
+      title: '改天气',
+      compassSub: '选一类天气, 具体哪种看天意 · 改 1 小时',
+      lotsSub: '摇出两支天气签, 挑一支 · 改 1 小时',
+      have: (n: number) => `持有 ${n}`,
+      use: '使用',
+      pick: '去选签',
+      toMayor: '镇长那换',
+      toShop: '去商店',
+      rule: (hours: number) => `每人 ${hours} 小时用一次；有人刚改过的 1 小时里不能再改。`,
+      locked: (minutes: number, time: string) =>
+        `别人刚改过天气, ${minutes} 分钟后 (${time} 以后) 才能再改。`,
+      cooling: (used: string, ready: string) => `你 ${used} 用过, ${ready} 以后才能再用。`,
+      done: (name: string, time: string) => `天气改成了${name}, 持续到 ${time}`,
+      failed: '改天气失败',
+    },
+    compass: {
+      title: '司天罗盘: 选一类天气',
+      sub: '具体哪种看天意, 改 1 小时, 全镇都按这个天气经营。罗盘不会换出酸雨、冰冻。',
+      cannot: '现在的天气转不到这一类',
+      go: '用掉 1 个司天罗盘',
+      pickFirst: '先选一类',
+    },
+    lots: {
+      title: '晴雨签',
+      readySub: '摇出两支天气签, 挑一支, 天气改 1 小时。签都顺着现在的天气来, 偶尔会摇出特殊天气。',
+      draw: '摇签 (用掉 1 个晴雨签)',
+      pickTitle: '晴雨签: 挑一支',
+      pickSub: '签已经摇出来了, 挑一支, 天气改 1 小时。',
+      lot: (n: number) => `签${n === 1 ? '一' : '二'}`,
+      take: (name: string) => `就要${name}`,
+      countdown: (s: number) => `${s} 秒内不选, 自动用签一`,
+    },
   },
   invite: {
     title: '邀请好友',

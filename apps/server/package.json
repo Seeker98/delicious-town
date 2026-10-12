@@ -22,7 +22,8 @@
     "bench:api": "tsx src/cli/bench-api.ts",
     "items": "tsx src/items/main.ts",
     "renumber:dry": "tsx --env-file=.env.development src/cli/renumber-dry-run.ts",
-    "odds": "vitest run -c vitest.odds.config.ts"
+    "odds": "vitest run -c vitest.odds.config.ts",
+    "weather-chain": "tsx --env-file=.env.development src/sim/weatherChain.ts"
   },
   "dependencies": {
     "@dt/config": "workspace:*",

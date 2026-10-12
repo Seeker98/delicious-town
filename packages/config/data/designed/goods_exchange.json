@@ -154,6 +154,22 @@
    "newsflag": 1
   },
   {
+   "id": 74,
+   "category": "bg",
+   "goodsId": 10419,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 10005,
+     "num": 2
+    }
+   ],
+   "times": 1,
+   "weekly": 1,
+   "newsflag": 0
+  },
+  {
    "id": 11,
    "category": "bg",
    "goodsId": 60802,

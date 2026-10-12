@@ -13,10 +13,6 @@ export const townExchangeQuery = z.object({ part: z.enum(['goods', 'level', 'mys
 export type TownExchangePart = NonNullable<z.infer<typeof townExchangeQuery>['part']>;
 export const townBroadcastBody = z.object({ text: z.string().max(500) });
 export const townTalkBody = z.object({ npc: npcKey });
-export const townHammerBody = z.discriminatedUnion('mode', [
-  z.object({ mode: z.literal('coin'), type: z.number().int().min(1).max(4) }),
-  z.object({ mode: z.literal('diamond') }),
-]);
 export const townExchangeBody = z.object({ id, num: z.number().int().min(1).max(999) });
 export const townLevelTicketBody = z.object({
   level: z.number().int().min(1).max(5),
@@ -71,13 +67,6 @@ export interface ShakeResultDto {
   egg: { goodsId: number; num: number } | null;
 }
 
-export interface HammerResultDto {
-  from: number;
-  to: number;
-  gift: { goodsId: number; num: number };
-  cooldownUntil: string;
-}
-
 export interface TownExchangeResultDto {
   goodsId: number;
   num: number;
@@ -119,15 +108,6 @@ export interface TownDto {
   bigEaterGift: boolean;
   shaken: boolean;
   broadcast: { horns: number; readyAt: string | null; minStar: number; maxLen: number };
-  hammer: {
-    has: boolean;
-    /** 我的冷却结束时间 */
-    readyAt: string | null;
-    /** 全镇 90 秒间隔结束时间 */
-    townReadyAt: string | null;
-    coin: number;
-    diamond: number;
-  };
   weather: { id: number; name: string; until: string };
   bless: {
     today: BlessDto | null;
@@ -147,6 +127,8 @@ export interface TownExchangeItemDto {
   /** -1 不限 */
   times: number;
   used: number;
+  /** times 是每周限兑（周一 0 点重置）；旧服务端没有 */
+  weekly?: boolean;
 }
 
 export interface TownExchangeDto {

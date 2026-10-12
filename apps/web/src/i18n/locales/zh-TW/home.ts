@@ -13,6 +13,9 @@ export default {
     failed: '趕走失敗',
   },
   stars: (n: number) => `${n} 星`,
+  /** 首頁抬頭天氣後面的預報（天氣改版）：下一輪機率最大的一類，過半寫“多半”，不到一半寫“可能” */
+  forecast: (hour: number, type: string, same: boolean, sure: boolean) =>
+    `${hour} 點後${sure ? '多半' : '可能'}${same ? '還是' : '轉'}${type}`,
   level: '等級',
   closed: '停業',
   /** 首頁頭圖招牌下掛的牌子（介面改版 P5） */

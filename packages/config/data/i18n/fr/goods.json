@@ -183,6 +183,14 @@
     "name": "Biscuit de la chance",
     "desc": "Un biscuit gagné au jeu de devinettes du marché\u202f; augmente la valeur finale des plats signature que vous cuisinez (au hasard, [6 − étoiles du restaurant / 2])"
   },
+  "10419": {
+    "name": "Boussole céleste",
+    "desc": "Réplique du Marteau de Thor perdu, fabriquée par la station météo de la ville, bien moins autoritaire\u202f: vous indiquez une direction (un type de météo), le ciel choisit la météo exacte, pour toute la ville pendant 1 heure. À utiliser sur la page météo"
+  },
+  "10420": {
+    "name": "Bâtonnets du temps",
+    "desc": "Encore plus au hasard que la boussole céleste\u202f: tirez deux bâtonnets, gardez-en un, et la météo de la ville change pendant 1 heure. Les bâtonnets suivent toujours la météo actuelle, et parfois une météo spéciale sort. À utiliser sur la page météo"
+  },
   "10501": {
     "name": "Bon d'amélioration du bidon (basique)",
     "desc": "Bon important pour améliorer le bidon d'huile"

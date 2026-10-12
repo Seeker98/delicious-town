@@ -46,6 +46,7 @@ import type {
   SlotAward,
   TowerFloor,
   KujiTheme,
+  WeatherChain,
 } from './types';
 
 export interface BuildResult {
@@ -99,6 +100,8 @@ export interface BuildOptions {
    * 免得改了强化表、加点数后旧的长老数据通不过校验，生成器又拿不到新配置（问题记录 408 审查）
    */
   ignoreElders?: boolean;
+  /** 天气链数据（game/weather_chain）缺失或对不上时也出配置：给拟合天气链的 pnpm -F @dt/server weather-chain 用 */
+  ignoreWeatherChain?: boolean;
 }
 
 export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResult {
@@ -169,6 +172,22 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   const towerElders = opts.ignoreElders
     ? (raw.towerEldersFile.safeParse(src['game/tower_elders']).data ?? { note: '', floors: [] })
     : parse('game/tower_elders', raw.towerEldersFile);
+  const EMPTY_CHAIN: WeatherChain = {
+    note: '',
+    score: { at: 0.9, sp: 0.16, k: 4, perTable: 56 },
+    stay: [{ min: -Infinity, p: 0 }],
+    intensity: {},
+    counter: [],
+    precursors: {},
+    rainbow: { id: 0, from: 0, to: 0 },
+    compassBanned: [],
+    types: {},
+    spk: {},
+    q: {},
+  };
+  const weatherChain = opts.ignoreWeatherChain
+    ? (raw.weatherChainFile.safeParse(src['game/weather_chain']).data ?? EMPTY_CHAIN)
+    : parse('game/weather_chain', raw.weatherChainFile);
   const elderError = (m: string) => {
     if (!opts.ignoreElders) errors.push(m);
   };
@@ -229,6 +248,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     !equipLore ||
     !towerFix ||
     !towerElders ||
+    !weatherChain ||
     !settingDocs ||
     !newbieCodesRaw ||
     !newbieRaw ||
@@ -642,6 +662,24 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     'weather',
     weather.map((w) => w.id),
   );
+  // 天气链（天气改版设计 §1）：每种天气都有权重；类型矩阵每行加起来是 1；前兆、罗盘不出的天气都在天气表里
+  if (!opts.ignoreWeatherChain) {
+    const byId = new Map(weather.map((w) => [w.id, w]));
+    for (const w of weather)
+      if (!((weatherChain.q[String(w.id)] ?? 0) > 0)) errors.push(`weather_chain q misses weather ${w.id}`);
+    for (const t of ['1', '2', '3', '4']) {
+      const row = weatherChain.types[t];
+      const s = row ? ['1', '2', '3', '4'].reduce((a, k) => a + (row[k] ?? 0), 0) : 0;
+      if (Math.abs(s - 1) > 0.001) errors.push(`weather_chain types row ${t} sums to ${s}`);
+    }
+    for (const [sp, list] of Object.entries(weatherChain.precursors)) {
+      if (!byId.get(Number(sp))?.special)
+        errors.push(`weather_chain precursor target ${sp} is not a special weather`);
+      for (const [p] of list) if (!byId.has(p)) errors.push(`weather_chain precursor ${p} is not a weather`);
+    }
+    for (const id of [...weatherChain.compassBanned, weatherChain.rainbow.id, ...weatherChain.counter.flat()])
+      if (!byId.has(id)) errors.push(`weather_chain references unknown weather ${id}`);
+  }
 
   const devices = devicesRaw.map((d) => ({
     id: d.deviceid,
@@ -1141,6 +1179,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
       num: e.num,
       need: e.needGoods.map((n) => ({ goodsId: n.id, num: n.num })),
       times: e.times,
+      weekly: e.weekly === 1,
       news: e.newsflag === 1,
     }))
     // 换到的东西下架了，这一条不再出现（问题记录 501）；要用掉的材料下架了仍然报错，要人工处理
@@ -1183,7 +1222,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     )
       errors.push(`bless ${x.id} needs a level range within 1~6`);
   }
-  // 神秘礼券、爆裂飞弹、神秘券、蟹黄堡、蟹币、N 级券、雷神锤、喇叭、神灯、幸运饼干
+  // 神秘礼券、爆裂飞弹、神秘券、蟹黄堡、蟹币、N 级券、司天罗盘、晴雨签、喇叭、神灯、幸运饼干
   for (const id of [
     GOODS.mysteryTicket,
     GOODS.missileBurst,
@@ -1191,7 +1230,8 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     GOODS.krabBurger,
     GOODS.krabCoin,
     ...[1, 2, 3, 4, 5].map((lv) => GOODS.levelTicketBase + lv),
-    GOODS.thorHammer,
+    GOODS.compass,
+    GOODS.weatherLots,
     GOODS.horn,
     GOODS.magicLamp,
     GOODS.luckyCookie,
@@ -1421,6 +1461,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     incomeActions,
     slotAwards,
     towerFloors,
+    weatherChain,
     renownShop,
     weather,
     devices,

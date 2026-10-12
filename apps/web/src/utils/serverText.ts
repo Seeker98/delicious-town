@@ -117,7 +117,9 @@ export function predictNote(
       x.weatherName(p.weather),
       t.weather.types[p.type] ?? String(p.type),
     );
-    return isNum(p.hammerTo) ? note + t.weather.hammer(x.weatherName(p.hammerTo)) : note;
+    // 天气改版：罗盘、签盖的是 coverTo；以前雷神锤的旧题是 hammerTo
+    const cover = isNum(p.coverTo) ? p.coverTo : isNum(p.hammerTo) ? p.hammerTo : null;
+    return cover !== null ? note + t.weather.hammer(x.weatherName(cover)) : note;
   }
   if (e.kind === 'stats' && isNum(p.today) && isNum(p.yesterday) && isStr(p.prevDay))
     return t.stats.note(day, formatNum(p.today), dayLabel(p.prevDay), formatNum(p.yesterday));

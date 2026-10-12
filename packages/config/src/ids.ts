@@ -88,7 +88,8 @@ export const GOODS = {
   horn: 10417, // 喇叭（小镇广播）
   kujiTicket: 10303, // 一番赏抽赏券
   kujiDeluxeTicket: 10304, // 豪华签券（240-2）
-  thorHammer: 61405, // 雷神锤
+  compass: 10419, // 司天罗盘
+  weatherLots: 10420, // 晴雨签
   krabBurger: 10005, // 蟹黄堡
   levelTicketBase: 10100, // N 级食材兑换券 = 10100 + N（10101~10105）
 } as const;

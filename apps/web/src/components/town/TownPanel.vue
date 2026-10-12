@@ -1,23 +1,21 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { RouterLink } from 'vue-router';
 import type { TownDto, TownRewardDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
-import type { ArtName } from '../../art/generated/names';
 import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import { effectChips } from '../../utils/effects';
-import { formatNum, timeHM } from '../../utils/format';
+import { formatNum } from '../../utils/format';
 import { rewardText } from '../../utils/rewards';
-import { useServerClock } from '../../utils/serverClock';
 import DtArt from '../DtArt.vue';
 import DtSheet from '../DtSheet.vue';
-import PickRow from '../PickRow.vue';
 
 /**
  * 广场 · 居民（界面改版 P10）：蟹老板的钱袋（大头像卡 + 摇一摇）、今天的星愿（谁许的愿、效果小胶囊、
- * 共飨奖励和按钮）、雷神锤（现在的天气，点“换天气”从下面弹出面板，一类天气一行）
+ * 共飨奖励和按钮）、改天气（天气改版：雷神锤换成司天罗盘、晴雨签，在天气页用；这里一行入口）
  */
 const props = defineProps<{ data: TownDto }>();
 const emit = defineEmits<{ reload: [] }>();
@@ -25,7 +23,6 @@ const catalog = useCatalogStore();
 const toast = useToastStore();
 const t = useT();
 const busy = ref(false);
-const clock = useServerClock(() => props.data.now);
 
 async function act<T>(fn: () => Promise<T>, done: (r: T) => string, fallback: string): Promise<boolean> {
   if (busy.value) return false;
@@ -120,53 +117,6 @@ function wish() {
     t.value.town.wishFailed,
   );
 }
-
-/** 雷神锤：没有锤子、我在冷却、全镇刚换过——这一行写原因，不放按钮 */
-const hammerBlock = computed(() => {
-  const h = props.data.hammer;
-  if (!h.has) return t.value.town.hammerNeed;
-  if (clock.pending(h.readyAt)) return t.value.town.hammerCool(timeHM(h.readyAt));
-  if (clock.pending(h.townReadyAt)) return t.value.town.hammerTown(clock.secondsLeft(h.townReadyAt));
-  return '';
-});
-const hammerOpen = ref(false);
-/** 面板里选的一行：1~4 是天气大类（银币），0 是召唤特殊天气（钻石） */
-const hammerPick = ref<number | null>(null);
-const WEATHER_ART: Record<number, ArtName> = {
-  1: 'weather-sun',
-  2: 'weather-rain',
-  3: 'weather-snow',
-  4: 'weather-wind',
-};
-const TYPES = [1, 2, 3, 4] as const;
-function openHammer() {
-  hammerPick.value = null;
-  hammerOpen.value = true;
-}
-async function hammer() {
-  const p = hammerPick.value;
-  if (p === null) return;
-  const body = p === 0 ? ({ mode: 'diamond' } as const) : ({ mode: 'coin', type: p } as const);
-  const ok = await act(
-    () => endpoints.townHammer(body),
-    (r) =>
-      t.value.town.hammerDone(
-        catalog.weatherName(r.from),
-        catalog.weatherName(r.to),
-        catalog.goodsName(r.gift.goodsId),
-        r.gift.num,
-      ),
-    t.value.town.hammerFailed,
-  );
-  if (ok) hammerOpen.value = false;
-}
-const hammerOk = computed(() => {
-  const p = hammerPick.value;
-  if (p === null) return t.value.town.hammerPickFirst;
-  return p === 0
-    ? t.value.town.hammerGoSpecial(props.data.hammer.diamond)
-    : t.value.town.hammerGo(t.value.town.weatherTypes[p] ?? '', formatNum(props.data.hammer.coin));
-});
 </script>
 
 <template>
@@ -259,93 +209,19 @@ const hammerOk = computed(() => {
   </div>
 
   <div class="dt-block-head mt-3">
-    <h2 class="dt-block-title">{{ t.town.hammer }}</h2>
+    <h2 class="dt-block-title">{{ t.town.weatherTool }}</h2>
   </div>
   <div class="dt-card dt-rows-card">
-    <div class="dt-row" data-testid="hammer-row">
-      <span class="dt-row-ico"><DtArt name="town-hammer" :size="28" /></span>
+    <RouterLink to="/weather" class="dt-row is-link" data-testid="weather-tool-row">
+      <span class="dt-row-ico"><DtArt name="goods-compass" :size="28" /></span>
       <span class="dt-row-main">
-        <span class="dt-row-title is-strong">{{
-          t.town.weatherIs(catalog.weatherName(data.weather.id, data.weather.name))
-        }}</span>
+        <span class="dt-row-title is-strong">{{ t.town.toWeather }}</span>
         <span class="dt-row-sub dt-row-sub-wrap">{{
-          t.town.hammerHint(formatNum(data.hammer.coin), data.hammer.diamond)
-        }}</span>
-        <span v-if="hammerBlock" class="dt-row-sub dt-row-sub-wrap text-danger" data-testid="hammer-block">{{
-          hammerBlock
+          t.town.weatherToolSub(catalog.weatherName(data.weather.id, data.weather.name))
         }}</span>
       </span>
-      <span v-if="!hammerBlock" class="dt-row-end">
-        <button
-          type="button"
-          class="btn btn-sm btn-outline-primary"
-          data-testid="hammer-open"
-          @click="openHammer"
-        >
-          {{ t.town.hammerOpen }}
-        </button>
-      </span>
-    </div>
+    </RouterLink>
   </div>
-
-  <!-- 换天气面板：一类天气一行（单选），最后一行召唤特殊天气 -->
-  <DtSheet :open="hammerOpen" :title="t.town.hammer" @close="hammerOpen = false">
-    <div class="dt-detail-head">
-      <span class="dt-detail-art"><DtArt name="town-hammer" :size="52" /></span>
-      <div class="dt-detail-info">
-        <div>{{ t.town.weatherIs(catalog.weatherName(data.weather.id, data.weather.name)) }}</div>
-        <div class="dt-detail-sub">{{ t.town.hammerSheetSub }}</div>
-      </div>
-    </div>
-    <div class="dt-field-label-top">{{ t.town.hammerPickLabel }}</div>
-    <div class="dt-card dt-rows-card" role="radiogroup" :aria-label="t.town.hammerPickLabel">
-      <PickRow
-        v-for="x in TYPES"
-        :key="x"
-        :on="hammerPick === x"
-        :art="WEATHER_ART[x]"
-        :title="t.town.weatherTypes[x]"
-        :sub="t.town.hammerTypeSub"
-        :testid="`hammer-${x}`"
-        @pick="hammerPick = x"
-      >
-        <template #end
-          ><span class="dt-pick-price"
-            ><DtArt name="res-coin-silver" :size="16" />{{ formatNum(data.hammer.coin) }}</span
-          ></template
-        >
-      </PickRow>
-      <PickRow
-        :on="hammerPick === 0"
-        art="weather-special"
-        :title="t.town.hammerSpecialName"
-        :sub="t.town.hammerSpecialSub"
-        testid="hammer-diamond"
-        @pick="hammerPick = 0"
-      >
-        <template #end
-          ><span class="dt-pick-price"
-            ><DtArt name="res-diamond" :size="16" />{{ data.hammer.diamond }}</span
-          ></template
-        >
-      </PickRow>
-    </div>
-    <p class="dt-detail-note">{{ t.town.hammerNote }}</p>
-    <template #actions>
-      <div class="dt-sheet-pair">
-        <button type="button" class="btn btn-light" @click="hammerOpen = false">{{ t.common.cancel }}</button>
-        <button
-          type="button"
-          class="btn btn-primary"
-          :disabled="busy || hammerPick === null"
-          data-testid="hammer-ok"
-          @click="hammer"
-        >
-          {{ hammerOk }}
-        </button>
-      </div>
-    </template>
-  </DtSheet>
 
   <!-- 自选食材的星愿：选一种再共飨 -->
   <DtSheet :open="pickOpen" :title="t.town.pickFood" @close="pickOpen = false">

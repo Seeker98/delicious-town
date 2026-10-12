@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    weather1012:
+      "Weather rework: the weather now changes every 4 hours and follows the current weather, and the weather page has a forecast for the next change and a short guide. Thor's Hammer is replaced by the Sky Compass (pick a type; the mayor trades 1 per week, and it also comes from the Ichiban Kuji last prize and the wish tree) and Weather Lots (shake two, keep one; 1 per day in the coin shop). Both last 1 hour, and nobody else can change the weather in the hour after a change",
     season1012:
       'Seasoning can now take attribute points like Cooking, Knife skills and Heat control, and a Respec Card refunds them too. Tower elders also put points into Seasoning; every floor was rebalanced and is no easier than before',
     tables1012:

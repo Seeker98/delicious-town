@@ -33,6 +33,8 @@ export const useCatalogStore = defineStore('catalog', {
     weatherMap: new Map<number, string>(),
     /** 天气效果说明（问题记录 272 起按语言） */
     weatherNotes: new Map<number, string>(),
+    /** 天气大类、是否特殊天气（天气改版；旧目录缓存没有） */
+    weatherKinds: new Map<number, { type: number; special: boolean }>(),
     /** 设施、套装的名字：加成来源用（问题记录 272） */
     devicesMap: new Map<number, string>(),
     suitsMap: new Map<number, NonNullable<CatalogDto['suits']>[number]>(),
@@ -49,6 +51,9 @@ export const useCatalogStore = defineStore('catalog', {
       this.streets = c.streets;
       this.weatherMap = new Map(c.weather.map((w) => [w.id, w.name]));
       this.weatherNotes = new Map(c.weather.flatMap((w) => (w.note ? [[w.id, w.note] as const] : [])));
+      this.weatherKinds = new Map(
+        c.weather.flatMap((w) => (w.type ? [[w.id, { type: w.type, special: !!w.special }] as const] : [])),
+      );
       this.devicesMap = new Map(c.devices.map((d) => [d.id, d.name]));
       this.suitsMap = new Map((c.suits ?? []).map((s) => [s.id, s]));
       this.dataMap = new Map(
@@ -175,6 +180,9 @@ export const useCatalogStore = defineStore('catalog', {
     /** 按 id 取当前语言的数据名字；目录里没有（旧缓存）时返回 undefined，调用处用服务端给的原文 */
     data(kind: CatalogDataKind, id: number): CatalogDataEntry | undefined {
       return this.dataMap.get(`${kind}:${id}`);
+    },
+    weather(id: number): { type: number; special: boolean } | undefined {
+      return this.weatherKinds.get(id);
     },
     weatherNote(id: number): string | undefined {
       return this.weatherNotes.get(id);
