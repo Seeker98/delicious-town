@@ -2,16 +2,6 @@
 export default {
   tabs: { cupboard: '常温', fridge: '冰箱' },
   newBadge: '新',
-  summary: (p: {
-    used: number;
-    slots: number;
-    lockUsed: number;
-    lockSlots: number;
-    max: number;
-    free: number;
-    grade: number;
-  }) =>
-    `格子 ${p.used}/${p.slots} · 锁定 ${p.lockUsed}/${p.lockSlots} · 单种上限 ${p.max} · 今天免体力处理还剩 ${p.free} 次 · 本街目标 ${p.grade} 品`,
   levelCount: (label: string, n: number) => `${label} (${n})`,
   /** 界面改版 P6：格子进度条、规则一行、详情面板 */
   meta: {

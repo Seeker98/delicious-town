@@ -267,7 +267,9 @@ onMounted(async () => {
        右边按能不能学分三档：能学实心“学习”，要用万能食材浅紫胶囊，学不了只放灰色小标签 -->
   <div v-if="list && list.items.length > 0" class="dt-card dt-rows-card">
     <div v-for="r in list.items" :key="r.id" class="dt-row dt-cb-row" :data-testid="`cb-${r.id}`">
-      <span class="dt-row-ico dt-cb-ico"><FoodArt :id="r.next?.[0]?.foodsId ?? 0" :size="28" /></span>
+      <span class="dt-row-ico dt-cb-ico"
+        ><FoodArt :id="r.art ?? r.next?.[0]?.foodsId ?? 0" :size="28"
+      /></span>
       <span class="dt-row-main">
         <span class="dt-row-title"
           ><RouterLink :to="`/cookbooks/${r.id}`" class="dt-cb-name">{{
@@ -313,26 +315,27 @@ onMounted(async () => {
         >{{ learnLabel(r) }}</span
       >
     </div>
-  </div>
-  <div v-if="list && list.total > list.pageSize" class="dt-pager">
-    <button
-      type="button"
-      class="btn btn-sm btn-light"
-      data-testid="prev-page"
-      :disabled="page <= 1"
-      @click="page -= 1"
-    >
-      {{ t.common.prevPage }}
-    </button>
-    <span class="dt-meta">{{ page }} / {{ Math.ceil(list.total / list.pageSize) }}</span>
-    <button
-      type="button"
-      class="btn btn-sm btn-light"
-      data-testid="next-page"
-      :disabled="page * list.pageSize >= list.total"
-      @click="page += 1"
-    >
-      {{ t.common.nextPage }}
-    </button>
+    <!-- 翻页放在卡片最下面一行（backlog P4：原来在卡片外面） -->
+    <div v-if="list && list.total > list.pageSize" class="dt-pager is-in-card">
+      <button
+        type="button"
+        class="btn btn-sm btn-light"
+        data-testid="prev-page"
+        :disabled="page <= 1"
+        @click="page -= 1"
+      >
+        {{ t.common.prevPage }}
+      </button>
+      <span class="dt-meta">{{ page }} / {{ Math.ceil(list.total / list.pageSize) }}</span>
+      <button
+        type="button"
+        class="btn btn-sm btn-light"
+        data-testid="next-page"
+        :disabled="page * list.pageSize >= list.total"
+        @click="page += 1"
+      >
+        {{ t.common.nextPage }}
+      </button>
+    </div>
   </div>
 </template>

@@ -33,8 +33,6 @@ export default {
     coop: '合力',
     signin: '签到',
   } as Record<string, string>,
-  stripExchange: (left: string) => `兑换期 ${left}`,
-  stripSettling: '结算中',
   claimable: (n: number) => `可领 ${n}`,
   /** 计数的动作名（和 @dt/shared 的 ACTIVITY_ACTIONS 同一组键） */
   actions: {

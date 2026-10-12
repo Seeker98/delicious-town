@@ -1,13 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  activityStatus,
-  actionName,
-  defaultSelection,
-  kindLabel,
-  orderActivities,
-  rewardStatus,
-  timeLeft,
-} from './activity';
+import { actionName, defaultSelection, kindLabel, orderActivities, rewardStatus, timeLeft } from './activity';
 
 describe('活动页工具', () => {
   it('剩余时间：天和小时；不到一小时显示分钟；过了显示已结束', () => {
@@ -58,14 +50,6 @@ describe('活动条（问题记录 226）', () => {
     );
     expect(kindLabel(a({ kind: 'coop' }))).toBe('合力');
     expect(kindLabel(a({ kind: 'exchange' }))).toBe('兑换');
-  });
-  it('状态：进行中写剩余时间；结束后兑换期内写兑换期；结算中；已结束', () => {
-    expect(activityStatus(a({}), now)).toBe('还剩 2 天 0 小时');
-    expect(
-      activityStatus(a({ state: 'ended', kind: 'exchange', exchangeUntil: '2026-10-01T05:00:00Z' }), now),
-    ).toBe('兑换期 还剩 5 小时');
-    expect(activityStatus(a({ state: 'settling' }), now)).toBe('结算中');
-    expect(activityStatus(a({ state: 'ended', exchangeUntil: '2026-09-30T00:00:00Z' }), now)).toBe('已结束');
   });
   it('排序：进行中在前，然后兑换期，最后结算中和已结束；同组保持原顺序', () => {
     const items = [

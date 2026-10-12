@@ -73,9 +73,10 @@ const summary = computed(() => {
           'is-freeloader': x.customer === 9,
           'is-empty': x.customer === 0,
           'is-left': x.customer === -2,
+          'is-picked': selected === x.no,
         },
       ]"
-      :aria-pressed="selected === x.no"
+      aria-haspopup="dialog"
       :data-testid="`table-${x.no}`"
       @click="emit('pick', x)"
     >

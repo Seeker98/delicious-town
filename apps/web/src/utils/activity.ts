@@ -38,13 +38,6 @@ export function kindLabel(a: ActivityDto): string {
 const exchangeOpen = (a: ActivityDto, now: Date) =>
   a.exchangeUntil !== null && new Date(a.exchangeUntil).getTime() > now.getTime();
 
-/** 活动条上的状态：进行中写剩余时间；结束后兑换期内写兑换期 */
-export function activityStatus(a: ActivityDto, now = new Date(serverNowMs())): string {
-  if (a.state === 'running') return timeLeft(a.endsAt, now);
-  if (exchangeOpen(a, now)) return m().stripExchange(timeLeft(a.exchangeUntil!, now));
-  return a.state === 'settling' ? m().stripSettling : m().endedShort;
-}
-
 /** 活动条的顺序：进行中 → 兑换期 → 结算中和已结束；同组保持服务端的顺序（按结束时间） */
 export function orderActivities(items: ActivityDto[], now = new Date(serverNowMs())): ActivityDto[] {
   const group = (a: ActivityDto) => (a.state === 'running' ? 0 : exchangeOpen(a, now) ? 1 : 2);

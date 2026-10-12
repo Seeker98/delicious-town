@@ -29,6 +29,8 @@ const wealth: Messages['wealth'] = {
   deposit: 'Depositar',
   tiersTitle: 'Hacer un depósito',
   termLabel: 'Plazo',
+  /** 期限按钮第三行：每多少银币得几个（backlog 理财：原来只写包名） */
+  termRate: (unit, per) => `${per} por cada ${unit}`,
   termDays: (days) => `${days} ${days === 1 ? 'día' : 'días'}`,
   withdrawShort: 'Retirar antes',
   depositConfirm: (amount, days, packs, pack, earlyPct) =>

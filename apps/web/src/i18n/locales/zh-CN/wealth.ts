@@ -26,6 +26,8 @@ export default {
   /** 界面改版 P8 */
   tiersTitle: '存一笔',
   termLabel: '存期',
+  /** 期限按钮第三行：每多少银币得几个（backlog 理财：原来只写包名） */
+  termRate: (unit: string, per: number) => `每 ${unit} 得 ${per} 个`,
   termDays: (days: number) => `${days} 天`,
   withdrawShort: '提前取出',
   depositConfirm: (amount: string, days: number, packs: number, pack: string, earlyPct: number) =>

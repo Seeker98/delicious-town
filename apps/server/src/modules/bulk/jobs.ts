@@ -23,7 +23,7 @@ export function bulkJobs(d: GameDeps): PeriodicJob[] {
       run: async ({ shardId, now, log }) => ({
         // 先写停更快照（问题记录 595），再收盘、结算
         frozen: await freezeDue(d, shardId, now),
-        closed: await closeDue(d, shardId, now),
+        closed: await closeDue(d, shardId, now, log),
         ...(await payOut(d, shardId, now, log)),
       }),
     },

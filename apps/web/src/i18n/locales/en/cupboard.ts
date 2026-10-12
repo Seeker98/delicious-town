@@ -4,8 +4,6 @@ import { plEn } from '../../helpers';
 const cupboard: Messages['cupboard'] = {
   tabs: { cupboard: 'Shelf', fridge: 'Fridge' },
   newBadge: 'New',
-  summary: (p) =>
-    `Slots ${p.used}/${p.slots} · Locked ${p.lockUsed}/${p.lockSlots} · Max ${p.max} each · ${p.free} free handlings left today · Street target: grade ${p.grade}`,
   levelCount: (label, n) => `${label} (${n})`,
   meta: {
     slots: (used, all) => `Slots ${used}/${all}`,

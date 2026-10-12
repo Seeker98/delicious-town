@@ -130,7 +130,7 @@ const guide: Messages['guide'] = {
       a: [
         'The daily check-in pack can contain some; the 100- and 120-point daily activity rewards; ',
         { to: '/rest/tasks?tab=weekly', text: 'weekly quests' },
-        '; the Chef ranking packs; Ichiban Kuji A, B, C and Last prizes; friends you invited reaching Lv. 10 and Lv. 30; a forum post being featured; event rewards and redeem codes.',
+        '; the Chef ranking packs; Ichiban Kuji A, B, C and Last prizes; friends you invited reaching the two levels shown on the invite page; a forum post being featured; event rewards and redeem codes.',
       ],
     },
     {

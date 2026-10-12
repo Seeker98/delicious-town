@@ -124,7 +124,7 @@ onMounted(() =>
         <h2 class="dt-block-title">{{ t.cookbook.foodsNeeded }}</h2>
         <span class="dt-block-more">{{ t.cookbook.missNote }}</span>
       </div>
-      <div class="dt-card dt-rows-card">
+      <div class="dt-card dt-rows-card dt-grade-rows">
         <div
           v-for="g in gradeRows"
           :key="g.from"

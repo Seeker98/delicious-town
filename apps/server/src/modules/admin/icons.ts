@@ -59,7 +59,7 @@ export function createAdminIcons(game: Game) {
           .forNoKeyUpdate()
           .executeTakeFirst();
         if (!r) throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404);
-        await lockRewardIcons(tx, { icons: [{ key: b.key }] });
+        await lockRewardIcons(tx, { icons: [{ key: b.key }] }, () => 'key');
         await grantIcon(tx, { restId, key: b.key, expiresAt, now, grantedBy: actor.accountId });
         await writeAudit(tx, {
           actor,

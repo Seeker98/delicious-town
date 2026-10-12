@@ -82,6 +82,17 @@ describe('ShopView（问题记录：商店不显示最大可购买数量）', ()
     expect(w.find('[data-testid="cap-86"]').text()).toBe('银币不够');
     expect(w.find('[data-testid="cap-52"]').text()).toBe('已达持有上限');
   });
+  it('余额不够时面板写还差多少，不写“买完剩 0”（backlog P8）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({ coin: 20000, diamond: 0 } as never);
+    const w = mountView();
+    await flushPromises();
+    await w.get('[data-testid="buy-86"]').trigger('click');
+    const sum = w.get('[data-testid="sheet-sum"]');
+    expect(sum.text()).not.toContain('买完剩');
+    expect(w.get('[data-testid="sheet-short"]').text()).toBe('还差35,000 银币');
+    await w.get('[data-testid="buy-13"]').trigger('click');
+    expect(w.get('[data-testid="sheet-sum"]').text()).toContain('买完剩19,000 银币');
+  });
   it('星级不够时写“x 星可用”，价格按钮变灰（问题记录 146）', async () => {
     vi.mocked(endpoints.shop).mockResolvedValue({
       coin: [

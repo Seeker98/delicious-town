@@ -15,6 +15,9 @@ const friends = useFriendsStore();
 /** 区服关掉的功能不显示入口（问题记录 248） */
 const tabs = computed(() => SECTIONS.filter((s) => !s.feature || restStore.featureOn(s.feature)));
 const current = computed(() => route.meta.section ?? null);
+/** 就在入口页上写 page；在入口下的详情页（好友餐厅、食谱详情）只说明属于这个入口，写 true（backlog P2a） */
+const ariaCurrent = (s: { key: Section; to: string }) =>
+  current.value !== s.key ? undefined : route.path === s.to ? 'page' : 'true';
 const LABEL: Record<Section, 'rest' | 'cookbooks' | 'cupboard' | 'market' | 'friends' | 'map'> = {
   home: 'rest',
   cookbooks: 'cookbooks',
@@ -37,7 +40,7 @@ watch(
       :key="s.key"
       :to="s.to"
       :class="['dt-tab', { active: current === s.key }]"
-      :aria-current="current === s.key ? 'page' : undefined"
+      :aria-current="ariaCurrent(s)"
       :data-testid="`tab-${s.key}`"
     >
       <DtArt :name="s.art" :size="24" />

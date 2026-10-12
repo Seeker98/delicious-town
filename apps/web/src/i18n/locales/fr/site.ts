@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    fix1013b:
+      'Encore quelques corrections\u202f: la boutique indique combien il vous manque au lieu de «\u202fil reste 0\u202f»\u202f; les souvenirs de l’entrepôt s’ouvrent pour afficher leur description complète\u202f; dans la liste des recettes, les plats au niveau max ont leur image d’ingrédient, la pagination est dans la carte et le détail aligne les ingrédients de chaque rang\u202f; les durées d’épargne indiquent combien de paquets on reçoit par montant déposé\u202f; une proposition refusée en Souscription en gros garde ce que vous avez saisi, et le panneau se rafraîchit toutes les 30 secondes tant qu’il est ouvert\u202f; les lecteurs d’écran nomment la case de quantité et ne lisent plus comme des interrupteurs les cases qui ouvrent un panneau',
     home1013:
       'Accueil plus compact\u202f: les pièces, l’EXP et l’huile du dernier tour sont dans une seule carte avec les tables, «\u202fMon restaurant\u202f» tient en trois petites cases, les nouvelles du village affichent 2 lignes et les équipements tiennent à quatre par ligne, les emplacements verrouillés résumés en une ligne. Touchez les pièces, l’énergie, les diamants, la renommée ou l’anneau de niveau sous la bannière pour savoir ce que c’est, comment l’obtenir et à quoi ça sert',
     fix1013:

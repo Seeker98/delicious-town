@@ -124,7 +124,8 @@ async function loadGuideCodes() {
   }
 }
 
-async function load() {
+/** fresh：操作完要最新的概况；进页面、定时刷新时和顶栏同时在读就共用一个请求 */
+async function load(fresh = false) {
   void loadAnnouncements();
   void loadSignIn();
   // 概况、任务、白食互不依赖，一起读（性能排查 2026-10-08：原来一个接一个，线上多两轮往返）
@@ -134,7 +135,7 @@ async function load() {
   tasksReq.catch(() => undefined);
   dineReq.catch(() => undefined);
   try {
-    await store.refresh();
+    await (fresh ? store.refresh() : store.load());
     void loadGuideCodes();
     // 本章第一个可领的；没有可领的显示第一个没完成的（问题记录 318）
     // 本章任务都领完时显示章末奖励，章锁定时写解锁条件
@@ -167,7 +168,7 @@ async function act(fn: () => Promise<unknown>, fallback: string) {
   busy.value = true;
   try {
     await fn();
-    await load();
+    await load(true);
   } catch (e) {
     toast.push(errorMessage(e, fallback), 'danger');
   } finally {

@@ -466,16 +466,18 @@ describe('CupboardView', () => {
     expect(w.find('[data-testid="fridge-302"]').exists()).toBe(true);
   });
 
-  it('一行一种，左边是食材图，选中的 aria-pressed；数量是步进器（界面改版 P4）（橱柜改版）', async () => {
+  it('一行一种，左边是食材图，正在看的那行 is-picked（点开的是面板，不用 aria-pressed，backlog P3）；数量是步进器（界面改版 P4）（橱柜改版）', async () => {
     const w = mountView();
     await flushPromises();
     const tile = w.get('[data-testid="pick-302"]');
     expect(tile.classes()).toContain('dt-cup-row');
     expect(tile.get('.dt-cup-tray use').attributes('href')).toMatch(/#food-/);
     expect(tile.get('use').attributes('href')).toMatch(/#food-/);
-    expect(tile.attributes('aria-pressed')).toBe('false');
+    expect(tile.attributes('aria-pressed')).toBeUndefined();
+    expect(tile.attributes('aria-haspopup')).toBe('dialog');
+    expect(tile.classes()).not.toContain('is-picked');
     await tile.trigger('click');
-    expect(tile.attributes('aria-pressed')).toBe('true');
+    expect(tile.classes()).toContain('is-picked');
     expect(w.get('input[type="number"]').element.closest('.dt-stepper')).not.toBeNull();
   });
 
@@ -490,14 +492,14 @@ describe('CupboardView', () => {
     // 再点同一格：关掉
     await tile.trigger('click');
     expect(w.find('[data-testid="picked-card"]').exists()).toBe(false);
-    expect(tile.attributes('aria-pressed')).toBe('false');
+    expect(tile.classes()).not.toContain('is-picked');
     // 按 Esc：关掉
     await tile.trigger('click');
     expect(w.find('[data-testid="picked-card"]').exists()).toBe(true);
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     await flushPromises();
     expect(w.find('[data-testid="picked-card"]').exists()).toBe(false);
-    expect(tile.attributes('aria-pressed')).toBe('false');
+    expect(tile.classes()).not.toContain('is-picked');
     w.unmount();
   });
 

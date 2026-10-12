@@ -1360,7 +1360,8 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   errors.push(...fundErrors(tuning.fund, { honorIds }));
   // 食材理财（理财设计 §3.1）：同一套检查后台保存区服数值时也跑
   const packIds = new Set(goods.filter((g) => g.use?.kind === 'needFood').map((g) => g.id));
-  errors.push(...wealthErrors(tuning.wealth, { packIds }));
+  const goodsMax = new Map(goods.map((g) => [g.id, g.maxNum]));
+  errors.push(...wealthErrors(tuning.wealth, { packIds, maxNumOf: (id) => goodsMax.get(id) }));
   // 特许大宗认购（大宗认购设计 §2.1）：同一套检查后台保存区服数值时也跑
   errors.push(...bulkErrors(tuning.bulk, { goodsIds: new Set(goods.map((g) => g.id)) }));
   // 许愿树（许愿树设计 §2）：同一套检查后台保存区服数值时也跑

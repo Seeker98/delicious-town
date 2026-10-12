@@ -146,6 +146,23 @@ describe('食谱列表、详情、需求', () => {
     expect(upgradable.allTotal).toBe(3810);
   });
 
+  it('列表左边的食材图：满级的菜也有，和详情页头图一样是一级所需的第一种食材（backlog P7）', async () => {
+    const ctx = await newRestaurant(t, { cookbooks: { [ZHOU]: 7 } });
+    // 满级的排在最后，几页都读出来
+    const first = await cb().list(ctx, { street: 0, page: 1, filter: 'all' });
+    const pages = Math.ceil(first.total / first.pageSize);
+    const items = (
+      await Promise.all(
+        Array.from({ length: pages }, (_, i) => cb().list(ctx, { street: 0, page: i + 1, filter: 'all' })),
+      )
+    ).flatMap((l) => l.items);
+    const row = items.find((r) => r.id === ZHOU)!;
+    expect(row).toMatchObject({ learn: 'max', next: null });
+    const d = await cb().detail(ctx, ZHOU);
+    expect(row.art).toBe(d.grades[0]!.foods[0]!.foodsId);
+    expect(items.every((r) => (r.art ?? 0) > 0)).toBe(true);
+  });
+
   it('详情：各品级所需食材', async () => {
     const ctx = await newRestaurant(t);
     const d = await cb().detail(ctx, ZHOU);

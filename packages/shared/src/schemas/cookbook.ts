@@ -33,6 +33,8 @@ export interface CookbookRowDto {
   grade: number;
   next: NeedFoodDto[] | null;
   learn: LearnType;
+  /** 列表左边的食材图：一级所需的第一种食材，和详情页头图一样（满级的菜 next 为空，原来只能用通用图，backlog P7）；旧服务端没有 */
+  art?: number;
 }
 
 export interface CookbookListDto {

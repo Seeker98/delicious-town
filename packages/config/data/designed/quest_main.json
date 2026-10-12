@@ -373,7 +373,7 @@
     "coin": 20000,
     "exp": 2000
    },
-   "href": "/mc"
+   "href": "/cookbooks?tab=mc"
   },
   {
    "id": 2082,
@@ -389,7 +389,7 @@
     "coin": 20000,
     "exp": 2000
    },
-   "href": "/mc"
+   "href": "/cookbooks?tab=mc"
   },
   {
    "id": 2083,
@@ -405,7 +405,7 @@
     "coin": 20000,
     "exp": 2000
    },
-   "href": "/mc"
+   "href": "/cookbooks?tab=mc"
   },
   {
    "id": 2084,
@@ -863,7 +863,7 @@
     "coin": 300000,
     "exp": 30000
    },
-   "href": "/mc"
+   "href": "/cookbooks?tab=mc"
   },
   {
    "id": 2182,

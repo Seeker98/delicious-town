@@ -93,6 +93,9 @@ describe('RankPanel', () => {
   it('shortNum：亿、万缩写', () => {
     expect(shortNum(123_456_789)).toBe('1.23亿');
     expect(shortNum(45_678)).toBe('4.6万');
+    // 末尾的 0 不写（理财期限按钮“每 100万 得 1 个”）
+    expect(shortNum(1_000_000)).toBe('100万');
+    expect(shortNum(120_000_000)).toBe('1.2亿');
     expect(shortNum(9_999)).toBe('9,999');
   });
 

@@ -27,6 +27,8 @@ export default {
   /** 介面改版 P8 */
   tiersTitle: '存一筆',
   termLabel: '存期',
+  /** 期限按鈕第三行：每多少銀幣得幾個（backlog 理財：原來只寫包名） */
+  termRate: (unit: string, per: number) => `每 ${unit} 得 ${per} 個`,
   termDays: (days: number) => `${days} 天`,
   withdrawShort: '提前取出',
   depositConfirm: (amount: string, days: number, packs: number, pack: string, earlyPct: number) =>

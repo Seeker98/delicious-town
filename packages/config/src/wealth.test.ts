@@ -45,6 +45,16 @@ describe('食材理财配置（理财设计 §3.1）', () => {
     expect(errors).toContain('tuning.wealth.terms 14 days goods 10203 is not a market pack');
   });
 
+  it('检查：一笔存满合计上限时给的包数超过补给包的持有上限时报错（backlog：领取永远放不下、本金卡住）', () => {
+    const src = source();
+    const t = JSON.parse(JSON.stringify(src['game/tuning']));
+    t.wealth.unit = 1000;
+    const { errors } = buildBundle({ ...src, 'game/tuning': t });
+    expect(errors).toContain(
+      `tuning.wealth.terms 3 days gives up to 10000 packs, over goods ${WEALTH.packBase + 3} max 9999`,
+    );
+  });
+
   it('检查：补给包编号要等于 10210 + 等级', () => {
     const src = source();
     const goods = structuredClone(src['master/goods']) as Array<{ id: number; use?: { level: number } }>;

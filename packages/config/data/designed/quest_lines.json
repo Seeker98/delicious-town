@@ -236,7 +236,7 @@
        }
       ]
      },
-     "href": "/society/fund"
+     "href": "/bank?tab=fund"
     },
     {
      "id": 3047,
@@ -646,7 +646,7 @@
       "coin": 30000,
       "exp": 3000
      },
-     "href": "/mc"
+     "href": "/cookbooks?tab=mc"
     },
     {
      "id": 3102,
@@ -694,7 +694,7 @@
       "coin": 100000,
       "exp": 10000
      },
-     "href": "/mc"
+     "href": "/cookbooks?tab=mc"
     },
     {
      "id": 3105,
@@ -710,7 +710,7 @@
       "coin": 300000,
       "exp": 30000
      },
-     "href": "/mc"
+     "href": "/cookbooks?tab=mc"
     }
    ]
   },
@@ -1464,7 +1464,7 @@
      "id": 3228,
      "order": 8,
      "needStar": 0,
-     "name": "一道题持有满 {n} 份",
+     "name": "一道题持有到 {n} 份",
      "cond": {
       "kind": "counter",
       "key": "predict.hold200",
@@ -2338,7 +2338,7 @@
        }
       ]
      },
-     "href": "/mc"
+     "href": "/cookbooks?tab=mc"
     },
     {
      "id": 3362,
@@ -2360,7 +2360,7 @@
        }
       ]
      },
-     "href": "/mc"
+     "href": "/cookbooks?tab=mc"
     },
     {
      "id": 3363,
@@ -2382,7 +2382,7 @@
        }
       ]
      },
-     "href": "/mc"
+     "href": "/cookbooks?tab=mc"
     },
     {
      "id": 3364,
@@ -2404,7 +2404,7 @@
        }
       ]
      },
-     "href": "/mc"
+     "href": "/cookbooks?tab=mc"
     }
    ]
   },
@@ -2958,7 +2958,7 @@
        }
       ]
      },
-     "href": "/rest/gem"
+     "href": "/rest/equip?tab=gem"
     },
     {
      "id": 3482,
@@ -3002,7 +3002,7 @@
        }
       ]
      },
-     "href": "/rest/gem"
+     "href": "/rest/equip?tab=gem"
     },
     {
      "id": 3484,
@@ -3024,7 +3024,7 @@
        }
       ]
      },
-     "href": "/rest/gem"
+     "href": "/rest/equip?tab=gem"
     }
    ]
   },
@@ -3356,7 +3356,7 @@
      "id": 3543,
      "order": 3,
      "needStar": 0,
-     "name": "在称号商店买一个称号",
+     "name": "买一个限定称号",
      "cond": {
       "kind": "counter",
       "key": "icon.buy",

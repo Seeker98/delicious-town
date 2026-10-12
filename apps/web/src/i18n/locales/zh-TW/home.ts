@@ -17,7 +17,6 @@ export default {
   forecast: (hour: number, type: string, same: boolean, sure: boolean) =>
     `${hour} 點後${sure ? '多半' : '可能'}${same ? '還是' : '轉'}${type}`,
   level: '等級',
-  closed: '停業',
   /** 首頁頭圖招牌下掛的牌子（介面改版 P5） */
   closedSign: '停業中',
   renown: '聲望',
@@ -30,7 +29,6 @@ export default {
   noCoinHint: '沒有銀幣, 加不了油',
   statusOpen: '營業中',
   oilFull: '油是滿的',
-  lastRound: '上一輪: ',
   /** 首頁區塊標題、簽到塊（介面改版 P5） */
   roundTitle: '上一輪',
   todayTitle: '今日',

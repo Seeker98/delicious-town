@@ -23,6 +23,11 @@ describe('数量步进器（界面改版 P3，设计 §5 第 6 条）', () => {
     expect(mountIt({ modelValue: 1 }).findAll('button')[0]!.attributes('disabled')).toBeDefined();
   });
 
+  it('中间的数字框有读屏名字：默认“数量”，可以传 label（backlog P3）', () => {
+    expect(mountIt({}).get('input').attributes('aria-label')).toBe('数量');
+    expect(mountIt({ label: '出价' }).get('input').attributes('aria-label')).toBe('出价');
+  });
+
   it('直接打字：合法数字跟着变；空的、字母失焦后回到下限；超上限夹到上限；小数取整', async () => {
     const w = mountIt({});
     const input = w.get('input[data-testid="n"]');

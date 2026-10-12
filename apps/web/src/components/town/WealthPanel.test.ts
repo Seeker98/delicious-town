@@ -59,6 +59,8 @@ describe('WealthPanel（理财设计 §3.4）', () => {
     const w = mount(WealthPanel, { global: { stubs: { teleport: true } } });
     await flushPromises();
     expect(btn(w, 'we-left').text()).toContain('10,000,000');
+    // 期限按钮写每多少银币得几个（backlog 理财）
+    expect(btn(w, 'we-rate-14').text()).toBe('每 100万 得 1 个');
     expect(btn(w, 'we-summary').text()).toContain('×1');
     // 界面改版 P8：“怎么算”收进一行，点开面板看规则（提前取出退 95%）
     expect(w.find('.dt-sheet').exists()).toBe(false);

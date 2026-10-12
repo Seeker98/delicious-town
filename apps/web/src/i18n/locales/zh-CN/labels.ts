@@ -71,11 +71,11 @@ export default {
   takeawayGrade: ['', '普通', '中品', '上品', '极品', '金牌', '珍品', '佳肴'],
   /** 食材等级的显示名：7 级是神秘食材、9 级是万能食材 */
   foodLevel: (level: number) => (level === 7 ? '神秘' : level === 9 ? '万能' : `${level} 级`),
-  /** 排行等大数：≥ 1 亿写 x.xx亿，≥ 1 万写 x.x万，否则 null（用千分位） */
+  /** 排行等大数：≥ 1 亿写 x.xx亿，≥ 1 万写 x.x万，末尾的 0 去掉（100万，不写 100.0万），否则 null（用千分位） */
   shortNum: (n: number): string | null =>
     Math.abs(n) >= 1e8
-      ? `${(n / 1e8).toFixed(2)}亿`
+      ? `${+(n / 1e8).toFixed(2)}亿`
       : Math.abs(n) >= 1e4
-        ? `${(n / 1e4).toFixed(1)}万`
+        ? `${+(n / 1e4).toFixed(1)}万`
         : null,
 };

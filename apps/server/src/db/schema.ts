@@ -1301,7 +1301,6 @@ export interface AcquireTendTable {
   created_at: Ts;
 }
 
-/** 每家被收购的店每天给老板的分红（压过封顶以后的）；day 是结算的那天 */
 /** 期货食材列表（期货设计 §5）：全服一份；不在表里 = 没上架 */
 export interface FuturesFoodTable {
   foods_id: number;
@@ -1337,6 +1336,7 @@ export interface FuturesQuotaTable {
   used: Default<number>;
 }
 
+/** 每家被收购的店每天给老板的分红（压过封顶以后的）；day 是结算的那天 */
 export interface AcquireDividendTable {
   rest_id: number;
   day: string;

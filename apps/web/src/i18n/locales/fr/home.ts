@@ -17,7 +17,6 @@ const home: Messages['home'] = {
   forecast: (hour, type, same, sure) =>
     `${sure ? 'Sans doute' : 'Peut-être'} ${same ? 'toujours ' : ''}${type.toLowerCase()} après ${hour} h`,
   level: 'Niveau',
-  closed: 'Fermé',
   closedSign: 'Fermé',
   renown: 'Renommée',
   refuel: (full, cost) =>
@@ -29,7 +28,6 @@ const home: Messages['home'] = {
   noCoinHint: 'Pas de pièces pour acheter de l’huile',
   statusOpen: 'Ouvert',
   oilFull: 'Huile au maximum',
-  lastRound: 'Dernier tour\u202f:',
   roundTitle: 'Dernier tour',
   todayTitle: 'Aujourd’hui',
   signInTodo: 'Pas encore aujourd’hui',

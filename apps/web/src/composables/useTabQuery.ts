@@ -41,6 +41,31 @@ export function useTabQuery<T extends string>(opts: TabQueryOptions<T>): Writabl
     else query[param] = v;
     return query;
   };
+  /** 切到这个标签、写进网址（自动改正网址时也用：不写本地存储） */
+  function go(v: T) {
+    if (!route || !router) {
+      memory.value = v;
+      return;
+    }
+    pending.value = v;
+    const path = route.path;
+    void router.replace({ query: withTab(v) }).then((f) => {
+      // 被别的跳转打断（切过去的面板挂载时按旧网址写参数，比如食谱列表写街道，终审 I1）：
+      // 等打断它的那次走完，还在这页、还要这个标签而网址不是，就按当时的网址再写一次
+      if (!isNavigationFailure(f, NavigationFailureType.cancelled)) return;
+      const stop = router.afterEach(() => {
+        stop();
+        if (pending.value === v && route.path === path && route.query[param] !== withTab(v)[param])
+          void router.replace({ query: withTab(v) });
+      });
+    });
+  }
+  /**
+   * 网址里要的标签暂时不可用、被自动改掉了（backlog P2b：期货关着的区服冷启动打开 ?tab=futures，
+   * 餐厅数据读回来前期货标签在、读回来后没了、读到有持仓又出现）：记下要的和改成的，标签又出现时切回去；
+   * 玩家自己切过标签就不管了
+   */
+  let wanted: { tab: string; shown: T } | null = null;
   const tab = computed<T>({
     get: () => {
       if (valid(pending.value)) return pending.value;
@@ -51,20 +76,8 @@ export function useTabQuery<T extends string>(opts: TabQueryOptions<T>): Writabl
       return valid(opts.omitWhen) ? opts.omitWhen : (list.value[0] as T);
     },
     set: (v) => {
-      if (route && router) {
-        pending.value = v;
-        const path = route.path;
-        void router.replace({ query: withTab(v) }).then((f) => {
-          // 被别的跳转打断（切过去的面板挂载时按旧网址写参数，比如食谱列表写街道，终审 I1）：
-          // 等打断它的那次走完，还在这页、还要这个标签而网址不是，就按当时的网址再写一次
-          if (!isNavigationFailure(f, NavigationFailureType.cancelled)) return;
-          const stop = router.afterEach(() => {
-            stop();
-            if (pending.value === v && route.path === path && route.query[param] !== withTab(v)[param])
-              void router.replace({ query: withTab(v) });
-          });
-        });
-      } else memory.value = v;
+      wanted = null;
+      go(v);
       if (opts.storageKey) {
         try {
           localStorage.setItem(opts.storageKey, v);
@@ -79,13 +92,27 @@ export function useTabQuery<T extends string>(opts: TabQueryOptions<T>): Writabl
       () => route.query[param],
       () => (pending.value = null),
     );
-  // 可用的标签变了（功能关了、数据读回来了），网址里的那个不再可用：改成现在显示的那个
-  watch(list, () => {
-    const q = route?.query[param];
-    if (typeof q === 'string' && !valid(q) && list.value.length > 0) {
-      const shown = tab.value;
-      tab.value = shown;
+  /**
+   * 网址里的标签不可用（不存在的 ?tab=xyz、功能关了）：网址改成现在显示的那个，不算玩家选的、不写本地存储
+   * （backlog P2b：原来不存在的值不改网址；标签列表变了改回第一个时也写进了“上次看的”）
+   */
+  function settle() {
+    if (!route || list.value.length === 0) return;
+    const q = route.query[param];
+    const cur = typeof q === 'string' ? q : opts.omitWhen;
+    if (wanted && valid(wanted.tab) && cur === wanted.shown) {
+      const w = wanted.tab;
+      wanted = null;
+      go(w);
+      return;
     }
-  });
+    if (typeof q === 'string' && !valid(q)) {
+      const shown = tab.value;
+      wanted = { tab: q, shown };
+      go(shown);
+    }
+  }
+  watch(list, settle);
+  settle();
   return tab;
 }
