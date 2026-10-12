@@ -136,6 +136,17 @@ const events: Messages['events'] = {
     'equip.stress': (p, names) =>
       `Enhancing ${names.goodsName(n(p, 'goodsId'))} to +${n(p, 'to')} ${p.success ? 'succeeded' : 'failed'}`,
     'level.up': (p) => `Restaurant reached level ${n(p, 'to')}`,
+    'table.auto': (p, names) => {
+      const extra = [
+        n(p, 'store') > 0 ? `used ${n(p, 'store')} ${names.goodsName(n(p, 'goodsId'))} from storage` : '',
+        n(p, 'coin') > 0 ? `spent ${formatNum(n(p, 'coin'))} coins` : '',
+      ].filter(Boolean);
+      return `Level-up: ${n(p, 'num')} ${plEn(n(p, 'num'), 'table', 'tables')} set up automatically${extra.length ? ` (${extra.join(', ')})` : ''}`;
+    },
+    'table.autoFail': (p, names) =>
+      p.reason === 'full'
+        ? `Level-up raised the table limit by ${n(p, 'num')}, but your floors are full, so no table was set up. Gain a star, then buy ${names.goodsName(n(p, 'goodsId'))} at the shop`
+        : `Level-up raised the table limit by ${n(p, 'num')}, but you didn't have ${formatNum(n(p, 'price'))} coins, so no table was set up. Buy ${names.goodsName(n(p, 'goodsId'))} at the shop when you can`,
     'star.up': (p) => `Restaurant reached ${n(p, 'star')} ${plEn(n(p, 'star'), 'star', 'stars')}`,
     'oil.expand': (p) => `Oil tank expanded to level ${n(p, 'level')} (max ${formatNum(n(p, 'oilMax'))})`,
     'rest.closed': () => 'Ran out of oil; the restaurant closed',

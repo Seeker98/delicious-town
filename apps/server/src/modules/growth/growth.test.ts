@@ -17,11 +17,14 @@ const learned = (n: number) =>
   Object.fromEntries(config.cookbookIndex.allIds.slice(0, n).map((id) => [id, 1]));
 
 describe('加点（规格书 02 §2.3）', () => {
-  it('只能加厨艺、刀工、火候，不超过剩余点数', async () => {
-    const ctx = await newRestaurant(t, { patch: { attr_left: 3 } });
-    const r = await t.game.growth.allocate(ctx, { cook: 2, cutting: 1, fire: 0 });
-    expect(r.data).toMatchObject({ attrLeft: 0, attrs: { cook: 2, cutting: 1, fire: 0 } });
-    await expect(t.game.growth.allocate(ctx, { cook: 1, cutting: 0, fire: 0 })).rejects.toMatchObject({
+  it('能加厨艺、刀工、火候、调味（用户 2026-10-12：调味和另外三项同等），不超过剩余点数', async () => {
+    const ctx = await newRestaurant(t, { patch: { attr_left: 5 } });
+    const r = await t.game.growth.allocate(ctx, { cook: 2, cutting: 1, fire: 0, season: 2 });
+    expect(r.data).toMatchObject({ attrLeft: 0, attrs: { cook: 2, cutting: 1, fire: 0, season: 2 } });
+    expect(await restRow(t, ctx.restaurantId)).toMatchObject({ attr_season: 2, attr_left: 0 });
+    await expect(
+      t.game.growth.allocate(ctx, { cook: 0, cutting: 0, fire: 0, season: 1 }),
+    ).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
       params: { kind: 'attrPoint', need: 1, have: 0 },
     });

@@ -50,7 +50,7 @@ describe('FloorPanel', () => {
     });
     const w = mountPanel(towerData());
     // 一行里写店名、称号
-    const text = w.get('[data-testid="floor-1"]').text();
+    const text = w.get('[data-testid="floor-open-1"]').text();
     expect(text).toContain('Apprentice Model Restaurant');
     expect(text).toContain('Apprentice Guardian');
     expect(text).not.toContain('守塔人1');
@@ -62,10 +62,24 @@ describe('FloorPanel', () => {
     expect(sheet).not.toMatch(/守塔人1|称号1|来挑战吧/);
   });
 
+  it('一行整行点开长老面板，行上没有挑战按钮（用户 2026-10-12：所有操作走面板）；打满的层右边写今天累了、没有 ›', async () => {
+    const w = mountPanel(towerData({ floors: [towerFloor(1), towerFloor(2, { left: 0, unlocked: true })] }));
+    expect(w.find('[data-testid^="tc-"]').exists()).toBe(false);
+    const row = w.get('[data-testid="floor-open-1"]');
+    expect(row.element.tagName).toBe('BUTTON');
+    expect(row.classes()).toContain('is-link');
+    const full = w.get('[data-testid="floor-open-2"]');
+    expect(full.classes()).not.toContain('is-link');
+    expect(full.text()).toContain('今天累了');
+    await row.trigger('click');
+    expect(w.find('[data-testid="tc-sheet-1"]').exists()).toBe(true);
+  });
+
   it('挑战后显示对决结果并通知刷新；试打按 test = true 调用', async () => {
     const w = mountPanel(towerData());
-    // 行上的“挑战”直接打
-    await w.get('[data-testid="tc-1"]').trigger('click');
+    // 挑战在点开的面板里
+    await openFloor(w, 1);
+    await w.get('[data-testid="tc-sheet-1"]').trigger('click');
     await flushPromises();
     expect(endpoints.towerChallenge).toHaveBeenCalledWith(1, false);
     // 结果从下面弹出
@@ -105,28 +119,22 @@ describe('FloorPanel', () => {
     );
     expect(w.get('[data-testid="block-2"]').text()).toBe('先打赢第 1 层');
     expect(w.get('[data-testid="block-3"]').text()).toBe('餐厅 21 级才能挑战');
-    // 没解锁的层没有挑战按钮
-    expect(w.find('[data-testid="tc-2"]').exists()).toBe(false);
-    expect(w.find('[data-testid="tc-3"]').exists()).toBe(false);
     expect(w.get('[data-testid="block-4"]').text()).toBe('4 层以上 6 点以后才能挑战');
-    expect(w.get('[data-testid="tc-4"]').attributes('disabled')).toBeDefined();
     // 点开的面板里也写原因，挑战灰掉
     await openFloor(w, 4);
     expect(w.get('[data-testid="sheet-block-4"]').text()).toBe('4 层以上 6 点以后才能挑战');
     expect(w.get('[data-testid="tc-sheet-4"]').attributes('disabled')).toBeDefined();
     const used = mountPanel(towerData({ left: 0 }));
     expect(used.get('[data-testid="block-1"]').text()).toBe('今天的挑战次数用完了');
-    expect(used.get('[data-testid="tc-1"]').attributes('disabled')).toBeDefined();
     await openFloor(used, 1);
     expect(used.get('[data-testid="tc-sheet-1"]').attributes('disabled')).toBeDefined();
     expect(used.get('[data-testid="tp-1"]').attributes('disabled')).toBeUndefined();
     const tired = mountPanel(towerData({ strength: 3 }));
     expect(tired.get('[data-testid="block-1"]').text()).toBe('体力不够 (要 5)');
-    // 这一层今天打满了：不写红字，按钮换成“累了”的标签，试打仍可用
+    // 这一层今天打满了：不写红字，右边是“累了”的标签，试打仍可用
     const full = mountPanel(towerData({ floors: [towerFloor(1, { left: 0 })] }));
     expect(full.find('[data-testid="block-1"]').exists()).toBe(false);
-    expect(full.find('[data-testid="tc-1"]').exists()).toBe(false);
-    expect(full.get('[data-testid="floor-1"]').text()).toContain('今天累了');
+    expect(full.get('[data-testid="floor-open-1"]').text()).toContain('今天累了');
     await openFloor(full, 1);
     expect(full.get('[data-testid="tc-sheet-1"]').attributes('disabled')).toBeDefined();
     expect(full.get('[data-testid="tp-1"]').attributes('disabled')).toBeUndefined();

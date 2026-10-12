@@ -10,29 +10,32 @@ import { ATTR_NAMES } from '../../utils/labels';
 
 /**
  * 加点（问题记录：从餐厅信息挪到厨具页）；加完通知父页面刷新属性表。
- * 界面改版 P7：放进底部面板，一项一行；预览写加完以后的合计（含厨具，父页面传 totals）
+ * 界面改版 P7：放进底部面板，一项一行；预览写加完以后的合计（含厨具，父页面传 totals）。
+ * 用户 2026-10-12：调味和厨艺、刀工、火候一样能加
  */
-const props = defineProps<{ totals?: Partial<Record<'cook' | 'cutting' | 'fire', number>> }>();
+const FIELDS = ['cook', 'cutting', 'fire', 'season'] as const;
+type Field = (typeof FIELDS)[number];
+const props = defineProps<{ totals?: Partial<Record<Field, number>> }>();
 const emit = defineEmits<{ done: [] }>();
 const store = useRestaurantStore();
 const toast = useToastStore();
 const t = useT();
 /** 每格加几点：步进器默认 0（界面改版 P3；原来留空是因为看不出是哪一项，现在每格上方写了名字） */
-const add = reactive<Record<'cook' | 'cutting' | 'fire', number>>({ cook: 0, cutting: 0, fire: 0 });
+const add = reactive<Record<Field, number>>({ cook: 0, cutting: 0, fire: 0, season: 0 });
 const busy = ref(false);
 const left = computed(() => store.rest?.attrLeft ?? 0);
 /** 清空的输入框（v-model.number 给空串）按 0 算 */
 const num = (x: unknown) => Math.max(0, Math.floor(Number(x) || 0));
-const points = () => ({ cook: num(add.cook), cutting: num(add.cutting), fire: num(add.fire) });
-const sum = computed(() => {
-  const p = points();
-  return p.cook + p.cutting + p.fire;
+const points = () => ({
+  cook: num(add.cook),
+  cutting: num(add.cutting),
+  fire: num(add.fire),
+  season: num(add.season),
 });
-const FIELDS = ['cook', 'cutting', 'fire'] as const;
-type Field = (typeof FIELDS)[number];
+const sum = computed(() => FIELDS.reduce((s, k) => s + num(add[k]), 0));
 /** 还没分出去的点数（问题记录 557：跟着输入减少） */
 const remain = computed(() => Math.max(0, left.value - sum.value));
-/** 这一格最多能填几点：剩余点数减去另外两格 */
+/** 这一格最多能填几点：剩余点数减去另外几格 */
 const cap = (k: Field) =>
   Math.max(0, left.value - FIELDS.filter((x) => x !== k).reduce((s, x) => s + num(add[x]), 0));
 // 填多了自动退回这一格最多能填的数（原来只是按钮变灰，不说为什么）；只退回刚改的那一格，不动已经填好的
@@ -54,14 +57,14 @@ const preview = (k: Field) => {
   return n > 0 ? `${base(k)} → ${base(k) + n}` : String(base(k));
 };
 const clear = () => {
-  add.cook = add.cutting = add.fire = 0;
+  for (const k of FIELDS) add[k] = 0;
 };
 
 async function allocate() {
   busy.value = true;
   try {
     await endpoints.allocate(points());
-    add.cook = add.cutting = add.fire = 0;
+    clear();
     await store.refresh();
     emit('done');
   } catch (e) {

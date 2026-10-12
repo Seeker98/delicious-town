@@ -4,11 +4,15 @@
  *   pnpm -F @dt/server elders            生成
  *   pnpm -F @dt/server elders --report   另外打印典型玩家几级能打过
  *
- * - 长老：等级属性点只加厨艺、刀工、火候（和玩家一样）；厨具基础属性按正常随机的期望；强化增量按最优分。
- * - “最难打”：对同级、穿当前等级最好套装 +5、加点平均、厨具按期望的典型玩家，胜率最低的分配。
+ * - 长老：等级属性点加厨艺、刀工、火候、调味（和玩家一样，用户 2026-10-12 加调味）；厨具基础属性按正常随机的期望；强化增量按最优分。
+ * - “最难打”：对穿当前等级最好套装 +5、加点平均、厨具按期望的典型玩家，胜率最低的分配。典型玩家加点平均分到
+ *   三项（厨艺刀工火候）或四项（连调味），哪种赢面大按哪种算（用户 2026-10-12 加调味）；玩家等级取长老同级和低 4、8、12 级，
+ *   胜率取平均（只看同级时，低几级的四项加点玩家比原来更早打得过）。
+ * - 和原来比（用户 2026-10-12：难度不低于加调味以前）：原来的难度 = 原来那份长老对三项加点典型玩家的得分（以前只能这样加）；
+ *   新算的和原来的长老都按“两种加法里赢面大的”算，取难的那个，报告里写出和原来难度的比较。
  * - 守塔人当天的特色菜按这一层菜池的期望每份价值算。随机数用固定种子，同样的配置每次生成一样的结果。
  */
-import { writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   EQUIP_ATTRS,
@@ -87,7 +91,8 @@ const PLAYER_SETS: ReadonlyArray<[number, number[]]> = [
 ];
 
 type Ratio = Record<(typeof EQUIP_ATTRS)[number], number>;
-type PointRatio = { cook: number; cutting: number; fire: number };
+type PointRatio = { cook: number; cutting: number; fire: number; season: number };
+const POINT_KEYS = ['cook', 'cutting', 'fire', 'season'] as const;
 
 /** 按比例把 n 分成整数（最大余数法，余数相同按顺序） */
 export function splitInt<K extends string>(
@@ -164,7 +169,7 @@ export function elderOf(
     level: spec.level,
     stress: spec.stress,
     drops: spec.drops,
-    points: splitInt(P, pts, ['cook', 'cutting', 'fire'] as const),
+    points: splitInt(P, pts, POINT_KEYS),
     pieces: spec.ids.map((id) => {
       const table = config.requireGoods(id).equip!.stressTable;
       return {
@@ -176,14 +181,27 @@ export function elderOf(
   };
 }
 
-/** 典型玩家（进攻）：加点平均分到厨艺刀工火候，最好的一套，厨具基础和强化都按期望（强化按部位顺序约一半给第一项） */
-export function typicalPlayer(config: GameConfig, level: number, stress: number): DuelSide {
+/** 典型玩家加点：平均分到厨艺刀工火候（三项，加调味以前的玩法），或者四项连调味一起平均分 */
+export type PlayerSplit = 3 | 4;
+
+/** 典型玩家（进攻）：加点平均分（默认三项），最好的一套，厨具基础和强化都按期望（强化按部位顺序约一半给第一项） */
+export function typicalPlayer(
+  config: GameConfig,
+  level: number,
+  stress: number,
+  split: PlayerSplit = 3,
+): DuelSide {
   const t = config.tuning.rest;
   const ids = PLAYER_SETS.find(([lv]) => level >= lv)![1];
   const P = t.attrPerLevel * (level - 1);
+  const keys = POINT_KEYS.slice(0, split);
   const points = {
     ...zeroAttrs(),
-    ...splitInt(P, { cook: 1 / 3, cutting: 1 / 3, fire: 1 / 3 }, ['cook', 'cutting', 'fire'] as const),
+    ...splitInt(
+      P,
+      Object.fromEntries(keys.map((k) => [k, 1 / split])) as Record<(typeof keys)[number], number>,
+      keys,
+    ),
   };
   const gear = zeroAttrs();
   for (const id of ids) {
@@ -251,25 +269,39 @@ function* grid(step: number): Generator<Ratio> {
               luck: (n - a - b - c - d - e) / n,
             };
 }
-const POINTS: PointRatio[] = [];
-for (let a = 0; a <= 4; a++)
-  for (let b = 0; a + b <= 4; b++) POINTS.push({ cook: a / 4, cutting: b / 4, fire: (4 - a - b) / 4 });
+/** 加点比例的候选：四项各占 1/n 的整数倍 */
+export function pointGrid(n: number): PointRatio[] {
+  const out: PointRatio[] = [];
+  for (let a = 0; a <= n; a++)
+    for (let b = 0; a + b <= n; b++)
+      for (let c = 0; a + b + c <= n; c++)
+        out.push({ cook: a / n, cutting: b / n, fire: c / n, season: (n - a - b - c) / n });
+  return out;
+}
+
+/** 比哪几级的典型玩家：长老同级，和低 4、8、12 级（不低于 1 级） */
+export const LEVEL_GAPS = [0, 4, 8, 12] as const;
+const playerLevels = (level: number) => [...new Set(LEVEL_GAPS.map((g) => Math.max(1, level - g)))];
+const mean = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
 
 /** 一层的最难打分配：先粗搜（强化 0.2 步长），再在最优附近细搜（0.1、0.05） */
-export function hardestElder(config: GameConfig, spec: (typeof ELDER_SPECS)[number], rng: Rng): ElderInput {
+export function hardestElder(
+  config: GameConfig,
+  spec: (typeof ELDER_SPECS)[number],
+  rng: Rng,
+  POINTS: PointRatio[] = pointGrid(4),
+): ElderInput {
   const t = config.tuning.tower.duel;
   const ctx = { goods: config.goods, suits: config.suits, ...config.tuning.rest };
-  const player = typicalPlayer(config, spec.level, 5);
+  const players = playerLevels(spec.level).map((lv) =>
+    ([3, 4] as const).map((split) => typicalPlayer(config, lv, 5, split)),
+  );
   const mc = expectedMc(config, spec.floor);
+  // 每个等级按赢面大的加法打（两种典型玩家胜率里高的），几个等级取平均
   const rate = (pts: PointRatio, gain: Ratio, n: number) => {
     const e = elderOf(config, spec, pts, gain);
-    return winRate(
-      player,
-      { name: '长老', attrs: elderAttrs(e, ctx).attrs, mcPrice: mc, dish: null },
-      t,
-      n,
-      rng,
-    );
+    const them = { name: '长老', attrs: elderAttrs(e, ctx).attrs, mcPrice: mc, dish: null };
+    return mean(players.map((ps) => Math.max(...ps.map((p) => winRate(p, them, t, n, rng)))));
   };
   let best = { pts: POINTS[0]!, gain: [...grid(0.2)][0]!, r: 2 };
   for (const gain of grid(0.2))
@@ -294,6 +326,55 @@ export function hardestElder(config: GameConfig, spec: (typeof ELDER_SPECS)[numb
   return elderOf(config, spec, best.pts, best.gain);
 }
 
+/** 典型玩家打这个长老的胜率：三项加点、四项加点两种（固定种子、局数多，新旧长老比较用） */
+export function elderRates(config: GameConfig, e: ElderInput, n = 20000): [number, number] {
+  return [elderScore(config, e, [3], n, [0]), elderScore(config, e, [4], n, [0])];
+}
+
+/**
+ * 长老的难度得分：同级和低几级的典型玩家（splits 里的加法取赢面大的）胜率的平均，越低越难打。固定种子、局数多，新旧长老比较用。
+ * 原来的难度用 splits = [3]（加调味以前只能三项加点）
+ */
+export function elderScore(
+  config: GameConfig,
+  e: ElderInput,
+  splits: readonly PlayerSplit[],
+  n = 5000,
+  gaps: readonly number[] = LEVEL_GAPS,
+): number {
+  const ctx = { goods: config.goods, suits: config.suits, ...config.tuning.rest };
+  const them = {
+    name: '长老',
+    attrs: elderAttrs(e, ctx).attrs,
+    mcPrice: expectedMc(config, e.floor),
+    dish: null,
+  };
+  const t = config.tuning.tower.duel;
+  const levels = [...new Set(gaps.map((g) => Math.max(1, e.level - g)))];
+  return mean(
+    levels.map((lv) =>
+      Math.max(
+        ...splits.map((split) =>
+          winRate(typicalPlayer(config, lv, 5, split), them, t, n, seededRng(4080 + e.floor * 100 + lv)),
+        ),
+      ),
+    ),
+  );
+}
+
+/** 原来那份长老数据（旧数据没有调味加点，按 0 算）；没有文件时为空 */
+function oldElders(file: string): Map<number, ElderInput> {
+  if (!existsSync(file)) return new Map();
+  const raw = JSON.parse(readFileSync(file, 'utf8')) as {
+    floors: Array<
+      Omit<ElderInput, 'points'> & { points: Omit<ElderInput['points'], 'season'> & { season?: number } }
+    >;
+  };
+  return new Map(
+    raw.floors.map((e) => [e.floor, { ...e, points: { ...e.points, season: e.points.season ?? 0 } }]),
+  );
+}
+
 function main(): void {
   // 从配置源现场构建，忽略旧的长老数据：改了强化表、加点数以后旧数据通不过校验，也能重新生成（问题记录 408 审查）
   const built = buildBundle(readSourceDir(defaultDataDir()), { ignoreElders: true });
@@ -301,9 +382,31 @@ function main(): void {
   const config = createGameConfig(built.bundle);
   const ctx = { goods: config.goods, suits: config.suits, ...config.tuning.rest };
   const report = process.argv.includes('--report');
+  const out = join(defaultDataDir(), 'game/tower_elders.json');
+  const old = oldElders(out);
   const floors: ElderInput[] = [];
+  const pct = (x: number) => `${(x * 100).toFixed(1)}%`;
   for (const spec of ELDER_SPECS) {
-    const e = hardestElder(config, spec, seededRng(408 * 100 + spec.floor));
+    let e = hardestElder(config, spec, seededRng(408 * 100 + spec.floor));
+    const prev = old.get(spec.floor);
+    // 等级、厨具没变时才比：新的、原来的都按两种加法里赢面大的算，取难的；和原来的难度（原来的长老对三项加点）比较
+    if (
+      prev &&
+      prev.level === spec.level &&
+      prev.stress === spec.stress &&
+      elderErrors(prev, ctx).length === 0
+    ) {
+      const before = elderScore(config, prev, [3]);
+      const oldNow = elderScore(config, prev, [3, 4]);
+      const fresh = elderScore(config, e, [3, 4]);
+      const keep = oldNow < fresh;
+      if (keep) e = prev;
+      const now = Math.min(oldNow, fresh);
+      console.log(
+        `${spec.floor} 层 典型玩家平均胜率（同级和低 4、8、12 级）：加调味以前 ${pct(before)}；原来的长老现在 ${pct(oldNow)}，新算 ${pct(fresh)}；` +
+          `用${keep ? '原来的' : '新算的'}${now > before ? '，比以前好打' : ''}`,
+      );
+    }
     const errs = elderErrors(e, ctx);
     if (errs.length > 0) throw new Error(errs.join('\n'));
     floors.push(e);
@@ -322,7 +425,6 @@ function main(): void {
     }
     console.log(line);
   }
-  const out = join(defaultDataDir(), 'game/tower_elders.json');
   writeFileSync(
     out,
     JSON.stringify(

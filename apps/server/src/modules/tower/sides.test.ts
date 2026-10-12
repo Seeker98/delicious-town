@@ -24,7 +24,7 @@ describe('长老属性和真实的店一致（backlog 408）', () => {
           attr_cook: e.points.cook,
           attr_cutting: e.points.cutting,
           attr_fire: e.points.fire,
-          attr_season: 0,
+          attr_season: e.points.season,
           attr_creatives: 0,
           luck: config.tuning.rest.luckPerLevel * (e.level - 1),
         },

@@ -1,3 +1,4 @@
+import { GOODS } from '@dt/config';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createTestGame, newRestaurant, restRow, type TestGame } from '../../test/game';
 import { runOp } from './op';
@@ -54,7 +55,9 @@ describe('runOp', () => {
   });
 
   it('经验可以连升多级：属性点、幸运、餐桌上限随之增加，并写个人日志', async () => {
-    const ctx = await newRestaurant(t, { patch: { level: 1, exp: 0, attr_left: 3, luck: 0, table_num: 4 } });
+    const ctx = await newRestaurant(t, {
+      patch: { level: 1, exp: 0, attr_left: 3, luck: 0, table_num: 4, coin: 0 },
+    });
     await run(ctx, async (op) => {
       gainExp(op, 2600);
     });
@@ -65,7 +68,11 @@ describe('runOp', () => {
       .selectAll()
       .where('rest_id', '=', ctx.restaurantId)
       .execute();
-    expect(logs.map((l) => [l.type, l.params])).toEqual([['level.up', { from: 1, to: 3 }]]);
+    // 升级后自动摆餐桌（用户 2026-10-12）：这家店没银币，写没买成
+    expect(logs.map((l) => [l.type, l.params])).toEqual([
+      ['level.up', { from: 1, to: 3 }],
+      ['table.autoFail', { num: 2, reason: 'coin', price: 5000, goodsId: GOODS.tableA }],
+    ]);
   });
 
   it('功能在区服关闭时拒绝，不锁店', async () => {

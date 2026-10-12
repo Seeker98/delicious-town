@@ -82,3 +82,24 @@ describe('交换食材的动态写明用什么换走了什么（问题记录 587
     );
   });
 });
+
+describe('升级自动摆餐桌、老鼠夹的动态（用户 2026-10-12）', () => {
+  const log = (type: string, params: Record<string, unknown>) => describeFeed({ type, params, at }, food);
+  it('摆上了几张、用了仓库的还是花了银币；没买成写原因和去哪买', () => {
+    expect(log('table.auto', { num: 1, store: 0, coin: 5000, goodsId: 10413 })).toBe(
+      '升级后自动摆上 1 张餐桌, 花了 5,000 银币',
+    );
+    expect(log('table.auto', { num: 2, store: 1, coin: 5000, goodsId: 10413 })).toBe(
+      '升级后自动摆上 2 张餐桌, 用了仓库里的道具10413 ×1, 花了 5,000 银币',
+    );
+    expect(log('table.autoFail', { num: 1, reason: 'coin', price: 5000, goodsId: 10413 })).toBe(
+      '升级后餐桌上限 +1, 但银币不够 5,000, 没买成；攒够后去商店买道具10413',
+    );
+    expect(log('table.autoFail', { num: 1, reason: 'full', price: 5000, goodsId: 10413 })).toBe(
+      '升级后餐桌上限 +1, 但楼层已经摆满, 没买成；升星后去商店买道具10413',
+    );
+  });
+  it('老鼠来偷被老鼠夹夹住', () => {
+    expect(log('mouse.trap', { coin: 120 })).toBe('老鼠来偷食材, 被老鼠夹夹住了, 得到 120 银币');
+  });
+});

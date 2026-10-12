@@ -1064,7 +1064,13 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
       return {
         attrs: { cook: 0, cutting: 0, fire: 0, season: 0, creatives: 0, luck: 0 },
         power: 0,
-        elder: { level: 1, stress: 0, points: { cook: 0, cutting: 0, fire: 0 }, pieces: [], drops: [] },
+        elder: {
+          level: 1,
+          stress: 0,
+          points: { cook: 0, cutting: 0, fire: 0, season: 0 },
+          pieces: [],
+          drops: [],
+        },
       };
     }
     const { floor: _f, ...elder } = e;

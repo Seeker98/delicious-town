@@ -136,6 +136,13 @@ export default {
     'equip.stress': (p, names) =>
       `${names.goodsName(n(p, 'goodsId'))}強化到 +${n(p, 'to')}${p.success ? '成功' : '失敗'}`,
     'level.up': (p) => `餐廳升到了 ${n(p, 'to')} 級`,
+    /** 升級自動擺餐桌（使用者 2026-10-12）：用了倉庫的幾張、花了多少銀幣；沒買成寫原因和去哪買 */
+    'table.auto': (p, names) =>
+      `升級後自動擺上 ${n(p, 'num')} 張餐桌${n(p, 'store') > 0 ? `, 用了倉庫裡的${names.goodsName(n(p, 'goodsId'))} ×${n(p, 'store')}` : ''}${n(p, 'coin') > 0 ? `, 花了 ${formatNum(n(p, 'coin'))} 銀幣` : ''}`,
+    'table.autoFail': (p, names) =>
+      p.reason === 'full'
+        ? `升級後餐桌上限 +${n(p, 'num')}, 但樓層已經擺滿, 沒買成；升星後去商店買${names.goodsName(n(p, 'goodsId'))}`
+        : `升級後餐桌上限 +${n(p, 'num')}, 但銀幣不夠 ${formatNum(n(p, 'price'))}, 沒買成；攢夠後去商店買${names.goodsName(n(p, 'goodsId'))}`,
     'star.up': (p) => `餐廳升到了 ${n(p, 'star')} 星`,
     'oil.expand': (p) => `油壺擴容到 ${n(p, 'level')} 級 (上限 ${formatNum(n(p, 'oilMax'))})`,
     'rest.closed': () => '油用光了, 餐廳停業',

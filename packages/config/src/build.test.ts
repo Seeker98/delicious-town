@@ -757,7 +757,7 @@ describe('厨塔配置（子项目 4C-2）', () => {
     expect(errors).toEqual([]);
     const f = bundle!.towerFloors;
     expect(f.map((x) => x.floor)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    expect(f.map((x) => x.power)).toEqual([39, 143, 217, 329, 461, 476, 562, 732, 792, 851]);
+    expect(f.map((x) => x.power)).toEqual([39, 143, 215, 329, 462, 474, 555, 733, 785, 855]);
     expect(f[9]).toMatchObject({
       name: '彭祖',
       title: '食神',
@@ -765,7 +765,7 @@ describe('厨塔配置（子项目 4C-2）', () => {
       maxTimes: 2,
       mc: true,
       note: '你会做蛋炒饭吗?',
-      attrs: { cook: 157, cutting: 275, fire: 62, season: 253, creatives: 35, luck: 138 },
+      attrs: { cook: 80, cutting: 231, fire: 62, season: 378, creatives: 35, luck: 138 },
     });
     expect(f[9]!.elder).toMatchObject({ level: 94, stress: 5, drops: [40701, 40702, 40703, 40704, 40705] });
     expect(f.filter((x) => x.mc).map((x) => x.floor)).toEqual([4, 5, 6, 7, 8, 9, 10]);
@@ -1353,7 +1353,7 @@ describe('赛厨长老（问题记录 408）', () => {
   it('和厨具配置对不上时报错（加点总数不对）', () => {
     const e = elders();
     const floors = e.floors.map((f) =>
-      f.floor === 1 ? { ...f, points: { cook: 0, cutting: 0, fire: 1 } } : f,
+      f.floor === 1 ? { ...f, points: { cook: 0, cutting: 0, fire: 1, season: 0 } } : f,
     );
     expect(buildBundle({ ...source(), 'game/tower_elders': { ...e, floors } }).errors).toContain(
       'tower_elders floor 1: points sum 1, expected 21',

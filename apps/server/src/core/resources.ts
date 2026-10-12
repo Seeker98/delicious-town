@@ -2,7 +2,7 @@ import type { GameEvent } from '@dt/shared';
 import type { LedgerEntry } from '../modules/ledger/ledger';
 import { notEnough } from './errors';
 import { applyExp } from './level';
-import { restLog, setRest, type Op } from './op';
+import { LEVEL_TABLES_KEY, restLog, setRest, type Op } from './op';
 
 type Kind = LedgerEntry['kind'];
 
@@ -95,7 +95,7 @@ export function gainOil(op: Op, n: number, opts: GainOptions = {}): number {
   return add;
 }
 
-/** 经验入账并处理升级：每级属性点 +3、幸运 +1、餐桌上限 +1（规格书 02 §2.2）；返回升了几级 */
+/** 经验入账并处理升级：每级属性点 +3、幸运 +1、餐桌上限 +1（规格书 02 §2.2），写回前自动补桌；返回升了几级 */
 export function gainExp(op: Op, n: number, opts: GainOptions = {}): number {
   if (n <= 0) return 0;
   const from = op.rest.level;
@@ -109,6 +109,11 @@ export function gainExp(op: Op, n: number, opts: GainOptions = {}): number {
     setRest(op, 'luck', op.rest.luck + t.luckPerLevel * r.gained);
     setRest(op, 'table_num', op.rest.table_num + t.tablesPerLevel * r.gained);
     restLog(op, 'level.up', { from, to: r.level });
+    // 升级自动摆餐桌（用户 2026-10-12）：要查库、要异步，记下来到 flushOp 写回前统一摆
+    op.cache.set(
+      LEVEL_TABLES_KEY,
+      ((op.cache.get(LEVEL_TABLES_KEY) as number | undefined) ?? 0) + t.tablesPerLevel * r.gained,
+    );
   }
   return r.gained;
 }

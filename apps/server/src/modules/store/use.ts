@@ -159,12 +159,14 @@ export async function useGoods(
       setRest(op, 'foods_lock_num', op.rest.foods_lock_num + use.amount * num);
       break;
     case 'resetAttr': {
-      const spent = op.rest.attr_cook + op.rest.attr_cutting + op.rest.attr_fire;
+      // 调味也能加点（用户 2026-10-12），一起返还
+      const spent = op.rest.attr_cook + op.rest.attr_cutting + op.rest.attr_fire + op.rest.attr_season;
       if (spent === 0) throw invalidState('no_points_to_reset');
       setRest(op, 'attr_left', op.rest.attr_left + spent);
       setRest(op, 'attr_cook', 0);
       setRest(op, 'attr_cutting', 0);
       setRest(op, 'attr_fire', 0);
+      setRest(op, 'attr_season', 0);
       break;
     }
     case 'bundle':

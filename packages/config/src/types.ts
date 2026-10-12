@@ -583,7 +583,7 @@ export interface TowerFloor {
 export interface TowerElder {
   level: number;
   stress: number;
-  points: { cook: number; cutting: number; fire: number };
+  points: { cook: number; cutting: number; fire: number; season: number };
   pieces: Array<{ id: number; base: EquipAttrs; gain: EquipAttrs }>;
   drops: number[];
 }
