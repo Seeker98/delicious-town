@@ -29,6 +29,8 @@ const myRoads = computed(() => new Set(props.data.myRoads));
 const tableOpen = ref(false);
 const pickItem = ref<'remnant' | 'rare' | null>(null);
 const busy = ref(false);
+/** 会的菜里应时的最多列几道，多的写“等 N 道”去特色菜页看 */
+const MINE_MAX = 3;
 
 const ART: Record<ShilingItem, ArtName> = {
   remnant: 'goods-scroll',
@@ -102,9 +104,16 @@ async function buy(item: ShilingItem, mcId?: number) {
       <p class="dt-sl-mine" data-testid="shiling-mine">
         <template v-if="data.inSeason.length"
           >{{ sl.mine
-          }}<template v-for="(id, i) in data.inSeason" :key="id"
+          }}<template v-for="(id, i) in data.inSeason.slice(0, MINE_MAX)" :key="id"
             ><template v-if="i > 0">{{ sl.sep }}</template
             ><RouterLink to="/cookbooks?tab=mc" class="dt-go">{{ catalog.mcName(id) }}</RouterLink></template
+          ><template v-if="data.inSeason.length > MINE_MAX">{{ ' ' }}</template
+          ><RouterLink
+            v-if="data.inSeason.length > MINE_MAX"
+            to="/cookbooks?tab=mc"
+            class="dt-go"
+            data-testid="shiling-mine-more"
+            >{{ sl.more(data.inSeason.length - MINE_MAX) }}</RouterLink
           ></template
         >
         <template v-else>{{ sl.mineNone }}</template>

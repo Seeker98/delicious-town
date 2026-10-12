@@ -88,6 +88,7 @@ const misc: Messages['misc'] = {
       until: (time) => `· until ${time}`,
       mine: 'Your dishes that are in season now: ',
       mineNone: 'None of your dishes are in season right now.',
+      more: (n) => `and ${n} more`,
       rule: 'Each seasonal serving a customer eats earns dish level × grade bonus ÷ 10 points; thrown-away and tasted servings don’t count.',
       tableRow: 'Season chart',
       tableSub: 'Which paths are in season in each weather',

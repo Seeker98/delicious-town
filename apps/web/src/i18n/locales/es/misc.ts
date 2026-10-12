@@ -88,6 +88,7 @@ const misc: Messages['misc'] = {
       until: (time) => `· hasta las ${time}`,
       mine: 'Tus platos de temporada ahora: ',
       mineNone: 'Ninguno de tus platos está de temporada ahora.',
+      more: (n) => `y ${n} más`,
       rule: 'Cada ración de temporada que se come un cliente da nivel del plato × bonus de calidad ÷ 10 puntos; las raciones tiradas o probadas no cuentan.',
       tableRow: 'Tabla de temporada',
       tableSub: 'Qué vías están de temporada con cada clima',

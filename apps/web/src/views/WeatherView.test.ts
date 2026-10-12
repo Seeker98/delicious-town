@@ -374,6 +374,17 @@ describe('时令（天气改版 PR②，设计图 Sl-A~Sl-D）', () => {
     expect(w.get('[data-testid="shiling-mine"]').text()).toBe('你会的菜里, 现在下锅应时: 秘·肉末烧饼');
   });
 
+  it('会的应时菜多时只列 3 道，后面写“等 N 道”去特色菜页（用户 2026-10-12）', async () => {
+    catalogWithMc();
+    vi.mocked(endpoints.shiling).mockResolvedValue(shiling({ inSeason: [14, 41, 186, 69, 231] }));
+    const w = await mountView();
+    expect(w.get('[data-testid="shiling-mine"]').text()).toBe(
+      '你会的菜里, 现在下锅应时: 秘·肉末烧饼、秘·龙井金鱼、秘·金糕 等 2 道',
+    );
+    expect(w.findAll('[data-testid="shiling-mine"] a')).toHaveLength(4);
+    expect(w.get('[data-testid="shiling-mine-more"]').attributes('href')).toBe('/cookbooks?tab=mc');
+  });
+
   it('时令铺：残卷写每级单价和本周还剩；罗盘点价格直接换，换完重新读；换满的灰掉；底下写试炼指定的花费', async () => {
     catalogWithMc();
     vi.mocked(endpoints.shiling).mockResolvedValue(shiling());
