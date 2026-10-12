@@ -8,6 +8,7 @@ export const SHARED_GOODS = {
   krabCoin: 10006, // 蟹币
   backStressOne: 10605, // 归元石（强化回退 1 级；厨具详情没有回退道具时写名字）
   backStressAll: 10604, // 神秘水晶（强化回退到初始）
+  mayorFavor: 60504, // 镇长的推荐（镇长猜天气猜对给的，页面写名字）
 } as const;
 
 /** 前后端都要用到的食材 id：万能食材 = masterBase + 食材等级（1~5 级）；一级、二级能换稀有食材（重新编号 PR 2） */

@@ -3,7 +3,6 @@ import { gameTime, seededRng } from '@dt/shared';
 import { createShard } from '../../../../test/fixtures';
 import { createTestGame, type TestGame } from '../../../../test/game';
 import { createAutoEvents, resolveAutoEvents } from './index';
-import { hiphop } from './hiphop';
 import { market } from './market';
 
 afterEach(() => vi.restoreAllMocks());
@@ -37,18 +36,17 @@ describe('出题任务（238-2 设计 §5.2）', () => {
     expect(rows.find((r) => r.auto_key === `krab:${DAY}`)!.kind).toBe('krab');
   });
 
-  it('双数日出嘻哈男孩；关掉嘻哈男孩功能时改出蟹老板；关掉开关不出这一类', async () => {
+  it('双数日也出蟹老板题（嘻哈男孩已删，天气改版 PR③）；关掉开关不出这一类', async () => {
     const even = '2026-11-04';
     const s1 = await createShard(t.db);
     await createAutoEvents(t.game.deps, s1, gameTime(even, 0, 5), seededRng(1));
-    expect((await events(s1)).find((r) => r.auto_key === `krab:${even}`)!.kind).toBe('hiphop');
+    expect((await events(s1)).find((r) => r.auto_key === `krab:${even}`)!.kind).toBe('krab');
     const s2 = await createShard(t.db);
     await t.db
       .insertInto('shard_config')
       .values({
         shard_id: s2,
         override: JSON.stringify({
-          features: { hiphop: false },
           tuning: { predict: { auto: { market: false, weather: false } } },
         }),
       })
@@ -144,13 +142,27 @@ describe('出错隔离（终审 I2）', () => {
     expect(r2.voided).toBeGreaterThanOrEqual(1);
     expect((await events(shardId)).find((r) => r.id === m.id)!.status).toBe('void');
   });
+
+  it('删掉的题型（嘻哈男孩，天气改版 PR③）判不了：过了 24 小时作废退款', async () => {
+    const shardId = await createShard(t.db);
+    await createAutoEvents(t.game.deps, shardId, at0, seededRng(1));
+    const m = (await events(shardId)).find((r) => r.kind === 'market')!;
+    await t.db.updateTable('predict_event').set({ kind: 'hiphop' }).where('id', '=', m.id).execute();
+    expect((await resolveAutoEvents(t.game.deps, shardId, m.resolve_at!)).voided).toBe(0);
+    const r = await resolveAutoEvents(
+      t.game.deps,
+      shardId,
+      new Date(m.resolve_at!.getTime() + 24 * 3_600_000),
+    );
+    expect(r.voided).toBeGreaterThanOrEqual(1);
+    expect((await events(shardId)).find((x) => x.id === m.id)!.status).toBe('void');
+  });
 });
 
 describe('出题的兜底和日志（backlog 238-2）', () => {
-  it('双数日嘻哈男孩题出不了时改出蟹老板题；出不了的一类写日志', async () => {
+  it('出不了的一类写日志', async () => {
     const even = '2026-11-04';
     const shardId = await createShard(t.db);
-    vi.spyOn(hiphop, 'create').mockResolvedValueOnce(null);
     vi.spyOn(market, 'create').mockResolvedValueOnce(null);
     const r = await createAutoEvents(t.game.deps, shardId, gameTime(even, 0, 5), seededRng(1), log);
     expect(r.created.sort()).toEqual(['krab', 'stats', 'weather']);

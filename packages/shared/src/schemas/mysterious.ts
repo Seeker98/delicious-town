@@ -77,6 +77,8 @@ export interface McOverviewDto {
   cookNums: number[];
   /** 有星神之书时鉴定会重抽 */
   starBook: boolean;
+  /** 持有特色菜鉴定师时是它（鉴定 +5%，天气改版 PR③）；没有为 null */
+  jobCard: number | null;
   /** 现在的当令（已学列表标当令、下锅面板写是否应时） */
   season: SeasonDto;
 }

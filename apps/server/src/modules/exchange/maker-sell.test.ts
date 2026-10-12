@@ -1,10 +1,12 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { GOODS } from '@dt/config';
 import { gameDay } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, foodNum, restRow, type TestGame } from '../../../test/game';
 import { eventCount } from '../../../test/quests';
 import { setTuning } from '../../../test/town';
 import { getDaily } from '../counter/dailyCounter';
+import { grantGoods } from '../store/grant';
 import { makerState, marketFloor, TO_SYSTEM } from './maker';
 import { refPrice } from './ref';
 import { feeOf, isTradable, priceBand } from './rules';
@@ -60,7 +62,7 @@ describe('卖给系统（问题记录 244）', () => {
     expect(fee).toMatchObject({ price: sys!.price, qty: 5, held: false });
     expect(await have(seller.restaurantId, f.id)).toBe(25);
     const coin = Number((await restRow(t, seller.restaurantId)).coin);
-    expect(coin).toBe(sys!.price * 5 - feeOf(sys!.price, 5, tune()));
+    expect(coin).toBe(sys!.price * 5 - feeOf(sys!.price, 5, tune().feeRate));
     expect(await makerState(t.db, shardId, f.id, day())).toMatchObject({ stock: 5, bought: 5 });
     expect(await getDaily(t.db, seller.restaurantId, TO_SYSTEM, day())).toBe(5);
     const trades = await t.db
@@ -165,5 +167,20 @@ describe('任务计数（问题记录 318）', () => {
     const { f, seller, sys } = await setup();
     await svc().sellToSystem(seller, { foodsId: f.id, qty: 1, price: sys!.price });
     expect(await eventCount(t, seller.restaurantId, 'exchange.fill')).toBe(1);
+  });
+});
+
+describe('交易所经纪人（天气改版 PR③）', () => {
+  it('持证卖出按证上的 2.5% 收手续费；我的页面费率跟着变', async () => {
+    const { f, seller, sys } = await setup();
+    await grantGoods(t.db, t.deps.config, seller.restaurantId, GOODS.brokerCard, 1, t.clock.now);
+    await svc().sellToSystem(seller, { foodsId: f.id, qty: 5, price: sys!.price });
+    const coin = Number((await restRow(t, seller.restaurantId)).coin);
+    expect(coin).toBe(sys!.price * 5 - feeOf(sys!.price, 5, 0.025));
+    expect(await svc().me(seller)).toMatchObject({
+      feeRate: 0.025,
+      feeBase: 0.05,
+      feeCard: GOODS.brokerCard,
+    });
   });
 });

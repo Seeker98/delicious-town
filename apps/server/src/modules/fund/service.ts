@@ -1,4 +1,4 @@
-import { FUND_MEDALS, goodsEffectHours, type Tuning } from '@dt/config';
+import { FUND_MEDALS, GOODS, goodsEffectHours, type Tuning } from '@dt/config';
 import type { FundViewDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
@@ -6,6 +6,7 @@ import { emitAction } from '../../core/action';
 import { opNews, restLog, runOp, type Op } from '../../core/op';
 import { gainCoin, spendCoin } from '../../core/resources';
 import { iconLive, MAX_SHOWN_ICONS } from '../friend/looks';
+import { cardValue } from '../jobcard/perks';
 import { grantGoodsOp, removeHonor } from '../store/goods';
 
 type F = Tuning['fund'];
@@ -73,14 +74,19 @@ export function createFundService(d: GameDeps) {
     now: Date,
   ): Promise<FundViewDto> {
     const a = await activeOf(db, restId);
+    // 持有银行理财顾问的按证上的返还比例（天气改版 PR③）
+    const card = await cardValue(db, d.config, restId, GOODS.fundCard, 'fundReturnRate', now);
+    const rate = card ?? f.returnRate;
     return {
       days: f.days,
-      returnRate: f.returnRate,
+      returnRate: rate,
+      returnBase: f.returnRate,
+      returnCard: card === null ? null : GOODS.fundCard,
       earlyRate: f.earlyRate,
       tiers: f.tiers.map((x) => ({
         key: x.key,
         coin: x.coin,
-        back: share(x.coin, f.returnRate),
+        back: share(x.coin, rate),
         medal: x.medal,
         // 页面写勋章加成用；目录里的道具不带加成
         expRate: d.config.goods.get(x.medal)?.effects.expRate ?? 0,
@@ -94,7 +100,7 @@ export function createFundService(d: GameDeps) {
             startedAt: a.started_at.toISOString(),
             maturesAt: a.matures_at.toISOString(),
             mature: a.matures_at <= now,
-            back: share(a.coin, f.returnRate),
+            back: share(a.coin, rate),
             early: share(a.coin, f.earlyRate),
             // 勋章加成按存入时的勋章取，运营删档、换勋章后也对（backlog 基金）
             expRate: d.config.goods.get(a.medal)?.effects.expRate ?? 0,
@@ -148,7 +154,8 @@ export function createFundService(d: GameDeps) {
         const a = await activeOf(o.tx, o.rest.id);
         if (!a) throw invalidState('fund_none');
         if (a.matures_at > o.now) throw invalidState('fund_not_mature');
-        const back = share(a.coin, o.tuning.fund.returnRate);
+        const card = await cardValue(o.tx, o.config, o.rest.id, GOODS.fundCard, 'fundReturnRate', o.now);
+        const back = share(a.coin, card ?? o.tuning.fund.returnRate);
         gainCoin(o, back);
         // 勋章不叠加：去掉身上其他基金勋章（不只当前档位里的，运营可能删过档）再发这一笔的
         for (const id of FUND_MEDALS) if (id !== a.medal) await removeHonor(o, id);

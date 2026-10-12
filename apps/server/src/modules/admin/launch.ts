@@ -7,7 +7,6 @@ import { createAdminShards } from './shards';
 
 /** 上线检查项（设计 §7）：开发期为方便测试关掉、上线前必须打开的开关 */
 export const LAUNCH_CHECKS: ReadonlyArray<{ path: string; want: boolean; why: string }> = [
-  { path: 'tuning.hiphop.requireVerifiedEmail', want: true, why: '防止小号刷嘻哈奖励' },
   { path: 'tuning.town.shake.limitIp', want: true, why: '摇钱树按 IP 限次，防多号' },
   { path: 'tuning.town.shake.limitDevice', want: true, why: '摇钱树按设备限次，防多号' },
   { path: 'tuning.friend.requireVerifiedEmail', want: true, why: '好友互动要求验证邮箱（防止被改回去）' },

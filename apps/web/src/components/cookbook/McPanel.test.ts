@@ -50,6 +50,7 @@ const overview: McOverviewDto = {
   cookies: 2,
   cookNums: [1, 5, 10],
   starBook: false,
+  jobCard: null,
   season: {
     open: true,
     minStar: 1,

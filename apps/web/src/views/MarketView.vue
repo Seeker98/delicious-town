@@ -6,7 +6,6 @@ import DtSheet from '../components/DtSheet.vue';
 import DtSkeleton from '../components/DtSkeleton.vue';
 import DtStepper from '../components/DtStepper.vue';
 import FoodArt from '../components/FoodArt.vue';
-import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import GardenSis from '../components/market/GardenSis.vue';
 import { computed, onMounted, ref } from 'vue';
 import { MARKET_BUY_MAX, type MarketDto, type MarketItemDto } from '@dt/shared';
@@ -181,7 +180,6 @@ onMounted(() =>
       {{ t.nav.links.exchange }}
     </RouterLink>
   </GardenSis>
-  <HiphopCard :place="1" @changed="load" />
   <DtEmpty v-if="!data && failed" :title="t.market.loadFailed" data-testid="market-failed" />
   <DtSkeleton v-else-if="!data" :rows="6" data-testid="market-skeleton" />
   <template v-else>

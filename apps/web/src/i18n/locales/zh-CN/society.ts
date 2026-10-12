@@ -54,7 +54,7 @@ export default {
     cardNum: '1 张',
     costLabel: '花费',
     costValue: (cost: string) => `约 ${cost} 银币, 幸运时半价`,
-    permit: '持有搬家处工作证时不要搬家卡。',
+    permit: '持有搬家公司调度工作证时不要搬家卡。',
     btn: '搬家',
     done: (street: string) => `已经搬到 ${street}`,
     failed: '搬家失败',

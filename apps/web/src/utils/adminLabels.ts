@@ -100,7 +100,6 @@ const SOURCE_PREFIX: Record<string, string> = {
   friend: '好友',
   fund: '基金',
   futures: '期货',
-  hiphop: '嘻哈男孩',
   invite: '邀请',
   kuji: '一番赏',
   lesson: '课堂',

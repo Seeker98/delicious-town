@@ -82,7 +82,6 @@ const activity: Messages['activity'] = {
     'equip.stress': 'Enhance cookware',
     'equip.gemIn': 'Socket gems',
     'equip.drill': 'Drill cookware',
-    'hiphop.reward': 'Tip the Hip-hop Boy',
     'post.create': 'Post on the forum',
     broadcast: 'Broadcast',
   },

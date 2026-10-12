@@ -23,8 +23,8 @@ const KNOWN: Record<string, string[]> = {
   'modules/mail/reward.ts': ['g.id'],
   // 好友周榜：代码常量 AWARDS（都是 GOODS 常量）
   'modules/friend/weekly.ts': ['goodsId'],
-  // 嘻哈周卡（weeklyCards）和工资：区服数值（tuningRefs）
-  'modules/hiphop/weekly.ts': ['goodsId', 'wages.get(h.goods_id)!'],
+  // 时令周榜发的工作证和工资：区服数值 jobCard.cards（tuningRefs）
+  'modules/jobcard/weekly.ts': ['goodsId', 'wages.get(h.goods_id)!'],
   // 发展基金勋章：FUND 常量（CODE_GOODS）
   'modules/fund/service.ts': ['a.medal'],
   // 食材理财的街市补给包：区服数值 wealth.terms（tuningRefs）
@@ -64,8 +64,7 @@ const KNOWN: Record<string, string[]> = {
   'modules/town/shake.ts': ['egg.goodsId'],
   // 时令铺的司天罗盘、晴雨签：按兑换项二选一的 GOODS 常量
   'modules/shiling/service.ts': ["b.item === 'compass' ? GOODS.compass : GOODS.weatherLots"],
-  // 雷神锤、镇长、和 NPC 聊天：按条件二选一的 GOODS 常量
-  'modules/town/mayor.ts': ['goodsId'],
+  // 和 NPC 聊天：按条件二选一的 GOODS 常量
   'modules/town/talk.ts': ['goodsId'],
 };
 

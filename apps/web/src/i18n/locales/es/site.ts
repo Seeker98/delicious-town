@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    jobcard1012:
+      'Cambio en los permisos de trabajo: el Chico hip-hop y el ranking de propinas desaparecen; los permisos ahora salen del ranking de temporada (página del tiempo: cada domingo a las 23:00, los 3 primeros con al menos 200 puntos de temporada en la semana sacan uno cada uno). Los permisos llevan nombre de oficio y hay seis nuevos (Corredor de la bolsa, Operador de futuros, Asesor de inversiones, Asesor de fusiones, Dependiente del Kuji, Analista de predicciones) que rebajan una comisión de su sistema; todos dan monedas y EXP finales +5\u00a0%, y los sueldos bajan mucho. La pregunta del alcalde pasa a ser adivinar el próximo tiempo: si aciertas hay premio, fallar no penaliza',
     shiling1012:
       'Temporadas: cada clima pone de temporada dos vías de platos estrella, y una tanda cocinada de temporada es de temporada (desde 1 estrella). Los clientes que comen platos de temporada te dan puntos de temporada para la tienda de temporada de la página del clima (fragmentos, brújulas celestes, palillos del tiempo); elegir el plato de prueba ahora cuesta puntos de temporada. Se quitan el Kraken y la tienda de tentáculos, la olla del alcalde ya no da semillas y las recompensas aleatorias ya no dan abono ni fórmulas arcanas. Las semillas que tenías valen 5 puntos de temporada cada una, los tentáculos 30',
     weather1012:

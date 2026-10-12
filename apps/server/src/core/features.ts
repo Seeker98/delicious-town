@@ -22,7 +22,6 @@ export const IMPLEMENTED_FEATURES: ReadonlySet<string> = new Set([
   'tower',
   'takeaway',
   'town',
-  'hiphop',
   'forum',
   'mail',
   'redeem',

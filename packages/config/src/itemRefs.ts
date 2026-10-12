@@ -21,7 +21,7 @@ const range = (base: number, from: number, to: number) =>
 
 /**
  * 代码里直接用到的道具：ids.ts 的常量、按编号推算的（残卷碎片 10801~10806、N 级券 10101~10105），
- * 构建里点名检查的（菜园、小镇、嘻哈男孩用到的道具）也都在 GOODS 里
+ * 构建里点名检查的（菜园、小镇用到的道具）也都在 GOODS 里
  */
 export const CODE_GOODS: ReadonlySet<number> = new Set([
   // 基数（fragmentBase、levelTicketBase）只是推算的起点，不是道具
@@ -59,10 +59,9 @@ export function tuningRefs(t: Tuning): ItemRef[] {
   for (const [, id] of t.tower.rankGifts) add('goods', id, 'gives', '厨塔排行');
   for (const [id] of t.takeaway.awards) add('goods', id, 'gives', '外卖');
   for (const id of [t.takeaway.customer.success, t.takeaway.customer.fail]) add('goods', id, 'gives', '外卖');
-  for (const id of t.hiphop.weeklyCards) add('goods', id, 'gives', '嘻哈男孩');
-  for (const [card, wage] of t.hiphop.wages) {
-    add('goods', card, 'uses', '嘻哈男孩');
-    add('goods', wage, 'gives', '嘻哈男孩');
+  for (const [card, wage] of t.jobCard.cards) {
+    add('goods', card, 'gives', '时令周榜');
+    add('goods', wage, 'gives', '工作证工资');
   }
   for (const [id] of t.forum.featureReward.goods) add('goods', id, 'gives', '论坛精华');
   for (const r of [t.invite.newbie, t.invite.rewards.lv10, t.invite.rewards.lv30]) award('邀请', r);

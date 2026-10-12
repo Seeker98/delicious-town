@@ -1,10 +1,11 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { FUND } from '@dt/config';
+import { FUND, GOODS } from '@dt/config';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { eventCount } from '../../../test/quests';
 import { setTuning } from '../../../test/town';
 import { listActiveEffects } from '../effects/service';
+import { grantGoods } from '../store/grant';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -328,5 +329,19 @@ describe('小镇发展基金（240-2）', () => {
     await features(true);
     await svc().claim(r);
     expect(await coin(r.restaurantId)).toBe(900_000);
+  });
+});
+
+describe('银行理财顾问（天气改版 PR③）', () => {
+  it('领取时持证按 95% 返还；页面比例跟着变、写原值', async () => {
+    const r = await newRestaurant(t, { patch: { coin: 1_000_000 } });
+    await svc().deposit(r, 'C');
+    later(7 * DAY);
+    await grantGoods(t.db, t.deps.config, r.restaurantId, GOODS.fundCard, 1, t.clock.now);
+    const v = await svc().view(r);
+    expect(v).toMatchObject({ returnRate: 0.95, returnBase: 0.9, returnCard: GOODS.fundCard });
+    expect(v.deposit?.back).toBe(950_000);
+    await svc().claim(r);
+    expect(await coin(r.restaurantId)).toBe(950_000);
   });
 });

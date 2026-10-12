@@ -67,10 +67,10 @@ describe('RankPanel', () => {
     expect(w.find('[data-testid="rank-elsewhere-acquire"]').exists()).toBe(false);
   });
 
-  it('我不在前列时底部单独显示；打赏大类显示奖励说明', async () => {
+  it('我不在前列时底部单独显示；时令大类显示奖励说明（天气改版 PR③）', async () => {
     vi.mocked(endpoints.rank).mockResolvedValue(
       board({
-        key: 'hiphop.week',
+        key: 'shiling.week',
         rows: board().rows.filter((r) => r.restId !== 7),
         me: { rank: 53, value: 10 },
       }),
@@ -78,9 +78,9 @@ describe('RankPanel', () => {
     useRestaurantStore().rest = { name: '我的店', disabledFeatures: [] } as never;
     const w = mount(RankPanel, { global: { stubs: { RouterLink: { template: '<a><slot /></a>' } } } });
     await flushPromises();
-    await w.find('[data-testid="rank-group-打赏"]').trigger('click');
+    await w.find('[data-testid="rank-group-时令"]').trigger('click');
     await flushPromises();
-    expect(endpoints.rank).toHaveBeenLastCalledWith('hiphop.week');
+    expect(endpoints.rank).toHaveBeenLastCalledWith('shiling.week');
     expect(w.find('[data-testid="rank-reward"]').text()).toContain('工作证');
     // 界面改版 P10：底部吸住一条：名次圆章、“我 · 店名”、没进前几、数值
     const me = w.get('[data-testid="rank-me"]');

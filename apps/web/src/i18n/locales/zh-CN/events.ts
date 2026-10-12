@@ -6,6 +6,8 @@ import { awardWords, n, table, type P } from '../../helpers';
 
 /** 得失提示、个人日志、好友动态的文案（问题记录 272） */
 type LogFn = (p: P, names: Names) => string;
+/** 天气四大类（镇长猜天气的消息用） */
+const WT = ['', '晴', '雨', '雪冰', '风沙雾'];
 const logs = table<LogFn>();
 const mcNameOf = (names: Names, id: number) => names.mcName?.(id) ?? `特色菜${id}`;
 const seedNameOf = (names: Names, id: number) => names.seedName?.(id) ?? `种子${id}`;
@@ -223,6 +225,9 @@ export default {
     'hiphop.tip': () => '打赏了嘻哈男孩',
     'hiphop.wage': (p, names) => `领到嘻哈男孩的工资 (${names.goodsName(n(p, 'cardId'))})`,
     'hiphop.weekly': (p, names) => `嘻哈周榜第 ${n(p, 'rank')} 名, 获得 ${names.goodsName(n(p, 'goodsId'))}`,
+    'jobCard.weekly': (p, names) =>
+      `时令周榜第 ${n(p, 'rank')} 名, 抽到工作证「${names.goodsName(n(p, 'goodsId'))}」`,
+    'jobCard.wage': (p, names) => `领到工作证的工资 (${names.goodsName(n(p, 'cardId'))})`,
     'market.manual': (p) => `菜场手动进货, 花费银币 ${formatNum(n(p, 'cost'))}`,
     'market.share': (p, names) =>
       p.byName
@@ -245,7 +250,14 @@ export default {
     'town.hammer': () => '敲了天气锤, 改变了天气',
     'weather.tool': (p, names) =>
       `用${names.goodsName(n(p, 'goodsId'))}把${names.weatherName?.(n(p, 'from')) ?? ''}改成了${names.weatherName?.(n(p, 'to')) ?? ''}`,
-    'town.mayor': (p) => (p.right ? '答对了镇长大胃锅的问题' : '答错了镇长大胃锅的问题'),
+    'town.mayor': (p) =>
+      p.type === undefined
+        ? p.right
+          ? '答对了镇长大胃锅的问题'
+          : '答错了镇长大胃锅的问题'
+        : p.right
+          ? `猜对了镇长的天气题: 是${WT[n(p, 'actual')] ?? ''}, 获得镇长的推荐`
+          : `镇长的天气题没猜中: 是${WT[n(p, 'actual')] ?? ''} (你猜的是${WT[n(p, 'type')] ?? ''})`,
     'town.shake': (p) => `摇钱树摇到银币 ${formatNum(n(p, 'coin'))}`,
     'town.talk': () => '和小镇居民聊了天',
     'town.wish': () => '在广场许了愿',

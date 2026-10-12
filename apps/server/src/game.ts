@@ -30,8 +30,8 @@ import { createBarService, type BarService } from './modules/bar/service';
 import { createTowerService, type TowerService } from './modules/tower/service';
 import { createTakeawayService, type TakeawayService } from './modules/takeaway/service';
 import { createTownService, type TownService } from './modules/town/service';
-import { hiphopJobs } from './modules/hiphop/jobs';
-import { createHiphopService, type HiphopService } from './modules/hiphop/service';
+import { jobCardJobs } from './modules/jobcard/jobs';
+import { mayorJobs } from './modules/town/mayor';
 import { createRankService, type RankService } from './modules/rank/service';
 import { createForumService, type ForumService } from './modules/forum/service';
 import { createActivityService, type ActivityService } from './modules/activity/service';
@@ -93,7 +93,6 @@ export interface Game {
   tower: TowerService;
   takeaway: TakeawayService;
   town: TownService;
-  hiphop: HiphopService;
   rank: RankService;
   forum: ForumService;
   mail: MailService;
@@ -147,7 +146,8 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...yardJobs(deps, world));
   jobs.push(...towerJobs(deps));
   jobs.push(...takeawayJobs(deps));
-  jobs.push(...hiphopJobs(deps));
+  jobs.push(...jobCardJobs(deps));
+  jobs.push(...mayorJobs(deps));
   jobs.push(...activityJobs(deps));
   jobs.push(...exchangeJobs(deps));
   jobs.push(...futuresJobs(deps));
@@ -175,7 +175,6 @@ export function createGame(app: AppDeps): Game {
     tower: createTowerService(deps),
     takeaway: createTakeawayService(deps, world),
     town: createTownService(deps, world),
-    hiphop: createHiphopService(deps, world),
     rank: createRankService(deps),
     forum: createForumService(deps),
     mail: createMailService(deps),

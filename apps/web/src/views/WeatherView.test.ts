@@ -5,6 +5,7 @@ import { createMemoryHistory, createRouter } from 'vue-router';
 import type { ShilingDto, WeatherToolsDto, WorldDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
+import { useRestaurantStore } from '../stores/restaurant';
 import WeatherView from './WeatherView.vue';
 import { usePageTitleStore } from '../stores/pageTitle';
 
@@ -16,6 +17,7 @@ vi.mock('../api/endpoints', () => ({
     weatherLots: vi.fn(),
     weatherLotsPick: vi.fn(),
     shiling: vi.fn(),
+    shilingWeek: vi.fn(),
     shilingBuy: vi.fn(),
   },
 }));
@@ -323,6 +325,7 @@ const shiling = (patch: Partial<ShilingDto> = {}): ShilingDto => ({
   ],
   myRoads: [1, 3],
   trialPick: 30,
+  week: { rank: null, minGain: 200, count: 3 },
   ...patch,
 });
 const catalogWithMc = () =>
@@ -372,6 +375,55 @@ describe('时令（天气改版 PR②，设计图 Sl-A~Sl-D）', () => {
     expect(now.text()).toContain('· 到 17:00');
     expect(now.findAll('.dt-road.is-mine').map((x) => x.text())).toEqual(['一道']);
     expect(w.get('[data-testid="shiling-mine"]').text()).toBe('你会的菜里, 现在下锅应时: 秘·肉末烧饼');
+  });
+
+  it('时令周榜（PR③，设计图 Jc-A、Jc-B）：一行写名次；点开列排名、门槛线、工作证和抽不到的原因', async () => {
+    catalogWithMc();
+    useRestaurantStore().rest = { id: 1, name: '美味小馆', disabledFeatures: [] } as never;
+    vi.mocked(endpoints.shiling).mockResolvedValue(shiling({ week: { rank: 2, minGain: 200, count: 3 } }));
+    vi.mocked(endpoints.shilingWeek).mockResolvedValue({
+      week: '2026-09-28',
+      until: '2026-10-04T15:00:00.000Z',
+      count: 3,
+      minGain: 200,
+      top: [
+        { rank: 1, restId: 5, name: '小猪餐厅', gain: 1120 },
+        { rank: 2, restId: 1, name: '美味小馆', gain: 380 },
+        { rank: 3, restId: 6, name: '阿花小馆', gain: 260 },
+        { rank: 4, restId: 8, name: '老王面馆', gain: 150 },
+      ],
+      me: { rank: 2, gain: 380 },
+      cards: [
+        { goodsId: 60406, wageId: 20406, wage: [{ kind: 'coin', id: null, num: 300_000 }], block: null },
+        {
+          goodsId: 60409,
+          wageId: 20409,
+          wage: [{ kind: 'coin', id: null, num: 300_000 }],
+          block: { kind: 'star', n: 2 },
+        },
+      ],
+    });
+    const w = await mountView();
+    expect(w.get('[data-testid="shiling-week-rank"]').text()).toBe('你第 2 名');
+    expect(w.get('[data-testid="shiling-week-open"]').text()).toContain(
+      '本周获得 ≥ 200 的前 3 名抽工作证 · 周日 23 点',
+    );
+    await w.get('[data-testid="shiling-week-open"]').trigger('click');
+    await flushPromises();
+    expect(w.text()).toContain('本周 9/28 ~ 10/4 23:00 · 按本周获得的时令值排');
+    expect(w.get('[data-testid="week-row-1"]').classes()).toContain('is-mine');
+    expect(w.get('[data-testid="week-row-1"]').text()).toContain('你 · 美味小馆');
+    expect(w.findAll('[data-testid="week-cut"]').map((x) => x.text())).toEqual([
+      '— 本周获得 200 以下不抽证 —',
+    ]);
+    expect(w.find('[data-testid="week-me"]').exists()).toBe(false);
+    const broker = w.get('[data-testid="week-card-60406"]');
+    expect(broker.text()).toContain('交易所卖出手续费 5% → 2.5%');
+    expect(broker.text()).toContain('300,000');
+    expect(broker.classes()).not.toContain('is-off');
+    const mna = w.get('[data-testid="week-card-60409"]');
+    expect(mna.classes()).toContain('is-off');
+    expect(mna.text()).toContain('要 2 星');
   });
 
   it('会的应时菜多时只列 3 道，后面写“等 N 道”去特色菜页（用户 2026-10-12）', async () => {

@@ -72,6 +72,8 @@ const news: Messages['news'] = {
       `${w} consiguió ${x.goodsName(SHARED_GOODS.krabCoin)}×${num(p.num)} dando propinas`,
     'hiphop.weekly': (w, p, x) =>
       `Enhorabuena a ${w}, ${rank(num(p.rank))} en las propinas semanales, que gana ${x.goodsName(num(p.goodsId))} (160 horas)`,
+    'shiling.weekly': (w, p, x) =>
+      `¡Enhorabuena a ${w}! ${num(p.rank)}.º en el ranking de temporada, saca el permiso de trabajo «${x.goodsName(num(p.goodsId))}» (160 horas)`,
     'market.manual': (w, p, x) =>
       `${w} se abasteció de platos del día: ${list(p.foods)
         .map((id) => x.foodName(num(id)))

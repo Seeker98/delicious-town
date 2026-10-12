@@ -63,6 +63,16 @@ export async function gainShiling(
     )
     .returning('week_gain')
     .executeTakeFirstOrThrow();
+  // 周榜（PR③）按周另记一份，跨周也留着
+  await op.tx
+    .insertInto('shiling_week')
+    .values({ rest_id: op.rest.id, shard_id: op.shardId, week, gain: n, last_at: op.now })
+    .onConflict((oc) =>
+      oc
+        .columns(['rest_id', 'week'])
+        .doUpdateSet({ gain: sql<number>`shiling_week.gain + ${n}`, last_at: op.now }),
+    )
+    .execute();
   recordChange(op, 'shiling', n, opts);
   return { before: r.week_gain - n, after: r.week_gain };
 }

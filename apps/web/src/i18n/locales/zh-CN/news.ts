@@ -67,6 +67,8 @@ export default {
     'hiphop.krab': (w, p, x) => `${w}通过打赏获得 ${x.goodsName(SHARED_GOODS.krabCoin)}×${num(p.num)}`,
     'hiphop.weekly': (w, p, x) =>
       `恭喜${w}在每周打赏中获得第 ${num(p.rank)} 名, 奖励 ${x.goodsName(num(p.goodsId))} (160 小时)`,
+    'shiling.weekly': (w, p, x) =>
+      `恭喜${w}在时令周榜获得第 ${num(p.rank)} 名, 抽到工作证「${x.goodsName(num(p.goodsId))}」(160 小时)`,
     'market.manual': (w, p, x) =>
       `${w}已进货日常菜: ${list(p.foods)
         .map((id) => x.foodName(num(id)))

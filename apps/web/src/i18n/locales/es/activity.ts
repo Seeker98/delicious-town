@@ -83,7 +83,6 @@ const activity: Messages['activity'] = {
     'equip.stress': 'Reforzar utensilios',
     'equip.gemIn': 'Engastar gemas',
     'equip.drill': 'Perforar utensilios',
-    'hiphop.reward': 'Dar propina al Chico hip-hop',
     'post.create': 'Publicar en el foro',
     broadcast: 'Hacer un anuncio',
   },

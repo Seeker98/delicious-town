@@ -12,12 +12,6 @@
       "note": "摇钱树每天一次 shake.base 8000 + 平均 rand 2500；雯姐送神秘礼券 1~20 张取平均 10；13 哥送喇叭 1~2 个取 1。大胃哥送的食材不计"
     },
     {
-      "source": "hiphop",
-      "minLevel": 1,
-      "coin": 8000,
-      "note": "打赏收益粗估：worthBase 35000 × 平均倍率约 1.25 ÷ coinWorthDiv 5，约每天一次"
-    },
-    {
       "source": "bar",
       "minLevel": 1,
       "randomFoods": [

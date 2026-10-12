@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import JobCardNote from '../JobCardNote.vue';
 import { onMounted, ref } from 'vue';
 import type { FundViewDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
@@ -91,6 +92,7 @@ onMounted(load);
   <div data-testid="fund-panel">
     <template v-if="data">
       <div class="dt-block-note">{{ t.fund.rule(data.days, pct(data.returnRate), pct(data.earlyRate)) }}</div>
+      <JobCardNote v-if="data.returnCard" :card="data.returnCard" />
       <section v-if="data.deposit" class="dt-block">
         <div class="dt-block-head">
           <h2 class="dt-block-title">{{ t.fund.mine }}</h2>

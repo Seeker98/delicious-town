@@ -46,7 +46,7 @@ const takeaway: Messages['takeaway'] = {
     noRenown: (n) => `Renombre insuficiente (necesitas ${n})`,
     noFoods: 'Faltan ingredientes',
     noRider: 'No hay repartidores libres',
-    needJob: 'Necesitas un permiso de trabajo de tienda válido',
+    needJob: 'Necesitas un permiso de trabajo de Jefe de reparto válido',
     taken: (name, min) => `${name} va de camino, llega en ${min} min`,
     takeFailed: 'No se pudo aceptar el pedido',
     refreshed: (n) =>

@@ -176,7 +176,7 @@ const wiki: Messages['wiki'] = {
           (n) =>
             `On apprend plus vite dans une rue qui a beaucoup de recettes\u202f: la ${n.biggestStreet.name} en a ${formatNum(n.biggestStreet.cookbooks)}, plus que toute autre rue.`,
           'Les rues sont à pièces, équilibrées ou à EXP\u202f: allez dans une rue des pièces quand il vous faut des pièces, dans une rue de l’EXP pour monter de niveau. La page de déménagement et la page des recettes indiquent le type et le bonus de chaque rue.',
-          'Déménager demande une carte de déménagement (inutile avec un permis de travail du bureau des déménagements) et des frais, divisés par deux quand vous avez de la chance.',
+          'Déménager demande une carte de déménagement (inutile avec la carte de métier Répartiteur de déménagement) et des frais, divisés par deux quand vous avez de la chance.',
         ],
       },
       {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import JobCardNote from '../components/JobCardNote.vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import type {
@@ -135,7 +136,8 @@ function tend() {
 async function redeem() {
   const v = view.value;
   if (!v?.me.owner) return;
-  const got = sellerGets(v.me.price, v.taxRate);
+  // 赎身的钱给老板：按老板的税率（老板持有并购顾问时少扣，天气改版 PR③）
+  const got = sellerGets(v.me.price, v.me.taxRate);
   const a = t.value.acquire;
   const [title = '', ...body] = a
     .confirmRedeem(coin(v.me.price), v.me.owner.name, coin(got), coin(v.me.price - got), v.protectDays)
@@ -339,6 +341,7 @@ onMounted(load);
           >
         </button>
       </div>
+      <JobCardNote v-if="view.taxCard" :card="view.taxCard" />
 
       <section class="dt-block">
         <div class="dt-block-head">
@@ -489,7 +492,7 @@ onMounted(load);
             </div>
             <div>
               <dt>{{ t.acquire.listGot }}</dt>
-              <dd>{{ coin(sellerGets(listCost, view.taxRate)) }}</dd>
+              <dd>{{ coin(sellerGets(listCost, view.me.taxRate)) }}</dd>
             </div>
           </dl>
           <div class="dt-detail-note">{{ t.acquire.listNote(view.listDays) }}</div>

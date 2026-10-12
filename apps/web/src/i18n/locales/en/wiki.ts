@@ -175,7 +175,7 @@ const wiki: Messages['wiki'] = {
           (n) =>
             `Streets with more recipes are faster to learn on: ${n.biggestStreet.name} has ${formatNum(n.biggestStreet.cookbooks)}, the most of any street.`,
           'Streets are coin, balanced or EXP streets: go to a coin street when you need coins, an EXP street to level up. The moving page and the recipe page show each street’s type and bonus.',
-          'Moving takes a Moving Card (not needed with a Moving Office Work Permit) and a moving fee, halved when you are lucky.',
+          'Moving takes a Moving Card (not needed with the Moving Company Dispatcher job permit) and a moving fee, halved when you are lucky.',
         ],
       },
       {

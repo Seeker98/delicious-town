@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import JobCardNote from '../JobCardNote.vue';
 import { computed, onMounted, ref } from 'vue';
 import type { FuturesContractDto, FuturesDto, FuturesFoodDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
@@ -145,6 +146,7 @@ function result(c: FuturesContractDto): string {
   <div v-if="data">
     <div v-if="!data.enabled" class="dt-act-note" data-testid="fu-off">{{ t.futures.off }}</div>
     <div v-else-if="blockedText" class="dt-act-note is-warn" data-testid="fu-blocked">{{ blockedText }}</div>
+    <JobCardNote v-if="data.card" :card="data.card" />
     <div class="dt-card dt-rows-card">
       <div v-if="data.enabled" class="dt-row" data-testid="fu-person">
         <span class="dt-row-main">

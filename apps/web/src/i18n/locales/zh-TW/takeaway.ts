@@ -46,7 +46,7 @@ export default {
     noRenown: (n: number) => `聲望不夠 (要 ${n})`,
     noFoods: '食材不夠',
     noRider: '沒有空閒的騎手',
-    needJob: '要持有有效的商店工作證',
+    needJob: '要持有有效的外賣站長工作證',
     taken: (name: string, min: number) => `${name}出發了, ${min} 分鐘後送到`,
     takeFailed: '接單失敗',
     refreshed: (n: number) => `刷出了 ${n} 張私人單`,

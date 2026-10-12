@@ -7,7 +7,6 @@ import type { ArtName } from '../art/generated/names';
 import societyScene from '../art/scene/society.svg?url';
 import DtArt from '../components/DtArt.vue';
 import DtRow from '../components/DtRow.vue';
-import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import PlaceScene from '../components/place/PlaceScene.vue';
 import MoveSheet from '../components/society/MoveSheet.vue';
 import RenameSheet from '../components/society/RenameSheet.vue';
@@ -173,7 +172,6 @@ function done() {
       {{ t.society.chips.oilMax(formatNum(oil.oilMax)) }}</span
     >
   </PlaceScene>
-  <HiphopCard :place="4" class="mt-2" />
 
   <template v-if="townOn">
     <div class="dt-block-head mt-3">

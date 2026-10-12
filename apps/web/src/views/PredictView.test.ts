@@ -36,6 +36,8 @@ const list = (p: Partial<PredictListDto> = {}): PredictListDto => ({
   enabled: true,
   need: { level: 20, days: 7 },
   feeRate: 0.02,
+  feeBase: 0.02,
+  feeCard: null,
   maxHold: 200,
   maxTrade: 100,
   unit: 1000,

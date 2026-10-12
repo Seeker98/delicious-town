@@ -58,7 +58,7 @@ const society: Messages['society'] = {
     cardNum: '1',
     costLabel: 'Cost',
     costValue: (cost) => `about ${cost} coins, half price when lucky`,
-    permit: 'No Moving Card needed with a Moving Office permit.',
+    permit: 'No Moving Card needed with the Moving Company Dispatcher job permit.',
     btn: 'Move',
     done: (street) => `Moved to ${street}`,
     failed: 'Moving failed',

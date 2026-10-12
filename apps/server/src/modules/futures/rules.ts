@@ -12,7 +12,9 @@ export function futuresUnitPrice(levelPrice: number, ref: number, t: FuturesTuni
 }
 
 /** 定金 = ceil(总价 × depositRate)；尾款 = 总价 − 定金 */
-export const futuresDeposit = (total: number, t: FuturesTuning): number => ceilClean(total * t.depositRate);
+/** 定金；depositRate 持有期货交易员时是证上的（天气改版 PR③） */
+export const futuresDeposit = (total: number, t: { depositRate: number }): number =>
+  ceilClean(total * t.depositRate);
 
 /** 区服每天每种的额度：列表里单独设了的优先（0 也算），否则按等级默认 */
 export const futuresQuota = (level: number, override: number | null, t: FuturesTuning): number =>

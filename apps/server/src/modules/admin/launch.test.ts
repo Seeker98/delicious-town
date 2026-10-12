@@ -22,17 +22,13 @@ describe('上线检查（设计 §7）', () => {
   it('默认值下列出没通过的项；修复只改这几项，保留其他覆盖（Review Focus 3）', async () => {
     const pre = await call(ctx.app, 'POST', `/api/v1/admin/shards/${shardId}/override`, {
       cookie: admin.cookie,
-      body: { override: { tuning: { hiphop: { hour: 10 } } }, note: '原有覆盖', version: 0 },
+      body: { override: { tuning: { rank: { top: 40 } } }, note: '原有覆盖', version: 0 },
     });
     expect(pre.status).toBe(200);
     const r = await get(mod.cookie);
     const s = mine(r.json.data);
     expect(s.items.filter((i: { ok: boolean }) => !i.ok).map((i: { path: string }) => i.path)).toEqual(
-      expect.arrayContaining([
-        'tuning.hiphop.requireVerifiedEmail',
-        'tuning.town.shake.limitIp',
-        'tuning.town.shake.limitDevice',
-      ]),
+      expect.arrayContaining(['tuning.town.shake.limitIp', 'tuning.town.shake.limitDevice']),
     );
     const fix = await call(ctx.app, 'POST', '/api/v1/admin/launch-check/fix', {
       cookie: admin.cookie,
@@ -43,7 +39,8 @@ describe('上线检查（设计 §7）', () => {
     const settings = await call(ctx.app, 'GET', `/api/v1/admin/shards/${shardId}/settings`, {
       cookie: admin.cookie,
     });
-    expect(settings.json.data.override.tuning.hiphop).toMatchObject({ hour: 10, requireVerifiedEmail: true });
+    expect(settings.json.data.override.tuning.rank).toMatchObject({ top: 40 });
+    expect(settings.json.data.override.tuning.town.shake).toMatchObject({ limitIp: true, limitDevice: true });
     const hist = await call(ctx.app, 'GET', `/api/v1/admin/shards/${shardId}/history`, {
       cookie: admin.cookie,
     });

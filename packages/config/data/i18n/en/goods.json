@@ -500,24 +500,48 @@
     "desc": "Pack for #16–30 in monthly Kraken feeding: Kraken's Severed Tentacle x5, 100 diamonds"
   },
   "20401": {
-    "name": "Market Work Pack",
-    "desc": "Wage for working at the market: 8 Mystery Ingredient Pick Vouchers, Krab Coin x6, 10 Random Universal Ingredient Packs"
+    "name": "Market Wholesaler Wage",
+    "desc": "Weekly wage of the Market Wholesaler: 20 Random Universal Ingredient Packs"
   },
   "20402": {
-    "name": "Shop Work Pack",
-    "desc": "Wage for working at the shop: 5 Random Mystery Ingredient Vouchers, Krab Coin x8, 10 Random Universal Ingredient Packs"
+    "name": "Delivery Station Chief Wage",
+    "desc": "Weekly wage of the Delivery Station Chief: 10 Random Universal Ingredient Packs, 150,000 coins"
   },
   "20403": {
-    "name": "Rename Office Work Pack",
-    "desc": "Wage for working at the rename office: 3 Random Mystery Ingredient Vouchers, Krab Coin x7, 10 Random Universal Ingredient Packs"
+    "name": "Specialty Dish Appraiser Wage",
+    "desc": "Weekly wage of the Specialty Dish Appraiser: 3 Delicious Seals"
   },
   "20404": {
-    "name": "Moving Office Work Pack",
-    "desc": "Wage for working at the moving office: 3 Mystery Ingredient Pick Vouchers, Krab Coin x5, 10 Random Universal Ingredient Packs"
+    "name": "Moving Company Dispatcher Wage",
+    "desc": "Weekly wage of the Moving Company Dispatcher: 10 Random Universal Ingredient Packs, 150,000 coins"
   },
   "20405": {
-    "name": "Security Work Pack",
-    "desc": "Wage for working as security: 3 Random Mystery Ingredient Vouchers, Krab Coin x4, 10 Random Universal Ingredient Packs"
+    "name": "Exploration Guide Wage",
+    "desc": "Weekly wage of the Exploration Guide: 2 Exploration Maps, 5 Random Universal Ingredient Packs"
+  },
+  "20406": {
+    "name": "Exchange Broker Wage",
+    "desc": "Weekly wage of the Exchange Broker: 300,000 coins"
+  },
+  "20407": {
+    "name": "Futures Trader Wage",
+    "desc": "Weekly wage of the Futures Trader: 300,000 coins"
+  },
+  "20408": {
+    "name": "Bank Wealth Advisor Wage",
+    "desc": "Weekly wage of the Bank Wealth Advisor: 8 Level 5 Market Supply Packs"
+  },
+  "20409": {
+    "name": "M&A Advisor Wage",
+    "desc": "Weekly wage of the M&A Advisor: 300,000 coins"
+  },
+  "20410": {
+    "name": "Kuji Shop Clerk Wage",
+    "desc": "Weekly wage of the Kuji Shop Clerk: 3 Ichiban Kuji Tickets, 200,000 coins"
+  },
+  "20411": {
+    "name": "Prediction Analyst Wage",
+    "desc": "Weekly wage of the Prediction Analyst: 300,000 coins"
   },
   "30001": {
     "name": "Regular Promo Poster",
@@ -1544,24 +1568,48 @@
     "desc": "Special item (compensation of 2025-04-02); they say owning it brings good luck. Coins per table +1, luck +16"
   },
   "60401": {
-    "name": "Market Work Permit",
-    "desc": "Proof of working at the market: earn a cut when wholesaling ingredients. Final EXP income +20%, final oil use -20% (weekly wage: 8 Mystery Ingredient Pick Vouchers, 10 Universal Ingredient Packs)"
+    "name": "Market Wholesaler",
+    "desc": "Job permit from the weekly Season ranking: can buy stock by hand at the market and earn a wholesale cut; final coin income +5%, final EXP +5% (weekly wage: 20 Random Universal Ingredient Packs)"
   },
   "60402": {
-    "name": "Shop Work Permit",
-    "desc": "Proof of working at the shop: refresh extra takeaway orders and earn a big EXP cut. Final EXP and coin income +15%, occupancy +5%, final oil use -10% (weekly wage: 5 Random Mystery Ingredient Vouchers, 10 Random Universal Ingredient Packs)"
+    "name": "Delivery Station Chief",
+    "desc": "Job permit from the weekly Season ranking: can refresh delivery orders privately; final coin income +5%, final EXP +5% (weekly wage: 10 Random Universal Ingredient Packs, 150,000 coins)"
   },
   "60403": {
-    "name": "Rename Office Work Permit",
-    "desc": "Proof of working at the rename office: Delicious Seal appraisal success +5%, final coin income +15%, picky rate +35% (weekly wage: 3 Random Mystery Ingredient Vouchers, 10 Random Universal Ingredient Packs)"
+    "name": "Specialty Dish Appraiser",
+    "desc": "Job permit from the weekly Season ranking: fragment appraisal success +5% (all appraisal items); final coin income +5%, final EXP +5% (weekly wage: 3 Delicious Seals)"
   },
   "60404": {
-    "name": "Security Badge",
-    "desc": "Proof of working as bar or guild security: chance of mystery ingredients while exploring +2.5%, luck +56 (weekly wage: 3 Random Mystery Ingredient Vouchers, 10 Random Universal Ingredient Packs)"
+    "name": "Exploration Guide",
+    "desc": "Job permit from the weekly Season ranking: mystery ingredient chance while exploring +2.5%; final coin income +5%, final EXP +5% (weekly wage: 2 Exploration Maps, 5 Random Universal Ingredient Packs)"
   },
   "60405": {
-    "name": "Moving Office Work Permit",
-    "desc": "Proof of working at the moving office: moving doesn't use a Moving Card; final EXP income +50% (weekly wage: 3 Mystery Ingredient Pick Vouchers, 10 Random Universal Ingredient Packs)"
+    "name": "Moving Company Dispatcher",
+    "desc": "Job permit from the weekly Season ranking: moving costs no Moving Card; final coin income +5%, final EXP +5% (weekly wage: 10 Random Universal Ingredient Packs, 150,000 coins)"
+  },
+  "60406": {
+    "name": "Exchange Broker",
+    "desc": "Job permit from the weekly Season ranking: Exchange selling fee 5% → 2.5%; final coin income +5%, final EXP +5% (weekly wage: 300,000 coins)"
+  },
+  "60407": {
+    "name": "Futures Trader",
+    "desc": "Job permit from the weekly Season ranking: futures deposit 30% → 20%, daily order limit 50 → 75; final coin income +5%, final EXP +5% (weekly wage: 300,000 coins)"
+  },
+  "60408": {
+    "name": "Bank Wealth Advisor",
+    "desc": "Job permit from the weekly Season ranking: Development Fund return at maturity 90% → 95%; final coin income +5%, final EXP +5% (weekly wage: 8 Level 5 Market Supply Packs)"
+  },
+  "60409": {
+    "name": "M&A Advisor",
+    "desc": "Job permit from the weekly Season ranking: acquisition tax 10% → 5% (you keep more when bought out or redeemed); final coin income +5%, final EXP +5% (weekly wage: 300,000 coins)"
+  },
+  "60410": {
+    "name": "Kuji Shop Clerk",
+    "desc": "Job permit from the weekly Season ranking: 3 free regular Ichiban Kuji draws a week (3 tickets come with the wage); final coin income +5%, final EXP +5% (weekly wage: 3 Ichiban Kuji Tickets, 200,000 coins)"
+  },
+  "60411": {
+    "name": "Prediction Analyst",
+    "desc": "Job permit from the weekly Season ranking: no 2% fee on event predictions; final coin income +5%, final EXP +5% (weekly wage: 300,000 coins)"
   },
   "60501": {
     "name": "Mr. Krab",

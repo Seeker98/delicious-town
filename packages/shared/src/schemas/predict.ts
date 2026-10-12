@@ -47,7 +47,7 @@ export interface PredictEventDto {
   auto: boolean;
   /** 判定依据；没有为 null */
   resultNote: string | null;
-  /** 题型（krab / hiphop / market / weather / stats；手动题为 manual）和出题参数：前端按语言渲染自动题（问题记录 272） */
+  /** 题型（krab / market / weather / stats；旧题还有 hiphop；手动题为 manual）和出题参数：前端按语言渲染自动题（问题记录 272） */
   kind: string;
   params: Record<string, unknown>;
   /** 自动题判定依据的参数；旧数据和手动题为 null，显示 resultNote 原文 */
@@ -63,7 +63,10 @@ export interface PredictListDto {
   /** 区服是否开着事件合约：关掉时只能看，不能买卖（backlog 238-1） */
   enabled: boolean;
   need: { level: number; days: number };
+  /** 手续费率（持有预测社分析师时是证上的）；feeBase 区服原值，feeCard 起作用的工作证（天气改版 PR③） */
   feeRate: number;
+  feeBase: number;
+  feeCard: number | null;
   maxHold: number;
   maxTrade: number;
   /** 区服默认的每份结算金额，页面顶部"怎么玩"用；各事件自己的金额见 PredictEventDto.unit（问题记录 288） */

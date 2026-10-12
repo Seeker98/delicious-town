@@ -136,6 +136,7 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
           GOODS.mysteryRecipe,
           GOODS.luckyCookie,
           GOODS.starBook,
+          GOODS.appraiserCard,
           ...[1, 2, 3, 4, 5, 6].map((lv) => GOODS.fragmentBase + lv),
         ])
         .execute();
@@ -188,6 +189,7 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         cookies: have(GOODS.luckyCookie),
         cookNums: s.tuning.mysterious.cookNums,
         starBook: have(GOODS.starBook) > 0,
+        jobCard: have(GOODS.appraiserCard) > 0 ? GOODS.appraiserCard : null,
         season,
       };
     },

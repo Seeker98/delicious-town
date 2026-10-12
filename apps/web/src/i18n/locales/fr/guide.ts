@@ -65,7 +65,7 @@ const guide: Messages['guide'] = {
     },
     {
       to: '/society/mayor',
-      text: 'Guilde\u202f: discutez chaque jour avec le Maire Grosse Marmite (ingrédient et graine) et dites-lui où est le Garçon hip-hop\u202f; Frère 13 donne des klaxons chaque jour\u202f; Carmen offre un bon d’ingrédient mystère à la première visite',
+      text: 'Guilde\u202f: discutez chaque jour avec le Maire Grosse Marmite (un ingrédient) et devinez avec lui la prochaine météo (bonne réponse récompensée, aucune pénalité sinon)\u202f; Frère 13 donne des klaxons chaque jour\u202f; Carmen offre un bon d’ingrédient mystère à la première visite',
     },
     {
       to: '/yard',
@@ -164,6 +164,15 @@ const guide: Messages['guide'] = {
         { to: '/weather', text: 'page météo' },
         '). Cuisinez quand votre voie est de saison et toute la fournée est de saison jusqu’à épuisement, même si la météo change. Chaque part de saison mangée par un client rapporte niveau du plat × bonus de qualité ÷ 10 points\u202f; les parts jetées ou goûtées ne comptent pas. Averse\u202f: +25\u202f%, arc-en-ciel\u202f: +10\u202f%.',
         'Dépensez-les à la boutique de saison de la page météo en fragments de plats, boussoles célestes et bâtonnets du temps (réassort chaque lundi)\u202f; choisir le plat d’épreuve au temple coûte aussi des points de saison.',
+      ],
+    },
+    {
+      q: 'D’où viennent les cartes de métier\u202f? À quoi servent-elles\u202f?',
+      a: [
+        'Chaque dimanche à 23 h, les joueurs sont classés selon les points de saison gagnés dans la semaine (voir le classement de saison sur la ',
+        { to: '/weather', text: 'page météo' },
+        '). Les 3 premiers ayant au moins 200 tirent chacun une carte de métier dans l’ordre\u202f; une carte déjà tirée ne ressort pas, et vous ne tirez que des cartes utiles pour vous.',
+        'Une carte dure 160 heures et verse un salaire le lundi à 7 h 59. Toutes donnent pièces et EXP finales +5\u202f%, plus un avantage propre\u202f: frais réduits à la Bourse, sur les contrats à terme, le fonds de développement, les rachats ou les prédictions, meilleures chances d’expertise ou d’exploration, réapprovisionnement manuel au marché, livraisons rafraîchies en privé, déménagement gratuit, etc.',
       ],
     },
   ],

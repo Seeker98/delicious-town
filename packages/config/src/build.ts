@@ -867,14 +867,14 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   activationRewards.push(...actExtra.rewards);
   activationRewards.sort((a, b) => a.points - b.points);
   for (const r of actExtra.rewards) checkAward(`activation_reward ${r.points}`, r.award);
-  // 支线里写死的门槛（backlog）：服务端只在领 100 点那一档时记 activation.100、周榜前 5 名记 hiphop.top5
+  // 支线里写死的门槛（backlog）：服务端只在领 100 点那一档时记 activation.100、时令周榜发到证的记 shiling.top
   const questKeys = new Set(
     questLinesRaw.flatMap((l) => l.steps.map((s) => (s.cond.kind === 'counter' ? s.cond.key : ''))),
   );
   if (questKeys.has('activation.100') && !activationRewards.some((r) => r.points === 100))
     errors.push('quest key activation.100 needs a 100-point activation reward');
-  if (questKeys.has('hiphop.top5') && tuning && tuning.hiphop.weeklyCards.length < 5)
-    errors.push('quest key hiphop.top5 needs at least 5 tuning.hiphop.weeklyCards');
+  if (questKeys.has('shiling.top') && tuning && tuning.jobCard.count < 1)
+    errors.push('quest key shiling.top needs tuning.jobCard.count >= 1');
 
   const activationNames = new Set(activationTasks.map((a) => a.name));
   for (const [key, name] of Object.entries(actionMap.activation)) {
@@ -1241,23 +1241,19 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   for (const id of tuning.town.mysteryExclude)
     if (!foodIds.has(id)) errors.push(`tuning.town.mysteryExclude references unknown food ${id}`);
 
-  // ---------- 嘻哈男孩（子项目 4E-2） ----------
-  const hh = tuning.hiphop;
-  for (const [place] of hh.placeWeights)
-    // 和 @dt/shared 的 HIPHOP_PLACES 一致（问题记录 256 加了 10~15）
-    if (![1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 14, 15].includes(place))
-      errors.push(`tuning.hiphop.placeWeights has unknown place ${place}`);
-  for (const id of [
-    ...hh.weeklyCards,
-    ...hh.wages.flat(),
-    GOODS.hiphopCulture,
-    GOODS.mayorFavor,
-    GOODS.mayorAgainst,
-  ])
-    if (!goodsIds.has(id)) errors.push(`hiphop references unknown goods ${id}`);
-  const wageCards = new Set(hh.wages.map(([card]) => card));
-  if (wageCards.size !== hh.weeklyCards.length || hh.weeklyCards.some((c) => !wageCards.has(c)))
-    errors.push('tuning.hiphop.wages must cover exactly the weeklyCards');
+  // ---------- 工作证（天气改版 PR③）、镇长问答 ----------
+  const jc = tuning.jobCard;
+  const rawById = new Map(goodsRaw.map((m) => [m.id, m]));
+  const cardIds = new Set<number>();
+  for (const [card, wage] of jc.cards) {
+    const c = rawById.get(card);
+    const w = rawById.get(wage);
+    if (!c || c.group !== 'honorJob') errors.push(`tuning.jobCard.cards: ${card} is not a job card`);
+    if (!w || w.group !== 'giftJob') errors.push(`tuning.jobCard.cards: ${wage} is not a wage pack`);
+    if (cardIds.has(card)) errors.push(`tuning.jobCard.cards lists ${card} twice`);
+    cardIds.add(card);
+  }
+  if (!goodsIds.has(GOODS.mayorFavor)) errors.push(`town references unknown goods ${GOODS.mayorFavor}`);
 
   // ---------- 酒吧扩展、神殿飞弹（PR27、PR28 遗留） ----------
   const mem = tuning.bar.memory;

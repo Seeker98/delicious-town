@@ -46,6 +46,16 @@ export interface HeadlinesDto {
   daily: DailyHeadDto | null;
 }
 
+/** 镇长猜天气（天气改版 PR③）：每天猜一次下一轮自然换天后的天气大类（1 晴、2 雨、3 雪冰、4 风沙雾），换天时揭晓 */
+export const mayorBody = z.object({ type: z.number().int().min(1).max(4) });
+
+export interface MayorDto {
+  /** 今天猜的那一次：at 揭晓时间；没揭晓时 right、actual 为 null */
+  today: { type: number; at: string; right: boolean | null; actual: number | null } | null;
+  /** 现在猜的话哪一轮揭晓、那一轮四类天气的概率（%） */
+  next: { at: string; types: Array<{ type: number; p: number }> };
+}
+
 /** 小镇玩法获得的东西；银币、钻石的 id 为 null */
 export interface TownRewardDto {
   kind: 'foods' | 'goods' | 'seed' | 'coin' | 'diamond';
@@ -54,7 +64,7 @@ export interface TownRewardDto {
 }
 
 /** NPC 台词（问题记录 272）：前端按语言显示 */
-export type TalkLine = NpcKey | 'bigEaterFirst' | 'carmenFirst' | 'mayorRight' | 'mayorWrong';
+export type TalkLine = NpcKey | 'bigEaterFirst' | 'carmenFirst';
 
 export interface TalkResultDto {
   npc: NpcKey | 'mayor';
@@ -101,9 +111,7 @@ export interface TownDto {
   coin: number;
   diamond: number;
   talked: Record<NpcKey, boolean>;
-  /** 镇长问答（4E-2）：今天是否已经回答过 */
-  /** hiphopOut：今天的嘻哈男孩出来了没有（今天的地点记录已生成）；hour：几点出来（问题记录 333）。旧服务端没有这两项 */
-  mayor: { answered: boolean; hiphopOut?: boolean; hour?: number };
+  mayor: MayorDto;
   /** 大胃哥的首次礼物已经领过 */
   bigEaterGift: boolean;
   shaken: boolean;

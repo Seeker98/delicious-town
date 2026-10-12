@@ -84,7 +84,6 @@ export default {
     'equip.stress': '強化廚具',
     'equip.gemIn': '鑲嵌寶石',
     'equip.drill': '廚具打孔',
-    'hiphop.reward': '打賞嘻哈男孩',
     'post.create': '論壇發帖',
     broadcast: '發喇叭',
   } as Record<string, string>,

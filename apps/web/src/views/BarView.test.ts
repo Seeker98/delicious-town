@@ -11,12 +11,7 @@ import BarView from './BarView.vue';
 
 vi.mock('../api/endpoints', () => ({ endpoints: { bar: vi.fn(), townTalk: vi.fn() } }));
 
-const stubs = {
-  HiphopCard: {
-    template: `<button data-testid="hiphop-tip" @click="$emit('changed')">hiphop</button>`,
-    emits: ['changed'],
-  },
-};
+const stubs = {};
 const GAMES = ['fg', 'cup', 'num', 'slot', 'devil', 'memory', 'darts', 'nim', 'spice', 'deal'];
 
 /** 酒吧首页的格子是 RouterLink：每个游戏一页 /bar/<游戏>（界面改版 P9） */
@@ -99,13 +94,6 @@ describe('BarView', () => {
     const { w } = await mountBar();
     expect(w.find('[data-testid="bar-wenjie"]').exists()).toBe(true);
     expect(w.find('[data-testid="talk-wenjie"]').exists()).toBe(false);
-  });
-
-  it('嘻哈男孩打赏后重新读取（礼券、蟹币可能变了）', async () => {
-    const { w } = await mountBar();
-    await w.get('[data-testid="hiphop-tip"]').trigger('click');
-    await flushPromises();
-    expect(endpoints.bar).toHaveBeenCalledTimes(2);
   });
 
   it('十个游戏的格子按顺序写名字和花费；进行中、用完了、连胜标在角上（4C-3、最后一颗糖）', async () => {

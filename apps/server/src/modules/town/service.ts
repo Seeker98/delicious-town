@@ -1,6 +1,5 @@
 import type {
   DailyDto,
-  HiphopPlace,
   NewsPageDto,
   NpcKey,
   ShakeResultDto,
@@ -46,8 +45,8 @@ export function createTownService(d: GameDeps, world: WorldService) {
     broadcast(ctx: RestCtx, b: { text: string }) {
       return op(ctx, 'town.broadcast', (o) => broadcast(o, b.text));
     },
-    mayor(ctx: RestCtx, place: HiphopPlace) {
-      return op(ctx, 'town.mayor', (o) => askMayor(o, place));
+    mayor(ctx: RestCtx, type: number) {
+      return op(ctx, 'town.mayor', (o) => askMayor(o, world, type));
     },
     talk(ctx: RestCtx, b: { npc: NpcKey }) {
       return op(ctx, 'town.talk', (o) => talk(o, b.npc));

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { firstClaimableTab, type TaskTab } from '../utils/tasks';
 import IconTag from '../components/IconTag.vue';
-import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import type {
@@ -408,7 +407,6 @@ onBeforeUnmount(() => {
         {{ t.acquire.homeOwned(rest.acquireOwner.name) }}
         <RouterLink to="/acquire?tab=mine" class="dt-go ms-1">{{ t.acquire.homeLink }}</RouterLink>
       </div>
-      <HiphopCard :rest-id="rest.id" class="mt-2" @changed="load" />
       <div v-if="rest.isPlanktonHost" class="alert alert-warning py-2 small" data-testid="plankton">
         <div>
           <b>{{ t.home.plankton.title }}</b

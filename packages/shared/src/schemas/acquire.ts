@@ -43,7 +43,7 @@ export interface AcquireBriefDto {
 
 /** 对方餐厅页、我的身价：再加保护期和“我能不能收” */
 export interface AcquireRestDto extends AcquireBriefDto {
-  /** 税率：确认框算对方得多少 */
+  /** 税率：确认框算对方得多少（卖方持有并购顾问时是证上的，天气改版 PR③） */
   taxRate: number;
   protectedUntil: string | null;
   /** 我能不能强收：能为 null；不能时是原因（no_state = 还不到 2 星、没有身价） */
@@ -67,7 +67,9 @@ export interface AcquireViewDto {
   dividendPaid: boolean;
   holdings: AcquireHoldingDto[];
   maxHoldings: number;
+  /** 区服的收购税率；taxCard：我持有并购顾问（名下店被收购、赎身时我少扣税），没有为 null */
   taxRate: number;
+  taxCard: number | null;
   listMinRate: number;
   listDays: number;
   protectDays: number;

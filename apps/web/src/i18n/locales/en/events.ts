@@ -5,6 +5,8 @@ import { formatNum } from '../../../utils/format';
 import fund from './fund';
 import { awardWords, n, type P, plEn } from '../../helpers';
 
+/** 天气四大类（镇长猜天气的消息用） */
+const WT = ['', 'Sunny', 'Rain', 'Snow & ice', 'Wind, sand & fog'];
 const mcNameOf = (names: Names, id: number) => names.mcName?.(id) ?? `Signature dish ${id}`;
 const seedNameOf = (names: Names, id: number) => names.seedName?.(id) ?? `Seed ${id}`;
 const holdHours = (p: P) => (p.holdHours === undefined ? 24 : n(p, 'holdHours'));
@@ -238,6 +240,9 @@ const events: Messages['events'] = {
     'hiphop.wage': (p, names) => `Collected the Hip-hop Boy's wage (${names.goodsName(n(p, 'cardId'))})`,
     'hiphop.weekly': (p, names) =>
       `Ranked #${n(p, 'rank')} in the weekly Hip-hop ranking, got ${names.goodsName(n(p, 'goodsId'))}`,
+    'jobCard.weekly': (p, names) =>
+      `Ranked #${n(p, 'rank')} in the weekly Season ranking, drew the job permit “${names.goodsName(n(p, 'goodsId'))}”`,
+    'jobCard.wage': (p, names) => `Collected a job permit wage (${names.goodsName(n(p, 'cardId'))})`,
     'market.manual': (p) =>
       `Restocked at the market manually for ${formatNum(n(p, 'cost'))} ${plEn(formatNum(n(p, 'cost')), 'coin', 'coins')}`,
     'market.share': (p, names) =>
@@ -268,7 +273,13 @@ const events: Messages['events'] = {
     'weather.tool': (p, names) =>
       `Used ${names.goodsName(n(p, 'goodsId'))}: ${names.weatherName?.(n(p, 'from')) ?? ''} became ${names.weatherName?.(n(p, 'to')) ?? ''}`,
     'town.mayor': (p) =>
-      p.right ? "Answered Mayor Big Pot's question correctly" : "Got Mayor Big Pot's question wrong",
+      p.type === undefined
+        ? p.right
+          ? "Answered Mayor Big Pot's question correctly"
+          : "Got Mayor Big Pot's question wrong"
+        : p.right
+          ? `Guessed the mayor's weather right: ${WT[n(p, 'actual')] ?? ''}, got the Mayor's Recommendation`
+          : `Missed the mayor's weather guess: it was ${WT[n(p, 'actual')] ?? ''} (you guessed ${WT[n(p, 'type')] ?? ''})`,
     'town.shake': (p) =>
       `Shook the money tree for ${formatNum(n(p, 'coin'))} ${plEn(formatNum(n(p, 'coin')), 'coin', 'coins')}`,
     'town.talk': () => 'Chatted with the townsfolk',

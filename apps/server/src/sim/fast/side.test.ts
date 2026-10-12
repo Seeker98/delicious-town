@@ -21,9 +21,9 @@ const table = (rows: unknown[]) =>
   loadSideTable({ participation: { diligent: 1, normal: 0.7, casual: 0.4 }, rows }, config);
 
 describe('旁支产出表（设计 §5）', () => {
-  it('真实的产出表能通过校验，八个来源都有', () => {
+  it('真实的产出表能通过校验，七个来源都有（嘻哈男孩删了）', () => {
     const t = loadSideTable(real, config);
-    expect(new Set(t.rows.map((r) => r.source)).size).toBe(8);
+    expect(new Set(t.rows.map((r) => r.source)).size).toBe(7);
   });
 
   it('等级段：取不超过当前等级的最高一段；只有高等级段时低等级拿 0（Review Focus 3）', () => {

@@ -15,7 +15,6 @@ const DATASET = [
   'activation_tasks',
   'activation_rewards',
   'tower_floors',
-  'hiphop_places',
   'suit_pot',
   'suit_painting',
   'suit_zodiac',

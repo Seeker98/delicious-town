@@ -124,7 +124,6 @@ describe('服务端代码 → 文字（问题记录 272）', () => {
   });
 
   it('简中：台词、外卖意外、鉴定失败、加成来源', () => {
-    expect(talkText('mayorWrong')).toBe('你觉得乱说一个位置我就会信吗！');
     expect(takeawayFailText({ reason: '旧原因', reasonId: 7 })).toBe('顾客退单了!');
     expect(takeawayFailText({ reason: '旧原因' })).toBe('旧原因');
     expect(appraiseFailText({ text: '旧', textId: 3 })).toBe('原来是一张过期的菜单');

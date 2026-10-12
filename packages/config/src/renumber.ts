@@ -26,7 +26,7 @@ export function isNewId(kind: IdKind, id: number): boolean {
 /** 值是某类编号的键 */
 export const ID_KEYS: Readonly<Record<string, IdKind>> = {
   goodsId: 'goods',
-  cardId: 'goods', // 嘻哈男孩的工资卡（日志 hiphop.wage）
+  cardId: 'goods', // 工作证（日志 hiphop.wage、jobCard.wage）
   medal: 'goods', // 基金勋章（日志 fund.claim、区服数值 fund.tiers）
   nextid: 'goods', // 宝石的下一阶（主表 value）
   foodsId: 'foods',
@@ -54,15 +54,14 @@ export const TUNING_ID_PATHS: readonly PathRule[] = [
   [['takeaway', 'awards', '*', 0], 'goods'],
   [['takeaway', 'customer', 'success'], 'goods'],
   [['takeaway', 'customer', 'fail'], 'goods'],
-  [['hiphop', 'weeklyCards', '*'], 'goods'],
   // 食材理财的街市补给包（理财设计 §3.1）：键名 goods 但值是单个编号，通用的列表规则认不出
   [['wealth', 'terms', '*', 'goods'], 'goods'],
   // 大宗认购的安慰奖（大宗认购设计 §2.1）：键名 goods 但值是单个编号
   [['bulk', 'consolation', 'goods'], 'goods'],
   // 许愿树的道具清单（许愿树设计 §2）：键名 goods 但值是单个编号
   [['wishTree', 'prizes', '*', 'goods'], 'goods'],
-  [['hiphop', 'wages', '*', 0], 'goods'],
-  [['hiphop', 'wages', '*', 1], 'goods'],
+  [['jobCard', 'cards', '*', 0], 'goods'],
+  [['jobCard', 'cards', '*', 1], 'goods'],
   [['temple', 'missileAttack', '*', 0], 'goods'],
   [['mysterious', 'championGoodsId'], 'goods'],
   [['town', 'mysteryExclude', '*'], 'foods'],

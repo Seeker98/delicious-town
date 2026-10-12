@@ -6,8 +6,8 @@ const npc: Messages['npc'] = {
     name: 'Maire Grosse Marmite',
     lines: [
       'Pâtés de crabe, Tickets Délice, fragments\u202f: échangez-les chez moi contre des objets rares.',
-      'Où est passé le Garçon hip-hop aujourd’hui\u202f? Dites-le-moi\u202f: une bonne réponse vous vaut un bonus.',
-      'Je suis le Maire Grosse Marmite. Passez discuter chaque jour\u202f: un ingrédient et une graine pour vous.',
+      'Je sais comment le ciel va tourner. Devinez la prochaine météo avec moi\u202f: une bonne réponse est récompensée.',
+      'Je suis le Maire Grosse Marmite. Passez discuter chaque jour\u202f: un ingrédient pour vous.',
     ],
   },
   bro13: {
@@ -64,7 +64,7 @@ const npc: Messages['npc'] = {
     },
     mayor: {
       label: 'Maire Grosse Marmite',
-      desc: 'Discussion quotidienne\u202f: ingrédient et graine\u202f; objets rares\u202f; où est le Garçon hip-hop',
+      desc: 'Discussion quotidienne\u202f: un ingrédient\u202f; objets rares\u202f; deviner la prochaine météo',
     },
     bro13: {
       label: 'Frère 13',

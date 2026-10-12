@@ -87,7 +87,7 @@ const market: Messages['market'] = {
     nextDaily: (time) => `Le marché du jour se réapprovisionne à ${time}. Repassez voir.`,
     guessOpen: 'Vous n’avez pas encore fait votre pronostic pour ce tour. Essayez ci-dessous\u202f?',
     hasCard:
-      'Vous avez un permis de travail du marché. Réapprovisionnez vous-même si vous ne voulez pas attendre.',
+      'Vous avez la carte de métier Grossiste du marché. Réapprovisionnez vous-même si vous ne voulez pas attendre.',
     cupboardFull: 'Votre garde-manger est plein. Faites de la place avant d’acheter.',
   },
 };

@@ -58,6 +58,8 @@ const me = (p: Partial<ExchangeMeDto> = {}): ExchangeMeDto => ({
   wallet: { coin: 950, foods: [{ foodsId: 11, num: 2 }] },
   trades: [],
   feeRate: 0.05,
+  feeBase: 0.05,
+  feeCard: null,
   holds: [],
   frozen: null,
   level: 30,
@@ -594,6 +596,8 @@ describe('终审 I2：冷静期已过的所得能取出', () => {
       personLeft: 50,
       deliverHours: 72,
       depositRate: 0.3,
+      base: { personDaily: 50, depositRate: 0.3 },
+      card: null,
       contracts: open
         ? [
             {
@@ -680,6 +684,8 @@ describe('终审 I2：冷静期已过的所得能取出', () => {
         personLeft: 50,
         deliverHours: 72,
         depositRate: 0.3,
+        base: { personDaily: 50, depositRate: 0.3 },
+        card: null,
         contracts: [],
       });
     });

@@ -14,8 +14,8 @@ describe('排行榜定义', () => {
       'roach.kill.lastWeek',
       'flip.flipped.lastWeek',
       'mc.yesterday',
-      'hiphop.week',
+      'shiling.week',
     ]);
-    expect(RANK_BOARDS.find((b) => b.key === 'hiphop.week')!.reward).toContain('工作证');
+    expect(RANK_BOARDS.find((b) => b.key === 'shiling.week')!.reward).toContain('工作证');
   });
 });

@@ -35,7 +35,7 @@ const town: Messages['town'] = {
   npcs: {
     bigEater: {
       name: 'Alcalde Gran Olla',
-      desc: 'Charla a diario: un ingrediente de nivel 1 a 5 y una semilla',
+      desc: 'Charla a diario: un ingrediente de nivel 1 a 5',
     },
     wenjie: { name: 'Hermana Wen', desc: 'Regala vales misteriosos cada día' },
     bro13: { name: 'Hermano 13', desc: 'Charla a diario: bocinas' },
@@ -47,8 +47,26 @@ const town: Messages['town'] = {
   said: (name, talk, rewards) => `${name}: ${talk} Recibiste ${rewards}`,
   mayorName: 'Alcalde Gran Olla',
   /** 镇长大胃锅页上的问答标题（问题记录 441） */
-  mayorAsk: '¿Dónde está hoy el Chico hip-hop?',
-  mayorFailed: 'No se pudo responder',
+  mayorAsk: 'Adivina el próximo tiempo',
+  mayorFailed: 'No se pudo registrar tu apuesta',
+  mayorHint: (at) => `«¿Qué tiempo hará tras el cambio de las ${at}? Si aciertas, hay premio.»`,
+  mayorRule: (at, goods) =>
+    `Una vez al día · se revela a las ${at} · si aciertas: ${goods} (fallar no penaliza)`,
+  mayorWaiting: (type, at) =>
+    `Apostaste por ${type}. Se revela con el cambio de las ${at}; el resultado llega a tus mensajes.`,
+  mayorWaitTag: (at) => `A las ${at}`,
+  mayorRight: (type, goods) => `¡Acertaste: ${type}! Recibes ${goods}. Vuelve a adivinar mañana.`,
+  mayorWrong: (actual, guess) => `No acertaste: fue ${actual} (dijiste ${guess}). Vuelve mañana.`,
+  mayorRightTag: 'Acertaste',
+  mayorWrongTag: 'Fallaste',
+  mayorOpen: 'Adivinar',
+  mayorQuestion: (at) => `Tiempo tras el cambio de las ${at}`,
+  mayorQuestionSub:
+    'Elige uno de los cuatro tipos. Solo cuenta el cambio natural, no la Brújula celeste ni los Palillos del tiempo. El pronóstico es una probabilidad, no una promesa.',
+  mayorForecast: (p) => `Pronóstico ${p}`,
+  mayorPickFirst: 'Elige primero un tipo',
+  mayorIs: (type) => `Apostar: ${type}`,
+  mayorDone: (type, at) => `Apuesta: ${type}, se revela a las ${at}`,
   talkFailed: 'No se pudo charlar',
   shook: (coin) => `Sacudiste ${coin} ${plEs(coin, 'moneda', 'monedas')}`,
   shookEgg: (name, num) => `, y sacaste ${name}×${num} de su bolsillo`,
@@ -68,19 +86,6 @@ const town: Messages['town'] = {
   wishFailed: 'No se pudo pedir el deseo',
   talkedToday: 'Ya charlasteis hoy',
   talk: 'Charlar',
-  mayorAnswered: 'Ya le respondiste al alcalde hoy',
-  mayorNotOut: (h) => `El Chico hip-hop sale a las ${h}:00. Vuelve entonces a decírselo al alcalde`,
-  mayorHint:
-    'Dile al alcalde dónde está hoy el Chico hip-hop: si aciertas hay bonificación, si fallas te regaña',
-  mayorOpen: 'Responder al alcalde',
-  mayorDoneTag: 'Ya respondiste',
-  mayorWaitTag: (h) => `Sale a las ${h}:00`,
-  mayorQuestion: '¿Dónde está hoy el Chico hip-hop?',
-  mayorQuestionSub: 'Si aciertas hay bonificación, si fallas, regañina · una vez al día',
-  mayorWent: 'Hoy fue a',
-  mayorPickNote: 'Elige un sitio y confirma, para no equivocarte',
-  mayorPickFirst: 'Elige primero un sitio',
-  mayorIs: (place) => `Es: ${place}`,
   krab: 'La bolsa de Don Krab',
   shakeHint: 'Una sacudida al día. Las monedas dependen de tus estrellas',
   shakenToday: 'Ya la sacudiste hoy',
@@ -157,7 +162,7 @@ const town: Messages['town'] = {
       'Chile del Diablo',
       'Trato o no trato',
       'Platos estrella',
-      'Propinas',
+      'Temporada',
     ],
     periods: { today: 'Hoy', yesterday: 'Ayer', thisWeek: 'Esta semana', lastWeek: 'Semana pasada' },
     boards: {
@@ -210,16 +215,16 @@ const town: Messages['town'] = {
       'mc.best': 'Mejor valor',
       'mc.times': 'Veces en total',
       'mc.learned': 'Aprendidos',
-      'hiphop.week': 'Esta semana',
-      'hiphop.lastWeek': 'Semana pasada',
+      'shiling.week': 'Esta semana',
+      'shiling.lastWeek': 'Semana pasada',
     },
     rewards: {
       'roach.kill.lastWeek': 'Top 2 de la semana pasada: Matacucarachas de medianoche (lunes 7:59)',
       'flip.flipped.lastWeek':
         'Top 4 de la semana pasada: Las desgracias nunca vienen solas / Petardo / Farolillo / Fortuna (lunes 7:59)',
       'mc.yesterday': '1.º: Campeón de platos estrella (cada día)',
-      'hiphop.week':
-        'Top 5: permiso de trabajo de Tienda / Oficina de nombres / Mercado / Mudanzas, pase de seguridad (domingo 23:00, válido 160 horas, sueldo lunes 7:59)',
+      'shiling.week':
+        'Los 3 primeros con al menos 200 esta semana sacan un permiso de trabajo cada uno, por orden (domingo 23:00, válido 160 horas, sueldo lunes 7:59)',
     },
     every10: 'Se actualiza cada 10 min',
     every1: 'Se actualiza cada minuto',

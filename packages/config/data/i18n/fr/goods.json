@@ -500,24 +500,48 @@
     "desc": "Pack des places 16 à 30 du nourrissage mensuel du Kraken\u202f: tentacule tranché du Kraken x5, 100 diamants"
   },
   "20401": {
-    "name": "Pack de salaire du marché",
-    "desc": "Salaire du travail au marché\u202f: 8 bons d'ingrédient mystère au choix, pièce Krab x6, 10 packs d'ingrédient universel au hasard"
+    "name": "Salaire (Grossiste du marché)",
+    "desc": "Salaire hebdomadaire (Grossiste du marché)\u202f: 20 packs d'ingrédient universel au hasard"
   },
   "20402": {
-    "name": "Pack de salaire de la boutique",
-    "desc": "Salaire du travail à la boutique\u202f: 5 bons d'ingrédient mystère au hasard, pièce Krab x8, 10 packs d'ingrédient universel au hasard"
+    "name": "Salaire (Chef de station de livraison)",
+    "desc": "Salaire hebdomadaire (Chef de station de livraison)\u202f: 10 packs d'ingrédient universel au hasard, 150 000 pièces"
   },
   "20403": {
-    "name": "Pack de salaire du bureau des noms",
-    "desc": "Salaire du travail au bureau des noms\u202f: 3 bons d'ingrédient mystère au hasard, pièce Krab x7, 10 packs d'ingrédient universel au hasard"
+    "name": "Salaire (Expert en plats spéciaux)",
+    "desc": "Salaire hebdomadaire (Expert en plats spéciaux)\u202f: 3 Sceaux Délice"
   },
   "20404": {
-    "name": "Pack de salaire du bureau des déménagements",
-    "desc": "Salaire du travail au bureau des déménagements\u202f: 3 bons d'ingrédient mystère au choix, pièce Krab x5, 10 packs d'ingrédient universel au hasard"
+    "name": "Salaire (Répartiteur de déménagement)",
+    "desc": "Salaire hebdomadaire (Répartiteur de déménagement)\u202f: 10 packs d'ingrédient universel au hasard, 150 000 pièces"
   },
   "20405": {
-    "name": "Pack de salaire de la sécurité",
-    "desc": "Salaire du travail d'agent de sécurité\u202f: 3 bons d'ingrédient mystère au hasard, pièce Krab x4, 10 packs d'ingrédient universel au hasard"
+    "name": "Salaire (Guide d'exploration)",
+    "desc": "Salaire hebdomadaire (Guide d'exploration)\u202f: 2 cartes d'exploration, 5 packs d'ingrédient universel au hasard"
+  },
+  "20406": {
+    "name": "Salaire (Courtier de la Bourse)",
+    "desc": "Salaire hebdomadaire (Courtier de la Bourse)\u202f: 300 000 pièces"
+  },
+  "20407": {
+    "name": "Salaire (Trader en contrats à terme)",
+    "desc": "Salaire hebdomadaire (Trader en contrats à terme)\u202f: 300 000 pièces"
+  },
+  "20408": {
+    "name": "Salaire (Conseiller en placements)",
+    "desc": "Salaire hebdomadaire (Conseiller en placements)\u202f: 8 colis de ravitaillement du marché niv. 5"
+  },
+  "20409": {
+    "name": "Salaire (Conseiller en fusions)",
+    "desc": "Salaire hebdomadaire (Conseiller en fusions)\u202f: 300 000 pièces"
+  },
+  "20410": {
+    "name": "Salaire (Vendeur du stand Kuji)",
+    "desc": "Salaire hebdomadaire (Vendeur du stand Kuji)\u202f: 3 tickets Ichiban Kuji, 200 000 pièces"
+  },
+  "20411": {
+    "name": "Salaire (Analyste des prédictions)",
+    "desc": "Salaire hebdomadaire (Analyste des prédictions)\u202f: 300 000 pièces"
   },
   "30001": {
     "name": "Affiche publicitaire ordinaire",
@@ -1544,24 +1568,48 @@
     "desc": "Objet spécial (compensation du 02/04/2025)\u202f; on dit qu'il porte chance. Pièces par table +1, chance +16"
   },
   "60401": {
-    "name": "Permis de travail du marché",
-    "desc": "Preuve d'emploi au marché\u202f: touchez une commission sur la vente en gros d'ingrédients. EXP finale +20\u202f%, consommation d'huile finale -20\u202f% (salaire hebdomadaire\u202f: 8 bons d'ingrédient mystère au choix, 10 packs d'ingrédients universels)"
+    "name": "Grossiste du marché",
+    "desc": "Carte de métier du classement de saison: peut acheter à la main au marché et toucher une commission de gros; pièces finales +5\u202f%, EXP finale +5\u202f% (salaire hebdo: 20 packs d'ingrédient universel au hasard)"
   },
   "60402": {
-    "name": "Permis de travail de la boutique",
-    "desc": "Preuve d'emploi à la boutique\u202f: rafraîchissez plus de commandes à emporter et touchez une grosse commission en EXP. EXP et revenus finaux en pièces +15\u202f%, fréquentation +5\u202f%, consommation d'huile finale -10\u202f% (salaire hebdomadaire\u202f: 5 bons d'ingrédient mystère au hasard, 10 packs d'ingrédient universel au hasard)"
+    "name": "Chef de station de livraison",
+    "desc": "Carte de métier du classement de saison: peut rafraîchir les livraisons en privé; pièces finales +5\u202f%, EXP finale +5\u202f% (salaire hebdo: 10 packs d'ingrédient universel au hasard, 150 000 pièces)"
   },
   "60403": {
-    "name": "Permis de travail du bureau des noms",
-    "desc": "Preuve d'emploi au bureau des noms\u202f: réussite de l'expertise avec le Sceau Délice +5\u202f%, revenus finaux en pièces +15\u202f%, clients difficiles +35\u202f% (salaire hebdomadaire\u202f: 3 bons d'ingrédient mystère au hasard, 10 packs d'ingrédient universel au hasard)"
+    "name": "Expert en plats spéciaux",
+    "desc": "Carte de métier du classement de saison: réussite de l'expertise des fragments +5\u202f% (tous les objets d'expertise); pièces finales +5\u202f%, EXP finale +5\u202f% (salaire hebdo: 3 Sceaux Délice)"
   },
   "60404": {
-    "name": "Badge de sécurité",
-    "desc": "Preuve d'emploi comme agent de sécurité du bar ou de la guilde\u202f: chance d'ingrédients mystère en exploration +2,5\u202f%, chance +56 (salaire hebdomadaire\u202f: 3 bons d'ingrédient mystère au hasard, 10 packs d'ingrédient universel au hasard)"
+    "name": "Guide d'exploration",
+    "desc": "Carte de métier du classement de saison: chance d'ingrédient mystère en exploration +2,5\u202f%; pièces finales +5\u202f%, EXP finale +5\u202f% (salaire hebdo: 2 cartes d'exploration, 5 packs d'ingrédient universel au hasard)"
   },
   "60405": {
-    "name": "Permis de travail du bureau des déménagements",
-    "desc": "Preuve d'emploi au bureau des déménagements\u202f: déménager ne consomme pas de carte de déménagement\u202f; EXP finale +50\u202f% (salaire hebdomadaire\u202f: 3 bons d'ingrédient mystère au choix, 10 packs d'ingrédient universel au hasard)"
+    "name": "Répartiteur de déménagement",
+    "desc": "Carte de métier du classement de saison: déménager ne consomme pas de carte de déménagement; pièces finales +5\u202f%, EXP finale +5\u202f% (salaire hebdo: 10 packs d'ingrédient universel au hasard, 150 000 pièces)"
+  },
+  "60406": {
+    "name": "Courtier de la Bourse",
+    "desc": "Carte de métier du classement de saison: frais de vente à la Bourse 5\u202f% → 2,5\u202f%; pièces finales +5\u202f%, EXP finale +5\u202f% (salaire hebdo: 300 000 pièces)"
+  },
+  "60407": {
+    "name": "Trader en contrats à terme",
+    "desc": "Carte de métier du classement de saison: acompte des contrats à terme 30\u202f% → 20\u202f%, limite quotidienne 50 → 75; pièces finales +5\u202f%, EXP finale +5\u202f% (salaire hebdo: 300 000 pièces)"
+  },
+  "60408": {
+    "name": "Conseiller en placements",
+    "desc": "Carte de métier du classement de saison: remboursement du fonds de développement à l'échéance 90\u202f% → 95\u202f%; pièces finales +5\u202f%, EXP finale +5\u202f% (salaire hebdo: 8 colis de ravitaillement du marché niv. 5)"
+  },
+  "60409": {
+    "name": "Conseiller en fusions",
+    "desc": "Carte de métier du classement de saison: taxe de rachat 10\u202f% → 5\u202f% (vous touchez plus en cas de rachat ou de reprise); pièces finales +5\u202f%, EXP finale +5\u202f% (salaire hebdo: 300 000 pièces)"
+  },
+  "60410": {
+    "name": "Vendeur du stand Kuji",
+    "desc": "Carte de métier du classement de saison: 3 tirages Ichiban Kuji normaux gratuits par semaine (3 tickets avec le salaire); pièces finales +5\u202f%, EXP finale +5\u202f% (salaire hebdo: 3 tickets Ichiban Kuji, 200 000 pièces)"
+  },
+  "60411": {
+    "name": "Analyste des prédictions",
+    "desc": "Carte de métier du classement de saison: pas de frais de 2\u202f% sur les prédictions; pièces finales +5\u202f%, EXP finale +5\u202f% (salaire hebdo: 300 000 pièces)"
   },
   "60501": {
     "name": "M. Krab",

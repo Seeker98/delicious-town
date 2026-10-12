@@ -61,7 +61,7 @@ const guide: Messages['guide'] = {
     },
     {
       to: '/society/mayor',
-      text: 'Guild: chat with Mayor Big Pot daily for an ingredient and a seed, and tell him where the Hip-hop Boy is today; Brother 13 gives horns daily; Carmen gives a mystery ingredient voucher on your first visit',
+      text: 'Guild: chat with Mayor Big Pot daily for an ingredient, and guess the next weather with him (a right guess is rewarded, a wrong one costs nothing); Brother 13 gives horns daily; Carmen gives a mystery ingredient voucher on your first visit',
     },
     {
       to: '/yard',
@@ -157,6 +157,15 @@ const guide: Messages['guide'] = {
         { to: '/weather', text: 'weather page' },
         '). Cook while your path is in season and the whole batch is seasonal until it sells out, even if the weather changes. Each seasonal serving a customer eats earns dish level × grade bonus ÷ 10 points; thrown-away and tasted servings don’t count. Rainstorm gives +25%, Rainbow +10%.',
         'Spend them at the seasonal shop on the weather page on dish fragments, Sky Compasses and Weather Lots (restocks every Monday); picking a trial dish at the temple also costs seasonal points.',
+      ],
+    },
+    {
+      q: 'Where do job permits come from? What do they do?',
+      a: [
+        'Every Sunday at 23:00, players are ranked by seasonal points gained that week (see the Season ranking on the ',
+        { to: '/weather', text: 'weather page' },
+        '). The top 3 with at least 200 each draw a job permit in rank order; a permit already drawn won’t come up again, and you only draw permits you can use.',
+        'A permit lasts 160 hours and pays one wage on Monday at 7:59. Every permit gives final coins and EXP +5%, plus its own perk: lower fees at the exchange, futures, Development Fund, acquisitions or predictions, better appraisal or exploration odds, manual market restocking, private delivery refreshes, free moves, and so on.',
       ],
     },
   ],

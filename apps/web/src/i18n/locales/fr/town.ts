@@ -36,7 +36,7 @@ const town: Messages['town'] = {
   npcs: {
     bigEater: {
       name: 'Maire Grosse Marmite',
-      desc: 'Discussion quotidienne\u202f: un ingrédient de niveau 1 à 5 et une graine',
+      desc: 'Discussion quotidienne\u202f: un ingrédient de niveau 1 à 5',
     },
     wenjie: { name: 'Sœur Wen', desc: 'Offre des bons mystère chaque jour' },
     bro13: { name: 'Frère 13', desc: 'Discussion quotidienne\u202f: des klaxons' },
@@ -48,8 +48,27 @@ const town: Messages['town'] = {
   said: (name, talk, rewards) => `${name}\u202f: ${talk} Vous recevez ${rewards}`,
   mayorName: 'Maire Grosse Marmite',
   /** 镇长大胃锅页上的问答标题（问题记录 441） */
-  mayorAsk: 'Où est le Garçon hip-hop aujourd’hui\u202f?',
-  mayorFailed: 'Impossible de répondre',
+  mayorAsk: 'Deviner la prochaine météo',
+  mayorFailed: 'Impossible d’enregistrer votre pari',
+  mayorHint: (at) =>
+    `«\u202fQuelle météo après le changement de ${at}\u202f? Bonne réponse récompensée.\u202f»`,
+  mayorRule: (at, goods) =>
+    `Une fois par jour · résultat à ${at} · bonne réponse\u202f: ${goods} (pas de pénalité)`,
+  mayorWaiting: (type, at) =>
+    `Vous avez parié sur ${type}. Résultat au changement de ${at}, envoyé dans vos messages.`,
+  mayorWaitTag: (at) => `À ${at}`,
+  mayorRight: (type, goods) => `Gagné\u202f: ${type}. Vous recevez ${goods}. Rejouez demain.`,
+  mayorWrong: (actual, guess) => `Raté\u202f: c’était ${actual} (vous aviez dit ${guess}). Revenez demain.`,
+  mayorRightTag: 'Gagné',
+  mayorWrongTag: 'Raté',
+  mayorOpen: 'Deviner',
+  mayorQuestion: (at) => `Météo après le changement de ${at}`,
+  mayorQuestionSub:
+    'Choisissez un des quatre types. Seul le changement naturel compte, pas la Boussole céleste ni les Bâtonnets du temps. La prévision est une probabilité, pas une certitude.',
+  mayorForecast: (p) => `Prévision ${p}`,
+  mayorPickFirst: 'Choisissez d’abord un type',
+  mayorIs: (type) => `Parier\u202f: ${type}`,
+  mayorDone: (type, at) => `Pari\u202f: ${type}, résultat à ${at}`,
   talkFailed: 'Impossible de discuter',
   shook: (coin) => `Vous avez secoué ${coin} ${plFr(coin, 'pièce', 'pièces')}`,
   shookEgg: (name, num) => `, et sorti ${name}\u202f×\u202f${num} de sa poche`,
@@ -68,19 +87,6 @@ const town: Messages['town'] = {
   wishFailed: 'Impossible de faire un vœu',
   talkedToday: "Déjà discuté aujourd'hui",
   talk: 'Discuter',
-  mayorAnswered: "Vous avez déjà répondu au maire aujourd'hui",
-  mayorNotOut: (h) => `Le Garçon hip-hop sort à ${h} h. Revenez le dire au maire à ce moment-là`,
-  mayorHint:
-    "Dites au maire où est le Garçon hip-hop aujourd'hui\u202f: bonne réponse = bonus, mauvaise = réprimande",
-  mayorOpen: 'Répondre au maire',
-  mayorDoneTag: 'Déjà répondu',
-  mayorWaitTag: (h) => `Sort à ${h}h`,
-  mayorQuestion: 'Où est le Hip-hop Boy aujourd’hui\u202f?',
-  mayorQuestionSub: 'Bonne réponse\u202f: un bonus, mauvaise\u202f: un savon · une fois par jour',
-  mayorWent: 'Il est allé',
-  mayorPickNote: 'Choisissez un lieu puis confirmez, pour éviter les erreurs',
-  mayorPickFirst: "Choisissez d'abord un lieu",
-  mayorIs: (place) => `C'est\u202f: ${place}`,
   krab: 'La bourse de M. Krab',
   shakeHint: 'Une secousse par jour. Les pièces dépendent de vos étoiles',
   shakenToday: "Déjà secouée aujourd'hui",
@@ -157,7 +163,7 @@ const town: Messages['town'] = {
       'Piment du Diable',
       'À prendre ou à laisser',
       'Plats signature',
-      'Pourboires',
+      'Saison',
     ],
     periods: {
       today: "Aujourd'hui",
@@ -215,16 +221,16 @@ const town: Messages['town'] = {
       'mc.best': 'Meilleure valeur',
       'mc.times': 'Nombre total',
       'mc.learned': 'Appris',
-      'hiphop.week': 'Cette semaine',
-      'hiphop.lastWeek': 'Semaine dernière',
+      'shiling.week': 'Cette semaine',
+      'shiling.lastWeek': 'Semaine dernière',
     },
     rewards: {
       'roach.kill.lastWeek': 'Top 2 de la semaine dernière\u202f: Tueur de cafards de minuit (lundi 7 h 59)',
       'flip.flipped.lastWeek':
         'Top 4 de la semaine dernière\u202f: Un malheur n’arrive jamais seul / Pétard / Lanterne / Bonheur (lundi 7 h 59)',
       'mc.yesterday': '1er\u202f: Champion des plats signature (chaque jour)',
-      'hiphop.week':
-        'Top 5\u202f: permis de travail Boutique / Bureau des noms / Marché / Déménagements, carte de sécurité (dimanche 23 h, valable 160 heures, salaire lundi 7 h 59)',
+      'shiling.week':
+        'Les 3 premiers ayant gagné au moins 200 cette semaine tirent chacun une carte de métier, dans l’ordre (dimanche 23 h, valable 160 heures, salaire lundi 7 h 59)',
     },
     every10: 'Mis à jour toutes les 10 min',
     every1: 'Mis à jour chaque minute',

@@ -85,7 +85,10 @@ export interface ExchangeMeDto {
   orders: ExchangeOrderDto[];
   wallet: { coin: number; foods: Array<{ foodsId: number; num: number }> };
   trades: ExchangeTradeDto[];
+  /** 卖出手续费率（持有交易所经纪人时是证上的）；feeBase 区服原价，feeCard 起作用的工作证（天气改版 PR③） */
   feeRate: number;
+  feeBase: number;
+  feeCard: number | null;
   /** 冻结中（冷静期）的所得 */
   holds: ExchangeHoldDto[];
   /** 交易所被冻结时的原因 */

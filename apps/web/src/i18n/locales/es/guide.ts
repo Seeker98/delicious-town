@@ -65,7 +65,7 @@ const guide: Messages['guide'] = {
     },
     {
       to: '/society/mayor',
-      text: 'Gremio: charla a diario con el Alcalde Gran Olla (ingrediente y semilla) y dile dónde está hoy el Chico hip-hop; el Hermano 13 da bocinas cada día; Carmen regala un vale de ingrediente misterioso en tu primera visita',
+      text: 'Gremio: charla a diario con el Alcalde Gran Olla (un ingrediente) y adivina con él el próximo tiempo (si aciertas hay premio, fallar no penaliza); el Hermano 13 da bocinas cada día; Carmen regala un vale de ingrediente misterioso en tu primera visita',
     },
     {
       to: '/yard',
@@ -164,6 +164,15 @@ const guide: Messages['guide'] = {
         { to: '/weather', text: 'página del clima' },
         '). Si cocinas cuando tu vía está de temporada, toda la tanda es de temporada hasta agotarse, aunque cambie el clima. Cada ración de temporada que se come un cliente da nivel del plato × bonus de calidad ÷ 10 puntos; las raciones tiradas o probadas no cuentan. Con aguacero +25\u00a0%, con arcoíris +10\u00a0%.',
         'Gástalos en la tienda de temporada de la página del clima en fragmentos de platos, brújulas celestes y palillos del tiempo (se repone cada lunes); elegir el plato de prueba en el templo también cuesta puntos de temporada.',
+      ],
+    },
+    {
+      q: '¿De dónde salen los permisos de trabajo? ¿Para qué sirven?',
+      a: [
+        'Cada domingo a las 23:00 se ordena a los jugadores por los puntos de temporada ganados en la semana (mira el ranking de temporada en la ',
+        { to: '/weather', text: 'página del tiempo' },
+        '). Los 3 primeros con al menos 200 sacan un permiso de trabajo cada uno, por orden; un permiso ya sacado no vuelve a salir y solo sacas permisos que puedes usar.',
+        'Un permiso dura 160 horas y paga un sueldo el lunes a las 7:59. Todos dan monedas y EXP finales +5\u00a0%, más una ventaja propia: comisiones más bajas en la bolsa, los futuros, el fondo de desarrollo, las adquisiciones o las predicciones, más probabilidad al tasar o explorar, reposición manual en el mercado, renovar pedidos a domicilio en privado, mudanzas gratis, etc.',
       ],
     },
   ],

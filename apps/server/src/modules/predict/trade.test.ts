@@ -1,10 +1,12 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { GOODS } from '@dt/config';
 import { predictQuote } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, restRow, type TestGame } from '../../../test/game';
 import { eventCount } from '../../../test/quests';
 import { setTuning } from '../../../test/town';
 import { trader } from '../exchange/test';
+import { grantGoods } from '../store/grant';
 import { newEvent } from './test';
 
 let t: TestGame;
@@ -347,5 +349,19 @@ describe('出题人不能交易自己出的题（backlog 238-1）', () => {
     expect((await svc().detail(author, id)).event.own).toBe(true);
     expect((await svc().detail(other, id)).event.own).toBe(false);
     await svc().trade(other, id, { side: 'yes', dir: 'buy', qty: 1 });
+  });
+});
+
+describe('预测社分析师（天气改版 PR③）', () => {
+  it('持证买卖不收手续费；列表费率跟着变、写原值', async () => {
+    const shardId = await createShard(t.db);
+    const id = await newEvent(t, shardId);
+    const r = await trader(t, { shardId, coin: 1_000_000 });
+    await grantGoods(t.db, t.deps.config, r.restaurantId, GOODS.predictCard, 1, t.clock.now);
+    const q = predictQuote({ y: 0, n: 0, b: 100 }, 'yes', 'buy', 10, { unit: 1000, feeRate: 0 });
+    const res = await svc().trade(r, id, { side: 'yes', dir: 'buy', qty: 10 });
+    expect(res.data).toMatchObject({ fee: 0, total: q.total });
+    expect(await coin(r.restaurantId)).toBe(1_000_000 - q.total);
+    expect(await svc().list(r)).toMatchObject({ feeRate: 0, feeBase: 0.02, feeCard: GOODS.predictCard });
   });
 });

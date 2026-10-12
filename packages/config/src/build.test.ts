@@ -193,7 +193,7 @@ describe('buildBundle（真实数据）', () => {
     const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     expect(bundle!.foods).toHaveLength(336); // 313 + 新街道 23 种（问题记录 284）
-    expect(bundle!.goods).toHaveLength(728); // 天气改版 司天罗盘、晴雨签 2 件 + 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件 + 一到五级食材随机券 5 张（问题记录 331）+ 豪华签券 1 张（240-2） + 基金勋章 3 枚（240-2） + 后期海报奖杯 8 个（146）+ 天机石 6 阶（419）+ 街市补给包 5 个（理财）
+    expect(bundle!.goods).toHaveLength(740); // 天气改版 工作证 6 张、工资礼包 6 个（PR③）+ 司天罗盘、晴雨签 2 件 + 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件 + 一到五级食材随机券 5 张（问题记录 331）+ 豪华签券 1 张（240-2） + 基金勋章 3 枚（240-2） + 后期海报奖杯 8 个（146）+ 天机石 6 阶（419）+ 街市补给包 5 个（理财）
     expect(bundle!.cookbooks).toHaveLength(3810);
     expect(bundle!.streets).toHaveLength(30);
     expect(bundle!.starNeed).toHaveLength(12);
@@ -874,10 +874,11 @@ describe('小镇（子项目 4E-1）', () => {
     expect(bundle!.tuning.town.shake).toMatchObject({ limitIp: false, limitDevice: false });
   });
 
-  it('嘻哈男孩和论坛的事件键不再归到 town（裁定 22）', () => {
+  it('论坛、时令的事件键不再归到 town（裁定 22）', () => {
     const { bundle } = realBuild();
     const f = bundle!.actionMap.features;
-    expect(featureOfKey('hiphop.reward', f)).toBe('hiphop');
+    expect(featureOfKey('shiling.top', f)).toBe('mysterious');
+    expect(featureOfKey('town.mayor.ask', f)).toBe('town');
     expect(featureOfKey('post.create', f)).toBe('forum');
     expect(featureOfKey('broadcast', f)).toBe('town');
     expect(featureOfKey('krab.shake', f)).toBe('town');
@@ -987,53 +988,37 @@ describe('酒吧扩展（子项目 4C-3）', () => {
   });
 });
 
-describe('嘻哈男孩、排行（子项目 4E-2）', () => {
-  it('数值和工作证', () => {
+describe('工作证、排行（天气改版 PR③）', () => {
+  it('每周 3 张、门槛 200、11 张证各配一个工资礼包', () => {
     const { bundle } = realBuild();
-    const h = bundle!.tuning.hiphop;
-    expect(h.weeklyCards).toEqual(
-      ['商店工作证', '改名处工作证', '菜场工作证', '搬家处工作证', '保安证'].map(gid),
-    );
-    expect(new Set(h.wages.map(([card]) => card))).toEqual(new Set(h.weeklyCards));
-    expect(h.requireVerifiedEmail).toBe(false);
+    const j = bundle!.tuning.jobCard;
+    expect(j).toMatchObject({ hour: 23, count: 3, minGain: 200 });
+    expect(j.cards.map(([card]) => bundle!.goods.find((g) => g.id === card)!.name)).toEqual([
+      '菜场批发商',
+      '外卖站长',
+      '特色菜鉴定师',
+      '探险向导',
+      '搬家公司调度',
+      '交易所经纪人',
+      '期货交易员',
+      '银行理财顾问',
+      '并购顾问',
+      '赏铺店员',
+      '预测社分析师',
+    ]);
+    expect(new Set(j.cards.map(([, wage]) => wage)).size).toBe(11);
     expect(bundle!.tuning.market.manualPersonMax).toBe(99);
     expect(bundle!.tuning.rank.top).toBe(50);
   });
 
-  it('默认权重：原版地点各 10、某家餐厅 7、新地点各 5（问题记录 256）', () => {
-    expect(realBuild().bundle!.tuning.hiphop.placeWeights).toEqual([
-      [1, 10],
-      [2, 10],
-      [3, 10],
-      [4, 10],
-      [5, 10],
-      [6, 10],
-      [9, 7],
-      [10, 5],
-      [11, 5],
-      [12, 5],
-      [13, 5],
-      [14, 5],
-      [15, 5],
-    ]);
-  });
-
-  it('地点只能是 1~6、9 和 10~15', () => {
+  it('证要是工作证、工资要是工资礼包、证不能重复', () => {
     const src = source();
-    const tuning = structuredClone(src['game/tuning']) as { hiphop: { placeWeights: number[][] } };
-    tuning.hiphop.placeWeights.push([8, 1]);
-    expect(buildBundle({ ...src, 'game/tuning': tuning }).errors).toContain(
-      'tuning.hiphop.placeWeights has unknown place 8',
-    );
-  });
-
-  it('工资表的证要和周榜的证一致', () => {
-    const src = source();
-    const tuning = structuredClone(src['game/tuning']) as { hiphop: { wages: number[][] } };
-    tuning.hiphop.wages.pop();
-    expect(buildBundle({ ...src, 'game/tuning': tuning }).errors).toContain(
-      'tuning.hiphop.wages must cover exactly the weeklyCards',
-    );
+    const tuning = structuredClone(src['game/tuning']) as { jobCard: { cards: number[][] } };
+    const [first] = tuning.jobCard.cards;
+    tuning.jobCard.cards.push([first![0]!, gid('司天罗盘')]);
+    const errors = buildBundle({ ...src, 'game/tuning': tuning }).errors;
+    expect(errors).toContain(`tuning.jobCard.cards lists ${first![0]} twice`);
+    expect(errors).toContain(`tuning.jobCard.cards: ${gid('司天罗盘')} is not a wage pack`);
   });
 });
 
@@ -1450,7 +1435,7 @@ describe('活跃度新增项目（问题记录 318）', () => {
     );
   });
 
-  it('支线写死的门槛：“领 100 点活跃奖励”要有 100 点这一档，“周榜前 5”要有 5 张周榜卡（backlog）', () => {
+  it('支线写死的门槛：“领 100 点活跃奖励”要有 100 点这一档，“时令周榜拿到工作证”要每周至少发 1 张（backlog）', () => {
     const src = readSourceDir(defaultDataDir());
     const rewards = (structuredClone(src['dataset/activation_rewards']) as Array<{ dictval: number }>).filter(
       (r) => r.dictval !== 100,
@@ -1458,10 +1443,10 @@ describe('活跃度新增项目（问题记录 318）', () => {
     expect(buildBundle({ ...src, 'dataset/activation_rewards': rewards }).errors).toContain(
       'quest key activation.100 needs a 100-point activation reward',
     );
-    const tuning = structuredClone(src['game/tuning']) as { hiphop: { weeklyCards: number[] } };
-    tuning.hiphop.weeklyCards = tuning.hiphop.weeklyCards.slice(0, 4);
+    const tuning = structuredClone(src['game/tuning']) as { jobCard: { count: number } };
+    tuning.jobCard.count = 0;
     expect(buildBundle({ ...src, 'game/tuning': tuning }).errors).toContain(
-      'quest key hiphop.top5 needs at least 5 tuning.hiphop.weeklyCards',
+      'quest key shiling.top needs tuning.jobCard.count >= 1',
     );
   });
 
@@ -2147,7 +2132,7 @@ describe('支线扩充 B：其他模块（docs/superpowers/specs/2026-10-08-side
       ['town.mayor.right', 10],
       ['town.mayor.right', 50],
       ['fund.deposit', 1],
-      ['hiphop.top5', 1],
+      ['shiling.top', 1],
       ['weather.tool', 1],
       ['town.wish', 1],
     ]);

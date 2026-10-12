@@ -1,6 +1,6 @@
 import { sql, type Kysely, type Selectable } from 'kysely';
 import { gameDay, type FuturesContractDto, type FuturesDto, type FuturesFoodDto } from '@dt/shared';
-import type { GameConfig } from '@dt/config';
+import { GOODS, type GameConfig, type Tuning } from '@dt/config';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, limitReached, requirement } from '../../core/errors';
 import { featureAvailable } from '../../core/features';
@@ -12,6 +12,7 @@ import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { eligibility } from '../exchange/eligibility';
 import { frozenReason } from '../exchange/guard';
 import { refPrice, refPrices } from '../exchange/ref';
+import { cardValue } from '../jobcard/perks';
 import { futuresDeposit, futuresQuota, futuresUnitPrice } from './rules';
 
 type ContractRow = Selectable<FuturesContractTable>;
@@ -53,6 +54,20 @@ async function usedToday(db: Kysely<DB>, shardId: number, day: string): Promise<
   return new Map(rows.map((r) => [r.foods_id, r.used]));
 }
 
+/** 定金比例和每人每天的份数：持有期货交易员的按证上的（天气改版 PR③） */
+async function perkOf(
+  db: Kysely<DB>,
+  config: GameConfig,
+  t: Tuning['futures'],
+  restId: number,
+  now: Date,
+): Promise<{ depositRate: number; personDaily: number; card: number | null }> {
+  const rate = await cardValue(db, config, restId, GOODS.futuresCard, 'futuresDepositRate', now);
+  if (rate === null) return { depositRate: t.depositRate, personDaily: t.personDaily, card: null };
+  const daily = await cardValue(db, config, restId, GOODS.futuresCard, 'futuresPersonDaily', now);
+  return { depositRate: rate, personDaily: daily ?? t.personDaily, card: GOODS.futuresCard };
+}
+
 /** 食材期货（期货设计 2026-10-10）：下单、撤单、期货标签 */
 export function createFuturesService(d: GameDeps) {
   async function order(
@@ -87,10 +102,14 @@ export function createFuturesService(d: GameDeps) {
     if (unit !== b.unitPrice) throw invalidState('futures_price_moved', { price: unit });
     // 个人额度：锁着店，不会并发
     const mine = await getDaily(o.tx, o.rest.id, DAILY_KEY, day);
-    if (mine + b.qty > t.personDaily)
-      throw limitReached('futures_person', { max: t.personDaily, left: Math.max(0, t.personDaily - mine) });
+    const perk = await perkOf(o.tx, o.config, t, o.rest.id, o.now);
+    if (mine + b.qty > perk.personDaily)
+      throw limitReached('futures_person', {
+        max: perk.personDaily,
+        left: Math.max(0, perk.personDaily - mine),
+      });
     const total = unit * b.qty;
-    const deposit = futuresDeposit(total, t);
+    const deposit = futuresDeposit(total, perk);
     spendCoin(o, deposit, { source: 'futures.deposit' });
     // 区服额度：原子地加，加完超了就没加上（期货设计 §4，并发下也不超）
     const quota = futuresQuota(food.level, row.daily_quota, t);
@@ -187,6 +206,7 @@ export function createFuturesService(d: GameDeps) {
         .sort((a, b) => a.level - b.level || a.foodsId - b.foodsId);
     }
     const mine = await getDaily(d.db, ctx.restaurantId, DAILY_KEY, day);
+    const perk = await perkOf(d.db, d.config, t, ctx.restaurantId, now);
     const base = d.db.selectFrom('futures_contract').selectAll().where('rest_id', '=', ctx.restaurantId);
     const open = await base
       .where('status', '=', 'open')
@@ -208,10 +228,12 @@ export function createFuturesService(d: GameDeps) {
       needLevel: et.minLevel,
       needDays: et.minAccountDays,
       foods,
-      personDaily: t.personDaily,
-      personLeft: Math.max(0, t.personDaily - mine),
+      personDaily: perk.personDaily,
+      personLeft: Math.max(0, perk.personDaily - mine),
       deliverHours: t.deliverHours,
-      depositRate: t.depositRate,
+      depositRate: perk.depositRate,
+      base: { personDaily: t.personDaily, depositRate: t.depositRate },
+      card: perk.card,
       contracts,
     };
   }

@@ -5,6 +5,8 @@ import { formatNum } from '../../../utils/format';
 import fund from './fund';
 import { awardWords, n, type P, plEs } from '../../helpers';
 
+/** 天气四大类（镇长猜天气的消息用） */
+const WT = ['', 'Soleado', 'Lluvia', 'Nieve y hielo', 'Viento, arena y niebla'];
 const mcNameOf = (names: Names, id: number) => names.mcName?.(id) ?? `Plato estrella ${id}`;
 const seedNameOf = (names: Names, id: number) => names.seedName?.(id) ?? `Semilla ${id}`;
 const holdHours = (p: P) => (p.holdHours === undefined ? 24 : n(p, 'holdHours'));
@@ -240,6 +242,10 @@ const events: Messages['events'] = {
     'hiphop.wage': (p, names) => `Cobraste el sueldo del Chico hip-hop (${names.goodsName(n(p, 'cardId'))})`,
     'hiphop.weekly': (p, names) =>
       `${n(p, 'rank')}.º en la clasificación hip-hop semanal, ganas ${names.goodsName(n(p, 'goodsId'))}`,
+    'jobCard.weekly': (p, names) =>
+      `${n(p, 'rank')}.º en el ranking de temporada, sacaste el permiso de trabajo «${names.goodsName(n(p, 'goodsId'))}»`,
+    'jobCard.wage': (p, names) =>
+      `Cobraste el sueldo de un permiso de trabajo (${names.goodsName(n(p, 'cardId'))})`,
     'market.manual': (p) =>
       `Te abasteciste a mano en el mercado por ${formatNum(n(p, 'cost'))} ${plEs(formatNum(n(p, 'cost')), 'moneda', 'monedas')}`,
     'market.share': (p, names) =>
@@ -270,9 +276,13 @@ const events: Messages['events'] = {
     'weather.tool': (p, names) =>
       `Usaste ${names.goodsName(n(p, 'goodsId'))}: ${names.weatherName?.(n(p, 'from')) ?? ''} pasó a ${names.weatherName?.(n(p, 'to')) ?? ''}`,
     'town.mayor': (p) =>
-      p.right
-        ? 'Respondiste bien a la pregunta del Alcalde Gran Olla'
-        : 'Respondiste mal a la pregunta del Alcalde Gran Olla',
+      p.type === undefined
+        ? p.right
+          ? 'Respondiste bien a la pregunta del Alcalde Gran Olla'
+          : 'Respondiste mal a la pregunta del Alcalde Gran Olla'
+        : p.right
+          ? `Acertaste el tiempo del alcalde: ${WT[n(p, 'actual')] ?? ''}, ganas la Recomendación del Alcalde`
+          : `Fallaste el tiempo del alcalde: fue ${WT[n(p, 'actual')] ?? ''} (dijiste ${WT[n(p, 'type')] ?? ''})`,
     'town.shake': (p) =>
       `Sacudiste el árbol del dinero: ${formatNum(n(p, 'coin'))} ${plEs(formatNum(n(p, 'coin')), 'moneda', 'monedas')}`,
     'town.talk': () => 'Charlaste con los vecinos',

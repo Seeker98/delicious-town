@@ -17,9 +17,10 @@ import { emitAction } from '../../core/action';
 import { restLog, runOp, type Op } from '../../core/op';
 import { gainCoin, spendCoin } from '../../core/resources';
 import { AppError } from '../../http/errors';
-import { isFeatureEnabled } from '@dt/config';
+import { GOODS, isFeatureEnabled } from '@dt/config';
 import { frozenReason } from '../exchange/guard';
 import { eligibility } from '../exchange/eligibility';
+import { cardValue } from '../jobcard/perks';
 import { holdStep } from './holdStep';
 
 const KEEP_DAYS = 7;
@@ -90,9 +91,11 @@ export function createPredictService(d: GameDeps) {
       throw limitReached('predict_hold', { max: t.maxHold });
     if (b.dir === 'sell' && b.qty > held[b.side]) throw invalidState('predict_not_enough');
 
+    // 持有预测社分析师的按证上的手续费（天气改版 PR③）
+    const card = await cardValue(o.tx, o.config, o.rest.id, GOODS.predictCard, 'predictFeeRate', o.now);
     const q = predictQuote({ y: e.q_yes, n: e.q_no, b: e.b }, b.side, b.dir, b.qty, {
       unit: e.unit,
-      feeRate: t.feeRate,
+      feeRate: card ?? t.feeRate,
     });
     // 滑点保护（终审 I2）：带了预估金额时，买入要付的超过它、卖出得到的低于它就不成交
     if (b.limit !== undefined && (b.dir === 'buy' ? q.total > b.limit : q.total < b.limit))
@@ -248,6 +251,14 @@ export function createPredictService(d: GameDeps) {
       .select('level')
       .where('id', '=', ctx.restaurantId)
       .executeTakeFirstOrThrow();
+    const feeCard = await cardValue(
+      d.db,
+      d.config,
+      ctx.restaurantId,
+      GOODS.predictCard,
+      'predictFeeRate',
+      now,
+    );
     const r =
       (await eligibility({ db: d.db, level: rest.level, accountId: ctx.accountId, now, t })) ??
       ((await frozenReason(d.db, ctx.restaurantId)) !== null ? 'predict_frozen' : null);
@@ -272,7 +283,9 @@ export function createPredictService(d: GameDeps) {
       reason: r === null ? null : (REASON[r] ?? r),
       enabled: isFeatureEnabled(s, 'predict'),
       need: { level: t.minLevel, days: t.minAccountDays },
-      feeRate: t.feeRate,
+      feeRate: feeCard ?? t.feeRate,
+      feeBase: t.feeRate,
+      feeCard: feeCard === null ? null : GOODS.predictCard,
       maxHold: t.maxHold,
       maxTrade: t.maxTrade,
       unit: t.unit,

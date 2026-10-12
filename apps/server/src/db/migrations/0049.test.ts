@@ -39,7 +39,7 @@ const OVERRIDE = {
   restaurant: { giftGoods: [{ id: 1, num: 2 }], giftFoods: [{ id: 101, num: 3 }], coin: 101 },
   tuning: {
     shop: { discardable: [87] },
-    hiphop: { wages: [[108, 110]] },
+    jobCard: { cards: [[108, 110]] },
     predict: { unit: 500 },
     exchange: { refOverrides: { '467': 5000 } },
   },
@@ -486,7 +486,7 @@ describe('迁移 0049：重新编号', () => {
       restaurant: { giftGoods: [{ id: g(1), num: 2 }], giftFoods: [{ id: f(101), num: 3 }], coin: 101 },
       tuning: {
         shop: { discardable: [g(87)] },
-        hiphop: { wages: [[g(108), g(110)]] },
+        jobCard: { cards: [[g(108), g(110)]] },
         predict: { unit: 500 },
         exchange: { refOverrides: { [String(f(467))]: 5000 } },
       },

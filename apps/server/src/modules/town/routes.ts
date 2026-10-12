@@ -44,7 +44,7 @@ export function townRoutes(svc: TownService): FastifyPluginAsync {
     );
     r.post('/town/shake', async (req) => okOp(await svc.shake(restCtxOf(req))));
     r.post('/town/mayor', async (req) =>
-      okOp(await svc.mayor(restCtxOf(req), parse(mayorBody, req.body).place)),
+      okOp(await svc.mayor(restCtxOf(req), parse(mayorBody, req.body).type)),
     );
     r.post('/town/talk', async (req) => okOp(await svc.talk(restCtxOf(req), parse(townTalkBody, req.body))));
   };

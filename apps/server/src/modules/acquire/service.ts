@@ -1,4 +1,5 @@
-import { sql } from 'kysely';
+import { sql, type Kysely, type RawBuilder } from 'kysely';
+import { GOODS, type Tuning } from '@dt/config';
 import {
   ErrorCode,
   type AcquireBriefDto,
@@ -18,12 +19,14 @@ import { emitAction } from '../../core/action';
 import { createOp, flushOp, opNews, restLog, runOp, type Op, type OpResult } from '../../core/op';
 import { gainCoin, spendCoin } from '../../core/resources';
 import { opNeedPick } from '../../core/scarcity';
+import type { DB } from '../../db/schema';
 import { withRestaurants } from '../../db/tx';
 import { AppError } from '../../http/errors';
 import { isBanned } from '../admin/ban';
 import { awardFoodsPool } from '../award/random';
 import { addFoods } from '../cupboard/foods';
 import { linkedAccounts } from '../exchange/guard';
+import { cardValue } from '../jobcard/perks';
 import {
   buyBlock,
   heatAfterAcquire,
@@ -75,6 +78,12 @@ const bad = (reason: string, params: Record<string, unknown> = {}) =>
 
 /** 收购（问题记录 421）：强收、买挂牌、赎身、放手、挂牌 / 撤牌和读接口 */
 export function createAcquireService(d: GameDeps) {
+  /** 收钱的一方（被收购店的老板、赎身时的老板）的收购税：持有并购顾问的按证上的 */
+  const taxOf = async (db: Kysely<DB>, restId: number, t: Tuning['acquire'], now: Date): Promise<number> =>
+    (await cardValue(db, d.config, restId, GOODS.mnaCard, 'acquireTaxRate', now)) ?? t.taxRate;
+  /** 并购顾问证上的税率 */
+  const cardTax = (t: Tuning['acquire']): number =>
+    d.config.requireGoods(GOODS.mnaCard).effects.acquireTaxRate ?? t.taxRate;
   /**
    * 一个事务里按 id 升序锁住这些店，每家一个 Op，最后一起写回（同 runPairOp，多家）。
    * 结算、别的操作每次只锁一家，或者也按 id 升序锁，不会死锁
@@ -231,7 +240,7 @@ export function createAcquireService(d: GameDeps) {
       if (block !== null) throw bad(block);
       const price = b.way === 'listed' ? listPrice(s)! : priceOf(s);
       if (price !== b.expect) throw bad('price_changed', { price });
-      const sellerGot = share(price, 1 - t.taxRate);
+      const sellerGot = share(price, 1 - (await taxOf(me.tx, sellerId, t, me.now)));
       const seller = ops.get(sellerId)!;
       spendCoin(me, price, { source: 'acquire.buy' });
       gainCoin(seller, sellerGot, { source: 'acquire.sale' });
@@ -292,7 +301,7 @@ export function createAcquireService(d: GameDeps) {
       if (s.owner_rest_id !== ownerId) throw bad('owner_changed');
       const price = priceOf(s);
       if (price !== b.expect) throw bad('price_changed', { price });
-      const got = share(price, 1 - t.taxRate);
+      const got = share(price, 1 - (await taxOf(me.tx, ownerId, t, me.now)));
       spendCoin(me, price, { source: 'acquire.redeem' });
       gainCoin(owner, got, { source: 'acquire.sale' });
       await me.tx
@@ -471,6 +480,20 @@ export function createAcquireService(d: GameDeps) {
    * 还没有状态行时不建行：不到 minStar 两项都是 no_state；到了的按近几天收入算出基础身价显示
    */
   async function restOf(ctx: RestCtx, restId: number, t: T, now: Date): Promise<AcquireRestDto> {
+    return (await restFull(ctx, restId, t, now)).dto;
+  }
+
+  /** 同上，另带这家店自己持不持有并购顾问（我的页面写提示用） */
+  async function restFull(
+    ctx: RestCtx,
+    restId: number,
+    t: T,
+    now: Date,
+  ): Promise<{ dto: AcquireRestDto; ownCard: boolean }> {
+    // 持有并购顾问（天气改版 PR③）：卖方（老板，没有老板是店自己）和店自己，并在这一条查询里
+    const holds = (owner: RawBuilder<number>) =>
+      sql<boolean>`exists(select 1 from store_item c where c.rest_id = ${owner} and c.goods_id = ${GOODS.mnaCard}
+        and c.num > 0 and (c.expires_at is null or c.expires_at > ${now}))`;
     const row = await d.db
       .selectFrom('restaurant as r')
       .innerJoin('account as a', 'a.id', 'r.account_id')
@@ -495,6 +518,8 @@ export function createAcquireService(d: GameDeps) {
         's.list_rate',
         's.list_until',
         's.protected_until',
+        holds(sql<number>`coalesce(s.owner_rest_id, r.id)`).as('seller_card'),
+        holds(sql<number>`r.id`).as('own_card'),
       ])
       .where('r.id', '=', restId)
       .executeTakeFirst();
@@ -517,24 +542,27 @@ export function createAcquireService(d: GameDeps) {
       now,
     );
     const protectedUntil = row.protected_until;
+    // 卖方（老板；没有老板就是店自己）持有并购顾问时按证上的税率（天气改版 PR③）
+    const sellerTax = row.seller_card ? cardTax(t) : t.taxRate;
+    const wrap = (dto: AcquireRestDto) => ({ dto, ownCard: row.own_card });
     if (!hasState && row.star_level < t.minStar)
-      return {
+      return wrap({
         ...brief,
-        taxRate: t.taxRate,
+        taxRate: sellerTax,
         protectedUntil: null,
         acquireBlock: 'no_state',
         listedBlock: 'no_state',
-      };
+      });
     const protectedIso = protectedUntil && protectedUntil > now ? protectedUntil.toISOString() : null;
     // 自己的店：不用再查别的
     if (restId === ctx.restaurantId)
-      return {
+      return wrap({
         ...brief,
-        taxRate: t.taxRate,
+        taxRate: sellerTax,
         protectedUntil: protectedIso,
         acquireBlock: 'self',
         listedBlock: 'self',
-      };
+      });
     const [mine, holdings, facts, links] = await Promise.all([
       d.db
         .selectFrom('acquire_state')
@@ -567,13 +595,13 @@ export function createAcquireService(d: GameDeps) {
       listed: brief.listed !== null,
       now,
     };
-    return {
+    return wrap({
       ...brief,
-      taxRate: t.taxRate,
+      taxRate: sellerTax,
       protectedUntil: protectedIso,
       acquireBlock: buyBlock(facts0, t, 'acquire') ?? (links.size > 0 ? 'linked' : null),
       listedBlock: buyBlock(facts0, t, 'listed') ?? (links.size > 0 ? 'linked' : null),
-    };
+    });
   }
 
   async function settingsOf(ctx: RestCtx): Promise<T> {
@@ -609,8 +637,8 @@ export function createAcquireService(d: GameDeps) {
       )
       .where('s.owner_rest_id', '=', ctx.restaurantId)
       .execute();
-    const [me, m, myTend] = await Promise.all([
-      restOf(ctx, ctx.restaurantId, t, now),
+    const [mine, m, myTend] = await Promise.all([
+      restFull(ctx, ctx.restaurantId, t, now),
       briefs(
         hold.map((x) => x.rest_id),
         now,
@@ -630,13 +658,14 @@ export function createAcquireService(d: GameDeps) {
         tendedToday: x.tended_today !== null,
       }));
     return {
-      me,
+      me: mine.dto,
       tendedToday: myTend !== undefined,
       // 没有名下店时用不上，按已发
       dividendPaid: hold[0]?.paid ?? true,
       holdings: holdings.sort((x, y) => y.price - x.price || x.restId - y.restId),
       maxHoldings: t.maxHoldings,
       taxRate: t.taxRate,
+      taxCard: mine.ownCard ? GOODS.mnaCard : null,
       listMinRate: t.listMinRate,
       listDays: t.listDays,
       protectDays: t.protectDays,

@@ -75,31 +75,6 @@ const mc: Messages['mc'] = {
   decomposed: 'Décomposé',
   decomposeFailed: 'Échec de la décomposition',
   decompose: 'Décomposer',
-  hiphop: {
-    kinds: { food: 'Ingrédients', coin: 'Pièces', diamond: 'Diamants' },
-    replies: {
-      thanks: 'Merci pour votre soutien, c’est grâce à vous que je progresse\u202f!',
-      wanted: "C'est exactement ce qu'il me fallait\u202f! Merci\u202f!",
-    },
-    stale: "Ces ingrédients n'ont pas l'air très frais. ",
-    krab: (coin, rainbow) => `Vous avez ramassé ${coin}${rainbow ? ' (arc-en-ciel)' : ''} à côté`,
-    tickets: (text) => ` et ${text}`,
-    exp: (n) => `. EXP en plus\u202f: ${n}`,
-    failed: 'Échec du pourboire',
-    title: 'Le Garçon hip-hop se produit ici',
-    want: 'Je voudrais ',
-    wantHave: (name, n) => `${name} (vous en avez ${n})`,
-    meta: (worth, mine) =>
-      `Un pourboire d'au moins ${worth} en une fois peut rapporter des pièces Krab · Cette semaine\u202f: ${mine}`,
-    noFood: 'Pas d’ingrédients au garde-manger. Donnez plutôt des pièces ou des diamants',
-    pick: 'Choisir',
-    foodOption: (name, n) => `${name} (${n})`,
-    noWant:
-      "Vous n'avez pas ce qu'il veut. Les autres ingrédients ne comptent pas dans la valeur du pourboire",
-    numFood: 'Parts',
-    tip: 'Donner',
-    kindLabel: 'Donner quoi',
-  },
   season: {
     now: (roads) => `De saison\u202f: ${roads}`,
     roadTag: (road) => `${road} · de saison`,

@@ -102,7 +102,7 @@ const errors: Messages['errors'] = {
     job_honor: (p, n) =>
       p.goodsId
         ? `You need a valid ${n.goodsName(Number(p.goodsId))}`
-        : 'You need a valid shop work permit to refresh',
+        : 'You need a valid Delivery Station Chief job permit to refresh',
   },
   limit: {
     shiling_weekly: (p) => `Weekly limit reached (${String(p.limit)} a week)`,
@@ -271,7 +271,6 @@ const errors: Messages['errors'] = {
     not_discardable: "This item can't be discarded",
     not_owned: "You don't own this item",
     item_gone: 'This batch has been taken off the shelf',
-    not_here: "The Hip-hop Boy isn't here",
     post_text: 'Title or body length is invalid (title 1–40 characters, body 1–5000 characters)',
     reply_text: 'Reply length is invalid (1–500 characters)',
     post_locked: "Pinned or featured posts can't be deleted",
@@ -279,7 +278,6 @@ const errors: Messages['errors'] = {
     query_text: 'The search text is too long (max 20 characters)',
     cursor: 'Invalid page. Please refresh.',
     post_changed: 'The post changed. Refresh and try again.',
-    hiphop_not_out: "The Hip-hop Boy hasn't come out today. Ask Mayor Big Pot at the Guild later.",
     pick_food: 'Choose an ingredient to tip',
     pick_count: 'Wrong number of ingredients guessed',
     bad_food: 'You can only guess level 1–2 ingredients',
@@ -461,8 +459,6 @@ const errors: Messages['errors'] = {
     mailLevel: (level) => `Level too low (level ${level} required)`,
     codeLevel: (level) => `This code requires level ${level}`,
     queryText: (max) => `Search text can be at most ${max} ${plEn(max, 'character', 'characters')}`,
-    hiphopNotOut: (hour) =>
-      `The Hip-hop Boy hasn't come out today. Ask Mayor Big Pot at the Guild after ${hour}:00.`,
     unknown: (code) => `Something went wrong (${code})`,
   },
   fallbackName: {

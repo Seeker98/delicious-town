@@ -117,8 +117,6 @@ export default {
     bigEaterFirst: '你! 很有个性是吧!',
     wenjie: '用了飘柔就明显气质上来了!',
     bro13: '爱就直接去做!!!',
-    mayorRight: '谢谢你, 我现在就去找他, 好好弥补他！',
-    mayorWrong: '你觉得乱说一个位置我就会信吗！',
   },
   /** 外卖配送失败的原因（下标 = 服务端给的序号，原版 takeawayDeliveryFailRessonList） */
   takeawayFail: [

@@ -346,6 +346,16 @@ describe('支线“一周获得 200 时令值”', () => {
     } finally {
       t.clock.set(was);
     }
-    expect((await balanceOf(ctx.restaurantId))?.balance).toBe(150 + 90 + 5);
+    expect((await balanceOf(ctx.restaurantId))?.balance).toBe(150 + 90 + 5); // 周榜（PR③）按周另记，跨周也留着
+    const weeks = await t.db
+      .selectFrom('shiling_week')
+      .select(['week', 'gain'])
+      .where('rest_id', '=', ctx.restaurantId)
+      .orderBy('week')
+      .execute();
+    expect(weeks).toEqual([
+      { week: '2026-10-12', gain: 240 },
+      { week: '2026-10-19', gain: 5 },
+    ]);
   });
 });

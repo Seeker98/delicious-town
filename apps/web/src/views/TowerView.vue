@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import type { RankDto, RenownShopDto, TowerDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -73,7 +72,6 @@ watch(tab, (k) => void LOAD[k]());
       <b>{{ formatNum(shop.renown) }}</b></span
     >
   </PlaceScene>
-  <HiphopCard :place="5" class="mt-2" @changed="loadTower" />
   <DtTabs v-model="tab" :tabs="tabItems" />
   <template v-if="tab === 'tower'">
     <FloorPanel v-if="data" :data="data" @reload="loadAll" />

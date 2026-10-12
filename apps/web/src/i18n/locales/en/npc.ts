@@ -6,8 +6,8 @@ const npc: Messages['npc'] = {
     name: 'Mayor Big Pot',
     lines: [
       'Krabby Patties, Delicious Tickets, fragments — trade them with me for rare items.',
-      'Where did the Hip-hop Boy go today? Tell me, and a right answer earns you a bonus.',
-      "I'm Mayor Big Pot — a pot, not a bro. Chat with me every day for an ingredient and a seed.",
+      'I know how the sky will turn. Guess the next weather with me; a right guess earns you a reward.',
+      "I'm Mayor Big Pot — a pot, not a bro. Chat with me every day for an ingredient.",
     ],
   },
   bro13: {
@@ -61,7 +61,7 @@ const npc: Messages['npc'] = {
     classroom: { label: 'Classroom', desc: 'Teach, learn and sneak-learn signature dishes' },
     mayor: {
       label: 'Mayor Big Pot',
-      desc: 'Daily chat for an ingredient and a seed; rare items; where is the Hip-hop Boy',
+      desc: 'Daily chat for an ingredient; rare items; guess the next weather',
     },
     bro13: { label: 'Brother 13', desc: 'Daily chat for horns; trade ingredient vouchers' },
     carmen: { label: 'Carmen', desc: 'Trade mystery ingredient vouchers; a free one on your first visit' },
