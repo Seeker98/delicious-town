@@ -98,6 +98,24 @@ describe('点赞（规格书 13 §13.7）', () => {
     expect((await th().today(b)).every((x) => x.returned)).toBe(true);
     expect((await th().returnAll(b)).data.ok).toEqual([]);
   });
+
+  it('我先赞了对方、对方后来才赞我：算已经回赞过，一键回赞不再去点、不报失败（问题记录 601）', async () => {
+    const [a, b] = await friends();
+    await th().up(b, a.restaurantId);
+    await th().up({ ...a, ip: '10.0.0.3' }, b.restaurantId);
+    expect((await th().today(b)).map((x) => x.returned)).toEqual([true]);
+    const r = await th().returnAll(b);
+    expect(r.data).toEqual({ ok: [], failed: [] });
+    // 修之前已经记错的（没回赞）：一键回赞也跳过
+    await t.db
+      .updateTable('thumb')
+      .set({ returned: false })
+      .where('from_rest', '=', a.restaurantId)
+      .where('to_rest', '=', b.restaurantId)
+      .execute();
+    expect((await th().returnAll(b)).data).toEqual({ ok: [], failed: [] });
+    expect((await th().today(b)).map((x) => x.returned)).toEqual([true]);
+  });
 });
 
 describe('活跃度“点赞或被赞”（用户 2026-10-08 加的，2 点、每天 5 次）', () => {
