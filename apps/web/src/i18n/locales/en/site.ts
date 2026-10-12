@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    picky1012:
+      "Picky customers rebalanced: they now order from your street 90% of the time and from other streets 10%, no longer shifting with stars; with 30 or more dishes of your street learned they always pick one you can cook, with fewer they may order one you haven't learned and leave, and that table earns nothing; when your grade is too low they're unhappy but still pay half the dish price (it used to be a small base fee); the picky rate now grows 2% per star (was 6%), and the part above 30% only counts for a third",
     jobcard1012:
       'Job permit rework: the Hip-hop Boy and the tipping ranking are gone; job permits now come from the weekly Season ranking (on the weather page: each Sunday at 23:00 the top 3 with at least 200 seasonal points that week each draw one). Permits are now named jobs, with six new ones (Exchange Broker, Futures Trader, Bank Wealth Advisor, M&A Advisor, Kuji Shop Clerk, Prediction Analyst) that each lower a fee in their system; every permit now gives final coins and EXP +5%, and wages are much lower. The mayor’s quiz is now a guess of the next weather: a right guess is rewarded, a wrong one costs nothing',
     shiling1012:

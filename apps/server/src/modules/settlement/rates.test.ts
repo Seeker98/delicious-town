@@ -55,10 +55,24 @@ describe('汇总率（规格书 01 §1.3）', () => {
     expect(r.seated).toBe(0);
   });
 
-  it('阿刁：挑剔率超过 1 的部分一半转成银币率', () => {
+  it('挑剔率软上限：截到 0~1 后超过 30% 的部分只算三分之一，压掉的记成负分项（挑剔顾客调整 2026-10-12）', () => {
+    // 2 星：基本 0.1 + 0.02 × 2 = 0.14，浮动 0；加 0.46 → 0.6 → 0.3 + 0.3 ÷ 3 = 0.4
+    const { rates: r } = rates({ rest: { star: 2 }, agg: { spRate: 0.46 } });
+    expect(r.spRate.total).toBeCloseTo(0.4, 5);
+    expect(r.spRate.parts.softCap).toBeCloseTo(-0.2, 5);
+    const sum = Object.values(r.spRate.parts).reduce((a, b) => a + b, 0);
+    expect(sum).toBeCloseTo(r.spRate.total, 5);
+    // 超过 1 先截到 1：0.3 + 0.7 ÷ 3
+    expect(rates({ rest: { star: 2 }, agg: { spRate: 1 } }).rates.spRate.total).toBeCloseTo(0.5333, 3);
+    // 不到 30% 不动，没有 softCap 分项
+    const low = rates({ rest: { star: 2 }, agg: { spRate: 0.1 } }).rates.spRate;
+    expect(low.total).toBeCloseTo(0.24, 5);
+    expect(low.parts.softCap).toBeUndefined();
+  });
+
+  it('阿雕作废：挑剔率超过 1 也不再转成银币率', () => {
     const { rates: r } = rates({ rest: { star: 2 }, agg: { spRate: 1, adiao: 1 } });
-    expect(r.spRate.total).toBe(1);
-    expect(r.coinRate.parts.spOverflow).toBeCloseTo(0.11);
+    expect(r.coinRate.parts.spOverflow).toBeUndefined();
   });
 
   it('银币转经验：银币率 ×1.5 加到经验率，银币率清零', () => {
@@ -122,9 +136,10 @@ describe('汇总率（规格书 01 §1.3）', () => {
     const { flags } = rates({
       agg: { husky: 1, ali: 1, spCoinRate: 0.5, squidwardExpRate: 1, roachClearRate: 0.2 },
     });
+    // 二哈、阿狸作废（挑剔顾客调整 2026-10-12）
+    expect(flags).not.toHaveProperty('husky');
+    expect(flags).not.toHaveProperty('ali');
     expect(flags).toMatchObject({
-      husky: true,
-      ali: true,
       flute: false,
       spCoinRate: 0.5,
       sqExpRate: 2,

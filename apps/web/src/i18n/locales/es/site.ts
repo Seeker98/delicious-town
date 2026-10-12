@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    picky1012:
+      'Ajuste de los clientes exigentes: piden un plato de tu calle 9 de cada 10 veces y de otras calles 1 de cada 10, sin depender ya de las estrellas; con 30 o más platos de tu calle aprendidos siempre eligen uno que sabes cocinar, con menos pueden pedir uno que no has aprendido y marcharse, y esa mesa no da ingresos; si tu calidad no llega, quedan insatisfechos pero pagan la mitad del precio del plato (antes, una pequeña tarifa base); la tasa de exigentes sube un 2\u00a0% por estrella (antes un 6\u00a0%) y lo que pase del 30\u00a0% cuenta solo un tercio',
     jobcard1012:
       'Cambio en los permisos de trabajo: el Chico hip-hop y el ranking de propinas desaparecen; los permisos ahora salen del ranking de temporada (página del tiempo: cada domingo a las 23:00, los 3 primeros con al menos 200 puntos de temporada en la semana sacan uno cada uno). Los permisos llevan nombre de oficio y hay seis nuevos (Corredor de la bolsa, Operador de futuros, Asesor de inversiones, Asesor de fusiones, Dependiente del Kuji, Analista de predicciones) que rebajan una comisión de su sistema; todos dan monedas y EXP finales +5\u00a0%, y los sueldos bajan mucho. La pregunta del alcalde pasa a ser adivinar el próximo tiempo: si aciertas hay premio, fallar no penaliza',
     shiling1012:

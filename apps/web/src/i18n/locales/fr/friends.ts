@@ -117,6 +117,7 @@ const friends: Messages['friends'] = {
     count: (floor, n) => `Étage ${floor}\u202f: ${n} ${plFr(n, 'table', 'tables')}`,
     eating: (n) => `${n} ${plFr(n, 'occupée', 'occupées')}`,
     roach: (n) => `${n} ${plFr(n, 'cafard', 'cafards')}`,
+    left: (n) => `${n} ${plFr(n, 'client parti', 'clients partis')}`,
     free: (n) => `${n} ${plFr(n, 'pique-assiette', 'pique-assiettes')}`,
   },
   flip: {

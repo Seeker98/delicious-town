@@ -47,8 +47,11 @@ const rest: Messages['rest'] = {
     tableNo: (n) => `Mesa ${n}`,
     last: (coin, exp) => `Última ronda ${coin} ${plEs(coin, 'moneda', 'monedas')} / ${exp} EXP`,
     ordered: (dish, req, grade, ok) =>
-      `Pidió «${dish}», quería ${req}, el tuyo es ${grade}: ${ok ? 'satisfecho' : 'no satisfecho'}`,
+      `Pidió «${dish}», quería ${req}, el tuyo es ${grade}: ${ok ? 'satisfecho' : 'no satisfecho, pagó la mitad del precio del plato'}`,
     orderedNone: (req) => `Quería un plato ${req}, pero aún no has aprendido ninguno que puedas servirle`,
+    orderedLeft: (dish) => `Pidió «${dish}», que aún no has aprendido, y se fue`,
+    leftNote:
+      'Esta mesa no dio ingresos esta ronda. Cuantos más platos de tu calle aprendas, menos clientes se irán.',
     ateSpecial: (name, n) => `Comió la especialidad «${name}» ×${n}`,
     roachNote: 'Una mesa con cucaracha no recibe clientes hasta que la elimines.',
     kill: 'Aplastar la cucaracha',

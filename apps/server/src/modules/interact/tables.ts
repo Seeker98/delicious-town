@@ -26,9 +26,9 @@ export function findTable(tables: TableState[], no: number): TableState {
   return t;
 }
 
-/** 空桌：没有顾客（0）或蟑螂刚被蟑螂药消灭（-3），且没有蟑螂、没有白食者（计划裁定 7） */
+/** 空桌：没有顾客（0）、蟑螂刚被蟑螂药消灭（-3）或挑剔顾客走了（-2），且没有蟑螂、没有白食者（计划裁定 7） */
 export function isEmptyTable(t: TableState): boolean {
-  return (t.customer === 0 || t.customer === -3) && !t.roach && !t.freeloader;
+  return (t.customer === 0 || t.customer === -3 || t.customer === -2) && !t.roach && !t.freeloader;
 }
 
 /** 清空一张桌子（灭蟑螂、结束白食后） */

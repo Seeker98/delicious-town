@@ -47,8 +47,11 @@ const rest: Messages['rest'] = {
     tableNo: (n) => `Table ${n}`,
     last: (coin, exp) => `Last round ${coin} ${plEn(coin, 'coin', 'coins')} / ${exp} EXP`,
     ordered: (dish, req, grade, ok) =>
-      `Ordered "${dish}", wanted ${req}, yours is ${grade}: ${ok ? 'satisfied' : 'not satisfied'}`,
+      `Ordered "${dish}", wanted ${req}, yours is ${grade}: ${ok ? 'satisfied' : 'not satisfied, paid half the dish price'}`,
     orderedNone: (req) => `Wanted a ${req} dish, but you haven't learned one you can serve`,
+    orderedLeft: (dish) => `Ordered "${dish}", which you haven't learned yet, and left`,
+    leftNote:
+      'No income from this table this round. The more dishes of your street you learn, the fewer customers leave.',
     ateSpecial: (name, n) => `Ate the special "${name}" ×${n}`,
     roachNote: "A table with a roach can't take customers until you squash it.",
     kill: 'Squash the roach',

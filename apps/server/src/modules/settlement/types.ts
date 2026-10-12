@@ -76,8 +76,6 @@ export interface Rates {
 
 /** 开关型荣誉和其他系数 */
 export interface Flags {
-  husky: boolean;
-  ali: boolean;
   flute: boolean;
   paintingTop: boolean;
   pinkBook: boolean;

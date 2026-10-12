@@ -72,6 +72,30 @@ describe('有蟑螂的楼层标出来（问题记录 561）', () => {
     });
     expect(w.get('[data-testid="floor-summary"]').text()).toBe('1 楼 4 桌 · 2 桌在吃 · 1 只蟑螂');
   });
+
+  it('挑剔顾客走了的桌：菜名划掉、红标签“走了”，汇总写几桌走了、不算在吃（挑剔顾客调整）', () => {
+    const catalog = useCatalogStore();
+    catalog.dataMap = new Map([['cookbooks:5', { id: 5, name: '宫保鸡丁' }]]) as never;
+    const w = mount(TableGrid, {
+      props: {
+        tables: [
+          {
+            no: 1,
+            floor: 1,
+            customer: -2,
+            last: { type: -2, coin: 0, exp: 0, oil: 0, req: 1, cookbookId: 5 },
+          },
+          { no: 2, floor: 1, customer: 1 },
+        ],
+      },
+    });
+    expect(w.get('[data-testid="floor-summary"]').text()).toBe('1 楼 2 桌 · 1 桌在吃 · 1 桌走了');
+    const cell = w.get('[data-testid="table-1"]');
+    expect(cell.classes()).toContain('is-left');
+    expect(w.get('[data-testid="table-dish-1"]').text()).toBe('宫保鸡丁');
+    expect(cell.get('.dt-tag').text()).toBe('走了');
+    expect(cell.get('.dt-tag').classes()).toContain('dt-tag-danger');
+  });
 });
 
 describe('每桌点的菜（问题记录 559）', () => {
