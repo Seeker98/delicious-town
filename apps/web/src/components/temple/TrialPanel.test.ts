@@ -18,7 +18,7 @@ vi.mock('../../api/endpoints', () => ({
   },
 }));
 
-/** 选食材、触手指定、玩法说明都是底部面板（Teleport 到 body）：测试里把 teleport 桩掉，面板内容留在 wrapper 里（同 ShopView.test） */
+/** 选食材、时令值指定、玩法说明都是底部面板（Teleport 到 body）：测试里把 teleport 桩掉，面板内容留在 wrapper 里（同 ShopView.test） */
 const stubs = { teleport: true };
 
 type W = ReturnType<typeof mount>;
@@ -94,7 +94,9 @@ describe('TrialPanel', () => {
     const w = mount(TrialPanel, {
       global: { stubs },
       props: {
-        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+        data: templeData({
+          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+        }),
       },
     });
     await flushPromises();
@@ -109,7 +111,9 @@ describe('TrialPanel', () => {
     const w = mount(TrialPanel, {
       global: { stubs },
       props: {
-        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+        data: templeData({
+          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+        }),
       },
     });
     await flushPromises();
@@ -159,7 +163,9 @@ describe('TrialPanel', () => {
     const w = mount(TrialPanel, {
       global: { stubs },
       props: {
-        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+        data: templeData({
+          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+        }),
       },
     });
     await flushPromises();
@@ -190,7 +196,9 @@ describe('TrialPanel', () => {
     const w = mount(TrialPanel, {
       global: { stubs },
       props: {
-        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+        data: templeData({
+          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+        }),
       },
     });
     await flushPromises();
@@ -221,7 +229,9 @@ describe('TrialPanel', () => {
     const w = mount(TrialPanel, {
       global: { stubs },
       props: {
-        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+        data: templeData({
+          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+        }),
       },
     });
     await flushPromises();
@@ -259,7 +269,9 @@ describe('TrialPanel', () => {
     const w = mount(TrialPanel, {
       global: { stubs },
       props: {
-        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+        data: templeData({
+          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+        }),
       },
     });
     await flushPromises();
@@ -301,7 +313,9 @@ describe('TrialPanel', () => {
     const w = mount(TrialPanel, {
       global: { stubs },
       props: {
-        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+        data: templeData({
+          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+        }),
       },
     });
     await flushPromises();
@@ -325,7 +339,9 @@ describe('TrialPanel', () => {
     const w = mount(TrialPanel, {
       global: { stubs },
       props: {
-        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+        data: templeData({
+          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+        }),
       },
     });
     await flushPromises();
@@ -356,7 +372,9 @@ describe('TrialPanel', () => {
     const w = mount(TrialPanel, {
       global: { stubs },
       props: {
-        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+        data: templeData({
+          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+        }),
       },
     });
     await flushPromises();
@@ -371,7 +389,9 @@ describe('TrialPanel', () => {
     await w.get('[data-testid="trial-group-5"]').trigger('click');
     expect(open()).toBe('false');
     await w.setProps({
-      data: templeData({ trial: { mcId: 4, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+      data: templeData({
+        trial: { mcId: 4, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+      }),
     });
     expect(open()).toBe('true');
   });
@@ -396,7 +416,9 @@ describe('TrialPanel', () => {
     const w = mount(TrialPanel, {
       global: { stubs },
       props: {
-        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+        data: templeData({
+          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+        }),
       },
     });
     await flushPromises();
@@ -427,7 +449,9 @@ describe('TrialPanel', () => {
     const w = mount(TrialPanel, {
       global: { stubs },
       props: {
-        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+        data: templeData({
+          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+        }),
       },
     });
     await flushPromises();
@@ -439,10 +463,52 @@ describe('TrialPanel', () => {
     expect(w.find('.dt-help').exists()).toBe(false);
     await w.get('[data-testid="trial-help"]').trigger('click');
     const help = w.get('.dt-help').text();
-    for (const x of ['注射', '冥想', '触手', '稀有', '主料']) expect(help).toContain(x);
+    for (const x of ['注射', '冥想', '时令值', '稀有', '主料']) expect(help).toContain(x);
     // 上限按区服数值写（用户 2026-10-07 定：50 → 30），说明里写明对决不算试炼价值
     expect(w.text()).toContain('最多 +30%');
     expect(w.text()).not.toMatch(/(^|[^0-9])50%/);
     expect(help).toContain('对决');
+  });
+
+  it('用时令值指定试炼菜（时令改版，原来花触手）：按钮写花费；面板写每次多少、我有多少；不够时指定按钮灰掉', async () => {
+    vi.mocked(endpoints.trialRefresh).mockResolvedValue({ mcId: 5 });
+    const row = (mcId: number) => ({
+      mcId,
+      curlevel: 1,
+      levelName: '初学',
+      curexp: 0,
+      expNext: 200,
+      trialWorth: 0,
+      trialExp: 0,
+      way: 1,
+    });
+    vi.mocked(endpoints.mc).mockResolvedValue({ learned: [row(3), row(5)] } as never);
+    useCatalogStore().mcMap.set(5, {
+      id: 5,
+      name: '秘·宫保鸡丁',
+      level: 2,
+      road: 2,
+      nutritive: 1,
+      coin: 1,
+      foods: [],
+      appraisable: true,
+    });
+    const trial = { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 };
+    const w = mount(TrialPanel, { global: { stubs }, props: { data: templeData({ trial, shiling: 45 }) } });
+    await flushPromises();
+    expect(w.get('[data-testid="trial-pick-open"]').text()).toBe('用时令值指定 (30)');
+    await w.get('[data-testid="trial-pick-open"]').trigger('click');
+    expect(w.text()).toContain('每次 30 时令值 (你有 45), 可以指定你学会的 1~5 级特色菜。');
+    expect(w.get('[data-testid="trial-pick-5"]').attributes('disabled')).toBeUndefined();
+    await w.get('[data-testid="trial-pick-5"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.trialRefresh).toHaveBeenCalledWith(5);
+    const poor = mount(TrialPanel, {
+      global: { stubs },
+      props: { data: templeData({ trial, shiling: 10 }) },
+    });
+    await flushPromises();
+    await poor.get('[data-testid="trial-pick-open"]').trigger('click');
+    expect(poor.get('[data-testid="trial-pick-5"]').attributes('disabled')).toBeDefined();
   });
 });

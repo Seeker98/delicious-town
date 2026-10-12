@@ -21,6 +21,7 @@ import { createMarketService, type MarketService } from './modules/market/servic
 import { mysteriousJobs } from './modules/mysterious/jobs';
 import { createMysteriousService, type MysteriousService } from './modules/mysterious/service';
 import { createTempleService, type TempleService } from './modules/temple/service';
+import { createShilingService, type ShilingService } from './modules/shiling/service';
 import { yardJobs } from './modules/yard/jobs';
 import { towerJobs } from './modules/tower/jobs';
 import { takeawayJobs } from './modules/takeaway/jobs';
@@ -86,6 +87,7 @@ export interface Game {
   equip: EquipService;
   mysterious: MysteriousService;
   temple: TempleService;
+  shiling: ShilingService;
   yard: YardService;
   bar: BarService;
   tower: TowerService;
@@ -167,6 +169,7 @@ export function createGame(app: AppDeps): Game {
     equip: createEquipService(deps, world),
     mysterious: createMysteriousService(deps, world),
     temple: createTempleService(deps, world),
+    shiling: createShilingService(deps, world),
     yard: createYardService(deps),
     bar: createBarService(deps),
     tower: createTowerService(deps),

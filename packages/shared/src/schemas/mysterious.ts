@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { SeasonDto } from './shiling';
 
 const id = z.number().int().positive();
 export const mcIdParam = z.object({ id: z.coerce.number().int().positive() });
@@ -36,6 +37,9 @@ export interface McCookDto {
   luck: boolean;
   eatCount: number;
   createdAt: string;
+  /** 应时（天气改版设计 §3.2）：下锅那一刻当令；shilingPts 这一批已经攒下的时令值 */
+  shiling: boolean;
+  shilingPts: number;
 }
 
 export interface McToolDto {
@@ -73,6 +77,8 @@ export interface McOverviewDto {
   cookNums: number[];
   /** 有星神之书时鉴定会重抽 */
   starBook: boolean;
+  /** 现在的当令（已学列表标当令、下锅面板写是否应时） */
+  season: SeasonDto;
 }
 
 export interface AppraiseResultDto {

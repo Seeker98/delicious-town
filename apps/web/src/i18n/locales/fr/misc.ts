@@ -31,6 +31,7 @@ const misc: Messages['misc'] = {
         `La météo change toutes les 4 heures (${hours.map((h) => `${h} h`).join(', ')}) et suit le temps actuel\u202f: pas de neige juste après le soleil, la pluie forcit petit à petit.`,
         'La prévision ci-dessous donne la probabilité de chaque type au prochain changement.',
         'Par mauvais temps, la boussole céleste (choisir un type) ou les bâtonnets du temps (un sur deux) changent la météo pour 1 heure, pour toute la ville.',
+        'Chaque météo met deux voies de plats signature de saison. Cuisinez quand votre voie est de saison et toute la fournée devient de saison\u202f: chaque part mangée par un client rapporte des points de saison à dépenser à la boutique de saison (dès 1 étoile).',
       ],
     },
     forecast: {
@@ -73,6 +74,84 @@ const misc: Messages['misc'] = {
       lot: (n) => `Bâtonnet ${n}`,
       take: (name) => `Garder ${name}`,
       countdown: (s) => `Sans choix dans ${s} s, le bâtonnet 1 est utilisé`,
+    },
+    shiling: {
+      loadFailed: 'Impossible de charger la saison',
+      dl: 'De saison',
+      roads: ['', 'Voie 1', 'Voie 2', 'Voie 3', 'Voie 4', 'Voie 5', 'Voie 6', 'Voie des bêtes'],
+      sep: ', ',
+      title: 'Saison',
+      weekReset: 'Remise à zéro de la semaine lundi 0 h',
+      balance: 'Points de saison',
+      weekGain: 'Cette semaine',
+      nowRoads: 'De saison',
+      until: (time) => `· jusqu’à ${time}`,
+      mine: 'Parmi vos plats, de saison maintenant\u202f: ',
+      mineNone: 'Aucun de vos plats n’est de saison en ce moment.',
+      rule: 'Chaque part de saison mangée par un client rapporte niveau du plat × bonus de qualité ÷ 10 points\u202f; les parts jetées ou goûtées ne comptent pas.',
+      tableRow: 'Calendrier des saisons',
+      tableSub: 'Quelles voies sont de saison pour chaque météo',
+      lockedTitle: (n) => `Débloqué à ${n} étoile${n > 1 ? 's' : ''}`,
+      lockedText:
+        'Chaque météo met deux voies de plats signature de saison\u202f; une fournée cuisinée quand sa voie est de saison est de saison. Les clients qui mangent vos plats de saison vous rapportent des points de saison, à échanger contre des fragments, des boussoles célestes et des bâtonnets du temps.',
+      starUp: 'Comment gagner des étoiles',
+      shop: {
+        title: 'Boutique de saison',
+        restock: 'Réassort lundi 0 h',
+        remnant: 'Fragment de plat signature',
+        remnantSub: (per, left) =>
+          `Plat niv. 1 à 5 au choix · ${per} × niveau l’unité · encore ${left} cette semaine`,
+        rare: 'Fragment rare',
+        rareSub: (left) => `Plat niv. 6 ou de la voie des bêtes au choix · encore ${left} cette semaine`,
+        goodsSub: (left) => `Encore ${left} cette semaine`,
+        pick: 'Choisir',
+        price: (n) => `Échanger contre ${n} points de saison`,
+        foot: (n) =>
+          `Choisir le plat d’épreuve au temple coûte aussi des points de saison (${n} à chaque fois).`,
+        done: (name) => `Obtenu\u202f: ${name}`,
+        failed: 'Échec de l’échange',
+      },
+      table: {
+        title: 'Calendrier des saisons',
+        sub: 'La météo décide des deux voies de saison. Si la voie d’un plat est de saison quand vous le cuisinez, toute la fournée est de saison jusqu’à épuisement. Les voies encadrées sont celles de vos plats.',
+        now: 'maintenant',
+        special: 'Météo spéciale',
+      },
+      pick: {
+        title: 'Échanger un fragment de plat',
+        rareTitle: 'Échanger un fragment rare',
+        sub: (per, left) =>
+          `Un plat niv. 1 à 5 identifiable que vous ne connaissez pas encore. ${per} × niveau l’unité, encore ${left} cette semaine\u202f; 3 fragments du même plat suffisent pour l’apprendre.`,
+        rareSub: (price, left) =>
+          `Un plat qu’on ne peut pas identifier, comme ceux de niv. 6 ou de la voie des bêtes. ${price} l’unité, encore ${left} cette semaine.`,
+        inSeason: (roads) => `De saison (${roads})`,
+        allRoads: 'Toutes les voies',
+        level: (n) => `Niv. ${n}`,
+        have: (n) => `${n} ${plFr(n, 'fragment', 'fragments')}`,
+        none: 'Aucun fragment',
+        empty: 'Rien à échanger',
+        foot: 'Les plats que vous connaissez ne sont pas listés. Toucher un prix échange 1 fragment tout de suite (un fragment pris par erreur peut être vendu dans les recettes).',
+      },
+      intro: {
+        title: 'Saisons débloquées',
+        sub: 'À 1 étoile, vos plats signature suivent la météo',
+        steps: [
+          [
+            'Voir ce qui est de saison',
+            'Chaque météo met deux voies de saison\u202f; la page météo montre l’actuelle et la suivante.',
+          ],
+          [
+            'Cuisiner de saison',
+            'Si la voie est de saison quand vous cuisinez, toute la fournée est de saison jusqu’à épuisement.',
+          ],
+          [
+            'Gagner des points de saison',
+            'Les clients qui mangent vos plats de saison rapportent des points pour des fragments, des boussoles célestes et des bâtonnets du temps.',
+          ],
+        ] as [string, string][],
+        ok: 'Compris',
+        go: 'Voir la météo',
+      },
     },
   },
   invite: {

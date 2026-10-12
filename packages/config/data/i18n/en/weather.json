@@ -21,7 +21,7 @@
   },
   "6": {
     "name": "Rainbow",
-    "note": "Chance of Krab Coins when tipping the busker +10%!\nTrial success rate +8%!\nBusiness: final EXP +120%\nTakeaway: delivery time -20%, EXP +120%, renown +100%, success rate +20%"
+    "note": "Seasonal points +10%!\nTrial success rate +8%!\nBusiness: final EXP +120%\nTakeaway: delivery time -20%, EXP +120%, renown +100%, success rate +20%"
   },
   "7": {
     "name": "Hurricane",
@@ -49,7 +49,7 @@
   },
   "13": {
     "name": "Rainstorm",
-    "note": "Market ingredient prices +60%!\nKraken favor when feeding +25%!\nBusiness: occupancy -20%, EXP per table +3\nTakeaway: delivery time -20%, coins -40%, EXP +80%, success rate -30%"
+    "note": "Market ingredient prices +60%!\nSeasonal points +25%!\nBusiness: occupancy -20%, EXP per table +3\nTakeaway: delivery time -20%, coins -40%, EXP +80%, success rate -30%"
   },
   "14": {
     "name": "Sleet",

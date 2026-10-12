@@ -18,26 +18,21 @@ const talk = (ctx: RestCtx, npc: 'bigEater' | 'wenjie' | 'bro13' | 'carmen') =>
   t.game.town.talk(ctx, { npc });
 
 describe('NPC 对话（设计文档 §3.3）', () => {
-  it('镇长大胃锅（原来的大胃哥，问题记录 441）：每天 1~5 级食材 1~3 个 + 1 颗种子；不再送神秘食材兑换券', async () => {
+  it('镇长大胃锅（原来的大胃哥，问题记录 441）：每天 1~5 级食材 1~3 个；不再送神秘食材兑换券，也不再送种子（时令改版）', async () => {
     const a = await newRestaurant(t);
     const first = (await talk(a, 'bigEater')).data;
     expect(first.talk).toBe('bigEater');
-    expect(first.rewards).toHaveLength(2);
-    const [food, seed] = first.rewards;
+    expect(first.rewards).toHaveLength(1);
+    const [food] = first.rewards;
     expect(food!.kind).toBe('foods');
     expect(config.requireFood(food!.id!).level).toBeGreaterThanOrEqual(1);
     expect(config.requireFood(food!.id!).level).toBeLessThanOrEqual(5);
     expect(food!.num).toBeGreaterThanOrEqual(1);
     expect(food!.num).toBeLessThanOrEqual(3);
-    expect(seed).toMatchObject({ kind: 'seed', num: 1 });
     expect(await goodsNum(t, a.restaurantId, GOODS.mysteryFoodExchange)).toBe(0);
-    const seedRow = await t.db
-      .selectFrom('rest_seed')
-      .select('num')
-      .where('rest_id', '=', a.restaurantId)
-      .where('seed_id', '=', seed!.id!)
-      .executeTakeFirstOrThrow();
-    expect(seedRow.num).toBe(1);
+    expect(
+      await t.db.selectFrom('rest_seed').select('num').where('rest_id', '=', a.restaurantId).execute(),
+    ).toEqual([]);
 
     await expect(talk(a, 'bigEater')).rejects.toMatchObject({
       code: 'ALREADY_DONE',
@@ -45,7 +40,7 @@ describe('NPC 对话（设计文档 §3.3）', () => {
     });
 
     t.clock.set(gameTime('2026-10-01', 12));
-    expect((await talk(a, 'bigEater')).data.rewards).toHaveLength(2);
+    expect((await talk(a, 'bigEater')).data.rewards).toHaveLength(1);
   });
 
   it('卡门的见面礼（问题记录 441：原来大胃哥第一次聊天送）：神秘食材兑换券 ×1，每家店一次', async () => {

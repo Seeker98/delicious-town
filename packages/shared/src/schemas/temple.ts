@@ -6,8 +6,6 @@ export const exploreBody = z.object({ goodsId: id, times: z.number().int().min(1
 export const trialPrepareBody = z.object({ way: z.union([z.literal(1), z.literal(2)]) });
 export const trialRefreshBody = z.object({ mcId: id.optional() });
 export const trialStartBody = z.object({ mainFoodsId: id, subFoodsId: id });
-export const krakenFeedBody = z.object({ num: z.number().int().min(1).max(1_000_000) });
-export const tentacleExchangeBody = z.object({ slot: z.number().int().min(0).max(19) });
 
 type FoodNum = { foodsId: number; num: number };
 
@@ -19,16 +17,17 @@ export interface TempleDto {
   maps: Array<{ goodsId: number; num: number; needStrength: number }>;
   /** mcId 为 null = 没准备过；readyMinutes = 准备勋章剩余分钟，0 = 没准备好 */
   /** worthMax / expMax：本区服试炼价值、试炼经验的上限（百分比，用户 2026-10-07 起价值上限 30） */
-  trial: { mcId: number | null; readyMinutes: number; creatives: number; worthMax: number; expMax: number };
-  kraken: {
-    targetMcId: number;
-    fed: boolean;
-    feedable: boolean;
-    hours: Array<[number, number]>;
-    current: { mcId: number; grade: number; leftNum: number; price: number } | null;
+  /** pickCost：用时令值指定试炼菜一次花多少 */
+  trial: {
+    mcId: number | null;
+    readyMinutes: number;
+    creatives: number;
+    worthMax: number;
+    expMax: number;
+    pickCost: number;
   };
-  seeds: Array<{ seedId: number; num: number }>;
-  tentacles: number;
+  /** 时令值余额（试炼指定用） */
+  shiling: number;
 }
 
 export interface MissileResultDto {
@@ -61,21 +60,4 @@ export interface TrialResultDto {
   addExp: number;
   proficiency: number;
   curlevel: number;
-}
-
-export interface KrakenFeedDto {
-  relation: 'same' | 'road' | 'other';
-  favor: number;
-  seeds: Array<{ seedId: number; num: number }>;
-  krabCoin: number;
-  tentacle: boolean;
-  punish: { kind: 'exp' | 'worth' | 'forget'; value: number } | null;
-}
-
-export interface TentacleShopDto {
-  slots: Array<{ mcId: number; bought: boolean }>;
-  refreshes: number;
-  /** 下次刷新花几条触手（当天第一次免费） */
-  refreshCost: number;
-  tentacles: number;
 }

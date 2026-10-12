@@ -117,7 +117,7 @@
     "name": "Completar 3 repartos"
   },
   "2143": {
-    "name": "Alimentar al Kraken una vez"
+    "name": "Cocinar una tanda de temporada"
   },
   "2144": {
     "name": "Aprender 300 recetas"
@@ -294,16 +294,16 @@
     "name": "Atacar al Guardián 20 veces"
   },
   "3124": {
-    "name": "Alimentar al Kraken 10 veces"
+    "name": "Cocinar 10 tandas de temporada"
   },
   "3125": {
-    "name": "Conseguir más de {n} de favor del Kraken en una sola comida"
+    "name": "Ganar {n} puntos de temporada en una semana"
   },
   "3126": {
-    "name": "Conseguir un tentáculo del Kraken al alimentarlo 3 veces"
+    "name": "Canjear 3 veces en la tienda de temporada"
   },
   "3127": {
-    "name": "Alimentar al Kraken 50 veces"
+    "name": "Cocinar 50 tandas de temporada"
   },
   "3141": {
     "name": "Cosechar 10 veces"

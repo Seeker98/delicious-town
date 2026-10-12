@@ -788,26 +788,26 @@
      "id": 3124,
      "order": 4,
      "needStar": 0,
-     "name": "投喂克拉肯 10 次",
+     "name": "做 10 批应时特色菜",
      "cond": {
       "kind": "counter",
-      "key": "kraken.feed",
+      "key": "shiling.cook",
       "target": 10
      },
      "award": {
       "coin": 100000,
       "exp": 10000
      },
-     "href": "/temple"
+     "href": "/cookbooks?tab=mc"
     },
     {
      "id": 3125,
      "order": 5,
      "needStar": 0,
-     "name": "投喂克拉肯一次好感超过 {n}",
+     "name": "一周获得 {n} 时令值",
      "cond": {
       "kind": "counter",
-      "key": "kraken.favorHigh",
+      "key": "shiling.week200",
       "target": 1
      },
      "award": {
@@ -820,16 +820,16 @@
        }
       ]
      },
-     "href": "/temple"
+     "href": "/weather"
     },
     {
      "id": 3126,
      "order": 6,
      "needStar": 0,
-     "name": "投喂拿到克拉肯触手 3 次",
+     "name": "在时令铺兑换 3 次",
      "cond": {
       "kind": "counter",
-      "key": "kraken.tentacle",
+      "key": "shiling.buy",
       "target": 3
      },
      "award": {
@@ -842,16 +842,16 @@
        }
       ]
      },
-     "href": "/temple"
+     "href": "/weather"
     },
     {
      "id": 3127,
      "order": 7,
      "needStar": 0,
-     "name": "投喂克拉肯 50 次",
+     "name": "做 50 批应时特色菜",
      "cond": {
       "kind": "counter",
-      "key": "kraken.feed",
+      "key": "shiling.cook",
       "target": 50
      },
      "award": {
@@ -864,7 +864,7 @@
        }
       ]
      },
-     "href": "/temple"
+     "href": "/cookbooks?tab=mc"
     }
    ]
   },

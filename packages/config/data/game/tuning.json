@@ -240,11 +240,19 @@
     "guardianRareRate": 0.25, "guardianFoodsBase": 60, "guardianFoodsSpread": 10, "guardianRewardHp": 30000,
     "injectCoin": 250000, "refreshCoin": 20000, "trialCoin": 10000,
     "trialWorthMax": 30, "trialExpMax": 150, "trialProficiencyPerLevel": 800,
-    "trialCap": 0.6, "rareOdds": 100,
-    "krakenHours": [[11, 14], [17, 21]],
-    "krakenRates": { "same": 2.4, "road": 1, "other": 0.5 },
-    "krabCoinRate": 0.32, "tentacleFavor": 35, "tentacleRate": 0.3, "forgetRate": 0.25,
-    "shopSlots": 6, "shopExclude": [249]
+    "trialCap": 0.6, "rareOdds": 100
+  },
+  "shiling": {
+    "minStar": 1, "divisor": 10, "gradeStep": 0.1, "trialPick": 30, "seedRate": 5, "week200": 200,
+    "shop": { "remnantPerLevel": 80, "remnantWeekly": 6, "rarePrice": 1500, "rareWeekly": 1, "compass": [300, 2], "lots": [120, 4] },
+    "roads": [
+      [1, [1, 2]], [28, [1, 2]], [2, [3, 5]], [3, [4, 6]], [29, [4, 6]], [31, [3, 5]],
+      [8, [4, 6]], [30, [4, 6]], [5, [1, 2]], [4, [4, 5]], [9, [3, 5]], [10, [5, 6]],
+      [17, [3, 6]], [11, [1, 2]], [16, [2, 3]], [14, [4, 5]], [12, [3, 4]], [13, [3, 4]],
+      [22, [4, 5]], [25, [4, 5]], [15, [3, 4]], [19, [1, 5]], [20, [1, 3]], [21, [4, 5]],
+      [23, [1, 4]], [32, [3, 4]], [6, [7]], [7, [7]], [18, [7]], [24, [7]],
+      [27, [7]]
+    ]
   },
   "yard": {
     "maxLands": 9, "landBaseCoin": 50000, "landMaxLevel": 10, "yieldPerLevel": 8,

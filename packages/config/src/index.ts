@@ -43,6 +43,7 @@ export { fundErrors } from './fund';
 export { wealthErrors } from './wealth';
 export { bulkErrors } from './bulk';
 export { wishTreeErrors, WISH_TREE_ICON } from './wishtree';
+export { shilingErrors, BEAST_ROAD } from './shiling';
 export { slotFloorErrors } from './slot';
 export {
   itemRefs,

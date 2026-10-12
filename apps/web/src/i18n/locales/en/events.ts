@@ -101,6 +101,7 @@ const events: Messages['events'] = {
   gain: 'Gained',
   loss: 'Used',
   kind: {
+    shiling: 'Seasonal points',
     coin: 'Coins',
     diamond: 'Diamonds',
     exp: 'EXP',
@@ -131,8 +132,6 @@ const events: Messages['events'] = {
       p.success
         ? `"${mcNameOf(names, n(p, 'mcId'))}" passed the trial: trial value +${n(p, 'worth')}%, trial EXP +${n(p, 'exp')}%`
         : `"${mcNameOf(names, n(p, 'mcId'))}" failed the trial`,
-    'kraken.forget': (p, names) =>
-      `The Kraken was displeased; you forgot the signature dish "${mcNameOf(names, n(p, 'mcId'))}"`,
     'equip.stress': (p, names) =>
       `Enhancing ${names.goodsName(n(p, 'goodsId'))} to +${n(p, 'to')} ${p.success ? 'succeeded' : 'failed'}`,
     'level.up': (p) => `Restaurant reached level ${n(p, 'to')}`,

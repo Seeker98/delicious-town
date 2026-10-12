@@ -100,4 +100,26 @@ export default {
     tip: '打賞',
     kindLabel: '打賞什麼',
   },
+  /** 時令（天氣改版 PR②）：已學列表標當令、在售標應時、下鍋面板寫現在下鍋是否應時 */
+  season: {
+    now: (roads: string) => `現在當令: ${roads}`,
+    roadTag: (road: string) => `${road} · 當令`,
+    shiling: '應時',
+    pts: (n: string) => ` · 已攢時令值 +${n}`,
+    note: '在售那一批是下鍋時定的: 中途換天, 應時不變。',
+    yes: '現在下鍋應時',
+    yesText: (weather: string, road: string) =>
+      ` · ${weather}, ${road}當令。整批賣完前顧客吃掉的每份都攢時令值。`,
+    no: '現在下鍋不應時',
+    noText: (
+      road: string,
+      weather: string,
+      roads: string,
+      hour: number,
+      type: string,
+      same: boolean,
+      sure: boolean,
+    ) =>
+      ` · ${road}, ${weather}當令的是${roads}。${hour} 點換天, 預報${sure ? '多半' : '可能'}${same ? '還是' : '轉'}${type}。`,
+  },
 };

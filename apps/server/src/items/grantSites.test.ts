@@ -62,6 +62,8 @@ const KNOWN: Record<string, string[]> = {
   'modules/town/exchange.ts': ['e.goodsId'],
   // 摇一摇彩蛋：GOODS.krabBurger、GOODS.krabCoin（rules.ts，数量来自区服数值）
   'modules/town/shake.ts': ['egg.goodsId'],
+  // 时令铺的司天罗盘、晴雨签：按兑换项二选一的 GOODS 常量
+  'modules/shiling/service.ts': ["b.item === 'compass' ? GOODS.compass : GOODS.weatherLots"],
   // 雷神锤、镇长、和 NPC 聊天：按条件二选一的 GOODS 常量
   'modules/town/mayor.ts': ['goodsId'],
   'modules/town/talk.ts': ['goodsId'],

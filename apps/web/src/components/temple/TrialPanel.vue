@@ -8,6 +8,7 @@ import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import { foodLevelLabel, formatPct } from '../../utils/format';
 import { matchText } from '../../utils/match';
+import DtArt from '../DtArt.vue';
 import DtRow from '../DtRow.vue';
 import DtSheet from '../DtSheet.vue';
 import FoodArt from '../FoodArt.vue';
@@ -26,9 +27,9 @@ const learned = ref<McLearnedDto[]>([]);
 const main = ref<number | null>(null);
 const sub = ref<number | null>(null);
 const busy = ref(false);
-/** 选食材面板、用触手指定面板、玩法说明 */
+/** 选食材面板、用时令值指定面板、玩法说明 */
 const picker = ref(false);
-const tentacleOpen = ref(false);
+const pickOpen = ref(false);
 const helpOpen = ref(false);
 const result = ref<TrialResultDto | null>(null);
 /** 稀有食材：odds < 100（规格书 09 §9.4） */
@@ -168,10 +169,10 @@ async function run(fn: () => Promise<unknown>, fallback: string) {
 const prepare = (way: 1 | 2) => run(() => endpoints.trialPrepare(way), t.value.temple.trial.prepareFailed);
 const refresh = (mcId?: number) =>
   run(() => endpoints.trialRefresh(mcId), t.value.temple.trial.refreshFailed);
-/** 用触手指定一道（花 1 条触手） */
-async function pickByTentacle(mcId: number) {
+/** 用时令值指定一道（时令改版：原来花 1 条触手） */
+async function pickByShiling(mcId: number) {
   // 失败时面板留着（P9 终审 M9）
-  if (await refresh(mcId)) tentacleOpen.value = false;
+  if (await refresh(mcId)) pickOpen.value = false;
 }
 const start = async () => {
   await run(async () => {
@@ -262,9 +263,9 @@ const start = async () => {
           class="btn btn-sm btn-outline-primary"
           data-testid="trial-pick-open"
           :disabled="busy"
-          @click="tentacleOpen = true"
+          @click="pickOpen = true"
         >
-          {{ t.temple.trial.pickByTentacle(data.tentacles) }}
+          <DtArt name="res-shiling" :size="16" />{{ t.temple.trial.pickByShiling(data.trial.pickCost) }}
         </button>
       </div>
     </section>
@@ -408,8 +409,8 @@ const start = async () => {
     </p>
   </DtSheet>
 
-  <DtSheet :open="tentacleOpen" :title="t.temple.trial.tentacleTitle" @close="tentacleOpen = false">
-    <p class="dt-detail-note">{{ t.temple.trial.tentacleNote(data.tentacles) }}</p>
+  <DtSheet :open="pickOpen" :title="t.temple.trial.shilingTitle" @close="pickOpen = false">
+    <p class="dt-detail-note">{{ t.temple.trial.pickNote(data.trial.pickCost, data.shiling) }}</p>
     <div class="dt-sheet-list" data-testid="trial-pick">
       <DtRow v-for="m in learned" :key="m.mcId">
         <template #title>{{ catalog.mcName(m.mcId) }}</template>
@@ -418,9 +419,9 @@ const start = async () => {
           <button
             type="button"
             class="btn btn-sm btn-outline-primary"
-            :disabled="busy || data.tentacles < 1 || m.mcId === trial.mcId"
+            :disabled="busy || data.shiling < data.trial.pickCost || m.mcId === trial.mcId"
             :data-testid="`trial-pick-${m.mcId}`"
-            @click="pickByTentacle(m.mcId)"
+            @click="pickByShiling(m.mcId)"
           >
             {{ m.mcId === trial.mcId ? t.temple.trial.current : t.temple.trial.pick }}
           </button>

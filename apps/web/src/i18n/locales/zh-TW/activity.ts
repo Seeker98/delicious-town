@@ -70,7 +70,7 @@ export default {
     'temple.explore': '神殿探險',
     'temple.missile': '挑戰守護獸',
     'temple.trial': '神殿試煉',
-    'kraken.feed': '投餵克拉肯',
+    'shiling.cook': '做應時特色菜',
     'mc.cook': '烹製特色菜',
     'mc.appraise': '鑑定特色菜',
     'lesson.learn': '上課學特色菜',

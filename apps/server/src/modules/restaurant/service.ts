@@ -31,20 +31,11 @@ import type { ShardService } from '../shard/service';
 import { grantGoods } from '../store/grant';
 import { iconLive } from '../friend/looks';
 import { normalizeCounts } from '../settlement/globals';
+import { topForecast } from '../world/rules';
 import type { WorldService } from '../world/service';
 import { buffsOf, deviceSlots, feedPage, incomePage, lastRound, logPage, restNames, tableDto } from './reads';
 import { emptyCookbookLevels, initialTables, newRestaurantValues, toRestaurantDto } from './rules';
 import { iconDefs } from '../icons/defs';
-
-/** 预报里概率最大的一类（一样大取编号小的） */
-function topForecast(f: { at: Date; types: Record<string, number> }): {
-  at: string;
-  type: number;
-  p: number;
-} {
-  const [type, p] = Object.entries(f.types).sort((a, b) => b[1] - a[1] || Number(a[0]) - Number(b[0]))[0]!;
-  return { at: f.at.toISOString(), type: Number(type), p };
-}
 
 export interface RestaurantDeps {
   db: Kysely<DB>;
@@ -236,6 +227,17 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       return { bulk: { foodsId: bulkFoodsId!, level: bulkLevel!, qty: bulkQty!, demand } };
     };
     const growth = tuning.growth;
+    // 时令说明弹窗（天气改版设计 指引②）：够星、还没看过才弹
+    const shilingIntro =
+      row.star_level >= tuning.shiling.minStar &&
+      isFeatureEnabled(settings, 'mysterious') &&
+      !(
+        await d.db
+          .selectFrom('rest_shiling')
+          .select('intro_at')
+          .where('rest_id', '=', restId)
+          .executeTakeFirst()
+      )?.intro_at;
     const dto = toRestaurantDto(row, tables.tables, shownEffects(effects, equipOff(settings)), d.config, {
       devices,
       lastRound: last,
@@ -270,6 +272,7 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
         specialId !== null && specialLevel !== null && (specialLeft ?? 0) > 0 && specialEnded === null
           ? { id: specialId, level: specialLevel }
           : null,
+      shilingIntro,
       disabledFeatures: Object.entries(settings.features)
         .filter(([, on]) => on === false)
         .map(([k]) => k)

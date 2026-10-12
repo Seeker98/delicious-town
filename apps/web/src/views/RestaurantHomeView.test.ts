@@ -108,6 +108,7 @@ const dto: RestaurantDto = {
   assets: null,
   cookbooks: { learned: 12, total: 3810 },
   special: null,
+  shilingIntro: false,
   devices: [
     { slot: 1, name: '宣传海报', deviceType: 1, needStar: 0, unlocked: true, goodsId: null, expiresAt: null },
     { slot: 4, name: '捕鼠夹', deviceType: 4, needStar: 2, unlocked: false, goodsId: null, expiresAt: null },

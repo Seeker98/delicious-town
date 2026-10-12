@@ -48,6 +48,14 @@ const overview: McOverviewDto = {
   cookies: 0,
   cookNums: [1],
   starBook: true,
+  season: {
+    open: true,
+    minStar: 1,
+    weatherId: 11,
+    roads: [1, 2],
+    until: '2026-10-12T09:00:00.000Z',
+    next: { at: '2026-10-12T09:00:00.000Z', type: 2, p: 0.58 },
+  },
 };
 
 /** 数量面板用 Teleport 挂到 body 上：测试里把 teleport 桩掉，面板内容就留在 wrapper 里（同 ShopView.test） */

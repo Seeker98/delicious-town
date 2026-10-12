@@ -14,18 +14,17 @@ import { useTabQuery } from '../composables/useTabQuery';
 import AppraisePanel from '../components/temple/AppraisePanel.vue';
 import ExplorePanel from '../components/temple/ExplorePanel.vue';
 import GuardianPanel from '../components/temple/GuardianPanel.vue';
-import KrakenPanel from '../components/temple/KrakenPanel.vue';
 import TrialPanel from '../components/temple/TrialPanel.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
 
 /**
- * 神殿（界面改版 P9）：120px 头图叠体力、守护兽血量、触手；下面五个标签。
- * 头图的数字要神殿数据，鉴定页也读一次；切标签重读（血量、触手会变），读取失败可以重试
+ * 神殿（界面改版 P9）：120px 头图叠体力、守护兽血量；下面四个标签（时令改版去掉了克拉肯）。
+ * 头图的数字要神殿数据，鉴定页也读一次；切标签重读（血量会变），读取失败可以重试
  */
-type Tab = 'appraise' | 'guardian' | 'explore' | 'trial' | 'kraken';
-const TABS: readonly Tab[] = ['appraise', 'guardian', 'explore', 'trial', 'kraken'];
+type Tab = 'appraise' | 'guardian' | 'explore' | 'trial';
+const TABS: readonly Tab[] = ['appraise', 'guardian', 'explore', 'trial'];
 const KEY = 'dt_temple_tab';
 const toast = useToastStore();
 const t = useT();
@@ -59,10 +58,6 @@ watch(tab, () => void load());
         >{{ t.temple.chips.guardian }} <b>{{ formatNum(data.guardian.hpLeft) }}</b> /
         {{ formatNum(data.guardian.hpMax) }}</span
       >
-      <span class="dt-place-chip" data-testid="temple-tentacles"
-        ><DtArt name="res-tentacle" :size="18" />{{ t.temple.chips.tentacles }}
-        <b>{{ formatNum(data.tentacles) }}</b></span
-      >
     </template>
   </PlaceScene>
   <HiphopCard :place="6" class="mt-2" @changed="load" />
@@ -77,7 +72,6 @@ watch(tab, () => void load());
   <template v-else>
     <GuardianPanel v-if="tab === 'guardian'" :data="data" @reload="load" />
     <ExplorePanel v-else-if="tab === 'explore'" :data="data" @reload="load" />
-    <TrialPanel v-else-if="tab === 'trial'" :data="data" @reload="load" />
-    <KrakenPanel v-else :data="data" @reload="load" />
+    <TrialPanel v-else :data="data" @reload="load" />
   </template>
 </template>

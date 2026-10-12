@@ -72,10 +72,11 @@ import type {
   SeedsDto,
   YardDto,
   ExploreResultDto,
-  KrakenFeedDto,
   MissileResultDto,
   TempleDto,
-  TentacleShopDto,
+  ShilingBuyResultDto,
+  ShilingDto,
+  ShilingItem,
   TrialResultDto,
   AppraiseResultDto,
   CookResultDto,
@@ -405,10 +406,6 @@ export const endpoints = {
     api.post<{ mcId: number }>('/api/v1/temple/trial/refresh', mcId === undefined ? {} : { mcId }),
   trialStart: (mainFoodsId: number, subFoodsId: number) =>
     api.post<TrialResultDto>('/api/v1/temple/trial/start', { mainFoodsId, subFoodsId }),
-  krakenFeed: (num: number) => api.post<KrakenFeedDto>('/api/v1/temple/kraken/feed', { num }),
-  tentacleShop: () => api.get<TentacleShopDto>('/api/v1/temple/tentacle'),
-  tentacleRefresh: () => api.post<TentacleShopDto>('/api/v1/temple/tentacle/refresh'),
-  tentacleExchange: (slot: number) => api.post<TentacleShopDto>('/api/v1/temple/tentacle/exchange', { slot }),
   yard: () => api.get<YardDto>('/api/v1/yard'),
   yardFriend: (restId: number) => api.get<FriendYardDto>(`/api/v1/yard/friend/${restId}`),
   yardExpand: () => api.post<{ no: number; coin: number }>('/api/v1/yard/land/expand'),
@@ -524,6 +521,11 @@ export const endpoints = {
   weatherLots: () => api.post<LotsDrawDto>('/api/v1/world/weather/lots', {}),
   weatherLotsPick: (index: number) =>
     api.post<WeatherToolResultDto>('/api/v1/world/weather/lots/pick', { index }),
+  /** 时令（天气改版 PR②）：天气页的时令区、时令铺、1 星说明弹窗 */
+  shiling: () => api.get<ShilingDto>('/api/v1/shiling'),
+  shilingBuy: (item: ShilingItem, mcId?: number) =>
+    api.post<ShilingBuyResultDto>('/api/v1/shiling/buy', mcId === undefined ? { item } : { item, mcId }),
+  shilingIntro: () => api.post<Record<string, never>>('/api/v1/shiling/intro', {}),
   townExchangeDo: (id: number, num: number) =>
     api.post<TownExchangeResultDto>('/api/v1/town/exchange', { id, num }),
   townLevelTicket: (level: number, picks: Array<{ foodsId: number; num: number }>) =>

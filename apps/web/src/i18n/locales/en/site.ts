@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    shiling1012:
+      'Seasons: each weather puts two signature-dish paths in season, and a batch cooked in season is seasonal (from 1★). Customers eating seasonal dishes earn seasonal points to spend at the seasonal shop on the weather page (dish fragments, Sky Compasses, Weather Lots); picking a trial dish now costs seasonal points too. The Kraken and the tentacle shop are gone, the mayor’s pot no longer gives seeds, and random rewards no longer include fertilizer or arcane formulas. Seeds you held became 5 seasonal points each, tentacles 30',
     weather1012:
       "Weather rework: the weather now changes every 4 hours and follows the current weather, and the weather page has a forecast for the next change and a short guide. Thor's Hammer is replaced by the Sky Compass (pick a type; the mayor trades 1 per week, and it also comes from the Ichiban Kuji last prize and the wish tree) and Weather Lots (shake two, keep one; 1 per day in the coin shop). Both last 1 hour, and nobody else can change the weather in the hour after a change",
     season1012:

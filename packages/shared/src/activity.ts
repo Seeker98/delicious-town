@@ -34,7 +34,7 @@ export const ACTIVITY_ACTIONS: Readonly<Record<string, string>> = {
   'temple.explore': '神殿探险',
   'temple.missile': '挑战守护兽',
   'temple.trial': '神殿试炼',
-  'kraken.feed': '投喂克拉肯',
+  'shiling.cook': '做应时特色菜',
   'mc.cook': '烹制特色菜',
   'mc.appraise': '鉴定特色菜',
   'lesson.learn': '上课学特色菜',

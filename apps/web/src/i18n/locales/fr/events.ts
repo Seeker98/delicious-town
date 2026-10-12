@@ -101,6 +101,7 @@ const events: Messages['events'] = {
   gain: 'Obtenu',
   loss: 'Dépensé',
   kind: {
+    shiling: 'Points de saison',
     coin: 'Pièces',
     diamond: 'Diamants',
     exp: 'EXP',
@@ -132,8 +133,6 @@ const events: Messages['events'] = {
       p.success
         ? `«\u202f${mcNameOf(names, n(p, 'mcId'))}\u202f» a réussi l'épreuve\u202f: valeur d'épreuve +${n(p, 'worth')}\u202f%, EXP d'épreuve +${n(p, 'exp')}\u202f%`
         : `«\u202f${mcNameOf(names, n(p, 'mcId'))}\u202f» a échoué à l'épreuve`,
-    'kraken.forget': (p, names) =>
-      `Le Kraken était mécontent\u202f; vous avez oublié le plat signature «\u202f${mcNameOf(names, n(p, 'mcId'))}\u202f»`,
     'equip.stress': (p, names) =>
       `Renforcement de ${names.goodsName(n(p, 'goodsId'))} à +${n(p, 'to')}\u202f: ${p.success ? 'réussi' : 'raté'}`,
     'level.up': (p) => `Le restaurant passe au niveau ${n(p, 'to')}`,

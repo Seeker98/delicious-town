@@ -21,7 +21,7 @@
   },
   "6": {
     "name": "Arc-en-ciel",
-    "note": "Chance de Pièces Krab en donnant un pourboire au musicien +10\u202f%\u202f!\nRéussite des épreuves +8\u202f%\u202f!\nService\u202f: EXP finale +120\u202f%\nÀ emporter\u202f: délai de livraison -20\u202f%, EXP +120\u202f%, renommée +100\u202f%, réussite +20\u202f%"
+    "note": "Points de saison +10\u202f%\u202f!\nRéussite des épreuves +8\u202f%\u202f!\nService\u202f: EXP finale +120\u202f%\nÀ emporter\u202f: délai de livraison -20\u202f%, EXP +120\u202f%, renommée +100\u202f%, réussite +20\u202f%"
   },
   "7": {
     "name": "Ouragan",
@@ -49,7 +49,7 @@
   },
   "13": {
     "name": "Averse",
-    "note": "Prix des ingrédients au marché +60\u202f%\u202f!\nAffection du Kraken en le nourrissant +25\u202f%\u202f!\nService\u202f: fréquentation -20\u202f%, EXP par table +3\nÀ emporter\u202f: délai de livraison -20\u202f%, pièces -40\u202f%, EXP +80\u202f%, réussite -30\u202f%"
+    "note": "Prix des ingrédients au marché +60\u202f%\u202f!\nPoints de saison +25\u202f%\u202f!\nService\u202f: fréquentation -20\u202f%, EXP par table +3\nÀ emporter\u202f: délai de livraison -20\u202f%, pièces -40\u202f%, EXP +80\u202f%, réussite -30\u202f%"
   },
   "14": {
     "name": "Neige fondue",

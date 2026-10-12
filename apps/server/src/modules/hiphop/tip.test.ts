@@ -77,12 +77,12 @@ describe('打赏（设计文档 §2.2）', () => {
     expect(news.map((n) => n.type)).toContain('hiphop.krab');
   });
 
-  it('天气加成让它中的标"虹"', async () => {
+  it('虹不再加打赏的蟹币概率（时令改版：虹改成时令值 +10%，嘻哈男孩下一版删掉）', async () => {
     script = [0.5, 0.15];
     const a = await setup({ patch: { coin: 10_000_000, luck: 0 } });
     await setWeather(t, a.shardId, 6);
     const r = await t.game.hiphop.tip(a, { place: 1, kind: 'coin', num: 1_000_000 });
-    expect(r.data).toMatchObject({ reply: 'krab', rainbow: true });
+    expect(r.data).toMatchObject({ rainbow: false });
   });
 
   it('没到门槛：不判蟹币', async () => {

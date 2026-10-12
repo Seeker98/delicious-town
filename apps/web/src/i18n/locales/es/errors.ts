@@ -52,6 +52,7 @@ const errors: Messages['errors'] = {
     reserved: 'El nombre no puede incluir personajes del pueblo ni palabras oficiales',
   },
   kind: {
+    shiling: 'Puntos de temporada',
     coin: 'Monedas',
     diamond: 'Diamantes',
     strength: 'Energía',
@@ -103,6 +104,7 @@ const errors: Messages['errors'] = {
         : 'Necesitas un permiso de trabajo de la tienda válido para renovar',
   },
   limit: {
+    shiling_weekly: (p) => `Límite semanal alcanzado (${String(p.limit)} por semana)`,
     exchange_orders: (p) =>
       `Puedes tener como máximo ${s(p.max)} ${plEs(s(p.max), 'orden abierta', 'órdenes abiertas')}`,
     futures_person: (p) => `Hoy solo puedes encargar ${s(p.left)} más (${s(p.max)} al día)`,
@@ -167,6 +169,7 @@ const errors: Messages['errors'] = {
     weekly: (p) => `Has llegado al límite de canjes de la semana (${s(p.max)})`,
   },
   state: {
+    shiling_not_in_shop: 'La tienda de temporada no tiene este plato',
     not_running: 'Este evento no está activo (las recompensas sin reclamar se envían por correo al terminar)',
     no_reward: 'Esta recompensa no existe',
     not_pass: 'Este evento no tiene recompensas premium',
@@ -324,11 +327,6 @@ const errors: Messages['errors'] = {
     guardian_down: 'Hoy ya derrotaste al guardián. Vuelve mañana.',
     trial_ready: 'Tu medalla de prueba sigue siendo válida; puedes empezar la prueba',
     no_trial: 'No te has preparado para la prueba (o caducó). Ponte una inyección o medita primero.',
-    not_feed_time: 'No es hora de alimentar',
-    fed_today: 'Hoy ya alimentaste al Kraken',
-    portions:
-      'No hay suficientes raciones: deja al menos 1 ración de tu plato estrella a la venta después de alimentar',
-    slot_bought: 'Este espacio ya se ha canjeado',
     mc_cooking: 'Ya tienes un plato estrella a la venta. Agótalo o tíralo antes de volver a cocinar.',
     no_cooking: 'Ahora no hay ningún plato estrella a la venta',
     mc_learned: 'Ya has aprendido este plato estrella',
@@ -355,7 +353,7 @@ const errors: Messages['errors'] = {
     formula_unlearned: 'Todavía no has aprendido esta fórmula',
     formula_learned: 'Ya has aprendido esta fórmula',
     seed_shop_closed: 'La tienda de semillas todavía no está abierta',
-    seed_not_sold: 'Las semillas misteriosas no se venden; consíguelas canjeando o alimentando al Kraken',
+    seed_not_sold: 'Las semillas misteriosas no se venden; se consiguen canjeando',
     takeaway_closed: 'Todavía no has abierto el reparto a domicilio',
     order_gone: 'Este pedido para llevar ya no existe',
     order_taken: 'Otra persona ya tomó este pedido',

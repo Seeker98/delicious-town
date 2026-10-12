@@ -15,6 +15,7 @@ export interface GameEvent {
     | 'remnant'
     | 'seed'
     | 'basket'
+    | 'shiling'
     | 'activityCurrency';
   id?: number;
   /** 活动货币的名字（问题记录 224）：活动货币没有道具 id */

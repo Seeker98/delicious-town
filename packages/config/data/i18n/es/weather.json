@@ -21,7 +21,7 @@
   },
   "6": {
     "name": "Arcoíris",
-    "note": "¡Probabilidad de Monedas Krab al dar propina al artista +10\u00a0%!\n¡Éxito en las pruebas +8\u00a0%!\nNegocio: EXP final +120\u00a0%\nA domicilio: tiempo de entrega -20\u00a0%, EXP +120\u00a0%, renombre +100\u00a0%, éxito +20\u00a0%"
+    "note": "¡Puntos de temporada +10\u00a0%!\n¡Éxito en las pruebas +8\u00a0%!\nNegocio: EXP final +120\u00a0%\nA domicilio: tiempo de entrega -20\u00a0%, EXP +120\u00a0%, renombre +100\u00a0%, éxito +20\u00a0%"
   },
   "7": {
     "name": "Huracán",
@@ -49,7 +49,7 @@
   },
   "13": {
     "name": "Aguacero",
-    "note": "¡Precio de los ingredientes del mercado +60\u00a0%!\n¡Afecto del Kraken al alimentarlo +25\u00a0%!\nNegocio: ocupación -20\u00a0%, EXP por mesa +3\nA domicilio: tiempo de entrega -20\u00a0%, monedas -40\u00a0%, EXP +80\u00a0%, éxito -30\u00a0%"
+    "note": "¡Precio de los ingredientes del mercado +60\u00a0%!\n¡Puntos de temporada +25\u00a0%!\nNegocio: ocupación -20\u00a0%, EXP por mesa +3\nA domicilio: tiempo de entrega -20\u00a0%, monedas -40\u00a0%, EXP +80\u00a0%, éxito -30\u00a0%"
   },
   "14": {
     "name": "Aguanieve",

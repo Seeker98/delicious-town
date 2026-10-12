@@ -12,7 +12,6 @@ const stubs = {
   GuardianPanel: { template: '<p>guardian-panel</p>', props: ['data'] },
   ExplorePanel: { template: '<p>explore-panel</p>', props: ['data'] },
   TrialPanel: { template: '<p>trial-panel</p>', props: ['data'] },
-  KrakenPanel: { template: '<p>kraken-panel</p>', props: ['data'] },
 };
 
 describe('TempleView（标签页）', () => {
@@ -20,7 +19,7 @@ describe('TempleView（标签页）', () => {
     vi.clearAllMocks();
     setActivePinia(createPinia());
     localStorage.clear();
-    vi.mocked(endpoints.temple).mockResolvedValue(templeData({ strength: 9848, tentacles: 3 }));
+    vi.mocked(endpoints.temple).mockResolvedValue(templeData({ strength: 9848 }));
   });
 
   it('默认是鉴定；头图的数字要神殿数据，鉴定页也读；切到守护兽；记住上次的标签', async () => {
@@ -33,7 +32,9 @@ describe('TempleView（标签页）', () => {
     expect(endpoints.temple).toHaveBeenCalledTimes(1);
     expect(w.get('[data-testid="temple-strength"]').text()).toContain('9,848');
     expect(w.get('[data-testid="temple-hp"]').text()).toContain('12,000 / 15,000');
-    expect(w.get('[data-testid="temple-tentacles"]').text()).toContain('3');
+    // 时令改版：克拉肯标签和触手去掉了
+    expect(w.find('[data-testid="temple-tentacles"]').exists()).toBe(false);
+    expect(w.find('[data-testid="tab-kraken"]').exists()).toBe(false);
     await w.find('[data-testid="tab-guardian"]').trigger('click');
     await flushPromises();
     expect(w.text()).toContain('guardian-panel');

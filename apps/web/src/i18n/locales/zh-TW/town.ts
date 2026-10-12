@@ -221,7 +221,6 @@ export default {
     places: {
       tower: { title: '廚塔 · 賽廚榜', sub: '前 15 名, 可以直接挑戰' },
       acquire: { title: '收購 · 身價榜', sub: '可以直接收購' },
-      kraken: { title: '神殿 · 克拉肯月榜', sub: '投餵克拉肯的老闆' },
     },
   },
   classroom: {

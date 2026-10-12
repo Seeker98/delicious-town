@@ -59,6 +59,7 @@ export default {
   },
   /** 数量不够时"什么"不够 */
   kind: {
+    shiling: '时令值',
     coin: '银币',
     diamond: '钻石',
     strength: '体力',
@@ -107,6 +108,7 @@ export default {
   }),
   /** 达到上限（LIMIT_REACHED 的 what） */
   limit: fns({
+    shiling_weekly: (p) => `这件本周已经换满了 (每周 ${String(p.limit)} 个)`,
     exchange_orders: (p) => `最多同时挂 ${String(p.max)} 张单`,
     futures_person: (p) => `今天最多还能订 ${String(p.left)} 份 (每天 ${String(p.max)} 份)`,
     futures_quota: (p) => `这种食材今天全区服只剩 ${String(p.left)} 份`,
@@ -162,6 +164,7 @@ export default {
   }),
   /** 当前状态不能这样做（INVALID_STATE 的 reason） */
   state: {
+    shiling_not_in_shop: '时令铺里不能换这道菜',
     not_running: '活动不在进行中 (结束后未领的奖励会发到邮箱)',
     no_reward: '没有这份奖励',
     not_pass: '这个活动没有进阶奖励',
@@ -314,10 +317,6 @@ export default {
     guardian_down: '今天已经击败守护兽了, 明天再来',
     trial_ready: '试炼勋章还有效, 可以直接试炼',
     no_trial: '还没准备试炼 (或准备已过期), 先注射或冥想',
-    not_feed_time: '现在不是投喂时间',
-    fed_today: '今天已经投喂过克拉肯了',
-    portions: '份数不够: 投喂后在售的特色菜至少要留 1 份',
-    slot_bought: '这一格已经兑换过了',
     mc_cooking: '已经有在售的特色菜了, 卖完或倒掉后再烹制',
     no_cooking: '现在没有在售的特色菜',
     mc_learned: '已经学会这道特色菜了',
@@ -344,7 +343,7 @@ export default {
     formula_unlearned: '还没学会这个配方',
     formula_learned: '已经学会这个配方了',
     seed_shop_closed: '种子商店暂未开放',
-    seed_not_sold: '神秘种子不卖, 只能兑换或投喂克拉肯得到',
+    seed_not_sold: '神秘种子不卖, 只能兑换得到',
     takeaway_closed: '还没开通外卖',
     order_gone: '这张外卖单已经没有了',
     order_taken: '这张单已经被别人接走了',

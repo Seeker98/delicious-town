@@ -8,7 +8,8 @@ import { spendCoin } from '../../core/resources';
 import { subFoods } from '../cupboard/foods';
 import { equipOff, restGear } from '../equip/power';
 import { addProficiency } from '../mysterious/rules';
-import { consumeGoods, grantGoodsOp, hasValidHonor } from '../store/goods';
+import { spendShiling } from '../shiling/store';
+import { grantGoodsOp, hasValidHonor } from '../store/goods';
 import { badInput, learnedUpTo } from './common';
 import { foodsTrial, trialBase, trialGainCaps } from './rules';
 
@@ -43,7 +44,7 @@ export async function prepareTrial(o: Op, b: { way: 1 | 2 }): Promise<{ mcId: nu
   return { mcId: mc.id };
 }
 
-/** 换对象：不指定时花银币重抽；指定时花 1 条触手 */
+/** 换对象：不指定时花银币重抽；指定时花时令值（天气改版设计 §3.4，原来是 1 条触手） */
 export async function refreshTrial(o: Op, b: { mcId?: number }): Promise<{ mcId: number }> {
   assertStar(o);
   const row = await o.tx
@@ -56,7 +57,7 @@ export async function refreshTrial(o: Op, b: { mcId?: number }): Promise<{ mcId:
   let mcId: number;
   if (b.mcId !== undefined) {
     if (!learned.some((m) => m.id === b.mcId)) throw invalidState('mc_not_learned');
-    await consumeGoods(o, GOODS.tentacle, 1);
+    await spendShiling(o, o.tuning.shiling.trialPick);
     mcId = b.mcId;
   } else {
     if (learned.length === 0) throw requirement('mc_count', { need: 1 });

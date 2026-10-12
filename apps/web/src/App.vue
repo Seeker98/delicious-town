@@ -7,6 +7,7 @@ import AppHeader from './components/AppHeader.vue';
 import BottomNav from './components/BottomNav.vue';
 import DtConfirmHost from './components/DtConfirmHost.vue';
 import EventToast from './components/EventToast.vue';
+import ShilingIntroPopup from './components/ShilingIntroPopup.vue';
 import { useCatalogStore } from './stores/catalog';
 import { useLocaleStore } from './stores/locale';
 import { useSessionStore } from './stores/session';
@@ -49,6 +50,7 @@ onMounted(() => {
       <RouterView :key="locale.locale" />
     </main>
     <AnnouncePopup v-if="inGame" />
+    <ShilingIntroPopup v-if="inGame" />
     <DtConfirmHost />
     <EventToast :nav="inGame" />
     <BottomNav v-if="inGame" />

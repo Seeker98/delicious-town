@@ -39,8 +39,8 @@ export function activationTotal(
  */
 export function questVars(key: string, tuning: Tuning): { n: number } | undefined {
   switch (key) {
-    case 'kraken.favorHigh':
-      return { n: tuning.temple.tentacleFavor };
+    case 'shiling.week200':
+      return { n: tuning.shiling.week200 };
     case 'predict.hold100':
       return { n: holdStep(100, tuning.predict.maxHold) };
     case 'predict.hold200':

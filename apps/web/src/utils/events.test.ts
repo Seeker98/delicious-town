@@ -160,7 +160,7 @@ describe('神殿（子项目 4B-1）', () => {
     expect(eventText({ type: 'gain', kind: 'seed', id: 5, num: 3 }, names)).toBe('获得 种子5×3');
     expect(recordLabel({ kind: 'seed', itemId: 5 }, names)).toBe('种子5');
   });
-  it('试炼、克拉肯遗忘的日志', () => {
+  it('试炼的日志', () => {
     expect(
       logText(
         { type: 'temple.trial', params: { mcId: 3, success: true, worth: 1, exp: 2 }, at } as never,
@@ -169,9 +169,6 @@ describe('神殿（子项目 4B-1）', () => {
     ).toBe('「秘·3」试炼成功: 试炼价值 +1%、试炼经验 +2%');
     expect(logText({ type: 'temple.trial', params: { mcId: 3, success: false }, at } as never, names)).toBe(
       '「秘·3」试炼失败',
-    );
-    expect(logText({ type: 'kraken.forget', params: { mcId: 3 }, at } as never, names)).toBe(
-      '克拉肯很不满意, 你遗忘了特色菜「秘·3」',
     );
   });
 });

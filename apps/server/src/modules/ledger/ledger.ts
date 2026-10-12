@@ -14,7 +14,8 @@ export interface LedgerEntry {
     | 'strength'
     | 'remnant'
     | 'seed'
-    | 'basket';
+    | 'basket'
+    | 'shiling';
   itemId?: number;
   delta: number;
   source: string;

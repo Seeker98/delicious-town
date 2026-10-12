@@ -130,7 +130,7 @@ const guide: Messages['guide'] = {
       a: [
         'The daily check-in pack can contain some; the 100- and 120-point daily activity rewards; ',
         { to: '/rest/tasks?tab=weekly', text: 'weekly quests' },
-        '; the Chef ranking and monthly Kraken affinity ranking packs; Ichiban Kuji A, B, C and Last prizes; friends you invited reaching Lv. 10 and Lv. 30; a forum post being featured; event rewards and redeem codes.',
+        '; the Chef ranking packs; Ichiban Kuji A, B, C and Last prizes; friends you invited reaching Lv. 10 and Lv. 30; a forum post being featured; event rewards and redeem codes.',
       ],
     },
     {
@@ -148,6 +148,15 @@ const guide: Messages['guide'] = {
       a: [
         'The weather changes every 4 hours (1:00, 5:00, 9:00, 13:00, 17:00, 21:00) and follows the current weather: good weather tends to stay, snow never comes right after sun, and heavy rain builds up from light rain step by step. Special weather (thunderstorm, acid rain, freezing, hurricane, rainbow) only comes after its warning signs. The weather page shows the chance of each type next time.',
         'To change it, use a Sky Compass (pick a type; the mayor trades 1 per week, and it also comes from the Ichiban Kuji last prize and the wish tree) or Weather Lots (shake out two, keep one; the coin shop sells 1 per day). It lasts 1 hour and the whole town does business under it. Each player can use one every 4 hours, and nobody else can change it in the hour after a change. Restaurants at 0 stars are not affected by the weather.',
+      ],
+    },
+    {
+      q: 'What are seasons? How do I earn seasonal points?',
+      a: [
+        'From 1★. Each weather puts two signature-dish paths in season (see the season chart on the ',
+        { to: '/weather', text: 'weather page' },
+        '). Cook while your path is in season and the whole batch is seasonal until it sells out, even if the weather changes. Each seasonal serving a customer eats earns dish level × grade bonus ÷ 10 points; thrown-away and tasted servings don’t count. Rainstorm gives +25%, Rainbow +10%.',
+        'Spend them at the seasonal shop on the weather page on dish fragments, Sky Compasses and Weather Lots (restocks every Monday); picking a trial dish at the temple also costs seasonal points.',
       ],
     },
   ],

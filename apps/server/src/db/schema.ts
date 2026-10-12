@@ -579,6 +579,11 @@ export interface McCookTable {
   ended_at: TsNullable;
   /** sold / dumped / eaten */
   end_reason: Nullable<string>;
+  /** 下锅那一刻当令（天气改版设计 §3.2）：整批应时，顾客吃掉的份数攒时令值 */
+  shiling: Default<boolean>;
+  /** 顾客吃掉的份数累计的点数（带小数）和已经入账的整数部分 */
+  shiling_acc: Default<number>;
+  shiling_pts: Default<number>;
 }
 
 export interface McEatTable {
@@ -619,29 +624,14 @@ export interface RestTrialTable {
   prepared_at: TsDefault;
 }
 
-export interface KrakenFeedTable {
-  id: Generated<number>;
+/** 时令值（天气改版设计 §3.3）：余额、本周获得（week 是哪一周）、1 星说明弹窗看过的时间 */
+export interface RestShilingTable {
   rest_id: number;
   shard_id: number;
-  /** 游戏日 YYYY-MM-DD */
-  day: string;
-  mc_id: number;
-  target_mc_id: number;
-  num: number;
-  favor: number;
-  created_at: TsDefault;
-}
-
-export interface TentacleSlot {
-  mcId: number;
-  bought: boolean;
-}
-
-export interface TentacleShopTable {
-  rest_id: number;
-  day: string;
-  refreshes: Default<number>;
-  slots: Json<TentacleSlot[]>;
+  balance: Default<number>;
+  week: Default<string>;
+  week_gain: Default<number>;
+  intro_at: TsNullable;
 }
 
 export interface RestSeedTable {
@@ -1605,8 +1595,7 @@ export interface DB {
   mc_lesson: McLessonTable;
   mc_lesson_student: McLessonStudentTable;
   rest_trial: RestTrialTable;
-  kraken_feed: KrakenFeedTable;
-  tentacle_shop: TentacleShopTable;
+  rest_shiling: RestShilingTable;
   rest_seed: RestSeedTable;
   yard_land: YardLandTable;
   yard_plant: YardPlantTable;

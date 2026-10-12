@@ -2,7 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
-import type { WeatherToolsDto, WorldDto } from '@dt/shared';
+import type { ShilingDto, WeatherToolsDto, WorldDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
 import WeatherView from './WeatherView.vue';
@@ -15,6 +15,8 @@ vi.mock('../api/endpoints', () => ({
     weatherCompass: vi.fn(),
     weatherLots: vi.fn(),
     weatherLotsPick: vi.fn(),
+    shiling: vi.fn(),
+    shilingBuy: vi.fn(),
   },
 }));
 
@@ -84,6 +86,8 @@ beforeEach(() => {
   vi.setSystemTime(new Date(NOW));
   vi.mocked(endpoints.weather).mockResolvedValue(world);
   vi.mocked(endpoints.weatherTools).mockResolvedValue(tools());
+  // 时令（PR②）读不到时不显示那一块；要测时令的用例自己给
+  vi.mocked(endpoints.shiling).mockRejectedValue(new Error('off'));
   try {
     localStorage.clear();
   } catch {
@@ -152,7 +156,7 @@ describe('天气页（天气改版，设计图 Wx-A、Wx-B）', () => {
 
   it('“天气怎么玩”三行，可以收起，收起记住', async () => {
     const w = await mountView();
-    expect(w.findAll('[data-testid="weather-how"] li')).toHaveLength(3);
+    expect(w.findAll('[data-testid="weather-how"] li')).toHaveLength(4);
     expect(w.get('[data-testid="weather-how"]').text()).toContain('1、5、9、13、17、21 点');
     await w.get('[data-testid="weather-how-toggle"]').trigger('click');
     expect(w.findAll('[data-testid="weather-how"] li')).toHaveLength(0);
@@ -288,5 +292,143 @@ describe('天气页（天气改版，设计图 Wx-A、Wx-B）', () => {
     await w.get('[data-testid="lot-take"]').trigger('click');
     await flushPromises();
     expect(endpoints.weatherLotsPick).toHaveBeenCalledWith(1);
+  });
+});
+
+const shiling = (patch: Partial<ShilingDto> = {}): ShilingDto => ({
+  season: {
+    open: true,
+    minStar: 1,
+    weatherId: 1,
+    roads: [1, 2],
+    until: '2026-10-03T09:00:00.000Z',
+    next: { at: '2026-10-03T09:00:00.000Z', type: 1, p: 0.6 },
+  },
+  balance: 1240,
+  weekGain: 380,
+  inSeason: [14],
+  shop: [
+    { item: 'remnant', price: 80, perLevel: true, goodsId: null, weekly: 6, left: 4 },
+    { item: 'rare', price: 1500, perLevel: false, goodsId: null, weekly: 1, left: 1 },
+    { item: 'compass', price: 300, perLevel: false, goodsId: 10419, weekly: 2, left: 2 },
+    { item: 'lots', price: 120, perLevel: false, goodsId: 10420, weekly: 4, left: 0 },
+  ],
+  remnantPool: [41, 69, 186],
+  rarePool: [231],
+  remnants: [{ mcId: 186, num: 1 }],
+  table: [
+    { ids: [1, 28], roads: [1, 2] },
+    { ids: [10], roads: [5, 6] },
+    { ids: [6, 7], roads: [7] },
+  ],
+  myRoads: [1, 3],
+  trialPick: 30,
+  ...patch,
+});
+const catalogWithMc = () =>
+  useCatalogStore().apply({
+    version: 'v',
+    goods: [
+      { id: 10419, name: '司天罗盘' },
+      { id: 10420, name: '晴雨签' },
+    ],
+    foods: [],
+    devices: [],
+    weather: [
+      { id: 1, name: '晴', type: 1 },
+      { id: 28, name: '夜间晴', type: 1 },
+      { id: 10, name: '小雨', type: 2 },
+      { id: 6, name: '虹', type: 1, special: true },
+      { id: 7, name: '飓风', type: 4, special: true },
+    ],
+    streets: [],
+    mysterious: [
+      { id: 14, name: '秘·肉末烧饼', level: 1, road: 1, nutritive: 0, coin: 0, foods: [], appraisable: true },
+      { id: 41, name: '秘·龙井金鱼', level: 1, road: 2, nutritive: 0, coin: 0, foods: [], appraisable: true },
+      { id: 69, name: '秘·荷花酥', level: 1, road: 3, nutritive: 0, coin: 0, foods: [], appraisable: true },
+      { id: 186, name: '秘·金糕', level: 2, road: 1, nutritive: 0, coin: 0, foods: [], appraisable: true },
+      {
+        id: 231,
+        name: '兽·酸橘汁腌鱼',
+        level: 6,
+        road: 7,
+        nutritive: 0,
+        coin: 0,
+        foods: [],
+        appraisable: false,
+      },
+    ],
+  } as never);
+
+describe('时令（天气改版 PR②，设计图 Sl-A~Sl-D）', () => {
+  it('天气卡写当令的道；时令区写余额、本周获得、现在当令（我会的道描边）、会的菜里应时的', async () => {
+    catalogWithMc();
+    vi.mocked(endpoints.shiling).mockResolvedValue(shiling());
+    const w = await mountView();
+    expect(w.get('[data-testid="weather-season"]').text()).toBe('当令一道二道');
+    expect(w.get('[data-testid="shiling-balance"]').text()).toBe('1,240');
+    expect(w.get('[data-testid="shiling-week"]').text()).toBe('380');
+    const now = w.get('[data-testid="shiling-now"]');
+    expect(now.text()).toContain('· 到 17:00');
+    expect(now.findAll('.dt-road.is-mine').map((x) => x.text())).toEqual(['一道']);
+    expect(w.get('[data-testid="shiling-mine"]').text()).toBe('你会的菜里, 现在下锅应时: 秘·肉末烧饼');
+  });
+
+  it('时令铺：残卷写每级单价和本周还剩；罗盘点价格直接换，换完重新读；换满的灰掉；底下写试炼指定的花费', async () => {
+    catalogWithMc();
+    vi.mocked(endpoints.shiling).mockResolvedValue(shiling());
+    vi.mocked(endpoints.shilingBuy).mockResolvedValue({ item: 'compass', mcId: null, balance: 940 });
+    const w = await mountView();
+    expect(w.get('[data-testid="shiling-remnant"]').text()).toContain('每张 80 × 等级 · 本周还能换 4 张');
+    expect(w.get('[data-testid="shiling-compass"]').text()).toContain('司天罗盘');
+    expect(w.get('[data-testid="shiling-buy-lots"]').attributes('disabled')).toBeDefined();
+    expect(w.get('[data-testid="shiling-shop"]').text()).toContain('试炼指定菜也用时令值 (每次 30)');
+    await w.get('[data-testid="shiling-buy-compass"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.shilingBuy).toHaveBeenCalledWith('compass', undefined);
+    expect(endpoints.shiling).toHaveBeenCalledTimes(2);
+  });
+
+  it('当令表：按类分组、日夜合一行、现在的那行标出来；特殊天气一组', async () => {
+    catalogWithMc();
+    vi.mocked(endpoints.shiling).mockResolvedValue(shiling());
+    const w = await mountView();
+    await w.get('[data-testid="shiling-table-open"]').trigger('click');
+    const row = w.get('[data-testid="season-row-1"]');
+    expect(row.text()).toContain('晴 / 夜间晴 · 现在');
+    expect(row.classes()).toContain('is-now');
+    expect(w.get('[data-testid="season-row-6"]').text()).toContain('虹 / 飓风');
+    expect(w.get('[data-testid="season-row-6"]').text()).toContain('兽道');
+    expect(w.get('[data-testid="season-table"]').text()).toContain('特殊天气');
+  });
+
+  it('换残卷：默认只列当令的道，能切全部、按级；写持有几张；点价格换这一道', async () => {
+    catalogWithMc();
+    vi.mocked(endpoints.shiling).mockResolvedValue(shiling());
+    vi.mocked(endpoints.shilingBuy).mockResolvedValue({ item: 'remnant', mcId: 186, balance: 1080 });
+    const w = await mountView();
+    await w.get('[data-testid="shiling-pick-remnant"]').trigger('click');
+    const ids = () => w.findAll('[data-testid^="remnant-buy-"]').map((x) => x.attributes('data-testid'));
+    expect(w.get('[data-testid="remnant-filter-season"]').text()).toBe('当令 (一道、二道)');
+    expect(ids()).toEqual(['remnant-buy-41', 'remnant-buy-186']);
+    await w.get('[data-testid="remnant-filter-all"]').trigger('click');
+    expect(ids()).toEqual(['remnant-buy-41', 'remnant-buy-69', 'remnant-buy-186']);
+    await w.get('[data-testid="remnant-filter-2"]').trigger('click');
+    expect(ids()).toEqual(['remnant-buy-186']);
+    expect(w.get('[data-testid="remnant-186"]').text()).toContain('残卷 1 张');
+    expect(w.get('[data-testid="remnant-buy-186"]').text()).toBe('160');
+    await w.get('[data-testid="remnant-buy-186"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.shilingBuy).toHaveBeenCalledWith('remnant', 186);
+  });
+
+  it('0 星：只写几星开放，没有时令铺', async () => {
+    catalogWithMc();
+    vi.mocked(endpoints.shiling).mockResolvedValue(
+      shiling({ season: { ...shiling().season, open: false }, inSeason: [] }),
+    );
+    const w = await mountView();
+    expect(w.get('[data-testid="shiling-locked"]').text()).toContain('1 星开放');
+    expect(w.find('[data-testid="shiling-shop"]').exists()).toBe(false);
   });
 });

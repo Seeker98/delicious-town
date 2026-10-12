@@ -137,7 +137,7 @@ const guide: Messages['guide'] = {
       a: [
         "Le pack de pointage quotidien peut en contenir\u202f; les récompenses d'activité de 100 et 120 points\u202f; ",
         { to: '/rest/tasks?tab=weekly', text: 'les quêtes hebdomadaires' },
-        '\u202f; les packs du classement des chefs et du classement mensuel d’affinité du Kraken\u202f; les prix A, B, C et Dernier Prix de l’Ichiban Kuji\u202f; les amis invités qui atteignent les niv. 10 et 30\u202f; un message du forum mis en avant\u202f; les récompenses d’événements et les codes cadeaux.',
+        '\u202f; les packs du classement des chefs\u202f; les prix A, B, C et Dernier Prix de l’Ichiban Kuji\u202f; les amis invités qui atteignent les niv. 10 et 30\u202f; un message du forum mis en avant\u202f; les récompenses d’événements et les codes cadeaux.',
       ],
     },
     {
@@ -155,6 +155,15 @@ const guide: Messages['guide'] = {
       a: [
         `La météo change toutes les 4 heures (1 h, 5 h, 9 h, 13 h, 17 h, 21 h) et suit le temps actuel\u202f: le beau temps a tendance à rester, la neige ne vient jamais juste après le soleil, et la forte pluie s'installe petit à petit. Les météos spéciales (orage, pluie acide, gel, ouragan, arc-en-ciel) n'arrivent qu'après leurs signes avant-coureurs. La page météo donne la probabilité de chaque type au prochain changement.`,
         `Pour la changer, utilisez une boussole céleste (choisir un type\u202f; le maire en échange 1 par semaine, et on en trouve aussi au dernier lot de l'Ichiban Kuji et à l'arbre à vœux) ou des bâtonnets du temps (en tirer deux, en garder un\u202f; la boutique en vend 1 par jour). Cela dure 1 heure pour toute la ville. Chaque joueur peut en utiliser une toutes les 4 heures, et personne ne peut la rechanger dans l'heure qui suit. Les restaurants à 0 étoile ne sont pas affectés par la météo.`,
+      ],
+    },
+    {
+      q: 'Que sont les saisons\u202f? Comment gagner des points de saison\u202f?',
+      a: [
+        'Dès 1 étoile. Chaque météo met deux voies de plats signature de saison (voir le calendrier sur la ',
+        { to: '/weather', text: 'page météo' },
+        '). Cuisinez quand votre voie est de saison et toute la fournée est de saison jusqu’à épuisement, même si la météo change. Chaque part de saison mangée par un client rapporte niveau du plat × bonus de qualité ÷ 10 points\u202f; les parts jetées ou goûtées ne comptent pas. Averse\u202f: +25\u202f%, arc-en-ciel\u202f: +10\u202f%.',
+        'Dépensez-les à la boutique de saison de la page météo en fragments de plats, boussoles célestes et bâtonnets du temps (réassort chaque lundi)\u202f; choisir le plat d’épreuve au temple coûte aussi des points de saison.',
       ],
     },
   ],

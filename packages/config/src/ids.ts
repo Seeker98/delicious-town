@@ -75,7 +75,6 @@ export const GOODS = {
   needle: 61414, // 欲望之针（规格书写作"指南针"）
   starKey: 61418, // 星光之钥
   exploreBook: 61420, // 探险者秘籍
-  tentacle: 10708, // 克拉肯断裂的触手
   dreamNet: 61426, // 捕梦网
   formulaScroll: 10903, // 玄奥配方
   moonScroll: 61425, // 星月密卷（配方鉴定 +10%、辅碎片转主碎片）

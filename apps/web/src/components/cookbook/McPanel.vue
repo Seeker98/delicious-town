@@ -12,7 +12,7 @@ import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useConfirmStore } from '../../stores/confirm';
 import { useToastStore } from '../../stores/toast';
-import { formatNum } from '../../utils/format';
+import { formatNum, timeHM } from '../../utils/format';
 import { GRADE_NAMES, ROAD_NAMES } from '../../utils/labels';
 
 const catalog = useCatalogStore();
@@ -241,6 +241,34 @@ function cook(n: number) {
     t.value.mc.cookFailed,
   );
 }
+/** 时令（天气改版 PR②）：够星时标出当令的道；下锅面板写现在下锅是否应时 */
+const season = computed(() => (o.value?.season.open ? o.value.season : null));
+const roadLabel = (r: number) => t.value.misc.weather.shiling.roads[r] ?? '';
+const seasonRoads = computed(() =>
+  (season.value?.roads ?? []).map(roadLabel).join(t.value.misc.weather.shiling.sep),
+);
+const inSeason = (mcId: number) => !!season.value && season.value.roads.includes(dish(mcId)?.road ?? 0);
+const cookSeason = computed(() => {
+  const p = preview.value;
+  const s = season.value;
+  if (!p || !s) return null;
+  const road = roadLabel(dish(p.mcId)?.road ?? 0);
+  const weather = catalog.weatherName(s.weatherId);
+  if (inSeason(p.mcId)) return { yes: true, text: t.value.mc.season.yesText(weather, road) };
+  const cur = catalog.weather(s.weatherId)?.type;
+  return {
+    yes: false,
+    text: t.value.mc.season.noText(
+      road,
+      weather,
+      seasonRoads.value,
+      Number(timeHM(s.next.at).slice(0, 2)),
+      t.value.misc.weather.types[s.next.type] ?? '',
+      cur === s.next.type,
+      s.next.p >= 0.5,
+    ),
+  };
+});
 const confirm = useConfirmStore();
 /** 倒掉在售的特色菜：危险操作，确认面板红色按钮（界面改版 P4） */
 async function dump() {
@@ -274,7 +302,10 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
     <div v-if="o.current" class="dt-card mb-2 small d-flex align-items-center" data-testid="mc-current">
       <div class="flex-fill">
         {{ t.mc.onSale }}<b>{{ nameOf(o.current.mcId) }}</b> {{ GRADE_NAMES[o.current.grade]
-        }}{{ o.current.luck ? t.mc.lucky : '' }}
+        }}{{ o.current.luck ? t.mc.lucky : ''
+        }}<span v-if="o.current.shiling" class="dt-tag-ok ms-1" data-testid="mc-current-shiling">{{
+          t.mc.season.shiling
+        }}</span>
         <div class="text-muted">
           {{
             t.mc.saleMeta(
@@ -283,7 +314,8 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
               formatNum(o.current.price),
               o.current.eatCount,
             )
-          }}{{ o.saleRate !== null && o.saleRate !== 1 ? t.mc.saleRate(formatNum(o.saleRate)) : '' }}
+          }}{{ o.saleRate !== null && o.saleRate !== 1 ? t.mc.saleRate(formatNum(o.saleRate)) : ''
+          }}{{ o.current.shiling ? t.mc.season.pts(formatNum(o.current.shilingPts)) : '' }}
         </div>
       </div>
       <button
@@ -306,6 +338,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
               : t.mc.learned(o.learned.length)
           }}
         </h2>
+        <span v-if="season && season.roads.length" class="dt-block-more" data-testid="mc-season-now">{{
+          t.mc.season.now(seasonRoads)
+        }}</span>
       </div>
       <div
         v-if="allIds.size > 0"
@@ -348,7 +383,10 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
               }}<span v-if="dish(m.mcId)?.level" class="dt-tag dt-tag-primary">{{
                 t.mc.filter.level(dish(m.mcId)!.level)
               }}</span
-              ><span v-if="ROAD_NAMES[dish(m.mcId)?.road ?? 0]" class="dt-tag dt-tag-mute">{{
+              ><span v-if="inSeason(m.mcId)" class="dt-road" :data-testid="`season-tag-${m.mcId}`">{{
+                t.mc.season.roadTag(roadLabel(dish(m.mcId)!.road))
+              }}</span
+              ><span v-else-if="ROAD_NAMES[dish(m.mcId)?.road ?? 0]" class="dt-tag dt-tag-mute">{{
                 ROAD_NAMES[dish(m.mcId)?.road ?? 0]
               }}</span></span
             >
@@ -374,6 +412,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
           </button>
         </div>
       </div>
+      <p v-if="season && o.current" class="dt-block-note" data-testid="mc-season-note">
+        {{ t.mc.season.note }}
+      </p>
       <div v-if="learnedPages > 1" class="dt-pager" data-testid="mc-pager">
         <button
           type="button"
@@ -407,6 +448,14 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
             >{{ catalog.foodName(f.foodsId) }} {{ f.have }}</span
           >
         </div>
+        <p
+          v-if="cookSeason"
+          :class="['dt-mc-season', cookSeason.yes ? 'is-yes' : 'is-no']"
+          data-testid="cook-season"
+        >
+          <b>{{ cookSeason.yes ? t.mc.season.yes : t.mc.season.no }}</b
+          >{{ cookSeason.text }}
+        </p>
         <label class="dt-row dt-mc-cookie">
           <span class="dt-row-main"
             ><span class="dt-row-title">{{ t.mc.cookie(preview.cookies) }}</span></span

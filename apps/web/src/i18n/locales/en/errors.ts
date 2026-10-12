@@ -53,6 +53,7 @@ const errors: Messages['errors'] = {
     reserved: "The name can't include town characters or official words",
   },
   kind: {
+    shiling: 'Seasonal points',
     coin: 'Coins',
     diamond: 'Diamonds',
     strength: 'Stamina',
@@ -104,6 +105,7 @@ const errors: Messages['errors'] = {
         : 'You need a valid shop work permit to refresh',
   },
   limit: {
+    shiling_weekly: (p) => `Weekly limit reached (${String(p.limit)} a week)`,
     exchange_orders: (p) => `You can have at most ${s(p.max)} open orders`,
     futures_person: (p) => `You can order only ${s(p.left)} more today (${s(p.max)} per day)`,
     futures_quota: (p) => `Only ${s(p.left)} of this ingredient left on the server today`,
@@ -165,6 +167,7 @@ const errors: Messages['errors'] = {
     weekly: (p) => `You've reached this week's exchange limit (${s(p.max)})`,
   },
   state: {
+    shiling_not_in_shop: 'The seasonal shop doesn’t offer this dish',
     not_running: "This event isn't running (unclaimed rewards are mailed after it ends)",
     no_reward: "This reward doesn't exist",
     not_pass: "This event doesn't have premium rewards",
@@ -322,10 +325,6 @@ const errors: Messages['errors'] = {
     guardian_down: "You've already defeated the guardian today. Come back tomorrow.",
     trial_ready: 'Your trial medal is still valid; you can start the trial now',
     no_trial: "You haven't prepared for the trial (or it expired). Take an injection or meditate first.",
-    not_feed_time: "It's not feeding time",
-    fed_today: "You've already fed the Kraken today",
-    portions: 'Not enough portions: keep at least 1 portion of your signature dish on sale after feeding',
-    slot_bought: 'This slot has already been exchanged',
     mc_cooking: 'You already have a signature dish on sale. Sell out or discard it before cooking again.',
     no_cooking: 'No signature dish is on sale right now',
     mc_learned: "You've already learned this signature dish",
@@ -352,7 +351,7 @@ const errors: Messages['errors'] = {
     formula_unlearned: "You haven't learned this formula yet",
     formula_learned: "You've already learned this formula",
     seed_shop_closed: "The seed shop isn't open yet",
-    seed_not_sold: "Mystery seeds aren't sold; get them by exchanging or by feeding the Kraken",
+    seed_not_sold: "Mystery seeds aren't sold; get them by exchanging",
     takeaway_closed: "You haven't opened takeaway yet",
     order_gone: 'This takeaway order is gone',
     order_taken: 'Someone else already took this order',

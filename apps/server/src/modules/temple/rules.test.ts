@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { MapDef, MissileDef, MysteriousCookbook } from '@dt/config';
-import { buildPool, sequenceRng } from '@dt/shared';
+import type { MapDef, MissileDef } from '@dt/config';
+import { sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import {
   exploreAwardNum,
@@ -12,13 +12,6 @@ import {
   guardianRareNews,
   guardianScale,
   guardianHp,
-  inFeedHours,
-  krakenFavor,
-  krakenTarget,
-  pickSeeds,
-  pickShopSlots,
-  relationOf,
-  seedCount,
   shoot,
   trialBase,
   trialGainCaps,
@@ -31,19 +24,6 @@ const speed: MissileDef = { attack: [5000, 5000], hitRate: 0.96, crit: 0.2, crit
 const shot = (def: MissileDef, seq: number[], sealRate = 0) =>
   shoot({ def, luckRate: 0, hitBonus: 0, critBonus: 0, sealRate }, t, sequenceRng(seq));
 const map: MapDef = { rate: 0.75, level: [4, 5], num: [5, 10], mysteriousRate: 0.06, needStrength: 2 };
-const dish = (patch: Partial<MysteriousCookbook>): MysteriousCookbook => ({
-  id: 1,
-  name: 'x',
-  level: 3,
-  road: 1,
-  nutritive: 10,
-  coin: 1,
-  odds: 1,
-  taste: [],
-  appraisable: true,
-  foods: [],
-  ...patch,
-});
 
 describe('守护兽（规格书 09 §9.1）', () => {
   it('血量 20000 + 10000 × 星级（试玩修复 14）', () => {
@@ -175,88 +155,6 @@ describe('试炼（规格书 09 §9.4）', () => {
     expect(trialGainCaps(true, false)).toEqual({ n: 1, m: 3 });
     expect(trialGainCaps(false, true)).toEqual({ n: 0, m: 2 });
     expect(trialGainCaps(false, false)).toEqual({ n: 0, m: 1 });
-  });
-});
-
-describe('克拉肯（规格书 09 §9.5）', () => {
-  const pool = buildPool(
-    config.bundle.mysteriousCookbooks.filter((m) => m.appraisable && m.level <= 5),
-    (m) => m.odds,
-  );
-
-  it('今天想吃的菜：同区服同日稳定，1~5 级可鉴定', () => {
-    const a = krakenTarget(pool, 7, '2026-09-30');
-    expect(krakenTarget(pool, 7, '2026-09-30').id).toBe(a.id);
-    expect(a.level).toBeLessThanOrEqual(5);
-    const days = ['2026-10-01', '2026-10-02', '2026-10-03', '2026-10-04', '2026-10-05'];
-    expect(new Set(days.map((d) => krakenTarget(pool, 7, d).id)).size).toBeGreaterThan(1);
-  });
-
-  it('投喂时段左闭右开', () => {
-    expect([11, 13, 14, 17, 20, 21, 0].map((h) => inFeedHours(h, t.krakenHours))).toEqual([
-      true,
-      true,
-      false,
-      true,
-      true,
-      false,
-      false,
-    ]);
-  });
-
-  it('关系：同一道菜 / 同道 / 其他', () => {
-    const target = dish({ id: 5, road: 2 });
-    expect(relationOf(dish({ id: 5, road: 2 }), target)).toBe('same');
-    expect(relationOf(dish({ id: 6, road: 2 }), target)).toBe('road');
-    expect(relationOf(dish({ id: 7, road: 3 }), target)).toBe('other');
-  });
-
-  it('好感度：rand(init) − trunc(k × init)，0 记 1，不超过 init；同菜加幸运', () => {
-    const base = { level: 4, grade: 1, luckRate: 0 };
-    // init = ⌊√(10×50×2.4)/12⌋ = 2；k = 0 → favor 0 → 1
-    expect(
-      krakenFavor({ ...base, num: 10, price: 50, grade: 3, relation: 'same' }, t, sequenceRng([0])),
-    ).toEqual({
-      init: 2,
-      favor: 1,
-      luck: 0,
-    });
-    // 其他：init = ⌊√(100×100×0.5)/12⌋ = 5；k = 0.2 → 0 − 1 = −1
-    expect(
-      krakenFavor({ ...base, num: 100, price: 100, relation: 'other' }, t, sequenceRng([0])),
-    ).toMatchObject({
-      init: 5,
-      favor: -1,
-    });
-    // 同道：init 8，k = 0.1 → trunc(0.8) = 0；rand(8) = 7
-    expect(
-      krakenFavor({ ...base, num: 100, price: 100, relation: 'road' }, t, sequenceRng([0.99])),
-    ).toMatchObject({
-      init: 8,
-      favor: 7,
-    });
-    // 同菜 7 品：init 12，k = −0.36 → trunc(−4.32) = −4；11 + 4 = 15 → 封顶 12
-    expect(
-      krakenFavor({ ...base, num: 100, price: 100, grade: 7, relation: 'same' }, t, sequenceRng([0.99, 0])),
-    ).toMatchObject({ init: 12, favor: 12 });
-    // 同菜幸运：rand(⌊12 × 1 / 5⌋ = 2) = 1
-    expect(
-      krakenFavor(
-        { ...base, num: 100, price: 100, relation: 'same', luckRate: 1 },
-        t,
-        sequenceRng([0.5, 0.5]),
-      ),
-    ).toEqual({ init: 12, favor: 7, luck: 1 });
-  });
-
-  it('种子数 = ⌊√max(0, 好感)⌋ + 2（计划裁定 4）', () => {
-    expect([-3, 1, 16, 35].map(seedCount)).toEqual([2, 3, 6, 7]);
-  });
-
-  it('抽种子合并计数；触手商店抽 n 格', () => {
-    const r = pickSeeds(config.seedPool, 3, sequenceRng([0]));
-    expect([...r.values()]).toEqual([3]);
-    expect(pickShopSlots(pool, 6, sequenceRng([0.3, 0.6]))).toHaveLength(6);
   });
 });
 

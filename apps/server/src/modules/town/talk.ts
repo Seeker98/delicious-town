@@ -15,7 +15,6 @@ import { incrementDaily } from '../counter/dailyCounter';
 import { addFoods } from '../cupboard/foods';
 import { opNeedPick } from '../../core/scarcity';
 import { grantGoodsOp } from '../store/goods';
-import { addSeeds } from '../temple/common';
 import { setTownRest, townRest } from './common';
 import { pickBigEaterLevel, rollRange } from './rules';
 
@@ -45,9 +44,6 @@ export async function talk(o: Op, npc: NpcKey): Promise<TalkResultDto> {
     // 奖励按实际到账显示：超过持有上限被丢弃的部分不算（PR26 遗留）
     const got = await addFoods(o, foodId, num);
     rewards.push({ kind: 'foods', id: foodId, num: got.toCupboard + got.toFridge });
-    const seed = pickWeighted(o.config.seedPool, o.rng);
-    await addSeeds(o, seed.id, 1);
-    rewards.push({ kind: 'seed', id: seed.id, num: 1 });
   } else if (npc === 'carmen') {
     const gift = await grantGoodsOp(o, GOODS.mysteryFoodExchange, 1);
     await setTownRest(o, { big_eater_gift: true });

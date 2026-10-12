@@ -220,7 +220,6 @@ export default {
     places: {
       tower: { title: '厨塔 · 赛厨榜', sub: '前 15 名, 可以直接挑战' },
       acquire: { title: '收购 · 身价榜', sub: '可以直接收购' },
-      kraken: { title: '神殿 · 克拉肯月榜', sub: '投喂克拉肯的老板' },
     },
   },
   classroom: {

@@ -60,12 +60,11 @@ describe('RankPanel', () => {
     expect(w.findAll('[data-testid^="rank-elsewhere-"]').map((x) => x.attributes('data-testid'))).toEqual([
       'rank-elsewhere-tower',
       'rank-elsewhere-acquire',
-      'rank-elsewhere-temple',
     ]);
     expect(w.get('[data-testid="rank-elsewhere-tower"]').text()).toContain('厨塔 · 赛厨榜');
-    useRestaurantStore().rest = { disabledFeatures: ['temple'] } as never;
+    useRestaurantStore().rest = { disabledFeatures: ['acquire'] } as never;
     await flushPromises();
-    expect(w.find('[data-testid="rank-elsewhere-temple"]').exists()).toBe(false);
+    expect(w.find('[data-testid="rank-elsewhere-acquire"]').exists()).toBe(false);
   });
 
   it('我不在前列时底部单独显示；打赏大类显示奖励说明', async () => {

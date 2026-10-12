@@ -100,5 +100,18 @@ const mc: Messages['mc'] = {
     tip: 'Donner',
     kindLabel: 'Donner quoi',
   },
+  season: {
+    now: (roads) => `De saison\u202f: ${roads}`,
+    roadTag: (road) => `${road} · de saison`,
+    shiling: 'De saison',
+    pts: (n) => ` · ${n} points de saison gagnés`,
+    note: 'La fournée en vente a été fixée à la cuisson\u202f: un changement de météo ne la modifie pas.',
+    yes: 'De saison si vous cuisinez maintenant',
+    yesText: (weather, road) =>
+      ` · ${weather}\u202f: la ${road.toLowerCase()} est de saison. Chaque part mangée avant épuisement rapporte des points de saison.`,
+    no: 'Pas de saison si vous cuisinez maintenant',
+    noText: (road, weather, roads, hour, type, same, sure) =>
+      ` · ${road}\u202f; avec ${weather.toLowerCase()}, ${roads} sont de saison. Changement à ${hour} h, ${sure ? 'sans doute' : 'peut-être'} ${same ? 'encore' : 'vers'} ${type.toLowerCase()}.`,
+  },
 };
 export default mc;
