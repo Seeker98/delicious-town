@@ -13,11 +13,17 @@ const cupboard: Messages['cupboard'] = {
     rules: (free, max, grade) =>
       `${free} ${plFr(free, 'traitement gratuit', 'traitements gratuits')} aujourd’hui · max ${max} par ingrédient · objectif de la rue\u202f: qualité ${grade}`,
   },
-  needShort: (n) => `Manque ${n}`,
   have: (n) => `Vous en avez ${n}`,
   howMany: 'Combien',
   locked: 'Verrouillé',
   levelEmpty: 'Aucun ingrédient de ce niveau',
+  search: {
+    placeholder: 'Chercher un ingrédient',
+    clear: 'Effacer la recherche',
+    none: (q) => `Aucun ingrédient nommé «\u202f${q}\u202f»`,
+    elseFridge: 'Essayez un autre mot, ou regardez le frigo',
+    elseShelf: 'Essayez un autre mot, ou regardez l’étagère',
+  },
   /** 橱柜空着（界面改版 P4：空状态） */
   empty: {
     title: 'L’étagère est vide',

@@ -32,6 +32,8 @@ const mountView = (global: Record<string, unknown> = {}) =>
 describe('CupboardView', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    // 等级筛选记在本地存储里：别让上一个测试选的等级把这次的行筛掉
+    localStorage.clear();
     // 按钮是否可用取决于食材等级，目录里放一个 2 级食材
     useCatalogStore().apply({
       version: 'test',
@@ -163,41 +165,147 @@ describe('CupboardView', () => {
     await w2.find('[data-testid="level-all"]').trigger('click');
     expect(w2.find('[data-testid="pick-101"]').exists()).toBe(true);
   });
-  it('方块统一两行：没有"本街还需"的第二行也占位（问题记录：方块高度不一）（界面改版 P6）', async () => {
+  it('列表一行一种（橱柜改版）：本街还需写在名字下面，不需要的只有一行；右边数量；2 级以上有等级标签，锁定的有小锁', async () => {
+    useCatalogStore().apply({
+      version: 'test',
+      goods: [],
+      foods: [
+        { id: 302, name: '葡萄', level: 2, odds: 100, coin: 1000, type: 2 },
+        { id: 101, name: '大米', level: 1, odds: 100, coin: 100, type: 2 },
+        { id: 401, name: '橄榄油', level: 4, odds: 100, coin: 100, type: 2 },
+        { id: M1, name: '一级万能食材', level: 9, odds: 100, coin: 100, type: 2 },
+      ],
+      streets: [],
+      weather: [],
+      devices: [],
+    });
     vi.mocked(endpoints.cupboard).mockResolvedValue({
-      slotsUsed: 2,
-      slots: 100,
-      lockUsed: 0,
-      lockSlots: 15,
-      foodsMaxNum: 999,
-      targetGrade: 5,
-      fridgeCount: 0,
-      fridgeUnread: false,
-      freeHandleLeft: 20,
-      handleMax: 100,
+      ...(await endpoints.cupboard()),
       items: [
         { foodsId: 302, num: 4, locked: false, streetNeed: 3 },
-        { foodsId: 101, num: 9, locked: false, streetNeed: 0 },
+        { foodsId: 101, num: 1200, locked: true, streetNeed: 0 },
+        { foodsId: 401, num: 2, locked: false, streetNeed: 0 },
+        { foodsId: M1, num: 6, locked: false, streetNeed: 0 },
       ],
+    });
+    localStorage.clear();
+    const w = mountView();
+    await flushPromises();
+    expect(w.find('.dt-bag').exists()).toBe(false);
+    const row = w.get('[data-testid="pick-302"]');
+    expect(row.classes()).toContain('dt-cup-row');
+    expect(row.get('.dt-cup-name').text()).toContain('葡萄');
+    expect(row.get('.dt-cup-need').text()).toBe('本街还需 3');
+    expect(row.get('.dt-cup-qty').text()).toBe('4');
+    expect(row.get('.dt-lv').classes()).toContain('is-t2');
+    expect(row.find('.bi-lock-fill').exists()).toBe(false);
+    const rice = w.get('[data-testid="pick-101"]');
+    expect(rice.find('.dt-cup-need').exists()).toBe(false);
+    expect(rice.find('.dt-lv').exists()).toBe(false);
+    expect(rice.find('.bi-lock-fill').exists()).toBe(true);
+    expect(rice.get('.dt-cup-qty').text()).toBe('1,200');
+    expect(w.get('[data-testid="pick-401"] .dt-lv').classes()).toContain('is-t3');
+    expect(w.get(`[data-testid="pick-${M1}"] .dt-lv`).classes()).toContain('is-master');
+    expect(w.get(`[data-testid="pick-${M1}"] .dt-lv`).text()).toBe('万能');
+    // 食材名不截断（问题记录 138）
+    expect(row.find('.text-truncate').exists()).toBe(false);
+  });
+
+  it('搜索框（橱柜改版）：按名字过滤，等级胶囊的数跟着变，匹配的字标出来；✕ 清空；搜不到时写明', async () => {
+    useCatalogStore().apply({
+      version: 'test',
+      goods: [],
+      foods: [
+        { id: 103, name: '苦瓜', level: 1, odds: 100, coin: 100, type: 2 },
+        { id: 108, name: '黄瓜', level: 1, odds: 100, coin: 100, type: 2 },
+        { id: 101, name: '大米', level: 1, odds: 100, coin: 100, type: 2 },
+        { id: 302, name: '葡萄', level: 2, odds: 100, coin: 1000, type: 2 },
+      ],
+      streets: [],
+      weather: [],
+      devices: [],
+    });
+    vi.mocked(endpoints.cupboard).mockResolvedValue({
+      ...(await endpoints.cupboard()),
+      items: [103, 108, 101, 302].map((foodsId) => ({ foodsId, num: 5, locked: false, streetNeed: 0 })),
+    });
+    localStorage.clear();
+    const w = mountView();
+    await flushPromises();
+    const q = w.get('[data-testid="cupboard-q"]');
+    expect(q.attributes('placeholder')).toBe('搜食材名字');
+    expect(w.find('[data-testid="cupboard-q-clear"]').exists()).toBe(false);
+    await q.setValue('瓜');
+    expect(w.findAll('.dt-cup-row').map((r) => r.attributes('data-testid'))).toEqual([
+      'pick-103',
+      'pick-108',
+    ]);
+    expect(w.get('[data-testid="level-all"]').text()).toBe('全部 (2)');
+    expect(w.get('[data-testid="level-1"]').text()).toBe('1 级 (2)');
+    expect(w.find('[data-testid="level-2"]').exists()).toBe(false);
+    expect(w.get('[data-testid="pick-103"] mark').text()).toBe('瓜');
+    await q.setValue('松露');
+    expect(w.findAll('.dt-cup-row')).toHaveLength(0);
+    const none = w.get('[data-testid="cupboard-nomatch"]').text();
+    expect(none).toContain('没有叫“松露”的食材');
+    expect(none).toContain('看看冰箱');
+    await w.get('[data-testid="cupboard-q-clear"]').trigger('click');
+    expect((q.element as HTMLInputElement).value).toBe('');
+    expect(w.findAll('.dt-cup-row')).toHaveLength(4);
+    expect(w.find('.dt-cup-row mark').exists()).toBe(false);
+  });
+
+  it('搜索时选着的等级里没有结果：那个胶囊还在（数是 0），写这一级没有', async () => {
+    useCatalogStore().apply({
+      version: 'test',
+      goods: [],
+      foods: [
+        { id: 103, name: '苦瓜', level: 1, odds: 100, coin: 100, type: 2 },
+        { id: 302, name: '葡萄', level: 2, odds: 100, coin: 1000, type: 2 },
+      ],
+      streets: [],
+      weather: [],
+      devices: [],
+    });
+    vi.mocked(endpoints.cupboard).mockResolvedValue({
+      ...(await endpoints.cupboard()),
+      items: [103, 302].map((foodsId) => ({ foodsId, num: 5, locked: false, streetNeed: 0 })),
+    });
+    localStorage.clear();
+    const w = mountView();
+    await flushPromises();
+    await w.get('[data-testid="level-2"]').trigger('click');
+    await w.get('[data-testid="cupboard-q"]').setValue('瓜');
+    expect(w.get('[data-testid="level-2"]').text()).toBe('2 级 (0)');
+    expect(w.text()).toContain('这一级没有食材');
+    expect(w.find('[data-testid="cupboard-nomatch"]').exists()).toBe(false);
+  });
+
+  it('冰箱也有搜索框：按名字过滤，搜不到时提示看看常温', async () => {
+    useCatalogStore().apply({
+      version: 'test',
+      goods: [],
+      foods: [
+        { id: 103, name: '苦瓜', level: 1, odds: 100, coin: 100, type: 2 },
+        { id: 302, name: '葡萄', level: 2, odds: 100, coin: 1000, type: 2 },
+      ],
+      streets: [],
+      weather: [],
+      devices: [],
+    });
+    vi.mocked(endpoints.fridge).mockResolvedValue({
+      items: [103, 302].map((foodsId) => ({ foodsId, num: 5, thawable: 3, thawCoin: 750, streetNeed: 0 })),
     });
     const w = mountView();
     await flushPromises();
-    for (const id of [302, 101]) {
-      const tile = w.find(`[data-testid="pick-${id}"]`);
-      expect(tile.classes()).toContain('dt-bag-cell');
-      expect(tile.find('.dt-bag-need').exists()).toBe(true);
-    }
-    expect(w.find('[data-testid="pick-302"] .dt-bag-need').text()).toBe('需 3');
-    expect(w.find('[data-testid="pick-101"] .dt-bag-need').text()).toBe('');
-    // 名字太长时只截名字，数量总是显示
-    expect(w.find('[data-testid="pick-101"] .dt-bag-num').text()).toBe('9');
-  });
-
-  it('食材名不截断：不再用 text-truncate（问题记录 138）（界面改版 P6）', async () => {
-    const w = mountView();
+    await w.get('[data-testid="tab-fridge"]').trigger('click');
     await flushPromises();
-    expect(w.find('[data-testid="pick-302"] .text-truncate').exists()).toBe(false);
-    expect(w.find('[data-testid="pick-302"] .dt-bag-name').text()).toBe('葡萄');
+    const q = w.get('[data-testid="fridge-q"]');
+    await q.setValue('葡');
+    expect(w.find('[data-testid="fridge-302"]').exists()).toBe(true);
+    expect(w.find('[data-testid="fridge-103"]').exists()).toBe(false);
+    await q.setValue('松露');
+    expect(w.get('[data-testid="fridge-nomatch"]').text()).toContain('看看常温');
   });
 
   it('选中万能食材时写明能否兑换稀有食材（问题记录 140）', async () => {
@@ -296,7 +404,8 @@ describe('CupboardView', () => {
       expect(meta).toContain('max 999 per ingredient');
       expect(w.find('[data-testid="level-all"]').text()).toBe('All (1)');
       expect(w.find('[data-testid="level-2"]').text()).toBe('Level 2 (1)');
-      expect(w.get('[data-testid="pick-302"] .dt-bag-need').text()).toBe('Need 3');
+      expect(w.get('[data-testid="pick-302"] .dt-cup-need').text()).toBe('Street needs 3');
+      expect(w.get('[data-testid="cupboard-q"]').attributes('placeholder')).toBe('Search ingredients');
       expect(w.get('[data-testid="pick-302"]').attributes('aria-label')).toContain('Street needs 3');
       await w.find('[data-testid="pick-302"]').trigger('click');
       expect(w.find('[data-testid="decompose"]').text()).toBe('Break down ×1');
@@ -321,12 +430,12 @@ describe('CupboardView', () => {
     expect(w.find('[data-testid="fridge-302"]').exists()).toBe(true);
   });
 
-  it('格子 4 列，每格上面是食材图，选中的 aria-pressed；数量是步进器（界面改版 P4）（界面改版 P6）', async () => {
+  it('一行一种，左边是食材图，选中的 aria-pressed；数量是步进器（界面改版 P4）（橱柜改版）', async () => {
     const w = mountView();
     await flushPromises();
-    expect(w.find('.dt-bag').exists()).toBe(true);
     const tile = w.get('[data-testid="pick-302"]');
-    expect(tile.classes()).toContain('dt-bag-cell');
+    expect(tile.classes()).toContain('dt-cup-row');
+    expect(tile.get('.dt-cup-tray use').attributes('href')).toMatch(/#food-/);
     expect(tile.get('use').attributes('href')).toMatch(/#food-/);
     expect(tile.attributes('aria-pressed')).toBe('false');
     await tile.trigger('click');

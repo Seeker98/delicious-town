@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    cupboard1012:
+      'The cupboard is now a list, one ingredient per row: a small picture, the level after the name, what the street still needs under it and the amount on the right. A search box filters by name, on the shelf and in the fridge',
     thumbs1012:
       'Return all no longer reports a failure when you gave someone a thumbs-up before they gave you one: that already counts as returned',
     account1012:

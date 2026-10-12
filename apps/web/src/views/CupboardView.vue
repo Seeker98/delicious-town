@@ -16,6 +16,7 @@ import { useCatalogStore } from '../stores/catalog';
 import { useConfirmStore } from '../stores/confirm';
 import { useToastStore } from '../stores/toast';
 import { foodLevelLabel, formatNum } from '../utils/format';
+import { matchRange, matchText } from '../utils/match';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
@@ -55,15 +56,28 @@ watch(level, (v) => {
   }
 });
 const levelOf = (foodsId: number) => catalog.food(foodsId)?.level ?? 0;
+/** 搜索框（橱柜改版）：按名字过滤，常温和冰箱共用一个关键字（搜不到时提示去另一边看看，切过去照样搜） */
+const q = ref('');
+const hit = (foodsId: number) => matchText(catalog.foodName(foodsId), q.value.trim());
+const searched = computed(() => (data.value?.items ?? []).filter((f) => hit(f.foodsId)));
+/** 等级胶囊的数跟着搜索结果走；选着的那一级搜不到时胶囊也留着（数是 0），免得选中的胶囊突然没了 */
 const levels = computed(() => {
   const count = new Map<number, number>();
-  for (const f of data.value?.items ?? [])
-    count.set(levelOf(f.foodsId), (count.get(levelOf(f.foodsId)) ?? 0) + 1);
+  if (level.value !== 0) count.set(level.value, 0);
+  for (const f of searched.value) count.set(levelOf(f.foodsId), (count.get(levelOf(f.foodsId)) ?? 0) + 1);
   return [...count].sort((a, b) => a[0] - b[0]).map(([lv, n]) => ({ lv, n }));
 });
 const shown = computed(() =>
-  (data.value?.items ?? []).filter((f) => level.value === 0 || levelOf(f.foodsId) === level.value),
+  searched.value.filter((f) => level.value === 0 || levelOf(f.foodsId) === level.value),
 );
+const fridgeShown = computed(() => (fridge.value?.items ?? []).filter((f) => hit(f.foodsId)));
+/** 名字拆成匹配前、匹配到的字、匹配后三段（匹配的字标紫色）；没在搜时整个名字一段 */
+function nameParts(foodsId: number): [string, string, string] {
+  const name = catalog.foodName(foodsId);
+  const r = matchRange(name, q.value.trim());
+  return r ? [name.slice(0, r[0]), name.slice(r[0], r[1]), name.slice(r[1])] : [name, '', ''];
+}
+const rows = computed(() => shown.value.map((f) => ({ ...f, name: nameParts(f.foodsId) })));
 
 const pickedItem = computed(() => data.value?.items.find((x) => x.foodsId === picked.value) ?? null);
 // 选中的食材用完了（分解光、合成光、兑换光）：不再记着它，免得之后同一种又回到橱柜时面板自己弹出来（P6 审查 I2）
@@ -107,14 +121,14 @@ const slotsPct = computed(() =>
     ? Math.min(100, Math.round((data.value.slotsUsed / data.value.slots) * 100))
     : 0,
 );
-/** 格子底色（设计 §1.1 第 3 条）：万能食材黄底，2 级绿底，3 级以上紫底，1 级白底 */
+/** 等级配色（设计 §1.1 第 3 条）：万能食材黄，2 级绿，3 级以上紫，1 级不标；详情面板的图托盘、列表里的等级标签用 */
 function tierClass(foodsId: number): string {
   // 万能食材按编号认（masterBase + 1~5），不靠配图类别：旧目录缓存里没有类别
   if (foodsId > SHARED_FOODS.masterBase && foodsId <= SHARED_FOODS.masterBase + 5) return 'is-master';
   const lv = levelOf(foodsId);
   return lv >= 3 ? 'is-t3' : lv === 2 ? 'is-t2' : '';
 }
-/** 格子的读屏文字：名字、数量、锁定、本街还需（格子上的字都是 aria-hidden 的碎片） */
+/** 一行的读屏文字：名字、数量、锁定、本街还需（行里的字是碎片，读屏读这一句） */
 function cellLabel(x: CupboardDto['items'][number]): string {
   const c = t.value.cupboard;
   const parts = [t.value.common.qty(catalog.foodName(x.foodsId), x.num)];
@@ -219,7 +233,27 @@ onMounted(() =>
         {{ t.cupboard.meta.rules(data.freeHandleLeft, data.foodsMaxNum, data.targetGrade) }}
       </div>
     </div>
-    <div class="dt-pills">
+    <label class="dt-search-box dt-cup-search">
+      <i class="bi bi-search" aria-hidden="true"></i>
+      <input
+        v-model="q"
+        type="search"
+        :placeholder="t.cupboard.search.placeholder"
+        :aria-label="t.cupboard.search.placeholder"
+        data-testid="cupboard-q"
+      />
+      <button
+        v-if="q"
+        type="button"
+        class="dt-cup-search-x"
+        :aria-label="t.cupboard.search.clear"
+        data-testid="cupboard-q-clear"
+        @click="q = ''"
+      >
+        <i class="bi bi-x" aria-hidden="true"></i>
+      </button>
+    </label>
+    <div class="dt-pills dt-pills-scroll dt-cup-pills">
       <button
         type="button"
         :class="{ active: level === 0 }"
@@ -227,7 +261,7 @@ onMounted(() =>
         data-testid="level-all"
         @click="level = 0"
       >
-        {{ t.cupboard.levelCount(t.common.all, data.items.length) }}
+        {{ t.cupboard.levelCount(t.common.all, searched.length) }}
       </button>
       <button
         v-for="x in levels"
@@ -241,32 +275,46 @@ onMounted(() =>
         {{ t.cupboard.levelCount(foodLevelLabel(x.lv), x.n) }}
       </button>
     </div>
-    <div v-if="shown.length === 0" class="small text-muted">{{ t.cupboard.levelEmpty }}</div>
-    <!-- 背包格子（界面改版 P6，设计 §1.1 第 3 条）：4 列，44px 图，右上角数量，2 级以上和万能食材用底色区分；点一格弹出详情 -->
-    <div class="dt-bag">
+    <!-- 搜不到：写搜的什么，提示去冰箱看看 -->
+    <div
+      v-if="q.trim() && searched.length === 0"
+      class="dt-card dt-cup-nomatch"
+      data-testid="cupboard-nomatch"
+    >
+      <DtEmpty :title="t.cupboard.search.none(q.trim())" :body="t.cupboard.search.elseFridge" />
+    </div>
+    <div v-else-if="shown.length === 0" class="small text-muted">{{ t.cupboard.levelEmpty }}</div>
+    <!-- 列表（橱柜改版，用户 2026-10-12：格子太乱）：一行一种，左边图，名字和等级标签、锁，下面本街还需；右边数量。点一行弹出详情 -->
+    <div v-else class="dt-card dt-cup-list">
       <button
-        v-for="f in shown"
+        v-for="f in rows"
         :key="f.foodsId"
         type="button"
-        :class="['dt-bag-cell', tierClass(f.foodsId)]"
+        class="dt-cup-row"
         :aria-pressed="picked === f.foodsId"
         :aria-label="cellLabel(f)"
         :data-testid="`pick-${f.foodsId}`"
         @click="pick(f.foodsId)"
       >
-        <span class="dt-bag-num" aria-hidden="true">{{ formatNum(f.num) }}</span>
-        <i v-if="f.locked" class="bi bi-lock-fill dt-bag-lock" aria-hidden="true"></i>
-        <FoodArt :id="f.foodsId" :size="40" />
-        <span class="dt-bag-name" aria-hidden="true">{{ catalog.foodName(f.foodsId) }}</span>
-        <!-- 第二行总是占位，格子一样高（问题记录） -->
-        <span class="dt-bag-need" aria-hidden="true">{{
-          f.streetNeed > 0 ? t.cupboard.needShort(f.streetNeed) : ' '
-        }}</span>
+        <span class="dt-cup-tray"><FoodArt :id="f.foodsId" :size="30" /></span>
+        <span class="dt-cup-main">
+          <span class="dt-cup-name"
+            ><span
+              >{{ f.name[0] }}<mark v-if="f.name[1]">{{ f.name[1] }}</mark
+              >{{ f.name[2] }}</span
+            ><span v-if="levelOf(f.foodsId) >= 2" :class="['dt-tag', 'dt-lv', tierClass(f.foodsId)]">{{
+              foodLevelLabel(levelOf(f.foodsId))
+            }}</span
+            ><i v-if="f.locked" class="bi bi-lock-fill" aria-hidden="true"></i
+          ></span>
+          <span v-if="f.streetNeed > 0" class="dt-cup-need">{{ t.cupboard.streetNeed(f.streetNeed) }}</span>
+        </span>
+        <span class="dt-cup-qty">{{ formatNum(f.num) }}</span>
       </button>
     </div>
   </template>
 
-  <!-- 点一格从底部弹出详情：大图、持有、本街还需；数量和分解、合成、兑换、锁定 -->
+  <!-- 点一行从底部弹出详情：大图、持有、本街还需；数量和分解、合成、兑换、锁定 -->
   <DtSheet
     :open="tab === 'cupboard' && !!pickedItem"
     :title="pickedItem ? catalog.foodName(pickedItem.foodsId) : ''"
@@ -367,32 +415,57 @@ onMounted(() =>
   <!-- 冰箱：一种一行（界面改版 P6：和别处同一种行）——食材图、名字和数量、等级和本街还需，右边解冻按钮 -->
   <template v-if="tab === 'fridge' && fridge">
     <DtEmpty v-if="fridge.items.length === 0" :title="t.cupboard.fridgeEmpty" data-testid="fridge-empty" />
-    <div v-else class="dt-card dt-rows-card">
-      <DtRow
-        v-for="f in fridge.items"
-        :key="f.foodsId"
-        :title="t.common.qty(catalog.foodName(f.foodsId), f.num)"
-        :data-testid="`fridge-${f.foodsId}`"
-      >
-        <template #icon><FoodArt :id="f.foodsId" :size="26" /></template>
-        <!-- 和橱柜一样写等级和本街还需几个（问题记录 465） -->
-        <template #sub
-          >{{ foodLevelLabel(levelOf(f.foodsId))
-          }}<template v-if="f.streetNeed > 0"> · {{ t.cupboard.streetNeed(f.streetNeed) }}</template
-          ><template v-if="f.thawable === 0"> · {{ t.cupboard.noRoom }}</template></template
+    <template v-else>
+      <label class="dt-search-box dt-cup-search">
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <input
+          v-model="q"
+          type="search"
+          :placeholder="t.cupboard.search.placeholder"
+          :aria-label="t.cupboard.search.placeholder"
+          data-testid="fridge-q"
+        />
+        <button
+          v-if="q"
+          type="button"
+          class="dt-cup-search-x"
+          :aria-label="t.cupboard.search.clear"
+          data-testid="fridge-q-clear"
+          @click="q = ''"
         >
-        <!-- 解冻要花银币：按钮写明个数和费用，点了再确认（问题记录 206） -->
-        <template #end>
-          <button
-            class="btn btn-sm btn-outline-primary"
-            :disabled="busy || f.thawable === 0"
-            :data-testid="`thaw-${f.foodsId}`"
-            @click="thaw(f)"
+          <i class="bi bi-x" aria-hidden="true"></i>
+        </button>
+      </label>
+      <div v-if="fridgeShown.length === 0" class="dt-card dt-cup-nomatch" data-testid="fridge-nomatch">
+        <DtEmpty :title="t.cupboard.search.none(q.trim())" :body="t.cupboard.search.elseShelf" />
+      </div>
+      <div v-else class="dt-card dt-rows-card">
+        <DtRow
+          v-for="f in fridgeShown"
+          :key="f.foodsId"
+          :title="t.common.qty(catalog.foodName(f.foodsId), f.num)"
+          :data-testid="`fridge-${f.foodsId}`"
+        >
+          <template #icon><FoodArt :id="f.foodsId" :size="26" /></template>
+          <!-- 和橱柜一样写等级和本街还需几个（问题记录 465） -->
+          <template #sub
+            >{{ foodLevelLabel(levelOf(f.foodsId))
+            }}<template v-if="f.streetNeed > 0"> · {{ t.cupboard.streetNeed(f.streetNeed) }}</template
+            ><template v-if="f.thawable === 0"> · {{ t.cupboard.noRoom }}</template></template
           >
-            {{ t.cupboard.thaw(f.thawable, formatNum(f.thawCoin)) }}
-          </button>
-        </template>
-      </DtRow>
-    </div>
+          <!-- 解冻要花银币：按钮写明个数和费用，点了再确认（问题记录 206） -->
+          <template #end>
+            <button
+              class="btn btn-sm btn-outline-primary"
+              :disabled="busy || f.thawable === 0"
+              :data-testid="`thaw-${f.foodsId}`"
+              @click="thaw(f)"
+            >
+              {{ t.cupboard.thaw(f.thawable, formatNum(f.thawCoin)) }}
+            </button>
+          </template>
+        </DtRow>
+      </div>
+    </template>
   </template>
 </template>
