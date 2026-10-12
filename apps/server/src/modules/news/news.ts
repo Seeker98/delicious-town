@@ -74,7 +74,8 @@ export async function headlines(
       : undefined;
   const [news, bc, daily] = await Promise.all([
     // 一番赏大赏也算全服广播，和玩家喇叭一起显示（一番赏设计 §6）
-    listNews(db, shardId, { limit: 3, not: [...BROADCAST_STYLE_NEWS] }),
+    // 首页最多列 2 条（问题记录 619）
+    listNews(db, shardId, { limit: 2, not: [...BROADCAST_STYLE_NEWS] }),
     listNews(db, shardId, { limit: 1, only: [...BROADCAST_STYLE_NEWS], since }),
     o.daily && o.now ? dailyHead(db, shardId, o.now) : null,
   ]);

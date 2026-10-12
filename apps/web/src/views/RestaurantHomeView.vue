@@ -15,11 +15,11 @@ import { endpoints } from '../api/endpoints';
 import ActivityBanner from '../components/ActivityBanner.vue';
 import AnnounceBanner from '../components/AnnounceBanner.vue';
 import DtArt from '../components/DtArt.vue';
+import DtSheet from '../components/DtSheet.vue';
 import DtSkeleton from '../components/DtSkeleton.vue';
 import DtLevelRing from '../components/DtLevelRing.vue';
 import DtResPill from '../components/DtResPill.vue';
 import DtRow from '../components/DtRow.vue';
-import DtStatTile from '../components/DtStatTile.vue';
 import HomeStatus from '../components/home/HomeStatus.vue';
 import HomeScene from '../components/home/HomeScene.vue';
 import HomeFeed from '../components/town/HomeFeed.vue';
@@ -205,6 +205,21 @@ async function openSlot(slot: number) {
 /** 设施位：开了的、没开的分开排（P5 返工） */
 const openDevices = computed(() => (rest.value?.devices ?? []).filter((d) => d.unlocked));
 const lockedDevices = computed(() => (rest.value?.devices ?? []).filter((d) => !d.unlocked));
+/** 设施标题右边写空着几格（问题记录 619） */
+const emptySlots = computed(() => openDevices.value.filter((d) => !d.goodsId).length);
+/** 锁着的设施位并成一行字（问题记录 619）：按几星开放归在一起，“2★ ×2 · 3★ · 12★”；没开通的第二块牌匾写“未开通” */
+const lockedText = computed(() => {
+  const h = t.value.home;
+  const stars = new Map<number, number>();
+  let notOpened = 0;
+  for (const d of lockedDevices.value) {
+    if (d.slot === PLAQUE2_SLOT && plaque2Offer.value) notOpened += 1;
+    else stars.set(needStarOf(d), (stars.get(needStarOf(d)) ?? 0) + 1);
+  }
+  const list = [...stars].sort(([a], [b]) => a - b).map(([star, n]) => h.lockedStar(star, n));
+  if (notOpened > 0) list.push(h.notOpened);
+  return h.lockedLine(lockedDevices.value.length, list.join(' · '));
+});
 /** 没开的设施位的全称：名字 + 几星开放（小格子里只写“12★”，全称给悬停和读屏） */
 const lockedLabel = (d: { slot: number; name: string; needStar: number }) =>
   `${catalog.deviceName(d.slot) ?? d.name} · ${d.slot === PLAQUE2_SLOT && plaque2Offer.value ? t.value.home.notOpened : t.value.home.starOpen(needStarOf(d))}`;
@@ -274,6 +289,61 @@ const effectExpires = (e: EffectDto) => expiresText(e.expiresAt);
 const strengthText = computed(() =>
   rest.value ? `${formatNum(rest.value.strength)}/${formatNum(rest.value.strengthMax)}` : '',
 );
+
+/**
+ * 头图下的胶囊、等级环点开的小面板（问题记录 619）：是什么、怎么来、去哪用。
+ * 不写死区服能改的数（每级加多少、每轮恢复多少），只写规则
+ */
+type InfoKind = 'level' | 'coin' | 'strength' | 'diamond' | 'renown';
+const info = ref<InfoKind | null>(null);
+const infoView = computed(() => {
+  const r = rest.value;
+  const k = info.value;
+  if (!r || !k) return null;
+  const x = t.value.home.info;
+  const last = r.lastRound;
+  if (k === 'level')
+    return {
+      title: x.level(r.level),
+      sub: x.levelSub(formatNum(r.exp), formatNum(r.expToNext), formatNum(Math.max(0, r.expToNext - r.exp))),
+      rows: [[x.perLevel, x.perLevelText], ...(last ? [[x.lastExp, `+${formatNum(last.exp)}`]] : [])],
+      to: '/rest/income',
+      link: x.toIncome,
+    };
+  if (k === 'coin')
+    return {
+      title: x.coin(formatNum(r.coin)),
+      sub: x.coinSub,
+      rows: last ? [[x.lastCoin, `+${formatNum(last.coin)}`]] : [],
+      to: '/rest/income',
+      link: x.toIncome,
+    };
+  if (k === 'strength')
+    return {
+      title: x.strength(strengthText.value),
+      sub: (r.strength >= r.strengthMax ? x.strengthFull : '') + x.strengthSub,
+      rows: [[x.use, x.strengthUse]],
+      to: '/shop',
+      link: x.toShop,
+    };
+  if (k === 'diamond')
+    return {
+      title: x.diamond(formatNum(r.diamond)),
+      sub: x.diamondSub,
+      rows: [[x.from, x.diamondFrom]],
+      to: '/shop?tab=black',
+      link: x.toBlack,
+    };
+  return {
+    title: x.renown(formatNum(r.renown)),
+    sub: x.renownSub,
+    rows: [[x.use, x.renownUse]],
+    to: '/tower?tab=shop',
+    link: x.toRenownShop,
+  };
+});
+/** 胶囊按钮的读屏名字：名字 + 数值 + 点开看说明 */
+const pillLabel = (name: string, value: string) => t.value.home.info.open(`${name} ${value}`);
 
 /** 餐厅卡底部（问题记录 447）：原来的厨具、仓库、商店入口换成食谱数和在售特色菜；区服关了的不显示 */
 const showBooks = computed(() => store.featureOn('cookbook'));
@@ -366,9 +436,18 @@ onBeforeUnmount(() => {
       </HomeScene>
       <!-- 等级环往上压进头图；右边称号和经验数字（经验条换成等级环） -->
       <div class="dt-home-level" data-testid="home-level">
-        <DtLevelRing :level="rest.level" :percent="expPercent"
-          ><span data-testid="rest-level">{{ rest.level }}</span></DtLevelRing
+        <!-- 等级环可以点：弹出经验和升级的说明（问题记录 619） -->
+        <button
+          type="button"
+          class="dt-home-ring-btn"
+          data-testid="info-level"
+          :aria-label="t.home.info.open(t.home.info.level(rest.level))"
+          @click="info = 'level'"
         >
+          <DtLevelRing :level="rest.level" :percent="expPercent"
+            ><span data-testid="rest-level">{{ rest.level }}</span></DtLevelRing
+          >
+        </button>
         <div class="dt-home-level-main">
           <!-- 称号多时不换行，放不下的藏起来（终审 I4）；弹性盒按行高居中（问题记录 563） -->
           <div v-if="rest.icons.length > 0" class="dt-home-tags">
@@ -385,17 +464,43 @@ onBeforeUnmount(() => {
       </div>
       <!-- 资源一排彩色胶囊，名字给读屏；油在营业状态卡里（界面改版 P5） -->
       <div class="dt-home-res" data-testid="home-resources">
-        <DtResPill art="res-coin-silver" :label="t.events.kind.coin"
+        <!-- 每个胶囊都能点开看说明（问题记录 619） -->
+        <DtResPill
+          art="res-coin-silver"
+          :label="t.events.kind.coin"
+          clickable
+          :open-label="pillLabel(t.events.kind.coin, formatNum(rest.coin))"
+          data-testid="info-coin"
+          @click="info = 'coin'"
           ><span data-testid="rest-coin">{{ formatNum(rest.coin) }}</span></DtResPill
         >
         <!-- 体力、声望也按千分位（问题记录 296） -->
-        <DtResPill art="res-strength" :label="t.events.kind.strength"
+        <DtResPill
+          art="res-strength"
+          :label="t.events.kind.strength"
+          clickable
+          :open-label="pillLabel(t.events.kind.strength, strengthText)"
+          data-testid="info-strength"
+          @click="info = 'strength'"
           ><span data-testid="rest-strength">{{ strengthText }}</span></DtResPill
         >
-        <DtResPill art="res-diamond" :label="t.events.kind.diamond"
+        <DtResPill
+          art="res-diamond"
+          :label="t.events.kind.diamond"
+          clickable
+          :open-label="pillLabel(t.events.kind.diamond, formatNum(rest.diamond))"
+          data-testid="info-diamond"
+          @click="info = 'diamond'"
           ><span>{{ formatNum(rest.diamond) }}</span></DtResPill
         >
-        <DtResPill art="res-prestige" :label="t.events.kind.renown" :title="t.home.renown"
+        <DtResPill
+          art="res-prestige"
+          :label="t.events.kind.renown"
+          :title="t.home.renown"
+          clickable
+          :open-label="pillLabel(t.events.kind.renown, formatNum(rest.renown))"
+          data-testid="info-renown"
+          @click="info = 'renown'"
           ><span data-testid="rest-renown">{{ formatNum(rest.renown) }}</span></DtResPill
         >
       </div>
@@ -442,12 +547,22 @@ onBeforeUnmount(() => {
         <h2 class="dt-block-title">{{ t.home.roundTitle }}</h2>
         <span class="dt-block-more">{{ t.home.income }}</span>
       </RouterLink>
-      <div v-if="rest.lastRound" class="dt-stat-grid" data-testid="last-round-line">
-        <DtStatTile :value="`+${formatNum(rest.lastRound.coin)}`" :label="t.home.roundCoin" tone="good" />
-        <DtStatTile :value="`+${formatNum(rest.lastRound.exp)}`" :label="t.home.roundExp" tone="good" />
-        <DtStatTile :value="formatNum(rest.lastRound.oil)" :label="t.home.roundOil" />
-      </div>
-      <div class="dt-card dt-rows-card mt-2">
+      <!-- 三个数和楼层餐桌并成一张卡（问题记录 619）：数字一行，左右边距和下面的行对齐 -->
+      <div class="dt-card dt-rows-card">
+        <div v-if="rest.lastRound" class="dt-round-stats" data-testid="last-round-line">
+          <div class="is-good">
+            <b>+{{ formatNum(rest.lastRound.coin) }}</b
+            ><span>{{ t.home.roundCoin }}</span>
+          </div>
+          <div class="is-good">
+            <b>+{{ formatNum(rest.lastRound.exp) }}</b
+            ><span>{{ t.home.roundExp }}</span>
+          </div>
+          <div>
+            <b>{{ formatNum(rest.lastRound.oil) }}</b
+            ><span>{{ t.home.roundOil }}</span>
+          </div>
+        </div>
         <DtRow to="/rest/floor" :title="t.home.floor" art="nav-home" data-testid="home-floor-row">
           <template #title
             >{{ t.home.floor
@@ -595,41 +710,29 @@ onBeforeUnmount(() => {
       <div class="dt-block-head">
         <h2 class="dt-block-title">{{ t.nav.me.groups.shop }}</h2>
       </div>
-      <div class="dt-card dt-rows-card" :data-testid="showBooks || showSpecial ? 'home-books' : undefined">
-        <DtRow
-          v-if="showBooks"
-          to="/cookbooks"
-          art="nav-cookbooks"
-          :title="t.home.row.cookbooks"
-          :value="`${formatNum(rest.cookbooks.learned)}/${formatNum(rest.cookbooks.total)}`"
-          data-testid="home-cookbooks"
-        />
-        <!-- 菜名放不下才截断，几级不截（审查 I2） -->
-        <DtRow
-          v-if="showSpecial"
-          to="/cookbooks?tab=mc"
-          art="sec-star"
-          :title="t.home.row.special"
-          data-testid="home-special"
-        >
-          <template #value
-            ><span class="text-truncate">{{
-              rest.special ? catalog.mcName(rest.special.id) : t.home.row.specialNone
-            }}</span
-            ><span v-if="rest.special" class="flex-shrink-0">{{
-              t.home.specialLevel(rest.special.level)
-            }}</span></template
+      <!-- 一排三个小格（问题记录 619）：名字、当前值、一行说明，每格整格可点 -->
+      <div class="dt-shop-tiles" :data-testid="showBooks || showSpecial ? 'home-books' : undefined">
+        <RouterLink v-if="showBooks" to="/cookbooks" class="dt-shop-tile" data-testid="home-cookbooks">
+          <span class="dt-shop-tile-k"
+            ><DtArt name="nav-cookbooks" :size="14" />{{ t.home.row.cookbooks }}</span
           >
-        </DtRow>
-        <!-- 资产：名下的店身价合计，和投资榜一样；整行去收购（问题记录 447） -->
-        <DtRow
-          v-if="rest.assets !== null"
-          to="/acquire"
-          art="place-acquire"
-          :title="t.home.row.assets"
-          :value="formatNum(rest.assets)"
-          data-testid="home-assets"
-        />
+          <b class="dt-shop-tile-v">{{ formatNum(rest.cookbooks.learned) }}</b>
+          <span class="dt-shop-tile-s">{{ t.home.row.cookbooksTotal(formatNum(rest.cookbooks.total)) }}</span>
+        </RouterLink>
+        <!-- 菜名放不下截断（审查 I2） -->
+        <RouterLink v-if="showSpecial" to="/cookbooks?tab=mc" class="dt-shop-tile" data-testid="home-special">
+          <span class="dt-shop-tile-k"><DtArt name="sec-star" :size="14" />{{ t.home.row.special }}</span>
+          <b class="dt-shop-tile-v is-name">{{
+            rest.special ? catalog.mcName(rest.special.id) : t.home.row.specialNone
+          }}</b>
+          <span class="dt-shop-tile-s">{{ rest.special ? t.home.specialLv(rest.special.level) : '' }}</span>
+        </RouterLink>
+        <!-- 资产：名下的店身价合计，和投资榜一样；整格去收购（问题记录 447） -->
+        <RouterLink v-if="rest.assets !== null" to="/acquire" class="dt-shop-tile" data-testid="home-assets">
+          <span class="dt-shop-tile-k"><DtArt name="place-acquire" :size="14" />{{ t.home.row.assets }}</span>
+          <b class="dt-shop-tile-v">{{ formatNum(rest.assets) }}</b>
+          <span class="dt-shop-tile-s">{{ t.home.row.assetsSub }}</span>
+        </RouterLink>
       </div>
     </section>
 
@@ -639,9 +742,12 @@ onBeforeUnmount(() => {
     <HomeNews :headlines="rest.headlines" />
 
     <!-- 设施：3 列格子，图形放在托盘里，名字和状态各一行 -->
-    <section class="dt-block" data-testid="home-devices">
+    <section class="dt-block dt-home-devices" data-testid="home-devices">
       <div class="dt-block-head">
         <h2 class="dt-block-title">{{ t.home.devices }}</h2>
+        <span v-if="emptySlots > 0" class="dt-block-more" data-testid="fac-empty">{{
+          t.home.emptySlots(emptySlots)
+        }}</span>
       </div>
       <!-- 开了的设施位一格一个；没开的收成一排小格子（图形 + 几星开放），省掉两排（P5 返工：首页太长） -->
       <div v-if="openDevices.length > 0" class="dt-fac-grid">
@@ -668,24 +774,10 @@ onBeforeUnmount(() => {
           <span v-else class="dt-fac-state">{{ t.home.empty }}</span>
         </button>
       </div>
-      <div v-if="lockedDevices.length > 0" class="dt-fac-locked">
-        <button
-          v-for="d in lockedDevices"
-          :key="d.slot"
-          type="button"
-          class="dt-fac-lock"
-          :data-testid="`slot-${d.slot}`"
-          :title="lockedLabel(d)"
-          disabled
-        >
-          <DtArt v-if="DEVICE_ART[d.deviceType]" :name="DEVICE_ART[d.deviceType]!" :size="22" />
-          <span class="visually-hidden">{{ lockedLabel(d) }}</span>
-          <span class="dt-fac-lock-text"
-            ><i class="bi bi-lock" aria-hidden="true"></i
-            >{{ d.slot === PLAQUE2_SLOT && plaque2Offer ? t.home.notOpened : `${needStarOf(d)}★` }}</span
-          >
-        </button>
-      </div>
+      <!-- 锁着的格子并成一行字（问题记录 619：原来是一排小格子） -->
+      <p v-if="lockedDevices.length > 0" class="dt-fac-locked-line" data-testid="fac-locked">
+        <i class="bi bi-lock" aria-hidden="true"></i>{{ lockedText }}
+      </p>
       <div v-if="plaque2Offer" class="dt-card dt-rows-card mt-2">
         <DtRow art="fac-plaque" :title="t.home.plaque2.title">
           <template #sub
@@ -866,5 +958,20 @@ onBeforeUnmount(() => {
         </div>
       </details>
     </section>
+    <!-- 胶囊、等级环点开的说明（问题记录 619） -->
+    <DtSheet :open="!!infoView" :title="infoView?.title ?? ''" @close="info = null">
+      <div v-if="infoView" data-testid="info-sheet">
+        <p class="dt-detail-note mt-0">{{ infoView.sub }}</p>
+        <dl v-if="infoView.rows.length > 0" class="dt-sum dt-info-sum">
+          <div v-for="[k, v] in infoView.rows" :key="k">
+            <dt>{{ k }}</dt>
+            <dd>{{ v }}</dd>
+          </div>
+        </dl>
+        <RouterLink :to="infoView.to" class="dt-go d-inline-block mt-3" data-testid="info-link">{{
+          infoView.link
+        }}</RouterLink>
+      </div>
+    </DtSheet>
   </div>
 </template>

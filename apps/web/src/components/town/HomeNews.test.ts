@@ -34,4 +34,21 @@ describe('HomeNews 小镇日报入口', () => {
   it('没有日报就不显示这一行', () => {
     expect(mountIt(head(null)).find('[data-testid="home-daily"]').exists()).toBe(false);
   });
+
+  it('首页最多列 2 条：按日报、广播、新闻的先后取（问题记录 619）', () => {
+    const n = (id: number) => ({
+      id,
+      type: 'x',
+      restId: null,
+      restName: null,
+      params: {},
+      createdAt: '2026-10-13T01:00:00.000Z',
+    });
+    const w = mountIt({ news: [n(1), n(2)], broadcast: { ...n(9), type: 'broadcast' }, daily });
+    expect(w.find('[data-testid="home-daily"]').exists()).toBe(true);
+    expect(w.findAll('[data-testid="home-broadcast"]')).toHaveLength(1);
+    expect(w.findAll('[data-testid="home-news"]')).toHaveLength(0);
+    const w2 = mountIt({ news: [n(1), n(2)], broadcast: null, daily: null });
+    expect(w2.findAll('[data-testid="home-news"]')).toHaveLength(2);
+  });
 });
