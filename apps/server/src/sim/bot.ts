@@ -18,6 +18,50 @@ export const PERSONAS: Persona[] = [
   { key: 'casual', label: '休闲', hours: [20] },
 ];
 
+/** 在新手街到这个等级就搬走（2026-10-12 线上核对：搬离新手街时 5~19 级，中位 13 级）；快速模型用同一个 */
+export const LEAVE_NEWBIE_LEVEL = 13;
+/** 缺 1 个 L+1 级食材，买这么多个 L 级的去合成：2 个合 1 次，按权重随机抽、缺料倾向弱，约 3 次才中 1 个要的 */
+export const FEED_PER_LACK = 6;
+/** 学菜要用的食材，合成时在需要量之外再留几个；用不到的不留 */
+const KEEP_EACH = 5;
+export const spareOf = (have: number, need: number): number => have - need - (need > 0 ? KEEP_EACH : 0);
+/** 免体力次数用完后花体力合成时留着的体力（灭蟑螂用） */
+export const HANDLE_KEEP_STRENGTH = 20;
+
+/** 按食材等级汇总缺口 */
+export function lackByLevel(
+  levelOf: (id: number) => number,
+  lack: Iterable<[number, number]>,
+): Map<number, number> {
+  const out = new Map<number, number>();
+  for (const [id, n] of lack) if (n > 0) out.set(levelOf(id), (out.get(levelOf(id)) ?? 0) + n);
+  return out;
+}
+
+/**
+ * 每级还要买多少原料（2026-10-12 线上核对：活跃玩家大量买 1、2 级食材合成上去）：
+ * 上一级的缺口 × FEED_PER_LACK，减去这一级已有的可合成的量；只算 1~4 级
+ */
+export function feedWant(
+  levelOf: (id: number) => number,
+  lack: Iterable<[number, number]>,
+  foods: Iterable<[number, number]>,
+  need: (id: number) => number,
+): Map<number, number> {
+  const lackLv = lackByLevel(levelOf, lack);
+  const spare = new Map<number, number>();
+  for (const [id, have] of foods) {
+    const n = spareOf(have, need(id));
+    if (n > 0) spare.set(levelOf(id), (spare.get(levelOf(id)) ?? 0) + n);
+  }
+  const out = new Map<number, number>();
+  for (let lv = 1; lv <= 4; lv++) {
+    const want = (lackLv.get(lv + 1) ?? 0) * FEED_PER_LACK - (spare.get(lv) ?? 0);
+    if (want > 0) out.set(lv, want);
+  }
+  return out;
+}
+
 export interface Bot {
   name: string;
   persona: Persona;
@@ -265,6 +309,32 @@ async function shopForFoods(game: Game, bot: Bot, attempt: Attempt, saving: numb
       r = await game.restaurant.overview(ctx.restaurantId);
     }
   }
+  // 原料：缺 L+1 级食材时，在日常货架多买 L 级的合成上去
+  const config = game.app.config;
+  const levelOf = (id: number) => config.foods.get(id)?.level ?? 0;
+  const left = (await game.cookbook.foodsNeed(ctx, { target: 1, street: r.streetId })).items;
+  const cup = await game.cupboard.list(ctx);
+  const needOf = new Map(left.map((x) => [x.foodsId, x.need]));
+  const feed = feedWant(
+    levelOf,
+    left.map((x) => [x.foodsId, x.lack] as [number, number]),
+    cup.items.map((x) => [x.foodsId, x.num] as [number, number]),
+    (id) => needOf.get(id) ?? 0,
+  );
+  const fresh = await game.market.view(ctx);
+  for (const it of [...fresh.daily].sort(
+    (a, b) => config.requireFood(a.foodsId).coin - config.requireFood(b.foodsId).coin || a.id - b.id,
+  )) {
+    const lv = levelOf(it.foodsId);
+    const want = feed.get(lv) ?? 0;
+    const room = Math.min(it.limit - it.bought, it.left, want);
+    const num = Math.min(room, Math.floor((r.coin - reserve) / Math.max(1, it.price)));
+    if (num <= 0) continue;
+    if (await attempt(() => game.market.buy(ctx, { itemId: it.id, num }))) {
+      feed.set(lv, want - num);
+      r = await game.restaurant.overview(ctx.restaurantId);
+    }
+  }
   if (!market.guess.joined && market.daily.length > 0) {
     const pick = market.daily
       .map((x) => x.foodsId)
@@ -292,8 +362,9 @@ async function learnedNow(game: Game, bot: Bot): Promise<{ levels: Uint8Array; l
 }
 
 /**
- * 搬街（和快速模型同一规则，问题记录 240 报告）：下一星还差食谱数，而本街没学过的菜学完了、
- * 或者连续 3 天没学到新菜，就搬到没学过的菜最多的街；没有搬家卡时花钻石在黑市买一张
+ * 搬街（和快速模型同一规则，问题记录 240 报告；2026-10-12 按线上核对改）：新手街到 LEAVE_NEWBIE_LEVEL 级就搬；
+ * 其他街下一星还差食谱数，而本街没学过的菜学完了、或者连续 3 天没学到新菜就搬。都搬到没学过的菜最多的街；
+ * 没有搬家卡时花钻石在黑市买一张
  */
 async function maybeMove(game: Game, bot: Bot, attempt: Attempt): Promise<void> {
   const ctx = bot.ctx;
@@ -301,13 +372,17 @@ async function maybeMove(game: Game, bot: Bot, attempt: Attempt): Promise<void> 
   const now = game.app.now();
   const { levels, learned } = await learnedNow(game, bot);
   const r = await game.restaurant.overview(ctx.restaurantId);
-  const need = config.starNeed.get(r.starLevel + 1);
-  if (!need || need.cookbooksKind !== 'learned' || learned >= need.needCookbooks) return;
   const byStreet = config.cookbookIndex.idsByStreet;
   const fresh = (street: number) =>
     (byStreet.get(street) ?? []).filter((id) => !gradeOf(levels, config.cookbookIndex.slotOf, id)).length;
-  const stale = now.getTime() - (bot.lastFreshAt ?? now).getTime() >= STALE_MS;
-  if (fresh(r.streetId) > 0 && !stale) return;
+  if (r.streetId === 0) {
+    if (r.level < LEAVE_NEWBIE_LEVEL) return;
+  } else {
+    const need = config.starNeed.get(r.starLevel + 1);
+    if (!need || need.cookbooksKind !== 'learned' || learned >= need.needCookbooks) return;
+    const stale = now.getTime() - (bot.lastFreshAt ?? now).getTime() >= STALE_MS;
+    if (fresh(r.streetId) > 0 && !stale) return;
+  }
   let target = -1;
   let best = 0;
   for (const id of [...byStreet.keys()].sort((a, b) => a - b)) {
@@ -325,22 +400,46 @@ async function maybeMove(game: Game, bot: Bot, attempt: Attempt): Promise<void> 
   if (await attempt(() => game.growth.move(ctx, target))) bot.lastFreshAt = now;
 }
 
-/** 用当天的免体力次数，把学食谱用不到的 1~4 级食材合成上去 */
+/**
+ * 合成（和快速模型一致）：用当天的免体力次数，把学食谱用不到的 1~4 级食材合成上去，先合上一级缺料的；
+ * 免体力次数用完后，上一级缺料的花体力接着合（线上活跃玩家每天合成几十到几百次，2026-10-12 核对）。
+ * 从没合成过时先合成 2 个，做主线"合成或分解一次食材"
+ */
 async function composeSurplus(game: Game, bot: Bot, attempt: Attempt): Promise<void> {
   const ctx = bot.ctx;
+  const config = game.app.config;
   const cup = await game.cupboard.list(ctx);
   let free = cup.freeHandleLeft;
-  const { streetId } = await game.restaurant.overview(ctx.restaurantId);
+  const ov = await game.restaurant.overview(ctx.restaurantId);
+  const streetId = ov.streetId;
+  let strength = ov.strength;
   const need = await game.cookbook.foodsNeed(ctx, { target: 1, street: streetId });
   const needed = new Map(need.items.map((x) => [x.foodsId, x.need]));
-  for (const it of cup.items) {
-    if (free <= 0) break;
-    const food = game.app.config.foods.get(it.foodsId);
+  const levelOf = (id: number) => config.foods.get(id)?.level ?? 0;
+  const lackLv = lackByLevel(
+    levelOf,
+    need.items.map((x) => [x.foodsId, x.lack] as [number, number]),
+  );
+  const up = (id: number) => Number((lackLv.get(levelOf(id) + 1) ?? 0) > 0);
+  let first =
+    (await game.app.db
+      .selectFrom('event_counter')
+      .select('count')
+      .where('rest_id', '=', ctx.restaurantId)
+      .where('key', '=', 'foods.handle')
+      .executeTakeFirst()) === undefined;
+  for (const it of [...cup.items].sort((a, b) => up(b.foodsId) - up(a.foodsId) || a.foodsId - b.foodsId)) {
+    const food = config.foods.get(it.foodsId);
     if (!food || food.level < 1 || food.level > 4) continue;
-    const surplus = it.num - (needed.get(it.foodsId) ?? 0) - 5;
-    const num = Math.min(100, surplus - (surplus % 2));
+    const paid = free <= 0;
+    if (paid && (!up(it.foodsId) || strength <= HANDLE_KEEP_STRENGTH)) continue;
+    const surplus = spareOf(it.num, needed.get(it.foodsId) ?? 0);
+    const num = first ? Math.min(2, it.num) : Math.min(100, surplus - (surplus % 2));
     if (num < 2) continue;
-    if (await attempt(() => game.cupboard.handle(ctx, { foodsId: it.foodsId, way: 'compose', num })))
-      free -= 1;
+    if (await attempt(() => game.cupboard.handle(ctx, { foodsId: it.foodsId, way: 'compose', num }))) {
+      first = false;
+      if (paid) strength -= 1;
+      else free -= 1;
+    }
   }
 }

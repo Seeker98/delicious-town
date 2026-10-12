@@ -1,5 +1,13 @@
-import { deviceHours, DEVICE_TYPE, GOODS, GOODS_TYPE, type Award, type Goods } from '@dt/config';
-import { gameDay, gameParts, nextSlot, pickWeighted, type Rng } from '@dt/shared';
+import {
+  deviceHours,
+  DEVICE_TYPE,
+  GOODS,
+  GOODS_TYPE,
+  type Award,
+  type Goods,
+  type QuestCond,
+} from '@dt/config';
+import { addDays, gameDay, gameParts, nextSlot, pickWeighted, type Rng } from '@dt/shared';
 import {
   applyLearn,
   foodsNeedFor,
@@ -25,7 +33,16 @@ import {
   type QuestCtx,
 } from '../../modules/task/quests';
 import { activationTotal, stateValue } from '../../modules/task/rules';
-import { CHEAP_DEVICES, USE_ALL, type Persona } from '../bot';
+import {
+  CHEAP_DEVICES,
+  feedWant as feedWantOf,
+  HANDLE_KEEP_STRENGTH,
+  lackByLevel as lackByLevelOf,
+  LEAVE_NEWBIE_LEVEL,
+  spareOf,
+  USE_ALL,
+  type Persona,
+} from '../bot';
 import { joinGuess, marketBuy, type FastMarket } from './market';
 import {
   needPickOf,
@@ -71,6 +88,28 @@ const TASK_EXTRA = {
   'yard.lands': 0,
   'takeaway.open': 0,
 };
+
+/** 快速模型照规则模拟了的玩法（任务的 feature） */
+const MODELED_FEATURES = new Set(['growth', 'cookbook', 'market', 'task', 'restaurant', 'shop', 'cupboard']);
+
+/**
+ * 按已完成算的主线任务条件：快速模型没模拟的玩法里的一次性引导（见 botTurn 的任务部分）。
+ * 外卖除外：开通要 888 万银币，快速模型不付这笔钱，线上玩家也不是进到第 7 章就开
+ */
+const NO_CONDS: ReadonlySet<QuestCond> = new Set();
+const assumedCache = new WeakMap<FastCtx['config'], Set<QuestCond>>();
+function assumedConds(cfg: FastCtx['config']): ReadonlySet<QuestCond> {
+  let s = assumedCache.get(cfg);
+  if (!s) {
+    s = new Set(
+      cfg.bundle.quests
+        .filter((q) => q.line === null && !MODELED_FEATURES.has(q.feature) && q.feature !== 'takeaway')
+        .map((q) => q.cond),
+    );
+    assumedCache.set(cfg, s);
+  }
+  return s;
+}
 
 const needOf = (c: FastCtx) => (id: number, grade: number) =>
   c.config.requireCookbook(id).needFoods[grade] ?? [];
@@ -380,22 +419,22 @@ function moveStreet(c: FastCtx, r: FastRest, streetId: number): boolean {
   r.lastFreshAt = c.now;
   r.learnIdleKey = '';
   action(c, r, 'rest.move');
+  // 支线“四海为家”按搬到哪条街记（问题记录 515）
+  action(c, r, `rest.moveTo.${streetId}`);
   return true;
 }
 
 /**
- * 什么时候搬（快速模型的假设，问题记录 240 报告）：下一星还差食谱数，而本街没学过的菜学完了、
- * 或者连续 3 天没学到新菜，就搬到没学过的菜最多的街
+ * 什么时候搬（快速模型的假设，问题记录 240 报告；2026-10-12 按线上核对改）：
+ * - 新手街到 LEAVE_NEWBIE_LEVEL 级就搬：新手街勋章压没了挑剔顾客，线上玩家没学完就走；
+ * - 其他街：下一星还差食谱数，而本街没学过的菜学完了、或者连续 3 天没学到新菜就搬。
+ * 都搬到没学过的菜最多的街
  */
 function maybeMove(c: FastCtx, r: FastRest): boolean {
-  const need = c.config.starNeed.get(r.star + 1);
-  if (!need || need.cookbooksKind !== 'learned' || r.counts.learned >= need.needCookbooks) return false;
   const byStreet = c.config.cookbookIndex.idsByStreet;
   const fresh = (street: number) =>
     (byStreet.get(street) ?? []).filter((id) => !gradeOf(r.levels, c.config.cookbookIndex.slotOf, id)).length;
-  r.lastFreshAt ??= c.now;
-  const stale = c.now.getTime() - r.lastFreshAt.getTime() >= STALE_MS;
-  if (fresh(r.streetId) > 0 && !stale) return false;
+  if (r.streetId === 0 ? r.level < LEAVE_NEWBIE_LEVEL : !moveDue(c, r, fresh(r.streetId))) return false;
   let target = -1;
   let best = 0;
   for (const id of [...byStreet.keys()].sort((a, b) => a - b)) {
@@ -407,6 +446,28 @@ function maybeMove(c: FastCtx, r: FastRest): boolean {
     }
   }
   return target >= 0 && moveStreet(c, r, target);
+}
+
+function moveDue(c: FastCtx, r: FastRest, fresh: number): boolean {
+  const need = c.config.starNeed.get(r.star + 1);
+  if (!need || need.cookbooksKind !== 'learned' || r.counts.learned >= need.needCookbooks) return false;
+  r.lastFreshAt ??= c.now;
+  return fresh === 0 || c.now.getTime() - r.lastFreshAt.getTime() >= STALE_MS;
+}
+
+// ---------- 合成原料（规则和全真模拟器 sim/bot.ts 共用） ----------
+
+const lackByLevel = (c: FastCtx, lack: ReadonlyMap<number, number>) =>
+  lackByLevelOf((id) => c.config.foods.get(id)?.level ?? 0, lack);
+
+function feedWant(c: FastCtx, r: FastRest, lack: ReadonlyMap<number, number>): Map<number, number> {
+  const need = foodsNeed(c, r);
+  return feedWantOf(
+    (id) => c.config.foods.get(id)?.level ?? 0,
+    lack,
+    r.foods,
+    (id) => need.get(id) ?? 0,
+  );
 }
 
 // ---------- 卡点 ----------
@@ -458,14 +519,18 @@ export function botTurn(
   const cfg = c.config;
 
   // 签到（task/service.ts 的 signIn）
+  const today = gameDay(c.now);
   if ((r.daily.get('signin') ?? 0) === 0) {
     r.daily.set('signin', 1);
+    // 连续签到（task/service.ts 的 recordStreak）
+    r.signinStreak = r.signinDay === addDays(today, -1) ? r.signinStreak + 1 : 1;
+    r.signinDay = today;
+    r.signinBest = Math.max(r.signinBest, r.signinStreak);
     grantGoods(c, r, GOODS.signInGift, 1, 'signin');
     action(c, r, 'signin');
   }
 
   // 旁支产出：每天第一次上线时发（设计 §5.2）
-  const today = gameDay(c.now);
   if (side && bot.lastSideDay !== today) {
     applySide(c, r, side, bot.persona.key);
     bot.lastSideDay = today;
@@ -522,25 +587,40 @@ export function botTurn(
     action(c, r, 'roach.kill');
   }
 
-  // 任务（task/service.ts，问题记录 318）：主线、支线当前档、章末能领就领；功能都按开着算；
-  // 快速模型没有的状态（好友数等）按 0。每周任务不模拟：快速模型按天跑，周常收益小，先不算
+  // 任务（task/service.ts，问题记录 318）：主线、支线当前档、章末能领就领。
+  // 算旁支产出时（平时都算）：菜园按关着算（线上关着，以后也当独立系统），限时活动按没有在办算；
+  // 主线里快速模型没模拟的玩法（好友、酒吧、特色菜、神殿、厨具、厨塔、一番赏、广播、论坛、克拉肯）是一次性的引导，
+  // 线上玩家进到这一章当天就做完（2026-10-12 线上核对），按已完成算；这些玩法支线的奖励按旁支产出表的 quest 行折算。
+  // 不算旁支时（--side none、核对）功能都按开着算、不替玩家做引导，和全真模拟器一致。
+  // 快速模型没有的其他状态（好友数等）按 0。每周任务不模拟：快速模型按天跑，周常收益小，先不算
   const { chapters, quests, questLines } = cfg.bundle;
   const counters = Object.fromEntries(r.counters);
-  const extra = { ...TASK_EXTRA, 'cookbooks.foreignLearned': foreignLearned(r.counts.street) };
+  const extra = {
+    ...TASK_EXTRA,
+    'cookbooks.foreignLearned': foreignLearned(r.counts.street),
+    'signin.best': r.signinBest,
+    'rest.tables': r.tables.length,
+    'rest.devices': [...r.devices.values()].filter((d) => !d.expiresAt || d.expiresAt > c.now).length,
+    'rest.bestDayCoin': r.bestDayCoin,
+    'rest.bestRounds': r.bestRounds,
+  };
+  const assumed = side ? assumedConds(cfg) : NO_CONDS;
   const qctx: QuestCtx = {
     level: r.level,
     star: r.star,
     done: r.questDone,
-    available: () => true,
+    available: (f) => !side || (f !== 'yard' && f !== 'activity'),
     progress: (q) =>
-      q.kind === 'counter'
-        ? counterOf(q.key, counters)
-        : (stateValue(
-            q.key,
-            { level: r.level, star_level: r.star, oil_level: r.oilLevel },
-            r.counts,
-            extra,
-          ) ?? 0),
+      assumed.has(q)
+        ? q.target
+        : q.kind === 'counter'
+          ? counterOf(q.key, counters)
+          : (stateValue(
+              q.key,
+              { level: r.level, star_level: r.star, oil_level: r.oilLevel },
+              r.counts,
+              extra,
+            ) ?? 0),
   };
   for (let i = 0; i < 5; i++) {
     qctx.level = r.level;
@@ -571,6 +651,8 @@ export function botTurn(
     r.daily.set(key, 1);
     const award: Award = rw.award.exp ? { ...rw.award, exp: rw.award.exp * r.level } : rw.award;
     grantAward(c, r, award, 'activation', countGoods(c, r, GOODS.loveNecklace) > 0 ? 2 : 1);
+    // 支线“签到和活跃”：领 100 点这一档的天数
+    if (rw.points === 100) action(c, r, 'activation.100');
   }
 
   // 摆设施：空着的、已解锁的格子；仓库没有时钱够就买便宜货
@@ -675,6 +757,20 @@ export function botTurn(
       if (num > 0 && marketBuy(c, r, m, it.id, num, w.weather)) lack.set(it.foodsId, want - num);
     }
   }
+  // 原料：缺 L+1 级食材时，在日常货架多买 L 级的合成上去（线上玩家的主要做法，2026-10-12 核对）
+  const feed = feedWant(c, r, lack);
+  for (const it of m.items
+    .filter((x) => x.shelf === 0)
+    .sort((a, b) => cfg.requireFood(a.foodsId).coin - cfg.requireFood(b.foodsId).coin || a.id - b.id)) {
+    const food = cfg.requireFood(it.foodsId);
+    const want = feed.get(food.level) ?? 0;
+    if (want <= 0) continue;
+    const limit = personLimit(it.shelf, food, it.openedAt, c.now, t);
+    const room = Math.min(limit - (it.bought.get(r.id) ?? 0), it.stock - it.sold, want);
+    const price = unitPrice(0, food, t, w.weather);
+    const num = Math.min(room, Math.floor((r.coin - reserve) / Math.max(1, price)));
+    if (num > 0 && marketBuy(c, r, m, it.id, num, w.weather)) feed.set(food.level, want - num);
+  }
   const period = nextSlot(c.now, t.dailyHours).key;
   const daily = m.items.filter((x) => x.shelf === 0);
   if (m.guesses.get(r.id)?.period !== period && daily.length > 0) {
@@ -697,19 +793,32 @@ export function botTurn(
     r.learnIdleKey = learned === 0 ? `${r.foodsVersion}:${r.levelsVersion}` : '';
   }
 
-  // 合成多余食材：只用当天的免体力次数，把学菜用不到的 1~4 级食材合成上去
+  // 合成多余食材：只用当天的免体力次数，把学菜用不到的 1~4 级食材合成上去。
+  // 从没合成过时先合成 2 个，做主线“合成或分解一次食材”（线上玩家第一天就做，2026-10-12 核对）
   const cup = c.tuning.cupboard;
   let free = cup.freeHandleBase + cup.freeHandlePerStar * r.star - (r.daily.get('handle') ?? 0);
   const need = foodsNeed(c, r);
-  for (const [id, have] of [...r.foods].sort((a, b) => a[0] - b[0])) {
-    if (free <= 0) break;
+  // 先合成上一级缺料的（原料就是为这个买的），再按编号
+  const lackLv = lackByLevel(c, foodsLack(c, r));
+  const lvOf = (id: number) => cfg.foods.get(id)?.level ?? 0;
+  const order = [...r.foods].sort(
+    (a, b) =>
+      Number((lackLv.get(lvOf(b[0]) + 1) ?? 0) > 0) - Number((lackLv.get(lvOf(a[0]) + 1) ?? 0) > 0) ||
+      a[0] - b[0],
+  );
+  for (const [id, have] of order) {
     const food = cfg.foods.get(id);
     if (!food || food.level < 1 || food.level > 4) continue;
-    const surplus = have - (need.get(id) ?? 0) - 5;
-    const num = Math.min(100, surplus - (surplus % 2));
+    // 免体力次数用完后，上一级缺料的花体力接着合（线上活跃玩家每天合成几十到几百次，2026-10-12 核对），留点体力灭蟑螂
+    const paid = free <= 0;
+    if (paid && ((lackLv.get(food.level + 1) ?? 0) <= 0 || r.strength <= HANDLE_KEEP_STRENGTH)) continue;
+    const surplus = spareOf(have, need.get(id) ?? 0);
+    const first = (r.counters.get('foods.handle') ?? 0) === 0;
+    const num = first ? Math.min(2, have) : Math.min(100, surplus - (surplus % 2));
     if (num < 2 || r.coin <= 0) continue;
     const target = handleTargetLevel('compose', food.level);
     if (target === null) continue;
+    if (paid) spendStrength(c, r, 1);
     subFoods(c, r, id, num);
     r.daily.set('handle', (r.daily.get('handle') ?? 0) + 1);
     const agg = aggOf(c, r);

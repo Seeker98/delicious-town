@@ -54,6 +54,9 @@ export function settleRound(c: FastCtx, r: FastRest, g: SettleGlobals): 'settled
     return 'closed';
   }
   r.tables = res.tables;
+  // 当天结算银币、轮数（income_round 每轮一行），跨天时并进历史最高（acquire/income.ts）
+  r.daily.set('settle.coin', (r.daily.get('settle.coin') ?? 0) + res.coin);
+  r.daily.set('settle.rounds', (r.daily.get('settle.rounds') ?? 0) + 1);
   gainCoin(c, r, res.coin, 'settlement');
   gainExp(c, r, res.exp, 'settlement');
   if (res.oil > 0) r.oil -= res.oil;

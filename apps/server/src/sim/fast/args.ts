@@ -12,6 +12,8 @@ export interface FastArgs {
   variants: string[];
   sets: string[];
   side: string | undefined;
+  /** 旁支产出再加上运营发放（兑换码、邮件），表在 side-income-ops.json */
+  ops: boolean;
   out: string | undefined;
   stuckDays: number;
   start: Date;
@@ -38,6 +40,7 @@ export function parseFastArgs(args: string[]): FastArgs {
       variant: { type: 'string', multiple: true, default: [] },
       set: { type: 'string', multiple: true, default: [] },
       side: { type: 'string' },
+      ops: { type: 'boolean', default: false },
       out: { type: 'string' },
       'stuck-days': { type: 'string', default: '5' },
       start: { type: 'string', default: '2026-10-01T00:00:00+08:00' },
@@ -62,6 +65,7 @@ export function parseFastArgs(args: string[]): FastArgs {
     variants: values.variant,
     sets: values.set,
     side: values.side,
+    ops: values.ops,
     out: values.out,
     stuckDays: positiveInt('--stuck-days', values['stuck-days']),
     start,

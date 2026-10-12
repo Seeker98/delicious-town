@@ -4,8 +4,9 @@ import { seededRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { countGoods, openFastRest } from './ops';
 import { prizeFoodTier } from '../../modules/award/random';
-import { applySide, loadSideTable, rowsFor } from './side';
+import { applySide, loadSideTable, rowsFor, SIDE_SOURCES } from './side';
 import real from './side-income.json';
+import ops from './side-income-ops.json';
 import type { FastCtx } from './state';
 
 const config = testConfig();
@@ -21,9 +22,12 @@ const table = (rows: unknown[]) =>
   loadSideTable({ participation: { diligent: 1, normal: 0.7, casual: 0.4 }, rows }, config);
 
 describe('旁支产出表（设计 §5）', () => {
-  it('真实的产出表能通过校验，八个来源都有', () => {
+  it('真实的产出表能通过校验，除了运营发放每个来源都有；运营发放表追加进来能通过校验', () => {
     const t = loadSideTable(real, config);
-    expect(new Set(t.rows.map((r) => r.source)).size).toBe(8);
+    expect(new Set(t.rows.map((r) => r.source))).toEqual(new Set(SIDE_SOURCES.filter((s) => s !== 'ops')));
+    const withOps = loadSideTable(real, config, ops);
+    expect(withOps.rows.length).toBe(t.rows.length + 1);
+    expect(withOps.rows.at(-1)!.source).toBe('ops');
   });
 
   it('等级段：取不超过当前等级的最高一段；只有高等级段时低等级拿 0（Review Focus 3）', () => {
