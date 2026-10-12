@@ -13,11 +13,17 @@ const cupboard: Messages['cupboard'] = {
     rules: (free, max, grade) =>
       `${free} free ${plEn(free, 'process', 'processes')} left today · max ${max} per ingredient · street goal grade ${grade}`,
   },
-  needShort: (n) => `Need ${n}`,
   have: (n) => `You have ${n}`,
   howMany: 'How many',
   locked: 'Locked',
   levelEmpty: 'No ingredients at this level',
+  search: {
+    placeholder: 'Search ingredients',
+    clear: 'Clear search',
+    none: (q) => `No ingredient called “${q}”`,
+    elseFridge: 'Try another word, or check the fridge',
+    elseShelf: 'Try another word, or check the shelf',
+  },
   /** 橱柜空着（界面改版 P4：空状态） */
   empty: {
     title: 'Nothing on the shelf yet',

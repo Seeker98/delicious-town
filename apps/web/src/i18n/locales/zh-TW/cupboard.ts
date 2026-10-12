@@ -14,18 +14,25 @@ export default {
   }) =>
     `格子 ${p.used}/${p.slots} · 鎖定 ${p.lockUsed}/${p.lockSlots} · 單種上限 ${p.max} · 今天免體力處理還剩 ${p.free} 次 · 本街目標 ${p.grade} 品`,
   levelCount: (label: string, n: number) => `${label} (${n})`,
-  /** 介面改版 P6：格子進度條、規則一行、格子上的“需 N”、詳情面板 */
+  /** 介面改版 P6：格子進度條、規則一行、詳情面板 */
   meta: {
     slots: (used: number, all: number) => `格子 ${used}/${all}`,
     lock: (used: number, all: number) => `鎖定 ${used}/${all}`,
     rules: (free: number, max: number, grade: number) =>
       `今天免體力處理還剩 ${free} 次 · 單種上限 ${max} · 本街目標 ${grade} 品`,
   },
-  needShort: (n: number) => `需 ${n}`,
   have: (n: string) => `持有 ${n}`,
   howMany: '用幾個',
   locked: '已鎖定',
   levelEmpty: '這一級沒有食材',
+  /** 櫥櫃改版（列表 + 搜尋框）：按名字搜，搜不到時提示去另一個標籤看看 */
+  search: {
+    placeholder: '搜食材名字',
+    clear: '清空搜尋',
+    none: (q: string) => `沒有叫“${q}”的食材`,
+    elseFridge: '換個字搜, 或者看看冰箱',
+    elseShelf: '換個字搜, 或者看看常溫',
+  },
   /** 櫥櫃空著（介面改版 P4：空狀態） */
   empty: { title: '櫥櫃是空的', body: '學菜、上菜都要用到食材, 去菜場買一些', link: '去菜場' },
   streetNeed: (n: number) => `本街還需 ${n}`,

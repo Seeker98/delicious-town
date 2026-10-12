@@ -13,11 +13,17 @@ const cupboard: Messages['cupboard'] = {
     rules: (free, max, grade) =>
       `${free} ${plEs(free, 'proceso gratis', 'procesos gratis')} hoy · máx. ${max} por ingrediente · objetivo de la calle: calidad ${grade}`,
   },
-  needShort: (n) => `Faltan ${n}`,
   have: (n) => `Tienes ${n}`,
   howMany: 'Cuántos',
   locked: 'Bloqueado',
   levelEmpty: 'No hay ingredientes de este nivel',
+  search: {
+    placeholder: 'Buscar ingredientes',
+    clear: 'Borrar la búsqueda',
+    none: (q) => `Ningún ingrediente se llama «${q}»`,
+    elseFridge: 'Prueba otra palabra o mira la nevera',
+    elseShelf: 'Prueba otra palabra o mira el estante',
+  },
   /** 橱柜空着（界面改版 P4：空状态） */
   empty: {
     title: 'La estantería está vacía',

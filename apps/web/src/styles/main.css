@@ -1916,6 +1916,137 @@ details.dt-card > summary {
   color: var(--dt-muted);
   font-variant-numeric: tabular-nums;
 }
+/* 橱柜改版（用户 2026-10-12：格子图大字小显得乱）：搜索框、一行横滑的等级胶囊、一行一种的列表 */
+.dt-search-box.dt-cup-search {
+  min-height: 42px;
+  margin-bottom: 10px;
+  padding: 0 12px;
+  border-radius: 12px;
+}
+.dt-search-box.dt-cup-search:focus-within {
+  box-shadow: 0 0 0 3px var(--dt-soft-primary);
+}
+.dt-search-box.dt-cup-search > input {
+  font-size: 15px;
+}
+/* 自己画了 ✕，不要浏览器自带的清除按钮 */
+.dt-cup-search > input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+.dt-cup-search-x {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--dt-line);
+  color: var(--dt-muted);
+  font-size: 16px;
+}
+/* 圆点只有 20px：点的范围往外扩到 44px */
+.dt-cup-search-x::after {
+  content: '';
+  position: absolute;
+  inset: -12px;
+}
+/* 胶囊贴着屏幕边横滑（.dt-main 左右各 8px） */
+.dt-cup-pills {
+  gap: 6px;
+  margin: 0 -8px 10px;
+  padding: 0 8px;
+}
+.dt-cup-list {
+  padding: 0;
+  overflow: hidden;
+}
+.dt-cup-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 60px;
+  padding: 8px 14px;
+  border: 0;
+  border-top: 1px solid var(--dt-line);
+  background: transparent;
+  color: var(--dt-text);
+  font: inherit;
+  text-align: left;
+  transition: background-color var(--dt-dur-fast) ease;
+}
+.dt-cup-row:first-child {
+  border-top: 0;
+}
+.dt-cup-row:active {
+  background: var(--dt-surface-2);
+}
+.dt-cup-row[aria-pressed='true'] {
+  background: var(--dt-soft-primary);
+}
+.dt-cup-tray {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--dt-bg);
+}
+.dt-cup-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.dt-cup-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+.dt-cup-name > .dt-lv {
+  padding: 0 6px;
+  font-weight: 600;
+  line-height: 18px;
+}
+.dt-cup-name > .bi-lock-fill {
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+/* 搜到的字：紫色加粗，不要浏览器默认的黄底 */
+.dt-cup-name mark {
+  padding: 0;
+  background: none;
+  color: var(--dt-ink-primary);
+  font-weight: 800;
+}
+.dt-cup-need {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--dt-ink-warning);
+  font-variant-numeric: tabular-nums;
+}
+.dt-cup-qty {
+  flex-shrink: 0;
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.dt-cup-nomatch {
+  padding: 8px 4px;
+}
+.dt-cup-nomatch .dt-empty-title {
+  font-size: 15px;
+}
 /* 详情面板（橱柜详情、菜场购买共用）：大图托盘 + 信息；数量；说明 */
 .dt-detail-head {
   display: flex;
@@ -2013,6 +2144,10 @@ details.dt-card > summary {
 .dt-lv.is-t3 {
   background: var(--dt-soft-primary);
   color: var(--dt-ink-primary);
+}
+.dt-lv.is-master {
+  background: var(--dt-soft-warning);
+  color: var(--dt-ink-warning);
 }
 .dt-tag-hot {
   border-radius: var(--dt-radius-xs);

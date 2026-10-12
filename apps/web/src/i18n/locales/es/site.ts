@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    cupboard1012:
+      'La despensa ahora es una lista, un ingrediente por fila: una imagen pequeña, el nivel tras el nombre, lo que aún pide la calle debajo y la cantidad a la derecha. Un buscador filtra por nombre, en el estante y en la nevera',
     thumbs1012:
       'Devolver todos ya no marca un fallo cuando le diste me gusta a alguien antes de que te lo diera a ti: ya cuenta como devuelto',
     account1012:
