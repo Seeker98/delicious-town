@@ -1,13 +1,23 @@
 {
-  "participation": { "diligent": 1, "normal": 0.7, "casual": 0.4 },
+  "participation": {
+    "diligent": 1,
+    "normal": 0.7,
+    "casual": 0.4
+  },
   "rows": [
     {
       "source": "town",
       "minLevel": 1,
       "coin": 10500,
       "goods": [
-        { "id": 10001, "num": 10 },
-        { "id": 10417, "num": 1 }
+        {
+          "id": 10001,
+          "num": 10
+        },
+        {
+          "id": 10417,
+          "num": 1
+        }
       ],
       "note": "摇钱树每天一次 shake.base 8000 + 平均 rand 2500；雯姐送神秘礼券 1~20 张取平均 10；13 哥送喇叭 1~2 个取 1。大胃哥送的食材不计"
     },
@@ -15,8 +25,16 @@
       "source": "bar",
       "minLevel": 1,
       "randomFoods": [
-        { "times": 1.4, "level": 3, "bar": true },
-        { "times": 1.4, "level": 5, "bar": true }
+        {
+          "times": 1.4,
+          "level": 3,
+          "bar": true
+        },
+        {
+          "times": 1.4,
+          "level": 5,
+          "bar": true
+        }
       ],
       "note": "酒吧主要用神秘礼券换食材和蟹币，对主线的银币、经验贡献很小，银币经验记 0。随机食材（问题记录 50 验证）：每天约 4 次奖励（神秘礼券约 10 张），食材占 7 成，奖励档次一半按 3、一半按 5；和真实一样带个人缺料倾向"
     },
@@ -30,8 +48,14 @@
       "minLevel": 10,
       "renown": 30,
       "randomFoods": [
-        { "times": 2, "level": 4 },
-        { "times": 2.5, "level": 4 }
+        {
+          "times": 2,
+          "level": 4
+        },
+        {
+          "times": 2.5,
+          "level": 4
+        }
       ],
       "note": "每天 dailyBase 5 次挑战 × winRenownBase 6 声望；守塔人门槛按 10 级估。随机食材（估算）：守塔人赢第 F 层给 F 次随机奖励、等级 F+2（tower.ts），按 10~30 级常打第 2 层：5 次约赢 4 次 × 2 次 × 食材 1/4 = 2 次、4 级；排位每天 10 次约赢 5 次，当天前 10 次赢各给 2 次 4 级奖励（sparAwards）：5 × 2 × 1/4 = 2.5 次、4 级。声望仍是原来的粗估，没跟着层数改"
     },
@@ -51,20 +75,64 @@
     {
       "source": "equip",
       "minLevel": 20,
-      "effects": { "coinRate": 0.03, "expRate": 0.03 },
+      "effects": {
+        "coinRate": 0.03,
+        "expRate": 0.03
+      },
       "note": "穿戴厨具带来的结算加成粗估：20 级起一套普通厨具"
     },
     {
       "source": "equip",
       "minLevel": 40,
-      "effects": { "coinRate": 0.08, "expRate": 0.08, "luckValue": 10 },
+      "effects": {
+        "coinRate": 0.08,
+        "expRate": 0.08,
+        "luckValue": 10
+      },
       "note": "40 级起换成中档套装并强化"
     },
     {
       "source": "equip",
       "minLevel": 60,
-      "effects": { "coinRate": 0.15, "expRate": 0.15, "luckValue": 20 },
+      "effects": {
+        "coinRate": 0.15,
+        "expRate": 0.15,
+        "luckValue": 20
+      },
       "note": "60 级起高档套装"
+    },
+    {
+      "source": "quest",
+      "minLevel": 10,
+      "coin": 120000,
+      "exp": 12000,
+      "note": "没模拟的玩法的支线任务奖励（酒吧、酒运、酒桌高手、好友、特色菜、神殿、厨塔、守塔人、一番赏、社交等，第 3 章 10 级起陆续开）。2026-10-12 线上核对：20 级以上的活跃店前 3 天这些支线平均约 30 万银币，10 级到第 3 天末约 2.3 天，约 13 万/天；支线经验是银币的 1/10。这些支线银币一共约 1100 万，前面几档容易、后面难，所以按等级段递减（估算）"
+    },
+    {
+      "source": "quest",
+      "minLevel": 30,
+      "coin": 60000,
+      "exp": 6000,
+      "note": "30 级起前面几档做完了，按一半估"
+    },
+    {
+      "source": "quest",
+      "minLevel": 50,
+      "coin": 20000,
+      "exp": 2000,
+      "note": "50 级起只剩难的档，粗估"
+    },
+    {
+      "source": "equipSell",
+      "minLevel": 15,
+      "coin": 100000,
+      "note": "厨具一键卖（equip.batch、equip.sell）：厨具来自厨塔对战、守塔人和章末奖励。2026-10-12 线上 20 级以上的活跃店前 3 天平均约 39 万（只有 3 家卖了，集中在一两家），约 13 万/天；勤快按 10 万/天估，15 级起（第 5 章前后有厨具）"
+    },
+    {
+      "source": "black",
+      "minLevel": 10,
+      "coin": 60000,
+      "note": "黑市用钻石买金币袋（10003，50 钻换 10 万银币）再用掉：2026-10-12 线上活跃店前 3 天平均约 19 万，约 6 万/天。钻石主要来自一番赏、兑换码、厨塔周榜，快速模型里没有，所以直接记银币"
     }
   ]
 }

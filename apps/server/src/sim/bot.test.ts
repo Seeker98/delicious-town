@@ -4,7 +4,7 @@ import { GOODS } from '@dt/config';
 import { testConfig } from '../../test/config';
 import { createShard } from '../../test/fixtures';
 import { createTestGame, newRestaurant, type TestGame } from '../../test/game';
-import { botTurn, PERSONAS } from './bot';
+import { botTurn, LEAVE_NEWBIE_LEVEL, PERSONAS } from './bot';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -134,12 +134,20 @@ describe('机器人策略', () => {
     expect(config.cookbookIndex.idsByStreet.get(r.streetId)!.length).toBe(most);
   }, 60_000);
 
-  it('本街还有没学过的菜：3 天内学到过新菜就不搬，超过 3 天没学到就搬', async () => {
+  it('本街（不是新手街）还有没学过的菜：3 天内学到过新菜就不搬，超过 3 天没学到就搬', async () => {
     const config = testConfig();
-    const ids = config.cookbookIndex.idsByStreet.get(0)!;
+    const ids = config.cookbookIndex.idsByStreet.get(1)!;
     const tables = [1, 2, 3, 4].map((no) => ({ no, floor: 1, customer: 0 }));
     const ctx = await newRestaurant(t, {
-      patch: { level: 30, star_level: 1, coin: 5_000_000, oil: 9000, oil_max: 9000, table_num: 4 },
+      patch: {
+        level: 30,
+        star_level: 1,
+        coin: 5_000_000,
+        oil: 9000,
+        oil_max: 9000,
+        table_num: 4,
+        street_id: 1,
+      },
       cookbooks: Object.fromEntries(ids.slice(1).map((id) => [id, 1])),
       goods: { [GOODS.moveCard]: 1 },
       tables,
@@ -153,10 +161,26 @@ describe('机器人策略', () => {
       lastFreshAt: new Date(now - 2 * 86_400_000),
     };
     await botTurn(t.game, bot);
-    expect((await t.game.restaurant.overview(ctx.restaurantId)).streetId).toBe(0);
+    expect((await t.game.restaurant.overview(ctx.restaurantId)).streetId).toBe(1);
     bot.lastFreshAt = new Date(now - 4 * 86_400_000);
     await botTurn(t.game, bot);
-    expect((await t.game.restaurant.overview(ctx.restaurantId)).streetId).not.toBe(0);
+    expect((await t.game.restaurant.overview(ctx.restaurantId)).streetId).not.toBe(1);
+  }, 60_000);
+
+  it('新手街到 13 级就搬，菜没学完也搬；12 级不搬（2026-10-12 线上核对）', async () => {
+    const tables = [1, 2, 3, 4].map((no) => ({ no, floor: 1, customer: 0 }));
+    const make = (level: number) =>
+      newRestaurant(t, {
+        patch: { level, coin: 5_000_000, oil: 9000, oil_max: 9000, table_num: 4 },
+        goods: { [GOODS.moveCard]: 1 },
+        tables,
+      });
+    const low = await make(LEAVE_NEWBIE_LEVEL - 1);
+    await botTurn(t.game, { name: 'b', persona: PERSONAS[0]!, ctx: low });
+    expect((await t.game.restaurant.overview(low.restaurantId)).streetId).toBe(0);
+    const ok = await make(LEAVE_NEWBIE_LEVEL);
+    await botTurn(t.game, { name: 'b', persona: PERSONAS[0]!, ctx: ok });
+    expect((await t.game.restaurant.overview(ok.restaurantId)).streetId).not.toBe(0);
   }, 60_000);
 
   it('有体力时灭掉自己店里的蟑螂', async () => {

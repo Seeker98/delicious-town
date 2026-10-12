@@ -2,11 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { GOODS, GOODS_TYPE, NEWBIE, resolveShardSettings } from '@dt/config';
 import { seededRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
-import { PERSONAS } from '../bot';
+import { LEAVE_NEWBIE_LEVEL, PERSONAS } from '../bot';
 import { CHAPTER_MARK } from '../../modules/task/quests';
 import { botTurn, starBlockers, type FastBot } from './bot';
 import { newMarket } from './market';
 import { needPickOf, openFastRest } from './ops';
+import type { SideTable } from './side';
 import type { FastCtx } from './state';
 import type { FastWorld } from './world';
 import { cid, gid } from '../../../test/items';
@@ -223,18 +224,34 @@ describe('机器人（设计 §4.5）', () => {
       expect(b2.rest.diamond).toBe(0);
     });
 
-    it('本街还有没学过的菜但 3 天没学到新菜：也搬；不到 3 天不搬', () => {
+    it('本街（不是新手街）还有没学过的菜但 3 天没学到新菜：也搬；不到 3 天不搬', () => {
       const c = ctx();
       const b = exhausted(c);
-      const left = config.cookbookIndex.idsByStreet.get(0)![0]!;
-      setGrade(b.rest.levels, config.cookbookIndex.slotOf, left, 0);
-      b.rest.counts.learned -= 1;
+      const ids = config.cookbookIndex.idsByStreet.get(1)!;
+      for (const id of ids.slice(1)) setGrade(b.rest.levels, config.cookbookIndex.slotOf, id, 1);
+      b.rest.streetId = 1;
       b.rest.foods.clear();
       b.rest.store.set(GOODS.moveCard, { num: 1, expiresAt: null });
       b.rest.lastFreshAt = new Date(c.now.getTime() - 2 * 86_400_000);
       botTurn(c, b, newMarket(), world(), null);
-      expect(b.rest.streetId).toBe(0);
+      expect(b.rest.streetId).toBe(1);
       b.rest.lastFreshAt = new Date(c.now.getTime() - 4 * 86_400_000);
+      botTurn(c, b, newMarket(), world(), null);
+      expect(b.rest.streetId).not.toBe(1);
+    });
+
+    it('新手街到 13 级就搬，菜没学完、下一星的食谱数够了也搬；12 级不搬（2026-10-12 线上核对）', () => {
+      const c = ctx();
+      const b = bot(c);
+      noQuests(b);
+      b.rest.coin = 1e7;
+      b.rest.daily.set('signin', 1);
+      b.rest.store.set(GOODS.moveCard, { num: 1, expiresAt: null });
+      b.rest.level = LEAVE_NEWBIE_LEVEL - 1;
+      botTurn(c, b, newMarket(), world(), null);
+      expect(b.rest.streetId).toBe(0);
+      b.rest.level = LEAVE_NEWBIE_LEVEL;
+      b.rest.counts.learned = 999;
       botTurn(c, b, newMarket(), world(), null);
       expect(b.rest.streetId).not.toBe(0);
     });
@@ -337,6 +354,85 @@ describe('任务（问题记录 318）', () => {
     b.rest.state = 2;
     botTurn(c, b, newMarket(), world(), null);
     for (const id of [2021, 2022, 2025]) expect(b.rest.questDone.has(id), String(id)).toBe(true);
+  });
+
+  /** 第 1、2 章都领完、10 级的店：下一步是第 3 章（好友、翻橱柜、换食材、酒吧这些引导） */
+  const atChapter3 = (c: FastCtx) => {
+    const b = bot(c);
+    for (const q of config.bundle.quests) if (q.line === null && q.chapter <= 2) b.rest.questDone.add(q.id);
+    for (const id of [1, 2]) b.rest.questDone.add(CHAPTER_MARK + id);
+    b.rest.level = 10;
+    return b;
+  };
+  const side: SideTable = { participation: { diligent: 1, normal: 1, casual: 1 }, rows: [] };
+
+  it('算旁支时：没模拟的玩法的主线引导按已完成算（2026-10-12 线上核对）；不算旁支时照规则（和全真模拟器一致）', () => {
+    const c = ctx();
+    const b = atChapter3(c);
+    botTurn(c, b, newMarket(), world(), side);
+    for (const id of [2061, 2062, 2063, 2064]) expect(b.rest.questDone.has(id), String(id)).toBe(true);
+    const c2 = ctx();
+    const b2 = atChapter3(c2);
+    botTurn(c2, b2, newMarket(), world(), null);
+    for (const id of [2061, 2062, 2063, 2064]) expect(b2.rest.questDone.has(id), String(id)).toBe(false);
+  });
+
+  it('支线"经营"按餐桌数领；连续签到天数照真实规则记', () => {
+    const c = ctx();
+    const b = atChapter3(c);
+    while (b.rest.tables.length < 16)
+      b.rest.tables.push({ no: b.rest.tables.length + 1, floor: 1, customer: 0 });
+    b.rest.signinDay = '2026-10-01';
+    b.rest.signinStreak = 6;
+    b.rest.signinBest = 6;
+    botTurn(c, b, newMarket(), world(), side);
+    expect(b.rest.questDone.has(3561)).toBe(true);
+    expect(b.rest.signinStreak).toBe(7);
+    expect(b.rest.signinBest).toBe(7);
+  });
+});
+
+describe('合成原料（2026-10-12 线上核对）', () => {
+  it('从没合成过时先合成 2 个，做主线"合成或分解一次食材"', () => {
+    const c = ctx();
+    const b = bot(c);
+    noQuests(b);
+    b.rest.daily.set('signin', 1);
+    const food = [...config.foods.values()].find((f) => f.level === 1)!;
+    b.rest.foods.clear();
+    b.rest.foods.set(food.id, 2);
+    botTurn(c, b, newMarket(), world(), null);
+    expect(b.rest.counters.get('foods.handle')).toBe(1);
+    expect(b.rest.foods.get(food.id) ?? 0).toBe(0);
+  });
+
+  it('缺 2 级食材时在日常货架多买 1 级的合成上去；免体力次数用完后花体力接着合', () => {
+    const c = ctx();
+    const b = bot(c);
+    noQuests(b);
+    b.rest.daily.set('signin', 1);
+    b.rest.store.delete(NEWBIE.pack);
+    b.rest.foods.clear();
+    b.rest.counters.set('foods.handle', 1);
+    b.rest.coin = 1e7;
+    const cup = settings.tuning.cupboard;
+    b.rest.daily.set('handle', cup.freeHandleBase);
+    b.rest.strength = 100;
+    const feed = [...config.foods.values()].find((f) => f.level === 1 && f.weight === 100)!;
+    const m = newMarket();
+    m.items.push({
+      id: 1,
+      shelf: 0,
+      foodsId: feed.id,
+      stock: 1000,
+      sold: 0,
+      openedAt: new Date(0),
+      bought: new Map(),
+    });
+    botTurn(c, b, m, world(), null);
+    expect(m.items[0]!.sold).toBeGreaterThan(0);
+    expect(b.rest.counters.get('foods.handle')).toBe(2);
+    expect(b.rest.strength).toBe(99);
   });
 });
 
