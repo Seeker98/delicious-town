@@ -613,19 +613,19 @@
   },
   "30301": {
     "name": "Tapette à souris",
-    "desc": "Tapette à souris\u202f; les amis qui fouillent votre garde-manger peuvent se faire pincer les doigts"
+    "desc": "Tapette à souris\u202f; pendant 24 heures, les amis qui fouillent votre garde-manger et les souris qui viennent voler vos ingrédients ont 30\u202f% de risque de se faire pincer"
   },
   "30302": {
     "name": "Tapette en or",
-    "desc": "Tapette en or\u202f; pendant 24 heures, les amis qui fouillent votre garde-manger ont 50\u202f% de risque de se faire pincer"
+    "desc": "Tapette en or\u202f; pendant 24 heures, les amis qui fouillent votre garde-manger et les souris qui viennent voler vos ingrédients ont 50\u202f% de risque de se faire pincer"
   },
   "30303": {
     "name": "Tapette longue durée",
-    "desc": "Tapette longue durée\u202f; pendant 36 heures, les amis qui fouillent votre garde-manger ont 30\u202f% de risque de se faire pincer"
+    "desc": "Tapette longue durée\u202f; pendant 36 heures, les amis qui fouillent votre garde-manger et les souris qui viennent voler vos ingrédients ont 30\u202f% de risque de se faire pincer"
   },
   "30304": {
     "name": "Tapette 100\u202f%",
-    "desc": "Tapette 100\u202f%\u202f; pendant 10 jours, les amis qui fouillent votre garde-manger se font pincer à coup sûr"
+    "desc": "Tapette 100\u202f%\u202f; pendant 10 jours, les amis qui fouillent votre garde-manger et les souris qui viennent voler vos ingrédients se font pincer à coup sûr"
   },
   "30401": {
     "name": "Insecticide anti-cafards",

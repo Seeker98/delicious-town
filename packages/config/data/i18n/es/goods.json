@@ -613,19 +613,19 @@
   },
   "30301": {
     "name": "Ratonera",
-    "desc": "Ratonera; los amigos que revuelvan tu despensa pueden pillarse los dedos"
+    "desc": "Ratonera; durante 24 horas, los amigos que revuelvan tu despensa y los ratones que vengan a robar ingredientes tienen un 30\u00a0% de probabilidad de pillarse"
   },
   "30302": {
     "name": "Ratonera de oro",
-    "desc": "Ratonera de oro; durante 24 horas, los amigos que revuelvan tu despensa tienen un 50\u00a0% de probabilidad de pillarse"
+    "desc": "Ratonera de oro; durante 24 horas, los amigos que revuelvan tu despensa y los ratones que vengan a robar ingredientes tienen un 50\u00a0% de probabilidad de pillarse"
   },
   "30303": {
     "name": "Ratonera duradera",
-    "desc": "Ratonera duradera; durante 36 horas, los amigos que revuelvan tu despensa tienen un 30\u00a0% de probabilidad de pillarse"
+    "desc": "Ratonera duradera; durante 36 horas, los amigos que revuelvan tu despensa y los ratones que vengan a robar ingredientes tienen un 30\u00a0% de probabilidad de pillarse"
   },
   "30304": {
     "name": "Ratonera 100\u00a0%",
-    "desc": "Ratonera 100\u00a0%; durante 10 días, los amigos que revuelvan tu despensa se pillan seguro"
+    "desc": "Ratonera 100\u00a0%; durante 10 días, los amigos que revuelvan tu despensa y los ratones que vengan a robar ingredientes se pillan seguro"
   },
   "30401": {
     "name": "Insecticida para cucarachas",

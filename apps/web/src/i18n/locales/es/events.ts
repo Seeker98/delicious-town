@@ -146,7 +146,7 @@ const events: Messages['events'] = {
     'rest.move': () => 'El restaurante se mudó',
     'mouse.escape': () => 'Vino un ratón, pero por suerte no pasó nada',
     'mouse.trap': (p) =>
-      `La ratonera atrapó un ratón: obtuviste ${formatNum(n(p, 'coin'))} ${plEs(formatNum(n(p, 'coin')), 'moneda', 'monedas')}`,
+      `Un ratón vino a robar ingredientes y cayó en la ratonera: obtuviste ${formatNum(n(p, 'coin'))} ${plEs(formatNum(n(p, 'coin')), 'moneda', 'monedas')}`,
     'mouse.steal': (p, names) => `Un ratón robó ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')}`,
     'mouse.nothing': () => 'Vino un ratón pero no robó nada',
     'mouse.map': () => 'Un ratón dejó un mapa de exploración',

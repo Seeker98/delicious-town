@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    mousetrap1012:
+      'Mousetraps now catch mice after your ingredients at the chance written on the trap, just like friends raiding your pantry (before, your luck was checked first, so the higher it was the less the trap did). Item descriptions and the restaurant feed say so',
     cupboard1012:
       'The cupboard is now a list, one ingredient per row: a small picture, the level after the name, what the street still needs under it and the amount on the right. A search box filters by name, on the shelf and in the fridge',
     thumbs1012:

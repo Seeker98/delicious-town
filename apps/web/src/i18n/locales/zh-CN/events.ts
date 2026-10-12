@@ -142,7 +142,7 @@ export default {
     'rest.rename': (p) => `餐厅改名为「${String(p.to ?? '')}」`,
     'rest.move': () => '餐厅搬家了',
     'mouse.escape': () => '老鼠来了, 幸运地躲过一劫',
-    'mouse.trap': (p) => `捕鼠夹抓到了老鼠, 得到 ${formatNum(n(p, 'coin'))} 银币`,
+    'mouse.trap': (p) => `老鼠来偷食材, 被老鼠夹夹住了, 得到 ${formatNum(n(p, 'coin'))} 银币`,
     'mouse.steal': (p, names) => `老鼠偷走了 ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')}`,
     'mouse.nothing': () => '老鼠来了, 什么也没偷到',
     'mouse.map': () => '老鼠留下了一张探险图',

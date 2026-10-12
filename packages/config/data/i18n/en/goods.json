@@ -613,19 +613,19 @@
   },
   "30301": {
     "name": "Mousetrap",
-    "desc": "A mousetrap; friends raiding your pantry may get their fingers caught"
+    "desc": "A mousetrap; for 24 hours, friends raiding your pantry and mice after your ingredients have a 30% chance of getting caught"
   },
   "30302": {
     "name": "Gold Mousetrap",
-    "desc": "Gold mousetrap; for 24 hours, friends raiding your pantry have a 50% chance of getting caught"
+    "desc": "Gold mousetrap; for 24 hours, friends raiding your pantry and mice after your ingredients have a 50% chance of getting caught"
   },
   "30303": {
     "name": "Long-lasting Mousetrap",
-    "desc": "Long-lasting mousetrap; for 36 hours, friends raiding your pantry have a 30% chance of getting caught"
+    "desc": "Long-lasting mousetrap; for 36 hours, friends raiding your pantry and mice after your ingredients have a 30% chance of getting caught"
   },
   "30304": {
     "name": "100% Mousetrap",
-    "desc": "100% mousetrap; for 10 days, friends raiding your pantry are sure to get caught"
+    "desc": "100% mousetrap; for 10 days, friends raiding your pantry and mice after your ingredients are sure to get caught"
   },
   "30401": {
     "name": "Roach Killer",

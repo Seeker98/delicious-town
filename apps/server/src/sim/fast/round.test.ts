@@ -76,6 +76,16 @@ describe('老鼠和体力恢复的节奏（核对发现，设计 §4.4）', () =
     expect(r.foods.get(fid('大米'))).toBeLessThanOrEqual(900 - 50);
   });
 
+  it('老鼠夹先判，运气再高也照样夹住（和 settlement/mouse.ts 一样）', async () => {
+    const { mouseVisit } = await import('./round');
+    const c = mk(13);
+    const r = openFastRest(c, 1, settings);
+    r.luck = 100_000_000;
+    r.effects.push({ sourceType: 'device', sourceId: 4, effects: { trapRate: 1 }, expiresAt: null });
+    r.aggDirty = true;
+    for (let i = 0; i < 5; i++) expect(mouseVisit(c, r)).toBe('trapped');
+  });
+
   it('跑一天：体力每 10 分钟恢复一次（不是每轮）', async () => {
     const { runFast } = await import('./run');
     const res = runFast(

@@ -86,7 +86,7 @@ export function regenRound(c: FastCtx, r: FastRest): void {
 }
 
 /**
- * 老鼠捣乱一次（settlement/mouse.ts 的 visit）：按幸运逃走；有捕鼠夹按概率抓住给银币；
+ * 老鼠捣乱一次（settlement/mouse.ts 的 visit）：有老鼠夹先按概率夹住给银币；再按幸运逃走；
  * 否则从数量大于 0 的食材里按数量加权挑一种（问题记录 581），偷 1~(2×星级+1) 个（快速模型的机器人不锁食材）；另有概率掉探险图
  */
 export function mouseVisit(c: FastCtx, r: FastRest): 'escaped' | 'trapped' | 'stolen' | 'nothing' {
@@ -94,11 +94,11 @@ export function mouseVisit(c: FastCtx, r: FastRest): 'escaped' | 'trapped' | 'st
   const agg = aggOf(c, r);
   const { sum, rate } = luckOf(c, r);
   let out: 'escaped' | 'trapped' | 'stolen' | 'nothing';
-  if (c.rng.chance(rate / mt.luckDivisor)) out = 'escaped';
-  else if (c.rng.chance(agg.trapRate ?? 0)) {
+  if (c.rng.chance(agg.trapRate ?? 0)) {
     gainCoin(c, r, Math.floor(r.level * mt.trapCoinPerLevel * (0.5 + c.rng.next()) + sum), 'mouse.trap');
     out = 'trapped';
-  } else {
+  } else if (c.rng.chance(rate / mt.luckDivisor)) out = 'escaped';
+  else {
     const foods = [...r.foods].filter(([, n]) => n > 0).sort((a, b) => a[0] - b[0]);
     if (foods.length === 0) out = 'nothing';
     else {

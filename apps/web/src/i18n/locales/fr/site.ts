@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    mousetrap1012:
+      "Les tapettes attrapent désormais les souris venues voler vos ingrédients avec la probabilité indiquée, comme pour les amis qui fouillent votre garde-manger (avant, votre chance était vérifiée d'abord, et plus elle était haute, moins la tapette servait). Les descriptions et le fil du restaurant le précisent",
     cupboard1012:
       "Le garde-manger devient une liste, un ingrédient par ligne\u202f: une petite image, le niveau après le nom, ce que la rue demande encore en dessous et la quantité à droite. Une barre de recherche filtre par nom, sur l'étagère comme dans le frigo",
     thumbs1012:

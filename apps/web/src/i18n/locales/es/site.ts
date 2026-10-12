@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    mousetrap1012:
+      'Las ratoneras ahora atrapan a los ratones que vienen a robar ingredientes con la probabilidad que indican, igual que a los amigos que revuelven tu despensa (antes se comprobaba primero tu suerte, y cuanta más tenías, menos servía la ratonera). Las descripciones y las novedades del restaurante lo explican',
     cupboard1012:
       'La despensa ahora es una lista, un ingrediente por fila: una imagen pequeña, el nivel tras el nombre, lo que aún pide la calle debajo y la cantidad a la derecha. Un buscador filtra por nombre, en el estante y en la nevera',
     thumbs1012:

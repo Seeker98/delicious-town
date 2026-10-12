@@ -146,7 +146,7 @@ const events: Messages['events'] = {
     'rest.move': () => 'Le restaurant a déménagé',
     'mouse.escape': () => "Une souris est passée, mais par chance rien n'est arrivé",
     'mouse.trap': (p) =>
-      `La tapette a attrapé une souris\u202f: ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce obtenue', 'pièces obtenues')}`,
+      `Une souris venue voler vos ingrédients s’est fait prendre dans la tapette\u202f: ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce obtenue', 'pièces obtenues')}`,
     'mouse.steal': (p, names) =>
       `Une souris a volé ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'num')}`,
     'mouse.nothing': () => "Une souris est passée mais n'a rien volé",
