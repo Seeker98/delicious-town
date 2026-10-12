@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    handle1013:
+      'Pantry processing: within your daily free processing, one go costs no Stamina however many ingredients you use; after that, each ingredient you make by combining or break down costs 1 Stamina (it used to be 1 per go). The detail panel now closes after processing so the result is no longer hidden',
     picky1012:
       "Picky customers rebalanced: they now order from your street 90% of the time and from other streets 10%, no longer shifting with stars; with 30 or more dishes of your street learned they always pick one you can cook, with fewer they may order one you haven't learned and leave, and that table earns nothing; when your grade is too low they're unhappy but still pay half the dish price (it used to be a small base fee); the picky rate now grows 2% per star (was 6%), and the part above 30% only counts for a third",
     jobcard1012:

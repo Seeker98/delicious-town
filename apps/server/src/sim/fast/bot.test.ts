@@ -432,7 +432,9 @@ describe('合成原料（2026-10-12 线上核对）', () => {
     botTurn(c, b, m, world(), null);
     expect(m.items[0]!.sold).toBeGreaterThan(0);
     expect(b.rest.counters.get('foods.handle')).toBe(2);
-    expect(b.rest.strength).toBe(99);
+    // 合成出几个扣几点体力（2026-10-13），留够灭蟑螂的
+    expect(100 - b.rest.strength).toBeGreaterThan(1);
+    expect(b.rest.strength).toBeGreaterThanOrEqual(20);
   });
 });
 

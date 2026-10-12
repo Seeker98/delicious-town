@@ -199,7 +199,7 @@ html {
   transform: translateX(-50%);
   width: calc(100% - 32px);
   max-width: 688px;
-  z-index: 1040;
+  z-index: 1080;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2044,6 +2044,10 @@ details.dt-card > summary {
   color: var(--dt-muted);
 }
 /* 搜到的字：紫色加粗，不要浏览器默认的黄底 */
+/* 免体力次数用完时面板里写这次扣几点体力（2026-10-13） */
+.dt-detail-note.dt-cup-paid {
+  color: var(--dt-ink-warning);
+}
 .dt-cup-name mark {
   padding: 0;
   background: none;

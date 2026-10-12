@@ -1,3 +1,4 @@
+import { handleStrength } from '../modules/cupboard/rules';
 import { GOODS, type GoodsUse } from '@dt/config';
 import type { RestCtx } from '../core/deps';
 import type { Game } from '../game';
@@ -434,11 +435,13 @@ async function composeSurplus(game: Game, bot: Bot, attempt: Attempt): Promise<v
     const paid = free <= 0;
     if (paid && (!up(it.foodsId) || strength <= HANDLE_KEEP_STRENGTH)) continue;
     const surplus = spareOf(it.num, needed.get(it.foodsId) ?? 0);
-    const num = first ? Math.min(2, it.num) : Math.min(100, surplus - (surplus % 2));
+    let num = first ? Math.min(2, it.num) : Math.min(100, surplus - (surplus % 2));
+    // 花体力时合成出几个扣几点（2026-10-13），只花留给灭蟑螂以外的
+    if (paid) num = Math.min(num, (strength - HANDLE_KEEP_STRENGTH) * 2);
     if (num < 2) continue;
     if (await attempt(() => game.cupboard.handle(ctx, { foodsId: it.foodsId, way: 'compose', num }))) {
       first = false;
-      if (paid) strength -= 1;
+      if (paid) strength -= handleStrength('compose', num);
       else free -= 1;
     }
   }

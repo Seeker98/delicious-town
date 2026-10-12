@@ -17,7 +17,7 @@ import {
   planLearn,
   setGrade,
 } from '../../modules/cookbook/rules';
-import { composePool, handleTargetLevel, runHandle } from '../../modules/cupboard/rules';
+import { composePool, handleStrength, handleTargetLevel, runHandle } from '../../modules/cupboard/rules';
 import { moveCost, oilChecks, starChecks, starCoinOf } from '../../modules/growth/rules';
 import { clearTable } from '../../modules/interact/tables';
 import { killReward, killStrength } from '../../modules/interact/rules';
@@ -814,11 +814,13 @@ export function botTurn(
     if (paid && ((lackLv.get(food.level + 1) ?? 0) <= 0 || r.strength <= HANDLE_KEEP_STRENGTH)) continue;
     const surplus = spareOf(have, need.get(id) ?? 0);
     const first = (r.counters.get('foods.handle') ?? 0) === 0;
-    const num = first ? Math.min(2, have) : Math.min(100, surplus - (surplus % 2));
+    let num = first ? Math.min(2, have) : Math.min(100, surplus - (surplus % 2));
+    // 花体力时合成出几个扣几点（2026-10-13），只花留给灭蟑螂以外的
+    if (paid) num = Math.min(num, (r.strength - HANDLE_KEEP_STRENGTH) * 2);
     if (num < 2 || r.coin <= 0) continue;
     const target = handleTargetLevel('compose', food.level);
     if (target === null) continue;
-    if (paid) spendStrength(c, r, 1);
+    if (paid) spendStrength(c, r, handleStrength('compose', num));
     subFoods(c, r, id, num);
     r.daily.set('handle', (r.daily.get('handle') ?? 0) + 1);
     const agg = aggOf(c, r);

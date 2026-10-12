@@ -185,7 +185,13 @@ async function buy() {
       </button>
     </div>
     <div class="dt-card dt-rows-card">
-      <DtRow v-for="it in shown" :key="it.goodsId" class="dt-row-wrap" :data-testid="`item-${it.goodsId}`">
+      <DtRow
+        v-for="it in shown"
+        :key="it.goodsId"
+        class="dt-row-wrap"
+        strong
+        :data-testid="`item-${it.goodsId}`"
+      >
         <template #icon><DtArt :name="catalog.goodsArt(it.goodsId)" :size="28" /></template>
         <template #title>{{ catalog.goodsName(it.goodsId) }}</template>
         <template #sub
@@ -224,7 +230,7 @@ async function buy() {
     </div>
     <DtEmpty v-if="!special" :title="t.store.shop.specialSoon" data-testid="special-none" />
     <div v-else class="dt-card dt-rows-card">
-      <DtRow data-testid="special">
+      <DtRow strong data-testid="special">
         <template #icon><DtArt :name="catalog.goodsArt(special.goodsId)" :size="28" /></template>
         <template #title
           ><span data-testid="special-title"

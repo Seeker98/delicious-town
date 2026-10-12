@@ -6,6 +6,7 @@ import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
 import { useConfirmStore } from '../stores/confirm';
 import { useLocaleStore } from '../stores/locale';
+import { useToastStore } from '../stores/toast';
 import CupboardView from './CupboardView.vue';
 import { SHARED_FOODS } from '@dt/shared';
 
@@ -105,6 +106,39 @@ describe('CupboardView', () => {
     expect(endpoints.handleFoods).toHaveBeenCalledWith({ foodsId: 302, way: 'decompose', num: 1 });
   });
 
+  it('免体力次数用完时面板写明这次分解、合成各扣几点体力；还有免体力次数时不写（2026-10-13）', async () => {
+    const full = await endpoints.cupboard();
+    vi.mocked(endpoints.cupboard).mockResolvedValue({ ...full, freeHandleLeft: 0 });
+    const w = mountView();
+    await flushPromises();
+    await w.get('[data-testid="pick-302"]').trigger('click');
+    // 2 级葡萄持有 4：分解 1 个扣 1，合成 4 个出 2 个扣 2（步进器默认 1，合成按偶数取）
+    await w.get('[data-testid="picked-card"] input').setValue('4');
+    expect(w.get('[data-testid="handle-paid"]').text()).toBe(
+      '今天的免体力次数用完了: 分解 4 个扣 4 体力, 合成 4 个 (出 2 个) 扣 2 体力',
+    );
+    vi.mocked(endpoints.handleFoods).mockResolvedValueOnce({
+      chances: 8,
+      success: 7,
+      lucky: 0,
+      failCoin: 0,
+      strengthUsed: 4,
+      gained: [],
+    });
+    await w.get('[data-testid="decompose"]').trigger('click');
+    await flushPromises();
+    expect(useToastStore().items.map((x) => x.text)).toContain('成功 7/8 次, 消耗 4 体力');
+    // 处理完面板关掉，提示不被挡住
+    expect(w.find('[data-testid="picked-card"]').exists()).toBe(false);
+  });
+
+  it('还有免体力次数时不写扣体力', async () => {
+    const w = mountView();
+    await flushPromises();
+    await w.get('[data-testid="pick-302"]').trigger('click');
+    expect(w.find('[data-testid="handle-paid"]').exists()).toBe(false);
+  });
+
   it('显示最多能分解、合成几个；数量超过时按上限处理（合成取偶数）（问题记录：合成不显示最大数）', async () => {
     vi.mocked(endpoints.cupboard).mockResolvedValue({
       ...(await endpoints.cupboard()),
@@ -119,6 +153,8 @@ describe('CupboardView', () => {
     await w.find('[data-testid="compose"]').trigger('click');
     await flushPromises();
     expect(endpoints.handleFoods).toHaveBeenLastCalledWith({ foodsId: 302, way: 'compose', num: 6 });
+    // 处理完面板关上了（2026-10-13），再点开
+    await w.find('[data-testid="pick-302"]').trigger('click');
     await w.find('input[type="number"]').setValue('99');
     expect(w.find('[data-testid="decompose"]').text()).toBe('分解 ×7');
   });

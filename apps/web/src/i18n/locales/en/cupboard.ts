@@ -41,9 +41,12 @@ const cupboard: Messages['cupboard'] = {
   masterHigh:
     "Level 3+ universal ingredients can't be traded for rare ones. They can only stand in for a missing ingredient of the same level when learning a recipe.",
   handleHint: (decomposeMax, composeMax) =>
-    `Up to ${decomposeMax} per break-down, ${composeMax} per combine (even numbers only). Break down: 1 → 2 chances at a lower-level ingredient. Combine: 2 → 1 chance at a higher-level ingredient, never one that is already full in your pantry.`,
-  handleResult: (success, chances, strengthUsed) =>
-    `${success}/${chances} succeeded${strengthUsed ? ', used 1 Stamina' : ''}`,
+    `Up to ${decomposeMax} per break-down, ${composeMax} per combine (even numbers only). Break down: 1 → 2 chances at a lower-level ingredient. Combine: 2 → 1 chance at a higher-level ingredient, never one that is already full in your pantry. Within your free processing each day, one go costs no Stamina however many you use; after that, each ingredient broken down or made costs 1 Stamina.`,
+  handleResult: (success, chances, strength) =>
+    `${success}/${chances} succeeded${strength > 0 ? `, used ${strength} Stamina` : ''}`,
+  paidHead: 'No free processing left today: ',
+  paidDecompose: (n) => `breaking down ${n} costs ${n} Stamina`,
+  paidCompose: (n, out) => `combining ${n} (makes ${out}) costs ${out} Stamina`,
   handleFailed: 'Failed',
   exchangeFailed: 'Trade failed',
   loadFailed: "Couldn't load your pantry",

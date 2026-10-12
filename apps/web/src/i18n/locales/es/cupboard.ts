@@ -41,9 +41,12 @@ const cupboard: Messages['cupboard'] = {
   masterHigh:
     'Los ingredientes universales de nivel 3 o más no se cambian por raros. Solo sirven para sustituir un ingrediente que falte del mismo nivel al aprender una receta.',
   handleHint: (decomposeMax, composeMax) =>
-    `Hasta ${decomposeMax} por descomposición y ${composeMax} por combinación (número par). Descomponer: 1 → 2 oportunidades de un ingrediente de nivel inferior. Combinar: 2 → 1 oportunidad de un ingrediente de nivel superior, nunca uno que ya esté lleno en la despensa.`,
-  handleResult: (success, chances, strengthUsed) =>
-    `${success}/${chances} con éxito${strengthUsed ? ', gastaste 1 de energía' : ''}`,
+    `Hasta ${decomposeMax} por descomposición y ${composeMax} por combinación (número par). Descomponer: 1 → 2 oportunidades de un ingrediente de nivel inferior. Combinar: 2 → 1 oportunidad de un ingrediente de nivel superior, nunca uno que ya esté lleno en la despensa. Dentro de tus procesados gratis del día, cada vez no cuesta energía sin importar la cantidad; después, cada ingrediente descompuesto u obtenido cuesta 1 de energía.`,
+  handleResult: (success, chances, strength) =>
+    `${success}/${chances} con éxito${strength > 0 ? `, gastaste ${strength} de energía` : ''}`,
+  paidHead: 'Hoy ya no te quedan procesados gratis: ',
+  paidDecompose: (n) => `descomponer ${n} cuesta ${n} de energía`,
+  paidCompose: (n, out) => `combinar ${n} (salen ${out}) cuesta ${out} de energía`,
   handleFailed: 'No se pudo procesar',
   exchangeFailed: 'No se pudo cambiar',
   loadFailed: 'No se pudo cargar la despensa',

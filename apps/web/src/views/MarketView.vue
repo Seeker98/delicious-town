@@ -210,7 +210,13 @@ onMounted(() =>
         {{ t.market.empty }}
       </div>
       <div v-else class="dt-card dt-rows-card">
-        <DtRow v-for="it in data[s.key]" :key="it.id" class="dt-row-wrap" :data-testid="`item-${it.id}`">
+        <DtRow
+          v-for="it in data[s.key]"
+          :key="it.id"
+          class="dt-row-wrap"
+          strong
+          :data-testid="`item-${it.id}`"
+        >
           <template #icon><FoodArt :id="it.foodsId" :size="28" /></template>
           <template #title
             >{{ catalog.foodName(it.foodsId)

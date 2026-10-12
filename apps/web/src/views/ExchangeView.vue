@@ -401,7 +401,7 @@ onMounted(async () => {
         >
           <span class="dt-row-ico"><FoodArt :id="f.foodsId" :size="28" /></span>
           <span class="dt-row-main">
-            <span class="dt-row-title"
+            <span class="dt-row-title is-strong"
               >{{ catalog.foodName(f.foodsId)
               }}<span v-if="saleNum(f) > 0" class="dt-tag-ok">{{ t.exchange.saleTag(saleNum(f)) }}</span
               ><span v-if="f.buying > 0" class="dt-tag-primary">{{ t.exchange.buyTag(f.buying) }}</span></span
