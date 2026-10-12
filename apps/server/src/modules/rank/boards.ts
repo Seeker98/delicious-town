@@ -4,7 +4,8 @@ import { addDays, gameDay, gameTime } from '@dt/shared';
 import type { DB } from '../../db/schema';
 import { restPower } from '../equip/power';
 import { mondayOf } from '../friend/weekly';
-import { tipTotals } from '../hiphop/weekly';
+import { weekGains } from '../jobcard/weekly';
+import { shilingWeek } from '../shiling/store';
 import type { RankSource } from './ranking';
 import { notBannedSql } from '../admin/ban';
 
@@ -191,11 +192,12 @@ const mcLearned: Source = (c) =>
       group by x.rest_id, r.name`,
   );
 
-const hiphop =
+/** 时令周榜（天气改版 PR③）：按周记的获得时令值 */
+const shiling =
   (p: 'thisWeek' | 'lastWeek'): Source =>
   (c) => {
-    const { fromAt, toAt } = range(c.now, p);
-    return tipTotals(c.db, c.shardId, fromAt, toAt);
+    const week = shilingWeek(c.now);
+    return weekGains(c.db, c.shardId, p === 'thisWeek' ? week : addDays(week, -7));
   };
 
 const PERIODS: Period[] = ['today', 'yesterday', 'thisWeek', 'lastWeek'];
@@ -255,6 +257,6 @@ export const BOARD_SOURCES: Record<string, Source> = {
   'mc.best': mc('value'),
   'mc.times': mc('times'),
   'mc.learned': mcLearned,
-  'hiphop.week': hiphop('thisWeek'),
-  'hiphop.lastWeek': hiphop('lastWeek'),
+  'shiling.week': shiling('thisWeek'),
+  'shiling.lastWeek': shiling('lastWeek'),
 };

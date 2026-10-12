@@ -102,7 +102,7 @@ describe('OrdersPanel', () => {
 
   it('私人刷新：没有工作证时灰掉；有时点击后通知刷新', async () => {
     const no = mount(OrdersPanel, { props: { data: takeawayData() } });
-    expect(no.find('[data-testid="refresh-block"]').text()).toBe('要持有有效的商店工作证');
+    expect(no.find('[data-testid="refresh-block"]').text()).toBe('要持有有效的外卖站长工作证');
     expect(no.find('[data-testid="refresh"]').attributes('disabled')).toBeDefined();
     const w = mount(OrdersPanel, {
       props: { data: takeawayData({ coin: 2_000_000, refresh: { cost: 1_000_000, hasJob: true } }) },

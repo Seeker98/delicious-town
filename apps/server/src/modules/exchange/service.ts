@@ -1,4 +1,5 @@
 import { sql, type Kysely } from 'kysely';
+import { GOODS } from '@dt/config';
 import {
   ErrorCode,
   gameDay,
@@ -21,6 +22,7 @@ import { AppError } from '../../http/errors';
 import { addFoods, cupboardSlotsUsed, planAddFoods, subFoods } from '../cupboard/foods';
 import { refPrice, refPrices } from './ref';
 import { feeOf, isTradable, priceBand } from './rules';
+import { cardValue } from '../jobcard/perks';
 import { addHold, frozenReason, linkedAccounts, tradeFlags } from './guard';
 import { eligibility } from './eligibility';
 import { addCredit, creditWallets, newCredits } from './wallet';
@@ -258,13 +260,24 @@ export function createExchangeService(d: GameDeps) {
       m.set(key, (m.get(key) ?? 0) + n);
       quest.set(restId, m);
     };
+    // 卖方的手续费率：持有交易所经纪人的按证上的（天气改版 PR③）；挂单方可能是别人
+    const feeRates = new Map<number, number>();
+    const feeRateOf = async (restId: number): Promise<number> => {
+      let r = feeRates.get(restId);
+      if (r === undefined) {
+        r =
+          (await cardValue(o.tx, o.config, restId, GOODS.brokerCard, 'exchangeFeeRate', o.now)) ?? t.feeRate;
+        feeRates.set(restId, r);
+      }
+      return r;
+    };
     let left = b.qty;
     for (const lv of queue) {
       if (left === 0) break;
       if (lv.kind === 'system') {
         const n = Math.min(left, lv.s.qty);
         const price = lv.s.price;
-        const fee = b.side === 'sell' ? feeOf(price, n, t) : 0;
+        const fee = b.side === 'sell' ? feeOf(price, n, await feeRateOf(o.rest.id)) : 0;
         const mine = b.side === 'buy';
         await o.tx
           .insertInto('exchange_trade')
@@ -310,9 +323,9 @@ export function createExchangeService(d: GameDeps) {
       if (link === 'device') continue;
       const n = Math.min(left, m.qty - m.filled);
       const price = m.price;
-      const fee = feeOf(price, n, t);
       const buy = b.side === 'buy' ? order : m;
       const sell = b.side === 'sell' ? order : m;
+      const fee = feeOf(price, n, await feeRateOf(sell.rest_id));
       const pair = await o.tx
         .selectFrom('exchange_trade')
         .select((eb) => eb.fn.countAll<string>().as('n'))
@@ -691,12 +704,20 @@ export function createExchangeService(d: GameDeps) {
     const s = await d.shards.settings(ctx.shardId);
     const t = s.tuning.exchange;
     const now = d.now();
+    // 持有交易所经纪人（天气改版 PR③）并在这一条查询里
     const rest = await d.db
-      .selectFrom('restaurant')
-      .select('level')
-      .where('id', '=', ctx.restaurantId)
+      .selectFrom('restaurant as r')
+      .select([
+        'r.level',
+        sql<boolean>`exists(select 1 from store_item c where c.rest_id = r.id and c.goods_id = ${GOODS.brokerCard}
+          and c.num > 0 and (c.expires_at is null or c.expires_at > ${now}))`.as('card'),
+      ])
+      .where('r.id', '=', ctx.restaurantId)
       .executeTakeFirstOrThrow();
     const reason = await eligibility({ db: d.db, level: rest.level, accountId: ctx.accountId, now, t });
+    const cardFee = rest.card
+      ? (d.config.requireGoods(GOODS.brokerCard).effects.exchangeFeeRate ?? null)
+      : null;
     const orders = (await d.db
       .selectFrom('exchange_order')
       .select(ORDER_COLS)
@@ -748,7 +769,9 @@ export function createExchangeService(d: GameDeps) {
           createdAt: x.created_at.toISOString(),
         };
       }),
-      feeRate: t.feeRate,
+      feeRate: cardFee ?? t.feeRate,
+      feeBase: t.feeRate,
+      feeCard: cardFee === null ? null : GOODS.brokerCard,
       holds: (
         await d.db
           .selectFrom('exchange_hold')

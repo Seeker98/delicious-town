@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { gameTime, RANK_BOARDS } from '@dt/shared';
+import { addDays, gameTime, RANK_BOARDS, weekStart } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import type { RestCtx } from '../../core/deps';
@@ -284,16 +284,19 @@ describe('排行榜（设计文档 §2.6）', () => {
     expect((await board(a!, 'mc.times')).me).toEqual({ rank: 1, value: 3 });
   });
 
-  it('打赏本周：同值时先打赏的在前', async () => {
+  it('时令本周（天气改版 PR③）：同值时先到的在前；上周的另算', async () => {
     const [a, b] = await rests(2);
-    const tip = (restId: number, at: Date) =>
+    const gain = (restId: number, week: string, at: Date) =>
       t.db
-        .insertInto('hiphop_tip')
-        .values({ shard_id: a!.shardId, rest_id: restId, kind: 'coin', num: 5, worth: 1, created_at: at })
+        .insertInto('shiling_week')
+        .values({ rest_id: restId, shard_id: a!.shardId, week, gain: 300, last_at: at })
         .execute();
-    await tip(b!.restaurantId, gameTime('2026-09-29', 10));
-    await tip(a!.restaurantId, gameTime('2026-09-30', 10));
-    const r = await board(a!, 'hiphop.week');
+    const week = weekStart(DAY);
+    await gain(b!.restaurantId, week, gameTime('2026-09-29', 10));
+    await gain(a!.restaurantId, week, gameTime('2026-09-30', 10));
+    await gain(a!.restaurantId, addDays(week, -7), gameTime('2026-09-22', 10));
+    expect((await board(a!, 'shiling.lastWeek')).rows.map((x) => x.restId)).toEqual([a!.restaurantId]);
+    const r = await board(a!, 'shiling.week');
     expect(r.rows.map((x) => [x.restId, x.rank])).toEqual([
       [b!.restaurantId, 1],
       [a!.restaurantId, 2],

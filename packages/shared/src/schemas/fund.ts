@@ -19,7 +19,10 @@ export interface FundDepositDto {
 
 export interface FundViewDto {
   days: number;
+  /** 到期返还比例（持有银行理财顾问时是证上的）；returnBase 区服原值，returnCard 起作用的工作证（天气改版 PR③） */
   returnRate: number;
+  returnBase: number;
+  returnCard: number | null;
   earlyRate: number;
   /** expRate 是勋章的经验加成 */
   tiers: Array<{

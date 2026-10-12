@@ -123,8 +123,6 @@ const server: Messages['server'] = {
     bigEaterFirst: 'Vous\u202f! Vous avez du caractère, hein\u202f!',
     wenjie: 'Avec Rejoice, on gagne tout de suite en allure\u202f!',
     bro13: 'Si tu aimes, fonce\u202f!!!',
-    mayorRight: 'Merci, je vais le voir tout de suite pour me faire pardonner\u202f!',
-    mayorWrong: "Vous croyez que je vais gober n'importe quel endroit\u202f?!",
   },
   takeawayFail: [
     'Coincé dans un énorme bouchon\u202f!',

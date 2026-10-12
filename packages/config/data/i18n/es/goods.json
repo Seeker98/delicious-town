@@ -500,24 +500,48 @@
     "desc": "Pack de los puestos 16 a 30 en alimentar al Kraken este mes: tentáculo cortado del Kraken x5, 100 diamantes"
   },
   "20401": {
-    "name": "Pack de sueldo del mercado",
-    "desc": "Sueldo por trabajar en el mercado: 8 vales de ingrediente misterioso a elegir, moneda Krab x6, 10 packs de ingrediente universal al azar"
+    "name": "Sueldo de mayorista del mercado",
+    "desc": "Sueldo semanal de mayorista del mercado: 20 packs de ingrediente universal al azar"
   },
   "20402": {
-    "name": "Pack de sueldo de la tienda",
-    "desc": "Sueldo por trabajar en la tienda: 5 vales de ingrediente misterioso al azar, moneda Krab x8, 10 packs de ingrediente universal al azar"
+    "name": "Sueldo de jefe de reparto",
+    "desc": "Sueldo semanal de jefe de reparto: 10 packs de ingrediente universal al azar, 150.000 monedas"
   },
   "20403": {
-    "name": "Pack de sueldo de la oficina de nombres",
-    "desc": "Sueldo por trabajar en la oficina de nombres: 3 vales de ingrediente misterioso al azar, moneda Krab x7, 10 packs de ingrediente universal al azar"
+    "name": "Sueldo de tasador de platos especiales",
+    "desc": "Sueldo semanal de tasador de platos especiales: 3 Sellos Delicia"
   },
   "20404": {
-    "name": "Pack de sueldo de la oficina de mudanzas",
-    "desc": "Sueldo por trabajar en la oficina de mudanzas: 3 vales de ingrediente misterioso a elegir, moneda Krab x5, 10 packs de ingrediente universal al azar"
+    "name": "Sueldo de coordinador de mudanzas",
+    "desc": "Sueldo semanal de coordinador de mudanzas: 10 packs de ingrediente universal al azar, 150.000 monedas"
   },
   "20405": {
-    "name": "Pack de sueldo de seguridad",
-    "desc": "Sueldo por trabajar de vigilante: 3 vales de ingrediente misterioso al azar, moneda Krab x4, 10 packs de ingrediente universal al azar"
+    "name": "Sueldo de guía de exploración",
+    "desc": "Sueldo semanal de guía de exploración: 2 mapas de exploración, 5 packs de ingrediente universal al azar"
+  },
+  "20406": {
+    "name": "Sueldo de corredor de la bolsa",
+    "desc": "Sueldo semanal de corredor de la bolsa: 300.000 monedas"
+  },
+  "20407": {
+    "name": "Sueldo de operador de futuros",
+    "desc": "Sueldo semanal de operador de futuros: 300.000 monedas"
+  },
+  "20408": {
+    "name": "Sueldo de asesor de inversiones",
+    "desc": "Sueldo semanal de asesor de inversiones: 8 paquetes de suministros del mercado nv. 5"
+  },
+  "20409": {
+    "name": "Sueldo de asesor de fusiones",
+    "desc": "Sueldo semanal de asesor de fusiones: 300.000 monedas"
+  },
+  "20410": {
+    "name": "Sueldo de dependiente del kuji",
+    "desc": "Sueldo semanal de dependiente del kuji: 3 boletos Ichiban Kuji, 200.000 monedas"
+  },
+  "20411": {
+    "name": "Sueldo de analista de predicciones",
+    "desc": "Sueldo semanal de analista de predicciones: 300.000 monedas"
   },
   "30001": {
     "name": "Cartel promocional normal",
@@ -1544,24 +1568,48 @@
     "desc": "Objeto especial (compensación del 02/04/2025); dicen que trae buena suerte. Monedas por mesa +1, suerte +16"
   },
   "60401": {
-    "name": "Permiso de trabajo del mercado",
-    "desc": "Prueba de empleo en el mercado: llévate comisión al vender ingredientes al por mayor. EXP final +20\u00a0%, consumo final de aceite -20\u00a0% (sueldo semanal: 8 vales de ingrediente misterioso a elegir, 10 packs de ingredientes universales)"
+    "name": "Mayorista del mercado",
+    "desc": "Permiso de trabajo del ranking de temporada: puede comprar a mano en el mercado y cobrar comisión de mayorista; monedas finales +5\u00a0%, EXP final +5\u00a0% (sueldo semanal: 20 packs de ingrediente universal al azar)"
   },
   "60402": {
-    "name": "Permiso de trabajo de la tienda",
-    "desc": "Prueba de empleo en la tienda: renueva más pedidos a domicilio y llévate mucha EXP de comisión. EXP e ingresos finales de monedas +15\u00a0%, ocupación +5\u00a0%, consumo final de aceite -10\u00a0% (sueldo semanal: 5 vales de ingrediente misterioso al azar, 10 packs de ingrediente universal al azar)"
+    "name": "Jefe de reparto",
+    "desc": "Permiso de trabajo del ranking de temporada: puede renovar los pedidos a domicilio en privado; monedas finales +5\u00a0%, EXP final +5\u00a0% (sueldo semanal: 10 packs de ingrediente universal al azar, 150.000 monedas)"
   },
   "60403": {
-    "name": "Permiso de trabajo de la oficina de nombres",
-    "desc": "Prueba de empleo en la oficina de nombres: éxito al tasar con el Sello Delicia +5\u00a0%, ingresos finales de monedas +15\u00a0%, clientes exigentes +35\u00a0% (sueldo semanal: 3 vales de ingrediente misterioso al azar, 10 packs de ingrediente universal al azar)"
+    "name": "Tasador de platos especiales",
+    "desc": "Permiso de trabajo del ranking de temporada: éxito al tasar fragmentos +5\u00a0% (todos los objetos de tasación); monedas finales +5\u00a0%, EXP final +5\u00a0% (sueldo semanal: 3 Sellos Delicia)"
   },
   "60404": {
-    "name": "Placa de seguridad",
-    "desc": "Prueba de empleo como vigilante del bar o del gremio: probabilidad de ingredientes misteriosos al explorar +2,5\u00a0%, suerte +56 (sueldo semanal: 3 vales de ingrediente misterioso al azar, 10 packs de ingrediente universal al azar)"
+    "name": "Guía de exploración",
+    "desc": "Permiso de trabajo del ranking de temporada: probabilidad de ingrediente misterioso al explorar +2,5\u00a0%; monedas finales +5\u00a0%, EXP final +5\u00a0% (sueldo semanal: 2 mapas de exploración, 5 packs de ingrediente universal al azar)"
   },
   "60405": {
-    "name": "Permiso de trabajo de la oficina de mudanzas",
-    "desc": "Prueba de empleo en la oficina de mudanzas: mudarte no gasta tarjeta de mudanza; EXP final +50\u00a0% (sueldo semanal: 3 vales de ingrediente misterioso a elegir, 10 packs de ingrediente universal al azar)"
+    "name": "Coordinador de mudanzas",
+    "desc": "Permiso de trabajo del ranking de temporada: mudarse no gasta tarjeta de mudanza; monedas finales +5\u00a0%, EXP final +5\u00a0% (sueldo semanal: 10 packs de ingrediente universal al azar, 150.000 monedas)"
+  },
+  "60406": {
+    "name": "Corredor de la bolsa",
+    "desc": "Permiso de trabajo del ranking de temporada: comisión de venta en la bolsa 5\u00a0% → 2,5\u00a0%; monedas finales +5\u00a0%, EXP final +5\u00a0% (sueldo semanal: 300.000 monedas)"
+  },
+  "60407": {
+    "name": "Operador de futuros",
+    "desc": "Permiso de trabajo del ranking de temporada: depósito de futuros 30\u00a0% → 20\u00a0%, límite diario 50 → 75; monedas finales +5\u00a0%, EXP final +5\u00a0% (sueldo semanal: 300.000 monedas)"
+  },
+  "60408": {
+    "name": "Asesor de inversiones",
+    "desc": "Permiso de trabajo del ranking de temporada: devolución del fondo de desarrollo al vencer 90\u00a0% → 95\u00a0%; monedas finales +5\u00a0%, EXP final +5\u00a0% (sueldo semanal: 8 paquetes de suministros del mercado nv. 5)"
+  },
+  "60409": {
+    "name": "Asesor de fusiones",
+    "desc": "Permiso de trabajo del ranking de temporada: impuesto de adquisición 10\u00a0% → 5\u00a0% (cobras más al ser comprado o rescatado); monedas finales +5\u00a0%, EXP final +5\u00a0% (sueldo semanal: 300.000 monedas)"
+  },
+  "60410": {
+    "name": "Dependiente del Kuji",
+    "desc": "Permiso de trabajo del ranking de temporada: 3 tiradas gratis de Ichiban Kuji normal por semana (3 boletos con el sueldo); monedas finales +5\u00a0%, EXP final +5\u00a0% (sueldo semanal: 3 boletos Ichiban Kuji, 200.000 monedas)"
+  },
+  "60411": {
+    "name": "Analista de predicciones",
+    "desc": "Permiso de trabajo del ranking de temporada: sin la comisión del 2\u00a0% en las predicciones; monedas finales +5\u00a0%, EXP final +5\u00a0% (sueldo semanal: 300.000 monedas)"
   },
   "60501": {
     "name": "Don Krab",

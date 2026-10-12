@@ -6,7 +6,6 @@ import DtSheet from '../components/DtSheet.vue';
 import DtSkeleton from '../components/DtSkeleton.vue';
 import DtStepper from '../components/DtStepper.vue';
 import DtTabs from '../components/DtTabs.vue';
-import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import type { BuyBlock, ShopDto, ShopItemDto, ShopSpecialDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -148,7 +147,6 @@ async function buy() {
 </script>
 
 <template>
-  <HiphopCard :place="2" @changed="load" />
   <DtTabs v-model="tab" :tabs="tabItems" />
   <DtEmpty v-if="!shop && failed" :title="t.store.shop.loadFailed" data-testid="shop-failed" />
   <DtSkeleton v-else-if="!shop" :rows="6" />

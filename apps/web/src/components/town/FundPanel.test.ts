@@ -17,6 +17,8 @@ vi.mock('../../api/endpoints', () => ({
 const base: FundViewDto = {
   days: 7,
   returnRate: 0.9,
+  returnBase: 0.9,
+  returnCard: null,
   earlyRate: 0.7,
   coin: 2_000_000,
   deposit: null,
@@ -119,5 +121,16 @@ describe('FundPanel（240-2）', () => {
     await flushPromises();
     expect(endpoints.fundClaim).toHaveBeenCalled();
     expect(w.find('[data-testid="fund-tier-C"]').exists()).toBe(true);
+  });
+
+  it('持有银行理财顾问：领回按证上的比例算，写一行证的提示（天气改版 PR③）', async () => {
+    vi.mocked(endpoints.fund).mockResolvedValue({ ...base, returnRate: 0.95, returnCard: 60408 });
+    const w = mount(FundPanel);
+    await flushPromises();
+    expect(w.get('[data-testid="job-note-60408"]').text()).toContain('发展基金到期返还 90% → 95%');
+    vi.mocked(endpoints.fund).mockResolvedValue(base);
+    const plain = mount(FundPanel);
+    await flushPromises();
+    expect(plain.find('[data-testid^="job-note-"]').exists()).toBe(false);
   });
 });

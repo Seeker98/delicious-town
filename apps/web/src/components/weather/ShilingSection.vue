@@ -12,11 +12,13 @@ import { useToastStore } from '../../stores/toast';
 import { formatNum, timeHM } from '../../utils/format';
 import RemnantSheet from './RemnantSheet.vue';
 import SeasonTableSheet from './SeasonTableSheet.vue';
+import ShilingWeekSheet from './ShilingWeekSheet.vue';
+import { goodsArt } from '../../utils/goodsArt';
 
 /**
  * 天气页的时令区（天气改版 PR②；设计图 Sl-A、Sl-B）：
  * 余额、本周获得、现在当令、会的菜里应时的、当令表入口；时令铺四样（残卷、珍稀残卷选菜，罗盘、晴雨签点价格直接换）。
- * 0 星只写“1 星开放”
+ * 0 星只写“1 星开放”。PR③ 加时令周榜一行（设计图 Jc-A）
  */
 const props = defineProps<{ data: ShilingDto }>();
 const emit = defineEmits<{ changed: [] }>();
@@ -27,6 +29,10 @@ const sl = computed(() => t.value.misc.weather.shiling);
 const roadName = (r: number) => sl.value.roads[r] ?? '';
 const myRoads = computed(() => new Set(props.data.myRoads));
 const tableOpen = ref(false);
+/** 时令周榜（PR③，设计图 Jc-A）：一行入口，点开面板 */
+const weekOpen = ref(false);
+/** 工作证的图（按道具小类给的） */
+const JOB_ART = 60401;
 const pickItem = ref<'remnant' | 'rare' | null>(null);
 const busy = ref(false);
 /** 会的菜里应时的最多列几道，多的写“等 N 道”去特色菜页看 */
@@ -120,6 +126,22 @@ async function buy(item: ShilingItem, mcId?: number) {
       </p>
       <p class="dt-sl-rule">{{ sl.rule }}</p>
     </div>
+    <button type="button" class="dt-row is-link" data-testid="shiling-week-open" @click="weekOpen = true">
+      <span class="dt-wx-tool-art"><DtArt :name="goodsArt(JOB_ART)" :size="30" /></span>
+      <span class="dt-row-main"
+        ><span class="dt-row-title is-strong"
+          >{{ sl.week.title
+          }}<span
+            v-if="data.week.rank !== null"
+            class="dt-tag dt-tag-primary"
+            data-testid="shiling-week-rank"
+            >{{ sl.week.rankTag(data.week.rank) }}</span
+          ></span
+        ><span class="dt-row-sub">{{
+          sl.week.rowSub(formatNum(data.week.minGain), data.week.count)
+        }}</span></span
+      >
+    </button>
     <button type="button" class="dt-row is-link" data-testid="shiling-table-open" @click="tableOpen = true">
       <span class="dt-row-main"
         ><span class="dt-row-title is-strong">{{ sl.tableRow }}</span
@@ -167,6 +189,7 @@ async function buy(item: ShilingItem, mcId?: number) {
   </template>
 
   <SeasonTableSheet :open="tableOpen" :data="data" @close="tableOpen = false" />
+  <ShilingWeekSheet :open="weekOpen" @close="weekOpen = false" />
   <RemnantSheet
     :open="pickItem !== null"
     :item="pickItem ?? 'remnant'"

@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    jobcard1012:
+      'Job permit rework: the Hip-hop Boy and the tipping ranking are gone; job permits now come from the weekly Season ranking (on the weather page: each Sunday at 23:00 the top 3 with at least 200 seasonal points that week each draw one). Permits are now named jobs, with six new ones (Exchange Broker, Futures Trader, Bank Wealth Advisor, M&A Advisor, Kuji Shop Clerk, Prediction Analyst) that each lower a fee in their system; every permit now gives final coins and EXP +5%, and wages are much lower. The mayor’s quiz is now a guess of the next weather: a right guess is rewarded, a wrong one costs nothing',
     shiling1012:
       'Seasons: each weather puts two signature-dish paths in season, and a batch cooked in season is seasonal (from 1★). Customers eating seasonal dishes earn seasonal points to spend at the seasonal shop on the weather page (dish fragments, Sky Compasses, Weather Lots); picking a trial dish now costs seasonal points too. The Kraken and the tentacle shop are gone, the mayor’s pot no longer gives seeds, and random rewards no longer include fertilizer or arcane formulas. Seeds you held became 5 seasonal points each, tentacles 30',
     weather1012:

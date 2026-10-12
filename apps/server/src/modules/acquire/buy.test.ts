@@ -1,8 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { GOODS } from '@dt/config';
 import { acquireShard, acquireStateOf, setAcquireState } from '../../../test/acquire';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { eventCount } from '../../../test/quests';
+import { grantGoods } from '../store/grant';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -426,5 +428,22 @@ describe('强收（收购 PR 1）', () => {
     await expect(
       svc().buy(buyer, { restId: target.restaurantId, way: 'acquire', expect: 1 }),
     ).rejects.toMatchObject({ code: 'FEATURE_DISABLED' });
+  });
+});
+
+describe('并购顾问（天气改版 PR③）', () => {
+  it('收钱的老板持证：被收购时只扣 5% 的税；对方页面的税率跟着变；我的页面标出证', async () => {
+    const shardId = await acquireShard(t);
+    const owner = await newRestaurant(t, { shardId, patch: { coin: 0 } });
+    const buyer = await newRestaurant(t, { shardId, patch: { coin: 5_000_000 } });
+    const target = await newRestaurant(t, { shardId, patch: { coin: 0, star_level: 2 } });
+    await setState(target.restaurantId, shardId, { owner_rest_id: owner.restaurantId });
+    await grantGoods(t.db, t.deps.config, owner.restaurantId, GOODS.mnaCard, 1, t.clock.now);
+    expect((await svc().rest(buyer, target.restaurantId)).taxRate).toBe(0.05);
+    expect((await svc().view(owner)).taxCard).toBe(GOODS.mnaCard);
+    expect((await svc().view(buyer)).taxCard).toBeNull();
+    const r = await svc().buy(buyer, { restId: target.restaurantId, way: 'acquire', expect: 1_000_000 });
+    expect(r.data).toMatchObject({ tax: 50_000, sellerGot: 950_000 });
+    expect(await coin(owner.restaurantId)).toBe(950_000);
   });
 });

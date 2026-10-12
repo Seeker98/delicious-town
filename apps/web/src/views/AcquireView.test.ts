@@ -57,6 +57,7 @@ const view = (o: Partial<AcquireViewDto> = {}): AcquireViewDto => ({
   holdings: [],
   maxHoldings: 10,
   taxRate: 0.1,
+  taxCard: null,
   listMinRate: 0.5,
   listDays: 3,
   protectDays: 3,
@@ -274,6 +275,24 @@ describe('AcquireView（收购 PR 3）', () => {
     );
     const w2 = await mountView('/acquire?tab=mine');
     expect(w2.get('[data-testid="acquire-tend"]').attributes('disabled')).toBeDefined();
+  });
+
+  it('赎身按老板的税率算（老板持有并购顾问时少扣，天气改版 PR③）；我持证时写一行提示', async () => {
+    vi.mocked(endpoints.acquire).mockResolvedValue(
+      view({ taxCard: 60409, me: rest({ restId: 1, taxRate: 0.05, owner: { restId: 7, name: '大老板' } }) }),
+    );
+    vi.mocked(endpoints.acquireRedeem).mockResolvedValue({
+      restId: 1,
+      price: 500_000,
+      tax: 25_000,
+      sellerGot: 475_000,
+    });
+    const w = await mountView('/acquire?tab=mine');
+    expect(w.get('[data-testid="job-note-60409"]').text()).toContain('收购税 10% → 5%');
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    await w.get('[data-testid="acquire-redeem"]').trigger('click');
+    await flushPromises();
+    expect(confirm.mock.calls[0]![0]).toContain('老板「大老板」得 1,140,000 银币, 税 60,000 银币');
   });
 
   it('我的：名下的店写昨天分红、今天打理没有；挂牌按选的折扣，撤牌、放手', async () => {

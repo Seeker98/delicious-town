@@ -854,29 +854,25 @@ export interface TakeawayDeliveryTable {
 export type EquipRow = Selectable<EquipTable>;
 export type EquipGemRow = Selectable<EquipGemTable>;
 
-/** 嘻哈男孩每日地点（子项目 4E-2）：每区每天一行 */
-export interface HiphopDayTable {
+/** 每家店每周获得的时令值（天气改版 PR③）：时令周榜、周日发工作证；last_at 是最后一次获得，同分先到的排前 */
+export interface ShilingWeekTable {
+  rest_id: number;
   shard_id: number;
-  day: string;
-  /** 1~6 公共地点，9 某家餐厅 */
-  place: number;
-  rest_id: Nullable<number>;
-  foods_id: number;
-  worth: number;
-  created_at: Ts;
+  week: string;
+  gain: Default<number>;
+  last_at: Ts;
 }
 
-/** 打赏记录（子项目 4E-2） */
-export interface HiphopTipTable {
-  id: Generated<number>;
-  shard_id: number;
+/** 镇长猜天气（天气改版 PR③）：一店一天一次；at 揭晓时间，揭晓后写 actual、right */
+export interface MayorGuessTable {
   rest_id: number;
-  kind: string;
-  num: number;
-  foods_id: Nullable<number>;
-  worth: number;
-  krab_coin: Default<number>;
-  created_at: Ts;
+  shard_id: number;
+  day: string;
+  type: number;
+  at: Ts;
+  actual: Nullable<number>;
+  right: Nullable<boolean>;
+  created_at: TsDefault;
 }
 
 /** 论坛帖子（子项目 4E-3）：计数冗余存在这里，和操作在同一事务里更新 */
@@ -1606,8 +1602,8 @@ export interface DB {
   bar_streak_best: BarStreakBestTable;
   bar_slot_stat: BarSlotStatTable;
   bar_round: BarRoundTable;
-  hiphop_day: HiphopDayTable;
-  hiphop_tip: HiphopTipTable;
+  shiling_week: ShilingWeekTable;
+  mayor_guess: MayorGuessTable;
   forum_post: ForumPostTable;
   forum_reply: ForumReplyTable;
   forum_reaction: ForumReactionTable;

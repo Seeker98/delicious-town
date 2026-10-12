@@ -9,7 +9,6 @@ import DtArt from '../components/DtArt.vue';
 import DtEmpty from '../components/DtEmpty.vue';
 import DtSkeleton from '../components/DtSkeleton.vue';
 import MascotCard from '../components/MascotCard.vue';
-import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import PlaceScene from '../components/place/PlaceScene.vue';
 import NpcTalk from '../components/town/NpcTalk.vue';
 import { useT } from '../composables/useT';
@@ -161,7 +160,6 @@ const tiles = computed(() => {
       @reload="load"
     />
   </MascotCard>
-  <HiphopCard :place="3" @changed="load" />
   <div class="dt-block-head">
     <h2 class="dt-block-title">{{ t.bar.home.title }}</h2>
     <span class="dt-block-more">{{ t.bar.home.reset }}</span>

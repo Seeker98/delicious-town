@@ -1,13 +1,25 @@
 import type { Kysely } from 'kysely';
 import { GOODS, type GameConfig, type MysteriousCookbook, type Tuning } from '@dt/config';
-import type { SeasonDto, ShilingBuyResultDto, ShilingDto, ShilingItem, ShilingShopItemDto } from '@dt/shared';
+import type {
+  SeasonDto,
+  ShilingBuyResultDto,
+  ShilingDto,
+  ShilingItem,
+  ShilingShopItemDto,
+  ShilingWeekDto,
+  TownRewardDto,
+} from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { emitAction } from '../../core/action';
 import { invalidState, limitReached, requirement } from '../../core/errors';
 import { badInput } from '../temple/common';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import type { DB } from '../../db/schema';
+import { featureAvailable } from '../../core/features';
+import { cardBlock, cardGate, weekEndAt } from '../jobcard/rules';
+import { weekGains } from '../jobcard/weekly';
 import { addRemnant } from '../mysterious/remnant';
+import { rankRows } from '../rank/ranking';
 import { grantGoodsOp } from '../store/goods';
 import { topForecast } from '../world/rules';
 import type { WorldService } from '../world/service';
@@ -111,6 +123,17 @@ export async function seasonOf(
   };
 }
 
+/** 工资礼包里的东西：道具按个数，银币按数额（工资礼包都是必得的） */
+function wageItems(config: GameConfig, wageId: number): TownRewardDto[] {
+  return (config.goods.get(wageId)?.gift ?? []).flatMap((g): TownRewardDto[] =>
+    g.type === 'goods'
+      ? [{ kind: 'goods', id: g.id, num: g.num }]
+      : g.type === 'coin'
+        ? [{ kind: 'coin', id: null, num: g.min }]
+        : [],
+  );
+}
+
 export function createShilingService(d: GameDeps, world: WorldService) {
   const op = <T>(ctx: RestCtx, source: string, fn: (o: Op) => Promise<T>): Promise<OpResult<T>> =>
     runOp(d, ctx, { feature: 'mysterious', source }, fn);
@@ -122,7 +145,7 @@ export function createShilingService(d: GameDeps, world: WorldService) {
       const t = s.tuning.shiling;
       const now = d.now();
       const rid = ctx.restaurantId;
-      const [rest, mine, learned, remnants, bought] = await Promise.all([
+      const [rest, mine, learned, remnants, bought, gains] = await Promise.all([
         d.db.selectFrom('restaurant').select('star_level').where('id', '=', rid).executeTakeFirstOrThrow(),
         shilingOf(d.db, rid, now),
         d.db.selectFrom('rest_mc').select('mc_id').where('rest_id', '=', rid).execute(),
@@ -133,6 +156,7 @@ export function createShilingService(d: GameDeps, world: WorldService) {
           .where('num', '>', 0)
           .execute(),
         boughtThisWeek(d.db, rid, now),
+        weekGains(d.db, ctx.shardId, shilingWeek(now)),
       ]);
       const season = await seasonOf(world, t, ctx.shardId, rest.star_level, now);
       const learnedIds = new Set(learned.map((r) => r.mc_id));
@@ -155,6 +179,48 @@ export function createShilingService(d: GameDeps, world: WorldService) {
         table: seasonTable(config, t),
         myRoads: [...new Set(learnedMc.map((m) => m.road))].sort((a, b) => a - b),
         trialPick: t.trialPick,
+        week: {
+          rank: rankRows(gains).find((r) => r.restId === rid)?.rank ?? null,
+          minGain: s.tuning.jobCard.minGain,
+          count: s.tuning.jobCard.count,
+        },
+      };
+    },
+
+    /** 时令周榜（PR③）：本周排名（前 count + 2 名和自己）、门槛、11 张证和你能不能抽到 */
+    async week(ctx: RestCtx): Promise<ShilingWeekDto> {
+      const s = await d.shards.ensureFeature(ctx.shardId, 'mysterious');
+      const t = s.tuning.jobCard;
+      const now = d.now();
+      const week = shilingWeek(now);
+      const [rest, gains] = await Promise.all([
+        d.db
+          .selectFrom('restaurant')
+          .select(['level', 'star_level'])
+          .where('id', '=', ctx.restaurantId)
+          .executeTakeFirstOrThrow(),
+        weekGains(d.db, ctx.shardId, week),
+      ]);
+      const ranked = rankRows(gains);
+      const me = ranked.find((r) => r.restId === ctx.restaurantId);
+      return {
+        week,
+        until: weekEndAt(week, t.hour).toISOString(),
+        count: t.count,
+        minGain: t.minGain,
+        top: ranked
+          .slice(0, t.count + 2)
+          .map((r) => ({ rank: r.rank, restId: r.restId, name: r.name, gain: r.value })),
+        me: { rank: me?.rank ?? null, gain: me?.value ?? 0 },
+        cards: t.cards.map(([goodsId, wageId]) => ({
+          goodsId,
+          wageId,
+          wage: wageItems(config, wageId),
+          block: cardBlock(cardGate(goodsId, s.tuning), (f) => featureAvailable(s, f), {
+            level: rest.level,
+            star: rest.star_level,
+          }),
+        })),
       };
     },
 

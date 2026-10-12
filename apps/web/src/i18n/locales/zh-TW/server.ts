@@ -118,8 +118,6 @@ export default {
     bigEaterFirst: '你! 很有個性是吧!',
     wenjie: '用了飄柔就明顯氣質上來了!',
     bro13: '愛就直接去做!!!',
-    mayorRight: '謝謝你, 我現在就去找他, 好好彌補他！',
-    mayorWrong: '你覺得亂說一個位置我就會信嗎！',
   },
   /** 外賣配送失敗的原因（下標 = 服務端給的序號，原版 takeawayDeliveryFailRessonList） */
   takeawayFail: [

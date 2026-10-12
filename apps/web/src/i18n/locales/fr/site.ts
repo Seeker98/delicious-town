@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    jobcard1012:
+      'Refonte des cartes de métier\u202f: le Garçon hip-hop et le classement des pourboires disparaissent\u202f; les cartes viennent désormais du classement de saison (page météo\u202f: chaque dimanche à 23 h, les 3 premiers avec au moins 200 points de saison dans la semaine en tirent une chacun). Les cartes portent des noms de métiers, avec six nouvelles (Courtier de la Bourse, Trader en contrats à terme, Conseiller en placements, Conseiller en fusions, Vendeur du stand Kuji, Analyste des prédictions) qui baissent chacune des frais dans leur système\u202f; toutes donnent pièces et EXP finales +5\u202f%, et les salaires baissent nettement. Le quiz du maire devient un pari sur la prochaine météo\u202f: bonne réponse récompensée, aucune pénalité sinon',
     shiling1012:
       'Saisons\u202f: chaque météo met deux voies de plats signature de saison, et une fournée cuisinée de saison est de saison (dès 1 étoile). Les clients qui mangent vos plats de saison vous rapportent des points de saison à dépenser à la boutique de saison de la page météo (fragments, boussoles célestes, bâtonnets du temps)\u202f; choisir le plat d’épreuve coûte maintenant des points de saison. Le Kraken et la boutique de tentacules disparaissent, la marmite du maire ne donne plus de graines et les récompenses aléatoires ne donnent plus d’engrais ni de formules arcanes. Vos graines valent 5 points de saison chacune, les tentacules 30',
     weather1012:

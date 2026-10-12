@@ -6,8 +6,8 @@ const npc: Messages['npc'] = {
     name: 'Alcalde Gran Olla',
     lines: [
       'Cangreburgers, Vales Delicioso, fragmentos: cámbialos conmigo por objetos raros.',
-      '¿Adónde fue hoy el Chico hip-hop? Dímelo; si aciertas, tendrás una bonificación.',
-      'Soy el Alcalde Gran Olla. Charla conmigo cada día y te daré un ingrediente y una semilla.',
+      'Sé cómo va a cambiar el cielo. Adivina conmigo el próximo tiempo; si aciertas, hay premio.',
+      'Soy el Alcalde Gran Olla. Charla conmigo cada día y te daré un ingrediente.',
     ],
   },
   bro13: {
@@ -61,7 +61,7 @@ const npc: Messages['npc'] = {
     classroom: { label: 'Aula', desc: 'Enseñar, aprender y aprender a escondidas platos estrella' },
     mayor: {
       label: 'Alcalde Gran Olla',
-      desc: 'Charla diaria: ingrediente y semilla; objetos raros; dónde está el Chico hip-hop',
+      desc: 'Charla diaria: un ingrediente; objetos raros; adivinar el próximo tiempo',
     },
     bro13: { label: 'Hermano 13', desc: 'Charla diaria: bocinas; cambiar vales de ingredientes' },
     carmen: {

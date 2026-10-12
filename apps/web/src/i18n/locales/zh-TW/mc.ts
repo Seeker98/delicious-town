@@ -1,5 +1,5 @@
 // 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
-/** 特色菜和嘻哈男孩卡片（問題記錄 272） */
+/** 特色菜（問題記錄 272） */
 export default {
   title: '特色菜',
   temple: '神殿鑑定',
@@ -77,29 +77,6 @@ export default {
   decomposed: '已分解',
   decomposeFailed: '分解失敗',
   decompose: '分解',
-  hiphop: {
-    kinds: { food: '食材', coin: '銀幣', diamond: '鑽石' },
-    replies: {
-      thanks: '感謝您的支援和鼓勵, 你們是我進步的動力！',
-      wanted: '這些正是我需要的！謝謝！',
-    },
-    stale: '這些食材看起來不怎麼新鮮的樣子。',
-    krab: (coin: string, rainbow: boolean) => `你在旁邊撿到 ${coin}${rainbow ? ' (虹)' : ''}`,
-    tickets: (text: string) => `、${text}`,
-    exp: (n: string) => `額外獲得經驗 ${n}`,
-    failed: '打賞失敗',
-    title: '嘻哈男孩在這裡賣藝',
-    want: '我想要 ',
-    wantHave: (name: string, n: number) => `${name} (你有 ${n} 份)`,
-    meta: (worth: string, mine: string) => `單次打賞價值達到 ${worth} 有機會撿到蟹幣 · 本週你已打賞 ${mine}`,
-    noFood: '櫥櫃裡沒有食材, 可以改用銀幣或鑽石打賞',
-    pick: '請選擇',
-    foodOption: (name: string, n: number) => `${name} (${n})`,
-    noWant: '你沒有他想要的食材, 給別的食材不算打賞價值',
-    numFood: '份數',
-    tip: '打賞',
-    kindLabel: '打賞什麼',
-  },
   /** 時令（天氣改版 PR②）：已學列表標當令、在售標應時、下鍋面板寫現在下鍋是否應時 */
   season: {
     now: (roads: string) => `現在當令: ${roads}`,

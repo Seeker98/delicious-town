@@ -21,9 +21,9 @@ export function weightedPrice(trades: Array<{ price: number; qty: number }>): nu
   return Math.round(trades.reduce((s, x) => s + x.price * x.qty, 0) / qty);
 }
 
-/** 卖方手续费 */
-export function feeOf(price: number, qty: number, t: ExchangeTuning): number {
-  return Math.floor(price * qty * t.feeRate);
+/** 卖方手续费；rate 是卖方的费率（持有交易所经纪人的按证上的，天气改版 PR③） */
+export function feeOf(price: number, qty: number, rate: number): number {
+  return Math.floor(price * qty * rate);
 }
 
 const CLAMP_LOW = 0.75;

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import JobCardNote from '../components/JobCardNote.vue';
 import { computed, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { predictPercent, type PredictEventDto, type PredictListDto } from '@dt/shared';
@@ -12,7 +13,6 @@ import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
 import { predictNote, predictTitle } from '../utils/serverText';
 import { useCatalogStore } from '../stores/catalog';
-import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { predictLeft, predictReason } from '../utils/predict';
 
 /**
@@ -67,12 +67,12 @@ onMounted(() => void loadList());
 </script>
 
 <template>
-  <HiphopCard :place="11" />
   <DtEmpty v-if="!list && failed" :title="t.common.loadFailed" data-testid="pd-failed" />
   <DtSkeleton v-else-if="!list" :rows="4" />
   <template v-else>
     <div v-if="!list.enabled" class="dt-act-note" data-testid="pd-off">{{ t.predict.off }}</div>
     <div v-if="reasonText" class="dt-act-note is-warn" data-testid="pd-reason">{{ reasonText }}</div>
+    <JobCardNote v-if="list.feeCard" :card="list.feeCard" />
     <div class="dt-card dt-rows-card">
       <!-- 玩法说明整页一份，点开从下面弹出（问题记录 288） -->
       <button type="button" class="dt-row is-link" data-testid="pd-help" @click="helpOpen = true">

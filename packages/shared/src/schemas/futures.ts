@@ -48,6 +48,9 @@ export interface FuturesDto {
   personLeft: number;
   deliverHours: number;
   depositRate: number;
+  /** 持有期货交易员时 personDaily、depositRate 是证上的；base 区服原值，card 起作用的工作证（天气改版 PR③） */
+  base: { personDaily: number; depositRate: number };
+  card: number | null;
   /** 进行中的全部，已结束的最近 30 张；新的在前 */
   contracts: FuturesContractDto[];
 }

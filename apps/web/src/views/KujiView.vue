@@ -13,7 +13,6 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 import { formatNum, gameDateTime } from '../utils/format';
-import HiphopCard from '../components/hiphop/HiphopCard.vue';
 
 /**
  * 一番赏（一番赏设计 §7.2）：奖池看板、买券、抽签。
@@ -142,7 +141,6 @@ watch(line, () => {
 </script>
 
 <template>
-  <HiphopCard :place="12" />
   <DtTabs :model-value="line" :tabs="lineItems" testid-prefix="kj-line-" @update:model-value="pickLine" />
   <template v-if="data">
     <!-- 月度主题（问题记录 274）：A/B/C/最后赏的手办只在这个月抽得到 -->

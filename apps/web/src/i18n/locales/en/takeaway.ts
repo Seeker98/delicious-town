@@ -46,7 +46,7 @@ const takeaway: Messages['takeaway'] = {
     noRenown: (n) => `Not enough Renown (need ${n})`,
     noFoods: 'Not enough ingredients',
     noRider: 'No free riders',
-    needJob: 'You need a valid Shop work permit',
+    needJob: 'You need a valid Delivery Station Chief job permit',
     taken: (name, min) => `${name} is on its way, arriving in ${min} min`,
     takeFailed: "Couldn't take the order",
     refreshed: (n) => `${n} private orders appeared`,

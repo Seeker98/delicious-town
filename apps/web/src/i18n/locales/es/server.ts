@@ -120,8 +120,6 @@ const server: Messages['server'] = {
     bigEaterFirst: '¡Tú! Tienes mucha personalidad, ¿eh?',
     wenjie: '¡Con Rejoice se nota enseguida el estilo!',
     bro13: '¡¡¡Si lo quieres, ve a por ello!!!',
-    mayorRight: '¡Gracias, voy a buscarlo ahora mismo para compensarle!',
-    mayorWrong: '¿¡Crees que me voy a creer cualquier sitio que digas!?',
   },
   takeawayFail: [
     '¡Un atasco enorme!',

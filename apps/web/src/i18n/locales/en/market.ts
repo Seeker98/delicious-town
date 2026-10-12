@@ -83,7 +83,7 @@ const market: Messages['market'] = {
     specialSoldOut: (time) => `Bargains are sold out. Next restock at ${time}.`,
     nextDaily: (time) => `The daily market restocks at ${time}. Come take a look.`,
     guessOpen: "You haven't placed this round's guess yet. Want to try below?",
-    hasCard: "You have a Market Work Permit. Restock manually if you don't want to wait.",
+    hasCard: "You have the Market Wholesaler job permit. Restock manually if you don't want to wait.",
     cupboardFull: 'Your pantry is full. Make some room before buying more.',
   },
 };

@@ -130,6 +130,12 @@ describe('新闻文案', () => {
     expect(newsText(n('market.manual', { foods: [3, 5] }), names)).toBe('小王的店已进货日常菜: 食材3、食材5');
   });
 
+  it('时令周榜发工作证（天气改版 PR③）', () => {
+    expect(newsText(n('shiling.weekly', { rank: 1, goodsId: 60406 }), names)).toBe(
+      '恭喜小王的店在时令周榜获得第 1 名, 抽到工作证「道具60406」(160 小时)',
+    );
+  });
+
   it('目录里已经没有的星愿（下架去掉了）：英西法不显示中文名，写“一个星愿”；简中照旧（backlog）', async () => {
     const gone = n('town.bless', { blessId: 999, blessName: '五谷丰登' });
     expect(newsText(gone, names)).toBe('小王的店许愿得到星愿: 五谷丰登');

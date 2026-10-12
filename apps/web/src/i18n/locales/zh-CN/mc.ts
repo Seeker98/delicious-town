@@ -1,4 +1,4 @@
-/** 特色菜和嘻哈男孩卡片（问题记录 272） */
+/** 特色菜（问题记录 272） */
 export default {
   title: '特色菜',
   temple: '神殿鉴定',
@@ -76,29 +76,6 @@ export default {
   decomposed: '已分解',
   decomposeFailed: '分解失败',
   decompose: '分解',
-  hiphop: {
-    kinds: { food: '食材', coin: '银币', diamond: '钻石' },
-    replies: {
-      thanks: '感谢您的支持和鼓励, 你们是我进步的动力！',
-      wanted: '这些正是我需要的！谢谢！',
-    },
-    stale: '这些食材看起来不怎么新鲜的样子。',
-    krab: (coin: string, rainbow: boolean) => `你在旁边捡到 ${coin}${rainbow ? ' (虹)' : ''}`,
-    tickets: (text: string) => `、${text}`,
-    exp: (n: string) => `额外获得经验 ${n}`,
-    failed: '打赏失败',
-    title: '嘻哈男孩在这里卖艺',
-    want: '我想要 ',
-    wantHave: (name: string, n: number) => `${name} (你有 ${n} 份)`,
-    meta: (worth: string, mine: string) => `单次打赏价值达到 ${worth} 有机会捡到蟹币 · 本周你已打赏 ${mine}`,
-    noFood: '橱柜里没有食材, 可以改用银币或钻石打赏',
-    pick: '请选择',
-    foodOption: (name: string, n: number) => `${name} (${n})`,
-    noWant: '你没有他想要的食材, 给别的食材不算打赏价值',
-    numFood: '份数',
-    tip: '打赏',
-    kindLabel: '打赏什么',
-  },
   /** 时令（天气改版 PR②）：已学列表标当令、在售标应时、下锅面板写现在下锅是否应时 */
   season: {
     now: (roads: string) => `现在当令: ${roads}`,

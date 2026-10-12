@@ -41,6 +41,8 @@ const data = (p: Partial<FuturesDto> = {}): FuturesDto => ({
   personLeft: 48,
   deliverHours: 72,
   depositRate: 0.3,
+  base: { personDaily: 50, depositRate: 0.3 },
+  card: null,
   contracts: [
     contract({}),
     contract({ id: 2, status: 'delivered', toCupboard: 1, toWallet: 1, settledAt: '2026-10-09T00:00:00Z' }),

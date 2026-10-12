@@ -5,7 +5,7 @@ import type { WorldService } from '../world/service';
 import { blessDto, todayBless } from './bless';
 import { activationPoints } from './common';
 import { goodsCounts } from './exchange';
-import { hiphopDay } from '../hiphop/day';
+import { mayorView } from './mayor';
 
 const NPCS: NpcKey[] = ['bigEater', 'wenjie', 'bro13', 'carmen'];
 const later = (at: Date | null, ms: number, now: Date): string | null =>
@@ -19,7 +19,7 @@ export async function townView(d: GameDeps, world: WorldService, ctx: RestCtx): 
   const day = gameDay(now);
   const restId = ctx.restaurantId;
   // 互不依赖的查询一起发（性能第二轮：原来一条接一条，开发服 16 毫秒左右）
-  const [rest, counterRows, tr, shaken, goods, snap, today, hiphop, activation] = await Promise.all([
+  const [rest, counterRows, tr, shaken, goods, snap, today, mayor, activation] = await Promise.all([
     d.db
       .selectFrom('restaurant')
       .select(['star_level', 'coin', 'diamond'])
@@ -47,7 +47,7 @@ export async function townView(d: GameDeps, world: WorldService, ctx: RestCtx): 
     goodsCounts(d.db, restId, [GOODS.horn, GOODS.magicLamp], now),
     world.ensure(ctx.shardId, now),
     todayBless(d.db, d.config, ctx.shardId, now),
-    hiphopDay(d.db, ctx.shardId, now),
+    mayorView(d.db, world, ctx.shardId, restId, now),
     activationPoints(d.db, d.config, restId, day),
   ]);
   const counters = new Map(counterRows.map((r) => [r.key, r.count]));
@@ -64,12 +64,7 @@ export async function townView(d: GameDeps, world: WorldService, ctx: RestCtx): 
     coin: rest.coin,
     diamond: rest.diamond,
     talked: talked as Record<NpcKey, boolean>,
-    // 嘻哈男孩今天还没出来时镇长那里先写明几点出来，不让人选完才报错（问题记录 333）
-    mayor: {
-      answered: (counters.get('town.talk.mayor') ?? 0) > 0,
-      hiphopOut: hiphop !== null,
-      hour: s.tuning.hiphop.hour,
-    },
+    mayor,
     bigEaterGift: tr?.big_eater_gift ?? false,
     shaken: shaken !== undefined,
     broadcast: {

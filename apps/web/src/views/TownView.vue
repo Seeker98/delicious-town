@@ -8,7 +8,6 @@ import DtArt from '../components/DtArt.vue';
 import DtEmpty from '../components/DtEmpty.vue';
 import DtSkeleton from '../components/DtSkeleton.vue';
 import DtTabs from '../components/DtTabs.vue';
-import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import PlaceScene from '../components/place/PlaceScene.vue';
 import NewsPanel from '../components/town/NewsPanel.vue';
 import RankPanel from '../components/town/RankPanel.vue';
@@ -85,7 +84,6 @@ const blessName = computed(() => {
       >{{ t.town.chips.bless }} <b>{{ blessName }}</b></span
     >
   </PlaceScene>
-  <HiphopCard :place="13" class="mt-2" />
   <DtTabs v-model="tab" :tabs="tabItems">
     <template #end>
       <RouterLink to="/forum" class="dt-tabs-link" data-testid="town-forum">{{ t.town.forum }}</RouterLink>

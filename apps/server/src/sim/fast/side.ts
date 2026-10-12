@@ -19,7 +19,6 @@ import type { FastCtx, FastRest } from './state';
 /** 旁支产出表（快速模拟设计 §5）：按来源和等级段写每天平均产出 */
 export const SIDE_SOURCES = [
   'town',
-  'hiphop',
   'bar',
   'yard',
   'tower',

@@ -48,7 +48,6 @@ export const ACTIVITY_ACTIONS: Readonly<Record<string, string>> = {
   'equip.stress': '强化厨具',
   'equip.gemIn': '镶嵌宝石',
   'equip.drill': '厨具打孔',
-  'hiphop.reward': '打赏嘻哈男孩',
   'post.create': '论坛发帖',
   broadcast: '发喇叭',
 };

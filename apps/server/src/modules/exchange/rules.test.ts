@@ -32,7 +32,7 @@ describe('交易所规则（156-1 设计 §5、§6）', () => {
     ).toBe(167);
   });
   it('手续费向下取整', () => {
-    expect(feeOf(333, 3, t)).toBe(49);
+    expect(feeOf(333, 3, t.feeRate)).toBe(49);
   });
 });
 

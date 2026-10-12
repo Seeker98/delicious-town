@@ -80,7 +80,7 @@ export default {
     specialSoldOut: (time: string) => `特价菜卖光了, 下次 ${time} 进货。`,
     nextDaily: (time: string) => `日常菜场下次 ${time} 上新, 到时候来看看。`,
     guessOpen: '这一轮的竞猜还没下注呢, 去下面猜一猜？',
-    hasCard: '你有菜场工作证, 不想等的话可以手动进货。',
+    hasCard: '你有菜场批发商工作证, 不想等的话可以手动进货。',
     cupboardFull: '你的橱柜满了, 买新菜之前先腾腾地方吧。',
   },
 };

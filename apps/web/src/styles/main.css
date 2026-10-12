@@ -586,7 +586,7 @@ details.dt-card > summary {
   padding: 12px 0;
 }
 
-/* ---------- 嘻哈男孩、排行（子项目 4E-2） ---------- */
+/* ---------- 排行（子项目 4E-2） ---------- */
 
 /* ---------- 论坛（子项目 4E-3） ---------- */
 
@@ -3556,32 +3556,6 @@ details.dt-card > summary {
   border-radius: 50%;
   overflow: hidden;
 }
-/* 嘻哈男孩（P8）：收起时一行；点开下面是打赏 */
-.dt-hiphop-head {
-  width: 100%;
-  border: 0;
-  background: transparent;
-  font: inherit;
-  text-align: left;
-}
-.dt-hiphop.is-open .dt-effects-chev {
-  transform: rotate(180deg);
-}
-.dt-hiphop-body {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 12px 14px 14px;
-  border-top: 1px solid var(--dt-line);
-}
-.dt-hiphop-num {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 13px;
-  color: var(--dt-muted);
-}
 /* 整行可点的按钮行（打开面板，不跳页）：和链接行同样子 */
 button.dt-row {
   width: 100%;
@@ -6290,26 +6264,40 @@ button.dt-row {
   font-weight: 400;
   color: var(--dt-muted);
 }
-/* 镇长问答的地点：换行胶囊，选中实心紫 */
-.dt-place-picks {
-  display: flex;
-  flex-wrap: wrap;
+/* 镇长猜天气（天气改版 PR③，设计图 Jc-D）：四类两两一排，图 + 名字 + 预报，选中描边浅紫 */
+.dt-guess-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
-.dt-place-pick {
-  min-height: 40px;
-  padding: 0 16px;
-  border: 0;
-  border-radius: var(--dt-radius-pill);
-  background: var(--dt-surface-2);
+.dt-guess {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 64px;
+  padding: 0 12px;
+  border: 1px solid var(--dt-line);
+  border-radius: 14px;
+  background: var(--dt-surface);
   color: var(--dt-text);
-  font-size: 14px;
-  font-weight: 600;
-  white-space: nowrap;
+  text-align: left;
 }
-.dt-place-pick[aria-checked='true'] {
-  background: var(--dt-primary);
-  color: var(--dt-on-primary);
+.dt-guess[aria-checked='true'] {
+  border-color: var(--dt-primary);
+  box-shadow: inset 0 0 0 1px var(--dt-primary);
+  background: var(--dt-primary-soft);
+}
+.dt-guess-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.dt-guess-text b {
+  font-size: 15px;
+}
+.dt-guess-text small {
+  font-size: 12px;
+  color: var(--dt-muted);
 }
 /* 页面底部吸住的一条（13 哥兑换、好友换食材）：停在底部导航上面 */
 .dt-sticky-bar {
@@ -9287,4 +9275,126 @@ a.dt-entry-row::after {
   color: var(--dt-primary-ink);
   font-size: 12px;
   font-weight: 800;
+}
+/* 时令周榜（天气改版 PR③，设计图 Jc-B）：排名行、门槛线、工作证一览 */
+.dt-sl-week-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 14px;
+  border-top: 1px solid var(--dt-line);
+  font-size: 14px;
+}
+.dt-sl-week-row:first-child {
+  border-top: 0;
+}
+.dt-sl-week-row.is-mine {
+  background: var(--dt-primary-soft);
+}
+.dt-sl-week-rank {
+  width: 26px;
+  flex-shrink: 0;
+  text-align: center;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--dt-muted);
+}
+.dt-sl-week-rank.is-top {
+  color: var(--dt-ink-warning);
+}
+.dt-sl-week-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dt-sl-week-gain {
+  font-variant-numeric: tabular-nums;
+}
+.dt-sl-week-cut {
+  padding: 6px 14px;
+  border-top: 1px dashed var(--dt-line);
+  font-size: 12px;
+  text-align: center;
+  color: var(--dt-muted);
+}
+.dt-sl-week-empty {
+  margin: 0;
+  padding: 14px;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-sl-week-rule {
+  margin: 8px 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--dt-surface-2);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.dt-sl-week-sec {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+  margin: 14px 0 4px;
+  font-size: 13px;
+}
+.dt-sl-week-sec span {
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-sl-card {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-sl-card.is-off {
+  opacity: 0.55;
+}
+.dt-sl-card-art {
+  flex-shrink: 0;
+}
+.dt-sl-card-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+.dt-sl-card-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.dt-sl-card-perk {
+  margin-top: 2px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.dt-sl-card-wage {
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dt-muted);
+}
+/* 工作证起作用时的一行（设计图 Jc-E）：绿底小字，证名加粗 */
+.dt-job-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--dt-soft-success);
+  color: var(--dt-ink-success);
+  font-size: 13px;
+  line-height: 1.5;
 }

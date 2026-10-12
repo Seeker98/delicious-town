@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { GOODS } from '@dt/config';
 import { gameDay, gameTime } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createShard } from '../../../test/fixtures';
@@ -10,6 +11,7 @@ import { FUTURES_INITIAL } from '../../db/migrations/0063_futures';
 import { refPrice } from '../exchange/ref';
 import { trader } from '../exchange/test';
 import { getDaily } from '../counter/dailyCounter';
+import { grantGoods } from '../store/grant';
 import { futuresDeposit, futuresUnitPrice } from './rules';
 
 const config = testConfig();
@@ -322,5 +324,23 @@ describe('我的期货（GET /futures）', () => {
     expect(v.contracts).toHaveLength(1);
     await t.db.updateTable('restaurant').set({ level: 5 }).where('id', '=', r.restaurantId).execute();
     expect((await svc().view(r)).blocked).toBe('exchange_level');
+  });
+});
+
+describe('期货交易员（天气改版 PR③）', () => {
+  it('持证定金按 20%、每天能订 75 份；页面跟着变、写原值', async () => {
+    const shardId = await createShard(t.db);
+    const r = await trader(t, { shardId, coin: 10_000_000 });
+    await grantGoods(t.db, config, r.restaurantId, GOODS.futuresCard, 1, t.clock.now);
+    const unit = await priceOf(shardId, RARE3);
+    const res = (await svc().order(r, { foodsId: RARE3, qty: 3, unitPrice: unit })).data;
+    expect(res.deposit).toBe(futuresDeposit(unit * 3, { depositRate: 0.2 }));
+    expect(await svc().view(r)).toMatchObject({
+      personDaily: 75,
+      personLeft: 72,
+      depositRate: 0.2,
+      base: { personDaily: 50, depositRate: 0.3 },
+      card: GOODS.futuresCard,
+    });
   });
 });

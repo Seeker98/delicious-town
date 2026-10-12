@@ -3,13 +3,11 @@ import { GOODS } from '@dt/config';
 import { addDays, gameTime, seededRng, slotKey } from '@dt/shared';
 import { createShard } from '../../../../test/fixtures';
 import { createTestGame, newRestaurant, type TestGame } from '../../../../test/game';
-import { hiphop } from './hiphop';
 import { krab } from './krab';
 import { market } from './market';
 import { stats } from './stats';
 import type { AutoCtx } from './types';
 import { weather } from './weather';
-import { fid } from '../../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -72,79 +70,6 @@ describe('蟹老板（238-2 设计 §4.1）', () => {
       expect(r.note).toBe(`11月4日 9 点蟹老板刷新在 ${street} 号街`);
       expect(r.noteParams).toEqual({ day: tomorrow, hour: 9, street });
     }
-  });
-});
-
-describe('嘻哈男孩（238-2 设计 §4.2）', () => {
-  it('出题只考虑本区服开着的功能的地点（问题记录 256）', async () => {
-    const shardId = await createShard(t.db);
-    await t.db
-      .insertInto('shard_config')
-      .values({
-        shard_id: shardId,
-        override: JSON.stringify({
-          features: { kuji: false },
-          tuning: {
-            hiphop: {
-              placeWeights: [
-                [12, 1000],
-                [2, 1],
-              ],
-            },
-          },
-        }),
-      })
-      .execute();
-    t.game.shards.invalidate(shardId);
-    const dr = (await hiphop.create(await ctx(shardId, 3)))!;
-    expect(dr.params.place).toBe(2);
-    // 1000 : 1 只剩商店一个地点，概率夹到上限 0.95
-    expect(dr.p0).toBe(0.95);
-    expect(dr.title).toBe('明天嘻哈男孩会出现在商店吗');
-  });
-
-  it('出题：按地点权重，明天 hiphop.hour 判定；判定读地点记录，没生成返回 null', async () => {
-    const shardId = await createShard(t.db);
-    // 有近期活跃的玩家店："某家餐厅"也在候选里，概率按全部地点权重算（backlog 238-2）
-    const active = await newRestaurant(t, { shardId });
-    await t.db
-      .insertInto('income_round')
-      .values({
-        rest_id: active.restaurantId,
-        round_no: 1,
-        coin: 1,
-        exp: 0,
-        oil: 0,
-        customers: JSON.stringify([]),
-        rates: JSON.stringify({}),
-        drops: JSON.stringify([]),
-        created_at: new Date(at0.getTime() - 3_600_000),
-      })
-      .execute();
-    const dr = (await hiphop.create(await ctx(shardId, 3)))!;
-    const place = dr.params.place as number;
-    const weights = t.deps.config.tuning.hiphop.placeWeights;
-    const total = weights.reduce((s, [, x]) => s + x, 0);
-    expect(dr.p0).toBeCloseTo(weights.find(([p]) => p === place)![1] / total, 9);
-    expect(dr.resolveAt).toEqual(gameTime(addDays(DAY, 1), t.deps.config.tuning.hiphop.hour));
-    expect(await hiphop.resolve(await rctx(shardId), dr.params)).toBeNull();
-    const other = place === 1 ? 2 : 1;
-    await t.db
-      .insertInto('hiphop_day')
-      .values({
-        shard_id: shardId,
-        day: addDays(DAY, 1),
-        place: other,
-        foods_id: fid('大米'),
-        worth: 1,
-        created_at: at0,
-      })
-      .execute();
-    const r = (await hiphop.resolve(await rctx(shardId), dr.params))!;
-    expect(r.outcome).toBe(false);
-    expect(r.note).toMatch(/^11月4日嘻哈男孩出现在/);
-    expect(r.noteParams).toEqual({ day: addDays(DAY, 1), place: other });
-    expect(dr.params).toMatchObject({ hour: expect.any(Number) });
   });
 });
 
@@ -407,32 +332,5 @@ describe('判定边界（backlog 238-2）', () => {
     await ran(shardId, 'market-daily', period, gameTime(DAY, hour));
     const r = (await market.resolve(await rctx(shardId), { hour, level: 2, period }))!;
     expect(r).toMatchObject({ outcome: true, noteParams: { foods: [r2.id] } });
-  });
-
-  it('嘻哈男孩：近期没有活跃玩家店时不出"某家餐厅"，概率按公共地点重新算', async () => {
-    const shardId = await createShard(t.db);
-    await t.db
-      .insertInto('shard_config')
-      .values({
-        shard_id: shardId,
-        override: JSON.stringify({
-          tuning: {
-            hiphop: {
-              placeWeights: [
-                [9, 1000],
-                [2, 1],
-                [3, 1],
-              ],
-            },
-          },
-        }),
-      })
-      .execute();
-    t.game.shards.invalidate(shardId);
-    for (const seed of [1, 2, 3, 4, 5]) {
-      const dr = (await hiphop.create(await ctx(shardId, seed)))!;
-      expect(dr.params.place).not.toBe(9);
-      expect(dr.p0).toBeCloseTo(0.5, 9);
-    }
   });
 });

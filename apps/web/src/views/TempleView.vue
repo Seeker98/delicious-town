@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import type { TempleDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -60,7 +59,6 @@ watch(tab, () => void load());
       >
     </template>
   </PlaceScene>
-  <HiphopCard :place="6" class="mt-2" @changed="load" />
   <DtTabs v-model="tab" :tabs="tabItems" />
   <AppraisePanel v-if="tab === 'appraise'" />
   <DtEmpty v-else-if="!data && failed" :title="t.temple.loadFailed" data-testid="temple-failed"

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import JobCardNote from '../JobCardNote.vue';
 import NpcCard from '../NpcCard.vue';
 import { computed, onMounted, ref } from 'vue';
 import type { AppraiseResultDto, McOverviewDto, McToolDto } from '@dt/shared';
@@ -91,6 +92,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.common.lo
   <!-- 鉴定神秘食谱的 NPC 是饭老道（问题记录 443） -->
   <NpcCard npc="fanDao" />
   <template v-if="o">
+    <JobCardNote v-if="o.jobCard" :card="o.jobCard" />
     <div class="dt-block-head">
       <h2 class="dt-block-title">{{ t.temple.appraise.pickTool }}</h2>
       <span class="dt-block-more" data-testid="recipes">{{ t.temple.appraise.recipes(o.recipes) }}</span>

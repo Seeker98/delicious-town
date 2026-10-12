@@ -46,7 +46,7 @@ const takeaway: Messages['takeaway'] = {
     noRenown: (n) => `Pas assez de renommée (il en faut ${n})`,
     noFoods: "Pas assez d'ingrédients",
     noRider: 'Aucun livreur libre',
-    needJob: 'Il faut un permis de travail de boutique valide',
+    needJob: 'Il faut une carte de métier Chef de station de livraison valide',
     taken: (name, min) => `${name} est en route, livraison dans ${min} min`,
     takeFailed: 'Impossible de prendre la commande',
     refreshed: (n) => `${n} ${plFr(n, 'commande privée obtenue', 'commandes privées obtenues')}`,

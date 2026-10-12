@@ -101,7 +101,7 @@ const errors: Messages['errors'] = {
     job_honor: (p, n) =>
       p.goodsId
         ? `Il vous faut un ${n.goodsName(Number(p.goodsId))} valide`
-        : 'Il vous faut un permis de travail de boutique valide pour actualiser',
+        : 'Il vous faut une carte de métier Chef de station de livraison valide pour actualiser',
   },
   limit: {
     shiling_weekly: (p) => `Limite de la semaine atteinte (${String(p.limit)} par semaine)`,
@@ -271,7 +271,6 @@ const errors: Messages['errors'] = {
     not_discardable: 'Cet objet ne peut pas être jeté',
     not_owned: 'Vous ne possédez pas cet objet',
     item_gone: 'Ce lot a été retiré du rayon',
-    not_here: "Le Garçon hip-hop n'est pas ici",
     post_text: 'Longueur du titre ou du texte invalide (titre 1–40 caractères, texte 1–5000 caractères)',
     reply_text: 'Longueur de la réponse invalide (1–500 caractères)',
     post_locked: 'Les publications épinglées ou mises en avant ne peuvent pas être supprimées',
@@ -279,8 +278,6 @@ const errors: Messages['errors'] = {
     query_text: 'Le texte de recherche est trop long (20 caractères au plus)',
     cursor: 'Page invalide. Actualisez.',
     post_changed: 'La publication a changé. Actualisez et réessayez.',
-    hiphop_not_out:
-      "Le Garçon hip-hop n'est pas encore sorti aujourd'hui. Demandez plus tard au Maire Grosse Marmite, à la Guilde.",
     pick_food: 'Choisissez un ingrédient à offrir',
     pick_count: "Nombre d'ingrédients pariés invalide",
     bad_food: 'Vous ne pouvez parier que sur des ingrédients de niveau 1 à 2',
@@ -463,8 +460,6 @@ const errors: Messages['errors'] = {
     mailLevel: (level) => `Niveau insuffisant (niveau ${level} requis)`,
     codeLevel: (level) => `Ce code demande le niveau ${level}`,
     queryText: (max) => `Le texte de recherche fait au plus ${max} ${plFr(max, 'caractère', 'caractères')}`,
-    hiphopNotOut: (hour) =>
-      `Le Garçon hip-hop n'est pas encore sorti aujourd'hui. Demandez au Maire Grosse Marmite, à la Guilde, après ${hour} h.`,
     unknown: (code) => `Une erreur s'est produite (${code})`,
   },
   fallbackName: {

@@ -104,7 +104,7 @@ export default {
     not_learned: () => '还没学会这道菜',
     double: () => '持有"使命必达"才能加料',
     job_honor: (p, n) =>
-      p.goodsId ? `需要持有有效的${n.goodsName(Number(p.goodsId))}` : '持有有效的商店工作证才能刷新',
+      p.goodsId ? `需要持有有效的${n.goodsName(Number(p.goodsId))}` : '持有有效的外卖站长工作证才能刷新',
   }),
   /** 达到上限（LIMIT_REACHED 的 what） */
   limit: fns({
@@ -263,7 +263,6 @@ export default {
     not_discardable: '这个道具不能丢弃',
     not_owned: '没有这个道具',
     item_gone: '这批货已经下架了',
-    not_here: '嘻哈男孩不在这里',
     post_text: '标题或正文长度不对 (标题 1~40 字, 正文 1~5000 字)',
     reply_text: '回复长度不对 (1~500 字)',
     post_locked: '置顶或加精的帖子不能删除',
@@ -271,7 +270,6 @@ export default {
     query_text: '搜索词太长了 (最多 20 字)',
     cursor: '翻页参数不对, 请刷新',
     post_changed: '帖子状态变了, 请刷新后再试',
-    hiphop_not_out: '嘻哈男孩今天还没出来, 晚些时候再去协会问镇长大胃锅吧',
     pick_food: '请选择要打赏的食材',
     pick_count: '竞猜的食材数量不对',
     bad_food: '只能竞猜 1~2 级食材',
@@ -455,7 +453,6 @@ export default {
     mailLevel: (level: string) => `等级不够, 需 ${level} 级`,
     codeLevel: (level: string) => `兑换码要求 ${level} 级`,
     queryText: (max: string) => `搜索词最多 ${max} 字`,
-    hiphopNotOut: (hour: string) => `嘻哈男孩今天还没出来, ${hour} 点以后再去协会问镇长大胃锅吧`,
     unknown: (code: string) => `出错了 (${code})`,
   },
   /** 名字查不到时的占位 */

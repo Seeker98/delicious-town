@@ -85,7 +85,7 @@ const market: Messages['market'] = {
     specialSoldOut: (time) => `Las ofertas se agotaron. Próxima reposición a las ${time}.`,
     nextDaily: (time) => `El mercado diario se repone a las ${time}. Pásate a verlo.`,
     guessOpen: 'Aún no has apostado en esta ronda. ¿Lo intentas abajo?',
-    hasCard: 'Tienes un permiso de trabajo del mercado. Repón a mano si no quieres esperar.',
+    hasCard: 'Tienes el permiso de trabajo de Mayorista del mercado. Repón a mano si no quieres esperar.',
     cupboardFull: 'Tu despensa está llena. Haz sitio antes de comprar más.',
   },
 };

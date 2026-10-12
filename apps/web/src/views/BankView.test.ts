@@ -30,6 +30,8 @@ describe('银行：盖乐瑞的基金和理财（界面改版 P2b，原来在协
     vi.mocked(endpoints.fund).mockResolvedValue({
       days: 7,
       returnRate: 0.9,
+      returnBase: 0.9,
+      returnCard: null,
       earlyRate: 0.7,
       coin: 0,
       deposit: null,

@@ -176,7 +176,7 @@ const wiki: Messages['wiki'] = {
           (n) =>
             `Se aprende más rápido en calles con muchas recetas: la ${n.biggestStreet.name} tiene ${formatNum(n.biggestStreet.cookbooks)}, más que ninguna otra.`,
           'Las calles son de monedas, equilibradas o de EXP: si te faltan monedas, ve a una calle de monedas; para subir de nivel, a una de EXP. La página de mudanza y la de recetas muestran el tipo y la bonificación de cada calle.',
-          'Mudarse cuesta una tarjeta de mudanza (no hace falta con un permiso de trabajo de la oficina de mudanzas) y una tarifa, que se reduce a la mitad cuando tienes suerte.',
+          'Mudarse cuesta una tarjeta de mudanza (no hace falta con el permiso de trabajo de Coordinador de mudanzas) y una tarifa, que se reduce a la mitad cuando tienes suerte.',
         ],
       },
       {

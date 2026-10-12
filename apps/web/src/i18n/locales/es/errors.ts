@@ -101,7 +101,7 @@ const errors: Messages['errors'] = {
     job_honor: (p, n) =>
       p.goodsId
         ? `Necesitas un ${n.goodsName(Number(p.goodsId))} válido`
-        : 'Necesitas un permiso de trabajo de la tienda válido para renovar',
+        : 'Necesitas un permiso de trabajo de Jefe de reparto válido para renovar',
   },
   limit: {
     shiling_weekly: (p) => `Límite semanal alcanzado (${String(p.limit)} por semana)`,
@@ -272,7 +272,6 @@ const errors: Messages['errors'] = {
     not_discardable: 'Este objeto no se puede tirar',
     not_owned: 'No tienes este objeto',
     item_gone: 'Este lote ya se retiró del estante',
-    not_here: 'El Chico hip-hop no está aquí',
     post_text: 'Longitud del título o del texto no válida (título 1–40 caracteres, texto 1–5000 caracteres)',
     reply_text: 'Longitud de la respuesta no válida (1–500 caracteres)',
     post_locked: 'Las publicaciones fijadas o destacadas no se pueden borrar',
@@ -280,8 +279,6 @@ const errors: Messages['errors'] = {
     query_text: 'El texto de búsqueda es demasiado largo (máximo 20 caracteres)',
     cursor: 'Página no válida. Recarga.',
     post_changed: 'La publicación cambió. Recarga e inténtalo de nuevo.',
-    hiphop_not_out:
-      'El Chico hip-hop todavía no ha salido hoy. Pregunta más tarde al Alcalde Gran Olla en el Gremio.',
     pick_food: 'Elige un ingrediente para dar de propina',
     pick_count: 'Número de ingredientes apostados no válido',
     bad_food: 'Solo puedes apostar por ingredientes de nivel 1 a 2',
@@ -464,8 +461,6 @@ const errors: Messages['errors'] = {
     codeLevel: (level) => `Este código requiere nivel ${level}`,
     queryText: (max) =>
       `El texto de búsqueda tiene como máximo ${max} ${plEs(max, 'carácter', 'caracteres')}`,
-    hiphopNotOut: (hour) =>
-      `El Chico hip-hop todavía no ha salido hoy. Pregunta al Alcalde Gran Olla en el Gremio después de las ${hour}:00.`,
     unknown: (code) => `Algo salió mal (${code})`,
   },
   fallbackName: {

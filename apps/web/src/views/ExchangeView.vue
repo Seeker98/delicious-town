@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import JobCardNote from '../components/JobCardNote.vue';
 import { computed, onMounted, ref } from 'vue';
 import type { ExchangeBookDto, ExchangeFoodDto, ExchangeMeDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -14,7 +15,6 @@ import { useToastStore } from '../stores/toast';
 import { timeLeft } from '../utils/activity';
 import { foodLevelLabel, formatNum, formatPct } from '../utils/format';
 import { matchText } from '../utils/match';
-import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import FuturesPanel from '../components/exchange/FuturesPanel.vue';
 import BulkPanel from '../components/exchange/BulkPanel.vue';
 import { useRestaurantStore } from '../stores/restaurant';
@@ -305,11 +305,11 @@ onMounted(async () => {
 </script>
 
 <template>
-  <HiphopCard :place="10" />
   <DtTabs v-model="tab" :tabs="tabItems" testid-prefix="ex-tab-" />
   <FuturesPanel v-if="tab === 'futures' && showFutures" />
   <BulkPanel v-else-if="tab === 'bulk' && showBulk" />
   <template v-else>
+    <JobCardNote v-if="me?.feeCard" :card="me.feeCard" />
     <div v-if="me?.frozen" class="dt-act-note is-danger" data-testid="ex-frozen">
       {{ t.exchange.frozenNotice(me.frozen.reason) }}
     </div>

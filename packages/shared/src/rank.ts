@@ -30,7 +30,7 @@ export const RANK_GROUPS: readonly string[] = [
   '魔鬼辣杯',
   '一掷千金',
   '特色菜',
-  '打赏',
+  '时令',
 ];
 
 const PERIODS: ReadonlyArray<[string, string]> = [
@@ -104,13 +104,12 @@ export const RANK_BOARDS: readonly RankBoardDef[] = [
   { key: 'mc.times', group: '特色菜', label: '总次数' },
   { key: 'mc.learned', group: '特色菜', label: '已学' },
   {
-    key: 'hiphop.week',
-    group: '打赏',
+    key: 'shiling.week',
+    group: '时令',
     label: '本周',
-    reward:
-      '前 5 名：商店 / 改名处 / 菜场 / 搬家处工作证、保安证 (周日 23 点发, 有效 160 小时, 周一 7:59 发工资)',
+    reward: '本周获得 ≥ 200 的前 3 名依次抽一张工作证 (周日 23 点发, 有效 160 小时, 周一 7:59 发工资)',
   },
-  { key: 'hiphop.lastWeek', group: '打赏', label: '上周' },
+  { key: 'shiling.lastWeek', group: '时令', label: '上周' },
 ];
 
 export const RANK_KEYS: ReadonlySet<string> = new Set(RANK_BOARDS.map((b) => b.key));

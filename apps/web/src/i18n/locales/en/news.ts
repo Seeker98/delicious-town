@@ -77,6 +77,8 @@ const news: Messages['news'] = {
     'hiphop.krab': (w, p, x) => `${w} got ${x.goodsName(SHARED_GOODS.krabCoin)}×${num(p.num)} by tipping`,
     'hiphop.weekly': (w, p, x) =>
       `Congratulations to ${w} for placing ${ordinal(num(p.rank))} in the weekly tips and winning ${x.goodsName(num(p.goodsId))} (160 hours)`,
+    'shiling.weekly': (w, p, x) =>
+      `Congrats to ${w}: #${num(p.rank)} in the weekly Season ranking, drew the job permit “${x.goodsName(num(p.goodsId))}” (160 hours)`,
     'market.manual': (w, p, x) =>
       `${w} restocked daily dishes: ${list(p.foods)
         .map((id) => x.foodName(num(id)))

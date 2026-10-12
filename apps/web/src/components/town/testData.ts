@@ -18,7 +18,18 @@ export const townData = (patch: Partial<TownDto> = {}): TownDto => ({
   coin: 1_000_000,
   diamond: 20,
   talked: { bigEater: false, wenjie: false, bro13: false, carmen: false },
-  mayor: { answered: false, hiphopOut: true, hour: 9 },
+  mayor: {
+    today: null,
+    next: {
+      at: '2026-10-01T09:00:00.000Z',
+      types: [
+        { type: 1, p: 0.27 },
+        { type: 2, p: 0.58 },
+        { type: 3, p: 0.06 },
+        { type: 4, p: 0.09 },
+      ],
+    },
+  },
   bigEaterGift: false,
   shaken: false,
   broadcast: { horns: 2, readyAt: null, minStar: 1, maxLen: 64 },

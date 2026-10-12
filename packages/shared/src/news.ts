@@ -32,9 +32,11 @@ export const NEWS_TYPES: readonly string[] = [
   'gem.levelUp',
   'market.restock',
   'market.manual',
+  // 嘻哈男孩已删（天气改版 PR③）：旧新闻还在库里，留着让网页能显示
   'hiphop.event',
   'hiphop.krab',
   'hiphop.weekly',
+  'shiling.weekly',
   'forum.pin',
   'forum.feature',
   'mc.champion',

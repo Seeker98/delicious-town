@@ -6,7 +6,6 @@ import FormulaPanel from '../components/yard/FormulaPanel.vue';
 import FriendYard from '../components/yard/FriendYard.vue';
 import LandPanel from '../components/yard/LandPanel.vue';
 import SeedPanel from '../components/yard/SeedPanel.vue';
-import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { useT } from '../composables/useT';
 
 type Tab = 'land' | 'basket' | 'formula' | 'seed';
@@ -41,7 +40,6 @@ watch(tab, (v) => {
   <FriendYard v-if="friendId !== null" :key="friendId" :rest-id="friendId" />
   <template v-else>
     <h5>{{ t.yard.title }}</h5>
-    <HiphopCard :place="14" />
     <ul class="nav nav-tabs mb-2">
       <li v-for="x in TABS" :key="x" class="nav-item">
         <a

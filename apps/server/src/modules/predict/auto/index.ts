@@ -1,15 +1,13 @@
 import { gameDay, initialShares, type Rng } from '@dt/shared';
 import type { GameDeps } from '../../../core/deps';
-import { featureAvailable } from '../../../core/features';
 import { finalizeEvent } from '../finalize';
-import { hiphop } from './hiphop';
 import { krab } from './krab';
 import { market } from './market';
 import { stats } from './stats';
 import type { AutoKind } from './types';
 import { weather } from './weather';
 
-const KINDS: Record<AutoKind['kind'], AutoKind> = { krab, hiphop, market, weather, stats };
+const KINDS: Record<AutoKind['kind'], AutoKind> = { krab, market, weather, stats };
 const GIVE_UP_MS = 24 * 3_600_000;
 
 type Log = { error(obj: object, msg: string): void; info?(obj: object, msg: string): void };
@@ -26,12 +24,9 @@ export async function createAutoEvents(
   const settings = await d.shards.settings(shardId);
   const t = settings.tuning.predict;
   const day = gameDay(now);
-  // 每类按顺序试，前一个出不了（返回 null 或出错）换下一个：双数日嘻哈男孩出不了改出蟹老板（backlog 238-2）
+  // 每类按顺序试，前一个出不了（返回 null 或出错）换下一个（嘻哈男孩已删，天气改版 PR③：蟹老板题每天出）
   const plan: Array<[string, AutoKind[]]> = [];
-  if (t.auto.krab) {
-    const odd = Number(day.slice(8)) % 2 === 1;
-    plan.push(['krab', odd || !featureAvailable(settings, 'hiphop') ? [krab] : [hiphop, krab]]);
-  }
+  if (t.auto.krab) plan.push(['krab', [krab]]);
   if (t.auto.market) plan.push(['market', [market]]);
   if (t.auto.weather) plan.push(['weather', [weather]]);
   if (t.auto.stats) plan.push(['stats', [stats]]);
@@ -113,12 +108,12 @@ export async function resolveAutoEvents(
   let resolved = 0;
   let voided = 0;
   for (const e of due) {
-    const k = KINDS[e.kind as AutoKind['kind']];
-    if (!k) continue;
+    // 删掉的题型（嘻哈男孩，天气改版 PR③）判不了：和数据缺失一样，过了 24 小时作废退款
+    const k = KINDS[e.kind as AutoKind['kind']] as AutoKind | undefined;
     // 判定出错按"还判不了"处理（终审 I2）：不挡住后面的事件，过了 24 小时照样作废
     let r: Awaited<ReturnType<AutoKind['resolve']>> = null;
     try {
-      r = await k.resolve({ d, shardId, settings }, e.params);
+      r = k ? await k.resolve({ d, shardId, settings }, e.params) : null;
     } catch (err) {
       log.error({ err, shardId, eventId: e.id, kind: e.kind }, 'predict auto resolve failed');
     }

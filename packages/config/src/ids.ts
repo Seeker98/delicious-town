@@ -14,12 +14,16 @@ export const GOODS = {
   starCert: 10505, // 升星凭证
   starPromoHonor: SHARED_GOODS.starPromoHonor, // 升星促销勋章
   promoHonor: 60203, // 八折促销
-  moveJobHonor: 60405, // 搬家处工作证
-  marketJobHonor: 60401, // 菜场工作证（手动进货）
-  renameJobHonor: 60403, // 改名处工作证
-  hiphopCulture: 60503, // 嘻哈文化（嘻哈男孩所在餐厅）
-  mayorFavor: 60504, // 镇长的推荐
-  mayorAgainst: 60505, // 镇长的针对
+  moveJobHonor: 60405, // 工作证：搬家公司调度（搬家不耗搬家卡）
+  marketJobHonor: 60401, // 工作证：菜场批发商（手动进货）
+  appraiserCard: 60403, // 工作证：特色菜鉴定师（鉴定 +5%，走加成的 starMCBookRate）
+  brokerCard: 60406, // 工作证：交易所经纪人（卖出手续费）
+  futuresCard: 60407, // 工作证：期货交易员（定金、每日份数）
+  fundCard: 60408, // 工作证：银行理财顾问（发展基金返还）
+  mnaCard: 60409, // 工作证：并购顾问（收购税）
+  kujiCard: 60410, // 工作证：赏铺店员（工资里发抽赏券）
+  predictCard: 60411, // 工作证：预测社分析师（预测手续费）
+  mayorFavor: SHARED_GOODS.mayorFavor, // 镇长的推荐
   signInGift: 20003, // 每日签到礼包
   krabHappy: 60501, // 蟹老板（回味无穷）
   krabAngry: 60502, // 蟹老板-生气
@@ -68,7 +72,7 @@ export const GOODS = {
   mapNormal: 10704, // 探险图
   mapHigh: 10705, // 高级探险图
   seal: 10813, // 厨神玉玺
-  securityCard: 60404, // 保安证
+  securityCard: 60404, // 工作证：探险向导（原保安证；探险出神秘食材）
   creativePotion: 61407, // 创意药水（试炼准备：注射）
   meditation: 61408, // 冥想（试炼准备）
   lamp: 61413, // 煤油灯
@@ -83,7 +87,7 @@ export const GOODS = {
   borderCollie: 60604, // 边牧（偷菜惩罚）
   towerTicket: 10301, // 厨塔挑战券
   takeawayTicket: 10302, // 外卖券
-  shopJobHonor: 60402, // 商店工作证（外卖私人刷新）
+  shopJobHonor: 60402, // 工作证：外卖站长（外卖私人刷新）
   horn: 10417, // 喇叭（小镇广播）
   kujiTicket: 10303, // 一番赏抽赏券
   kujiDeluxeTicket: 10304, // 豪华签券（240-2）

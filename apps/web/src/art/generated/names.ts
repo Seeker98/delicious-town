@@ -194,7 +194,6 @@ export const CONTENT_ART = [
   'npc-fandao',
   'npc-gary',
   'npc-guardian',
-  'npc-hiphop',
   'npc-krab',
   'npc-mayor',
   'npc-wenjie',

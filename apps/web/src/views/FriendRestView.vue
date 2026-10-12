@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import IconTag from '../components/IconTag.vue';
 import AcquireCard from '../components/acquire/AcquireCard.vue';
-import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { FriendRestDto, TableDto } from '@dt/shared';
@@ -171,7 +170,6 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
     <div v-if="rest.icons.length > 0" class="dt-friend-icons" data-testid="friend-icons">
       <IconTag v-for="i in rest.icons" :key="i.key" :title="catalog.icon(i.key)?.title ?? i.title" />
     </div>
-    <HiphopCard :rest-id="restId" class="mt-2" />
 
     <!-- 操作块：好友才有；不是好友时一个整宽“加好友” -->
     <div v-if="rest.isFriend" class="dt-do-grid mt-3" data-testid="act-bar">

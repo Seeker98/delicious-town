@@ -388,17 +388,9 @@
     "mysteryExclude": [7011, 7012],
     "exchangeMaxNum": 99
   },
-  "hiphop": {
-    "hour": 9, "closeHour": 22, "weeklyHour": 23,
-    "placeWeights": [[1, 10], [2, 10], [3, 10], [4, 10], [5, 10], [6, 10], [9, 7], [10, 5], [11, 5], [12, 5], [13, 5], [14, 5], [15, 5]],
-    "restActiveDays": 7,
-    "worthBase": 35000, "worthMin": 1.25, "worthRand": 0.8,
-    "krabRate": 0.1, "foodFactor": 1.5,
-    "coinMax": 100000000, "coinWorthDiv": 5, "coinExpDiv": 210,
-    "diamondMax": 9999, "diamondWorthNum": 10001, "diamondWorthDen": 3, "diamondExpMul": 50,
-    "expJitter": 0.1, "requireVerifiedEmail": false,
-    "weeklyCards": [60402, 60403, 60401, 60405, 60404],
-    "wages": [[60401, 20401], [60402, 20402], [60403, 20403], [60405, 20404], [60404, 20405]]
+  "jobCard": {
+    "hour": 23, "count": 3, "minGain": 200,
+    "cards": [[60401, 20401], [60402, 20402], [60403, 20403], [60404, 20405], [60405, 20404], [60406, 20406], [60407, 20407], [60408, 20408], [60409, 20409], [60410, 20410], [60411, 20411]]
   },
   "rank": { "top": 50, "cacheSeconds": 60, "powerCacheSeconds": 600 },
   "mail": { "expiresDays": 30, "listMax": 100 },

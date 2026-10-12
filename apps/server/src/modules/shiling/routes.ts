@@ -9,6 +9,7 @@ import type { ShilingService } from './service';
 export function shilingRoutes(svc: ShilingService): FastifyPluginAsync {
   return async (r) => {
     r.get('/shiling', async (req) => ok(await svc.view(restCtxOf(req))));
+    r.get('/shiling/week', async (req) => ok(await svc.week(restCtxOf(req))));
     r.post('/shiling/buy', async (req) =>
       okOp(await svc.buy(restCtxOf(req), parse(shilingBuyBody, req.body))),
     );

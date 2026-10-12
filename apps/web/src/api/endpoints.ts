@@ -28,9 +28,6 @@ import type {
   ForumReplyBody,
   ForumReplyDto,
   ForumTab,
-  HiphopSpotDto,
-  HiphopTipBody,
-  HiphopTipDto,
   DartsAimDto,
   DartsDto,
   DartsThrowDto,
@@ -49,6 +46,7 @@ import type {
   NpcKey,
   ShakeResultDto,
   TalkResultDto,
+  MayorDto,
   LeaderboardDto,
   ManualStockDto,
   TicketResultDto,
@@ -76,6 +74,7 @@ import type {
   TempleDto,
   ShilingBuyResultDto,
   ShilingDto,
+  ShilingWeekDto,
   ShilingItem,
   TrialResultDto,
   AppraiseResultDto,
@@ -496,7 +495,7 @@ export const endpoints = {
   townBroadcast: (text: string) => api.post<{ text: string }>('/api/v1/town/broadcast', { text }),
   townTalk: (npc: NpcKey) => api.post<TalkResultDto>('/api/v1/town/talk', { npc }),
   townShake: () => api.post<ShakeResultDto>('/api/v1/town/shake'),
-  townMayor: (place: number) => api.post<TalkResultDto>('/api/v1/town/mayor', { place }),
+  townMayor: (type: number) => api.post<MayorDto>('/api/v1/town/mayor', { type }),
   rank: (key: string) => api.get<LeaderboardDto>(`/api/v1/rank/${encodeURIComponent(key)}`),
   forumList: (q: { tab: ForumTab; q?: string; cursor?: string }) =>
     api.get<ForumListDto>(`/api/v1/forum/posts${qs(q)}`),
@@ -513,8 +512,6 @@ export const endpoints = {
   forumReads: (id: number) => api.get<ForumReadsDto>(`/api/v1/forum/posts/${id}/reads`),
   forumAdmin: (id: number, action: ForumAdminAction) =>
     api.post<ForumAdminDto>(`/api/v1/forum/posts/${id}/admin`, { action }),
-  hiphopSpot: (q: { place: number } | { restId: number }) => api.get<HiphopSpotDto>(`/api/v1/hiphop${qs(q)}`),
-  hiphopTip: (b: HiphopTipBody) => api.post<HiphopTipDto>('/api/v1/hiphop/tip', b),
   /** 司天罗盘、晴雨签（天气改版） */
   weatherTools: () => api.get<WeatherToolsDto>('/api/v1/world/weather/tools'),
   weatherCompass: (type: number) => api.post<WeatherToolResultDto>('/api/v1/world/weather/compass', { type }),
@@ -523,6 +520,7 @@ export const endpoints = {
     api.post<WeatherToolResultDto>('/api/v1/world/weather/lots/pick', { index }),
   /** 时令（天气改版 PR②）：天气页的时令区、时令铺、1 星说明弹窗 */
   shiling: () => api.get<ShilingDto>('/api/v1/shiling'),
+  shilingWeek: () => api.get<ShilingWeekDto>('/api/v1/shiling/week'),
   shilingBuy: (item: ShilingItem, mcId?: number) =>
     api.post<ShilingBuyResultDto>('/api/v1/shiling/buy', mcId === undefined ? { item } : { item, mcId }),
   shilingIntro: () => api.post<Record<string, never>>('/api/v1/shiling/intro', {}),

@@ -114,8 +114,6 @@ const server: Messages['server'] = {
     bigEaterFirst: "You! Quite the character, aren't you!",
     wenjie: "With Rejoice, you've clearly got more style!",
     bro13: 'If you love it, just go for it!!!',
-    mayorRight: "Thank you, I'll go find him right now and make it up to him!",
-    mayorWrong: "You think I'll believe any old place you make up?!",
   },
   takeawayFail: [
     'Got stuck in a huge traffic jam!',

@@ -5,6 +5,8 @@ import { formatNum } from '../../../utils/format';
 import fund from './fund';
 import { awardWords, n, type P, plFr } from '../../helpers';
 
+/** 天气四大类（镇长猜天气的消息用） */
+const WT = ['', 'Beau', 'Pluie', 'Neige, glace', 'Vent, sable, brume'];
 const mcNameOf = (names: Names, id: number) => names.mcName?.(id) ?? `Plat signature ${id}`;
 const seedNameOf = (names: Names, id: number) => names.seedName?.(id) ?? `Graine ${id}`;
 const holdHours = (p: P) => (p.holdHours === undefined ? 24 : n(p, 'holdHours'));
@@ -244,6 +246,10 @@ const events: Messages['events'] = {
     'hiphop.wage': (p, names) => `A touché le salaire du Garçon hip-hop (${names.goodsName(n(p, 'cardId'))})`,
     'hiphop.weekly': (p, names) =>
       `${n(p, 'rank')}e du classement hip-hop hebdomadaire, gagne ${names.goodsName(n(p, 'goodsId'))}`,
+    'jobCard.weekly': (p, names) =>
+      `${n(p, 'rank')}e du classement de saison, a tiré la carte de métier «\u202f${names.goodsName(n(p, 'goodsId'))}\u202f»`,
+    'jobCard.wage': (p, names) =>
+      `A touché le salaire d’une carte de métier (${names.goodsName(n(p, 'cardId'))})`,
     'market.manual': (p) =>
       `Réapprovisionnement manuel au marché pour ${formatNum(n(p, 'cost'))} ${plFr(formatNum(n(p, 'cost')), 'pièce', 'pièces')}`,
     'market.share': (p, names) =>
@@ -273,9 +279,13 @@ const events: Messages['events'] = {
     'weather.tool': (p, names) =>
       `A utilisé ${names.goodsName(n(p, 'goodsId'))}\u202f: ${names.weatherName?.(n(p, 'from')) ?? ''} devient ${names.weatherName?.(n(p, 'to')) ?? ''}`,
     'town.mayor': (p) =>
-      p.right
-        ? 'A bien répondu à la question du Maire Grosse Marmite'
-        : 'A mal répondu à la question du Maire Grosse Marmite',
+      p.type === undefined
+        ? p.right
+          ? 'A bien répondu à la question du Maire Grosse Marmite'
+          : 'A mal répondu à la question du Maire Grosse Marmite'
+        : p.right
+          ? `A deviné la météo du maire\u202f: ${WT[n(p, 'actual')] ?? ''}, gagne la Recommandation du Maire`
+          : `A raté la météo du maire\u202f: c’était ${WT[n(p, 'actual')] ?? ''} (pari\u202f: ${WT[n(p, 'type')] ?? ''})`,
     'town.shake': (p) =>
       `A secoué l'arbre à pièces\u202f: ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce', 'pièces')}`,
     'town.talk': () => 'A discuté avec les habitants',
