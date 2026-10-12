@@ -9,7 +9,7 @@ import { useToastStore } from '../../stores/toast';
 import LangSheet from './LangSheet.vue';
 
 /**
- * 第一次切到某种语言要动态加载翻译包：全量并行跑时 Vite 要现场编译大量文件，可能超过 10 秒（和 LangSelect 测试一样放宽）。
+ * 第一次切到某种语言要动态加载翻译包：全量并行跑时 Vite 要现场编译大量文件，可能超过 10 秒（和以前的语言下拉框测试一样放宽）。
  * 等待放宽到 40 秒，用例超时放宽到 60 秒
  */
 const LOAD = { timeout: 40_000 };

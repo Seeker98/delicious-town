@@ -15,13 +15,13 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
 </script>
 
 <template>
-  <div v-if="errors['def.rules']" class="text-danger small" data-testid="err-def.rules">
+  <div v-if="errors['def.rules']" class="dt-adm-err" data-testid="err-def.rules">
     {{ errors['def.rules'] }}
   </div>
   <template v-for="(r, i) in modelValue" :key="`r${i}`">
     <div class="d-flex gap-2 align-items-center py-1">
       <select
-        class="form-select form-select-sm w-auto"
+        class="dt-adm-in"
         :value="r.key"
         @change="setRule(i, { key: ($event.target as HTMLSelectElement).value })"
       >
@@ -31,7 +31,7 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
       <input
         type="number"
         min="1"
-        class="form-control form-control-sm"
+        class="dt-adm-in"
         style="width: 5rem"
         :value="r.points"
         :data-testid="`rule-points-${i}`"
@@ -41,7 +41,7 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
       <input
         type="number"
         min="1"
-        class="form-control form-control-sm"
+        class="dt-adm-in"
         style="width: 6rem"
         :value="r.dailyCap"
         @input="setRule(i, { dailyCap: num($event) })"
@@ -49,7 +49,7 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
       分
       <button
         type="button"
-        class="btn btn-sm btn-link text-danger"
+        class="dt-adm-btn is-t is-sm is-danger"
         :disabled="modelValue.length <= 1"
         @click="
           emit(
@@ -64,7 +64,7 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
     <div
       v-for="[k, m] in errsUnder(errors, `def.rules.${i}.`)"
       :key="k"
-      class="text-danger small"
+      class="dt-adm-err"
       :data-testid="`err-${k}`"
     >
       {{ m }}
@@ -72,7 +72,7 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
   </template>
   <button
     type="button"
-    class="btn btn-sm btn-outline-primary mb-3"
+    class="dt-adm-btn is-sp is-sm dt-adm-mb"
     :disabled="modelValue.length >= 20"
     @click="emit('update:modelValue', [...modelValue, { key: 'signin', points: 10, dailyCap: 10 }])"
   >

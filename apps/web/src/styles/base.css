@@ -1,5 +1,7 @@
 /*
- * Bootstrap 接管（界面改版设计 §2.8）：Bootstrap 只提供排版和工具类，长相全部读我们的令牌。
+ * Bootstrap 接管（界面改版设计 §2.8）：Bootstrap 只引入重置、栅格和工具类（P12 起，见 main.ts），
+ * 按钮、输入框、勾选框、标签页、徽章、提示块、表格、进度条、弹窗这些组件由这里自己写，长相全部读我们的令牌。
+ * 组件规则沿用 --bs-btn-* 这类变量名：页面里按变量覆盖的写法照常生效，菜园等没改版的页面长相不变。
  * 选择器带 [data-theme]：子元素切换模式时这些映射也跟着重新解析（变量引用在声明处就算好，不随继承更新）。
  */
 :root,
@@ -63,6 +65,23 @@
 .badge {
   --bs-badge-font-weight: 500;
   --bs-badge-border-radius: var(--dt-radius-xs);
+  display: inline-block;
+  padding: 0.35em 0.65em;
+  font-size: 0.75em;
+  font-weight: var(--bs-badge-font-weight);
+  line-height: 1;
+  color: var(--dt-badge-ink);
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: var(--bs-badge-border-radius);
+}
+.badge:empty {
+  display: none;
+}
+.btn .badge {
+  position: relative;
+  top: -1px;
 }
 .badge.text-bg-primary,
 .badge:not(.rounded-pill).bg-primary {
@@ -105,10 +124,19 @@
 }
 /* 提示块：浅底深字、无边框；info 不用青色（设计 §2.1） */
 .alert {
+  --bs-alert-bg: transparent;
+  --bs-alert-color: inherit;
   --bs-alert-border-radius: var(--dt-radius-sm);
   --bs-alert-padding-x: 12px;
   --bs-alert-padding-y: 6px;
   --bs-alert-border-color: transparent;
+  position: relative;
+  padding: var(--bs-alert-padding-y) var(--bs-alert-padding-x);
+  margin-bottom: 1rem;
+  color: var(--bs-alert-color);
+  background-color: var(--bs-alert-bg);
+  border: 1px solid var(--bs-alert-border-color);
+  border-radius: var(--bs-alert-border-radius);
 }
 .alert-danger {
   --bs-alert-bg: var(--dt-soft-danger);
@@ -130,79 +158,148 @@
   --bs-alert-color: var(--dt-ink-primary);
   --bs-alert-link-color: var(--dt-ink-primary);
 }
-.alert-secondary {
-  --bs-alert-bg: var(--dt-soft-secondary);
-  --bs-alert-color: var(--dt-ink-secondary);
-  --bs-alert-link-color: var(--dt-ink-secondary);
-}
 /* 进度条：轨道浅紫、填充中等亮度（问题记录 212 的规则沿用） */
 .progress {
+  --bs-progress-height: 1rem;
   --bs-progress-bg: var(--dt-primary-soft);
   --bs-progress-border-radius: 999px;
   --bs-progress-bar-bg: var(--dt-primary);
+  display: flex;
+  height: var(--bs-progress-height);
+  overflow: hidden;
+  font-size: 0.75rem;
+  background-color: var(--bs-progress-bg);
+  border-radius: var(--bs-progress-border-radius);
 }
-.progress-bar.bg-primary {
-  background-color: var(--dt-fill-primary) !important;
-}
-.progress-bar.bg-success {
-  background-color: var(--dt-fill-success) !important;
-}
-.progress-bar.bg-danger {
-  background-color: var(--dt-fill-danger) !important;
-}
-.progress-bar.bg-warning {
-  background-color: var(--dt-fill-warning) !important;
-}
-.progress-bar.bg-info {
-  background-color: var(--dt-fill-info) !important;
-}
-.progress-bar.bg-secondary {
-  background-color: var(--dt-fill-secondary) !important;
+.progress-bar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  color: var(--dt-badge-ink);
+  text-align: center;
+  white-space: nowrap;
+  background-color: var(--bs-progress-bar-bg);
+  transition: width 0.6s ease;
 }
 /* 表格：细线、表头小号次要色 */
 .table {
   --bs-table-bg: transparent;
   --bs-table-color: var(--dt-text);
   --bs-table-border-color: var(--dt-line);
-  --bs-table-striped-bg: var(--dt-surface-2);
-  --bs-table-hover-bg: var(--dt-surface-2);
-  --bs-table-active-bg: var(--dt-primary-soft);
+  width: 100%;
+  margin-bottom: 1rem;
+  vertical-align: top;
+  border-color: var(--bs-table-border-color);
+}
+.table > :not(caption) > * > * {
+  padding: 0.5rem;
+  color: var(--bs-table-color);
+  background-color: var(--bs-table-bg);
+  border-bottom-width: 1px;
+}
+.table > tbody {
+  vertical-align: inherit;
+}
+.table > thead {
+  vertical-align: bottom;
+}
+.table-sm > :not(caption) > * > * {
+  padding: 0.25rem;
 }
 .table > thead th {
   color: var(--dt-muted);
   font-weight: 500;
   font-size: 12px;
 }
-.table-success {
-  --bs-table-bg: var(--dt-soft-success);
-  --bs-table-color: var(--dt-ink-success);
-}
-.table-danger {
-  --bs-table-bg: var(--dt-soft-danger);
-  --bs-table-color: var(--dt-ink-danger);
-}
-/* 卡片、列表组、弹窗 */
-.card {
-  --bs-card-bg: var(--dt-surface);
-  --bs-card-border-color: var(--dt-line);
-  --bs-card-border-radius: var(--dt-radius-md);
-}
-.list-group {
-  --bs-list-group-bg: var(--dt-surface);
-  --bs-list-group-color: var(--dt-text);
-  --bs-list-group-border-color: var(--dt-line);
-  --bs-list-group-action-hover-bg: var(--dt-surface-2);
-  --bs-list-group-action-color: var(--dt-text);
-}
+/* 弹窗：只有游戏里的公告弹窗在用（AnnouncePopup），居中、手机两边留 8px */
 .modal {
-  --bs-modal-bg: var(--dt-surface);
-  --bs-modal-border-color: var(--dt-line);
-  --bs-modal-border-radius: var(--dt-radius-md);
-  --bs-modal-box-shadow: var(--dt-shadow-float);
+  --bs-modal-margin: 0.5rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1055;
+  display: none;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  outline: 0;
+}
+.modal-dialog {
+  position: relative;
+  width: auto;
+  margin: var(--bs-modal-margin);
+  pointer-events: none;
+}
+.modal-dialog-centered {
+  display: flex;
+  align-items: center;
+  min-height: calc(100% - var(--bs-modal-margin) * 2);
+}
+.modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  color: var(--dt-text);
+  pointer-events: auto;
+  background-color: var(--dt-surface);
+  background-clip: padding-box;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-md);
+  outline: 0;
+}
+.modal-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--dt-line);
+  border-top-left-radius: calc(var(--dt-radius-md) - 1px);
+  border-top-right-radius: calc(var(--dt-radius-md) - 1px);
+}
+.modal-title {
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+.modal-body {
+  position: relative;
+  flex: 1 1 auto;
+  padding: 1rem;
+}
+.modal-footer {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0.75rem;
+  border-top: 1px solid var(--dt-line);
+  border-bottom-right-radius: calc(var(--dt-radius-md) - 1px);
+  border-bottom-left-radius: calc(var(--dt-radius-md) - 1px);
+}
+.modal-footer > * {
+  margin: 0.25rem;
 }
 .modal-backdrop {
-  --bs-backdrop-bg: var(--dt-scrim);
-  --bs-backdrop-opacity: 1;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1050;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--dt-scrim);
+}
+@media (min-width: 576px) {
+  .modal {
+    --bs-modal-margin: 1.75rem;
+  }
+  .modal-dialog {
+    max-width: 500px;
+    margin-right: auto;
+    margin-left: auto;
+  }
 }
 body {
   background: var(--dt-bg);
@@ -210,6 +307,10 @@ body {
   font-family: var(--dt-font-sans);
   /* 数字等宽：数量、价格、排行上下对齐（设计 §2.3） */
   font-variant-numeric: tabular-nums;
+}
+/* 小一号的字（原来 Bootstrap 的 .small） */
+.small {
+  font-size: 0.875em;
 }
 /* ---------- 控件（设计 §2.6、§2.7） ---------- */
 :focus-visible {
@@ -222,9 +323,67 @@ body {
   --bs-btn-font-weight: 500;
   --bs-btn-disabled-opacity: 1;
   --bs-btn-focus-box-shadow: 0 0 0 2px var(--dt-surface), 0 0 0 4px var(--dt-primary);
+  --bs-btn-padding-x: 0.75rem;
+  --bs-btn-padding-y: 0.375rem;
+  --bs-btn-font-size: 1rem;
+  --bs-btn-color: var(--dt-text);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: transparent;
+  --bs-btn-hover-border-color: transparent;
+  display: inline-block;
+  padding: var(--bs-btn-padding-y) var(--bs-btn-padding-x);
+  font-size: var(--bs-btn-font-size);
+  font-weight: var(--bs-btn-font-weight);
+  line-height: 1.5;
+  color: var(--bs-btn-color);
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid var(--bs-btn-border-color);
+  border-radius: var(--bs-btn-border-radius);
+  background-color: var(--bs-btn-bg);
+}
+.btn:hover {
+  color: var(--bs-btn-hover-color);
+  background-color: var(--bs-btn-hover-bg);
+  border-color: var(--bs-btn-hover-border-color);
+}
+.btn:focus-visible {
+  color: var(--bs-btn-hover-color);
+  background-color: var(--bs-btn-hover-bg);
+  border-color: var(--bs-btn-hover-border-color);
+  outline: 0;
+  box-shadow: var(--bs-btn-focus-box-shadow);
+}
+/* 按下、选中（.active）：选择器的权重和原来 Bootstrap 的一样，页面里的覆盖规则照常生效 */
+:not(.btn-check) + .btn:active,
+.btn:first-child:active,
+.btn.active {
+  color: var(--bs-btn-active-color);
+  background-color: var(--bs-btn-active-bg);
+  border-color: var(--bs-btn-active-border-color);
+}
+:not(.btn-check) + .btn:active:focus-visible,
+.btn:first-child:active:focus-visible,
+.btn.active:focus-visible {
+  box-shadow: var(--bs-btn-focus-box-shadow);
+}
+.btn:disabled,
+.btn.disabled,
+fieldset:disabled .btn {
+  color: var(--bs-btn-disabled-color);
+  pointer-events: none;
+  background-color: var(--bs-btn-disabled-bg);
+  border-color: var(--bs-btn-disabled-border-color);
+  opacity: var(--bs-btn-disabled-opacity);
 }
 .btn-sm {
   --bs-btn-border-radius: var(--dt-radius-pill);
+  --bs-btn-padding-y: 0.25rem;
+  --bs-btn-padding-x: 0.5rem;
+  --bs-btn-font-size: 0.875rem;
 }
 .btn-primary {
   --bs-btn-color: var(--dt-on-primary);
@@ -275,10 +434,21 @@ body {
 }
 .btn-link {
   --bs-btn-color: var(--dt-primary-ink);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: transparent;
   --bs-btn-hover-color: var(--dt-primary-ink-hover);
+  --bs-btn-hover-border-color: transparent;
   --bs-btn-active-color: var(--dt-primary-ink-hover);
+  --bs-btn-active-border-color: transparent;
   --bs-btn-disabled-color: var(--dt-disabled-text);
+  --bs-btn-disabled-border-color: transparent;
   text-decoration: none;
+}
+.btn-link:focus-visible {
+  color: var(--bs-btn-color);
+}
+.btn-link:hover {
+  color: var(--bs-btn-hover-color);
 }
 .btn-outline-danger {
   --bs-btn-color: var(--dt-danger);
@@ -382,59 +552,202 @@ body {
   --bs-btn-active-border-color: var(--dt-text);
 }
 /* 输入框、下拉框 */
-.form-control,
-.form-select {
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
   color: var(--dt-text);
+  appearance: none;
   background-color: var(--dt-surface-2);
-  border-color: var(--dt-line);
+  background-clip: padding-box;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-sm);
+  transition:
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
+textarea.form-control {
+  min-height: calc(1.5em + 0.75rem + 2px);
+}
+.form-select {
+  display: block;
+  width: 100%;
+  padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--dt-text);
+  appearance: none;
+  background-color: var(--dt-surface-2);
+  --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  background-image: var(--bs-form-select-bg-img);
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-sm);
+  transition:
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
+.form-control-sm {
+  min-height: calc(1.5em + 0.5rem + 2px);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
   border-radius: var(--dt-radius-sm);
 }
-.form-control-sm,
+textarea.form-control-sm {
+  min-height: calc(1.5em + 0.5rem + 2px);
+}
 .form-select-sm {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-left: 0.5rem;
+  font-size: 0.875rem;
   border-radius: var(--dt-radius-sm);
 }
 .form-control::placeholder {
   color: var(--dt-muted);
+  opacity: 1;
 }
 .form-control:focus,
 .form-select:focus {
   color: var(--dt-text);
   background-color: var(--dt-surface);
   border-color: var(--dt-primary);
+  outline: 0;
   box-shadow: 0 0 0 3px rgba(var(--dt-primary-rgb), 0.2);
 }
 .form-control:disabled,
 .form-select:disabled {
   color: var(--dt-disabled-text);
   background-color: var(--dt-disabled-bg);
+  opacity: 1;
 }
 /* 勾选框、开关 */
+.form-check {
+  display: block;
+  min-height: 1.5rem;
+  padding-left: 1.5em;
+  margin-bottom: 0.125rem;
+}
+.form-check .form-check-input {
+  float: left;
+  margin-left: -1.5em;
+}
 .form-check-input {
+  flex-shrink: 0;
+  width: 1em;
+  height: 1em;
+  margin-top: 0.25em;
+  vertical-align: top;
+  appearance: none;
   background-color: var(--dt-surface-2);
-  border-color: var(--dt-line-strong);
+  background-image: var(--bs-form-check-bg-image);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  border: 1px solid var(--dt-line-strong);
+  print-color-adjust: exact;
+}
+.form-check-input[type='checkbox'] {
+  border-radius: 0.25em;
+}
+.form-check-input[type='radio'] {
+  border-radius: 50%;
+}
+.form-check-input:active {
+  filter: brightness(90%);
 }
 .form-check-input:checked {
   background-color: var(--dt-primary);
   border-color: var(--dt-primary);
 }
+.form-check-input:checked[type='checkbox'] {
+  --bs-form-check-bg-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+}
+.form-check-input:checked[type='radio'] {
+  --bs-form-check-bg-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23fff'/%3e%3c/svg%3e");
+}
 .form-check-input:focus {
   border-color: var(--dt-primary);
+  outline: 0;
   box-shadow: 0 0 0 3px rgba(var(--dt-primary-rgb), 0.2);
+}
+.form-check-input:disabled {
+  pointer-events: none;
+  filter: none;
+  opacity: 0.5;
+}
+.form-check-input:disabled ~ .form-check-label {
+  cursor: default;
+  opacity: 0.5;
+}
+.form-switch {
+  padding-left: 2.5em;
+}
+.form-switch .form-check-input {
+  --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%280, 0, 0, 0.25%29'/%3e%3c/svg%3e");
+  width: 2em;
+  margin-left: -2.5em;
+  background-image: var(--bs-form-switch-bg);
+  background-position: left center;
+  border-radius: 2em;
+  transition: background-position 0.15s ease-in-out;
 }
 /* 开关聚焦时的圆点：Bootstrap 写死浅蓝，换成紫水晶 400 */
 .form-switch .form-check-input:focus:not(:checked) {
   --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23a57be2'/%3e%3c/svg%3e");
+}
+.form-switch .form-check-input:checked {
+  background-position: right center;
+  --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+}
+/* 深色模式（theme.ts 同时写 data-bs-theme）：下拉箭头、没打开的开关圆点用浅色，和原来 Bootstrap 的一样 */
+[data-bs-theme='dark'] .form-select {
+  --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23dee2e6' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+[data-bs-theme='dark'] .form-switch .form-check-input:not(:checked):not(:focus) {
+  --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%28255, 255, 255, 0.25%29'/%3e%3c/svg%3e");
+}
+/* 标签页的横排（游戏里的 DtTabs、菜园）：横排、去掉列表样式 */
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+}
+.nav-link {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: var(--dt-primary-ink);
+  text-decoration: none;
+  background: none;
+  border: 0;
+  transition:
+    color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out;
+}
+.nav-link:hover,
+.nav-link:focus {
+  color: var(--dt-primary-ink-hover);
+}
+.nav-link.disabled,
+.nav-link:disabled {
+  color: var(--dt-muted);
+  pointer-events: none;
+  cursor: default;
 }
 /*
  * 一级标签页：下划线式，不换行、放不下时横向滑动（问题记录 100）；
  * 选中的下划线是标签栏的 ::after，位置由 utils/tabsScroll.ts 写进变量
  */
 .nav-tabs {
-  --bs-nav-tabs-border-color: var(--dt-line);
-  --bs-nav-tabs-link-active-bg: transparent;
-  --bs-nav-tabs-link-active-color: var(--dt-text);
-  --bs-nav-tabs-link-active-border-color: transparent;
-  --bs-nav-tabs-link-hover-border-color: transparent;
   position: relative;
   flex-wrap: nowrap;
   overflow-x: auto;
@@ -448,6 +761,7 @@ body {
 }
 .nav-tabs .nav-link {
   border: 0;
+  border-radius: 0.375rem 0.375rem 0 0;
   background: none;
   color: var(--dt-muted);
   font-weight: 500;
@@ -457,6 +771,7 @@ body {
 .nav-tabs .nav-link.active {
   color: var(--dt-text);
   font-weight: 600;
+  border-color: transparent;
 }
 /* 键盘焦点画在标签里面：画在外面会被横向滑动的容器裁掉（backlog #116 的规则沿用） */
 .nav-tabs .nav-link:focus-visible {
@@ -499,6 +814,16 @@ body {
   cursor: not-allowed;
 }
 /* 动效（设计 §2.5）：只动 transform、颜色；系统要求减少动态时不缩放、下划线不滑 */
+/* 系统要求减少动态：输入框、标签、进度条、开关不做过渡（原来 Bootstrap 的规则） */
+@media (prefers-reduced-motion: reduce) {
+  .form-control,
+  .form-select,
+  .nav-link,
+  .progress-bar,
+  .form-switch .form-check-input {
+    transition: none;
+  }
+}
 @media (prefers-reduced-motion: no-preference) {
   .btn,
   .dt-tap,

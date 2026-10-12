@@ -35,7 +35,6 @@ describe('AdminShardHistoryView', () => {
       },
     ]);
     vi.mocked(adminApi.rollback).mockResolvedValue({ version: 3 });
-    const prompt = vi.spyOn(window, 'prompt').mockReturnValue('回到加速');
     const router = createRouter({
       history: createMemoryHistory(),
       routes: [
@@ -44,13 +43,18 @@ describe('AdminShardHistoryView', () => {
       ],
     });
     await router.push('/admin/shards/1/history');
-    const w = mount({ template: '<RouterView />' }, { global: { plugins: [router] } });
+    const w = mount(
+      { template: '<RouterView />' },
+      { global: { plugins: [router], stubs: { teleport: true } } },
+    );
     await flushPromises();
     expect(w.text()).toContain('tuning.settlement.expMultiplier');
     expect(w.find('[data-testid="rollback-2"]').exists()).toBe(false);
     await w.find('[data-testid="rollback-1"]').trigger('click');
+    // 面板里写说明再确认（界面改版 P12，原来是浏览器输入框）
+    await w.find('[data-testid="rollback-note"]').setValue('回到加速');
+    await w.find('[data-testid="rollback-ok"]').trigger('click');
     await flushPromises();
     expect(adminApi.rollback).toHaveBeenCalledWith(1, { version: 1, note: '回到加速' });
-    prompt.mockRestore();
   });
 });

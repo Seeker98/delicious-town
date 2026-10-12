@@ -104,7 +104,7 @@ describe('AdminShardView', () => {
     const gift = w.find(field('restaurant.giftFoods'));
     await gift.setValue('[{');
     await gift.trigger('change');
-    expect(gift.classes()).toContain('is-invalid');
+    expect(gift.classes()).toContain('is-bad');
     expect((gift.element as HTMLTextAreaElement).value).toBe('[{');
     await w.find('[data-testid="save-note"]').setValue('x');
     expect(w.find('[data-testid="save-settings"]').attributes('disabled')).toBeDefined();

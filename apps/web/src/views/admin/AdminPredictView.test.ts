@@ -30,7 +30,7 @@ const row: PredictAdminRow = {
 async function mountAs(role: 'mod' | 'admin') {
   useAdminStore().me = { accountId: 1, username: 'boss', role };
   useAdminStore().shardId = 3;
-  const w = mount(AdminPredictView);
+  const w = mount(AdminPredictView, { global: { stubs: { teleport: true } } });
   await flushPromises();
   return w;
 }
@@ -43,8 +43,6 @@ describe('后台预测页（238-1 设计 §7.3）', () => {
     vi.mocked(adminApi.predictCreate).mockResolvedValue({ id: 8 });
     vi.mocked(adminApi.predictResolve).mockResolvedValue({ ok: true });
     vi.mocked(adminApi.predictVoid).mockResolvedValue({ ok: true });
-    // 判定、作废改用输入框确认，可以顺便填备注（backlog 238-1）
-    vi.spyOn(window, 'prompt').mockReturnValue('');
   });
 
   it('按区服读取；显示概率、成交、系统收支', async () => {
@@ -62,25 +60,30 @@ describe('后台预测页（238-1 设计 §7.3）', () => {
     expect(m.find('[data-testid="apd-yes-7"]').exists()).toBe(false);
     const a = await mountAs('admin');
     await a.get('[data-testid="apd-yes-7"]').trigger('click');
+    await a.get('[data-testid="apd-confirm"]').trigger('click');
     await flushPromises();
     expect(adminApi.predictResolve).toHaveBeenCalledWith(7, true, '');
     expect(adminApi.predictList).toHaveBeenCalledTimes(3);
   });
 
-  it('判定、作废可以填备注；取消就不提交（backlog 238-1）', async () => {
+  it('判定、作废在面板里确认，可以填备注；取消就不提交（backlog 238-1，界面改版 P12）', async () => {
     const a = await mountAs('admin');
-    vi.mocked(window.prompt).mockReturnValueOnce(null);
     await a.get('[data-testid="apd-yes-7"]').trigger('click');
-    await flushPromises();
-    expect(adminApi.predictResolve).not.toHaveBeenCalled();
-    vi.mocked(window.prompt).mockReturnValueOnce(' 官方公告已发布 ');
-    await a.get('[data-testid="apd-yes-7"]').trigger('click');
+    await a.get('[data-testid="apd-note-input"]').setValue(' 官方公告已发布 ');
+    await a.get('[data-testid="apd-confirm"]').trigger('click');
     await flushPromises();
     expect(adminApi.predictResolve).toHaveBeenCalledWith(7, true, '官方公告已发布');
-    vi.mocked(window.prompt).mockReturnValueOnce('题目有歧义');
     await a.get('[data-testid="apd-void-7"]').trigger('click');
+    expect(a.get('[data-testid="apd-note-input"]').element).toHaveProperty('value', '');
+    await a.get('[data-testid="apd-note-input"]').setValue('题目有歧义');
+    await a.get('[data-testid="apd-confirm"]').trigger('click');
     await flushPromises();
     expect(adminApi.predictVoid).toHaveBeenCalledWith(7, '题目有歧义');
+    vi.mocked(adminApi.predictResolve).mockClear();
+    await a.get('[data-testid="apd-no-7"]').trigger('click');
+    expect(a.find('[data-testid="apd-confirm"]').exists()).toBe(true);
+    await a.vm.$nextTick();
+    expect(adminApi.predictResolve).not.toHaveBeenCalled();
   });
 
   it('系统出的题出题人显示"系统"，显示判定依据', async () => {

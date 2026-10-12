@@ -31,7 +31,7 @@ html {
 }
 
 .dt-app-wide {
-  max-width: 1200px;
+  max-width: none;
 }
 /* ---------- 顶栏（界面改版 P2a，设计 §4.2）：返回、标题、时间、邮件、“我” ---------- */
 .dt-header {
@@ -119,6 +119,10 @@ html {
 }
 .dt-main {
   padding: 8px;
+}
+/* 后台（界面改版 P12）：页面自己排边距 */
+.dt-main-wide {
+  padding: 0;
 }
 /* 吉祥物、好友卡片名字前的图标（界面改版 P4：原来是原版图包的头像位置） */
 .dt-main-nav {
@@ -225,49 +229,7 @@ html {
   background: var(--dt-surface-2);
   font-size: 12px;
 }
-/* 放在大一号文字前的标签（问题记录 388：街道类型和加成说明）：按基线对齐时小字整体偏下约 1px，
-   改成顶端和旁边文字的字面顶端对齐，两者中线重合 */
-.dt-tag-lead {
-  vertical-align: text-top;
-}
-/* 列表里的分类小标题（问题记录 194）：浅色小字加细线，不和加粗的条目名抢层级 */
-.dt-group-label {
-  margin: 12px 0 2px;
-  padding-bottom: 2px;
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--dt-muted);
-  border-bottom: 1px solid var(--dt-line);
-}
-/* 区服数值页的功能开关（问题记录 184）：手机一列，宽屏两列，说明在名字下面 */
-.dt-feature-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.5rem 1rem;
-}
-@media (min-width: 576px) {
-  .dt-feature-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-.dt-feature {
-  min-width: 0;
-}
-/* 任务页的活跃项：进行中白底橙条、做满浅绿、星级不够灰底（问题记录：灰色黑色分不清） */
-/* 店铺页的厨具：部位一列按最长的部位名定宽，名字一列占满、没有空格的长名字也折行，强化等级靠右（问题记录 323） */
-.dt-equip-grid {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr) max-content;
-  column-gap: 0.75rem;
-  row-gap: 0.25rem;
-  align-items: baseline;
-}
-.dt-equip-row {
-  display: contents;
-}
-.dt-equip-name {
-  overflow-wrap: anywhere;
-}
+
 /* 食谱列表的紧凑卡片（问题记录：信息密度低） */
 /* 食谱列表的一行（界面改版 P4：卡片里的行，细线分隔） */
 .dt-cb {
@@ -283,18 +245,8 @@ html {
 .dt-cb-foods {
   font-size: 12px;
 }
-.dt-btn-xs {
-  padding: 1px 8px;
-  font-size: 12px;
-  flex-shrink: 0;
-}
 /* 橱柜方块：统一两行（问题记录：方块高度不一） */
-/* 橱柜格子（界面改版 P4）：4 列，上面食材图，下面名字和数量；选中紫边浅紫底 */
-.dt-tile-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 4px;
-}
+
 .dt-tile {
   display: flex;
   flex-direction: column;
@@ -316,26 +268,6 @@ html {
   border-color: var(--dt-primary);
   background: var(--dt-primary-soft);
 }
-.dt-tile-art {
-  position: relative;
-  line-height: 0;
-}
-.dt-tile-lock {
-  position: absolute;
-  right: -6px;
-  bottom: -2px;
-  font-size: 11px;
-  line-height: 1;
-  color: var(--dt-muted);
-}
-.dt-tile-num {
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-.dt-tile-sub {
-  font-size: 11px;
-  min-height: 1.3em;
-}
 /* 区块标题统一：加粗、左侧色条（问题记录：首页标题比内容小、不醒目）；上边距 16 → 12（问题记录 439） */
 .dt-section {
   margin-top: 12px;
@@ -344,12 +276,7 @@ html {
   font-size: 15px;
   font-weight: 600;
 }
-/* 首页快捷入口 */
-.dt-quick {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 4px;
-}
+
 /* 首页设施格子：一行 4 个、小一号字 */
 .dt-slot {
   font-size: 12px;
@@ -392,32 +319,13 @@ html {
     padding-right: 0.5rem;
   }
 }
-/*
- * 页面标题在顶栏（界面改版 P2a）；原来标题行右侧的东西（钱包、全部领取、链接）单独一行靠右
- */
-.dt-page-meta {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-  margin: 0 0 6px;
-  font-size: 13px;
-}
+
 /* h5 只剩登录、注册等卡片标题和菜园页在用（问题记录 278 的规格） */
 h5 {
   font-size: 18px;
   font-weight: 600;
 }
-/* 首页今日待办（问题记录 280）：一行一件事，右边是操作；行高 36 → 32（问题记录 439） */
-.dt-todo-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 32px;
-  padding: 2px 0;
-  border-top: 1px solid var(--dt-line);
-}
+
 /*
  * 文字链接统一（问题记录 445）：都是品牌色、没有下划线。
  * .dt-go 去别的页面，末尾由样式加一个 ›（读屏不读）；文案里不再自己写箭头。
@@ -492,33 +400,7 @@ a:not([class]):focus-visible {
 details.dt-card > summary {
   cursor: pointer;
 }
-/* 交易所食材列表：有人在卖的绿框；卖 N / 收 N 小标（问题记录 282） */
-.btn.dt-on-sale:not(.btn-primary) {
-  border-color: var(--dt-success);
-}
-.dt-sale-tag {
-  display: inline-block;
-  padding: 0 4px;
-  border-radius: 4px;
-  font-size: 11px;
-  line-height: 16px;
-  background: var(--dt-soft-success);
-  color: var(--dt-ink-success);
-}
-.dt-buy-tag {
-  display: inline-block;
-  padding: 0 4px;
-  border-radius: 4px;
-  font-size: 11px;
-  line-height: 16px;
-  background: var(--dt-soft-primary);
-  color: var(--dt-ink-primary);
-}
-/* 卡片标题：和正文同字号、粗 600（问题记录 278：卡片里的 <b> 继承 16px 显得粗大） */
-.dt-card-title {
-  font-size: 14px;
-  font-weight: 600;
-}
+
 .dt-meta {
   font-size: 12px;
   color: var(--dt-muted);
@@ -582,13 +464,7 @@ details.dt-card > summary {
   gap: 4px;
   flex-shrink: 0;
 }
-.dt-qty {
-  width: 64px;
-}
-/* 数量框位置上的一行字（“限拥有 1 个”）：至少和数量框一样宽，不折行（问题记录 489） */
-.dt-qty-text {
-  min-width: 64px;
-}
+
 /* 数量步进器（界面改版 P3，设计 §5 第 6 条）：− 数字 +，胶囊外框 */
 .dt-stepper {
   display: inline-flex;
@@ -702,45 +578,20 @@ details.dt-card > summary {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-/* 橱柜方块里的食材名：万能食材的等级在名字末尾，最多三行（问题记录 138、100；法文“Ingrédient universel niveau 1”两行放不下） */
-.dt-tile-name {
-  overflow-wrap: anywhere;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-/* 品牌浅底的提示块（一番赏月度主题等），代替 Bootstrap 的青色 alert-info */
-.dt-note {
-  background: var(--dt-primary-soft);
-  border: 1px solid var(--dt-line);
-  border-radius: var(--dt-radius-sm);
-  padding: 4px 12px;
-}
+
 .dt-empty {
   text-align: center;
   color: var(--dt-muted);
   font-size: 13px;
   padding: 12px 0;
 }
-/* 两列按钮网格（雷神锤的四个天气类型） */
-.dt-grid2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4px;
-}
-.dt-span2 {
-  grid-column: span 2;
-}
+
 /* ---------- 嘻哈男孩、排行（子项目 4E-2） ---------- */
 
 /* ---------- 论坛（子项目 4E-3） ---------- */
 
 /* 顶栏邮箱未读数（子项目 6A） */
-/* 首页经验条（问题记录 212）：柔和的橙色，不再是亮黄色大块 */
-.dt-exp-bar {
-  background-color: var(--dt-fill-primary);
-}
+
 /* 顶栏邮箱未读数（问题记录 200）：缩小贴在图标右上角 */
 .dt-mail-badge {
   font-size: 11px;
@@ -796,13 +647,6 @@ details.dt-card > summary {
   color: var(--dt-ink-success);
 }
 
-/* 活动条（问题记录 226）：手机上横向滑动，宽屏自动换行 */
-.dt-act-strip {
-  display: flex;
-  gap: 0.5rem;
-  overflow-x: auto;
-  padding-bottom: 0.25rem;
-}
 .dt-act-tab {
   flex: 0 0 auto;
   max-width: 15rem;
@@ -812,12 +656,6 @@ details.dt-card > summary {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-@media (min-width: 768px) {
-  .dt-act-strip {
-    flex-wrap: wrap;
-    overflow-x: visible;
-  }
 }
 /* ---------- 图形（界面改版设计 §3） ---------- */
 .dt-art {
@@ -1145,76 +983,9 @@ details.dt-card > summary {
   margin: -6px -10px 6px;
   border-radius: var(--dt-radius-md) var(--dt-radius-md) 0 0;
 }
-.dt-hero-sub {
-  font-size: 12px;
-  color: var(--dt-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-/* 停业、称号一行放不下就藏起来，不换行（终审 I4） */
-.dt-hero-tags {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  white-space: nowrap;
-  overflow: hidden;
-}
-.dt-hero-tags > * {
-  flex-shrink: 0;
-}
-.dt-hero-tags > [data-testid='my-icons'] {
-  flex-wrap: nowrap;
-  flex-shrink: 1;
-  min-width: 0;
-  overflow: hidden;
-}
-.dt-hero-main {
-  font-size: 13px;
-}
-.dt-hero-main b {
-  font-size: 20px;
-}
-.dt-res-ico .dt-art,
-.dt-sec-art,
-.dt-res-grid .dt-art,
-.dt-card-title .dt-art {
-  vertical-align: -3px;
-}
-/* 资源图标和数字之间的间距（问题记录 298：不靠空格，模板折行时空格会被吞掉） */
-.dt-res-ico {
-  margin-right: 4px;
-}
+
 /* ---------- 餐厅：键值两组一排、数字表格、餐桌格子（界面改版 P3） ---------- */
-/* 键值成对排（餐厅信息的属性、容量）：放得下两列就两列，名字长（法文）自动折行；数值右对齐等宽 */
-.dt-kv-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 160px), 1fr));
-  column-gap: 16px;
-  margin: 0;
-}
-.dt-kv-pair {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 32px;
-  border-bottom: 1px solid var(--dt-line);
-}
-.dt-kv-pair > dt {
-  flex: 1;
-  min-width: 0;
-  font-weight: normal;
-  color: var(--dt-muted);
-  overflow-wrap: anywhere;
-}
-.dt-kv-pair > dd {
-  margin: 0;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-.dt-num-table td {
-  font-variant-numeric: tabular-nums;
-}
+
 .dt-table-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1411,16 +1182,7 @@ details.dt-card > summary {
 .dt-cbi-name > .dt-tag {
   vertical-align: 3px;
 }
-/* 名字一行：名字按字折行，右边的小字（限购）放不下时换到下一行，不压在名字上（终审 I1） */
-.dt-name-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  column-gap: 4px;
-}
-.dt-name-row-name {
-  overflow-wrap: anywhere;
-}
+
 /* 等级环（界面改版 P5）：外圈经验进度，中间等级 */
 .dt-level-ring {
   position: relative;
@@ -1745,14 +1507,6 @@ details.dt-card > summary {
   flex-shrink: 0;
   font-size: 13px;
 }
-.dt-block-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 6px;
-  padding: 0 2px;
-  font-size: 13px;
-}
 /* 三个统计块一排 */
 .dt-stat-grid {
   display: grid;
@@ -1764,10 +1518,7 @@ details.dt-card > summary {
   padding: 0;
   overflow: hidden;
 }
-/* 整行不可点、右边自己有链接的行：不再画 › */
-.dt-nav-row-static::after {
-  content: none;
-}
+
 /* 一行（DtRow，界面改版 P5 返工）：图标托盘、标题、灰色副行，右边值或操作；有链接时整行可点、右边 › */
 .dt-row {
   display: flex;
@@ -4401,12 +4152,7 @@ button.dt-row {
   min-height: 48px;
   border-radius: var(--dt-radius-sm);
 }
-/* 好友餐厅页的头像图标（P10 再改） */
-.dt-mascot-icon {
-  font-size: 22px;
-  line-height: 1;
-  color: var(--dt-primary-ink);
-}
+
 /* 行里的主名字加粗（P8 用户反馈：预测已结束的题目、外卖菜名和骑手名、存款的金额和期限、基金档位） */
 .dt-row-title.is-strong {
   font-weight: 600;

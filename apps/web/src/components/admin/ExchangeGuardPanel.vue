@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { adminTime } from '../../utils/gameInput';
+import { adminShort } from '../../utils/gameInput';
 import { computed, onMounted, ref, watch } from 'vue';
 import { EXCHANGE_FLAGS, type ExchangeFrozenRow, type ExchangeSuspiciousRow } from '@dt/shared';
 import { adminApi } from '../../api/admin';
@@ -8,11 +8,16 @@ import { useAdminStore } from '../../stores/admin';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
+import DtSheet from '../DtSheet.vue';
+import AdmBox from './kit/AdmBox.vue';
+import AdmEmpty from './kit/AdmEmpty.vue';
+import { useConfirmStore } from '../../stores/confirm';
 
 /** 后台"可疑数据 → 交易所"（156-2 设计 §7）：可疑成交、冻结名单、冻结/解冻/没收 */
 const admin = useAdminStore();
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const confirm = useConfirmStore();
 const rows = ref<ExchangeSuspiciousRow[]>([]);
 const frozen = ref<ExchangeFrozenRow[]>([]);
 const flag = ref('');
@@ -43,14 +48,29 @@ async function run(fn: () => Promise<unknown>, ok: string) {
     busy.value = false;
   }
 }
+/** 冻结（界面改版 P12）：面板里写原因，不再用浏览器输入框 */
+const freezeId = ref<number | null>(null);
+const freezeReason = ref('');
 function freeze(restId: number) {
-  const reason = window.prompt('冻结原因（玩家能看到）')?.trim();
-  if (!reason) return;
-  void run(() => adminApi.exchangeFreeze({ restId, reason }), '已冻结');
+  freezeId.value = restId;
+  freezeReason.value = '';
+}
+async function doFreeze() {
+  const restId = freezeId.value;
+  const reason = freezeReason.value.trim();
+  if (restId === null || !reason) return;
+  freezeId.value = null;
+  await run(() => adminApi.exchangeFreeze({ restId, reason }), '已冻结');
 }
 const unfreeze = (restId: number) => run(() => adminApi.exchangeUnfreeze({ restId }), '已解冻');
-function confiscate(b: { tradeId: number } | { restId: number }) {
-  if (!window.confirm('没收后不能恢复，确定吗？')) return;
+async function confiscate(b: { tradeId: number } | { restId: number }) {
+  const ok = await confirm.ask({
+    title: 'tradeId' in b ? '没收这笔成交的所得？' : '没收这家店全部冻结中所得？',
+    body: '没收后不能恢复。',
+    ok: '没收',
+    danger: true,
+  });
+  if (!ok) return;
   void run(() => adminApi.exchangeConfiscate(b), '已没收');
 }
 watch([flag, () => admin.shardId], () => void load());
@@ -58,119 +78,143 @@ onMounted(() => void load());
 </script>
 
 <template>
-  <div class="d-flex align-items-center gap-2 mb-2 small">
-    标记
-    <select v-model="flag" class="form-select form-select-sm w-auto" data-testid="exg-flag">
-      <option value="">全部</option>
-      <option v-for="(label, k) in EXCHANGE_FLAGS" :key="k" :value="k">{{ label }}</option>
-    </select>
-    <span class="text-muted">近 7 天，最多 200 条</span>
-  </div>
-  <table class="table table-sm small">
-    <thead>
-      <tr>
-        <th>时间</th>
-        <th>食材</th>
-        <th>价格（参考价）</th>
-        <th>数量 / 金额</th>
-        <th>标记</th>
-        <th>买方</th>
-        <th>卖方</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="r in rows" :key="r.tradeId" :data-testid="`exg-row-${r.tradeId}`">
-        <td>{{ adminTime(r.at) }}</td>
-        <td>{{ catalog.foodName(r.foodsId) }}</td>
-        <td>
-          {{ formatNum(r.price)
-          }}<span v-if="r.ref !== null" class="text-muted">（{{ formatNum(r.ref) }}）</span>
-        </td>
-        <td>{{ r.qty }} / {{ formatNum(r.amount) }}</td>
-        <td>
-          <span v-for="f in r.flags" :key="f" class="badge text-bg-warning me-1">{{
-            EXCHANGE_FLAGS[f]
-          }}</span>
-        </td>
-        <td>
-          {{ r.buyer.restName ?? `店 ${r.buyer.restId}`
-          }}<span class="text-muted">（{{ r.buyer.username ?? '?' }}）</span>
-          <div v-if="r.buyer.hold" class="text-muted">{{ HOLD[r.buyer.hold] }}</div>
-        </td>
-        <td>
-          {{ r.seller.restName ?? `店 ${r.seller.restId}`
-          }}<span class="text-muted">（{{ r.seller.username ?? '?' }}）</span>
-          <div v-if="r.seller.hold" class="text-muted">{{ HOLD[r.seller.hold] }}</div>
-        </td>
-        <td class="text-nowrap">
-          <button
-            type="button"
-            class="btn btn-sm btn-link p-0 me-2"
-            :disabled="busy"
-            :data-testid="`exg-freeze-buyer-${r.tradeId}`"
-            @click="freeze(r.buyer.restId)"
-          >
-            冻结买方
-          </button>
-          <button
-            type="button"
-            class="btn btn-sm btn-link p-0 me-2"
-            :disabled="busy"
-            :data-testid="`exg-freeze-seller-${r.tradeId}`"
-            @click="freeze(r.seller.restId)"
-          >
-            冻结卖方
-          </button>
-          <button
-            v-if="isAdmin"
-            type="button"
-            class="btn btn-sm btn-link text-danger p-0"
-            :disabled="busy"
-            :data-testid="`exg-confiscate-${r.tradeId}`"
-            @click="confiscate({ tradeId: r.tradeId })"
-          >
-            没收这笔
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <div v-if="rows.length === 0" class="text-muted small mb-3">没有可疑成交</div>
+  <AdmBox title="交易所可疑成交" sub="近 7 天, 最多 200 条" flush>
+    <template #right>
+      <select v-model="flag" class="dt-adm-in" aria-label="标记" data-testid="exg-flag">
+        <option value="">全部标记</option>
+        <option v-for="(label, k) in EXCHANGE_FLAGS" :key="k" :value="k">{{ label }}</option>
+      </select>
+    </template>
+    <div v-if="rows.length > 0" class="dt-adm-scroll">
+      <table class="dt-adm-table">
+        <thead>
+          <tr>
+            <th>时间</th>
+            <th>食材</th>
+            <th class="num">价格（参考价）</th>
+            <th class="num">数量 / 金额</th>
+            <th>标记</th>
+            <th>买方</th>
+            <th>卖方</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="r in rows" :key="r.tradeId" :data-testid="`exg-row-${r.tradeId}`">
+            <td class="dt-adm-mu nowrap">{{ adminShort(r.at) }}</td>
+            <td>{{ catalog.foodName(r.foodsId) }}</td>
+            <td class="num nowrap">
+              {{ formatNum(r.price)
+              }}<span v-if="r.ref !== null" class="dt-adm-mu"> ({{ formatNum(r.ref) }})</span>
+            </td>
+            <td class="num nowrap">{{ r.qty }} / {{ formatNum(r.amount) }}</td>
+            <td>
+              <span v-for="f in r.flags" :key="f" class="dt-adm-tag is-w me-1">{{ EXCHANGE_FLAGS[f] }}</span>
+            </td>
+            <td>
+              {{ r.buyer.restName ?? `店 ${r.buyer.restId}`
+              }}<span class="dt-adm-mu"> ({{ r.buyer.username ?? '?' }})</span>
+              <div v-if="r.buyer.hold" class="dt-adm-mu dt-adm-small">{{ HOLD[r.buyer.hold] }}</div>
+            </td>
+            <td>
+              {{ r.seller.restName ?? `店 ${r.seller.restId}`
+              }}<span class="dt-adm-mu"> ({{ r.seller.username ?? '?' }})</span>
+              <div v-if="r.seller.hold" class="dt-adm-mu dt-adm-small">{{ HOLD[r.seller.hold] }}</div>
+            </td>
+            <td class="acts">
+              <button
+                type="button"
+                class="dt-adm-btn is-t is-sm"
+                :disabled="busy"
+                :data-testid="`exg-freeze-buyer-${r.tradeId}`"
+                @click="freeze(r.buyer.restId)"
+              >
+                冻结买方
+              </button>
+              <button
+                type="button"
+                class="dt-adm-btn is-t is-sm"
+                :disabled="busy"
+                :data-testid="`exg-freeze-seller-${r.tradeId}`"
+                @click="freeze(r.seller.restId)"
+              >
+                冻结卖方
+              </button>
+              <button
+                v-if="isAdmin"
+                type="button"
+                class="dt-adm-btn is-d is-sm"
+                :disabled="busy"
+                :data-testid="`exg-confiscate-${r.tradeId}`"
+                @click="confiscate({ tradeId: r.tradeId })"
+              >
+                没收这笔
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <AdmEmpty v-else title="没有可疑成交" />
+  </AdmBox>
 
-  <h6 class="dt-section">冻结名单</h6>
-  <div v-if="frozen.length === 0" class="text-muted small">没有被冻结的店</div>
-  <div
-    v-for="f in frozen"
-    :key="f.restId"
-    class="d-flex flex-wrap align-items-center gap-2 small border-bottom py-1"
-    :data-testid="`exg-frozen-${f.restId}`"
-  >
-    <span class="flex-fill"
-      >{{ f.restName }}（{{ f.username }}）：{{ f.reason
-      }}<span class="text-muted">
-        · {{ f.actor ?? '?' }} · {{ adminTime(f.at) }} · 冻结中所得 银币 {{ formatNum(f.heldCoin) }}、食材
-        {{ f.heldFoods }} 个</span
-      ></span
-    >
-    <button
-      type="button"
-      class="btn btn-sm btn-outline-secondary"
-      :disabled="busy"
-      :data-testid="`exg-unfreeze-${f.restId}`"
-      @click="unfreeze(f.restId)"
-    >
-      解冻
-    </button>
-    <button
-      v-if="isAdmin"
-      type="button"
-      class="btn btn-sm btn-outline-danger"
-      :disabled="busy"
-      :data-testid="`exg-confiscate-rest-${f.restId}`"
-      @click="confiscate({ restId: f.restId })"
-    >
-      没收全部冻结中所得
-    </button>
-  </div>
+  <AdmBox title="冻结名单" :sub="`${frozen.length} 家`" flush>
+    <AdmEmpty v-if="frozen.length === 0" title="没有被冻结的店" />
+    <table v-else class="dt-adm-table">
+      <tbody>
+        <tr v-for="f in frozen" :key="f.restId" :data-testid="`exg-frozen-${f.restId}`">
+          <td>
+            <b>{{ f.restName }}</b> <span class="dt-adm-mu">({{ f.username }})</span>: {{ f.reason }}
+            <div class="dt-adm-mu dt-adm-small">
+              {{ f.actor ?? '?' }} · {{ adminShort(f.at) }} · 冻结中所得 银币
+              {{ formatNum(f.heldCoin) }}、食材 {{ f.heldFoods }} 个
+            </div>
+          </td>
+          <td class="acts">
+            <button
+              type="button"
+              class="dt-adm-btn is-s is-sm"
+              :disabled="busy"
+              :data-testid="`exg-unfreeze-${f.restId}`"
+              @click="unfreeze(f.restId)"
+            >
+              解冻
+            </button>
+            <button
+              v-if="isAdmin"
+              type="button"
+              class="dt-adm-btn is-d is-sm"
+              :disabled="busy"
+              :data-testid="`exg-confiscate-rest-${f.restId}`"
+              @click="confiscate({ restId: f.restId })"
+            >
+              没收全部冻结中所得
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </AdmBox>
+
+  <DtSheet :open="freezeId !== null" :title="`冻结店 ${freezeId} 的交易所`" @close="freezeId = null">
+    <p class="dt-sheet-text">冻结后这家店在交易所的所得先扣着, 解冻时还给它, 没收就不还。原因玩家能看到。</p>
+    <input
+      v-model="freezeReason"
+      class="dt-adm-in dt-adm-full"
+      placeholder="冻结原因 (玩家能看到)"
+      data-testid="exg-freeze-reason"
+    />
+    <template #actions>
+      <button type="button" class="btn btn-outline-secondary" @click="freezeId = null">取消</button>
+      <button
+        type="button"
+        class="btn btn-outline-danger"
+        :disabled="busy || !freezeReason.trim()"
+        data-testid="exg-freeze-ok"
+        @click="doFreeze"
+      >
+        冻结
+      </button>
+    </template>
+  </DtSheet>
 </template>

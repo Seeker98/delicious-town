@@ -106,7 +106,16 @@ export function createAdminPlayers(game: Game) {
       if (ids.length === 0) return [];
       const accounts = await db
         .selectFrom('account')
-        .select(['id', 'username', 'email', 'role', 'banned_at', 'banned_until'])
+        .select([
+          'id',
+          'username',
+          'email',
+          'role',
+          'banned_at',
+          'banned_until',
+          'email_verified_at',
+          'created_at',
+        ])
         .where('is_system', '=', false)
         .where('id', 'in', ids)
         .orderBy('id')
@@ -119,6 +128,9 @@ export function createAdminPlayers(game: Game) {
         role: a.role,
         banned: isBanned(a, game.deps.now()),
         restaurants: rests.get(a.id) ?? [],
+        emailVerified: a.email_verified_at !== null,
+        bannedUntil: a.banned_until?.toISOString() ?? null,
+        createdAt: a.created_at.toISOString(),
       }));
     },
 

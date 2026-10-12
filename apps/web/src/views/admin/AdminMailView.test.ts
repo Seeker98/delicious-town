@@ -30,7 +30,7 @@ describe('AdminMailView', () => {
     const ask = vi.spyOn(window, 'confirm').mockReturnValue(true);
     const w = mount(AdminMailView);
     await flushPromises();
-    await w.find('[data-testid="mail-scope"]').setValue('shard');
+    await w.find('[data-testid="mail-scope-shard"]').trigger('click');
     await w.find('[data-testid="mail-title"]').setValue('开服礼');
     await w.find('[data-testid="mail-body"]').setValue('欢迎');
     await w.find('[data-testid="ri-coin"]').setValue('100');
@@ -59,7 +59,7 @@ describe('AdminMailView', () => {
         body: 'b',
         items: null,
         source: 'admin',
-        createdAt: '',
+        createdAt: '2026-10-01T00:00:00Z',
         expiresAt: '',
         revokedAt: null,
         claimedCount: 2,
@@ -75,7 +75,7 @@ describe('AdminMailView', () => {
         body: 'b',
         items: null,
         source: 'admin',
-        createdAt: '',
+        createdAt: '2026-10-01T00:00:00Z',
         expiresAt: '',
         revokedAt: '2026-10-01T00:00:00Z',
         claimedCount: 0,
@@ -103,14 +103,14 @@ describe('AdminMailView', () => {
     });
     const w = mount(AdminMailView);
     await flushPromises();
-    await w.find('[data-testid="mail-scope"]').setValue('rest');
+    await w.find('[data-testid="mail-scope-rest"]').trigger('click');
     await w.find('[data-testid="mail-title"]').setValue('定制称号');
     await w.find('[data-testid="mail-body"]').setValue('送你');
     await w.find('[data-testid="ri-coin"]').setValue('1');
     await w.find('[data-testid="mail-rest"]').setValue('3, 5 3，99');
     await flushPromises();
     expect(w.find('[data-testid="mail-rest-who-3"]').text()).toContain('店3');
-    expect(w.find('[data-testid="mail-rest-who-99"]').classes()).toContain('text-danger');
+    expect(w.find('[data-testid="mail-rest-who-99"]').classes()).toContain('dt-adm-bad');
     expect(w.find('[data-testid="mail-send"]').attributes('disabled')).toBeDefined();
     await w.find('[data-testid="mail-rest"]').setValue('3 5 3');
     await flushPromises();
@@ -137,7 +137,7 @@ describe('AdminMailView', () => {
     });
     const w = mount(AdminMailView);
     await flushPromises();
-    await w.find('[data-testid="mail-scope"]').setValue('rest');
+    await w.find('[data-testid="mail-scope-rest"]').trigger('click');
     await w.find('[data-testid="mail-title"]').setValue('t');
     await w.find('[data-testid="mail-body"]').setValue('b');
     await w.find('[data-testid="mail-rest"]').setValue('3');

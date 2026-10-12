@@ -126,18 +126,19 @@ watch(
 </script>
 
 <template>
-  <div>
-    <details v-if="presets && !goodsOnly" class="mb-2" :data-testid="tid('presets')">
-      <summary class="dt-meta">推荐奖励</summary>
-      <div class="dt-meta my-1">
+  <!-- 界面改版 P12：银币、钻石、经验和“＋ 道具”这些按钮排一行，选了的道具、食材、帽子、称号一样一行，下面写单次上限 -->
+  <div class="dt-adm-rie">
+    <details v-if="presets && !goodsOnly" class="dt-adm-rie-presets" :data-testid="tid('presets')">
+      <summary class="dt-adm-btn is-t is-sm">推荐奖励</summary>
+      <div class="dt-adm-help">
         平时缺、主线要用的。7 天的活动建议万能食材合计 10~15 个、食材随机券 10~20 张（问题记录 505 的分析）。
       </div>
-      <div class="d-flex flex-wrap gap-1">
+      <div class="dt-adm-line dt-adm-mt-sm">
         <button
           v-for="p in ACTIVITY_REWARD_PRESETS"
           :key="`${p.kind}-${p.id}`"
           type="button"
-          class="btn btn-outline-secondary btn-sm"
+          class="dt-adm-btn is-s is-sm"
           :data-testid="tid(`preset-${p.kind}-${p.id}`)"
           @click="addPreset(p)"
         >
@@ -145,128 +146,140 @@ watch(
         </button>
       </div>
     </details>
-    <div v-if="!goodsOnly" class="d-flex flex-wrap gap-2 mb-2">
-      <input
-        v-model.number="coin"
-        type="number"
-        class="form-control form-control-sm w-auto"
-        :placeholder="`银币（≤ ${fmt(GRANT_LIMITS.coin)}）`"
-        :max="GRANT_LIMITS.coin"
-        :data-testid="tid('coin')"
-      />
-      <input
-        v-model.number="diamond"
-        type="number"
-        class="form-control form-control-sm w-auto"
-        :placeholder="`钻石（≤ ${fmt(GRANT_LIMITS.diamond)}）`"
-        :max="GRANT_LIMITS.diamond"
-        :data-testid="tid('diamond')"
-      />
-      <input
-        v-model.number="exp"
-        type="number"
-        class="form-control form-control-sm w-auto"
-        :placeholder="`经验（≤ ${fmt(GRANT_LIMITS.exp)}）`"
-        :max="GRANT_LIMITS.exp"
-        :data-testid="tid('exp')"
-      />
+    <div class="dt-adm-line">
+      <template v-if="!goodsOnly">
+        <input
+          v-model.number="coin"
+          type="number"
+          class="dt-adm-in dt-adm-w-rie"
+          :placeholder="`银币（≤ ${fmt(GRANT_LIMITS.coin)}）`"
+          aria-label="银币"
+          :max="GRANT_LIMITS.coin"
+          :data-testid="tid('coin')"
+        />
+        <input
+          v-model.number="diamond"
+          type="number"
+          class="dt-adm-in dt-adm-w-rie"
+          :placeholder="`钻石（≤ ${fmt(GRANT_LIMITS.diamond)}）`"
+          aria-label="钻石"
+          :max="GRANT_LIMITS.diamond"
+          :data-testid="tid('diamond')"
+        />
+        <input
+          v-model.number="exp"
+          type="number"
+          class="dt-adm-in dt-adm-w-rie"
+          :placeholder="`经验（≤ ${fmt(GRANT_LIMITS.exp)}）`"
+          aria-label="经验"
+          :max="GRANT_LIMITS.exp"
+          :data-testid="tid('exp')"
+        />
+      </template>
+      <button
+        type="button"
+        class="dt-adm-btn is-t"
+        :data-testid="tid('add-goods')"
+        @click="goods.push({ id: '', num: 1 })"
+      >
+        ＋ 道具
+      </button>
+      <button
+        v-if="!goodsOnly"
+        type="button"
+        class="dt-adm-btn is-t"
+        :data-testid="tid('add-foods')"
+        @click="foods.push({ id: '', num: 1 })"
+      >
+        ＋ 食材
+      </button>
+      <button
+        v-if="hats && !goodsOnly"
+        type="button"
+        class="dt-adm-btn is-t"
+        :disabled="hatRows.length >= MAIL_HATS_MAX"
+        :data-testid="tid('add-hat')"
+        @click="hatRows.push({ tier: 'jade', name: '' })"
+      >
+        ＋ 命名帽子
+      </button>
+      <button
+        v-if="icons && !goodsOnly"
+        type="button"
+        class="dt-adm-btn is-t"
+        :disabled="iconRows.length >= MAIL_ICONS_MAX"
+        :data-testid="tid('add-icon')"
+        @click="iconRows.push({ uid: ++uid, v: { key: '', title: '' } })"
+      >
+        ＋ 称号
+      </button>
     </div>
-    <div v-for="(g, i) in goods" :key="`g${i}`" class="d-flex gap-2 mb-1 align-items-center">
-      <CatalogPicker v-model="g.id" kind="goods" class="flex-fill" :testid="tid(`goods-id-${i}`)" />
+    <div v-for="(g, i) in goods" :key="`g${i}`" class="dt-adm-line">
+      <span class="dt-adm-rie-kind">道具</span>
+      <CatalogPicker v-model="g.id" kind="goods" class="dt-adm-grow" :testid="tid(`goods-id-${i}`)" />
       <input
         v-model.number="g.num"
         type="number"
-        class="form-control form-control-sm w-auto"
+        class="dt-adm-in dt-adm-w-sm"
         :placeholder="`数量（≤ ${fmt(GRANT_LIMITS.item)}）`"
+        aria-label="数量"
         :max="GRANT_LIMITS.item"
         :data-testid="tid(`goods-num-${i}`)"
       />
+      <button type="button" class="dt-adm-btn is-t is-sm" @click="goods.splice(i, 1)">删除</button>
     </div>
-    <div v-for="(f, i) in foods" :key="`f${i}`" class="d-flex gap-2 mb-1 align-items-center">
-      <CatalogPicker v-model="f.id" kind="foods" class="flex-fill" :testid="tid(`foods-id-${i}`)" />
+    <div v-for="(f, i) in foods" :key="`f${i}`" class="dt-adm-line">
+      <span class="dt-adm-rie-kind">食材</span>
+      <CatalogPicker v-model="f.id" kind="foods" class="dt-adm-grow" :testid="tid(`foods-id-${i}`)" />
       <input
         v-model.number="f.num"
         type="number"
-        class="form-control form-control-sm w-auto"
+        class="dt-adm-in dt-adm-w-sm"
         :placeholder="`数量（≤ ${fmt(GRANT_LIMITS.item)}）`"
+        aria-label="数量"
         :max="GRANT_LIMITS.item"
         :data-testid="tid(`foods-num-${i}`)"
       />
+      <button type="button" class="dt-adm-btn is-t is-sm" @click="foods.splice(i, 1)">删除</button>
     </div>
-    <div v-for="(h, i) in hatRows" :key="`h${i}`" class="d-flex gap-2 mb-1 align-items-center">
-      <select v-model="h.tier" class="form-select form-select-sm w-auto" :data-testid="tid(`hat-tier-${i}`)">
+    <div v-for="(h, i) in hatRows" :key="`h${i}`" class="dt-adm-line">
+      <span class="dt-adm-rie-kind">帽子</span>
+      <select v-model="h.tier" class="dt-adm-in" :data-testid="tid(`hat-tier-${i}`)">
         <option value="jade">玉级（创意 +22）</option>
         <option value="xuan">铉级（创意 +40）</option>
       </select>
       <input
         v-model="h.name"
-        class="form-control form-control-sm w-auto"
+        class="dt-adm-in dt-adm-w-md"
         :maxlength="HAT_NAME_MAX"
         :placeholder="`帽子名字（1~${HAT_NAME_MAX} 字）`"
         :data-testid="tid(`hat-name-${i}`)"
       />
-      <span class="text-muted">{{
+      <span class="dt-adm-mu">{{
         h.name.trim() ? `${h.tier === 'jade' ? '玉' : '铉'}•${h.name.trim()}之帽` : ''
       }}</span>
+      <button type="button" class="dt-adm-btn is-t is-sm" @click="hatRows.splice(i, 1)">删除</button>
     </div>
-    <div v-for="(r, i) in iconRows" :key="r.uid" class="d-flex gap-1 mb-1 align-items-start">
-      <TitlePicker v-model="r.v" :create="true" class="flex-fill" :testid="tid(`icon-${i}`)" />
+    <div v-for="(r, i) in iconRows" :key="r.uid" class="dt-adm-line dt-adm-rie-icon">
+      <span class="dt-adm-rie-kind">称号</span>
+      <TitlePicker v-model="r.v" :create="true" class="dt-adm-grow" :testid="tid(`icon-${i}`)" />
       <button
         type="button"
-        class="btn btn-link btn-sm p-0"
+        class="dt-adm-btn is-t is-sm"
         :data-testid="tid(`icon-${i}-remove`)"
         @click="iconRows.splice(i, 1)"
       >
         删除
       </button>
     </div>
-    <div v-if="!goodsOnly" class="dt-meta mb-1" :data-testid="tid('limits')">
-      单次上限：银币、经验各 ≤ {{ fmt(GRANT_LIMITS.coin) }}；钻石 ≤
+    <div v-if="!goodsOnly" class="dt-adm-help" :data-testid="tid('limits')">
+      单次上限: 银币、经验各 ≤ {{ fmt(GRANT_LIMITS.coin) }}；钻石 ≤
       {{ fmt(GRANT_LIMITS.diamond) }}；道具、食材每种 ≤ {{ fmt(GRANT_LIMITS.item) }}。
       <!-- 问题记录 204：发 9999 个只到账 5998，是橱柜、冰箱各有单种上限 -->
       食材到账时受店的单种食材上限限制：橱柜放满后进冰箱，冰箱也满了，多出的会丢弃，并记进玩家日志。
     </div>
-    <div v-if="overLimit.length > 0" class="text-danger mb-1" :data-testid="tid('over')">
+    <div v-if="overLimit.length > 0" class="dt-adm-help dt-adm-bad" :data-testid="tid('over')">
       请检查：{{ overLimit.join('；') }}
-    </div>
-    <div class="d-flex gap-2 mb-2">
-      <button
-        type="button"
-        class="btn btn-link btn-sm p-0"
-        :data-testid="tid('add-goods')"
-        @click="goods.push({ id: '', num: 1 })"
-      >
-        + 道具
-      </button>
-      <button
-        v-if="!goodsOnly"
-        type="button"
-        class="btn btn-link btn-sm p-0"
-        :data-testid="tid('add-foods')"
-        @click="foods.push({ id: '', num: 1 })"
-      >
-        + 食材
-      </button>
-      <button
-        v-if="hats && !goodsOnly"
-        type="button"
-        class="btn btn-link btn-sm p-0"
-        :disabled="hatRows.length >= MAIL_HATS_MAX"
-        :data-testid="tid('add-hat')"
-        @click="hatRows.push({ tier: 'jade', name: '' })"
-      >
-        + 命名帽子
-      </button>
-      <button
-        v-if="icons && !goodsOnly"
-        type="button"
-        class="btn btn-link btn-sm p-0"
-        :disabled="iconRows.length >= MAIL_ICONS_MAX"
-        :data-testid="tid('add-icon')"
-        @click="iconRows.push({ uid: ++uid, v: { key: '', title: '' } })"
-      >
-        + 称号
-      </button>
     </div>
   </div>
 </template>

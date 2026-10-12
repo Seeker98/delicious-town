@@ -94,10 +94,10 @@ function onBlur() {
 </script>
 
 <template>
-  <div class="position-relative">
+  <div class="dt-adm-pick">
     <input
       :value="text"
-      class="form-control form-control-sm"
+      class="dt-adm-in dt-adm-full"
       :placeholder="kind === 'goods' ? '搜道具名或 id' : '搜食材名或 id'"
       autocomplete="off"
       :data-testid="testid"
@@ -106,16 +106,12 @@ function onBlur() {
       @focus="open = true"
       @blur="onBlur"
     />
-    <ul
-      v-if="options.length > 0"
-      class="list-group position-absolute w-100 shadow-sm small"
-      style="z-index: 10; max-height: 16rem; overflow-y: auto; min-width: 16rem"
-    >
+    <ul v-if="options.length > 0" class="dt-adm-pop" role="listbox">
       <!-- mousedown 而不是 click：在输入框失焦之前选中 -->
       <li
         v-for="(o, i) in options"
         :key="o.id"
-        :class="['list-group-item list-group-item-action py-1', i === active ? 'active' : '']"
+        :class="{ 'is-on': i === active }"
         role="option"
         :data-testid="`${testid}-opt-${o.id}`"
         @mousedown.prevent="choose(o)"

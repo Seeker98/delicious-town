@@ -1,9 +1,16 @@
 <script setup lang="ts">
-import { adminTime } from '../../utils/gameInput';
 import { computed, onMounted, ref, watch } from 'vue';
 import { MAIL_RESTS_MAX, type AdminMailDto, type RewardItems, type SendMailInput } from '@dt/shared';
 import { adminApi } from '../../api/admin';
 import RewardItemsEditor from '../../components/admin/RewardItemsEditor.vue';
+import AdmBox from '../../components/admin/kit/AdmBox.vue';
+import AdmEmpty from '../../components/admin/kit/AdmEmpty.vue';
+import AdmField from '../../components/admin/kit/AdmField.vue';
+import AdmHead from '../../components/admin/kit/AdmHead.vue';
+import AdmSeg from '../../components/admin/kit/AdmSeg.vue';
+import { useConfirmStore } from '../../stores/confirm';
+import { formatNum } from '../../utils/format';
+import { adminShort } from '../../utils/gameInput';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
 import { useCatalogStore } from '../../stores/catalog';
@@ -14,6 +21,7 @@ import { rewardSummary } from '../../utils/reward';
 const admin = useAdminStore();
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const confirm = useConfirmStore();
 
 const scope = ref<'rest' | 'shard' | 'all'>('shard');
 /** 一家或几家店的 id：逗号、空格、换行分隔，重复的只算一次（每家一封） */
@@ -47,6 +55,18 @@ const busy = ref(false);
 const list = ref<AdminMailDto[]>([]);
 
 const SCOPE: Record<AdminMailDto['scope'], string> = { rest: '单店', shard: '区服', all: '全部区服' };
+const SCOPES = [
+  ['rest', '单店'],
+  ['shard', '当前区服'],
+  ['all', '全部区服'],
+] as const;
+/** 发送按钮旁边写清发给多少家（界面改版 P12） */
+const whoText = computed(() => {
+  if (scope.value === 'rest') return `发给 ${restIds.value.length} 家店`;
+  const shards = scope.value === 'shard' ? admin.shards.filter((s) => s.id === admin.shardId) : admin.shards;
+  const n = shards.reduce((sum, s) => sum + s.restaurants, 0);
+  return `发给${scope.value === 'shard' ? (shards[0]?.name ?? '当前区服') : '全部区服'} ${formatNum(n)} 家店`;
+});
 
 /** 填店 id 后逐个查出店名、店主，避免发错人（和补偿页同一套做法） */
 let whoSeq = 0;
@@ -95,7 +115,12 @@ async function send() {
     return;
   }
   const attach = Object.keys(rewards.value).length > 0 ? rewardSummary(rewards.value, catalog) : '无附件';
-  if (!window.confirm(`${confirmText()}：「${title.value.trim()}」；附件：${attach}。确定吗？`)) return;
+  const ok = await confirm.ask({
+    title: `发送「${title.value.trim()}」？`,
+    body: `${confirmText()}；附件：${attach}。`,
+    ok: '发送',
+  });
+  if (!ok) return;
   busy.value = true;
   try {
     const b: SendMailInput = {
@@ -122,7 +147,13 @@ async function send() {
 }
 
 async function revoke(m: AdminMailDto) {
-  if (!window.confirm(`撤回「${m.title}」？没领的人将看不到它，已领的不追回。`)) return;
+  const ok = await confirm.ask({
+    title: `撤回「${m.title}」？`,
+    body: '没领的人将看不到它, 已领的不追回。',
+    ok: '撤回',
+    danger: true,
+  });
+  if (!ok) return;
   try {
     await adminApi.revokeMail(m.id);
     await loadList();
@@ -133,105 +164,131 @@ async function revoke(m: AdminMailDto) {
 </script>
 
 <template>
-  <h5>邮件</h5>
-  <p v-if="!admin.isAdmin" class="small text-muted">只有管理员能发邮件，你可以查看记录。</p>
-  <form v-else class="small border rounded p-2 mb-3" @submit.prevent="send">
-    <div class="d-flex flex-wrap gap-2 mb-2 align-items-center">
-      <select v-model="scope" class="form-select form-select-sm w-auto" data-testid="mail-scope">
-        <option value="rest">一家或几家餐厅</option>
-        <option value="shard">当前区服</option>
-        <option value="all">全部区服</option>
-      </select>
-      <input
-        v-if="scope === 'rest'"
-        v-model="restInput"
-        class="form-control form-control-sm w-auto"
-        placeholder="餐厅 id，几家用逗号或空格隔开"
-        data-testid="mail-rest"
-      />
-      <input
-        v-model.number="minLevel"
-        type="number"
-        class="form-control form-control-sm w-auto"
-        placeholder="最低等级（可空，按领取时算）"
-        data-testid="mail-min-level"
-      />
+  <div class="dt-adm-page">
+    <AdmHead title="邮件" desc="发给一家店、一个区服或全部区服; 附件当场到对方邮箱" />
+    <div v-if="!admin.isAdmin" class="dt-adm-alert is-p">
+      <i class="bi bi-eye" aria-hidden="true"></i>
+      <div>只有管理员能发邮件, 你可以查看记录。</div>
     </div>
-    <ul v-if="scope === 'rest' && restWho.length > 0" class="list-unstyled mb-2">
-      <li
-        v-for="r in restWho"
-        :key="r.id"
-        :class="r.ok ? 'text-success' : 'text-danger'"
-        :data-testid="`mail-rest-who-${r.id}`"
-      >
-        {{ r.text }}
-      </li>
-    </ul>
-    <input
-      v-model="title"
-      class="form-control form-control-sm mb-2"
-      maxlength="40"
-      placeholder="标题（≤ 40 字）"
-      data-testid="mail-title"
-    />
-    <textarea
-      v-model="body"
-      class="form-control form-control-sm mb-2"
-      rows="3"
-      maxlength="1000"
-      placeholder="正文（≤ 1000 字）"
-      data-testid="mail-body"
-    ></textarea>
-    <RewardItemsEditor :key="formKey" v-model="rewards" :hats="true" :icons="true" @over="over = $event" />
-    <button
-      type="button"
-      class="btn btn-primary btn-sm"
-      :disabled="busy || !title.trim() || !body.trim() || over.length > 0 || (scope === 'rest' && !restsOk)"
-      data-testid="mail-send"
-      @click="send"
-    >
-      发送
-    </button>
-  </form>
+    <AdmBox v-else title="写一封">
+      <form @submit.prevent>
+        <AdmField label="发给谁">
+          <div class="dt-adm-line">
+            <AdmSeg v-model="scope" :options="SCOPES" testid="mail-scope" />
+            <input
+              v-if="scope === 'rest'"
+              v-model="restInput"
+              class="dt-adm-in dt-adm-w-md"
+              placeholder="餐厅 id, 几家用逗号或空格隔开"
+              data-testid="mail-rest"
+            />
+            <input
+              v-model.number="minLevel"
+              type="number"
+              class="dt-adm-in dt-adm-w-md"
+              placeholder="最低等级 (可空, 按领取时算)"
+              data-testid="mail-min-level"
+            />
+          </div>
+          <template v-if="scope === 'rest' && restWho.length > 0" #help>
+            <div
+              v-for="r in restWho"
+              :key="r.id"
+              :class="r.ok ? 'dt-adm-good' : 'dt-adm-bad'"
+              :data-testid="`mail-rest-who-${r.id}`"
+            >
+              {{ r.text }}
+            </div>
+          </template>
+        </AdmField>
+        <AdmField label="标题" hint="≤ 40 字">
+          <input v-model="title" class="dt-adm-in dt-adm-full" maxlength="40" data-testid="mail-title" />
+        </AdmField>
+        <AdmField label="正文" hint="≤ 1000 字">
+          <textarea
+            v-model="body"
+            class="dt-adm-in dt-adm-full"
+            rows="3"
+            maxlength="1000"
+            data-testid="mail-body"
+          ></textarea>
+        </AdmField>
+        <AdmField label="附件" hint="可以不带">
+          <RewardItemsEditor
+            :key="formKey"
+            v-model="rewards"
+            :hats="true"
+            :icons="true"
+            @over="over = $event"
+          />
+        </AdmField>
+        <AdmField>
+          <div class="dt-adm-line">
+            <button
+              type="button"
+              class="dt-adm-btn is-p"
+              :disabled="
+                busy || !title.trim() || !body.trim() || over.length > 0 || (scope === 'rest' && !restsOk)
+              "
+              data-testid="mail-send"
+              @click="send"
+            >
+              发送…
+            </button>
+            <span class="dt-adm-mu dt-adm-small">发送前确认: {{ whoText }}</span>
+          </div>
+        </AdmField>
+      </form>
+    </AdmBox>
 
-  <table class="table table-sm small">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>范围</th>
-        <th>标题</th>
-        <th>附件</th>
-        <th>已领</th>
-        <th>发送人</th>
-        <th>时间</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="m in list" :key="m.id" :class="{ 'text-muted': m.revokedAt }">
-        <td>{{ m.id }}</td>
-        <td>
-          {{ SCOPE[m.scope] }}{{ m.restId ? ` ${m.restId}` : ''
-          }}{{ m.minLevel ? `（≥${m.minLevel} 级）` : '' }}
-        </td>
-        <td>{{ m.title }}</td>
-        <td>{{ m.items ? rewardSummary(m.items, catalog) : '—' }}</td>
-        <td>已领 {{ m.claimedCount }}</td>
-        <td>{{ m.actor ?? '系统' }}</td>
-        <td>{{ adminTime(m.createdAt) }}</td>
-        <td>
-          <span v-if="m.revokedAt">已撤回</span>
-          <button
-            v-else-if="admin.isAdmin"
-            type="button"
-            class="btn btn-sm btn-outline-danger py-0"
-            :data-testid="`mail-revoke-${m.id}`"
-            @click="revoke(m)"
-          >
-            撤回
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <AdmBox title="已发出" :sub="`最近 ${list.length} 封`" flush>
+      <div class="dt-adm-scroll">
+        <table v-if="list.length > 0" class="dt-adm-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>发给</th>
+              <th>标题</th>
+              <th>附件</th>
+              <th>已领</th>
+              <th>发送人</th>
+              <th>时间</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="m in list" :key="m.id" :class="{ 'is-off': m.revokedAt }">
+              <td class="dt-adm-mono dt-adm-mu">{{ m.id }}</td>
+              <td class="nowrap">
+                {{ SCOPE[m.scope] }}{{ m.restId ? ` ${m.restId}` : ''
+                }}{{ m.minLevel ? ` (≥ ${m.minLevel} 级)` : '' }}
+              </td>
+              <td>{{ m.title }}</td>
+              <td>{{ m.items ? rewardSummary(m.items, catalog) : '—' }}</td>
+              <td>
+                <span :class="['dt-adm-tag', m.claimedCount > 0 ? 'is-ok' : '']">{{
+                  m.scope === 'rest' ? `${m.claimedCount} / 1` : `已领 ${m.claimedCount}`
+                }}</span>
+              </td>
+              <td class="dt-adm-mu">{{ m.actor ?? '系统' }}</td>
+              <td class="dt-adm-mu nowrap">{{ adminShort(m.createdAt) }}</td>
+              <td class="acts">
+                <span v-if="m.revokedAt" class="dt-adm-tag">已撤回</span>
+                <button
+                  v-else-if="admin.isAdmin"
+                  type="button"
+                  class="dt-adm-btn is-d is-sm"
+                  :data-testid="`mail-revoke-${m.id}`"
+                  @click="revoke(m)"
+                >
+                  撤回
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <AdmEmpty v-else title="还没有发过邮件" />
+      </div>
+    </AdmBox>
+  </div>
 </template>

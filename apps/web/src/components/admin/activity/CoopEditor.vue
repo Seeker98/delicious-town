@@ -45,14 +45,14 @@ const errsUnder = (prefix: string) => Object.entries(props.errors).filter(([k]) 
 </script>
 
 <template>
-  <div class="small fw-bold">贡献规则</div>
+  <div class="dt-adm-lab">贡献规则</div>
   <RuleRows :model-value="modelValue.rules" :errors="errors" @update:model-value="patch({ rules: $event })" />
 
-  <div class="small fw-bold">里程碑（全服总分达到目标、个人贡献达到门槛才能领）</div>
+  <div class="dt-adm-lab">里程碑（全服总分达到目标、个人贡献达到门槛才能领）</div>
   <div
     v-for="(m, i) in modelValue.milestones"
     :key="msKeys[i]"
-    class="border-bottom py-2"
+    class="dt-adm-sec"
     :data-testid="`ms-row-${i}`"
   >
     <div class="d-flex flex-wrap gap-2 align-items-center">
@@ -60,7 +60,7 @@ const errsUnder = (prefix: string) => Object.entries(props.errors).filter(([k]) 
       <input
         type="number"
         min="1"
-        class="form-control form-control-sm"
+        class="dt-adm-in"
         style="width: 8rem"
         :value="m.target"
         :data-testid="`ms-target-${i}`"
@@ -70,7 +70,7 @@ const errsUnder = (prefix: string) => Object.entries(props.errors).filter(([k]) 
       <input
         type="number"
         min="0"
-        class="form-control form-control-sm"
+        class="dt-adm-in"
         style="width: 6rem"
         :value="m.minContribution"
         :data-testid="`ms-min-${i}`"
@@ -79,7 +79,7 @@ const errsUnder = (prefix: string) => Object.entries(props.errors).filter(([k]) 
       分
       <button
         type="button"
-        class="btn btn-sm btn-link text-danger"
+        class="dt-adm-btn is-t is-sm is-danger"
         :disabled="modelValue.milestones.length <= 1"
         :data-testid="`ms-del-${i}`"
         @click="removeMs(i)"
@@ -97,14 +97,14 @@ const errsUnder = (prefix: string) => Object.entries(props.errors).filter(([k]) 
     <span
       v-for="[k, msg] in errsUnder(`def.milestones.${i}.`)"
       :key="k"
-      class="text-danger small"
+      class="dt-adm-err"
       :data-testid="`err-${k}`"
       >{{ msg }}</span
     >
   </div>
   <button
     type="button"
-    class="btn btn-sm btn-outline-primary my-2"
+    class="dt-adm-btn is-sp is-sm dt-adm-my"
     data-testid="ms-add"
     :disabled="modelValue.milestones.length >= 10"
     @click="addMs"
@@ -112,11 +112,11 @@ const errsUnder = (prefix: string) => Object.entries(props.errors).filter(([k]) 
     加一个里程碑
   </button>
 
-  <div class="small fw-bold">贡献榜名次奖励（活动结束后发邮件，可以不设）</div>
+  <div class="dt-adm-lab">贡献榜名次奖励（活动结束后发邮件，可以不设）</div>
   <div
     v-for="(r, i) in modelValue.ranks"
     :key="rankKeys[i]"
-    class="border-bottom py-2"
+    class="dt-adm-sec"
     :data-testid="`rank-row-${i}`"
   >
     <div class="d-flex flex-wrap gap-2 align-items-center">
@@ -125,7 +125,7 @@ const errsUnder = (prefix: string) => Object.entries(props.errors).filter(([k]) 
         type="number"
         min="1"
         max="100"
-        class="form-control form-control-sm"
+        class="dt-adm-in"
         style="width: 5rem"
         :value="r.from"
         :data-testid="`rank-from-${i}`"
@@ -136,7 +136,7 @@ const errsUnder = (prefix: string) => Object.entries(props.errors).filter(([k]) 
         type="number"
         min="1"
         max="100"
-        class="form-control form-control-sm"
+        class="dt-adm-in"
         style="width: 5rem"
         :value="r.to"
         :data-testid="`rank-to-${i}`"
@@ -145,7 +145,7 @@ const errsUnder = (prefix: string) => Object.entries(props.errors).filter(([k]) 
       名
       <button
         type="button"
-        class="btn btn-sm btn-link text-danger"
+        class="dt-adm-btn is-t is-sm is-danger"
         :data-testid="`rank-del-${i}`"
         @click="removeRank(i)"
       >
@@ -162,14 +162,14 @@ const errsUnder = (prefix: string) => Object.entries(props.errors).filter(([k]) 
     <span
       v-for="[k, msg] in errsUnder(`def.ranks.${i}.`)"
       :key="k"
-      class="text-danger small"
+      class="dt-adm-err"
       :data-testid="`err-${k}`"
       >{{ msg }}</span
     >
   </div>
   <button
     type="button"
-    class="btn btn-sm btn-outline-primary my-2"
+    class="dt-adm-btn is-sp is-sm dt-adm-my"
     data-testid="rank-add"
     :disabled="modelValue.ranks.length >= 10"
     @click="addRank"

@@ -65,7 +65,7 @@ describe('AdminSuspiciousView（子项目 6B-2）', () => {
     expect(adminApi.suspiciousBar).toHaveBeenCalledWith(1);
     expect(w.text()).toContain('只作提醒');
     const row = w.find('[data-testid="sus-bar-3"]');
-    expect(row.classes()).toContain('table-danger');
+    expect(row.classes()).toContain('is-bad');
     expect(row.find('a').attributes('href')).toBe('/admin/players/9');
   });
 

@@ -117,7 +117,7 @@ describe('AdminGrantsView', () => {
     const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
     const w = await setup('admin');
     await flushPromises();
-    await w.find('[data-testid="grant-target-shard"]').setValue(true);
+    await w.find('[data-testid="grant-target-shard"]').trigger('click');
     await w.find('[data-testid="grant-min-level"]').setValue('10');
     await w.find('[data-testid="grant-coin"]').setValue('100');
     await w.find('[data-testid="grant-reason"]').setValue('全服补偿');
@@ -152,6 +152,9 @@ describe('AdminGrantsView', () => {
         email: 'a@x',
         role: 'player',
         banned: false,
+        emailVerified: true,
+        bannedUntil: null,
+        createdAt: '2026-10-01T00:00:00.000Z',
         restaurants: [
           { id: 3, shardId: 1, shardName: '一服', name: '爱丽丝店', level: 12, star: 1, state: 1 },
           { id: 9, shardId: 2, shardName: '二服', name: '爱丽丝二店', level: 3, star: 0, state: 1 },

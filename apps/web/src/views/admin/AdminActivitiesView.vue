@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { provideOverLimit } from '../../utils/overLimit';
-import { adminTime, fromGameInput, toGameInput } from '../../utils/gameInput';
+import { adminShort, fromGameInput, toGameInput } from '../../utils/gameInput';
 import { computed, nextTick, onMounted, ref } from 'vue';
 import type {
   ActivityInput,
@@ -24,10 +24,17 @@ import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
 import { useToastStore } from '../../stores/toast';
 import { defaultDef, issueMap } from '../../utils/activityForm';
+import AdmBox from '../../components/admin/kit/AdmBox.vue';
+import AdmEmpty from '../../components/admin/kit/AdmEmpty.vue';
+import AdmField from '../../components/admin/kit/AdmField.vue';
+import AdmHead from '../../components/admin/kit/AdmHead.vue';
+import type { ConfirmRequest } from '../../stores/confirm';
+import { useConfirmStore } from '../../stores/confirm';
 
 /** 后台限时活动（问题记录 148，设计 §7.1） */
 const admin = useAdminStore();
 const toast = useToastStore();
+const confirm = useConfirmStore();
 const list = ref<AdminActivityDto[]>([]);
 const busy = ref(false);
 const open = ref(false);
@@ -36,8 +43,8 @@ const errors = ref<Record<string, string>>({});
 const formEl = ref<HTMLElement | null>(null);
 /** 保存失败时滚到第一处错误并聚焦对应的输入框（问题记录 232）：表单很长，错误常在视野外 */
 function focusFirstError() {
-  // 错误提示都是 text-danger small；删除按钮也是红字（btn text-danger），要排除
-  const el = formEl.value?.querySelector<HTMLElement>('.text-danger.small:not(.btn)');
+  // 错误提示都是 dt-adm-err（界面改版 P12）
+  const el = formEl.value?.querySelector<HTMLElement>('.dt-adm-err');
   if (!el) return;
   el.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
   const prev = el.previousElementSibling;
@@ -78,6 +85,7 @@ const ended = computed(
   () => editing.value !== null && (editing.value.state === 'settling' || editing.value.state === 'settled'),
 );
 const STATE = { pending: '未开始', running: '进行中', settling: '结算中', settled: '已补发' } as const;
+const STATE_TONE = { pending: '', running: 'is-ok', settling: 'is-w', settled: '' } as const;
 /** 兑换活动结束后还有兑换期，玩家仍能兑换，列表不显示"结算中/已补发"（backlog 148-2） */
 function stateText(a: AdminActivityDto): string {
   if (a.kind === 'exchange' && (a.state === 'settling' || a.state === 'settled')) {
@@ -188,8 +196,8 @@ async function save() {
     busy.value = false;
   }
 }
-async function act(fn: () => Promise<unknown>, ok: string, ask: string) {
-  if (!window.confirm(ask)) return;
+async function act(fn: () => Promise<unknown>, ok: string, ask: ConfirmRequest) {
+  if (!(await confirm.ask({ ...ask, danger: true }))) return;
   try {
     await fn();
     toast.push(ok);
@@ -201,155 +209,195 @@ async function act(fn: () => Promise<unknown>, ok: string, ask: string) {
 </script>
 
 <template>
-  <div class="d-flex align-items-center mb-2">
-    <h5 class="flex-fill mb-0">限时活动</h5>
-    <button type="button" class="btn btn-sm btn-primary" data-testid="ac-new" @click="fill(null)">
-      新建
-    </button>
-  </div>
-  <table class="table table-sm small">
-    <thead>
-      <tr>
-        <th>标题</th>
-        <th>区服</th>
-        <th>类型</th>
-        <th>时间</th>
-        <th>状态</th>
-        <th>参与</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="a in list" :key="a.id">
-        <td>{{ a.title }}</td>
-        <td>{{ a.shardId ?? '全服' }}</td>
-        <td>{{ KIND[a.kind] }}</td>
-        <td>{{ adminTime(a.startsAt) }} ~ {{ adminTime(a.endsAt) }}</td>
-        <td>{{ stateText(a) }}</td>
-        <td>{{ a.participants }}</td>
-        <td class="text-nowrap">
-          <button
-            type="button"
-            class="btn btn-sm btn-link p-0 me-2"
-            :data-testid="`ac-edit-${a.id}`"
-            @click="fill(a)"
-          >
-            编辑
-          </button>
-          <button type="button" class="btn btn-sm btn-link p-0 me-2" @click="fill(a, true)">复制</button>
-          <button
-            v-if="a.state === 'running'"
-            type="button"
-            class="btn btn-sm btn-link p-0 me-2 text-warning"
-            @click="act(() => adminApi.endActivity(a.id), '已结束', '确定提前结束这个活动吗？')"
-          >
-            提前结束
-          </button>
-          <button
-            v-if="a.state === 'pending'"
-            type="button"
-            class="btn btn-sm btn-link p-0 text-danger"
-            @click="act(() => adminApi.deleteActivity(a.id), '已删除', '确定删除吗？')"
-          >
-            删除
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="dt-adm-page">
+    <AdmHead
+      title="限时活动"
+      desc="目标清单、九宫格、战令、全服加成、兑换、全服合力; 开始后只能改标题、说明和延长结束时间"
+    >
+      <button type="button" class="dt-adm-btn is-p" data-testid="ac-new" @click="fill(null)">＋ 新建</button>
+    </AdmHead>
+    <AdmBox flush>
+      <AdmEmpty v-if="list.length === 0" title="还没有活动" />
+      <div v-else class="dt-adm-scroll">
+        <table class="dt-adm-table">
+          <thead>
+            <tr>
+              <th>标题</th>
+              <th>区服</th>
+              <th>类型</th>
+              <th>时间</th>
+              <th>状态</th>
+              <th class="num">参与</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="a in list" :key="a.id" :class="{ 'is-hl': open && editing?.id === a.id }">
+              <td>{{ a.title }}</td>
+              <td class="nowrap">{{ a.shardId ?? '全服' }}</td>
+              <td class="nowrap">{{ KIND[a.kind] }}</td>
+              <td class="dt-adm-mu nowrap">{{ adminShort(a.startsAt) }} – {{ adminShort(a.endsAt) }}</td>
+              <td>
+                <span :class="['dt-adm-tag', STATE_TONE[a.state]]">{{ stateText(a) }}</span>
+              </td>
+              <td class="num">{{ a.participants }}</td>
+              <td class="acts">
+                <button
+                  type="button"
+                  class="dt-adm-btn is-t is-sm"
+                  :data-testid="`ac-edit-${a.id}`"
+                  @click="fill(a)"
+                >
+                  编辑
+                </button>
+                <button type="button" class="dt-adm-btn is-t is-sm" @click="fill(a, true)">复制</button>
+                <button
+                  v-if="a.state === 'running'"
+                  type="button"
+                  class="dt-adm-btn is-d is-sm"
+                  @click="
+                    act(() => adminApi.endActivity(a.id), '已结束', {
+                      title: `提前结束「${a.title}」？`,
+                      body: '马上结束, 按现在的进度结算。',
+                      ok: '提前结束',
+                    })
+                  "
+                >
+                  提前结束
+                </button>
+                <button
+                  v-if="a.state === 'pending'"
+                  type="button"
+                  class="dt-adm-btn is-d is-sm"
+                  @click="
+                    act(() => adminApi.deleteActivity(a.id), '已删除', {
+                      title: `删除「${a.title}」？`,
+                      body: '还没开始, 删掉后玩家看不到。',
+                      ok: '删除',
+                    })
+                  "
+                >
+                  删除
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </AdmBox>
 
-  <div v-if="open" ref="formEl" class="dt-card">
-    <div v-if="ended" class="alert alert-warning py-1 small">活动已结束，只能改标题和说明</div>
-    <div v-else-if="started" class="alert alert-warning py-1 small">
-      活动已开始，只能改标题、说明和延长结束时间
-    </div>
-    <div v-for="[k, m] in topErrors" :key="k" class="text-danger small" :data-testid="`err-${k}`">
-      {{ FIELD[k] ?? k }}：{{ m }}
-    </div>
-    <div class="row g-2 mb-2">
-      <div class="col-auto">
-        <select v-model="scope" class="form-select form-select-sm" :disabled="started">
-          <option value="shard">当前区服</option>
-          <option value="all">全服</option>
-        </select>
-      </div>
-      <div class="col-auto">
-        <select v-model="kind" class="form-select form-select-sm" data-testid="ac-kind" :disabled="started">
-          <option value="goals">目标清单</option>
-          <option value="grid">九宫格</option>
-          <option value="pass">战令</option>
-          <option value="boost">全服加成</option>
-          <option value="exchange">兑换活动</option>
-          <option value="coop">全服合力</option>
-        </select>
-      </div>
-      <div v-if="kind !== 'boost'" class="col-auto">
-        最低等级
-        <input
-          v-model.number="minLevel"
-          data-testid="ac-min-level"
-          type="number"
-          min="1"
-          class="form-control form-control-sm d-inline-block"
-          style="width: 5rem"
-          :disabled="started"
-        />
-      </div>
-    </div>
-    <input
-      v-model="title"
-      :class="['form-control form-control-sm mb-1', { 'is-invalid': errors.title }]"
-      placeholder="标题"
-      maxlength="40"
-      data-testid="ac-title"
-    />
-    <div v-if="errors.title" class="text-danger small" data-testid="err-title">{{ errors.title }}</div>
-    <textarea
-      v-model="body"
-      :class="['form-control form-control-sm mb-1', { 'is-invalid': errors.body }]"
-      placeholder="说明"
-      maxlength="1000"
-      data-testid="ac-body"
-    ></textarea>
-    <div v-if="errors.body" class="text-danger small" data-testid="err-body">{{ errors.body }}</div>
-    <div class="d-flex gap-2 align-items-center mb-2 small">
-      开始（北京时间）
-      <input
-        v-model="startsAt"
-        type="datetime-local"
-        class="form-control form-control-sm w-auto"
-        data-testid="ac-starts"
-        :disabled="started"
-      />
-      结束（北京时间）
-      <input
-        v-model="endsAt"
-        type="datetime-local"
-        class="form-control form-control-sm w-auto"
-        data-testid="ac-ends"
-        :disabled="ended"
-      />
-    </div>
-    <div v-if="errors.endsAt" class="text-danger small" data-testid="err-endsAt">{{ errors.endsAt }}</div>
-    <fieldset :key="formKey" :disabled="started" data-testid="ac-def">
-      <GoalsEditor v-if="kind === 'goals'" v-model="defs.goals" :errors="errors" />
-      <GridEditor v-else-if="kind === 'grid'" v-model="defs.grid" :errors="errors" />
-      <PassEditor v-else-if="kind === 'pass'" v-model="defs.pass" :errors="errors" />
-      <BoostEditor v-else-if="kind === 'boost'" v-model="defs.boost" :errors="errors" />
-      <ExchangeEditor v-else-if="kind === 'exchange'" v-model="defs.exchange" :errors="errors" />
-      <CoopEditor v-else-if="kind === 'coop'" v-model="defs.coop" :errors="errors" />
-    </fieldset>
-    <div class="mt-2">
-      <button
-        type="button"
-        class="btn btn-sm btn-primary me-2"
-        :disabled="busy || anyOver"
-        data-testid="ac-save"
-        @click="save"
-      >
-        保存
-      </button>
-      <button type="button" class="btn btn-sm btn-outline-secondary" @click="open = false">取消</button>
+    <div v-if="open" ref="formEl">
+      <AdmBox :title="editing ? `修改 #${editing.id}` : '新建活动'">
+        <div v-if="ended" class="dt-adm-alert dt-adm-mb">
+          <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+          <div>活动已结束，只能改标题和说明</div>
+        </div>
+        <div v-else-if="started" class="dt-adm-alert dt-adm-mb">
+          <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+          <div>活动已开始，只能改标题、说明和延长结束时间</div>
+        </div>
+        <div v-for="[k, m] in topErrors" :key="k" class="dt-adm-err" :data-testid="`err-${k}`">
+          {{ FIELD[k] ?? k }}：{{ m }}
+        </div>
+        <AdmField label="范围和类型">
+          <div class="dt-adm-line">
+            <select v-model="scope" class="dt-adm-in" aria-label="范围" :disabled="started">
+              <option value="shard">当前区服</option>
+              <option value="all">全服</option>
+            </select>
+            <select
+              v-model="kind"
+              class="dt-adm-in"
+              aria-label="类型"
+              data-testid="ac-kind"
+              :disabled="started"
+            >
+              <option value="goals">目标清单</option>
+              <option value="grid">九宫格</option>
+              <option value="pass">战令</option>
+              <option value="boost">全服加成</option>
+              <option value="exchange">兑换活动</option>
+              <option value="coop">全服合力</option>
+            </select>
+            <template v-if="kind !== 'boost'">
+              <span class="dt-adm-mu">最低等级</span>
+              <input
+                v-model.number="minLevel"
+                data-testid="ac-min-level"
+                type="number"
+                min="1"
+                class="dt-adm-in dt-adm-w-xs"
+                aria-label="最低等级"
+                :disabled="started"
+              />
+            </template>
+          </div>
+        </AdmField>
+        <AdmField label="标题" hint="≤ 40 字">
+          <input
+            v-model="title"
+            :class="['dt-adm-in', 'dt-adm-full', { 'is-bad': errors.title }]"
+            maxlength="40"
+            data-testid="ac-title"
+          />
+          <div v-if="errors.title" class="dt-adm-err" data-testid="err-title">{{ errors.title }}</div>
+        </AdmField>
+        <AdmField label="说明" hint="≤ 1000 字">
+          <textarea
+            v-model="body"
+            :class="['dt-adm-in', 'dt-adm-full', { 'is-bad': errors.body }]"
+            maxlength="1000"
+            data-testid="ac-body"
+          ></textarea>
+          <div v-if="errors.body" class="dt-adm-err" data-testid="err-body">{{ errors.body }}</div>
+        </AdmField>
+        <AdmField label="时间段" hint="北京时间">
+          <div class="dt-adm-line">
+            <input
+              v-model="startsAt"
+              type="datetime-local"
+              class="dt-adm-in"
+              aria-label="开始"
+              data-testid="ac-starts"
+              :disabled="started"
+            />
+            <span class="dt-adm-mu">–</span>
+            <input
+              v-model="endsAt"
+              type="datetime-local"
+              class="dt-adm-in"
+              aria-label="结束"
+              data-testid="ac-ends"
+              :disabled="ended"
+            />
+          </div>
+          <div v-if="errors.endsAt" class="dt-adm-err" data-testid="err-endsAt">{{ errors.endsAt }}</div>
+        </AdmField>
+        <AdmField :label="`${KIND[kind]}设置`">
+          <fieldset :key="formKey" :disabled="started" class="dt-adm-def" data-testid="ac-def">
+            <GoalsEditor v-if="kind === 'goals'" v-model="defs.goals" :errors="errors" />
+            <GridEditor v-else-if="kind === 'grid'" v-model="defs.grid" :errors="errors" />
+            <PassEditor v-else-if="kind === 'pass'" v-model="defs.pass" :errors="errors" />
+            <BoostEditor v-else-if="kind === 'boost'" v-model="defs.boost" :errors="errors" />
+            <ExchangeEditor v-else-if="kind === 'exchange'" v-model="defs.exchange" :errors="errors" />
+            <CoopEditor v-else-if="kind === 'coop'" v-model="defs.coop" :errors="errors" />
+          </fieldset>
+        </AdmField>
+        <AdmField>
+          <div class="dt-adm-line">
+            <button
+              type="button"
+              class="dt-adm-btn is-p"
+              :disabled="busy || anyOver"
+              data-testid="ac-save"
+              @click="save"
+            >
+              保存
+            </button>
+            <button type="button" class="dt-adm-btn is-s" @click="open = false">取消</button>
+          </div>
+        </AdmField>
+      </AdmBox>
     </div>
   </div>
 </template>

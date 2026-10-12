@@ -176,7 +176,7 @@ export const adminApi = {
   distribution: (shardId: number) => api.get<DistributionDto>(`${A}/stats/distribution${qs({ shardId })}`),
   settlementRounds: (shardId: number, rounds = 90) =>
     api.get<SettlementRoundDto[]>(`${A}/stats/settlement${qs({ shardId, rounds })}`),
-  audit: (q: { actor?: string; action?: string; before?: string }) =>
+  audit: (q: { actor?: string; action?: string; days?: number; before?: string }) =>
     api.get<AuditPageDto>(`${A}/audit${qs(q)}`),
   icons: (restId: number) => api.get<AdminIconDto[]>(`${A}/restaurants/${restId}/icons`),
   grantIcon: (restId: number, b: { key: string; days?: number; until?: string }) =>

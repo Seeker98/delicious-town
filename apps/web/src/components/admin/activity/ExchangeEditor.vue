@@ -37,13 +37,13 @@ const inUse = (i: number) =>
 </script>
 
 <template>
-  <div class="small fw-bold">活动货币</div>
-  <div v-if="err('def.currencies')" class="text-danger small" data-testid="err-def.currencies">
+  <div class="dt-adm-lab">活动货币</div>
+  <div v-if="err('def.currencies')" class="dt-adm-err" data-testid="err-def.currencies">
     {{ err('def.currencies') }}
   </div>
   <div v-for="(c, i) in modelValue.currencies" :key="`c${i}`" class="d-flex gap-2 align-items-center py-1">
     <input
-      class="form-control form-control-sm w-auto"
+      class="dt-adm-in"
       maxlength="12"
       :value="c.name"
       :data-testid="`cur-name-${i}`"
@@ -53,7 +53,7 @@ const inUse = (i: number) =>
     />
     <button
       type="button"
-      class="btn btn-sm btn-link text-danger"
+      class="dt-adm-btn is-t is-sm is-danger"
       :disabled="modelValue.currencies.length <= 1 || inUse(i)"
       :title="inUse(i) ? '掉落规则或兑换表还在用这种货币，先改掉再删' : undefined"
       :data-testid="`cur-del-${i}`"
@@ -64,14 +64,14 @@ const inUse = (i: number) =>
     <span
       v-for="[k, m] in errsUnder(`def.currencies.${i}.`)"
       :key="k"
-      class="text-danger small"
+      class="dt-adm-err"
       :data-testid="`err-${k}`"
       >{{ m }}</span
     >
   </div>
   <button
     type="button"
-    class="btn btn-sm btn-outline-primary mb-3"
+    class="dt-adm-btn is-sp is-sm dt-adm-mb"
     data-testid="cur-add"
     :disabled="modelValue.currencies.length >= 8"
     @click="patch({ currencies: [...modelValue.currencies, { name: '' }] })"
@@ -79,34 +79,26 @@ const inUse = (i: number) =>
     加一种货币
   </button>
 
-  <div class="small fw-bold">掉落规则</div>
+  <div class="dt-adm-lab">掉落规则</div>
   <div
     v-for="(d, i) in modelValue.drops"
     :key="`d${i}`"
     class="d-flex flex-wrap gap-2 align-items-center py-1"
   >
-    <select
-      class="form-select form-select-sm w-auto"
-      :value="d.key"
-      @change="setDrop(i, { key: val($event) })"
-    >
+    <select class="dt-adm-in" :value="d.key" @change="setDrop(i, { key: val($event) })">
       <option v-for="(name, k) in ACTIVITY_ACTIONS" :key="k" :value="k">{{ name }}</option>
     </select>
     概率
     <input
       type="number"
       step="0.01"
-      class="form-control form-control-sm"
+      class="dt-adm-in"
       style="width: 5rem"
       :value="Math.round(d.chance * 10000) / 100"
       :data-testid="`drop-chance-${i}`"
       @input="setDrop(i, { chance: Math.round(num($event) * 100) / 10000 })"
     />% 掉
-    <select
-      class="form-select form-select-sm w-auto"
-      :value="d.currency"
-      @change="setDrop(i, { currency: num($event) })"
-    >
+    <select class="dt-adm-in" :value="d.currency" @change="setDrop(i, { currency: num($event) })">
       <option v-for="(c, k) in modelValue.currencies" :key="k" :value="k">
         {{ c.name || `货币 ${k + 1}` }}
       </option>
@@ -114,7 +106,7 @@ const inUse = (i: number) =>
     ×<input
       type="number"
       min="1"
-      class="form-control form-control-sm"
+      class="dt-adm-in"
       style="width: 4rem"
       :value="d.num"
       @input="setDrop(i, { num: num($event) })"
@@ -123,14 +115,14 @@ const inUse = (i: number) =>
     <input
       type="number"
       min="1"
-      class="form-control form-control-sm"
+      class="dt-adm-in"
       style="width: 5rem"
       :value="d.dailyCap"
       @input="setDrop(i, { dailyCap: num($event) })"
     />
     <button
       type="button"
-      class="btn btn-sm btn-link text-danger"
+      class="dt-adm-btn is-t is-sm is-danger"
       :disabled="modelValue.drops.length <= 1"
       @click="patch({ drops: modelValue.drops.filter((_, j) => j !== i) })"
     >
@@ -139,14 +131,14 @@ const inUse = (i: number) =>
     <span
       v-for="[k, m] in errsUnder(`def.drops.${i}.`)"
       :key="k"
-      class="text-danger small"
+      class="dt-adm-err"
       :data-testid="`err-${k}`"
       >{{ m }}</span
     >
   </div>
   <button
     type="button"
-    class="btn btn-sm btn-outline-primary mb-3"
+    class="dt-adm-btn is-sp is-sm dt-adm-mb"
     :disabled="modelValue.drops.length >= 20"
     @click="
       patch({
@@ -157,12 +149,12 @@ const inUse = (i: number) =>
     加一条规则
   </button>
 
-  <div class="small fw-bold">兑换表</div>
-  <div v-for="(s, i) in modelValue.shop" :key="shopKeys[i]" class="border-bottom py-2">
+  <div class="dt-adm-lab">兑换表</div>
+  <div v-for="(s, i) in modelValue.shop" :key="shopKeys[i]" class="dt-adm-sec">
     <div v-for="(c, k) in s.cost" :key="k" class="d-flex gap-2 align-items-center py-1">
       消耗
       <select
-        class="form-select form-select-sm w-auto"
+        class="dt-adm-in"
         :value="c.currency"
         :data-testid="`shop-cost-cur-${i}-${k}`"
         @change="setCost(i, k, { currency: num($event) })"
@@ -174,14 +166,14 @@ const inUse = (i: number) =>
       ×<input
         type="number"
         min="1"
-        class="form-control form-control-sm"
+        class="dt-adm-in"
         style="width: 5rem"
         :value="c.num"
         @input="setCost(i, k, { num: num($event) })"
       />
       <button
         type="button"
-        class="btn btn-sm btn-link text-danger"
+        class="dt-adm-btn is-t is-sm is-danger"
         :disabled="s.cost.length <= 1"
         @click="setShop(i, { cost: s.cost.filter((_, j) => j !== k) })"
       >
@@ -190,7 +182,7 @@ const inUse = (i: number) =>
     </div>
     <button
       type="button"
-      class="btn btn-sm btn-link p-0"
+      class="dt-adm-btn is-t is-sm"
       :data-testid="`shop-cost-add-${i}`"
       :disabled="s.cost.length >= 4"
       @click="setShop(i, { cost: [...s.cost, { currency: 0, num: 1 }] })"
@@ -209,7 +201,7 @@ const inUse = (i: number) =>
       <input
         type="number"
         min="1"
-        class="form-control form-control-sm"
+        class="dt-adm-in"
         style="width: 5rem"
         :value="s.limit"
         :data-testid="`shop-limit-${i}`"
@@ -218,7 +210,7 @@ const inUse = (i: number) =>
       次
       <button
         type="button"
-        class="btn btn-sm btn-link text-danger"
+        class="dt-adm-btn is-t is-sm is-danger"
         :disabled="modelValue.shop.length <= 1"
         :data-testid="`shop-del-${i}`"
         @click="removeShop(i)"
@@ -227,12 +219,12 @@ const inUse = (i: number) =>
       </button>
     </div>
     <div v-for="(m, k) in errors" :key="k">
-      <span v-if="String(k).startsWith(`def.shop.${i}.`)" class="text-danger small">{{ m }}</span>
+      <span v-if="String(k).startsWith(`def.shop.${i}.`)" class="dt-adm-err">{{ m }}</span>
     </div>
   </div>
   <button
     type="button"
-    class="btn btn-sm btn-outline-primary my-2"
+    class="dt-adm-btn is-sp is-sm dt-adm-my"
     :disabled="modelValue.shop.length >= 30"
     data-testid="shop-add"
     @click="addShop"
@@ -246,13 +238,13 @@ const inUse = (i: number) =>
       type="number"
       min="0"
       max="168"
-      class="form-control form-control-sm"
+      class="dt-adm-in"
       style="width: 5rem"
       :value="modelValue.graceHours"
       data-testid="ex-grace"
       @input="patch({ graceHours: num($event) })"
     />
-    <span v-if="err('def.graceHours')" class="text-danger small" data-testid="err-def.graceHours">{{
+    <span v-if="err('def.graceHours')" class="dt-adm-err" data-testid="err-def.graceHours">{{
       err('def.graceHours')
     }}</span>
   </div>

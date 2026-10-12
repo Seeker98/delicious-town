@@ -44,7 +44,13 @@ describe('AdminAuditView', () => {
     expect(w.text()).toContain('修改区服数值');
     await w.find('[data-testid="audit-more"]').trigger('click');
     await flushPromises();
-    expect(adminApi.audit).toHaveBeenLastCalledWith({ actor: undefined, action: undefined, before: 'c1' });
+    // 默认看最近 7 天（界面改版 P12）
+    expect(adminApi.audit).toHaveBeenLastCalledWith({
+      actor: undefined,
+      action: undefined,
+      days: 7,
+      before: 'c1',
+    });
     expect(w.text()).toContain('命令行');
     expect(w.find('[data-testid="audit-more"]').exists()).toBe(false);
   });

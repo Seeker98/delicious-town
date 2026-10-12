@@ -38,7 +38,7 @@ describe('后台系统做市（156-3 设计 §7）', () => {
     const w = mount(ExchangeMakerPanel);
     await flushPromises();
     expect(adminApi.exchangeMaker).toHaveBeenCalledWith(1);
-    expect(w.get('[data-testid="exm-today"]').text()).toContain('净回收 -72,500');
+    expect(w.get('[data-testid="exm-today"]').text()).toContain('净回收-72,500');
     expect(w.get('[data-testid="exm-row-11"]').text()).toContain('松露');
     expect(w.get('[data-testid="exm-row-11"]').text()).toContain('35,000');
     expect(w.get('[data-testid="exm-row-12"]').text()).toContain('不收');
@@ -52,7 +52,7 @@ describe('后台系统做市（156-3 设计 §7）', () => {
     });
     const w = mount(ExchangeMakerPanel);
     await flushPromises();
-    expect(w.text()).toContain('系统还没有库存，今天也没有收购');
+    expect(w.text()).toContain('系统还没有库存今天也没有收购');
   });
 
   it('系统做市关闭时写明已关闭，不显示买卖价（backlog 156-3）', async () => {

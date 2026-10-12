@@ -1,15 +1,22 @@
 <script setup lang="ts">
-import { adminTime, fromGameInput, toGameInput } from '../../utils/gameInput';
+import { adminShort, fromGameInput, toGameInput } from '../../utils/gameInput';
 import { onMounted, ref } from 'vue';
 import type { AdminAnnouncementDto, AnnouncementInput } from '@dt/shared';
 import { adminApi } from '../../api/admin';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
 import { useToastStore } from '../../stores/toast';
+import AdmBox from '../../components/admin/kit/AdmBox.vue';
+import AdmEmpty from '../../components/admin/kit/AdmEmpty.vue';
+import AdmField from '../../components/admin/kit/AdmField.vue';
+import AdmHead from '../../components/admin/kit/AdmHead.vue';
+import { periodText, periodTone } from '../../utils/adminLabels';
+import { useConfirmStore } from '../../stores/confirm';
 
 /** 后台公告（子项目 6A）：列表、新建、编辑、删除；时间用本地时间输入，提交时转成 ISO */
 const admin = useAdminStore();
 const toast = useToastStore();
+const confirm = useConfirmStore();
 const list = ref<AdminAnnouncementDto[]>([]);
 const busy = ref(false);
 
@@ -80,7 +87,13 @@ async function save() {
 }
 
 async function remove(a: AdminAnnouncementDto) {
-  if (!window.confirm(`删除公告「${a.title}」？`)) return;
+  const ok = await confirm.ask({
+    title: `删除公告「${a.title}」？`,
+    body: '删掉后玩家马上看不到, 不能恢复。',
+    ok: '删除',
+    danger: true,
+  });
+  if (!ok) return;
   try {
     await adminApi.deleteAnnouncement(a.id);
     if (editing.value === a.id) reset();
@@ -92,99 +105,129 @@ async function remove(a: AdminAnnouncementDto) {
 </script>
 
 <template>
-  <h5>公告</h5>
-  <p v-if="!admin.isAdmin" class="small text-muted">只有管理员能发公告，你可以查看列表。</p>
-  <form v-else class="small border rounded p-2 mb-3" @submit.prevent="save">
-    <div class="d-flex flex-wrap gap-2 mb-2 align-items-center">
-      <select v-model="scope" class="form-select form-select-sm w-auto" data-testid="an-scope">
-        <option value="all">全部区服（登录页也显示）</option>
-        <option value="shard" :disabled="admin.shardId === null && editingShard === null">
-          {{ editingShard !== null ? `区服 ${editingShard}` : '当前区服' }}
-        </option>
-      </select>
-      <label
-        ><input v-model="important" type="checkbox" data-testid="an-important" /> 重要（进游戏弹一次）</label
-      >
-      <label
-        >开始（北京时间） <input v-model="startsAt" type="datetime-local" data-testid="an-starts"
-      /></label>
-      <label>结束（北京时间） <input v-model="endsAt" type="datetime-local" data-testid="an-ends" /></label>
+  <div class="dt-adm-page">
+    <AdmHead title="公告" desc="登录页和游戏里的公告; 重要的进游戏弹一次" />
+    <div v-if="!admin.isAdmin" class="dt-adm-alert is-p">
+      <i class="bi bi-eye" aria-hidden="true"></i>
+      <div>只有管理员能发公告, 你可以查看列表。</div>
     </div>
-    <input
-      v-model="title"
-      class="form-control form-control-sm mb-2"
-      maxlength="40"
-      placeholder="标题（≤ 40 字）"
-      data-testid="an-title"
-    />
-    <textarea
-      v-model="body"
-      class="form-control form-control-sm mb-2"
-      rows="4"
-      maxlength="2000"
-      placeholder="正文（≤ 2000 字）"
-      data-testid="an-body"
-    ></textarea>
-    <div class="d-flex gap-2">
-      <button
-        type="button"
-        class="btn btn-primary btn-sm"
-        :disabled="busy || !title.trim() || !body.trim()"
-        data-testid="an-save"
-        @click="save"
-      >
-        {{ editing === null ? '发布' : '保存修改' }}
-      </button>
-      <button v-if="editing !== null" type="button" class="btn btn-outline-secondary btn-sm" @click="reset">
-        取消编辑
-      </button>
-    </div>
-  </form>
+    <AdmBox v-else :title="editing === null ? '写一条' : `修改 #${editing}`">
+      <form @submit.prevent="save">
+        <AdmField label="发到哪">
+          <div class="dt-adm-line">
+            <select v-model="scope" class="dt-adm-in" data-testid="an-scope">
+              <option value="all">全部区服（登录页也显示）</option>
+              <option value="shard" :disabled="admin.shardId === null && editingShard === null">
+                {{ editingShard !== null ? `区服 ${editingShard}` : '当前区服' }}
+              </option>
+            </select>
+            <label class="dt-adm-check"
+              ><input v-model="important" type="checkbox" data-testid="an-important" />
+              重要（进游戏弹一次）</label
+            >
+          </div>
+        </AdmField>
+        <AdmField label="时间段" hint="北京时间">
+          <div class="dt-adm-line">
+            <input
+              v-model="startsAt"
+              type="datetime-local"
+              class="dt-adm-in"
+              aria-label="开始"
+              data-testid="an-starts"
+            />
+            <span class="dt-adm-mu">–</span>
+            <input
+              v-model="endsAt"
+              type="datetime-local"
+              class="dt-adm-in"
+              aria-label="结束"
+              data-testid="an-ends"
+            />
+          </div>
+        </AdmField>
+        <AdmField label="标题" hint="≤ 40 字">
+          <input v-model="title" class="dt-adm-in dt-adm-full" maxlength="40" data-testid="an-title" />
+        </AdmField>
+        <AdmField label="正文" hint="≤ 2000 字">
+          <textarea
+            v-model="body"
+            class="dt-adm-in dt-adm-full"
+            rows="4"
+            maxlength="2000"
+            data-testid="an-body"
+          ></textarea>
+        </AdmField>
+        <AdmField>
+          <div class="dt-adm-line">
+            <button
+              type="button"
+              class="dt-adm-btn is-p"
+              :disabled="busy || !title.trim() || !body.trim()"
+              data-testid="an-save"
+              @click="save"
+            >
+              {{ editing === null ? '发布' : '保存修改' }}
+            </button>
+            <button v-if="editing !== null" type="button" class="dt-adm-btn is-s" @click="reset">
+              取消编辑
+            </button>
+          </div>
+        </AdmField>
+      </form>
+    </AdmBox>
 
-  <table class="table table-sm small">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>标题</th>
-        <th>范围</th>
-        <th>时间段</th>
-        <th>重要</th>
-        <th>发布人</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="a in list" :key="a.id">
-        <td>{{ a.id }}</td>
-        <td>{{ a.title }}</td>
-        <td>{{ a.shardId === null ? '全部区服' : `区服 ${a.shardId}` }}</td>
-        <td>
-          {{ adminTime(a.startsAt) }} ~
-          {{ adminTime(a.endsAt) }}
-        </td>
-        <td>{{ a.important ? '是' : '' }}</td>
-        <td>{{ a.actor ?? '—' }}</td>
-        <td class="text-nowrap">
-          <template v-if="admin.isAdmin">
-            <button
-              type="button"
-              class="btn btn-sm btn-link py-0"
-              :data-testid="`an-edit-${a.id}`"
-              @click="edit(a)"
-            >
-              编辑
-            </button>
-            <button
-              type="button"
-              class="btn btn-sm btn-outline-danger py-0"
-              :data-testid="`an-delete-${a.id}`"
-              @click="remove(a)"
-            >
-              删除
-            </button>
-          </template>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <AdmBox title="全部公告" :sub="`${list.length} 条`" flush>
+      <div class="dt-adm-scroll">
+        <table v-if="list.length > 0" class="dt-adm-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>标题</th>
+              <th>范围</th>
+              <th>时间段</th>
+              <th>状态</th>
+              <th>发布人</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="a in list" :key="a.id" :class="{ 'is-hl': editing === a.id }">
+              <td class="dt-adm-mono dt-adm-mu">{{ a.id }}</td>
+              <td>{{ a.title }} <span v-if="a.important" class="dt-adm-tag is-w">重要</span></td>
+              <td class="nowrap">{{ a.shardId === null ? '全部区服' : `区服 ${a.shardId}` }}</td>
+              <td class="dt-adm-mu nowrap">{{ adminShort(a.startsAt) }} – {{ adminShort(a.endsAt) }}</td>
+              <td>
+                <span :class="['dt-adm-tag', periodTone(a.startsAt, a.endsAt)]">{{
+                  periodText(a.startsAt, a.endsAt)
+                }}</span>
+              </td>
+              <td class="dt-adm-mu">{{ a.actor ?? '—' }}</td>
+              <td class="acts">
+                <template v-if="admin.isAdmin">
+                  <button
+                    type="button"
+                    class="dt-adm-btn is-t is-sm"
+                    :data-testid="`an-edit-${a.id}`"
+                    @click="edit(a)"
+                  >
+                    编辑
+                  </button>
+                  <button
+                    type="button"
+                    class="dt-adm-btn is-d is-sm"
+                    :data-testid="`an-delete-${a.id}`"
+                    @click="remove(a)"
+                  >
+                    删除
+                  </button>
+                </template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <AdmEmpty v-else title="还没有公告" />
+      </div>
+    </AdmBox>
+  </div>
 </template>

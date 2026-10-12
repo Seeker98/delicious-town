@@ -69,7 +69,7 @@ describe('AdminFuturesView（期货设计 §5.3）', () => {
     for (const x of ['31', '火腿', '3', '稀有', '9,000', '10,800', '7']) expect(r).toContain(x);
     expect(w.get(T('fut-streets-31')).text()).toBe('2');
     expect(w.get(T('fut-quota-31')).text()).toContain('100');
-    expect(w.get(T('fut-quota-31')).classes()).toContain('text-muted');
+    expect(w.get(T('fut-quota-31')).classes()).toContain('dt-adm-mu');
     expect(w.get(T('fut-quota-32')).text()).toContain('5');
     expect(w.get(T('fut-row-21')).text()).toContain('不在表里');
   });

@@ -97,15 +97,16 @@ async function save() {
 </script>
 
 <template>
-  <div class="border rounded p-1 mb-1">
-    <div class="d-flex flex-wrap gap-1 align-items-center">
+  <div class="dt-adm-tp">
+    <div class="dt-adm-line">
       <input
         v-model="q"
-        class="form-control form-control-sm w-auto"
+        class="dt-adm-in dt-adm-w-sm"
+        type="search"
         placeholder="搜名字或备注"
         :data-testid="tid('q')"
       />
-      <select v-model="key" class="form-select form-select-sm w-auto" :data-testid="tid('select')">
+      <select v-model="key" class="dt-adm-in dt-adm-grow" :data-testid="tid('select')">
         <option value="">选择称号</option>
         <optgroup v-if="custom.length > 0" label="定制称号">
           <option v-for="t in custom" :key="t.key" :value="t.key">
@@ -116,7 +117,7 @@ async function save() {
           <option v-for="t in config" :key="t.key" :value="t.key">{{ t.title }}（{{ t.key }}）</option>
         </optgroup>
       </select>
-      <select v-model="mode" class="form-select form-select-sm w-auto" :data-testid="tid('mode')">
+      <select v-model="mode" class="dt-adm-in" :data-testid="tid('mode')">
         <option value="forever">永久</option>
         <option value="days">领取后 N 天</option>
         <option value="until">到某个时间</option>
@@ -127,7 +128,7 @@ async function save() {
         type="number"
         min="1"
         max="3650"
-        class="form-control form-control-sm w-auto"
+        class="dt-adm-in dt-adm-w-sm"
         placeholder="天数（1~3650）"
         :data-testid="tid('days')"
       />
@@ -135,52 +136,54 @@ async function save() {
         v-if="mode === 'until'"
         v-model="until"
         type="datetime-local"
-        class="form-control form-control-sm w-auto"
+        class="dt-adm-in dt-adm-w-sm"
         :data-testid="tid('until')"
       />
-      <span v-if="mode === 'until'" class="dt-meta">北京时间</span>
+      <span v-if="mode === 'until'" class="dt-adm-mu dt-adm-small">北京时间</span>
       <button
         v-if="create && !making"
         type="button"
-        class="btn btn-link btn-sm p-0"
+        class="dt-adm-btn is-t is-sm"
         :data-testid="tid('new')"
         @click="making = true"
       >
         新建称号
       </button>
     </div>
-    <div v-if="making" class="d-flex flex-wrap gap-1 align-items-center mt-1">
+    <div v-if="making" class="dt-adm-line">
       <input
         v-model="nt"
-        class="form-control form-control-sm w-auto"
+        class="dt-adm-in dt-adm-w-sm"
         :placeholder="`名字（1~${TITLE_MAX} 字，可用 emoji）`"
         :data-testid="tid('new-title')"
       />
-      <span class="dt-meta" :data-testid="tid('new-count')">{{ count(nt) }}/{{ TITLE_MAX }}</span>
+      <span class="dt-adm-mu dt-adm-small" :data-testid="tid('new-count')"
+        >{{ count(nt) }}/{{ TITLE_MAX }}</span
+      >
       <input
         v-model="nd"
-        class="form-control form-control-sm w-auto"
+        class="dt-adm-in dt-adm-w-sm"
         :placeholder="`说明（可空，≤ ${TITLE_DESC_MAX} 字）`"
         :data-testid="tid('new-desc')"
       />
       <input
         v-model="nn"
-        class="form-control form-control-sm w-auto"
+        class="dt-adm-in dt-adm-w-sm"
         placeholder="备注（只有后台看，给谁、为什么）"
         :data-testid="tid('new-note')"
       />
       <button
         type="button"
-        class="btn btn-sm btn-primary"
+        class="dt-adm-btn is-p is-sm"
         :disabled="!canSave || busy"
         :data-testid="tid('new-save')"
         @click="save"
       >
         保存
       </button>
-      <button type="button" class="btn btn-link btn-sm p-0" @click="making = false">取消</button>
-      <span v-if="dup" class="text-warning small" :data-testid="tid('dup')">已有同名称号</span>
-      <span v-if="err" class="text-danger small">{{ err }}</span>
+      <button type="button" class="dt-adm-btn is-t is-sm" @click="making = false">取消</button>
+      <span v-if="dup" class="dt-adm-small dt-adm-warn" :data-testid="tid('dup')">已有同名称号</span>
+      <span v-if="err" class="dt-adm-small dt-adm-bad">{{ err }}</span>
     </div>
   </div>
 </template>
