@@ -115,6 +115,7 @@ export default {
     count: (floor: number, n: number) => `${floor} 楼 ${n} 桌`,
     eating: (n: number) => `${n} 桌在吃`,
     roach: (n: number) => `${n} 只蟑螂`,
+    left: (n: number) => `${n} 桌走了`,
     free: (n: number) => `${n} 桌白食`,
   },
   flip: {

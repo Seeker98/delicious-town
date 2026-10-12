@@ -82,7 +82,9 @@ export const tuningSchema = z.object({
     spFloatCenter: num,
     atOverflowThreshold: num,
     atOverflowDivisor: num,
-    adiaoOverflowRate: num,
+    /** 挑剔率软上限（挑剔顾客调整 2026-10-12）：截到 0~1 之后，超过 spSoftCapAt 的部分乘 spSoftCapRate */
+    spSoftCapAt: z.number().min(0).max(1),
+    spSoftCapRate: z.number().min(0).max(1),
     negativeRenownAtRate: num,
     starPotential: z.array(num),
     // 低等级经验加成（问题记录 378）：1 级 +rate，线性减到 maxLevel 为 0
@@ -115,10 +117,13 @@ export const tuningSchema = z.object({
     krabMaxGrade: int,
     krabExpPerGrade: num,
     krabCoinMultiplier: num,
-    huskyRate: num,
     painting13Rate: num,
     painting13Hours: num,
     pickyMaxGrade: int,
+    /** 本街学会几道菜时挑剔顾客一定点到会做的；不到时按 学会数 ÷ 它 的机会点到，否则点到没学会的走人 */
+    pickyHitCount: int.min(1),
+    /** 品级不够时付这道菜挑剔价的几成 */
+    pickyShortPayRate: z.number().min(0).max(1),
     cookfoodsPerFlag: int,
     cookfoodsMaxFlag: int,
     cookfoodsMinGrade: int,

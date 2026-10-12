@@ -38,7 +38,7 @@ describe('每桌点的菜（问题记录 559）', () => {
         last({ type: 2, req: 3, grade: 2, cookbookId: 5, satisfied: false, mcId: 42, mcNum: 1 }),
         names,
       ),
-    ).toEqual(['点了「宫保鸡丁」, 要上品, 你的是中品, 不满意', '吃了特色菜「佛跳墙」×1']);
+    ).toEqual(['点了「宫保鸡丁」, 要上品, 你的是中品, 不满意, 付一半菜钱', '吃了特色菜「佛跳墙」×1']);
     expect(
       tableOrderLines(last({ type: 8, req: 4, grade: 5, cookbookId: 5, satisfied: true }), names),
     ).toEqual(['点了「宫保鸡丁」, 要极品, 你的是金牌, 满意']);
@@ -50,6 +50,12 @@ describe('每桌点的菜（问题记录 559）', () => {
     expect(tableOrderLines(last({ type: 2, req: 2 }), names)).toEqual([
       '想点中品的菜, 但你还没学会能给他做的菜',
     ]);
+  });
+
+  it('挑剔顾客点到没学会的菜走了（-2）：格子写那道菜，详情写点了哪道没学会、走了（挑剔顾客调整）', () => {
+    const left = last({ type: -2, coin: 0, exp: 0, oil: 0, req: 2, cookbookId: 5 });
+    expect(tableDish(left, names)).toBe('宫保鸡丁');
+    expect(tableOrderLines(left, names)).toEqual(['点了「宫保鸡丁」, 你还没学会这道菜, 他走了']);
   });
 
   it('旧记录没有特色菜编号时不写特色菜那一行', () => {

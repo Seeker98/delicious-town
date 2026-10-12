@@ -114,6 +114,7 @@ const friends: Messages['friends'] = {
     count: (floor, n) => `Floor ${floor}: ${n} ${plEn(n, 'table', 'tables')}`,
     eating: (n) => `${n} eating`,
     roach: (n) => `${n} ${plEn(n, 'roach', 'roaches')}`,
+    left: (n) => `${n} left`,
     free: (n) => `${n} freeloading`,
   },
   flip: {

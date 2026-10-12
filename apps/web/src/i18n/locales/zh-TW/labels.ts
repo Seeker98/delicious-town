@@ -8,16 +8,21 @@ export default {
     '2': '挑剔顧客',
     '3': '蟑螂',
     '-3': '蟑螂 (已消滅)',
+    '-2': '挑剔顧客 (走了)',
     '6': '章魚哥',
     '7': '痞老闆',
     '8': '蟹老闆',
     '9': '白食',
   },
   /** 顧客類型的短名（介面改版 P7 餐桌格子裡的小標籤） */
-  customerShort: { '1': '普通', '2': '挑剔', '6': '章魚哥', '7': '痞老闆', '8': '蟹老闆' } as Record<
-    string,
-    string
-  >,
+  customerShort: {
+    '1': '普通',
+    '2': '挑剔',
+    '-2': '走了',
+    '6': '章魚哥',
+    '7': '痞老闆',
+    '8': '蟹老闆',
+  } as Record<string, string>,
   grade: ['未學', '普通', '中品', '上品', '極品', '金牌', '珍品', '佳餚', '仙珍', '聖宴', '天饌'],
   rate: {
     atRate: { label: '上座率', percent: true },
@@ -42,7 +47,7 @@ export default {
     honor: '集榮譽',
     pot: '集盆栽',
     painting: '集名畫',
-    spOverflow: '挑剔溢位',
+    softCap: '超出部分折算',
     atOverflow: '上座溢位',
     starPotential: '星潛力',
     newbie: '新手經驗',

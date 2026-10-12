@@ -54,7 +54,6 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
     bless: v(b, 'spRate'),
     float: spFloat,
   });
-  const spOverflow = v(a, 'adiao') > 0 && sp.total > 1 ? (sp.total - 1) * st.adiaoOverflowRate : 0;
 
   const coinParts: Record<string, number> = {
     effects: v(a, 'coinRate'),
@@ -64,7 +63,6 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
     painting: v(a, 'paintingCoinRate'),
     weather: v(w, 'coinRate'),
     bless: v(b, 'coinRate'),
-    spOverflow,
   };
   const expParts: Record<string, number> = {
     effects: v(a, 'expRate'),
@@ -88,7 +86,7 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
   const luckSum = rest.luck + v(a, 'luckValue') + v(w, 'luckValue');
   const rates: Rates = {
     atRate: { total: atRate, parts: at.parts },
-    spRate: { total: Math.min(Math.max(sp.total, 0), 1), parts: sp.parts },
+    spRate: softCap(sp, st.spSoftCapAt, st.spSoftCapRate),
     coinRate: coin,
     expRate: part(expParts),
     coinValue: part({ effects: v(a, 'coinValue'), weather: v(w, 'coinValue') }),
@@ -99,8 +97,6 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
     seated: Math.round(atRate * input.tables.length),
   };
   const flags: Flags = {
-    husky: v(a, 'husky') > 0,
-    ali: v(a, 'ali') > 0,
     flute: v(a, 'magicFlute') > 0,
     paintingTop: v(a, 'paintingTop') > 0,
     pinkBook: v(a, 'pinkBook') > 0,
@@ -114,6 +110,17 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
     luckRate: luckRate(luckSum),
   };
   return { rates, flags };
+}
+
+/**
+ * 挑剔率截到 0~1，再过软上限（挑剔顾客调整 2026-10-12）：超过 at 的部分只算 rate。
+ * 压掉的部分记成负的分项 softCap，分项加起来仍等于合计
+ */
+export function softCap(sp: RatePart, at: number, rate: number): RatePart {
+  const clipped = Math.min(Math.max(sp.total, 0), 1);
+  if (clipped <= at) return { total: clipped, parts: sp.parts };
+  const total = round(at + (clipped - at) * rate);
+  return { total, parts: { ...sp.parts, softCap: round(total - sp.total) } };
 }
 
 /** 低等级经验加成（问题记录 378）：1 级 +rate，线性减到 maxLevel 为 0 */

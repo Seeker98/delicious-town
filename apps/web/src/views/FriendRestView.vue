@@ -75,7 +75,8 @@ async function act(fn: () => Promise<unknown>, ok: string, fallback: string) {
   }
 }
 
-const isEmpty = (t: TableDto) => (t.customer === 0 || t.customer === -3) && !t.roach && !t.freeloaderRestId;
+const isEmpty = (t: TableDto) =>
+  (t.customer === 0 || t.customer === -3 || t.customer === -2) && !t.roach && !t.freeloaderRestId;
 const mine = computed(() => session.me?.restaurantId ?? null);
 const equips = computed(() => [...(rest.value?.equips ?? [])].sort((a, b) => a.part - b.part));
 const maxStress = computed(() => Math.max(0, ...equips.value.map((e) => e.stress)));

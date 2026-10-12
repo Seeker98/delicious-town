@@ -48,8 +48,11 @@ export default {
     last: (coin: string, exp: string) => `上一轮 ${coin} 银 / ${exp} 经`,
     /** 每桌点的菜（问题记录 559） */
     ordered: (dish: string, req: string, grade: string, ok: boolean) =>
-      `点了「${dish}」, 要${req}, 你的是${grade}, ${ok ? '满意' : '不满意'}`,
+      `点了「${dish}」, 要${req}, 你的是${grade}, ${ok ? '满意' : '不满意, 付一半菜钱'}`,
     orderedNone: (req: string) => `想点${req}的菜, 但你还没学会能给他做的菜`,
+    /** 挑剔顾客点到本街没学会的菜，走了（挑剔顾客调整 2026-10-12） */
+    orderedLeft: (dish: string) => `点了「${dish}」, 你还没学会这道菜, 他走了`,
+    leftNote: '这一轮这桌没有收入。本街的菜学会得越多, 越少有人走。',
     ateSpecial: (name: string, n: number) => `吃了特色菜「${name}」×${n}`,
     /** 点开有蟑螂的桌子（界面改版 P7） */
     roachNote: '有蟑螂的桌子接不了客, 消灭它才能继续接客。',

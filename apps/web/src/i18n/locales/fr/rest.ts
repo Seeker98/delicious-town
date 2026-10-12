@@ -47,8 +47,12 @@ const rest: Messages['rest'] = {
     tableNo: (n) => `Table ${n}`,
     last: (coin, exp) => `Dernier tour ${coin} ${plFr(coin, 'pièce', 'pièces')} / ${exp} EXP`,
     ordered: (dish, req, grade, ok) =>
-      `A commandé «\u202f${dish}\u202f», voulait ${req}, le vôtre est ${grade}\u202f: ${ok ? 'satisfait' : 'pas satisfait'}`,
+      `A commandé «\u202f${dish}\u202f», voulait ${req}, le vôtre est ${grade}\u202f: ${ok ? 'satisfait' : 'pas satisfait, a payé la moitié du prix du plat'}`,
     orderedNone: (req) => `Voulait un plat ${req}, mais vous n’en avez appris aucun à lui servir`,
+    orderedLeft: (dish) =>
+      `A commandé «\u202f${dish}\u202f», que vous ne savez pas encore cuisiner\u202f: il est parti`,
+    leftNote:
+      'Aucun revenu pour cette table ce tour-ci. Plus vous apprenez de plats de votre rue, moins les clients partent.',
     ateSpecial: (name, n) => `A mangé la spécialité «\u202f${name}\u202f»\u202f×\u202f${n}`,
     roachNote: 'Une table avec un cafard ne reçoit plus de clients tant que vous ne l’avez pas écrasé.',
     kill: 'Écraser le cafard',

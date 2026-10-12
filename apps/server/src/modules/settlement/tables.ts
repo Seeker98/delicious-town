@@ -36,6 +36,23 @@ export function splitLearned(
   return { all, local, other };
 }
 
+/**
+ * 挑剔顾客点本街菜（挑剔顾客调整 2026-10-12）：本街学会 n 道，有 n ÷ min(hitCount, 本街菜数) 的机会点到会做的（返回 null）；
+ * 否则从本街没学会的菜里随机点一道，返回它（这桌走人）。判定取一次随机数，走人时再取一次挑菜
+ */
+export function missedDish(
+  localLearned: readonly number[],
+  streetIds: readonly number[],
+  hitCount: number,
+  rng: Rng,
+): number | null {
+  const need = Math.min(hitCount, streetIds.length);
+  if (rng.chance(need <= 0 ? 1 : localLearned.length / need)) return null;
+  const known = new Set(localLearned);
+  const left = streetIds.filter((id) => !known.has(id));
+  return left.length > 0 ? left[rng.int(left.length)]! : null;
+}
+
 /** 规格书 01 §1.5E：原值为 0 或加上之后 ≤0 时为 0 */
 export function realValue(x: number, add: number): number {
   return x === 0 ? 0 : Math.max(0, x + add);
@@ -285,8 +302,6 @@ export function allocateTables(
             t.krabCoinMultiplier;
           out.drops.push({ goodsId: GOODS.krabHappy, num: 1 });
           out.logs.push({ type: 'krab.happy', params: { cookbookId: cb, grade, req } });
-        } else if (flags.husky && rng.chance(t.huskyRate)) {
-          out.logs.push({ type: 'krab.husky', params: { req } });
         } else if (flags.paintingTop && rng.chance(t.painting13Rate)) {
           out.drops.push({ goodsId: GOODS.krabHappy, num: 1, hours: t.painting13Hours });
           out.logs.push({ type: 'krab.painting', params: { req } });
@@ -297,22 +312,32 @@ export function allocateTables(
           out.logs.push({ type: 'krab.angry', params: { req } });
         }
       } else {
-        // 普通挑剔顾客
+        // 普通挑剔顾客（挑剔顾客调整 2026-10-12）
         type = 2;
         next.customer = 2;
         const req = rng.intMin1(Math.min(s, t.pickyMaxGrade));
         const localRate = rest.streetId === 0 ? 1 : rt.localRateBase - rt.localRatePerStar * s;
         const local = rng.chance(localRate);
+        // 本街：按 学会数 ÷ pickyHitCount 的机会点到会做的，否则点到没学会的菜、走人
+        const unlearned = local
+          ? missedDish(learned.local, g.cookbooks.idsByStreet.get(rest.streetId) ?? [], t.pickyHitCount, rng)
+          : null;
         const pool = local ? learned.local : learned.other;
-        const cb = pool.length > 0 ? pool[rng.int(pool.length)]! : null;
-        if (cb !== null) {
+        const cb = unlearned !== null || pool.length === 0 ? null : pool[rng.int(pool.length)]!;
+        if (unlearned !== null) {
+          // 走人：这桌这一轮银币、经验、油都是 0（-2 不在付费顾客里）
+          type = -2;
+          next.customer = -2;
+          Object.assign(extra, { req, cookbookId: unlearned });
+        } else if (cb !== null) {
           const grade = gradeOf(input.levels, g.cookbooks.slotOf, cb);
           Object.assign(extra, { req, grade, cookbookId: cb });
           oil = oil + oil + grade;
           exp += grade * (local ? 1 : 2);
+          const dish = dishCoin(g.cookbooks.coin[cb]!, t.dishCoinRate) * (1 + g.grade(grade).spCoinAddRate);
           if (grade >= req) {
             satisfied = true;
-            coin += dishCoin(g.cookbooks.coin[cb]!, t.dishCoinRate) * (1 + g.grade(grade).spCoinAddRate);
+            coin += dish;
             const m = eatSpecial(2, false);
             mcCoin += m.coin;
             mcNum += m.n;
@@ -321,25 +346,15 @@ export function allocateTables(
               out.candidates.push({ cookbookId: cb, req });
             }
           } else {
-            coin += grade;
-            if (flags.ali) {
-              const m = eatSpecial(1, false);
-              mcCoin += m.coin;
-              mcNum += m.n;
-              mcExp += m.exp;
-            }
+            // 品级不够：按自己的品级算的挑剔价付几成
+            coin += dish * t.pickyShortPayRate;
           }
         } else {
+          // 外街一道都没学会：银币、经验减半
           Object.assign(extra, { req });
           exp /= 2;
-          if (flags.ali) {
-            const m = eatSpecial(1, true);
-            mcCoin += m.coin;
-            mcNum += m.n;
-            mcExp += m.exp;
-          }
+          coin /= 2;
         }
-        if (!satisfied && !flags.husky) coin /= 2;
       }
     } else {
       // 普通顾客

@@ -22,16 +22,18 @@ const roaches = computed(() => {
   for (const x of props.tables) if (x.customer === 3) m.set(x.floor, (m.get(x.floor) ?? 0) + 1);
   return m;
 });
-/** 这一层的汇总（界面改版 P7）：几桌、几桌在吃、几只蟑螂、几桌白食，没有的不写 */
+/** 这一层的汇总（界面改版 P7）：几桌、几桌在吃、几桌挑剔顾客走了、几只蟑螂、几桌白食，没有的不写 */
 const summary = computed(() => {
   const s = t.value.friends.tables;
   const list = shown.value;
   const eating = list.filter((x) => PAYING_CUSTOMERS.includes(x.customer)).length;
   const roach = list.filter((x) => x.customer === 3).length;
   const free = list.filter((x) => x.customer === 9).length;
+  const left = list.filter((x) => x.customer === -2).length;
   return [
     s.count(floor.value, list.length),
     eating > 0 ? s.eating(eating) : '',
+    left > 0 ? s.left(left) : '',
     roach > 0 ? s.roach(roach) : '',
     free > 0 ? s.free(free) : '',
   ]
@@ -66,7 +68,12 @@ const summary = computed(() => {
       type="button"
       :class="[
         'dt-table-cell',
-        { 'is-roach': x.customer === 3, 'is-freeloader': x.customer === 9, 'is-empty': x.customer === 0 },
+        {
+          'is-roach': x.customer === 3,
+          'is-freeloader': x.customer === 9,
+          'is-empty': x.customer === 0,
+          'is-left': x.customer === -2,
+        },
       ]"
       :aria-pressed="selected === x.no"
       :data-testid="`table-${x.no}`"
@@ -83,13 +90,15 @@ const summary = computed(() => {
       </template>
       <span v-else-if="x.customer === 0" class="dt-table-who">{{ CUSTOMER_NAMES['0'] }}</span>
       <template v-else>
-        <!-- 这桌点的菜：挑剔顾客、蟹老板写点的菜，普通顾客、章鱼哥写吃的特色菜（问题记录 559） -->
+        <!-- 这桌点的菜：挑剔顾客、蟹老板写点的菜，普通顾客、章鱼哥写吃的特色菜（问题记录 559）；挑剔顾客走了的菜名划掉、红标签（挑剔顾客调整） -->
         <span v-if="dishes.get(x.no)" class="dt-table-main" :data-testid="`table-dish-${x.no}`">{{
           dishes.get(x.no)
         }}</span>
-        <span v-if="dishes.get(x.no)" class="dt-tag dt-tag-mute">{{
-          CUSTOMER_SHORT[String(x.customer)] ?? CUSTOMER_NAMES[String(x.customer)]
-        }}</span>
+        <span
+          v-if="dishes.get(x.no)"
+          :class="['dt-tag', x.customer === -2 ? 'dt-tag-danger' : 'dt-tag-mute']"
+          >{{ CUSTOMER_SHORT[String(x.customer)] ?? CUSTOMER_NAMES[String(x.customer)] }}</span
+        >
         <span v-else class="dt-table-main">{{ CUSTOMER_NAMES[String(x.customer)] }}</span>
       </template>
     </button>

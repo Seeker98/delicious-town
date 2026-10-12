@@ -97,7 +97,26 @@ describe('RestFloorView', () => {
     await flushPromises();
     await w.find('[data-testid="table-4"]').trigger('click');
     const lines = w.findAll('[data-testid="table-order"]').map((x) => x.text());
-    expect(lines).toEqual(['点了「宫保鸡丁」, 要上品, 你的是中品, 不满意', '吃了特色菜「佛跳墙」×1']);
+    expect(lines).toEqual([
+      '点了「宫保鸡丁」, 要上品, 你的是中品, 不满意, 付一半菜钱',
+      '吃了特色菜「佛跳墙」×1',
+    ]);
+  });
+
+  it('点开挑剔顾客走了的桌：写点了哪道没学会的菜、走了，下面说明这一轮没有收入（挑剔顾客调整）', async () => {
+    const catalog = useCatalogStore();
+    catalog.dataMap = new Map([['cookbooks:5', { id: 5, name: '宫保鸡丁' }]]) as never;
+    vi.mocked(endpoints.floor).mockResolvedValue([
+      { no: 4, floor: 1, customer: -2, last: { type: -2, coin: 0, exp: 0, oil: 0, req: 1, cookbookId: 5 } },
+    ]);
+    const w = mountView();
+    await flushPromises();
+    await w.find('[data-testid="table-4"]').trigger('click');
+    expect(w.findAll('[data-testid="table-order"]').map((x) => x.text())).toEqual([
+      '点了「宫保鸡丁」, 你还没学会这道菜, 他走了',
+    ]);
+    expect(w.get('[data-testid="table-left-note"]').text()).toContain('这一轮这桌没有收入');
+    expect(w.text()).not.toContain('上一轮 0 银');
   });
 
   it('点一桌从底部弹出面板（界面改版 P7）；灭蟑螂是主按钮，赶白食是危险描边；普通桌没有操作按钮', async () => {

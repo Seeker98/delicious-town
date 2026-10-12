@@ -90,7 +90,10 @@ onMounted(load);
             >
               {{ line }}
             </div>
-            <div v-if="picked.last && picked.last.type !== 0" class="dt-detail-sub">
+            <div v-if="picked.last?.type === -2" class="dt-detail-sub" data-testid="table-left-note">
+              {{ t.rest.floor.leftNote }}
+            </div>
+            <div v-else-if="picked.last && picked.last.type !== 0" class="dt-detail-sub">
               {{
                 t.rest.floor.last(
                   formatNum(Math.floor(picked.last.coin)),

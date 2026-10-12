@@ -1088,6 +1088,11 @@ details.dt-card > summary {
 .dt-table-cell.is-empty .dt-table-who {
   color: var(--dt-muted);
 }
+/* 挑剔顾客点到没学会的菜走了（挑剔顾客调整 2026-10-12）：菜名灰色划掉，下面红标签“走了” */
+.dt-table-cell.is-left .dt-table-main {
+  color: var(--dt-muted);
+  text-decoration: line-through;
+}
 .dt-table-cell .dt-tag {
   max-width: 100%;
   overflow: hidden;

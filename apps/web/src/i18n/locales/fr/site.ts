@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    picky1012:
+      'Clients difficiles rééquilibrés\u202f: ils commandent un plat de votre rue 9 fois sur 10 et d’une autre rue 1 fois sur 10, sans plus dépendre des étoiles\u202f; avec au moins 30 plats de votre rue appris, ils choisissent toujours un plat que vous savez cuisiner, sinon ils peuvent commander un plat non appris et partir, et la table ne rapporte rien\u202f; si votre qualité est insuffisante, ils sont mécontents mais paient la moitié du prix du plat (avant, un petit montant de base)\u202f; le taux de clients difficiles monte de 2\u202f% par étoile (6\u202f% avant), et la part au-delà de 30\u202f% ne compte que pour un tiers',
     jobcard1012:
       'Refonte des cartes de métier\u202f: le Garçon hip-hop et le classement des pourboires disparaissent\u202f; les cartes viennent désormais du classement de saison (page météo\u202f: chaque dimanche à 23 h, les 3 premiers avec au moins 200 points de saison dans la semaine en tirent une chacun). Les cartes portent des noms de métiers, avec six nouvelles (Courtier de la Bourse, Trader en contrats à terme, Conseiller en placements, Conseiller en fusions, Vendeur du stand Kuji, Analyste des prédictions) qui baissent chacune des frais dans leur système\u202f; toutes donnent pièces et EXP finales +5\u202f%, et les salaires baissent nettement. Le quiz du maire devient un pari sur la prochaine météo\u202f: bonne réponse récompensée, aucune pénalité sinon',
     shiling1012:

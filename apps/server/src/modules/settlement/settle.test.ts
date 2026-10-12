@@ -123,11 +123,55 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     expect(plain.coin).toBe(10);
   });
 
-  it('挑剔点了没学过的菜：经验减半，没有二哈时银币减半', () => {
-    const r = settle({}, {}, [0.5, 0.65, 0.9, 0.05, 0.3, 0.9, 0.9, 0.9]);
+  it('挑剔点到本街没学会的菜：走人，这桌银币、经验、油都是 0，桌子记 -2 和点的菜（挑剔顾客调整 2026-10-12）', () => {
+    const newbie = config.cookbookIndex.idsByStreet.get(0)!;
+    // 本街一道没学：命中率 0，挑没学会的第 int(0.5 × 69) 道
+    const r = settle({}, {}, [0.5, 0.65, 0.9, 0.05, 0.3, 0.9, 0.5, 0.9, 0.9, 0.9, 0.9, 0.9]);
+    expect(r.tables[0]).toMatchObject({
+      customer: -2,
+      last: { type: -2, req: 1, cookbookId: newbie[34], coin: 0, exp: 0, oil: 0 },
+    });
+    expect(r.tables[0]!.last!.satisfied).toBeUndefined();
+    expect(r.customers['-2']).toBe(1);
+    expect(r.coin).toBe(0);
+    expect(r.oil).toBe(0);
+  });
+
+  it('本街学会不到 30 道：按 学会数 ÷ 30 的机会点到会做的', () => {
+    const cookbooks = Object.fromEntries(
+      config.cookbookIndex.idsByStreet
+        .get(0)!
+        .slice(0, 15)
+        .map((id) => [id, 1]),
+    );
+    // 学会 15 道：0.49 < 0.5 点到会做的，0.51 走人
+    const hit = settle({ cookbooks }, {}, [0.5, 0.65, 0.9, 0.05, 0.3, 0.49, 0, 0.9, 0.9, 0.9]);
+    expect(hit.tables[0]!.last).toMatchObject({ type: 2, satisfied: true });
+    const miss = settle({ cookbooks }, {}, [0.5, 0.65, 0.9, 0.05, 0.3, 0.51, 0, 0.9, 0.9, 0.9]);
+    expect(miss.tables[0]!.last!.type).toBe(-2);
+    expect(cookbooks[miss.tables[0]!.last!.cookbookId!]).toBeUndefined();
+  });
+
+  it('挑剔品级不够：按自己的品级算的挑剔价付一半，不再整桌减半', () => {
+    const cb = cid('桑椹葡萄粥');
+    // 2 星新手街：要求 int(0.9 × 2) + 1 = 2 品，学会的是 1 品
+    const r = settle(
+      { rest: { star: 2 }, cookbooks: { [cb]: 1 } },
+      {},
+      [0.5, 0.65, 0.9, 0.05, 0.9, 0.3, 0, 0, 0.9, 0.9, 0.9],
+    );
+    expect(r.tables[0]!.last).toMatchObject({ type: 2, req: 2, grade: 1, satisfied: false, exp: 4, oil: 5 });
+    expect(r.tables[0]!.last!.coin).toBeCloseTo(9 + price(cb) * 1.2 * 0.5, 1);
+  });
+
+  it('外街一道都没学会：银币、经验减半（不变）', () => {
+    // 1 星湖南街：0.95 ≥ 0.9 点外街，外街没有学会的菜
+    const r = settle(
+      { rest: { star: 1, streetId: 1 } },
+      {},
+      [0.5, 0.65, 0.9, 0.05, 0.9, 0.5, 0.95, 0.9, 0.9, 0.9],
+    );
     expect(r.tables[0]!.last).toMatchObject({ type: 2, req: 1, satisfied: false, coin: 5, exp: 1, oil: 2 });
-    const h = settle({ agg: { husky: 1 } }, {}, [0.5, 0.65, 0.9, 0.05, 0.3, 0.9, 0.9, 0.9]);
-    expect(h.tables[0]!.last!.coin).toBe(10);
   });
 
   it('蟑螂：原有蟑螂被蟑螂药消灭变成 -3；新蟑螂在上座判定之前产生', () => {
@@ -183,7 +227,7 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     expect(r.logs.map((l) => l.type)).toContain('krab.happy');
   });
 
-  it('蟹老板不满足：扫兴而归(134)，银币经验减半；有二哈时 30% 摸二哈不惩罚', () => {
+  it('蟹老板不满足：扫兴而归(134)，银币经验减半；二哈作废，不再摸二哈免罚', () => {
     const angry = settle(
       { rest: { star: 1, streetId: 1 }, cookbooks: { [street1]: 1 } },
       { krabStreet: 1 },
@@ -196,8 +240,8 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
       { krabStreet: 1 },
       [0.5, 0.65, 0.9, 0.1, 0.0001, 0.2, 0, 0.1, 0.9, 0.9, 0.9],
     );
-    expect(husky.tables[0]!.last).toMatchObject({ type: 8, satisfied: false, coin: 10, exp: 2 });
-    expect(husky.drops).toEqual([]);
+    expect(husky.tables[0]!.last).toMatchObject({ type: 8, satisfied: false, coin: 5, exp: 1 });
+    expect(husky.logs.map((l) => l.type)).not.toContain('krab.husky');
   });
 
   it('痞老板：驻留店每轮最多出现一次，×5；下一轮保持', () => {

@@ -134,6 +134,8 @@ describe('空桌（计划裁定 7）', () => {
   it('0 和 -3 且没有蟑螂、没有白食者才算空桌', () => {
     expect(isEmptyTable({ no: 1, floor: 1, customer: 0 })).toBe(true);
     expect(isEmptyTable({ no: 1, floor: 1, customer: -3 })).toBe(true);
+    // 挑剔顾客走了（-2）的桌也空着（挑剔顾客调整 2026-10-12）
+    expect(isEmptyTable({ no: 1, floor: 1, customer: -2 })).toBe(true);
     expect(isEmptyTable({ no: 1, floor: 1, customer: 1 })).toBe(false);
     expect(isEmptyTable({ no: 1, floor: 1, customer: 3, roach: { by: null, at: 'x' } })).toBe(false);
     expect(clearTable({ no: 2, floor: 1, customer: 3, roach: { by: 1, at: 'x' } })).toEqual({
