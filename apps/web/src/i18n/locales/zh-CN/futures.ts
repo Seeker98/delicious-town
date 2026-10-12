@@ -33,6 +33,8 @@ export default {
   level: (n: number) => `${n} 级`,
   foodLine: (price: string, left: number) => `${price} 银币 · 今天还剩 ${left} 份`,
   soldOut: '今天订完了',
+  /** 银币连 1 份的定金都不够（backlog 期货） */
+  noCoin: (need: string) => `银币不够付 1 份的定金 (要 ${need})`,
   empty: '没有符合条件的食材',
   qty: '份数',
   total: (s: string) => `总价 ${s} 银币`,

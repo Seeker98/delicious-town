@@ -64,7 +64,11 @@ function mineTag(r: WishTreeResultDto): { text: string; cls: string } | null {
   if (!r.mine) return null;
   if (r.mine.won) return { text: w.mineTag, cls: 'dt-tag-ok' };
   return {
-    text: r.mine.award ? w.lostTag(awardText(r.mine.award, catalog)) : w.pendingTag,
+    text: r.mine.award
+      ? w.lostTag(awardText(r.mine.award, catalog))
+      : r.mine.skipped
+        ? w.skippedTag
+        : w.pendingTag,
     cls: 'dt-tag-mute',
   };
 }
@@ -119,7 +123,7 @@ function mineTag(r: WishTreeResultDto): { text: string; cls: string } | null {
       <DtRow v-for="r in data.recent" :key="r.id" strong class="dt-row-wrap" data-testid="wt-recent-row">
         <template #icon><DtArt :name="catalog.goodsArt(r.goodsId)" :size="28" /></template>
         <template #title>{{
-          t.wishtree.recentTitleLine(r.day.slice(5), prizeText(r.goodsId, r.num))
+          t.wishtree.recentTitleLine((r.drawDay ?? r.day).slice(5), prizeText(r.goodsId, r.num))
         }}</template>
         <template #sub>
           <span v-if="r.status === 'empty'" data-testid="wt-empty">{{ t.wishtree.empty }}</span>

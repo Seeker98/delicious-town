@@ -29,4 +29,6 @@ export default {
   mineTag: '你中了',
   lostTag: (award: string) => `没中 · ${award}`,
   pendingTag: '没中 · 安慰奖马上发',
+  /** 开奖时店被封号，跳过了 */
+  skippedTag: '没中 · 开奖时账号被封, 没有安慰奖',
 };

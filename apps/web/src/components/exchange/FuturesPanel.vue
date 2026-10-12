@@ -79,15 +79,31 @@ const groups = computed(() => {
   return [...m.entries()].sort(([a], [b]) => a - b);
 });
 const pick = computed(() => data.value?.foods.find((f) => f.foodsId === selected.value) ?? null);
-const maxQty = computed(() => Math.max(0, Math.min(pick.value?.left ?? 0, data.value?.personLeft ?? 0)));
+/** 定金：总价 × 定金比例，向上取整（和服务端一致） */
+const depositOf = (unitPrice: number, qty: number) =>
+  Math.ceil(Math.round(unitPrice * qty * (data.value?.depositRate ?? 0) * 1e6) / 1e6);
+/** 银币够付几份的定金（backlog 期货：原来只看区服剩余和个人剩余，点下单才报银币不够）；旧服务端没有 coin 时不限 */
+const byCoin = computed(() => {
+  const f = pick.value;
+  const coin = data.value?.coin;
+  if (!f || coin === undefined) return Infinity;
+  let q = Math.floor(coin / Math.max(1e-9, f.unitPrice * (data.value?.depositRate ?? 0)));
+  while (q > 0 && depositOf(f.unitPrice, q) > coin) q -= 1;
+  return q;
+});
+/** 额度还有、只是银币连 1 份的定金都不够 */
+const coinShort = computed(
+  () => byCoin.value < 1 && Math.min(pick.value?.left ?? 0, data.value?.personLeft ?? 0) >= 1,
+);
+const maxQty = computed(() =>
+  Math.max(0, Math.min(pick.value?.left ?? 0, data.value?.personLeft ?? 0, byCoin.value)),
+);
 /** 份数：步进器夹在 1 和最多能订之间；一份都订不了时为 0，下单按钮不能点（终审：原来按 1 份下单） */
 const n = computed(() => (maxQty.value < 1 ? 0 : Math.min(maxQty.value, Math.max(1, Math.floor(qty.value)))));
 /** 进行中的期货单：第一张写在上面卡片的副行 */
 const openOnes = computed(() => data.value?.contracts.filter((c) => c.status === 'open') ?? []);
 const total = computed(() => (pick.value ? pick.value.unitPrice * n.value : 0));
-const deposit = computed(() =>
-  Math.ceil(Math.round(total.value * (data.value?.depositRate ?? 0) * 1e6) / 1e6),
-);
+const deposit = computed(() => (pick.value ? depositOf(pick.value.unitPrice, n.value) : 0));
 const dueAt = computed(() =>
   newsTime(new Date(serverNowMs() + (data.value?.deliverHours ?? 0) * 3_600_000).toISOString()),
 );
@@ -292,6 +308,9 @@ function result(c: FuturesContractDto): string {
           </div>
         </dl>
         <div class="dt-act-note is-warn mt-3 mb-0">{{ t.futures.warn }}</div>
+        <div v-if="coinShort" class="dt-detail-note text-danger" data-testid="fu-coin-short">
+          {{ t.futures.noCoin(formatNum(depositOf(pick.unitPrice, 1))) }}
+        </div>
         <div v-if="blockedText" class="dt-detail-note text-danger">{{ blockedText }}</div>
       </div>
       <template v-if="pick" #actions>

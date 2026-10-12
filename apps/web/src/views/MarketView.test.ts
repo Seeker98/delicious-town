@@ -117,6 +117,25 @@ describe('MarketView', () => {
     expect(endpoints.market).toHaveBeenCalledTimes(2);
   });
 
+  it('买失败时面板不关，选好的数量还在（backlog P6）', async () => {
+    vi.mocked(endpoints.marketBuy).mockRejectedValueOnce(new Error('x'));
+    const w = mountView();
+    await flushPromises();
+    await openBuy(w, 11);
+    await w.find('[data-testid="qty-sheet"]').setValue(5);
+    await w.find('[data-testid="buy-confirm"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="buy-sheet"]').exists()).toBe(true);
+    expect((w.find('[data-testid="qty-sheet"]').element as HTMLInputElement).value).toBe('5');
+  });
+
+  it('报了名、又没有上期结果时，展开竞猜写明等开奖，不是空的（backlog P6）', async () => {
+    vi.mocked(endpoints.market).mockResolvedValue({ ...view, guess: { ...view.guess, joined: [101] } });
+    const w = mountView();
+    await flushPromises();
+    expect(w.get('[data-testid="guess-waiting"]').text()).toContain('开奖');
+  });
+
   it('特价冷却中：写明同一网络 10 分钟只能抢一次、还要等几分钟，特价按钮灰掉（问题记录：买第二个提示操作太快）', async () => {
     const item = { ...view.daily[0]!, id: 21, shelf: 1 as const, limit: 1 };
     vi.mocked(endpoints.market).mockResolvedValue({

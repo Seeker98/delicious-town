@@ -202,6 +202,9 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
     await setBid(w, '60000', '2');
     expect(disabled(w)).toBe(true);
     expect(el(w, 'bk-reason').text()).toBe('银币不够冻结');
+    // 单价超过 10 亿：页面先拦（backlog 大宗认购）
+    await setBid(w, '1000000001', '1');
+    expect(el(w, 'bk-reason').text()).toBe('单价最多 1,000,000,000');
     await setBid(w, '60000', '1');
     expect(disabled(w)).toBe(false);
     expect(w.find('[data-testid="bk-reason"]').exists()).toBe(false);
@@ -250,6 +253,10 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
     vi.mocked(endpoints.bulk).mockResolvedValue(data({ lot: null }));
     const w2 = await mountPanel();
     expect(el(w2, 'bk-none').text()).toContain('20');
+    // 没有批次时说明不写“0 份”（backlog 大宗认购）
+    const help = await helpText(w2);
+    expect(help).not.toContain(' 0 份');
+    expect(help).toContain('成团份数');
   });
 
   it('最近结果：成交价、份数、认购倍数、我的结果；流拍写全额退回', async () => {

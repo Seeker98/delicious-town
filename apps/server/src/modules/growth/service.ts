@@ -79,12 +79,8 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
         const add = Math.min(need, o.rest.coin);
         if (add <= 0) throw notEnough('coin', need, o.rest.coin);
         spendCoin(o, add);
+        // 停业的店加了油就开门（gainOil 里统一处理）
         gainOil(o, add);
-        if (o.rest.state === 2) {
-          setRest(o, 'state', 1);
-          setRest(o, 'state_reason', null);
-          restLog(o, 'rest.reopen');
-        }
         await emitAction(o, 'oil.fill');
         return { oil: o.rest.oil };
       });

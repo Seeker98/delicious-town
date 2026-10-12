@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    fix1013:
+      'Small fixes: a closed restaurant now reopens however it gets oil; the market charges exactly the unit price shown, keeps the panel open if a purchase fails, and re-enables special items when the cooldown ends; futures orders are capped at what your coins can cover as deposit; savings and the development fund switch to Claim when they mature while the page is open; the wishing tree lists recent rounds by draw date; slot machine voucher counts now have thousands separators',
     handle1013:
       'Pantry processing: within your daily free processing, one go costs no Stamina however many ingredients you use; after that, each ingredient you make by combining or break down costs 1 Stamina (it used to be 1 per go). The detail panel now closes after processing so the result is no longer hidden',
     picky1012:

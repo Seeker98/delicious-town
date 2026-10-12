@@ -1,7 +1,6 @@
 import { emitAction } from '../../core/action';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, notEnough } from '../../core/errors';
-import { restLog, setRest } from '../../core/op';
 import { feedLog, runPairOp } from '../../core/pair';
 import { gainOil, spendCoin } from '../../core/resources';
 import { drawDtTickets } from '../../core/tickets';
@@ -24,11 +23,6 @@ export function createRefuel(d: GameDeps) {
           const add = Math.min(need, b.num === -1 ? need : b.num, me.rest.coin);
           spendCoin(me, add);
           gainOil(them, add, { event: false });
-          if (them.rest.state === 2 && them.rest.oil > 0) {
-            setRest(them, 'state', 1);
-            setRest(them, 'state_reason', null);
-            restLog(them, 'rest.reopen');
-          }
           const tickets = await drawDtTickets(
             me,
             refuelDraws(add, them.rest.oil_max, me.tuning.friend.refuel),

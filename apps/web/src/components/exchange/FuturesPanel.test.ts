@@ -39,6 +39,7 @@ const data = (p: Partial<FuturesDto> = {}): FuturesDto => ({
   ],
   personDaily: 50,
   personLeft: 48,
+  coin: 10_000_000,
   deliverHours: 72,
   depositRate: 0.3,
   base: { personDaily: 50, depositRate: 0.3 },
@@ -206,5 +207,20 @@ describe('FuturesPanel（期货设计 §10）', () => {
     expect(w.get('[data-testid="fu-blocked"]').text()).toContain('20 级');
     await w.get('[data-testid="fu-food-31"]').trigger('click');
     expect(w.find('[data-testid="fu-order"]').attributes('disabled')).toBeDefined();
+  });
+
+  it('银币只够付几份定金时，最多只能订几份；连 1 份都不够时写明（backlog 期货）', async () => {
+    // 3 级食材单价 10,800、定金 30%：1 份定金 3,240；银币 7,000 只够 2 份
+    vi.mocked(endpoints.futures).mockResolvedValue(data({ coin: 7000 }));
+    const w = mount(FuturesPanel, { global: { stubs: { teleport: true } } });
+    await flushPromises();
+    await w.get('[data-testid="fu-food-31"]').trigger('click');
+    expect(w.get('[data-testid="fu-max"]').text()).toContain('2');
+    vi.mocked(endpoints.futures).mockResolvedValue(data({ coin: 3000 }));
+    const w2 = mount(FuturesPanel, { global: { stubs: { teleport: true } } });
+    await flushPromises();
+    await w2.get('[data-testid="fu-food-31"]').trigger('click');
+    expect(w2.get('[data-testid="fu-coin-short"]').text()).toContain('3,240');
+    expect(w2.get('[data-testid="fu-order"]').attributes('disabled')).toBeDefined();
   });
 });

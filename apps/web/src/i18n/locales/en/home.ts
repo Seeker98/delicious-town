@@ -28,6 +28,7 @@ const home: Messages['home'] = {
   refuelFailed: 'Refuel failed',
   statusClosed: 'Out of oil, restaurant closed',
   statusClosedHint: 'Fill up to reopen',
+  noCoinHint: 'No coins to buy oil',
   statusOpen: 'Open',
   oilFull: 'Oil is full',
   lastRound: 'Last round:',
@@ -81,6 +82,7 @@ const home: Messages['home'] = {
     guide: 'Getting started',
     guideSub: 'How to play',
     exchangeSub: 'Trade rare ingredients, order futures',
+    exchangeSubSpot: 'Trade rare ingredients',
     bulk: 'Bulk subscription',
     bulkSub: (name, level, qty, demand) =>
       `${name} (level ${level}), ${qty} units, ${demand === null ? 'figures frozen' : `${demand} bid so far`}`,

@@ -1,9 +1,12 @@
 import { z } from 'zod';
 
+/** 出价的单价上限（网页提前拦，backlog 大宗认购） */
+export const BULK_PRICE_MAX = 1_000_000_000;
+
 /** 特许大宗认购（大宗认购设计 2026-10-10）：第一次出价和改出价都用这个 */
 export const bulkBidBody = z.object({
   lotId: z.number().int().positive(),
-  price: z.number().int().min(1).max(1_000_000_000),
+  price: z.number().int().min(1).max(BULK_PRICE_MAX),
   qty: z.number().int().min(1).max(10_000),
 });
 export type BulkBidInput = z.infer<typeof bulkBidBody>;

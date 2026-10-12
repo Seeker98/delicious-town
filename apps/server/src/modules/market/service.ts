@@ -193,7 +193,8 @@ export function createMarketService(d: GameDeps, world: WorldService) {
         .executeTakeFirst();
       if (!sold) throw new AppError(ErrorCode.SOLD_OUT, 400);
       const snap = await world.ensure(o.shardId, o.now, o.tx);
-      if (!own) spendCoin(o, Math.ceil(unitPrice(shelf, food, t, snap.weather.effects) * b.num));
+      // 按页面显示的单价（向上取整）乘数量，页面合计和实际扣的一致（backlog P6）
+      if (!own) spendCoin(o, Math.ceil(unitPrice(shelf, food, t, snap.weather.effects)) * b.num);
       if (shelf === 1) {
         const ok = await d.redis.eval(
           COOLDOWN_LUA,

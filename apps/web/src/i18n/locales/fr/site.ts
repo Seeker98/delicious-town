@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    fix1013:
+      'Petites corrections\u202f: un restaurant fermé rouvre dès qu’il reçoit de l’huile, quelle qu’en soit la source\u202f; le marché débite exactement le prix unitaire affiché, garde le panneau ouvert si l’achat échoue et réactive les offres spéciales à la fin du délai\u202f; les commandes de contrats à terme sont limitées à ce que vos pièces couvrent en acompte\u202f; l’épargne et le fonds de développement passent à «\u202fRécupérer\u202f» à l’échéance même page ouverte\u202f; l’arbre à vœux affiche les derniers tours par date de tirage\u202f; les bons de la machine à sous ont des séparateurs de milliers',
     handle1013:
       'Traitement au garde-manger\u202f: dans vos traitements gratuits du jour, un traitement ne coûte pas d’énergie quelle que soit la quantité\u202f; ensuite, chaque ingrédient obtenu en combinant ou décomposé coûte 1 énergie (avant, 1 par traitement). Le panneau se ferme après le traitement pour que le résultat reste visible',
     picky1012:

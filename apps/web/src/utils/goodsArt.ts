@@ -104,7 +104,7 @@ export function goodsGroup(id: number): string | null {
   return GOODS_GROUPS.find(([, base, size]) => id >= base && id < base + size)?.[0] ?? null;
 }
 
-/** 宝石六种颜色（gem1~gem6：智慧、红晶、黄玉、蓝冥、绿玄、天机） */
+/** 宝石六种颜色（gem1~gem6：智慧、红晶、黄晶、蓝冥、绿玄、天机） */
 const GEM_TYPES = ['wisdom', 'ruby', 'topaz', 'sapphire', 'emerald', 'astral'] as const;
 
 /**

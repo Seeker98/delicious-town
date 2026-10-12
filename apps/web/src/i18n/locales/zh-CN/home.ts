@@ -26,6 +26,7 @@ export default {
   /** 首页营业状态卡（界面改版 P5） */
   statusClosed: '油用光了, 餐厅停业',
   statusClosedHint: '加满就能继续营业',
+  noCoinHint: '没有银币, 加不了油',
   statusOpen: '营业中',
   oilFull: '油是满的',
   lastRound: '上一轮: ',
@@ -86,6 +87,8 @@ export default {
     guide: '新手指引',
     guideSub: '看看怎么玩',
     exchangeSub: '买卖稀有食材, 期货点名订货',
+    /** 区服关了期货时（backlog feat/ui-1011） */
+    exchangeSubSpot: '买卖稀有食材',
     bulk: '大宗认购',
     bulkSub: (name: string, level: number, qty: number, demand: number | null) =>
       `${name} (${level} 级) 共 ${qty} 份, ${demand === null ? '最后阶段停更中' : `已认购 ${demand} 份`}`,

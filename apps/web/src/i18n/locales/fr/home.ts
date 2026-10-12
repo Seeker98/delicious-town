@@ -26,6 +26,7 @@ const home: Messages['home'] = {
   refuelFailed: "Échec de l'ajout d'huile",
   statusClosed: "Plus d'huile, restaurant fermé",
   statusClosedHint: 'Faites le plein pour rouvrir',
+  noCoinHint: 'Pas de pièces pour acheter de l’huile',
   statusOpen: 'Ouvert',
   oilFull: 'Huile au maximum',
   lastRound: 'Dernier tour\u202f:',
@@ -79,6 +80,7 @@ const home: Messages['home'] = {
     guide: 'Premiers pas',
     guideSub: 'Comment jouer',
     exchangeSub: 'Ingrédients rares, contrats à terme',
+    exchangeSubSpot: 'Ingrédients rares',
     bulk: 'Souscription en gros',
     bulkSub: (name, level, qty, demand) =>
       `${name} (niv. ${level}), ${qty} unités, ${demand === null ? 'chiffres figés' : `${demand} demandées`}`,

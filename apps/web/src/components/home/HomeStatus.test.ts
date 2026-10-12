@@ -66,4 +66,21 @@ describe('首页营业状态卡（界面改版 P5，样稿 B）', () => {
       mountStatus({ state: 1 }, true).get('[data-testid="refuel"]').attributes('disabled'),
     ).toBeDefined();
   });
+
+  it('停业且银币为 0：按钮灰掉，提示写没有银币加不了油（backlog P5）', () => {
+    const w = mountStatus({ state: 2, oil: 0, coin: 0 });
+    expect(w.get('[data-testid="oil-closed-hint"]').text()).toBe('没有银币, 加不了油');
+    expect(w.get('[data-testid="refuel"]').attributes('disabled')).toBeDefined();
+  });
+
+  it('停业而油是满的：按钮写油是满的，和读屏一致，不写“加满 0”（backlog P5）', () => {
+    const b = mountStatus({ state: 2, oil: 1000 }).get('[data-testid="refuel"]');
+    expect(b.text()).toBe('油是满的');
+    expect(b.attributes('aria-label')).toBe('油是满的');
+  });
+
+  it('油量条向下取整：995/1000 不画成满格（backlog P5）', () => {
+    const w = mountStatus({ state: 1, oil: 995 });
+    expect(w.get('[role="progressbar"]').attributes('aria-valuenow')).toBe('99');
+  });
 });

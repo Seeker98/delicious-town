@@ -78,6 +78,8 @@ export default {
     estimate: (buy: boolean, total: string, fee: string, pct: number) =>
       `${buy ? '預計花費' : '預計得到'} ${total} 銀幣 (含手續費 ${fee}), 成交後"是" ${pct}%`,
     enterQty: '輸入份數 (賣出不能超過持有)',
+    /** 賣出時這一邊沒有持有（backlog P8） */
+    noHold: '這一邊你沒有持有, 賣不了',
     own: '這道題是你出的, 不能交易',
     summary: '本局盈虧',
     summaryLine: (bought: string, sold: string, fees: string, net: string) =>

@@ -35,6 +35,7 @@ const futures: Messages['futures'] = {
   level: (n) => `Nivel ${n}`,
   foodLine: (price, left) => `${price} monedas · quedan ${left} hoy`,
   soldOut: 'Agotado por hoy',
+  noCoin: (need) => `No tienes monedas para la señal de 1 (necesitas ${need})`,
   empty: 'Ningún ingrediente coincide',
   qty: 'Cantidad',
   total: (s) => `Total ${s} monedas`,

@@ -33,13 +33,14 @@ export default {
   sheet: {
     open: (name: string, price: string) => `买${name}, ${price}`,
     free: '免费',
-    each: (price: string) => `每个 ${price} 银币`,
+    /** n：单价数值，英、法、西按它分单复数（backlog P6） */
+    each: (price: string, _n: number) => `每个 ${price} 银币`,
     have: (n: string) => `橱柜里有 ${n}`,
     canBuy: (n: string) => `最多能买 ${n}`,
     qty: '买几个',
     max: (n: string) => `最多 ${n}`,
     total: '合计',
-    coin: '银币',
+    coin: (_n: number) => '银币',
     balance: (n: string) => `余 ${n}`,
     short: '银币不够',
     confirm: (n: number) => `买 ${n} 个`,
@@ -48,6 +49,8 @@ export default {
     title: '菜场竞猜',
     hint: (hour: string) => `猜下一轮日常菜场 (${hour} 点) 上什么菜`,
     last: (n: number) => `上次猜中 ${n} 种`,
+    /** 报了名、又没有上期结果时（backlog P6：原来展开是空的） */
+    waiting: '这一轮已经押好了, 下次日常进货时开奖',
     joined: (list: string) => `已报名: ${list}`,
     rule: (max: number, cost: number) => `最多选 ${max} 种, 花 ${cost} 张神秘礼券`,
     join: (n: number) => `报名 (${n} 种)`,

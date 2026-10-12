@@ -38,7 +38,7 @@ const dep = (o: Partial<WealthDepositDto> = {}): WealthDepositDto => ({
   goodsId: 10213,
   packs: 2,
   startedAt: '2026-10-10T00:00:00.000Z',
-  maturesAt: '2026-10-13T00:00:00.000Z',
+  maturesAt: '2099-10-13T00:00:00.000Z',
   mature: false,
   early: 1_900_000,
   ...o,
@@ -126,6 +126,16 @@ describe('WealthPanel（理财设计 §3.4）', () => {
     await flushPromises();
     expect(btn(w2, 'we-blocked').text()).toContain('3 笔');
     expect(disabled(w2)).toBe(true);
+  });
+
+  it('页面开着时过了到期时间：服务端还写没到期，也按到期显示领取，不再显示提前取出（backlog 理财）', async () => {
+    vi.mocked(endpoints.wealth).mockResolvedValue(
+      view({ deposits: [dep({ id: 3, maturesAt: '2020-01-01T00:00:00.000Z' })] }),
+    );
+    const w = mount(WealthPanel);
+    await flushPromises();
+    expect(w.find('[data-testid="we-claim-3"]').exists()).toBe(true);
+    expect(w.find('[data-testid="we-withdraw-3"]').exists()).toBe(false);
   });
 
   it('没到期的可以提前取出（确认框写退多少）；到期的可以领取', async () => {

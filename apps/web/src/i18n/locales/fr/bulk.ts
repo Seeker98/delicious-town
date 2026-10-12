@@ -9,7 +9,9 @@ const bulk: Messages['bulk'] = {
   help: (cap, group, raisePct, cooldown, windowMin, openHour, blindMin) => [
     `Un nouveau lot ouvre chaque jour à ${openHour}\u202fh et dure une journée`,
     "Les unités vont aux prix les plus hauts d'abord (à prix égal, l'offre la plus ancienne passe devant)\u202f; l'offre de la dernière unité attribuée est le prix unique payé par tous",
-    `Au plus ${cap} ${plFr(cap, 'unité', 'unités')} par joueur dans ce lot\u202f; s'il y a moins de ${group} unités demandées au total, le lot échoue et tout est remboursé`,
+    cap === null || group === null
+      ? 'Chaque lot a un plafond par joueur et un minimum au total\u202f; en dessous, le lot échoue et tout est remboursé'
+      : `Au plus ${cap} ${plFr(cap, 'unité', 'unités')} par joueur dans ce lot\u202f; s'il y a moins de ${group} unités demandées au total, le lot échoue et tout est remboursé`,
     'Une offre gèle prix × quantité\u202f; après la clôture vous payez le prix final et le reste vous est rendu',
     `Les offres ne peuvent que monter\u202f: prix et quantité ne font qu'augmenter, et chaque hausse de prix est d'au moins ${raisePct}\u202f%`,
     `Le lot peut clôturer à tout moment dans les ${windowMin} dernières minutes, et les offres après la clôture ne comptent pas\u202f; après chaque offre il faut attendre ${cooldown}\u202fs`,
@@ -66,6 +68,7 @@ const bulk: Messages['bulk'] = {
     same: "Votre offre n'a pas changé",
     raise: (n) => `Montez le prix à au moins ${n}`,
     coin: 'Pas assez de pièces à geler',
+    priceMax: (n) => `Le prix unitaire est limité à ${n}`,
   },
   bid: 'Proposer',
   groupedTag: (ok) => (ok ? 'Groupe formé' : 'Pas encore formé'),

@@ -3,9 +3,10 @@ export default {
   tab: '大宗认购',
   intro: '每天开一批食材, 报单价和份数参与；收盘时最后入围那一份的价格就是大家的统一成交价, 多冻结的退回。',
   helpTitle: '大宗认购怎么算',
+  /** cap、group 取自当前批次；没有进行中的批次时为 null，不写 0 份（backlog 大宗认购） */
   help: (
-    cap: number,
-    group: number,
+    cap: number | null,
+    group: number | null,
     raisePct: number,
     cooldown: number,
     windowMin: number,
@@ -14,7 +15,9 @@ export default {
   ) => [
     `每天 ${openHour} 点开新的一批, 竞价一天`,
     '按单价从高到低分份数, 同价先出价的先分；最后分出去的那一份的出价就是统一成交价, 大家都按这个价付',
-    `这一批每人最多认购 ${cap} 份；认购份数合计不到 ${group} 份就流拍, 全部退回`,
+    cap === null || group === null
+      ? '每一批都有每人认购上限和成团份数, 认购合计不到成团份数就流拍, 全部退回'
+      : `这一批每人最多认购 ${cap} 份；认购份数合计不到 ${group} 份就流拍, 全部退回`,
     `出价时冻结 单价 × 份数 的银币, 收盘后按成交价扣, 多冻结的退回`,
     `出价只能加不能撤: 单价、份数都只能加, 加价每次至少 ${raisePct}%`,
     `最后 ${windowMin} 分钟内随时可能收盘, 收盘后的出价无效；每次出价后要等 ${cooldown} 秒才能再出`,
@@ -61,6 +64,7 @@ export default {
     same: '还没改出价',
     raise: (n: string) => `加价至少要到 ${n}`,
     coin: '银币不够冻结',
+    priceMax: (n: string) => `单价最多 ${n}`,
   },
   bid: '出价',
   /** 界面改版 P8：批次卡片、出价面板 */

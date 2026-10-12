@@ -27,6 +27,7 @@ export default {
   /** 首頁營業狀態卡（介面改版 P5） */
   statusClosed: '油用光了, 餐廳停業',
   statusClosedHint: '加滿就能繼續營業',
+  noCoinHint: '沒有銀幣, 加不了油',
   statusOpen: '營業中',
   oilFull: '油是滿的',
   lastRound: '上一輪: ',
@@ -87,6 +88,8 @@ export default {
     guide: '新手指引',
     guideSub: '看看怎麼玩',
     exchangeSub: '買賣稀有食材, 期貨點名訂貨',
+    /** 區服關了期貨時（backlog feat/ui-1011） */
+    exchangeSubSpot: '買賣稀有食材',
     bulk: '大宗認購',
     bulkSub: (name: string, level: number, qty: number, demand: number | null) =>
       `${name} (${level} 級) 共 ${qty} 份, ${demand === null ? '最後階段停更中' : `已認購 ${demand} 份`}`,

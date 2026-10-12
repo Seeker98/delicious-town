@@ -195,7 +195,7 @@ const bar: Messages['bar'] = {
     exAfter: 'Te quedarán',
     tickets: (n) => `${n} ${plEs(n, 'vale', 'vales')}`,
     exBtnShort: 'Canjear',
-    exBtn: (n, tickets) => `Conseguir ${n} (${tickets} ${plEs(tickets, 'vale', 'vales')})`,
+    exBtn: (n, tickets, ticketsText) => `Conseguir ${n} (${ticketsText} ${plEs(tickets, 'vale', 'vales')})`,
     exDone: (n) => `Conseguiste ${n} ${plEs(n, 'moneda Krab', 'monedas Krab')}`,
     pool: 'Premios y probabilidades',
     rareShort: (n) => `Contando el premio asegurado, sale un raro más o menos cada ${n} tiradas`,

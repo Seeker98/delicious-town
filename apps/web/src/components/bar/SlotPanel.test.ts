@@ -116,7 +116,7 @@ describe('SlotPanel', () => {
     const rich = mountSlot(barData({ tickets: 50000 }));
     await rich.find('[data-testid="ex-open"]').trigger('click');
     await rich.find('[data-testid="qty-max"]').trigger('click');
-    expect(rich.find('[data-testid="qty-ok"]').text()).toBe('换 99 个 (9900 张礼券)');
+    expect(rich.find('[data-testid="qty-ok"]').text()).toBe('换 99 个 (9,900 张礼券)');
 
     const poor = mountSlot(barData({ tickets: 50 }));
     await poor.find('[data-testid="ex-open"]').trigger('click');

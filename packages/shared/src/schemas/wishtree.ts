@@ -19,14 +19,19 @@ export interface WishTreeAwardDto {
 export interface WishTreeResultDto {
   id: number;
   day: string;
+  /** 开奖那天（北京时间日期）：开奖在开这一轮的第二天，最近几轮按它显示（backlog 许愿树） */
+  drawDay: string;
   goodsId: number;
   num: number;
   status: 'drawn' | 'empty';
   entries: number;
   /** 中奖店；没人中、或店已删除时为 null；店名取不到时 name 为 null */
   winner: { restId: number; name: string | null } | null;
-  /** 我参加了这一轮：中没中、安慰奖（还没发时为 null） */
-  mine: { won: boolean; award: WishTreeAwardDto | null } | null;
+  /**
+   * 我参加了这一轮：中没中、安慰奖（还没发时为 null）；skipped：开奖时店被封号，跳过了、不发安慰奖
+   * （backlog 许愿树：原来解封后一直写“马上发放”）
+   */
+  mine: { won: boolean; award: WishTreeAwardDto | null; skipped: boolean } | null;
 }
 export interface WishTreeDto {
   enabled: boolean;

@@ -201,7 +201,8 @@ export default {
     exAfter: '换完剩',
     tickets: (n: string) => `${n} 张礼券`,
     exBtnShort: '换',
-    exBtn: (n: number, tickets: number) => `换 ${n} 个 (${tickets} 张礼券)`,
+    /** ticketsText：加了千分位的礼券数（backlog P9） */
+    exBtn: (n: number, _tickets: number, ticketsText: string) => `换 ${n} 个 (${ticketsText} 张礼券)`,
     exDone: (n: number) => `换到了蟹币 ${n} 个`,
     pool: '奖池和概率',
     rareShort: (n: number) => `算上保底, 平均每 ${n} 次出一次稀有`,

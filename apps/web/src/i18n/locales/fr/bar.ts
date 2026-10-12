@@ -210,7 +210,7 @@ const bar: Messages['bar'] = {
     exAfter: 'Reste après',
     tickets: (n) => `${n} ${plFr(n, 'bon', 'bons')}`,
     exBtnShort: 'Échanger',
-    exBtn: (n, tickets) => `En obtenir ${n} (${tickets} ${plFr(tickets, 'bon', 'bons')})`,
+    exBtn: (n, tickets, ticketsText) => `En obtenir ${n} (${ticketsText} ${plFr(tickets, 'bon', 'bons')})`,
     exDone: (n) => `${n} ${plFr(n, 'pièce Krab obtenue', 'pièces Krab obtenues')}`,
     pool: 'Lots et probabilités',
     rareShort: (n) => `En comptant le lot garanti, un lot rare tombe environ tous les ${n} tirages`,

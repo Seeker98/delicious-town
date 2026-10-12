@@ -39,13 +39,13 @@ const market: Messages['market'] = {
   sheet: {
     open: (name, price) => `Acheter ${name}, ${price}`,
     free: 'Gratuit',
-    each: (price) => `${price} pièces l’unité`,
+    each: (price, n) => `${price} ${plFr(n, 'pièce', 'pièces')} l’unité`,
     have: (n) => `${n} dans le placard`,
     canBuy: (n) => `jusqu’à ${n}`,
     qty: 'Combien',
     max: (n) => `Max ${n}`,
     total: 'Total',
-    coin: 'pièces',
+    coin: (n) => plFr(n, 'pièce', 'pièces'),
     balance: (n) => `reste ${n}`,
     short: 'Pas assez de pièces',
     confirm: (n) => `Acheter ${n}`,
@@ -54,6 +54,7 @@ const market: Messages['market'] = {
     title: 'Pronostic du marché',
     hint: (hour) => `Devinez ce que vendra le prochain marché du jour (${hour} h)`,
     last: (n) => `La dernière fois\u202f: ${n} ${plFr(n, 'bonne réponse', 'bonnes réponses')}`,
+    waiting: 'Vos choix sont faits\u202f; résultats au prochain réassort quotidien',
     joined: (list) => `Inscrit\u202f: ${list}`,
     rule: (max, cost) =>
       `Choisissez jusqu'à ${max}, coût\u202f: ${cost} ${plFr(cost, 'bon', 'bons')} mystère`,

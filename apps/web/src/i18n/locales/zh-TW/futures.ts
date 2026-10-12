@@ -34,6 +34,8 @@ export default {
   level: (n: number) => `${n} 級`,
   foodLine: (price: string, left: number) => `${price} 銀幣 · 今天還剩 ${left} 份`,
   soldOut: '今天訂完了',
+  /** 銀幣連 1 份的定金都不夠（backlog 期貨） */
+  noCoin: (need: string) => `銀幣不夠付 1 份的定金 (要 ${need})`,
   empty: '沒有符合條件的食材',
   qty: '份數',
   total: (s: string) => `總價 ${s} 銀幣`,

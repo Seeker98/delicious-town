@@ -124,6 +124,8 @@ const limitText = computed(() => {
   const k = qty.value;
   if (!l || !Number.isInteger(k) || k < 1) return '';
   const x = t.value.predict.detail;
+  // 卖出时这一边一份都没有：写“没有持有”，不是“请输入份数”（backlog P8）
+  if (dir.value === 'sell' && held.value === 0) return x.noHold;
   if (k > l.maxTrade) return x.overTrade(l.maxTrade);
   if (dir.value === 'buy' && held.value + k > l.maxHold)
     return x.overHold(l.maxHold, Math.max(0, l.maxHold - held.value));

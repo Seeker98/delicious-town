@@ -192,7 +192,7 @@ const bar: Messages['bar'] = {
     exAfter: 'Left after',
     tickets: (n) => `${n} vouchers`,
     exBtnShort: 'Trade',
-    exBtn: (n, tickets) => `Get ${n} (${tickets} ${plEn(tickets, 'voucher', 'vouchers')})`,
+    exBtn: (n, tickets, ticketsText) => `Get ${n} (${ticketsText} ${plEn(tickets, 'voucher', 'vouchers')})`,
     exDone: (n) => `Got ${n} Krab ${plEn(n, 'Coin', 'Coins')}`,
     pool: 'Prize pool and odds',
     rareShort: (n) => `With the guarantee, a rare about once every ${n} spins`,

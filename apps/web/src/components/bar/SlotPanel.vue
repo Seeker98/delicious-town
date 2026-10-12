@@ -205,7 +205,7 @@ async function exchange() {
     ]"
     :label="t.bar.slot.exHowMany"
     :max="exMax"
-    :ok-text="t.bar.slot.exBtn(exN, exN * data.krabCoinTickets)"
+    :ok-text="t.bar.slot.exBtn(exN, exN * data.krabCoinTickets, formatNum(exN * data.krabCoinTickets))"
     :busy="busy"
     :reason="exBlock"
     :sum="[
