@@ -16,6 +16,7 @@ import { fundErrors } from './fund';
 import { wealthErrors } from './wealth';
 import { bulkErrors } from './bulk';
 import { wishTreeErrors } from './wishtree';
+import { shilingErrors } from './shiling';
 import { foodWeights } from './foodSupply';
 import { FUND_MEDALS, GOODS, GOODS_TYPE, NEWBIE, NON_SUIT_IDS, WEALTH } from './ids';
 import { tuningSchema } from './tuning';
@@ -1368,6 +1369,8 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   errors.push(...bulkErrors(tuning.bulk, { goodsIds: new Set(goods.map((g) => g.id)) }));
   // 许愿树（许愿树设计 §2）：同一套检查后台保存区服数值时也跑
   errors.push(...wishTreeErrors(tuning.wishTree, { goodsIds: new Set(goods.map((g) => g.id)), iconKeys }));
+  // 时令（天气改版设计 §3.1）：当令表，同一套检查后台保存区服数值时也跑
+  errors.push(...shilingErrors(tuning.shiling, { weathers: weather, counter: weatherChain.counter }));
   for (const m of fundRaw.medals)
     if (!iconKeys.has(m.icon)) errors.push(`fund medal ${m.id} icon ${m.icon} not in looks.icons`);
 

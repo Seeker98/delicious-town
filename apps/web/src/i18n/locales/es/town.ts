@@ -135,7 +135,6 @@ const town: Messages['town'] = {
     places: {
       tower: { title: 'Torre de chefs · Clasificación', sub: 'Top 15, se puede retar directamente' },
       acquire: { title: 'Adquisición · Valor', sub: 'Se puede comprar directamente' },
-      kraken: { title: 'Templo · Kraken del mes', sub: 'Quién alimentó más al Kraken' },
     },
     loadFailed: 'No se pudieron cargar las clasificaciones',
     groups: [

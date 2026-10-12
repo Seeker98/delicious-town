@@ -5,6 +5,7 @@ import { featureAvailable } from '../../core/features';
 import { opNews, restLog, runSystemOp, setRest, type Op } from '../../core/op';
 import { gainCoin, gainExp, gainOil, gainRenown, spendCoin } from '../../core/resources';
 import { subFoods } from '../cupboard/foods';
+import { accrueShiling } from '../shiling/store';
 import { consumeSpecial } from '../mysterious/cook';
 import { npcTableRound } from '../npc/npc';
 import { grantGoodsOp } from '../store/goods';
@@ -112,7 +113,17 @@ export async function settleOne(
       ? undefined
       : await op.tx
           .selectFrom('mc_cook')
-          .select(['id', 'mc_id', 'price', 'level', 'left_num'])
+          .select([
+            'id',
+            'mc_id',
+            'price',
+            'level',
+            'grade',
+            'left_num',
+            'shiling',
+            'shiling_acc',
+            'shiling_pts',
+          ])
           .where('id', '=', op.rest.mc_cook_id)
           .executeTakeFirst();
   let cupboard: Map<number, number> | null = null;
@@ -160,7 +171,11 @@ export async function settleOne(
   }
   for (const f of r.foodsUsed)
     await subFoods(op, f.foodsId, f.num, { source: 'settlement.cookfoods', event: false });
-  if (cook && r.specialUsed > 0) await consumeSpecial(op, cook.id, r.specialUsed, 'sold');
+  if (cook && r.specialUsed > 0) {
+    await consumeSpecial(op, cook.id, r.specialUsed, 'sold');
+    // 时令（天气改版设计 §3.3）：应时的一批，顾客吃掉的份数攒时令值；暴雨、虹按天气的 shilingRate 加成
+    if (cook.shiling) await accrueShiling(op, cook, r.specialUsed, g.weather.shilingRate ?? 0);
+  }
   for (const l of r.logs) restLog(op, l.type, l.params);
   if (r.planktonAppeared) opNews(op, 'plankton.appear');
   autoRefuel(op, agg);

@@ -28,6 +28,8 @@ import type { WorldService } from '../world/service';
 import { consumeSpecial, currentCook, endCook } from './cook';
 import { createLessonOps } from './lesson';
 import { addRemnant, subRemnant } from './remnant';
+import { cookInSeason } from '../shiling/rules';
+import { seasonOf } from '../shiling/service';
 import {
   addProficiency,
   appraisePick,
@@ -68,6 +70,8 @@ export function cookDto(c: McCookRow): McCookDto {
     luck: c.luck,
     eatCount: c.eat_count,
     createdAt: c.created_at.toISOString(),
+    shiling: c.shiling,
+    shilingPts: c.shiling_pts,
   };
 }
 
@@ -140,6 +144,7 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         const r = held.find((x) => x.goods_id === id);
         return r && (r.expires_at === null || r.expires_at > now) ? r.num : 0;
       };
+      const season = await seasonOf(world, s.tuning.shiling, ctx.shardId, rest.star_level, now);
       return {
         star: rest.star_level,
         learned: learned.map((m) => {
@@ -183,6 +188,7 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         cookies: have(GOODS.luckyCookie),
         cookNums: s.tuning.mysterious.cookNums,
         starBook: have(GOODS.starBook) > 0,
+        season,
       };
     },
 
@@ -369,7 +375,10 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         const free = (agg.magicBook ?? 0) > 0 && normal.length > 0 ? normal[o.rng.int(normal.length)]! : null;
         for (const f of mc.foods) if (f !== free) await subFoods(o, f, b.cookNum);
         if (b.cookie) await consumeGoods(o, GOODS.luckyCookie, b.cookNum);
-        const weather = (await world.ensure(o.shardId, o.now, o.tx)).weather.effects;
+        const snap = await world.ensure(o.shardId, o.now, o.tx);
+        const weather = snap.weather.effects;
+        // 时令（天气改版设计 §3.2）：下锅那一刻生效天气（道具盖着按盖的）当令这道菜所在的道，整批应时
+        const shiling = cookInSeason(o.tuning.shiling, o.rest.star_level, snap.weather.id, mc.road);
         const others = (
           await o.tx
             .selectFrom('rest_mc')
@@ -427,12 +436,14 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
             price: out.price,
             duel_price: out.duelPrice,
             luck: out.luck,
+            shiling,
             created_at: o.now,
           })
           .returningAll()
           .executeTakeFirstOrThrow();
         setRest(o, 'mc_cook_id', c.id);
         await emitAction(o, 'mc.cook');
+        if (shiling) await emitAction(o, 'shiling.cook');
         // 支线“神秘菜谱”（问题记录 515）：这一批份数 × 单价到 10 万
         if (out.num * out.price >= BIG_BATCH) await emitAction(o, 'mc.cook.big');
         opNews(o, 'mc.cook', { mcId: mc.id, grade: out.grade, num: out.num });

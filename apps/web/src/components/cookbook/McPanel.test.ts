@@ -50,6 +50,14 @@ const overview: McOverviewDto = {
   cookies: 2,
   cookNums: [1, 5, 10],
   starBook: false,
+  season: {
+    open: true,
+    minStar: 1,
+    weatherId: 11,
+    roads: [1, 2],
+    until: '2026-10-12T09:00:00.000Z',
+    next: { at: '2026-10-12T09:00:00.000Z', type: 2, p: 0.58 },
+  },
 };
 
 function mountView() {
@@ -139,6 +147,8 @@ describe('McPanel', () => {
         price: 70,
         luck: true,
         eatCount: 0,
+        shiling: false,
+        shilingPts: 0,
         createdAt: '',
       },
       proficiency: 21,
@@ -181,6 +191,8 @@ describe('McPanel', () => {
         price: 40,
         luck: false,
         eatCount: 1,
+        shiling: false,
+        shilingPts: 0,
         createdAt: '',
       },
       saleRate: 3.2,
@@ -410,6 +422,8 @@ describe('特色菜套用新控件（界面改版 P4）', () => {
         price: 40,
         luck: false,
         eatCount: 1,
+        shiling: false,
+        shilingPts: 0,
         createdAt: '',
       },
     });
@@ -444,5 +458,112 @@ describe('特色菜分页（界面改版 P7：249 道一次全列出来整页三
     await w.get('[data-testid="mc-pager"] button:last-child').trigger('click');
     expect(w.findAll('[data-testid^="learned-"]')).toHaveLength(1);
     expect(w.get('[data-testid="mc-pager"]').text()).toContain('2 / 2');
+  });
+});
+
+describe('McPanel：时令（天气改版 PR②，设计图 Sl-F~Sl-H）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [{ id: 11, name: '中雨', type: 2 }],
+      devices: [],
+      mysterious: [
+        {
+          id: 1,
+          name: '秘·仿膳饽饽',
+          level: 4,
+          road: 1,
+          nutritive: 0,
+          coin: 0,
+          foods: [],
+          appraisable: true,
+        },
+        {
+          id: 5,
+          name: '秘·宫保鸡丁',
+          level: 3,
+          road: 3,
+          nutritive: 0,
+          coin: 0,
+          foods: [],
+          appraisable: true,
+        },
+      ],
+    } as never);
+  });
+  const learned = (mcId: number) => ({ ...overview.learned[0]!, mcId });
+  const preview = (mcId: number) => ({
+    mcId,
+    learned: true,
+    cooking: false,
+    foods: [],
+    cookNums: [{ n: 1, ok: true }],
+    cookies: 0,
+  });
+
+  it('标题旁写现在当令；当令的道在已学里标“当令”；在售的应时菜标应时、写已攒多少', async () => {
+    vi.mocked(endpoints.mc).mockResolvedValue({
+      ...structuredClone(overview),
+      learned: [learned(1), learned(5)],
+      current: {
+        id: 9,
+        mcId: 1,
+        grade: 3,
+        totalNum: 600,
+        leftNum: 120,
+        price: 40,
+        luck: false,
+        eatCount: 0,
+        createdAt: '',
+        shiling: true,
+        shilingPts: 58,
+      },
+    });
+    const w = mountView();
+    await flushPromises();
+    expect(w.get('[data-testid="mc-season-now"]').text()).toBe('现在当令: 一道、二道');
+    expect(w.get('[data-testid="season-tag-1"]').text()).toBe('一道 · 当令');
+    expect(w.find('[data-testid="season-tag-5"]').exists()).toBe(false);
+    expect(w.get('[data-testid="mc-current-shiling"]').text()).toBe('应时');
+    expect(w.get('[data-testid="mc-current"]').text()).toContain('已攒时令值 +58');
+    expect(w.get('[data-testid="mc-season-note"]').text()).toContain('中途换天, 应时不变');
+  });
+
+  it('下锅面板：当令的写现在下锅应时；不当令的写当令的是哪两道、几点换天、预报', async () => {
+    vi.mocked(endpoints.mc).mockResolvedValue({
+      ...structuredClone(overview),
+      learned: [learned(1), learned(5)],
+    });
+    vi.mocked(endpoints.mcPreview).mockImplementation(async (id: number) => preview(id));
+    const w = mountView();
+    await flushPromises();
+    await w.get('[data-testid="cook-1"]').trigger('click');
+    await flushPromises();
+    expect(w.get('[data-testid="cook-season"]').classes()).toContain('is-yes');
+    expect(w.get('[data-testid="cook-season"]').text()).toBe(
+      '现在下锅应时 · 中雨, 一道当令。整批卖完前顾客吃掉的每份都攒时令值。',
+    );
+    await w.get('[data-testid="cook-5"]').trigger('click');
+    await flushPromises();
+    expect(w.get('[data-testid="cook-season"]').text()).toBe(
+      '现在下锅不应时 · 三道, 中雨当令的是一道、二道。17 点换天, 预报多半还是雨。',
+    );
+  });
+
+  it('0 星：不标当令', async () => {
+    vi.mocked(endpoints.mc).mockResolvedValue({
+      ...structuredClone(overview),
+      star: 0,
+      season: { ...overview.season, open: false },
+    });
+    const w = mountView();
+    await flushPromises();
+    expect(w.find('[data-testid="mc-season-now"]').exists()).toBe(false);
+    expect(w.find('[data-testid="season-tag-1"]').exists()).toBe(false);
   });
 });

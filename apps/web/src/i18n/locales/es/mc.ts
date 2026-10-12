@@ -97,5 +97,18 @@ const mc: Messages['mc'] = {
     tip: 'Dar propina',
     kindLabel: 'Dar propina con',
   },
+  season: {
+    now: (roads) => `De temporada ahora: ${roads}`,
+    roadTag: (road) => `${road} · de temporada`,
+    shiling: 'De temporada',
+    pts: (n) => ` · ${n} puntos de temporada ganados`,
+    note: 'La tanda en venta se decidió al cocinarla: un cambio de clima no la afecta.',
+    yes: 'De temporada si cocinas ahora',
+    yesText: (weather, road) =>
+      ` · ${weather}: la ${road.toLowerCase()} está de temporada. Cada ración que se coman antes de agotarse da puntos de temporada.`,
+    no: 'No es de temporada si cocinas ahora',
+    noText: (road, weather, roads, hour, type, same, sure) =>
+      ` · ${road}; con ${weather.toLowerCase()} están de temporada ${roads}. El clima cambia a las ${hour}:00 y ${sure ? 'seguramente' : 'quizá'} ${same ? 'siga' : 'pase a'} ${type.toLowerCase()}.`,
+  },
 };
 export default mc;

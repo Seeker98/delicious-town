@@ -31,6 +31,7 @@ const misc: Messages['misc'] = {
         `El tiempo cambia cada 4 horas (${hours.map((h) => `${h}:00`).join(', ')}) y sigue al tiempo actual: no nieva justo después del sol y la lluvia aumenta poco a poco.`,
         'La previsión de abajo da la probabilidad de cada tipo en el próximo cambio.',
         'Con mal tiempo, la brújula celeste (elige un tipo) o los palillos del tiempo (uno de dos) lo cambian durante 1 hora para todo el pueblo.',
+        'Cada clima pone de temporada dos vías de platos estrella. Si cocinas cuando tu vía está de temporada, toda la tanda es de temporada: cada ración que comen los clientes da puntos de temporada para la tienda de temporada (desde 1 estrella).',
       ],
     },
     forecast: {
@@ -73,6 +74,85 @@ const misc: Messages['misc'] = {
       lot: (n) => `Palillo ${n}`,
       take: (name) => `Quedarme con ${name}`,
       countdown: (s) => `Si no eliges en ${s} s, se usa el palillo 1`,
+    },
+    shiling: {
+      loadFailed: 'No se pudo cargar la temporada',
+      dl: 'De temporada',
+      roads: ['', 'Vía 1', 'Vía 2', 'Vía 3', 'Vía 4', 'Vía 5', 'Vía 6', 'Vía bestia'],
+      sep: ', ',
+      title: 'Temporada',
+      weekReset: 'La semana se reinicia el lunes a las 0:00',
+      balance: 'Puntos de temporada',
+      weekGain: 'Esta semana',
+      nowRoads: 'De temporada ahora',
+      until: (time) => `· hasta las ${time}`,
+      mine: 'Tus platos de temporada ahora: ',
+      mineNone: 'Ninguno de tus platos está de temporada ahora.',
+      more: (n) => `y ${n} más`,
+      rule: 'Cada ración de temporada que se come un cliente da nivel del plato × bonus de calidad ÷ 10 puntos; las raciones tiradas o probadas no cuentan.',
+      tableRow: 'Tabla de temporada',
+      tableSub: 'Qué vías están de temporada con cada clima',
+      lockedTitle: (n) => `Se desbloquea con ${n} ${plEs(n, 'estrella', 'estrellas')}`,
+      lockedText:
+        'Cada clima pone de temporada dos vías de platos estrella; una tanda cocinada cuando su vía está de temporada es de temporada. Los clientes que comen platos de temporada te dan puntos de temporada para fragmentos, brújulas celestes y palillos del tiempo.',
+      starUp: 'Cómo ganar estrellas',
+      shop: {
+        title: 'Tienda de temporada',
+        restock: 'Se repone el lunes a las 0:00',
+        remnant: 'Fragmento de plato estrella',
+        remnantSub: (per, left) =>
+          `Cualquier plato de nv. 1 a 5 · ${per} × nivel cada uno · quedan ${left} esta semana`,
+        rare: 'Fragmento raro',
+        rareSub: (left) => `Cualquier plato de nv. 6 o de la vía bestia · quedan ${left} esta semana`,
+        goodsSub: (left) => `Quedan ${left} esta semana`,
+        pick: 'Elegir',
+        price: (n) => `Canjear por ${n} puntos de temporada`,
+        foot: (n) =>
+          `Elegir el plato de prueba en el templo también cuesta puntos de temporada (${n} cada vez).`,
+        done: (name) => `Conseguiste ${name}`,
+        failed: 'No se pudo canjear',
+      },
+      table: {
+        title: 'Tabla de temporada',
+        sub: 'El clima decide qué dos vías están de temporada. Si la vía de un plato está de temporada al cocinarlo, toda la tanda es de temporada hasta agotarse. Las vías con borde son las de tus platos.',
+        now: 'ahora',
+        special: 'Clima especial',
+      },
+      pick: {
+        title: 'Canjear un fragmento de plato',
+        rareTitle: 'Canjear un fragmento raro',
+        sub: (per, left) =>
+          `Cualquier plato de nv. 1 a 5 que se pueda tasar y que no hayas aprendido. ${per} × nivel cada uno, quedan ${left} esta semana; con 3 fragmentos del mismo plato lo aprendes.`,
+        rareSub: (price, left) =>
+          `Cualquier plato que no se pueda tasar, como los de nv. 6 o de la vía bestia. ${price} cada uno, quedan ${left} esta semana.`,
+        inSeason: (roads) => `De temporada (${roads})`,
+        allRoads: 'Todas las vías',
+        level: (n) => `Nv. ${n}`,
+        have: (n) => `${n} ${plEs(n, 'fragmento', 'fragmentos')}`,
+        none: 'Aún sin fragmentos',
+        empty: 'Nada que canjear',
+        foot: 'Los platos que ya sabes no aparecen. Al tocar un precio se canjea 1 fragmento al momento (si te equivocas, puedes venderlo en recetas).',
+      },
+      intro: {
+        title: 'Temporadas desbloqueadas',
+        sub: 'Con 1 estrella, tus platos estrella siguen al clima',
+        steps: [
+          [
+            'Mira qué está de temporada',
+            'Cada clima pone dos vías de temporada; la página del clima muestra la actual y la siguiente.',
+          ],
+          [
+            'Cocina de temporada',
+            'Si la vía está de temporada al cocinar, toda la tanda es de temporada hasta agotarse.',
+          ],
+          [
+            'Gana puntos de temporada',
+            'Los clientes que comen platos de temporada dan puntos para fragmentos, brújulas celestes y palillos del tiempo.',
+          ],
+        ] as [string, string][],
+        ok: 'Entendido',
+        go: 'Ver el clima',
+      },
     },
   },
   invite: {

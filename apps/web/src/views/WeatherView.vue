@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
-import type { WeatherToolsDto, WorldDto } from '@dt/shared';
+import type { ShilingDto, WeatherToolsDto, WorldDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import type { ArtName } from '../art/generated/names';
 import DtArt from '../components/DtArt.vue';
 import CompassSheet from '../components/weather/CompassSheet.vue';
 import LotsSheet from '../components/weather/LotsSheet.vue';
+import ShilingSection from '../components/weather/ShilingSection.vue';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
@@ -17,7 +18,8 @@ import { formatPct, timeHM } from '../utils/format';
 import { useServerClock } from '../utils/serverClock';
 
 /**
- * 天气页（天气改版设计；设计图 Wx-A、Wx-B）：顶部现在的天气和效果、怎么玩、预报（下一轮四类概率）、改天气（司天罗盘、晴雨签）
+ * 天气页（天气改版设计；设计图 Wx-A、Wx-B、Sl-A、Sl-B）：顶部现在的天气和效果、当令的道、怎么玩、预报（下一轮四类概率）、
+ * 时令（余额、当令、时令铺）、改天气（司天罗盘、晴雨签）
  */
 const t = useT();
 /** 天气名、说明、街道名按目录取，跟着语言走（问题记录 272） */
@@ -25,6 +27,8 @@ const catalog = useCatalogStore();
 const toast = useToastStore();
 const world = ref<WorldDto | null>(null);
 const tools = ref<WeatherToolsDto | null>(null);
+/** 时令（天气改版 PR②）：功能关着或读失败时不显示这一块 */
+const shiling = ref<ShilingDto | null>(null);
 /** 顶栏标题是当前天气（界面改版 P2a） */
 usePageTitle(() =>
   world.value ? catalog.weatherName(world.value.weather.id, world.value.weather.name) : null,
@@ -142,9 +146,14 @@ const lotsOpen = ref(false);
 
 async function load() {
   try {
-    const [w, x] = await Promise.all([endpoints.weather(), endpoints.weatherTools().catch(() => null)]);
+    const [w, x, s] = await Promise.all([
+      endpoints.weather(),
+      endpoints.weatherTools().catch(() => null),
+      endpoints.shiling().catch(() => null),
+    ]);
     world.value = w;
     tools.value = x;
+    shiling.value = s;
     error.value = '';
   } catch (e) {
     error.value = errorMessage(e, t.value.misc.weather.loadFailed);
@@ -179,6 +188,12 @@ onMounted(load);
             </li>
           </ul>
           <div class="dt-wx-zero">{{ t.misc.weather.zeroStarLine }}</div>
+          <div v-if="shiling?.season.roads.length" class="dt-wx-dl" data-testid="weather-season">
+            <span class="dt-wx-fx-k">{{ t.misc.weather.shiling.dl }}</span
+            ><span v-for="r in shiling.season.roads" :key="r" class="dt-road">{{
+              t.misc.weather.shiling.roads[r]
+            }}</span>
+          </div>
         </div>
       </div>
       <p v-if="head.cover" class="dt-wx-cover" data-testid="weather-cover">
@@ -233,6 +248,9 @@ onMounted(load);
         <p class="dt-wx-fc-note">{{ t.misc.weather.forecast.note }}</p>
       </section>
     </template>
+
+    <!-- 时令（天气改版 PR②）：余额、当令、时令铺；0 星写“1 星开放” -->
+    <ShilingSection v-if="shiling" :data="shiling" @changed="load" />
 
     <!-- 改天气：司天罗盘、晴雨签；底下一行写规则或者为什么现在不能用 -->
     <template v-if="tools">

@@ -95,14 +95,14 @@
    "probability": 0.0118,
    "value": {
     "expRate": 1.2,
-    "krabCoinRate": 0.1,
+    "shilingRate": 0.1,
     "trialRate": 0.08,
     "taNeedtimeRate": -0.2,
     "taExpRate": 1.2,
     "taRenownRate": 1,
     "taSuccessoddsRate": 0.2
    },
-   "note": "打赏时卖艺男孩时获得蟹币概率+10%!\r\n试炼时成功率+8%!\r\n经营: 最终经验+120%\r\n外卖: 配送时间-20%, 经验+120%, 声望+100%, 成功率+20%",
+   "note": "时令值+10%!\r\n试炼时成功率+8%!\r\n经营: 最终经验+120%\r\n外卖: 配送时间-20%, 经验+120%, 声望+100%, 成功率+20%",
    "valueSource": "har"
   },
   {
@@ -229,7 +229,7 @@
    "probability": 0.0239,
    "value": {
     "marketCoin": 0.6,
-    "krakenFavorRate": 0.25,
+    "shilingRate": 0.25,
     "atRate": -0.2,
     "expValue": 3,
     "taNeedtimeRate": -0.2,
@@ -237,7 +237,7 @@
     "taExpRate": 0.8,
     "taSuccessoddsRate": -0.3
    },
-   "note": "菜场食材价格+60%!\r\n投喂克拉肯好感度+25%!\r\n经营: 上座率-20%, 每桌经验+3\r\n外卖: 配送时间-20%, 银币-40%, 经验+80%, 成功率-30%",
+   "note": "菜场食材价格+60%!\r\n时令值+25%!\r\n经营: 上座率-20%, 每桌经验+3\r\n外卖: 配送时间-20%, 银币-40%, 经验+80%, 成功率-30%",
    "valueSource": "parsed"
   },
   {

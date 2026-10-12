@@ -117,7 +117,7 @@
     "name": "Complete 3 takeaway deliveries"
   },
   "2143": {
-    "name": "Feed the Kraken once"
+    "name": "Cook one in-season batch of a special"
   },
   "2144": {
     "name": "Learn 300 recipes"
@@ -294,16 +294,16 @@
     "name": "Attack the Guardian 20 times"
   },
   "3124": {
-    "name": "Feed the Kraken 10 times"
+    "name": "Cook 10 in-season batches of specials"
   },
   "3125": {
-    "name": "Get more than {n} favor from the Kraken in one feeding"
+    "name": "Earn {n} seasonal points in one week"
   },
   "3126": {
-    "name": "Get a Kraken tentacle from feeding 3 times"
+    "name": "Exchange 3 times at the seasonal shop"
   },
   "3127": {
-    "name": "Feed the Kraken 50 times"
+    "name": "Cook 50 in-season batches of specials"
   },
   "3141": {
     "name": "Harvest 10 times"

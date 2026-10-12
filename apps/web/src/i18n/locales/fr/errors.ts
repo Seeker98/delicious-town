@@ -52,6 +52,7 @@ const errors: Messages['errors'] = {
     reserved: 'Le nom ne peut pas contenir de personnages de la ville ni de mots officiels',
   },
   kind: {
+    shiling: 'Points de saison',
     coin: 'Pièces',
     diamond: 'Diamants',
     strength: 'Énergie',
@@ -103,6 +104,7 @@ const errors: Messages['errors'] = {
         : 'Il vous faut un permis de travail de boutique valide pour actualiser',
   },
   limit: {
+    shiling_weekly: (p) => `Limite de la semaine atteinte (${String(p.limit)} par semaine)`,
     exchange_orders: (p) =>
       `Vous pouvez avoir au plus ${s(p.max)} ${plFr(s(p.max), 'ordre ouvert', 'ordres ouverts')}`,
     futures_person: (p) => `Encore ${s(p.left)} au plus aujourd’hui (${s(p.max)} par jour)`,
@@ -164,6 +166,7 @@ const errors: Messages['errors'] = {
     weekly: (p) => `Limite d'échanges de la semaine atteinte (${s(p.max)})`,
   },
   state: {
+    shiling_not_in_shop: 'La boutique de saison ne propose pas ce plat',
     not_running:
       "Cet événement n'est pas en cours (les récompenses non réclamées sont envoyées par courrier à la fin)",
     no_reward: "Cette récompense n'existe pas",
@@ -324,11 +327,6 @@ const errors: Messages['errors'] = {
     trial_ready: "Votre médaille d'épreuve est encore valide\u202f; vous pouvez commencer l'épreuve",
     no_trial:
       "Vous ne vous êtes pas préparé à l'épreuve (ou c'est expiré). Faites une injection ou méditez d'abord.",
-    not_feed_time: "Ce n'est pas l'heure du repas",
-    fed_today: "Vous avez déjà nourri le Kraken aujourd'hui",
-    portions:
-      'Pas assez de portions\u202f: gardez au moins 1 portion de votre plat signature en vente après le repas',
-    slot_bought: 'Cet emplacement a déjà été échangé',
     mc_cooking: 'Vous avez déjà un plat signature en vente. Écoulez-le ou jetez-le avant de recuisiner.',
     no_cooking: "Aucun plat signature n'est en vente pour le moment",
     mc_learned: 'Vous avez déjà appris ce plat signature',
@@ -355,8 +353,7 @@ const errors: Messages['errors'] = {
     formula_unlearned: "Vous n'avez pas encore appris cette formule",
     formula_learned: 'Vous avez déjà appris cette formule',
     seed_shop_closed: "La boutique de graines n'est pas encore ouverte",
-    seed_not_sold:
-      'Les graines mystère ne sont pas vendues\u202f; obtenez-les par échange ou en nourrissant le Kraken',
+    seed_not_sold: 'Les graines mystère ne sont pas vendues\u202f: on les obtient par échange',
     takeaway_closed: "Vous n'avez pas encore ouvert la livraison",
     order_gone: "Cette commande à emporter n'existe plus",
     order_taken: "Quelqu'un a déjà pris cette commande",

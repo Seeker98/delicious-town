@@ -26,3 +26,13 @@ export function rollWeather(config: GameConfig, hour: number, w: Tuning['world']
 export function rollKrabStreet(w: Tuning['world'], rng: Rng): number {
   return w.krabStreetMin + rng.int(w.krabStreetMax - w.krabStreetMin + 1);
 }
+
+/** 预报里概率最大的一类（一样大取编号小的） */
+export function topForecast(f: { at: Date; types: Record<string, number> }): {
+  at: string;
+  type: number;
+  p: number;
+} {
+  const [type, p] = Object.entries(f.types).sort((a, b) => b[1] - a[1] || Number(a[0]) - Number(b[0]))[0]!;
+  return { at: f.at.toISOString(), type: Number(type), p };
+}

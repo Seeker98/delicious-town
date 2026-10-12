@@ -418,16 +418,32 @@ export const tuningSchema = z.object({
     trialProficiencyPerLevel: int,
     trialCap: num,
     rareOdds: int,
-    krakenHours: z.array(z.tuple([int, int])).min(1),
-    krakenRates: z.object({ same: num, road: num, other: num }),
-    krabCoinRate: num,
-    tentacleFavor: int,
-    tentacleRate: num,
-    forgetRate: num,
-    shopSlots: int.min(1),
-    shopExclude: z.array(int),
     /** 飞弹伤害覆盖：[道具 id, 最小, 最大]（试玩修复 14：集束飞弹太强） */
     missileAttack: z.array(z.tuple([int, int.min(0), int.min(0)])),
+  }),
+  /** 时令（天气改版设计 §3）：当令表、每份点数、时令铺 */
+  shiling: z.object({
+    minStar: int.min(0),
+    /** 每份点数 = 菜等级 × (1 + gradeStep × (品级 − 1)) ÷ divisor */
+    divisor: num.positive(),
+    gradeStep: num.min(0),
+    /** 神殿试炼用时令值指定试炼菜 */
+    trialPick: int.min(0),
+    /** 上线时每颗种子折多少时令值（迁移里用，这里记一下） */
+    seedRate: int.min(0),
+    /** 支线“一周获得多少时令值” */
+    week200: int.min(1),
+    shop: z.object({
+      remnantPerLevel: int.min(1),
+      remnantWeekly: int.min(0),
+      rarePrice: int.min(1),
+      rareWeekly: int.min(0),
+      /** [价格, 每周限购] */
+      compass: z.tuple([int.min(1), int.min(0)]),
+      lots: z.tuple([int.min(1), int.min(0)]),
+    }),
+    /** [天气 id, 当令的道]（1~6；7 是兽道） */
+    roads: z.array(z.tuple([int, z.array(int.min(1).max(7)).min(1)])),
   }),
   yard: z.object({
     maxLands: int.min(1),

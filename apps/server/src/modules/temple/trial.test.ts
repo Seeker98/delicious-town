@@ -35,9 +35,12 @@ async function ready(g: TestGame, learned: number[] = [MC3.id], patch: Record<st
   const foods = Object.fromEntries([RARE, COMMON, ...MC3.foods].map((f) => [f, 5]));
   const ctx = await newRestaurant(g, {
     patch: { star_level: 1, coin: 1_000_000, ...patch },
-    goods: { [GOODS.tentacle]: 2 },
     foods,
   });
+  await g.db
+    .insertInto('rest_shiling')
+    .values({ rest_id: ctx.restaurantId, shard_id: ctx.shardId, balance: 40 })
+    .execute();
   for (const id of learned)
     await g.db.insertInto('rest_mc').values({ rest_id: ctx.restaurantId, mc_id: id, way: 1 }).execute();
   return ctx;
@@ -79,7 +82,7 @@ describe('试炼准备（设计文档 裁定 1、7）', () => {
     });
   });
 
-  it('换对象：不指定花 2 万银币；用触手指定已学的菜；没学或 >5 级的报 mc_not_learned', async () => {
+  it('换对象：不指定花 2 万银币；用 30 时令值指定已学的菜，不够报 not_enough；没学或 >5 级的报 mc_not_learned', async () => {
     const ctx = await ready(win, [MC3.id, MC4.id, MC6.id]);
     await win.game.temple.prepareTrial(ctx, { way: 2 });
     const a = await win.game.temple.refreshTrial(ctx, {});
@@ -87,7 +90,11 @@ describe('试炼准备（设计文档 裁定 1、7）', () => {
     expect((await restRow(win, ctx.restaurantId)).coin).toBe(1_000_000 - 20_000);
     const b = await win.game.temple.refreshTrial(ctx, { mcId: MC4.id });
     expect(b.data.mcId).toBe(MC4.id);
-    expect(await goodsNum(win, ctx.restaurantId, GOODS.tentacle)).toBe(1);
+    expect((await win.game.temple.overview(ctx)).shiling).toBe(10);
+    await expect(win.game.temple.refreshTrial(ctx, { mcId: MC3.id })).rejects.toMatchObject({
+      code: 'NOT_ENOUGH',
+      params: { kind: 'shiling', need: 30, have: 10 },
+    });
     for (const id of [lvl(5)[0]!.id, MC6.id])
       await expect(win.game.temple.refreshTrial(ctx, { mcId: id })).rejects.toMatchObject({
         params: { reason: 'mc_not_learned' },

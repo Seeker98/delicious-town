@@ -97,5 +97,18 @@ const mc: Messages['mc'] = {
     tip: 'Tip',
     kindLabel: 'Tip with',
   },
+  season: {
+    now: (roads) => `In season now: ${roads}`,
+    roadTag: (road) => `${road} · in season`,
+    shiling: 'Seasonal',
+    pts: (n) => ` · earned ${n} seasonal points`,
+    note: 'The batch on sale was decided when it was cooked: a weather change doesn’t affect it.',
+    yes: 'Seasonal if cooked now',
+    yesText: (weather, road) =>
+      ` · ${weather}: ${road} is in season. Every serving customers eat before it sells out earns seasonal points.`,
+    no: 'Not seasonal if cooked now',
+    noText: (road, weather, roads, hour, type, same, sure) =>
+      ` · ${road}; ${weather} puts ${roads} in season. The weather changes at ${hour}:00 and will ${sure ? 'probably' : 'maybe'} ${same ? 'stay' : 'turn'} ${type.toLowerCase()}.`,
+  },
 };
 export default mc;

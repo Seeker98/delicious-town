@@ -7,7 +7,14 @@ import { nextTick, onBeforeUnmount, ref, useId, watch } from 'vue';
  */
 /** top：确认面板用，永远压在别的面板上面（P7 终审 C1：后挂载的页面面板会盖住确认面板） */
 /** focusPanel：打开时焦点放在面板本身，不放进第一个输入框（P9 试炼选料：一打开就弹出手机键盘） */
-const props = defineProps<{ open: boolean; title: string; top?: boolean; focusPanel?: boolean }>();
+/** center：屏幕中间的卡片（时令说明弹窗，设计图 Sl-E），没有把手，标题居中；#art 插在标题上面 */
+const props = defineProps<{
+  open: boolean;
+  title: string;
+  top?: boolean;
+  focusPanel?: boolean;
+  center?: boolean;
+}>();
 const emit = defineEmits<{ close: [] }>();
 const titleId = `dt-sheet-${useId()}`;
 const panel = ref<HTMLElement | null>(null);
@@ -67,7 +74,7 @@ let justClosedBack: HTMLElement | null = null;
 
 <template>
   <Teleport to="body">
-    <div v-if="open" :class="['dt-sheet-wrap', { 'is-top': top }]">
+    <div v-if="open" :class="['dt-sheet-wrap', { 'is-top': top, 'is-center': center }]">
       <div class="dt-sheet-scrim" @click="emit('close')"></div>
       <div
         ref="panel"
@@ -77,7 +84,8 @@ let justClosedBack: HTMLElement | null = null;
         :aria-labelledby="titleId"
         tabindex="-1"
       >
-        <div class="dt-sheet-grip" aria-hidden="true"></div>
+        <div v-if="!center" class="dt-sheet-grip" aria-hidden="true"></div>
+        <div v-if="$slots.art" class="dt-sheet-art"><slot name="art" /></div>
         <div :id="titleId" class="dt-sheet-title">{{ title }}</div>
         <div class="dt-sheet-body"><slot /></div>
         <div v-if="$slots.actions" class="dt-sheet-actions"><slot name="actions" /></div>

@@ -127,7 +127,6 @@ const town: Messages['town'] = {
     places: {
       tower: { title: 'Chef Tower · Chef ranking', sub: 'Top 15, challenge them directly' },
       acquire: { title: 'Takeover · Value ranking', sub: 'Buy them out directly' },
-      kraken: { title: 'Temple · Monthly Kraken ranking', sub: 'Who fed the Kraken most' },
     },
     loadFailed: "Couldn't load rankings",
     groups: [

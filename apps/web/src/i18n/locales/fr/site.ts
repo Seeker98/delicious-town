@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    shiling1012:
+      'Saisons\u202f: chaque météo met deux voies de plats signature de saison, et une fournée cuisinée de saison est de saison (dès 1 étoile). Les clients qui mangent vos plats de saison vous rapportent des points de saison à dépenser à la boutique de saison de la page météo (fragments, boussoles célestes, bâtonnets du temps)\u202f; choisir le plat d’épreuve coûte maintenant des points de saison. Le Kraken et la boutique de tentacules disparaissent, la marmite du maire ne donne plus de graines et les récompenses aléatoires ne donnent plus d’engrais ni de formules arcanes. Vos graines valent 5 points de saison chacune, les tentacules 30',
     weather1012:
       "Refonte de la météo\u202f: elle change toutes les 4 heures et suit le temps actuel, et la page météo affiche la prévision du prochain changement et un petit guide. Le Marteau de Thor est remplacé par la boussole céleste (choisir un type\u202f; le maire en échange 1 par semaine, et on en trouve au dernier lot de l'Ichiban Kuji et à l'arbre à vœux) et les bâtonnets du temps (en tirer deux, en garder un\u202f; 1 par jour à la boutique). Les deux durent 1 heure, et personne ne peut rechanger la météo dans l'heure qui suit",
     season1012:

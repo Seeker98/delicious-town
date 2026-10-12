@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    shiling1012:
+      'Temporadas: cada clima pone de temporada dos vías de platos estrella, y una tanda cocinada de temporada es de temporada (desde 1 estrella). Los clientes que comen platos de temporada te dan puntos de temporada para la tienda de temporada de la página del clima (fragmentos, brújulas celestes, palillos del tiempo); elegir el plato de prueba ahora cuesta puntos de temporada. Se quitan el Kraken y la tienda de tentáculos, la olla del alcalde ya no da semillas y las recompensas aleatorias ya no dan abono ni fórmulas arcanas. Las semillas que tenías valen 5 puntos de temporada cada una, los tentáculos 30',
     weather1012:
       'Cambios en el tiempo: ahora cambia cada 4 horas y sigue al tiempo actual, y la página del tiempo muestra la previsión del próximo cambio y una guía breve. El Martillo de Thor se sustituye por la brújula celeste (eliges un tipo; el alcalde cambia 1 por semana y también sale en el último premio del Ichiban Kuji y en el árbol de los deseos) y los palillos del tiempo (agitas dos y te quedas con uno; 1 al día en la tienda). Ambos duran 1 hora y nadie más puede cambiar el tiempo en la hora siguiente',
     season1012:

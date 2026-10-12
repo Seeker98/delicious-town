@@ -695,10 +695,10 @@
    "id": 2143,
    "chapter": 7,
    "order": 3,
-   "name": "投喂一次克拉肯",
+   "name": "做一批应时特色菜",
    "cond": {
     "kind": "counter",
-    "key": "kraken.feed",
+    "key": "shiling.cook",
     "target": 1
    },
    "award": {
@@ -706,12 +706,12 @@
     "exp": 5000,
     "goods": [
      {
-      "id": 10708,
+      "id": 10420,
       "num": 1
      }
     ]
    },
-   "href": "/temple"
+   "href": "/cookbooks?tab=mc"
   },
   {
    "id": 2144,

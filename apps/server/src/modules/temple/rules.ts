@@ -1,6 +1,5 @@
-import type { MapDef, MissileDef, MysteriousCookbook, Seed, Tuning } from '@dt/config';
-import { pickWeighted, seededRng, type Rng, type WeightedPool } from '@dt/shared';
-import { gameSeed } from '../../core/seed';
+import type { MapDef, MissileDef, Tuning } from '@dt/config';
+import type { Rng } from '@dt/shared';
 
 export type TempleTuning = Tuning['temple'];
 
@@ -128,56 +127,4 @@ export function trialGainCaps(mainRare: boolean, subRare: boolean): { n: number;
     n: mainRare ? (subRare ? 2 : 1) : 0,
     m: mainRare ? (subRare ? 4 : 3) : subRare ? 2 : 1,
   };
-}
-
-/** 克拉肯今天想吃的菜（设计文档 裁定 2）：按 区服 + 日期 定种子 */
-export function krakenTarget(
-  pool: WeightedPool<MysteriousCookbook>,
-  shardId: number,
-  day: string,
-): MysteriousCookbook {
-  return pickWeighted(pool, seededRng(gameSeed(shardId, 'kraken', day)));
-}
-
-export function inFeedHours(hour: number, hours: ReadonlyArray<readonly [number, number]>): boolean {
-  return hours.some(([a, b]) => hour >= a && hour < b);
-}
-
-export type Relation = 'same' | 'road' | 'other';
-
-export function relationOf(cook: MysteriousCookbook, target: MysteriousCookbook): Relation {
-  return cook.id === target.id ? 'same' : cook.road === target.road ? 'road' : 'other';
-}
-
-/** 好感度（原版 feedKraken）；k × init 向零截断（计划裁定 5） */
-export function krakenFavor(
-  i: { num: number; level: number; price: number; grade: number; relation: Relation; luckRate: number },
-  t: TempleTuning,
-  rng: Rng,
-): { init: number; favor: number; luck: number } {
-  const rate = t.krakenRates[i.relation];
-  const init = Math.floor(Math.sqrt(i.num * (i.level === 6 ? 0.5 : 1) * i.price * rate) / 12);
-  const g = i.grade - 1;
-  const k = i.relation === 'same' ? -0.06 * g : i.relation === 'road' ? 0.1 - 0.01 * g : 0.2;
-  let favor = rng.int(init) - Math.trunc(k * init);
-  favor = favor === 0 ? 1 : Math.min(favor, init);
-  const luck = i.relation === 'same' ? rng.int(Math.floor((init * i.luckRate) / 5)) : 0;
-  return { init, favor: favor + luck, luck };
-}
-
-export function seedCount(favor: number): number {
-  return Math.floor(Math.sqrt(Math.max(0, favor))) + 2;
-}
-
-export function pickSeeds(pool: WeightedPool<Seed>, n: number, rng: Rng): Map<number, number> {
-  const out = new Map<number, number>();
-  for (let i = 0; i < n; i++) {
-    const s = pickWeighted(pool, rng);
-    out.set(s.id, (out.get(s.id) ?? 0) + 1);
-  }
-  return out;
-}
-
-export function pickShopSlots(pool: WeightedPool<MysteriousCookbook>, n: number, rng: Rng): number[] {
-  return Array.from({ length: n }, () => pickWeighted(pool, rng).id);
 }

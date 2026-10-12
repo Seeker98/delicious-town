@@ -841,6 +841,24 @@ details.dt-card > summary {
   border-radius: var(--dt-radius-sheet) var(--dt-radius-sheet) 0 0;
   box-shadow: var(--dt-shadow-float);
 }
+/* 中间的卡片（时令说明弹窗，设计图 Sl-E）：四角都圆、左右留边、标题居中 */
+.dt-sheet-wrap.is-center {
+  justify-content: center;
+  padding: 0 20px;
+}
+.dt-sheet-wrap.is-center > .dt-sheet {
+  max-width: 400px;
+  padding: 20px 18px 18px;
+  border-radius: var(--dt-radius-sheet);
+}
+.dt-sheet-wrap.is-center .dt-sheet-title {
+  text-align: center;
+}
+.dt-sheet-art {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 6px;
+}
 .dt-sheet:focus {
   outline: none;
 }
@@ -5400,22 +5418,6 @@ button.dt-row {
   border-color: transparent;
   background: var(--dt-surface-2);
 }
-/* 区块下面的一行说明加一个文字按钮（触手商店刷新） */
-.dt-block-foot {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  margin: 8px 2px 0;
-  font-size: 12px;
-  color: var(--dt-muted);
-}
-.dt-block-foot > span {
-  flex: 1 1 auto;
-}
-.dt-block-foot > .dt-link-btn {
-  font-size: 13px;
-  font-weight: 600;
-}
 /* 守护兽：大头像加粗血条 */
 .dt-guardian {
   display: flex;
@@ -5737,57 +5739,6 @@ button.dt-row {
   color: var(--dt-on-primary);
   font-size: 11px;
   line-height: 14px;
-}
-/* 克拉肯：头像、想吃的菜、投喂时段（正在开放的绿色） */
-.dt-kraken {
-  margin-bottom: 12px;
-  padding: 14px;
-}
-.dt-kraken-head {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.dt-kraken-ava {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: var(--dt-primary-soft);
-}
-.dt-kraken-dish {
-  font-size: 18px;
-}
-.dt-kraken-tags {
-  display: flex;
-  gap: 4px;
-  margin-top: 2px;
-}
-.dt-kraken-time {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-  margin-top: 12px;
-  font-size: 12px;
-  color: var(--dt-muted);
-}
-.dt-kraken-hour {
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: var(--dt-bg);
-  color: var(--dt-text);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-.dt-kraken-hour.is-on {
-  background: var(--dt-soft-success);
-  color: var(--dt-ink-success);
-}
-.dt-kraken-state {
-  margin-left: auto;
 }
 /* 厨塔：三块统计、一层一行（层号方块、守护者、右边挑战），点开的面板和对决结果 */
 .dt-tiles-3 {
@@ -9122,4 +9073,218 @@ a.dt-entry-row::after {
   line-height: 18px;
   padding: 0 6px;
   border-radius: var(--dt-radius-xs);
+}
+/* ===== 时令（天气改版 PR②；设计图 Sl-A~Sl-I） ===== */
+/* 道的胶囊：当令绿底；is-mine 你会的菜所在的道再描边；is-off 不当令灰 */
+.dt-road {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--dt-soft-success);
+  color: var(--dt-ink-success);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.dt-road.is-mine {
+  box-shadow: inset 0 0 0 1px var(--dt-ink-success);
+}
+.dt-road.is-off {
+  background: var(--dt-surface-2);
+  color: var(--dt-muted);
+  font-weight: 600;
+}
+.dt-road.is-off.is-mine {
+  box-shadow: inset 0 0 0 1px var(--dt-line-strong);
+}
+.dt-row-title > .dt-road {
+  margin-left: 6px;
+  height: 18px;
+  font-size: 11px;
+}
+/* 天气卡最下面一行“当令 一道 二道”，虚线隔开 */
+.dt-wx-dl {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--dt-line);
+  font-size: 13px;
+}
+.dt-sl-main {
+  padding: 14px;
+}
+.dt-sl-nums {
+  display: flex;
+  gap: 10px;
+}
+.dt-sl-num {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--dt-bg);
+}
+.dt-sl-num-k {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-sl-num > b {
+  display: block;
+  margin-top: 2px;
+  font-size: 22px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.dt-sl-now {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 13px;
+}
+.dt-sl-k {
+  color: var(--dt-muted);
+}
+.dt-sl-mine {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.dt-sl-mine .dt-go {
+  font-weight: 600;
+  white-space: normal;
+}
+.dt-sl-rule {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dt-muted);
+}
+.dt-sl-lock {
+  padding: 14px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.dt-sl-lock > b {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 15px;
+}
+.dt-sl-lock > p {
+  margin: 0 0 8px;
+}
+.dt-sl-item {
+  min-height: 60px;
+}
+.dt-sl-item > .btn,
+.dt-sl-item > .dt-price-btn,
+.dt-sl-pick > .dt-price-btn {
+  flex-shrink: 0;
+}
+/* 当令表：每类一个小标题，一种天气一行，现在的天气那行浅紫底 */
+.dt-sl-table-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 12px 0 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dt-muted);
+}
+.dt-sl-table-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 4px 8px;
+  border-top: 1px solid var(--dt-line);
+  font-size: 13px;
+}
+.dt-sl-table-row.is-now {
+  border-radius: 8px;
+  border-top-color: transparent;
+  background: var(--dt-primary-soft);
+}
+.dt-sl-table-row.is-now > .dt-sl-table-name {
+  font-weight: 700;
+  color: var(--dt-primary-ink);
+}
+.dt-sl-table-name {
+  flex: 1;
+  min-width: 0;
+}
+.dt-sl-table-roads {
+  display: flex;
+  flex-shrink: 0;
+  gap: 4px;
+}
+.dt-sl-pick-foot {
+  margin: 10px 0 0;
+}
+/* 特色菜（设计图 Sl-F~Sl-H）：在售一批的“应时”、下锅面板里现在下锅是否应时 */
+.dt-mc-season {
+  margin: 10px 0 2px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.dt-mc-season.is-yes {
+  background: var(--dt-soft-success);
+  color: var(--dt-ink-success);
+}
+.dt-mc-season.is-no {
+  background: var(--dt-bg);
+  color: var(--dt-muted);
+}
+.dt-mc-season > b {
+  color: var(--dt-text);
+}
+/* 1 星时令说明弹窗（设计图 Sl-E） */
+.dt-sl-intro-art {
+  display: flex;
+  justify-content: center;
+}
+.dt-sl-intro-sub {
+  margin: 2px 0 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--dt-muted);
+}
+.dt-sl-intro-steps {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.dt-sl-intro-steps > li {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.dt-sl-intro-steps b {
+  display: block;
+  font-size: 14px;
+}
+.dt-sl-intro-n {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--dt-primary-soft);
+  color: var(--dt-primary-ink);
+  font-size: 12px;
+  font-weight: 800;
 }

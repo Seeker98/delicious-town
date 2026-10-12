@@ -308,7 +308,7 @@
   },
   {
    "id": 36,
-   "activationname": "投喂克拉肯",
+   "activationname": "做应时特色菜",
    "activationvalue": 5,
    "activation": 0,
    "note": "每日1次",
@@ -317,7 +317,7 @@
    "limittimes": 1,
    "finishtimes": 0,
    "starlevel": 1,
-   "nexturl": "[{\"name\":\"去投喂\",\"to\":\"/temple\"}]",
+   "nexturl": "[{\"name\":\"去烹制\",\"to\":\"/rest/cookbooks?cook=2\"}]",
    "friendRestId": null,
    "friendRestName": null,
    "finishFlag": false

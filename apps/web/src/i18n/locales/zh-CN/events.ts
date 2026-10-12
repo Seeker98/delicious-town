@@ -101,6 +101,7 @@ export default {
   loss: '消耗',
   /** 得失的资源名 */
   kind: {
+    shiling: '时令值',
     coin: '银币',
     diamond: '钻石',
     exp: '经验',
@@ -131,7 +132,6 @@ export default {
       p.success
         ? `「${mcNameOf(names, n(p, 'mcId'))}」试炼成功: 试炼价值 +${n(p, 'worth')}%、试炼经验 +${n(p, 'exp')}%`
         : `「${mcNameOf(names, n(p, 'mcId'))}」试炼失败`,
-    'kraken.forget': (p, names) => `克拉肯很不满意, 你遗忘了特色菜「${mcNameOf(names, n(p, 'mcId'))}」`,
     'equip.stress': (p, names) =>
       `${names.goodsName(n(p, 'goodsId'))}强化到 +${n(p, 'to')}${p.success ? '成功' : '失败'}`,
     'level.up': (p) => `餐厅升到了 ${n(p, 'to')} 级`,

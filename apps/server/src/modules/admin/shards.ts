@@ -4,6 +4,7 @@ import {
   wealthErrors,
   bulkErrors,
   wishTreeErrors,
+  shilingErrors,
   GOODS_TYPE,
   isFeatureEnabled,
   kujiErrors,
@@ -114,6 +115,15 @@ export function createAdminShards(game: Game, log?: WarnLog) {
     if (bulk.length > 0)
       throw new AppError(ErrorCode.INVALID_CONFIG, 400, {
         issues: bulk.map((message) => ({ path: 'tuning.bulk', message })),
+      });
+    // 时令当令表（天气改版设计 §3.1）：和配置构建同一套检查
+    const shiling = shilingErrors(resolved.tuning.shiling, {
+      weathers: [...config.weather.values()],
+      counter: config.bundle.weatherChain.counter,
+    });
+    if (shiling.length > 0)
+      throw new AppError(ErrorCode.INVALID_CONFIG, 400, {
+        issues: shiling.map((message) => ({ path: 'tuning.shiling.roads', message })),
       });
     // 许愿树（许愿树设计 §2）：和配置构建同一套检查
     const wish = wishTreeErrors(resolved.tuning.wishTree, {

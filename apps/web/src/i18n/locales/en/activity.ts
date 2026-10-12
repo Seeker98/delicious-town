@@ -68,7 +68,7 @@ const activity: Messages['activity'] = {
     'temple.explore': 'Temple exploration',
     'temple.missile': 'Challenge the guardian',
     'temple.trial': 'Temple trials',
-    'kraken.feed': 'Feed the Kraken',
+    'shiling.cook': 'Cook a seasonal batch',
     'mc.cook': 'Cook signature dishes',
     'mc.appraise': 'Appraise signature dishes',
     'lesson.learn': 'Attend classes',

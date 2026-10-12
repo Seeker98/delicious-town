@@ -119,6 +119,8 @@ export interface RestaurantDto {
   cookbooks: { learned: number; total: number };
   /** 在售的特色菜：哪道、几级；没有、卖完为 null（问题记录 447） */
   special: { id: number; level: number } | null;
+  /** 第一次够星打开时令（天气改版设计 指引②）：要弹一次时令说明 */
+  shilingIntro: boolean;
   createdAt: string;
 }
 

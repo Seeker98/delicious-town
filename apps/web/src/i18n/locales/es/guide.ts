@@ -137,7 +137,7 @@ const guide: Messages['guide'] = {
       a: [
         'El pack de registro diario puede traer algunos; los premios de actividad de 100 y 120 puntos; ',
         { to: '/rest/tasks?tab=weekly', text: 'las misiones semanales' },
-        '; los packs de la clasificación de chefs y de la clasificación mensual de afinidad del Kraken; los premios A, B, C y Último premio del Ichiban Kuji; los amigos invitados que llegan a nv. 10 y 30; un mensaje del foro destacado; los premios de eventos y los códigos.',
+        '; los packs de la clasificación de chefs; los premios A, B, C y Último premio del Ichiban Kuji; los amigos invitados que llegan a nv. 10 y 30; un mensaje del foro destacado; los premios de eventos y los códigos.',
       ],
     },
     {
@@ -155,6 +155,15 @@ const guide: Messages['guide'] = {
       a: [
         'El tiempo cambia cada 4 horas (1:00, 5:00, 9:00, 13:00, 17:00, 21:00) y sigue al tiempo actual: el buen tiempo tiende a quedarse, nunca nieva justo después del sol y la lluvia fuerte llega poco a poco desde la llovizna. Los tiempos especiales (tormenta eléctrica, lluvia ácida, helada, huracán, arcoíris) solo llegan tras sus señales previas. La página del tiempo muestra la probabilidad de cada tipo en el próximo cambio.',
         'Para cambiarlo, usa una brújula celeste (eliges un tipo; el alcalde cambia 1 por semana y también sale en el último premio del Ichiban Kuji y en el árbol de los deseos) o los palillos del tiempo (agitas dos y te quedas con uno; la tienda vende 1 al día). Dura 1 hora para todo el pueblo. Cada jugador puede usar uno cada 4 horas y nadie más puede cambiarlo en la hora siguiente. Los restaurantes de 0 estrellas no se ven afectados por el tiempo.',
+      ],
+    },
+    {
+      q: '¿Qué son las temporadas? ¿Cómo gano puntos de temporada?',
+      a: [
+        'Desde 1 estrella. Cada clima pone de temporada dos vías de platos estrella (mira la tabla en la ',
+        { to: '/weather', text: 'página del clima' },
+        '). Si cocinas cuando tu vía está de temporada, toda la tanda es de temporada hasta agotarse, aunque cambie el clima. Cada ración de temporada que se come un cliente da nivel del plato × bonus de calidad ÷ 10 puntos; las raciones tiradas o probadas no cuentan. Con aguacero +25\u00a0%, con arcoíris +10\u00a0%.',
+        'Gástalos en la tienda de temporada de la página del clima en fragmentos de platos, brújulas celestes y palillos del tiempo (se repone cada lunes); elegir el plato de prueba en el templo también cuesta puntos de temporada.',
       ],
     },
   ],

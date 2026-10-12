@@ -146,7 +146,13 @@ const stock = computed(() => {
     food: foods[i],
   }));
 });
-const KIND_NAME: Record<string, string> = { coin: '银币', diamond: '钻石', exp: '经验', oil: '油' };
+const KIND_NAME: Record<string, string> = {
+  coin: '银币',
+  diamond: '钻石',
+  exp: '经验',
+  oil: '油',
+  shiling: '时令值',
+};
 /** 流水里的东西：道具、食材写名字（后面跟编号），银币这些写中文名 */
 function itemName(l: AdminLedgerRowDto): string {
   if (l.itemId && l.kind === 'goods') return catalog.goodsName(l.itemId);

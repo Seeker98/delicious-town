@@ -94,7 +94,8 @@ export function itemRefs(b: Omit<ConfigBundle, 'version' | 'i18n'>): ItemRef[] {
   for (const g of b.goods) {
     if (g.onSale && g.coin > 0) add('goods', g.id, 'gives', '商店');
     if (g.awardFlag !== null) add('goods', g.id, 'gives', '随机奖励');
-    if (g.gift) gift(`礼包 ${g.id} ${g.name}`, g.gift);
+    // 下架的礼包拿不到，里面装着下架的道具不算（时令改版：克拉肯月好感礼包里的触手）
+    if (g.gift && !g.retired) gift(`礼包 ${g.id} ${g.name}`, g.gift);
     if (g.gem?.nextId) add('goods', g.gem.nextId, 'gives', '宝石升阶');
     // 鞋带：把 goods 捆成 targetGoods
     if (g.use?.kind === 'bundle') {

@@ -60,6 +60,7 @@ export default {
   },
   /** 數量不夠時"什麼"不夠 */
   kind: {
+    shiling: '時令值',
     coin: '銀幣',
     diamond: '鑽石',
     strength: '體力',
@@ -108,6 +109,7 @@ export default {
   }),
   /** 達到上限（LIMIT_REACHED 的 what） */
   limit: fns({
+    shiling_weekly: (p) => `這件本週已經換滿了 (每週 ${String(p.limit)} 個)`,
     exchange_orders: (p) => `最多同時掛 ${String(p.max)} 張單`,
     futures_person: (p) => `今天最多還能訂 ${String(p.left)} 份 (每天 ${String(p.max)} 份)`,
     futures_quota: (p) => `這種食材今天全區服只剩 ${String(p.left)} 份`,
@@ -163,6 +165,7 @@ export default {
   }),
   /** 當前狀態不能這樣做（INVALID_STATE 的 reason） */
   state: {
+    shiling_not_in_shop: '時令鋪裡不能換這道菜',
     not_running: '活動不在進行中 (結束後未領的獎勵會發到郵箱)',
     no_reward: '沒有這份獎勵',
     not_pass: '這個活動沒有進階獎勵',
@@ -315,10 +318,6 @@ export default {
     guardian_down: '今天已經擊敗守護獸了, 明天再來',
     trial_ready: '試煉勳章還有效, 可以直接試煉',
     no_trial: '還沒準備試煉 (或準備已過期), 先注射或冥想',
-    not_feed_time: '現在不是投餵時間',
-    fed_today: '今天已經投餵過克拉肯了',
-    portions: '份數不夠: 投餵後在售的特色菜至少要留 1 份',
-    slot_bought: '這一格已經兌換過了',
     mc_cooking: '已經有在售的特色菜了, 賣完或倒掉後再烹製',
     no_cooking: '現在沒有在售的特色菜',
     mc_learned: '已經學會這道特色菜了',
@@ -345,7 +344,7 @@ export default {
     formula_unlearned: '還沒學會這個配方',
     formula_learned: '已經學會這個配方了',
     seed_shop_closed: '種子商店暫未開放',
-    seed_not_sold: '神秘種子不賣, 只能兌換或投餵克拉肯得到',
+    seed_not_sold: '神秘種子不賣, 只能兌換得到',
     takeaway_closed: '還沒開通外賣',
     order_gone: '這張外賣單已經沒有了',
     order_taken: '這張單已經被別人接走了',

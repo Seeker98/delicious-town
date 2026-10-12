@@ -80,7 +80,6 @@ const elsewhere = computed(() => {
   return [
     { to: '/tower?tab=rank', feature: 'tower', ...e.tower },
     { to: '/acquire?tab=price', feature: 'acquire', ...e.acquire },
-    { to: '/temple?tab=kraken', feature: 'temple', ...e.kraken },
   ].filter((x) => restStore.featureOn(x.feature));
 });
 </script>
