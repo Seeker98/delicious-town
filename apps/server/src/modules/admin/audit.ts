@@ -32,7 +32,7 @@ const likeEscape = (s: string) => s.replace(/[\\%_]/g, (c) => `\\${c}`);
 /** 审计列表：按操作人用户名和动作前缀筛选（都不分大小写），游标"时间~id" */
 export async function auditPage(
   db: Kysely<DB>,
-  q: { actor?: string; action?: string; before?: string; limit: number },
+  q: { actor?: string; action?: string; days?: number; before?: string; limit: number },
 ): Promise<AuditPageDto> {
   let s = db
     .selectFrom('audit_log as a')
@@ -41,6 +41,7 @@ export async function auditPage(
   if (q.actor) s = s.where(sql<string>`lower(account.username)`, '=', q.actor.toLowerCase());
   // 不区分大小写（问题记录 316）
   if (q.action) s = s.where('a.action', 'ilike', `${likeEscape(q.action)}%`);
+  if (q.days) s = s.where('a.created_at', '>=', sql<Date>`now() - make_interval(days => ${q.days})`);
   if (q.before) {
     const c = parseCursor(q.before);
     s = c.id

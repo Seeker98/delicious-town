@@ -553,8 +553,8 @@ describe('问题记录 232：保存失败时定位到第一处错误', () => {
     await w.find('[data-testid="ac-save"]').trigger('click');
     await flushPromises();
     const body = w.find('[data-testid="ac-body"]');
-    expect(body.classes()).toContain('is-invalid');
-    expect(w.find('[data-testid="ac-title"]').classes()).not.toContain('is-invalid');
+    expect(body.classes()).toContain('is-bad');
+    expect(w.find('[data-testid="ac-title"]').classes()).not.toContain('is-bad');
     expect(scroll).toHaveBeenCalledTimes(1);
     expect(scroll.mock.contexts[0]).toBe(w.find('[data-testid="err-body"]').element);
     expect(document.activeElement).toBe(body.element);

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { adminTime } from '../../utils/gameInput';
+import { adminShort } from '../../utils/gameInput';
 import { onMounted, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import type {
@@ -17,6 +17,10 @@ import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
+import AdmBox from '../../components/admin/kit/AdmBox.vue';
+import AdmEmpty from '../../components/admin/kit/AdmEmpty.vue';
+import AdmHead from '../../components/admin/kit/AdmHead.vue';
+import AdmTabs from '../../components/admin/kit/AdmTabs.vue';
 
 /** 可疑数据（子项目 6B-2，设计 §5）：只读，只作提醒 */
 type Tab = 'bar' | 'surge' | 'multi' | 'redeem' | 'exchange' | 'acquire';
@@ -85,165 +89,174 @@ const player = (accountId: number) => `/admin/players/${accountId}`;
 </script>
 
 <template>
-  <h5>可疑数据</h5>
-  <p class="small text-muted">只作提醒，不能单凭这里处罚。同一宿舍、网吧的人会共用 IP。</p>
-  <ul class="nav nav-tabs mb-2">
-    <li v-for="[k, label] in TABS" :key="k" class="nav-item">
-      <button
-        type="button"
-        :class="['nav-link', { active: tab === k }]"
-        :data-testid="`sus-tab-${k}`"
-        @click="tab = k"
-      >
-        {{ label }}
-      </button>
-    </li>
-  </ul>
-
-  <ExchangeGuardPanel v-if="tab === 'exchange'" />
-  <ExchangeMakerPanel v-if="tab === 'exchange'" />
-  <template v-if="tab === 'bar'">
-    <p class="small text-muted">
-      最近 7 个游戏日；单日超过门槛的标红（门槛在区服数值 tuning.ops.suspicious）。
-    </p>
-    <div v-if="loading" class="dt-empty">加载中…</div>
-    <div v-else-if="bar.length === 0" class="dt-empty">没有数据</div>
-    <table v-else class="table table-sm small">
-      <thead>
-        <tr>
-          <th>店</th>
-          <th>记忆调酒全过（7 天 / 单日最高）</th>
-          <th>飞镖 50 分（7 天 / 单日最高）</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="r in bar"
-          :key="r.restId"
-          :class="{ 'table-danger': r.flagged }"
-          :data-testid="`sus-bar-${r.restId}`"
-        >
-          <td>
-            <RouterLink :to="player(r.accountId)">{{ r.restName }}（{{ r.username }}）</RouterLink>
-          </td>
-          <td>{{ r.perfectSum }} / {{ r.perfectMax }}</td>
-          <td>{{ r.bullSum }} / {{ r.bullMax }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </template>
-
-  <template v-else-if="tab === 'surge'">
-    <div class="d-flex align-items-center gap-2 mb-2 small">
-      <label
-        >游戏日
-        <input
-          v-model="day"
-          type="date"
-          class="form-control form-control-sm d-inline-block w-auto"
-          data-testid="sus-day"
-      /></label>
-      <span class="text-muted"
-        >含结算收入（结算明细只留 3 天，更早的日期只有流水部分）；不选就是昨天{{
-          surge ? `（当前：${surge.day}）` : ''
-        }}</span
-      >
+  <div class="dt-adm-page">
+    <AdmHead title="可疑数据" desc="只作提醒, 不能单凭这里处罚。同一宿舍、网吧的人会共用 IP。" />
+    <div class="dt-adm-box">
+      <AdmTabs v-model="tab" :options="TABS" testid="sus-tab" />
     </div>
-    <div v-if="loading" class="dt-empty">加载中…</div>
-    <template v-else-if="surge">
-      <div v-for="[k, label] in SURGE" :key="k" class="mb-3">
-        <h6>{{ label }}净增</h6>
-        <div v-if="surge[k].length === 0" class="dt-empty">没有数据</div>
-        <table v-else class="table table-sm small">
+
+    <template v-if="tab === 'exchange'">
+      <ExchangeGuardPanel />
+      <ExchangeMakerPanel />
+    </template>
+
+    <AdmBox
+      v-else-if="tab === 'bar'"
+      title="酒吧"
+      sub="最近 7 个游戏日; 单日超过门槛的标红（门槛在区服数值 tuning.ops.suspicious）"
+      flush
+    >
+      <AdmEmpty v-if="loading" title="加载中…" />
+      <AdmEmpty v-else-if="bar.length === 0" title="没有数据" />
+      <div v-else class="dt-adm-scroll">
+        <table class="dt-adm-table">
+          <thead>
+            <tr>
+              <th>店</th>
+              <th class="num">记忆调酒全过（7 天 / 单日最高）</th>
+              <th class="num">飞镖 50 分（7 天 / 单日最高）</th>
+            </tr>
+          </thead>
           <tbody>
-            <tr v-for="r in surge[k]" :key="r.restId">
+            <tr
+              v-for="r in bar"
+              :key="r.restId"
+              :class="{ 'is-bad': r.flagged }"
+              :data-testid="`sus-bar-${r.restId}`"
+            >
               <td>
-                <RouterLink :to="player(r.accountId)">{{ r.restName }}（{{ r.username }}）</RouterLink>
+                <RouterLink :to="player(r.accountId)">{{ r.restName }}</RouterLink>
+                <span class="dt-adm-mu"> ({{ r.username }})</span>
+                <span v-if="r.flagged" class="dt-adm-tag is-d ms-1">超过门槛</span>
               </td>
-              <td class="text-end">{{ formatNum(r.net) }}</td>
-              <td class="text-muted">{{ sources(r) }}</td>
+              <td class="num">{{ r.perfectSum }} / {{ r.perfectMax }}</td>
+              <td class="num">{{ r.bullSum }} / {{ r.bullMax }}</td>
             </tr>
           </tbody>
         </table>
       </div>
-    </template>
-  </template>
+    </AdmBox>
 
-  <template v-else-if="tab === 'multi'">
-    <p class="small text-muted">最近 30 天同一 IP 或同一设备登录过多个账号（至少一个在本区服有店）。</p>
-    <div v-if="loading" class="dt-empty">加载中…</div>
-    <div v-else-if="multi.length === 0" class="dt-empty">没有数据</div>
-    <div v-for="g in loading ? [] : multi" :key="`${g.kind}-${g.key}`" class="dt-card small mb-2">
-      <div class="fw-bold mb-1">
-        {{ g.kind === 'ip' ? '同一 IP' : '同一设备' }}：{{ g.key }}
-        <!-- 账号太多时服务端只列最近的一部分（backlog 6B-2） -->
-        <span v-if="g.total > g.accounts.length" class="fw-normal text-muted ms-1"
-          >共 {{ g.total }} 个账号，只列最近 {{ g.accounts.length }} 个</span
+    <template v-else-if="tab === 'surge'">
+      <div class="dt-adm-fbar">
+        <input v-model="day" type="date" class="dt-adm-in" aria-label="游戏日" data-testid="sus-day" />
+        <span class="dt-adm-mu dt-adm-small"
+          >含结算收入（结算明细只留 3 天, 更早的日期只有流水部分）; 不选就是昨天{{
+            surge ? ` · 当前 ${surge.day}` : ''
+          }}</span
         >
       </div>
-      <div v-for="a in g.accounts" :key="a.accountId" data-testid="sus-multi-account">
-        <RouterLink :to="player(a.accountId)">{{ a.username }}</RouterLink>
-        <span class="text-muted"> · {{ a.restName ?? '本区没有店' }} · 最近 {{ adminTime(a.lastSeen) }}</span>
+      <AdmBox v-if="loading" flush><AdmEmpty title="加载中…" /></AdmBox>
+      <div v-else-if="surge" class="dt-adm-g3">
+        <AdmBox v-for="[k, label] in SURGE" :key="k" :title="`${label}净增`" flush>
+          <AdmEmpty v-if="surge[k].length === 0" title="没有数据" />
+          <table v-else class="dt-adm-table">
+            <tbody>
+              <tr v-for="r in surge[k]" :key="r.restId">
+                <td>
+                  <RouterLink :to="player(r.accountId)">{{ r.restName }}</RouterLink>
+                  <span class="dt-adm-mu"> ({{ r.username }})</span>
+                  <div class="dt-adm-mu dt-adm-small">{{ sources(r) }}</div>
+                </td>
+                <td class="num">{{ formatNum(r.net) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </AdmBox>
       </div>
-    </div>
-  </template>
+    </template>
 
-  <template v-else-if="tab === 'acquire'">
-    <p class="small text-muted">
-      收购时和目标店（或它的老板）近 30 天共用过设备或 IP，被拦下的记录；留 30 天，最多列 200 条。
-    </p>
-    <div v-if="loading" class="dt-empty">加载中…</div>
-    <div v-else-if="acquire.length === 0" class="dt-empty">没有拦截记录</div>
-    <table v-else class="table table-sm small">
-      <thead>
-        <tr>
-          <th>时间</th>
-          <th>买家</th>
-          <th>目标店</th>
-          <th>原因</th>
-          <th>关联账号</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(r, i) in acquire" :key="i" :data-testid="`sus-acquire-${i}`">
-          <td>{{ adminTime(r.at) }}</td>
-          <td>
-            <RouterLink :to="player(r.buyer.accountId)">{{ r.buyer.name }}</RouterLink>
-          </td>
-          <td>
-            <RouterLink :to="player(r.target.accountId)">{{ r.target.name }}</RouterLink>
-          </td>
-          <td>{{ r.reason === 'device' ? '共用设备' : '共用 IP' }}</td>
-          <td>
-            <RouterLink v-if="r.linked" :to="player(r.linked.accountId)">{{ r.linked.username }}</RouterLink>
-            <span v-else class="text-muted">–</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </template>
+    <AdmBox
+      v-else-if="tab === 'multi'"
+      title="多账号"
+      sub="最近 30 天同一 IP 或同一设备登录过多个账号（至少一个在本区服有店）"
+      flush
+    >
+      <AdmEmpty v-if="loading" title="加载中…" />
+      <AdmEmpty v-else-if="multi.length === 0" title="没有数据" />
+      <div v-for="g in loading ? [] : multi" :key="`${g.kind}-${g.key}`" class="dt-adm-group">
+        <div class="dt-adm-group-h">
+          <b
+            >{{ g.kind === 'ip' ? '同一 IP' : '同一设备' }}：<span class="dt-adm-mono">{{ g.key }}</span></b
+          >
+          <!-- 账号太多时服务端只列最近的一部分（backlog 6B-2） -->
+          <span v-if="g.total > g.accounts.length" class="dt-adm-mu dt-adm-small"
+            >共 {{ g.total }} 个账号，只列最近 {{ g.accounts.length }} 个</span
+          >
+        </div>
+        <div v-for="a in g.accounts" :key="a.accountId" data-testid="sus-multi-account">
+          <RouterLink :to="player(a.accountId)">{{ a.username }}</RouterLink>
+          <span class="dt-adm-mu">
+            · {{ a.restName ?? '本区没有店' }} · 最近 {{ adminShort(a.lastSeen) }}</span
+          >
+        </div>
+      </div>
+    </AdmBox>
 
-  <template v-else-if="tab === 'redeem'">
-    <p class="small text-muted">兑换码输错次数按账号计，不分区服。</p>
-    <div v-if="loading" class="dt-empty">加载中…</div>
-    <div v-else-if="redeem.length === 0" class="dt-empty">没有被锁的账号</div>
-    <table v-else class="table table-sm small">
-      <thead>
-        <tr>
-          <th>账号</th>
-          <th>输错次数</th>
-          <th>还要锁</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="r in redeem" :key="r.accountId">
-          <td>
-            <RouterLink :to="player(r.accountId)">{{ r.username }}</RouterLink>
-          </td>
-          <td>{{ r.fails }}</td>
-          <td>{{ Math.ceil(r.ttlSec / 60) }} 分钟</td>
-        </tr>
-      </tbody>
-    </table>
-  </template>
+    <AdmBox
+      v-else-if="tab === 'acquire'"
+      title="收购拦截"
+      sub="收购时和目标店（或它的老板）近 30 天共用过设备或 IP, 被拦下的记录; 留 30 天, 最多列 200 条"
+      flush
+    >
+      <AdmEmpty v-if="loading" title="加载中…" />
+      <AdmEmpty v-else-if="acquire.length === 0" title="没有拦截记录" />
+      <div v-else class="dt-adm-scroll">
+        <table class="dt-adm-table">
+          <thead>
+            <tr>
+              <th>时间</th>
+              <th>买家</th>
+              <th>目标店</th>
+              <th>原因</th>
+              <th>关联账号</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(r, i) in acquire" :key="i" :data-testid="`sus-acquire-${i}`">
+              <td class="dt-adm-mu nowrap">{{ adminShort(r.at) }}</td>
+              <td>
+                <RouterLink :to="player(r.buyer.accountId)">{{ r.buyer.name }}</RouterLink>
+              </td>
+              <td>
+                <RouterLink :to="player(r.target.accountId)">{{ r.target.name }}</RouterLink>
+              </td>
+              <td>
+                <span class="dt-adm-tag is-w">{{ r.reason === 'device' ? '共用设备' : '共用 IP' }}</span>
+              </td>
+              <td>
+                <RouterLink v-if="r.linked" :to="player(r.linked.accountId)">{{
+                  r.linked.username
+                }}</RouterLink>
+                <span v-else class="dt-adm-mu">–</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </AdmBox>
+
+    <AdmBox v-else-if="tab === 'redeem'" title="兑换码输错" sub="输错次数按账号计, 不分区服" flush>
+      <AdmEmpty v-if="loading" title="加载中…" />
+      <AdmEmpty v-else-if="redeem.length === 0" title="没有被锁的账号" />
+      <table v-else class="dt-adm-table">
+        <thead>
+          <tr>
+            <th>账号</th>
+            <th class="num">输错次数</th>
+            <th class="num">还要锁</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="r in redeem" :key="r.accountId">
+            <td>
+              <RouterLink :to="player(r.accountId)">{{ r.username }}</RouterLink>
+            </td>
+            <td class="num">{{ r.fails }}</td>
+            <td class="num">{{ Math.ceil(r.ttlSec / 60) }} 分钟</td>
+          </tr>
+        </tbody>
+      </table>
+    </AdmBox>
+  </div>
 </template>

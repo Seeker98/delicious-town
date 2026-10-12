@@ -29,9 +29,9 @@ watch(
 </script>
 
 <template>
-  <label class="form-label small">尺寸</label>
+  <label class="dt-adm-lab">尺寸</label>
   <select
-    class="form-select form-select-sm w-auto mb-2"
+    class="dt-adm-in dt-adm-mb"
     data-testid="grid-size"
     :value="modelValue.size"
     @change="resize(Number(($event.target as HTMLSelectElement).value) as 3 | 4)"
@@ -39,19 +39,19 @@ watch(
     <option :value="3">3×3</option>
     <option :value="4">4×4</option>
   </select>
-  <div class="dt-grid-board" :style="{ gridTemplateColumns: `repeat(${modelValue.size}, 1fr)` }">
+  <div class="dt-adm-gridb" :style="{ gridTemplateColumns: `repeat(${modelValue.size}, 1fr)` }">
     <button
       v-for="(c, i) in modelValue.cells"
       :key="i"
       type="button"
-      :class="['dt-grid-cell btn btn-sm', { 'border-primary': picked === i, 'border-danger': cellErr(i) }]"
+      :class="['dt-adm-gcell', { 'is-on': picked === i, 'is-bad': cellErr(i) }]"
       :data-testid="`grid-cell-${i}`"
       @click="picked = i"
     >
       {{ ACTIVITY_ACTIONS[c.key] ?? c.key }} × {{ c.target }}
     </button>
   </div>
-  <div class="small text-muted">第 {{ picked + 1 }} 格</div>
+  <div class="dt-adm-help">第 {{ picked + 1 }} 格</div>
   <GoalRow
     :key="picked"
     :goal="modelValue.cells[picked]!"
@@ -68,7 +68,7 @@ watch(
     id-prefix="line"
     @update:model-value="patch({ lineAward: $event })"
   />
-  <div v-if="errUnder(errors, 'def.lineAward')" class="text-danger small" data-testid="err-def.lineAward">
+  <div v-if="errUnder(errors, 'def.lineAward')" class="dt-adm-err" data-testid="err-def.lineAward">
     {{ errUnder(errors, 'def.lineAward') }}
   </div>
   <div class="mt-2 small">全部完成的奖励</div>
@@ -79,7 +79,7 @@ watch(
     id-prefix="full"
     @update:model-value="patch({ fullAward: $event })"
   />
-  <div v-if="errUnder(errors, 'def.fullAward')" class="text-danger small" data-testid="err-def.fullAward">
+  <div v-if="errUnder(errors, 'def.fullAward')" class="dt-adm-err" data-testid="err-def.fullAward">
     {{ errUnder(errors, 'def.fullAward') }}
   </div>
 </template>

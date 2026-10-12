@@ -13,27 +13,35 @@ const props = (kind: 'number' | 'json', value: unknown) => ({
   error: false,
 });
 
+/** 一行是表格里的 tr（界面改版 P12）：挂在表格里测 */
+const mountRow = (p: ReturnType<typeof props> & { doc?: string }) =>
+  mount({
+    components: { SettingRow },
+    data: () => ({ p }),
+    template: '<table><tbody><SettingRow v-bind="p" /></tbody></table>',
+  });
+
 describe('SettingRow（问题记录 152）', () => {
-  it('JSON 值的输入框占整行，按内容行数调高', () => {
+  it('JSON 值的输入框占两格，按内容行数调高', () => {
     const value = [
       { id: 1, num: 2 },
       { id: 3, num: 4 },
     ];
-    const w = mount(SettingRow, { props: props('json', value) });
+    const w = mountRow(props('json', value));
     const box = w.find('[data-testid="setting-restaurant.giftFoods"]');
-    expect(box.element.parentElement!.className).toContain('col-12');
+    expect(box.element.parentElement!.getAttribute('colspan')).toBe('2');
     expect(Number(box.attributes('rows'))).toBeGreaterThanOrEqual(2);
   });
 
   it('数字仍然是窄输入框', () => {
-    const w = mount(SettingRow, { props: props('number', 3) });
-    expect(w.find('[data-testid="setting-restaurant.giftFoods"]').element.parentElement!.className).toContain(
-      'col-md-3',
-    );
+    const w = mountRow(props('number', 3));
+    const cell = w.find('[data-testid="setting-restaurant.giftFoods"]').element.parentElement!;
+    expect(cell.getAttribute('colspan')).toBeNull();
+    expect(cell.className).toContain('dt-adm-set-val');
   });
 
   it('字段名下面显示说明（问题记录 126）', () => {
-    const w = mount(SettingRow, { props: { ...props('number', 3), doc: '新店银币' } });
+    const w = mountRow({ ...props('number', 3), doc: '新店银币' });
     expect(w.find('[data-testid="doc-restaurant.giftFoods"]').text()).toBe('新店银币');
   });
 });

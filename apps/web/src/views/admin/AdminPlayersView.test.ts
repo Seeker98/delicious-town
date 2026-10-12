@@ -18,6 +18,9 @@ describe('AdminPlayersView', () => {
         email: 'a@x',
         role: 'player',
         banned: true,
+        emailVerified: false,
+        bannedUntil: '2026-10-15T00:00:00.000Z',
+        createdAt: '2026-10-03T02:00:00.000Z',
         restaurants: [
           { id: 3, shardId: 1, shardName: '一服', name: '爱丽丝店', level: 12, star: 1, state: 1 },
         ],
@@ -33,8 +36,10 @@ describe('AdminPlayersView', () => {
     await flushPromises();
     expect(adminApi.searchPlayers).toHaveBeenCalledWith('ali');
     expect(w.text()).toContain('爱丽丝店');
-    expect(w.text()).toContain('餐厅 id 3');
-    expect(w.text()).toContain('已封禁');
+    expect(w.text()).toContain('#3');
+    expect(w.text()).toContain('封号到 10/15');
+    expect(w.text()).toContain('没验证');
+    expect(w.text()).toContain('2026/10/03');
     expect(w.find('a[href="/admin/players/7"]').exists()).toBe(true);
   });
 });

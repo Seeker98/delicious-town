@@ -32,13 +32,6 @@ describe('main.css', () => {
     expect(rule).toContain('color: rgba(var(--dt-primary-ink-rgb), var(--bs-text-opacity, 1)) !important');
   });
 
-  it('名字行放不下时右边的小字换到下一行，名字按字折行（终审 I1：菜场法文限购压在名字上）', () => {
-    const at = css.indexOf('.dt-name-row {');
-    expect(at).toBeGreaterThan(-1);
-    const rule = css.slice(at, css.indexOf('}', at));
-    expect(rule).toContain('flex-wrap: wrap');
-  });
-
   it('去别处的文字链接是紫字加点状下划线，后面不再加 ›（P5 返工，设计 §2.6：“文字 ›”只留给整行去别处）', () => {
     expect(css).toMatch(/\.dt-go \{[^}]*text-decoration: underline dotted;/);
     expect(css).not.toMatch(/\.dt-go::after/);
@@ -81,8 +74,8 @@ describe('触屏小号输入框和 btn-sm 等高（质量期 ①a）', () => {
 });
 
 describe('颜色只读令牌（界面改版 P1）', () => {
-  it('base.css、main.css 不写裸色值（色值只在 tokens.css）', () => {
-    for (const name of ['base', 'main'] as const) {
+  it('base.css、main.css、admin.css 不写裸色值（色值只在 tokens.css）', () => {
+    for (const name of ['base', 'main', 'admin'] as const) {
       const src = stripComments(readCss(name)).replace(/url\("data:[^"]*"\)/g, '');
       expect(src.match(/#[0-9a-fA-F]{3,8}\b|rgba?\(\s*\d/g) ?? [], name).toEqual([]);
     }

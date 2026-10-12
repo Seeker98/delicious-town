@@ -16,24 +16,24 @@ const awardErr = () => errUnder(props.errors, `${props.path}.award`);
   <div class="d-flex flex-wrap gap-2 align-items-start">
     <div>
       <select
-        class="form-select form-select-sm"
+        class="dt-adm-in"
         :value="goal.key"
         @change="set({ key: ($event.target as HTMLSelectElement).value })"
       >
         <option v-for="(name, k) in ACTIVITY_ACTIONS" :key="k" :value="k">{{ name }}</option>
       </select>
-      <div v-if="err('key')" class="text-danger small" :data-testid="`err-${path}.key`">{{ err('key') }}</div>
+      <div v-if="err('key')" class="dt-adm-err" :data-testid="`err-${path}.key`">{{ err('key') }}</div>
     </div>
     <div>
       <input
         type="number"
         min="1"
-        class="form-control form-control-sm"
+        class="dt-adm-in"
         style="width: 6rem"
         :value="goal.target"
         @input="set({ target: Number(($event.target as HTMLInputElement).value) })"
       />
-      <div v-if="err('target')" class="text-danger small" :data-testid="`err-${path}.target`">
+      <div v-if="err('target')" class="dt-adm-err" :data-testid="`err-${path}.target`">
         {{ err('target') }}
       </div>
     </div>
@@ -45,7 +45,7 @@ const awardErr = () => errUnder(props.errors, `${props.path}.award`);
         :id-prefix="idPrefix"
         @update:model-value="set({ award: $event })"
       />
-      <div v-if="awardErr()" class="text-danger small" :data-testid="`err-${path}.award`">
+      <div v-if="awardErr()" class="dt-adm-err" :data-testid="`err-${path}.award`">
         {{ awardErr() }}
       </div>
     </div>

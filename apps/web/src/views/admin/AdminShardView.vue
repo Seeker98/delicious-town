@@ -6,6 +6,10 @@ import { boostText, type ShardSettingsDto } from '@dt/shared';
 import { adminApi } from '../../api/admin';
 import { ApiError } from '../../api/client';
 import SettingRow from '../../components/admin/SettingRow.vue';
+import AdmBox from '../../components/admin/kit/AdmBox.vue';
+import AdmEmpty from '../../components/admin/kit/AdmEmpty.vue';
+import AdmHead from '../../components/admin/kit/AdmHead.vue';
+import AdmSeg from '../../components/admin/kit/AdmSeg.vue';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
 import { useToastStore } from '../../stores/toast';
@@ -36,6 +40,11 @@ const badInput = ref(new Set<string>());
 const rawText = ref<Record<string, string>>({});
 const badServer = ref(new Set<string>());
 const readOnly = computed(() => admin.me?.role !== 'admin');
+const shardName = computed(
+  () => admin.shards.find((s) => s.id === shardId.value)?.name ?? `区服 ${shardId.value}`,
+);
+/** 只看改过的（界面改版 P12）：只列有覆盖的字段和功能开关，分组全部展开 */
+const onlyChanged = ref(false);
 
 /** 正在生效的全服加成（148-4）：本页显示的是不含加成的数值，在上方提示；由接口直接给出，不会漏掉早建的 */
 const boosts = computed(() => data.value?.boosts ?? []);
@@ -67,14 +76,24 @@ const docs = computed(() => data.value?.docs ?? { features: {}, groups: {}, fiel
 const q = computed(() => search.value.trim());
 const hit = (...texts: Array<string | undefined>) =>
   !q.value || texts.some((t) => matchText(t ?? '', q.value));
-const match = (p: string) => hit(p, docs.value.fields[p], docs.value.groups[groupOf(p)]);
+const overriddenAt = (p: string) => getAt(draft.value, p) !== undefined;
+const match = (p: string) =>
+  (!onlyChanged.value || overriddenAt(p)) && hit(p, docs.value.fields[p], docs.value.groups[groupOf(p)]);
+const featureChanged = (name: string) => overriddenAt(`features.${name}`);
 const features = computed(() =>
-  (data.value?.features ?? []).filter((f) => hit(f.name, docs.value.features[f.name])),
+  (data.value?.features ?? []).filter(
+    (f) => (!onlyChanged.value || featureChanged(f.name)) && hit(f.name, docs.value.features[f.name]),
+  ),
 );
+/** 改过（有覆盖）的字段和功能开关 */
+const changedPaths = computed(() => [
+  ...paths.value.filter(overriddenAt),
+  ...(data.value?.features ?? []).map((f) => `features.${f.name}`).filter(overriddenAt),
+]);
 /** 手动展开的分组：清空搜索后保持展开（backlog 6B-2），搜索时的自动展开不记 */
 const opened = ref(new Set<string>());
 function onToggle(g: string, e: Event) {
-  if (q.value) return;
+  if (q.value || onlyChanged.value) return;
   const s = new Set(opened.value);
   if ((e.target as HTMLDetailsElement).open) s.add(g);
   else s.delete(g);
@@ -164,6 +183,18 @@ function setFeature(name: string, enabled: boolean) {
 }
 
 const dirty = computed(() => JSON.stringify(draft.value) !== JSON.stringify(data.value?.override ?? {}));
+/** 这次改了几项：和保存时的覆盖逐项比（字段 + 功能开关） */
+const dirtyCount = computed(() => {
+  const saved = (data.value?.override ?? {}) as Tree;
+  const all = [...paths.value, ...(data.value?.features ?? []).map((f) => `features.${f.name}`)];
+  return all.filter((p) => JSON.stringify(getAt(draft.value, p)) !== JSON.stringify(getAt(saved, p))).length;
+});
+/** 撤销这次的改动：回到保存时的覆盖 */
+function undo() {
+  draft.value = JSON.parse(JSON.stringify(data.value?.override ?? {})) as Tree;
+  badInput.value = new Set();
+  badServer.value = new Set();
+}
 
 async function save() {
   if (!data.value) return;
@@ -190,85 +221,130 @@ async function save() {
 </script>
 
 <template>
-  <div v-if="data">
-    <div v-if="boosts.length" class="alert alert-warning py-1 small" data-testid="boost-hint">
-      当前有全服加成生效（下面显示的是不含加成的数值）：
-      <span v-for="b in boosts" :key="b.id" class="me-2">
-        {{ boostText(b.items) }}（至 {{ adminTime(b.endsAt) }}）
-      </span>
-    </div>
-    <div class="d-flex align-items-center gap-2 mb-2">
-      <h5 class="mb-0">区服数值</h5>
-      <span class="small text-muted">版本 {{ data.version }}</span>
-      <RouterLink :to="`/admin/shards/${shardId}/history`" class="small ms-auto">修改历史</RouterLink>
-    </div>
-    <p v-if="readOnly" class="small text-muted">你是协管，只能查看。</p>
-    <input
-      v-model="search"
-      class="form-control form-control-sm mb-2"
-      placeholder="搜索字段名或说明，比如：经验、菜场"
-      data-testid="setting-search"
-    />
-    <h6 v-if="pinned.length > 0">常用</h6>
-    <SettingRow
-      v-for="p in pinned"
-      :key="p"
-      v-bind="rowProps(p)"
-      @edit="onInput(p, $event)"
-      @reset="reset(p)"
-    />
-    <h6 v-if="features.length > 0" class="mt-3">功能开关</h6>
-    <!-- 功能开关（问题记录 184）：整齐的网格，名字一行、说明一行 -->
-    <div class="dt-feature-grid small">
-      <label v-for="f in features" :key="f.name" class="dt-feature" :title="docs.features[f.name] ?? ''">
-        <span class="d-flex align-items-center">
-          <input
-            type="checkbox"
-            class="form-check-input me-1 mt-0"
-            :checked="featureOn(f.name)"
-            :disabled="readOnly"
-            :data-testid="`feature-${f.name}`"
-            @change="setFeature(f.name, ($event.target as HTMLInputElement).checked)"
-          />{{ f.name }}
+  <div v-if="data" class="dt-adm-page">
+    <AdmHead title="区服数值" :desc="`${shardName} · 版本 ${data.version} · 改了的字段浅紫底`">
+      <RouterLink :to="`/admin/shards/${shardId}/history`" class="dt-adm-btn is-s">修改历史</RouterLink>
+    </AdmHead>
+    <div v-if="boosts.length" class="dt-adm-alert" data-testid="boost-hint">
+      <i class="bi bi-lightning-charge" aria-hidden="true"></i>
+      <div>
+        当前有全服加成生效（下面显示的是不含加成的数值）:
+        <span v-for="b in boosts" :key="b.id" class="me-2">
+          {{ boostText(b.items) }}（至 {{ adminTime(b.endsAt) }}）
         </span>
-        <span
-          v-if="docs.features[f.name]"
-          class="d-block text-muted"
-          :data-testid="`feature-doc-${f.name}`"
-          >{{ docs.features[f.name] }}</span
-        >
-      </label>
+      </div>
     </div>
+    <div v-if="readOnly" class="dt-adm-alert is-p">
+      <i class="bi bi-eye" aria-hidden="true"></i>
+      <div>你是协管，只能查看。</div>
+    </div>
+    <div class="dt-adm-fbar">
+      <input
+        v-model="search"
+        class="dt-adm-in dt-adm-w-lg"
+        type="search"
+        placeholder="搜索字段名或说明, 比如: 经验、菜场"
+        data-testid="setting-search"
+      />
+      <AdmSeg
+        v-model="onlyChanged"
+        :options="[
+          [false, '全部'],
+          [true, `只看改过的 (${changedPaths.length})`],
+        ]"
+        testid="setting-only"
+      />
+      <span class="dt-adm-fbar-r">共 {{ paths.length }} 项</span>
+    </div>
+    <AdmBox v-if="pinned.length > 0" title="常用" :sub="`${pinned.length} 项`" flush>
+      <table class="dt-adm-table dt-adm-set">
+        <thead>
+          <tr>
+            <th>字段</th>
+            <th>值</th>
+            <th>默认 / 生效</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <SettingRow
+            v-for="p in pinned"
+            :key="p"
+            v-bind="rowProps(p)"
+            @edit="onInput(p, $event)"
+            @reset="reset(p)"
+          />
+        </tbody>
+      </table>
+    </AdmBox>
+    <AdmBox v-if="features.length > 0" title="功能开关" :sub="`${features.length} 项 · 勾上是开`">
+      <!-- 功能开关（问题记录 184）：整齐的网格，名字一行、说明一行 -->
+      <div class="dt-feature-grid">
+        <label
+          v-for="f in features"
+          :key="f.name"
+          :class="['dt-feature', { 'is-hl': featureChanged(f.name) }]"
+          :title="docs.features[f.name] ?? ''"
+        >
+          <span class="dt-adm-check">
+            <input
+              type="checkbox"
+              :checked="featureOn(f.name)"
+              :disabled="readOnly"
+              :data-testid="`feature-${f.name}`"
+              @change="setFeature(f.name, ($event.target as HTMLInputElement).checked)"
+            /><span class="dt-adm-key">{{ f.name }}</span>
+          </span>
+          <span v-if="docs.features[f.name]" class="dt-adm-key-doc" :data-testid="`feature-doc-${f.name}`">{{
+            docs.features[f.name]
+          }}</span>
+        </label>
+      </div>
+    </AdmBox>
     <details
       v-for="[g, ps] in groups"
       :key="g"
-      class="mt-2"
-      :open="q !== '' || opened.has(g) || undefined"
+      class="dt-adm-box dt-adm-fold"
+      :open="q !== '' || onlyChanged || opened.has(g) || undefined"
       :data-testid="`group-${g}`"
       @toggle="onToggle(g, $event)"
     >
-      <summary>
-        {{ g }}（{{ ps.length }}）<span v-if="docs.groups[g]" class="small text-muted ms-1">{{
-          docs.groups[g]
-        }}</span>
+      <summary class="dt-adm-bh">
+        <b>{{ g }}</b
+        ><span>{{ ps.length }} 项{{ docs.groups[g] ? ` · ${docs.groups[g]}` : '' }}</span>
       </summary>
-      <SettingRow
-        v-for="p in ps"
-        :key="p"
-        v-bind="rowProps(p)"
-        @edit="onInput(p, $event)"
-        @reset="reset(p)"
-      />
+      <table class="dt-adm-table dt-adm-set">
+        <tbody>
+          <SettingRow
+            v-for="p in ps"
+            :key="p"
+            v-bind="rowProps(p)"
+            @edit="onInput(p, $event)"
+            @reset="reset(p)"
+          />
+        </tbody>
+      </table>
     </details>
-    <div v-if="!readOnly" class="sticky-bottom bg-white border-top py-2 mt-3 d-flex gap-2">
+    <AdmEmpty
+      v-if="pinned.length === 0 && groups.length === 0 && features.length === 0"
+      class="dt-adm-box"
+      title="没有找到"
+      :text="onlyChanged ? '这个区服还没有改过的字段' : '换个词搜搜看'"
+    />
+    <div v-if="!readOnly" class="dt-adm-savebar">
+      <b data-testid="save-count">{{ dirtyCount > 0 ? `改了 ${dirtyCount} 项` : '没有改动' }}</b>
       <input
         v-model="note"
-        class="form-control form-control-sm"
-        placeholder="修改说明（必填）"
+        class="dt-adm-in dt-adm-grow"
+        placeholder="修改说明 (必填)"
         data-testid="save-note"
       />
+      <button type="button" class="dt-adm-btn is-s" :disabled="!dirty" data-testid="save-undo" @click="undo">
+        撤销
+      </button>
       <button
-        class="btn btn-primary btn-sm text-nowrap"
+        type="button"
+        class="dt-adm-btn is-p"
         data-testid="save-settings"
         :disabled="busy || !dirty || !note.trim() || badInput.size > 0"
         @click="save"

@@ -1,0 +1,1308 @@
+/*
+ * 后台（界面改版 P12）：工具风、比游戏页紧凑。只在后台的页面文件里引入（AdminLayout），游戏页面不加载。
+ * 宽屏左边分组侧栏，手机上收成顶上的“菜单”按钮、从左边滑出；每一页都用同一套部件拼：
+ * 页头、筛选条、数据表、表单分组卡、数字块、状态小标签、提示块、空状态、标签页、三段切换。
+ * 颜色只读令牌（tokens.css），类名都带 dt-adm- 前缀。
+ */
+.dt-adm {
+  display: flex;
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--dt-text);
+  background: var(--dt-bg);
+}
+.dt-adm input[type='checkbox'],
+.dt-adm input[type='radio'] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--dt-primary);
+  vertical-align: -3px;
+}
+/* ---------- 侧栏 ---------- */
+.dt-adm-side {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+  width: 232px;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 14px 12px;
+  background: var(--dt-surface);
+  border-right: 1px solid var(--dt-line);
+}
+.dt-adm-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 6px 10px;
+  font-size: 16px;
+  font-weight: 800;
+}
+.dt-adm-brand span {
+  padding: 1px 6px;
+  border-radius: var(--dt-radius-xs);
+  background: var(--dt-primary-soft);
+  color: var(--dt-ink-primary);
+  font-size: 11px;
+  font-weight: 700;
+}
+.dt-adm-shard {
+  height: 36px;
+  border-radius: var(--dt-radius-sm);
+  background-color: var(--dt-bg);
+  font-weight: 600;
+}
+.dt-adm-who {
+  margin-bottom: 6px;
+  padding: 6px 6px 8px;
+  border-bottom: 1px solid var(--dt-line);
+  color: var(--dt-muted);
+  font-size: 12px;
+}
+.dt-adm-grp {
+  padding: 10px 8px 4px;
+  color: var(--dt-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.dt-adm-nav {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 8px;
+  color: var(--dt-text);
+  font-size: 14px;
+  text-decoration: none;
+}
+.dt-adm-nav.is-on {
+  background: var(--dt-primary-soft);
+  color: var(--dt-ink-primary);
+  font-weight: 700;
+}
+.dt-adm-main {
+  flex: 1;
+  min-width: 0;
+  padding: 20px 28px 40px;
+}
+/* 手机顶栏和遮罩、只在手机上写的字：宽屏不显示 */
+.dt-adm-top,
+.dt-adm-scrim,
+.dt-adm-only-m {
+  display: none;
+}
+.dt-adm-menu {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-sm);
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font-size: 20px;
+}
+/* ---------- 一页：从上往下排，块和块之间 14px ---------- */
+.dt-adm-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 14px;
+}
+.dt-adm-crumb {
+  margin-bottom: 4px;
+  color: var(--dt-muted);
+  font-size: 12px;
+}
+.dt-adm-crumb a {
+  color: var(--dt-ink-primary);
+  text-decoration: none;
+}
+.dt-adm-ph {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.dt-adm-ph h1 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.dt-adm-ph-desc {
+  margin-top: 2px;
+  color: var(--dt-muted);
+  font-size: 13px;
+}
+.dt-adm-ph-acts {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: auto;
+}
+.dt-adm-h2 {
+  margin: 6px 0 -4px;
+  font-size: 15px;
+  font-weight: 700;
+}
+/* 卡片：白底细边 12px 圆角；头一行标题 + 灰字说明 + 右边的东西 */
+.dt-adm-box {
+  min-width: 0;
+  background: var(--dt-surface);
+  border: 1px solid var(--dt-line);
+  border-radius: 12px;
+}
+.dt-adm-bh {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  min-height: 46px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--dt-line);
+}
+.dt-adm-bh > b {
+  font-size: 15px;
+}
+.dt-adm-bh > span {
+  color: var(--dt-muted);
+  font-size: 12px;
+}
+.dt-adm-bh-r {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: auto;
+}
+.dt-adm-box > .dt-adm-bh:last-child {
+  border-bottom: 0;
+}
+.dt-adm-bb {
+  padding: 14px 16px;
+}
+/* 折叠的分组卡（区服数值） */
+.dt-adm-fold > summary {
+  list-style: none;
+  cursor: pointer;
+}
+.dt-adm-fold > summary::-webkit-details-marker {
+  display: none;
+}
+.dt-adm-fold > summary::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  margin: 0 4px 3px auto;
+  border-right: 1.6px solid var(--dt-muted);
+  border-bottom: 1.6px solid var(--dt-muted);
+  transform: rotate(45deg);
+}
+.dt-adm-fold[open] > summary::after {
+  margin-bottom: -3px;
+  transform: rotate(-135deg);
+}
+.dt-adm-fold:not([open]) > summary {
+  border-bottom: 0;
+}
+/* ---------- 筛选条 ---------- */
+.dt-adm-fbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--dt-surface);
+  border: 1px solid var(--dt-line);
+  border-radius: 12px;
+}
+.dt-adm-box > .dt-adm-fbar {
+  border: 0;
+  border-radius: 0;
+  border-bottom: 1px solid var(--dt-line);
+}
+.dt-adm-fbar-r {
+  margin-left: auto;
+  color: var(--dt-muted);
+  font-size: 12px;
+}
+/* ---------- 输入框、下拉框、多行 ---------- */
+.dt-adm-in {
+  box-sizing: border-box;
+  min-width: 0;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--dt-line);
+  border-radius: 8px;
+  background-color: var(--dt-surface);
+  color: var(--dt-text);
+  font: inherit;
+  font-size: 13px;
+}
+.dt-adm-in::placeholder {
+  color: var(--dt-muted);
+}
+.dt-adm-in:focus {
+  outline: 0;
+  border-color: var(--dt-primary);
+  box-shadow: 0 0 0 3px var(--dt-primary-soft);
+}
+.dt-adm-in:disabled,
+.dt-adm-in[readonly] {
+  background-color: var(--dt-surface-2);
+  color: var(--dt-muted);
+}
+.dt-adm-in.is-bad {
+  border-color: var(--dt-danger);
+}
+select.dt-adm-in {
+  appearance: none;
+  padding-right: 28px;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23968da6' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m3 6 5 5 5-5'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 9px center;
+  background-size: 12px;
+}
+textarea.dt-adm-in {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  line-height: 1.5;
+  resize: vertical;
+}
+.dt-adm-in.is-mono,
+.dt-adm-mono {
+  font-family: var(--dt-font-mono);
+  font-size: 12px;
+}
+.dt-adm-w-xs {
+  width: 90px;
+}
+.dt-adm-w-sm {
+  width: 140px;
+}
+.dt-adm-w-md {
+  width: 200px;
+}
+.dt-adm-w-lg {
+  width: 360px;
+}
+.dt-adm-grow {
+  flex: 1;
+}
+.dt-adm-full {
+  width: 100%;
+}
+.dt-adm-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+/* ---------- 按钮：高 34px、圆角 8px；表格行里用小号 28px ---------- */
+.dt-adm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-shrink: 0;
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+}
+.dt-adm-btn.is-p {
+  background: var(--dt-primary);
+  color: var(--dt-on-primary);
+}
+.dt-adm-btn.is-s {
+  border-color: var(--dt-line);
+}
+.dt-adm-btn.is-sp {
+  background: var(--dt-primary-soft);
+  color: var(--dt-ink-primary);
+}
+.dt-adm-btn.is-d {
+  border-color: var(--dt-danger);
+  color: var(--dt-danger);
+}
+.dt-adm-btn.is-t {
+  padding: 0 6px;
+  background: transparent;
+  color: var(--dt-ink-primary);
+}
+.dt-adm-btn.is-sm {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+.dt-adm-btn.is-t.is-sm {
+  padding: 0 6px;
+}
+.dt-adm-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+/* ---------- 数据表：细线、表头浅底吸顶、数字右对齐 ---------- */
+.dt-adm-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+}
+.dt-adm-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--dt-line);
+  background: var(--dt-surface-2);
+  color: var(--dt-muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+  white-space: nowrap;
+}
+.dt-adm-box > .dt-adm-table:first-child th:first-child,
+.dt-adm-box > .dt-adm-scroll:first-child th:first-child {
+  border-top-left-radius: 11px;
+}
+.dt-adm-box > .dt-adm-table:first-child th:last-child,
+.dt-adm-box > .dt-adm-scroll:first-child th:last-child {
+  border-top-right-radius: 11px;
+}
+.dt-adm-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--dt-line);
+  vertical-align: middle;
+}
+.dt-adm-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.dt-adm-table tr.is-hl td {
+  background: var(--dt-primary-soft);
+}
+.dt-adm-table tr.is-off td {
+  color: var(--dt-muted);
+}
+.dt-adm-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.dt-adm-table .acts {
+  text-align: right;
+  white-space: nowrap;
+}
+.dt-adm-table .acts > * + * {
+  margin-left: 6px;
+}
+.dt-adm-table .nowrap {
+  white-space: nowrap;
+}
+.dt-adm-table td a {
+  color: var(--dt-ink-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+.dt-adm-table tr.is-link {
+  cursor: pointer;
+}
+.dt-adm-more {
+  padding: 10px;
+  border-top: 1px solid var(--dt-line);
+  text-align: center;
+}
+.dt-adm-mu {
+  color: var(--dt-muted);
+}
+.dt-adm-up {
+  color: var(--dt-ink-success);
+}
+.dt-adm-dn {
+  color: var(--dt-ink-danger);
+}
+.dt-adm-bad {
+  color: var(--dt-ink-danger);
+}
+.dt-adm-good {
+  color: var(--dt-ink-success);
+}
+.dt-adm-small {
+  font-size: 12px;
+}
+/* ---------- 状态小标签：前面一个圆点 ---------- */
+.dt-adm-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: 5px;
+  background: var(--dt-bg);
+  color: var(--dt-muted);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  vertical-align: 1px;
+}
+.dt-adm-tag::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.dt-adm-tag.is-ok {
+  background: var(--dt-soft-success);
+  color: var(--dt-ink-success);
+}
+.dt-adm-tag.is-w {
+  background: var(--dt-soft-warning);
+  color: var(--dt-ink-warning);
+}
+.dt-adm-tag.is-d {
+  background: var(--dt-soft-danger);
+  color: var(--dt-ink-danger);
+}
+.dt-adm-tag.is-p {
+  background: var(--dt-primary-soft);
+  color: var(--dt-ink-primary);
+}
+/* ---------- 格子、数字块 ---------- */
+.dt-adm-g2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+.dt-adm-g3 {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.dt-adm-g4 {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.dt-adm-g6 {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+.dt-adm-kpi {
+  padding: 14px 16px;
+}
+.dt-adm-kpi > span {
+  display: block;
+  color: var(--dt-muted);
+  font-size: 12px;
+}
+.dt-adm-kpi > b {
+  display: block;
+  margin-top: 2px;
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.dt-adm-kpi > i {
+  display: block;
+  margin-top: 2px;
+  color: var(--dt-muted);
+  font-size: 12px;
+  font-style: normal;
+}
+.dt-adm-kpi.is-sm {
+  padding: 10px 14px;
+}
+.dt-adm-kpi.is-sm > b {
+  font-size: 17px;
+}
+/* ---------- 表单分组卡：左边字段名和限制，右边输入 ---------- */
+.dt-adm-frow {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-adm-frow:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+.dt-adm-frow:last-child {
+  padding-bottom: 0;
+}
+.dt-adm-frow > label {
+  padding-top: 7px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.dt-adm-frow > label small {
+  display: block;
+  color: var(--dt-muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+.dt-adm-help {
+  margin-top: 4px;
+  color: var(--dt-muted);
+  font-size: 12px;
+}
+.dt-adm-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.dt-adm-line + .dt-adm-line {
+  margin-top: 8px;
+}
+/* ---------- 提示块、空状态 ---------- */
+.dt-adm-alert {
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--dt-soft-warning);
+  color: var(--dt-ink-warning);
+  font-size: 13px;
+}
+.dt-adm-alert > .bi {
+  font-size: 18px;
+  line-height: 1.1;
+}
+.dt-adm-alert b {
+  display: block;
+  font-size: 14px;
+}
+.dt-adm-alert.is-d {
+  background: var(--dt-soft-danger);
+  color: var(--dt-ink-danger);
+}
+.dt-adm-alert.is-ok {
+  background: var(--dt-soft-success);
+  color: var(--dt-ink-success);
+}
+.dt-adm-alert.is-p {
+  background: var(--dt-primary-soft);
+  color: var(--dt-ink-primary);
+}
+.dt-adm-empty {
+  padding: 36px 16px;
+  color: var(--dt-muted);
+  font-size: 13px;
+  text-align: center;
+}
+.dt-adm-empty b {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--dt-text);
+  font-size: 14px;
+}
+/* ---------- 标签页、三段切换、图例 ---------- */
+.dt-adm-tabs {
+  display: flex;
+  gap: 18px;
+  padding: 0 16px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--dt-line);
+  scrollbar-width: none;
+}
+.dt-adm-tabs > button {
+  flex-shrink: 0;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--dt-muted);
+  font: inherit;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.dt-adm-tabs > button.is-on {
+  color: var(--dt-text);
+  font-weight: 700;
+  box-shadow: inset 0 -2px 0 var(--dt-primary);
+}
+.dt-adm-seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 9px;
+  background: var(--dt-bg);
+}
+.dt-adm-seg > button {
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--dt-muted);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.dt-adm-seg > button.is-on {
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  box-shadow: var(--dt-shadow-hair);
+}
+.dt-adm-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: var(--dt-bg);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.dt-adm-chip > i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.dt-adm-chip.is-w {
+  background: var(--dt-soft-warning);
+  color: var(--dt-ink-warning);
+}
+/* 详情 JSON：等宽一行省略，点开看全文 */
+.dt-adm-code {
+  display: block;
+  max-width: 420px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: none;
+  color: var(--dt-muted);
+  font-family: var(--dt-font-mono);
+  font-size: 12px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.dt-adm-code.is-open {
+  max-width: 560px;
+  color: var(--dt-text);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+/* 底部吸住的一条：修改说明 + 保存 */
+.dt-adm-savebar {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 -28px -40px;
+  padding: 12px 28px;
+  background: var(--dt-surface);
+  border-top: 1px solid var(--dt-line);
+  box-shadow: var(--dt-shadow-bar);
+}
+.dt-adm-savebar > b {
+  font-size: 13px;
+  white-space: nowrap;
+}
+/* ---------- 图表：五种固定颜色、坐标字不跟着图缩放 ---------- */
+.dt-adm-chart {
+  display: flex;
+  gap: 10px;
+}
+.dt-adm-chart-y {
+  position: relative;
+  flex-shrink: 0;
+  width: 56px;
+  color: var(--dt-muted);
+  font-size: 11px;
+  text-align: right;
+}
+.dt-adm-chart-y > span {
+  position: absolute;
+  right: 0;
+  transform: translateY(-50%);
+  white-space: nowrap;
+}
+.dt-adm-chart-plot {
+  flex: 1;
+  min-width: 0;
+}
+.dt-adm-chart-plot svg {
+  display: block;
+  width: 100%;
+}
+.dt-adm-chart-grid {
+  stroke: var(--dt-line);
+  stroke-width: 1;
+}
+.dt-adm-chart-x {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  color: var(--dt-muted);
+  font-size: 11px;
+}
+.dt-adm-bars {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  height: 130px;
+  padding-top: 6px;
+}
+.dt-adm-bar {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  color: var(--dt-muted);
+  font-size: 11px;
+  text-align: center;
+}
+.dt-adm-bar > b {
+  color: var(--dt-text);
+  font-size: 11px;
+  font-weight: 600;
+}
+.dt-adm-bar-col {
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+  margin-top: 2px;
+}
+.dt-adm-bar-col > i {
+  display: block;
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+  background: var(--dt-chart-1);
+  opacity: 0.85;
+}
+.dt-adm-bar > span {
+  margin-top: 4px;
+  white-space: nowrap;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dt-adm-btn {
+    transition:
+      transform var(--dt-dur-press) var(--dt-ease-out),
+      background-color var(--dt-dur-fast) ease;
+  }
+  .dt-adm-btn:not(:disabled):active {
+    transform: scale(0.97);
+  }
+  .dt-adm-side {
+    transition: transform var(--dt-dur-panel) var(--dt-ease-drawer);
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .dt-adm-nav:not(.is-on):hover,
+  .dt-adm-table tr.is-link:hover td {
+    background: var(--dt-surface-2);
+  }
+  .dt-adm-btn.is-p:not(:disabled):hover {
+    background: var(--dt-primary-hover);
+  }
+  .dt-adm-btn.is-s:not(:disabled):hover {
+    background: var(--dt-surface-2);
+  }
+  .dt-adm-btn.is-sp:not(:disabled):hover,
+  .dt-adm-btn.is-t:not(:disabled):hover {
+    background: var(--dt-primary-soft);
+    color: var(--dt-ink-primary);
+  }
+  .dt-adm-btn.is-d:not(:disabled):hover {
+    background: var(--dt-soft-danger);
+  }
+  .dt-adm-tabs > button:not(.is-on):hover,
+  .dt-adm-seg > button:not(.is-on):hover {
+    color: var(--dt-text);
+  }
+}
+/* ---------- 手机：侧栏收起，顶上“菜单”点开从左边滑出 ---------- */
+@media (max-width: 959.98px) {
+  .dt-adm {
+    display: block;
+  }
+  .dt-adm-top {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 52px;
+    padding: 0 12px;
+    background: var(--dt-surface);
+    border-bottom: 1px solid var(--dt-line);
+  }
+  .dt-adm-top > b {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    font-size: 16px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .dt-adm-top .dt-adm-in {
+    height: 30px;
+    font-size: 12px;
+  }
+  .dt-adm-side {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1061;
+    width: 260px;
+    height: auto;
+    box-shadow: var(--dt-shadow-float);
+    transform: translateX(-105%);
+  }
+  .dt-adm-side.is-open {
+    transform: none;
+  }
+  .dt-adm-scrim.is-open {
+    position: fixed;
+    inset: 0;
+    z-index: 1060;
+    display: block;
+    background: var(--dt-scrim);
+  }
+  .dt-adm-main {
+    padding: 12px 12px 32px;
+  }
+  .dt-adm-savebar {
+    margin: 0 -12px -32px;
+    padding: 10px 12px;
+  }
+  .dt-adm-g3,
+  .dt-adm-g4,
+  .dt-adm-g6 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .dt-adm-g2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .dt-adm-frow {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+  .dt-adm-frow > label {
+    padding-top: 0;
+  }
+
+  /* 区服数值在手机上一项分几层：字段名和说明、输入框、默认和生效 + 恢复默认 */
+  .dt-adm-set thead {
+    display: none;
+  }
+  .dt-adm-set tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 6px 10px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--dt-line);
+  }
+  .dt-adm-set tbody tr:last-child {
+    border-bottom: 0;
+  }
+  .dt-adm-set tr.is-hl {
+    background: var(--dt-primary-soft);
+  }
+  .dt-adm-set td,
+  .dt-adm-set tr.is-hl td {
+    display: block;
+    width: auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+  .dt-adm-set td:first-child,
+  .dt-adm-set td.dt-adm-set-val,
+  .dt-adm-set td.dt-adm-set-json {
+    grid-column: 1 / -1;
+  }
+  .dt-adm-set td.acts {
+    width: auto;
+  }
+  /* 太宽的表格横向滑动；表头不再吸顶（滑动容器里吸不住） */
+  .dt-adm-scroll {
+    overflow-x: auto;
+  }
+  .dt-adm-scroll .dt-adm-table th {
+    position: static;
+  }
+  /* 宽表在手机上改成一行两层的列表：主名字 + 一行灰字 */
+  .dt-adm-table.is-stack thead {
+    display: none;
+  }
+  .dt-adm-table.is-stack tr {
+    display: block;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--dt-line);
+  }
+  .dt-adm-table.is-stack tbody tr:last-child {
+    border-bottom: 0;
+  }
+  .dt-adm-table.is-stack td {
+    display: inline;
+    padding: 0;
+    border: 0;
+  }
+  /* 灰字一行里的几项用“·”隔开：从第二个看得见的格子开始 */
+  .dt-adm-table.is-stack td:not(.is-main):not(.is-hide-m) ~ td:not(.is-hide-m):not(.acts)::before {
+    content: ' · ';
+    color: var(--dt-muted);
+  }
+  .dt-adm-table.is-stack td.is-main {
+    display: block;
+  }
+  .dt-adm-table.is-stack td.is-hide-m {
+    display: none;
+  }
+  .dt-adm-table.is-stack td:not(.is-main) {
+    color: var(--dt-muted);
+    font-size: 12px;
+  }
+  .dt-adm-only-m {
+    display: inline;
+  }
+  .dt-adm-tag.dt-adm-only-m {
+    display: inline-flex;
+  }
+  .dt-adm-fbar .dt-adm-w-lg {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+  }
+  .dt-adm-table.is-stack td.acts:not(.is-hide-m) {
+    display: block;
+    margin-top: 6px;
+    text-align: left;
+  }
+}
+/* ---------- 各页自己的一点样式 ---------- */
+/* 概览：上线检查提示块里的小表 */
+.dt-adm-launch {
+  margin-top: 8px;
+}
+.dt-adm-launch td {
+  background: transparent;
+}
+.dt-adm-launch-why {
+  color: var(--dt-muted);
+}
+/* 区服数值：字段名等宽紫字 + 说明；值一列 240px、默认和生效一列 220px */
+.dt-adm-key {
+  color: var(--dt-ink-primary);
+  font-family: var(--dt-font-mono);
+  font-size: 12px;
+  word-break: break-all;
+}
+.dt-adm-key-doc {
+  display: block;
+  color: var(--dt-muted);
+  font-size: 12px;
+}
+.dt-adm-set-val {
+  width: 240px;
+}
+.dt-adm-set-def {
+  width: 220px;
+  overflow-wrap: anywhere;
+}
+.dt-adm-set-json .dt-adm-help {
+  overflow-wrap: anywhere;
+}
+.dt-adm-set .acts {
+  width: 90px;
+}
+/* 功能开关：整齐的网格，名字一行、说明一行；改过的浅紫底 */
+.dt-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px 12px;
+}
+.dt-feature {
+  min-width: 0;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+.dt-feature.is-hl {
+  background: var(--dt-primary-soft);
+}
+@media (max-width: 959.98px) {
+  .dt-feature-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.dt-adm-hist-changed {
+  max-width: 420px;
+  overflow-wrap: anywhere;
+}
+.dt-adm-mt {
+  margin-top: 12px;
+}
+.dt-adm-warn {
+  color: var(--dt-ink-warning);
+}
+/* 玩家详情：标题后的账号 id；个性图标一行；称号选择器占满一行剩下的地方 */
+.dt-adm-ph-id {
+  color: var(--dt-muted);
+  font-size: 15px;
+  font-weight: 400;
+}
+.dt-adm-icon {
+  gap: 2px;
+}
+.dt-adm-icon-pick {
+  align-items: flex-start;
+}
+.dt-adm-tp {
+  min-width: 0;
+}
+.dt-adm-w-time {
+  width: 110px;
+}
+/* 附件编辑器（补偿、邮件、兑换码、活动） */
+.dt-adm-rie {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.dt-adm-rie .dt-adm-line + .dt-adm-line {
+  margin-top: 0;
+}
+.dt-adm-rie-kind {
+  width: 36px;
+  color: var(--dt-muted);
+  font-size: 12px;
+}
+.dt-adm-rie-icon {
+  align-items: flex-start;
+}
+.dt-adm-rie-icon > .dt-adm-rie-kind {
+  padding-top: 9px;
+}
+.dt-adm-rie-presets > summary {
+  display: inline-flex;
+  list-style: none;
+}
+.dt-adm-rie-presets > summary::-webkit-details-marker {
+  display: none;
+}
+.dt-adm-mt-sm {
+  margin-top: 6px;
+}
+/* 道具、食材的搜索下拉 */
+.dt-adm-pick {
+  position: relative;
+  min-width: 0;
+}
+.dt-adm-pop {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  min-width: 16rem;
+  max-height: 16rem;
+  margin: 0;
+  padding: 4px;
+  overflow-y: auto;
+  list-style: none;
+  background: var(--dt-surface);
+  border: 1px solid var(--dt-line);
+  border-radius: 10px;
+  box-shadow: var(--dt-shadow-float);
+  font-size: 13px;
+}
+.dt-adm-pop > li {
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.dt-adm-pop > li.is-on,
+.dt-adm-pop > li:hover {
+  background: var(--dt-primary-soft);
+  color: var(--dt-ink-primary);
+}
+.dt-adm-break {
+  overflow-wrap: anywhere;
+}
+.dt-adm-range .dt-adm-in {
+  width: 150px;
+}
+.dt-adm-w-rie {
+  width: 190px;
+}
+/* 举报：点开的一行 */
+.dt-adm-table tr.dt-adm-report td {
+  background: var(--dt-surface-2);
+}
+.dt-adm-report-dl {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr);
+  gap: 6px 12px;
+  margin: 0;
+}
+.dt-adm-report-dl dt {
+  color: var(--dt-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+.dt-adm-report-dl dd {
+  margin: 0;
+}
+.dt-adm-pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.dt-adm-table tr.is-bad td {
+  background: var(--dt-soft-danger);
+}
+/* 可疑数据：同一 IP、设备的一组账号 */
+.dt-adm-group {
+  padding: 10px 16px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-adm-bh + .dt-adm-group {
+  border-top: 0;
+}
+.dt-adm-group-h {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.dt-adm-group a {
+  color: var(--dt-ink-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+.dt-adm-mb {
+  margin-bottom: 12px;
+}
+/* 期货、大宗认购：额度一格里的小输入框 */
+.dt-adm-quota {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+}
+.dt-adm-quota .dt-adm-in {
+  width: 76px;
+  height: 28px;
+}
+/* 大宗认购的食材清单很长：限高、在框里滚动（表头吸在框顶） */
+.dt-adm-tall {
+  max-height: 26rem;
+  overflow-y: auto;
+}
+/* 日报：编辑和预览 */
+.dt-adm-stack {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.dt-adm-stack + .dt-adm-stack,
+.dt-adm-g2 > .dt-adm-stack {
+  gap: 14px;
+}
+.dt-adm-lab {
+  font-size: 13px;
+  font-weight: 600;
+}
+.dt-adm-daily p {
+  margin: 6px 0 0;
+}
+.dt-adm-facts {
+  max-height: 24rem;
+  margin: 0;
+  padding: 10px;
+  overflow: auto;
+  border-radius: 8px;
+  background: var(--dt-surface-2);
+  font-family: var(--dt-font-mono);
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+/* 活动编辑：错误红字、一段一段的分隔、九宫格 */
+.dt-adm-err {
+  margin-top: 2px;
+  color: var(--dt-ink-danger);
+  font-size: 12px;
+}
+.dt-adm-btn.is-t.is-danger {
+  color: var(--dt-ink-danger);
+}
+.dt-adm-my {
+  margin: 8px 0;
+}
+.dt-adm-sec {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--dt-line);
+}
+.dt-adm-gridb {
+  display: grid;
+  gap: 6px;
+  max-width: 420px;
+  margin: 8px 0;
+}
+.dt-adm-gcell {
+  min-height: 56px;
+  padding: 6px;
+  border: 1px solid var(--dt-line);
+  border-radius: 8px;
+  background: var(--dt-surface-2);
+  color: var(--dt-text);
+  font: inherit;
+  font-size: 12px;
+}
+.dt-adm-gcell.is-on {
+  border-color: var(--dt-primary);
+  box-shadow: 0 0 0 3px var(--dt-primary-soft);
+}
+.dt-adm-gcell.is-bad {
+  border-color: var(--dt-danger);
+}
+.dt-adm-def {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}

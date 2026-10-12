@@ -6,8 +6,13 @@ import { ApiError } from '../../api/client';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
 import { useToastStore } from '../../stores/toast';
-import { adminTime } from '../../utils/gameInput';
+import { adminShort } from '../../utils/gameInput';
 import { useTitleList } from '../../components/admin/titleList';
+import AdmBox from '../../components/admin/kit/AdmBox.vue';
+import AdmEmpty from '../../components/admin/kit/AdmEmpty.vue';
+import AdmField from '../../components/admin/kit/AdmField.vue';
+import AdmHead from '../../components/admin/kit/AdmHead.vue';
+import { useConfirmStore } from '../../stores/confirm';
 
 /**
  * 后台称号页（问题记录 539，定制称号设计 二）：定制称号的新建、改、停用、删；配置称号只读列出。
@@ -15,6 +20,7 @@ import { useTitleList } from '../../components/admin/titleList';
  */
 const admin = useAdminStore();
 const toast = useToastStore();
+const confirm = useConfirmStore();
 const titles = useTitleList();
 const list = ref<AdminTitleDto[]>([]);
 const q = ref('');
@@ -103,190 +109,208 @@ async function save(t: AdminTitleDto) {
 }
 const toggle = (t: AdminTitleDto) =>
   act(() => adminApi.updateTitle(t.id!, { retired: !t.retired }), t.retired ? '已启用' : '已停用');
-function remove(t: AdminTitleDto) {
-  if (!window.confirm(`删除称号「${t.title}」？删了找不回来。`)) return;
+async function remove(t: AdminTitleDto) {
+  const ok = await confirm.ask({
+    title: `删除称号「${t.title}」？`,
+    body: '删了找不回来。',
+    ok: '删除',
+    danger: true,
+  });
+  if (!ok) return;
   return act(() => adminApi.deleteTitle(t.id!), '已删除');
 }
 </script>
 
 <template>
-  <h5>称号</h5>
-  <p class="small text-muted">
-    定制称号在这里新建；发给玩家用邮件（一家或几家店）、兑换码，或者玩家页直接发。改名字后已经拥有的人也跟着变；
-    停用后不能再发，已经拥有的照样保留。定制称号在所有语言里都显示原文。
-  </p>
-  <div v-if="err" class="text-danger small mb-2">{{ err }}</div>
-  <div class="d-flex gap-1 mb-2">
-    <input
-      v-model="q"
-      class="form-control form-control-sm w-auto"
-      placeholder="搜名字或备注"
-      data-testid="title-q"
+  <div class="dt-adm-page">
+    <AdmHead
+      title="称号"
+      desc="定制称号在这里新建; 发给玩家用邮件、兑换码, 或者玩家页直接发。改名字后已经拥有的人也跟着变; 停用后不能再发, 已经拥有的照样保留; 定制称号在所有语言里都显示原文。"
     />
-    <button type="button" class="btn btn-sm btn-outline-secondary" data-testid="title-search" @click="load">
-      搜索
-    </button>
+    <div v-if="err" class="dt-adm-alert is-d">
+      <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+      <div>{{ err }}</div>
+    </div>
+    <AdmBox v-if="admin.isAdmin" title="新建称号">
+      <form @submit.prevent="create">
+        <AdmField label="名字" :hint="`1~${TITLE_MAX} 字, 可用 emoji`">
+          <div class="dt-adm-line">
+            <input v-model="nt" class="dt-adm-in dt-adm-w-lg" data-testid="title-new-title" />
+            <span class="dt-adm-mu dt-adm-small">{{ count(nt) }}/{{ TITLE_MAX }}</span>
+            <span v-if="dup(nt)" class="dt-adm-warn dt-adm-small">已有同名称号</span>
+          </div>
+        </AdmField>
+        <AdmField label="说明" :hint="`可空, ≤ ${TITLE_DESC_MAX} 字`">
+          <input v-model="nd" class="dt-adm-in dt-adm-full" data-testid="title-new-desc" />
+        </AdmField>
+        <AdmField label="备注" hint="只有后台看">
+          <input
+            v-model="nn"
+            class="dt-adm-in dt-adm-full"
+            placeholder="给谁、为什么"
+            data-testid="title-new-note"
+          />
+        </AdmField>
+        <AdmField>
+          <button
+            type="button"
+            class="dt-adm-btn is-p"
+            :disabled="!canCreate || busy"
+            data-testid="title-create"
+            @click="create"
+          >
+            新建
+          </button>
+        </AdmField>
+      </form>
+    </AdmBox>
+
+    <form class="dt-adm-fbar" @submit.prevent="load">
+      <input
+        v-model="q"
+        class="dt-adm-in dt-adm-w-lg"
+        type="search"
+        placeholder="搜名字或备注"
+        data-testid="title-q"
+      />
+      <button type="button" class="dt-adm-btn is-sp" data-testid="title-search" @click="load">搜索</button>
+    </form>
+
+    <AdmBox title="定制称号" :sub="`${custom.length} 个`" flush>
+      <div class="dt-adm-scroll">
+        <table class="dt-adm-table">
+          <thead>
+            <tr>
+              <th>键</th>
+              <th>名字</th>
+              <th>说明</th>
+              <th>备注</th>
+              <th class="num">拥有</th>
+              <th>建的人</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="t in custom"
+              :key="t.key"
+              :class="{ 'is-off': t.retired, 'is-hl': editing === t.id }"
+              :data-testid="`title-row-${t.key}`"
+            >
+              <td class="dt-adm-mono dt-adm-mu">{{ t.key }}</td>
+              <template v-if="editing === t.id">
+                <td>
+                  <input
+                    v-model="et"
+                    class="dt-adm-in dt-adm-full"
+                    :data-testid="`title-edit-title-${t.id}`"
+                  />
+                  <div class="dt-adm-help">
+                    {{ count(et) }}/{{ TITLE_MAX }}
+                    <span v-if="dup(et, t.key)" class="dt-adm-warn">已有同名称号</span>
+                  </div>
+                </td>
+                <td>
+                  <input
+                    v-model="ed"
+                    class="dt-adm-in dt-adm-full"
+                    :data-testid="`title-edit-desc-${t.id}`"
+                  />
+                </td>
+                <td>
+                  <input
+                    v-model="en"
+                    class="dt-adm-in dt-adm-full"
+                    :data-testid="`title-edit-note-${t.id}`"
+                  />
+                </td>
+              </template>
+              <template v-else>
+                <td>
+                  <span class="dt-adm-chip is-w">{{ t.title }}</span>
+                  <span v-if="t.retired" class="dt-adm-tag ms-1">已停用</span>
+                </td>
+                <td>{{ t.desc ?? '' }}</td>
+                <td class="dt-adm-mu">{{ t.note ?? '' }}</td>
+              </template>
+              <td class="num">{{ t.owners }}</td>
+              <td class="dt-adm-mu nowrap">
+                {{ t.createdBy ?? '' }} {{ t.createdAt ? adminShort(t.createdAt) : '' }}
+              </td>
+              <td class="acts">
+                <template v-if="admin.isAdmin">
+                  <template v-if="editing === t.id">
+                    <button
+                      type="button"
+                      class="dt-adm-btn is-p is-sm"
+                      :disabled="busy"
+                      :data-testid="`title-save-${t.id}`"
+                      @click="save(t)"
+                    >
+                      保存
+                    </button>
+                    <button type="button" class="dt-adm-btn is-t is-sm" @click="editing = null">取消</button>
+                  </template>
+                  <template v-else>
+                    <button
+                      type="button"
+                      class="dt-adm-btn is-t is-sm"
+                      :data-testid="`title-edit-${t.id}`"
+                      @click="startEdit(t)"
+                    >
+                      改
+                    </button>
+                    <button
+                      type="button"
+                      class="dt-adm-btn is-s is-sm"
+                      :disabled="busy"
+                      :data-testid="`title-retire-${t.id}`"
+                      @click="toggle(t)"
+                    >
+                      {{ t.retired ? '启用' : '停用' }}
+                    </button>
+                    <button
+                      type="button"
+                      class="dt-adm-btn is-d is-sm"
+                      :disabled="busy"
+                      :data-testid="`title-delete-${t.id}`"
+                      @click="remove(t)"
+                    >
+                      删除
+                    </button>
+                  </template>
+                </template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <AdmEmpty v-if="custom.length === 0" title="还没有定制称号" />
+    </AdmBox>
+
+    <AdmBox title="配置称号" sub="只读, 改要走配置" flush>
+      <div class="dt-adm-scroll">
+        <table class="dt-adm-table">
+          <thead>
+            <tr>
+              <th>键</th>
+              <th>名字</th>
+              <th>说明</th>
+              <th>来源</th>
+              <th class="num">拥有</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="t in config" :key="t.key" :data-testid="`conf-row-${t.key}`">
+              <td class="dt-adm-mono dt-adm-mu">{{ t.key }}</td>
+              <td>{{ t.title }}</td>
+              <td>{{ t.desc ?? '' }}</td>
+              <td class="dt-adm-mu">{{ SOURCE[t.source] }}</td>
+              <td class="num">{{ t.owners }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </AdmBox>
   </div>
-
-  <form
-    v-if="admin.isAdmin"
-    class="d-flex flex-wrap gap-1 align-items-center border rounded p-2 mb-3 small"
-    @submit.prevent="create"
-  >
-    <input
-      v-model="nt"
-      class="form-control form-control-sm w-auto"
-      :placeholder="`名字（1~${TITLE_MAX} 字，可用 emoji）`"
-      data-testid="title-new-title"
-    />
-    <span class="dt-meta">{{ count(nt) }}/{{ TITLE_MAX }}</span>
-    <input
-      v-model="nd"
-      class="form-control form-control-sm w-auto"
-      :placeholder="`说明（可空，≤ ${TITLE_DESC_MAX} 字）`"
-      data-testid="title-new-desc"
-    />
-    <input
-      v-model="nn"
-      class="form-control form-control-sm w-auto"
-      placeholder="备注（只有后台看）"
-      data-testid="title-new-note"
-    />
-    <button
-      type="button"
-      class="btn btn-sm btn-primary"
-      :disabled="!canCreate || busy"
-      data-testid="title-create"
-      @click="create"
-    >
-      新建
-    </button>
-    <span v-if="dup(nt)" class="text-warning">已有同名称号</span>
-  </form>
-
-  <h6>定制称号</h6>
-  <table class="table table-sm small">
-    <thead>
-      <tr>
-        <th>键</th>
-        <th>名字</th>
-        <th>说明</th>
-        <th>备注</th>
-        <th>拥有</th>
-        <th>建的人</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        v-for="t in custom"
-        :key="t.key"
-        :class="{ 'text-muted': t.retired }"
-        :data-testid="`title-row-${t.key}`"
-      >
-        <td>{{ t.key }}</td>
-        <template v-if="editing === t.id">
-          <td>
-            <input
-              v-model="et"
-              class="form-control form-control-sm"
-              :data-testid="`title-edit-title-${t.id}`"
-            />
-            <span class="dt-meta">{{ count(et) }}/{{ TITLE_MAX }}</span>
-            <span v-if="dup(et, t.key)" class="text-warning">已有同名称号</span>
-          </td>
-          <td>
-            <input
-              v-model="ed"
-              class="form-control form-control-sm"
-              :data-testid="`title-edit-desc-${t.id}`"
-            />
-          </td>
-          <td>
-            <input
-              v-model="en"
-              class="form-control form-control-sm"
-              :data-testid="`title-edit-note-${t.id}`"
-            />
-          </td>
-        </template>
-        <template v-else>
-          <td>{{ t.title }}<span v-if="t.retired">（已停用）</span></td>
-          <td>{{ t.desc ?? '' }}</td>
-          <td>{{ t.note ?? '' }}</td>
-        </template>
-        <td>{{ t.owners }}</td>
-        <td>{{ t.createdBy ?? '' }} {{ t.createdAt ? adminTime(t.createdAt) : '' }}</td>
-        <td class="text-nowrap">
-          <template v-if="admin.isAdmin">
-            <template v-if="editing === t.id">
-              <button
-                type="button"
-                class="btn btn-sm btn-primary py-0"
-                :disabled="busy"
-                :data-testid="`title-save-${t.id}`"
-                @click="save(t)"
-              >
-                保存
-              </button>
-              <button type="button" class="btn btn-link btn-sm py-0" @click="editing = null">取消</button>
-            </template>
-            <template v-else>
-              <button
-                type="button"
-                class="btn btn-link btn-sm py-0"
-                :data-testid="`title-edit-${t.id}`"
-                @click="startEdit(t)"
-              >
-                改
-              </button>
-              <button
-                type="button"
-                class="btn btn-link btn-sm py-0"
-                :disabled="busy"
-                :data-testid="`title-retire-${t.id}`"
-                @click="toggle(t)"
-              >
-                {{ t.retired ? '启用' : '停用' }}
-              </button>
-              <button
-                type="button"
-                class="btn btn-link btn-sm py-0 text-danger"
-                :disabled="busy"
-                :data-testid="`title-delete-${t.id}`"
-                @click="remove(t)"
-              >
-                删
-              </button>
-            </template>
-          </template>
-        </td>
-      </tr>
-      <tr v-if="custom.length === 0">
-        <td colspan="7" class="text-muted">没有</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <h6>配置称号（只读，改要走配置）</h6>
-  <table class="table table-sm small">
-    <thead>
-      <tr>
-        <th>键</th>
-        <th>名字</th>
-        <th>说明</th>
-        <th>来源</th>
-        <th>拥有</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="t in config" :key="t.key" :data-testid="`conf-row-${t.key}`">
-        <td>{{ t.key }}</td>
-        <td>{{ t.title }}</td>
-        <td>{{ t.desc ?? '' }}</td>
-        <td>{{ SOURCE[t.source] }}</td>
-        <td>{{ t.owners }}</td>
-      </tr>
-    </tbody>
-  </table>
 </template>

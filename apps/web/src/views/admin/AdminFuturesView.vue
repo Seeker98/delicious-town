@@ -8,6 +8,9 @@ import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 import { matchText } from '../../utils/match';
+import AdmBox from '../../components/admin/kit/AdmBox.vue';
+import AdmEmpty from '../../components/admin/kit/AdmEmpty.vue';
+import AdmHead from '../../components/admin/kit/AdmHead.vue';
 
 /**
  * 后台“期货食材”页（期货设计 §5.3）：全服一份列表，勾选上架、下架，单独设额度；
@@ -92,136 +95,161 @@ const status = (r: AdminFuturesFoodDto) => (!r.inList ? '不在表里' : r.enabl
 </script>
 
 <template>
-  <h5>期货食材</h5>
-  <p class="small text-muted">
-    玩家在交易所“期货”标签能订的食材（全服一份）。勾选后一键上架、下架；额度是这种食材全区服每天一共能订几份，
-    不填按等级默认。价格和今天已订份数按顶部选的区服显示。已经下的单不受影响。
-  </p>
-  <div v-if="err" class="text-danger small mb-2">{{ err }}</div>
-  <div class="d-flex flex-wrap gap-1 mb-2 small">
-    <select v-model="level" class="form-select form-select-sm w-auto" data-testid="fut-level">
-      <option value="">全部等级</option>
-      <option v-for="n in 5" :key="n" :value="String(n)">{{ n }} 级</option>
-    </select>
-    <select v-model="kind" class="form-select form-select-sm w-auto" data-testid="fut-kind">
-      <option value="">稀有和普通</option>
-      <option value="rare">稀有</option>
-      <option value="normal">普通</option>
-    </select>
-    <select v-model="state" class="form-select form-select-sm w-auto" data-testid="fut-state">
-      <option value="">全部状态</option>
-      <option value="on">上架</option>
-      <option value="off">下架</option>
-      <option value="out">不在表里</option>
-    </select>
-    <select v-model="street" class="form-select form-select-sm w-auto" data-testid="fut-street">
-      <option value="">全部街道</option>
-      <option v-for="s in streets" :key="s" :value="String(s)">
-        {{ catalog.streetName(s, `街道 ${s}`) }}
-      </option>
-    </select>
-    <input
-      v-model="q"
-      class="form-control form-control-sm w-auto"
-      placeholder="名字或编号"
-      data-testid="fut-q"
+  <div class="dt-adm-page">
+    <AdmHead
+      title="期货食材"
+      desc="玩家在交易所“期货”标签能订的食材（全服一份）。额度是这种食材全区服每天一共能订几份, 不填按等级默认; 价格和今天已订份数按左上选的区服显示。已经下的单不受影响。"
     />
-  </div>
-  <div v-if="admin.isAdmin" class="d-flex flex-wrap gap-1 align-items-center mb-2 small">
-    <button type="button" class="btn btn-sm btn-outline-secondary" data-testid="fut-all" @click="checkAll">
-      全选当前筛选结果 ({{ shown.length }})
-    </button>
-    <span class="dt-meta">已选 {{ checked.size }}</span>
-    <button
-      type="button"
-      class="btn btn-sm btn-primary"
-      :disabled="busy || checked.size === 0"
-      data-testid="fut-on"
-      @click="setEnabled(true)"
-    >
-      上架
-    </button>
-    <button
-      type="button"
-      class="btn btn-sm btn-outline-danger"
-      :disabled="busy || checked.size === 0"
-      data-testid="fut-off"
-      @click="setEnabled(false)"
-    >
-      下架
-    </button>
-  </div>
-  <div class="table-responsive">
-    <table class="table table-sm small align-middle">
-      <thead>
-        <tr>
-          <th v-if="admin.isAdmin"></th>
-          <th>编号</th>
-          <th>名字</th>
-          <th>等级</th>
-          <th>稀有</th>
-          <th>状态</th>
-          <th>街道数</th>
-          <th>参考价</th>
-          <th>等级价</th>
-          <th>期货价</th>
-          <th>额度</th>
-          <th>今天已订</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="r in shown" :key="r.foodsId" :data-testid="`fut-row-${r.foodsId}`">
-          <td v-if="admin.isAdmin">
-            <input
-              type="checkbox"
-              :checked="checked.has(r.foodsId)"
-              :data-testid="`fut-check-${r.foodsId}`"
-              @change="check(r.foodsId, ($event.target as HTMLInputElement).checked)"
-            />
-          </td>
-          <td>{{ r.foodsId }}</td>
-          <td>{{ catalog.foodName(r.foodsId) }}</td>
-          <td>{{ r.level }}</td>
-          <td>{{ r.rare ? '稀有' : '普通' }}</td>
-          <td :class="{ 'text-muted': !r.enabled }">{{ status(r) }}</td>
-          <td
-            :data-testid="`fut-streets-${r.foodsId}`"
-            :title="r.streets.map((s) => catalog.streetName(s, String(s))).join('、')"
-          >
-            {{ r.streets.length }}
-          </td>
-          <td>{{ formatNum(r.ref) }}</td>
-          <td>{{ formatNum(r.levelPrice) }}</td>
-          <td>{{ formatNum(r.unitPrice) }}</td>
-          <td>
-            <span :class="{ 'text-muted': r.dailyQuota === null }" :data-testid="`fut-quota-${r.foodsId}`">{{
-              r.dailyQuota ?? r.defaultQuota
-            }}</span>
-            <span v-if="admin.isAdmin" class="d-inline-flex gap-1 ms-1">
-              <input
-                :value="quotaInput.get(r.foodsId) ?? ''"
-                type="number"
-                min="0"
-                class="form-control form-control-sm"
-                style="width: 5rem"
-                placeholder="默认"
-                :data-testid="`fut-quota-input-${r.foodsId}`"
-                @input="quotaInput.set(r.foodsId, ($event.target as HTMLInputElement).value)"
-              />
-              <button
-                type="button"
-                class="btn btn-sm btn-outline-secondary"
-                :disabled="busy"
-                :data-testid="`fut-quota-save-${r.foodsId}`"
-                @click="saveQuota(r)"
+    <div v-if="err" class="dt-adm-alert is-d">
+      <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+      <div>{{ err }}</div>
+    </div>
+    <div class="dt-adm-fbar">
+      <select v-model="level" class="dt-adm-in" data-testid="fut-level">
+        <option value="">全部等级</option>
+        <option v-for="n in 5" :key="n" :value="String(n)">{{ n }} 级</option>
+      </select>
+      <select v-model="kind" class="dt-adm-in" data-testid="fut-kind">
+        <option value="">稀有和普通</option>
+        <option value="rare">稀有</option>
+        <option value="normal">普通</option>
+      </select>
+      <select v-model="state" class="dt-adm-in" data-testid="fut-state">
+        <option value="">全部状态</option>
+        <option value="on">上架</option>
+        <option value="off">下架</option>
+        <option value="out">不在表里</option>
+      </select>
+      <select v-model="street" class="dt-adm-in" data-testid="fut-street">
+        <option value="">全部街道</option>
+        <option v-for="s in streets" :key="s" :value="String(s)">
+          {{ catalog.streetName(s, `街道 ${s}`) }}
+        </option>
+      </select>
+      <input
+        v-model="q"
+        class="dt-adm-in dt-adm-w-md"
+        type="search"
+        placeholder="名字或编号"
+        data-testid="fut-q"
+      />
+      <span class="dt-adm-fbar-r">{{ shown.length }} 种</span>
+    </div>
+    <AdmBox flush>
+      <template v-if="admin.isAdmin" #head>
+        <button type="button" class="dt-adm-btn is-s is-sm" data-testid="fut-all" @click="checkAll">
+          全选当前筛选结果 ({{ shown.length }})
+        </button>
+        <span>已选 {{ checked.size }}</span>
+      </template>
+      <template v-if="admin.isAdmin" #right>
+        <button
+          type="button"
+          class="dt-adm-btn is-p is-sm"
+          :disabled="busy || checked.size === 0"
+          data-testid="fut-on"
+          @click="setEnabled(true)"
+        >
+          上架
+        </button>
+        <button
+          type="button"
+          class="dt-adm-btn is-d is-sm"
+          :disabled="busy || checked.size === 0"
+          data-testid="fut-off"
+          @click="setEnabled(false)"
+        >
+          下架
+        </button>
+      </template>
+      <div class="dt-adm-scroll">
+        <table class="dt-adm-table">
+          <thead>
+            <tr>
+              <th v-if="admin.isAdmin"></th>
+              <th>#</th>
+              <th>名字</th>
+              <th class="num">等级</th>
+              <th>稀有</th>
+              <th>状态</th>
+              <th class="num">街道数</th>
+              <th class="num">参考价</th>
+              <th class="num">等级价</th>
+              <th class="num">期货价</th>
+              <th>额度</th>
+              <th class="num">今天已订</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="r in shown"
+              :key="r.foodsId"
+              :class="{ 'is-hl': checked.has(r.foodsId) }"
+              :data-testid="`fut-row-${r.foodsId}`"
+            >
+              <td v-if="admin.isAdmin">
+                <input
+                  type="checkbox"
+                  :checked="checked.has(r.foodsId)"
+                  :aria-label="catalog.foodName(r.foodsId)"
+                  :data-testid="`fut-check-${r.foodsId}`"
+                  @change="check(r.foodsId, ($event.target as HTMLInputElement).checked)"
+                />
+              </td>
+              <td class="dt-adm-mono dt-adm-mu">{{ r.foodsId }}</td>
+              <td>{{ catalog.foodName(r.foodsId) }}</td>
+              <td class="num">{{ r.level }}</td>
+              <td>
+                <span v-if="r.rare" class="dt-adm-tag is-w">稀有</span
+                ><span v-else class="dt-adm-mu">普通</span>
+              </td>
+              <td>
+                <span :class="['dt-adm-tag', r.enabled ? 'is-ok' : '']">{{ status(r) }}</span>
+              </td>
+              <td
+                class="num"
+                :data-testid="`fut-streets-${r.foodsId}`"
+                :title="r.streets.map((s) => catalog.streetName(s, String(s))).join('、')"
               >
-                改
-              </button>
-            </span>
-          </td>
-          <td>{{ r.ordered }}</td>
-        </tr>
-      </tbody>
-    </table>
+                {{ r.streets.length }}
+              </td>
+              <td class="num">{{ formatNum(r.ref) }}</td>
+              <td class="num">{{ formatNum(r.levelPrice) }}</td>
+              <td class="num">{{ formatNum(r.unitPrice) }}</td>
+              <td class="nowrap">
+                <span
+                  :class="{ 'dt-adm-mu': r.dailyQuota === null }"
+                  :data-testid="`fut-quota-${r.foodsId}`"
+                  >{{ r.dailyQuota ?? r.defaultQuota }}</span
+                >
+                <span v-if="admin.isAdmin" class="dt-adm-quota">
+                  <input
+                    :value="quotaInput.get(r.foodsId) ?? ''"
+                    type="number"
+                    min="0"
+                    class="dt-adm-in"
+                    placeholder="默认"
+                    aria-label="额度"
+                    :data-testid="`fut-quota-input-${r.foodsId}`"
+                    @input="quotaInput.set(r.foodsId, ($event.target as HTMLInputElement).value)"
+                  />
+                  <button
+                    type="button"
+                    class="dt-adm-btn is-s is-sm"
+                    :disabled="busy"
+                    :data-testid="`fut-quota-save-${r.foodsId}`"
+                    @click="saveQuota(r)"
+                  >
+                    改
+                  </button>
+                </span>
+              </td>
+              <td class="num">{{ r.ordered }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <AdmEmpty v-if="shown.length === 0" title="没有符合的食材" />
+    </AdmBox>
   </div>
 </template>

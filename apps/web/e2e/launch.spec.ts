@@ -36,9 +36,11 @@ test('上线检查：管理员一键改自己新建区服的开关；可疑数�
     await query(`update account set role = 'admin' where lower(username) = lower($1)`, [me.username]);
 
     await page.goto('/admin');
-    await expect(page.getByText(shardName, { exact: true })).toBeVisible();
-    page.once('dialog', (d) => void d.accept());
+    // 区服下拉里也有同名的选项：只在上线检查的表里找
+    await expect(page.locator('.dt-adm-launch').getByText(shardName, { exact: true })).toBeVisible();
+    // 确认在底部面板里（界面改版 P12，原来是浏览器确认框）
     await page.getByTestId(`launch-fix-${shardId}`).click();
+    await page.getByTestId('confirm-ok').click();
     await expect(page.getByText('已改成上线值')).toBeVisible();
     await expect(page.getByTestId(`launch-fix-${shardId}`)).toHaveCount(0);
 

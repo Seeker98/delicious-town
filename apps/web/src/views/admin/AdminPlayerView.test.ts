@@ -44,7 +44,10 @@ async function mountView(role: 'mod' | 'admin') {
     routes: [{ path: '/admin/players/:id', component: AdminPlayerView }],
   });
   await router.push('/admin/players/7');
-  const w = mount({ template: '<RouterView />' }, { global: { plugins: [router] } });
+  const w = mount(
+    { template: '<RouterView />' },
+    { global: { plugins: [router], stubs: { teleport: true } } },
+  );
   await flushPromises();
   return w;
 }
@@ -95,6 +98,8 @@ describe('AdminPlayerView', () => {
 
   it('封号要填原因；协管看不到改角色；协管只能选 1 天或 7 天（子项目 6B-1）', async () => {
     const w = await mountView('mod');
+    // 封号在面板里填（界面改版 P12）
+    await w.find('[data-testid="ban-open"]').trigger('click');
     const days = w.findAll('[data-testid="ban-days"] option').map((o) => o.attributes('value'));
     expect(days).toEqual(['1', '7']);
     expect(w.find('[data-testid="role-select"]').exists()).toBe(false);

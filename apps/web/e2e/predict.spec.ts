@@ -51,11 +51,12 @@ test('事件预测：出题、买入、判定、结算到账', async ({ page, re
 
     await page.goto('/predict');
     await page.getByTestId(`pd-event-${eventId}`).click();
+    // 详情页先点“买入是”，在底部面板里填份数（界面改版 P8）
+    await page.getByTestId('pd-buy-yes').click();
     await page.getByTestId('pd-qty').fill('10');
     await page.getByTestId('pd-submit').click();
-    await expect(page.getByText('买入是 10 份')).toBeVisible();
-    const afterBuy = (await overview()).coin;
-    expect(afterBuy).toBeLessThan(1_000_000);
+    // “买入是 10 份”也是面板按钮上的字：按银币变少确认买到了
+    await expect.poll(async () => (await overview()).coin, { timeout: 10_000 }).toBeLessThan(me.coin);
 
     const resolved = await page.request.post(`/api/v1/admin/predict/${eventId}/resolve`, {
       data: { outcome: true },

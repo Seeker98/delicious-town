@@ -28,14 +28,14 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
 </script>
 
 <template>
-  <div class="small fw-bold">积分规则</div>
+  <div class="dt-adm-lab">积分规则</div>
   <RuleRows :model-value="modelValue.rules" :errors="errors" @update:model-value="patch({ rules: $event })" />
 
-  <div class="small fw-bold">档位（奖励可以留空，但普通和进阶不能都空）</div>
+  <div class="dt-adm-lab">档位（奖励可以留空，但普通和进阶不能都空）</div>
   <div
     v-for="(l, i) in modelValue.levels"
     :key="levelKeys[i]"
-    class="border-bottom py-2"
+    class="dt-adm-sec"
     :data-testid="`level-row-${i}`"
   >
     <div class="d-flex gap-2 align-items-center">
@@ -43,14 +43,14 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
       <input
         type="number"
         min="1"
-        class="form-control form-control-sm"
+        class="dt-adm-in"
         style="width: 7rem"
         :value="l.points"
         @input="setLevel(i, { points: num($event) })"
       />
       <button
         type="button"
-        class="btn btn-sm btn-link text-danger"
+        class="dt-adm-btn is-t is-sm is-danger"
         :disabled="modelValue.levels.length <= 1"
         :data-testid="`level-del-${i}`"
         @click="removeLevel(i)"
@@ -58,14 +58,10 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
         删除这档
       </button>
     </div>
-    <div
-      v-if="err(`def.levels.${i}.points`)"
-      class="text-danger small"
-      :data-testid="`err-def.levels.${i}.points`"
-    >
+    <div v-if="err(`def.levels.${i}.points`)" class="dt-adm-err" :data-testid="`err-def.levels.${i}.points`">
       {{ err(`def.levels.${i}.points`) }}
     </div>
-    <div v-if="err(`def.levels.${i}`)" class="text-danger small" :data-testid="`err-def.levels.${i}`">
+    <div v-if="err(`def.levels.${i}`)" class="dt-adm-err" :data-testid="`err-def.levels.${i}`">
       {{ err(`def.levels.${i}`) }}
     </div>
     <div class="small mt-1">普通</div>
@@ -78,7 +74,7 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
     />
     <div
       v-if="errUnder(errors, `def.levels.${i}.free`)"
-      class="text-danger small"
+      class="dt-adm-err"
       :data-testid="`err-def.levels.${i}.free`"
     >
       {{ errUnder(errors, `def.levels.${i}.free`) }}
@@ -93,7 +89,7 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
     />
     <div
       v-if="errUnder(errors, `def.levels.${i}.premium`)"
-      class="text-danger small"
+      class="dt-adm-err"
       :data-testid="`err-def.levels.${i}.premium`"
     >
       {{ errUnder(errors, `def.levels.${i}.premium`) }}
@@ -101,20 +97,20 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
   </div>
   <button
     type="button"
-    class="btn btn-sm btn-outline-primary my-2"
+    class="dt-adm-btn is-sp is-sm dt-adm-my"
     :disabled="modelValue.levels.length >= 50"
     @click="addLevel"
   >
     加一档
   </button>
 
-  <div class="small fw-bold">解锁进阶的价格</div>
+  <div class="dt-adm-lab">解锁进阶的价格</div>
   <div class="d-flex gap-2 align-items-center">
     钻石
     <input
       type="number"
       min="0"
-      class="form-control form-control-sm"
+      class="dt-adm-in"
       style="width: 7rem"
       :value="modelValue.unlock.diamond ?? 0"
       @input="patch({ unlock: { ...modelValue.unlock, diamond: num($event) || undefined } })"
@@ -128,7 +124,7 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
       patch({ unlock: { ...modelValue.unlock, goods: $event.goods?.length ? $event.goods : undefined } })
     "
   />
-  <div v-if="errUnder(errors, 'def.unlock')" class="text-danger small" data-testid="err-def.unlock">
+  <div v-if="errUnder(errors, 'def.unlock')" class="dt-adm-err" data-testid="err-def.unlock">
     {{ errUnder(errors, 'def.unlock') }}
   </div>
 </template>

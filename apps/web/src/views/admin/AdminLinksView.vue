@@ -5,10 +5,16 @@ import { adminApi } from '../../api/admin';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
 import { useToastStore } from '../../stores/toast';
+import AdmBox from '../../components/admin/kit/AdmBox.vue';
+import AdmEmpty from '../../components/admin/kit/AdmEmpty.vue';
+import AdmField from '../../components/admin/kit/AdmField.vue';
+import AdmHead from '../../components/admin/kit/AdmHead.vue';
+import { useConfirmStore } from '../../stores/confirm';
 
 /** 后台友情链接（问题记录 348）：列表、新建、编辑、删除；排序小的在前 */
 const admin = useAdminStore();
 const toast = useToastStore();
+const confirm = useConfirmStore();
 const list = ref<AdminLinkDto[]>([]);
 const busy = ref(false);
 const editing = ref<number | null>(null);
@@ -64,7 +70,8 @@ async function save() {
 }
 
 async function remove(l: AdminLinkDto) {
-  if (!window.confirm(`删除友情链接「${l.name}」？`)) return;
+  const ok = await confirm.ask({ title: `删除友情链接「${l.name}」？`, ok: '删除', danger: true });
+  if (!ok) return;
   try {
     await adminApi.deleteLink(l.id);
     if (editing.value === l.id) reset();
@@ -76,94 +83,104 @@ async function remove(l: AdminLinkDto) {
 </script>
 
 <template>
-  <h5>友情链接</h5>
-  <p v-if="!admin.isAdmin" class="small text-muted">只有管理员能改友情链接，你可以查看列表。</p>
-  <form v-else class="small border rounded p-2 mb-3" @submit.prevent="save">
-    <div class="d-flex flex-wrap gap-2 mb-2">
-      <input
-        v-model="name"
-        class="form-control form-control-sm w-auto"
-        :maxlength="LINK_NAME_MAX"
-        :placeholder="`名字（≤ ${LINK_NAME_MAX} 字）`"
-        data-testid="ln-name"
-      />
-      <input
-        v-model="url"
-        class="form-control form-control-sm flex-fill"
-        :maxlength="LINK_URL_MAX"
-        placeholder="地址（https://…）"
-        data-testid="ln-url"
-      />
-      <label class="d-flex align-items-center gap-1"
-        >排序
-        <input
-          v-model.number="sort"
-          type="number"
-          class="form-control form-control-sm"
-          style="width: 80px"
-          data-testid="ln-sort"
-      /></label>
+  <div class="dt-adm-page">
+    <AdmHead title="友情链接" desc="帮助中心底部的友情链接; 排序小的在前" />
+    <div v-if="!admin.isAdmin" class="dt-adm-alert is-p">
+      <i class="bi bi-eye" aria-hidden="true"></i>
+      <div>只有管理员能改友情链接, 你可以查看列表。</div>
     </div>
-    <input
-      v-model="note"
-      class="form-control form-control-sm mb-2"
-      :maxlength="LINK_NOTE_MAX"
-      :placeholder="`一句介绍（可空，≤ ${LINK_NOTE_MAX} 字）`"
-      data-testid="ln-note"
-    />
-    <div class="d-flex gap-2">
-      <button
-        type="button"
-        class="btn btn-primary btn-sm"
-        :disabled="busy || !name.trim() || !url.trim()"
-        data-testid="ln-save"
-        @click="save"
-      >
-        {{ editing === null ? '添加' : '保存修改' }}
-      </button>
-      <button v-if="editing !== null" type="button" class="btn btn-outline-secondary btn-sm" @click="reset">
-        取消编辑
-      </button>
-    </div>
-  </form>
+    <AdmBox v-else :title="editing === null ? '加一个' : `修改 #${editing}`">
+      <form @submit.prevent="save">
+        <AdmField label="名字" :hint="`≤ ${LINK_NAME_MAX} 字`">
+          <input
+            v-model="name"
+            class="dt-adm-in dt-adm-w-lg"
+            :maxlength="LINK_NAME_MAX"
+            data-testid="ln-name"
+          />
+        </AdmField>
+        <AdmField label="地址">
+          <input
+            v-model="url"
+            class="dt-adm-in dt-adm-full"
+            :maxlength="LINK_URL_MAX"
+            placeholder="https://…"
+            data-testid="ln-url"
+          />
+        </AdmField>
+        <AdmField label="介绍" :hint="`可空, ≤ ${LINK_NOTE_MAX} 字`">
+          <input
+            v-model="note"
+            class="dt-adm-in dt-adm-full"
+            :maxlength="LINK_NOTE_MAX"
+            data-testid="ln-note"
+          />
+        </AdmField>
+        <AdmField label="排序" hint="小的在前">
+          <input v-model.number="sort" type="number" class="dt-adm-in dt-adm-w-xs" data-testid="ln-sort" />
+        </AdmField>
+        <AdmField>
+          <div class="dt-adm-line">
+            <button
+              type="button"
+              class="dt-adm-btn is-p"
+              :disabled="busy || !name.trim() || !url.trim()"
+              data-testid="ln-save"
+              @click="save"
+            >
+              {{ editing === null ? '添加' : '保存修改' }}
+            </button>
+            <button v-if="editing !== null" type="button" class="dt-adm-btn is-s" @click="reset">
+              取消编辑
+            </button>
+          </div>
+        </AdmField>
+      </form>
+    </AdmBox>
 
-  <table class="table table-sm small">
-    <thead>
-      <tr>
-        <th>排序</th>
-        <th>名字</th>
-        <th>地址</th>
-        <th>介绍</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="l in list" :key="l.id">
-        <td>{{ l.sort }}</td>
-        <td>{{ l.name }}</td>
-        <td class="text-break">{{ l.url }}</td>
-        <td>{{ l.note }}</td>
-        <td class="text-nowrap">
-          <template v-if="admin.isAdmin">
-            <button
-              type="button"
-              class="btn btn-sm btn-link py-0"
-              :data-testid="`ln-edit-${l.id}`"
-              @click="edit(l)"
-            >
-              编辑
-            </button>
-            <button
-              type="button"
-              class="btn btn-sm btn-outline-danger py-0"
-              :data-testid="`ln-delete-${l.id}`"
-              @click="remove(l)"
-            >
-              删除
-            </button>
-          </template>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <AdmBox title="全部链接" :sub="`${list.length} 个`" flush>
+      <div class="dt-adm-scroll">
+        <table v-if="list.length > 0" class="dt-adm-table">
+          <thead>
+            <tr>
+              <th class="num">排序</th>
+              <th>名字</th>
+              <th>地址</th>
+              <th>介绍</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="l in list" :key="l.id" :class="{ 'is-hl': editing === l.id }">
+              <td class="num dt-adm-mu">{{ l.sort }}</td>
+              <td>{{ l.name }}</td>
+              <td class="dt-adm-mono dt-adm-break">{{ l.url }}</td>
+              <td class="dt-adm-mu">{{ l.note }}</td>
+              <td class="acts">
+                <template v-if="admin.isAdmin">
+                  <button
+                    type="button"
+                    class="dt-adm-btn is-t is-sm"
+                    :data-testid="`ln-edit-${l.id}`"
+                    @click="edit(l)"
+                  >
+                    编辑
+                  </button>
+                  <button
+                    type="button"
+                    class="dt-adm-btn is-d is-sm"
+                    :data-testid="`ln-delete-${l.id}`"
+                    @click="remove(l)"
+                  >
+                    删除
+                  </button>
+                </template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <AdmEmpty v-else title="还没有友情链接" />
+      </div>
+    </AdmBox>
+  </div>
 </template>

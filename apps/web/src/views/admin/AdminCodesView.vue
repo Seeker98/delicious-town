@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { adminTime, fromGameInput } from '../../utils/gameInput';
+import { adminShort, fromGameInput } from '../../utils/gameInput';
 import { computed, onMounted, ref, watch } from 'vue';
 import type { AdminCodeDto, RewardItems } from '@dt/shared';
 import { adminApi } from '../../api/admin';
@@ -10,11 +10,17 @@ import { useAdminStore } from '../../stores/admin';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import { rewardSummary } from '../../utils/reward';
+import AdmBox from '../../components/admin/kit/AdmBox.vue';
+import AdmEmpty from '../../components/admin/kit/AdmEmpty.vue';
+import AdmField from '../../components/admin/kit/AdmField.vue';
+import AdmHead from '../../components/admin/kit/AdmHead.vue';
+import { useConfirmStore } from '../../stores/confirm';
 
 /** 后台兑换码（子项目 6A-2）：通用码、批量一次性码；批次按整批停用、导出 */
 const admin = useAdminStore();
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const confirm = useConfirmStore();
 
 const kind = ref<'shared' | 'single'>('shared');
 const code = ref('');
@@ -143,7 +149,13 @@ function downloadExport() {
 
 async function disable(c: AdminCodeDto) {
   const what = c.code ? `兑换码 ${c.code}` : `这一批 ${c.count} 个一次性码`;
-  if (!window.confirm(`停用${what}？停用后不能再兑换，已兑换的不追回。`)) return;
+  const ok = await confirm.ask({
+    title: `停用${what}？`,
+    body: '停用后不能再兑换, 已兑换的不追回。',
+    ok: '停用',
+    danger: true,
+  });
+  if (!ok) return;
   try {
     await adminApi.disableCode(c.id);
     await loadList();
@@ -154,7 +166,8 @@ async function disable(c: AdminCodeDto) {
 
 async function enable(c: AdminCodeDto) {
   const what = c.code ? `兑换码 ${c.code}` : `这一批 ${c.count} 个一次性码`;
-  if (!window.confirm(`重新启用${what}？启用后可以继续兑换。`)) return;
+  const ok = await confirm.ask({ title: `重新启用${what}？`, body: '启用后可以继续兑换。', ok: '启用' });
+  if (!ok) return;
   try {
     await adminApi.enableCode(c.id);
     await loadList();
@@ -163,191 +176,220 @@ async function enable(c: AdminCodeDto) {
   }
 }
 
-const fmt = (s: string | null) => (s ? adminTime(s) : '');
+const fmt = (s: string | null) => (s ? adminShort(s) : '');
 const period = (c: AdminCodeDto) =>
   c.startsAt || c.endsAt ? `${fmt(c.startsAt) || '现在'} ~ ${fmt(c.endsAt) || '不限'}` : '不限';
 </script>
 
 <template>
-  <h5>兑换码</h5>
-  <p v-if="!admin.isAdmin" class="small text-muted">只有管理员能建码，你可以查看记录。</p>
-  <form v-else class="small border rounded p-2 mb-3" @submit.prevent="create">
-    <div class="d-flex flex-wrap gap-2 mb-2 align-items-center">
-      <select v-model="kind" class="form-select form-select-sm w-auto" data-testid="code-kind">
-        <option value="shared">通用码（每家店一次）</option>
-        <option value="single">一次性码（批量生成）</option>
-      </select>
-      <template v-if="kind === 'shared'">
-        <input
-          v-model="code"
-          class="form-control form-control-sm w-auto"
-          maxlength="20"
-          placeholder="自定码（可空，空就随机）"
-          data-testid="code-text"
-        />
-        <input
-          v-model.number="maxUses"
-          type="number"
-          min="1"
-          class="form-control form-control-sm w-auto"
-          placeholder="总次数上限（可空）"
-          data-testid="code-max"
-        />
-      </template>
-      <input
-        v-else
-        v-model.number="count"
-        type="number"
-        min="1"
-        max="1000"
-        class="form-control form-control-sm w-auto"
-        placeholder="数量（1~1000）"
-        data-testid="code-count"
-      />
-      <select v-model="scope" class="form-select form-select-sm w-auto" data-testid="code-scope">
-        <option value="all">全部区服</option>
-        <option value="shard">当前区服</option>
-      </select>
-      <span v-if="noShard" class="text-danger" data-testid="code-scope-hint">请先在顶部选择区服</span>
-      <input
-        v-model.number="minLevel"
-        type="number"
-        min="1"
-        class="form-control form-control-sm w-auto"
-        placeholder="最低等级（可空）"
-        data-testid="code-min-level"
-      />
+  <div class="dt-adm-page">
+    <AdmHead title="兑换码" desc="通用码每家店能用一次; 一次性码批量生成, 每个只能用一次" />
+    <div v-if="!admin.isAdmin" class="dt-adm-alert is-p">
+      <i class="bi bi-eye" aria-hidden="true"></i>
+      <div>只有管理员能建码, 你可以查看记录。</div>
     </div>
-    <div class="d-flex flex-wrap gap-2 mb-2 align-items-center">
-      <label
-        >开始（北京时间）
-        <input
-          v-model="startsAt"
-          type="datetime-local"
-          class="form-control form-control-sm d-inline-block w-auto"
-          data-testid="code-starts"
-      /></label>
-      <label
-        >结束（北京时间）
-        <input
-          v-model="endsAt"
-          type="datetime-local"
-          class="form-control form-control-sm d-inline-block w-auto"
-          data-testid="code-ends"
-      /></label>
-    </div>
-    <input
-      v-model="note"
-      class="form-control form-control-sm mb-2"
-      maxlength="200"
-      placeholder="备注（运营自己看，≤ 200 字）"
-      data-testid="code-note"
-    />
-    <RewardItemsEditor :key="formKey" v-model="rewards" :hats="true" :icons="true" @over="over = $event" />
-    <div v-if="iconSharedHint" class="text-warning small mb-1" data-testid="code-icon-shared-hint">
-      共享码可以被转发，谁拿到都能兑换；称号只想给特定的人，请用一次性码。
-    </div>
-    <div v-if="iconUntilHint" class="text-warning small mb-1" data-testid="code-icon-until-hint">
-      兑换码截止前称号就过期了，过期后兑换会跳过称号（别的照发）。
-    </div>
-    <button
-      type="button"
-      class="btn btn-primary btn-sm"
-      :disabled="busy || !hasRewards || over.length > 0 || !countOk || noShard"
-      data-testid="code-create"
-      @click="create"
-    >
-      {{ kind === 'shared' ? '建码' : '批量生成' }}
-    </button>
-  </form>
-
-  <div v-if="exported" class="small border rounded p-2 mb-3">
-    <div class="d-flex align-items-center gap-2 mb-1">
-      <span class="flex-fill">批次 {{ exported.batchId }} 的全部兑换码</span>
-      <button type="button" class="btn btn-sm btn-outline-primary py-0" @click="copyExport">复制全部</button>
-      <button type="button" class="btn btn-sm btn-outline-primary py-0" @click="downloadExport">
-        下载 .txt
-      </button>
-      <button type="button" class="btn btn-sm btn-outline-secondary py-0" @click="exported = null">
-        关闭
-      </button>
-    </div>
-    <textarea
-      class="form-control form-control-sm font-monospace"
-      rows="6"
-      readonly
-      :value="exported.text"
-      data-testid="code-export-text"
-    ></textarea>
-  </div>
-
-  <form class="d-flex gap-2 mb-2 small" data-testid="code-search-form" @submit.prevent="loadList">
-    <input
-      v-model="search"
-      class="form-control form-control-sm w-auto"
-      maxlength="40"
-      placeholder="按码搜索（一次性码会列出整批）"
-      data-testid="code-search"
-    />
-    <button type="submit" class="btn btn-sm btn-outline-primary">搜索</button>
-  </form>
-  <table class="table table-sm small">
-    <thead>
-      <tr>
-        <th>码</th>
-        <th>范围</th>
-        <th>附件</th>
-        <th>已用</th>
-        <th>时间段</th>
-        <th>备注</th>
-        <th>操作人</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="c in list" :key="c.id" :class="{ 'text-muted': c.disabled }">
-        <td class="font-monospace">{{ c.code ?? `一次性码 ×${c.count}` }}</td>
-        <td>
-          {{ c.shardId ? `区服 ${c.shardId}` : '全部区服' }}{{ c.minLevel ? `（≥${c.minLevel} 级）` : '' }}
-        </td>
-        <td>{{ rewardSummary(c.items, catalog) }}</td>
-        <td>{{ c.usedCount }} / {{ c.code === null ? c.count : (c.maxUses ?? '不限') }}</td>
-        <td>{{ period(c) }}</td>
-        <td>{{ c.note }}</td>
-        <td>{{ c.actor ?? '系统' }}</td>
-        <td class="text-nowrap">
-          <span v-if="c.disabled">已停用</span>
-          <template v-if="admin.isAdmin">
-            <button
-              v-if="c.code === null && c.batchId !== null"
-              type="button"
-              class="btn btn-sm btn-outline-primary py-0 me-1"
-              :data-testid="`code-export-${c.id}`"
-              @click="showExport(c.batchId)"
-            >
-              导出
-            </button>
-            <button
-              v-if="c.disabled"
-              type="button"
-              class="btn btn-sm btn-outline-success py-0"
-              :data-testid="`code-enable-${c.id}`"
-              @click="enable(c)"
-            >
-              启用
-            </button>
-            <button
+    <AdmBox v-else title="建码">
+      <form @submit.prevent="create">
+        <AdmField label="种类">
+          <div class="dt-adm-line">
+            <select v-model="kind" class="dt-adm-in" data-testid="code-kind">
+              <option value="shared">通用码（每家店一次）</option>
+              <option value="single">一次性码（批量生成）</option>
+            </select>
+            <template v-if="kind === 'shared'">
+              <input
+                v-model="code"
+                class="dt-adm-in dt-adm-w-md is-mono"
+                maxlength="20"
+                placeholder="自定码 (可空, 空就随机)"
+                data-testid="code-text"
+              />
+              <input
+                v-model.number="maxUses"
+                type="number"
+                min="1"
+                class="dt-adm-in dt-adm-w-md"
+                placeholder="总次数上限 (可空)"
+                data-testid="code-max"
+              />
+            </template>
+            <input
               v-else
-              type="button"
-              class="btn btn-sm btn-outline-danger py-0"
-              :data-testid="`code-disable-${c.id}`"
-              @click="disable(c)"
+              v-model.number="count"
+              type="number"
+              min="1"
+              max="1000"
+              class="dt-adm-in dt-adm-w-md"
+              placeholder="数量 (1~1000)"
+              data-testid="code-count"
+            />
+          </div>
+        </AdmField>
+        <AdmField label="谁能用">
+          <div class="dt-adm-line">
+            <select v-model="scope" class="dt-adm-in" data-testid="code-scope">
+              <option value="all">全部区服</option>
+              <option value="shard">当前区服</option>
+            </select>
+            <input
+              v-model.number="minLevel"
+              type="number"
+              min="1"
+              class="dt-adm-in dt-adm-w-md"
+              placeholder="最低等级 (可空)"
+              data-testid="code-min-level"
+            />
+            <span v-if="noShard" class="dt-adm-bad dt-adm-small" data-testid="code-scope-hint"
+              >请先在顶部选择区服</span
             >
-              停用
-            </button>
+          </div>
+        </AdmField>
+        <AdmField label="时间段" hint="北京时间, 可空">
+          <div class="dt-adm-line">
+            <input
+              v-model="startsAt"
+              type="datetime-local"
+              class="dt-adm-in"
+              aria-label="开始"
+              data-testid="code-starts"
+            />
+            <span class="dt-adm-mu">–</span>
+            <input
+              v-model="endsAt"
+              type="datetime-local"
+              class="dt-adm-in"
+              aria-label="结束"
+              data-testid="code-ends"
+            />
+          </div>
+        </AdmField>
+        <AdmField label="备注" hint="运营自己看, ≤ 200 字">
+          <input v-model="note" class="dt-adm-in dt-adm-full" maxlength="200" data-testid="code-note" />
+        </AdmField>
+        <AdmField label="附件">
+          <RewardItemsEditor
+            :key="formKey"
+            v-model="rewards"
+            :hats="true"
+            :icons="true"
+            @over="over = $event"
+          />
+          <template v-if="iconSharedHint || iconUntilHint" #help>
+            <div v-if="iconSharedHint" class="dt-adm-warn" data-testid="code-icon-shared-hint">
+              共享码可以被转发, 谁拿到都能兑换; 称号只想给特定的人, 请用一次性码。
+            </div>
+            <div v-if="iconUntilHint" class="dt-adm-warn" data-testid="code-icon-until-hint">
+              兑换码截止前称号就过期了, 过期后兑换会跳过称号（别的照发）。
+            </div>
           </template>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+        </AdmField>
+        <AdmField>
+          <button
+            type="button"
+            class="dt-adm-btn is-p"
+            :disabled="busy || !hasRewards || over.length > 0 || !countOk || noShard"
+            data-testid="code-create"
+            @click="create"
+          >
+            {{ kind === 'shared' ? '建码' : '批量生成' }}
+          </button>
+        </AdmField>
+      </form>
+    </AdmBox>
+
+    <AdmBox v-if="exported" :title="`批次 ${exported.batchId} 的全部兑换码`">
+      <template #right>
+        <button type="button" class="dt-adm-btn is-sp is-sm" @click="copyExport">复制全部</button>
+        <button type="button" class="dt-adm-btn is-sp is-sm" @click="downloadExport">下载 .txt</button>
+        <button type="button" class="dt-adm-btn is-s is-sm" @click="exported = null">关闭</button>
+      </template>
+      <textarea
+        class="dt-adm-in is-mono dt-adm-full"
+        rows="6"
+        readonly
+        :value="exported.text"
+        data-testid="code-export-text"
+      ></textarea>
+    </AdmBox>
+
+    <form class="dt-adm-fbar" data-testid="code-search-form" @submit.prevent="loadList">
+      <input
+        v-model="search"
+        class="dt-adm-in dt-adm-w-lg"
+        type="search"
+        maxlength="40"
+        placeholder="按码搜索 (一次性码会列出整批)"
+        data-testid="code-search"
+      />
+      <button type="submit" class="dt-adm-btn is-sp">搜索</button>
+      <span class="dt-adm-fbar-r">{{ list.length }} 条</span>
+    </form>
+    <AdmBox flush>
+      <div class="dt-adm-scroll">
+        <table v-if="list.length > 0" class="dt-adm-table">
+          <thead>
+            <tr>
+              <th>码</th>
+              <th>范围</th>
+              <th>附件</th>
+              <th class="num">已用</th>
+              <th>时间段</th>
+              <th>备注</th>
+              <th>操作人</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="c in list" :key="c.id" :class="{ 'is-off': c.disabled }">
+              <td class="dt-adm-mono nowrap">{{ c.code ?? `一次性码 ×${c.count}` }}</td>
+              <td class="nowrap">
+                {{ c.shardId ? `区服 ${c.shardId}` : '全部区服'
+                }}{{ c.minLevel ? ` (≥ ${c.minLevel} 级)` : '' }}
+              </td>
+              <td>{{ rewardSummary(c.items, catalog) }}</td>
+              <td class="num nowrap">
+                {{ c.usedCount }} / {{ c.code === null ? c.count : (c.maxUses ?? '不限') }}
+              </td>
+              <td class="dt-adm-mu">{{ period(c) }}</td>
+              <td class="dt-adm-mu">{{ c.note }}</td>
+              <td class="dt-adm-mu">{{ c.actor ?? '系统' }}</td>
+              <td class="acts">
+                <span v-if="c.disabled" class="dt-adm-tag">已停用</span>
+                <template v-if="admin.isAdmin">
+                  <button
+                    v-if="c.code === null && c.batchId !== null"
+                    type="button"
+                    class="dt-adm-btn is-t is-sm"
+                    :data-testid="`code-export-${c.id}`"
+                    @click="showExport(c.batchId)"
+                  >
+                    导出
+                  </button>
+                  <button
+                    v-if="c.disabled"
+                    type="button"
+                    class="dt-adm-btn is-s is-sm"
+                    :data-testid="`code-enable-${c.id}`"
+                    @click="enable(c)"
+                  >
+                    启用
+                  </button>
+                  <button
+                    v-else
+                    type="button"
+                    class="dt-adm-btn is-d is-sm"
+                    :data-testid="`code-disable-${c.id}`"
+                    @click="disable(c)"
+                  >
+                    停用
+                  </button>
+                </template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <AdmEmpty v-else title="没有兑换码" text="建一个, 或者换个词搜" />
+      </div>
+    </AdmBox>
+  </div>
 </template>

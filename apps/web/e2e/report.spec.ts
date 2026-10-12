@@ -47,8 +47,9 @@ test('举报公告 → 管理员处理 → 公告清空、举报人收到结果�
   await pageC.goto('/admin/reports');
   await pageC.getByText(notice).first().click();
   await pageC.getByTestId('report-note').fill('广告');
-  pageC.once('dialog', (d) => void d.accept());
+  // 确认在底部面板里（界面改版 P12，原来是浏览器确认框）
   await pageC.getByTestId('report-resolve').click();
+  await pageC.getByTestId('confirm-ok').click();
   await expect(pageC.getByText('已处理')).toBeVisible();
 
   await page.goto('/mail');

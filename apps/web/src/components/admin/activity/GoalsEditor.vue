@@ -26,18 +26,13 @@ function add() {
 <template>
   <button
     type="button"
-    class="btn btn-sm btn-outline-secondary mb-2"
+    class="dt-adm-btn is-s is-sm dt-adm-mb"
     data-testid="ac-signin-template"
     @click="template"
   >
     签到模板
   </button>
-  <div
-    v-for="(g, i) in modelValue.goals"
-    :key="keys[i]"
-    class="border-bottom py-2"
-    :data-testid="`goal-row-${i}`"
-  >
+  <div v-for="(g, i) in modelValue.goals" :key="keys[i]" class="dt-adm-sec" :data-testid="`goal-row-${i}`">
     <GoalRow
       :goal="g"
       :path="`def.goals.${i}`"
@@ -47,7 +42,7 @@ function add() {
     />
     <button
       type="button"
-      class="btn btn-sm btn-link text-danger p-0"
+      class="dt-adm-btn is-t is-sm is-danger"
       :disabled="modelValue.goals.length <= 1"
       :data-testid="`goal-del-${i}`"
       @click="remove(i)"
@@ -57,7 +52,7 @@ function add() {
   </div>
   <button
     type="button"
-    class="btn btn-sm btn-outline-primary mt-2"
+    class="dt-adm-btn is-sp is-sm dt-adm-mt-sm"
     :disabled="modelValue.goals.length >= 20"
     @click="add"
   >

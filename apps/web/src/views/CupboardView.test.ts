@@ -285,7 +285,7 @@ describe('CupboardView', () => {
   it('切到英语后橱柜页是英文（问题记录 272）（界面改版 P6）', async () => {
     const pinia = getActivePinia()!;
     await useLocaleStore().set('en');
-    // 加载语言包期间别的计时器可能把活动 Pinia 换成旧的（见 LangSelect.test），挂载前换回来
+    // 加载语言包期间别的计时器可能把活动 Pinia 换成旧的（见 LangSheet.test），挂载前换回来
     setActivePinia(pinia);
     try {
       const w = mountView();

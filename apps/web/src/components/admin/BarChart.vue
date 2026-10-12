@@ -1,34 +1,20 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { formatNum } from '../../utils/format';
 
-const props = withDefaults(
-  defineProps<{ bars: Array<{ label: string; value: number }>; height?: number }>(),
-  {
-    height: 160,
-  },
-);
-
-const W = 600;
+/** 柱状图（界面改版 P12）：柱顶写数，下面写区间；柱子一个颜色（紫） */
+const props = defineProps<{ bars: Array<{ label: string; value: number }> }>();
 const max = computed(() => Math.max(1, ...props.bars.map((b) => b.value)));
-const bw = computed(() => (W - 20) / Math.max(1, props.bars.length));
-const h = (v: number) => ((props.height - 40) * v) / max.value;
+/** 柱高按比例，最低 1%：数是 0 时也留一条细线 */
+const pct = (v: number) => `${Math.max(1, (v / max.value) * 100)}%`;
 </script>
 
 <template>
-  <svg :viewBox="`0 0 ${W} ${height}`" class="w-100" role="img" data-testid="bar-chart">
-    <g v-for="(b, i) in bars" :key="b.label">
-      <rect
-        data-testid="bar"
-        :x="10 + i * bw + 2"
-        :width="Math.max(1, bw - 4)"
-        :y="height - 20 - h(b.value)"
-        :height="h(b.value)"
-        fill="#0d6efd"
-      />
-      <text :x="10 + i * bw + bw / 2" :y="height - 6" font-size="10" text-anchor="middle">{{ b.label }}</text>
-      <text :x="10 + i * bw + bw / 2" :y="height - 24 - h(b.value)" font-size="10" text-anchor="middle">
-        {{ b.value }}
-      </text>
-    </g>
-  </svg>
+  <div class="dt-adm-bars" role="img" data-testid="bar-chart">
+    <div v-for="b in bars" :key="b.label" class="dt-adm-bar">
+      <b>{{ formatNum(b.value) }}</b>
+      <div class="dt-adm-bar-col"><i data-testid="bar" :style="{ height: pct(b.value) }"></i></div>
+      <span>{{ b.label }}</span>
+    </div>
+  </div>
 </template>

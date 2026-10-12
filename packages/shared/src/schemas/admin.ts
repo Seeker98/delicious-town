@@ -81,15 +81,16 @@ export interface PlayerBriefDto {
   role: AccountRole;
   banned: boolean;
   restaurants: PlayerRestaurantBriefDto[];
+  /** 搜索结果也写邮箱验没验证、注册时间、封号到哪天（界面改版 P12 玩家列表） */
+  emailVerified: boolean;
+  /** 封号到期时间；永久封号或没封为 null（子项目 6B-1） */
+  bannedUntil: string | null;
+  createdAt: string;
 }
 
 export interface PlayerDetailDto extends PlayerBriefDto {
-  emailVerified: boolean;
   bannedAt: string | null;
-  /** 封号到期时间；永久封号或没封为 null（子项目 6B-1） */
-  bannedUntil: string | null;
   banReason: string | null;
-  createdAt: string;
 }
 
 export interface AdminRestaurantDto {
@@ -242,6 +243,8 @@ export interface SettlementRoundDto {
 export const auditQuery = pageQuery.extend({
   actor: z.string().trim().max(32).optional(),
   action: z.string().trim().max(64).optional(),
+  /** 只看最近几天（界面改版 P12 审计页的时间筛选） */
+  days: z.coerce.number().int().min(1).max(366).optional(),
 });
 
 export interface AuditRowDto {

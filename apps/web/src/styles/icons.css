@@ -1,5 +1,5 @@
 /*! Bootstrap Icons v1.13.1 | Copyright 2019-2024 The Bootstrap Authors | MIT License | https://github.com/twbs/icons/blob/main/LICENSE */
-/* 由 scripts/gen-icons.mjs 生成，别手改：只含网页用到的 42 个图标 */
+/* 由 scripts/gen-icons.mjs 生成，别手改：只含网页用到的 45 个图标 */
 
 @font-face {
   font-display: block;
@@ -48,8 +48,10 @@
 .bi-gift::before { content: "\f3ec"; }
 .bi-hand-thumbs-down::before { content: "\f405"; }
 .bi-hand-thumbs-up::before { content: "\f407"; }
+.bi-info-circle::before { content: "\f431"; }
 .bi-lightning::before { content: "\f46f"; }
 .bi-lightning-charge::before { content: "\f46d"; }
+.bi-list::before { content: "\f479"; }
 .bi-lock::before { content: "\f47b"; }
 .bi-lock-fill::before { content: "\f47a"; }
 .bi-megaphone::before { content: "\f484"; }
@@ -59,6 +61,7 @@
 .bi-pin-angle::before { content: "\f4eb"; }
 .bi-plus-lg::before { content: "\f64d"; }
 .bi-search::before { content: "\f52a"; }
+.bi-slash-circle::before { content: "\f567"; }
 .bi-star::before { content: "\f588"; }
 .bi-stars::before { content: "\f589"; }
 .bi-three-dots::before { content: "\f5d4"; }
