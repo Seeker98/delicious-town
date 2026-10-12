@@ -1,5 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils';
-import { createPinia, setActivePinia } from 'pinia';
+import { createPinia, setActivePinia, type Pinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ExchangeBookDto, ExchangeMeDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -66,14 +66,20 @@ const me = (p: Partial<ExchangeMeDto> = {}): ExchangeMeDto => ({
   ...p,
 });
 /** 盘口、我的挂单、规则都在 Teleport 到 body 的底部面板里：测试里把 teleport 桩掉，内容留在 wrapper 里（界面改版 P8） */
-const mountView = () => mount(ExchangeView, { global: { stubs: { teleport: true } } });
+/**
+ * 这个用例自己的 Pinia：组件和断言都用它，不依赖“当前 Pinia”
+ *（CI 上偶发：前面用例的计时器把当前 Pinia 换掉，断言读到另一个空的提示列表）
+ */
+let pinia: Pinia;
+const mountView = () => mount(ExchangeView, { global: { plugins: [pinia], stubs: { teleport: true } } });
 const inputValue = (w: ReturnType<typeof mountView>, id: string) =>
   (w.get(`[data-testid="${id}"]`).element as HTMLInputElement).value;
 
 describe('ExchangeView（156-1 设计 §8）', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    setActivePinia(createPinia());
+    pinia = createPinia();
+    setActivePinia(pinia);
     useCatalogStore().apply({
       version: 'x',
       goods: [],
@@ -199,7 +205,7 @@ describe('ExchangeView（156-1 设计 §8）', () => {
     await w.get('[data-testid="ex-sys-submit"]').trigger('click');
     await flushPromises();
     expect(endpoints.tradeSellSystem).toHaveBeenCalledWith({ foodsId: 11, price: 380, qty: 3 });
-    expect(useToastStore().items.at(-1)!.text).toContain('卖给系统 3 个');
+    expect(useToastStore(pinia).items.at(-1)!.text).toContain('卖给系统 3 个');
     expect(endpoints.tradeBook).toHaveBeenCalledTimes(2);
   });
 
@@ -322,7 +328,8 @@ describe('ExchangeView（156-1 设计 §8）', () => {
 describe('终审：交易所页的选食材和取出提示', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    setActivePinia(createPinia());
+    pinia = createPinia();
+    setActivePinia(pinia);
     useCatalogStore().apply({
       version: 'x',
       goods: [],
@@ -371,7 +378,7 @@ describe('终审：交易所页的选食材和取出提示', () => {
     await flushPromises();
     await w.find('[data-testid="ex-food-11"]').trigger('click');
     await flushPromises();
-    expect(useToastStore().items.map((x) => x.text)).toContain('读取盘口失败');
+    expect(useToastStore(pinia).items.map((x) => x.text)).toContain('读取盘口失败');
   });
 
   it('取出时有放不下的：提示留在交易所账户', async () => {
@@ -384,14 +391,17 @@ describe('终审：交易所页的选食材和取出提示', () => {
     await flushPromises();
     await w.find('[data-testid="ex-withdraw"]').trigger('click');
     await flushPromises();
-    expect(useToastStore().items.map((x) => x.text)).toContain('已取出；还有 3 个食材放不下, 留在交易所账户');
+    expect(useToastStore(pinia).items.map((x) => x.text)).toContain(
+      '已取出；还有 3 个食材放不下, 留在交易所账户',
+    );
   });
 });
 
 describe('交易所页的防作弊提示（156-2）', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    setActivePinia(createPinia());
+    pinia = createPinia();
+    setActivePinia(pinia);
     useCatalogStore().apply({
       version: 'x',
       goods: [],
@@ -449,7 +459,7 @@ describe('交易所页的防作弊提示（156-2）', () => {
     await w.find('[data-testid="ex-qty"]').setValue('2');
     await w.find('[data-testid="ex-submit"]').trigger('click');
     await flushPromises();
-    expect(useToastStore().items.map((x) => x.text)).toContain(
+    expect(useToastStore(pinia).items.map((x) => x.text)).toContain(
       '已成交 2 个, 其中有可疑成交, 所得冻结 24 小时',
     );
   });
@@ -458,7 +468,8 @@ describe('交易所页的防作弊提示（156-2）', () => {
 describe('backlog 长尾第 3 批：交易所页面不写死数字', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    setActivePinia(createPinia());
+    pinia = createPinia();
+    setActivePinia(pinia);
     useCatalogStore().apply({
       version: 'x',
       goods: [],
@@ -512,7 +523,7 @@ describe('backlog 长尾第 3 批：交易所页面不写死数字', () => {
     await w.find('[data-testid="ex-qty"]').setValue('2');
     await w.find('[data-testid="ex-submit"]').trigger('click');
     await flushPromises();
-    expect(useToastStore().items.map((x) => x.text)).toContain(
+    expect(useToastStore(pinia).items.map((x) => x.text)).toContain(
       '已成交 2 个, 其中有可疑成交, 所得冻结 48 小时',
     );
   });
@@ -536,7 +547,8 @@ describe('backlog 长尾第 3 批：交易所页面不写死数字', () => {
 describe('终审 I2：冷静期已过的所得能取出', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    setActivePinia(createPinia());
+    pinia = createPinia();
+    setActivePinia(pinia);
     useCatalogStore().apply({
       version: 'x',
       goods: [],
