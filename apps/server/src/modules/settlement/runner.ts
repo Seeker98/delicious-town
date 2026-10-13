@@ -5,6 +5,7 @@ import { featureAvailable } from '../../core/features';
 import { opNews, restLog, runSystemOp, setRest, type Op } from '../../core/op';
 import { gainCoin, gainExp, gainRenown } from '../../core/resources';
 import { subFoods } from '../cupboard/foods';
+import { cookInSeason, perPortion } from '../shiling/rules';
 import { accrueShiling } from '../shiling/store';
 import { consumeSpecial } from '../mysterious/cook';
 import { npcTableRound } from '../npc/npc';
@@ -108,9 +109,9 @@ export async function settleOne(
             'level',
             'grade',
             'left_num',
-            'shiling',
             'shiling_acc',
             'shiling_pts',
+            'shiling_per',
           ])
           .where('id', '=', op.rest.mc_cook_id)
           .executeTakeFirst();
@@ -161,8 +162,25 @@ export async function settleOne(
     await subFoods(op, f.foodsId, f.num, { source: 'settlement.cookfoods', event: false });
   if (cook && r.specialUsed > 0) {
     await consumeSpecial(op, cook.id, r.specialUsed, 'sold');
-    // 时令（天气改版设计 §3.3）：应时的一批，顾客吃掉的份数攒时令值；暴雨、虹按天气的 shilingRate 加成
-    if (cook.shiling) await accrueShiling(op, cook, r.specialUsed, g.weather.shilingRate ?? 0);
+    // 时令（时令值改法 2026-10-13）：本轮生效天气当令这道菜的道，挑剔顾客和章鱼哥吃掉的份数攒时令值；
+    // 暴雨、虹按天气的 shilingRate 加成。迁移 0077 之前下锅的批次没有每份点数，按配置现算
+    const mc = op.config.mysterious.get(cook.mc_id);
+    if (
+      mc &&
+      r.specialPicky > 0 &&
+      cookInSeason(g.tuning.shiling, op.rest.star_level, g.weatherId, mc.road)
+    ) {
+      const per =
+        cook.shiling_per ??
+        perPortion(
+          g.tuning.shiling,
+          g.tuning.mysterious,
+          g.tuning.market,
+          mc.foods.map((f) => op.config.requireFood(f)),
+          cook.grade,
+        );
+      await accrueShiling(op, cook, r.specialPicky, per, g.weather.shilingRate ?? 0);
+    }
   }
   for (const l of r.logs) restLog(op, l.type, l.params);
   if (r.planktonAppeared) opNews(op, 'plankton.appear');
@@ -224,6 +242,7 @@ export async function settleShardRound(
   }
   const globals = buildGlobals(d.config, settings.tuning, {
     weather: snap.weather.effects,
+    weatherId: snap.weather.id,
     krabStreet: snap.krabStreet,
     planktonRestId: snap.planktonRestId,
     holidayMultiplier: d.config.holidayMultiplier(now),

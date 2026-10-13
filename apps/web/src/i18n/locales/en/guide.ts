@@ -151,7 +151,7 @@ const guide: Messages['guide'] = {
       a: [
         'From 1★. Each weather puts two signature-dish paths in season (see the season chart on the ',
         { to: '/weather', text: 'weather page' },
-        '). Cook while your path is in season and the whole batch is seasonal until it sells out, even if the weather changes. Each seasonal serving a customer eats earns dish level × grade bonus ÷ 10 points; thrown-away and tasted servings don’t count. Rainstorm gives +25%, Rainbow +10%.',
+        '). While the dish on sale is in season, each serving picky customers or Squidward eat earns seasonal points, judged by the weather of that round, so it follows weather changes; servings eaten by regular customers, thrown away or tasted don’t count. Points per serving follow the dish’s ingredient prices: about 1 point per 1,100 coins of ingredients, a bit more at higher grades. Rainstorm gives +25%, Rainbow +10%. Seasonal points above 500 decay by 1% a day.',
         'Spend them at the seasonal shop on the weather page on dish fragments, Sky Compasses and Weather Lots (restocks every Monday); picking a trial dish at the temple also costs seasonal points.',
       ],
     },

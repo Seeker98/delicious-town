@@ -77,7 +77,10 @@ export interface TableOutcome {
   drops: Drop[];
   logs: SettleLog[];
   candidates: Candidate[];
+  /** 本轮吃掉的特色菜份数（扣库存） */
   specialUsed: number;
+  /** 其中挑剔顾客和章鱼哥吃掉的（时令值改法 2026-10-13：只有这些攒时令值，普通顾客顺便吃的不算） */
+  specialPicky: number;
   planktonAppeared: boolean;
 }
 
@@ -140,6 +143,7 @@ export function allocateTables(
     logs: [],
     candidates: [],
     specialUsed: 0,
+    specialPicky: 0,
     planktonAppeared: false,
   };
   const count = (type: number) => {
@@ -154,6 +158,7 @@ export function allocateTables(
     const n = Math.min(portions, special.leftNum);
     special.leftNum -= n;
     out.specialUsed += n;
+    if (!normal) out.specialPicky += n;
     // 卖出倍率按特色菜等级（问题记录 412）：只在这里乘，赛厨的“养”、品尝等用原价
     const sale = g.tuning.mysterious.saleRates[special.level - 1] ?? 1;
     return {
@@ -277,6 +282,7 @@ export function allocateTables(
         const n = Math.min(t.squidwardPortions, special.leftNum);
         special.leftNum -= n;
         out.specialUsed += n;
+        out.specialPicky += n;
         mcNum += n;
         if (flags.flute) {
           exp = special.price * t.squidwardPortions * (1 + flags.mcCoinRate);

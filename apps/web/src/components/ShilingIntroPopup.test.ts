@@ -31,7 +31,7 @@ describe('ShilingIntroPopup（时令说明弹窗，设计图 Sl-E）', () => {
     expect((await mountPopup(false)).w.find('[data-testid="shiling-intro"]').exists()).toBe(false);
     const { w } = await mountPopup(true);
     const steps = w.findAll('[data-testid="shiling-intro"] li');
-    expect(steps.map((x) => x.find('b').text())).toEqual(['看当令', '当令时下锅', '攒时令值']);
+    expect(steps.map((x) => x.find('b').text())).toEqual(['看当令', '卖当令的菜', '攒时令值']);
   });
 
   it('“知道了”关掉并记看过；“去天气页看看”跳到天气页', async () => {

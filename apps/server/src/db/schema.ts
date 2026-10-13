@@ -578,11 +578,13 @@ export interface McCookTable {
   ended_at: TsNullable;
   /** sold / dumped / eaten */
   end_reason: Nullable<string>;
-  /** 下锅那一刻当令（天气改版设计 §3.2）：整批应时，顾客吃掉的份数攒时令值 */
+  /** 下锅那一刻当令（天气改版设计 §3.2）；时令值改法（2026-10-13）之后不再读，应时按吃的那一轮判 */
   shiling: Default<boolean>;
   /** 顾客吃掉的份数累计的点数（带小数）和已经入账的整数部分 */
   shiling_acc: Default<number>;
   shiling_pts: Default<number>;
+  /** 下锅时算好的每份时令值（时令值改法 2026-10-13）；迁移 0077 之前下锅的为空，入账时按配置现算 */
+  shiling_per: Nullable<number>;
 }
 
 export interface McEatTable {

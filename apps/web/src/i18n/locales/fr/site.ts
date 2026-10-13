@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    shiling1014:
+      'Refonte des points de saison\u202f: seules les parts mangées par les clients difficiles et par Carlo rapportent des points de saison, et non plus celles des clients ordinaires\u202f; un plat est de saison selon la météo du tour où il est mangé, et non plus à la cuisson\u202f; les points par part suivent le prix des ingrédients du plat, environ 1 point pour 1\u202f100 pièces d’ingrédients\u202f; au-delà de 500, les points de saison baissent de 1\u202f% par jour',
     mccut1013:
       'Nettoyage des plats signature\u202f: 27 plats signature retirés (10 plats vides sans ingrédients, et les 17 plats de la voie des bêtes qui demandaient des ingrédients niv. 6)\u202f; il en reste 250. Sans plats de la voie des bêtes, la météo spéciale (arc-en-ciel, ouragan, pluie acide, orage violent, grand gel) met désormais les six voies de saison',
     cuts41013:

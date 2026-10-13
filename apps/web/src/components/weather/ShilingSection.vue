@@ -9,7 +9,7 @@ import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
-import { formatNum, timeHM } from '../../utils/format';
+import { formatNum, formatPct, timeHM } from '../../utils/format';
 import RemnantSheet from './RemnantSheet.vue';
 import SeasonTableSheet from './SeasonTableSheet.vue';
 import ShilingWeekSheet from './ShilingWeekSheet.vue';
@@ -94,6 +94,9 @@ async function buy(item: ShilingItem, mcId?: number) {
         <div class="dt-sl-num">
           <span class="dt-sl-num-k"><DtArt name="res-shiling" :size="14" />{{ sl.balance }}</span>
           <b data-testid="shiling-balance">{{ formatNum(data.balance) }}</b>
+          <span class="dt-sl-num-sub" data-testid="shiling-decay">{{
+            sl.decay(formatPct(data.decay.rate, { digits: 0 }), formatNum(data.decay.floor))
+          }}</span>
         </div>
         <div class="dt-sl-num">
           <span class="dt-sl-num-k">{{ sl.weekGain }}</span>

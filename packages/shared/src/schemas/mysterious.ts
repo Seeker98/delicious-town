@@ -35,8 +35,7 @@ export interface McCookDto {
   luck: boolean;
   eatCount: number;
   createdAt: string;
-  /** 应时（天气改版设计 §3.2）：下锅那一刻当令；shilingPts 这一批已经攒下的时令值 */
-  shiling: boolean;
+  /** 这一批已经攒下的时令值（时令值改法 2026-10-13：挑剔顾客、章鱼哥在当令的那一轮吃掉才攒） */
   shilingPts: number;
 }
 
@@ -75,8 +74,10 @@ export interface McOverviewDto {
   cookNums: number[];
   /** 持有特色菜鉴定师时是它（鉴定 +5%，天气改版 PR③）；没有为 null */
   jobCard: number | null;
-  /** 现在的当令（已学列表标当令、下锅面板写是否应时） */
+  /** 现在的当令（已学列表、在售的标当令，下锅面板写现在是否当令） */
   season: SeasonDto;
+  /** 当令表（同时令区）：下锅面板列出这道菜当令的天气 */
+  seasonTable: Array<{ ids: number[]; roads: number[] }>;
 }
 
 export interface AppraiseResultDto {

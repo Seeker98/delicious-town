@@ -89,6 +89,7 @@ export function settleRestaurant(input: SettleInput, g: SettleGlobals, rng: Rng)
       renown: 0,
       foodsUsed: [],
       specialUsed: 0,
+      specialPicky: 0,
       logs: [],
       planktonAppeared: false,
     };
@@ -120,6 +121,7 @@ export function settleRestaurant(input: SettleInput, g: SettleGlobals, rng: Rng)
     renown,
     foodsUsed,
     specialUsed: o.specialUsed,
+    specialPicky: o.specialPicky,
     logs: o.logs,
     planktonAppeared: o.planktonAppeared,
   };

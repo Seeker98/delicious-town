@@ -78,15 +78,16 @@ const mc: Messages['mc'] = {
   season: {
     now: (roads) => `In season now: ${roads}`,
     roadTag: (road) => `${road} · in season`,
-    shiling: 'Seasonal',
+    shiling: 'In season',
     pts: (n) => ` · earned ${n} seasonal points`,
-    note: 'The batch on sale was decided when it was cooked: a weather change doesn’t affect it.',
-    yes: 'Seasonal if cooked now',
+    note: 'The batch on sale earns seasonal points only when picky customers eat it while its path is in season; it follows the weather.',
+    yes: 'In season now',
     yesText: (weather, road) =>
-      ` · ${weather}: ${road} is in season. Every serving customers eat before it sells out earns seasonal points.`,
-    no: 'Not seasonal if cooked now',
+      ` · ${weather}: ${road} is in season. Every serving picky customers eat now earns seasonal points; after a weather change the new weather counts.`,
+    no: 'Not in season now',
     noText: (road, weather, roads, hour, type, same, sure) =>
       ` · ${road}; ${weather} puts ${roads} in season. The weather changes at ${hour}:00 and will ${sure ? 'probably' : 'maybe'} ${same ? 'stay' : 'turn'} ${type.toLowerCase()}.`,
+    weathers: (names, special) => `In season for this dish: ${names}, and ${special.toLowerCase()}`,
   },
 };
 export default mc;

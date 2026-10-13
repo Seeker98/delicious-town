@@ -40,6 +40,8 @@ export interface SettleInput {
 
 export interface SettleGlobals {
   weather: Record<string, number>;
+  /** 本轮生效天气（道具盖着按盖的）：时令按吃的那一轮判；没有天气（测试）为 0 */
+  weatherId: number;
   krabStreet: number | null;
   planktonRestId: number | null;
   holidayMultiplier: number;
@@ -112,6 +114,8 @@ export interface SettleResult {
   renown: number;
   foodsUsed: Array<{ foodsId: number; num: number }>;
   specialUsed: number;
+  /** 其中挑剔顾客和章鱼哥吃掉的：只有这些攒时令值 */
+  specialPicky: number;
   logs: SettleLog[];
   planktonAppeared: boolean;
 }

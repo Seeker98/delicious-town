@@ -80,13 +80,14 @@ const mc: Messages['mc'] = {
     roadTag: (road) => `${road} · de temporada`,
     shiling: 'De temporada',
     pts: (n) => ` · ${n} puntos de temporada ganados`,
-    note: 'La tanda en venta se decidió al cocinarla: un cambio de clima no la afecta.',
-    yes: 'De temporada si cocinas ahora',
+    note: 'La tanda en venta solo da puntos de temporada cuando la comen clientes exigentes mientras su vía está de temporada; sigue al clima.',
+    yes: 'De temporada ahora',
     yesText: (weather, road) =>
-      ` · ${weather}: la ${road.toLowerCase()} está de temporada. Cada ración que se coman antes de agotarse da puntos de temporada.`,
-    no: 'No es de temporada si cocinas ahora',
+      ` · ${weather}: la ${road.toLowerCase()} está de temporada. Cada ración que se coman ahora los clientes exigentes da puntos de temporada; si cambia el clima, cuenta el nuevo.`,
+    no: 'No es de temporada ahora',
     noText: (road, weather, roads, hour, type, same, sure) =>
       ` · ${road}; con ${weather.toLowerCase()} están de temporada ${roads}. El clima cambia a las ${hour}:00 y ${sure ? 'seguramente' : 'quizá'} ${same ? 'siga' : 'pase a'} ${type.toLowerCase()}.`,
+    weathers: (names, special) => `Climas de temporada para este plato: ${names}, y ${special.toLowerCase()}`,
   },
 };
 export default mc;

@@ -158,7 +158,7 @@ const guide: Messages['guide'] = {
       a: [
         'Dès 1 étoile. Chaque météo met deux voies de plats signature de saison (voir le calendrier sur la ',
         { to: '/weather', text: 'page météo' },
-        '). Cuisinez quand votre voie est de saison et toute la fournée est de saison jusqu’à épuisement, même si la météo change. Chaque part de saison mangée par un client rapporte niveau du plat × bonus de qualité ÷ 10 points\u202f; les parts jetées ou goûtées ne comptent pas. Averse\u202f: +25\u202f%, arc-en-ciel\u202f: +10\u202f%.',
+        '). Tant que le plat en vente est de saison, chaque part mangée par un client difficile ou par Carlo rapporte des points de saison, selon la météo du tour où elle est mangée\u202f; les parts mangées par les clients ordinaires, jetées ou goûtées ne comptent pas. Les points par part suivent le prix des ingrédients du plat\u202f: environ 1 point pour 1\u202f100 pièces d’ingrédients, un peu plus aux qualités élevées. Averse\u202f: +25\u202f%, arc-en-ciel\u202f: +10\u202f%. Au-delà de 500, les points de saison baissent de 1\u202f% par jour.',
         'Dépensez-les à la boutique de saison de la page météo en fragments de plats, boussoles célestes et bâtonnets du temps (réassort chaque lundi)\u202f; choisir le plat d’épreuve au temple coûte aussi des points de saison.',
       ],
     },

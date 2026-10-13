@@ -238,7 +238,8 @@
     "trialCap": 0.6, "rareOdds": 100
   },
   "shiling": {
-    "minStar": 1, "divisor": 10, "gradeStep": 0.1, "trialPick": 30, "week200": 200,
+    "minStar": 1, "k": 1100, "gradeStep": 0.1, "trialPick": 30, "week200": 200,
+    "decay": { "rate": 0.01, "floor": 500 },
     "shop": { "remnantPerLevel": 80, "remnantWeekly": 6, "rarePrice": 1500, "rareWeekly": 1, "compass": [300, 2], "lots": [120, 4] },
     "roads": [
       [1, [1, 2]], [28, [1, 2]], [2, [3, 5]], [3, [4, 6]], [29, [4, 6]], [31, [3, 5]],
