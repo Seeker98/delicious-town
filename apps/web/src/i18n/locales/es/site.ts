@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    cuts31013:
+      'Recortes, tercera tanda: desaparecen las placas conmemorativas de 2023 y 2025 y «Éxito inmediato» (los bonus de colección de placas y honores ya no se refuerzan); desaparece «Llega el Dios de la Riqueza»; se retiran los senbei, la Medalla Amor Verdadero, el nudo chino, el trébol de cuatro hojas y la carpa koi, y la misión principal «Llegar a cinco estrellas» ya no da la medalla. Varios honores se debilitan: la Mano de Dios solo garantiza ingredientes en la primera revuelta del día, EXP +1\u00a0%, suerte +5; Dolor hasta los huesos EXP +3\u00a0%, monedas +2\u00a0%, suerte +10; Petardos EXP +2\u00a0%, suerte +8; Farolillo EXP +1\u00a0%, suerte +6; Fortuna EXP +1\u00a0%, suerte +4; Rey de los me gusta EXP +1\u00a0%; Aclamado por todos EXP +2\u00a0%; Estrella del reparto EXP a domicilio +10\u00a0%; los títulos del ranking de chefs dan +3\u00a0%, +2\u00a0% y +1\u00a0% de monedas y EXP finales. Los honores que ya tienes siguen los efectos nuevos',
     cuts21013:
       'Menos objetos, segunda tanda: se quitan las estatuas Apolo, Monumento al Renacimiento Africano, Vulgar y El pensador, la Llave de luz estelar, el Border collie, el Libro del Dios de las Estrellas, la Lámpara de queroseno, el Corazón acelerado y el Atrapasueños; con ellos desaparecen las monedas a EXP, echar a mano al enfadado Don Krab, repetir la tasación, los Sellos de jade del Dios de la Cocina en los críticos al guardián y las entregas fallidas convertidas en éxito; la tienda de renombre ahora tiene una de las estatuas restantes cada semana',
     yard1013:

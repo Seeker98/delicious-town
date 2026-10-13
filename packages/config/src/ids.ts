@@ -38,9 +38,6 @@ export const GOODS = {
   adventureMap: 10704, // 探险图
   krabCoin: SHARED_GOODS.krabCoin, // 蟹币
   dtTicket: 10007, // 美味券
-  an2023Plaque: 30508, // 2023 纪念牌匾
-  an2025Plaque: 30522, // 2025 纪念牌匾
-  mdcgPlaque: 30523, // 马到成功
   purpleShell: 10506, // 泛紫海螺
   redPants: 60304, // 红内裤
   roachKiller: 61401, // 午夜蟑螂杀手（灭蟑能手）

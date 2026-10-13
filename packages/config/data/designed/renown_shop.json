@@ -1,7 +1,7 @@
 {
  "source": "新设计(design_missing.py)",
  "rule": "weekGroup=0 常驻；雕像每组 1 座，按 ISO 周数 % 组数轮换（每周都有一座；道具减法 2026-10-13 删了 4 座后剩 3 组）；稀有品每人限 1 个；四、五级食材随机券常驻（问题记录 505：平时没有来路，用户 2026-10-08 定）",
- "count": 10,
+ "count": 7,
  "data": [
   {
    "goodsId": 10007,
@@ -26,30 +26,6 @@
    "weeklyLimit": 2,
    "weekGroup": 0,
    "require": null
-  },
-  {
-   "goodsId": 10905,
-   "renown": 120,
-   "rareflag": 0,
-   "weeklyLimit": 20,
-   "weekGroup": 0,
-   "require": "xz"
-  },
-  {
-   "goodsId": 10906,
-   "renown": 100,
-   "rareflag": 0,
-   "weeklyLimit": 20,
-   "weekGroup": 0,
-   "require": "xz"
-  },
-  {
-   "goodsId": 10907,
-   "renown": 90,
-   "rareflag": 0,
-   "weeklyLimit": 20,
-   "weekGroup": 0,
-   "require": "xz"
   },
   {
    "goodsId": 10506,

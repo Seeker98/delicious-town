@@ -72,10 +72,7 @@
   },
   "collection": {
     "plaquePer": 0.01,
-    "an2023Multiplier": 2,
-    "honorPer": 0.004,
-    "mdcgMultiplier": 1.5,
-    "an2025CoinBonus": 0.16
+    "honorPer": 0.004
   },
   "strength": { "regen": 1, "luckyRegen": 2 },
   "mouse": { "rateBase": 0.16, "ratePerStar": 0.01, "newbieFactor": 0.5, "luckDivisor": 2, "trapCoinPerLevel": 20 },

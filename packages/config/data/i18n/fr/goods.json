@@ -1553,15 +1553,15 @@
   },
   "60305": {
     "name": "Pétards",
-    "desc": "Une guirlande de pétards, l'idéal pour chasser la malchance\u202f; EXP finale +20\u202f%, chance +44"
+    "desc": "Une guirlande de pétards, l'idéal pour chasser la malchance\u202f; EXP finale +2\u202f%, chance +8"
   },
   "60306": {
     "name": "Lanterne",
-    "desc": "Une lanterne qui chasse la malchance\u202f; accrochez-la dans votre restaurant pour attirer la bonne fortune. EXP finale +16\u202f%, chance +33"
+    "desc": "Une lanterne qui chasse la malchance\u202f; accrochez-la dans votre restaurant pour attirer la bonne fortune. EXP finale +1\u202f%, chance +6"
   },
   "60307": {
     "name": "Bonheur",
-    "desc": "Quand le bonheur arrive, la malchance s'en va\u202f; à afficher dans votre restaurant. EXP finale +12\u202f%, chance +22"
+    "desc": "Quand le bonheur arrive, la malchance s'en va\u202f; à afficher dans votre restaurant. EXP finale +1\u202f%, chance +4"
   },
   "60308": {
     "name": "Pièce porte-bonheur",
@@ -1761,23 +1761,23 @@
   },
   "60901": {
     "name": "Dieu des chefs",
-    "desc": "Titre de la 1re place du classement des chefs (150 heures)\u202f; pièces par table +2, EXP finale +25\u202f%"
+    "desc": "Titre de la 1re place du classement des chefs (150 heures)\u202f; revenus finaux en pièces +3\u202f%, EXP finale +3\u202f%"
   },
   "60902": {
     "name": "Saint des chefs",
-    "desc": "Titre de la 2e place du classement des chefs (150 heures)\u202f; pièces par table +2, EXP finale +20\u202f%"
+    "desc": "Titre de la 2e place du classement des chefs (150 heures)\u202f; revenus finaux en pièces +2\u202f%, EXP finale +2\u202f%"
   },
   "60903": {
     "name": "Roi des chefs",
-    "desc": "Titre de la 3e place du classement des chefs (150 heures)\u202f; pièces par table +1, EXP finale +20\u202f%"
+    "desc": "Titre de la 3e place du classement des chefs (150 heures)\u202f; revenus finaux en pièces +1\u202f%, EXP finale +1\u202f%"
   },
   "61001": {
     "name": "Cœur brisé jusqu'à l'os",
-    "desc": "Le chagrin coule comme un fleuve\u202f! EXP finale +15\u202f%, revenus finaux en pièces +10\u202f%, chance +50"
+    "desc": "Le chagrin coule comme un fleuve\u202f! EXP finale +3\u202f%, revenus finaux en pièces +2\u202f%, chance +10"
   },
   "61002": {
     "name": "Main de Dieu",
-    "desc": "Mettez la main là-dedans\u202f! Remuez\u202f! Vos 25 premières fouilles de garde-manger de la journée trouvent des ingrédients à 100\u202f%\u202f! EXP finale +20\u202f%, chance +8"
+    "desc": "Mettez la main là-dedans\u202f! Remuez\u202f! Votre première fouille de garde-manger de la journée trouve des ingrédients à 100\u202f%\u202f! EXP finale +1\u202f%, chance +5"
   },
   "61101": {
     "name": "Médaille Délice\u202f: gourmet",
@@ -1921,7 +1921,7 @@
   },
   "61411": {
     "name": "Roi des j'aime",
-    "desc": "Généreux et bienveillant, il se fait des amis à coups de j'aime et partage l'amour de la cuisine\u202f! EXP finale +5\u202f%\u202f; vos 10 premiers j'aime à des amis chaque jour ont 30\u202f% de chance de rapporter 1 à 3 points d'énergie\u202f!"
+    "desc": "Généreux et bienveillant, il se fait des amis à coups de j'aime et partage l'amour de la cuisine\u202f! EXP finale +1\u202f%\u202f; vos 10 premiers j'aime à des amis chaque jour ont 30\u202f% de chance de rapporter 1 à 3 points d'énergie\u202f!"
   },
   "61412": {
     "name": "Vieille horloge comtoise",
@@ -2013,7 +2013,7 @@
   },
   "61503": {
     "name": "Salué par tous",
-    "desc": "Vous êtes devenu la personne la plus populaire de la ville (mais toujours moins que M. Krab, bien sûr)\u202f; EXP finale +25\u202f%"
+    "desc": "Vous êtes devenu la personne la plus populaire de la ville (mais toujours moins que M. Krab, bien sûr)\u202f; EXP finale +2\u202f%"
   },
   "61504": {
     "name": "Empereur du farm",
@@ -2021,7 +2021,7 @@
   },
   "61505": {
     "name": "Étoile de la livraison",
-    "desc": "Étoile de la livraison\u202f! EXP des commandes à emporter +30\u202f%"
+    "desc": "Étoile de la livraison\u202f! EXP des commandes à emporter +10\u202f%"
   },
   "61506": {
     "name": "Toujours livrer",

@@ -9,7 +9,7 @@ import { RETIRED_GOODS, stripYardOverrides, YARD_TABLES } from './0072_yard_cut'
 
 const FERTILIZER = gid('低级肥料');
 const MOON = gid('星月密卷');
-const KEPT = gid('仙贝-红');
+const KEPT = gid('司天罗盘');
 const config = testConfig();
 
 const db = testDb();
@@ -84,7 +84,7 @@ describe('迁移 0072：菜园整个删掉', () => {
     expect(config.goods.get(KEPT)?.retired).toBeFalsy();
   });
 
-  it('肥料、星月密卷持有的、加成来源都清掉，加成缓存标脏；仙贝不动', async () => {
+  it('肥料、星月密卷持有的、加成来源都清掉，加成缓存标脏；别的道具（司天罗盘）不动', async () => {
     const shard = await createShard(db);
     const a = await createRestaurantRow(db, shard, await createAccountRow(db));
     const b = await createRestaurantRow(db, shard, await createAccountRow(db));

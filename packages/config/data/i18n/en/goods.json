@@ -1553,15 +1553,15 @@
   },
   "60305": {
     "name": "Firecrackers",
-    "desc": "A string of firecrackers, the best thing for chasing away bad luck; final EXP income +20%, luck +44"
+    "desc": "A string of firecrackers, the best thing for chasing away bad luck; final EXP income +2%, luck +8"
   },
   "60306": {
     "name": "Lantern",
-    "desc": "A lantern that chases away bad luck; hang it in your restaurant for good fortune. Final EXP income +16%, luck +33"
+    "desc": "A lantern that chases away bad luck; hang it in your restaurant for good fortune. Final EXP income +1%, luck +6"
   },
   "60307": {
     "name": "Fortune",
-    "desc": "When fortune comes, bad luck goes; stick it up in your restaurant. Final EXP income +12%, luck +22"
+    "desc": "When fortune comes, bad luck goes; stick it up in your restaurant. Final EXP income +1%, luck +4"
   },
   "60308": {
     "name": "Lucky Coin",
@@ -1761,23 +1761,23 @@
   },
   "60901": {
     "name": "Chef God",
-    "desc": "Title for first place in the chef ranking (lasts 150 hours); coins per table +2, final EXP income +25%"
+    "desc": "Title for first place in the chef ranking (lasts 150 hours); final coin income +3%, final EXP income +3%"
   },
   "60902": {
     "name": "Chef Saint",
-    "desc": "Title for second place in the chef ranking (lasts 150 hours); coins per table +2, final EXP income +20%"
+    "desc": "Title for second place in the chef ranking (lasts 150 hours); final coin income +2%, final EXP income +2%"
   },
   "60903": {
     "name": "Chef King",
-    "desc": "Title for third place in the chef ranking (lasts 150 hours); coins per table +1, final EXP income +20%"
+    "desc": "Title for third place in the chef ranking (lasts 150 hours); final coin income +1%, final EXP income +1%"
   },
   "61001": {
     "name": "Heartbroken to the Bone",
-    "desc": "Sorrow flows like a river! Final EXP income +15%, final coin income +10%, luck +50"
+    "desc": "Sorrow flows like a river! Final EXP income +3%, final coin income +2%, luck +10"
   },
   "61002": {
     "name": "Hand of God",
-    "desc": "Put your hand right in there! Wiggle it around! Your first 25 pantry raids each day are 100% sure to find ingredients! Final EXP income +20%, luck +8"
+    "desc": "Put your hand right in there! Wiggle it around! Your first pantry raid each day is 100% sure to find ingredients! Final EXP income +1%, luck +5"
   },
   "61101": {
     "name": "Delicious Medal: Gourmet",
@@ -1921,7 +1921,7 @@
   },
   "61411": {
     "name": "Like King",
-    "desc": "Generous and kind, making friends through likes and sharing a love of cooking! Final EXP income +5%; your first 10 likes for friends each day have a 30% chance of giving 1–3 Stamina!"
+    "desc": "Generous and kind, making friends through likes and sharing a love of cooking! Final EXP income +1%; your first 10 likes for friends each day have a 30% chance of giving 1–3 Stamina!"
   },
   "61412": {
     "name": "Old Grandfather Clock",
@@ -2013,7 +2013,7 @@
   },
   "61503": {
     "name": "Universally Acclaimed",
-    "desc": "You've become the most popular person in town (though still not as popular as Mr. Krab, of course); final EXP income +25%"
+    "desc": "You've become the most popular person in town (though still not as popular as Mr. Krab, of course); final EXP income +2%"
   },
   "61504": {
     "name": "Grind Emperor",
@@ -2021,7 +2021,7 @@
   },
   "61505": {
     "name": "Takeaway Star",
-    "desc": "Takeaway star! Takeaway EXP +30%"
+    "desc": "Takeaway star! Takeaway EXP +10%"
   },
   "61506": {
     "name": "Keep Delivering",

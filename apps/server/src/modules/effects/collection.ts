@@ -6,9 +6,6 @@ export interface CollectionCounts {
   /** 有效勋章数（不含街道勋章） */
   honors: number;
   pots: number;
-  an2023: boolean;
-  an2025: boolean;
-  mdcg: boolean;
 }
 
 const RENAMED: ReadonlySet<string> = new Set(['coinRate', 'expRate']);
@@ -31,11 +28,11 @@ export function collectionEffects(
   potTiers: CollectionTier[],
 ): Record<string, number> {
   const out: Record<string, number> = {};
-  const plaqueSum = c.plaques * t.plaquePer * (c.an2023 ? t.an2023Multiplier : 1);
+  const plaqueSum = c.plaques * t.plaquePer;
   if (plaqueSum > 0) out.plaqueSum = plaqueSum;
-  const honorAdd = c.honors * t.honorPer * (c.mdcg ? t.mdcgMultiplier : 1);
+  const honorAdd = c.honors * t.honorPer;
   if (honorAdd > 0) {
-    out.honorAddCoin = honorAdd * (c.an2025 ? 1 + t.an2025CoinBonus : 1);
+    out.honorAddCoin = honorAdd;
     out.honorAddExp = honorAdd;
   }
   addTiers(out, c.pots, potTiers, 'pot');
