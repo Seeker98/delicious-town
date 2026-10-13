@@ -14,13 +14,12 @@ import {
 } from '../../../test/game';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { ensureNpc } from '../npc/npc';
-import { grantGoods } from '../store/grant';
 
 const config = testConfig();
 let seq = [0.99];
 let t: TestGame;
 beforeAll(async () => {
-  // 0.99：所有概率判定都不中（没有礼券、巫毒娃娃不触发），便于断言数值
+  // 0.99：所有概率判定都不中（没有礼券），便于断言数值
   t = await createTestGame({ rng: () => sequenceRng(seq) });
 });
 afterAll(() => t.close());
@@ -128,7 +127,7 @@ describe('灭蟑螂（规格书 13 §13.4、20 §20.18）', () => {
     expect((await tablesOf(t, npc)).every((tb) => tb.customer === 0)).toBe(true);
   });
 
-  it('蟹老板店不耗体力；巫毒娃娃可以免体力；礼券和美味券', async () => {
+  it('蟹老板店不耗体力；好友店照常耗体力；礼券和美味券', async () => {
     const [a] = await friends();
     const npc = (await ensureNpc(t.db, config, config.tuning.friend.npc, a.shardId, seededRng(1))).id;
     await befriend(t, a.restaurantId, npc);
@@ -139,11 +138,11 @@ describe('灭蟑螂（规格书 13 §13.4、20 §20.18）', () => {
     expect((await roach().kill(a, { restId: npc, tableNo: 1 })).data.strength).toBe(0);
 
     const [c, e] = await friends();
-    await grantGoods(t.db, config, c.restaurantId, GOODS.voodoo, 1, t.clock.now);
     await setTables(t, e.restaurantId, [{ no: 1, floor: 1, customer: 3, roach: { by: null, at: 'x' } }]);
     seq = [0]; // 所有概率判定都中
     const r = await roach().kill(c, { restId: e.restaurantId, tableNo: 1 });
-    expect(r.data).toMatchObject({ strength: 0, tickets: 1 });
+    // 巫毒娃娃下架，不再有免体力（道具减法第四批（2026-10-13））
+    expect(r.data).toMatchObject({ strength: 2, tickets: 1 });
     expect(await goodsNum(t, c.restaurantId, GOODS.mysteryTicket)).toBe(1);
     expect(await goodsNum(t, c.restaurantId, GOODS.dtTicket)).toBe(1);
   });

@@ -3,7 +3,6 @@ import { sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { questIn, showQuest } from '../../../test/quests';
-import { grantGoods } from '../store/grant';
 import { streetMysteriousRate } from './explore';
 import { GOODS } from '@dt/config';
 import { gid } from '../../../test/items';
@@ -58,14 +57,13 @@ describe('探险（规格书 09 §9.2）', () => {
     expect(await goodsNum(lose, ctx.restaurantId, gid('探险图'))).toBe(0);
   });
 
-  it('高级探险图 + 探险者秘籍：额外 2 个 3 级食材', async () => {
+  it('高级探险图：5 级、4 级食材，没有额外的 3 级食材', async () => {
     const ctx = await newRestaurant(win, { patch: { strength: 100 }, goods: { [GOODS.mapHigh]: 1 } });
-    await grantGoods(win.db, config, ctx.restaurantId, GOODS.exploreBook, 1, new Date());
     const r = await win.game.temple.explore(ctx, { goodsId: GOODS.mapHigh, times: 1 });
-    // awardNum = 1 + 10 = 11：5 级 2、4 级 8，再加 3 级 2
-    expect(sum(r.data.foods)).toBe(12);
+    // awardNum = 1 + 10 = 11：5 级 2、4 级 8；探险者秘籍下架，不再多给 3 级食材（道具减法第四批（2026-10-13））
+    expect(sum(r.data.foods)).toBe(10);
     const l3 = r.data.foods.filter((f) => config.requireFood(f.foodsId).level === 3);
-    expect(sum(l3)).toBe(2);
+    expect(sum(l3)).toBe(0);
   });
 
   it('体力不够：报 NOT_ENOUGH strength，探险图不扣（Review Focus 2）', async () => {

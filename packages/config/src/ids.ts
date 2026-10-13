@@ -48,7 +48,6 @@ export const GOODS = {
   heartache: 61001, // 痛心入骨
   godsHand: 61002, // 神之一手
   thumbKing: 61411, // 点赞王
-  voodoo: 61422, // 巫毒娃娃
   townCare: 60512, // 镇长的关心
   essence: 10603, // 厨具精华
   stressStone: 10601, // 强化石
@@ -63,8 +62,6 @@ export const GOODS = {
   securityCard: 60404, // 工作证：探险向导（原保安证；探险出神秘食材）
   creativePotion: 61407, // 创意药水（试炼准备：注射）
   meditation: 61408, // 冥想（试炼准备）
-  needle: 61414, // 欲望之针（规格书写作"指南针"）
-  exploreBook: 61420, // 探险者秘籍
   towerTicket: 10301, // 厨塔挑战券
   takeawayTicket: 10302, // 外卖券
   shopJobHonor: 60402, // 工作证：外卖站长（外卖私人刷新）

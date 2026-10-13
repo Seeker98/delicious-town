@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    cuts41013:
+      "Item cuts, round 4: chef ranking packs are smaller (#1: 100 renown, 1 Random Mystery Ingredient Voucher, 8 Mystery Recipes, 50 diamonds; lower places get less); star plaques no longer give EXP per table, final EXP +3% to +30% (1 to 7 stars); Grand Opening is now EXP and coins +50%, occupancy +25%; Star God's Cup EXP +10%; Star God's Favor is now coins and EXP +75%; the Needle of Desire, Explorer's Handbook and Voodoo Doll are retired. Plaques already on display and honors you already have use the new effects",
     cuts31013:
       'Item cuts, round 3: the 2023 and 2025 commemorative plaques and Instant Success are gone (plaque and honor collection bonuses are no longer boosted); God of Wealth Descends is gone; senbei, the True Love Medal, Chinese Knot, Four-leaf Clover and Koi are retired, and the main quest “Reach five stars” no longer gives the True Love Medal. Several honors are weaker: Hand of God only guarantees ingredients on the first pantry raid each day, EXP +1%, luck +5; Heartbroken to the Bone EXP +3%, coins +2%, luck +10; Firecrackers EXP +2%, luck +8; Lantern EXP +1%, luck +6; Fortune EXP +1%, luck +4; Like King EXP +1%; Universally Acclaimed EXP +2%; Takeaway Star takeaway EXP +10%; the chef ranking titles now give +3%, +2% and +1% final coins and EXP. Honors you already hold use the new effects',
     cuts21013:

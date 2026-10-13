@@ -78,10 +78,9 @@ export function guardianFoods(t: TempleTuning, rng: Rng, scale = 1): Array<{ lev
 }
 
 /** 探险成功率（不含幸运，规格书 09 §9.2） */
-export function exploreRate(def: MapDef, b: { needle: boolean; lostRate: number; suitRate: number }): number {
+export function exploreRate(def: MapDef, b: { lostRate: number; suitRate: number }): number {
   let rate = def.rate;
-  if (b.needle) rate += (1 - rate) / 2;
-  rate -= b.lostRate / (b.needle ? 2 : 1);
+  rate -= b.lostRate;
   if (b.suitRate > 0) rate += b.suitRate;
   return rate;
 }

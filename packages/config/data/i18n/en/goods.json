@@ -457,23 +457,23 @@
   },
   "20301": {
     "name": "Chef Ranking #1 Pack",
-    "desc": "Chef ranking #1 pack: [Chef God], 500 renown, Random Mystery Ingredient Voucher x2, Mystery Recipe x15, 150 diamonds"
+    "desc": "Chef ranking #1 pack: [Chef God], 100 renown, Random Mystery Ingredient Voucher x1, Mystery Recipe x8, 50 diamonds"
   },
   "20302": {
     "name": "Chef Ranking #2 Pack",
-    "desc": "Chef ranking #2 pack: [Chef Saint], 400 renown, Random Mystery Ingredient Voucher x1, Mystery Recipe x12, 120 diamonds"
+    "desc": "Chef ranking #2 pack: [Chef Saint], 80 renown, Random Mystery Ingredient Voucher x1, Mystery Recipe x6, 40 diamonds"
   },
   "20303": {
     "name": "Chef Ranking #3 Pack",
-    "desc": "Chef ranking #3 pack: [Chef King], 300 renown, Random Mystery Ingredient Voucher x1, Mystery Recipe x10, 100 diamonds"
+    "desc": "Chef ranking #3 pack: [Chef King], 60 renown, Random Mystery Ingredient Voucher x1, Mystery Recipe x5, 32 diamonds"
   },
   "20304": {
     "name": "Chef Ranking #4–8 Pack",
-    "desc": "Chef ranking #4–8 pack: 150 renown, Random Mystery Ingredient Voucher x1, Mystery Recipe x8, 75 diamonds"
+    "desc": "Chef ranking #4–8 pack: 20 renown, Mystery Recipe x3, 25 diamonds"
   },
   "20305": {
     "name": "Chef Ranking #9–15 Pack",
-    "desc": "Chef ranking #9–15 pack: 100 renown, Mystery Recipe x5, 50 diamonds"
+    "desc": "Chef ranking #9–15 pack: 10 renown, Mystery Recipe x2, 20 diamonds"
   },
   "20306": {
     "name": "Kraken Monthly Favor #1 Pack",
@@ -677,27 +677,27 @@
   },
   "30502": {
     "name": "[1-Star Plaque]",
-    "desc": "1-star plaque; final EXP income +10%, EXP per table +1"
+    "desc": "1-star plaque; final EXP income +3%"
   },
   "30503": {
     "name": "[2-Star Plaque]",
-    "desc": "2-star plaque; final EXP income +15%, EXP per table +2"
+    "desc": "2-star plaque; final EXP income +5%"
   },
   "30504": {
     "name": "[3-Star Plaque]",
-    "desc": "3-star plaque; final EXP income +20%, EXP per table +3"
+    "desc": "3-star plaque; final EXP income +8%"
   },
   "30505": {
     "name": "[4-Star Plaque]",
-    "desc": "4-star plaque; final EXP income +30%, EXP per table +4"
+    "desc": "4-star plaque; final EXP income +12%"
   },
   "30506": {
     "name": "[5-Star Plaque]",
-    "desc": "5-star plaque; final EXP income +40%, EXP per table +5"
+    "desc": "5-star plaque; final EXP income +17%"
   },
   "30507": {
     "name": "[6-Star Plaque]",
-    "desc": "6-star plaque; final EXP income +50%, EXP per table +6"
+    "desc": "6-star plaque; final EXP income +23%"
   },
   "30508": {
     "name": "[2023 Commemorative Plaque]",
@@ -753,7 +753,7 @@
   },
   "30521": {
     "name": "[7-Star Plaque]",
-    "desc": "7-star plaque; final EXP income +60%, EXP per table +7"
+    "desc": "7-star plaque; final EXP income +30%"
   },
   "30522": {
     "name": "[2025 Commemorative Plaque]",
@@ -1513,7 +1513,7 @@
   },
   "60201": {
     "name": "Grand Opening",
-    "desc": "Exclusive to newly opened restaurants (lasts 15 days); final EXP and coin income +100%, occupancy +25%"
+    "desc": "Exclusive to newly opened restaurants (lasts 15 days); final EXP and coin income +50%, occupancy +25%"
   },
   "60202": {
     "name": "Star-up Promotion Medal",
@@ -1533,7 +1533,7 @@
   },
   "60206": {
     "name": "Star God's Cup",
-    "desc": "A trophy Mr. Krab awards to 6-star restaurants that greatly boosts EXP! Final EXP income +20%"
+    "desc": "A trophy Mr. Krab awards to 6-star restaurants that greatly boosts EXP! Final EXP income +10%"
   },
   "60301": {
     "name": "Chinese Knot",
@@ -1649,7 +1649,7 @@
   },
   "60510": {
     "name": "Star God's Favor",
-    "desc": "Your restaurant is favored by the Star God. Chance of higher grades when cooking signature dishes +25%, and final EXP income +150%"
+    "desc": "Your restaurant is favored by the Star God. Chance of higher grades when cooking signature dishes +25%, and final coin and EXP income +75%"
   },
   "60511": {
     "name": "Mr. Krab (Emo)",

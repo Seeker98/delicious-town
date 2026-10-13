@@ -34,8 +34,7 @@ async function killIn(
   if (hostKey && perHostLeft(rt.killPerHostDaily, await getDaily(me.tx, me.rest.id, hostKey, day)) === 0)
     throw limitReached('roach_kill_host', { max: rt.killPerHostDaily });
   const agg = await opAgg(me);
-  let strength = killStrength(place, agg, gameParts(me.now).hour, rt);
-  if (strength > 0 && me.rng.chance(agg.killRoachNoStrengthRate ?? 0)) strength = 0;
+  const strength = killStrength(place, agg, gameParts(me.now).hour, rt);
   spendStrength(me, strength);
   await writeTables(
     host,

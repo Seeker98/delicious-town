@@ -35,9 +35,10 @@ describe('道具整理的分析（问题记录 367）', () => {
     expect(wheres(row('foods', foodOf(6).id), 'gives')).not.toContain('合成');
   });
 
-  it('神殿探险还出 7 级食材、带探险者秘籍多出 3 级食材；蟹老板橱柜出 1~5 级（backlog 道具整理工具）', () => {
+  it('神殿探险还出 7 级食材；蟹老板橱柜出 1~5 级（backlog 道具整理工具）', () => {
     expect(wheres(row('foods', foodOf(7).id), 'gives')).toContain('神殿探险');
-    expect(wheres(row('foods', foodOf(3).id), 'gives')).toContain('神殿探险（探险者秘籍）');
+    // 探险者秘籍下架（道具减法第四批（2026-10-13））
+    expect(wheres(row('foods', foodOf(3).id), 'gives')).not.toContain('神殿探险（探险者秘籍）');
     for (const lv of [1, 2, 3, 4, 5])
       expect(wheres(row('foods', foodOf(lv).id), 'gives')).toContain('蟹老板橱柜');
     expect(wheres(row('foods', foodOf(6).id), 'gives')).not.toContain('蟹老板橱柜');
