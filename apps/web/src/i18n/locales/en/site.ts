@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    mccut1013:
+      'Signature dish cleanup: 27 signature dishes removed (10 empty dishes with no ingredients, plus the 17 beast-path dishes that needed Lv. 6 ingredients); 250 remain',
     cuts41013:
       "Item cuts, round 4: chef ranking packs are smaller (#1: 100 renown, 1 Random Mystery Ingredient Voucher, 8 Mystery Recipes, 50 diamonds; lower places get less); star plaques no longer give EXP per table, final EXP +3% to +30% (1 to 7 stars); Grand Opening is now EXP and coins +50%, occupancy +25%; Star God's Cup EXP +10%; Star God's Favor is now coins and EXP +75%; the Needle of Desire, Explorer's Handbook and Voodoo Doll are retired. Plaques already on display and honors you already have use the new effects",
     cuts31013:

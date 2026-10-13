@@ -103,7 +103,7 @@ const misc: Messages['misc'] = {
         remnantSub: (per, left) =>
           `Cualquier plato de nv. 1 a 5 · ${per} × nivel cada uno · quedan ${left} esta semana`,
         rare: 'Fragmento raro',
-        rareSub: (left) => `Cualquier plato de nv. 6 o de la vía bestia · quedan ${left} esta semana`,
+        rareSub: (left) => `Cualquier plato de nv. 6 · quedan ${left} esta semana`,
         goodsSub: (left) => `Quedan ${left} esta semana`,
         pick: 'Elegir',
         price: (n) => `Canjear por ${n} puntos de temporada`,
@@ -124,7 +124,7 @@ const misc: Messages['misc'] = {
         sub: (per, left) =>
           `Cualquier plato de nv. 1 a 5 que se pueda tasar y que no hayas aprendido. ${per} × nivel cada uno, quedan ${left} esta semana; con 3 fragmentos del mismo plato lo aprendes.`,
         rareSub: (price, left) =>
-          `Cualquier plato que no se pueda tasar, como los de nv. 6 o de la vía bestia. ${price} cada uno, quedan ${left} esta semana.`,
+          `Cualquier plato de nv. 6 que aún no hayas aprendido. ${price} cada uno, quedan ${left} esta semana.`,
         inSeason: (roads) => `De temporada (${roads})`,
         allRoads: 'Todas las vías',
         level: (n) => `Nv. ${n}`,

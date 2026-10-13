@@ -27,6 +27,7 @@ const RAIN = 11; // 中雨：当令一道、二道
 const STORM = 13; // 暴雨：三道、四道，时令值 +25%
 const MC1 = 1; // 秘·仿膳饽饽：4 级、一道
 const MC3 = 69; // 秘·荷花酥：1 级、三道
+const MC6 = 45; // 秘·三层套鸡：6 级、二道
 const balanceOf = async (restId: number) =>
   (await t.db.selectFrom('rest_shiling').selectAll().where('rest_id', '=', restId).executeTakeFirst()) ??
   null;
@@ -76,7 +77,7 @@ describe('规则（天气改版设计 §3）', () => {
       const m = config.requireMc(id);
       expect(!m.appraisable || m.level >= 6).toBe(true);
     }
-    expect(p.rare).toContain(231);
+    expect(p.rare).toContain(MC6);
   });
 });
 
@@ -251,9 +252,9 @@ describe('时令铺（§3.4）', () => {
     });
   });
 
-  it('珍稀残卷 1500：不能鉴定的菜；钱不够报 NOT_ENOUGH', async () => {
+  it('珍稀残卷 1500：6 级的菜；钱不够报 NOT_ENOUGH', async () => {
     const ctx = await shop(1600);
-    await t.game.shiling.buy(ctx, { item: 'rare', mcId: 231 });
+    await t.game.shiling.buy(ctx, { item: 'rare', mcId: MC6 });
     expect((await balanceOf(ctx.restaurantId))?.balance).toBe(100);
     const poor = await shop(100);
     await expect(t.game.shiling.buy(poor, { item: 'lots' })).rejects.toMatchObject({

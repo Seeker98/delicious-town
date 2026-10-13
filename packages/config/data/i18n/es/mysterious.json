@@ -686,63 +686,6 @@
   "230": {
     "name": "Nuevo·Cangrejo falso"
   },
-  "231": {
-    "name": "Bestia·Ceviche"
-  },
-  "232": {
-    "name": "Bestia·Galeras con sal y pimienta"
-  },
-  "233": {
-    "name": "Bestia·Beso de la tierra"
-  },
-  "234": {
-    "name": "Bestia·Raíz de loto con azúcar cande y caviar"
-  },
-  "235": {
-    "name": "Bestia·Salteado dorado de dos delicias"
-  },
-  "236": {
-    "name": "Bestia·Ensalada arcoíris de salmón"
-  },
-  "237": {
-    "name": "Bestia·Langostinos al ajillo"
-  },
-  "238": {
-    "name": "Bestia·Sopa italiana de tomate y setas"
-  },
-  "239": {
-    "name": "Bestia·Copa de frutas con mascarpone"
-  },
-  "240": {
-    "name": "Bestia·Arroz con salmón teriyaki"
-  },
-  "241": {
-    "name": "Bestia·Pasta cremosa con setas"
-  },
-  "242": {
-    "name": "Bestia·Filete de pollo a la plancha con romero"
-  },
-  "243": {
-    "name": "Bestia·Dados de ternera a la pimienta negra"
-  },
-  "244": {
-    "name": "Bestia·Pasta brisa de la tarde siciliana"
-  },
-  "245": {
-    "name": "Bestia·Tomates asados con aceite de peonía"
-  },
-  "246": {
-    "name": "Bestia·Bizcochos de soletilla con queso italiano"
-  },
-  "247": {
-    "name": "Bestia·Risotto al vino tinto con costillar Quinine"
-  },
-  "248": {
-    "name": "Bestia·Filete de pescado dorado envuelto en hilos fragantes"
-  },
-  "249": {
-    "name": "Bestia·Celebración de carne de bestia"
-  },
   "251": {
     "name": "Nuevo·Cerdo salteado con chile"
   },
@@ -805,29 +748,5 @@
   },
   "271": {
     "name": "Nuevo·Arroz de sepia rellena con azafrán"
-  },
-  "272": {
-    "name": "Nuevo·Lechuga escaldada"
-  },
-  "273": {
-    "name": "Nuevo·Callos de cerdo salteados con ginkgo"
-  },
-  "274": {
-    "name": "Nuevo·Sopa espesa de lubina"
-  },
-  "331": {
-    "name": "Bestia·Arroz frito con gambas y azafrán"
-  },
-  "332": {
-    "name": "Bestia·Tabla fría de jamón español"
-  },
-  "333": {
-    "name": "Bestia·Ensalada de col rizada"
-  },
-  "334": {
-    "name": "Bestia·Hígado de cerdo al vapor con leche"
-  },
-  "335": {
-    "name": "Bestia·Perdiz nival con uvas de Xinjiang"
   }
 }

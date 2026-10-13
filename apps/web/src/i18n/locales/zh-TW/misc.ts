@@ -106,7 +106,7 @@ export default {
         remnant: '特色菜殘卷',
         remnantSub: (per: number, left: number) => `1~5 級任選 · 每張 ${per} × 等級 · 本週還能換 ${left} 張`,
         rare: '珍稀殘卷',
-        rareSub: (left: number) => `6 級、獸道任選 · 本週還能換 ${left} 張`,
+        rareSub: (left: number) => `6 級任選 · 本週還能換 ${left} 張`,
         goodsSub: (left: number) => `本週還能換 ${left} 個`,
         pick: '選菜',
         price: (n: string) => `花 ${n} 時令值兌換`,
@@ -126,7 +126,7 @@ export default {
         sub: (per: number, left: number) =>
           `可鑑定、還沒學會的 1~5 級菜任選。每張 ${per} × 等級, 本週還能換 ${left} 張；3 張同一道菜就能學會。`,
         rareSub: (price: number, left: number) =>
-          `6 級、獸道這些不能鑑定的菜任選。每張 ${price}, 本週還能換 ${left} 張。`,
+          `還沒學會的 6 級菜任選。每張 ${price}, 本週還能換 ${left} 張。`,
         inSeason: (roads: string) => `當令 (${roads})`,
         allRoads: '全部道',
         level: (n: number) => `${n} 級`,

@@ -157,10 +157,7 @@ describe('残卷', () => {
     });
     // 被拒绝时碎片一张不少
     expect(await goodsNum(t, learned.restaurantId, frag)).toBe(3);
-    const special = config.bundle.mysteriousCookbooks.find((m) => !m.appraisable)!;
-    await expect(s().exchangeFragments(ctx, { mcId: special.id, num: 1 })).rejects.toMatchObject({
-      code: 'VALIDATION_FAILED',
-    });
+    // 不能鉴定的菜换不了（not_appraisable）：特色菜清理（2026-10-13）后数据里已经没有这种菜，不再测
   });
 
   it('3 张学会：写入熟练度 1 级；学过再学报 mc_learned 且不扣残卷；未知特色菜 NOT_FOUND', async () => {

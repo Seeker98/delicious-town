@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    mccut1013:
+      'Nettoyage des plats signature\u202f: 27 plats signature retirés (10 plats vides sans ingrédients, et les 17 plats de la voie des bêtes qui demandaient des ingrédients niv. 6)\u202f; il en reste 250',
     cuts41013:
       'Retraits, 4e vague\u202f: les packs du classement des chefs sont réduits (1re place\u202f: 100 de renommée, 1 bon d’ingrédient mystère au hasard, 8 recettes mystère, 50 diamants\u202f; moins pour les places suivantes)\u202f; les plaques étoilées ne donnent plus d’EXP par table, EXP finale +3\u202f% à +30\u202f% (1 à 7 étoiles)\u202f; «\u202fGrande ouverture\u202f» passe à EXP et pièces +50\u202f%, fréquentation +25\u202f%\u202f; «\u202fCoupe du Dieu des étoiles\u202f» EXP +10\u202f%\u202f; «\u202fFaveur du Dieu des étoiles\u202f» passe à pièces et EXP +75\u202f%\u202f; l’Aiguille du désir, le Manuel de l’explorateur et la Poupée vaudou sont retirés. Les plaques déjà exposées et les honneurs déjà obtenus suivent les nouveaux effets',
     cuts31013:
