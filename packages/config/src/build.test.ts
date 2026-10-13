@@ -707,8 +707,8 @@ describe('厨塔配置（子项目 4C-2）', () => {
 
   it('声望商店是正式字段', () => {
     const { bundle } = realBuild();
-    // 道具减法（2026-10-13）：思想者、阿波罗、非洲复兴纪念碑、俗 4 座雕像下架，剩下 3 座每组 1 座
-    expect(bundle!.renownShop).toHaveLength(10);
+    // 道具减法（2026-10-13）：思想者、阿波罗、非洲复兴纪念碑、俗 4 座雕像下架，剩下 3 座每组 1 座；仙贝红黄蓝下架
+    expect(bundle!.renownShop).toHaveLength(7);
     expect(bundle!.renownShop[0]).toEqual({
       goodsId: GOODS.dtTicket,
       renown: 60,
@@ -726,7 +726,6 @@ describe('厨塔配置（子项目 4C-2）', () => {
       [gid('史前怪石-雕像'), 3000, true, 1],
       [gid('破-雕像'), 3000, true, 3],
     ]);
-    expect(bundle!.renownShop.find((x) => x.goodsId === gid('仙贝-红'))).toMatchObject({ require: 'xz' });
     expect('renownShop' in bundle!.extra).toBe(false);
   });
 
@@ -777,8 +776,9 @@ describe('小镇（子项目 4E-1）', () => {
     const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     // 62 条里 37 条换到的是下架的道具（2026-10-08 一批、天气改版的雷神锤），构建时自动去掉（问题记录 501）；
-    // 换名画的 12 条随名画删掉，换星月密卷的 1 条随菜园删掉，换边牧、激动的心、星光之钥、捕梦网、星神之书的 5 条删掉（道具减法 2026-10-13）
-    expect(bundle!.goodsExchange).toHaveLength(19);
+    // 换名画的 12 条随名画删掉，换星月密卷的 1 条随菜园删掉，换边牧、激动的心、星光之钥、捕梦网、星神之书的 5 条删掉，
+    // 换 2023、2025 纪念牌匾和马到成功的 3 条删掉（道具减法 2026-10-13）
+    expect(bundle!.goodsExchange).toHaveLength(16);
     // 雷神锤换成司天罗盘：2 个蟹黄堡，每周 1 次（天气改版，用户 2026-10-12）
     expect(bundle!.goodsExchange.find((e) => e.goodsId === gid('司天罗盘'))).toEqual({
       id: 74,

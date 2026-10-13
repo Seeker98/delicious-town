@@ -883,13 +883,7 @@
    },
    "award": {
     "coin": 700000,
-    "exp": 70000,
-    "goods": [
-     {
-      "id": 60102,
-      "num": 1
-     }
-    ]
+    "exp": 70000
    },
    "href": "/society/star"
   },

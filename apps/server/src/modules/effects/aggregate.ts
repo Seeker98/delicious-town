@@ -1,4 +1,4 @@
-import { DEVICE_TYPE, FUND_MEDALS, GOODS, GOODS_TYPE, type GameConfig, type Tuning } from '@dt/config';
+import { DEVICE_TYPE, FUND_MEDALS, GOODS_TYPE, type GameConfig, type Tuning } from '@dt/config';
 import { collectionEffects } from './collection';
 
 export interface EffectLike {
@@ -85,12 +85,7 @@ export function computeEffectAgg(
   const { agg, nextExpireAt } = aggregateEffects(live, now);
   const honorIds = live.filter((s) => s.sourceType === 'honor').map((s) => s.sourceId);
   const derived = collectionEffects(
-    {
-      ...collectionCounts(owned, honorIds, config),
-      an2023: owned.has(GOODS.an2023Plaque),
-      an2025: owned.has(GOODS.an2025Plaque),
-      mdcg: owned.has(GOODS.mdcgPlaque),
-    },
+    collectionCounts(owned, honorIds, config),
     tuning.collection,
     config.bundle.potTiers,
   );

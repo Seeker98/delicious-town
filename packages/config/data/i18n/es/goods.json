@@ -1553,15 +1553,15 @@
   },
   "60305": {
     "name": "Petardos",
-    "desc": "Una ristra de petardos, lo mejor para espantar la mala suerte; EXP final +20\u00a0%, suerte +44"
+    "desc": "Una ristra de petardos, lo mejor para espantar la mala suerte; EXP final +2\u00a0%, suerte +8"
   },
   "60306": {
     "name": "Farolillo",
-    "desc": "Un farolillo que ahuyenta la mala suerte; cuélgalo en tu restaurante para atraer la fortuna. EXP final +16\u00a0%, suerte +33"
+    "desc": "Un farolillo que ahuyenta la mala suerte; cuélgalo en tu restaurante para atraer la fortuna. EXP final +1\u00a0%, suerte +6"
   },
   "60307": {
     "name": "Fortuna",
-    "desc": "Cuando llega la fortuna, se va la mala suerte; pégalo en tu restaurante. EXP final +12\u00a0%, suerte +22"
+    "desc": "Cuando llega la fortuna, se va la mala suerte; pégalo en tu restaurante. EXP final +1\u00a0%, suerte +4"
   },
   "60308": {
     "name": "Moneda de la suerte",
@@ -1761,23 +1761,23 @@
   },
   "60901": {
     "name": "Dios de los chefs",
-    "desc": "Título del 1.er puesto de la clasificación de chefs (dura 150 horas); monedas por mesa +2, EXP final +25\u00a0%"
+    "desc": "Título del 1.er puesto de la clasificación de chefs (dura 150 horas); ingresos finales de monedas +3\u00a0%, EXP final +3\u00a0%"
   },
   "60902": {
     "name": "Santo de los chefs",
-    "desc": "Título del 2.º puesto de la clasificación de chefs (dura 150 horas); monedas por mesa +2, EXP final +20\u00a0%"
+    "desc": "Título del 2.º puesto de la clasificación de chefs (dura 150 horas); ingresos finales de monedas +2\u00a0%, EXP final +2\u00a0%"
   },
   "60903": {
     "name": "Rey de los chefs",
-    "desc": "Título del 3.er puesto de la clasificación de chefs (dura 150 horas); monedas por mesa +1, EXP final +20\u00a0%"
+    "desc": "Título del 3.er puesto de la clasificación de chefs (dura 150 horas); ingresos finales de monedas +1\u00a0%, EXP final +1\u00a0%"
   },
   "61001": {
     "name": "Dolor hasta los huesos",
-    "desc": "¡La pena corre como un río! EXP final +15\u00a0%, ingresos finales de monedas +10\u00a0%, suerte +50"
+    "desc": "¡La pena corre como un río! EXP final +3\u00a0%, ingresos finales de monedas +2\u00a0%, suerte +10"
   },
   "61002": {
     "name": "Mano de Dios",
-    "desc": "¡Mete la mano ahí! ¡Muévela! Tus 25 primeras revueltas de despensa del día encuentran ingredientes seguro. EXP final +20\u00a0%, suerte +8"
+    "desc": "¡Mete la mano ahí! ¡Muévela! Tu primera revuelta de despensa del día encuentra ingredientes seguro. EXP final +1\u00a0%, suerte +5"
   },
   "61101": {
     "name": "Medalla Delicia: gourmet",
@@ -1921,7 +1921,7 @@
   },
   "61411": {
     "name": "Rey de los me gusta",
-    "desc": "Generoso y amable, hace amigos a base de me gusta y comparte el amor por la cocina. EXP final +5\u00a0%; tus 10 primeros me gusta a amigos cada día tienen un 30\u00a0% de probabilidad de dar 1–3 de energía"
+    "desc": "Generoso y amable, hace amigos a base de me gusta y comparte el amor por la cocina. EXP final +1\u00a0%; tus 10 primeros me gusta a amigos cada día tienen un 30\u00a0% de probabilidad de dar 1–3 de energía"
   },
   "61412": {
     "name": "Viejo reloj de pie",
@@ -2013,7 +2013,7 @@
   },
   "61503": {
     "name": "Aclamado por todos",
-    "desc": "Te has convertido en la persona más popular del pueblo (aunque claro, no tanto como Don Krab); EXP final +25\u00a0%"
+    "desc": "Te has convertido en la persona más popular del pueblo (aunque claro, no tanto como Don Krab); EXP final +2\u00a0%"
   },
   "61504": {
     "name": "Emperador del farmeo",
@@ -2021,7 +2021,7 @@
   },
   "61505": {
     "name": "Estrella del reparto",
-    "desc": "¡Estrella del reparto! EXP a domicilio +30\u00a0%"
+    "desc": "¡Estrella del reparto! EXP a domicilio +10\u00a0%"
   },
   "61506": {
     "name": "Seguir repartiendo",

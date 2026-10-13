@@ -142,10 +142,7 @@ export const tuningSchema = z.object({
   }),
   collection: z.object({
     plaquePer: num,
-    an2023Multiplier: num,
     honorPer: num,
-    mdcgMultiplier: num,
-    an2025CoinBonus: num,
   }),
   strength: z.object({ regen: int, luckyRegen: int }),
   mouse: z.object({

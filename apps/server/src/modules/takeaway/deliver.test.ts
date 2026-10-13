@@ -99,7 +99,7 @@ describe('接单（设计文档 §3.3）', () => {
     expect(row.exp).toBe(13);
   });
 
-  it('天气和我的加成算进数值：阴天银币 +10%，外卖之星经验 +30%', async () => {
+  it('天气和我的加成算进数值：阴天银币 +10%，外卖之星经验 +10%（道具减法 2026-10-13：原来 +30%）', async () => {
     const { ctx, rider } = await cook();
     await setWeather(t, ctx.shardId, 2);
     await grantGoods(t.db, config, ctx.restaurantId, gid('外卖之星'), 1, t.clock.now);
@@ -110,7 +110,7 @@ describe('接单（设计文档 §3.3）', () => {
         .select(['coin', 'exp'])
         .where('id', '=', r.data.id)
         .executeTakeFirstOrThrow(),
-    ).toEqual({ coin: 217, exp: 17 });
+    ).toEqual({ coin: 217, exp: 14 });
   });
 
   it('记下用了几种神秘食材', async () => {
