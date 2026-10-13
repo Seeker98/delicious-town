@@ -75,7 +75,6 @@ async function fromDb(
           streetId: r.street_id,
           renown: r.renown,
           luck: r.luck,
-          cteOn: r.cte_on,
           cookfoodsFlag: r.cookfoods_flag,
         },
         tables: tables.tables,

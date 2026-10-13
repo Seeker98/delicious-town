@@ -30,9 +30,6 @@ describe('NPC 对话（设计文档 §3.3）', () => {
     expect(food!.num).toBeGreaterThanOrEqual(1);
     expect(food!.num).toBeLessThanOrEqual(3);
     expect(await goodsNum(t, a.restaurantId, GOODS.mysteryFoodExchange)).toBe(0);
-    expect(
-      await t.db.selectFrom('rest_seed').select('num').where('rest_id', '=', a.restaurantId).execute(),
-    ).toEqual([]);
 
     await expect(talk(a, 'bigEater')).rejects.toMatchObject({
       code: 'ALREADY_DONE',

@@ -29,7 +29,6 @@
     "negativeRenownAtRate": -0.8,
     "starPotential": [0.6, 0.45, 0.3, 0.15],
     "newbieExp": { "maxLevel": 40, "rate": 2 },
-    "cteRate": 1.5,
     "planktonRateBase": 0.0001,
     "planktonRatePerStar": 0.00001,
     "planktonMultiplier": 5,
@@ -85,7 +84,6 @@
     "plaque2Coin": 15000000,
     "plaque2Diamond": 188,
     "cookfoodsMinStar": 6,
-    "driveKrabStrength": 50,
     "drivePlanktonStrength": 80,
     "drivePlanktonRenownPerSqrt": 10,
     "drivePlanktonExpPerRenown": 300,
@@ -166,7 +164,7 @@
   "friend": {
     "requireVerifiedEmail": true,
     "maxFriends": 199,
-    "dine": { "minMinutes": 30, "strengthPerHour": 20, "strengthMax": 100, "heartExpMul": 3, "heartStrengthMul": 1.5, "baseSeats": 1, "hostAwardLevel": 2 },
+    "dine": { "minMinutes": 30, "strengthPerHour": 20, "strengthMax": 100, "baseSeats": 1, "hostAwardLevel": 2 },
     "roach": {
       "layBase": 3, "layLevelRate": 0.2, "layCoin": 5, "layExp": 5,
       "killCoin": 10, "killExp": 5, "killCoinLevelRate": 0.5, "killSelfRate": 1.5,
@@ -225,9 +223,8 @@
     "roadSame": 0.02, "roadSameMax": 0.30, "roadOther": 0.005, "roadOtherMax": 0.10,
     "cookNumPowerDiv": 400,
     "bobRatePerNutritive": 0.0002,
-    "appraiseRetryBelow": 5,
     "tasteDaily": 2, "tasteAwardMax": 20, "tasteMcRate": 0.016, "tasteGradeFactor": 0.2,
-    "lessonLearnRate": 0.9, "lessonStealRate": 0.4, "lessonStealPerLevel": 0.02, "thinkerStealBonus": 0.05,
+    "lessonLearnRate": 0.9, "lessonStealRate": 0.4, "lessonStealPerLevel": 0.02,
     "learnStrength": 50, "stealStrength": 80,
     "tuitionTimes": 3, "teacherShare": 2, "learnFragments": 2, "teacherFragments": 1,
     "forgetPerLevel": 2, "forgetGrades": 1, "forgetMcFromLevel": 4, "forgetMcPerLevel": 0.02,
@@ -244,7 +241,7 @@
     "trialCap": 0.6, "rareOdds": 100
   },
   "shiling": {
-    "minStar": 1, "divisor": 10, "gradeStep": 0.1, "trialPick": 30, "seedRate": 5, "week200": 200,
+    "minStar": 1, "divisor": 10, "gradeStep": 0.1, "trialPick": 30, "week200": 200,
     "shop": { "remnantPerLevel": 80, "remnantWeekly": 6, "rarePrice": 1500, "rareWeekly": 1, "compass": [300, 2], "lots": [120, 4] },
     "roads": [
       [1, [1, 2]], [28, [1, 2]], [2, [3, 5]], [3, [4, 6]], [29, [4, 6]], [31, [3, 5]],
@@ -254,21 +251,6 @@
       [23, [1, 4]], [32, [3, 4]], [6, [7]], [7, [7]], [18, [7]], [24, [7]],
       [27, [7]]
     ]
-  },
-  "yard": {
-    "maxLands": 9, "landBaseCoin": 50000, "landMaxLevel": 10, "yieldPerLevel": 8,
-    "dryWaterSub": 5, "dryWaterMinRate": 0.5, "removeSeedRate": 0.3,
-    "stealKeepRate": 0.7, "stealMax": 2, "reapPunishRate": 0.25,
-    "seedShop": true, "seedPriceRate": 1,
-    "formulaMainRate": 0.25, "formulaAppraiseRatePerLuck": 0.1,
-    "composeStrength": 3, "composeCritRate": 0.1,
-    "essenceMain": 3, "essenceSub": 1,
-    "events": {
-      "minutes": [7, 27, 47], "nightMinute": 27, "dayFrom": 7, "dayTo": 22,
-      "wormEatRate": 0.2, "grassEatRate": 0.03, "dryDeath": 100,
-      "grassRate": 0.008, "grassDryFactor": 3, "dryAddRate": 0.1,
-      "dryStartRate": 0.002, "dryStartGrassRate": 0.008, "wormRate": 0.003
-    }
   },
   "bar": {
     "fgWinRate": 0.25, "fgDrawRate": 0.25, "fgLoseMin": 0.1, "fgNewsStreak": 5,

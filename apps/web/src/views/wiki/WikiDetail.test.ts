@@ -305,7 +305,7 @@ describe('游戏资料详情（问题记录 142）', () => {
     expect(useToastStore().items).toEqual([]);
   });
 
-  it('食材：属性、菜园种子、用到它的食谱（带街道和最低品级、链接）、特色菜', async () => {
+  it('食材：属性、用到它的食谱（带街道和最低品级、链接）、特色菜', async () => {
     const food: OpenFoodDto = {
       ...meta,
       id: 239,
@@ -315,7 +315,6 @@ describe('游戏资料详情（问题记录 142）', () => {
       rare: true,
       type: 2,
       maxNum: 99,
-      seed: { id: 5, harvestNum: 20 },
       cookbooks: [{ id: 1, name: '南煎丸子', streetId: 0, grade: 3, mainFoodId: 239 }],
       mysterious: [{ id: 7, name: '佛跳墙' }],
     };
@@ -323,7 +322,6 @@ describe('游戏资料详情（问题记录 142）', () => {
     const w = await mountAt(WikiFoodView, '/wiki/foods/:id', '/wiki/foods/239');
     // 稀有写在名字下面那一行分类里（界面改版 P11）
     expect(w.get('.dt-entry-kick').text()).toContain('稀有');
-    expect(w.text()).toContain('菜园能种出来, 每次收获 20 个');
     const cb = w.get('[data-testid="wiki-cookbooks"]');
     // 小标题后面小字写几道（界面改版 P11）
     expect(cb.get('h3.dt-entry-h').text()).toContain('用到它的食谱');
@@ -402,7 +400,6 @@ describe('食材、菜谱详情：晚到的旧请求不盖新页面（backlog #1
     rare: false,
     type: 2,
     maxNum: 99,
-    seed: null,
     cookbooks: [],
     mysterious: [],
   });

@@ -15,13 +15,13 @@ function vueFiles(dir: string): string[] {
   });
 }
 const rel = (p: string) => relative(SRC, p).replaceAll('\\', '/');
-/** 游戏页面：不含管理后台和菜园（菜园不考虑） */
+/** 游戏页面：不含管理后台 */
 const GAME = vueFiles(SRC)
   .map((p) => ({
     path: rel(p),
     tpl: readFileSync(p, 'utf8').split('<template>').slice(1).join('<template>'),
   }))
-  .filter((f) => !f.path.includes('admin/') && !/yard/i.test(f.path));
+  .filter((f) => !f.path.includes('admin/'));
 /** 整块可点、text-reset 的按钮（公告、顶栏、顶栏时间、邮件标题）不是文字链接 */
 const BLOCK_BTN_LINK = new Set([
   'components/AnnounceBanner.vue',

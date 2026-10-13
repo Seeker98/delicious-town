@@ -68,10 +68,6 @@ const guide: Messages['guide'] = {
       text: 'Guilde\u202f: discutez chaque jour avec le Maire Grosse Marmite (un ingrédient) et devinez avec lui la prochaine météo (bonne réponse récompensée, aucune pénalité sinon)\u202f; Frère 13 donne des klaxons chaque jour\u202f; Carmen offre un bon d’ingrédient mystère à la première visite',
     },
     {
-      to: '/yard',
-      text: 'Potager\u202f: plantez, arrosez, chassez insectes et mauvaises herbes, récoltez à temps, et volez dans les potagers de vos amis',
-    },
-    {
       to: '/market',
       text: 'Marché\u202f: le marché du jour se renouvelle toutes les deux heures en journée et le marché des promos toutes les heures',
     },

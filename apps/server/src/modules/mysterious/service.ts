@@ -1,6 +1,7 @@
 import { GOODS, type MysteriousCookbook } from '@dt/config';
 import {
   buildPool,
+  pickWeighted,
   gameDay,
   gameTime,
   ErrorCode,
@@ -32,7 +33,6 @@ import { cookInSeason } from '../shiling/rules';
 import { seasonOf } from '../shiling/service';
 import {
   addProficiency,
-  appraisePick,
   appraiseRate,
   bobChance,
   cookDish,
@@ -135,7 +135,6 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
           ...toolIds,
           GOODS.mysteryRecipe,
           GOODS.luckyCookie,
-          GOODS.starBook,
           GOODS.appraiserCard,
           ...[1, 2, 3, 4, 5, 6].map((lv) => GOODS.fragmentBase + lv),
         ])
@@ -186,19 +185,16 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
               d.config.bundle.shopPools.black.includes(goodsId) && g.diamond > 0 ? g.diamond : null,
             award: g.awardFlag !== null,
             champion: s.tuning.mysterious.championGoodsId === goodsId,
-            // 守护兽暴击掉的是厨神玉玺（temple/guardian 的 critGSRate）
-            guardian: goodsId === GOODS.seal,
           };
         }),
         cookies: have(GOODS.luckyCookie),
         cookNums: s.tuning.mysterious.cookNums,
-        starBook: have(GOODS.starBook) > 0,
         jobCard: have(GOODS.appraiserCard) > 0 ? GOODS.appraiserCard : null,
         season,
       };
     },
 
-    appraise(ctx: RestCtx, b: { toolId: number; times: number; noRetry: boolean }) {
+    appraise(ctx: RestCtx, b: { toolId: number; times: number }) {
       return op(ctx, 'mc.appraise', async (o): Promise<AppraiseResultDto> => {
         const def = o.config.appraiseTools.get(b.toolId);
         if (!def) throw badInput('not_appraise_tool');
@@ -210,7 +206,6 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         const weather = (await world.ensure(o.shardId, o.now, o.tx)).weather.effects;
         const rate = appraiseRate(def, (weather.starMCBookRate ?? 0) + (agg.starMCBookRate ?? 0), luck);
         const pool = poolOf(def.min, def.max);
-        const retry = (agg.starMCBook ?? 0) > 0 && !b.noRetry;
         const results: AppraiseResultDto['results'] = [];
         const got = new Map<number, number>();
         for (let i = 0; i < b.times; i++) {
@@ -220,10 +215,10 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
             results.push({ ok: false, text: FAIL_TEXTS[textId]!, textId });
             continue;
           }
-          const { mc, blessed } = appraisePick(pool, retry, o.tuning.mysterious, o.rng);
+          const mc = pickWeighted(pool, o.rng);
           const num = o.rng.intMin1(def.num);
           got.set(mc.id, (got.get(mc.id) ?? 0) + num);
-          results.push({ ok: true, mcId: mc.id, num, blessed });
+          results.push({ ok: true, mcId: mc.id, num });
         }
         for (const [mcId, num] of got) await addRemnant(o, mcId, num);
         await emitAction(o, 'mc.appraise', b.times);

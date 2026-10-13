@@ -3,7 +3,6 @@ import { sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
 import { questIn, showQuest } from '../../../test/quests';
-import { grantGoods } from '../store/grant';
 import { GOODS } from '@dt/config';
 import { gid } from '../../../test/items';
 import { createShard } from '../../../test/fixtures';
@@ -30,7 +29,7 @@ describe('守护兽（规格书 09 §9.1）', () => {
     expect(r.data.shots.every((s) => s.hit && s.crit && s.damage === 6400)).toBe(true);
     expect(r.data).toMatchObject({ hpMax: 30000, hpLeft: 0, killed: true });
     expect(await goodsNum(win, ctx.restaurantId, GOODS.missileCluster)).toBe(5);
-    expect(r.data.drops).toMatchObject({ tickets: 5, maps: 5, seals: 0, dtTickets: 320 });
+    expect(r.data.drops).toMatchObject({ tickets: 5, maps: 5, dtTickets: 320 });
     expect(await goodsNum(win, ctx.restaurantId, GOODS.mysteryTicket)).toBe(5);
     expect(await goodsNum(win, ctx.restaurantId, gid('探险图'))).toBe(5);
     expect(r.data.drops.rare).not.toBeNull();
@@ -70,14 +69,6 @@ describe('守护兽（规格书 09 §9.1）', () => {
         params: { reason: 'star', need: 1 },
       },
     );
-  });
-
-  it('捕梦网：暴击时按集束飞弹的概率掉厨神玉玺', async () => {
-    const ctx = await newRestaurant(win, { patch: { star_level: 3 }, goods: { [GOODS.missileCluster]: 1 } });
-    await grantGoods(win.db, config, ctx.restaurantId, GOODS.dreamNet, 1, new Date());
-    const r = await win.game.temple.missile(ctx, { goodsId: GOODS.missileCluster, num: 1 });
-    expect(r.data.drops.seals).toBe(1);
-    expect(await goodsNum(win, ctx.restaurantId, GOODS.seal)).toBe(1);
   });
 
   it('不是飞弹报 VALIDATION_FAILED；没有飞弹报 NOT_ENOUGH', async () => {

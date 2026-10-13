@@ -22,7 +22,7 @@ import {
 
 /**
  * 领取（设计文档 §3.4）。riderOp 是好友骑手店的操作（双店操作里的对方），自己当骑手时为 null。
- * 随机数顺序：成败 →（边牧）→ 奖池 →（礼券数量）→ 神秘顾客 →（失败原因）
+ * 随机数顺序：成败 → 奖池 →（礼券数量）→ 神秘顾客 →（失败原因）
  */
 export async function settleDelivery(
   o: Op,
@@ -53,13 +53,7 @@ export async function settleDelivery(
   if (!self && riderOp?.rest.id !== rider.rider_rest_id) throw invalidState('delivery_gone');
   if (drone) spendDiamond(o, droneDiamonds(v.grade));
   const agg = await opAgg(o);
-  let success = v.private || drone || o.rng.next() < v.success_odds / 1000;
-  let forced = false;
-  const force = agg.taFailForceSuccessRate ?? 0;
-  if (!success && force > 0 && o.rng.next() < force) {
-    success = true;
-    forced = true;
-  }
+  const success = v.private || drone || o.rng.next() < v.success_odds / 1000;
   let exp = claimExp(v.exp, { friend: !self, private: v.private }, t);
   let coin = 0;
   let renown = 0;
@@ -118,7 +112,6 @@ export async function settleDelivery(
   const result: TakeawayClaimDto = {
     deliveryId: v.id,
     success,
-    forced,
     drone,
     reason,
     reasonId,

@@ -14,28 +14,25 @@ describe('名字×数量（backlog #116）', () => {
     expect(zh.qty('大米', 3)).toBe('大米×3');
   });
 
-  it('法文文案里不再有紧挨着的“名字×数量”（菜园不改）', () => {
+  it('法文文案里不再有紧挨着的“名字×数量”', () => {
     const dir = join(__dirname, 'locales/fr');
-    const bad = readdirSync(dir)
-      .filter((f) => f !== 'yard.ts')
-      .flatMap((f) =>
-        readFileSync(join(dir, f), 'utf8')
-          .split('\n')
-          // 菜园被偷的好友动态和菜园页的写法一致，不改
-          .filter((l) => STUCK.test(l) && !l.includes('a volé votre'))
-          .map((l) => `${f}: ${l.trim()}`),
-      );
+    const bad = readdirSync(dir).flatMap((f) =>
+      readFileSync(join(dir, f), 'utf8')
+        .split('\n')
+        .filter((l) => STUCK.test(l))
+        .map((l) => `${f}: ${l.trim()}`),
+    );
     expect(bad).toEqual([]);
   });
 
-  it('玩家页面的代码不再写死“名字×数量”（后台、菜园、倍率除外）', () => {
+  it('玩家页面的代码不再写死“名字×数量”（后台、倍率除外）', () => {
     const root = join(__dirname, '..');
     const files: string[] = [];
     const walk = (d: string) => {
       for (const e of readdirSync(join(root, d), { withFileTypes: true })) {
         const p = d ? `${d}/${e.name}` : e.name;
         if (e.isDirectory()) {
-          if (!['i18n', 'admin', 'yard'].includes(e.name)) walk(p);
+          if (!['i18n', 'admin'].includes(e.name)) walk(p);
         } else if (/\.(vue|ts)$/.test(e.name) && !e.name.endsWith('.test.ts')) files.push(p);
       }
     };

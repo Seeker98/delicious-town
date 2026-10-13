@@ -31,7 +31,6 @@ const temple: Messages['temple'] = {
     lastTitle: (n) => `À l’instant · ${n} ${plFr(n, 'exploration', 'explorations')}`,
     result: (ok, fail) =>
       `${ok} ${plFr(ok, 'réussite', 'réussites')}, ${fail} ${plFr(fail, 'perdu', 'perdus')} en route`,
-    exp: (n) => `La lampe à pétrole a rapporté ${n} EXP`,
   },
   appraise: {
     what: 'faire une expertise',
@@ -55,7 +54,6 @@ const temple: Messages['temple'] = {
     howBlack: (diamond) => `marché noir ${diamond} diamants`,
     howAward: 'récompenses aléatoires de la Tour des chefs, du bar, etc.',
     howChampion: 'champion des plats signature d’hier',
-    howGuardian: 'coups critiques sur le gardien du Temple si vous avez un Attrape-rêves',
     howSep: ', ',
     howMany: 'Combien d’expertises',
     btn: (n) => `Expertiser ${n} fois`,
@@ -65,12 +63,10 @@ const temple: Messages['temple'] = {
     after: 'Reste après',
     afterItems: (recipes, tool, toolLeft) =>
       `${recipes} ${plFr(recipes, 'recette mystère', 'recettes mystère')}, ${tool}\u202f×\u202f${toolLeft}`,
-    noRetry: 'Ne pas relancer sous le niveau 5 (Livre du dieu des étoiles)',
     lastTitle: (n, ok) =>
       `À l’instant · ${n} ${plFr(n, 'expertise', 'expertises')}, ${ok} ${plFr(ok, 'réussie', 'réussies')}`,
     got: (name, num) => `Fragment de ${name}\u202f×\u202f${num}`,
     level: (n) => `Niv. ${n}`,
-    blessed: 'Faveur du dieu des étoiles',
   },
   guardian: {
     what: 'défier le gardien',
@@ -100,7 +96,6 @@ const temple: Messages['temple'] = {
     dropNames: {
       tickets: 'Bons mystère',
       maps: 'Cartes d’exploration',
-      seals: 'Sceaux du dieu cuisinier',
       dt: 'Tickets Délice',
     },
   },

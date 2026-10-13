@@ -25,7 +25,6 @@ describe('鉴定出高级特色菜', () => {
       const r = await t.game.mysterious.appraise(ctx, {
         toolId: GOODS.krabburgerBook,
         times: 10,
-        noRetry: false,
       });
       levels.push(...r.data.results.filter((x) => x.ok).map((x) => config.requireMc(x.mcId!).level));
     }

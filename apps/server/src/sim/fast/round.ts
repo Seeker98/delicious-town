@@ -20,7 +20,6 @@ export function fastSettleSource(r: FastRest, agg: Record<string, number>, now: 
       streetId: r.streetId,
       renown: r.renown,
       luck: r.luck,
-      cteOn: r.cteOn,
       cookfoodsFlag: r.cookfoodsFlag,
     },
     tables: r.tables,

@@ -28,7 +28,6 @@ const temple: Messages['temple'] = {
     strengthN: (n) => `Energía ${n}`,
     lastTitle: (n) => `Hace un momento · ${n} ${plEs(n, 'exploración', 'exploraciones')}`,
     result: (ok, fail) => `${ok} con éxito, ${fail} perdidos`,
-    exp: (n) => `La lámpara de aceite dio ${n} EXP`,
   },
   appraise: {
     what: 'tasar',
@@ -51,7 +50,6 @@ const temple: Messages['temple'] = {
     howBlack: (diamond) => `mercado negro ${diamond} diamantes`,
     howAward: 'premios aleatorios de la Torre de chefs, el bar y más',
     howChampion: 'campeón de platos estrella de ayer',
-    howGuardian: 'golpes críticos al guardián del Templo si tienes un Atrapasueños',
     howSep: ', ',
     howMany: '¿Cuántas veces?',
     btn: (n) => `Tasar ×${n}`,
@@ -60,11 +58,9 @@ const temple: Messages['temple'] = {
     after: 'Te quedará',
     afterItems: (recipes, tool, toolLeft) =>
       `${recipes} ${plEs(recipes, 'receta misteriosa', 'recetas misteriosas')}, ${tool} ×${toolLeft}`,
-    noRetry: 'No repetir por debajo del nivel 5 (Libro del dios de las estrellas)',
     lastTitle: (n, ok) => `Hace un momento · ${n} ${plEs(n, 'tasación', 'tasaciones')}, ${ok} con éxito`,
     got: (name, num) => `Fragmento de ${name} ×${num}`,
     level: (n) => `Nv. ${n}`,
-    blessed: 'Favor del dios de las estrellas',
   },
   guardian: {
     what: 'desafiar al guardián',
@@ -94,7 +90,6 @@ const temple: Messages['temple'] = {
     dropNames: {
       tickets: 'Vales misteriosos',
       maps: 'Mapas de exploración',
-      seals: 'Sellos del dios cocinero',
       dt: 'Vales Delicioso',
     },
   },

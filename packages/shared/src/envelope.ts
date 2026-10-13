@@ -13,8 +13,6 @@ export interface GameEvent {
     | 'oil'
     | 'strength'
     | 'remnant'
-    | 'seed'
-    | 'basket'
     | 'shiling'
     | 'activityCurrency';
   id?: number;

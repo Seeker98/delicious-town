@@ -1,7 +1,7 @@
 {
  "source": "新设计(design_missing.py)",
- "rule": "weekGroup=0 常驻；雕像分 4 组按 ISO 周数%4+1 轮换；稀有品每人限 1 个；四、五级食材随机券常驻（问题记录 505：平时没有来路，用户 2026-10-08 定）",
- "count": 14,
+ "rule": "weekGroup=0 常驻；雕像每组 1 座，按 ISO 周数 % 组数轮换（每周都有一座；道具减法 2026-10-13 删了 4 座后剩 3 组）；稀有品每人限 1 个；四、五级食材随机券常驻（问题记录 505：平时没有来路，用户 2026-10-08 定）",
+ "count": 10,
  "data": [
   {
    "goodsId": 10007,
@@ -60,35 +60,11 @@
    "require": "tz"
   },
   {
-   "goodsId": 61601,
-   "renown": 3000,
-   "rareflag": 1,
-   "weeklyLimit": 1,
-   "weekGroup": 1,
-   "require": null
-  },
-  {
    "goodsId": 61602,
    "renown": 3000,
    "rareflag": 1,
    "weeklyLimit": 1,
    "weekGroup": 2,
-   "require": null
-  },
-  {
-   "goodsId": 61603,
-   "renown": 3000,
-   "rareflag": 1,
-   "weeklyLimit": 1,
-   "weekGroup": 3,
-   "require": null
-  },
-  {
-   "goodsId": 61604,
-   "renown": 5000,
-   "rareflag": 1,
-   "weeklyLimit": 1,
-   "weekGroup": 4,
    "require": null
   },
   {
@@ -101,14 +77,6 @@
   },
   {
    "goodsId": 61606,
-   "renown": 3000,
-   "rareflag": 1,
-   "weeklyLimit": 1,
-   "weekGroup": 2,
-   "require": null
-  },
-  {
-   "goodsId": 61607,
    "renown": 3000,
    "rareflag": 1,
    "weeklyLimit": 1,

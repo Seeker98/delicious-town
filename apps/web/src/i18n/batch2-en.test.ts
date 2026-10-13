@@ -12,7 +12,6 @@ import { rewardText } from '../utils/rewards';
 const names = {
   goodsName: (id: number) => `G${id}`,
   foodName: (id: number) => `F${id}`,
-  seedName: () => 'S',
 };
 const market = {
   daily: [],

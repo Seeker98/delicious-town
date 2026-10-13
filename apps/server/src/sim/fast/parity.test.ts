@@ -64,7 +64,6 @@ describe('结算源字段一一对应（终审 I-3，设计 §9 第一条）', (
         street_id: 3,
         renown: 77,
         luck: 9,
-        cte_on: true,
         cookfoods_flag: 0,
       })
       .where('id', '=', ctx.restaurantId)
@@ -96,7 +95,6 @@ describe('结算源字段一一对应（终审 I-3，设计 §9 第一条）', (
       streetId: 3,
       renown: 77,
       luck: 9,
-      cteOn: true,
       cookfoodsFlag: 0,
     });
     r.tables = tables;

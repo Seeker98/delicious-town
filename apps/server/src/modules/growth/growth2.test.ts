@@ -172,12 +172,12 @@ describe('搬家（规格书 02 §2.8）', () => {
   it('搬到新街道印度街（id 20）：换上印度街勋章，devicetype 也是 20 的雕像不受影响（问题记录 284）', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 100000 }, goods: { [GOODS.moveCard]: 1 } });
     await grant(ctx.restaurantId, gid('新手街'));
-    await grant(ctx.restaurantId, GOODS.thinker);
+    await grant(ctx.restaurantId, gid('史前怪石-雕像'));
     await g().move(ctx, 20);
     expect((await restRow(t, ctx.restaurantId)).street_id).toBe(20);
     expect(await goodsNum(t, ctx.restaurantId, gid('新手街'))).toBe(0);
     expect(await goodsNum(t, ctx.restaurantId, gid('印度街'))).toBe(1);
-    expect(await goodsNum(t, ctx.restaurantId, GOODS.thinker)).toBe(1);
+    expect(await goodsNum(t, ctx.restaurantId, gid('史前怪石-雕像'))).toBe(1);
     const effects = await listActiveEffects(t.db, ctx.restaurantId, new Date());
     expect(effects.filter((e) => e.sourceType === 'street').map((e) => e.sourceId)).toEqual([gid('印度街')]);
   });
@@ -204,13 +204,6 @@ describe('开关', () => {
     await g().setCookfoods(six, 2);
     expect((await restRow(t, six.restaurantId)).cookfoods_flag).toBe(2);
     await expect(g().setCookfoods(six, 6)).rejects.toMatchObject({ code: 'INVALID_STATE' });
-  });
-  it('银币转经验：需要阿波罗雕像', async () => {
-    const ctx = await newRestaurant(t);
-    await expect(g().setCte(ctx, true)).rejects.toMatchObject({ code: 'REQUIREMENT_NOT_MET' });
-    await grant(ctx.restaurantId, GOODS.apolloStatue);
-    await g().setCte(ctx, true);
-    expect((await restRow(t, ctx.restaurantId)).cte_on).toBe(true);
   });
 });
 
@@ -264,15 +257,6 @@ describe('赶走 NPC（规格书 02 §2.8）', () => {
     await expect(g().drivePlankton(ctx, 'strength')).rejects.toMatchObject({
       params: { reason: 'not_plankton_host' },
     });
-  });
-  it('赶走生气的蟹老板：需要纪念碑，50 体力', async () => {
-    const ctx = await newRestaurant(t, { patch: { strength: 60 } });
-    await grant(ctx.restaurantId, GOODS.krabAngry);
-    await expect(g().driveKrab(ctx)).rejects.toMatchObject({ code: 'REQUIREMENT_NOT_MET' });
-    await grant(ctx.restaurantId, GOODS.armStatue);
-    await g().driveKrab(ctx);
-    expect(await goodsNum(t, ctx.restaurantId, GOODS.krabAngry)).toBe(0);
-    expect((await restRow(t, ctx.restaurantId)).strength).toBe(10);
   });
 });
 

@@ -68,10 +68,6 @@ const guide: Messages['guide'] = {
       text: 'Gremio: charla a diario con el Alcalde Gran Olla (un ingrediente) y adivina con él el próximo tiempo (si aciertas hay premio, fallar no penaliza); el Hermano 13 da bocinas cada día; Carmen regala un vale de ingrediente misterioso en tu primera visita',
     },
     {
-      to: '/yard',
-      text: 'Huerto: planta, riega, quita bichos y malas hierbas, cosecha a tiempo y roba en los huertos de tus amigos',
-    },
-    {
       to: '/market',
       text: 'Mercado: el mercado diario se renueva cada dos horas durante el día y el de ofertas cada hora',
     },

@@ -23,7 +23,7 @@ describe('GuardianPanel', () => {
       hpMax: 15000,
       hpLeft: 2000,
       killed: false,
-      drops: { tickets: 1, maps: 0, seals: 0, dtTickets: 3, rare: null, foods: [] },
+      drops: { tickets: 1, maps: 0, dtTickets: 3, rare: null, foods: [] },
     });
   });
 

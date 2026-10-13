@@ -80,10 +80,6 @@ const streetName = computed(() => new Map(streets.value.map((s) => [s.id, s.name
         <dd>{{ w.coin(formatNum(f.coin)) }}</dd>
         <dt>{{ w.fields.maxHold }}</dt>
         <dd>{{ w.fields.pieces(f.maxNum) }}</dd>
-        <template v-if="f.seed">
-          <dt>{{ w.fields.garden }}</dt>
-          <dd>{{ w.fields.seed(f.seed.harvestNum) }}</dd>
-        </template>
       </dl>
 
       <div data-testid="wiki-cookbooks">

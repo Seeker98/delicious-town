@@ -64,7 +64,6 @@ const takeaway: Messages['takeaway'] = {
     claimFailed: "Couldn't claim",
     noDiamond: (n) => `Not enough diamonds (need ${n})`,
     failedReason: (reason) => `Delivery failed: ${reason}`,
-    forced: 'Delivered (the border collie helped)',
     drone: 'Delivered by drone',
     success: 'Delivered',
     coin: (n) => `Coins +${n}`,

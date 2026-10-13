@@ -76,7 +76,6 @@ export interface RestaurantDto {
   state: number;
   stateReason: string | null;
   promoOn: boolean;
-  cteOn: boolean;
   cookfoodsFlag: number;
   /** 挑剔消耗食材每档保留的数量：N 档表示每种食材至少留 N × 这个数（问题记录 220） */
   cookfoodsPerFlag: number;

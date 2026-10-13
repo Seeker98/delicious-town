@@ -146,7 +146,7 @@ const tower: Messages['tower'] = {
     got: (name, n) => `Conseguiste ${name}×${n}`,
     failed: 'No se pudo canjear',
     renown: (n) => `Mi renombre ${n}`,
-    rule: 'Los vales Delicioso y los Vales de ingrediente aleatorio nv. 4 y 5 están siempre; las estatuas rotan cada semana y solo puedes tener 1',
+    rule: 'Los vales Delicioso y los Vales de ingrediente aleatorio nv. 4 y 5 están siempre; cada semana hay una estatua distinta y solo puedes tener 1',
     rareLine: 'Rota cada semana · máx. 1',
     weekLine: (bought, limit) => `Esta semana ${bought}/${limit}`,
     open: (name, price) => `Canjear ${name}, ${price} de renombre`,

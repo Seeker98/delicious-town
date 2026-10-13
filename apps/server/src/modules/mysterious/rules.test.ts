@@ -1,10 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import type { MysteriousCookbook } from '@dt/config';
-import { buildPool, sequenceRng } from '@dt/shared';
+import { sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import {
   addProficiency,
-  appraisePick,
   appraiseRate,
   bobChance,
   cookDish,
@@ -136,31 +135,12 @@ describe('鉴定（规格书 04 §4.3）', () => {
   it('成功率 = 道具 + 加成 + 幸运/8', () => {
     expect(appraiseRate({ min: 1, max: 6, rate: 0.28, num: 1 }, 0.2, 0.4)).toBeCloseTo(0.53, 10);
   });
-
-  it('星神之书：第一次抽到低于 5 级时重抽，取等级高的并标记眷恋', () => {
-    const pool = buildPool([dish({ id: 10, level: 3 }), dish({ id: 11, level: 5 })], (m) => m.odds);
-    expect(appraisePick(pool, true, t, sequenceRng([0.1, 0.9]))).toMatchObject({
-      mc: { id: 11 },
-      blessed: true,
-    });
-    expect(appraisePick(pool, false, t, sequenceRng([0.1, 0.9]))).toMatchObject({
-      mc: { id: 10 },
-      blessed: false,
-    });
-    expect(appraisePick(pool, true, t, sequenceRng([0.1, 0.1]))).toMatchObject({
-      mc: { id: 10 },
-      blessed: false,
-    });
-    expect(appraisePick(pool, true, t, sequenceRng([0.9]))).toMatchObject({ mc: { id: 11 }, blessed: false });
-  });
 });
 
 describe('教室（规格书 04 §4.7）', () => {
-  it('学：0.9（思想者 1）+ 幸运/5；偷：0.4 - 等级×0.02（思想者 +0.05）+ 幸运/5', () => {
-    expect(learnRate(false, 0.1, t)).toBeCloseTo(0.92, 10);
-    expect(learnRate(true, 0, t)).toBe(1);
-    expect(stealRate(5, false, 0.1, t)).toBeCloseTo(0.32, 10);
-    expect(stealRate(5, true, 0, t)).toBeCloseTo(0.35, 10);
+  it('学：0.9 + 幸运/5；偷：0.4 - 等级×0.02 + 幸运/5', () => {
+    expect(learnRate(0.1, t)).toBeCloseTo(0.92, 10);
+    expect(stealRate(5, 0.1, t)).toBeCloseTo(0.32, 10);
   });
 
   it('降级 等级×2+1 道（问题记录 424）；4 级起才可能遗忘特色菜，概率 等级×2%', () => {

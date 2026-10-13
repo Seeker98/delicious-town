@@ -1,7 +1,7 @@
 {
  "source": "新设计（问题记录 318）",
  "rule": "玩法支线：在开启章开始时出现，一次显示一档；档位 id = 3000 + 支线×20 + 顺序",
- "count": 28,
+ "count": 27,
  "data": [
   {
    "id": 1,
@@ -843,98 +843,6 @@
       ]
      },
      "href": "/cookbooks?tab=mc"
-    }
-   ]
-  },
-  {
-   "id": 7,
-   "key": "yard",
-   "name": "菜园",
-   "chapter": 5,
-   "steps": [
-    {
-     "id": 3141,
-     "order": 1,
-     "needStar": 0,
-     "name": "收获 10 次",
-     "cond": {
-      "kind": "counter",
-      "key": "yard.harvest",
-      "target": 10
-     },
-     "award": {
-      "coin": 30000,
-      "exp": 3000
-     },
-     "href": "/yard"
-    },
-    {
-     "id": 3142,
-     "order": 2,
-     "needStar": 0,
-     "name": "鉴定一次食材配方",
-     "cond": {
-      "kind": "counter",
-      "key": "formula.appraise",
-      "target": 1
-     },
-     "award": {
-      "goods": [
-       {
-        "id": 10903,
-        "num": 1
-       }
-      ]
-     },
-     "href": "/yard"
-    },
-    {
-     "id": 3143,
-     "order": 3,
-     "needStar": 0,
-     "name": "用配方合成一次食材",
-     "cond": {
-      "kind": "counter",
-      "key": "formula.compose",
-      "target": 1
-     },
-     "award": {
-      "coin": 30000,
-      "exp": 3000
-     },
-     "href": "/yard"
-    },
-    {
-     "id": 3144,
-     "order": 4,
-     "needStar": 0,
-     "name": "开垦 6 块地",
-     "cond": {
-      "kind": "state",
-      "key": "yard.lands",
-      "target": 6
-     },
-     "award": {
-      "coin": 80000,
-      "exp": 8000
-     },
-     "href": "/yard"
-    },
-    {
-     "id": 3145,
-     "order": 5,
-     "needStar": 0,
-     "name": "用配方合成 20 次",
-     "cond": {
-      "kind": "counter",
-      "key": "formula.compose",
-      "target": 20
-     },
-     "award": {
-      "coin": 100000,
-      "exp": 10000
-     },
-     "href": "/yard"
     }
    ]
   },

@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { GOODS } from '@dt/config';
+import { FUND, GOODS } from '@dt/config';
 import { testConfig } from '../../../test/config';
 import {
   befriend,
@@ -30,7 +30,7 @@ describe('访问好友餐厅（规格书 13 §13.2）', () => {
         { rest_id: b.restaurantId, icon_key: 'helper', shown: false },
       ])
       .execute();
-    await grantGoods(t.db, config, b.restaurantId, GOODS.excitedHeart, 1, new Date());
+    await grantGoods(t.db, config, b.restaurantId, FUND.B, 1, new Date());
     await grantGoods(t.db, config, b.restaurantId, GOODS.bangle, 1, new Date(Date.now() - 2 * 3600_000));
     await setTables(t, b.restaurantId, [
       {
@@ -48,7 +48,7 @@ describe('访问好友餐厅（规格书 13 §13.2）', () => {
       avatar: 2,
       isFriend: true,
       icons: [{ key: 'founder', title: '开服元老' }],
-      honors: [GOODS.excitedHeart],
+      honors: [FUND.B],
       thumbedToday: false,
     });
     expect(r).not.toHaveProperty('coin');

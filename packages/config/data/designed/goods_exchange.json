@@ -1,7 +1,7 @@
 {
  "source": "新设计(design_missing.py)",
  "rule": "物品集合来自公开接口的获取途径(镇长-蟹黄堡/美味券/万能碎片/其他)；价格按道具等级定档，勋章/牌匾限兑 1 次",
- "count": 62,
+ "count": 56,
  "data": [
   {
    "id": 1,
@@ -275,21 +275,6 @@
    "newsflag": 0
   },
   {
-   "id": 18,
-   "category": "bg",
-   "goodsId": 60604,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10005,
-     "num": 5
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
    "id": 19,
    "category": "bg",
    "goodsId": 61410,
@@ -380,36 +365,6 @@
    "newsflag": 0
   },
   {
-   "id": 26,
-   "category": "bg",
-   "goodsId": 61416,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10005,
-     "num": 5
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
-   "id": 27,
-   "category": "bg",
-   "goodsId": 61418,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10005,
-     "num": 5
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
    "id": 28,
    "category": "bg",
    "goodsId": 61419,
@@ -468,21 +423,6 @@
    ],
    "times": 1,
    "newsflag": 0
-  },
-  {
-   "id": 32,
-   "category": "bg",
-   "goodsId": 61426,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10005,
-     "num": 8
-    }
-   ],
-   "times": 1,
-   "newsflag": 1
   },
   {
    "id": 33,
@@ -620,21 +560,6 @@
    "newsflag": 0
   },
   {
-   "id": 43,
-   "category": "dt",
-   "goodsId": 61406,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10007,
-     "num": 66
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
    "id": 44,
    "category": "dt",
    "goodsId": 30519,
@@ -713,21 +638,6 @@
    "id": 50,
    "category": "dt",
    "goodsId": 61419,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10007,
-     "num": 66
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
-   "id": 51,
-   "category": "dt",
-   "goodsId": 61425,
    "num": 1,
    "needGoods": [
     {

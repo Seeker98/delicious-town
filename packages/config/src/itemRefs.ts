@@ -21,7 +21,7 @@ const range = (base: number, from: number, to: number) =>
 
 /**
  * 代码里直接用到的道具：ids.ts 的常量、按编号推算的（残卷碎片 10801~10806、N 级券 10101~10105），
- * 构建里点名检查的（菜园、小镇用到的道具）也都在 GOODS 里
+ * 构建里点名检查的（小镇用到的道具）也都在 GOODS 里
  */
 export const CODE_GOODS: ReadonlySet<number> = new Set([
   // 基数（fragmentBase、levelTicketBase）只是推算的起点，不是道具
@@ -105,16 +105,11 @@ export function itemRefs(b: Omit<ConfigBundle, 'version' | 'i18n'>): ItemRef[] {
   for (const id of b.shopPools.special) add('goods', id, 'gives', '商店特价');
   for (const id of b.shopPools.black) add('goods', id, 'gives', '黑市');
 
-  // ---------- 食谱、特色菜、菜园 ----------
+  // ---------- 食谱、特色菜 ----------
   for (const c of b.cookbooks)
     for (const [grade, list] of Object.entries(c.needFoods))
       for (const f of list) add('foods', f.foodsId, 'uses', `食谱 ${grade} 品级`);
   for (const m of b.mysteriousCookbooks) for (const id of m.foods) add('foods', id, 'uses', '特色菜');
-  for (const s of b.seeds) add('foods', s.foodsId, 'gives', '菜园种子');
-  for (const f of b.formulas) {
-    add('foods', f.resFoodsId, 'gives', '菜园配方');
-    for (const id of [f.mainFoodsId, f.subFoodsId, f.addFoodsId]) add('foods', id, 'uses', '菜园配方');
-  }
 
   // ---------- 奖励 ----------
   for (const s of b.starAward) award(`升星奖励 ${s.star} 星`, s.award);

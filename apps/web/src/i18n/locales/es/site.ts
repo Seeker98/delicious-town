@@ -31,6 +31,10 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    cuts21013:
+      'Menos objetos, segunda tanda: se quitan las estatuas Apolo, Monumento al Renacimiento Africano, Vulgar y El pensador, la Llave de luz estelar, el Border collie, el Libro del Dios de las Estrellas, la Lámpara de queroseno, el Corazón acelerado y el Atrapasueños; con ellos desaparecen las monedas a EXP, echar a mano al enfadado Don Krab, repetir la tasación, los Sellos de jade del Dios de la Cocina en los críticos al guardián y las entregas fallidas convertidas en éxito; la tienda de renombre ahora tiene una de las estatuas restantes cada semana',
+    yard1013:
+      'Se quita el huerto: siembra, robo de cosechas, cesta, fórmulas y abono desaparecen, junto con el Pergamino de la estrella y la luna; también se quitan los pasos del huerto en las misiones principales y secundarias, y el capítulo 5 de la misión principal ahora se llama «Utensilios y Torre de chefs»',
     cuts1013:
       'Menos objetos: se quitan los cuadros, la Lámpara mágica y el Deseo del pueblo, el Collar del amor y Misión cumplida (ración extra en las entregas); el Mercado premium ahora pide una medalla del fondo de nivel B o superior; las recompensas de actividad ya no se duplican; las misiones secundarias pierden los pasos «Tener 7 cuadros» y «Pedir un deseo con la Lámpara mágica»',
     special1013:

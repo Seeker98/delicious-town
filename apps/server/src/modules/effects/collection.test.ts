@@ -32,6 +32,7 @@ describe('收集类加成（规格书 20 §20.18）', () => {
   it('集盆栽：4 株银币 +8%，7 株再经验 +64%，档位累加', () => {
     expect(calc({ pots: 3 })).toEqual({});
     expect(calc({ pots: 4 })).toEqual({ potCoinRate: 0.08 });
-    expect(calc({ pots: 7 })).toEqual({ potCoinRate: 0.08, reapAddNum: 1, potExpRate: 0.64 });
+    expect(calc({ pots: 6 })).toEqual({ potCoinRate: 0.08 });
+    expect(calc({ pots: 7 })).toEqual({ potCoinRate: 0.08, potExpRate: 0.64 });
   });
 });

@@ -398,7 +398,6 @@ export function createWorldService(d: GameDeps) {
         foods: m.foods,
         appraisable: m.appraisable,
       })),
-      seeds: d.config.bundle.seeds.map((s) => ({ id: s.id, foodsId: s.foodsId, level: s.level })),
       data: {
         // 问题记录 318：主线、支线、每周任务的名字；章名、支线名
         tasks: [...d.config.bundle.quests, ...d.config.bundle.weeklyGroups.flatMap((g) => g.quests)].map(
@@ -416,7 +415,6 @@ export function createWorldService(d: GameDeps) {
           title: f.title,
           note: f.note,
         })),
-        formulas: [...d.config.formulas.values()].map((x) => ({ id: x.id, name: x.name })),
         kujiThemes: d.config.bundle.kujiThemes.map((x) => ({ id: x.month, name: x.name, desc: x.desc })),
         proficiency: d.config.mcProficiency.map((x) => ({ id: x.curlevel, name: x.name })),
         cookbooks: d.config.bundle.cookbooks.map((x) => ({ id: x.id, name: x.name })),

@@ -13,7 +13,6 @@ const names = {
   mcName: (id: number) => `M${id}`,
   weatherName: (id: number) => `W${id}`,
   streetName: (id: number) => `S${id}`,
-  seedName: (id: number) => `D${id}`,
 };
 const news = (type: string, params: Record<string, unknown> = {}): NewsDto =>
   ({ id: 1, type, restId: 1, restName: 'Bob', params, createdAt: '2026-10-02T00:00:00Z' }) as NewsDto;

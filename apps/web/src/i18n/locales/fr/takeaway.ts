@@ -64,7 +64,6 @@ const takeaway: Messages['takeaway'] = {
     claimFailed: 'Impossible de récupérer',
     noDiamond: (n) => `Pas assez de diamants (il en faut ${n})`,
     failedReason: (reason) => `Échec de la livraison\u202f: ${reason}`,
-    forced: 'Livrée (le border collie a aidé)',
     drone: 'Livrée par drone',
     success: 'Livrée',
     coin: (n) => `Pièces +${n}`,

@@ -148,7 +148,7 @@ const tower: Messages['tower'] = {
     got: (name, n) => `Obtenu\u202f: ${name}\u202f×\u202f${n}`,
     failed: "Échec de l'échange",
     renown: (n) => `Ma renommée ${n}`,
-    rule: 'Les tickets Délice et les Tickets d’ingrédient aléatoire niv. 4 et 5 sont toujours disponibles\u202f; les statues changent chaque semaine et vous ne pouvez en posséder qu’une',
+    rule: 'Les tickets Délice et les Tickets d’ingrédient aléatoire niv. 4 et 5 sont toujours disponibles\u202f; une statue différente chaque semaine, et vous ne pouvez en posséder qu’une',
     rareLine: 'Change chaque semaine · 1 max',
     weekLine: (bought, limit) => `Cette semaine ${bought}/${limit}`,
     open: (name, price) => `Échanger ${name}, ${price} renommée`,

@@ -8,7 +8,7 @@ import { dropRetiredGoods, RETIRED_GOODS, stripOverrides } from './0071_item_cut
 
 const LAMP = gid('神灯');
 const PAINTING = gid('蒙娜丽莎-名画');
-const KEPT = gid('激动的心');
+const KEPT = gid('增值资本勋章');
 const config = testConfig();
 
 const db = testDb();
@@ -128,7 +128,7 @@ describe('迁移 0071：神灯、星愿、名画、爱心项链、使命必达�
           rest_id: b,
           source_type: 'honor',
           source_id: KEPT,
-          effects: JSON.stringify({ excitedHeart: 1 }),
+          effects: JSON.stringify({ expRate: 0.1 }),
           expires_at: null,
         },
       ])

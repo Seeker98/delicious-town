@@ -64,7 +64,6 @@ export function rowSettleSource(
       streetId: rest.street_id,
       renown: rest.renown,
       luck: rest.luck,
-      cteOn: rest.cte_on,
       cookfoodsFlag: rest.cookfoods_flag,
     },
     tables,

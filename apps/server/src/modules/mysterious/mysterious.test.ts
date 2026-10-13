@@ -38,7 +38,7 @@ describe('鉴定（规格书 04 §4.3）', () => {
       patch: { star_level: 1 },
       goods: { [GOODS.mysteryRecipe]: 10, [GOODS.krabburgerBook]: 10 },
     });
-    const r = await s().appraise(ctx, { toolId: GOODS.krabburgerBook, times: 10, noRetry: false });
+    const r = await s().appraise(ctx, { toolId: GOODS.krabburgerBook, times: 10 });
     expect(r.data.results).toHaveLength(10);
     let total = 0;
     for (const x of r.data.results) {
@@ -71,7 +71,6 @@ describe('鉴定（规格书 04 §4.3）', () => {
     const r = await unlucky.game.mysterious.appraise(ctx, {
       toolId: gid('美味印章'),
       times: 2,
-      noRetry: false,
     });
     expect(r.data.results.every((x) => !x.ok && typeof x.text === 'string')).toBe(true);
     // 失败文案带序号，前端按语言显示（问题记录 272）
@@ -83,9 +82,7 @@ describe('鉴定（规格书 04 §4.3）', () => {
 
   it('0 星报 REQUIREMENT_NOT_MET；不是鉴定道具报 VALIDATION_FAILED；神秘食谱不够时秘方也不扣', async () => {
     const zero = await newRestaurant(t, { goods: { [GOODS.mysteryRecipe]: 1, [GOODS.krabburgerBook]: 1 } });
-    await expect(
-      s().appraise(zero, { toolId: GOODS.krabburgerBook, times: 1, noRetry: false }),
-    ).rejects.toMatchObject({
+    await expect(s().appraise(zero, { toolId: GOODS.krabburgerBook, times: 1 })).rejects.toMatchObject({
       code: 'REQUIREMENT_NOT_MET',
       params: { reason: 'star', need: 1 },
     });
@@ -93,13 +90,11 @@ describe('鉴定（规格书 04 §4.3）', () => {
       patch: { star_level: 1 },
       goods: { [GOODS.mysteryRecipe]: 1, [GOODS.krabburgerBook]: 5 },
     });
-    await expect(s().appraise(ctx, { toolId: gid('金币'), times: 1, noRetry: false })).rejects.toMatchObject({
+    await expect(s().appraise(ctx, { toolId: gid('金币'), times: 1 })).rejects.toMatchObject({
       code: 'VALIDATION_FAILED',
       params: { reason: 'not_appraise_tool' },
     });
-    await expect(
-      s().appraise(ctx, { toolId: GOODS.krabburgerBook, times: 2, noRetry: false }),
-    ).rejects.toMatchObject({
+    await expect(s().appraise(ctx, { toolId: GOODS.krabburgerBook, times: 2 })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
       params: { kind: 'goods', id: GOODS.mysteryRecipe },
     });
@@ -111,7 +106,7 @@ describe('鉴定（规格书 04 §4.3）', () => {
       patch: { star_level: 1 },
       goods: { [GOODS.mysteryRecipe]: 99, [GOODS.krabburgerBook]: 99 },
     });
-    await s().appraise(ctx, { toolId: GOODS.krabburgerBook, times: 99, noRetry: false });
+    await s().appraise(ctx, { toolId: GOODS.krabburgerBook, times: 99 });
     const kinds = await t.db
       .selectFrom('mc_remnant')
       .select('mc_id')
@@ -194,7 +189,7 @@ describe('概览、目录、任务、功能开关', () => {
     await t.db.insertInto('rest_mc').values({ rest_id: ctx.restaurantId, mc_id: 2, way: 1 }).execute();
     await giveRemnant(ctx, 3, 2);
     const o = await s().overview(ctx);
-    expect(o).toMatchObject({ star: 2, recipes: 3, cookies: 4, current: null, starBook: false });
+    expect(o).toMatchObject({ star: 2, recipes: 3, cookies: 4, current: null });
     expect(o.learned).toEqual([
       {
         mcId: 2,
@@ -220,14 +215,11 @@ describe('概览、目录、任务、功能开关', () => {
       blackDiamond: 30,
       award: true,
       champion: true,
-      guardian: false,
     });
     expect(o.tools.find((x) => x.goodsId === gid('厨神玉玺'))).toMatchObject({
       shopCoin: 300000,
       blackDiamond: 14,
       champion: false,
-      // 神殿守护兽暴击会掉（backlog 415）
-      guardian: true,
     });
     expect(o.cookNums).toEqual([1, 5, 10, 15, 25, 50]);
   });
@@ -249,7 +241,7 @@ describe('概览、目录、任务、功能开关', () => {
     });
     await showQuest(t, ctx.restaurantId, 2081);
     expect(questIn(await t.game.task.tasks(ctx), 2081)).toMatchObject({ key: 'mc.appraise', done: false });
-    await s().appraise(ctx, { toolId: GOODS.krabburgerBook, times: 1, noRetry: false });
+    await s().appraise(ctx, { toolId: GOODS.krabburgerBook, times: 1 });
     expect(questIn(await t.game.task.tasks(ctx), 2081)).toMatchObject({ done: true });
     const ctx2 = await newRestaurant(t);
     await giveRemnant(ctx2, 1, 3);
@@ -273,9 +265,7 @@ describe('概览、目录、任务、功能开关', () => {
       .execute();
     t.game.shards.invalidate(ctx.shardId);
     await expect(s().overview(ctx)).rejects.toMatchObject({ code: 'FEATURE_DISABLED' });
-    await expect(
-      s().appraise(ctx, { toolId: GOODS.krabburgerBook, times: 1, noRetry: false }),
-    ).rejects.toMatchObject({
+    await expect(s().appraise(ctx, { toolId: GOODS.krabburgerBook, times: 1 })).rejects.toMatchObject({
       code: 'FEATURE_DISABLED',
     });
   });

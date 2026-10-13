@@ -34,14 +34,10 @@ export const GOODS = {
   fragmentBase: 10800, // 残卷碎片 = 10800 + 特色菜等级（10801~10806）
   hundredMaster: 61702, // 百世之师（强制结束课程）
   spongeBob: 60508, // 海绵宝宝（烹制时点赞）
-  starBook: 61406, // 星神之书（鉴定重抽）
-  thinker: 61601, // 思想者-雕像
   luckyCookie: 10418, // 幸运饼干
   adventureMap: 10704, // 探险图
   krabCoin: SHARED_GOODS.krabCoin, // 蟹币
   dtTicket: 10007, // 美味券
-  apolloStatue: 61603, // 阿波罗-雕像（银币转经验）
-  armStatue: 61604, // 非洲复兴纪念碑-雕像（赶走生气的蟹老板）
   an2023Plaque: 30508, // 2023 纪念牌匾
   an2025Plaque: 30522, // 2025 纪念牌匾
   mdcgPlaque: 30523, // 马到成功
@@ -55,7 +51,6 @@ export const GOODS = {
   heartache: 61001, // 痛心入骨
   godsHand: 61002, // 神之一手
   thumbKing: 61411, // 点赞王
-  excitedHeart: 61416, // 激动的心
   voodoo: 61422, // 巫毒娃娃
   townCare: 60512, // 镇长的关心
   essence: 10603, // 厨具精华
@@ -68,20 +63,11 @@ export const GOODS = {
   missileBurst: 10703, // 爆裂飞弹
   mapNormal: 10704, // 探险图
   mapHigh: 10705, // 高级探险图
-  seal: 10813, // 厨神玉玺
   securityCard: 60404, // 工作证：探险向导（原保安证；探险出神秘食材）
   creativePotion: 61407, // 创意药水（试炼准备：注射）
   meditation: 61408, // 冥想（试炼准备）
-  lamp: 61413, // 煤油灯
   needle: 61414, // 欲望之针（规格书写作"指南针"）
-  starKey: 61418, // 星光之钥
   exploreBook: 61420, // 探险者秘籍
-  dreamNet: 61426, // 捕梦网
-  formulaScroll: 10903, // 玄奥配方
-  moonScroll: 61425, // 星月密卷（配方鉴定 +10%、辅碎片转主碎片）
-  starTear: 61427, // 星神之泪（配方合成额外产出）
-  formulaEssence: 10904, // 配方精华（essence 是厨具精华）
-  borderCollie: 60604, // 边牧（偷菜惩罚）
   towerTicket: 10301, // 厨塔挑战券
   takeawayTicket: 10302, // 外卖券
   shopJobHonor: 60402, // 工作证：外卖站长（外卖私人刷新）

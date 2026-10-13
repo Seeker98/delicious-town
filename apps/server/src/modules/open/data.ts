@@ -42,7 +42,7 @@ export const OPEN_ENDPOINTS = [
 
 /**
  * 开放接口的数据（问题记录 142，设计 §2）：全部从配置包算，不读数据库。
- * 反向索引（食材 → 菜谱、特色菜、种子；道具 → 兑换）建一次；名字按语言从配置包的翻译表取
+ * 反向索引（食材 → 菜谱、特色菜；道具 → 兑换）建一次；名字按语言从配置包的翻译表取
  */
 export function createOpenData(config: GameConfig) {
   const b = config.bundle;
@@ -65,7 +65,6 @@ export function createOpenData(config: GameConfig) {
   const foodMc = new Map<number, number[]>();
   for (const mc of b.mysteriousCookbooks)
     for (const f of new Set(mc.foods)) foodMc.set(f, [...(foodMc.get(f) ?? []), mc.id]);
-  const seedByFood = new Map(b.seeds.map((s) => [s.foodsId, s]));
   // 兑换规则：涉及隐藏道具的整条不出
   const rules = b.goodsExchange.filter((r) => visible(r.goodsId) && r.need.every((n) => visible(n.goodsId)));
   // 宝石的上一阶：两颗合成下一阶（视觉第三轮：来源写升阶）
@@ -273,12 +272,10 @@ export function createOpenData(config: GameConfig) {
     food(lang: Locale, id: number): OpenFoodDto | null {
       const f = config.foods.get(id);
       if (!f || f.retired) return null;
-      const seed = seedByFood.get(id);
       return {
         ...meta(lang),
         ...foodBrief(lang, id),
         maxNum: f.maxNum,
-        seed: seed ? { id: seed.id, harvestNum: seed.harvestNum } : null,
         cookbooks: [...(foodCookbooks.get(id) ?? new Map<number, number>())]
           .sort((x, y) => x[0] - y[0])
           .map(([cid, grade]) => ({

@@ -21,8 +21,8 @@ const config = testConfig();
 const t = config.tuning.temple;
 const normal: MissileDef = { attack: [90, 110], hitRate: 0.9, crit: 0.2, critRate: 2 };
 const speed: MissileDef = { attack: [5000, 5000], hitRate: 0.96, crit: 0.2, critRate: 2 };
-const shot = (def: MissileDef, seq: number[], sealRate = 0) =>
-  shoot({ def, luckRate: 0, hitBonus: 0, critBonus: 0, sealRate }, t, sequenceRng(seq));
+const shot = (def: MissileDef, seq: number[]) =>
+  shoot({ def, luckRate: 0, hitBonus: 0, critBonus: 0 }, t, sequenceRng(seq));
 const map: MapDef = { rate: 0.75, level: [4, 5], num: [5, 10], mysteriousRate: 0.06, needStrength: 2 };
 
 describe('守护兽（规格书 09 §9.1）', () => {
@@ -38,7 +38,6 @@ describe('守护兽（规格书 09 §9.1）', () => {
       damage: 0,
       ticket: 0,
       map: false,
-      seal: false,
     });
   });
 
@@ -49,7 +48,6 @@ describe('守护兽（规格书 09 §9.1）', () => {
       damage: 100,
       ticket: 0,
       map: false,
-      seal: false,
     });
   });
 
@@ -60,18 +58,16 @@ describe('守护兽（规格书 09 §9.1）', () => {
       damage: 200,
       ticket: 2,
       map: true,
-      seal: false,
     });
   });
 
-  it('固定伤害的飞弹不抽伤害；有捕梦网时暴击可能掉玉玺', () => {
-    expect(shot(speed, [0, 0, 0.99, 0.99, 0], 0.32)).toEqual({
+  it('固定伤害的飞弹不抽伤害', () => {
+    expect(shot(speed, [0, 0, 0.99, 0.99])).toEqual({
       hit: true,
       crit: true,
       damage: 10000,
       ticket: 0,
       map: false,
-      seal: true,
     });
   });
 
@@ -117,9 +113,8 @@ describe('探险（规格书 09 §9.2）', () => {
     expect(exploreRate(map, { needle: false, lostRate: 0, suitRate: -0.1 })).toBeCloseTo(0.75, 10);
   });
 
-  it('普通食材总数 = rand[1, max − min] + min（星光之钥 +2）', () => {
-    expect(exploreAwardNum(map, false, sequenceRng([0]))).toBe(6);
-    expect(exploreAwardNum(map, true, sequenceRng([0]))).toBe(8);
+  it('普通食材总数 = rand[1, max − min] + min', () => {
+    expect(exploreAwardNum(map, sequenceRng([0]))).toBe(6);
   });
 
   it('按等级分配：4 级拿 75%，其他 25%，照源码取整（计划裁定 1）', () => {

@@ -301,7 +301,7 @@
   },
   "10813": {
     "name": "Sello de jade del Dios de la Cocina",
-    "desc": "El objeto avanzado para tasar recetas misteriosas; da fragmentos de nivel 2 a 5 con mucha probabilidad de éxito, ¡y una pequeña probabilidad de tasar una fórmula de ingrediente!"
+    "desc": "El objeto avanzado para tasar recetas misteriosas; da fragmentos de nivel 2 a 5 con mucha probabilidad de éxito."
   },
   "10814": {
     "name": "Fórmula secreta de la Cangreburger",
@@ -1673,7 +1673,7 @@
   },
   "60604": {
     "name": "Border collie",
-    "desc": "Border collie, mascota del restaurante: un perro listo y obediente. Tiene un 25\u00a0% de probabilidad de que quien robe en tu huerto suelte un ingrediente de nivel 1–5 al azar, ¡y un reparto fallido tiene un 30\u00a0% de probabilidad de salir bien igualmente! EXP a domicilio +5\u00a0%"
+    "desc": "Border collie, mascota del restaurante: un perro listo y obediente. ¡Un reparto fallido tiene un 30\u00a0% de probabilidad de salir bien igualmente! EXP a domicilio +5\u00a0%"
   },
   "60605": {
     "name": "Ulu Ulu",
@@ -1985,7 +1985,7 @@
   },
   "61427": {
     "name": "Lágrima del Dios de las Estrellas",
-    "desc": "Lágrimas que derramó el Dios de las Estrellas añorando a un antiguo amor; ¡quien la tiene suelta todos sus pesares! Cada combinación de ingredientes tiene un 2\u00a0% de probabilidad de dar uno extra. ¡Combinar con una fórmula tiene un 25\u00a0% de probabilidad de dar un ingrediente extra!"
+    "desc": "Lágrimas que derramó el Dios de las Estrellas añorando a un antiguo amor; ¡quien la tiene suelta todos sus pesares! Cada combinación de ingredientes tiene un 2\u00a0% de probabilidad de dar uno extra."
   },
   "61428": {
     "name": "Rocío violeta del banquete",

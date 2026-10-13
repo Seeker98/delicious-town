@@ -48,7 +48,6 @@ const claimAll = () => run(() => endpoints.takeawayClaimAll());
 function headline(r: TakeawayClaimDto): string {
   const x = t.value.takeaway.deliveries;
   if (!r.success) return x.failedReason(takeawayFailText(r));
-  if (r.forced) return x.forced;
   return r.drone ? x.drone : x.success;
 }
 function gains(r: TakeawayClaimDto): string {

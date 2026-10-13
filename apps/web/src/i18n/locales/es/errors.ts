@@ -92,9 +92,7 @@ const errors: Messages['errors'] = {
     renown: (p) =>
       p.what === 'duel'
         ? 'No puedes retar a nadie con renombre negativo'
-        : p.need === undefined
-          ? 'No puedes dar «me gusta» con renombre negativo'
-          : `No tienes suficiente renombre (robar requiere ${s(p.need)})`,
+        : 'No puedes dar «me gusta» con renombre negativo',
     mc_count: (p) => `No has aprendido suficientes platos estrella (se requieren ${s(p.need)})`,
     not_learned: () => 'Todavía no has aprendido este plato',
     job_honor: (p, n) =>
@@ -156,7 +154,6 @@ const errors: Messages['errors'] = {
     taste: (p) => `Hoy ya has probado ${s(p.max)} ${plEs(s(p.max), 'vez', 'veces')}`,
     lesson_full: () => 'Esta clase está llena',
     lesson_open: () => 'Ya tienes una clase en curso',
-    lands: (p) => `Puedes cultivar como máximo ${s(p.max)} ${plEs(s(p.max), 'parcela', 'parcelas')}`,
     rider_busy: (p) => `Este repartidor ya tiene el máximo de pedidos (${s(p.max)})`,
     riders: (p) => `Ya tienes el máximo de repartidores (${s(p.max)})`,
     tower: (p) =>
@@ -252,7 +249,6 @@ const errors: Messages['errors'] = {
     already_off: 'Ya está desactivado',
     flag: 'Ajuste no válido',
     not_plankton_host: 'Plancton no está en tu restaurante',
-    no_angry_krab: 'Don Krab no está enfadado',
     no_food: 'No tienes este ingrediente en la despensa',
     not_locked: 'Este ingrediente no está bloqueado',
     fridge_empty: 'Tu nevera no tiene este ingrediente',
@@ -332,22 +328,6 @@ const errors: Messages['errors'] = {
     no_lesson: 'No tienes ninguna clase en curso',
     lesson_not_full: 'La clase no está llena, así que no se puede terminar antes',
     target_no_special: 'No tiene ningún plato estrella a la venta',
-    no_land: 'Esta parcela todavía no está cultivada',
-    land_busy: 'Ya está creciendo algo en esta parcela',
-    no_plant: 'El cultivo no existe (quizá se cosechó o se arrancó). Recarga.',
-    no_water: 'Todavía no se puede regar',
-    has_worm: 'Hay bichos. Quítalos primero.',
-    has_grass: 'Hay malas hierbas. Arráncalas primero.',
-    not_ripe: 'Todavía no está listo para cosechar',
-    withered: 'El cultivo se marchitó y solo se puede arrancar',
-    no_worm: 'No hay bichos',
-    no_grass: 'No hay malas hierbas',
-    feed_useless: 'No queda suficiente tiempo en esta fase para que el abono sirva',
-    steal_left: 'Queda poco. Deja algo para el dueño.',
-    formula_unlearned: 'Todavía no has aprendido esta fórmula',
-    formula_learned: 'Ya has aprendido esta fórmula',
-    seed_shop_closed: 'La tienda de semillas todavía no está abierta',
-    seed_not_sold: 'Las semillas misteriosas no se venden; se consiguen canjeando',
     takeaway_closed: 'Todavía no has abierto el reparto a domicilio',
     order_gone: 'Este pedido para llevar ya no existe',
     order_taken: 'Otra persona ya tomó este pedido',
@@ -420,7 +400,6 @@ const errors: Messages['errors'] = {
     thumb_ip: 'Alguien en la misma red ya le dio «me gusta» hoy',
     taste: 'Ya has probado este lote de platos estrella',
     lesson: 'Ya has probado esta clase',
-    steal: 'Ya robaste de esta planta',
     takeaway: 'El reparto a domicilio ya está abierto',
     talk: 'Hoy ya has hablado',
     bar_round: 'Todavía tienes una partida sin terminar en este juego',
@@ -442,8 +421,6 @@ const errors: Messages['errors'] = {
       `Las ofertas solo se pueden coger una vez cada ${minutes} ${plEs(minutes, 'minuto', 'minutos')} desde la misma red. Espera ${wait} min.`,
     notEnough: (what, need, have) => `No tienes suficiente: ${what} (necesitas ${need}, tienes ${have})`,
     remnant: (name) => `Fragmentos de ${name}`,
-    basket: (name) => `${name} en la cesta`,
-    fragment: (part) => `Fragmentos de fórmula ${part === 'main' ? 'principales' : 'secundarios'}`,
     amount: 'Cantidad',
     exchangeFrozen: (why) =>
       `Tu cuenta de bolsa está congelada: ${why}. Contacta con un administrador si tienes dudas.`,
@@ -462,8 +439,6 @@ const errors: Messages['errors'] = {
     food: (id) => `Ingrediente ${id}`,
     mc: (id) => `Plato estrella ${id}`,
     cookbook: (id) => `Receta ${id}`,
-    seed: (id) => `Semilla ${id}`,
-    seedOf: (food) => `Semilla de ${food}`,
     weather: (id) => `Clima ${id}`,
   },
 };

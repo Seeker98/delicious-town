@@ -74,12 +74,6 @@
   "2085": {
     "name": "Partir en expédition"
   },
-  "2101": {
-    "name": "Défricher une parcelle du potager"
-  },
-  "2102": {
-    "name": "Récolter une culture"
-  },
   "2103": {
     "name": "Équiper un ustensile"
   },
@@ -301,21 +295,6 @@
   },
   "3127": {
     "name": "Cuisiner 50 fournées de saison"
-  },
-  "3141": {
-    "name": "Récolter 10 fois"
-  },
-  "3142": {
-    "name": "Expertiser une Formule"
-  },
-  "3143": {
-    "name": "Créer un ingrédient avec une Formule"
-  },
-  "3144": {
-    "name": "Défricher 6 parcelles"
-  },
-  "3145": {
-    "name": "Créer avec des Formules 20 fois"
   },
   "3161": {
     "name": "Percer un emplacement dans un ustensile"

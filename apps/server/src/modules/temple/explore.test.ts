@@ -30,7 +30,7 @@ describe('探险（规格书 09 §9.2）', () => {
   it('成功：扣图和体力；每次 1 个神秘食材 + 5 个普通食材（5 级 1、4 级 4）；发新闻；活跃按次数计', async () => {
     const ctx = await newRestaurant(win, { patch: { strength: 100 }, goods: { [gid('探险图')]: 5 } });
     const r = await win.game.temple.explore(ctx, { goodsId: gid('探险图'), times: 3 });
-    expect(r.data).toMatchObject({ success: 3, fail: 0, exp: 0 });
+    expect(r.data).toMatchObject({ success: 3, fail: 0 });
     expect(sum(r.data.rare)).toBe(3);
     expect(sum(r.data.foods)).toBe(15);
     for (const f of r.data.foods) expect([4, 5]).toContain(config.requireFood(f.foodsId).level);
@@ -51,20 +51,10 @@ describe('探险（规格书 09 §9.2）', () => {
     expect(c?.count).toBe(3);
   });
 
-  it('煤油灯：经验 = 每次体力 × 餐厅等级 × (成功×5 + 失败×2)', async () => {
-    const ctx = await newRestaurant(win, {
-      patch: { strength: 100, level: 10 },
-      goods: { [gid('探险图')]: 2 },
-    });
-    await grantGoods(win.db, config, ctx.restaurantId, GOODS.lamp, 1, new Date());
-    const r = await win.game.temple.explore(ctx, { goodsId: gid('探险图'), times: 2 });
-    expect(r.data.exp).toBe(2 * 10 * (2 * 5));
-  });
-
   it('全部迷路：只扣图和体力，没有食材', async () => {
     const ctx = await newRestaurant(lose, { patch: { strength: 100 }, goods: { [gid('探险图')]: 2 } });
     const r = await lose.game.temple.explore(ctx, { goodsId: gid('探险图'), times: 2 });
-    expect(r.data).toEqual({ success: 0, fail: 2, rare: [], foods: [], exp: 0 });
+    expect(r.data).toEqual({ success: 0, fail: 2, rare: [], foods: [] });
     expect(await goodsNum(lose, ctx.restaurantId, gid('探险图'))).toBe(0);
   });
 

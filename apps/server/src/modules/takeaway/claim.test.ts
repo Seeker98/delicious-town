@@ -67,7 +67,6 @@ describe('领取（设计文档 §3.4）', () => {
     expect((await claim(ctx, id)).data).toEqual({
       deliveryId: id,
       success: true,
-      forced: false,
       drone: false,
       reason: null,
       reasonId: null,
@@ -165,21 +164,6 @@ describe('领取（设计文档 §3.4）', () => {
     const b = await take(ctx, rider);
     later();
     expect((await claim(ctx, b)).data).toMatchObject({ success: false, exp: 13 });
-  });
-
-  it('边牧：失败时 30% 改判成功', async () => {
-    rngValues = [0.9];
-    const { ctx, rider } = await cook();
-    const id = await take(ctx, rider);
-    await grantGoods(t.db, config, ctx.restaurantId, GOODS.borderCollie, 1, t.clock.now);
-    later();
-    rngValues = [0.9, 0.1, 0.4, 0.4, 0.4];
-    expect((await claim(ctx, id)).data).toMatchObject({
-      success: true,
-      forced: true,
-      coin: 198,
-      goods: { id: GOODS.mysteryTicket, num: 1 },
-    });
   });
 
   it('私人单必定成功，经验 ×1.5', async () => {

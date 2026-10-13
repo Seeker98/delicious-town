@@ -214,8 +214,6 @@ export const FEED_TYPES = [
   'lesson.taught',
   'friend.apply',
   'friend.accept',
-  'yard.helped',
-  'yard.stolen',
   'takeaway.hired',
   'dine.left',
   'forum.replied',

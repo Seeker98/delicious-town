@@ -38,7 +38,6 @@ export const UI_ART = [
   'place-takeaway',
   'place-temple',
   'place-tower',
-  'place-yard',
   'sec-bonus',
   'sec-feed',
   'sec-news',

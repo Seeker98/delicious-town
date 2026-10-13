@@ -94,7 +94,6 @@ const dto: RestaurantDto = {
   state: 1,
   stateReason: null,
   promoOn: false,
-  cteOn: false,
   cookfoodsFlag: 0,
   cookfoodsPerFlag: 50,
   plaque2Open: false,
@@ -648,7 +647,8 @@ describe('RestaurantHomeView', () => {
     expect(w.get('[data-testid="home-devices"]').find('[data-testid="slot-1"]').exists()).toBe(true);
     const sw = w.get('[data-testid="home-switches"]');
     expect(sw.get('.dt-block-title').text()).toBe('经营开关');
-    expect(sw.findAll('.dt-row').length).toBeGreaterThanOrEqual(2);
+    // 大促（6 星起还有挑剔消耗食材；银币转经验随阿波罗删掉，道具减法 2026-10-13）
+    expect(sw.findAll('.dt-row').length).toBeGreaterThanOrEqual(1);
     // 界面改版 P5：油和加油在营业状态卡里（主角卡片），营业中加油是次要胶囊按钮；油滴图形在卡片左边（问题记录 459）
     const oil = w.get('[data-testid="home-oil"]');
     const refuel = oil.get('[data-testid="refuel"]');

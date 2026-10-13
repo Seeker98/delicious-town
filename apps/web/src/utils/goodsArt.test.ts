@@ -26,7 +26,7 @@ describe('道具图形（界面改版 P7 仓库格子）', () => {
     expect(goodsArt(50001)).toBe('goods-gem-wisdom');
     expect(goodsArt(50506)).toBe('goods-jade-astral');
     expect(goodsArt(99999)).toBe('goods-misc');
-    expect(goodsArt(61603)).toBe('goods-statue');
+    expect(goodsArt(61605)).toBe('goods-statue');
   });
 
   it('目录里单个道具写了 art 就用 goods-<art>；没这张图时退回小类的图（界面改版 P9）', () => {

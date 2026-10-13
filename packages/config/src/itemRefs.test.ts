@@ -42,14 +42,6 @@ describe('道具、食材的引用（问题记录 367）', () => {
     expect(find('goods', item.id, 'gives').map((r) => r.where)).toContain(`礼包 ${g.id} ${g.name}`);
   });
 
-  it('菜园的种子、配方产出算来源，标明菜园', () => {
-    const s = b.seeds[0]!;
-    expect(find('foods', s.foodsId, 'gives').map((r) => r.where)).toContain('菜园种子');
-    const f = b.formulas[0]!;
-    expect(find('foods', f.resFoodsId, 'gives').map((r) => r.where)).toContain('菜园配方');
-    expect(find('foods', f.subFoodsId, 'uses').map((r) => r.where)).toContain('菜园配方');
-  });
-
   it('升星奖励、区服数值里的奖励（厨塔排行、外卖）都算来源', () => {
     const star = b.starAward.find((s) => (s.award.goods ?? []).length > 0)!;
     expect(find('goods', star.award.goods![0]!.id, 'gives').map((r) => r.where)).toContain(

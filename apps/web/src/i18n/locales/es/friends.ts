@@ -51,7 +51,6 @@ const friends: Messages['friends'] = {
     refuelSub: 'Llénalo con tu aceite',
     flipSub: 'Buscar ingredientes',
     exchangeSub: 'Das 2, recibes 1',
-    yardSub: 'Ver qué ha plantado',
     specialSub: (left, price) =>
       `Especialidad · quedan ${left} · ${price} ${price === 1 ? 'moneda' : 'monedas'} la ración`,
     tablesTitle: 'Mesas',
@@ -92,7 +91,6 @@ const friends: Messages['friends'] = {
     refuel: 'Llenarle el aceite',
     flip: 'Revolver la despensa',
     exchange: 'Cambiar ingredientes',
-    yard: 'Ir a su huerto',
     remove: 'Eliminar amigo',
     table: (no) => `Mesa ${no}`,
     dineStarted: 'Empezaste a comer gratis',

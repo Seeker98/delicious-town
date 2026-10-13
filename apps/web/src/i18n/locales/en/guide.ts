@@ -64,10 +64,6 @@ const guide: Messages['guide'] = {
       text: 'Guild: chat with Mayor Big Pot daily for an ingredient, and guess the next weather with him (a right guess is rewarded, a wrong one costs nothing); Brother 13 gives horns daily; Carmen gives a mystery ingredient voucher on your first visit',
     },
     {
-      to: '/yard',
-      text: 'Garden: plant, water, get rid of bugs and weeds, harvest on time, and steal from friends’ gardens',
-    },
-    {
       to: '/market',
       text: 'Market: the daily market restocks every two hours during the day and the bargain market every hour',
     },

@@ -45,8 +45,6 @@ const USE_NAME: Record<string, string> = {
   towerTicket: '厨塔挑战',
 };
 
-const YARD = new Set(['菜园种子', '菜园配方']);
-
 export function analyzeItems(
   config: GameConfig,
   retired: { goods: ReadonlySet<number>; foods: ReadonlySet<number> },
@@ -89,7 +87,6 @@ export function analyzeItems(
     if (g.gem) add('goods', g.id, 'uses', '宝石');
     if (config.maps.has(g.id)) add('goods', g.id, 'uses', '神殿探险图');
     if (config.missiles.has(g.id)) add('goods', g.id, 'uses', '神殿飞弹');
-    if (config.fertilizers.has(g.id)) add('goods', g.id, 'uses', '菜园肥料');
     if (config.teacherCerts.has(g.id)) add('goods', g.id, 'uses', '特色菜教学');
     if (config.appraiseTools.has(g.id)) add('goods', g.id, 'uses', '鉴定');
     else if (!g.use && !g.equip && !g.gem && Object.keys(g.effects).length > 0)
@@ -213,9 +210,8 @@ export function analyzeItems(
     const notes: string[] = [];
     if (gives.length > 0 && real.length === 0 && !isCode)
       notes.push(gives.every((x) => x.retired) ? '只从已下架礼包获得' : '只从拿不到的礼包或道具获得');
-    if (real.length > 0 && real.every((x) => YARD.has(x.where))) notes.push('只能靠菜园获得');
     const grade = /^食谱 (\d+) 品级$/;
-    // 只看食谱：别的用途（例如菜园配方当材料）另算
+    // 只看食谱：别的用途另算
     const cook = uses.flatMap((x) => {
       const m = grade.exec(x.where);
       return m ? [Number(m[1])] : [];

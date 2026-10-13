@@ -41,7 +41,6 @@ describe('FloorPanel', () => {
         tower: [
           { id: 1, name: 'Apprentice Model Restaurant', title: 'Apprentice Guardian', note: 'Bring it on' },
         ],
-        formulas: [],
         kujiThemes: [],
         proficiency: [],
         cookbooks: [],

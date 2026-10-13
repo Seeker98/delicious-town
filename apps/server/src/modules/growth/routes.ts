@@ -41,10 +41,8 @@ export function growthRoutes(svc: GrowthService): FastifyPluginAsync {
     r.post('/cookfoods', async (req) =>
       okOp(await svc.setCookfoods(restCtxOf(req), parse(cookfoodsBody, req.body).flag)),
     );
-    r.post('/cte', async (req) => okOp(await svc.setCte(restCtxOf(req), parse(toggleBody, req.body).on)));
     r.post('/plankton/drive', async (req) =>
       okOp(await svc.drivePlankton(restCtxOf(req), parse(drivePlanktonBody, req.body).way)),
     );
-    r.post('/krab/drive', async (req) => okOp(await svc.driveKrab(restCtxOf(req))));
   };
 }

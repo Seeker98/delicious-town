@@ -155,7 +155,7 @@ export default {
     got: (name: string, n: number) => `换到了 ${name}×${n}`,
     failed: '兑换失败',
     renown: (n: string) => `我的声望 ${n}`,
-    rule: '美味券、四级和五级食材随机券常驻；雕像每周轮换, 每人限拥有 1 个',
+    rule: '美味券、四级和五级食材随机券常驻；雕像每周轮换上架一座, 每人限拥有 1 个',
     rareLine: '本周轮换 · 限拥有 1 个',
     weekLine: (bought: number, limit: number) => `本周 ${bought}/${limit}`,
     open: (name: string, price: string) => `兑换 ${name}, ${price} 声望`,

@@ -66,7 +66,7 @@ const market: Messages['market'] = {
       'Los ingredientes universales de nivel 1 y 2 se cambian por raros en la despensa. Del nivel 3 en adelante solo sirven para sustituir un ingrediente al aprender recetas.',
       'El mercado diario se repone cada dos horas durante el día.',
       'El mercado de ofertas se repone cada hora. Ahí salen más baratos los ingredientes de nivel alto.',
-      'Cosecha el huerto en cuanto madure, o alguien te lo robará.',
+      'Si al restaurante de un amigo le falta aceite, puedes llenárselo con el tuyo.',
       '¡Mis verduras son las más frescas del pueblo!',
       'Cuantos más platos sepas cocinar, más clientes vendrán.',
       'Regístrate cada día en la página de inicio para llevarte un regalo.',

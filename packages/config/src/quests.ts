@@ -8,7 +8,6 @@ export const QUEST_STATE_KEYS: ReadonlySet<string> = new Set([
   'rest.thumbs',
   'oil.level',
   'mc.learned',
-  'yard.lands',
   'equip.maxStress',
   'takeaway.open',
   // 支线扩充 B（问题记录 515）

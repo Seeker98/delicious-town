@@ -129,7 +129,6 @@ describe('第 8c 批：任务、厨塔各层等按 id 取名字（问题记录 2
         tasks: [{ id: 1, name: 'Refill oil once' }],
         activation: [],
         tower: [{ id: 2, name: 'Junior Model Restaurant', title: 'Junior Guardian', note: 'Hi' }],
-        formulas: [],
         kujiThemes: [],
         proficiency: [],
         cookbooks: [],

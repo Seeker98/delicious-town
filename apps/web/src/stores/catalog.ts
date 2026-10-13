@@ -27,7 +27,6 @@ export const useCatalogStore = defineStore('catalog', {
     goodsMap: new Map<number, CatalogGoodsDto>(),
     foodsMap: new Map<number, CatalogFoodDto>(),
     mcMap: new Map<number, CatalogMcDto>(),
-    seedsMap: new Map<number, { id: number; foodsId: number; level: number }>(),
     streets: [] as CatalogDto['streets'],
     looks: null as LooksDto | null,
     weatherMap: new Map<number, string>(),
@@ -62,12 +61,10 @@ export const useCatalogStore = defineStore('catalog', {
       this.looks = c.looks ?? null;
       this.loaded = true;
       this.mcMap = new Map((c.mysterious ?? []).map((m) => [m.id, m]));
-      this.seedsMap = new Map((c.seeds ?? []).map((s) => [s.id, s]));
       setNameResolver({
         goodsName: (id) => this.goodsName(id),
         foodName: (id) => this.foodName(id),
         mcName: (id) => this.mcName(id),
-        seedName: (id) => this.seedName(id),
       });
     },
     /**
@@ -150,11 +147,6 @@ export const useCatalogStore = defineStore('catalog', {
     },
     cookbookName(id: number): string {
       return this.data('cookbooks', id)?.name ?? activeMessages().errors.fallbackName.cookbook(id);
-    },
-    seedName(id: number): string {
-      const s = this.seedsMap.get(id);
-      const f = activeMessages().errors.fallbackName;
-      return s ? f.seedOf(this.foodName(s.foodsId)) : f.seed(id);
     },
     mc(id: number): CatalogMcDto | undefined {
       return this.mcMap.get(id);

@@ -85,7 +85,6 @@ const TASK_EXTRA = {
   'rest.thumbs': 0,
   'equip.maxStress': 0,
   'mc.learned': 0,
-  'yard.lands': 0,
   'takeaway.open': 0,
 };
 
@@ -587,7 +586,7 @@ export function botTurn(
   }
 
   // 任务（task/service.ts，问题记录 318）：主线、支线当前档、章末能领就领。
-  // 算旁支产出时（平时都算）：菜园按关着算（线上关着，以后也当独立系统），限时活动按没有在办算；
+  // 算旁支产出时（平时都算）：限时活动按没有在办算；
   // 主线里快速模型没模拟的玩法（好友、酒吧、特色菜、神殿、厨具、厨塔、一番赏、广播、论坛、克拉肯）是一次性的引导，
   // 线上玩家进到这一章当天就做完（2026-10-12 线上核对），按已完成算；这些玩法支线的奖励按旁支产出表的 quest 行折算。
   // 不算旁支时（--side none、核对）功能都按开着算、不替玩家做引导，和全真模拟器一致。
@@ -608,7 +607,7 @@ export function botTurn(
     level: r.level,
     star: r.star,
     done: r.questDone,
-    available: (f) => !side || (f !== 'yard' && f !== 'activity'),
+    available: (f) => !side || f !== 'activity',
     progress: (q) =>
       assumed.has(q)
         ? q.target

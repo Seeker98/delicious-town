@@ -8,7 +8,6 @@ import { awardWords, n, type P, plEs } from '../../helpers';
 /** 天气四大类（镇长猜天气的消息用） */
 const WT = ['', 'Soleado', 'Lluvia', 'Nieve y hielo', 'Viento, arena y niebla'];
 const mcNameOf = (names: Names, id: number) => names.mcName?.(id) ?? `Plato estrella ${id}`;
-const seedNameOf = (names: Names, id: number) => names.seedName?.(id) ?? `Semilla ${id}`;
 const holdHours = (p: P) => (p.holdHours === undefined ? 24 : n(p, 'holdHours'));
 const heldNote = (p: P) =>
   p.held
@@ -81,19 +80,6 @@ function describeFeed(
       return `${who} te dio un me gusta`;
     case 'friend.apply':
       return `${who} te envió una solicitud de amistad`;
-    case 'yard.helped': {
-      const what =
-        p.what === 'weed'
-          ? 'quitó las malas hierbas de'
-          : p.what === 'deworm'
-            ? 'quitó los bichos de'
-            : 'regó';
-      return `${who} ${what} tu ${foodName(Number(p.foodsId))}`;
-    }
-    case 'yard.stolen': {
-      const caught = p.punished ? `; tu border collie lo atrapó y dejó ${foodName(Number(p.punished))}` : '';
-      return `${who} robó tu ${foodName(Number(p.foodsId))}×${String(p.num)}${caught}`;
-    }
     case 'friend.accept':
       return `${who} aceptó tu solicitud de amistad`;
     default:
@@ -114,8 +100,6 @@ const events: Messages['events'] = {
     strength: 'Energía',
   },
   remnant: (names, id) => `Fragmento de ${mcNameOf(names, id)}`,
-  seed: (names, id) => seedNameOf(names, id),
-  basket: (name) => `Cesta · ${name}`,
   activityCurrency: (name, num) => `${name ?? 'Moneda del evento'}×${num} (moneda del evento)`,
   lucky: ' (con suerte)',
   sep: ', ',

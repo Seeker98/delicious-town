@@ -47,7 +47,6 @@ const DAILY_ART: Record<string, ArtName> = {
   '/rest/tasks?tab=today': 'sec-bonus',
   '/town': 'place-plaza',
   '/society/mayor': 'place-society',
-  '/yard': 'place-yard',
   '/market': 'nav-market',
   '/bar': 'place-bar',
   '/tower': 'place-tower',

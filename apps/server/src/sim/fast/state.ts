@@ -40,7 +40,6 @@ export interface FastRest {
   foodsLockNum: number;
   plaque2Open: boolean;
   cookfoodsFlag: number;
-  cteOn: boolean;
   tables: TableState[];
   levels: Uint8Array;
   counts: CookbookCounts;
@@ -131,7 +130,6 @@ export function newFastRest(id: number, config: GameConfig, settings: ShardSetti
     foodsLockNum: d.foodsLockNum,
     plaque2Open: false,
     cookfoodsFlag: 0,
-    cteOn: false,
     tables: initialTables(d.tableNum),
     levels: new Uint8Array(config.cookbookIndex.slots),
     counts: normalizeCounts({}),

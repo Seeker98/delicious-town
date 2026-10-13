@@ -23,32 +23,24 @@ import { clearTable, isEmptyTable } from './tables';
 const f = testConfig().tuning.friend;
 
 describe('白食（规格书 13 §13.3）', () => {
-  it('体力 = min(整小时 × 20, 100)，激动的心 ×1.5', () => {
-    expect(dineStrength(0.9, false, f.dine)).toBe(0);
-    expect(dineStrength(2.5, false, f.dine)).toBe(40);
-    expect(dineStrength(9, false, f.dine)).toBe(100);
-    expect(dineStrength(2, true, f.dine)).toBe(60);
+  it('体力 = min(整小时 × 20, 100)', () => {
+    expect(dineStrength(0.9, f.dine)).toBe(0);
+    expect(dineStrength(2.5, f.dine)).toBe(40);
+    expect(dineStrength(9, f.dine)).toBe(100);
   });
-  it('自己结束：银币照拿，经验有激动的心 ×3', () => {
-    expect(dineEndReward({ coin: 100, exp: 50 }, 2, {}, f.dine)).toEqual({
+  it('自己结束：银币、经验照拿', () => {
+    expect(dineEndReward({ coin: 100, exp: 50 }, 2, f.dine)).toEqual({
       coin: 100,
       exp: 50,
       strength: 40,
     });
-    expect(dineEndReward({ coin: 100, exp: 50 }, 2, { excitedHeart: 1 }, f.dine)).toEqual({
-      coin: 100,
-      exp: 150,
-      strength: 60,
-    });
   });
-  it('被请走：店主 2 倍，白食者赔银币；没有激动的心不得经验（设计文档 裁定 3）', () => {
-    expect(expelReward({ coin: 100, exp: 50 }, 1, {}, f.dine)).toEqual({
+  it('被请走：店主 2 倍，白食者赔银币、不得经验（设计文档 裁定 3）', () => {
+    expect(expelReward({ coin: 100, exp: 50 }, 1, f.dine)).toEqual({
       hostCoin: 200,
       dinerLoss: 100,
-      dinerExp: 0,
       dinerStrength: 20,
     });
-    expect(expelReward({ coin: 100, exp: 50 }, 1, { excitedHeart: 1 }, f.dine).dinerExp).toBe(150);
   });
   it('每轮累计（规格书 01 §1.5B）：7 小时以内 ×3，之后 ×1', () => {
     const base = { oilBase: 1, coinBase: 10, expBase: 5 };

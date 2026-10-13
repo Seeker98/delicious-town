@@ -64,7 +64,7 @@ describe('2A 运行时索引', () => {
     expect(cfg.isStreetMedal(cfg.requireGoods(gid('北京街')))).toBe(true);
     expect(cfg.isStreetMedal(cfg.requireGoods(GOODS.redPants))).toBe(false);
     // 雕像的 devicetype 也是 20，不是印度街勋章（问题记录 284）
-    expect(cfg.isStreetMedal(cfg.requireGoods(GOODS.thinker))).toBe(false);
+    expect(cfg.isStreetMedal(cfg.requireGoods(gid('史前怪石-雕像')))).toBe(false);
     expect(cfg.isStreetMedal(cfg.requireGoods(gid('印度街')))).toBe(true);
   });
 
@@ -123,7 +123,7 @@ describe('特色菜索引（子项目 4A）', () => {
 });
 
 describe('神殿索引（子项目 4B-1）', () => {
-  it('飞弹、探险图按道具 id 索引；种子池', () => {
+  it('飞弹、探险图按道具 id 索引', () => {
     expect(config.missiles.get(gid('集束飞弹'))).toEqual({
       attack: [3200, 3200],
       hitRate: 0.96,
@@ -142,25 +142,7 @@ describe('神殿索引（子项目 4B-1）', () => {
     expect([...config.maps.keys()].sort((a, b) => a - b)).toEqual(
       ['探险图', '高级探险图', '顶级探险图', '极品探险图'].map(gid),
     );
-    expect(config.seeds.get(1)!.foodsId).toBe(fid('大米'));
-    expect(config.seedPool.items).toHaveLength(96);
     expect(config.tuning.temple.guardianHpBase).toBe(20000);
-  });
-});
-
-describe('菜园索引（子项目 4B-2）', () => {
-  it('配方池、种子兑换按种子 id、肥料分钟数、动作收益', () => {
-    expect(config.formulas.get(2)!.resFoodsId).toBe(fid('三文鱼'));
-    expect(config.formulaPool.items).toHaveLength(56);
-    expect(config.seedExchange.get(1)).toEqual({ seedId: 1, seedNum: 5, essence: 2 });
-    expect([...config.fertilizers]).toEqual([
-      [gid('低级肥料'), 20],
-      [gid('高级肥料'), 60],
-    ]);
-    expect(config.incomeAction(51)).toMatchObject({ coin: 1, exp: 1, landExp: 5 });
-    expect(() => config.incomeAction(999)).toThrow();
-    expect(config.tuning.yard.maxLands).toBe(9);
-    expect(config.tuning.yard.events.minutes).toEqual([7, 27, 47]);
   });
 });
 

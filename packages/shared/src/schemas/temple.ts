@@ -38,7 +38,6 @@ export interface MissileResultDto {
   drops: {
     tickets: number;
     maps: number;
-    seals: number;
     dtTickets: number;
     rare: number | null;
     foods: FoodNum[];
@@ -50,7 +49,6 @@ export interface ExploreResultDto {
   fail: number;
   rare: FoodNum[];
   foods: FoodNum[];
-  exp: number;
 }
 
 export interface TrialResultDto {

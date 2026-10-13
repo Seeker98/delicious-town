@@ -10,7 +10,6 @@ const names = {
   mcName: (id: number) => `特色菜${id}`,
   weatherName: (id: number) => (id === 1 ? '晴' : id === 13 ? '暴雨' : `天气${id}`),
   streetName: (id: number) => `街${id}`,
-  seedName: (id: number) => `种子${id}`,
 };
 const n = (
   type: string,
@@ -191,10 +190,9 @@ describe('新闻文案', () => {
 });
 
 describe('奖励文案', () => {
-  it('食材、道具、种子、银币、钻石', () => {
+  it('食材、道具、银币、钻石', () => {
     expect(rewardText({ kind: 'foods', id: 101, num: 2 }, names)).toBe('食材101×2');
     expect(rewardText({ kind: 'goods', id: 20, num: 1 }, names)).toBe('道具20×1');
-    expect(rewardText({ kind: 'seed', id: 3, num: 1 }, names)).toBe('种子3×1');
     expect(rewardText({ kind: 'coin', id: null, num: 200000 }, names)).toBe('银币 200,000');
     expect(rewardText({ kind: 'diamond', id: null, num: 5 }, names)).toBe('钻石 5');
   });

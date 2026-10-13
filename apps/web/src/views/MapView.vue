@@ -37,7 +37,6 @@ const GROUPS: Array<{ key: keyof Messages['nav']['map']['groups']; places: Place
       { key: 'bar', to: '/bar', art: 'place-bar', feature: 'bar' },
       { key: 'temple', to: '/temple', art: 'place-temple', feature: 'temple' },
       { key: 'tower', to: '/tower', art: 'place-tower', feature: 'tower' },
-      { key: 'yard', to: '/yard', art: 'place-yard', feature: 'yard' },
     ],
   },
   {

@@ -4,6 +4,8 @@ import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from 
 import { GOODS } from '@dt/config';
 import { gid } from '../../../test/items';
 
+const STATUE = gid('恰克摩尔-雕像');
+
 let t: TestGame;
 beforeAll(async () => {
   t = await createTestGame();
@@ -12,7 +14,7 @@ afterAll(() => t.close());
 beforeEach(() => t.clock.set(gameTime('2026-09-30', 12)));
 
 describe('声望商店（设计文档 §3.5）', () => {
-  it('本周在售：美味券、四五级食材随机券和本周轮到的两座雕像', async () => {
+  it('本周在售：美味券、四五级食材随机券和本周轮到的一座雕像', async () => {
     const ctx = await newRestaurant(t, { patch: { renown: 123 } });
     const v = await t.game.tower.shop(ctx);
     expect(v.renown).toBe(123);
@@ -21,8 +23,8 @@ describe('声望商店（设计文档 §3.5）', () => {
       // 问题记录 505：四、五级食材随机券常驻
       { goodsId: gid('四级食材随机券'), renown: 50, weeklyLimit: 3, bought: 0, rare: false, owned: false },
       { goodsId: gid('五级食材随机券'), renown: 80, weeklyLimit: 2, bought: 0, rare: false, owned: false },
-      { goodsId: GOODS.thinker, renown: 3000, weeklyLimit: 1, bought: 0, rare: true, owned: false },
-      { goodsId: gid('史前怪石-雕像'), renown: 3000, weeklyLimit: 1, bought: 0, rare: true, owned: false },
+      // 2026-09-30 是 ISO 第 40 周：40 % 3 组 = 第 2 组
+      { goodsId: gid('恰克摩尔-雕像'), renown: 3000, weeklyLimit: 1, bought: 0, rare: true, owned: false },
     ]);
   });
 
@@ -43,18 +45,18 @@ describe('声望商店（设计文档 §3.5）', () => {
 
   it('雕像：每人只能 1 个，兑换后发新闻；已拥有报 LIMIT owned；数量不是 1 报 VALIDATION_FAILED', async () => {
     const ctx = await newRestaurant(t, { patch: { renown: 7000 } });
-    await expect(t.game.tower.buy(ctx, { goodsId: GOODS.thinker, num: 2 })).rejects.toMatchObject({
+    await expect(t.game.tower.buy(ctx, { goodsId: STATUE, num: 2 })).rejects.toMatchObject({
       code: 'VALIDATION_FAILED',
       params: { reason: 'num' },
     });
-    expect((await t.game.tower.buy(ctx, { goodsId: GOODS.thinker, num: 1 })).data).toEqual({ renown: 4000 });
-    expect(await goodsNum(t, ctx.restaurantId, GOODS.thinker)).toBe(1);
-    expect((await t.game.tower.shop(ctx)).items.find((x) => x.goodsId === GOODS.thinker)).toMatchObject({
-      goodsId: GOODS.thinker,
+    expect((await t.game.tower.buy(ctx, { goodsId: STATUE, num: 1 })).data).toEqual({ renown: 4000 });
+    expect(await goodsNum(t, ctx.restaurantId, STATUE)).toBe(1);
+    expect((await t.game.tower.shop(ctx)).items.find((x) => x.goodsId === STATUE)).toMatchObject({
+      goodsId: STATUE,
       owned: true,
       bought: 1,
     });
-    await expect(t.game.tower.buy(ctx, { goodsId: GOODS.thinker, num: 1 })).rejects.toMatchObject({
+    await expect(t.game.tower.buy(ctx, { goodsId: STATUE, num: 1 })).rejects.toMatchObject({
       code: 'LIMIT_REACHED',
       params: { what: 'owned' },
     });
@@ -63,12 +65,12 @@ describe('声望商店（设计文档 §3.5）', () => {
       .select(['type', 'params'])
       .where('rest_id', '=', ctx.restaurantId)
       .execute();
-    expect(news).toEqual([{ type: 'tower.shop.rare', params: { goodsId: GOODS.thinker } }]);
+    expect(news).toEqual([{ type: 'tower.shop.rare', params: { goodsId: STATUE } }]);
   });
 
   it('本周不卖的、要前置玩法的报 not_on_sale；声望不够报 NOT_ENOUGH，什么都不变', async () => {
     const ctx = await newRestaurant(t, { patch: { renown: 50 } });
-    for (const goodsId of [gid('恰克摩尔-雕像'), gid('仙贝-红')])
+    for (const goodsId of [gid('史前怪石-雕像'), gid('仙贝-红')])
       await expect(t.game.tower.buy(ctx, { goodsId, num: 1 })).rejects.toMatchObject({
         code: 'INVALID_STATE',
         params: { reason: 'not_on_sale' },

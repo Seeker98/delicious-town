@@ -177,7 +177,6 @@ describe('CookbookListPanel', () => {
       questLines: [],
       activation: [],
       tower: [],
-      formulas: [],
       kujiThemes: [],
       proficiency: [],
     };
@@ -241,7 +240,6 @@ describe('CookbookListPanel', () => {
       questLines: [],
       activation: [],
       tower: [],
-      formulas: [],
       kujiThemes: [],
       proficiency: [],
       cookbooks: [],

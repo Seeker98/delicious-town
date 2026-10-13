@@ -93,9 +93,7 @@ const errors: Messages['errors'] = {
     renown: (p) =>
       p.what === 'duel'
         ? "You can't duel while your renown is negative"
-        : p.need === undefined
-          ? "You can't give likes while your renown is negative"
-          : `Not enough renown (stealing needs ${s(p.need)})`,
+        : "You can't give likes while your renown is negative",
     mc_count: (p) => `Not enough signature dishes learned (${s(p.need)} required)`,
     not_learned: () => "You haven't learned this dish yet",
     job_honor: (p, n) =>
@@ -154,7 +152,6 @@ const errors: Messages['errors'] = {
     taste: (p) => `You've already tasted ${s(p.max)} ${plEn(s(p.max), 'time', 'times')} today`,
     lesson_full: () => 'This class is full',
     lesson_open: () => 'You already have a class in progress',
-    lands: (p) => `You can cultivate at most ${s(p.max)} ${plEn(s(p.max), 'plot', 'plots')}`,
     rider_busy: (p) => `This rider already has the maximum number of orders (${s(p.max)})`,
     riders: (p) => `You already have the maximum number of riders (${s(p.max)})`,
     tower: (p) =>
@@ -251,7 +248,6 @@ const errors: Messages['errors'] = {
     already_off: "It's already off",
     flag: 'Invalid setting',
     not_plankton_host: "Plankton isn't in your restaurant",
-    no_angry_krab: "Mr. Krab isn't angry",
     no_food: "You don't have this ingredient in your pantry",
     not_locked: "This ingredient isn't locked",
     fridge_empty: "Your fridge doesn't have this ingredient",
@@ -331,22 +327,6 @@ const errors: Messages['errors'] = {
     no_lesson: "You don't have a class in progress",
     lesson_not_full: "The class isn't full yet, so it can't be ended early",
     target_no_special: "They don't have a signature dish on sale",
-    no_land: "This plot isn't cultivated yet",
-    land_busy: 'Something is already growing on this plot',
-    no_plant: "The crop doesn't exist (maybe harvested or removed). Please refresh.",
-    no_water: "It can't be watered yet",
-    has_worm: 'There are bugs. Remove them first.',
-    has_grass: 'There are weeds. Pull them first.',
-    not_ripe: "It's not ready to harvest yet",
-    withered: 'The crop has withered and can only be removed',
-    no_worm: 'There are no bugs',
-    no_grass: 'There are no weeds',
-    feed_useless: 'Not enough time left in this stage for fertilizer to help',
-    steal_left: "There isn't much left. Leave some for the owner.",
-    formula_unlearned: "You haven't learned this formula yet",
-    formula_learned: "You've already learned this formula",
-    seed_shop_closed: "The seed shop isn't open yet",
-    seed_not_sold: "Mystery seeds aren't sold; get them by exchanging",
     takeaway_closed: "You haven't opened takeaway yet",
     order_gone: 'This takeaway order is gone',
     order_taken: 'Someone else already took this order',
@@ -419,7 +399,6 @@ const errors: Messages['errors'] = {
     thumb_ip: 'Someone on the same network has already liked them today',
     taste: "You've already tasted this batch of signature dishes",
     lesson: "You've already tried this class",
-    steal: "You've already stolen from this plant",
     takeaway: 'Takeaway is already open',
     talk: "You've already talked today",
     bar_round: 'You still have an unfinished round of this game',
@@ -441,8 +420,6 @@ const errors: Messages['errors'] = {
       `Specials can only be grabbed once per ${minutes} ${plEn(minutes, 'minute', 'minutes')} from the same network. Wait ${wait} min.`,
     notEnough: (what, need, have) => `Not enough ${what} (need ${need}, have ${have})`,
     remnant: (name) => `${name} fragments`,
-    basket: (name) => `${name} in the basket`,
-    fragment: (part) => `${part === 'main' ? 'main' : 'secondary'} formula fragments`,
     amount: 'quantity',
     exchangeFrozen: (why) =>
       `Your exchange account is frozen: ${why}. Contact an admin if you have questions.`,
@@ -460,8 +437,6 @@ const errors: Messages['errors'] = {
     food: (id) => `Ingredient ${id}`,
     mc: (id) => `Signature dish ${id}`,
     cookbook: (id) => `Recipe ${id}`,
-    seed: (id) => `Seed ${id}`,
-    seedOf: (food) => `${food} seed`,
     weather: (id) => `Weather ${id}`,
   },
 };

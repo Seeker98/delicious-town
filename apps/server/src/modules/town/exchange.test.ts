@@ -77,12 +77,12 @@ describe('只有 13 哥的页才查本街需求（backlog 1010）', () => {
 });
 
 describe('镇长兑换（设计文档 §3.6）', () => {
-  it('兑换页：25 项 (2026-10-08 下架一批、2026-10-13 删掉名画后)、持有数、已兑次数、两种券和可换食材', async () => {
+  it('兑换页：19 项 (2026-10-08 下架一批、2026-10-13 删掉名画、星月密卷和道具减法第二批 5 项后)、持有数、已兑次数、两种券和可换食材', async () => {
     const a = await newRestaurant(t, {
       goods: { [gid('蟹黄堡')]: 10, [gid('一级食材兑换券')]: 2, [GOODS.mysteryFoodExchange]: 1 },
     });
     const v = await t.game.town.exchangeView(a);
-    expect(v.items).toHaveLength(25);
+    expect(v.items).toHaveLength(19);
     expect(v.items.find((x) => x.id === 23)).toEqual({
       id: 23,
       category: 'bg',

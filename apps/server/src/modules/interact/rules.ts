@@ -3,43 +3,27 @@ import type { Rng } from '@dt/shared';
 
 type F = Tuning['friend'];
 
-/** 白食体力 = min(整小时 × 每小时, 上限)，激动的心再乘倍数 */
-export function dineStrength(hours: number, heart: boolean, t: F['dine']): number {
-  const base = Math.min(Math.floor(hours) * t.strengthPerHour, t.strengthMax);
-  return Math.floor(base * (heart ? t.heartStrengthMul : 1));
+/** 白食体力 = min(整小时 × 每小时, 上限) */
+export function dineStrength(hours: number, t: F['dine']): number {
+  return Math.min(Math.floor(hours) * t.strengthPerHour, t.strengthMax);
 }
 
-const hasHeart = (agg: Record<string, number>) => (agg.excitedHeart ?? 0) > 0;
-
-/** 白食者自己结束（规格书 13 §13.3）：累计的银币照拿，经验有激动的心时 ×3 */
+/** 白食者自己结束（规格书 13 §13.3）：累计的银币、经验照拿 */
 export function dineEndReward(
   acc: { coin: number; exp: number },
   hours: number,
-  agg: Record<string, number>,
   t: F['dine'],
 ): { coin: number; exp: number; strength: number } {
-  const heart = hasHeart(agg);
-  return {
-    coin: acc.coin,
-    exp: Math.floor(acc.exp * (heart ? t.heartExpMul : 1)),
-    strength: dineStrength(hours, heart, t),
-  };
+  return { coin: acc.coin, exp: acc.exp, strength: dineStrength(hours, t) };
 }
 
-/** 被店主请走：店主拿 2 倍被吃掉的银币，白食者赔这些银币；经验只在有激动的心时给（设计文档 裁定 3） */
+/** 被店主请走：店主拿 2 倍被吃掉的银币，白食者赔这些银币、不得经验（设计文档 裁定 3） */
 export function expelReward(
   acc: { coin: number; exp: number },
   hours: number,
-  dinerAgg: Record<string, number>,
   t: F['dine'],
-): { hostCoin: number; dinerLoss: number; dinerExp: number; dinerStrength: number } {
-  const heart = hasHeart(dinerAgg);
-  return {
-    hostCoin: acc.coin * 2,
-    dinerLoss: acc.coin,
-    dinerExp: heart ? Math.floor(acc.exp * t.heartExpMul) : 0,
-    dinerStrength: dineStrength(hours, heart, t),
-  };
+): { hostCoin: number; dinerLoss: number; dinerStrength: number } {
+  return { hostCoin: acc.coin * 2, dinerLoss: acc.coin, dinerStrength: dineStrength(hours, t) };
 }
 
 export function layReward(level: number, t: F['roach']): { coin: number; exp: number } {

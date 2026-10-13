@@ -1,7 +1,7 @@
 {
  "source": "新设计（问题记录 318）",
  "rule": "主线任务：id = 2000 + 章×20 + 顺序；经验 = 银币 ÷ 10；同章不分先后",
- "count": 59,
+ "count": 57,
  "data": [
   {
    "id": 2021,
@@ -444,38 +444,6 @@
     "exp": 2000
    },
    "href": "/temple"
-  },
-  {
-   "id": 2101,
-   "chapter": 5,
-   "order": 1,
-   "name": "开垦一块菜园",
-   "cond": {
-    "kind": "state",
-    "key": "yard.lands",
-    "target": 1
-   },
-   "award": {
-    "coin": 30000,
-    "exp": 3000
-   },
-   "href": "/yard"
-  },
-  {
-   "id": 2102,
-   "chapter": 5,
-   "order": 2,
-   "name": "收获一次作物",
-   "cond": {
-    "kind": "counter",
-    "key": "yard.harvest",
-    "target": 1
-   },
-   "award": {
-    "coin": 30000,
-    "exp": 3000
-   },
-   "href": "/yard"
   },
   {
    "id": 2103,

@@ -126,8 +126,6 @@ const home: Messages['home'] = {
   switches: 'Réglages du restaurant',
   promo: 'Grande promo',
   promoHint: '-20\u202f%\u202f: bien plus de clients, gains un peu plus bas',
-  cte: 'Pièces en EXP',
-  cteHint: "Nécessite la statue d'Apollon",
   setFailed: 'Échec du réglage',
   cookfoods: "Niveau d'utilisation des ingrédients (clients difficiles)",
   off: 'Désactivé',

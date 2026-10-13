@@ -10,7 +10,6 @@ export interface Names {
   /** 食材等级（交换食材的动态写明几级，问题记录 587）；没有时不写等级 */
   foodLevel?(id: number): number | undefined;
   mcName?(id: number): string;
-  seedName?(id: number): string;
   /** 天气名（天气改版：用罗盘、签改天气的动态） */
   weatherName?(id: number): string;
 }
@@ -54,8 +53,6 @@ function eventItem(e: GameEvent, names: Names): string {
   if (e.kind === 'goods') what = q(names.goodsName(e.id ?? 0), formatNum(e.num));
   else if (e.kind === 'foods') what = q(names.foodName(e.id ?? 0), formatNum(e.num));
   else if (e.kind === 'remnant') what = q(m.remnant(names, e.id ?? 0), formatNum(e.num));
-  else if (e.kind === 'seed') what = q(m.seed(names, e.id ?? 0), formatNum(e.num));
-  else if (e.kind === 'basket') what = q(m.basket(names.foodName(e.id ?? 0)), formatNum(e.num));
   else if (e.kind === 'activityCurrency') what = m.activityCurrency(e.name, formatNum(e.num));
   else what = `${kindName(e.kind)} ${formatNum(e.num)}`;
   return `${what}${e.lucky ? m.lucky : ''}`;
@@ -96,7 +93,5 @@ export function recordLabel(r: { kind: string; itemId: number | null }, names: N
   if (r.kind === 'foods') return names.foodName(r.itemId ?? 0);
   const m = activeMessages().events;
   if (r.kind === 'remnant') return m.remnant(names, r.itemId ?? 0);
-  if (r.kind === 'seed') return m.seed(names, r.itemId ?? 0);
-  if (r.kind === 'basket') return m.basket(names.foodName(r.itemId ?? 0));
   return kindName(r.kind);
 }

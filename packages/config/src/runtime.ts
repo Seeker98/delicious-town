@@ -8,15 +8,11 @@ import type { Tuning } from './tuning';
 import type {
   ActivationTask,
   AppraiseDef,
-  Formula,
-  IncomeAction,
-  SeedExchange,
   GoodsExchange,
   SlotAward,
   TowerFloor,
   MapDef,
   MissileDef,
-  Seed,
   McProficiency,
   MysteriousCookbook,
   TeacherCertDef,
@@ -86,17 +82,9 @@ export interface GameConfig {
   readonly mcProficiency: readonly McProficiency[];
   readonly appraiseTools: ReadonlyMap<number, AppraiseDef>;
   readonly teacherCerts: ReadonlyMap<number, TeacherCertDef>;
-  readonly seeds: ReadonlyMap<number, Seed>;
-  readonly seedPool: WeightedPool<Seed>;
   readonly missiles: ReadonlyMap<number, MissileDef>;
   readonly maps: ReadonlyMap<number, MapDef>;
-  readonly formulas: ReadonlyMap<number, Formula>;
-  readonly formulaPool: WeightedPool<Formula>;
-  /** 按种子 id */
-  readonly seedExchange: ReadonlyMap<number, SeedExchange>;
   readonly goodsExchange: ReadonlyMap<number, GoodsExchange>;
-  /** 肥料（devicetype 80）：道具 id → 每次抵扣的分钟数 */
-  readonly fertilizers: ReadonlyMap<number, number>;
   /** 老虎机奖池（按 odds 抽，含空格） */
   readonly slotPool: WeightedPool<SlotAward>;
   readonly slotAwards: ReadonlyMap<number, SlotAward>;
@@ -104,7 +92,6 @@ export interface GameConfig {
   readonly towerFloors: ReadonlyMap<number, TowerFloor>;
   readonly settingDocs: ConfigBundle['settingDocs'];
   readonly newbieCodes: ConfigBundle['newbieCodes'];
-  incomeAction(id: number): IncomeAction;
   requireMc(id: number): MysteriousCookbook;
   grade(g: number): CookbookGrade;
   randomGoodsIds(level: number): readonly number[];
@@ -167,12 +154,6 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
   const teacherCerts = new Map<number, TeacherCertDef>();
   const missiles = new Map<number, MissileDef>();
   const maps = new Map<number, MapDef>();
-  const fertilizers = new Map<number, number>();
-  for (const g of bundle.goods) {
-    const minutes = g.effects.plantTime;
-    if (g.deviceType === 80 && minutes !== undefined && minutes > 0) fertilizers.set(g.id, minutes);
-  }
-  const incomeActions = byId(bundle.incomeActions);
   for (const g of bundle.goods) {
     if (g.deviceType === 97) {
       const m = parseMissileDef(g.value);
@@ -279,25 +260,14 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
     suits: new Map(bundle.suits.map((s) => [s.id, s])),
     mysterious,
     mcProficiency: bundle.mcProficiency,
-    seeds: byId(bundle.seeds),
-    seedPool: buildPool(bundle.seeds, (s) => s.odds),
     missiles,
     maps,
-    formulas: byId(bundle.formulas),
-    formulaPool: buildPool(bundle.formulas, (f) => f.odds),
-    seedExchange: new Map(bundle.seedExchange.map((e) => [e.seedId, e])),
     goodsExchange: new Map(bundle.goodsExchange.map((e) => [e.id, e])),
-    fertilizers,
     slotPool: buildPool(bundle.slotAwards, (a) => a.odds),
     slotAwards: byId(bundle.slotAwards),
     towerFloors: new Map(bundle.towerFloors.map((f) => [f.floor, f])),
     settingDocs: bundle.settingDocs,
     newbieCodes: bundle.newbieCodes,
-    incomeAction(id) {
-      const a = incomeActions.get(id);
-      if (!a) throw new Error(`unknown income action ${id}`);
-      return a;
-    },
     appraiseTools,
     teacherCerts,
     requireMc(id) {

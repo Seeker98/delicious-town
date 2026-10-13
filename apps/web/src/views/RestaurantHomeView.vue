@@ -851,21 +851,6 @@ onBeforeUnmount(() => {
             </span>
           </template>
         </DtRow>
-        <DtRow :title="t.home.cte" :sub="t.home.cteHint">
-          <template #end>
-            <span class="form-check form-switch m-0">
-              <input
-                id="cte"
-                class="form-check-input"
-                type="checkbox"
-                :aria-label="t.home.cte"
-                :checked="rest.cteOn"
-                :disabled="busy"
-                @change="act(() => endpoints.setCte(!rest!.cteOn), t.home.setFailed)"
-              />
-            </span>
-          </template>
-        </DtRow>
         <DtRow v-if="rest.starLevel >= 6" :title="t.home.cookfoods" data-testid="cookfoods-row">
           <template #end>
             <select

@@ -75,13 +75,6 @@ describe('汇总率（规格书 01 §1.3）', () => {
     expect(r.coinRate.parts.spOverflow).toBeUndefined();
   });
 
-  it('银币转经验：银币率 ×1.5 加到经验率，银币率清零', () => {
-    const { rates: r } = rates({ rest: { cteOn: true }, agg: { coinRate: 0.2 } });
-    expect(r.coinRate.total).toBe(0);
-    expect(r.expRate.parts.cte).toBeCloseTo(0.3);
-    expect(r.expRate.total).toBeCloseTo(0.9);
-  });
-
   it('低等级经验加成（问题记录 378）：1 级 +rate，线性减到 maxLevel 为 0；rate 0 不加', () => {
     const at = (level: number, rate: number) => {
       const tuning = {

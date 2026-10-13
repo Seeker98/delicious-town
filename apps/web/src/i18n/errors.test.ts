@@ -11,7 +11,6 @@ describe('报错文案按语言（问题记录 272）', () => {
       goodsName: (id) => (id === 85 ? 'Stamina Card' : `#${id}`),
       foodName: (id) => `food${id}`,
       mcName: (id) => `mc${id}`,
-      seedName: (id) => `seed${id}`,
     });
   });
   afterEach(async () => {
@@ -50,7 +49,7 @@ describe('报错文案按语言（问题记录 272）', () => {
         cap: 4,
         name: 'X',
       };
-      const n = { goodsName: () => 'G', foodName: () => 'F', mcName: () => 'M', seedName: () => 'S' };
+      const n = { goodsName: () => 'G', foodName: () => 'F', mcName: () => 'M' };
       for (const f of [...Object.values(e.requirement), ...Object.values(e.limit)]) {
         const s = f(p, n);
         expect(s, l).not.toContain('undefined');

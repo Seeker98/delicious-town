@@ -2,7 +2,7 @@ import { GOODS } from '@dt/config';
 import type { TestGame } from '../../../test/game';
 import { Ratio, Tally, rate, ratio, shops, spread, times } from './harness';
 
-/** 神秘菜谱鉴定（规格书 04）：幸运 0、天气晴、没有星神之书；成功率 = 鉴定工具的 rate，菜谱按 odds 抽，张数 rand[1, num] */
+/** 神秘菜谱鉴定（规格书 04）：幸运 0、天气晴；成功率 = 鉴定工具的 rate，菜谱按 odds 抽，张数 rand[1, num] */
 export async function mysteriousOdds(t: TestGame): Promise<void> {
   const config = t.deps.config;
   for (const [toolId, def] of config.appraiseTools) {
@@ -18,7 +18,7 @@ export async function mysteriousOdds(t: TestGame): Promise<void> {
     const num = new Ratio();
     const n = times(1_500);
     await spread(ctxs, n, async (ctx) => {
-      const d = (await t.game.mysterious.appraise(ctx, { toolId, times: 99, noRetry: true })).data;
+      const d = (await t.game.mysterious.appraise(ctx, { toolId, times: 99 })).data;
       let got = 0;
       let hits = 0;
       for (const r of d.results) {

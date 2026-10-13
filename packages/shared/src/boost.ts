@@ -21,7 +21,6 @@ export const BOOSTS = {
   dtTicket: { label: '德拓券掉率', paths: ['settlement.dtTicketBaseRate'], min: 1, max: 5 },
   equipStress: { label: '强化成功率', paths: ['equip.baseRate'], min: 1, max: 1.25, cap: 1 },
   gemLevel: { label: '宝石升级成功率', paths: ['equip.gemBaseRate'], min: 1, max: 1.05, cap: 1 },
-  yardYield: { label: '菜园土地等级加产', paths: ['yard.yieldPerLevel'], min: 1, max: 3, int: true },
   // guardianRareRate 现在是神秘食材的期望个数，不再是概率（2026-10-07）；cap 1 是基础期望最多 1 个，
   // 打倒高倍守护兽时再乘倍数（默认 0.25，加成最多 ×2，碰不到）
   guardianRare: { label: '守护兽稀有掉落', paths: ['temple.guardianRareRate'], min: 1, max: 2, cap: 1 },
