@@ -22,6 +22,11 @@ const withMultiplier = (m: number) => ({
   },
 });
 const rules = withMultiplier(1);
+/** 原来的特色菜卖法：普通顾客每桌都吃 1 份半价（特色菜卖法 2026-10-13 前；只有 1 桌普通顾客的用例用它） */
+const everyNormal = {
+  ...rules,
+  settlement: { ...rules.settlement, normalSpecialShare: 1, normalSpecialPriceRate: 0.5 },
+};
 const settle = (patch: InputPatch, g: Partial<SettleGlobals>, rng: number[]) =>
   settleRestaurant(buildInput(config, patch), buildGlobals(config, rules, g), sequenceRng(rng));
 
@@ -292,7 +297,7 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
   it('特色菜（输入存在时）：普通顾客吃 1 份半价；卖出时乘这一级的倍率（3 级 ×2.5，问题记录 412）', () => {
     const r = settle(
       { special: { price: 100, level: 3, leftNum: 1 } },
-      {},
+      { tuning: everyNormal },
       [0.5, 0.65, 0.9, 0.9, 0.9, 0.9, 0.9],
     );
     expect(r.specialUsed).toBe(1);
@@ -329,7 +334,7 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
   it('每桌记下吃了几份哪道特色菜，餐桌页显示用（问题记录 559）；没吃的桌不记', () => {
     const normal = settle(
       { special: { price: 100, level: 3, leftNum: 1, mcId: 42 } },
-      {},
+      { tuning: everyNormal },
       [0.5, 0.65, 0.9, 0.9, 0.9, 0.9, 0.9],
     );
     expect(normal.tables[0]!.last).toMatchObject({ type: 1, mcId: 42, mcNum: 1 });
@@ -364,10 +369,73 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
   it('特色菜卖出倍率按特色菜等级：1 级 ×1.3', () => {
     const r = settle(
       { special: { price: 100, level: 1, leftNum: 1 } },
-      {},
+      { tuning: everyNormal },
       [0.5, 0.65, 0.9, 0.9, 0.9, 0.9, 0.9],
     );
     expect(r.tables[0]!.last).toMatchObject({ coin: 75 });
+  });
+
+  describe('普通顾客按比例吃特色菜（特色菜卖法 2026-10-13）', () => {
+    /** 4 桌全上座、都是普通顾客：每桌取两次随机数（蟑螂、挑剔）都是 0.9 */
+    const fourNormal = [0.5, 0.65, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9];
+    const full = { agg: { atRate: 1 } };
+
+    it('默认 0.5 / 0.5：4 桌里随机挑 2 桌各吃 1 份，每份半价，经验 1', () => {
+      expect(rules.settlement.normalSpecialShare).toBe(0.5);
+      expect(rules.settlement.normalSpecialPriceRate).toBe(0.5);
+      // 挑桌：int(4) 取 0.9 → 第 4 桌换到最前；int(3) 取 0 → 第 2 桌不动；挑中第 2、4 桌
+      const rng = [...fourNormal, 0.9, 0];
+      const base = settle(full, {}, rng);
+      const r = settle({ ...full, special: { price: 100, level: 3, leftNum: 10, mcId: 5 } }, {}, rng);
+      expect(r.customers).toEqual({ '1': 4 });
+      expect(r.specialUsed).toBe(2);
+      expect(r.tables.map((x) => x.last!.mcNum ?? 0)).toEqual([0, 1, 0, 1]);
+      expect(r.tables[1]!.last).toMatchObject({ mcId: 5, coin: 135, exp: 3 });
+      expect(r.tables[0]!.last).toMatchObject({ coin: 10, exp: 2 });
+      // 100 × 2.5 × 0.5 × 2 份
+      expect(r.coin - base.coin).toBe(250);
+      // 每桌 +1 经验，合计再吃经验率（这里 +50%）
+      expect(r.exp - base.exp).toBe(3);
+    });
+
+    it('价钱比例不取整：1 级每份 15、比例 1/3 时每份 15 × 1.3 / 3 = 6.5，两份合计后取整', () => {
+      const tuning = { ...rules, settlement: { ...rules.settlement, normalSpecialPriceRate: 1 / 3 } };
+      const rng = [...fourNormal, 0.9, 0];
+      const base = settle(full, { tuning }, rng);
+      const r = settle({ ...full, special: { price: 15, level: 1, leftNum: 10 } }, { tuning }, rng);
+      expect(r.tables[1]!.last!.coin).toBe(16.5);
+      expect(r.coin - base.coin).toBe(13);
+    });
+
+    it('比例 1 / 0.5 等于原来的卖法：每桌都吃 1 份半价，按桌号吃，不多取随机数', () => {
+      const r = settle(
+        { ...full, special: { price: 100, level: 3, leftNum: 3 } },
+        { tuning: everyNormal },
+        fourNormal,
+      );
+      expect(r.specialUsed).toBe(3);
+      expect(r.tables.map((x) => x.last!.mcNum ?? 0)).toEqual([1, 1, 1, 0]);
+      expect(r.tables[0]!.last).toMatchObject({ coin: 135 });
+    });
+
+    it('只有 1 桌普通顾客时 ⌊1 × 0.5⌋ = 0，不吃', () => {
+      const r = settle({ special: { price: 100, level: 3, leftNum: 1 } }, {}, [0.5, 0.65, 0.9, 0.9, 0.9]);
+      expect(r.specialUsed).toBe(0);
+      expect(r.tables[0]!.last).not.toHaveProperty('mcNum');
+    });
+
+    it('一批剩得不够时先卖给满足的挑剔顾客：第 1 桌挑剔吃 2 份，后面的普通顾客没得吃', () => {
+      const rng = [0.5, 0.65, 0.9, 0.05, 0.3, 0, 0.9, 0.9, 0.9];
+      const r = settle(
+        { ...full, cookbooks: { [cid('桑椹葡萄粥')]: 1 }, special: { price: 100, level: 3, leftNum: 2 } },
+        { tuning: everyNormal },
+        rng,
+      );
+      expect(r.tables[0]!.last).toMatchObject({ type: 2, satisfied: true, mcNum: 2 });
+      expect(r.tables.slice(1).some((x) => x.last!.type === 1)).toBe(true);
+      expect(r.tables.slice(1).every((x) => !x.last!.mcNum)).toBe(true);
+      expect(r.specialUsed).toBe(2);
+    });
   });
 
   it('没油：停业，桌子原样保留，不消耗随机数', () => {

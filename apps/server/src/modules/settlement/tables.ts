@@ -145,8 +145,11 @@ export function allocateTables(
   const count = (type: number) => {
     out.customers[String(type)] = (out.customers[String(type)] ?? 0) + 1;
   };
-  /** 规格书 01 §1.7 */
-  const eatSpecial = (portions: number, half: boolean): { coin: number; exp: number; n: number } => {
+  /**
+   * 规格书 01 §1.7；普通顾客（normal）每份付 normalSpecialPriceRate 成、经验 1（特色菜卖法 2026-10-13：原来固定半价）。
+   * 每份银币不取整，整轮合计时再取整
+   */
+  const eatSpecial = (portions: number, normal: boolean): { coin: number; exp: number; n: number } => {
     if (!special || special.leftNum <= 0) return { coin: 0, exp: 0, n: 0 };
     const n = Math.min(portions, special.leftNum);
     special.leftNum -= n;
@@ -154,11 +157,14 @@ export function allocateTables(
     // 卖出倍率按特色菜等级（问题记录 412）：只在这里乘，赛厨的“养”、品尝等用原价
     const sale = g.tuning.mysterious.saleRates[special.level - 1] ?? 1;
     return {
-      coin: special.price * sale * n * (1 + flags.mcCoinRate) * (half ? 0.5 : 1),
-      exp: (half ? 1 : special.level) * (1 + flags.mcExpRate),
+      coin: special.price * sale * n * (1 + flags.mcCoinRate) * (normal ? t.normalSpecialPriceRate : 1),
+      exp: (normal ? 1 : special.level) * (1 + flags.mcExpRate),
       n,
     };
   };
+
+  /** 普通顾客桌：全部分完以后再挑几桌吃特色菜（特色菜卖法 2026-10-13）；记下这桌算最终值前的银币、经验 */
+  const normals: Array<{ at: number; coin: number; exp: number }> = [];
 
   let seatedLimit = rates.seated;
   // 店里已经坐着痞老板时，本轮不会再出现第二个
@@ -357,13 +363,10 @@ export function allocateTables(
         }
       }
     } else {
-      // 普通顾客
+      // 普通顾客：特色菜等全部桌子分完再挑（见循环后面）
       type = 1;
       next.customer = 1;
-      const m = eatSpecial(1, true);
-      mcCoin += m.coin;
-      mcNum += m.n;
-      mcExp += m.exp;
+      normals.push({ at: out.tables.length, coin, exp });
     }
 
     // E. 每桌最终值
@@ -391,6 +394,39 @@ export function allocateTables(
     };
     out.tables.push(next);
     count(type);
+  }
+
+  // 普通顾客吃特色菜（特色菜卖法 2026-10-13）：随机挑 ⌊桌数 × normalSpecialShare⌋ 桌各吃 1 份；
+  // 挑剔顾客、章鱼哥已经先吃过，一批剩得不够时先卖给它们。全挑时不取随机数，按桌号吃
+  const pick = Math.floor(normals.length * t.normalSpecialShare + 1e-9);
+  if (special && special.leftNum > 0 && pick > 0) {
+    const chosen = [...normals];
+    if (pick < chosen.length) {
+      for (let i = 0; i < pick; i++) {
+        const j = i + rng.int(chosen.length - i);
+        [chosen[i], chosen[j]] = [chosen[j]!, chosen[i]!];
+      }
+      chosen.length = pick;
+      chosen.sort((a, b) => a.at - b.at);
+    }
+    for (const c of chosen) {
+      const m = eatSpecial(1, true);
+      if (m.n === 0) break;
+      const table = out.tables[c.at]!;
+      const last = table.last!;
+      const coinT = (c.coin + rates.coinValue.total + m.coin) * t.coinMultiplier;
+      const expT = realValue(c.exp + m.exp, rates.expValue.total) * t.expMultiplier;
+      const before = realValue(c.exp, rates.expValue.total) * t.expMultiplier;
+      out.coin += m.coin * t.coinMultiplier;
+      out.exp += expT - before;
+      table.last = {
+        ...last,
+        coin: r2(coinT),
+        exp: r2(expT),
+        mcNum: m.n,
+        ...(special.mcId !== undefined ? { mcId: special.mcId } : {}),
+      };
+    }
   }
   return out;
 }

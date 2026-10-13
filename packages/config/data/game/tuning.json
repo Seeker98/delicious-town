@@ -56,6 +56,8 @@
     "pickyMaxGrade": 7,
     "pickyHitCount": 30,
     "pickyShortPayRate": 0.5,
+    "normalSpecialShare": 0.5,
+    "normalSpecialPriceRate": 0.5,
     "cookfoodsPerFlag": 50,
     "cookfoodsMaxFlag": 5,
     "cookfoodsMinGrade": 5,

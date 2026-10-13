@@ -28,7 +28,9 @@ export default {
   saleMeta: (left: string, total: string, price: string, eaten: number) =>
     `剩余 ${left} / ${total} 份 · 每份 ${price} 银币 · 被品尝 ${eaten} 次`,
   /** 卖给顾客时每份价值的倍率（问题记录 412）；赛厨等其他地方按原价 */
-  saleRate: (rate: string) => ` · 卖给顾客时 ×${rate} (普通顾客付一半)`,
+  saleRate: (rate: string) => ` · 卖给顾客时 ×${rate}`,
+  /** 普通顾客按比例点（特色菜卖法 2026-10-13）：比例、价钱都是区服数值 */
+  normalSale: (share: string, price: string) => ` · 普通顾客约 ${share} 的桌点, 每份付 ${price}`,
   dump: '倒掉',
   learned: (n: number) => `已学 (${n})`,
   /** 分页时：这一页几道 / 一共几道 */

@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    special1013:
+      'Los platos especiales se venden distinto: los clientes exigentes satisfechos siguen tomando 2 raciones a precio completo y los que no quedan satisfechos o se van no toman ninguna; los clientes normales ahora piden 1 ración (a mitad de precio) solo en cerca de la mitad de sus mesas cada ronda, en vez de en todas. La página de platos especiales muestra las cifras de tu servidor',
     fix1013b:
       'Más pequeños arreglos: la tienda indica cuánto te falta en vez de «Te quedan 0»; los recuerdos del almacén se abren para ver su descripción completa; en la lista de recetas, los platos al máximo tienen su imagen de ingrediente, la paginación va dentro de la tarjeta y el detalle alinea los ingredientes de cada grado; los plazos de ahorro indican cuántos paquetes recibes por cantidad depositada; una puja fallida en la Suscripción mayorista conserva lo que escribiste y el panel de puja se actualiza cada 30 segundos mientras está abierto; los lectores de pantalla nombran la casilla de cantidad y ya no leen como interruptores las casillas que abren un panel',
     home1013:

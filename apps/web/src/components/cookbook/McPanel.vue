@@ -12,7 +12,7 @@ import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useConfirmStore } from '../../stores/confirm';
 import { useToastStore } from '../../stores/toast';
-import { formatNum, timeHM } from '../../utils/format';
+import { formatNum, formatPct, timeHM } from '../../utils/format';
 import { GRADE_NAMES, ROAD_NAMES } from '../../utils/labels';
 
 const catalog = useCatalogStore();
@@ -315,6 +315,10 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
               o.current.eatCount,
             )
           }}{{ o.saleRate !== null && o.saleRate !== 1 ? t.mc.saleRate(formatNum(o.saleRate)) : ''
+          }}{{
+            o.normalSale
+              ? t.mc.normalSale(formatPct(o.normalSale.share), formatPct(o.normalSale.priceRate))
+              : ''
           }}{{ o.current.shiling ? t.mc.season.pts(formatNum(o.current.shilingPts)) : '' }}
         </div>
       </div>
