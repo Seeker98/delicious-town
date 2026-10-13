@@ -436,7 +436,7 @@ export const tuningSchema = z.object({
       compass: z.tuple([int.min(1), int.min(0)]),
       lots: z.tuple([int.min(1), int.min(0)]),
     }),
-    /** [天气 id, 当令的道]（1~6；7 是兽道） */
+    /** [天气 id, 当令的道]（1~6；特殊天气 1~6 全部） */
     roads: z.array(z.tuple([int, z.array(int.min(1).max(7)).min(1)])),
   }),
   bar: z.object({

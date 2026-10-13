@@ -375,7 +375,7 @@
     "tuning.shiling.shop.rareWeekly": "珍稀残卷每周限购（张）",
     "tuning.shiling.shop.compass": "司天罗盘 [价格, 每周限购]",
     "tuning.shiling.shop.lots": "晴雨签 [价格, 每周限购]",
-    "tuning.shiling.roads": "当令表：[天气 id, [当令的道]] 列表；道 1~6，兽道是 7（只给特殊天气）；日夜对应的天气要相同",
+    "tuning.shiling.roads": "当令表：[天气 id, [当令的道]] 列表；道 1~6；普通天气两道，特殊天气一道到六道全部当令；日夜对应的天气要相同",
     "tuning.bar.fgWinRate": "划拳赢的基础概率（概率，加幸运率）",
     "tuning.bar.fgDrawRate": "划拳平的概率（概率，不加幸运）",
     "tuning.bar.fgLoseMin": "划拳输的最低概率：幸运再高，赢的概率最多到 1 − 平 − 它（概率）",

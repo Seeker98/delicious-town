@@ -38,9 +38,9 @@ const give = (ctx: RestCtx, balance: number) =>
     .execute();
 
 describe('规则（天气改版设计 §3）', () => {
-  it('当令表：中雨一道二道、特殊天气兽道、表里没有的空', () => {
+  it('当令表：中雨一道二道、特殊天气一道到六道全部当令（特色菜清理 2026-10-13）、表里没有的空', () => {
     expect(roadsOf(T, RAIN)).toEqual([1, 2]);
-    expect(roadsOf(T, 24)).toEqual([7]);
+    expect(roadsOf(T, 24)).toEqual([1, 2, 3, 4, 5, 6]);
     expect(roadsOf(T, 999)).toEqual([]);
   });
 
@@ -297,7 +297,7 @@ describe('天气页的时令区', () => {
     expect(v.season).toMatchObject({ open: true, roads: [1, 2], weatherId: RAIN });
     expect(v.table).toContainEqual({ ids: [RAIN], roads: [1, 2] });
     expect(v.table).toContainEqual({ ids: [1, 28], roads: [1, 2] });
-    expect(v.table.at(-1)).toEqual({ ids: [6, 7, 18, 24, 27], roads: [7] });
+    expect(v.table.at(-1)).toEqual({ ids: [6, 7, 18, 24, 27], roads: [1, 2, 3, 4, 5, 6] });
     expect(v.remnantPool).not.toContain(MC1);
     expect(v.shop.map((x) => [x.item, x.price, x.left])).toEqual([
       ['remnant', 80, 6],
