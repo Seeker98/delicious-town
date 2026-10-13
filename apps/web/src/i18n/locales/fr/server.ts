@@ -146,7 +146,6 @@ const server: Messages['server'] = {
     hangover: 'Gueule de bois',
     suit: (name, need) => `${name} (${need} ${plFr(need, 'pièce', 'pièces')})`,
     suitFallback: 'Ensemble',
-    bless: (name) => `Vœu du jour\u202f: ${name}`,
   },
 };
 export default server;

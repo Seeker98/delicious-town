@@ -46,7 +46,6 @@ describe('开通（设计文档 §3.1）', () => {
     expect(v).toMatchObject({
       opened: true,
       riderCap: 1,
-      canDouble: false,
       refresh: { cost: 1_000_000, hasJob: false },
     });
     expect(v.riders).toEqual([

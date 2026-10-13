@@ -77,9 +77,13 @@ export function restockIfDue(
   return opened;
 }
 
+/** 有没有 B 档或以上的基金勋章（同 market/service.ts） */
+const t2Medal = (c: FastCtx, r: FastRest) =>
+  c.tuning.fund.tiers.some((x) => (x.key === 'A' || x.key === 'B') && countGoods(c, r, x.medal) > 0);
+
 /**
  * 买菜（market/service.ts 的 buyTx）：特价货架当作邮箱已验证、不算同网络冷却（设计 §4.6）；
- * 高级货架要有效的爱心项链；格子、单种上限、按店限购、库存、银币都够才买
+ * 高级货架要 B 档或以上的基金勋章（道具减法 2026-10-13）；格子、单种上限、按店限购、库存、银币都够才买
  */
 export function marketBuy(
   c: FastCtx,
@@ -94,7 +98,7 @@ export function marketBuy(
   if (!item) return false;
   const t = c.tuning.market;
   const food = c.config.requireFood(item.foodsId);
-  if (item.shelf === 2 && countGoods(c, r, GOODS.loveNecklace) <= 0) return false;
+  if (item.shelf === 2 && !t2Medal(c, r)) return false;
   const have = foodNum(r, food.id);
   if (have === 0 && slotsUsed(r) >= r.cupboardNum) return false;
   if (have + num > r.foodsMaxNum) return false;

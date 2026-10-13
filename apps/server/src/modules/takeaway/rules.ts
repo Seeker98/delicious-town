@@ -180,13 +180,9 @@ export function pickAward(r: number, grade: number, t: TakeawayTuning): number {
   return list[list.length - 1]![0];
 }
 
-/** 领取时的经验（设计文档 §3.4）：加料 ×2、好友骑手 ×0.9，再私人单 ×1.5 */
-export function claimExp(
-  exp: number,
-  f: { double: boolean; friend: boolean; private: boolean },
-  t: TakeawayTuning,
-): number {
-  const a = fl(exp * (f.double ? 2 : 1) * (f.friend ? t.friendRiderRate : 1));
+/** 领取时的经验（设计文档 §3.4）：好友骑手 ×0.9，再私人单 ×1.5 */
+export function claimExp(exp: number, f: { friend: boolean; private: boolean }, t: TakeawayTuning): number {
+  const a = fl(exp * (f.friend ? t.friendRiderRate : 1));
   return f.private ? fl(a * t.privateExpRate) : a;
 }
 

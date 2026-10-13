@@ -410,7 +410,6 @@ export function createWorldService(d: GameDeps) {
         chapters: d.config.bundle.chapters.map((x) => ({ id: x.id, name: x.name })),
         questLines: d.config.bundle.questLines.map((x) => ({ id: x.id, name: x.name })),
         activation: d.config.bundle.activationTasks.map((x) => ({ id: x.id, name: x.name })),
-        bless: d.config.bundle.bless.map((x) => ({ id: x.id, name: x.name })),
         tower: [...d.config.towerFloors.values()].map((f) => ({
           id: f.floor,
           name: f.name,

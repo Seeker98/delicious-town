@@ -3,7 +3,7 @@ import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../..
 import { opAgg } from '../../core/luck';
 import { runOp } from '../../core/op';
 import { assertStoreRoom, consumeGoods, grantGoodsOp, hasValidHonor, removeHonor } from './goods';
-import { GOODS } from '@dt/config';
+import { FUND, GOODS } from '@dt/config';
 import { gid } from '../../../test/items';
 
 let t: TestGame;
@@ -80,6 +80,6 @@ describe('道具发放与扣除', () => {
       code: 'STORE_FULL',
     });
     await run(ctx, (op) => assertStoreRoom(op, GOODS.starCert));
-    await run(ctx, (op) => assertStoreRoom(op, GOODS.loveNecklace));
+    await run(ctx, (op) => assertStoreRoom(op, FUND.B));
   });
 });

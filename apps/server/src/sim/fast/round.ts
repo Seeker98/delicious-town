@@ -4,17 +4,7 @@ import { strengthGain } from '../../modules/settlement/strength';
 import type { SettleGlobals } from '../../modules/settlement/types';
 import { GOODS } from '@dt/config';
 import { buildPool, pickWeighted } from '@dt/shared';
-import {
-  aggOf,
-  gainCoin,
-  gainExp,
-  gainOil,
-  gainRenown,
-  grantGoods,
-  luckOf,
-  spendCoin,
-  subFoods,
-} from './ops';
+import { aggOf, gainCoin, gainExp, gainRenown, grantGoods, luckOf, subFoods } from './ops';
 import type { FastCtx, FastRest } from './state';
 
 /** 从内存状态组出结算源；字段和 settlement/runner.ts 的 settleOne 一一对应 */
@@ -63,18 +53,7 @@ export function settleRound(c: FastCtx, r: FastRest, g: SettleGlobals): 'settled
   if (res.renown !== 0) gainRenown(c, r, res.renown);
   for (const d of res.drops) grantGoods(c, r, d.goodsId, d.num, 'settlement', d.hours);
   for (const f of res.foodsUsed) subFoods(c, r, f.foodsId, f.num);
-  autoRefuel(c, r, agg);
   return 'settled';
-}
-
-/** 自动加油（runner.ts 的 autoRefuel） */
-function autoRefuel(c: FastCtx, r: FastRest, agg: Record<string, number>): void {
-  if ((agg.autoAddOil ?? 0) <= 0) return;
-  if (r.oil >= c.tuning.settlement.autoRefuelThreshold) return;
-  const need = r.oilMax - r.oil;
-  if (need <= 0 || r.coin < need) return;
-  spendCoin(c, r, need, 'oil.auto');
-  gainOil(c, r, need);
 }
 
 /** 体力恢复（settlement/strength.ts 的 strengthGain） */

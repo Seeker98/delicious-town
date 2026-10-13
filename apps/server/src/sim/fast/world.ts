@@ -75,6 +75,5 @@ export function globalsOf(w: FastWorld, config: GameConfig, tuning: Tuning, now:
     planktonRestId: w.planktonRestId,
     holidayMultiplier: config.holidayMultiplier(now),
     naturalRoach: true,
-    bless: {},
   });
 }

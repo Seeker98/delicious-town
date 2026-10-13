@@ -127,7 +127,7 @@ describe('后台活动（设计 §5.2）', () => {
     const shardId = await createShard(t.db);
     const def = {
       goals: [
-        { key: 'signin', target: 1, award: { goods: [{ id: gid('金币'), num: 1 }] } },
+        { key: 'signin', target: 1, award: { goods: [{ id: gid('蟹黄堡'), num: 1 }] } },
         {
           key: 'signin',
           target: 2,

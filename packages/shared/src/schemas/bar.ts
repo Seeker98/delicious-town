@@ -82,11 +82,9 @@ export interface BarDto {
   num: BarGameDto & { cost: number; max: number };
   slot: {
     emailVerified: boolean;
-    /** 持有有效神灯（提前保底率翻倍） */
-    lamp: boolean;
     /** 最多再抽几次必出保底（稀有） */
     floorLeft: number;
-    /** 算上保底，平均每几次出一次稀有（按有没有神灯算；问题记录 511） */
+    /** 算上保底，平均每几次出一次稀有（问题记录 511） */
     rareEvery: number;
     pool: SlotAwardDto[];
     /** 我的统计：每个奖项累计格数（含空格 id 0），按奖项 id 排序 */

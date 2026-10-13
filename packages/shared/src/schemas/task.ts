@@ -91,7 +91,7 @@ export interface ActivationDto {
     blocked: ActivationBlock;
     off: boolean;
   }>;
-  rewards: Array<{ points: number; award: AwardDto; claimed: boolean; multiplier: number }>;
+  rewards: Array<{ points: number; award: AwardDto; claimed: boolean }>;
   /** 领哪一档另送一番赏抽赏券、送几张；区服关掉一番赏或不送时为 null（backlog 一番赏） */
   kujiTicket: { points: number; num: number } | null;
 }

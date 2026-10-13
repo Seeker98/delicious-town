@@ -115,7 +115,6 @@ export default {
     signedIn: '今天已簽到',
     signInFailed: '簽到失敗',
     claimed: (p: number) => `✓ 已領 ${p} 點`,
-    claim: (p: number, double: boolean) => `領 ${p} 點獎勵${double ? ' ×2' : ''}`,
     need: (p: number, left: number) => `${p} 點 (還差 ${left})`,
     kujiHint: (p: number, num: number) => `領 ${p} 點獎勵另送一番賞抽賞券 ×${num}`,
     full: '✓ 已滿',
@@ -156,7 +155,6 @@ export default {
     weeklyFullClaimed: '✓ 已領取',
     /** 介面改版 P7：今日活躍的進度條和檔位行、任務行、章和支線卡片頭 */
     actTitle: '今日活躍',
-    double: '獎勵翻倍',
     kujiTier: (num: number) => `另送一番賞抽賞券 ×${num}`,
     claimedShort: '已領',
     needShort: (n: number) => `還差 ${n}`,

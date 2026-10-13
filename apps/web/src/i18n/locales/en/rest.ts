@@ -112,7 +112,6 @@ const rest: Messages['rest'] = {
     signedIn: 'Checked in today',
     signInFailed: 'Could not check in',
     claimed: (p) => `✓ ${p}-point reward claimed`,
-    claim: (p, double) => `Claim ${p}-point reward${double ? ' ×2' : ''}`,
     need: (p, left) => `${p} ${plEn(p, 'point', 'points')} (${left} to go)`,
     kujiHint: (p, num) =>
       `The ${p}-point reward also gives ${num} Ichiban Kuji ${plEn(num, 'ticket', 'tickets')}`,
@@ -150,7 +149,6 @@ const rest: Messages['rest'] = {
     claimWeeklyFull: 'Claim',
     weeklyFullClaimed: '✓ Claimed',
     actTitle: 'Activity today',
-    double: 'Doubled',
     kujiTier: (num) => `plus ${num} lottery ${plEn(num, 'ticket', 'tickets')}`,
     claimedShort: 'Claimed',
     needShort: (n) => `${n} to go`,

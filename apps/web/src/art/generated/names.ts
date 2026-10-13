@@ -218,7 +218,6 @@ export const CONTENT_ART = [
   'town-hammer',
   'town-horn',
   'town-invite',
-  'town-lamp',
   'town-mail',
   'town-mail-open',
   'town-shop',

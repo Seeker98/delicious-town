@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const id = z.number().int().positive();
 export const takeawayOpenBody = z.object({ way: z.enum(['ticket', 'coin']) });
-export const takeawayDeliverBody = z.object({ orderId: id, riderId: id, double: z.boolean().default(false) });
+export const takeawayDeliverBody = z.object({ orderId: id, riderId: id });
 export const takeawayClaimBody = z.object({ deliveryId: id, drone: z.boolean().default(false) });
 export const takeawayHireBody = z.object({ restId: id });
 export const takeawayRiderBody = z.object({ riderId: id });
@@ -20,7 +20,7 @@ export interface TakeawayOrderDto {
   private: boolean;
   /** 按我这道菜的品级要的食材（没学会按品级 1），need 已乘单品级 */
   foods: Array<{ foodsId: number; need: number; have: number }>;
-  /** 不能接的原因；可以接为 null（加料另算） */
+  /** 不能接的原因；可以接为 null */
   block: 'not_learned' | 'renown' | 'foods' | null;
 }
 
@@ -31,7 +31,6 @@ export interface TakeawayDeliveryDto {
   cookbookName: string;
   grade: number;
   private: boolean;
-  double: boolean;
   riderId: number;
   riderName: string;
   arriveAt: string;
@@ -79,8 +78,6 @@ export interface TakeawayDto {
   deliveries: TakeawayDeliveryDto[];
   riders: TakeawayRiderDto[];
   riderCap: number;
-  /** 持有使命必达，可以加料 */
-  canDouble: boolean;
   /** 私人刷新：这一次的费用、有没有有效的商店工作证 */
   refresh: { cost: number; hasJob: boolean };
   star: number;

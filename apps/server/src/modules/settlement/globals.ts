@@ -13,7 +13,6 @@ export function buildGlobals(
     planktonRestId: null,
     holidayMultiplier: 1,
     naturalRoach: true,
-    bless: {},
     tuning,
     cookbooks: config.cookbookIndex,
     grade: (g) => config.grade(g),

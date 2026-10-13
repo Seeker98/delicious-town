@@ -49,11 +49,7 @@ function blockOf(times: number): string {
 const block1 = computed(() => blockOf(1));
 const block10 = computed(() => blockOf(10));
 const blockText = computed(() => block1.value || (block10.value ? t.value.bar.slot.ten(block10.value) : ''));
-const sub = computed(() => {
-  const s = t.value.bar.slot;
-  const base = s.floor(slot.value.floorLeft);
-  return slot.value.lamp ? t.value.bar.home.join(base, s.lampShort) : base;
-});
+const sub = computed(() => t.value.bar.slot.floor(slot.value.floorLeft));
 /** 转轮：上一次抽的最后一组 3 格；还没抽过是问号 */
 const reels = computed(() => last.value?.spins.at(-1) ?? null);
 const spinsText = computed(() =>

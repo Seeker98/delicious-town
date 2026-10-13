@@ -128,7 +128,6 @@ describe('第 8c 批：任务、厨塔各层等按 id 取名字（问题记录 2
       data: {
         tasks: [{ id: 1, name: 'Refill oil once' }],
         activation: [],
-        bless: [],
         tower: [{ id: 2, name: 'Junior Model Restaurant', title: 'Junior Guardian', note: 'Hi' }],
         formulas: [],
         kujiThemes: [],
@@ -144,7 +143,7 @@ describe('第 8c 批：任务、厨塔各层等按 id 取名字（问题记录 2
       note: 'Hi',
     });
     expect(c.data('tasks', 9)).toBeUndefined();
-    expect(c.data('bless', 1)).toBeUndefined();
+    expect(c.data('activation', 1)).toBeUndefined();
   });
 
   it('旧缓存里没有 data 时也不报错', () => {

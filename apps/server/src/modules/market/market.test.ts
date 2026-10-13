@@ -2,10 +2,9 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { gameTime, hashSeed, latestSlot, seededRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
-import { grantGoods } from '../store/grant';
 import { foodPrice } from '../../core/prices';
 import { rollShelf } from './rules';
-import { GOODS } from '@dt/config';
+import { FUND, FUND_MEDALS, GOODS } from '@dt/config';
 import { fid, gid } from '../../../test/items';
 import { eventCount } from '../../../test/quests';
 
@@ -214,15 +213,29 @@ describe('特价和高级菜场', () => {
     expect(row.sold).toBe(1);
   });
 
-  it('高级菜场需要爱心项链；价格 ×2 再乘等级价格倍数', async () => {
+  it('高级菜场要持有 B 档或以上的基金勋章（道具减法 2026-10-13）；价格 ×2 再乘等级价格倍数', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 1_000_000 } });
     const [item] = await openShelf(ctx.shardId, 2, 12);
-    await expect(m().buy({ ...ctx, ip: uniqueIp() }, { itemId: item!.id, num: 1 })).rejects.toMatchObject({
-      code: 'REQUIREMENT_NOT_MET',
-    });
-    await grantGoods(t.db, config, ctx.restaurantId, GOODS.loveNecklace, 1, t.clock.now);
+    const buy = () => m().buy({ ...ctx, ip: uniqueIp() }, { itemId: item!.id, num: 1 });
+    const medal = async (id: number | null) => {
+      await t.db
+        .deleteFrom('store_item')
+        .where('rest_id', '=', ctx.restaurantId)
+        .where('goods_id', 'in', [...FUND_MEDALS])
+        .execute();
+      if (id !== null)
+        await t.db
+          .insertInto('store_item')
+          .values({ rest_id: ctx.restaurantId, goods_id: id, num: 1 })
+          .execute();
+    };
+    const rejected = { code: 'REQUIREMENT_NOT_MET', params: { reason: 'fund_medal' } };
+    await expect(buy()).rejects.toMatchObject(rejected);
+    await medal(FUND.C);
+    await expect(buy()).rejects.toMatchObject(rejected);
+    await medal(FUND.B);
     const before = (await restRow(t, ctx.restaurantId)).coin;
-    await m().buy({ ...ctx, ip: uniqueIp() }, { itemId: item!.id, num: 1 });
+    await buy();
     const food = config.requireFood(item!.foods_id);
     const snap = await t.game.world.ensure(ctx.shardId);
     // 高级货架 ×2，再乘食材等级价格倍数（240-1，默认 4 级 ×3）
@@ -230,6 +243,8 @@ describe('特价和高级菜场', () => {
       foodPrice(food, config.tuning.market) * 2 * (1 + (snap.weather.effects.marketCoin ?? 0)),
     );
     expect(before - (await restRow(t, ctx.restaurantId)).coin).toBe(expected);
+    await medal(FUND.A);
+    await buy();
   });
 });
 

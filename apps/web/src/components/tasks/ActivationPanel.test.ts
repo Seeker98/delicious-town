@@ -79,9 +79,9 @@ const act = (patch: Partial<ActivationDto> = {}): ActivationDto => ({
     },
   ],
   rewards: [
-    { points: 50, award: { exp: 500 }, claimed: true, multiplier: 1 },
-    { points: 100, award: { diamond: 2 }, claimed: false, multiplier: 1 },
-    { points: 150, award: { diamond: 5 }, claimed: false, multiplier: 1 },
+    { points: 50, award: { exp: 500 }, claimed: true },
+    { points: 100, award: { diamond: 2 }, claimed: false },
+    { points: 150, award: { diamond: 5 }, claimed: false },
   ],
   kujiTicket: null,
   ...patch,
@@ -119,7 +119,6 @@ describe('ActivationPanel', () => {
         chapters: [],
         questLines: [],
         activation: [{ id: 1, name: 'Check in' }],
-        bless: [],
         tower: [],
         formulas: [],
         kujiThemes: [],
@@ -277,20 +276,6 @@ describe('ActivationPanel', () => {
     expect(w.get('[data-testid="claim-award-100"]').text()).toBe('钻石 2');
     expect(w.get('[data-testid="claim-award-150"]').text()).toBe('钻石 5');
     expect(w.get('[data-testid="tier-150"]').text()).toContain('钻石 5');
-  });
-
-  it('翻倍的档写奖励翻倍', async () => {
-    vi.mocked(endpoints.activation).mockResolvedValue(
-      act({
-        rewards: [
-          { points: 50, award: { exp: 500 }, claimed: true, multiplier: 1 },
-          { points: 100, award: { diamond: 2 }, claimed: false, multiplier: 2 },
-        ],
-      }),
-    );
-    const w = await mountView();
-    expect(w.get('[data-testid="tier-100"]').text()).toContain('奖励翻倍');
-    expect(w.get('[data-testid="tier-50"]').text()).not.toContain('奖励翻倍');
   });
 
   it('写明哪一档另送几张券；区服关掉一番赏时不写', async () => {

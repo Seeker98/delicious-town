@@ -398,32 +398,20 @@ describe('下架时产出类列表自动去掉（问题记录 501，用户 2026-
     '声望商店',
     real.renownShop.map((r) => r.goodsId),
   );
-  // 星愿里的道具别处都还有引用：测试时把一条许道具的星愿改成许 blessId（只在声望商店出现的另一种）
-  const blessId = onlyIn(
-    '声望商店',
-    real.renownShop.map((r) => r.goodsId).filter((id) => id !== renownId),
-  );
   const retire = (ids: number[]) => {
     const src = source();
-    const bless = structuredClone(src['designed/bless']) as Array<{
-      type: number;
-      value?: { goodsId?: number };
-    }>;
-    bless.find((x) => x.type === 2 && x.value?.goodsId)!.value!.goodsId = blessId;
-    src['designed/bless'] = bless;
     const file = structuredClone(src['game/retired']) as { goods: Array<{ id: number }>; foods: unknown[] };
     file.goods.push(...ids.filter((id) => !file.goods.some((g) => g.id === id)).map((id) => ({ id })));
     return buildBundle({ ...src, 'game/retired': file });
   };
 
-  it('镇长兑换、声望商店、星愿里换到 / 买到 / 许到的东西下架了：这几条不再出现，也不报“还被引用”', () => {
-    const b = retire([exId, renownId, blessId]);
-    const where = /镇长兑换|声望商店|星愿/;
+  it('镇长兑换、声望商店里换到 / 买到的东西下架了：这几条不再出现，也不报“还被引用”', () => {
+    const b = retire([exId, renownId]);
+    const where = /镇长兑换|声望商店/;
     expect(b.errors.filter((e) => where.test(e))).toEqual([]);
     expect(b.errors).toEqual([]);
     expect(b.bundle?.goodsExchange.some((e) => e.goodsId === exId)).toBe(false);
     expect(b.bundle?.renownShop.some((r) => r.goodsId === renownId)).toBe(false);
-    expect(b.bundle?.bless.some((x) => x.goodsId === blessId)).toBe(false);
   });
 
   it('镇长兑换要用掉的材料下架了仍然拦下（消耗类引用要人工处理）', () => {
@@ -591,12 +579,9 @@ describe('2A 新增配置', () => {
     expect(b.shopPools.black).toContain(gid('升星凭证'));
     expect(b.potTiers.map((t) => t.count)).toEqual([4, 6, 7]);
     expect(b.potTiers[0]!.effects).toEqual({ coinRate: 0.08 });
-    expect(b.paintingTiers.map((t) => t.count)).toEqual([7, 10, 13]);
-    expect(b.paintingTiers[0]!.effects).toEqual({ autoAddOil: 1, mcCoinAdd: 1 });
     expect(b.marketGuessFoods).toHaveLength(116); // 108 + 新街道 8 种 2 级食材（问题记录 284）
     expect(b.guessAwards.map((a) => a.hits)).toEqual([1, 2, 3, 4, 5, 6]);
     expect(b.guessBonus.map((a) => a.minHits)).toEqual([5, 4]);
-    expect(b.tuning.settlement.autoRefuelThreshold).toBe(2000);
     expect(b.tuning.market.shelfLimits).toEqual([1000, 1, 9]);
     expect(b.holidays.lunar['2026-02-17']).toBe('春节');
     expect(b.actionMap.activation['oil.fill']).toBe('给自己添油');
@@ -835,11 +820,12 @@ describe('外卖配置（子项目 4D）', () => {
 });
 
 describe('小镇（子项目 4E-1）', () => {
-  it('镇长兑换和星愿类型化', () => {
+  it('镇长兑换类型化', () => {
     const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
-    // 74 条里 37 条换到的是下架的道具（2026-10-08 一批、天气改版的雷神锤），构建时自动去掉（问题记录 501）
-    expect(bundle!.goodsExchange).toHaveLength(37);
+    // 62 条里 37 条换到的是下架的道具（2026-10-08 一批、天气改版的雷神锤），构建时自动去掉（问题记录 501）；
+    // 换名画的 12 条随名画删掉（道具减法 2026-10-13）
+    expect(bundle!.goodsExchange).toHaveLength(25);
     // 雷神锤换成司天罗盘：2 个蟹黄堡，每周 1 次（天气改版，用户 2026-10-12）
     expect(bundle!.goodsExchange.find((e) => e.goodsId === gid('司天罗盘'))).toEqual({
       id: 74,
@@ -852,25 +838,7 @@ describe('小镇（子项目 4E-1）', () => {
       news: false,
     });
     expect(bundle!.goodsExchange.some((e) => e.goodsId === gid('雷神锤'))).toBe(false);
-    expect(bundle!.bless).toHaveLength(12);
-    expect(bundle!.bless[0]).toEqual({
-      id: 1,
-      name: '五谷丰登',
-      type: 5,
-      num: 3,
-      needAct: 60,
-      levels: [1, 2],
-      goodsId: null,
-      buff: { atRate: 0.05 },
-      odds: 10,
-    });
-    expect(bundle!.bless.find((b) => b.id === 6)).toMatchObject({
-      type: 2,
-      goodsId: GOODS.mysteryTicket,
-      levels: null,
-    });
     expect('goodsExchange' in bundle!.extra).toBe(false);
-    expect('bless' in bundle!.extra).toBe(false);
     expect(bundle!.tuning.town.shake).toMatchObject({ limitIp: false, limitDevice: false });
   });
 
@@ -1482,12 +1450,12 @@ describe('任务配置（问题记录 318）', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('奖励总量：主线 1,072 万、支线 1,603 万银币（第 12 章、天馔一档暂未开放；515 支线扩充 A 加了 437 万、B 加了 677 万、经营 138 万）；经验 = 银币 ÷ 10', () => {
+  it('奖励总量：主线 1,072 万、支线 1,580 万银币（第 12 章、天馔一档暂未开放；515 支线扩充 A 加了 437 万、B 加了 677 万、经营 138 万；神灯许愿一档删掉少 3 万、集名画一档删掉少 20 万）；经验 = 银币 ÷ 10', () => {
     const b = realBuild().bundle!;
     const coin = (main: boolean) =>
       b.quests.filter((q) => (q.line === null) === main).reduce((s, q) => s + (q.award.coin ?? 0), 0);
     expect(coin(true)).toBe(10_720_000);
-    expect(coin(false)).toBe(16_028_000);
+    expect(coin(false)).toBe(15_798_000);
     for (const q of b.quests) expect(q.award.exp ?? 0, String(q.id)).toBe((q.award.coin ?? 0) / 10);
   });
 
@@ -2127,14 +2095,13 @@ describe('支线扩充 B：其他模块（docs/superpowers/specs/2026-10-08-side
   });
 
   // 支线一次只显示一档：要花大钱、要钻石或道具、要别人配合的档放后面，不挡容易做的（终审）
-  it('小镇：先镇长问答，再基金（存 100 万）、周榜，要道具的改天气（罗盘或签）、神灯最后', () => {
+  it('小镇：先镇长问答，再基金（存 100 万）、周榜，要道具的改天气（罗盘或签）最后', () => {
     expect(conds('town').slice(3)).toEqual([
       ['town.mayor.right', 10],
       ['town.mayor.right', 50],
       ['fund.deposit', 1],
       ['shiling.top', 1],
       ['weather.tool', 1],
-      ['town.wish', 1],
     ]);
   });
 

@@ -69,6 +69,7 @@ import * as m0067 from './0067_wishtree';
 import * as m0068 from './0068_weather_chain';
 import * as m0069 from './0069_shiling';
 import * as m0070 from './0070_jobcard';
+import * as m0071 from './0071_item_cuts';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -142,4 +143,5 @@ export const migrations: Record<string, Migration> = {
   '0068_weather_chain': m0068,
   '0069_shiling': m0069,
   '0070_jobcard': m0070,
+  '0071_item_cuts': m0071,
 };

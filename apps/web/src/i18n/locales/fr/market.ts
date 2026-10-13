@@ -5,7 +5,7 @@ const market: Messages['market'] = {
   sections: {
     daily: 'Marché du jour',
     special: 'Marché des promos',
-    premium: "Marché premium (collier d'amour requis)",
+    premium: 'Marché premium (médaille du fonds B ou plus requise)',
   },
   specialNote: (min) =>
     `e-mail vérifié requis, 1 de chaque par personne\u202f; un achat par réseau toutes les ${min} min`,

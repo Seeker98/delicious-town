@@ -31,7 +31,7 @@ import { grantAward } from '../award/award';
 import { collectionCounts } from '../effects/aggregate';
 import { incrementDaily } from '../counter/dailyCounter';
 import { normalizeCounts } from '../settlement/globals';
-import { grantGoodsOp, hasValidHonor } from '../store/goods';
+import { grantGoodsOp } from '../store/goods';
 import {
   CHAPTER_MARK,
   convertOld,
@@ -62,13 +62,12 @@ function claimableActivity(rest: Pick<RestaurantRow, 'shard_id' | 'level'>, now:
       and a.ends_at + coalesce((a.def->>'graceHours')::int, 24) * interval '1 hour' > ${now})))`;
 }
 
-/** 支线“收藏”的三个状态（问题记录 515）：和加成汇总同一个口径 */
+/** 支线“收藏”的两个状态（问题记录 515）：和加成汇总同一个口径 */
 function collectionOf(owned: number[], honors: number[], config: GameConfig) {
   const c = collectionCounts(owned, honors, config);
   return {
     'collection.plaques': c.plaques,
     'collection.honors': c.honors,
-    'collection.paintings': c.paintings,
   };
 }
 
@@ -342,16 +341,13 @@ export function createTaskService(d: GameDeps) {
   }
 
   /**
-   * 活跃项要读的店外数据一条查询读完（质量期 ③ 的查询预算）：爱心项链；交易所、事件预测的注册天数、
+   * 活跃项要读的店外数据一条查询读完（质量期 ③ 的查询预算）：交易所、事件预测的注册天数、
    * 邮箱门槛和交易所冻结；有没有能领奖的限时活动（backlog 第 ⑥ 批）
    */
   async function actFacts(db: Kysely<DB>, rest: RestaurantRow) {
     const now = d.now();
     const r = await db
       .selectNoFrom([
-        sql<boolean>`exists(select 1 from store_item where rest_id = ${rest.id} and goods_id = ${GOODS.loveNecklace} and (expires_at is null or expires_at > ${now}))`.as(
-          'necklace',
-        ),
         sql<Date>`(select created_at from account where id = ${rest.account_id})`.as('createdAt'),
         sql<boolean>`(select email_verified_at is not null from account where id = ${rest.account_id})`.as(
           'verified',
@@ -361,7 +357,6 @@ export function createTaskService(d: GameDeps) {
       ])
       .executeTakeFirstOrThrow();
     return {
-      necklace: r.necklace,
       createdAt: new Date(r.createdAt),
       verified: r.verified,
       activityOpen: r.activityOpen,
@@ -400,7 +395,6 @@ export function createTaskService(d: GameDeps) {
     const acts = d.config.bundle.activationTasks.filter((a) => a.limitTimes > 0);
     const counts = new Map(acts.map((a) => [a.id, byKey.get(`act:${a.id}`) ?? 0]));
     const facts = await actFacts(db, rest);
-    const multiplier = facts.necklace ? 2 : 1;
     const needDaysOf = (id: number) =>
       id === ACT_EXCHANGE
         ? settings.tuning.exchange.minAccountDays
@@ -447,7 +441,6 @@ export function createTaskService(d: GameDeps) {
         points: r.points,
         award: scaled(r.award, rest.level),
         claimed: (byKey.get(claimKey(r.points)) ?? 0) > 0,
-        multiplier,
       })),
       kujiTicket: kujiTicketOf(settings),
     };
@@ -555,8 +548,7 @@ export function createTaskService(d: GameDeps) {
         if (a.total < points) throw requirement('activation', { need: points, have: a.total });
         if ((await incrementDaily(o.tx, o.rest.id, claimKey(points), 1, day)) > 1)
           throw new AppError(ErrorCode.ALREADY_DONE, 400);
-        const multiplier = (await hasValidHonor(o, GOODS.loveNecklace)) ? 2 : 1;
-        await grantAward(o, scaled(reward.award, o.rest.level), { multiplier });
+        await grantAward(o, scaled(reward.award, o.rest.level));
         // 支线“签到和活跃”（问题记录 515）：领 100 点这一档的天数
         if (points === 100) await emitAction(o, 'activation.100');
         // 一番赏（一番赏设计 §5.5）：领 activeTicketPoints 这一档额外送券（默认 120 档，2026-10-08 从 150 档挪过来）；

@@ -6,7 +6,6 @@ export interface CollectionCounts {
   /** 有效勋章数（不含街道勋章） */
   honors: number;
   pots: number;
-  paintings: number;
   an2023: boolean;
   an2025: boolean;
   mdcg: boolean;
@@ -25,12 +24,11 @@ function addTiers(out: Record<string, number>, count: number, tiers: CollectionT
   }
 }
 
-/** 收集类加成（规格书 20 §20.18、17）：集牌匾、集荣誉、集盆栽、集名画 */
+/** 收集类加成（规格书 20 §20.18、17）：集牌匾、集荣誉、集盆栽 */
 export function collectionEffects(
   c: CollectionCounts,
   t: Tuning['collection'],
   potTiers: CollectionTier[],
-  paintingTiers: CollectionTier[],
 ): Record<string, number> {
   const out: Record<string, number> = {};
   const plaqueSum = c.plaques * t.plaquePer * (c.an2023 ? t.an2023Multiplier : 1);
@@ -41,9 +39,6 @@ export function collectionEffects(
     out.honorAddExp = honorAdd;
   }
   addTiers(out, c.pots, potTiers, 'pot');
-  addTiers(out, c.paintings, paintingTiers, 'painting');
-  const top = paintingTiers.at(-1);
-  if (top && c.paintings >= top.count) out.paintingTop = 1;
   for (const k of Object.keys(out)) out[k] = Math.round(out[k]! * 1e9) / 1e9;
   return out;
 }

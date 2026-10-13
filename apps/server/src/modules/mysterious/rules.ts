@@ -38,9 +38,6 @@ export interface CookInput {
   roadRate: number;
   /** 厨力 */
   power: number;
-  /** 集名画的 mcCoinAdd */
-  coinAdd: number;
-  humanSon: boolean;
   cookie: boolean;
 }
 
@@ -70,12 +67,10 @@ export function cookDish(i: CookInput, t: McTuning, rng: Rng): CookOutcome {
   const cookNumRate = (Math.sqrt(Math.max(0, i.power) * 2) / t.cookNumPowerDiv) * rng.next();
   const num = Math.floor(base * ratio * (1 + i.roadRate + i.numRate + cookNumRate));
   const halfStar = Math.floor(i.star / 2);
-  const son = i.humanSon ? rng.intMin1(Math.max(1, 4 - halfStar)) : 0;
   const cookie = i.cookie ? rng.intMin1(Math.max(1, 5 - halfStar)) : 0;
-  const flat = son + Math.floor(i.coinAdd) + cookie;
-  const price = Math.floor(i.mc.nutritive * ratio * (1 + levelRate + i.trialWorth / 100)) + flat;
+  const price = Math.floor(i.mc.nutritive * ratio * (1 + levelRate + i.trialWorth / 100)) + cookie;
   // 对决不吃试炼价值（用户 2026-10-07 定）
-  const duelPrice = Math.floor(i.mc.nutritive * ratio * (1 + levelRate)) + flat;
+  const duelPrice = Math.floor(i.mc.nutritive * ratio * (1 + levelRate)) + cookie;
   return { grade, luck, num, price, duelPrice, exp: Math.floor((grade * num) / 200) };
 }
 

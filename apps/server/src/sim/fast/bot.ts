@@ -163,7 +163,6 @@ function keepIds(c: FastCtx): Set<number> {
       GOODS.tableA,
       GOODS.mysteryTicket,
       GOODS.purpleShell,
-      GOODS.loveNecklace,
       GOODS.adventureMap,
       GOODS.signInGift,
     ]);
@@ -642,7 +641,7 @@ export function botTurn(
     }
   }
 
-  // 活跃奖励（claimActivation）：经验 × 等级；有效的爱心项链翻倍
+  // 活跃奖励（claimActivation）：经验 × 等级
   const acts = cfg.bundle.activationTasks.filter((a) => a.limitTimes > 0);
   const total = activationTotal(acts, new Map(acts.map((a) => [a.id, r.daily.get(`act:${a.id}`) ?? 0])));
   for (const rw of cfg.bundle.activationRewards) {
@@ -650,7 +649,7 @@ export function botTurn(
     if ((r.daily.get(key) ?? 0) > 0 || total < rw.points) continue;
     r.daily.set(key, 1);
     const award: Award = rw.award.exp ? { ...rw.award, exp: rw.award.exp * r.level } : rw.award;
-    grantAward(c, r, award, 'activation', countGoods(c, r, GOODS.loveNecklace) > 0 ? 2 : 1);
+    grantAward(c, r, award, 'activation');
     // 支线“签到和活跃”：领 100 点这一档的天数
     if (rw.points === 100) action(c, r, 'activation.100');
   }

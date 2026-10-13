@@ -172,8 +172,13 @@ export function createMarketService(d: GameDeps, world: WorldService) {
           .executeTakeFirstOrThrow();
         if (!acc.email_verified_at) throw new AppError(ErrorCode.EMAIL_NOT_VERIFIED, 403);
       }
-      if (shelf === 2 && !(await hasValidHonor(o, GOODS.loveNecklace)))
-        throw requirement('necklace', { goodsId: GOODS.loveNecklace });
+      // 高级货架：持有 B 档或以上的基金勋章（道具减法 2026-10-13：原来要爱心项链）；勋章按区服的档位表找
+      if (shelf === 2) {
+        const medals = o.tuning.fund.tiers.filter((x) => x.key === 'A' || x.key === 'B').map((x) => x.medal);
+        let ok = false;
+        for (const m of medals) if (await hasValidHonor(o, m)) ok = true;
+        if (!ok) throw requirement('fund_medal', { goodsId: medals.at(-1) ?? 0 });
+      }
       const have = (await foodsMap(o.tx, o.rest.id)).get(food.id)?.num ?? 0;
       if (have === 0 && (await cupboardSlotsUsed(o.tx, o.rest.id)) >= o.rest.cupboard_num)
         throw new AppError(ErrorCode.CUPBOARD_FULL, 400);

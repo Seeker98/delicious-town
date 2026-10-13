@@ -15,7 +15,6 @@ import {
 } from '../../../test/game';
 import { upsertEffectSource } from '../effects/service';
 import { ensureNpc } from '../npc/npc';
-import { grantGoods } from '../store/grant';
 
 const config = testConfig();
 const FOOD = config.foodsByLevel.get(2)![0]!.id;
@@ -119,19 +118,6 @@ describe('翻橱（规格书 05 §5.7）', () => {
     expect(r.data).toMatchObject({ outcome: 'caught', coin: 375 });
     expect((await restRow(t, a.restaurantId)).coin).toBe(625);
     expect((await restRow(t, b.restaurantId)).coin).toBe(375);
-  });
-
-  it('对方有神灯：80% 直接失败，不扣体力、不占冷却（设计文档 裁定 6）', async () => {
-    const [a, b] = await friends({ patch: { coin: 100 } });
-    await grantGoods(t.db, config, b.restaurantId, GOODS.magicLamp, 1, t.clock.now);
-    seq = [0];
-    await expect(svc().flip.flip(a, { restId: b.restaurantId, slotNo: 1 })).rejects.toMatchObject({
-      params: { reason: 'blessed' },
-    });
-    expect((await restRow(t, a.restaurantId)).strength).toBe(100);
-    expect((await svc().flip.slots(a, b.restaurantId)).cooling).toEqual([]);
-    // 被挡下的不占今天在这家店的次数（backlog 374）
-    expect((await svc().flip.slots(a, b.restaurantId)).hostLeft).toBe(3);
   });
 
   it('蟹老板的店也受每店每天 3 格的限制（backlog 374）', async () => {

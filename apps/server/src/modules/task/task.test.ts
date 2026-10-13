@@ -4,7 +4,6 @@ import { gameDay } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
 import { eventCount } from '../../../test/quests';
-import { grantGoods } from '../store/grant';
 
 const config = testConfig();
 let t: TestGame;
@@ -31,7 +30,7 @@ describe('活跃度（规格书 15 §15.2）', () => {
     expect(a.items.find((x) => x.name === '给自己添油')).toMatchObject({ count: 3, limit: 2 });
   });
 
-  it('活跃奖励：经验 × 餐厅等级；有爱心项链翻倍；每档每天一次', async () => {
+  it('活跃奖励：经验 × 餐厅等级（爱心项链翻倍 2026-10-13 删掉）；每档每天一次', async () => {
     const ctx = await newRestaurant(t, { patch: { level: 10, exp: 0 } });
     const day = gameDay(t.clock.now);
     const put = (counts: Record<number, number>) =>
@@ -51,9 +50,8 @@ describe('活跃度（规格书 15 §15.2）', () => {
     await expect(task().claimActivation(ctx, 50)).rejects.toMatchObject({ code: 'REQUIREMENT_NOT_MET' });
     await put({ 6: 1, 12: 1, 30: 1, 11: 1 });
     expect((await task().activation(ctx)).total).toBe(51);
-    await grantGoods(t.db, config, ctx.restaurantId, GOODS.loveNecklace, 1, t.clock.now);
     const r = await task().claimActivation(ctx, 50);
-    expect(r.events).toContainEqual({ type: 'gain', kind: 'exp', num: 500 * 10 * 2 });
+    expect(r.events).toContainEqual({ type: 'gain', kind: 'exp', num: 500 * 10 });
     await expect(task().claimActivation(ctx, 50)).rejects.toMatchObject({ code: 'ALREADY_DONE' });
     expect(await eventCount(t, ctx.restaurantId, 'activation.100')).toBe(0);
   });

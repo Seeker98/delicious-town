@@ -5,7 +5,6 @@ import type { DB, RestaurantRow, TakeawayOrderRow, TakeawayRiderRow } from '../.
 import { gradeOf, mergeNeed } from '../cookbook/rules';
 import { getDaily } from '../counter/dailyCounter';
 import { foodsMap } from '../cupboard/foods';
-import { getEffectAgg } from '../effects/service';
 import { busyByRider, KEY, levelsOf, stateOf, validNum } from './common';
 import { droneDiamonds, riderAttrs, type TakeawayTuning } from './rules';
 
@@ -107,7 +106,6 @@ export async function takeawayView(
       deliveries: [],
       riders: [],
       riderCap: 0,
-      canDouble: false,
       refresh: { cost: t.refreshCoin, hasJob: false },
     };
   const levels = await levelsOf(db, rest.id);
@@ -133,7 +131,6 @@ export async function takeawayView(
       'v.order_id',
       'v.grade',
       'v.private',
-      'v.double',
       'v.rider_id',
       'v.arrive_at',
       'o.cookbook_id',
@@ -154,7 +151,6 @@ export async function takeawayView(
     .execute();
   const busy = await busyByRider(db, rest.id);
   const times = await getDaily(db, rest.id, KEY.refresh, gameDay(now));
-  const agg = await getEffectAgg(db, rest.id, now, config, settings);
   return {
     ...base,
     opened: true,
@@ -175,7 +171,6 @@ export async function takeawayView(
       cookbookName: config.cookbooks.get(v.cookbook_id)?.name ?? '',
       grade: v.grade,
       private: v.private,
-      double: v.double,
       riderId: v.rider_id,
       riderName: v.name,
       arriveAt: v.arrive_at.toISOString(),
@@ -186,7 +181,6 @@ export async function takeawayView(
       .map((r) => riderDto(r, r.name, busy.get(r.id) ?? 0, t))
       .sort((a, b) => Number(b.self) - Number(a.self) || a.id - b.id),
     riderCap: state.rider_cap,
-    canDouble: (agg.taFoodsDoubleFlag ?? 0) > 0,
     refresh: {
       cost: t.refreshCoin * (times + 1),
       hasJob: (await validNum(db, rest.id, GOODS.shopJobHonor, now)) > 0,

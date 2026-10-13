@@ -65,7 +65,7 @@ const bar: Messages['bar'] = {
     ],
     slot: [
       'Cada tirada cuesta 1 moneda Krab y gira 3 rodillos; cada rodillo da un ingrediente o un objeto según las probabilidades de los premios, o puede salir vacío.',
-      'Cuanto más juegas, más cerca está el raro asegurado: arriba pone cuántas tiradas faltan. Con la lámpara mágica, el doble de probabilidad de que el raro asegurado salga antes.',
+      'Cuanto más juegas, más cerca está el raro asegurado: arriba pone cuántas tiradas faltan.',
       'Puedes cambiar vales misteriosos por monedas Krab. Verifica tu correo para jugar a la tragaperras.',
     ],
     devil: [
@@ -174,7 +174,6 @@ const bar: Messages['bar'] = {
   slot: {
     title: '1 moneda Krab por tirada, 3 rodillos',
     floor: (n) => `Raro asegurado en ${n} ${plEs(n, 'tirada', 'tiradas')} como mucho`,
-    lampShort: 'Lámpara mágica: el doble de probabilidad de adelantar el raro asegurado',
     empty: 'Vacío',
     needEmail: 'Verifica tu correo para jugar a la tragaperras',
     noKrab: (have) => `No tienes suficientes monedas Krab (1 por tirada, tienes ${have})`,

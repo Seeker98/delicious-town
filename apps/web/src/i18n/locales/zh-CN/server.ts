@@ -143,6 +143,5 @@ export default {
     hangover: '宿醉',
     suit: (name: string, need: number) => `${name} (${need} 件)`,
     suitFallback: '套装',
-    bless: (name: string) => `今日星愿: ${name}`,
   },
 };

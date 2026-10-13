@@ -150,7 +150,7 @@ const news: Messages['news'] = {
   },
   unknown: 'Pasó algo en el pueblo',
   someone: 'Un restaurante',
-  /** 目录里已经没有的星愿（下架去掉了），外文里不显示中文名 */
+  /** 旧的星愿新闻（星愿已删掉）：外文里不显示中文名 */
   blessGone: 'un deseo estelar',
 };
 export default news;

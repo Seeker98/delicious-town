@@ -103,7 +103,6 @@ function gains(r: TakeawayClaimDto): string {
             <span class="dt-row-title is-strong"
               >{{ dishName(d) }}<span class="dt-tag-mute">{{ TAKEAWAY_GRADES[d.grade] }}</span
               ><span v-if="d.private" class="dt-tag-primary">{{ t.takeaway.private }}</span
-              ><span v-if="d.double" class="dt-tag-primary">{{ t.takeaway.deliveries.double }}</span
               ><span class="dt-tag-ok">{{ t.takeaway.deliveries.arrived }}</span></span
             >
             <span class="dt-row-sub">{{ t.takeaway.deliveries.rider(d.riderName) }}</span>
@@ -129,8 +128,7 @@ function gains(r: TakeawayClaimDto): string {
           <span class="dt-row-main">
             <span class="dt-row-title is-strong"
               >{{ dishName(d) }}<span class="dt-tag-mute">{{ TAKEAWAY_GRADES[d.grade] }}</span
-              ><span v-if="d.private" class="dt-tag-primary">{{ t.takeaway.private }}</span
-              ><span v-if="d.double" class="dt-tag-primary">{{ t.takeaway.deliveries.double }}</span></span
+              ><span v-if="d.private" class="dt-tag-primary">{{ t.takeaway.private }}</span></span
             >
             <span class="dt-row-sub"
               >{{ t.takeaway.deliveries.rider(d.riderName) }} ·

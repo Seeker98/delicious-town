@@ -8,11 +8,8 @@ import { runOp } from '../../core/op';
 import type { DB } from '../../db/schema';
 import { spendCoin } from '../../core/resources';
 import { upsertEffectSource } from '../effects/service';
-import { grantGoods } from '../store/grant';
 import { runDueJobs } from '../../worker/periodic';
 import { settleShardRound } from './runner';
-import { GOODS } from '@dt/config';
-import { gid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -157,26 +154,6 @@ describe('settleShardRound', () => {
       .execute();
     await settle(shardId);
     expect((await t.game.world.ensure(shardId)).planktonRestId).toBe(star.restaurantId);
-  });
-
-  it('集齐 7 幅名画：油量低于 2000 时自动加满', async () => {
-    const shardId = await createShard(t.db);
-    const ctx = await newRestaurant(t, { shardId, patch: { coin: 100000, oil: 1000, oil_max: 1500 } });
-    for (const id of [
-      gid('呐喊-名画'),
-      gid('蒙娜丽莎-名画'),
-      gid('星夜-名画'),
-      GOODS.humanSon,
-      gid('红黄蓝的构成-名画'),
-      gid('黎明时分的星座觉醒-名画'),
-      gid('黑色广场和红场-名画'),
-    ]) {
-      await grantGoods(t.db, t.game.deps.config, ctx.restaurantId, id, 1, new Date());
-    }
-    await settle(shardId);
-    const r = await restRow(t, ctx.restaurantId);
-    expect(r.oil).toBe(1500);
-    expect(r.coin).toBeLessThan(100000 + (await income(ctx.restaurantId))[0]!.coin);
   });
 });
 

@@ -46,7 +46,7 @@ describe('OrdersPanel', () => {
     expect(endpoints.takeawayDeliver).not.toHaveBeenCalled();
     await w.get('[data-testid="take-confirm"]').trigger('click');
     await flushPromises();
-    expect(endpoints.takeawayDeliver).toHaveBeenCalledWith(11, 32, false);
+    expect(endpoints.takeawayDeliver).toHaveBeenCalledWith(11, 32);
     expect(w.emitted('reload')).toHaveLength(1);
     expect(w.find('[data-testid="take-sheet"]').exists()).toBe(false);
   });
@@ -69,35 +69,6 @@ describe('OrdersPanel', () => {
     expect(w.find('[data-testid="take-3"]').attributes('disabled')).toBeDefined();
     const busy = mount(OrdersPanel, { props: { data: takeawayData({ riders: [rider({ busy: 1 })] }) } });
     expect(busy.find('[data-testid="why-11"]').text()).toBe('没有空闲的骑手');
-  });
-
-  it('加料：没有使命必达时灰掉；有时勾上后按 double = true 接单，食材按两倍算', async () => {
-    const no = mountPanel(takeawayData());
-    await no.get('[data-testid="take-11"]').trigger('click');
-    expect(no.get('[data-testid="double"]').attributes('disabled')).toBeDefined();
-    const w = mountPanel(takeawayData({ canDouble: true }));
-    await w.get('[data-testid="take-11"]').trigger('click');
-    await w.get('[data-testid="double"]').setValue(true);
-    // 面板里的食材按两倍算，行里还是不加料的数
-    expect(w.get('[data-testid="take-sheet"]').text()).toContain('食材239 2/5');
-    expect(w.get('[data-testid="order-11"]').text()).toContain('食材239 1/5');
-    await w.get('[data-testid="take-confirm"]').trigger('click');
-    await flushPromises();
-    expect(endpoints.takeawayDeliver).toHaveBeenCalledWith(11, 31, true);
-  });
-
-  it('加料后食材不够：面板里写原因，接单按钮灰掉', async () => {
-    const w = mountPanel(
-      takeawayData({ canDouble: true, orders: [order({ foods: [{ foodsId: 239, need: 3, have: 5 }] })] }),
-    );
-    await w.get('[data-testid="take-11"]').trigger('click');
-    expect(w.find('[data-testid="take-why"]').exists()).toBe(false);
-    await w.get('[data-testid="double"]').setValue(true);
-    expect(w.get('[data-testid="take-why"]').text()).toBe('食材不够');
-    expect(w.get('[data-testid="take-confirm"]').attributes('disabled')).toBeDefined();
-    await w.get('[data-testid="take-confirm"]').trigger('click');
-    await flushPromises();
-    expect(endpoints.takeawayDeliver).not.toHaveBeenCalled();
   });
 
   it('私人刷新：没有工作证时灰掉；有时点击后通知刷新', async () => {

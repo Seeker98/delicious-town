@@ -80,7 +80,7 @@ const errors: Messages['errors'] = {
     not_available: () => 'Este nivel de estrellas todavía no está abierto',
     slot_locked: () => 'Este espacio de instalación todavía no está desbloqueado',
     statue: (p, n) => `Necesitas ${n.goodsName(Number(p.goodsId))}`,
-    necklace: () => 'Necesitas llevar un Collar del amor válido',
+    fund_medal: () => 'Necesitas una medalla del fondo de nivel B o superior',
     task: (p) => `Tarea sin terminar (${s(p.progress)}/${s(p.target)})`,
     activation: (p) =>
       p.have === undefined
@@ -97,7 +97,6 @@ const errors: Messages['errors'] = {
           : `No tienes suficiente renombre (robar requiere ${s(p.need)})`,
     mc_count: (p) => `No has aprendido suficientes platos estrella (se requieren ${s(p.need)})`,
     not_learned: () => 'Todavía no has aprendido este plato',
-    double: () => 'Necesitas «Misión cumplida» para añadir extras',
     job_honor: (p, n) =>
       p.goodsId
         ? `Necesitas un ${n.goodsName(Number(p.goodsId))} válido`
@@ -292,13 +291,11 @@ const errors: Messages['errors'] = {
     no_table: 'Esta mesa no existe',
     already_dining: 'Ya estás comiendo gratis en otro restaurante',
     not_dining: 'No estás comiendo gratis',
-    diner_protected: 'Está protegido por Don Krab (Lámpara mágica) y no se le puede echar',
     table_occupied: 'Esta mesa está ocupada',
     no_roach: 'No hay cucarachas en esta mesa',
     own_roach: 'No puedes eliminar las cucarachas que pusiste tú',
     friend_oil_full: 'El bidón de aceite de tu amigo ya está lleno',
     bad_slot: 'Este espacio de despensa no existe',
-    blessed: 'Su restaurante está bendecido por Don Krab; esta vez no encontraste nada',
     level_mismatch: 'Solo puedes intercambiar ingredientes del mismo nivel, hasta el nivel 5',
     foods_locked: 'Bloqueó este ingrediente; solo se intercambia durante un huracán',
     bad_look: 'Este estilo no existe',
@@ -370,7 +367,6 @@ const errors: Messages['errors'] = {
     deal_offer: 'El banquero espera tu respuesta: ¿trato o no trato?',
     deal_no_offer: 'Termina esta ronda primero; el banquero aún no ha hecho su oferta',
     krab_broke: 'La bolsa de dinero de Don Krab está vacía',
-    no_bless: 'Hoy todavía nadie ha pedido un deseo',
     foods_not_allowed: 'Este ingrediente no se puede canjear',
     no_weather: 'Ahora no hay ningún tiempo disponible para cambiar',
     no_exchange: 'Este artículo de canje no existe',
@@ -430,9 +426,7 @@ const errors: Messages['errors'] = {
     bar_round: 'Todavía tienes una partida sin terminar en este juego',
     cup_taken: 'Alguien ya se bebió esta copa',
     shake: 'Don Krab aprieta su bolsa de dinero (hoy ya la sacudiste)',
-    wish: 'Hoy alguien ya pidió un deseo',
     wishtree: 'Ya pediste un deseo en esta ronda',
-    feast: 'Hoy ya participaste en el banquete',
   },
   special: {
     banned: (reason) => `Esta cuenta ha sido bloqueada: ${reason}`,

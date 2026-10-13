@@ -362,7 +362,7 @@ const specialName = computed(() => {
 /** 生效的加成按来源分组，默认只显示前几条（问题记录：展示凌乱） */
 const EFFECTS_SHOWN = 5;
 type GroupKey = keyof Messages['home']['groups'];
-const EFFECT_GROUPS: GroupKey[] = ['bless', 'street', 'honor', 'device', 'equip', 'suit'];
+const EFFECT_GROUPS: GroupKey[] = ['street', 'honor', 'device', 'equip', 'suit'];
 const effectsAll = ref(false);
 /** 折叠时的一行摘要：来源名字，最多 3 个（问题记录 280） */
 const effectsSummary = computed(() => {

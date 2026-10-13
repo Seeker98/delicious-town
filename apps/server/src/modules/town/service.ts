@@ -15,7 +15,6 @@ import { readDaily } from '../daily/read';
 import { listNews } from '../news/news';
 import { npcIdOf } from '../npc/npc';
 import type { WorldService } from '../world/service';
-import { feast, wish } from './bless';
 import { broadcast } from './broadcast';
 import { doExchange, exchangeView, useLevelTicket, useMysteryTicket } from './exchange';
 import { shake } from './shake';
@@ -63,12 +62,6 @@ export function createTownService(d: GameDeps, world: WorldService) {
     },
     mysteryTicket(ctx: RestCtx, b: { foodsId: number }) {
       return op(ctx, 'town.mysteryTicket', (o) => useMysteryTicket(o, b.foodsId));
-    },
-    wish(ctx: RestCtx) {
-      return op(ctx, 'town.wish', (o) => wish(o));
-    },
-    feast(ctx: RestCtx, b: { foodsId?: number }) {
-      return op(ctx, 'town.feast', (o) => feast(o, b.foodsId));
     },
     /** 和蟹老板店一起按店号顺序加锁（计划裁定：避免和好友互动的锁顺序相反） */
     async shake(ctx: RestCtx): Promise<OpResult<ShakeResultDto>> {

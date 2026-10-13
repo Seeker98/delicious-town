@@ -158,9 +158,9 @@ describe('SlotPanel', () => {
     expect(w.text()).toContain('共 9 格');
   });
 
-  it('有神灯时副标题写上保底机会翻倍；没抽过时统计写还没抽过', () => {
-    const w = mountSlot(barData({ slot: slotOf({ lamp: true, floorLeft: 50 }) }));
-    expect(w.find('[data-testid="bar-info-sub"]').text()).toBe('再抽 50 次必出稀有 · 有神灯: 保底机会翻倍');
+  it('副标题写再抽几次必出稀有（神灯删掉了，没有翻倍）；没抽过时统计写还没抽过', () => {
+    const w = mountSlot(barData({ slot: slotOf({ floorLeft: 50 }) }));
+    expect(w.find('[data-testid="bar-info-sub"]').text()).toBe('再抽 50 次必出稀有');
     expect(w.find('[data-testid="slot-stats"]').text()).toBe('还没抽过');
   });
 });

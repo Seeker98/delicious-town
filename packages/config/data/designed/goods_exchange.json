@@ -1,7 +1,7 @@
 {
  "source": "新设计(design_missing.py)",
  "rule": "物品集合来自公开接口的获取途径(镇长-蟹黄堡/美味券/万能碎片/其他)；价格按道具等级定档，勋章/牌匾限兑 1 次",
- "count": 73,
+ "count": 62,
  "data": [
   {
    "id": 1,
@@ -320,21 +320,6 @@
    "newsflag": 0
   },
   {
-   "id": 21,
-   "category": "bg",
-   "goodsId": 61205,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10005,
-     "num": 3
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
    "id": 22,
    "category": "bg",
    "goodsId": 60806,
@@ -635,21 +620,6 @@
    "newsflag": 0
   },
   {
-   "id": 42,
-   "category": "dt",
-   "goodsId": 61201,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10007,
-     "num": 99
-    }
-   ],
-   "times": 1,
-   "newsflag": 1
-  },
-  {
    "id": 43,
    "category": "dt",
    "goodsId": 61406,
@@ -689,21 +659,6 @@
      "type": "goods",
      "id": 10007,
      "num": 20
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
-   "id": 46,
-   "category": "dt",
-   "goodsId": 61206,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10007,
-     "num": 36
     }
    ],
    "times": 1,
@@ -920,51 +875,6 @@
    "newsflag": 1
   },
   {
-   "id": 61,
-   "category": "chip",
-   "goodsId": 61202,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10805,
-     "num": 30
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
-   "id": 62,
-   "category": "chip",
-   "goodsId": 61203,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10805,
-     "num": 30
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
-   "id": 63,
-   "category": "chip",
-   "goodsId": 61208,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10805,
-     "num": 30
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
    "id": 64,
    "category": "chip",
    "goodsId": 61422,
@@ -980,21 +890,6 @@
    "newsflag": 0
   },
   {
-   "id": 65,
-   "category": "chip",
-   "goodsId": 61209,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10805,
-     "num": 30
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
    "id": 66,
    "category": "chip",
    "goodsId": 61427,
@@ -1004,81 +899,6 @@
      "type": "goods",
      "id": 10805,
      "num": 50
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
-   "id": 67,
-   "category": "chip",
-   "goodsId": 61210,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10805,
-     "num": 30
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
-   "id": 68,
-   "category": "chip",
-   "goodsId": 61211,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10805,
-     "num": 30
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
-   "id": 69,
-   "category": "chip",
-   "goodsId": 61212,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10805,
-     "num": 30
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
-   "id": 70,
-   "category": "chip",
-   "goodsId": 61213,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10805,
-     "num": 30
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
-   "id": 71,
-   "category": "chip",
-   "goodsId": 61214,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10805,
-     "num": 30
     }
    ],
    "times": 1,

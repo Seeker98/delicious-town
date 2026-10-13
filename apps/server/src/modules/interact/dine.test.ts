@@ -279,7 +279,7 @@ describe('白食结束、请走', () => {
     expect((await dine().end(a)).data).toEqual({ coin: 0, exp: 150, strength: 60 });
   });
 
-  it('请走：不满 30 分钟不行；有神灯不行；店主拿 2 倍，白食者赔银币、不得经验', async () => {
+  it('请走：不满 30 分钟不行；店主拿 2 倍，白食者赔银币、不得经验', async () => {
     const [a, b] = await setup({ patch: { coin: 0 } });
     await dine().start(a, { restId: b.restaurantId, tableNo: 1 });
     await expect(dine().expel(b, { tableNo: 1 })).rejects.toMatchObject({
@@ -294,14 +294,6 @@ describe('白食结束、请走', () => {
     expect(await dineRow(a.restaurantId)).toBeUndefined();
     const feed = await t.game.social.reads.feed(a, { limit: 30 });
     expect(feed.items[0]).toMatchObject({ type: 'dine.expelled', params: { by: b.restaurantId, coin: 100 } });
-
-    const [c, e] = await setup();
-    await grantGoods(t.db, config, c.restaurantId, GOODS.magicLamp, 1, t.clock.now);
-    await dine().start(c, { restId: e.restaurantId, tableNo: 1 });
-    t.clock.advance(31 * MIN);
-    await expect(dine().expel(e, { tableNo: 1 })).rejects.toMatchObject({
-      params: { reason: 'diner_protected' },
-    });
   });
 
   it('白食中删了好友、店主被封：白食者仍能结束；白食者被封：店主仍能请走（Review Focus 4）', async () => {

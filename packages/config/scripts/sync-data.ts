@@ -16,7 +16,6 @@ const DATASET = [
   'activation_rewards',
   'tower_floors',
   'suit_pot',
-  'suit_painting',
   'suit_zodiac',
   'suit_pet',
   'suit_sculpture',

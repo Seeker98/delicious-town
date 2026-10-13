@@ -129,7 +129,6 @@ export function createFlip(d: GameDeps) {
               await incrementDaily(me.tx, me.rest.id, 'flip.caught', 1, day);
             }
           } else {
-            if ((themAgg.magicLamp ?? 0) > 0 && me.rng.chance(t.blessedRate)) throw invalidState('blessed');
             let ticket = false;
             if (godsHand || me.rng.next() - luck < t.hitRate) {
               foodsId = await pickFood(them, me.rng);

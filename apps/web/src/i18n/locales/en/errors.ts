@@ -81,7 +81,7 @@ const errors: Messages['errors'] = {
     not_available: () => "This star level isn't open yet",
     slot_locked: () => "This facility slot isn't unlocked yet",
     statue: (p, n) => `You need ${n.goodsName(Number(p.goodsId))}`,
-    necklace: () => 'You need to wear a valid Love Necklace',
+    fund_medal: () => 'You need a tier B or higher fund medal',
     task: (p) => `Task not finished yet (${s(p.progress)}/${s(p.target)})`,
     activation: (p) =>
       p.have === undefined
@@ -98,7 +98,6 @@ const errors: Messages['errors'] = {
           : `Not enough renown (stealing needs ${s(p.need)})`,
     mc_count: (p) => `Not enough signature dishes learned (${s(p.need)} required)`,
     not_learned: () => "You haven't learned this dish yet",
-    double: () => 'You need "Mission Accomplished" to add extra toppings',
     job_honor: (p, n) =>
       p.goodsId
         ? `You need a valid ${n.goodsName(Number(p.goodsId))}`
@@ -291,13 +290,11 @@ const errors: Messages['errors'] = {
     no_table: "This table doesn't exist",
     already_dining: "You're already dining for free at another restaurant",
     not_dining: "You aren't dining for free",
-    diner_protected: "They're protected by Mr. Krab (Magic Lamp) and can't be sent away",
     table_occupied: 'This table is taken',
     no_roach: 'There are no roaches on this table',
     own_roach: "You can't remove roaches you placed yourself",
     friend_oil_full: "Your friend's oil tank is already full",
     bad_slot: "This pantry slot doesn't exist",
-    blessed: "Their restaurant is blessed by Mr. Krab; you didn't find anything this time",
     level_mismatch: 'You can only swap ingredients of the same level, up to level 5',
     foods_locked: 'They locked this ingredient; it can only be swapped during a hurricane',
     bad_look: "This style doesn't exist",
@@ -369,7 +366,6 @@ const errors: Messages['errors'] = {
     deal_offer: 'The banker is waiting: deal or no deal?',
     deal_no_offer: 'Finish this round first; the banker has not made an offer yet',
     krab_broke: "Mr. Krab's money bag is empty",
-    no_bless: 'Nobody has made a wish today yet',
     foods_not_allowed: "This ingredient can't be exchanged",
     no_weather: 'No weather is available to switch to right now',
     no_exchange: "This exchange item doesn't exist",
@@ -429,9 +425,7 @@ const errors: Messages['errors'] = {
     bar_round: 'You still have an unfinished round of this game',
     cup_taken: 'Someone already drank this cup',
     shake: 'Mr. Krab is clutching his money bag (you already shook it today)',
-    wish: 'Someone has already made a wish today',
     wishtree: "You've already made a wish this round",
-    feast: "You've already joined the feast today",
   },
   special: {
     banned: (reason) => `This account has been banned: ${reason}`,

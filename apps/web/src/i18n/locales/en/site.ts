@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    cuts1013:
+      'Fewer items: paintings, the Magic Lamp and the town Wish, the Love Necklace and Mission Accomplished (extra takeaway portions) are gone; the Premium market now needs a tier B or higher fund medal; activity rewards are no longer doubled; side quests drop the “Own 7 paintings” and “Make a wish with the Magic Lamp” steps',
     special1013:
       "Special dishes now sell differently: satisfied picky customers still have 2 portions at full price, while picky customers who are not satisfied or walk out have none; regular customers now order 1 portion (half price) at only about half of their tables each round instead of every table. The special dish page shows your server's figures",
     fix1013b:

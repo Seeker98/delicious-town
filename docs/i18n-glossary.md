@@ -45,10 +45,7 @@
 | 翻橱柜 | Raid pantry | Fouiller le garde-manger | Revolver la despensa |
 | 举报 | Report | Signaler | Denunciar |
 | 广播 / 喇叭 | Broadcast / Horn | Annonce / Klaxon | Anuncio / Bocina |
-| 星愿 | Wish | Vœu | Deseo |
-| 共飨 | Feast | Festin | Banquete |
 | 雷神锤 | Thor's Hammer | Marteau de Thor | Martillo de Thor |
-| 神灯 | Magic Lamp | Lampe magique | Lámpara mágica |
 | 偷学 | Sneak a lesson | Espionner un cours | Espiar una clase |
 | 残卷 | Fragment | Fragment | Fragmento |
 | 大胃哥 | Big Belly | Gros Mangeur | El Glotón |

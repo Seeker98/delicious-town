@@ -9,13 +9,13 @@ import { busyCount, levelsOf, requireOpen, riderLuckRate } from './common';
 import { droneDiamonds, orderValues, riderAttrs, sumBonus } from './rules';
 
 /**
- * 接单（设计文档 §3.3）。检查顺序：开通 → 单 → 骑手 → 学会 → 加料 → 声望 → 食材；
+ * 接单（设计文档 §3.3）。检查顺序：开通 → 单 → 骑手 → 学会 → 声望 → 食材；
  * 抢单用"状态仍可接且没过期才改"的更新，改不到报 order_taken。随机数：成功率浮动
  */
 export async function deliverOrder(
   o: Op,
   weather: Record<string, number>,
-  b: { orderId: number; riderId: number; double: boolean },
+  b: { orderId: number; riderId: number },
 ): Promise<TakeawayDeliveryDto> {
   const t = o.tuning.takeaway;
   await requireOpen(o);
@@ -44,13 +44,11 @@ export async function deliverOrder(
   const myGrade = gradeOf(await levelsOf(o.tx, o.rest.id), o.config.cookbookIndex.slotOf, order.cookbook_id);
   if (myGrade < 1) throw requirement('not_learned');
   const agg = await opAgg(o);
-  if (b.double && !((agg.taFoodsDoubleFlag ?? 0) > 0)) throw requirement('double');
   if (o.rest.renown < order.need_renown) throw notEnough('renown', order.need_renown, o.rest.renown);
   const cb = o.config.requireCookbook(order.cookbook_id);
-  const mult = order.grade * (b.double ? 2 : 1);
   const lines = mergeNeed(cb.needFoods[myGrade] ?? []).map((f) => ({
     foodsId: f.foodsId,
-    num: f.num * mult,
+    num: f.num * order.grade,
   }));
   const have = await foodsMap(o.tx, o.rest.id);
   for (const l of lines) {
@@ -92,7 +90,6 @@ export async function deliverOrder(
       rider_id: rider.id,
       grade: order.grade,
       private: isPrivate,
-      double: b.double,
       mystery_kinds: lines.filter((l) => o.config.foods.get(l.foodsId)?.level === 7).length,
       // 菜价倍率只压外卖银币，经验和档位照原价算（240-1，终审 I-1）
       coin: Math.floor(v.coin * o.tuning.settlement.dishCoinRate),
@@ -112,7 +109,6 @@ export async function deliverOrder(
     cookbookName: cb.name,
     grade: order.grade,
     private: isPrivate,
-    double: b.double,
     riderId: rider.id,
     riderName: rider.name,
     arriveAt: arriveAt.toISOString(),

@@ -80,7 +80,7 @@ const errors: Messages['errors'] = {
     not_available: () => "Ce niveau d'étoiles n'est pas encore ouvert",
     slot_locked: () => "Cet emplacement d'équipement n'est pas encore débloqué",
     statue: (p, n) => `Il vous faut ${n.goodsName(Number(p.goodsId))}`,
-    necklace: () => "Vous devez porter un Collier d'amour valide",
+    fund_medal: () => 'Il faut une médaille du fonds de rang B ou plus',
     task: (p) => `Tâche pas encore terminée (${s(p.progress)}/${s(p.target)})`,
     activation: (p) =>
       p.have === undefined
@@ -97,7 +97,6 @@ const errors: Messages['errors'] = {
           : `Pas assez de renommée (voler demande ${s(p.need)})`,
     mc_count: (p) => `Pas assez de plats signature appris (${s(p.need)} requis)`,
     not_learned: () => "Vous n'avez pas encore appris ce plat",
-    double: () => 'Il vous faut «\u202fMission accomplie\u202f» pour ajouter un supplément',
     job_honor: (p, n) =>
       p.goodsId
         ? `Il vous faut un ${n.goodsName(Number(p.goodsId))} valide`
@@ -291,13 +290,11 @@ const errors: Messages['errors'] = {
     no_table: "Cette table n'existe pas",
     already_dining: "Vous mangez déjà à l'œil dans un autre restaurant",
     not_dining: "Vous ne mangez pas à l'œil",
-    diner_protected: 'Ce joueur est protégé par M. Krab (Lampe magique) et ne peut pas être renvoyé',
     table_occupied: 'Cette table est occupée',
     no_roach: "Il n'y a pas de cafards sur cette table",
     own_roach: 'Vous ne pouvez pas éliminer les cafards que vous avez posés',
     friend_oil_full: "Le bidon d'huile de votre ami est déjà plein",
     bad_slot: "Cet emplacement de garde-manger n'existe pas",
-    blessed: "Son restaurant est béni par M. Krab\u202f; vous n'avez rien trouvé cette fois",
     level_mismatch: "Vous ne pouvez échanger que des ingrédients de même niveau, jusqu'au niveau 5",
     foods_locked: "Ce joueur a verrouillé cet ingrédient\u202f; il ne s'échange que pendant un ouragan",
     bad_look: "Ce style n'existe pas",
@@ -370,7 +367,6 @@ const errors: Messages['errors'] = {
     deal_offer: 'Le banquier attend votre réponse\u202f: accepter ou refuser\u202f?',
     deal_no_offer: 'Terminez d’abord cette manche\u202f; le banquier n’a pas encore fait d’offre',
     krab_broke: 'La bourse de M. Krab est vide',
-    no_bless: "Personne n'a encore fait de vœu aujourd'hui",
     foods_not_allowed: 'Cet ingrédient ne peut pas être échangé',
     no_weather: "Aucune météo n'est disponible pour le moment",
     no_exchange: "Cet objet d'échange n'existe pas",
@@ -430,9 +426,7 @@ const errors: Messages['errors'] = {
     bar_round: 'Vous avez encore une partie en cours dans ce jeu',
     cup_taken: "Quelqu'un a déjà bu ce verre",
     shake: "M. Krab serre sa bourse (vous l'avez déjà secouée aujourd'hui)",
-    wish: "Quelqu'un a déjà fait un vœu aujourd'hui",
     wishtree: 'Vous avez déjà fait un vœu pour ce tour',
-    feast: "Vous avez déjà participé au festin aujourd'hui",
   },
   special: {
     banned: (reason) => `Ce compte a été banni\u202f: ${reason}`,

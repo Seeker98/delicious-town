@@ -2,23 +2,20 @@ import { flushPromises, mount, RouterLinkStub } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { endpoints } from '../../api/endpoints';
-import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import TownPanel from './TownPanel.vue';
-import { blessData, townData } from './testData';
+import { townData } from './testData';
 
 vi.mock('../../api/endpoints', () => ({
   endpoints: {
     townTalk: vi.fn(),
     townMayor: vi.fn(),
     townShake: vi.fn(),
-    townWish: vi.fn(),
-    townFeast: vi.fn(),
     townHammer: vi.fn(),
   },
 }));
 
-/** 换天气、选食材面板 Teleport 到 body：测试里把 teleport 桩掉（界面改版 P10） */
+/** 面板 Teleport 到 body：测试里把 teleport 桩掉（界面改版 P10） */
 const mountIt = (data: ReturnType<typeof townData>) =>
   mount(TownPanel, { props: { data }, global: { stubs: { teleport: true, RouterLink: RouterLinkStub } } });
 
@@ -47,58 +44,10 @@ describe('TownPanel', () => {
     expect(useToastStore().items.at(-1)!.text).toBe('摇到银币 12,000, 还从裤兜里掏出了 道具180×1');
   });
 
-  it('星愿：没人许愿时有神灯才能许；自选食材要先选', async () => {
-    const none = mountIt(townData());
-    // 界面改版 P10：没有神灯时不放许愿按钮，写明原因
-    expect(none.find('[data-testid="wish"]').exists()).toBe(false);
-    expect(none.find('[data-testid="wish-block"]').text()).toBe('持有神灯才能许愿');
-    const lamp = mountIt(
-      townData({ bless: { today: null, restName: null, hasLamp: true, activation: 0, feasted: false } }),
-    );
-    expect(lamp.find('[data-testid="wish"]').attributes('disabled')).toBeUndefined();
-    expect(lamp.find('[data-testid="wish-block"]').exists()).toBe(false);
-
-    const today = townData({
-      bless: { today: blessData(), restName: '小李的店', hasLamp: false, activation: 130, feasted: false },
-    });
-    vi.mocked(endpoints.townFeast).mockResolvedValue({ rewards: [{ kind: 'foods', id: 501, num: 1 }] });
-    // 自选范围来自目录里的食材：放一个 5 级、一个 1 级
-    useCatalogStore().foodsMap = new Map([
-      [501, { id: 501, name: '鲍鱼', level: 5, odds: 100, coin: 1, type: null }],
-      [101, { id: 101, name: '大米', level: 1, odds: 70, coin: 1, type: null }],
-    ]);
-    const w = mountIt(today);
-    expect(w.find('[data-testid="bless-name"]').text()).toBe('心想事成');
-    expect(w.find('[data-testid="bless-reward"]').text()).toBe('自选 5 级食材 ×1');
-    // 界面改版 P10：点“共飨”先弹出选食材面板（原来是下拉框），只列星愿等级范围里的
-    await w.find('[data-testid="feast"]').trigger('click');
-    expect(endpoints.townFeast).not.toHaveBeenCalled();
-    expect(w.findAll('[data-testid^="feast-food-"]').map((o) => o.text())).toEqual(['鲍鱼']);
-    expect(w.find('[data-testid="feast-ok"]').attributes('disabled')).toBeDefined();
-    await w.find('[data-testid="feast-food-501"]').trigger('click');
-    expect(w.get('[data-testid="feast-food-501"]').attributes('aria-checked')).toBe('true');
-    expect(w.find('[data-testid="feast-ok"]').attributes('disabled')).toBeUndefined();
-    await w.find('[data-testid="feast-ok"]').trigger('click');
-    await flushPromises();
-    expect(endpoints.townFeast).toHaveBeenCalledWith(501);
-    expect(w.find('[data-testid="feast-ok"]').exists()).toBe(false);
-  });
-
-  it('活跃度不够时共飨按钮灰掉并写明差多少', () => {
-    const w = mountIt(
-      townData({
-        bless: {
-          today: blessData({ type: 3, num: 200000, levels: null }),
-          restName: '甲',
-          hasLamp: true,
-          activation: 30,
-          feasted: false,
-        },
-      }),
-    );
-    expect(w.find('[data-testid="feast"]').attributes('disabled')).toBeDefined();
-    expect(w.find('[data-testid="feast-block"]').text()).toBe('今天活跃度 30, 要 120 才能领');
-    expect(w.find('[data-testid="bless-reward"]').text()).toBe('银币 200,000 (持有神灯多领 10%)');
+  it('神灯和星愿删掉了（道具减法，用户 2026-10-13）：没有星愿卡、许愿和共飨按钮', () => {
+    const w = mountIt(townData());
+    for (const id of ['bless-card', 'bless-none', 'wish', 'feast'])
+      expect(w.find('[data-testid="' + id + '"]').exists()).toBe(false);
   });
 
   it('改天气（天气改版）：雷神锤换成一行入口，写现在的天气，点了去天气页用司天罗盘、晴雨签', () => {
@@ -123,7 +72,7 @@ describe('TownPanel', () => {
     expect(w.find('[data-testid="mayor-row"]').exists()).toBe(false);
   });
 
-  it('操作失败后也通知刷新：页面可能已经过时（比如别人刚许过愿、跨天了）', async () => {
+  it('操作失败后也通知刷新：页面可能已经过时（比如跨天了）', async () => {
     vi.mocked(endpoints.townShake).mockRejectedValue(new Error('x'));
     const w = mountIt(townData());
     await w.find('[data-testid="shake"]').trigger('click');

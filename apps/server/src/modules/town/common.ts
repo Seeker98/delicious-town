@@ -1,10 +1,6 @@
-import type { Kysely } from 'kysely';
-import type { GameConfig } from '@dt/config';
 import { ErrorCode } from '@dt/shared';
 import type { Op } from '../../core/op';
-import type { DB } from '../../db/schema';
 import { AppError } from '../../http/errors';
-import { activationTotal } from '../task/rules';
 
 export interface TownRestState {
   /** 司天罗盘、晴雨签共用的每人冷却：上次用的时间 */
@@ -46,23 +42,4 @@ export async function assertVerified(o: Op): Promise<void> {
     .where('id', '=', o.rest.account_id)
     .executeTakeFirstOrThrow();
   if (a.email_verified_at === null) throw new AppError(ErrorCode.EMAIL_NOT_VERIFIED, 403, { who: 'me' });
-}
-
-/** 当日活跃度：算法同任务模块（activationTotal，计数键 act:<id>） */
-export async function activationPoints(
-  db: Kysely<DB>,
-  config: GameConfig,
-  restId: number,
-  day: string,
-): Promise<number> {
-  const rows = await db
-    .selectFrom('daily_counter')
-    .select(['key', 'count'])
-    .where('rest_id', '=', restId)
-    .where('day', '=', day)
-    .where('key', 'like', 'act:%')
-    .execute();
-  const byKey = new Map(rows.map((r) => [r.key, r.count]));
-  const acts = config.bundle.activationTasks.filter((a) => a.limitTimes > 0);
-  return activationTotal(acts, new Map(acts.map((a) => [a.id, byKey.get(`act:${a.id}`) ?? 0])));
 }

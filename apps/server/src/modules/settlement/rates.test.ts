@@ -115,7 +115,7 @@ describe('汇总率（规格书 01 §1.3）', () => {
         honorAddCoin: 0.004,
         honorAddExp: 0.004,
         potCoinRate: 0.08,
-        paintingExpRate: 0.8,
+        potExpRate: 0.8,
       },
     });
     expect(r.coinRate.total).toBeCloseTo(0.104);
@@ -145,12 +145,5 @@ describe('汇总率（规格书 01 §1.3）', () => {
       sqExpRate: 2,
       roachClear: 0.2,
     });
-  });
-});
-
-describe('星愿加成（4E-1 裁定 11）', () => {
-  it('星愿的挑剔率计入', () => {
-    const { rates: r } = rates({}, { bless: { spRate: 0.03 } });
-    expect(r.spRate.parts.bless).toBe(0.03);
   });
 });

@@ -103,7 +103,6 @@ describe('外卖的错误文案', () => {
   it('按 reason / what 出文案', () => {
     expect(errorText('INVALID_STATE', { reason: 'order_taken' })).toBe('这张单已经被别人接走了');
     expect(errorText('INVALID_STATE', { reason: 'rider_hired' })).toBe('他已经被别人雇为骑手了');
-    expect(errorText('REQUIREMENT_NOT_MET', { reason: 'double' })).toBe('持有"使命必达"才能加料');
     expect(errorText('LIMIT_REACHED', { what: 'rider_busy', max: 2 })).toBe(
       '这个骑手同时送的单已经满了 (2 单)',
     );
@@ -123,7 +122,6 @@ describe('小镇错误文案（4E-1）', () => {
       '别人刚改过天气, 25 分钟后才能再改',
     );
     expect(errorText('ALREADY_DONE', { what: 'talk' })).toBe('今天已经聊过了');
-    expect(errorText('ALREADY_DONE', { what: 'wish' })).toBe('今天已经有人许过愿了');
     expect(errorText('LIMIT_REACHED', { what: 'town_exchange', max: 1, used: 1 })).toBe(
       '这一项每人限兑 1 次 (已兑 1 次)',
     );

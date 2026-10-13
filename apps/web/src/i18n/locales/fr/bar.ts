@@ -67,7 +67,7 @@ const bar: Messages['bar'] = {
     ],
     slot: [
       'Chaque tour coûte 1 pièce Krab et ouvre 3 cases\u202f; chaque case donne un ingrédient ou un objet selon les probabilités des lots, ou reste vide.',
-      'Plus vous jouez, plus le rare garanti approche\u202f: le nombre de tours restants est indiqué en haut. Avec une lampe magique, deux fois plus de chances d’avoir le rare garanti plus tôt.',
+      'Plus vous jouez, plus le rare garanti approche\u202f: le nombre de tours restants est indiqué en haut.',
       'Les pièces Krab s’échangent contre des bons mystère. La machine à sous demande un e-mail vérifié.',
     ],
     devil: [
@@ -188,7 +188,6 @@ const bar: Messages['bar'] = {
   slot: {
     title: '1 pièce Krab par tour, 3 rouleaux',
     floor: (n) => `Rare garanti dans ${n} ${plFr(n, 'tour', 'tours')} maximum`,
-    lampShort: 'Lampe magique\u202f: chances de rare garanti doublées',
     empty: 'Vide',
     needEmail: 'Vérifiez votre e-mail pour jouer à la machine à sous',
     noKrab: (have) => `Pas assez de pièces Krab (1 par tour, vous en avez ${have})`,

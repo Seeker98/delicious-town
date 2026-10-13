@@ -147,7 +147,6 @@ export default {
   none: '暂无',
   andMore: ' 等',
   groups: {
-    bless: '今日星愿',
     street: '街道',
     honor: '勋章和宠物',
     device: '设施',

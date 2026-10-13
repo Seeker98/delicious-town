@@ -22,7 +22,6 @@ export const townLevelTicketBody = z.object({
     .max(30),
 });
 export const townMysteryTicketBody = z.object({ foodsId: id });
-export const townFeastBody = z.object({ foodsId: id.optional() });
 
 export interface NewsDto {
   id: number;
@@ -86,25 +85,6 @@ export interface TicketResultDto {
   foods: Array<{ foodsId: number; num: number }>;
 }
 
-export interface BlessDto {
-  id: number;
-  name: string;
-  type: number;
-  num: number;
-  needAct: number;
-  levels: [number, number] | null;
-  goodsId: number | null;
-  buff: Record<string, number>;
-}
-
-export interface WishResultDto {
-  bless: BlessDto;
-}
-
-export interface FeastResultDto {
-  rewards: TownRewardDto[];
-}
-
 export interface TownDto {
   now: string;
   star: number;
@@ -117,13 +97,6 @@ export interface TownDto {
   shaken: boolean;
   broadcast: { horns: number; readyAt: string | null; minStar: number; maxLen: number };
   weather: { id: number; name: string; until: string };
-  bless: {
-    today: BlessDto | null;
-    restName: string | null;
-    hasLamp: boolean;
-    activation: number;
-    feasted: boolean;
-  };
 }
 
 export interface TownExchangeItemDto {

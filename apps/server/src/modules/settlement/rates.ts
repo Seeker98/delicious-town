@@ -26,7 +26,6 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
   const rt = g.tuning.rest;
   const st = g.tuning.settlement;
   const w = s === 0 ? {} : g.weather;
-  const b = g.bless;
 
   let cookbook = 0;
   for (let L = 1; L < input.counts.grade.length; L++) {
@@ -39,7 +38,6 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
     cookbook,
     effects: v(a, 'atRate'),
     weather: v(w, 'atRate'),
-    bless: v(b, 'atRate'),
     renown: rest.renown < 0 ? st.negativeRenownAtRate : 0,
     float: atFloat,
   });
@@ -51,7 +49,6 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
     base: rt.spRateBase + rt.spRatePerStar * s,
     effects: v(a, 'spRate'),
     weather: v(w, 'spRate'),
-    bless: v(b, 'spRate'),
     float: spFloat,
   });
 
@@ -60,9 +57,7 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
     plaque: v(a, 'plaqueSum'),
     honor: v(a, 'honorAddCoin'),
     pot: v(a, 'potCoinRate'),
-    painting: v(a, 'paintingCoinRate'),
     weather: v(w, 'coinRate'),
-    bless: v(b, 'coinRate'),
   };
   const expParts: Record<string, number> = {
     effects: v(a, 'expRate'),
@@ -71,9 +66,7 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
     plaque: v(a, 'plaqueSum'),
     honor: v(a, 'honorAddExp'),
     pot: v(a, 'potExpRate'),
-    painting: v(a, 'paintingExpRate'),
     weather: v(w, 'expRate'),
-    bless: v(b, 'expRate'),
     atOverflow: Math.max(leftAt, 0),
   };
   let coin = part(coinParts);
@@ -98,7 +91,6 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
   };
   const flags: Flags = {
     flute: v(a, 'magicFlute') > 0,
-    paintingTop: v(a, 'paintingTop') > 0,
     pinkBook: v(a, 'pinkBook') > 0,
     spCoinRate: v(a, 'spCoinRate'),
     mcCoinRate: v(a, 'mcCoinRate'),

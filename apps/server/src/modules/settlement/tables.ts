@@ -308,9 +308,6 @@ export function allocateTables(
             t.krabCoinMultiplier;
           out.drops.push({ goodsId: GOODS.krabHappy, num: 1 });
           out.logs.push({ type: 'krab.happy', params: { cookbookId: cb, grade, req } });
-        } else if (flags.paintingTop && rng.chance(t.painting13Rate)) {
-          out.drops.push({ goodsId: GOODS.krabHappy, num: 1, hours: t.painting13Hours });
-          out.logs.push({ type: 'krab.painting', params: { req } });
         } else {
           coin /= 2;
           exp /= 2;

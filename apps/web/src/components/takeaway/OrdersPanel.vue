@@ -14,7 +14,7 @@ import { minutesLeft } from './format';
 
 /**
  * 外卖单（界面改版 P8，设计图“外卖 · 外卖单”）：上面私人刷新一行；一单一行写要的食材和够不够，
- * 点“接单”从下面弹出面板选骑手、加料
+ * 点“接单”从下面弹出面板选骑手
  */
 const props = defineProps<{ data: TakeawayDto }>();
 const emit = defineEmits<{ reload: [] }>();
@@ -22,7 +22,6 @@ const catalog = useCatalogStore();
 const toast = useToastStore();
 const t = useT();
 const busy = ref(false);
-const double = ref(false);
 /** 还有空位的骑手 */
 const free = computed(() => props.data.riders.filter((r) => r.busy < r.maxNum));
 const riderId = ref<number | null>(null);
@@ -38,17 +37,16 @@ const pickedId = ref<number | null>(null);
 const picked = computed(() => props.data.orders.find((o) => o.id === pickedId.value) ?? null);
 function openTake(o: TakeawayOrderDto) {
   pickedId.value = o.id;
-  double.value = false;
 }
 const dishName = (o: { cookbookId: number; cookbookName: string }) =>
   catalog.data('cookbooks', o.cookbookId)?.name ?? o.cookbookName;
 
-/** 不能接的原因；空串表示可以。行里按不加料算，面板里按选的算 */
-function blockOf(o: TakeawayOrderDto, mult = 1): string {
+/** 不能接的原因；空串表示可以 */
+function blockOf(o: TakeawayOrderDto): string {
   const x = t.value.takeaway.orders;
   if (o.block === 'not_learned') return x.notLearned;
   if (o.block === 'renown') return x.noRenown(o.needRenown);
-  if (o.foods.some((f) => f.have < f.need * mult)) return x.noFoods;
+  if (o.foods.some((f) => f.have < f.need)) return x.noFoods;
   if (riderId.value === null) return x.noRider;
   return '';
 }
@@ -73,9 +71,9 @@ async function run(fn: () => Promise<void>, fallback: string) {
 }
 function take() {
   const o = picked.value;
-  if (!o || blockOf(o, double.value ? 2 : 1)) return;
+  if (!o || blockOf(o)) return;
   return run(async () => {
-    const d = await endpoints.takeawayDeliver(o.id, riderId.value!, double.value);
+    const d = await endpoints.takeawayDeliver(o.id, riderId.value!);
     pickedId.value = null;
     toast.push(t.value.takeaway.orders.taken(dishName(d), minutesLeft(d.arriveAt, props.data.now)));
   }, t.value.takeaway.orders.takeFailed);
@@ -168,11 +166,8 @@ function refresh() {
           {{ t.takeaway.orders.meta(picked.needMinutes, picked.needRenown) }}
         </div>
         <div class="dt-ta-foods mt-2">
-          <span
-            v-for="f in picked.foods"
-            :key="f.foodsId"
-            :class="{ 'is-short': f.have < f.need * (double ? 2 : 1) }"
-            >{{ catalog.foodName(f.foodsId) }} {{ f.need * (double ? 2 : 1) }}/{{ f.have }}</span
+          <span v-for="f in picked.foods" :key="f.foodsId" :class="{ 'is-short': f.have < f.need }"
+            >{{ catalog.foodName(f.foodsId) }} {{ f.need }}/{{ f.have }}</span
           >
         </div>
         <div class="dt-detail-qty">
@@ -199,25 +194,8 @@ function refresh() {
             <span class="dt-meta">{{ t.takeaway.riders.busy(r.busy, r.maxNum) }}</span>
           </label>
         </div>
-        <div class="form-check form-switch dt-switch-row d-flex align-items-center gap-2 mt-3">
-          <label class="form-check-label" for="ta-double"
-            >{{ t.takeaway.orders.double
-            }}<span v-if="!data.canDouble" class="d-block dt-meta">{{
-              t.takeaway.orders.needDouble
-            }}</span></label
-          >
-          <input
-            id="ta-double"
-            v-model="double"
-            class="form-check-input"
-            type="checkbox"
-            role="switch"
-            :disabled="!data.canDouble"
-            data-testid="double"
-          />
-        </div>
-        <div v-if="blockOf(picked, double ? 2 : 1)" class="dt-detail-note text-danger" data-testid="take-why">
-          {{ blockOf(picked, double ? 2 : 1) }}
+        <div v-if="blockOf(picked)" class="dt-detail-note text-danger" data-testid="take-why">
+          {{ blockOf(picked) }}
         </div>
       </div>
       <template v-if="picked" #actions>
@@ -226,7 +204,7 @@ function refresh() {
           <button
             type="button"
             class="btn btn-primary"
-            :disabled="busy || !!blockOf(picked, double ? 2 : 1)"
+            :disabled="busy || !!blockOf(picked)"
             data-testid="take-confirm"
             @click="take"
           >

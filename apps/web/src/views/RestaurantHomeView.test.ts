@@ -801,26 +801,6 @@ describe('RestaurantHomeView', () => {
     expect(w.find('[data-testid="home-news-more"]').attributes('href')).toBe('/town?tab=news');
   });
 
-  it('生效的加成：今日星愿排在最前', async () => {
-    vi.mocked(endpoints.overview).mockResolvedValue({
-      ...dto,
-      effects: [
-        ...dto.effects,
-        {
-          sourceType: 'bless',
-          sourceId: 4,
-          // 服务端只给星愿名，前缀由前端按语言加（问题记录 272）
-          name: '招财进宝',
-          effects: { coinRate: 0.08 },
-          expiresAt: null,
-        },
-      ],
-    });
-    const w = await mountView();
-    expect(w.findAll('[data-testid="effect-group"]')[0]!.text()).toBe('今日星愿');
-    expect(w.findAll('[data-testid="effect-row"]')[0]!.text()).toContain('今日星愿: 招财进宝');
-  });
-
   it('首页不直接领任务奖励：能领时右边的任务入口加礼物图标，点进主线卡（问题记录 555）', async () => {
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([quest({ progress: 1, done: true })]));
     const w = await mountView();
@@ -1105,9 +1085,9 @@ describe('RestaurantHomeView', () => {
       ...base,
       total: 40,
       rewards: [
-        { points: 30, award, claimed: true, multiplier: 1 },
-        { points: 40, award, claimed: false, multiplier: 1 },
-        { points: 60, award, claimed: false, multiplier: 1 },
+        { points: 30, award, claimed: true },
+        { points: 40, award, claimed: false },
+        { points: 60, award, claimed: false },
       ],
     });
     const w = await mountView();
@@ -1121,8 +1101,8 @@ describe('RestaurantHomeView', () => {
       ...base,
       total: 50,
       rewards: [
-        { points: 40, award, claimed: true, multiplier: 1 },
-        { points: 60, award, claimed: false, multiplier: 1 },
+        { points: 40, award, claimed: true },
+        { points: 60, award, claimed: false },
       ],
     });
     const k = await mountView();
