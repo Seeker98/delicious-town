@@ -1,11 +1,12 @@
 import type { Tuning } from './tuning';
 
-/** 兽道（特殊天气当令） */
+/** 兽道（特色菜清理 2026-10-13 后没有兽道菜了；道 1~6 以外的编号） */
 export const BEAST_ROAD = 7;
 
 /**
  * 当令表的检查（天气改版设计 §3.1）：配置构建和后台保存区服数值都调用。
- * 每种天气都要有；特殊天气只当令兽道；其他天气两道（1~6 不重复）；日夜对应的天气当令相同
+ * 每种天气都要有；特殊天气一道到六道全部当令（特色菜清理 2026-10-13：兽道菜删光了，原来只当令兽道）；
+ * 其他天气两道（1~6 不重复）；日夜对应的天气当令相同
  */
 export function shilingErrors(
   t: Tuning['shiling'],
@@ -29,8 +30,8 @@ export function shilingErrors(
       continue;
     }
     if (w.special) {
-      if (r.length !== 1 || r[0] !== BEAST_ROAD)
-        errors.push(`tuning.shiling roads ${w.id}: special weather must be [${BEAST_ROAD}]`);
+      if (new Set(r).size !== 6 || r.some((x) => x < 1 || x >= BEAST_ROAD))
+        errors.push(`tuning.shiling roads ${w.id}: special weather must be all roads 1~6`);
     } else if (r.length !== 2 || r[0] === r[1] || r.some((x) => x >= BEAST_ROAD))
       errors.push(`tuning.shiling roads ${w.id}: needs two different roads 1~6`);
   }

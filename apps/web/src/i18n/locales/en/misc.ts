@@ -102,7 +102,7 @@ const misc: Messages['misc'] = {
         remnant: 'Signature dish fragment',
         remnantSub: (per, left) => `Any Lv. 1–5 dish · ${per} × level each · ${left} left this week`,
         rare: 'Rare fragment',
-        rareSub: (left) => `Any Lv. 6 or beast-path dish · ${left} left this week`,
+        rareSub: (left) => `Any Lv. 6 dish · ${left} left this week`,
         goodsSub: (left) => `${left} left this week`,
         pick: 'Choose',
         price: (n) => `Exchange for ${n} seasonal points`,
@@ -122,7 +122,7 @@ const misc: Messages['misc'] = {
         sub: (per, left) =>
           `Any Lv. 1–5 dish you can appraise and haven’t learned. ${per} × level each, ${left} left this week; 3 fragments of the same dish teach it.`,
         rareSub: (price, left) =>
-          `Any dish that can’t be appraised, such as Lv. 6 and beast-path dishes. ${price} each, ${left} left this week.`,
+          `Any Lv. 6 dish you haven’t learned yet. ${price} each, ${left} left this week.`,
         inSeason: (roads) => `In season (${roads})`,
         allRoads: 'All paths',
         level: (n) => `Lv. ${n}`,

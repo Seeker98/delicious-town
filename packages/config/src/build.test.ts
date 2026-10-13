@@ -245,11 +245,14 @@ describe('buildBundle（真实数据）', () => {
 
   it('特色菜：食材只留 id（"[4]海参"的 4 是等级，设计文档 裁定 1）；熟练度表 10 级', () => {
     const { bundle } = realBuild();
-    expect(bundle!.mysteriousCookbooks).toHaveLength(277);
+    // 特色菜清理（2026-10-13）删掉 27 道：10 道没配食材的、17 道要 6 级食材的兽道菜；兽道一道不剩
+    expect(bundle!.mysteriousCookbooks).toHaveLength(250);
     const m1 = bundle!.mysteriousCookbooks.find((m) => m.id === 1)!;
     expect(m1.foods).toEqual([fid('海参'), fid('渤海对虾'), fid('冬笋')]);
     expect(m1.appraisable).toBe(true);
-    expect(bundle!.mysteriousCookbooks.filter((m) => !m.appraisable)).toHaveLength(27);
+    expect(bundle!.mysteriousCookbooks.filter((m) => !m.appraisable)).toHaveLength(0);
+    expect(bundle!.mysteriousCookbooks.filter((m) => m.road === 7)).toHaveLength(0);
+    for (const m of bundle!.mysteriousCookbooks) expect(m.foods.length, String(m.id)).toBeGreaterThan(0);
     expect(bundle!.mcProficiency).toHaveLength(10);
     expect(bundle!.mcProficiency[0]).toEqual({ curlevel: 1, name: '初学', expNext: 200 });
     expect(bundle!.mcProficiency[9]).toEqual({ curlevel: 10, name: '化境', expNext: null });

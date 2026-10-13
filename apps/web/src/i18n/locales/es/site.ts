@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    mccut1013:
+      'Limpieza de platos estrella: se retiran 27 platos estrella (10 platos vacíos sin ingredientes y los 17 platos de la vía bestia que pedían ingredientes de nv. 6); quedan 250. Como ya no hay platos de la vía bestia, el clima especial (arcoíris, huracán, lluvia ácida, tormenta eléctrica, helada) pone ahora de temporada las seis vías',
     cuts41013:
       'Recortes, cuarta tanda: los packs de la clasificación de chefs se reducen (1.er puesto: 100 de renombre, 1 vale de ingrediente misterioso al azar, 8 recetas misteriosas, 50 diamantes; los demás puestos, menos); las placas de estrellas ya no dan EXP por mesa, EXP final +3\u00a0% a +30\u00a0% (de 1 a 7 estrellas); «Gran inauguración» pasa a EXP y monedas +50\u00a0%, ocupación +25\u00a0%; «Copa del Dios de las Estrellas» EXP +10\u00a0%; «Favor del Dios de las Estrellas» pasa a monedas y EXP +75\u00a0%; se retiran la Aguja del deseo, el Manual del explorador y el Muñeco vudú. Las placas ya expuestas y los honores que ya tienes usan los nuevos efectos',
     cuts31013:
