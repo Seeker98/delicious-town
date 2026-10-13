@@ -29,7 +29,7 @@ import { restName, restNotice } from '../utils/npcName';
 
 /**
  * 好友餐厅（界面改版 P10）：店头和自己首页一样（门面、等级环、店名），称号一排；
- * 好友时 2×3 操作块（点赞、加油、翻橱柜、换食材、好友对决、菜园）；特色菜一行；餐桌格子（点一张从下面弹出）；
+ * 好友时 2 列操作块（点赞、加油、翻橱柜、换食材、好友对决；单数时最后一块占满一行）；特色菜一行；餐桌格子（点一张从下面弹出）；
  * 公告、厨具、收购收成“店里”几行，点开面板。举报店名、删除好友在顶栏右边“⋯”
  */
 const route = useRoute();
@@ -202,10 +202,6 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
         <span class="dt-do-sub">{{ t.friends.rest.exchangeSub }}</span>
       </RouterLink>
       <FriendDuel v-if="!rest.npc" :key="restId" :rest-id="restId" />
-      <RouterLink v-if="!rest.npc" class="dt-do" :to="`/yard?friend=${restId}`" data-testid="to-yard">
-        <span class="dt-do-title">{{ t.friends.rest.yard }}</span>
-        <span class="dt-do-sub">{{ t.friends.rest.yardSub }}</span>
-      </RouterLink>
     </div>
     <template v-else-if="rest.id !== mine">
       <span v-if="rest.requested" class="dt-card dt-up-max mt-3 d-block" data-testid="add-friend">{{

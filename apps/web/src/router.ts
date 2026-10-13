@@ -144,12 +144,6 @@ export const routes: RouteRecordRaw[] = [
     meta: { needRestaurant: true, section: 'map', title: T((t) => t.temple.title), parent: '/map' },
   },
   {
-    path: '/yard',
-    name: 'yard',
-    component: () => import('./views/YardView.vue'),
-    meta: { needRestaurant: true, section: 'map', title: T((t) => t.yard.title), parent: '/map' },
-  },
-  {
     path: '/bar',
     name: 'bar',
     component: () => import('./views/BarView.vue'),

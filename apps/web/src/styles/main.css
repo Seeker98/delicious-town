@@ -5517,7 +5517,7 @@ button.dt-row {
 .dt-muted {
   color: var(--dt-muted);
 }
-/* 面板里的一行勾选（星神之书） */
+/* 面板里的一行勾选 */
 .dt-check-row {
   display: flex;
   align-items: center;
@@ -7290,6 +7290,10 @@ a.dt-reply-name {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
+}
+/* 单数块时最后一块占满一行（菜园入口删掉后好友店是 5 块） */
+.dt-do-grid > .dt-do:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
 }
 .dt-do {
   display: flex;

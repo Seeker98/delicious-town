@@ -62,7 +62,6 @@ export const rider = (patch: Partial<TakeawayRiderDto> = {}): TakeawayRiderDto =
 export const claimResult = (patch: Partial<TakeawayClaimDto> = {}): TakeawayClaimDto => ({
   deliveryId: 21,
   success: true,
-  forced: false,
   drone: false,
   reason: null,
   coin: 198,

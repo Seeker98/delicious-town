@@ -91,7 +91,6 @@ export function buildInput(config: GameConfig, patch: InputPatch = {}): SettleIn
       streetId: 0,
       renown: 10,
       luck: 0,
-      cteOn: false,
       cookfoodsFlag: 0,
       ...patch.rest,
     },

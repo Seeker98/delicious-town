@@ -74,12 +74,6 @@
   "2085": {
     "name": "Go on an expedition"
   },
-  "2101": {
-    "name": "Clear a garden plot"
-  },
-  "2102": {
-    "name": "Harvest a crop"
-  },
   "2103": {
     "name": "Equip a piece of cookware"
   },
@@ -301,21 +295,6 @@
   },
   "3127": {
     "name": "Cook 50 in-season batches of specials"
-  },
-  "3141": {
-    "name": "Harvest 10 times"
-  },
-  "3142": {
-    "name": "Appraise a Formula"
-  },
-  "3143": {
-    "name": "Craft an ingredient with a Formula"
-  },
-  "3144": {
-    "name": "Clear 6 garden plots"
-  },
-  "3145": {
-    "name": "Craft with Formulas 20 times"
   },
   "3161": {
     "name": "Drill a socket in cookware"

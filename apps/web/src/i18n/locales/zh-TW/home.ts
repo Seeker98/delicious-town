@@ -134,8 +134,6 @@ export default {
   switches: '經營開關',
   promo: '大促活動',
   promoHint: '八折促銷: 上座率大增, 收益略降',
-  cte: '銀幣轉經驗',
-  cteHint: '需要阿波羅雕像',
   setFailed: '設定失敗',
   cookfoods: '挑剔消耗食材檔位',
   off: '關閉',

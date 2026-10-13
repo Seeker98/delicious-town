@@ -22,7 +22,6 @@ export default {
     strengthN: (n: number) => `体力 ${n}`,
     lastTitle: (n: number) => `刚才 · 探险 ${n} 次`,
     result: (ok: number, fail: number) => `成功 ${ok} 次, 迷路 ${fail} 次`,
-    exp: (n: number) => `煤油灯带来经验 ${n}`,
   },
   appraise: {
     what: '鉴定',
@@ -46,7 +45,6 @@ export default {
     howBlack: (diamond: number) => `黑市 ${diamond} 钻`,
     howAward: '厨塔和酒吧等的随机奖励',
     howChampion: '昨日特色菜冠军',
-    howGuardian: '持有捕梦网时, 神殿守护兽暴击掉落',
     howSep: '、',
     howMany: '鉴定几次',
     btn: (n: number) => `鉴定 ${n} 次`,
@@ -55,11 +53,9 @@ export default {
     after: '鉴定完剩',
     afterItems: (recipes: number, tool: string, toolLeft: number) =>
       `神秘食谱 ${recipes} 个、${tool} ${toolLeft} 个`,
-    noRetry: '低于 5 级不重抽 (星神之书)',
     lastTitle: (n: number, ok: number) => `刚才 · 鉴定 ${n} 次, 成功 ${ok} 次`,
     got: (name: string, num: number) => `${name} 残卷 ×${num}`,
     level: (n: number) => `${n} 级`,
-    blessed: '星神眷恋',
   },
   guardian: {
     what: '挑战守护兽',
@@ -84,7 +80,7 @@ export default {
       `${damage}${crit ? ' 暴击' : ''}${killed ? ' · 击败了守护兽！' : ''}`,
     dropsTitle: '掉落',
     noDrops: '这次没有掉落',
-    dropNames: { tickets: '神秘礼券', maps: '探险图', seals: '厨神玉玺', dt: '美味券' },
+    dropNames: { tickets: '神秘礼券', maps: '探险图', dt: '美味券' },
   },
   trial: {
     what: '试炼',

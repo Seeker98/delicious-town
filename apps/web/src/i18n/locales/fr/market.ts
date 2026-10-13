@@ -67,7 +67,7 @@ const market: Messages['market'] = {
       'Les ingrédients universels de niveau 1 et 2 s’échangent contre des rares au garde-manger. À partir du niveau 3, ils servent seulement à remplacer un ingrédient pour apprendre une recette.',
       'Le marché du jour se réapprovisionne toutes les deux heures en journée.',
       'Le marché des promos se réapprovisionne toutes les heures. C’est là que les ingrédients de haut niveau sont les moins chers.',
-      'Récoltez votre potager dès qu’il est mûr, sinon quelqu’un va le voler.',
+      'Si le restaurant d’un ami manque d’huile, vous pouvez faire le plein avec la vôtre.',
       'Mes légumes sont les plus frais de la ville\u202f!',
       'Plus vous savez cuisiner de plats, plus vous avez de clients.',
       'Pointez chaque jour sur l’accueil pour recevoir un cadeau.',

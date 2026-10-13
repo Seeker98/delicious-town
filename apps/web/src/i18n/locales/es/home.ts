@@ -124,8 +124,6 @@ const home: Messages['home'] = {
   switches: 'Ajustes del negocio',
   promo: 'Gran oferta',
   promoHint: '20\u00a0% de descuento: muchos más clientes, ingresos algo menores',
-  cte: 'Monedas a EXP',
-  cteHint: 'Requiere la estatua de Apolo',
   setFailed: 'No se pudo cambiar el ajuste',
   cookfoods: 'Nivel de uso de ingredientes (exigentes)',
   off: 'Desactivado',

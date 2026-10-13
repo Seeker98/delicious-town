@@ -372,11 +372,7 @@ export interface ConfigBundle {
   streets: Street[];
   mysteriousCookbooks: MysteriousCookbook[];
   mcProficiency: McProficiency[];
-  seeds: Seed[];
-  formulas: Formula[];
-  seedExchange: SeedExchange[];
   goodsExchange: GoodsExchange[];
-  incomeActions: IncomeAction[];
   slotAwards: SlotAward[];
   towerFloors: TowerFloor[];
   weatherChain: WeatherChain;
@@ -477,21 +473,6 @@ export interface SuitDef {
   tiers: SuitTier[];
 }
 
-/** 种子（规格书 20 §20.8）；infancy / maturity / autumn 是三个生长阶段的分钟数，harvest 是收获期分钟数 */
-export interface Seed {
-  id: number;
-  foodsId: number;
-  name: string;
-  level: number;
-  coin: number;
-  infancy: number;
-  maturity: number;
-  autumn: number;
-  harvest: number;
-  harvestNum: number;
-  odds: number;
-}
-
 /** 飞弹（devicetype 97）的 value（规格书 09 §9.1） */
 export interface MissileDef {
   hitRate: number;
@@ -509,18 +490,6 @@ export interface MapDef {
   needStrength: number;
 }
 
-/** 食材配方（规格书 08 §8.5）：主料从菜篮扣，辅料、添加料从橱柜扣 */
-export interface Formula {
-  id: number;
-  name: string;
-  mainFoodsId: number;
-  subFoodsId: number;
-  addFoodsId: number;
-  resFoodsId: number;
-  odds: number;
-}
-
-/** 配方精华换种子（规格书 20 §20.8）：每次花 essence 个精华换 seedNum 颗 */
 /** 镇长兑换（设计数据 goods_exchange） */
 export interface GoodsExchange {
   id: number;
@@ -535,21 +504,6 @@ export interface GoodsExchange {
   weekly: boolean;
   /** 兑换后写新闻 */
   news: boolean;
-}
-
-export interface SeedExchange {
-  seedId: number;
-  seedNum: number;
-  essence: number;
-}
-
-/** 动作收益（规格书 20 §20.7）；landExp 只有菜园动作有，其他为 0 */
-export interface IncomeAction {
-  id: number;
-  name: string;
-  coin: number;
-  exp: number;
-  landExp: number;
 }
 
 /** 老虎机奖项（dataset/bar_slot_machine_award；子项目 4C-1）。库存、过期日不做（设计文档裁定 4） */

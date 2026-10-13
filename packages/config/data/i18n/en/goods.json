@@ -301,7 +301,7 @@
   },
   "10813": {
     "name": "God of Cookery Jade Seal",
-    "desc": "The advanced item for appraising mystery recipes; gives level 2–5 fragments with a high success rate, and a small chance of appraising an ingredient formula!"
+    "desc": "The advanced item for appraising mystery recipes; gives level 2–5 fragments with a high success rate!"
   },
   "10814": {
     "name": "Krabby Patty Secret Formula",
@@ -1673,7 +1673,7 @@
   },
   "60604": {
     "name": "Border Collie",
-    "desc": "Border collie, restaurant pet: a smart, well-behaved border collie. It has a 25% chance of making garden thieves drop a random level 1–5 ingredient, and a failed delivery has a 30% chance of being forced through anyway! Takeaway EXP +5%"
+    "desc": "Border collie, restaurant pet: a smart, well-behaved border collie. A failed delivery has a 30% chance of being forced through anyway! Takeaway EXP +5%"
   },
   "60605": {
     "name": "Coo Coo",
@@ -1985,7 +1985,7 @@
   },
   "61427": {
     "name": "Star God's Tear",
-    "desc": "Tears the Star God shed missing a former love; owning it lets go of every regret! Each ingredient combination has a 2% chance of making one extra! Combining ingredients with a formula has a 25% chance of an extra ingredient!"
+    "desc": "Tears the Star God shed missing a former love; owning it lets go of every regret! Each ingredient combination has a 2% chance of making one extra!"
   },
   "61428": {
     "name": "Violet Feast Dew",

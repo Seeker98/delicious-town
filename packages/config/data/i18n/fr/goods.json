@@ -301,7 +301,7 @@
   },
   "10813": {
     "name": "Sceau de jade du Dieu de la cuisine",
-    "desc": "L'objet avancé pour expertiser les recettes mystère\u202f; donne des fragments de niveau 2 à 5 avec un bon taux de réussite, et une petite chance d'obtenir une formule d'ingrédient\u202f!"
+    "desc": "L'objet avancé pour expertiser les recettes mystère\u202f; donne des fragments de niveau 2 à 5 avec un bon taux de réussite\u202f!"
   },
   "10814": {
     "name": "Formule secrète du Krabby Patty",
@@ -1673,7 +1673,7 @@
   },
   "60604": {
     "name": "Border collie",
-    "desc": "Border collie, animal du restaurant\u202f: un chien malin et sage. Il a 25\u202f% de chance de faire lâcher un ingrédient de niveau 1–5 au hasard à ceux qui volent dans votre potager, et une livraison ratée a 30\u202f% de chance de réussir quand même\u202f! EXP des commandes à emporter +5\u202f%"
+    "desc": "Border collie, animal du restaurant\u202f: un chien malin et sage. Une livraison ratée a 30\u202f% de chance de réussir quand même\u202f! EXP des commandes à emporter +5\u202f%"
   },
   "60605": {
     "name": "Hou Hou",
@@ -1985,7 +1985,7 @@
   },
   "61427": {
     "name": "Larme du Dieu des étoiles",
-    "desc": "Les larmes du Dieu des étoiles, versées en pensant à un amour perdu\u202f; qui la possède oublie tous ses regrets\u202f! Chaque combinaison d'ingrédients a 2\u202f% de chance d'en produire un de plus\u202f! Combiner avec une formule a 25\u202f% de chance de donner un ingrédient de plus\u202f!"
+    "desc": "Les larmes du Dieu des étoiles, versées en pensant à un amour perdu\u202f; qui la possède oublie tous ses regrets\u202f! Chaque combinaison d'ingrédients a 2\u202f% de chance d'en produire un de plus\u202f!"
   },
   "61428": {
     "name": "Rosée violette du festin",

@@ -105,7 +105,6 @@ async function go() {
       <div v-if="got.length > 0" class="dt-award-chips">
         <AwardChip v-for="(a, i) in got" :key="i" :award="a" />
       </div>
-      <div v-if="result.exp > 0" class="dt-bar-detail">{{ t.temple.explore.exp(result.exp) }}</div>
     </section>
   </template>
 

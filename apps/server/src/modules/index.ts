@@ -8,7 +8,6 @@ import { equipRoutes } from './equip/routes';
 import { mysteriousRoutes } from './mysterious/routes';
 import { templeRoutes } from './temple/routes';
 import { shilingRoutes } from './shiling/routes';
-import { yardRoutes } from './yard/routes';
 import { barRoutes } from './bar/routes';
 import { towerRoutes } from './tower/routes';
 import { takeawayRoutes } from './takeaway/routes';
@@ -67,7 +66,6 @@ export function registerModules(app: FastifyInstance, game: Game): void {
   app.register(mysteriousRoutes(game.mysterious), { prefix: '/api/v1' });
   app.register(templeRoutes(game.temple), { prefix: '/api/v1' });
   app.register(shilingRoutes(game.shiling), { prefix: '/api/v1' });
-  app.register(yardRoutes(game.yard), { prefix: '/api/v1' });
   app.register(barRoutes(game.bar), { prefix: '/api/v1' });
   app.register(towerRoutes(game.tower), { prefix: '/api/v1' });
   app.register(takeawayRoutes(game.takeaway), { prefix: '/api/v1' });

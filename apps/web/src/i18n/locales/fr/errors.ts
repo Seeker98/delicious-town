@@ -92,9 +92,7 @@ const errors: Messages['errors'] = {
     renown: (p) =>
       p.what === 'duel'
         ? 'Impossible de défier quelqu’un avec une renommée négative'
-        : p.need === undefined
-          ? 'Impossible de mettre un «\u202fj’aime\u202f» avec une renommée négative'
-          : `Pas assez de renommée (voler demande ${s(p.need)})`,
+        : 'Impossible de mettre un «\u202fj’aime\u202f» avec une renommée négative',
     mc_count: (p) => `Pas assez de plats signature appris (${s(p.need)} requis)`,
     not_learned: () => "Vous n'avez pas encore appris ce plat",
     job_honor: (p, n) =>
@@ -153,7 +151,6 @@ const errors: Messages['errors'] = {
     taste: (p) => `Vous avez déjà goûté ${s(p.max)} fois aujourd'hui`,
     lesson_full: () => 'Ce cours est complet',
     lesson_open: () => 'Vous avez déjà un cours en cours',
-    lands: (p) => `Vous pouvez cultiver au plus ${s(p.max)} ${plFr(s(p.max), 'parcelle', 'parcelles')}`,
     rider_busy: (p) => `Ce livreur a déjà le maximum de commandes (${s(p.max)})`,
     riders: (p) => `Vous avez déjà le maximum de livreurs (${s(p.max)})`,
     tower: (p) =>
@@ -251,7 +248,6 @@ const errors: Messages['errors'] = {
     already_off: 'Déjà désactivé',
     flag: 'Réglage invalide',
     not_plankton_host: "Plancton n'est pas dans votre restaurant",
-    no_angry_krab: "M. Krab n'est pas en colère",
     no_food: "Vous n'avez pas cet ingrédient dans votre garde-manger",
     not_locked: "Cet ingrédient n'est pas verrouillé",
     fridge_empty: "Votre frigo n'a pas cet ingrédient",
@@ -332,22 +328,6 @@ const errors: Messages['errors'] = {
     no_lesson: "Vous n'avez pas de cours en cours",
     lesson_not_full: "Le cours n'est pas complet\u202f; impossible de le terminer plus tôt",
     target_no_special: "Ce joueur n'a pas de plat signature en vente",
-    no_land: "Cette parcelle n'est pas encore cultivée",
-    land_busy: 'Quelque chose pousse déjà sur cette parcelle',
-    no_plant: "La culture n'existe pas (peut-être récoltée ou arrachée). Actualisez.",
-    no_water: 'Impossible d’arroser pour le moment',
-    has_worm: "Il y a des insectes. Retirez-les d'abord.",
-    has_grass: "Il y a des mauvaises herbes. Arrachez-les d'abord.",
-    not_ripe: "Ce n'est pas encore prêt à récolter",
-    withered: 'La culture a flétri et ne peut qu’être arrachée',
-    no_worm: "Il n'y a pas d'insectes",
-    no_grass: "Il n'y a pas de mauvaises herbes",
-    feed_useless: "Il ne reste pas assez de temps dans cette étape pour que l'engrais serve",
-    steal_left: "Il n'en reste plus beaucoup. Laissez-en au propriétaire.",
-    formula_unlearned: "Vous n'avez pas encore appris cette formule",
-    formula_learned: 'Vous avez déjà appris cette formule',
-    seed_shop_closed: "La boutique de graines n'est pas encore ouverte",
-    seed_not_sold: 'Les graines mystère ne sont pas vendues\u202f: on les obtient par échange',
     takeaway_closed: "Vous n'avez pas encore ouvert la livraison",
     order_gone: "Cette commande à emporter n'existe plus",
     order_taken: "Quelqu'un a déjà pris cette commande",
@@ -420,7 +400,6 @@ const errors: Messages['errors'] = {
     thumb_ip: "Quelqu'un sur le même réseau lui a déjà mis un «\u202fj'aime\u202f» aujourd'hui",
     taste: 'Vous avez déjà goûté ce lot de plats signature',
     lesson: 'Vous avez déjà essayé ce cours',
-    steal: 'Vous avez déjà volé sur cette plante',
     takeaway: 'La livraison est déjà ouverte',
     talk: "Vous avez déjà discuté aujourd'hui",
     bar_round: 'Vous avez encore une partie en cours dans ce jeu',
@@ -442,8 +421,6 @@ const errors: Messages['errors'] = {
       `Les promotions ne peuvent être prises qu'une fois par période de ${minutes} min depuis un même réseau. Attendez ${wait} min.`,
     notEnough: (what, need, have) => `${what} insuffisant(e)s (il en faut ${need}, vous en avez ${have})`,
     remnant: (name) => `Fragments de ${name}`,
-    basket: (name) => `${name} dans le panier`,
-    fragment: (part) => `Fragments de formule ${part === 'main' ? 'principaux' : 'secondaires'}`,
     amount: 'Quantité',
     exchangeFrozen: (why) =>
       `Votre compte de bourse est gelé\u202f: ${why}. Contactez un administrateur pour toute question.`,
@@ -461,8 +438,6 @@ const errors: Messages['errors'] = {
     food: (id) => `Ingrédient ${id}`,
     mc: (id) => `Plat signature ${id}`,
     cookbook: (id) => `Recette ${id}`,
-    seed: (id) => `Graine ${id}`,
-    seedOf: (food) => `Graine de ${food}`,
     weather: (id) => `Météo ${id}`,
   },
 };

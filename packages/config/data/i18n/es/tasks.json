@@ -74,12 +74,6 @@
   "2085": {
     "name": "Ir de expedición"
   },
-  "2101": {
-    "name": "Despejar una parcela del huerto"
-  },
-  "2102": {
-    "name": "Cosechar un cultivo"
-  },
   "2103": {
     "name": "Equipar un utensilio"
   },
@@ -301,21 +295,6 @@
   },
   "3127": {
     "name": "Cocinar 50 tandas de temporada"
-  },
-  "3141": {
-    "name": "Cosechar 10 veces"
-  },
-  "3142": {
-    "name": "Tasar una Fórmula"
-  },
-  "3143": {
-    "name": "Crear un ingrediente con una Fórmula"
-  },
-  "3144": {
-    "name": "Despejar 6 parcelas"
-  },
-  "3145": {
-    "name": "Crear con Fórmulas 20 veces"
   },
   "3161": {
     "name": "Abrir un engarce en un utensilio"

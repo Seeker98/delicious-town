@@ -12,7 +12,6 @@ export interface SettleRest {
   renown: number;
   /** 基础幸运（等级带来的） */
   luck: number;
-  cteOn: boolean;
   cookfoodsFlag: number;
 }
 

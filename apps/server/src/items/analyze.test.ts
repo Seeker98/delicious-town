@@ -48,14 +48,13 @@ describe('道具整理的分析（问题记录 367）', () => {
     expect(wheres(r, 'gives')).toEqual(expect.arrayContaining(['神殿守护兽', '神秘食材兑换券']));
   });
 
-  it('6 级食材：大多只能靠菜园获得；食谱只在品级上限调到 10 时用到', () => {
+  it('6 级食材：食谱只在品级上限调到 10 时用到', () => {
     const lv6 = config.bundle.foods.filter((f) => f.level === 6).map((f) => row('foods', f.id));
     for (const r of lv6) {
-      expect(r.notes.includes('只能靠菜园获得')).toBe(r.gives.every((x) => x.where.startsWith('菜园')));
       if (r.uses.some((x) => x.where.startsWith('食谱')))
         expect(r.notes).toContain('食谱只在品级上限调到 10 时用到');
     }
-    expect(lv6.filter((r) => r.notes.includes('只能靠菜园获得')).length).toBeGreaterThan(10);
+    expect(lv6.some((r) => r.notes.includes('食谱只在品级上限调到 10 时用到'))).toBe(true);
   });
 
   it('道具：商店有售算来源；代码里写死的标出来；什么都没有的标“没有来源”', () => {

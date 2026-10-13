@@ -3,7 +3,7 @@ import { ErrorCode, type LessonDto, type LessonLearnDto, type LessonsDto } from 
 import { emitAction } from '../../core/action';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, limitReached, requirement } from '../../core/errors';
-import { opAgg, opLuck } from '../../core/luck';
+import { opLuck } from '../../core/luck';
 import { restLog, runOp, setRest, type Op } from '../../core/op';
 import { feedLog, runPairOp } from '../../core/pair';
 import { gainCoin, spendCoin, spendStrength } from '../../core/resources';
@@ -270,9 +270,7 @@ export function createLessonOps(d: GameDeps) {
           if (o.rest.star_level < needStar)
             throw requirement('star', { need: needStar, have: o.rest.star_level });
           const mc = o.config.requireMc(l.mc_id);
-          const agg = await opAgg(o);
           const { rate: luck } = await opLuck(o);
-          const thinker = (agg.thinker ?? 0) > 0;
           let success: boolean;
           let forgot: LessonLearnDto['forgot'] = { cookbooks: [], mcId: null, grades: 0, lost: 0 };
           if (b.type === 1) {
@@ -281,10 +279,10 @@ export function createLessonOps(d: GameDeps) {
             await consumeGoods(o, GOODS.fragmentBase + mc.level, t.learnFragments);
             gainCoin(p.them, Math.floor(mc.coin * t.teacherShare), { event: false });
             await grantGoodsOp(p.them, GOODS.fragmentBase + mc.level, t.teacherFragments, { event: false });
-            success = o.rng.chance(learnRate(thinker, luck, t));
+            success = o.rng.chance(learnRate(luck, t));
           } else {
             spendStrength(o, t.stealStrength);
-            success = o.rng.chance(stealRate(l.level, thinker, luck, t));
+            success = o.rng.chance(stealRate(l.level, luck, t));
             if (!success) forgot = await forget(o, l.level);
           }
           await o.tx

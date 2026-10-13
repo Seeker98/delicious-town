@@ -16,7 +16,7 @@ import QtySheet from '../QtySheet.vue';
 
 /**
  * 鉴定（界面改版 P9）：饭老道一句话；鉴定道具一行一种（鉴定出几级、成功率、持有），
- * 点“鉴定”弹出数量面板（星神之书的勾选也在面板里）；刚才鉴定的结果列在下面
+ * 点“鉴定”弹出数量面板；刚才鉴定的结果列在下面
  */
 const catalog = useCatalogStore();
 const toast = useToastStore();
@@ -24,7 +24,6 @@ const t = useT();
 const o = ref<McOverviewDto | null>(null);
 const toolId = ref<number | null>(null);
 const times = ref(1);
-const noRetry = ref(false);
 const results = ref<AppraiseResultDto['results']>([]);
 const busy = ref(false);
 const open = ref(false);
@@ -41,7 +40,6 @@ function howParts(x: McToolDto): string {
     x.blackDiamond !== null ? a.howBlack(x.blackDiamond) : '',
     x.award ? a.howAward : '',
     x.champion ? a.howChampion : '',
-    x.guardian ? a.howGuardian : '',
   ]
     .filter(Boolean)
     .join(a.howSep);
@@ -73,7 +71,7 @@ async function appraise() {
   if (busy.value || toolId.value === null || blockReason.value) return;
   busy.value = true;
   try {
-    const r = await endpoints.mcAppraise(toolId.value, n.value, noRetry.value);
+    const r = await endpoints.mcAppraise(toolId.value, n.value);
     results.value = r.results;
     open.value = false;
     toast.push(t.value.temple.appraise.done(r.results.length, r.results.filter((x) => x.ok).length));
@@ -141,9 +139,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.common.lo
                 v-if="(catalog.mc(r.mcId ?? 0)?.level ?? 0) >= 2"
                 :class="['dt-tag', 'dt-lv', (catalog.mc(r.mcId ?? 0)?.level ?? 0) >= 3 ? 'is-t3' : 'is-t2']"
                 >{{ t.temple.appraise.level(catalog.mc(r.mcId ?? 0)?.level ?? 0) }}</span
-              ><span v-if="r.blessed" class="dt-tag dt-tag-warn">{{
-                t.temple.appraise.blessed
-              }}</span></template
+              ></template
             >
           </DtRow>
           <div v-else class="dt-row dt-appraise-fail">{{ appraiseFailText(r) }}</div>
@@ -179,13 +175,6 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.common.lo
     @close="open = false"
     @ok="appraise"
   >
-    <template #top>
-      <label v-if="o.starBook" class="dt-check-row">
-        <input v-model="noRetry" type="checkbox" class="form-check-input" data-testid="no-retry" />{{
-          t.temple.appraise.noRetry
-        }}
-      </label>
-    </template>
     <p v-if="howParts(tool)" class="dt-detail-note" data-testid="tool-how">
       {{ t.temple.appraise.how(howParts(tool)) }}
     </p>

@@ -22,7 +22,6 @@ describe('迁移 0002', () => {
       .executeTakeFirstOrThrow();
     expect(r).toMatchObject({
       promo_on: false,
-      cte_on: false,
       cookfoods_flag: 0,
       plaque2_open: false,
       main_task_step: 1,

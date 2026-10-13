@@ -27,7 +27,7 @@ function serverLogTypes(): string[] {
   return [...out].sort();
 }
 
-const names = { goodsName: () => '道具', foodName: () => '食材', mcName: () => '秘', seedName: () => '种子' };
+const names = { goodsName: () => '道具', foodName: () => '食材', mcName: () => '秘' };
 
 describe('个人日志文案全覆盖（问题记录 154，Review Focus 5）', () => {
   it('能扫到服务端的日志类型', () => {

@@ -23,7 +23,6 @@ export default {
     strengthN: (n: number) => `體力 ${n}`,
     lastTitle: (n: number) => `剛才 · 探險 ${n} 次`,
     result: (ok: number, fail: number) => `成功 ${ok} 次, 迷路 ${fail} 次`,
-    exp: (n: number) => `煤油燈帶來經驗 ${n}`,
   },
   appraise: {
     what: '鑑定',
@@ -47,7 +46,6 @@ export default {
     howBlack: (diamond: number) => `黑市 ${diamond} 鑽`,
     howAward: '廚塔和酒吧等的隨機獎勵',
     howChampion: '昨日特色菜冠軍',
-    howGuardian: '持有捕夢網時, 神殿守護獸暴擊掉落',
     howSep: '、',
     howMany: '鑑定幾次',
     btn: (n: number) => `鑑定 ${n} 次`,
@@ -56,11 +54,9 @@ export default {
     after: '鑑定完剩',
     afterItems: (recipes: number, tool: string, toolLeft: number) =>
       `神秘食譜 ${recipes} 個、${tool} ${toolLeft} 個`,
-    noRetry: '低於 5 級不重抽 (星神之書)',
     lastTitle: (n: number, ok: number) => `剛才 · 鑑定 ${n} 次, 成功 ${ok} 次`,
     got: (name: string, num: number) => `${name} 殘卷 ×${num}`,
     level: (n: number) => `${n} 級`,
-    blessed: '星神眷戀',
   },
   guardian: {
     what: '挑戰守護獸',
@@ -85,7 +81,7 @@ export default {
       `${damage}${crit ? ' 暴擊' : ''}${killed ? ' · 擊敗了守護獸！' : ''}`,
     dropsTitle: '掉落',
     noDrops: '這次沒有掉落',
-    dropNames: { tickets: '神秘禮券', maps: '探險圖', seals: '廚神玉璽', dt: '美味券' },
+    dropNames: { tickets: '神秘禮券', maps: '探險圖', dt: '美味券' },
   },
   trial: {
     what: '試煉',

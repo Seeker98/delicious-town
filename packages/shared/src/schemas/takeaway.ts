@@ -91,8 +91,6 @@ export interface TakeawayDto {
 export interface TakeawayClaimDto {
   deliveryId: number;
   success: boolean;
-  /** 边牧把失败改判成功 */
-  forced: boolean;
   drone: boolean;
   /** 失败原因（中文原文，旧记录只有这个） */
   reason: string | null;

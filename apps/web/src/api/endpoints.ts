@@ -59,14 +59,6 @@ import type {
   FgResultDto,
   NumResultDto,
   SlotResultDto,
-  BasketDto,
-  ComposeResultDto,
-  FormulaAppraiseResultDto,
-  FormulasDto,
-  FriendYardDto,
-  ReapResultDto,
-  SeedsDto,
-  YardDto,
   ExploreResultDto,
   MissileResultDto,
   TempleDto,
@@ -255,9 +247,7 @@ export const endpoints = {
   move: (streetId: number) => api.post<{ streetId: number }>('/api/v1/growth/move', { streetId }),
   setPromo: (on: boolean) => api.post<Anything>('/api/v1/growth/promo', { on }),
   setCookfoods: (flag: number) => api.post<Anything>('/api/v1/growth/cookfoods', { flag }),
-  setCte: (on: boolean) => api.post<Anything>('/api/v1/growth/cte', { on }),
   drivePlankton: (way: 'strength' | 'book') => api.post<Anything>('/api/v1/growth/plankton/drive', { way }),
-  driveKrab: () => api.post<Anything>('/api/v1/growth/krab/drive'),
 
   cookbookList: (q: { street: number; page: number; filter: string }) =>
     api.get<CookbookListDto>(`/api/v1/cookbook/list${qs(q)}`),
@@ -372,8 +362,8 @@ export const endpoints = {
   equipPresetDelete: (id: number) => api.post<Anything>('/api/v1/equip/preset/delete', { id }),
   mc: () => api.get<McOverviewDto>('/api/v1/mc'),
   mcPreview: (mcId: number) => api.get<McPreviewDto>(`/api/v1/mc/${mcId}/preview`),
-  mcAppraise: (toolId: number, times: number, noRetry: boolean) =>
-    api.post<AppraiseResultDto>('/api/v1/mc/appraise', { toolId, times, noRetry }),
+  mcAppraise: (toolId: number, times: number) =>
+    api.post<AppraiseResultDto>('/api/v1/mc/appraise', { toolId, times }),
   mcRemnantSell: (mcId: number, num: number) =>
     api.post<{ coin: number }>('/api/v1/mc/remnant/sell', { mcId, num }),
   mcRemnantDecompose: (mcId: number, num: number) =>
@@ -403,35 +393,6 @@ export const endpoints = {
     api.post<{ mcId: number }>('/api/v1/temple/trial/refresh', mcId === undefined ? {} : { mcId }),
   trialStart: (mainFoodsId: number, subFoodsId: number) =>
     api.post<TrialResultDto>('/api/v1/temple/trial/start', { mainFoodsId, subFoodsId }),
-  yard: () => api.get<YardDto>('/api/v1/yard'),
-  yardFriend: (restId: number) => api.get<FriendYardDto>(`/api/v1/yard/friend/${restId}`),
-  yardExpand: () => api.post<{ no: number; coin: number }>('/api/v1/yard/land/expand'),
-  yardPlant: (landNo: number, seedId: number) =>
-    api.post<{ plantId: number }>('/api/v1/yard/plant', { landNo, seedId }),
-  yardWater: (plantId: number) => api.post<{ stage: number }>('/api/v1/yard/water', { plantId }),
-  yardFeed: (plantId: number, goodsId: number) =>
-    api.post<{ feedMin: number }>('/api/v1/yard/feed', { plantId, goodsId }),
-  yardWeed: (plantId: number) => api.post<{ plantId: number }>('/api/v1/yard/weed', { plantId }),
-  yardDeworm: (plantId: number) => api.post<{ plantId: number }>('/api/v1/yard/deworm', { plantId }),
-  yardRemove: (plantId: number) => api.post<{ seedBack: boolean }>('/api/v1/yard/remove', { plantId }),
-  yardReap: (plantId: number) => api.post<ReapResultDto>('/api/v1/yard/reap', { plantId }),
-  basket: () => api.get<BasketDto>('/api/v1/yard/basket'),
-  basketStore: (foodsId: number, num: number) =>
-    api.post<{ stored: number; dropped: number }>('/api/v1/yard/basket/store', { foodsId, num }),
-  formulas: () => api.get<FormulasDto>('/api/v1/yard/formulas'),
-  formulaAppraise: (toolId: number, times: number) =>
-    api.post<FormulaAppraiseResultDto>('/api/v1/yard/formula/appraise', { toolId, times }),
-  formulaLearn: (formulaId: number) =>
-    api.post<{ formulaId: number }>('/api/v1/yard/formula/learn', { formulaId }),
-  formulaDecompose: (formulaId: number, part: 'main' | 'sub', num: number) =>
-    api.post<{ essence: number }>('/api/v1/yard/formula/decompose', { formulaId, part, num }),
-  formulaCompose: (formulaId: number, num: number) =>
-    api.post<ComposeResultDto>('/api/v1/yard/formula/compose', { formulaId, num }),
-  seeds: () => api.get<SeedsDto>('/api/v1/yard/seeds'),
-  seedBuy: (seedId: number, num: number) =>
-    api.post<{ coin: number }>('/api/v1/yard/seed/buy', { seedId, num }),
-  seedExchange: (seedId: number, times: number) =>
-    api.post<{ seeds: number }>('/api/v1/yard/seed/exchange', { seedId, times }),
   bar: () => api.get<BarDto>('/api/v1/bar'),
   barFg: (hand: number) => api.post<FgResultDto>('/api/v1/bar/fg', { hand }),
   /** round：面板上看到的这一轮（没有局为 null），和服务端对不上时报 cup_round */

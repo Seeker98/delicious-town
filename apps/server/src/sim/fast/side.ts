@@ -20,7 +20,6 @@ import type { FastCtx, FastRest } from './state';
 export const SIDE_SOURCES = [
   'town',
   'bar',
-  'yard',
   'tower',
   'temple',
   'takeaway',

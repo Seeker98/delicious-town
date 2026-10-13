@@ -22,10 +22,8 @@ import { mysteriousJobs } from './modules/mysterious/jobs';
 import { createMysteriousService, type MysteriousService } from './modules/mysterious/service';
 import { createTempleService, type TempleService } from './modules/temple/service';
 import { createShilingService, type ShilingService } from './modules/shiling/service';
-import { yardJobs } from './modules/yard/jobs';
 import { towerJobs } from './modules/tower/jobs';
 import { takeawayJobs } from './modules/takeaway/jobs';
-import { createYardService, type YardService } from './modules/yard/service';
 import { createBarService, type BarService } from './modules/bar/service';
 import { createTowerService, type TowerService } from './modules/tower/service';
 import { createTakeawayService, type TakeawayService } from './modules/takeaway/service';
@@ -88,7 +86,6 @@ export interface Game {
   mysterious: MysteriousService;
   temple: TempleService;
   shiling: ShilingService;
-  yard: YardService;
   bar: BarService;
   tower: TowerService;
   takeaway: TakeawayService;
@@ -143,7 +140,6 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...equipIncomeJobs(deps));
   jobs.push(...acquireJobs(deps));
   jobs.push(...mysteriousJobs(deps));
-  jobs.push(...yardJobs(deps, world));
   jobs.push(...towerJobs(deps));
   jobs.push(...takeawayJobs(deps));
   jobs.push(...jobCardJobs(deps));
@@ -170,7 +166,6 @@ export function createGame(app: AppDeps): Game {
     mysterious: createMysteriousService(deps, world),
     temple: createTempleService(deps, world),
     shiling: createShilingService(deps, world),
-    yard: createYardService(deps),
     bar: createBarService(deps),
     tower: createTowerService(deps),
     takeaway: createTakeawayService(deps, world),

@@ -69,12 +69,7 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
     weather: v(w, 'expRate'),
     atOverflow: Math.max(leftAt, 0),
   };
-  let coin = part(coinParts);
-  if (rest.cteOn && coin.total !== 0) {
-    expParts.cte = coin.total * st.cteRate;
-    coin = part({ ...coinParts, cte: -coin.total });
-    coin.total = 0;
-  }
+  const coin = part(coinParts);
 
   const luckSum = rest.luck + v(a, 'luckValue') + v(w, 'luckValue');
   const rates: Rates = {

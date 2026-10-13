@@ -11,7 +11,6 @@ type LogFn = (p: P, names: Names) => string;
 const WT = ['', '晴', '雨', '雪冰', '風沙霧'];
 const logs = table<LogFn>();
 const mcNameOf = (names: Names, id: number) => names.mcName?.(id) ?? `特色菜${id}`;
-const seedNameOf = (names: Names, id: number) => names.seedName?.(id) ?? `種子${id}`;
 /** 可疑成交的所得進冷靜期（156-2） */
 /** 凍結幾小時：日誌裡帶 holdHours（backlog 156-2），舊日誌沒有時是 24 */
 const holdHours = (p: P) => (p.holdHours === undefined ? 24 : n(p, 'holdHours'));
@@ -84,14 +83,6 @@ function describeFeed(
       return `${who} 給你點了贊`;
     case 'friend.apply':
       return `${who} 申請加你為好友`;
-    case 'yard.helped': {
-      const what = p.what === 'weed' ? '除了草' : p.what === 'deworm' ? '除了蟲' : '澆了水';
-      return `${who} 幫你的${foodName(Number(p.foodsId))}${what}`;
-    }
-    case 'yard.stolen': {
-      const caught = p.punished ? `, 被邊牧逮住, 留下了 ${foodName(Number(p.punished))}` : '';
-      return `${who} 偷走了你的 ${foodName(Number(p.foodsId))}×${String(p.num)}${caught}`;
-    }
     case 'friend.accept':
       return `${who} 同意了你的好友申請`;
     default:
@@ -113,8 +104,6 @@ export default {
     strength: '體力',
   },
   remnant: (names: Names, id: number) => `${mcNameOf(names, id)}殘卷`,
-  seed: (names: Names, id: number) => seedNameOf(names, id),
-  basket: (name: string) => `菜籃·${name}`,
   activityCurrency: (name: string | undefined, num: string) => `${name ?? '活動貨幣'}×${num} (活動貨幣)`,
   lucky: ' (幸運)',
   /** 列表分隔：同類之間、得失之間 */

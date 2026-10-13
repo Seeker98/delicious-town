@@ -255,25 +255,6 @@ describe('buildBundle（真实数据）', () => {
     expect(bundle!.mcProficiency[9]).toEqual({ curlevel: 10, name: '化境', expNext: null });
   });
 
-  it('种子是正式字段（96 种）：食材、等级、各阶段分钟数、产量、权重', () => {
-    const { bundle } = realBuild();
-    expect(bundle!.seeds).toHaveLength(96);
-    expect(bundle!.seeds.find((s) => s.id === 1)).toEqual({
-      id: 1,
-      foodsId: fid('大米'),
-      name: '大米种子',
-      level: 1,
-      coin: 1800,
-      infancy: 24,
-      maturity: 36,
-      autumn: 60,
-      harvest: 1440,
-      harvestNum: 20,
-      odds: 70,
-    });
-    expect('seeds' in bundle!.extra).toBe(false);
-  });
-
   it('合并了新设计的售价和 awardflag', () => {
     const { bundle } = realBuild();
     const cb = bundle!.cookbooks.find((c) => c.id === cid('南煎丸子'))!;
@@ -344,40 +325,6 @@ describe('buildBundle（真实数据）', () => {
 
   it('同样的输入生成同样的版本号', () => {
     expect(realBuild().bundle!.version).toBe(buildBundle(source()).bundle!.version);
-  });
-  it('配方、种子兑换、动作收益是正式字段（子项目 4B-2）', () => {
-    const { bundle } = realBuild();
-    expect(bundle!.formulas).toHaveLength(56);
-    expect(bundle!.formulas.find((f) => f.id === 1)).toEqual({
-      id: 1,
-      name: '牡丹籽油配方',
-      mainFoodsId: fid('槟榔芋'),
-      subFoodsId: fid('鱼唇'),
-      addFoodsId: fid('乌鸡'),
-      resFoodsId: fid('牡丹籽油'),
-      odds: 10,
-    });
-    expect(bundle!.seedExchange).toHaveLength(96);
-    expect(bundle!.seedExchange.find((e) => e.seedId === 95)).toEqual({
-      seedId: 95,
-      seedNum: 1,
-      essence: 30,
-    });
-    expect(bundle!.incomeActions.find((a) => a.id === 54)).toEqual({
-      id: 54,
-      name: '收获',
-      coin: 2,
-      exp: 3,
-      landExp: 20,
-    });
-    expect(bundle!.incomeActions.find((a) => a.id === 20)!.landExp).toBe(0);
-    expect('formulas' in bundle!.extra).toBe(false);
-    expect('seedExchange' in bundle!.extra).toBe(false);
-  });
-
-  it('支线「鉴定一次食材配方」链接到菜园', () => {
-    const { bundle } = realBuild();
-    expect(bundle!.quests.find((q) => q.id === 3142)!.href).toBe('/yard');
   });
 });
 
@@ -577,7 +524,8 @@ describe('2A 新增配置', () => {
     expect(b.shopSpecialTiers[0]).toMatchObject({ name: '九折', from: 0, to: 0.5, stock: 50 });
     expect(b.shopPools.special).toContain(gid('短效节油器'));
     expect(b.shopPools.black).toContain(gid('升星凭证'));
-    expect(b.potTiers.map((t) => t.count)).toEqual([4, 6, 7]);
+    // 6 株一档（菜园收获 +1）随菜园删掉（2026-10-13）
+    expect(b.potTiers.map((t) => t.count)).toEqual([4, 7]);
     expect(b.potTiers[0]!.effects).toEqual({ coinRate: 0.08 });
     expect(b.marketGuessFoods).toHaveLength(116); // 108 + 新街道 8 种 2 级食材（问题记录 284）
     expect(b.guessAwards.map((a) => a.hits)).toEqual([1, 2, 3, 4, 5, 6]);
@@ -759,7 +707,8 @@ describe('厨塔配置（子项目 4C-2）', () => {
 
   it('声望商店是正式字段', () => {
     const { bundle } = realBuild();
-    expect(bundle!.renownShop).toHaveLength(14);
+    // 道具减法（2026-10-13）：思想者、阿波罗、非洲复兴纪念碑、俗 4 座雕像下架，剩下 3 座每组 1 座
+    expect(bundle!.renownShop).toHaveLength(10);
     expect(bundle!.renownShop[0]).toEqual({
       goodsId: GOODS.dtTicket,
       renown: 60,
@@ -768,11 +717,15 @@ describe('厨塔配置（子项目 4C-2）', () => {
       weekGroup: 0,
       require: null,
     });
-    expect(bundle!.renownShop.find((x) => x.goodsId === GOODS.armStatue)).toMatchObject({
-      renown: 5000,
-      rare: true,
-      weekGroup: 4,
-    });
+    expect(
+      bundle!.renownShop
+        .filter((x) => x.weekGroup > 0)
+        .map((x) => [x.goodsId, x.renown, x.rare, x.weekGroup]),
+    ).toEqual([
+      [gid('恰克摩尔-雕像'), 3000, true, 2],
+      [gid('史前怪石-雕像'), 3000, true, 1],
+      [gid('破-雕像'), 3000, true, 3],
+    ]);
     expect(bundle!.renownShop.find((x) => x.goodsId === gid('仙贝-红'))).toMatchObject({ require: 'xz' });
     expect('renownShop' in bundle!.extra).toBe(false);
   });
@@ -824,8 +777,8 @@ describe('小镇（子项目 4E-1）', () => {
     const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     // 62 条里 37 条换到的是下架的道具（2026-10-08 一批、天气改版的雷神锤），构建时自动去掉（问题记录 501）；
-    // 换名画的 12 条随名画删掉（道具减法 2026-10-13）
-    expect(bundle!.goodsExchange).toHaveLength(25);
+    // 换名画的 12 条随名画删掉，换星月密卷的 1 条随菜园删掉，换边牧、激动的心、星光之钥、捕梦网、星神之书的 5 条删掉（道具减法 2026-10-13）
+    expect(bundle!.goodsExchange).toHaveLength(19);
     // 雷神锤换成司天罗盘：2 个蟹黄堡，每周 1 次（天气改版，用户 2026-10-12）
     expect(bundle!.goodsExchange.find((e) => e.goodsId === gid('司天罗盘'))).toEqual({
       id: 74,
@@ -1428,13 +1381,13 @@ describe('活跃度新增项目（问题记录 318）', () => {
 });
 
 describe('任务配置（问题记录 318）', () => {
-  it('11 章（第 12 章暂未开放，问题记录 515）；主线按章排；支线 28 条（515 支线扩充 A 加了酒运、酒桌高手，B 加了 10 条，之后加了经营）；每周 3 组；id 不重复', () => {
+  it('11 章（第 12 章暂未开放，问题记录 515）；主线按章排；支线 27 条（515 支线扩充 A 加了酒运、酒桌高手，B 加了 10 条，之后加了经营；菜园删掉少 1 条）；每周 3 组；id 不重复', () => {
     const b = realBuild().bundle!;
     expect(b.chapters.map((c) => c.id)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
     const mains = b.quests.filter((q) => q.line === null);
     expect(mains.every((q) => q.id === 2000 + q.chapter * 20 + q.order)).toBe(true);
     expect(new Set(mains.map((q) => q.chapter))).toEqual(new Set(b.chapters.map((c) => c.id)));
-    expect(b.questLines).toHaveLength(28);
+    expect(b.questLines).toHaveLength(27);
     const sides = b.quests.filter((q) => q.line !== null);
     expect(sides.every((q) => q.id === 3000 + q.line! * 20 + q.order)).toBe(true);
     expect(b.weeklyGroups.map((g) => [g.key, g.minStar, g.maxStar, g.quests.length])).toEqual([
@@ -1450,12 +1403,12 @@ describe('任务配置（问题记录 318）', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('奖励总量：主线 1,072 万、支线 1,580 万银币（第 12 章、天馔一档暂未开放；515 支线扩充 A 加了 437 万、B 加了 677 万、经营 138 万；神灯许愿一档删掉少 3 万、集名画一档删掉少 20 万）；经验 = 银币 ÷ 10', () => {
+  it('奖励总量：主线 1,066 万、支线 1,556 万银币（第 12 章、天馔一档暂未开放；515 支线扩充 A 加了 437 万、B 加了 677 万、经营 138 万；神灯许愿一档删掉少 3 万、集名画一档删掉少 20 万；菜园删掉主线少 6 万、支线少 24 万）；经验 = 银币 ÷ 10', () => {
     const b = realBuild().bundle!;
     const coin = (main: boolean) =>
       b.quests.filter((q) => (q.line === null) === main).reduce((s, q) => s + (q.award.coin ?? 0), 0);
-    expect(coin(true)).toBe(10_720_000);
-    expect(coin(false)).toBe(15_798_000);
+    expect(coin(true)).toBe(10_660_000);
+    expect(coin(false)).toBe(15_558_000);
     for (const q of b.quests) expect(q.award.exp ?? 0, String(q.id)).toBe((q.award.coin ?? 0) / 10);
   });
 

@@ -118,7 +118,6 @@ export function createTaskService(d: GameDeps) {
         sql<number>`(select count(*) from friend where rest_id = ${rest.id})`.as('friends'),
         sql<number | null>`(select max(stress) from equip where rest_id = ${rest.id})`.as('maxStress'),
         sql<number>`(select count(*) from rest_mc where rest_id = ${rest.id})`.as('mcLearned'),
-        sql<number>`(select count(*) from yard_land where rest_id = ${rest.id})`.as('lands'),
         sql<boolean>`exists(select 1 from takeaway_state where rest_id = ${rest.id})`.as('takeaway'),
         // 支线扩充 B（问题记录 515）
         sql<number | null>`(select best_floor from tower_state where rest_id = ${rest.id})`.as('bestFloor'),
@@ -158,7 +157,6 @@ export function createTaskService(d: GameDeps) {
       'rest.thumbs': counters['thumbs.received'] ?? 0,
       'equip.maxStress': Number(facts.maxStress ?? 0),
       'mc.learned': Number(facts.mcLearned),
-      'yard.lands': Number(facts.lands),
       'takeaway.open': facts.takeaway ? 1 : 0,
       'cookbooks.foreignLearned': foreignLearned(counts.street),
       'tower.bestFloor': facts.bestFloor ?? 0,

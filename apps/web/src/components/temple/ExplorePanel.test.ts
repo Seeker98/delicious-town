@@ -20,7 +20,6 @@ describe('ExplorePanel', () => {
       fail: 1,
       rare: [],
       foods: [{ foodsId: 1, num: 2 }],
-      exp: 0,
     });
   });
 

@@ -8,7 +8,6 @@ import { awardWords, n, type P, plEn } from '../../helpers';
 /** 天气四大类（镇长猜天气的消息用） */
 const WT = ['', 'Sunny', 'Rain', 'Snow & ice', 'Wind, sand & fog'];
 const mcNameOf = (names: Names, id: number) => names.mcName?.(id) ?? `Signature dish ${id}`;
-const seedNameOf = (names: Names, id: number) => names.seedName?.(id) ?? `Seed ${id}`;
 const holdHours = (p: P) => (p.holdHours === undefined ? 24 : n(p, 'holdHours'));
 const heldNote = (p: P) =>
   p.held
@@ -81,17 +80,6 @@ function describeFeed(
       return `${who} gave you a thumbs-up`;
     case 'friend.apply':
       return `${who} sent you a friend request`;
-    case 'yard.helped': {
-      // 除虫不用 debugged：那是程序员的双关（backlog 多语言）
-      const what = p.what === 'weed' ? 'weeded' : p.what === 'deworm' ? 'got rid of the bugs on' : 'watered';
-      return `${who} ${what} your ${foodName(Number(p.foodsId))}`;
-    }
-    case 'yard.stolen': {
-      const caught = p.punished
-        ? `, got caught by your border collie and left ${foodName(Number(p.punished))} behind`
-        : '';
-      return `${who} stole your ${foodName(Number(p.foodsId))}×${String(p.num)}${caught}`;
-    }
     case 'friend.accept':
       return `${who} accepted your friend request`;
     default:
@@ -112,8 +100,6 @@ const events: Messages['events'] = {
     strength: 'Stamina',
   },
   remnant: (names, id) => `${mcNameOf(names, id)} fragment`,
-  seed: (names, id) => seedNameOf(names, id),
-  basket: (name) => `Basket · ${name}`,
   activityCurrency: (name, num) => `${name ?? 'Event currency'}×${num} (event currency)`,
   lucky: ' (lucky)',
   sep: ', ',

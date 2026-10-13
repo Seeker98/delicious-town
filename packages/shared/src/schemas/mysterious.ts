@@ -6,8 +6,6 @@ export const mcIdParam = z.object({ id: z.coerce.number().int().positive() });
 export const appraiseBody = z.object({
   toolId: id,
   times: z.number().int().min(1).max(99),
-  /** 勾选"低于 5 级不重抽" */
-  noRetry: z.boolean().default(false),
 });
 export const remnantBody = z.object({ mcId: id, num: z.number().int().min(1).max(9999) });
 export const mcLearnBody = z.object({ mcId: id });
@@ -55,8 +53,6 @@ export interface McToolDto {
   blackDiamond: number | null;
   award: boolean;
   champion: boolean;
-  /** 神殿守护兽暴击会掉（厨神玉玺，backlog 415） */
-  guardian: boolean;
 }
 
 export interface McOverviewDto {
@@ -77,8 +73,6 @@ export interface McOverviewDto {
   tools: McToolDto[];
   cookies: number;
   cookNums: number[];
-  /** 有星神之书时鉴定会重抽 */
-  starBook: boolean;
   /** 持有特色菜鉴定师时是它（鉴定 +5%，天气改版 PR③）；没有为 null */
   jobCard: number | null;
   /** 现在的当令（已学列表标当令、下锅面板写是否应时） */
@@ -91,7 +85,6 @@ export interface AppraiseResultDto {
     ok: boolean;
     mcId?: number;
     num?: number;
-    blessed?: boolean;
     text?: string;
     textId?: number;
   }>;

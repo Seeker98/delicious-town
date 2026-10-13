@@ -320,15 +320,6 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
       });
     },
 
-    setCte(ctx: RestCtx, on: boolean) {
-      return op(ctx, 'rest.cte', async (o) => {
-        if (on && !(await hasValidHonor(o, GOODS.apolloStatue)))
-          throw requirement('statue', { goodsId: GOODS.apolloStatue });
-        setRest(o, 'cte_on', on);
-        return { on };
-      });
-    },
-
     drivePlankton(ctx: RestCtx, way: 'strength' | 'book') {
       return op(ctx, 'plankton.drive', async (o) => {
         const snap = await world.ensure(o.shardId, o.now, o.tx);
@@ -366,18 +357,6 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
         restLog(o, 'plankton.driven', { way, renown });
         opNews(o, 'plankton.driven', { way, name: o.rest.name });
         return { renown };
-      });
-    },
-
-    driveKrab(ctx: RestCtx) {
-      return op(ctx, 'krab.drive', async (o) => {
-        if (!(await hasValidHonor(o, GOODS.armStatue)))
-          throw requirement('statue', { goodsId: GOODS.armStatue });
-        if (!(await hasValidHonor(o, GOODS.krabAngry))) throw invalidState('no_angry_krab');
-        spendStrength(o, o.tuning.growth.driveKrabStrength);
-        await removeHonor(o, GOODS.krabAngry);
-        restLog(o, 'krab.driven');
-        return { ok: true };
       });
     },
   };

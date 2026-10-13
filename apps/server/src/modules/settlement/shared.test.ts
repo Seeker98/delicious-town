@@ -22,7 +22,6 @@ describe('共用纯函数（快速模拟设计 §4.2）', () => {
         streetId: 0,
         renown: 0,
         luck: 2,
-        cteOn: false,
         cookfoodsFlag: 0,
       },
       tables: [],

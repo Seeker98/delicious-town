@@ -131,7 +131,6 @@ export function toRestaurantDto(
     state: r.state,
     stateReason: r.state_reason,
     promoOn: r.promo_on,
-    cteOn: r.cte_on,
     cookfoodsFlag: r.cookfoods_flag,
     plaque2Open: r.plaque2_open,
     plaque2Cost: extra.plaque2Cost,

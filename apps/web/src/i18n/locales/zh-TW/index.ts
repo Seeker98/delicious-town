@@ -41,7 +41,6 @@ import takeaway from './takeaway';
 import temple from './temple';
 import tower from './tower';
 import town from './town';
-import yard from './yard';
 import util from './util';
 
 /** 簡中翻譯：所有語言的結構以它為準（問題記錄 272） */
@@ -69,7 +68,6 @@ const zhCN = {
   bar,
   temple,
   tower,
-  yard,
   takeaway,
   mc,
   activity,

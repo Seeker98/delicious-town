@@ -232,37 +232,6 @@ export const restaurantDefaultsSchema = z.object({
   /** 开局食材：新手街几道菜的材料和低级万能食材，让新号当天就能学菜 */
   giftFoods: z.array(z.object({ id: int, num: int.min(1) })).default([]),
 });
-
-export const rawSeed = z.object({
-  id: int,
-  foodsId: int,
-  name: z.string(),
-  foodsLevel: int,
-  coin: z.number(),
-  infancy: int,
-  maturity: int,
-  autumn: int,
-  harvest: int,
-  harvestnum: int,
-  odds: z.number(),
-});
-export const rawSeedExchange = z.object({ seedId: int, seednum: int, remnantnum: int });
-export const rawFormula = z.object({
-  id: int,
-  name: z.string(),
-  mainFoodsId: int,
-  subFoodsId: int,
-  addFoodsId: int,
-  resFoodsId: int,
-  odds: z.number(),
-});
-export const rawIncomeAction = z.object({
-  id: int,
-  name: z.string(),
-  coin: z.number(),
-  exp: z.number(),
-  landExp: int.optional(),
-});
 export const rawSlotAward = z.object({
   id: int,
   /** 0 空、1 食材、2 道具 */

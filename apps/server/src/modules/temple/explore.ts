@@ -4,7 +4,7 @@ import { emitAction } from '../../core/action';
 import { opLuck } from '../../core/luck';
 import { opNeedPick } from '../../core/scarcity';
 import { opNews, type Op } from '../../core/op';
-import { gainExp, spendStrength } from '../../core/resources';
+import { spendStrength } from '../../core/resources';
 import { equipOff, restGear, suitEffect } from '../equip/power';
 import { consumeGoods, hasValidHonor } from '../store/goods';
 import { addFoodsMerged, badInput, bump, pickFood, toList } from './common';
@@ -27,9 +27,7 @@ export async function exploreMaps(
   spendStrength(o, def.needStrength * b.times);
   const { rate: luck } = await opLuck(o);
   const needle = await hasValidHonor(o, GOODS.needle);
-  const lamp = await hasValidHonor(o, GOODS.lamp);
   const card = await hasValidHonor(o, GOODS.securityCard);
-  const starKey = await hasValidHonor(o, GOODS.starKey);
   const book = b.goodsId === GOODS.mapHigh && (await hasValidHonor(o, GOODS.exploreBook));
   const eff = (id: number, key: string) => o.config.requireGoods(id).effects[key] ?? 0;
   const gear = await restGear(o.tx, o.rest, o.config.suits, equipOff(o.settings));
@@ -40,7 +38,6 @@ export async function exploreMaps(
   });
   const rareRate =
     def.mysteriousRate +
-    (lamp ? eff(GOODS.lamp, 'mysteriousRate') : 0) +
     (needle ? eff(GOODS.needle, 'mysteriousRate') : 0) +
     (card ? eff(GOODS.securityCard, 'mysteriousRate') : 0) +
     streetMysteriousRate(o.config, o.rest.street_id) +
@@ -61,17 +58,15 @@ export async function exploreMaps(
     success += 1;
     if (o.rng.chance(rareRate + luck / 20)) {
       const id = pickFood(o, 7, needPick);
-      bump(rare, id, starKey && o.rng.chance(0.5) ? 2 : 1);
+      bump(rare, id);
     }
-    for (const x of exploreSplit(def, exploreAwardNum(def, starKey, o.rng)))
+    for (const x of exploreSplit(def, exploreAwardNum(def, o.rng)))
       for (let k = 0; k < x.num; k++) bump(foods, pickFood(o, x.level, needPick));
     for (let k = 0; k < level3; k++) bump(foods, pickFood(o, 3, needPick));
   }
   await addFoodsMerged(o, rare);
   await addFoodsMerged(o, foods);
-  const exp = lamp ? def.needStrength * o.rest.level * (success * 5 + fail * 2) : 0;
-  if (exp > 0) gainExp(o, exp);
   if (rare.size > 0) opNews(o, 'temple.explore.rare', { foods: toList(rare) });
   await emitAction(o, 'temple.explore', b.times);
-  return { success, fail, rare: toList(rare), foods: toList(foods), exp };
+  return { success, fail, rare: toList(rare), foods: toList(foods) };
 }

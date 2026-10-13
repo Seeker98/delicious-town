@@ -34,8 +34,6 @@ export interface ShotInput {
   hitBonus: number;
   /** 加成 missileCritRate + 天气 missileCrit */
   critBonus: number;
-  /** 捕梦网掉玉玺的概率；没有捕梦网为 0 */
-  sealRate: number;
 }
 
 export interface Shot {
@@ -46,13 +44,11 @@ export interface Shot {
   ticket: number;
   /** 暴击掉了探险图 */
   map: boolean;
-  /** 暴击掉了厨神玉玺 */
-  seal: boolean;
 }
 
 /** 一枚飞弹（规格书 09 §9.1） */
 export function shoot(i: ShotInput, t: TempleTuning, rng: Rng): Shot {
-  const miss: Shot = { hit: false, crit: false, damage: 0, ticket: 0, map: false, seal: false };
+  const miss: Shot = { hit: false, crit: false, damage: 0, ticket: 0, map: false };
   if (!(rng.next() < i.def.hitRate + i.luckRate / 4 + i.hitBonus)) return miss;
   const crit = rng.next() < i.def.crit + i.critBonus;
   const [min, max] = i.def.attack;
@@ -62,8 +58,7 @@ export function shoot(i: ShotInput, t: TempleTuning, rng: Rng): Shot {
   const ticket =
     rng.next() < t.missileTicketRate + i.luckRate / 4 ? rng.intMin1(Math.floor(damage / 100)) : 0;
   const map = rng.next() < t.missileMapRate + i.luckRate / 20;
-  const seal = i.sealRate > 0 && rng.next() < i.sealRate;
-  return { hit: true, crit: true, damage, ticket, map, seal };
+  return { hit: true, crit: true, damage, ticket, map };
 }
 
 /** 击败奖励：3、2、1 级食材各 (⌊base/等级⌋ + rand(spread) − spread/2) × 奖励倍数 个，取整 */
@@ -91,9 +86,9 @@ export function exploreRate(def: MapDef, b: { needle: boolean; lostRate: number;
   return rate;
 }
 
-export function exploreAwardNum(def: MapDef, starKey: boolean, rng: Rng): number {
+export function exploreAwardNum(def: MapDef, rng: Rng): number {
   const [min, max] = def.num;
-  return rng.intMin1(max - min) + min + (starKey ? 2 : 0);
+  return rng.intMin1(max - min) + min;
 }
 
 /** 按等级分配普通食材：4 级 75%、其他 25%，照源码 ⌊round(x×10)/10⌋ 取整（计划裁定 1） */

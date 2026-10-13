@@ -120,7 +120,6 @@ describe('ActivationPanel', () => {
         questLines: [],
         activation: [{ id: 1, name: 'Check in' }],
         tower: [],
-        formulas: [],
         kujiThemes: [],
         proficiency: [],
         cookbooks: [],

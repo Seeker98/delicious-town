@@ -31,6 +31,10 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    cuts21013:
+      'Moins d’objets, deuxième vague\u202f: les statues Apollon, Monument de la Renaissance africaine, Vulgaire et Le Penseur, la Clé de lumière stellaire, le Border collie, le Livre du Dieu des étoiles, la Lampe à pétrole, le Cœur qui bat la chamade et l’Attrape-rêves disparaissent\u202f; avec eux disparaissent la conversion des pièces en EXP, le renvoi manuel de M. Krab en colère, la seconde expertise, les Sceaux de jade du Dieu de la cuisine sur les coups critiques du gardien et les livraisons ratées changées en réussites\u202f; la boutique de renommée propose désormais une des statues restantes chaque semaine',
+    yard1013:
+      'Le potager disparaît\u202f: cultures, vols de récoltes, panier, formules et engrais sont supprimés, ainsi que le Rouleau de l’étoile et de la lune\u202f; les étapes du potager dans les quêtes principales et secondaires disparaissent aussi, et le chapitre 5 de la quête principale s’appelle désormais «\u202fUstensiles et Tour des chefs\u202f»',
     cuts1013:
       'Moins d’objets\u202f: les tableaux, la Lampe magique et le Vœu du village, le Collier d’amour et Mission accomplie (portions doubles en livraison) disparaissent\u202f; le Marché premium demande désormais une médaille du fonds de rang B ou plus\u202f; les récompenses d’activité ne sont plus doublées\u202f; les quêtes secondaires perdent les étapes «\u202fPosséder 7 tableaux\u202f» et «\u202fFaire un vœu avec la Lampe magique\u202f»',
     special1013:

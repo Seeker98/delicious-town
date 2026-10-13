@@ -145,10 +145,6 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   const questMainRaw = parse('designed/quest_main', z.array(raw.rawQuestMain));
   const questLinesRaw = parse('designed/quest_lines', z.array(raw.rawQuestLine));
   const weeklyRaw = parse('designed/quest_weekly', z.array(raw.rawWeeklyGroup));
-  const seedsRaw = parse('designed/seeds', z.array(raw.rawSeed));
-  const seedExRaw = parse('designed/seed_exchange', z.array(raw.rawSeedExchange));
-  const formulasRaw = parse('designed/foods_formula', z.array(raw.rawFormula));
-  const incomeRaw = parse('designed/income_action', z.array(raw.rawIncomeAction));
   const slotRaw = parse('dataset/bar_slot_machine_award', z.array(raw.rawSlotAward));
   const towerRaw = parse('dataset/tower_floors', z.array(raw.rawTowerFloor));
   const goodsExRaw = parse('designed/goods_exchange', z.array(raw.rawGoodsExchange));
@@ -222,10 +218,6 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     !questMainRaw ||
     !questLinesRaw ||
     !weeklyRaw ||
-    !seedsRaw ||
-    !seedExRaw ||
-    !formulasRaw ||
-    !incomeRaw ||
     !slotRaw ||
     !towerRaw ||
     !goodsExRaw ||
@@ -942,19 +934,6 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   for (const a of guessBonus) checkAward(`market_guess_award bonus ${a.minHits}`, a.award);
 
   // ---------- 以后子项目用到的表 ----------
-  const seeds = seedsRaw.map((s) => ({
-    id: s.id,
-    foodsId: s.foodsId,
-    name: s.name,
-    level: s.foodsLevel,
-    coin: s.coin,
-    infancy: s.infancy,
-    maturity: s.maturity,
-    autumn: s.autumn,
-    harvest: s.harvest,
-    harvestNum: s.harvestnum,
-    odds: s.odds,
-  }));
   for (const g of goods) {
     if (g.deviceType === 97) {
       const m = parseMissileDef(g.value);
@@ -964,61 +943,6 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
       const m = parseMapDef(g.value);
       if (typeof m === 'string') errors.push(`goods ${g.id} map ${m}`);
     }
-  }
-  const seedIds = new Set(seedsRaw.map((s) => s.id));
-  for (const s of seedsRaw)
-    if (!foodIds.has(s.foodsId)) errors.push(`seed ${s.id} references unknown food ${s.foodsId}`);
-  const seedExchange = seedExRaw.map((e) => ({
-    seedId: e.seedId,
-    seedNum: e.seednum,
-    essence: e.remnantnum,
-  }));
-  for (const e of seedExchange) {
-    if (!seedIds.has(e.seedId)) errors.push(`seed_exchange references unknown seed ${e.seedId}`);
-    if (e.seedNum < 1 || e.essence < 1) errors.push(`seed_exchange ${e.seedId} needs positive numbers`);
-  }
-  const formulas = formulasRaw.map((f) => ({
-    id: f.id,
-    name: f.name,
-    mainFoodsId: f.mainFoodsId,
-    subFoodsId: f.subFoodsId,
-    addFoodsId: f.addFoodsId,
-    resFoodsId: f.resFoodsId,
-    odds: f.odds,
-  }));
-  unique(
-    'foods_formula',
-    formulas.map((f) => f.id),
-  );
-  for (const f of formulas) {
-    for (const id of [f.mainFoodsId, f.subFoodsId, f.addFoodsId, f.resFoodsId]) {
-      if (!foodIds.has(id)) errors.push(`formula ${f.id} references unknown food ${id}`);
-    }
-  }
-  const incomeActions = incomeRaw.map((a) => ({
-    id: a.id,
-    name: a.name,
-    coin: a.coin,
-    exp: a.exp,
-    landExp: a.landExp ?? 0,
-  }));
-  unique(
-    'income_action',
-    incomeActions.map((a) => a.id),
-  );
-  for (const id of [50, 51, 52, 53, 54, 55, 56])
-    if (!incomeActions.some((a) => a.id === id)) errors.push(`income_action missing yard action ${id}`);
-  for (const id of [
-    GOODS.formulaScroll,
-    GOODS.moonScroll,
-    GOODS.starTear,
-    GOODS.formulaEssence,
-    GOODS.borderCollie,
-  ])
-    if (!goodsIds.has(id)) errors.push(`yard references unknown goods ${id}`);
-  for (const g of goods) {
-    if (g.deviceType === 80 && !((g.effects.plantTime ?? 0) > 0))
-      errors.push(`goods ${g.id} fertilizer needs a positive plantTime`);
   }
   // ---------- 酒吧（子项目 4C-1） ----------
   const SLOT_KINDS = ['empty', 'foods', 'goods'] as const;
@@ -1401,7 +1325,6 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
         title: f.title,
         note: f.note,
       })),
-      formulas: [...formulas.values()],
       kujiThemes: kujiThemes.map((x) => ({ id: x.month, name: x.name, desc: x.desc })),
       proficiency: mcProficiency.map((x) => ({ id: x.curlevel, name: x.name })),
       cookbooks,
@@ -1421,10 +1344,6 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     streets,
     mysteriousCookbooks,
     mcProficiency,
-    seeds,
-    formulas,
-    seedExchange,
-    incomeActions,
     slotAwards,
     towerFloors,
     weatherChain,

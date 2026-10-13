@@ -63,7 +63,6 @@ export default {
     claimFailed: '领取失败',
     noDiamond: (n: number) => `钻石不够 (要 ${n})`,
     failedReason: (reason: string) => `配送失败: ${reason}`,
-    forced: '配送成功 (边牧帮了忙)',
     drone: '无人机送到了',
     success: '配送成功',
     coin: (n: string) => `银币 +${n}`,

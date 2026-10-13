@@ -151,8 +151,6 @@ describe('开放接口数据（问题记录 142）', () => {
     expect(food.cookbooks.map((c) => c.id)).toEqual(
       [...food.cookbooks.map((c) => c.id)].sort((x, y) => x - y),
     );
-    const seed = b.seeds[0]!;
-    expect(data.food('zh-CN', seed.foodsId)!.seed).toEqual({ id: seed.id, harvestNum: seed.harvestNum });
     const mc = b.mysteriousCookbooks[0]!;
     expect(data.food('zh-CN', mc.foods[0]!)!.mysterious.map((m) => m.id)).toContain(mc.id);
     expect(data.food('zh-CN', 999_999)).toBeNull();

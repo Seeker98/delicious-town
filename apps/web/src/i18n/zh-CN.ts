@@ -9,13 +9,11 @@ export interface NameResolver {
   goodsName(id: number): string;
   foodName(id: number): string;
   mcName(id: number): string;
-  seedName(id: number): string;
 }
 const fallbackNames: NameResolver = {
   goodsName: (id) => activeMessages().errors.fallbackName.goods(id),
   foodName: (id) => activeMessages().errors.fallbackName.food(id),
   mcName: (id) => activeMessages().errors.fallbackName.mc(id),
-  seedName: (id) => activeMessages().errors.fallbackName.seed(id),
 };
 let names: NameResolver = fallbackNames;
 /** 由目录 store 在加载后注入，错误文案里才能显示道具、食材名称 */
@@ -55,15 +53,9 @@ export function errorText(code: string, params: Record<string, unknown> = {}): s
           ? names.foodName(id)
           : kind === 'remnant'
             ? sp.remnant(names.mcName(id))
-            : kind === 'seed'
-              ? names.seedName(id)
-              : kind === 'basket'
-                ? sp.basket(names.foodName(id))
-                : kind === 'fragment'
-                  ? sp.fragment(params.part === 'main' ? 'main' : 'sub')
-                  : Object.hasOwn(e.kind, kind)
-                    ? e.kind[kind as keyof typeof e.kind]
-                    : sp.amount;
+            : Object.hasOwn(e.kind, kind)
+              ? e.kind[kind as keyof typeof e.kind]
+              : sp.amount;
     return sp.notEnough(thing, str(params.need), str(params.have));
   }
   if (code === 'REQUIREMENT_NOT_MET' && Object.hasOwn(e.requirement, reason))

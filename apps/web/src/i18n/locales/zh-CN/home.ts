@@ -133,8 +133,6 @@ export default {
   switches: '经营开关',
   promo: '大促活动',
   promoHint: '八折促销: 上座率大增, 收益略降',
-  cte: '银币转经验',
-  cteHint: '需要阿波罗雕像',
   setFailed: '设置失败',
   cookfoods: '挑剔消耗食材档位',
   off: '关闭',

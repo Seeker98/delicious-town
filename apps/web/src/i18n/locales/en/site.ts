@@ -31,6 +31,10 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    cuts21013:
+      "Fewer items, round two: the Apollo, African Renaissance Monument, Vulgar and The Thinker statues, the Starlight Key, Border Collie, Star God's Book, Kerosene Lamp, Racing Heart and Dreamcatcher are gone; with them go coins to EXP, driving away an angry Mr. Krab by hand, appraisal rerolls, God of Cookery Jade Seals from guardian critical hits and failed deliveries turned into successes; the renown shop now has one of the remaining statues every week",
+    yard1013:
+      'The garden is gone: planting, stealing crops, the basket, formulas and fertilizer are all removed, along with the Star and Moon Scroll; the garden steps in the main and side quests are gone too, and main quest chapter 5 is now called “Cookware and the Tower”',
     cuts1013:
       'Fewer items: paintings, the Magic Lamp and the town Wish, the Love Necklace and Mission Accomplished (extra takeaway portions) are gone; the Premium market now needs a tier B or higher fund medal; activity rewards are no longer doubled; side quests drop the “Own 7 paintings” and “Make a wish with the Magic Lamp” steps',
     special1013:

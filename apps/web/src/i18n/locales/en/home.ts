@@ -127,8 +127,6 @@ const home: Messages['home'] = {
   switches: 'Business settings',
   promo: 'Big sale',
   promoHint: '20% off: far more customers, slightly lower income',
-  cte: 'Coins to EXP',
-  cteHint: 'Requires the Apollo Statue',
   setFailed: 'Setting failed',
   cookfoods: 'Picky ingredient use level',
   off: 'Off',

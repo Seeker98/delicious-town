@@ -57,7 +57,7 @@ export interface MayorDto {
 
 /** 小镇玩法获得的东西；银币、钻石的 id 为 null */
 export interface TownRewardDto {
-  kind: 'foods' | 'goods' | 'seed' | 'coin' | 'diamond';
+  kind: 'foods' | 'goods' | 'coin' | 'diamond';
   id: number | null;
   num: number;
 }

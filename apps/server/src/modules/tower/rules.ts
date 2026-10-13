@@ -84,8 +84,15 @@ export function isoWeek(day: string): number {
   return 1 + Math.round((d.getTime() - first.getTime()) / (7 * 86_400_000));
 }
 
-/** 本周在售（裁定 12）：没有前置条件，且常驻或轮到本周 */
+/**
+ * 本周在售（裁定 12）：没有前置条件，且常驻或轮到本周。
+ * 轮换组按配置里实际有的组（weekGroup > 0 去重排序）走：第 ISO 周数 % 组数 个，每周都有一组
+ * （道具减法 2026-10-13：雕像删到 3 座，原来固定 4 组会空出一周）
+ */
 export function shopOnSale(items: readonly RenownShopItem[], day: string): RenownShopItem[] {
-  const group = (isoWeek(day) % 4) + 1;
+  const groups = [...new Set(items.filter((x) => x.weekGroup > 0).map((x) => x.weekGroup))].sort(
+    (a, b) => a - b,
+  );
+  const group = groups.length > 0 ? groups[isoWeek(day) % groups.length] : undefined;
   return items.filter((x) => x.require === null && (x.weekGroup === 0 || x.weekGroup === group));
 }

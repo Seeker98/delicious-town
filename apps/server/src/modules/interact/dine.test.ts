@@ -17,7 +17,6 @@ import {
 import { createShard } from '../../../test/fixtures';
 import { awardGoodsPool } from '../award/random';
 import { settleShardRound } from '../settlement/runner';
-import { grantGoods } from '../store/grant';
 
 const config = testConfig();
 let t: TestGame;
@@ -268,15 +267,6 @@ describe('白食结束、请走', () => {
       .where('rest_id', '=', b.restaurantId)
       .execute();
     expect(after).toEqual(before);
-  });
-
-  it('激动的心：经验 ×3、体力 ×1.5', async () => {
-    const [a, b] = await setup();
-    await grantGoods(t.db, config, a.restaurantId, GOODS.excitedHeart, 1, t.clock.now);
-    await dine().start(a, { restId: b.restaurantId, tableNo: 1 });
-    await setAcc(b.restaurantId, 0, 50);
-    t.clock.advance(121 * MIN);
-    expect((await dine().end(a)).data).toEqual({ coin: 0, exp: 150, strength: 60 });
   });
 
   it('请走：不满 30 分钟不行；店主拿 2 倍，白食者赔银币、不得经验', async () => {

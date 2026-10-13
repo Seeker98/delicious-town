@@ -2,7 +2,6 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { gameDay, gameTime } from '@dt/shared';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import { GOODS } from '@dt/config';
-import { fid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -34,14 +33,6 @@ describe('神殿概览', () => {
       worthMax: 30,
       expMax: 150,
       pickCost: 30,
-    });
-  });
-
-  it('目录带种子（id、食材、等级）', () => {
-    expect(t.game.world.catalog().seeds!.find((s) => s.id === 1)).toEqual({
-      id: 1,
-      foodsId: fid('大米'),
-      level: 1,
     });
   });
 

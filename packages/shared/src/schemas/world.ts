@@ -100,20 +100,17 @@ export interface CatalogDto {
   suits?: Array<{ id: number; name: string; maxNum: number; tiers: Array<{ need: number; desc: string }> }>;
   /** 特色菜；旧缓存里没有 */
   mysterious?: CatalogMcDto[];
-  /** 种子；旧缓存里没有 */
-  seeds?: Array<{ id: number; foodsId: number; level: number }>;
   /** 服务端接口直接给名字的数据，前端按 id 取当前语言的名字（问题记录 272）；旧缓存里没有 */
   data?: Record<CatalogDataKind, CatalogDataEntry[]>;
 }
 
-/** 任务（主线、支线、每周）、主线章节、玩法支线、活跃项、厨塔各层（id = 层）、菜园配方、一番赏主题（id = 月）、特色菜熟练度（id = 等级）、菜名 */
+/** 任务（主线、支线、每周）、主线章节、玩法支线、活跃项、厨塔各层（id = 层）、一番赏主题（id = 月）、特色菜熟练度（id = 等级）、菜名 */
 export const CATALOG_DATA_KINDS = [
   'tasks',
   'chapters',
   'questLines',
   'activation',
   'tower',
-  'formulas',
   'kujiThemes',
   'proficiency',
   'cookbooks',

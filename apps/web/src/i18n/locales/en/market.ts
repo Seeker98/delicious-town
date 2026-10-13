@@ -64,7 +64,7 @@ const market: Messages['market'] = {
       'Level 1 and 2 universal ingredients can be traded for rare ones in your pantry. Level 3 and up can only stand in when learning recipes.',
       'The daily market restocks every two hours during the day.',
       "The bargain market restocks every hour. That's the best place for high-level ingredients.",
-      "Harvest your garden as soon as it's ripe, or someone will steal it.",
+      "If a friend's restaurant is low on oil, you can fill it up with your own.",
       'My vegetables are the freshest in town!',
       'The more dishes you can cook, the more customers you get.',
       'Check in on the home page every day for a check-in gift.',

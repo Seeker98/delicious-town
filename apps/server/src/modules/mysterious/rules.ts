@@ -1,5 +1,5 @@
 import type { AppraiseDef, McProficiency, MysteriousCookbook, Tuning } from '@dt/config';
-import { pickWeighted, type Rng, type WeightedPool } from '@dt/shared';
+import type { Rng } from '@dt/shared';
 
 export type McTuning = Tuning['mysterious'];
 
@@ -106,27 +106,12 @@ export function appraiseRate(def: AppraiseDef, bonus: number, luckRate: number):
   return def.rate + bonus + luckRate / 8;
 }
 
-/** 按 odds 抽一道；retry（有星神之书且没勾"不重抽"）时低于 appraiseRetryBelow 级再抽一次取高的 */
-export function appraisePick(
-  pool: WeightedPool<MysteriousCookbook>,
-  retry: boolean,
-  t: McTuning,
-  rng: Rng,
-): { mc: MysteriousCookbook; blessed: boolean } {
-  const first = pickWeighted(pool, rng);
-  if (!retry || first.level >= t.appraiseRetryBelow) return { mc: first, blessed: false };
-  const second = pickWeighted(pool, rng);
-  return second.level > first.level ? { mc: second, blessed: true } : { mc: first, blessed: false };
+export function learnRate(luckRate: number, t: McTuning): number {
+  return t.lessonLearnRate + luckRate / 5;
 }
 
-export function learnRate(thinker: boolean, luckRate: number, t: McTuning): number {
-  return (thinker ? 1 : t.lessonLearnRate) + luckRate / 5;
-}
-
-export function stealRate(level: number, thinker: boolean, luckRate: number, t: McTuning): number {
-  return (
-    t.lessonStealRate - level * t.lessonStealPerLevel + (thinker ? t.thinkerStealBonus : 0) + luckRate / 5
-  );
+export function stealRate(level: number, luckRate: number, t: McTuning): number {
+  return t.lessonStealRate - level * t.lessonStealPerLevel + luckRate / 5;
 }
 
 export function forgetCount(level: number, t: McTuning): number {

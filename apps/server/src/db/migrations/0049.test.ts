@@ -49,7 +49,8 @@ const OVERRIDE = {
 async function seedOld() {
   await db.insertInto('store_item').values({ rest_id: rest, goods_id: 1, num: 3 }).execute();
   await db.insertInto('cupboard_food').values({ rest_id: rest, foods_id: 101, num: 5 }).execute();
-  await db.insertInto('yard_basket').values({ rest_id: rest, foods_id: 104, num: 2 }).execute();
+  // 菜篮在 0072 删掉了，最新的表类型里没有它：用原始 SQL
+  await sql`insert into yard_basket (rest_id, foods_id, num) values (${rest}, 104, 2)`.execute(db);
   await db.insertInto('exchange_wallet_food').values({ rest_id: rest, foods_id: 467, num: 1 }).execute();
   await db
     .insertInto('takeaway_order')
@@ -335,8 +336,8 @@ describe('迁移 0049：重新编号', () => {
         .foods_id,
     ).toBe(f(101));
     expect(
-      (await db.selectFrom('yard_basket').select('foods_id').where('rest_id', '=', rest).execute())[0]!
-        .foods_id,
+      (await sql<{ foods_id: number }>`select foods_id from yard_basket where rest_id = ${rest}`.execute(db))
+        .rows[0]!.foods_id,
     ).toBe(f(104));
     expect(
       (

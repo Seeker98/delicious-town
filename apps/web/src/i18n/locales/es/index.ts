@@ -41,7 +41,6 @@ import takeaway from './takeaway';
 import temple from './temple';
 import tower from './tower';
 import town from './town';
-import yard from './yard';
 import util from './util';
 
 const messages: Messages = {
@@ -68,7 +67,6 @@ const messages: Messages = {
   bar,
   temple,
   tower,
-  yard,
   takeaway,
   mc,
   activity,

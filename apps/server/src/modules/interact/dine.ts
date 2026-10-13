@@ -3,7 +3,6 @@ import { gameDay, type DineCurrentDto, type DineRewardDto } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, limitReached, requirement } from '../../core/errors';
-import { opAgg } from '../../core/luck';
 import { restLog, type Op } from '../../core/op';
 import { feedLog, runPairOp } from '../../core/pair';
 import { gainCoin, gainExp, gainStrength } from '../../core/resources';
@@ -130,12 +129,7 @@ export function createDine(d: GameDeps) {
           assertMinutes(me, r.started_at);
           const seat = takeSeat(await readTables(them), r.table_no, me.rest.id);
           await writeTables(them, seat.tables);
-          const reward = dineEndReward(
-            seat.acc,
-            hoursSince(r.started_at, me.now),
-            await opAgg(me),
-            me.tuning.friend.dine,
-          );
+          const reward = dineEndReward(seat.acc, hoursSince(r.started_at, me.now), me.tuning.friend.dine);
           gainCoin(me, reward.coin);
           gainExp(me, reward.exp);
           gainStrength(me, reward.strength);
@@ -186,15 +180,13 @@ export function createDine(d: GameDeps) {
           if (!r || r.host_rest_id !== me.rest.id || r.table_no !== b.tableNo)
             throw invalidState('not_dining');
           assertMinutes(me, r.started_at);
-          const dinerAgg = await opAgg(them);
           const seat = takeSeat(await readTables(me), b.tableNo, them.rest.id);
           await writeTables(me, seat.tables);
-          const x = expelReward(seat.acc, hoursSince(r.started_at, me.now), dinerAgg, me.tuning.friend.dine);
+          const x = expelReward(seat.acc, hoursSince(r.started_at, me.now), me.tuning.friend.dine);
           gainCoin(me, x.hostCoin);
           const loss = Math.min(x.dinerLoss, them.rest.coin);
           gainCoin(them, -loss, { event: false });
           gainStrength(them, x.dinerStrength, { event: false });
-          gainExp(them, x.dinerExp, { event: false });
           await me.tx.deleteFrom('dine_dash').where('diner_rest_id', '=', them.rest.id).execute();
           await incrementDaily(me.tx, them.rest.id, 'dine.done', 1, gameDay(me.now));
           feedLog(p, 'dine.expelled', { coin: loss, table: b.tableNo });

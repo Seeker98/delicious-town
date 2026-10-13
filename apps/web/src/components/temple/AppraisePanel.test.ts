@@ -29,7 +29,6 @@ const overview: McOverviewDto = {
       blackDiamond: 8,
       award: true,
       champion: false,
-      guardian: true,
     },
     {
       goodsId: 165,
@@ -42,12 +41,10 @@ const overview: McOverviewDto = {
       blackDiamond: 30,
       award: true,
       champion: true,
-      guardian: false,
     },
   ],
   cookies: 0,
   cookNums: [1],
-  starBook: true,
   jobCard: null,
   season: {
     open: true,
@@ -78,7 +75,7 @@ describe('AppraisePanel', () => {
     vi.mocked(endpoints.mc).mockResolvedValue(structuredClone(overview));
     vi.mocked(endpoints.mcAppraise).mockResolvedValue({
       results: [
-        { ok: true, mcId: 1, num: 2, blessed: true },
+        { ok: true, mcId: 1, num: 2 },
         { ok: false, text: '这只是一堆厕纸而已' },
       ],
     });
@@ -93,29 +90,17 @@ describe('AppraisePanel', () => {
     // 没点之前不弹面板
     expect(w.find('[data-testid="qty-ok"]').exists()).toBe(false);
     await w.find('[data-testid="appraise-open-165"]').trigger('click');
-    expect(w.find('[data-testid="no-retry"]').exists()).toBe(true);
     await w.find('[data-testid="times"]').setValue('9');
     await w.find('[data-testid="qty-ok"]').trigger('click');
     await flushPromises();
-    expect(endpoints.mcAppraise).toHaveBeenCalledWith(165, 2, false);
+    expect(endpoints.mcAppraise).toHaveBeenCalledWith(165, 2);
     // 鉴定完面板关掉
     expect(w.find('[data-testid="qty-ok"]').exists()).toBe(false);
     const rows = w.findAll('[data-testid="results"] > *');
     expect(rows).toHaveLength(2);
     expect(rows[0]!.text()).toContain('秘·仿膳饽饽 残卷 ×2');
     expect(rows[0]!.text()).toContain('4 级');
-    expect(rows[0]!.text()).toContain('星神眷恋');
     expect(rows[1]!.text()).toContain('这只是一堆厕纸而已');
-  });
-
-  it('勾上“低于 5 级不重抽”时带上 noRetry', async () => {
-    const w = mountPanel();
-    await flushPromises();
-    await w.find('[data-testid="appraise-open-165"]').trigger('click');
-    await w.find('[data-testid="no-retry"]').setValue(true);
-    await w.find('[data-testid="qty-ok"]').trigger('click');
-    await flushPromises();
-    expect(endpoints.mcAppraise).toHaveBeenCalledWith(165, 1, true);
   });
 });
 
@@ -155,7 +140,7 @@ describe('AppraisePanel：按钮灰掉时写明原因（问题记录：鉴定按
       '获得: 黑市 30 钻、厨塔和酒吧等的随机奖励、昨日特色菜冠军',
     );
     await w.find('[data-testid="appraise-open-163"]').trigger('click');
-    const how = '银币商店 90,000、黑市 8 钻、厨塔和酒吧等的随机奖励、持有捕梦网时, 神殿守护兽暴击掉落';
+    const how = '银币商店 90,000、黑市 8 钻、厨塔和酒吧等的随机奖励';
     expect(w.find('[data-testid="tool-how"]').text()).toBe(`获得: ${how}`);
     // 没有的道具在列表行里也写明怎么获得
     expect(w.find('[data-testid="tool-163"]').text()).toContain(`持有 0 · ${how}`);

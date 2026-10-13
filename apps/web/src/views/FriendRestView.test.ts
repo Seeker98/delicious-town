@@ -284,9 +284,9 @@ describe('FriendRestView', () => {
     expect(w2.get('[data-testid="act-taste"]').text()).toBe('已品尝');
   });
 
-  it('好友页有"去它的菜园"链接', async () => {
+  it('菜园删掉了：好友页没有"去它的菜园"链接', async () => {
     const w = await mountView();
-    expect(w.find('[data-testid="to-yard"]').attributes('href')).toBe('/yard?friend=2');
+    expect(w.find('[data-testid="to-yard"]').exists()).toBe(false);
   });
 
   it('好友店有"切磋"，蟹老板店没有', async () => {

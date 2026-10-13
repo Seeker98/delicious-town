@@ -7,7 +7,7 @@ import { opNeedPick } from '../../core/scarcity';
 import { opNews, type Op } from '../../core/op';
 import { drawDtTickets } from '../../core/tickets';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
-import { consumeGoods, countGoods, grantGoodsOp, hasValidHonor } from '../store/goods';
+import { consumeGoods, countGoods, grantGoodsOp } from '../store/goods';
 import { addFoodsMerged, badInput, bump, pickFood, toList } from './common';
 import {
   guardianFoods,
@@ -41,30 +41,22 @@ export async function shootMissiles(
 
   const agg = await opAgg(o);
   const { rate: luck } = await opLuck(o);
-  const dream = await hasValidHonor(o, GOODS.dreamNet);
-  const net = o.config.requireGoods(GOODS.dreamNet).effects;
-  const sealRate = dream
-    ? ((b.goodsId === GOODS.missileCluster ? net.critSpeedGSRate : net.critGSRate) ?? 0)
-    : 0;
   const input = {
     def,
     luckRate: luck,
     hitBonus: weather.hitRate ?? 0,
     critBonus: (agg.missileCritRate ?? 0) + (weather.missileCrit ?? 0),
-    sealRate,
   };
   const shots: MissileResultDto['shots'] = [];
   let total = 0;
   let tickets = 0;
   let maps = 0;
-  let seals = 0;
   let killed = false;
   for (let i = 0; i < Math.min(b.num, have) && !killed; i++) {
     const s = shoot(input, t, o.rng);
     total += s.damage;
     tickets += s.ticket;
     if (s.map) maps += 1;
-    if (s.seal) seals += 1;
     hpLeft = Math.max(0, hpLeft - s.damage);
     killed = hpLeft === 0;
     shots.push({ hit: s.hit, crit: s.crit, damage: s.damage, killed });
@@ -73,7 +65,6 @@ export async function shootMissiles(
   await incrementDaily(o.tx, o.rest.id, 'guardian.damage', total, day);
   if (tickets > 0) await grantGoodsOp(o, GOODS.mysteryTicket, tickets);
   if (maps > 0) await grantGoodsOp(o, GOODS.mapNormal, maps);
-  if (seals > 0) await grantGoodsOp(o, GOODS.seal, seals);
 
   const foods = new Map<number, number>();
   let rare: number | null = null;
@@ -99,7 +90,7 @@ export async function shootMissiles(
       for (let k = 0; k < x.num; k++) bump(foods, pickFood(o, x.level, needPick));
   }
   await addFoodsMerged(o, foods);
-  const dtTickets = await drawDtTickets(o, Math.floor(total / 100) * (dream ? 2 : 1));
+  const dtTickets = await drawDtTickets(o, Math.floor(total / 100));
   await emitAction(o, 'temple.missile');
   // 支线“守护兽”（问题记录 515）：打倒一次，5 星以上另记
   if (killed) {
@@ -111,6 +102,6 @@ export async function shootMissiles(
     hpMax,
     hpLeft,
     killed,
-    drops: { tickets, maps, seals, dtTickets, rare, foods: toList(foods) },
+    drops: { tickets, maps, dtTickets, rare, foods: toList(foods) },
   };
 }

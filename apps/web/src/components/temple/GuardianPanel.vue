@@ -48,7 +48,6 @@ const dropItems = computed(() => {
   const items: Array<[ArtName, string, number]> = [
     ['res-voucher', x.tickets, d.tickets],
     ['goods-map', x.maps, d.maps],
-    ['goods-jade-seal', x.seals, d.seals],
     ['goods-token', x.dt, d.dtTickets],
   ];
   return items.filter(([, , v]) => v > 0);

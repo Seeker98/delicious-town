@@ -23,7 +23,6 @@ const temple: Messages['temple'] = {
     strengthN: (n) => `Stamina ${n}`,
     lastTitle: (n) => `Just now · ${n} ${plEn(n, 'trip', 'trips')}`,
     result: (ok, fail) => `${ok} successful, ${fail} got lost`,
-    exp: (n) => `The oil lamp gave ${n} EXP`,
   },
   appraise: {
     what: 'appraise',
@@ -45,7 +44,6 @@ const temple: Messages['temple'] = {
     howBlack: (diamond) => `black market ${diamond} diamonds`,
     howAward: 'random rewards from the Chef Tower, the bar and more',
     howChampion: 'yesterday’s signature dish champion',
-    howGuardian: 'critical hits on the Temple guardian while you hold a Dreamcatcher',
     howSep: ', ',
     howMany: 'How many times',
     btn: (n) => `Appraise ${n} ${plEn(n, 'time', 'times')}`,
@@ -54,11 +52,9 @@ const temple: Messages['temple'] = {
     after: 'Left after',
     afterItems: (recipes, tool, toolLeft) =>
       `${recipes} Mystery ${plEn(recipes, 'Recipe', 'Recipes')}, ${tool} ×${toolLeft}`,
-    noRetry: "Don't reroll below level 5 (Book of the Star God)",
     lastTitle: (n, ok) => `Just now · ${n} ${plEn(n, 'try', 'tries')}, ${ok} succeeded`,
     got: (name, num) => `${name} fragment ×${num}`,
     level: (n) => `Lv. ${n}`,
-    blessed: "Star God's favor",
   },
   guardian: {
     what: 'challenge the guardian',
@@ -87,7 +83,6 @@ const temple: Messages['temple'] = {
     dropNames: {
       tickets: 'Mystery Vouchers',
       maps: 'Exploration maps',
-      seals: 'Chef God Seals',
       dt: 'Delicious Tickets',
     },
   },

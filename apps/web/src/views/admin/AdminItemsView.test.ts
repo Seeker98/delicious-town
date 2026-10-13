@@ -37,7 +37,7 @@ const data: AdminItemsDto = {
         { where: '礼包 A', n: 2, retired: true },
         { where: '礼包 B', n: 1, dead: true },
       ],
-      notes: ['只能靠菜园获得'],
+      notes: ['只从拿不到的礼包或道具获得'],
     }),
     row({ kind: 'foods', id: 101, name: '大米', category: '1 级食材', level: 1 }),
   ],
@@ -64,7 +64,7 @@ describe('后台道具整理只读页（问题记录 429）', () => {
     const gift = w.get('[data-testid="item-goods-3"]').text();
     expect(gift).toContain('礼包 A×2（已下架）');
     expect(gift).toContain('礼包 B（拿不到）');
-    expect(gift).toContain('只能靠菜园获得');
+    expect(gift).toContain('只从拿不到的礼包或道具获得');
   });
 
   it('筛选：没有来源、没有用途、已下架；搜名字或编号；切到食材', async () => {

@@ -153,13 +153,8 @@ describe('神殿（子项目 4B-1）', () => {
     goodsName: () => '道具',
     foodName: (id: number) => `食材${id}`,
     mcName: (id: number) => `秘·${id}`,
-    seedName: (id: number) => `种子${id}`,
   };
   const at = '2026-09-30T00:00:00Z';
-  it('种子事件和流水显示种子名', () => {
-    expect(eventText({ type: 'gain', kind: 'seed', id: 5, num: 3 }, names)).toBe('获得 种子5×3');
-    expect(recordLabel({ kind: 'seed', itemId: 5 }, names)).toBe('种子5');
-  });
   it('试炼的日志', () => {
     expect(
       logText(
@@ -170,28 +165,6 @@ describe('神殿（子项目 4B-1）', () => {
     expect(logText({ type: 'temple.trial', params: { mcId: 3, success: false }, at } as never, names)).toBe(
       '「秘·3」试炼失败',
     );
-  });
-});
-
-describe('菜园（子项目 4B-2）', () => {
-  it('菜篮的得失提示和流水名称；好友动态', () => {
-    expect(eventText({ type: 'gain', kind: 'basket', id: 101, num: 21 }, names)).toBe('获得 菜篮·大米×21');
-    expect(recordLabel({ kind: 'basket', itemId: 101 }, names)).toBe('菜篮·大米');
-    expect(
-      logText({ type: 'yard.helped', params: { byName: '乙店', what: 'weed', foodsId: 101 }, at: '' }, names),
-    ).toBe('乙店 帮你的大米除了草');
-    expect(
-      logText(
-        { type: 'yard.stolen', params: { byName: '乙店', foodsId: 101, num: 2, punished: null }, at: '' },
-        names,
-      ),
-    ).toBe('乙店 偷走了你的 大米×2');
-    expect(
-      logText(
-        { type: 'yard.stolen', params: { byName: '乙店', foodsId: 101, num: 1, punished: 101 }, at: '' },
-        names,
-      ),
-    ).toBe('乙店 偷走了你的 大米×1, 被边牧逮住, 留下了 大米');
   });
 });
 
@@ -357,10 +330,10 @@ describe('流水名称按语言（fix/batch-1008 遗留：道具流水只测了�
     mcName: (id: number) => `Dish ${id}`,
   };
 
-  it('英文：资源、残卷、种子、菜篮的名称都是英文，不夹中文', async () => {
+  it('英文：资源、残卷的名称都是英文，不夹中文', async () => {
     setActivePinia(createPinia());
     await useLocaleStore().set('en');
-    const labels = ['coin', 'diamond', 'exp', 'renown', 'remnant', 'seed', 'basket'].map((kind) =>
+    const labels = ['coin', 'diamond', 'exp', 'renown', 'remnant'].map((kind) =>
       recordLabel({ kind, itemId: 7 }, en),
     );
     expect(labels.filter((x) => /[\u4e00-\u9fff]/.test(x))).toEqual([]);
