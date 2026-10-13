@@ -81,10 +81,9 @@ function knownEffectKeys(config: GameConfig): Set<string> {
   for (const g of config.goods.values()) for (const k of Object.keys(g.effects)) keys.add(k);
   for (const w of config.weather.values()) for (const k of Object.keys(w.effects)) keys.add(k);
   const derived = collectionEffects(
-    { plaques: 99, honors: 99, pots: 99, paintings: 99, an2023: true, an2025: true, mdcg: true },
+    { plaques: 99, honors: 99, pots: 99, an2023: true, an2025: true, mdcg: true },
     config.tuning.collection,
     config.bundle.potTiers,
-    config.bundle.paintingTiers,
   );
   for (const k of Object.keys(derived)) keys.add(k);
   return keys;

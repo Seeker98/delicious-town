@@ -5,7 +5,7 @@ import { emitAction } from '../../core/action';
 import { opNews, type Op } from '../../core/op';
 import { AppError } from '../../http/errors';
 import { addFoods } from '../cupboard/foods';
-import { consumeGoods, countGoods, grantGoodsOp, hasValidHonor } from '../store/goods';
+import { consumeGoods, countGoods, grantGoodsOp } from '../store/goods';
 import { slotFloorLeft, slotFloorRate, slotForced } from './rules';
 import { lockBarState, saveBarState } from './state';
 
@@ -28,7 +28,6 @@ export async function playSlot(o: Op, times: number): Promise<SlotResultDto> {
   await assertVerified(o);
   await consumeGoods(o, GOODS.krabCoin, times);
   const s = await lockBarState(o);
-  const lamp = await hasValidHonor(o, GOODS.magicLamp);
   const floorAward = o.config.slotAwards.get(t.slotFloorAwardId)!;
   let fail = s.slot_fail;
   const spins: number[][] = [];
@@ -37,7 +36,7 @@ export async function playSlot(o: Op, times: number): Promise<SlotResultDto> {
   for (let i = 0; i < times; i++) {
     const spin: number[] = [];
     for (let c = 0; c < t.slotCells; c++) {
-      const floor = slotForced(fail, t) || o.rng.next() < slotFloorRate(fail, lamp, t);
+      const floor = slotForced(fail, t) || o.rng.next() < slotFloorRate(fail, t);
       const a = floor ? floorAward : pickWeighted(o.config.slotPool, o.rng);
       fail = floor || a.rare ? 0 : fail + 1;
       spin.push(a.id);

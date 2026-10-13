@@ -38,7 +38,6 @@ describe('FloorPanel', () => {
         chapters: [],
         questLines: [],
         activation: [],
-        bless: [],
         tower: [
           { id: 1, name: 'Apprentice Model Restaurant', title: 'Apprentice Guardian', note: 'Bring it on' },
         ],

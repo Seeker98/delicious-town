@@ -50,7 +50,7 @@ export function createTakeawayService(d: GameDeps, world: WorldService) {
     refresh(ctx: RestCtx) {
       return op(ctx, 'takeaway.refresh', (o) => refreshPrivate(o));
     },
-    deliver(ctx: RestCtx, b: { orderId: number; riderId: number; double: boolean }) {
+    deliver(ctx: RestCtx, b: { orderId: number; riderId: number }) {
       return op(ctx, 'takeaway.deliver', async (o) =>
         deliverOrder(o, (await world.ensure(o.shardId, o.now, o.tx)).weather.effects, b),
       );

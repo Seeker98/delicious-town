@@ -143,7 +143,6 @@ const server: Messages['server'] = {
     hangover: 'Resaca',
     suit: (name, need) => `${name} (${need} ${plEs(need, 'pieza', 'piezas')})`,
     suitFallback: 'Conjunto',
-    bless: (name) => `Deseo de hoy: ${name}`,
   },
 };
 export default server;

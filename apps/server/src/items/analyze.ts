@@ -2,7 +2,7 @@ import { GOODS_TYPE, itemRefs, type GameConfig, type ItemKind } from '@dt/config
 import type { AdminItemGradeRow, AdminItemRow, AdminItemsDto, AdminItemTag } from '@dt/shared';
 import { awardFoodsPool, prizeFoodPools } from '../modules/award/random';
 import { handleTargetLevel } from '../modules/cupboard/rules';
-import { blessFoodIds, levelFoodIds, mysteryFoodIds } from '../modules/town/rules';
+import { levelFoodIds, mysteryFoodIds } from '../modules/town/rules';
 
 /**
  * 道具整理工具的分析（问题记录 367）：每个道具、每种食材从哪来、拿来干什么。
@@ -131,9 +131,6 @@ export function analyzeItems(
     t.town.npc.bigEaterLevelWeights.flatMap((w, i) => (w > 0 ? [i + 1] : [])),
     '镇长大胃锅',
   );
-  for (const x of b.bless)
-    if ((x.type === 0 || x.type === 5) && x.levels)
-      for (const id of blessFoodIds(config, x.levels)) add('foods', id, 'gives', '星愿');
   for (let lv = 1; lv <= 5; lv++)
     for (const id of levelFoodIds(config, t.town, lv)) add('foods', id, 'gives', `${lv} 级食材兑换券`);
   for (const id of mysteryFoodIds(config, t.town)) add('foods', id, 'gives', '神秘食材兑换券');

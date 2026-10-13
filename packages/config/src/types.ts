@@ -376,7 +376,6 @@ export interface ConfigBundle {
   formulas: Formula[];
   seedExchange: SeedExchange[];
   goodsExchange: GoodsExchange[];
-  bless: Bless[];
   incomeActions: IncomeAction[];
   slotAwards: SlotAward[];
   towerFloors: TowerFloor[];
@@ -403,7 +402,6 @@ export interface ConfigBundle {
   shopSpecialTiers: ShopSpecialTier[];
   shopPools: { special: number[]; black: number[] };
   potTiers: CollectionTier[];
-  paintingTiers: CollectionTier[];
   marketGuessFoods: number[];
   guessAwards: GuessAward[];
   guessBonus: GuessBonus[];
@@ -537,22 +535,6 @@ export interface GoodsExchange {
   weekly: boolean;
   /** 兑换后写新闻 */
   news: boolean;
-}
-
-/** 星愿（设计数据 bless） */
-export interface Bless {
-  id: number;
-  name: string;
-  /** 0 自选食材 / 2 道具 / 3 银币 / 4 钻石 / 5 随机食材 */
-  type: 0 | 2 | 3 | 4 | 5;
-  num: number;
-  needAct: number;
-  /** 食材类的等级区间 [低, 高] */
-  levels: [number, number] | null;
-  goodsId: number | null;
-  /** 当天全镇的结算加成 */
-  buff: Record<string, number>;
-  odds: number;
 }
 
 export interface SeedExchange {

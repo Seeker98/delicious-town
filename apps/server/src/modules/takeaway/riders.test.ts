@@ -123,7 +123,6 @@ describe('解雇（设计文档 §3.5）', () => {
         rider_id: rider,
         grade: 1,
         private: false,
-        double: false,
         mystery_kinds: 0,
         coin: 1,
         exp: 1,

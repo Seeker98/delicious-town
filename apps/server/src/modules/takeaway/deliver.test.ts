@@ -29,8 +29,8 @@ const cook = async (shardId?: number): Promise<{ ctx: RestCtx; rider: number }> 
   await setWeather(t, ctx.shardId, 1);
   return { ctx, rider };
 };
-const deliver = (ctx: RestCtx, orderId: number, riderId: number, double = false) =>
-  t.game.takeaway.deliver(ctx, { orderId, riderId, double });
+const deliver = (ctx: RestCtx, orderId: number, riderId: number) =>
+  t.game.takeaway.deliver(ctx, { orderId, riderId });
 const foods = async (restId: number) =>
   Promise.all([fid('猪肉'), fid('鸡蛋'), fid('香葱')].map(async (id) => (await foodNum(t, restId, id)).num));
 
@@ -47,7 +47,6 @@ describe('接单（设计文档 §3.3）', () => {
       cookbookName: '南煎丸子',
       grade: 1,
       private: false,
-      double: false,
       riderId: rider,
       riderName: expect.any(String),
       arriveAt: new Date(t.clock.now.getTime() + 30 * 60_000).toISOString(),
@@ -112,19 +111,6 @@ describe('接单（设计文档 §3.3）', () => {
         .where('id', '=', r.data.id)
         .executeTakeFirstOrThrow(),
     ).toEqual({ coin: 217, exp: 17 });
-  });
-
-  it('加料要持有使命必达：食材翻倍', async () => {
-    const { ctx, rider } = await cook();
-    const order = await addOrder(t, ctx.shardId);
-    await expect(deliver(ctx, order, rider, true)).rejects.toMatchObject({
-      code: 'REQUIREMENT_NOT_MET',
-      params: { reason: 'double' },
-    });
-    await grantGoods(t.db, config, ctx.restaurantId, gid('使命必达'), 1, t.clock.now);
-    expect((await t.game.takeaway.overview(ctx)).canDouble).toBe(true);
-    expect((await deliver(ctx, order, rider, true)).data.double).toBe(true);
-    expect(await foods(ctx.restaurantId)).toEqual([3, 3, 3]);
   });
 
   it('记下用了几种神秘食材', async () => {

@@ -89,7 +89,6 @@ describe('迁移 0013', () => {
       rider_id: rider.id,
       grade: 1,
       private: false,
-      double: false,
       mystery_kinds: 0,
       coin: 198,
       exp: 13,

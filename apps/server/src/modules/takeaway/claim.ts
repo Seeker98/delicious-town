@@ -60,7 +60,7 @@ export async function settleDelivery(
     success = true;
     forced = true;
   }
-  let exp = claimExp(v.exp, { double: v.double, friend: !self, private: v.private }, t);
+  let exp = claimExp(v.exp, { friend: !self, private: v.private }, t);
   let coin = 0;
   let renown = 0;
   let goods: { id: number; num: number } | null = null;

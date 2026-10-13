@@ -343,17 +343,6 @@ export const towerEldersFile = z.object({
       .strict(),
   ),
 });
-export const rawBless = z.object({
-  id: int,
-  name: z.string(),
-  type: z.union([z.literal(0), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]),
-  num: int.min(1),
-  needAct: int.min(0),
-  value: z.object({ level: z.tuple([int, int]).optional(), goodsId: int.optional() }).nullable(),
-  buff: z.record(z.number()),
-  odds: int.min(0),
-});
-
 export const rawCookbookGrade = z.object({
   grade: int,
   name: z.string(),

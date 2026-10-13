@@ -187,7 +187,6 @@ export function createDine(d: GameDeps) {
             throw invalidState('not_dining');
           assertMinutes(me, r.started_at);
           const dinerAgg = await opAgg(them);
-          if ((dinerAgg.magicLamp ?? 0) > 0) throw invalidState('diner_protected');
           const seat = takeSeat(await readTables(me), b.tableNo, them.rest.id);
           await writeTables(me, seat.tables);
           const x = expelReward(seat.acc, hoursSince(r.started_at, me.now), dinerAgg, me.tuning.friend.dine);

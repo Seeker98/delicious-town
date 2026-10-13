@@ -9,8 +9,6 @@ export interface NewsNames {
   mcName(id: number): string;
   weatherName(id: number): string;
   streetName(id: number): string;
-  /** 星愿名按目录取（第 8c 批）；测试里可以不传 */
-  data?(kind: 'bless', id: number): { name: string } | undefined;
   /** 称号名按目录取（240-2 称号商店，跟着语言）；测试里可以不传 */
   icon?(key: string): { title: string } | undefined;
 }
@@ -78,24 +76,21 @@ function render(n: NewsDto, x: NewsNames, mark: { who: boolean; other: boolean }
   const who = mark?.who ? WHO : (n.restName ?? (name || m.someone));
   // 自动预测题的题目按题型和参数、当前语言渲染（问题记录 272）
   const p = n.params;
-  const blessKnown = typeof p.blessId === 'number' && x.data?.('bless', p.blessId);
   const zh = activeLocale() === 'zh-CN' || activeLocale() === 'zh-TW';
   const params =
-    n.type === 'town.bless' && blessKnown
-      ? { ...p, blessName: blessKnown.name }
-      : n.type === 'town.bless' && !zh
-        ? // 下架去掉的星愿目录里没有译名，记下的是简中名：外文写“一个星愿”（backlog）
-          { ...p, blessName: m.blessGone }
-        : n.type === 'predict.result' && typeof p.kind === 'string'
-          ? {
-              ...p,
-              title: predictTitle({
-                kind: p.kind,
-                title: String(p.title ?? ''),
-                params: (p.eventParams ?? {}) as Record<string, unknown>,
-              }),
-            }
-          : p;
+    n.type === 'town.bless' && !zh
+      ? // 星愿删掉了（道具减法，用户 2026-10-13），旧新闻里记下的是简中名：外文写“一个星愿”
+        { ...p, blessName: m.blessGone }
+      : n.type === 'predict.result' && typeof p.kind === 'string'
+        ? {
+            ...p,
+            title: predictTitle({
+              kind: p.kind,
+              title: String(p.title ?? ''),
+              params: (p.eventParams ?? {}) as Record<string, unknown>,
+            }),
+          }
+        : p;
   return r(who, mark?.other ? { ...params, name: OTHER } : params, x);
 }
 

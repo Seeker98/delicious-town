@@ -136,7 +136,7 @@ describe('新闻文案', () => {
     );
   });
 
-  it('目录里已经没有的星愿（下架去掉了）：英西法不显示中文名，写“一个星愿”；简中照旧（backlog）', async () => {
+  it('旧的星愿新闻（星愿已删掉，用户 2026-10-13）：英西法不显示中文名，写“一个星愿”；简中照旧', async () => {
     const gone = n('town.bless', { blessId: 999, blessName: '五谷丰登' });
     expect(newsText(gone, names)).toBe('小王的店许愿得到星愿: 五谷丰登');
     setActive('en', await loadMessages('en'));

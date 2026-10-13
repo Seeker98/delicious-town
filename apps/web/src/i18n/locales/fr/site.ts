@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    cuts1013:
+      'Moins d’objets\u202f: les tableaux, la Lampe magique et le Vœu du village, le Collier d’amour et Mission accomplie (portions doubles en livraison) disparaissent\u202f; le Marché premium demande désormais une médaille du fonds de rang B ou plus\u202f; les récompenses d’activité ne sont plus doublées\u202f; les quêtes secondaires perdent les étapes «\u202fPosséder 7 tableaux\u202f» et «\u202fFaire un vœu avec la Lampe magique\u202f»',
     special1013:
       'Nouvelle vente des plats spéciaux\u202f: les clients difficiles satisfaits en prennent toujours 2 portions à plein prix, ceux qui ne sont pas satisfaits ou qui partent n’en prennent pas\u202f; les clients ordinaires n’en commandent plus qu’à environ la moitié de leurs tables à chaque tour (1 portion à moitié prix), au lieu de toutes. La page des plats spéciaux indique les chiffres de votre serveur',
     fix1013b:

@@ -112,7 +112,6 @@ const rest: Messages['rest'] = {
     signedIn: 'Registrado hoy',
     signInFailed: 'No se pudo registrar',
     claimed: (p) => `✓ Premio de ${p} ${plEs(p, 'punto', 'puntos')} recogido`,
-    claim: (p, double) => `Recoger premio de ${p} ${plEs(p, 'punto', 'puntos')}${double ? ' ×2' : ''}`,
     need: (p, left) => `${p} ${plEs(p, 'punto', 'puntos')} (faltan ${left})`,
     kujiHint: (p, num) =>
       `El premio de ${p} ${plEs(p, 'punto', 'puntos')} también da ${num} ${plEs(num, 'boleto', 'boletos')} de Ichiban Kuji`,
@@ -150,7 +149,6 @@ const rest: Messages['rest'] = {
     claimWeeklyFull: 'Recoger',
     weeklyFullClaimed: '✓ Recogido',
     actTitle: 'Actividad de hoy',
-    double: 'Doble',
     kujiTier: (num) => `y ${num} ${plEs(num, 'boleto', 'boletos')} de lotería`,
     claimedShort: 'Recogido',
     needShort: (n) => `Faltan ${n}`,

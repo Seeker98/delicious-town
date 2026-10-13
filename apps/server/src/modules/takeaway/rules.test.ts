@@ -177,9 +177,9 @@ describe('结算（设计文档 §3.4、§3.6）', () => {
     expect(pickAward(0.999, 1, t)).toBe(GOODS.dtTicket);
   });
 
-  it('经验：加料 ×2、好友骑手 ×0.9、私人单 ×1.5（逐步取整）', () => {
-    expect(claimExp(13, { double: false, friend: false, private: false }, t)).toBe(13);
-    expect(claimExp(13, { double: true, friend: true, private: true }, t)).toBe(34);
+  it('经验：好友骑手 ×0.9、私人单 ×1.5（逐步取整）', () => {
+    expect(claimExp(13, { friend: false, private: false }, t)).toBe(13);
+    expect(claimExp(13, { friend: true, private: true }, t)).toBe(16);
   });
 
   it('骑手经验 = √(10g)×2×(失败×2)×(无人机×2)×(神秘食材种数+1)×(1+加成)', () => {

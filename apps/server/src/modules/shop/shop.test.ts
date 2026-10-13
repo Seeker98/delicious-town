@@ -5,7 +5,7 @@ import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from 
 import { runDueJobs } from '../../worker/periodic';
 import { grantGoods } from '../store/grant';
 import { sellPrice } from '../store/rules';
-import { GOODS, createGameConfig } from '@dt/config';
+import { FUND, GOODS, createGameConfig } from '@dt/config';
 import { gid } from '../../../test/items';
 
 const config = testConfig();
@@ -104,8 +104,8 @@ describe('黑市、出售、丢弃', () => {
     await expect(shop().sell(ctx, { goodsId: gid('[新春牌匾]'), num: 1 })).rejects.toMatchObject({
       params: { reason: 'keep_one_plaque' },
     });
-    await grantGoods(t.db, config, ctx.restaurantId, GOODS.loveNecklace, 1, new Date());
-    await expect(shop().sell(ctx, { goodsId: GOODS.loveNecklace, num: 1 })).rejects.toMatchObject({
+    await grantGoods(t.db, config, ctx.restaurantId, FUND.B, 1, new Date());
+    await expect(shop().sell(ctx, { goodsId: FUND.B, num: 1 })).rejects.toMatchObject({
       params: { reason: 'not_sellable' },
     });
   });

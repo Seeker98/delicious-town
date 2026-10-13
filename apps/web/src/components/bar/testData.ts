@@ -22,7 +22,6 @@ export const barData = (patch: Partial<BarDto> = {}): BarDto => ({
   num: { result: null, times: 0, cost: 8, max: 25 },
   slot: {
     emailVerified: true,
-    lamp: false,
     floorLeft: 100,
     rareEvery: 90,
     pool: [

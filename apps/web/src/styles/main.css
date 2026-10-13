@@ -6751,7 +6751,7 @@ button.dt-header-icon {
 .dt-area-count.is-over {
   color: var(--dt-ink-danger);
 }
-/* 居民：蟹老板的钱袋（大头像卡，不换台词）、今天的星愿 */
+/* 居民：蟹老板的钱袋（大头像卡，不换台词） */
 .dt-krab {
   cursor: default;
 }
@@ -6764,56 +6764,6 @@ button.dt-header-icon {
   display: block;
   font-size: 12px;
   color: var(--dt-muted);
-}
-.dt-bless {
-  padding: 14px;
-}
-.dt-bless-head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.dt-bless-art {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--dt-soft-warning);
-}
-.dt-bless-main {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-.dt-bless-main > b {
-  font-size: 16px;
-}
-.dt-bless-main > span {
-  font-size: 12px;
-  color: var(--dt-muted);
-}
-.dt-bless-feast {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 12px;
-  padding: 10px 12px;
-  border-radius: var(--dt-radius-md);
-  background: var(--dt-surface-2);
-}
-.dt-bless-feast-main {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  min-width: 0;
-  font-size: 12px;
-  color: var(--dt-muted);
-}
-.dt-bless-feast-main > b {
-  font-size: 13px;
-  color: var(--dt-text);
 }
 .dt-pick-price {
   display: inline-flex;

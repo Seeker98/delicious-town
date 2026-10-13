@@ -760,15 +760,6 @@ export interface TowerRankTable {
   rest_id: number;
 }
 
-/** 外卖（子项目 4D）：有这一行 = 已开通 */
-export interface TownBlessTable {
-  shard_id: number;
-  day: string;
-  bless_id: number;
-  rest_id: number;
-  created_at: Ts;
-}
-
 export interface TownRestTable {
   rest_id: number;
   /** 司天罗盘、晴雨签共用的每人冷却：上次用的时间 */
@@ -796,6 +787,7 @@ export interface TownExchangeUseTable {
   week: Default<string>;
 }
 
+/** 外卖（子项目 4D）：有这一行 = 已开通 */
 export interface TakeawayStateTable {
   rest_id: number;
   /** 可雇骑手上限（含自己） */
@@ -836,7 +828,6 @@ export interface TakeawayDeliveryTable {
   rider_id: number;
   grade: number;
   private: boolean;
-  double: boolean;
   mystery_kinds: number;
   coin: number;
   exp: number;
@@ -1662,7 +1653,6 @@ export interface DB {
   tower_watchman_mc: TowerWatchmanMcTable;
   tower_rank: TowerRankTable;
   takeaway_state: TakeawayStateTable;
-  town_bless: TownBlessTable;
   town_rest: TownRestTable;
   town_shake: TownShakeTable;
   town_exchange_use: TownExchangeUseTable;

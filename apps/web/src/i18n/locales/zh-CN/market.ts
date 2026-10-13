@@ -1,6 +1,6 @@
 /** 菜场和菜园姐（问题记录 272） */
 export default {
-  sections: { daily: '日常菜场', special: '特价菜场', premium: '高级菜场 (需爱心项链)' },
+  sections: { daily: '日常菜场', special: '特价菜场', premium: '高级菜场 (需 B 档以上基金勋章)' },
   specialNote: (min: number) => `需验证邮箱, 每种每人 1 份；同一网络 ${min} 分钟内只能抢一次`,
   manualConfirm: (cost: string, time: string) =>
     `花 ${cost} 银币进 4 种日常菜？下次日常进货 (${time}) 时会一起下架。`,

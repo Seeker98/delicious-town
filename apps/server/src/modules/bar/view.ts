@@ -29,7 +29,7 @@ export async function barView(
       .selectFrom('store_item')
       .select(['goods_id', 'num', 'expires_at'])
       .where('rest_id', '=', rest.id)
-      .where('goods_id', 'in', [GOODS.mysteryTicket, GOODS.krabCoin, GOODS.magicLamp])
+      .where('goods_id', 'in', [GOODS.mysteryTicket, GOODS.krabCoin])
       .execute(),
     db
       .selectFrom('account')
@@ -86,9 +86,8 @@ export async function barView(
     },
     slot: {
       emailVerified: acc.email_verified_at !== null,
-      lamp: have(GOODS.magicLamp) > 0,
       floorLeft: slotFloorLeft(s?.slot_fail ?? 0, t),
-      rareEvery: Math.round(slotRareEvery(config.slotPool.items, t, have(GOODS.magicLamp) > 0)),
+      rareEvery: Math.round(slotRareEvery(config.slotPool.items, t)),
       pool: config.slotPool.items.map((a) => ({
         id: a.id,
         kind: a.kind,

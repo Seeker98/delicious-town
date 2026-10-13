@@ -114,7 +114,6 @@ const rest: Messages['rest'] = {
     signedIn: "Pointé aujourd'hui",
     signInFailed: 'Impossible de pointer',
     claimed: (p) => `✓ Récompense de ${p} ${plFr(p, 'point', 'points')} reçue`,
-    claim: (p, double) => `Récompense de ${p} ${plFr(p, 'point', 'points')}${double ? ' ×2' : ''}`,
     need: (p, left) => `${p} ${plFr(p, 'point', 'points')} (encore ${left})`,
     kujiHint: (p, num) =>
       `La récompense de ${p} ${plFr(p, 'point', 'points')} donne aussi ${num} ${plFr(num, 'ticket', 'tickets')} d'Ichiban Kuji`,
@@ -152,7 +151,6 @@ const rest: Messages['rest'] = {
     claimWeeklyFull: 'Récupérer',
     weeklyFullClaimed: '✓ Récupéré',
     actTitle: 'Activité du jour',
-    double: 'Doublée',
     kujiTier: (num) => `plus ${num} ${plFr(num, 'ticket', 'tickets')} de loterie`,
     claimedShort: 'Récupéré',
     needShort: (n) => `Encore ${n}`,

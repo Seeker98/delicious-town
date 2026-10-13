@@ -49,7 +49,6 @@ const take = async (ctx: RestCtx, rider: number, o: OrderInit = {}) =>
     await t.game.takeaway.deliver(ctx, {
       orderId: await addOrder(t, ctx.shardId, o),
       riderId: rider,
-      double: false,
     })
   ).data.id;
 const claim = (ctx: RestCtx, deliveryId: number, drone = false) =>

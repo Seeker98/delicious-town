@@ -141,7 +141,6 @@ const home: Messages['home'] = {
   none: 'None',
   andMore: ' and more',
   groups: {
-    bless: "Today's wish",
     street: 'Street',
     honor: 'Badges & pets',
     device: 'Facilities',

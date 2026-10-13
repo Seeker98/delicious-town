@@ -39,7 +39,6 @@ describe('英法西的单复数（质量期 ④，backlog #116）', () => {
     expect(es.bar.darts.draw(1)).toBe('empate. Se devuelve 1 vale misterioso');
     expect(fr.friends.thumbsToday(1)).toContain('1 personne vous a donné');
     expect(fr.bar.darts.draw(1)).toBe('égalité. 1 bon mystère remboursé');
-    expect(en.town.blessRandom('1', 5)).toBe('5 random level 1 ingredients');
     expect(en.kuji.bought(1)).toBe('Bought 1 kuji ticket');
     expect(en.bar.darts.draw(1)).toBe('a draw. 1 Mystery Voucher refunded');
   });

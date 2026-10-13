@@ -57,8 +57,7 @@ const KNOWN: Record<string, string[]> = {
   // 厨塔声望商店、长老掉落（层的 elder.drops，itemRefs 的“厨塔长老”）
   'modules/tower/shop.ts': ['goodsId'],
   'modules/tower/tower.ts': ['id'],
-  // 星愿（itemRefs 的 bless）、镇长兑换（goodsExchange）
-  'modules/town/bless.ts': ['b.goodsId!'],
+  // 镇长兑换（goodsExchange）
   'modules/town/exchange.ts': ['e.goodsId'],
   // 摇一摇彩蛋：GOODS.krabBurger、GOODS.krabCoin（rules.ts，数量来自区服数值）
   'modules/town/shake.ts': ['egg.goodsId'],

@@ -37,7 +37,6 @@ import type {
   NimDto,
   SpiceDto,
   DealDto,
-  FeastResultDto,
   LotsDrawDto,
   WeatherToolResultDto,
   WeatherToolsDto,
@@ -54,7 +53,6 @@ import type {
   TownExchangeDto,
   TownExchangePart,
   TownExchangeResultDto,
-  WishResultDto,
   BarDto,
   BarExchangeResultDto,
   CupDto,
@@ -476,8 +474,8 @@ export const endpoints = {
   takeaway: () => api.get<TakeawayDto>('/api/v1/takeaway'),
   takeawayOpen: (way: 'ticket' | 'coin') => api.post<{ opened: true }>('/api/v1/takeaway/open', { way }),
   takeawayRefresh: () => api.post<{ created: number }>('/api/v1/takeaway/refresh'),
-  takeawayDeliver: (orderId: number, riderId: number, double: boolean) =>
-    api.post<TakeawayDeliveryDto>('/api/v1/takeaway/deliver', { orderId, riderId, double }),
+  takeawayDeliver: (orderId: number, riderId: number) =>
+    api.post<TakeawayDeliveryDto>('/api/v1/takeaway/deliver', { orderId, riderId }),
   takeawayClaim: (deliveryId: number, drone: boolean) =>
     api.post<TakeawayClaimDto>('/api/v1/takeaway/claim', { deliveryId, drone }),
   takeawayClaimAll: () => api.post<TakeawayClaimDto[]>('/api/v1/takeaway/claim-all'),
@@ -530,9 +528,6 @@ export const endpoints = {
     api.post<TicketResultDto>('/api/v1/town/level-ticket', { level, picks }),
   townMysteryTicket: (foodsId: number) =>
     api.post<TicketResultDto>('/api/v1/town/mystery-ticket', { foodsId }),
-  townWish: () => api.post<WishResultDto>('/api/v1/town/wish'),
-  townFeast: (foodsId?: number) =>
-    api.post<FeastResultDto>('/api/v1/town/feast', foodsId === undefined ? {} : { foodsId }),
   announcements: () => api.get<AnnouncementsDto>('/api/v1/announcements'),
   announcementSeen: (id: number) => api.post<null>(`/api/v1/announcements/${id}/seen`, {}),
   publicAnnouncements: () => api.get<AnnouncementsDto>('/api/v1/public/announcements'),

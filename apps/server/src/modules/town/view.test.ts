@@ -29,14 +29,13 @@ describe('小镇概览（设计文档 §3.8）', () => {
       shaken: false,
       broadcast: { horns: 0, readyAt: null, minStar: 1, maxLen: 64 },
       weather: { id: 1, name: '晴', until: expect.any(String) },
-      bless: { today: null, restName: null, hasLamp: false, activation: 0, feasted: false },
     });
   });
 
   it('做过各项之后：状态和冷却都反映出来', async () => {
     const a = await newRestaurant(t, {
       patch: { star_level: 1, coin: 1_000_000 },
-      goods: { [GOODS.horn]: 3, [GOODS.magicLamp]: 1 },
+      goods: { [GOODS.horn]: 3 },
       verified: true,
     });
     await setWeather(t, a.shardId, 1);
@@ -46,15 +45,12 @@ describe('小镇概览（设计文档 §3.8）', () => {
     await t.game.town.talk(a, { npc: 'carmen' });
     await t.game.town.broadcast(a, { text: '你好' });
     await t.game.town.shake(a);
-    const { bless } = (await t.game.town.wish(a)).data;
     const v = await t.game.town.overview(a);
     const now = gameTime(DAY, 12).getTime();
     expect(v.talked).toEqual({ bigEater: true, wenjie: false, bro13: false, carmen: true });
     expect(v.bigEaterGift).toBe(true);
     expect(v.shaken).toBe(true);
     expect(v.broadcast).toMatchObject({ horns: 2, readyAt: new Date(now + 30_000).toISOString() });
-    expect(v.bless).toMatchObject({ today: { id: bless.id }, hasLamp: true, feasted: false });
-    expect(v.bless.restName).toEqual(expect.any(String));
   });
 
   it('支线任务：广播、摇钱包、嘻哈男孩打赏（4E-2）、发帖（4E-3）都开放', async () => {

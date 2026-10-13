@@ -59,14 +59,9 @@ const itemName = (i: ActItem) => catalog.data('activation', i.id)?.name ?? i.nam
 const lockReason = (i: ActItem) => (lockText(i) ?? '').replace(/^🔒\s*/u, '');
 /** 活跃进度条：档位按最高一档的点数排在条上 */
 const maxPoints = computed(() => Math.max(1, ...(act.value?.rewards ?? []).map((r) => r.points)));
-/** 档位下面一行：翻倍、另送抽赏券，两样都有时用 · 隔开（P7 终审） */
+/** 档位下面一行：另送抽赏券（道具减法 2026-10-13：爱心项链的奖励翻倍删了） */
 const tierNote = (r: ActivationDto['rewards'][number]) =>
-  [
-    r.multiplier > 1 ? t.value.rest.tasks.double : '',
-    act.value?.kujiTicket?.points === r.points ? t.value.rest.tasks.kujiTier(act.value.kujiTicket.num) : '',
-  ]
-    .filter(Boolean)
-    .join(' · ');
+  act.value?.kujiTicket?.points === r.points ? t.value.rest.tasks.kujiTier(act.value.kujiTicket.num) : '';
 const at = (p: number) => `${Math.min(100, (p / maxPoints.value) * 100)}%`;
 
 onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.tasks.loadFailed), 'danger')));

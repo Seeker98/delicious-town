@@ -133,7 +133,6 @@ export function itemRefs(b: Omit<ConfigBundle, 'version' | 'i18n'>): ItemRef[] {
   for (const a of b.slotAwards)
     if (a.itemId !== null) add(a.kind === 'foods' ? 'foods' : 'goods', a.itemId, 'gives', '老虎机');
   for (const r of b.renownShop) add('goods', r.goodsId, 'gives', '声望商店');
-  for (const x of b.bless) if (x.goodsId !== null) add('goods', x.goodsId, 'gives', '星愿');
   // 搬家时发新街道的勋章（growth/service.ts，终审 C1）
   for (const s of b.streets) add('goods', s.medalId, 'gives', '搬家（街道勋章）');
   // 厨塔长老（问题记录 408）：打赢掉的厨具是来源；长老穿的厨具用来算属性、在页面上列出，也算用到（backlog 第 ⑦ 批审查）

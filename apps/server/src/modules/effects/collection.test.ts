@@ -8,13 +8,12 @@ const none: CollectionCounts = {
   plaques: 0,
   honors: 0,
   pots: 0,
-  paintings: 0,
   an2023: false,
   an2025: false,
   mdcg: false,
 };
 const calc = (c: Partial<CollectionCounts>) =>
-  collectionEffects({ ...none, ...c }, t, config.bundle.potTiers, config.bundle.paintingTiers);
+  collectionEffects({ ...none, ...c }, t, config.bundle.potTiers);
 
 describe('收集类加成（规格书 20 §20.18）', () => {
   it('什么都没有时为空', () => {
@@ -34,15 +33,5 @@ describe('收集类加成（规格书 20 §20.18）', () => {
     expect(calc({ pots: 3 })).toEqual({});
     expect(calc({ pots: 4 })).toEqual({ potCoinRate: 0.08 });
     expect(calc({ pots: 7 })).toEqual({ potCoinRate: 0.08, reapAddNum: 1, potExpRate: 0.64 });
-  });
-  it('集名画：7 幅自动加油，13 幅经验 +80% 且标记最高档', () => {
-    expect(calc({ paintings: 7 })).toEqual({ autoAddOil: 1, mcCoinAdd: 1 });
-    expect(calc({ paintings: 13 })).toEqual({
-      autoAddOil: 1,
-      mcCoinAdd: 1,
-      reapAddNum: 1,
-      paintingExpRate: 0.8,
-      paintingTop: 1,
-    });
   });
 });

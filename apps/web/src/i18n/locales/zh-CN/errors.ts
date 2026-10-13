@@ -86,7 +86,7 @@ export default {
     not_available: () => '这个星级暂未开放',
     slot_locked: () => '这个设施位还没开放',
     statue: (p, n) => `需要持有 ${n.goodsName(Number(p.goodsId))}`,
-    necklace: () => '需要佩戴有效的爱心项链',
+    fund_medal: () => '需要持有 B 档或以上的基金勋章',
     task: (p) => `任务还没完成 (${String(p.progress)}/${String(p.target)})`,
     activation: (p) =>
       p.have === undefined
@@ -102,7 +102,6 @@ export default {
           : `声望不够 (偷菜要 ${String(p.need)} 点声望)`,
     mc_count: (p) => `学会的特色菜不够 (需要 ${String(p.need)} 道)`,
     not_learned: () => '还没学会这道菜',
-    double: () => '持有"使命必达"才能加料',
     job_honor: (p, n) =>
       p.goodsId ? `需要持有有效的${n.goodsName(Number(p.goodsId))}` : '持有有效的外卖站长工作证才能刷新',
   }),
@@ -283,13 +282,11 @@ export default {
     no_table: '没有这张桌子',
     already_dining: '你已经在别人店里白食了',
     not_dining: '没有在白食',
-    diner_protected: '对方受蟹老板庇佑 (神灯), 请不走',
     table_occupied: '这张桌子有人了',
     no_roach: '这张桌上没有蟑螂',
     own_roach: '不能消灭自己放的蟑螂',
     friend_oil_full: '好友的油壶已经满了',
     bad_slot: '没有这个橱柜位',
-    blessed: '对方的餐厅受到蟹老板的庇佑, 这次什么也没翻到',
     level_mismatch: '只能交换同等级、5 级以内的食材',
     foods_locked: '对方锁定了这种食材, 飓风天才能换',
     bad_look: '没有这个款式',
@@ -361,7 +358,6 @@ export default {
     deal_offer: '银行家在等你回答, 先选成交还是不成交',
     deal_no_offer: '这一轮还没开完, 银行家还没出价',
     krab_broke: '蟹老板的钱袋空空如也',
-    no_bless: '今天还没有人许愿',
     foods_not_allowed: '这个食材不能换',
     no_weather: '现在没有可以换的天气',
     no_exchange: '没有这个兑换项',
@@ -422,9 +418,7 @@ export default {
     bar_round: '这个游戏还有一局没玩完',
     cup_taken: '这杯已经有人喝过了',
     shake: '蟹老板握紧了他的钱袋 (今天已经摇过了)',
-    wish: '今天已经有人许过愿了',
     wishtree: '这一轮你已经许过愿了',
-    feast: '今天已经共飨过了',
   },
   /** 带参数的特殊文案 */
   special: {

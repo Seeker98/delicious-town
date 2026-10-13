@@ -3,7 +3,7 @@ import type { GameDeps } from '../../core/deps';
 import { opAggAtStart } from '../../core/luck';
 import { featureAvailable } from '../../core/features';
 import { opNews, restLog, runSystemOp, setRest, type Op } from '../../core/op';
-import { gainCoin, gainExp, gainOil, gainRenown, spendCoin } from '../../core/resources';
+import { gainCoin, gainExp, gainRenown } from '../../core/resources';
 import { subFoods } from '../cupboard/foods';
 import { accrueShiling } from '../shiling/store';
 import { consumeSpecial } from '../mysterious/cook';
@@ -11,7 +11,6 @@ import { npcTableRound } from '../npc/npc';
 import { grantGoodsOp } from '../store/goods';
 import type { RestaurantRow, TableState } from '../../db/schema';
 import type { WorldService } from '../world/service';
-import { blessBuff } from '../town/bless';
 import { buildGlobals, toSettleInput, type SettleSource } from './globals';
 import { settleRestaurant } from './settle';
 import type { SettleGlobals, SpecialDish } from './types';
@@ -42,16 +41,6 @@ async function pool<T>(items: T[], n: number, fn: (x: T) => Promise<void>): Prom
     }
   };
   await Promise.all(Array.from({ length: Math.min(n, items.length) }, worker));
-}
-
-/** 自动加油（集名画"七韵丹青"）：油量低于门槛且银币够时加满 */
-export function autoRefuel(op: Op, agg: Record<string, number>): number {
-  if ((agg.autoAddOil ?? 0) <= 0) return 0;
-  if (op.rest.oil >= op.tuning.settlement.autoRefuelThreshold) return 0;
-  const need = op.rest.oil_max - op.rest.oil;
-  if (need <= 0 || op.rest.coin < need) return 0;
-  spendCoin(op, need, { source: 'oil.auto', event: false });
-  return gainOil(op, need, { source: 'oil.auto', event: false });
 }
 
 /** 店铺行 → 结算源（纯函数；快速模拟的 fastSettleSource 和它一一对应，parity 测试保证） */
@@ -178,7 +167,6 @@ export async function settleOne(
   }
   for (const l of r.logs) restLog(op, l.type, l.params);
   if (r.planktonAppeared) opNews(op, 'plankton.appear');
-  autoRefuel(op, agg);
   // 写餐桌放在 WITH 里和插收益记录合成一条语句（Postgres 的数据修改 CTE 不被引用也会执行）
   await op.tx
     .with('t', (db) =>
@@ -241,7 +229,6 @@ export async function settleShardRound(
     planktonRestId: snap.planktonRestId,
     holidayMultiplier: d.config.holidayMultiplier(now),
     naturalRoach: featureAvailable(settings, 'friend'),
-    bless: await blessBuff(d.db, d.config, shardId, now),
   });
   const ids = (
     await d.db

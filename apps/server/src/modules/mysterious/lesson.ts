@@ -281,8 +281,7 @@ export function createLessonOps(d: GameDeps) {
             await consumeGoods(o, GOODS.fragmentBase + mc.level, t.learnFragments);
             gainCoin(p.them, Math.floor(mc.coin * t.teacherShare), { event: false });
             await grantGoodsOp(p.them, GOODS.fragmentBase + mc.level, t.teacherFragments, { event: false });
-            success =
-              o.rng.chance(learnRate(thinker, luck, t)) || ((agg.magicLamp ?? 0) > 0 && o.rng.chance(0.5));
+            success = o.rng.chance(learnRate(thinker, luck, t));
           } else {
             spendStrength(o, t.stealStrength);
             success = o.rng.chance(stealRate(l.level, thinker, luck, t));

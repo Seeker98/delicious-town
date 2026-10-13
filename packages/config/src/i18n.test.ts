@@ -60,7 +60,6 @@ describe('第 8 批常见数据翻译（问题记录 272）', () => {
     'chapters',
     'questLines',
     'activation',
-    'bless',
     'tower',
     'formulas',
     'kujiThemes',
@@ -101,7 +100,6 @@ describe('第 8 批常见数据翻译（问题记录 272）', () => {
       chapters: b.chapters.map((x) => ({ id: String(x.id), fields: ['name'] })),
       questLines: b.questLines.map((x) => ({ id: String(x.id), fields: ['name'] })),
       activation: b.activationTasks.map((x) => ({ id: String(x.id), fields: ['name'] })),
-      bless: b.bless.map((x) => ({ id: String(x.id), fields: ['name'] })),
       tower: [...b.towerFloors.values()].map((x) => ({
         id: String(x.floor),
         fields: ['name', 'title', 'note'],

@@ -16,7 +16,6 @@ export const QUEST_STATE_KEYS: ReadonlySet<string> = new Set([
   'acquire.holdings',
   'collection.plaques',
   'collection.honors',
-  'collection.paintings',
   'signin.best',
   'invite.level10',
   'invite.level30',

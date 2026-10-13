@@ -14,22 +14,6 @@ const newRest = async () => createRestaurantRow(db, shard, await createAccountRo
 const now = new Date();
 
 describe('迁移 0014', () => {
-  it('星愿：每区服每天一行', async () => {
-    const a = await newRest();
-    const row = { shard_id: shard, day: '2026-09-30', bless_id: 1, rest_id: a, created_at: now };
-    await db.insertInto('town_bless').values(row).execute();
-    await expect(
-      db
-        .insertInto('town_bless')
-        .values({ ...row, bless_id: 2 })
-        .execute(),
-    ).rejects.toThrow();
-    await db
-      .insertInto('town_bless')
-      .values({ ...row, day: '2026-10-01' })
-      .execute();
-  });
-
   it('小镇个人状态：默认没领过大胃哥首次礼物', async () => {
     const a = await newRest();
     await db.insertInto('town_rest').values({ rest_id: a }).execute();

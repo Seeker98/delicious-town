@@ -92,10 +92,9 @@ describe('其他状态条件', () => {
     expect(await progress(me, 'acquire.holdings', 8)).toBe(2);
   });
 
-  it('收藏：牌匾按仓库里有的算；荣誉、名画按生效中的荣誉算，基金勋章和过期的不算', async () => {
+  it('收藏：牌匾按仓库里有的算；荣誉按生效中的荣誉算，基金勋章和过期的不算', async () => {
     const plaques = goodsWhere((g) => g.type === GOODS_TYPE.device && g.deviceType === DEVICE_TYPE.plaque);
-    const paintings = goodsWhere((g) => g.deviceType === DEVICE_TYPE.painting);
-    const other = goodsWhere((g) => g.deviceType === DEVICE_TYPE.pot)[0]!;
+    const pots = goodsWhere((g) => g.deviceType === DEVICE_TYPE.pot);
     const medal = [...FUND_MEDALS][0]!;
     const ctx = await newRestaurant(t, { goods: { [plaques[0]!]: 1, [plaques[1]!]: 2 } });
     const honor = (id: number, expires: Date | null = null) => ({
@@ -108,16 +107,15 @@ describe('其他状态条件', () => {
     await t.db
       .insertInto('effect_source')
       .values([
-        honor(paintings[0]!),
-        honor(paintings[1]!),
-        honor(other),
+        honor(pots[0]!),
+        honor(pots[1]!),
+        honor(pots[2]!),
         honor(medal),
-        honor(paintings[2]!, new Date(Date.now() - 1000)),
+        honor(pots[3]!, new Date(Date.now() - 1000)),
       ])
       .execute();
     expect(await progress(ctx, 'collection.plaques', 3)).toBe(2);
     expect(await progress(ctx, 'collection.honors', 10)).toBe(3);
-    expect(await progress(ctx, 'collection.paintings', 7)).toBe(2);
   });
 
   it('邀请的好友到 10 级、30 级：按邀请奖励记录算，超过每月上限的也算', async () => {

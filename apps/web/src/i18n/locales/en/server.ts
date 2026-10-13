@@ -137,7 +137,6 @@ const server: Messages['server'] = {
     hangover: 'Hangover',
     suit: (name, need) => `${name} (${need} ${plEn(need, 'piece', 'pieces')})`,
     suitFallback: 'Set',
-    bless: (name) => `Today's wish: ${name}`,
   },
 };
 export default server;

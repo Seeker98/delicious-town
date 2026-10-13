@@ -63,7 +63,7 @@ const bar: Messages['bar'] = {
     ],
     slot: [
       '1 Krab Coin per spin opens 3 slots; each slot gives an ingredient or item at the pool odds, or nothing.',
-      'The more you spin, the closer the guaranteed rare (the count is shown above); with a Magic Lamp an early guaranteed rare is twice as likely.',
+      'The more you spin, the closer the guaranteed rare (the count is shown above).',
       'Trade Mystery Vouchers for Krab Coins. Verify your email to use the slot machine.',
     ],
     devil: [
@@ -170,7 +170,6 @@ const bar: Messages['bar'] = {
   slot: {
     title: '1 Krab Coin per spin, 3 slots',
     floor: (n) => `A rare is guaranteed within ${n} ${plEn(n, 'spin', 'spins')}`,
-    lampShort: 'Magic Lamp: double guarantee chance',
     empty: 'Empty',
     needEmail: 'Verify your email to use the slot machine',
     noKrab: (have) => `Not enough Krab Coins (1 each, you have ${have})`,

@@ -1,11 +1,8 @@
 import { sql, type Kysely } from 'kysely';
 import { isFeatureEnabled, NEWBIE, type GameConfig } from '@dt/config';
 import {
-  addDays,
   checkRestaurantName,
   ErrorCode,
-  gameDay,
-  gameTime,
   type PageQuery,
   type RestaurantDto,
   type TableDto,
@@ -23,7 +20,6 @@ import { equipOff } from '../equip/power';
 import { headlines } from '../news/news';
 
 import { eligibilityOf } from '../exchange/eligibility';
-import { todayBless } from '../town/bless';
 import { recordLedger } from '../ledger/ledger';
 import { postNews } from '../news/news';
 import { npcAccountId } from '../npc/npc';
@@ -173,33 +169,29 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
     } = joined;
     // 其余十来条查询互不依赖，一起发（质量期 ③：首页最常用的接口，原来一条接一条，查询时间占了八成）
     const settingsP = shards.settings(row.shard_id);
-    const [tables, effects, snap, settings, devices, last, icons, news, boosts, today, feed] =
-      await Promise.all([
-        d.db
-          .selectFrom('restaurant_tables')
-          .select('tables')
-          .where('rest_id', '=', restId)
-          .executeTakeFirstOrThrow(),
-        listActiveEffects(d.db, restId, now),
-        world.ensure(row.shard_id, now),
-        settingsP,
-        deviceSlots(d.db, d.config, row, now),
-        lastRound(d.db, restId),
-        shownIcons(restId),
-        settingsP.then((st) =>
-          headlines(d.db, row.shard_id, {
-            daily: isFeatureEnabled(st, 'daily'),
-            now,
-            broadcastHours: st.tuning.town.broadcast.homeHours,
-          }),
-        ),
-        // 正在生效的全服加成单独列（问题记录 294）；区服关掉限时活动时加成也不生效，不列
-        settingsP.then((st) =>
-          isFeatureEnabled(st, 'activity') ? activeBoosts(d.db, row.shard_id, now) : [],
-        ),
-        todayBless(d.db, d.config, row.shard_id, now),
-        feedPage(d.db, restId, { limit: 3 }, now).then((p) => p.items),
-      ]);
+    const [tables, effects, snap, settings, devices, last, icons, news, boosts, feed] = await Promise.all([
+      d.db
+        .selectFrom('restaurant_tables')
+        .select('tables')
+        .where('rest_id', '=', restId)
+        .executeTakeFirstOrThrow(),
+      listActiveEffects(d.db, restId, now),
+      world.ensure(row.shard_id, now),
+      settingsP,
+      deviceSlots(d.db, d.config, row, now),
+      lastRound(d.db, restId),
+      shownIcons(restId),
+      settingsP.then((st) =>
+        headlines(d.db, row.shard_id, {
+          daily: isFeatureEnabled(st, 'daily'),
+          now,
+          broadcastHours: st.tuning.town.broadcast.homeHours,
+        }),
+      ),
+      // 正在生效的全服加成单独列（问题记录 294）；区服关掉限时活动时加成也不生效，不列
+      settingsP.then((st) => (isFeatureEnabled(st, 'activity') ? activeBoosts(d.db, row.shard_id, now) : [])),
+      feedPage(d.db, restId, { limit: 3 }, now).then((p) => p.items),
+    ]);
     const tuning = settings.tuning;
     /**
      * 首页待办的交易所一行（问题记录 591）：区服开着交易所、这家店够门槛才有；有进行中的大宗认购时带上批次。
@@ -238,7 +230,7 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
           .where('rest_id', '=', restId)
           .executeTakeFirst()
       )?.intro_at;
-    const dto = toRestaurantDto(row, tables.tables, shownEffects(effects, equipOff(settings)), d.config, {
+    return toRestaurantDto(row, tables.tables, shownEffects(effects, equipOff(settings)), d.config, {
       devices,
       lastRound: last,
       weather: {
@@ -278,16 +270,6 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
         .map(([k]) => k)
         .sort(),
     });
-    if (today)
-      dto.effects.unshift({
-        sourceType: 'bless',
-        sourceId: today.bless.id,
-        // 只给星愿名，"今日星愿："前缀由前端按语言加（问题记录 272）
-        name: today.bless.name,
-        effects: today.bless.buff,
-        expiresAt: gameTime(addDays(gameDay(now), 1), 0).toISOString(),
-      });
-    return dto;
   }
 
   /** 开店（不碰会话）：HTTP 的 create 和模拟器共用 */

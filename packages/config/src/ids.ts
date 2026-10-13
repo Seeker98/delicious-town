@@ -35,10 +35,8 @@ export const GOODS = {
   hundredMaster: 61702, // 百世之师（强制结束课程）
   spongeBob: 60508, // 海绵宝宝（烹制时点赞）
   starBook: 61406, // 星神之书（鉴定重抽）
-  humanSon: 61204, // 人类之子-名画（每份价值加成，计划裁定 2）
   thinker: 61601, // 思想者-雕像
   luckyCookie: 10418, // 幸运饼干
-  loveNecklace: 60204, // 爱心项链
   adventureMap: 10704, // 探险图
   krabCoin: SHARED_GOODS.krabCoin, // 蟹币
   dtTicket: 10007, // 美味券
@@ -57,7 +55,6 @@ export const GOODS = {
   heartache: 61001, // 痛心入骨
   godsHand: 61002, // 神之一手
   thumbKing: 61411, // 点赞王
-  magicLamp: 61415, // 神灯
   excitedHeart: 61416, // 激动的心
   voodoo: 61422, // 巫毒娃娃
   townCare: 60512, // 镇长的关心
@@ -117,8 +114,8 @@ export const GOODS_TYPE = {
   souvenir: 10,
 } as const;
 
-/** 牌匾的 devicetype；盆栽、名画勋章的 devicetype */
-export const DEVICE_TYPE = { plaque: 6, pot: 36, painting: 41 } as const;
+/** 牌匾的 devicetype；盆栽勋章的 devicetype */
+export const DEVICE_TYPE = { plaque: 6, pot: 36 } as const;
 
 /** 厨具六项属性（生成、强化、宝石都按这个名字） */
 export const EQUIP_ATTRS = ['cook', 'cutting', 'fire', 'season', 'creatives', 'luck'] as const;

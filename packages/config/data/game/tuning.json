@@ -51,8 +51,6 @@
     "krabMaxGrade": 7,
     "krabExpPerGrade": 5,
     "krabCoinMultiplier": 5,
-    "painting13Rate": 0.15,
-    "painting13Hours": 5,
     "pickyMaxGrade": 7,
     "pickyHitCount": 30,
     "pickyShortPayRate": 0.5,
@@ -70,7 +68,6 @@
     "krabCoinOddStep": 0.03,
     "renownRate": 0.78,
     "renownOddThreshold": 0.2,
-    "autoRefuelThreshold": 2000,
     "concurrency": 16,
     "batchSize": 200
   },
@@ -179,7 +176,7 @@
     "flip": {
       "baseSlots": 5, "slotsPerStar": 5, "coolHours": 22, "coolRandHours": 4, "npcCoolHours": 10,
       "cheapTimes": 100, "perHostDaily": 3, "caughtCoinPerLevel": 100, "npcCaughtCoinPerStar": 10,
-      "hitRate": 0.3, "blessedRate": 0.8, "handleFoodsRate": 0.9, "handleFoodsRatePerStar": 0.01, "luckDivisor": 3
+      "hitRate": 0.3, "handleFoodsRate": 0.9, "handleFoodsRatePerStar": 0.01, "luckDivisor": 3
     },
     "exchange": {
       "maxLevel": 5, "feeRate": 0.5, "lockedFeeMul": 2, "perDay": 10, "takenPerDay": 20,
@@ -386,7 +383,6 @@
       "base": 8000, "rand": 5000, "eggMod": 100, "eggTail": 88, "burgerEvery": 8, "burgerNum": 1, "krabCoinNum": 8,
       "limitIp": false, "limitDevice": false, "krabDailyCoin": 10000000
     },
-    "bless": { "lampCoinBonus": 0.1 },
     "news": { "pageSize": 50 },
     "rareExchange": false,
     "mysteryExclude": [7011, 7012],

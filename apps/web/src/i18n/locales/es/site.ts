@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    cuts1013:
+      'Menos objetos: se quitan los cuadros, la Lámpara mágica y el Deseo del pueblo, el Collar del amor y Misión cumplida (ración extra en las entregas); el Mercado premium ahora pide una medalla del fondo de nivel B o superior; las recompensas de actividad ya no se duplican; las misiones secundarias pierden los pasos «Tener 7 cuadros» y «Pedir un deseo con la Lámpara mágica»',
     special1013:
       'Los platos especiales se venden distinto: los clientes exigentes satisfechos siguen tomando 2 raciones a precio completo y los que no quedan satisfechos o se van no toman ninguna; los clientes normales ahora piden 1 ración (a mitad de precio) solo en cerca de la mitad de sus mesas cada ronda, en vez de en todas. La página de platos especiales muestra las cifras de tu servidor',
     fix1013b:

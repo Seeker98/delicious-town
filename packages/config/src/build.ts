@@ -34,7 +34,6 @@ import type {
   QuestLine,
   WeeklyGroup,
   Award,
-  Bless,
   CollectionTier,
   ConfigBundle,
   Cookbook,
@@ -154,9 +153,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   const towerRaw = parse('dataset/tower_floors', z.array(raw.rawTowerFloor));
   const goodsExRaw = parse('designed/goods_exchange', z.array(raw.rawGoodsExchange));
   const renownRaw = parse('designed/renown_shop', z.array(raw.rawRenownShop));
-  const blessRaw = parse('designed/bless', z.array(raw.rawBless));
   const potRaw = parse('dataset/suit_pot', z.array(raw.rawDictTier));
-  const paintingRaw = parse('dataset/suit_painting', z.array(raw.rawDictTier));
   const guessFoodsRaw = parse('dataset/market_guess_foods', z.array(raw.rawGuessFood));
   const gradesRaw = parse('designed/cookbook_grades', z.array(raw.rawCookbookGrade));
   const specialTiersRaw = parse('designed/shop_special_rate', z.array(raw.rawSpecialTier));
@@ -233,9 +230,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     !towerRaw ||
     !goodsExRaw ||
     !renownRaw ||
-    !blessRaw ||
     !potRaw ||
-    !paintingRaw ||
     !guessFoodsRaw ||
     !gradesRaw ||
     !specialTiersRaw ||
@@ -1058,8 +1053,8 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     if (!foods.some((f) => f.level === level && f.odds === 100 && !f.retired))
       errors.push(`tuning.bar.deal.prizes: no common level-${level} food to draw`);
   errors.push(...slotFloorErrors(tuning.bar.slotFloorAwardId, slotAwards));
-  // 神秘礼券、蟹币、神灯（GOODS.mysteryTicket / krabCoin / magicLamp）
-  for (const id of [GOODS.mysteryTicket, GOODS.krabCoin, GOODS.magicLamp])
+  // 神秘礼券、蟹币（GOODS.mysteryTicket / krabCoin）
+  for (const id of [GOODS.mysteryTicket, GOODS.krabCoin])
     if (!goodsIds.has(id)) errors.push(`bar references unknown goods ${id}`);
   // ---------- 厨塔（子项目 4C-2） ----------
   // 守塔人覆盖（问题记录 120）：各层厨力、第 5/6 层互换
@@ -1196,34 +1191,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
         errors.push(`goods_exchange ${e.id} references unknown goods ${n.goodsId}`);
     if (e.times === 0 || e.times < -1) errors.push(`goods_exchange ${e.id} times must be -1 or positive`);
   }
-  const blessAll: Bless[] = blessRaw.map((x) => ({
-    id: x.id,
-    name: x.name,
-    type: x.type,
-    num: x.num,
-    needAct: x.needAct,
-    levels: x.value?.level ?? null,
-    goodsId: x.value?.goodsId ?? null,
-    buff: x.buff,
-    odds: x.odds,
-  }));
-  // 许到的道具下架了，这条星愿不再出现（问题记录 501）；翻译表照完整的列表查，多出来的翻译不算错
-  const bless = blessAll.filter((x) => x.goodsId === null || !retired.goods.has(x.goodsId));
-  unique(
-    'bless',
-    blessAll.map((x) => x.id),
-  );
-  for (const x of blessAll) {
-    if (x.goodsId !== null && !goodsIds.has(x.goodsId))
-      errors.push(`bless ${x.id} references unknown goods ${x.goodsId}`);
-    if (x.type === 2 && x.goodsId === null) errors.push(`bless ${x.id} needs goodsId`);
-    if (
-      (x.type === 0 || x.type === 5) &&
-      (x.levels === null || x.levels[0] < 1 || x.levels[1] > 6 || x.levels[0] > x.levels[1])
-    )
-      errors.push(`bless ${x.id} needs a level range within 1~6`);
-  }
-  // 神秘礼券、爆裂飞弹、神秘券、蟹黄堡、蟹币、N 级券、司天罗盘、晴雨签、喇叭、神灯、幸运饼干
+  // 神秘礼券、爆裂飞弹、神秘券、蟹黄堡、蟹币、N 级券、司天罗盘、晴雨签、喇叭、幸运饼干
   for (const id of [
     GOODS.mysteryTicket,
     GOODS.missileBurst,
@@ -1234,7 +1202,6 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     GOODS.compass,
     GOODS.weatherLots,
     GOODS.horn,
-    GOODS.magicLamp,
     GOODS.luckyCookie,
   ])
     if (!goodsIds.has(id)) errors.push(`town references unknown goods ${id}`);
@@ -1428,7 +1395,6 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
       chapters: chaptersRaw.map((c) => ({ id: c.id, name: c.name })),
       questLines: questLines.map((l) => ({ id: l.id, name: l.name })),
       activation: activationTasks,
-      bless: blessAll,
       tower: [...towerFloors.values()].map((f) => ({
         id: f.floor,
         name: f.name,
@@ -1481,7 +1447,6 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     shopSpecialTiers,
     shopPools,
     potTiers: tiersFrom(potRaw),
-    paintingTiers: tiersFrom(paintingRaw),
     marketGuessFoods,
     guessAwards,
     guessBonus,
@@ -1494,7 +1459,6 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     looks,
     suits,
     goodsExchange,
-    bless,
     extra: {},
   };
   errors.push(...retiredErrors(itemRefs(body), retired));

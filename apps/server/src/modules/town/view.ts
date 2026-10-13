@@ -2,8 +2,6 @@ import { GOODS } from '@dt/config';
 import { gameDay, type NpcKey, type TownDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import type { WorldService } from '../world/service';
-import { blessDto, todayBless } from './bless';
-import { activationPoints } from './common';
 import { goodsCounts } from './exchange';
 import { mayorView } from './mayor';
 
@@ -19,7 +17,7 @@ export async function townView(d: GameDeps, world: WorldService, ctx: RestCtx): 
   const day = gameDay(now);
   const restId = ctx.restaurantId;
   // 互不依赖的查询一起发（性能第二轮：原来一条接一条，开发服 16 毫秒左右）
-  const [rest, counterRows, tr, shaken, goods, snap, today, mayor, activation] = await Promise.all([
+  const [rest, counterRows, tr, shaken, goods, snap, mayor] = await Promise.all([
     d.db
       .selectFrom('restaurant')
       .select(['star_level', 'coin', 'diamond'])
@@ -44,19 +42,11 @@ export async function townView(d: GameDeps, world: WorldService, ctx: RestCtx): 
       .where('day', '=', day)
       .where('rest_id', '=', restId)
       .executeTakeFirst(),
-    goodsCounts(d.db, restId, [GOODS.horn, GOODS.magicLamp], now),
+    goodsCounts(d.db, restId, [GOODS.horn], now),
     world.ensure(ctx.shardId, now),
-    todayBless(d.db, d.config, ctx.shardId, now),
     mayorView(d.db, world, ctx.shardId, restId, now),
-    activationPoints(d.db, d.config, restId, day),
   ]);
   const counters = new Map(counterRows.map((r) => [r.key, r.count]));
-  // 许愿的店名要等今天的星愿
-  const [blessRest] = await Promise.all([
-    today
-      ? d.db.selectFrom('restaurant').select('name').where('id', '=', today.restId).executeTakeFirst()
-      : undefined,
-  ]);
   const talked = Object.fromEntries(NPCS.map((n) => [n, (counters.get(`town.talk.${n}`) ?? 0) > 0]));
   return {
     now: now.toISOString(),
@@ -74,12 +64,5 @@ export async function townView(d: GameDeps, world: WorldService, ctx: RestCtx): 
       maxLen: t.broadcast.maxLen,
     },
     weather: { id: snap.weather.id, name: snap.weather.name, until: snap.weatherUntil.toISOString() },
-    bless: {
-      today: today ? blessDto(today.bless) : null,
-      restName: blessRest?.name ?? null,
-      hasLamp: (goods.get(GOODS.magicLamp) ?? 0) > 0,
-      activation,
-      feasted: (counters.get('town.feast') ?? 0) > 0,
-    },
   };
 }

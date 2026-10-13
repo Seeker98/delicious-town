@@ -21,7 +21,7 @@ import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 
 /**
- * 广场（界面改版 P10）：120px 头图叠天气、喇叭、今天的星愿；下面新闻、居民、排行、许愿树四个标签，
+ * 广场（界面改版 P10）：120px 头图叠天气、喇叭；下面新闻、居民、排行、许愿树四个标签，
  * 标签栏右边“论坛 ›”。'town' 是“居民”标签，键名沿用旧的，免得已存的上次标签和旧链接失效
  */
 type Tab = 'news' | 'town' | 'rank' | 'wishtree';
@@ -64,10 +64,6 @@ onMounted(() => {
   void catalog.load();
   void load();
 });
-const blessName = computed(() => {
-  const b = data.value?.bless.today;
-  return b ? (catalog.data('bless', b.id)?.name ?? b.name) : '';
-});
 </script>
 
 <template>
@@ -79,9 +75,6 @@ const blessName = computed(() => {
     >
     <span v-if="data" class="dt-place-chip" data-testid="town-horns"
       ><DtArt name="town-horn" :size="18" />{{ t.town.chips.horns }} <b>{{ data.broadcast.horns }}</b></span
-    >
-    <span v-if="blessName" class="dt-place-chip" data-testid="town-bless"
-      >{{ t.town.chips.bless }} <b>{{ blessName }}</b></span
     >
   </PlaceScene>
   <DtTabs v-model="tab" :tabs="tabItems">

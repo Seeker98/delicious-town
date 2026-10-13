@@ -42,14 +42,14 @@ export interface ActiveEffectLike extends EffectLike {
 }
 
 /**
- * 收藏的件数：牌匾按仓库里有的算，勋章（荣誉）、盆栽、名画按生效中的荣誉来源算。
+ * 收藏的件数：牌匾按仓库里有的算，勋章（荣誉）、盆栽按生效中的荣誉来源算。
  * 加成汇总和支线“收藏”（问题记录 515）共用
  */
 export function collectionCounts(
   owned: Iterable<number>,
   honorIds: Iterable<number>,
   config: GameConfig,
-): { plaques: number; honors: number; pots: number; paintings: number } {
+): { plaques: number; honors: number; pots: number } {
   let plaques = 0;
   for (const id of owned) {
     const g = config.goods.get(id);
@@ -57,21 +57,19 @@ export function collectionCounts(
   }
   let honors = 0;
   let pots = 0;
-  let paintings = 0;
   for (const id of honorIds) {
     // 基金勋章只加经验（240-2）：不算勋章收藏，否则会额外加银币收入
     if (FUND_MEDALS.has(id)) continue;
     honors += 1;
     const dt = config.goods.get(id)?.deviceType;
     if (dt === DEVICE_TYPE.pot) pots += 1;
-    if (dt === DEVICE_TYPE.painting) paintings += 1;
   }
-  return { plaques, honors, pots, paintings };
+  return { plaques, honors, pots };
 }
 
 /**
  * 加成汇总（真实服务和快速模型共用，快速模拟设计 §4.3）：
- * 来源汇总 + 牌匾、勋章、盆栽、名画、纪念牌匾的收藏派生
+ * 来源汇总 + 牌匾、勋章、盆栽、纪念牌匾的收藏派生
  */
 export function computeEffectAgg(
   sources: ActiveEffectLike[],
@@ -95,7 +93,6 @@ export function computeEffectAgg(
     },
     tuning.collection,
     config.bundle.potTiers,
-    config.bundle.paintingTiers,
   );
   for (const [k, v] of Object.entries(derived)) agg[k] = (agg[k] ?? 0) + v;
   if (opts.equipOff) agg[EQUIP_OFF_KEY] = 1;

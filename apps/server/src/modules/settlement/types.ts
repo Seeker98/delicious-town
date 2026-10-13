@@ -46,8 +46,6 @@ export interface SettleGlobals {
   holidayMultiplier: number;
   /** 是否自然产生蟑螂：打蟑螂（friend 功能）不可用时关闭，否则蟑螂只进不出 */
   naturalRoach: boolean;
-  /** 小镇祝福（子项目 4 提供；2A 为空） */
-  bless: Record<string, number>;
   tuning: Tuning;
   cookbooks: CookbookIndex;
   grade(g: number): CookbookGrade;
@@ -77,7 +75,6 @@ export interface Rates {
 /** 开关型荣誉和其他系数 */
 export interface Flags {
   flute: boolean;
-  paintingTop: boolean;
   pinkBook: boolean;
   spCoinRate: number;
   mcCoinRate: number;

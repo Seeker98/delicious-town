@@ -12,21 +12,14 @@ beforeAll(async () => {
 afterAll(() => t.close());
 
 describe('体力恢复（规格书 01 §1.10）', () => {
-  it('每次 +1（幸运时 +2），不超过上限；圣佑提高上限', async () => {
+  it('每次 +1（幸运时 +2），不超过上限', async () => {
     const shardId = await createShard(t.db);
     const low = await newRestaurant(t, { shardId, patch: { strength: 50, strength_max: 100 } });
     const full = await newRestaurant(t, { shardId, patch: { strength: 100, strength_max: 100 } });
-    const holy = await newRestaurant(t, { shardId, patch: { strength: 150, strength_max: 100 } });
-    await t.db
-      .updateTable('restaurant')
-      .set({ effect_agg: JSON.stringify({ holyBless: 100 }) })
-      .where('id', '=', holy.restaurantId)
-      .execute();
     const r = await regenStrength(t.game.deps, shardId, 'p1', new Date());
-    expect(r.updated).toBe(2);
+    expect(r.updated).toBe(1);
     expect([51, 52]).toContain((await restRow(t, low.restaurantId)).strength);
     expect((await restRow(t, full.restaurantId)).strength).toBe(100);
-    expect([151, 152]).toContain((await restRow(t, holy.restaurantId)).strength);
   });
 
   it('沙漏倍率', async () => {

@@ -50,8 +50,6 @@ const input = (patch: Partial<CookInput> = {}): CookInput => ({
   numRate: 0,
   roadRate: 0,
   power: 0,
-  coinAdd: 0,
-  humanSon: false,
   cookie: false,
   ...patch,
 });
@@ -74,7 +72,7 @@ describe('cookDish', () => {
     expect(r).toEqual({ grade: 3, luck: false, num: 565, price: 157, duelPrice: 157, exp: 8 });
   });
 
-  it('6 级菜份数打折；加成把品级抬到佳肴时标记幸运；熟练度、试炼价值、人子、饼干、名画都算进每份价值', () => {
+  it('6 级菜份数打折；加成把品级抬到佳肴时标记幸运；熟练度、试炼价值、饼干都算进每份价值', () => {
     const r = cookDish(
       input({
         mc: dish({ level: 6 }),
@@ -86,22 +84,20 @@ describe('cookDish', () => {
         numRate: 0.2,
         roadRate: 0.1,
         power: 200,
-        coinAdd: 3,
-        humanSon: true,
         cookie: true,
       }),
       t,
-      // 品级 0.9；份数折扣 0.70+0.4×0.25=0.8；份数系数 0.98+0.5×0.14；厨力项 0.05×0.5；人子 rand[1,2]→1；饼干 rand[1,3]→3
-      sequenceRng([0.9, 0.4, 0.5, 0.5, 0, 0.99]),
+      // 品级 0.9；份数折扣 0.70+0.4×0.25=0.8；份数系数 0.98+0.5×0.14；厨力项 0.05×0.5；饼干 rand[1,3]→3
+      sequenceRng([0.9, 0.4, 0.5, 0.5, 0.99]),
     );
     expect(r.grade).toBe(7);
     expect(r.luck).toBe(true);
     // 1440 × 2.05 × (1 + 0.1 + 0.2 + 0.025) = 3911.4
     expect(r.num).toBe(3911);
-    // ⌊100 × 2.05 × (1 + 0.08 + 0.1)⌋ + 1 + 3 + 3
-    expect(r.price).toBe(248);
-    // 对决用的每份价值不吃试炼价值（用户 2026-10-07 定）：⌊100 × 2.05 × (1 + 0.08)⌋ + 1 + 3 + 3
-    expect(r.duelPrice).toBe(228);
+    // ⌊100 × 2.05 × (1 + 0.08 + 0.1)⌋ + 3
+    expect(r.price).toBe(244);
+    // 对决用的每份价值不吃试炼价值（用户 2026-10-07 定）：⌊100 × 2.05 × (1 + 0.08)⌋ + 3
+    expect(r.duelPrice).toBe(224);
     expect(r.exp).toBe(Math.floor((7 * 3911) / 200));
   });
 });

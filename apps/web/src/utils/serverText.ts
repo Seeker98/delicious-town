@@ -147,8 +147,6 @@ export interface EffectNames {
   goodsName(id: number): string;
   deviceName(id: number): string | undefined;
   suit(id: number): { name: string; tiers: Array<{ need: number }> } | undefined;
-  /** 星愿名按目录取（第 8c 批）；测试里可以不传 */
-  data?(kind: 'bless', id: number): { name: string } | undefined;
 }
 
 /**
@@ -164,8 +162,6 @@ export function effectName(e: Pick<EffectDto, 'sourceType' | 'sourceId' | 'name'
       return t.equip;
     case 'bar':
       return t.hangover;
-    case 'bless':
-      return t.bless(x.data?.('bless', e.sourceId)?.name ?? e.name);
     case 'suit': {
       const suit = x.suit(Math.floor(e.sourceId / 10));
       const tier = suit?.tiers[e.sourceId % 10];

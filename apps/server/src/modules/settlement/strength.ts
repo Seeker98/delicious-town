@@ -11,7 +11,7 @@ export function strengthGain(
   tuning: Tuning,
   rng: Rng,
 ): { add: number; cap: number } | null {
-  const cap = r.strength_max + (agg.holyBless ?? 0);
+  const cap = r.strength_max;
   if (r.strength >= cap) return null;
   const base = rng.chance(luckRate(r.luck + (agg.luckValue ?? 0)))
     ? tuning.strength.luckyRegen

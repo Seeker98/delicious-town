@@ -130,7 +130,6 @@ describe('服务端代码 → 文字（问题记录 272）', () => {
     expect(effectName(effect('equip', 0), names)).toBe('厨具');
     expect(effectName(effect('suit', 20), names)).toBe('阿卡玛的神谕 (2 件)');
     expect(effectName(effect('device', 3), names)).toBe('冰箱');
-    expect(effectName(effect('bless', 4, '招财进宝'), names)).toBe('今日星愿: 招财进宝');
     expect(effectName(effect('honor', 7), names)).toBe('道具7');
     expect(effectName(effect('honor', 8, '没有这个道具'), names)).toBe('没有这个道具');
   });

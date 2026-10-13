@@ -3,7 +3,6 @@ import { sequenceRng } from '@dt/shared';
 import { createTestGame, foodNum, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
 import { questIn, showQuest } from '../../../test/quests';
 import { fid, gid } from '../../../test/items';
-import { GOODS } from '@dt/config';
 
 let t: TestGame;
 let rngValues: number[] = [0.5];
@@ -79,18 +78,15 @@ describe('老虎机（设计文档 §3.5）', () => {
     ]);
   });
 
-  it('提前保底：fail 200 时随机数 0.0005，有神灯（率翻倍到 0.00064）出蟹黄堡，没有神灯（0.00032）不出', async () => {
-    const lampy = await newRestaurant(t, {
-      verified: true,
-      goods: { [gid('蟹币')]: 1, [GOODS.magicLamp]: 1 },
-    });
-    const plain = await newRestaurant(t, { verified: true, goods: { [gid('蟹币')]: 1 } });
-    for (const c of [lampy, plain]) await setFail(c.restaurantId, 200);
+  it('提前保底：fail 200 时提前保底率 0.00032，随机数 0.0003 出蟹黄堡，0.0005 不出', async () => {
+    const hit = await newRestaurant(t, { verified: true, goods: { [gid('蟹币')]: 1 } });
+    const miss = await newRestaurant(t, { verified: true, goods: { [gid('蟹币')]: 1 } });
+    for (const c of [hit, miss]) await setFail(c.restaurantId, 200);
+    rngValues = [0.0003];
+    expect((await t.game.bar.slot(hit, { times: 1 })).data.spins).toEqual([[100, 0, 0]]);
     rngValues = [0.0005];
-    expect((await t.game.bar.slot(lampy, { times: 1 })).data.spins).toEqual([[100, 0, 0]]);
-    expect((await t.game.bar.slot(plain, { times: 1 })).data.spins).toEqual([[0, 0, 0]]);
-    expect(await failOf(plain.restaurantId)).toBe(203);
-    expect((await t.game.bar.overview(lampy)).slot.lamp).toBe(true);
+    expect((await t.game.bar.slot(miss, { times: 1 })).data.spins).toEqual([[0, 0, 0]]);
+    expect(await failOf(miss.restaurantId)).toBe(203);
   });
 
   it('奖池标了新闻的奖项（迷迭香）也发新闻，每种一条', async () => {

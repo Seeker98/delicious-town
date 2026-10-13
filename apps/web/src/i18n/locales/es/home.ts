@@ -138,7 +138,6 @@ const home: Messages['home'] = {
   none: 'Ninguna',
   andMore: ' y más',
   groups: {
-    bless: 'Deseo del día',
     street: 'Calle',
     honor: 'Insignias y mascotas',
     device: 'Instalaciones',

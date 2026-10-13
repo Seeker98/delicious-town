@@ -12,7 +12,6 @@ import type {
   IncomeAction,
   SeedExchange,
   GoodsExchange,
-  Bless,
   SlotAward,
   TowerFloor,
   MapDef,
@@ -96,9 +95,6 @@ export interface GameConfig {
   /** 按种子 id */
   readonly seedExchange: ReadonlyMap<number, SeedExchange>;
   readonly goodsExchange: ReadonlyMap<number, GoodsExchange>;
-  readonly bless: ReadonlyMap<number, Bless>;
-  /** 许愿按 odds 抽（4E-1 设计文档 裁定 7） */
-  readonly blessPool: WeightedPool<Bless>;
   /** 肥料（devicetype 80）：道具 id → 每次抵扣的分钟数 */
   readonly fertilizers: ReadonlyMap<number, number>;
   /** 老虎机奖池（按 odds 抽，含空格） */
@@ -291,8 +287,6 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
     formulaPool: buildPool(bundle.formulas, (f) => f.odds),
     seedExchange: new Map(bundle.seedExchange.map((e) => [e.seedId, e])),
     goodsExchange: new Map(bundle.goodsExchange.map((e) => [e.id, e])),
-    bless: new Map(bundle.bless.map((x) => [x.id, x])),
-    blessPool: buildPool(bundle.bless, (x) => x.odds),
     fertilizers,
     slotPool: buildPool(bundle.slotAwards, (a) => a.odds),
     slotAwards: byId(bundle.slotAwards),

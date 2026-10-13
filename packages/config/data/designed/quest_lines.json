@@ -281,28 +281,6 @@
       ]
      },
      "href": "/weather"
-    },
-    {
-     "id": 3049,
-     "order": 9,
-     "needStar": 0,
-     "name": "用神灯许一次愿",
-     "cond": {
-      "kind": "counter",
-      "key": "town.wish",
-      "target": 1
-     },
-     "award": {
-      "coin": 30000,
-      "exp": 3000,
-      "goods": [
-       {
-        "id": 10418,
-        "num": 2
-       }
-      ]
-     },
-     "href": "/town"
     }
    ]
   },
@@ -3073,28 +3051,6 @@
        {
         "id": 10007,
         "num": 1
-       }
-      ]
-     },
-     "href": "/store"
-    },
-    {
-     "id": 3503,
-     "order": 3,
-     "needStar": 0,
-     "name": "集齐 7 幅名画",
-     "cond": {
-      "kind": "state",
-      "key": "collection.paintings",
-      "target": 7
-     },
-     "award": {
-      "coin": 200000,
-      "exp": 20000,
-      "goods": [
-       {
-        "id": 10007,
-        "num": 3
        }
       ]
      },
