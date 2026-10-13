@@ -122,6 +122,7 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
     await setBid(w, '60000', '2');
     expect(el(w, 'bk-freeze').text()).toContain('120,000');
     expect(el(w, 'bk-partial-hint').text()).toContain('部分');
+    expect(w.find('[data-testid="bk-requeue-hint"]').exists()).toBe(false);
     const confirm = vi.spyOn(window, 'confirm').mockReturnValueOnce(false).mockReturnValueOnce(true);
     await el(w, 'bk-submit').trigger('click');
     expect(endpoints.bulkBid).not.toHaveBeenCalled();
@@ -142,6 +143,8 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
     expect(value(w, 'bk-price-input')).toBe('55000');
     expect(value(w, 'bk-qty-input')).toBe('4');
     expect(el(w, 'bk-min-raise').text()).toContain('55,550');
+    // 再出价按这次的时间重排，同价可能掉出入围（backlog）
+    expect(el(w, 'bk-requeue-hint').text()).toContain('重新排');
     expect(disabled(w)).toBe(true);
     for (const [p, q] of [
       ['54000', '4'],

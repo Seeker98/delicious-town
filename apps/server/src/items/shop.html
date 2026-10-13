@@ -278,6 +278,8 @@
         $('rows').innerHTML = list.map(rowHtml).join('');
         const byId = new Map(list.map((r) => [r.id, r]));
         for (const tr of $('rows').children) markRow(tr, byId.get(Number(tr.dataset.row)));
+        // 保存中搜索、换分类也会重画：重画出来的输入框照样锁着，不然改了也会在保存成功后被清掉（backlog）
+        if (saving) for (const el of $('rows').querySelectorAll('input')) el.disabled = true;
         updateButtons();
       }
 

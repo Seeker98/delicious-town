@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { GOODS } from '@dt/config';
+import { seededRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import { eventCount } from '../../../test/quests';
@@ -8,7 +9,9 @@ import { eventCount } from '../../../test/quests';
 const config = testConfig();
 let t: TestGame;
 beforeAll(async () => {
-  t = await createTestGame();
+  // 固定种子（backlog：原来用真随机数，鉴定出几级每次跑都不一样）；整个文件共用一个，依次往下取
+  const rng = seededRng(20261014);
+  t = await createTestGame({ rng: () => rng });
 });
 afterAll(() => t.close());
 const count = (restId: number, key: string) => eventCount(t, restId, key);

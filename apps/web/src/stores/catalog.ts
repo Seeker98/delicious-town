@@ -19,8 +19,11 @@ import { activeMessages } from '../i18n';
 /** 浏览器缓存按语言分开（问题记录 272） */
 const keyOf = (l: string) => `dt_catalog_${l}`;
 
-/** 正在进行的首次读取：几处同时调 load 时共用 */
-let loading: Promise<void> | null = null;
+/**
+ * 正在进行的首次读取：几处同时调 load 时共用。按目录实例记（换了 pinia 就是新的一份），
+ * 不放模块级变量：测试里没等上一条读完，下一条会挂到旧请求上（backlog）
+ */
+const loadingOf = new WeakMap<object, Promise<void>>();
 
 export const useCatalogStore = defineStore('catalog', {
   state: () => ({
@@ -73,7 +76,9 @@ export const useCatalogStore = defineStore('catalog', {
      */
     load(): Promise<void> {
       if (this.loaded) return Promise.resolve();
-      loading ??= (async () => {
+      const pending = loadingOf.get(this);
+      if (pending) return pending;
+      const loading = (async () => {
         const l = activeLocale();
         try {
           const cached = localStorage.getItem(keyOf(l));
@@ -83,8 +88,9 @@ export const useCatalogStore = defineStore('catalog', {
         }
         await this.reload(l);
       })().finally(() => {
-        loading = null;
+        loadingOf.delete(this);
       });
+      loadingOf.set(this, loading);
       return loading;
     },
     /** 按语言重新读目录（切换语言时调用，问题记录 272） */

@@ -312,21 +312,20 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
         .values({ rest_id: id, levels: emptyCookbookLevels(d.config.cookbookIndex.slots) })
         .execute();
       for (const gift of defaults.giftGoods) await grantGoods(tx, d.config, id, gift.id, gift.num, now);
-      // 开局送了新手大礼包时，老店补领的新手码记成本店已领（问题记录 331）：大礼包一次只能拿一个，
-      // 不拆就兑换会被丢掉，拆了再兑换又多拿一份。不加已用次数，后台看到的是补领的店数
-      if (defaults.giftGoods.some((g) => g.id === NEWBIE.pack)) {
-        const code = await tx
-          .selectFrom('redeem_code')
-          .select('id')
-          .where('code', '=', NEWBIE.packCode)
-          .where('actor_account_id', '=', await npcAccountId(d.db))
-          .executeTakeFirst();
-        if (code)
-          await tx
-            .insertInto('redeem_use')
-            .values({ code_id: code.id, rest_id: id, account_id: accountId })
-            .execute();
-      }
+      // 新手码是给开大礼包之前的老店补领的，新店一律记成已领（问题记录 331）：开局送了大礼包时，
+      // 大礼包一次只能拿一个，不拆就兑换会被丢掉，拆了再兑换又多拿一份；区服后台把大礼包从开店礼物里
+      // 去掉时，新店也不能拿码领（backlog）。不加已用次数，后台看到的是补领的店数
+      const code = await tx
+        .selectFrom('redeem_code')
+        .select('id')
+        .where('code', '=', NEWBIE.packCode)
+        .where('actor_account_id', '=', await npcAccountId(d.db))
+        .executeTakeFirst();
+      if (code)
+        await tx
+          .insertInto('redeem_use')
+          .values({ code_id: code.id, rest_id: id, account_id: accountId })
+          .execute();
       // 新店橱柜是空的，开局食材直接放进去（种类远少于橱柜格数）
       if (defaults.giftFoods.length > 0)
         await tx

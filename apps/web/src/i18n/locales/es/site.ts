@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    fix1014b:
+      'Más pequeños arreglos: las noticias de compras muestran el nombre actual del restaurante comprado y ya no enlazan a restaurantes que ya no existen; al cambiar una puja de suscripción al por mayor, una nota avisa de que volver a pujar (aunque solo añadas unidades) te pone a la cola con la hora nueva; el código del gran paquete de bienvenida solo sirve para restaurantes abiertos antes del paquete, y los nuevos no pueden usarlo en servidores que no dan el paquete; las dos conexiones con el servidor del juego se preparan al cargar, así la primera acción va un poco más rápida',
     fix1014:
       'Pequeños arreglos: las pestañas se cambian con las flechas del teclado, el subrayado se ajusta cuando cambia el ancho del texto y la otra línea del Ichiban Kuji se ve en gris mientras hay un sorteo en curso; los paneles inferiores ya no enfocan un botón al abrirse (Intro ya no aplica sin querer) y Tab se queda dentro del panel; la actividad del día, las misiones, los eventos, el árbol de los deseos y la información del restaurante dicen que no se pudieron cargar en vez de cargar sin fin; las misiones de invitación indican que el amigo debe verificar su correo; la ayuda de futuros usa los números de este servidor; al abrir directamente un utensilio en la wiki, volver lleva a la lista de utensilios; no se abren lotes de suscripción al por mayor con la bolsa cerrada',
     shiling1014:

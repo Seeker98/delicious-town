@@ -35,12 +35,27 @@ export interface ListNewsOptions {
   since?: Date;
 }
 
-/** 本区服新闻，按 id 倒序；店名取当前名字（左连接，店不存在时为 null） */
+/**
+ * 本区服新闻，按 id 倒序；店名取当前名字（左连接，店不存在时为 null）。
+ * 收购新闻里被收购的店（params.restId、name）也取当前名字；店不在了去掉 restId，网页就不链到不存在的店（ui1010、backlog）
+ */
 export async function listNews(db: Kysely<DB>, shardId: number, o: ListNewsOptions): Promise<NewsDto[]> {
   let q = db
     .selectFrom('news as n')
     .leftJoin('restaurant as r', 'r.id', 'n.rest_id')
-    .select(['n.id', 'n.type', 'n.rest_id', 'r.name as rest_name', 'n.params', 'n.created_at'])
+    .leftJoin('restaurant as t', (j) =>
+      j.on(sql<boolean>`n.type = 'acquire.big' and t.id = (n.params->>'restId')::int`),
+    )
+    .select([
+      'n.id',
+      'n.type',
+      'n.rest_id',
+      'r.name as rest_name',
+      't.id as target_id',
+      't.name as target_name',
+      'n.params',
+      'n.created_at',
+    ])
     .where('n.shard_id', '=', shardId);
   if (o.before !== undefined) q = q.where('n.id', '<', o.before);
   if (o.only && o.only.length > 0) q = q.where('n.type', 'in', o.only);
@@ -54,9 +69,21 @@ export async function listNews(db: Kysely<DB>, shardId: number, o: ListNewsOptio
     type: r.type,
     restId: r.rest_id,
     restName: r.rest_name ?? null,
-    params: r.params,
+    params: r.type === 'acquire.big' ? targetParams(r.params, r.target_id, r.target_name) : r.params,
     createdAt: r.created_at.toISOString(),
   }));
+}
+
+/** 收购新闻的被收购店：还在就换成现在的名字，不在了去掉 restId（名字留着新闻当时的） */
+function targetParams(
+  params: Record<string, unknown>,
+  id: number | null,
+  name: string | null,
+): Record<string, unknown> {
+  const p = { ...params };
+  if (id === null) delete p.restId;
+  else if (name) p.name = name;
+  return p;
 }
 
 /**

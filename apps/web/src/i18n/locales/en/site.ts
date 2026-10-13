@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    fix1014b:
+      'More small fixes: town news about acquisitions shows the bought restaurant’s current name and no longer links to restaurants that are gone; when changing a bulk subscription bid, a note says bidding again (even just adding units) re-queues you at the new time; the newbie gift pack code is only for restaurants opened before the pack existed, and new restaurants can’t claim it on servers that don’t give the pack; both connections to the API are warmed up on first load, so the first action is a little faster',
     fix1014:
       'A batch of small fixes: tab bars can be switched with the arrow keys, the underline follows when tab text changes width, and the other Ichiban Kuji line is greyed out while a draw is running; bottom sheets no longer focus a button when they open (so Enter doesn’t apply right away), and Tab stays inside the sheet; Today’s activity, Tasks, Events, the Wishing Tree and Restaurant info say they failed to load instead of loading forever; invite quest names say the friend must verify their email; the futures help uses this server’s pricing numbers; opening a cookware entry in the wiki directly goes back to the cookware list; no bulk subscription lots open while the exchange is off',
     shiling1014:

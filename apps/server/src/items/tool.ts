@@ -31,6 +31,9 @@ type RetiredFile = {
 };
 const EMPTY: RetiredFile = { goods: [], foods: [] };
 
+/** 读原始数据表出错时给页面看的一行（backlog：原来直接报 500，不说是哪个文件、错在哪） */
+export const readError = (e: unknown) => `读不出原始数据表：${e instanceof Error ? e.message : String(e)}`;
+
 export function createItemsTool(io: {
   readSource: () => SourceData;
   writeRetired: (text: string) => void;
@@ -62,7 +65,12 @@ export function createItemsTool(io: {
 
   return {
     report(): ToolReport {
-      const src = io.readSource();
+      let src: SourceData;
+      try {
+        src = io.readSource();
+      } catch (e) {
+        return { maxGrade: 0, grades: [], rows: [], errors: [readError(e)] };
+      }
       const file = (src['game/retired'] as RetiredFile | undefined) ?? EMPTY;
       return reportOf(src, file, buildBundle(src).errors);
     },

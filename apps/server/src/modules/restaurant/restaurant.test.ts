@@ -143,6 +143,20 @@ describe('开店', () => {
     expect(JSON.stringify(r.json)).toContain('code_used');
   });
 
+  it('区服后台把大礼包从开店礼物里去掉：新店也不能拿补领码领（backlog）', async () => {
+    await syncNewbieCodes(ctx.deps.db, ctx.deps.config.newbieCodes, { warn() {} });
+    const shardId = await createShard(ctx.deps.db);
+    await ctx.deps.db
+      .insertInto('shard_config')
+      .values({ shard_id: shardId, override: JSON.stringify({ restaurant: { giftGoods: [] } }) })
+      .execute();
+    const u = await playerIn(shardId);
+    await create(u.cookie, '没礼包小店');
+    const guide = await call(ctx.app, 'GET', '/api/v1/guide/codes', { cookie: u.cookie });
+    const codes = guide.json.data as { code: string; state: string }[];
+    expect(codes.find((c) => c.code === NEWBIE.packCode)?.state).toBe('used');
+  });
+
   it('名称校验', async () => {
     const u = await playerIn(await createShard(ctx.deps.db));
     const reserved = await create(u.cookie, '镇长小馆');

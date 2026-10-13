@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { buildBundle, createGameConfig, retiredOf, type ConfigBundle, type SourceData } from '@dt/config';
 import { sellPrice } from '../modules/store/rules';
 import { analyzeItems } from './analyze';
+import { readError } from './tool';
 
 /**
  * 商店整理工具的逻辑（问题记录 483）：改银币价、钻石价、银币商店上下架、今日特价池和黑市池。
@@ -162,7 +163,13 @@ export function createShopTool(io: { readSource: () => SourceData; writeShop: (t
 
   return {
     report(): ShopReport {
-      const src = io.readSource();
+      let src: SourceData;
+      try {
+        src = io.readSource();
+      } catch (e) {
+        // 原始数据表被手改坏（读不出 JSON）：页面列出原因，不报 500（backlog）
+        return { sellRate: 0, diamondSellCoin: 0, rows: [], errors: [readError(e)] };
+      }
       const file = (src['game/shop'] as ShopFile | undefined) ?? EMPTY;
       return reportOf(src, file, buildBundle(src).errors);
     },
@@ -182,9 +189,11 @@ export function createShopTool(io: { readSource: () => SourceData; writeShop: (t
         if (Object.keys(diff).length === 0 && !x.note) continue;
         goods.push({ id: x.id, name: names.get(x.id), ...diff, ...(x.note ? { note: x.note } : {}) });
       }
+      // 没发上来的池子沿用文件里现有的，不恢复成设计表（backlog：原来按整份快照存）
+      const had = (src['game/shop'] as ShopFile | undefined)?.pools ?? {};
       const pools: NonNullable<ShopFile['pools']> = {};
       for (const pool of ['special', 'black'] as const) {
-        const list = body.pools[pool];
+        const list = body.pools[pool] ?? had[pool];
         if (list && !sameSet(list, origPools[pool])) pools[pool] = list;
       }
       const file: ShopFile = { goods, ...(Object.keys(pools).length > 0 ? { pools } : {}) };

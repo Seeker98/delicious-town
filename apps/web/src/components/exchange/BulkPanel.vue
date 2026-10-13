@@ -351,6 +351,8 @@ function myResult(r: BulkResultDto): string {
           <div class="dt-meta">{{ estimateText }} {{ t.bulk.settleNote }}</div>
         </div>
         <div class="dt-detail-note" data-testid="bk-partial-hint">{{ t.bulk.partialHint }}</div>
+        <!-- 再出价（只加份数也一样）按这次的时间重排，同价时可能反而掉出入围（backlog） -->
+        <div v-if="mine" class="dt-detail-note" data-testid="bk-requeue-hint">{{ t.bulk.requeueHint }}</div>
         <div v-if="reason" class="dt-detail-note text-danger" data-testid="bk-reason">{{ reason }}</div>
       </div>
       <template v-if="lot" #actions>

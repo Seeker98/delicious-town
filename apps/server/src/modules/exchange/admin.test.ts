@@ -1,3 +1,4 @@
+import { backendPid, waitBlockedBy } from '../../../test/locks';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 // 六级默认关掉交易（问题记录 461）：这里的区服放开全部等级
 import { createShardAllLevels as createShard } from './test';
@@ -155,6 +156,7 @@ describe('终审 I1：冻结先锁店，和这家店正在进行的下单、取�
     let locked!: () => void;
     const isLocked = new Promise<void>((ok) => (locked = ok));
     // 模拟这家店正在进行的一次操作（下单、取出都会先锁店）
+    let pid = 0;
     const other = t.db.transaction().execute(async (tx) => {
       await tx
         .selectFrom('restaurant')
@@ -162,6 +164,7 @@ describe('终审 I1：冻结先锁店，和这家店正在进行的下单、取�
         .where('id', '=', r.restaurantId)
         .forNoKeyUpdate()
         .execute();
+      pid = await backendPid(tx);
       locked();
       await held;
     });
@@ -170,7 +173,7 @@ describe('终审 I1：冻结先锁店，和这家店正在进行的下单、取�
     const freezing = admin()
       .freeze(actor, { restId: r.restaurantId, reason: '对倒' })
       .then(() => (done = true));
-    await new Promise((ok) => setTimeout(ok, 300));
+    await waitBlockedBy(t.db, pid);
     expect(done).toBe(false);
     release();
     await other;
