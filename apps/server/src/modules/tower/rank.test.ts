@@ -154,9 +154,10 @@ describe('周结算（设计文档 §3.3）', () => {
       });
     expect(out).toEqual({ awarded: 3, failed: 0 });
     expect(await goodsNum(t, a.restaurantId, gid('厨神'))).toBe(1);
-    expect((await restRow(t, a.restaurantId)).renown).toBe(500);
-    expect((await restRow(t, b.restaurantId)).renown).toBe(150);
-    expect((await restRow(t, c.restaurantId)).renown).toBe(100);
+    // 名次礼包的声望：第 1 名 100、第 4~8 名 20、第 9~15 名 10（道具减法第四批（2026-10-13））
+    expect((await restRow(t, a.restaurantId)).renown).toBe(100);
+    expect((await restRow(t, b.restaurantId)).renown).toBe(20);
+    expect((await restRow(t, c.restaurantId)).renown).toBe(10);
     const news = await t.db
       .selectFrom('news')
       .select(['type', 'params'])
@@ -173,7 +174,7 @@ describe('周结算（设计文档 §3.3）', () => {
     await occupy(a, 1);
     await occupy(b, 4);
     await occupy(c, 9);
-    // 第 1 名的礼包加 500 声望会让 integer 溢出，这家店的结算失败
+    // 第 1 名的礼包加 100 声望会让 integer 溢出，这家店的结算失败
     await t.db
       .updateTable('restaurant')
       .set({ renown: 2_147_483_600 })
@@ -192,8 +193,9 @@ describe('周结算（设计文档 §3.3）', () => {
       });
     expect(out).toEqual({ awarded: 2, failed: 1 });
     expect(errors).toHaveLength(1);
-    expect((await restRow(t, b.restaurantId)).renown).toBe(150);
-    expect((await restRow(t, c.restaurantId)).renown).toBe(100);
+    // 道具减法第四批（2026-10-13）：第 4~8 名 20、第 9~15 名 10 声望
+    expect((await restRow(t, b.restaurantId)).renown).toBe(20);
+    expect((await restRow(t, c.restaurantId)).renown).toBe(10);
     const news = await t.db
       .selectFrom('news')
       .select('rest_id')

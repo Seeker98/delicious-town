@@ -457,23 +457,23 @@
   },
   "20301": {
     "name": "Pack 1re place du classement",
-    "desc": "Pack de la 1re place\u202f: [Dieu des chefs], 500 de renommée, bon d'ingrédient mystère au hasard x2, recette mystère x15, 150 diamants"
+    "desc": "Pack de la 1re place\u202f: [Dieu des chefs], 100 de renommée, bon d'ingrédient mystère au hasard x1, recette mystère x8, 50 diamants"
   },
   "20302": {
     "name": "Pack 2e place du classement",
-    "desc": "Pack de la 2e place\u202f: [Saint des chefs], 400 de renommée, bon d'ingrédient mystère au hasard x1, recette mystère x12, 120 diamants"
+    "desc": "Pack de la 2e place\u202f: [Saint des chefs], 80 de renommée, bon d'ingrédient mystère au hasard x1, recette mystère x6, 40 diamants"
   },
   "20303": {
     "name": "Pack 3e place du classement",
-    "desc": "Pack de la 3e place\u202f: [Roi des chefs], 300 de renommée, bon d'ingrédient mystère au hasard x1, recette mystère x10, 100 diamants"
+    "desc": "Pack de la 3e place\u202f: [Roi des chefs], 60 de renommée, bon d'ingrédient mystère au hasard x1, recette mystère x5, 32 diamants"
   },
   "20304": {
     "name": "Pack 4e–8e place du classement",
-    "desc": "Pack des places 4 à 8\u202f: 150 de renommée, bon d'ingrédient mystère au hasard x1, recette mystère x8, 75 diamants"
+    "desc": "Pack des places 4 à 8\u202f: 20 de renommée, recette mystère x3, 25 diamants"
   },
   "20305": {
     "name": "Pack 9e–15e place du classement",
-    "desc": "Pack des places 9 à 15\u202f: 100 de renommée, recette mystère x5, 50 diamants"
+    "desc": "Pack des places 9 à 15\u202f: 10 de renommée, recette mystère x2, 20 diamants"
   },
   "20306": {
     "name": "Pack 1re place de l'affection mensuelle du Kraken",
@@ -677,27 +677,27 @@
   },
   "30502": {
     "name": "[Plaque 1 étoile]",
-    "desc": "Plaque 1 étoile\u202f; EXP finale +10\u202f%, EXP par table +1"
+    "desc": "Plaque 1 étoile\u202f; EXP finale +3\u202f%"
   },
   "30503": {
     "name": "[Plaque 2 étoiles]",
-    "desc": "Plaque 2 étoiles\u202f; EXP finale +15\u202f%, EXP par table +2"
+    "desc": "Plaque 2 étoiles\u202f; EXP finale +5\u202f%"
   },
   "30504": {
     "name": "[Plaque 3 étoiles]",
-    "desc": "Plaque 3 étoiles\u202f; EXP finale +20\u202f%, EXP par table +3"
+    "desc": "Plaque 3 étoiles\u202f; EXP finale +8\u202f%"
   },
   "30505": {
     "name": "[Plaque 4 étoiles]",
-    "desc": "Plaque 4 étoiles\u202f; EXP finale +30\u202f%, EXP par table +4"
+    "desc": "Plaque 4 étoiles\u202f; EXP finale +12\u202f%"
   },
   "30506": {
     "name": "[Plaque 5 étoiles]",
-    "desc": "Plaque 5 étoiles\u202f; EXP finale +40\u202f%, EXP par table +5"
+    "desc": "Plaque 5 étoiles\u202f; EXP finale +17\u202f%"
   },
   "30507": {
     "name": "[Plaque 6 étoiles]",
-    "desc": "Plaque 6 étoiles\u202f; EXP finale +50\u202f%, EXP par table +6"
+    "desc": "Plaque 6 étoiles\u202f; EXP finale +23\u202f%"
   },
   "30508": {
     "name": "[Plaque commémorative 2023]",
@@ -753,7 +753,7 @@
   },
   "30521": {
     "name": "[Plaque 7 étoiles]",
-    "desc": "Plaque 7 étoiles\u202f; EXP finale +60\u202f%, EXP par table +7"
+    "desc": "Plaque 7 étoiles\u202f; EXP finale +30\u202f%"
   },
   "30522": {
     "name": "[Plaque commémorative 2025]",
@@ -1513,7 +1513,7 @@
   },
   "60201": {
     "name": "Grande ouverture",
-    "desc": "Réservé aux restaurants qui viennent d'ouvrir (valable 15 jours)\u202f; EXP et revenus finaux en pièces +100\u202f%, fréquentation +25\u202f%"
+    "desc": "Réservé aux restaurants qui viennent d'ouvrir (valable 15 jours)\u202f; EXP et revenus finaux en pièces +50\u202f%, fréquentation +25\u202f%"
   },
   "60202": {
     "name": "Médaille de promotion d'étoile",
@@ -1533,7 +1533,7 @@
   },
   "60206": {
     "name": "Coupe du Dieu des étoiles",
-    "desc": "Un trophée que M. Krab remet aux restaurants 6 étoiles, qui booste fortement l'EXP\u202f! EXP finale +20\u202f%"
+    "desc": "Un trophée que M. Krab remet aux restaurants 6 étoiles, qui booste fortement l'EXP\u202f! EXP finale +10\u202f%"
   },
   "60301": {
     "name": "Nœud chinois",
@@ -1649,7 +1649,7 @@
   },
   "60510": {
     "name": "Faveur du Dieu des étoiles",
-    "desc": "Votre restaurant a la faveur du Dieu des étoiles. Chance de meilleure qualité en cuisinant un plat signature +25\u202f%, et EXP finale +150\u202f%"
+    "desc": "Votre restaurant a la faveur du Dieu des étoiles. Chance de meilleure qualité en cuisinant un plat signature +25\u202f%, et EXP et revenus finaux en pièces +75\u202f%"
   },
   "60511": {
     "name": "M. Krab (déprimé)",

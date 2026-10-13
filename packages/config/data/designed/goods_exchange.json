@@ -1,7 +1,7 @@
 {
  "source": "新设计(design_missing.py)",
  "rule": "物品集合来自公开接口的获取途径(镇长-蟹黄堡/美味券/万能碎片/其他)；价格按道具等级定档，勋章/牌匾限兑 1 次",
- "count": 53,
+ "count": 50,
  "data": [
   {
    "id": 1,
@@ -320,21 +320,6 @@
    "newsflag": 0
   },
   {
-   "id": 23,
-   "category": "bg",
-   "goodsId": 61414,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10005,
-     "num": 8
-    }
-   ],
-   "times": 1,
-   "newsflag": 1
-  },
-  {
    "id": 24,
    "category": "bg",
    "goodsId": 60705,
@@ -374,21 +359,6 @@
      "type": "goods",
      "id": 10005,
      "num": 5
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
-   "id": 29,
-   "category": "bg",
-   "goodsId": 61420,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10005,
-     "num": 3
     }
    ],
    "times": 1,
@@ -738,21 +708,6 @@
    ],
    "times": 1,
    "newsflag": 1
-  },
-  {
-   "id": 64,
-   "category": "chip",
-   "goodsId": 61422,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10805,
-     "num": 50
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
   },
   {
    "id": 66,

@@ -106,8 +106,7 @@ export function createFlip(d: GameDeps) {
           const n = (await getDaily(me.tx, me.rest.id, 'flip.times', day)) + 1;
           const meAgg = await opAgg(me);
           const themAgg = await opAgg(them);
-          let strength = n <= t.cheapTimes ? 1 : 2;
-          if (me.rng.chance(meAgg.flipCBNoStrengthRate ?? 0)) strength = 0;
+          const strength = n <= t.cheapTimes ? 1 : 2;
           spendStrength(me, strength);
           const luck = luckRate((await opLuck(me)).sum - (await opLuck(them)).sum) / t.luckDivisor;
           const godsHand = (meAgg.godHand ?? 0) > 0 && n < (meAgg.godHand ?? 0);
@@ -120,7 +119,6 @@ export function createFlip(d: GameDeps) {
             else {
               outcome = 'caught';
               coin = caughtCoin(me.rest.level, me.rest.star_level, them.rest.npc, me.rng, t);
-              if (coin > 0 && me.rng.chance(meAgg.flipNoLostCoinRate ?? 0)) coin = 0;
               coin = Math.min(coin, me.rest.coin);
               if (coin > 0) {
                 spendCoin(me, coin);

@@ -104,13 +104,12 @@ describe('守护兽（规格书 09 §9.1）', () => {
 });
 
 describe('探险（规格书 09 §9.2）', () => {
-  it('成功率：欲望之针补一半失败率；天气迷路率（有针减半）；套装加成只加不减', () => {
-    expect(exploreRate(map, { needle: false, lostRate: 0, suitRate: 0 })).toBeCloseTo(0.75, 10);
-    expect(exploreRate(map, { needle: true, lostRate: 0, suitRate: 0 })).toBeCloseTo(0.875, 10);
-    expect(exploreRate(map, { needle: false, lostRate: 0.2, suitRate: 0 })).toBeCloseTo(0.55, 10);
-    expect(exploreRate(map, { needle: true, lostRate: 0.2, suitRate: 0 })).toBeCloseTo(0.775, 10);
-    expect(exploreRate(map, { needle: false, lostRate: 0, suitRate: 0.1 })).toBeCloseTo(0.85, 10);
-    expect(exploreRate(map, { needle: false, lostRate: 0, suitRate: -0.1 })).toBeCloseTo(0.75, 10);
+  // 欲望之针下架，不再补失败率、减半迷路率（道具减法第四批（2026-10-13））
+  it('成功率：减天气迷路率；套装加成只加不减', () => {
+    expect(exploreRate(map, { lostRate: 0, suitRate: 0 })).toBeCloseTo(0.75, 10);
+    expect(exploreRate(map, { lostRate: 0.2, suitRate: 0 })).toBeCloseTo(0.55, 10);
+    expect(exploreRate(map, { lostRate: 0, suitRate: 0.1 })).toBeCloseTo(0.85, 10);
+    expect(exploreRate(map, { lostRate: 0, suitRate: -0.1 })).toBeCloseTo(0.75, 10);
   });
 
   it('普通食材总数 = rand[1, max − min] + min', () => {

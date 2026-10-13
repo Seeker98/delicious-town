@@ -34,7 +34,7 @@ describe('grantGoods', () => {
     expect(effect).toMatchObject({
       sourceType: 'honor',
       sourceId: gid('开张大吉'),
-      effects: { atRate: 0.25, coinRate: 1, expRate: 1 },
+      effects: { atRate: 0.25, coinRate: 0.5, expRate: 0.5 }, // 道具减法第四批（2026-10-13）
     });
     expect(effect!.expiresAt).toEqual(new Date(now.getTime() + 360 * 3600_000));
   });

@@ -118,9 +118,8 @@ export function analyzeItems(
     if (handleTargetLevel('decompose', lv + 1) === lv) byLevel([lv], '分解');
   }
   for (const m of config.maps.values()) byLevel(range(m.level[0], m.level[1]), '神殿探险');
-  // 探险成功时还可能出 7 级食材；带探险者秘籍多出 3 级食材（temple/explore.ts）
+  // 探险成功时还可能出 7 级食材（temple/explore.ts）
   byLevel([7], '神殿探险');
-  byLevel([3], '神殿探险（探险者秘籍）');
   // 蟹老板橱柜每天补 1~5 级（npc/npc.ts）
   byLevel([1, 2, 3, 4, 5], '蟹老板橱柜');
   byLevel([1, 2, 3, 7], '神殿守护兽');

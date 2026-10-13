@@ -266,7 +266,8 @@ describe('buildBundle（真实数据）', () => {
   it('解析道具 value：效果、礼包、纯数字', () => {
     const { bundle } = realBuild();
     const goods = new Map(bundle!.goods.map((g) => [g.id, g]));
-    expect(goods.get(gid('开张大吉'))!.effects).toEqual({ atRate: 0.25, coinRate: 1, expRate: 1 });
+    // 道具减法第四批（2026-10-13）：开张大吉经验、银币 +100% → +50%
+    expect(goods.get(gid('开张大吉'))!.effects).toEqual({ atRate: 0.25, coinRate: 0.5, expRate: 0.5 });
     expect(goods.get(GOODS.signInGift)!.gift!.length).toBeGreaterThan(0);
     expect(goods.get(gid('小扩容卡'))!.value).toBe(1);
   });
@@ -777,8 +778,9 @@ describe('小镇（子项目 4E-1）', () => {
     expect(errors).toEqual([]);
     // 62 条里 37 条换到的是下架的道具（2026-10-08 一批、天气改版的雷神锤），构建时自动去掉（问题记录 501）；
     // 换名画的 12 条随名画删掉，换星月密卷的 1 条随菜园删掉，换边牧、激动的心、星光之钥、捕梦网、星神之书的 5 条删掉，
-    // 换 2023、2025 纪念牌匾和马到成功的 3 条删掉（道具减法 2026-10-13）
-    expect(bundle!.goodsExchange).toHaveLength(16);
+    // 换 2023、2025 纪念牌匾和马到成功的 3 条删掉（道具减法 2026-10-13）；
+    // 换欲望之针、探险者秘籍、巫毒娃娃的 3 条删掉（道具减法第四批（2026-10-13））
+    expect(bundle!.goodsExchange).toHaveLength(13);
     // 雷神锤换成司天罗盘：2 个蟹黄堡，每周 1 次（天气改版，用户 2026-10-12）
     expect(bundle!.goodsExchange.find((e) => e.goodsId === gid('司天罗盘'))).toEqual({
       id: 74,

@@ -26,23 +26,18 @@ export async function exploreMaps(
   await consumeGoods(o, b.goodsId, b.times);
   spendStrength(o, def.needStrength * b.times);
   const { rate: luck } = await opLuck(o);
-  const needle = await hasValidHonor(o, GOODS.needle);
   const card = await hasValidHonor(o, GOODS.securityCard);
-  const book = b.goodsId === GOODS.mapHigh && (await hasValidHonor(o, GOODS.exploreBook));
   const eff = (id: number, key: string) => o.config.requireGoods(id).effects[key] ?? 0;
   const gear = await restGear(o.tx, o.rest, o.config.suits, equipOff(o.settings));
   const rate = exploreRate(def, {
-    needle,
     lostRate: weather.mapLostRate ?? 0,
     suitRate: suitEffect(gear.suits, 'exploreSuccessRate'),
   });
   const rareRate =
     def.mysteriousRate +
-    (needle ? eff(GOODS.needle, 'mysteriousRate') : 0) +
     (card ? eff(GOODS.securityCard, 'mysteriousRate') : 0) +
     streetMysteriousRate(o.config, o.rest.street_id) +
     (weather.mysteriousRate ?? 0);
-  const level3 = book ? eff(GOODS.exploreBook, 'mapL3FoodsNumAdd') : 0;
 
   let success = 0;
   let fail = 0;
@@ -62,7 +57,6 @@ export async function exploreMaps(
     }
     for (const x of exploreSplit(def, exploreAwardNum(def, o.rng)))
       for (let k = 0; k < x.num; k++) bump(foods, pickFood(o, x.level, needPick));
-    for (let k = 0; k < level3; k++) bump(foods, pickFood(o, 3, needPick));
   }
   await addFoodsMerged(o, rare);
   await addFoodsMerged(o, foods);

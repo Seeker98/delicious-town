@@ -572,8 +572,7 @@ export function botTurn(
   for (const tb of [...r.tables]) {
     if (tb.customer !== 3) continue;
     const agg = aggOf(c, r);
-    let strength = killStrength('self', agg, gameParts(c.now).hour, rt);
-    if (strength > 0 && c.rng.chance(agg.killRoachNoStrengthRate ?? 0)) strength = 0;
+    const strength = killStrength('self', agg, gameParts(c.now).hour, rt);
     if (!spendStrength(c, r, strength)) break;
     r.tables = r.tables.map((x) => (x.no === tb.no ? clearTable(x) : x));
     const rw = killReward(r.level, 'self', agg, rt);
