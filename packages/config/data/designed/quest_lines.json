@@ -3280,7 +3280,7 @@
      "id": 3546,
      "order": 6,
      "needStar": 0,
-     "name": "邀请的好友升到 {n} 级",
+     "name": "邀请的好友升到 {n} 级 (好友要验证邮箱)",
      "cond": {
       "kind": "state",
       "key": "invite.level10",
@@ -3302,7 +3302,7 @@
      "id": 3547,
      "order": 7,
      "needStar": 0,
-     "name": "邀请的好友升到 {n} 级",
+     "name": "邀请的好友升到 {n} 级 (好友要验证邮箱)",
      "cond": {
       "kind": "state",
       "key": "invite.level30",

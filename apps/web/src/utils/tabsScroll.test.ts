@@ -77,4 +77,23 @@ describe('下划线不会自己触发自己（终审 C1）', () => {
     mo.disconnect();
     expect(records).toEqual([]);
   });
+
+  it('标签文字变了（未读数、切语言）：下划线宽度跟着变（backlog P1）', async () => {
+    const { installTabsScroll } = await import('./tabsScroll');
+    document.body.innerHTML = '<ul class="nav nav-tabs"><li><a class="nav-link active">A</a></li></ul>';
+    const c = document.querySelector<HTMLElement>('.nav-tabs')!;
+    const a = c.querySelector<HTMLElement>('.nav-link')!;
+    let w = 40;
+    Object.defineProperty(a, 'offsetWidth', { get: () => w });
+    const frame = () => new Promise((r) => requestAnimationFrame(() => r(null)));
+    const stop = installTabsScroll(document.body);
+    await frame();
+    expect(c.style.getPropertyValue('--dt-tab-w')).toBe('40');
+    w = 64;
+    a.firstChild!.textContent = 'A 12';
+    await Promise.resolve();
+    await frame();
+    expect(c.style.getPropertyValue('--dt-tab-w')).toBe('64');
+    stop();
+  });
 });

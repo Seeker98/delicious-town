@@ -597,6 +597,8 @@ describe('终审 I2：冷静期已过的所得能取出', () => {
       coin: 1_000_000,
       deliverHours: 72,
       depositRate: 0.3,
+      capRate: 2,
+      premium: 1.2,
       base: { personDaily: 50, depositRate: 0.3 },
       card: null,
       contracts: open
@@ -686,6 +688,8 @@ describe('终审 I2：冷静期已过的所得能取出', () => {
         coin: 0,
         deliverHours: 72,
         depositRate: 0.3,
+        capRate: 2,
+        premium: 1.2,
         base: { personDaily: 50, depositRate: 0.3 },
         card: null,
         contracts: [],

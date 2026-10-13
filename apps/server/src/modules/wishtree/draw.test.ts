@@ -100,7 +100,7 @@ describe('开奖（许愿树设计 §1.1、§3.2）', () => {
     expect(await newsOf(shardId)).toHaveLength(1);
   });
 
-  it('某家安慰奖失败：其他家照发，下一轮补上（Review Focus 4）', async () => {
+  it('某家安慰奖失败：其他家照发；之后隔 1、2、4……分钟再试，没到时间不取（Review Focus 4、backlog）', async () => {
     const shardId = await createShard(t.db);
     const rs: number[] = [];
     for (let i = 0; i < 3; i++) rs.push((await newRestaurant(t, { shardId })).restaurantId);
@@ -108,9 +108,14 @@ describe('开奖（许愿树设计 §1.1、§3.2）', () => {
     await drawDue(t.game.deps, shardId, t.clock.now);
     const losers = (await entries(id)).filter((e) => !e.won).map((e) => e.rest_id);
     const restore = await failRestLog(t.db, losers[0]!);
+    const at = (min: number) => new Date(t.clock.now.getTime() + min * 60_000);
     expect(await consoleDue(t.game.deps, shardId, t.clock.now)).toEqual({ done: 1, failed: 1 });
+    expect(await consoleDue(t.game.deps, shardId, at(0.5))).toEqual({ done: 0, failed: 0 });
+    expect(await consoleDue(t.game.deps, shardId, at(1))).toEqual({ done: 0, failed: 1 });
+    // 第二次失败后隔 2 分钟
+    expect(await consoleDue(t.game.deps, shardId, at(2))).toEqual({ done: 0, failed: 0 });
     await restore();
-    expect(await consoleDue(t.game.deps, shardId, t.clock.now)).toEqual({ done: 1, failed: 0 });
+    expect(await consoleDue(t.game.deps, shardId, at(3))).toEqual({ done: 1, failed: 0 });
   });
 
   it('没人许愿：状态 empty、不发新闻', async () => {

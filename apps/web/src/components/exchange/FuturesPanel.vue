@@ -372,7 +372,12 @@ function result(c: FuturesContractDto): string {
         <p>{{ t.futures.intro }}</p>
         <ul>
           <li
-            v-for="(x, i) in t.futures.help(data.deliverHours, Math.round(data.depositRate * 100))"
+            v-for="(x, i) in t.futures.help(
+              data.deliverHours,
+              Math.round(data.depositRate * 100),
+              formatNum(data.capRate),
+              Math.round((data.premium - 1) * 100),
+            )"
             :key="i"
           >
             {{ x }}

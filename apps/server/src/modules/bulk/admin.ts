@@ -179,17 +179,20 @@ export function createAdminBulk(game: Game) {
       }));
     },
 
-    /** 取消进行中的批次（设计 §3.2）：改成 cancelled；钱由结算第二段退，这里先跑一次，失败了下一分钟任务补 */
+    /**
+     * 取消进行中的批次（设计 §3.2）：改成 cancelled；钱由结算第二段退，这里先跑一次，失败了下一分钟任务补。
+     * 已经过了收盘时刻、等着结算的不能取消（backlog）
+     */
     async cancel(actor: AdminActor, lotId: number): Promise<void> {
       const now = game.deps.now();
       const lot = await db.transaction().execute(async (tx) => {
         const l = await tx
           .selectFrom('bulk_lot')
-          .select(['id', 'shard_id', 'status'])
+          .select(['id', 'shard_id', 'status', 'close_at'])
           .where('id', '=', String(lotId))
           .forUpdate()
           .executeTakeFirst();
-        if (!l || l.status !== 'open') throw invalidState('bulk_not_open');
+        if (!l || l.status !== 'open' || l.close_at <= now) throw invalidState('bulk_not_open');
         await tx
           .updateTable('bulk_lot')
           .set({ status: 'cancelled', settled_at: now })

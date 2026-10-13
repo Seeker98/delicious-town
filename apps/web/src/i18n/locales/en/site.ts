@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    fix1014:
+      'A batch of small fixes: tab bars can be switched with the arrow keys, the underline follows when tab text changes width, and the other Ichiban Kuji line is greyed out while a draw is running; bottom sheets no longer focus a button when they open (so Enter doesn’t apply right away), and Tab stays inside the sheet; Today’s activity, Tasks, Events, the Wishing Tree and Restaurant info say they failed to load instead of loading forever; invite quest names say the friend must verify their email; the futures help uses this server’s pricing numbers; opening a cookware entry in the wiki directly goes back to the cookware list; no bulk subscription lots open while the exchange is off',
     shiling1014:
       'Seasonal points rework: only servings eaten by picky customers and Squidward earn seasonal points, not regular customers; whether a dish is in season is now judged by the weather of the round it’s eaten in, not when it was cooked; points per serving follow the dish’s ingredient prices, about 1 point per 1,100 coins of ingredients; seasonal points above 500 decay by 1% a day',
     mccut1013:

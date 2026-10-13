@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    fix1014:
+      'Petites corrections\u202f: les onglets se changent avec les flèches du clavier, le soulignement suit quand le texte d’un onglet change de largeur, et l’autre ligne de l’Ichiban Kuji est grisée pendant un tirage\u202f; les panneaux du bas ne mettent plus le focus sur un bouton à l’ouverture (Entrée ne valide plus d’office), et Tab reste dans le panneau\u202f; l’activité du jour, les quêtes, les événements, l’arbre à vœux et les infos du restaurant affichent un échec de chargement au lieu de charger sans fin\u202f; les quêtes d’invitation précisent que l’ami doit vérifier son e-mail\u202f; l’aide des contrats à terme reprend les chiffres de ce serveur\u202f; en ouvrant directement un ustensile dans le wiki, le retour mène à la liste des ustensiles\u202f; plus de lots de souscription en gros quand la bourse est fermée',
     shiling1014:
       'Refonte des points de saison\u202f: seules les parts mangées par les clients difficiles et par Carlo rapportent des points de saison, et non plus celles des clients ordinaires\u202f; un plat est de saison selon la météo du tour où il est mangé, et non plus à la cuisson\u202f; les points par part suivent le prix des ingrédients du plat, environ 1 point pour 1\u202f100 pièces d’ingrédients\u202f; au-delà de 500, les points de saison baissent de 1\u202f% par jour',
     mccut1013:

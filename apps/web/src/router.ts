@@ -1,4 +1,4 @@
-import type { Pinia } from 'pinia';
+import { getActivePinia, type Pinia } from 'pinia';
 import {
   createRouter,
   createWebHistory,
@@ -10,6 +10,7 @@ import { BAR_GAMES, isBarGame } from './utils/barGames';
 import { goOrReload, installChunkReload } from './utils/chunkReload';
 import { resolveGuard, type RouteFlags } from './guard';
 import { activeMessages } from './i18n';
+import { useCatalogStore } from './stores/catalog';
 import { useSessionStore } from './stores/session';
 import { useToastStore } from './stores/toast';
 import type { Messages } from './i18n';
@@ -25,6 +26,9 @@ const TOWN_MOVED: Record<string, string> = {
   // 基金后来又搬到银行（界面改版 P2b）
   fund: '/bank?tab=fund',
 };
+
+/** 这件道具是不是厨具：按目录看（目录没读过、没有 pinia 时当不是） */
+const isEquip = (id: number): boolean => !!getActivePinia() && !!useCatalogStore().goods(id)?.equip;
 
 export const routes: RouteRecordRaw[] = [
   {
@@ -224,10 +228,13 @@ export const routes: RouteRecordRaw[] = [
       gameChrome: true,
       section: 'home',
       title: T((t) => t.nav.titles.wikiItem),
-      parent: (_to, back) =>
+      // 没有浏览历史（直接打开、刷新）时按目录判断是不是厨具，厨具回厨具列表（backlog P2a）
+      parent: (to, back) =>
         typeof back === 'string' && back.startsWith('/wiki/equips')
           ? listBack('/wiki/equips', back)
-          : listBack('/wiki/goods', back),
+          : typeof back !== 'string' && isEquip(Number(to.params.id))
+            ? '/wiki/equips'
+            : listBack('/wiki/goods', back),
     },
   },
   { path: '/wiki/equips/:id(\\d+)', redirect: (to) => `/wiki/goods/${String(to.params.id)}` },

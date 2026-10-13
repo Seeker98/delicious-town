@@ -1,11 +1,5 @@
 import { sql, type Kysely } from 'kysely';
-import {
-  ErrorCode,
-  gameDay,
-  type WishTreeAwardDto,
-  type WishTreeResultDto,
-  type WishTreeDto,
-} from '@dt/shared';
+import { ErrorCode, gameDay, type BarAwardDto, type WishTreeResultDto, type WishTreeDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, requirement } from '../../core/errors';
 import { featureAvailable } from '../../core/features';
@@ -83,7 +77,7 @@ async function viewOf(
         ? null
         : {
             won: !!x.won,
-            award: (x.award ?? null) as WishTreeAwardDto | null,
+            award: (x.award ?? null) as BarAwardDto | null,
             // 开奖时被封号跳过：记了处理时间、没中、也没有安慰奖
             skipped: !x.won && x.award === null && x.settled_at !== null,
           },

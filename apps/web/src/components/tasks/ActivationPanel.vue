@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import type { ActivationDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import DtEmpty from '../DtEmpty.vue';
 import DtSkeleton from '../DtSkeleton.vue';
 import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
@@ -15,6 +16,8 @@ const toast = useToastStore();
 const t = useT();
 const act = ref<ActivationDto | null>(null);
 const busy = ref(false);
+/** 第一次读失败：不再一直显示骨架、读屏一直报“加载中”（backlog P3） */
+const failed = ref(false);
 
 async function load() {
   act.value = await endpoints.activation();
@@ -64,11 +67,17 @@ const tierNote = (r: ActivationDto['rewards'][number]) =>
   act.value?.kujiTicket?.points === r.points ? t.value.rest.tasks.kujiTier(act.value.kujiTicket.num) : '';
 const at = (p: number) => `${Math.min(100, (p / maxPoints.value) * 100)}%`;
 
-onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.tasks.loadFailed), 'danger')));
+onMounted(() =>
+  load().catch((e) => {
+    failed.value = true;
+    toast.push(errorMessage(e, t.value.rest.tasks.loadFailed), 'danger');
+  }),
+);
 </script>
 
 <template>
-  <DtSkeleton v-if="!act" :rows="5" data-testid="activation-skeleton" />
+  <DtEmpty v-if="!act && failed" :title="t.rest.tasks.loadFailed" data-testid="activation-failed" />
+  <DtSkeleton v-else-if="!act" :rows="5" data-testid="activation-skeleton" />
   <template v-if="act">
     <!-- 今日活跃（界面改版 P7）：一条进度条，档位节点在条上；下面一档一行，到了的直接领奖 -->
     <section class="dt-card dt-act-card" data-testid="card-activation">

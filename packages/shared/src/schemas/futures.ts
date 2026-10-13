@@ -50,6 +50,9 @@ export interface FuturesDto {
   coin: number;
   deliverHours: number;
   depositRate: number;
+  /** 单价规则（说明里写，backlog：原来写死 2 倍、20%）：参考价最多到菜场等级价的 capRate 倍，再乘 premium */
+  capRate: number;
+  premium: number;
   /** 持有期货交易员时 personDaily、depositRate 是证上的；base 区服原值，card 起作用的工作证（天气改版 PR③） */
   base: { personDaily: number; depositRate: number };
   card: number | null;

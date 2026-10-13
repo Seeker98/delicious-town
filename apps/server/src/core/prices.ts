@@ -27,3 +27,9 @@ export function levelRateOf(food: Food, rates: readonly number[]): number {
 export function foodPrice(food: Food, mt: { levelPriceRate: readonly number[] }): number {
   return Math.round(food.coin * levelRateOf(food, mt.levelPriceRate));
 }
+
+/**
+ * 本金 × 比例向下取整。比例先换成整数百万分比再乘，免得 700,000 × 0.7 算成 489,999.99…（backlog 基金），
+ * 也不会像加一点点那样在 3 × 0.333333 时多给 1（质量期 ②）；比例超过 6 位小数的部分不算
+ */
+export const share = (coin: number, rate: number) => Math.floor((coin * Math.round(rate * 1e6)) / 1e6);

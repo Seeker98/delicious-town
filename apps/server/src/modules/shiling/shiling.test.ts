@@ -278,16 +278,16 @@ describe('每日衰减（时令值改法 2026-10-13）', () => {
   it('余额超过 500 的店扣超出部分的 1%，记流水；本周获得不动；500 以内的不碰', async () => {
     const shardId = await createShard(t.db);
     const week = '2026-10-12';
-    const shops = await Promise.all(
-      [499, 600, 1500].map(async (balance) => {
-        const ctx = await newRestaurant(t, { shardId, patch: { star_level: 1 } });
-        await t.db
-          .insertInto('rest_shiling')
-          .values({ rest_id: ctx.restaurantId, shard_id: shardId, balance, week, week_gain: 77 })
-          .execute();
-        return ctx.restaurantId;
-      }),
-    );
+    // 逐家建：并发建时店号先后和余额顺序对不上，按店号排出来的结果就乱了（CI 偶发失败）
+    const shops: number[] = [];
+    for (const balance of [499, 600, 1500]) {
+      const ctx = await newRestaurant(t, { shardId, patch: { star_level: 1 } });
+      await t.db
+        .insertInto('rest_shiling')
+        .values({ rest_id: ctx.restaurantId, shard_id: shardId, balance, week, week_gain: 77 })
+        .execute();
+      shops.push(ctx.restaurantId);
+    }
     const r = await decayShiling(t.game.deps, shardId, t.clock.now);
     expect(r).toEqual({ shops: 2, total: 11, failed: 0 });
     const rows = await t.db
@@ -296,7 +296,8 @@ describe('每日衰减（时令值改法 2026-10-13）', () => {
       .where('rest_id', 'in', shops)
       .orderBy('rest_id')
       .execute();
-    expect(rows.map((x) => [x.balance, x.week_gain])).toEqual([
+    const byShop = new Map(rows.map((x) => [x.rest_id, [x.balance, x.week_gain]]));
+    expect(shops.map((id) => byShop.get(id))).toEqual([
       [499, 77],
       [599, 77],
       [1490, 77],
@@ -308,9 +309,9 @@ describe('每日衰减（时令值改法 2026-10-13）', () => {
       .where('kind', '=', 'shiling')
       .orderBy('rest_id')
       .execute();
-    expect(ledger.map((x) => [x.delta, x.source])).toEqual([
-      [-1, 'shiling.decay'],
-      [-10, 'shiling.decay'],
+    expect(ledger.map((x) => [x.rest_id, x.delta, x.source])).toEqual([
+      [shops[1], -1, 'shiling.decay'],
+      [shops[2], -10, 'shiling.decay'],
     ]);
   });
 });

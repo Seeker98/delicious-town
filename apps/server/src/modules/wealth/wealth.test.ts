@@ -3,7 +3,6 @@ import { WEALTH } from '@dt/config';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { setTuning } from '../../../test/town';
-import { wealthDue } from './service';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -181,13 +180,12 @@ describe('食材理财（理财设计 §1、§3.3）', () => {
     expect(await goodsNum(t, r.restaurantId, WEALTH.packBase + 5)).toBe(0);
   });
 
-  it('wealthDue 和餐厅概览：只数到期没领的；区服关了理财为 0、接口报功能关闭', async () => {
+  it('餐厅概览的 wealthDue（概览主查询里的子查询，backlog 去掉了单独的函数）：只数到期没领的；区服关了理财为 0、接口报功能关闭', async () => {
     const r = await rich();
     await svc().deposit(r, { days: 3, coin: M });
     await svc().deposit(r, { days: 7, coin: M });
-    expect(await wealthDue(t.db, r.restaurantId, t.clock.now)).toBe(0);
+    expect((await t.game.restaurant.overview(r.restaurantId)).wealthDue).toBe(0);
     later(3 * DAY);
-    expect(await wealthDue(t.db, r.restaurantId, t.clock.now)).toBe(1);
     expect((await t.game.restaurant.overview(r.restaurantId)).wealthDue).toBe(1);
 
     const shardId = await createShard(t.db);

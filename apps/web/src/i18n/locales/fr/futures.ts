@@ -7,10 +7,10 @@ const futures: Messages['futures'] = {
   intro:
     'Commandez un ingrédient précis\u202f: un acompte fixe le prix, le solde est prélevé automatiquement à la livraison.',
   helpTitle: 'Comment fonctionnent les contrats',
-  help: (hours, pct) => [
+  help: (hours, pct, cap, premium) => [
     `Vous payez ${pct}\u202f% du total en acompte. Au bout de ${hours} heures, la livraison est automatique\u202f: si le restaurant a assez de pièces, le solde est prélevé et les ingrédients vont au garde-manger (ce qui ne rentre pas va sur votre compte de la bourse).`,
     'Si vous ne pouvez pas payer le solde à l’échéance, ou si vous annulez avant, le contrat est en défaut\u202f: l’acompte est perdu et le quota du jour n’est pas rendu.',
-    'Le prix unitaire est fixé à la commande\u202f: le prix de référence de la bourse, compris entre le prix du marché pour ce niveau et le double, plus 20\u202f%.',
+    `Le prix unitaire est fixé à la commande\u202f: le prix de référence de la bourse, compris entre le prix du marché pour ce niveau et ${cap} fois ce prix, plus ${premium}\u202f%.`,
     'Chaque ingrédient a un quota quotidien pour tout le serveur, et chaque joueur une limite quotidienne. Les deux repartent à zéro à minuit.',
   ],
   personLeft: (n, max) => `Encore ${n} ${plFr(n, 'unité', 'unités')} possible aujourd’hui (${max} par jour)`,

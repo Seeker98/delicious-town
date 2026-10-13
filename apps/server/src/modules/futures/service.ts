@@ -233,6 +233,8 @@ export function createFuturesService(d: GameDeps) {
       coin: Number(rest.coin),
       deliverHours: t.deliverHours,
       depositRate: perk.depositRate,
+      capRate: t.capRate,
+      premium: t.premium,
       base: { personDaily: t.personDaily, depositRate: t.depositRate },
       card: perk.card,
       contracts,

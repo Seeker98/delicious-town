@@ -47,7 +47,16 @@ export function installTabsScroll(root: HTMLElement = document.body): () => void
     if (!pending) pending = requestAnimationFrame(sync);
   };
   const observer = new MutationObserver(schedule);
-  observer.observe(root, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
+  // characterData：标签文字变了（未读数、切语言）宽度跟着变，下划线也要跟（backlog P1）
+  observer.observe(root, {
+    subtree: true,
+    childList: true,
+    characterData: true,
+    attributes: true,
+    attributeFilter: ['class'],
+  });
+  // 网页字体晚到时标签变宽
+  void document.fonts?.ready.then(schedule);
   const onScroll = (e: Event) => {
     const t = e.target;
     if (t instanceof HTMLElement && t.classList.contains('nav-tabs')) markOverflow(t);

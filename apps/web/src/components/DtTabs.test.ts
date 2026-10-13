@@ -37,6 +37,30 @@ describe('DtTabs（界面改版 P2b）', () => {
     expect(plain.find('.dt-tabs-end').exists()).toBe(false);
   });
 
+  it('键盘（backlog）：只有选中的在 Tab 顺序里；左右键循环切换并移焦点，Home、End 到两头', async () => {
+    const three = [...TABS, { key: 'c', label: '丙' }];
+    const w = mount(DtTabs, { props: { modelValue: 'a', tabs: three }, attachTo: document.body });
+    const btns = w.findAll('button[role="tab"]');
+    expect(btns.map((b) => b.attributes('tabindex'))).toEqual(['0', '-1', '-1']);
+    await btns[0]!.trigger('keydown', { key: 'ArrowRight' });
+    expect(document.activeElement).toBe(btns[1]!.element);
+    await btns[0]!.trigger('keydown', { key: 'ArrowLeft' });
+    await btns[0]!.trigger('keydown', { key: 'End' });
+    await btns[0]!.trigger('keydown', { key: 'Home' });
+    await btns[0]!.trigger('keydown', { key: 'Enter' });
+    expect(w.emitted('update:modelValue')).toEqual([['b'], ['c'], ['c']]);
+    w.unmount();
+  });
+
+  it('disabled（backlog：一番赏抽签进行中）：别的标签点不了、方向键跳过，选中的照常', async () => {
+    const w = mount(DtTabs, { props: { modelValue: 'a', tabs: TABS, disabled: true } });
+    expect(w.get('[data-testid="tab-a"]').attributes('disabled')).toBeUndefined();
+    expect(w.get('[data-testid="tab-b"]').attributes('disabled')).toBeDefined();
+    await w.get('[data-testid="tab-b"]').trigger('click');
+    await w.get('[data-testid="tab-a"]').trigger('keydown', { key: 'ArrowRight' });
+    expect(w.emitted('update:modelValue')).toBeUndefined();
+  });
+
   it('只有一个标签时不显示标签栏', () => {
     const w = mount(DtTabs, { props: { modelValue: 'a', tabs: [TABS[0]!] } });
     expect(w.find('ul').exists()).toBe(false);

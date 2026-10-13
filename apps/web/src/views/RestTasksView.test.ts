@@ -148,6 +148,13 @@ describe('RestTasksView', () => {
     vi.mocked(endpoints.signIn).mockResolvedValue({});
   });
 
+  it('读失败：写读取失败，不再一直显示骨架（backlog P3）', async () => {
+    vi.mocked(endpoints.tasks).mockRejectedValue(new Error('x'));
+    const w = await mountView();
+    expect(w.find('[data-testid="tasks-skeleton"]').exists()).toBe(false);
+    expect(w.find('[data-testid="tasks-failed"]').exists()).toBe(true);
+  });
+
   it('任务名按目录取当前语言；目录里没有时用服务端给的（问题记录 272）', async () => {
     useCatalogStore().apply({
       version: 'v:en',

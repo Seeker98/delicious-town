@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    fix1014:
+      'Pequeños arreglos: las pestañas se cambian con las flechas del teclado, el subrayado se ajusta cuando cambia el ancho del texto y la otra línea del Ichiban Kuji se ve en gris mientras hay un sorteo en curso; los paneles inferiores ya no enfocan un botón al abrirse (Intro ya no aplica sin querer) y Tab se queda dentro del panel; la actividad del día, las misiones, los eventos, el árbol de los deseos y la información del restaurante dicen que no se pudieron cargar en vez de cargar sin fin; las misiones de invitación indican que el amigo debe verificar su correo; la ayuda de futuros usa los números de este servidor; al abrir directamente un utensilio en la wiki, volver lleva a la lista de utensilios; no se abren lotes de suscripción al por mayor con la bolsa cerrada',
     shiling1014:
       'Cambio en los puntos de temporada: solo dan puntos las raciones que se comen los clientes exigentes y Calamardo, ya no las de clientes normales; un plato está de temporada según el clima de la ronda en que se come, no al cocinarlo; los puntos por ración siguen el precio de los ingredientes del plato, más o menos 1 punto por cada 1100 monedas de ingredientes; por encima de 500, los puntos de temporada bajan un 1\u00a0% al día',
     mccut1013:

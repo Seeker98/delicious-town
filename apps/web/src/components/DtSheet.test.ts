@@ -61,20 +61,20 @@ describe('底部面板（界面改版 P3，设计 §5 第 6、7 条）', () => {
     expect(w.emitted('close')).toHaveLength(2);
   });
 
-  it('打开后焦点进面板（第一个按钮），关掉后回到打开前的按钮', async () => {
+  it('打开后焦点在面板本身（不落在按钮上，backlog P3），关掉后回到打开前的按钮', async () => {
     const w = mount(Harness, { attachTo: document.body, global: { stubs: { teleport: true } } });
     const opener = w.get('#opener');
     (opener.element as HTMLButtonElement).focus();
     await opener.trigger('click');
     await flushPromises();
-    expect(document.activeElement?.id).toBe('ok');
+    expect(document.activeElement?.classList.contains('dt-sheet')).toBe(true);
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     await flushPromises();
     expect(document.activeElement?.id).toBe('opener');
     w.unmount();
   });
 
-  it('第一个按钮是灰掉的（步进器的“−”）时，焦点落在第一个能用的按钮上（P6 审查 I1）', async () => {
+  it('有输入框时焦点落在第一个输入框；Tab 圈在面板里、跳过灰掉的按钮（P6 审查 I1、backlog P3）', async () => {
     const Disabled = defineComponent({
       setup() {
         const open = ref(false);
@@ -86,6 +86,7 @@ describe('底部面板（界面改版 P3，设计 §5 第 6、7 条）', () => {
             {
               default: () => [
                 h('button', { id: 'minus', disabled: true }, '−'),
+                h('input', { id: 'qty' }),
                 h('button', { id: 'plus' }, '+'),
               ],
             },
@@ -96,7 +97,18 @@ describe('底部面板（界面改版 P3，设计 §5 第 6、7 条）', () => {
     const w = mount(Disabled, { attachTo: document.body, global: { stubs: { teleport: true } } });
     await w.get('#opener2').trigger('click');
     await flushPromises();
+    expect(document.activeElement?.id).toBe('qty');
+    const tab = (shiftKey = false) =>
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey, cancelable: true }));
+    (document.getElementById('plus') as HTMLButtonElement).focus();
+    tab();
+    expect(document.activeElement?.id).toBe('qty');
+    tab(true);
     expect(document.activeElement?.id).toBe('plus');
+    // 焦点跑到面板外（页面上的按钮）也拉回来
+    (document.getElementById('opener2') as HTMLButtonElement).focus();
+    tab();
+    expect(document.activeElement?.id).toBe('qty');
     w.unmount();
   });
 
@@ -117,7 +129,7 @@ describe('底部面板（界面改版 P3，设计 §5 第 6、7 条）', () => {
     await w.get('#swap').trigger('click');
     await flushPromises();
     expect(document.body.classList.contains('dt-sheet-lock')).toBe(true);
-    expect(document.activeElement?.id).toBe('b-ok');
+    expect(document.activeElement?.closest('.dt-sheet')?.textContent).toContain('确认');
     w.unmount();
     expect(document.body.classList.contains('dt-sheet-lock')).toBe(false);
   });

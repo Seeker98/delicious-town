@@ -630,10 +630,10 @@
     "name": "Get a forum post featured"
   },
   "3546": {
-    "name": "Have a friend you invited reach level {n}"
+    "name": "Have a friend you invited reach level {n} (they must verify their email)"
   },
   "3547": {
-    "name": "Have a friend you invited reach level {n}"
+    "name": "Have a friend you invited reach level {n} (they must verify their email)"
   },
   "3561": {
     "name": "Have 16 tables"

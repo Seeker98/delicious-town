@@ -25,6 +25,8 @@ const t = useT();
 const items = ref<ActivityDto[]>([]);
 const level = ref(0);
 const loaded = ref(false);
+/** 第一次读失败：写读取失败，不写“没有活动”（backlog P3） */
+const failed = ref(false);
 const busy = ref(false);
 /** 活动条 + 详情（问题记录 226）：只显示选中的那个活动 */
 const selected = ref<number | null>(null);
@@ -39,6 +41,7 @@ async function load() {
     // 领奖、兑换后重新读取时停在当前活动；它不在列表里了才按默认规则重选
     if (!r.items.some((a) => a.id === selected.value)) selected.value = defaultSelection(ordered.value);
   } catch (e) {
+    if (!loaded.value) failed.value = true;
     toast.push(errorMessage(e, t.value.activity.loadFailed), 'danger');
   } finally {
     loaded.value = true;
@@ -88,6 +91,7 @@ const isSignin = (a: ActivityDto) => a.kind === 'goals' && a.def.goals.every((g)
   <NpcCard npc="xiaoKai" />
   <!-- 加载时骨架、没有活动时空状态（界面改版 P3） -->
   <DtSkeleton v-if="!loaded" :rows="5" data-testid="activity-skeleton" />
+  <DtEmpty v-else-if="failed" :title="t.activity.loadFailed" data-testid="activity-failed" />
   <DtEmpty
     v-else-if="items.length === 0"
     art="empty-activity"
