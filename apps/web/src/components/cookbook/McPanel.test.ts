@@ -197,6 +197,7 @@ describe('McPanel', () => {
         createdAt: '',
       },
       saleRate: 3.2,
+      normalSale: { share: 0.5, priceRate: 0.5 },
     });
     vi.mocked(endpoints.mcDump).mockResolvedValue({} as never);
     const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
@@ -204,7 +205,9 @@ describe('McPanel', () => {
     await flushPromises();
     expect(w.find('[data-testid="mc-current"]').text()).toContain('120');
     // 卖出倍率（问题记录 412）
-    expect(w.find('[data-testid="mc-current"]').text()).toContain('卖给顾客时 ×3.2 (普通顾客付一半)');
+    expect(w.find('[data-testid="mc-current"]').text()).toContain('卖给顾客时 ×3.2');
+    // 普通顾客按比例点（特色菜卖法 2026-10-13，区服数值）
+    expect(w.find('[data-testid="mc-current"]').text()).toContain('普通顾客约 50% 的桌点, 每份付 50%');
     expect(w.find('[data-testid="cook-1"]').attributes('disabled')).toBeDefined();
     await w.find('[data-testid="dump"]').trigger('click');
     expect(endpoints.mcDump).not.toHaveBeenCalled();

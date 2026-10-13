@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    special1013:
+      "Special dishes now sell differently: satisfied picky customers still have 2 portions at full price, while picky customers who are not satisfied or walk out have none; regular customers now order 1 portion (half price) at only about half of their tables each round instead of every table. The special dish page shows your server's figures",
     fix1013b:
       'More small fixes: the shop shows how many coins you are short instead of “0 left”; souvenirs in storage open to show their full description; maxed dishes in the recipe list get their ingredient picture, the pager sits inside the card and recipe details line up the ingredients of every grade; savings terms show how many packs you get per amount deposited; a failed Bulk Subscription bid keeps what you typed, and the bid panel refreshes every 30 seconds while open; screen readers name the quantity box and no longer read tiles that open a panel as toggles',
     home1013:

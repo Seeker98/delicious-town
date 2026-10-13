@@ -124,6 +124,10 @@ export const tuningSchema = z.object({
     pickyHitCount: int.min(1),
     /** 品级不够时付这道菜挑剔价的几成 */
     pickyShortPayRate: z.number().min(0).max(1),
+    /** 普通顾客里吃特色菜的桌数比例：每轮从普通顾客桌里随机挑 ⌊桌数 × 它⌋ 桌各吃 1 份（特色菜卖法 2026-10-13；1 = 每桌都吃） */
+    normalSpecialShare: z.number().min(0).max(1),
+    /** 普通顾客每份特色菜付每份价值的几成（原来固定半价） */
+    normalSpecialPriceRate: z.number().min(0).max(1),
     cookfoodsPerFlag: int,
     cookfoodsMaxFlag: int,
     cookfoodsMinGrade: int,

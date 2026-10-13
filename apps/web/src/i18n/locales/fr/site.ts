@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    special1013:
+      'Nouvelle vente des plats spéciaux\u202f: les clients difficiles satisfaits en prennent toujours 2 portions à plein prix, ceux qui ne sont pas satisfaits ou qui partent n’en prennent pas\u202f; les clients ordinaires n’en commandent plus qu’à environ la moitié de leurs tables à chaque tour (1 portion à moitié prix), au lieu de toutes. La page des plats spéciaux indique les chiffres de votre serveur',
     fix1013b:
       'Encore quelques corrections\u202f: la boutique indique combien il vous manque au lieu de «\u202fil reste 0\u202f»\u202f; les souvenirs de l’entrepôt s’ouvrent pour afficher leur description complète\u202f; dans la liste des recettes, les plats au niveau max ont leur image d’ingrédient, la pagination est dans la carte et le détail aligne les ingrédients de chaque rang\u202f; les durées d’épargne indiquent combien de paquets on reçoit par montant déposé\u202f; une proposition refusée en Souscription en gros garde ce que vous avez saisi, et le panneau se rafraîchit toutes les 30 secondes tant qu’il est ouvert\u202f; les lecteurs d’écran nomment la case de quantité et ne lisent plus comme des interrupteurs les cases qui ouvrent un panneau',
     home1013:

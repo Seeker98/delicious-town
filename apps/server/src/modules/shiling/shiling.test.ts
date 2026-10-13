@@ -129,7 +129,10 @@ describe('下锅时定应时（§3.2）', () => {
 });
 
 describe('顾客吃掉应时菜攒时令值（§3.3）', () => {
-  const busy = { tuning: { rest: { atRateBase: 5, spRateBase: -5 } } };
+  // 全是普通顾客、每桌都吃特色菜（特色菜卖法 2026-10-13 后默认只有约一半的桌吃，桌少时可能一份都卖不出）
+  const busy = {
+    tuning: { rest: { atRateBase: 5, spRateBase: -5 }, settlement: { normalSpecialShare: 1 } },
+  };
   async function withDish(shiling: boolean, weather = RAIN) {
     const shardId = await createShard(t.db);
     await t.db

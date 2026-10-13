@@ -29,7 +29,9 @@ const mc: Messages['mc'] = {
   lucky: ' (chanceux)',
   saleMeta: (left, total, price, eaten) =>
     `Reste ${left} / ${total} · ${price} ${plFr(price, 'pièce', 'pièces')} la part · goûté ${eaten} fois`,
-  saleRate: (rate) => ` · vendu aux clients à ×${rate} (les clients ordinaires paient la moitié)`,
+  saleRate: (rate) => ` · vendu aux clients à ×${rate}`,
+  normalSale: (share, price) =>
+    ` · environ ${share} des tables de clients ordinaires en prennent, à ${price} la portion`,
   dump: 'Jeter',
   learned: (n) => `Appris (${n})`,
   learnedOf: (shown, total) => `Appris (${shown} / ${total})`,

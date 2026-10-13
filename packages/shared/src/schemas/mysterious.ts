@@ -70,6 +70,8 @@ export interface McOverviewDto {
   fragmentPerRemnant: number;
   /** 在售特色菜卖给顾客时每份价值的倍率（问题记录 412）；没有在售为 null */
   saleRate: number | null;
+  /** 普通顾客里点特色菜的桌数比例、每份付几成（特色菜卖法 2026-10-13，区服数值）；旧服务端没有 */
+  normalSale?: { share: number; priceRate: number };
   /** 持有的神秘食谱数 */
   recipes: number;
   tools: McToolDto[];
