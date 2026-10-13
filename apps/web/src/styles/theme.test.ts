@@ -43,7 +43,7 @@ const PAIRS: [string, string][] = [
   ['--dt-on-primary', '--dt-primary-hover'],
   ['--dt-on-danger', '--dt-danger'],
   ['--dt-disabled-text', '--dt-disabled-bg'],
-  // 首页经验条：数字压在填充部分上（终审：深色下只有 3.19）
+  // 填充色上的字（进度条一类的填充部分；原来是首页经验条，改版后暂时没有页面用 --dt-fill-primary，留着防回退）
   ['--dt-text', '--dt-fill-primary'],
   // 首页头图：店名顶栏和街道一行压在天空上（界面改版 P5）
   ['--dt-text', '--dt-scene-sky'],

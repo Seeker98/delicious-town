@@ -5,10 +5,10 @@ export default {
   tabFutures: '期貨',
   intro: '點名訂一種食材: 下單付定金、鎖定單價, 到期自動扣尾款交貨。',
   helpTitle: '期貨怎麼算',
-  help: (hours: number, pct: number) => [
+  help: (hours: number, pct: number, cap: string, premium: number) => [
     `下單時付總價的 ${pct}% 作為定金, ${hours} 小時後自動交割: 店裡銀幣夠付尾款就扣尾款、食材進櫥櫃, 放不下的進交易所賬戶。`,
     '到期時銀幣不夠付尾款、或者到期前撤單, 都算違約: 定金不退, 今天用掉的額度也不退。',
-    '單價下單時鎖定: 交易所參考價夾在菜場等級價和它的 2 倍之間, 再加 20%。',
+    `單價下單時鎖定: 交易所參考價夾在菜場等級價和它的 ${cap} 倍之間, 再加 ${premium}%。`,
     '每種食材全區服每天有額度, 每人每天合計也有上限, 每天 0 點重置。',
   ],
   personLeft: (n: number, max: number) => `我今天還能訂 ${n} 份 (每天 ${max} 份)`,

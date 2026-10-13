@@ -206,5 +206,14 @@ describe('后台大宗认购', () => {
     const settled = await mkLot(shardId, 'settled');
     const again = await call(ctx.app, 'POST', `${A}/lots/${settled}/cancel`, { cookie: admin.cookie });
     expect(again.json).toMatchObject({ code: 'INVALID_STATE', params: { reason: 'bulk_not_open' } });
+    // 过了收盘时刻、还没结算的也不能取消（backlog）
+    const closing = await mkLot(shardId);
+    await db()
+      .updateTable('bulk_lot')
+      .set({ close_at: new Date(Date.now() - 1000) })
+      .where('id', '=', closing)
+      .execute();
+    const late = await call(ctx.app, 'POST', `${A}/lots/${closing}/cancel`, { cookie: admin.cookie });
+    expect(late.json).toMatchObject({ code: 'INVALID_STATE', params: { reason: 'bulk_not_open' } });
   });
 });

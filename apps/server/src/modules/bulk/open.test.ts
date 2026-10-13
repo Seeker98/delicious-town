@@ -72,6 +72,19 @@ describe('开批次（大宗认购设计 §1.1）', () => {
   });
 });
 
+describe('区服关了交易所', () => {
+  it('谁都出不了价，不开批（backlog）', async () => {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({ shard_id: shardId, override: JSON.stringify({ features: { exchange: false } }) })
+      .execute();
+    t.clock.set(gameTime('2026-10-12', 20, 1));
+    expect(await openLot(t.game.deps, shardId, t.clock.now)).toBe('no_exchange');
+    expect(await lotsOf(shardId)).toEqual([]);
+  });
+});
+
 describe('不会两批同时开着（终审 I1）', () => {
   it('上一批还没收盘时不开新批（运营把开批时间往前调）；离名义结束只剩收盘窗口时也不开', async () => {
     const shardId = await createShard(t.db);

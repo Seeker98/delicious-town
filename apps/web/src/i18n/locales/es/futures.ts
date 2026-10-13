@@ -7,10 +7,10 @@ const futures: Messages['futures'] = {
   intro:
     'Encarga un ingrediente concreto: pagas un depósito para fijar el precio y el resto se cobra solo en la entrega.',
   helpTitle: 'Cómo funcionan los futuros',
-  help: (hours, pct) => [
+  help: (hours, pct, cap, premium) => [
     `Pagas el ${pct}\u00a0% del total como depósito. A las ${hours} horas se entrega solo: si el restaurante tiene monedas suficientes, se cobra el resto y los ingredientes van a la despensa (lo que no quepa va a tu cuenta de la bolsa).`,
     'Si al vencer no tienes monedas para el resto, o cancelas antes, el pedido queda impagado: pierdes el depósito y el cupo de hoy no se devuelve.',
-    'El precio por unidad se fija al pedir: el precio de referencia de la bolsa, entre el precio por nivel del mercado y el doble, más un 20\u00a0%.',
+    `El precio por unidad se fija al pedir: el precio de referencia de la bolsa, entre el precio por nivel del mercado y ${cap} veces ese precio, más un ${premium}\u00a0%.`,
     'Cada ingrediente tiene un cupo diario para todo el servidor y cada jugador un límite diario total. Ambos se reinician a medianoche.',
   ],
   personLeft: (n, max) => `Hoy puedes encargar ${n} más (${max} al día)`,

@@ -1300,6 +1300,7 @@ details.dt-card > summary {
 .dt-scene {
   position: relative;
   height: 144px;
+  /* 抵掉 .dt-main 的 8px 内边距，头图贴满顶栏下面和两边；.dt-main 内边距改了这里要跟着改 */
   margin: -8px -8px 0;
   overflow: hidden;
   background: var(--dt-scene-sky);

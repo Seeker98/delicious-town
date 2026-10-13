@@ -1,4 +1,4 @@
-import { ErrorCode, RANK_BOARDS, RANK_KEYS, type LeaderboardDto } from '@dt/shared';
+import { ErrorCode, gameDay, RANK_BOARDS, RANK_KEYS, type LeaderboardDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { AppError } from '../../http/errors';
 import { BOARD_SOURCES } from './boards';
@@ -6,7 +6,8 @@ import { rankRows, type RankedRow } from './ranking';
 
 /**
  * 排行榜（设计文档 §2.6）：打开时现查，整区排序结果按（区服, 榜）缓存在进程内。
- * 缓存的是计算中的 Promise：过期时同时进来的请求共用一次计算；算失败就删掉，下次重算（终审 I2）
+ * 缓存的是计算中的 Promise：过期时同时进来的请求共用一次计算；算失败就删掉，下次重算（终审 I2）。
+ * 跨了游戏日的缓存也作废：周一 0 点后本周榜不会还是上周的（517、backlog）
  */
 export function createRankService(d: GameDeps) {
   const cache = new Map<string, { at: number; rows: Promise<RankedRow[]> }>();
@@ -25,7 +26,7 @@ export function createRankService(d: GameDeps) {
       const ttl = (key === 'power' ? t.powerCacheSeconds : t.cacheSeconds) * 1000;
       const ck = `${ctx.shardId}:${key}`;
       let hit = cache.get(ck);
-      if (!hit || now.getTime() - hit.at >= ttl) {
+      if (!hit || now.getTime() - hit.at >= ttl || gameDay(new Date(hit.at)) !== gameDay(now)) {
         const entry = {
           at: now.getTime(),
           rows: source({ db: d.db, shardId: ctx.shardId, now, config: d.config }).then((rows) =>

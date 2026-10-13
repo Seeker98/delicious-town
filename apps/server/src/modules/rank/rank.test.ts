@@ -184,12 +184,12 @@ describe('排行榜（设计文档 §2.6）', () => {
     await best(b!.restaurantId, 'num', -1, 4);
     await best(c!.restaurantId, 'cup', -1, 2);
     const rows = (key: string) => board(a!, key).then((d) => d.rows.map((x) => [x.restId, x.value]));
-    t.clock.set(gameTime('2026-10-04', 23));
+    t.clock.set(new Date(gameTime('2026-10-05', 0).getTime() - 10_000));
     t.game.rank.clearCache();
     expect(await rows('bar.fg.win.thisWeek')).toEqual([[a!.restaurantId, 5]]);
-    // 周一 0 点后：本周（10-05）还没人玩，上周就是刚过去的那一周
-    t.clock.set(gameTime('2026-10-05', 0, 5));
-    t.game.rank.clearCache();
+    // 周一 0 点后：本周（10-05）还没人玩，上周就是刚过去的那一周；
+    // 缓存还没过 60 秒，跨了游戏日也重算（backlog）
+    t.clock.set(new Date(gameTime('2026-10-05', 0).getTime() + 5_000));
     expect(await rows('bar.fg.win.thisWeek')).toEqual([]);
     expect(await rows('bar.fg.win.lastWeek')).toEqual([[a!.restaurantId, 5]]);
     expect(await rows('bar.num.lose.lastWeek')).toEqual([[b!.restaurantId, 4]]);

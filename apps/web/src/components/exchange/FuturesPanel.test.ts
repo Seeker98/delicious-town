@@ -42,6 +42,8 @@ const data = (p: Partial<FuturesDto> = {}): FuturesDto => ({
   coin: 10_000_000,
   deliverHours: 72,
   depositRate: 0.3,
+  capRate: 2,
+  premium: 1.2,
   base: { personDaily: 50, depositRate: 0.3 },
   card: null,
   contracts: [
@@ -102,6 +104,15 @@ describe('FuturesPanel（期货设计 §10）', () => {
     expect(rowOf(w, 31)).toContain('今天还剩 98 份');
     expect(w.get('[data-testid="fu-food-21"]').attributes('disabled')).toBeDefined();
     expect(rowOf(w, 21)).toContain('今天订完了');
+  });
+
+  it('说明里的定金比例、交割时长、单价规则按区服数值写（backlog：原来写死 2 倍、20%）', async () => {
+    vi.mocked(endpoints.futures).mockResolvedValue(data({ capRate: 3, premium: 1.15 }));
+    const w = await mountPanel();
+    await w.get('[data-testid="fu-help"]').trigger('click');
+    const text = w.get('.dt-help').text();
+    expect(text).toContain('菜场等级价和它的 3 倍之间, 再加 15%');
+    expect(text).toContain('总价的 30% 作为定金, 72 小时后');
   });
 
   it('筛选：稀有、普通、本街要的、搜名字', async () => {

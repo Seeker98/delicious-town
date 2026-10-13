@@ -17,7 +17,8 @@ type Stats = { delivered: number; defaulted: number; refunded: number };
  * 到期交割（期货设计 §6）：每家店一个事务（锁店），这家店到期的单按到期先后逐张处理：
  * 店里银币够付尾款就扣尾款、给食材（橱柜放不下的进交易所账户，不丢）；不够就违约（定金早已扣过）。
  * 配置里没有这种食材了（极端情况）就撤销、退定金。状态只从 open 改一次，重跑不会重复交割；
- * 某家店失败只记日志，下一分钟重试
+ * 某家店失败只记日志，下一分钟重试。一轮按到期先后取单（不按店号）：某家店一直失败时，
+ * 别的店的单照样轮得到（backlog）
  */
 export async function deliverDue(
   d: GameDeps,
@@ -31,7 +32,6 @@ export async function deliverDue(
     .where('shard_id', '=', shardId)
     .where('status', '=', 'open')
     .where('due_at', '<=', now)
-    .orderBy('rest_id')
     .orderBy('due_at')
     .orderBy('id')
     .limit(BATCH)

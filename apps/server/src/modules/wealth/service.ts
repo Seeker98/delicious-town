@@ -5,7 +5,7 @@ import { invalidState, limitReached, requirement } from '../../core/errors';
 import { restLog, runOp, type Op } from '../../core/op';
 import { gainCoin, spendCoin } from '../../core/resources';
 import { AppError } from '../../http/errors';
-import { share } from '../fund/service';
+import { share } from '../../core/prices';
 import { grantGoodsOp } from '../store/goods';
 
 type W = Tuning['wealth'];
@@ -21,18 +21,6 @@ const activeOf = (db: Db, restId: number) =>
     .orderBy('matures_at')
     .orderBy('id')
     .execute();
-
-/** 到期没领的笔数（首页待办，理财设计 §3.4） */
-export async function wealthDue(db: Db, restId: number, now: Date): Promise<number> {
-  const r = await db
-    .selectFrom('wealth_deposit')
-    .select((eb) => eb.fn.countAll<string>().as('n'))
-    .where('rest_id', '=', restId)
-    .where('status', '=', 'active')
-    .where('matures_at', '<=', now)
-    .executeTakeFirstOrThrow();
-  return Number(r.n);
-}
 
 /** 食材理财（理财设计 2026-10-10）：锁银币，到期本金全退加街市补给包；提前取出退 earlyRate、没有包 */
 export function createWealthService(d: GameDeps) {

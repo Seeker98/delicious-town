@@ -4,6 +4,7 @@ import { computed, onMounted, ref } from 'vue';
 import type { AwardDto, QuestDto, QuestsDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import DtArt from '../components/DtArt.vue';
+import DtEmpty from '../components/DtEmpty.vue';
 import DtSkeleton from '../components/DtSkeleton.vue';
 import DtTabs from '../components/DtTabs.vue';
 import QuestCard from '../components/QuestCard.vue';
@@ -71,7 +72,14 @@ const chapterLock = computed(() => {
   return (c.needStar > 0 ? x.lockedStar(c.needStar) : x.lockedLevel(c.needLevel)).replace(/^🔒\s*/u, '');
 });
 
-onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.tasks.loadFailed), 'danger')));
+/** 第一次读失败：不再一直显示骨架（backlog P3） */
+const failed = ref(false);
+onMounted(() =>
+  load().catch((e) => {
+    failed.value = true;
+    toast.push(errorMessage(e, t.value.rest.tasks.loadFailed), 'danger');
+  }),
+);
 </script>
 
 <template>
@@ -81,7 +89,12 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
     </template>
   </DtTabs>
   <ActivationPanel v-if="tab === 'today'" />
-  <DtSkeleton v-if="!tasks && tab !== 'today'" :rows="5" data-testid="tasks-skeleton" />
+  <DtEmpty
+    v-if="!tasks && tab !== 'today' && failed"
+    :title="t.rest.tasks.loadFailed"
+    data-testid="tasks-failed"
+  />
+  <DtSkeleton v-else-if="!tasks && tab !== 'today'" :rows="5" data-testid="tasks-skeleton" />
   <template v-if="tasks">
     <!-- 主线：当前章一张卡片（界面改版 P7）——卡片头写第几章、章名、进度条，一行一个任务，卡片底写章末奖励 -->
     <section v-if="tab === 'main'" class="dt-card dt-rows-card dt-quest-card" data-testid="card-main">

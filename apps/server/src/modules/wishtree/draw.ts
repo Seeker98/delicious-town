@@ -109,8 +109,15 @@ export async function drawDue(d: GameDeps, shardId: number, now: Date): Promise<
 }
 
 /**
+ * 安慰奖失败过的许愿（backlog）：worker 进程里记下次重试的时间，每失败一次间隔翻倍（1、2、4……分钟，最长 1 小时）。
+ * 没到时间的不取，免得一直失败的几家每分钟报错、占满一轮的名额；进程重启后从头算
+ */
+const retry = new Map<string, { at: number; n: number }>();
+const RETRY_MAX_MS = 3_600_000;
+
+/**
  * 安慰奖（许愿树设计 §3.2）：开过奖的轮里还没处理的许愿，每家店一个事务发一份随机奖励，写 award、settled_at；
- * 重跑只补没处理的，某家失败只记日志，下一分钟重试
+ * 重跑只补没处理的，某家失败只记日志，按上面的间隔重试
  */
 export async function consoleDue(
   d: GameDeps,
@@ -118,6 +125,11 @@ export async function consoleDue(
   now: Date,
   log: Log = NO_LOG,
 ): Promise<{ done: number; failed: number }> {
+  const key = (roundId: string, restId: number) => `${roundId}:${restId}`;
+  const waiting = [...retry]
+    .filter(([, r]) => r.at > now.getTime())
+    .map(([k]) => k.split(':'))
+    .map(([roundId, restId]) => ({ roundId: roundId!, restId: Number(restId) }));
   const todo = await d.db
     .selectFrom('wish_entry as e')
     .innerJoin('wish_round as w', 'w.id', 'e.round_id')
@@ -125,6 +137,15 @@ export async function consoleDue(
     .where('e.shard_id', '=', shardId)
     .where('e.settled_at', 'is', null)
     .where('w.status', '!=', 'open')
+    .$if(waiting.length > 0, (q) =>
+      q.where((eb) =>
+        eb.not(
+          eb.or(
+            waiting.map((x) => eb.and([eb('e.round_id', '=', x.roundId), eb('e.rest_id', '=', x.restId)])),
+          ),
+        ),
+      ),
+    )
     .orderBy('e.round_id')
     .orderBy('e.rest_id')
     .limit(BATCH)
@@ -156,9 +177,15 @@ export async function consoleDue(
         restLog(op, 'wishtree.lost', { roundId: Number(x.round_id), goodsId: x.goods_id, num: x.num, award });
         return true;
       });
+      retry.delete(key(x.round_id, x.rest_id));
       if (ok) done++;
     } catch (err) {
-      log.error({ err, shardId, restId: x.rest_id }, 'wishtree consolation failed');
+      const n = (retry.get(key(x.round_id, x.rest_id))?.n ?? 0) + 1;
+      retry.set(key(x.round_id, x.rest_id), {
+        at: now.getTime() + Math.min(RETRY_MAX_MS, 60_000 * 2 ** (n - 1)),
+        n,
+      });
+      log.error({ err, shardId, restId: x.rest_id, attempts: n }, 'wishtree consolation failed');
       failed++;
     }
   }

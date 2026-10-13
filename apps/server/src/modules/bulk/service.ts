@@ -23,7 +23,8 @@ const MIN_MS = 60_000;
 /**
  * 最后一段停更（问题记录 595）：名义结束前 blindMin 分钟起，看板停在进入停更那一刻。
  * 已经写下快照就用它；进入停更了还没写就按现在的出价算出来，persist 时写进批次（只写一次）。
- * 出价的事务里对批次拿着共享锁，那里只算不写（persist = false），写快照放在出价之前的短事务里
+ * 出价的事务里对批次拿着共享锁，那里只算不写（persist = false），写快照放在出价之前的短事务里：
+ * 先对批次行 for update，等手上拿着共享锁的出价提交，再重读出价，停更前一刻提交的出价不会漏（backlog）。
  * blindMin 为 0（或还没到停更）时返回 null：实时显示
  */
 async function blindOf(
@@ -31,43 +32,51 @@ async function blindOf(
   lot: LotRow,
   blindMin: number,
   now: Date,
+  /** 只在 persist = false 时用；写快照时在锁里重读 */
   bids: readonly BidIn[],
   persist: boolean,
 ): Promise<Snapshot | null> {
   if (blindMin <= 0) return null;
   const at = new Date(lot.ends_at.getTime() - blindMin * MIN_MS);
   if (now < at) return null;
-  if (lot.blind_at !== null)
-    return {
-      at: lot.blind_at,
-      price: Number(lot.blind_price),
-      threshold: Number(lot.blind_threshold),
-      demand: lot.blind_demand ?? 0,
-      bidders: lot.blind_bidders ?? 0,
-    };
+  if (lot.blind_at !== null) return savedSnap(lot);
+  if (!persist) return snapOf(lot, at, bids);
+  return db.transaction().execute(async (tx) => {
+    const cur = await tx
+      .selectFrom('bulk_lot')
+      .selectAll()
+      .where('id', '=', lot.id)
+      .forUpdate()
+      .executeTakeFirstOrThrow();
+    // 别处先写了：用写下的那份
+    if (cur.blind_at !== null) return savedSnap(cur);
+    const snap = snapOf(cur, at, await bidsOf(tx, cur.id));
+    await tx
+      .updateTable('bulk_lot')
+      .set({
+        blind_at: at,
+        blind_price: snap.price,
+        blind_threshold: snap.threshold,
+        blind_demand: snap.demand,
+        blind_bidders: snap.bidders,
+      })
+      .where('id', '=', cur.id)
+      .execute();
+    return snap;
+  });
+}
+
+const savedSnap = (lot: LotRow): Snapshot => ({
+  at: lot.blind_at!,
+  price: Number(lot.blind_price),
+  threshold: Number(lot.blind_threshold),
+  demand: lot.blind_demand ?? 0,
+  bidders: lot.blind_bidders ?? 0,
+});
+
+function snapOf(lot: LotRow, at: Date, bids: readonly BidIn[]): Snapshot {
   const st = standing(lot.qty, Number(lot.reserve), bids);
-  const snap = { at, price: st.price, threshold: st.threshold, demand: st.demand, bidders: st.bidders };
-  if (!persist) return snap;
-  const w = await db
-    .updateTable('bulk_lot')
-    .set({
-      blind_at: at,
-      blind_price: snap.price,
-      blind_threshold: snap.threshold,
-      blind_demand: snap.demand,
-      blind_bidders: snap.bidders,
-    })
-    .where('id', '=', lot.id)
-    .where('blind_at', 'is', null)
-    .executeTakeFirst();
-  if (Number(w.numUpdatedRows) > 0) return snap;
-  // 别处先写了：用写下的那份
-  const again = await db
-    .selectFrom('bulk_lot')
-    .selectAll()
-    .where('id', '=', lot.id)
-    .executeTakeFirstOrThrow();
-  return blindOf(db, again, blindMin, now, bids, persist);
+  return { at, price: st.price, threshold: st.threshold, demand: st.demand, bidders: st.bidders };
 }
 
 const bidsOf = async (db: Kysely<DB>, lotId: string): Promise<BidIn[]> =>
@@ -91,8 +100,7 @@ export async function freezeDue(d: GameDeps, shardId: number, now: Date): Promis
     .where('ends_at', '<=', new Date(now.getTime() + t.blindMin * MIN_MS))
     .execute();
   let n = 0;
-  for (const lot of lots)
-    if (await blindOf(d.db, lot, t.blindMin, now, await bidsOf(d.db, lot.id), true)) n++;
+  for (const lot of lots) if (await blindOf(d.db, lot, t.blindMin, now, [], true)) n++;
   return n;
 }
 
@@ -107,8 +115,7 @@ async function freezeLot(d: GameDeps, shardId: number, lotId: number, now: Date)
     .where('shard_id', '=', shardId)
     .where('status', '=', 'open')
     .executeTakeFirst();
-  if (lot && lot.blind_at === null)
-    await blindOf(d.db, lot, t.blindMin, now, await bidsOf(d.db, lot.id), true);
+  if (lot && lot.blind_at === null) await blindOf(d.db, lot, t.blindMin, now, [], true);
 }
 
 /** 看板（大宗认购设计 §1.3）：进行中的批次、公开数据、我的出价、最近结果。不返回真正的收盘时刻 */

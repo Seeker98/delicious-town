@@ -96,6 +96,14 @@ describe('ActivitiesView', () => {
     vi.mocked(endpoints.activityUnlock).mockResolvedValue({ premium: true } as never);
   });
 
+  it('读失败：写读取失败，不写“没有活动”（backlog P3）', async () => {
+    vi.mocked(endpoints.activities).mockRejectedValue(new Error('x'));
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    expect(w.find('[data-testid="activity-failed"]').exists()).toBe(true);
+    expect(w.find('[data-testid="activity-empty"]').exists()).toBe(false);
+  });
+
   it('目标清单：签到徽标、进度、剩余时间；领取后重新读取', async () => {
     const w = mount(ActivitiesView);
     await flushPromises();

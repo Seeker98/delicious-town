@@ -103,7 +103,7 @@ export function analyzeItems(
     w.filter(([, x]) => x > 0).map(([l]) => l);
   byLevel(weighted(t.market.dailyLevelWeights), '菜场日常');
   byLevel(weighted(t.market.specialLevelWeights), '菜场特价');
-  byLevel([t.market.premiumLevel], '菜场高级货');
+  // 高级菜场在页面上隐藏着（477），不算来源；恢复时加回 byLevel([t.market.premiumLevel], '菜场高级货')
   for (const id of awardFoodsPool(b.foods, Number.MAX_SAFE_INTEGER)) add('foods', id, 'gives', '随机奖励');
   // 酒吧小游戏（问题记录 352）：各档次等级范围里的普通、稀有食材
   const barFoods = new Set<number>();

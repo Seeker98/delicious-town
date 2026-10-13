@@ -7,10 +7,10 @@ const futures: Messages['futures'] = {
   intro:
     'Order a specific ingredient: pay a deposit to lock the price, and the rest is charged automatically on delivery.',
   helpTitle: 'How futures work',
-  help: (hours, pct) => [
+  help: (hours, pct, cap, premium) => [
     `You pay ${pct}% of the total as a deposit. After ${hours} hours the order is delivered automatically: if your restaurant has enough coins, the balance is charged and the ingredients go to your pantry (anything that doesn't fit goes to your exchange account).`,
     "If you can't pay the balance on delivery, or you cancel before then, the order defaults: the deposit is lost and today's quota is not returned.",
-    'The unit price is locked when you order: the exchange reference price, kept between the market level price and twice that, plus 20%.',
+    `The unit price is locked when you order: the exchange reference price, kept between the market level price and ${cap}× that, plus ${premium}%.`,
     'Each ingredient has a server-wide daily quota, and each player has a daily total limit. Both reset at midnight.',
   ],
   personLeft: (n, max) => `You can order ${n} more today (${max} per day)`,

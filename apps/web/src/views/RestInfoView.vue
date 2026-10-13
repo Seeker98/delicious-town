@@ -26,9 +26,13 @@ async function moreLogs() {
   logs.value.push(...page.items);
   next.value = page.nextBefore;
 }
+/** 餐厅读失败、手上也没有：不再一直显示骨架（backlog P3） */
+const restFailed = ref(false);
 onMounted(async () => {
   // 餐厅和日志一起读（性能排查 2026-10-08：原来一个接一个，线上多一轮往返）
-  void store.refresh().catch(() => undefined);
+  void store.refresh().catch(() => {
+    if (!store.rest) restFailed.value = true;
+  });
   try {
     await moreLogs();
     logsState.value = 'ok';
@@ -61,7 +65,8 @@ const capacity = computed(() => {
 </script>
 
 <template>
-  <DtSkeleton v-if="!rest" :rows="6" data-testid="info-skeleton" />
+  <DtEmpty v-if="!rest && restFailed" :title="t.common.loadFailed" data-testid="info-failed" />
+  <DtSkeleton v-else-if="!rest" :rows="6" data-testid="info-skeleton" />
   <div v-else>
     <!-- 属性（界面改版 P7）：3×2 小数字块，0 灰掉；下面一句说明，句末是去加点的句中链接 -->
     <section class="dt-block mt-2">

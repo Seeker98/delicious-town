@@ -1,5 +1,6 @@
 import { gameDay, gameTime } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
+import { featureAvailable } from '../../core/features';
 import { foodPrice } from '../../core/prices';
 import { refPrice } from '../exchange/ref';
 import { futuresUnitPrice } from '../futures/rules';
@@ -10,14 +11,16 @@ const ALL_LEVELS = [1, 1, 1, 1, 1];
 
 /**
  * 开批次（大宗认购设计 §1.1）：每个区服每个游戏日一批，到 openHour 点以后的第一次检查开；
- * (shard_id, day) 唯一，任务重跑、几个进程同时跑都不会多开
+ * (shard_id, day) 唯一，任务重跑、几个进程同时跑都不会多开。
+ * 区服关了交易所时谁都出不了价，不开（backlog：原来照样开、第二天显示流拍）
  */
 export async function openLot(
   d: GameDeps,
   shardId: number,
   now: Date,
-): Promise<'opened' | 'exists' | 'early' | 'empty' | 'busy' | 'late'> {
+): Promise<'opened' | 'exists' | 'early' | 'empty' | 'busy' | 'late' | 'no_exchange'> {
   const s = await d.shards.settings(shardId);
+  if (!featureAvailable(s, 'exchange')) return 'no_exchange';
   const t = s.tuning.bulk;
   const day = gameDay(now);
   const opensAt = gameTime(day, t.openHour);

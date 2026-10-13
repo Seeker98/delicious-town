@@ -136,6 +136,13 @@ describe('ActivationPanel', () => {
     expect(w.find('[data-testid="to-tasks"]').exists()).toBe(false);
   });
 
+  it('读失败：写读取失败，不再一直显示骨架（backlog P3）', async () => {
+    vi.mocked(endpoints.activation).mockRejectedValue(new Error('x'));
+    const w = await mountView();
+    expect(w.find('[data-testid="activation-skeleton"]').exists()).toBe(false);
+    expect(w.find('[data-testid="activation-failed"]').exists()).toBe(true);
+  });
+
   it('签到按钮', async () => {
     const w = await mountView();
     const btn = w.get('[data-testid="signin"]');

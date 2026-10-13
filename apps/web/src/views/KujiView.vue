@@ -141,7 +141,13 @@ watch(line, () => {
 </script>
 
 <template>
-  <DtTabs :model-value="line" :tabs="lineItems" testid-prefix="kj-line-" @update:model-value="pickLine" />
+  <DtTabs
+    :model-value="line"
+    :tabs="lineItems"
+    :disabled="busy"
+    testid-prefix="kj-line-"
+    @update:model-value="pickLine"
+  />
   <template v-if="data">
     <!-- 月度主题（问题记录 274）：A/B/C/最后赏的手办只在这个月抽得到 -->
     <section v-if="data.theme" class="dt-kuji-theme" data-testid="kj-theme">

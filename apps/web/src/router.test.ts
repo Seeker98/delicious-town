@@ -1,4 +1,6 @@
+import { createPinia, setActivePinia } from 'pinia';
 import { describe, expect, it, vi } from 'vitest';
+import { useCatalogStore } from './stores/catalog';
 import zhCN from './i18n/locales/zh-CN';
 import { parentPath } from './nav/routeMeta';
 import { ROOT_PATHS } from './nav/sections';
@@ -202,6 +204,31 @@ describe('资料库详情的返回（backlog 第 ⑧ 批；界面改版 P2a 起�
     expect(parentPath(at('/wiki/goods/30'), '/wiki/equips?part=2')).toBe('/wiki/equips?part=2');
     expect(parentPath(at('/wiki/goods/30'), '/wiki/goods?q=x')).toBe('/wiki/goods?q=x');
     expect(parentPath(at('/wiki/goods/30'), null)).toBe('/wiki/goods');
+  });
+  it('没有浏览历史时直接打开厨具详情：按目录认出是厨具，回厨具列表（backlog P2a）', () => {
+    setActivePinia(createPinia());
+    const catalog = (equip: boolean) =>
+      useCatalogStore().apply({
+        version: 'x',
+        goods: [
+          {
+            id: 1,
+            name: '锅',
+            ...(equip ? { equip: { part: 1, minLevel: 1, suitId: 0, essence: 1, maxHole: 0 } } : {}),
+          },
+        ],
+        foods: [],
+        streets: [],
+        weather: [],
+        devices: [],
+      } as never);
+    catalog(true);
+    expect(parentPath(at('/wiki/goods/1'), null)).toBe('/wiki/equips');
+    // 从别的页面点进来的照旧
+    expect(parentPath(at('/wiki/goods/1'), '/wiki/goods?q=x')).toBe('/wiki/goods?q=x');
+    catalog(false);
+    expect(parentPath(at('/wiki/goods/1'), null)).toBe('/wiki/goods');
+    setActivePinia(undefined);
   });
 });
 

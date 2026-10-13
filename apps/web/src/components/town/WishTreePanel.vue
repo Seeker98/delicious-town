@@ -13,6 +13,7 @@ import { awardText } from '../bar/award';
 import DtArt from '../DtArt.vue';
 import DtRow from '../DtRow.vue';
 import DtSheet from '../DtSheet.vue';
+import DtEmpty from '../DtEmpty.vue';
 import DtSkeleton from '../DtSkeleton.vue';
 
 /**
@@ -25,11 +26,14 @@ const t = useT();
 const data = ref<WishTreeDto | null>(null);
 const busy = ref(false);
 const helpOpen = ref(false);
+/** 第一次读失败：不再一直显示骨架（backlog P3） */
+const failed = ref(false);
 
 async function load() {
   try {
     data.value = await endpoints.wishTree();
   } catch (e) {
+    if (!data.value) failed.value = true;
     toast.push(errorMessage(e, t.value.wishtree.loadFailed), 'danger');
   }
 }
@@ -159,5 +163,6 @@ function mineTag(r: WishTreeResultDto): { text: string; cls: string } | null {
       </template>
     </DtSheet>
   </div>
+  <DtEmpty v-else-if="failed" :title="t.wishtree.loadFailed" data-testid="wish-failed" />
   <DtSkeleton v-else :rows="5" />
 </template>

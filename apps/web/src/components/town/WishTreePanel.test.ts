@@ -41,6 +41,14 @@ describe('WishTreePanel（许愿树设计 §3.3）', () => {
     setActivePinia(createPinia());
   });
 
+  it('读失败：写读取失败，不再一直显示骨架（backlog P3）', async () => {
+    vi.mocked(endpoints.wishTree).mockRejectedValue(new Error('x'));
+    const w = mountIt();
+    await flushPromises();
+    expect(w.find('.dt-skel').exists()).toBe(false);
+    expect(w.find('[data-testid="wish-failed"]').exists()).toBe(true);
+  });
+
   it('这一轮：道具和数量、许愿人数；说明里的数字来自数据', async () => {
     vi.mocked(endpoints.wishTree).mockResolvedValue(data({ hour: 21, minLevel: 15, titleDays: 4 }));
     const w = mountIt();
