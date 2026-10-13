@@ -29,8 +29,8 @@ import type { WorldService } from '../world/service';
 import { consumeSpecial, currentCook, endCook } from './cook';
 import { createLessonOps } from './lesson';
 import { addRemnant, subRemnant } from './remnant';
-import { cookInSeason } from '../shiling/rules';
-import { seasonOf } from '../shiling/service';
+import { cookInSeason, perPortion } from '../shiling/rules';
+import { seasonOf, seasonTable } from '../shiling/service';
 import {
   addProficiency,
   appraiseRate,
@@ -70,7 +70,6 @@ export function cookDto(c: McCookRow): McCookDto {
     luck: c.luck,
     eatCount: c.eat_count,
     createdAt: c.created_at.toISOString(),
-    shiling: c.shiling,
     shilingPts: c.shiling_pts,
   };
 }
@@ -191,6 +190,7 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         cookNums: s.tuning.mysterious.cookNums,
         jobCard: have(GOODS.appraiserCard) > 0 ? GOODS.appraiserCard : null,
         season,
+        seasonTable: seasonTable(d.config, s.tuning.shiling),
       };
     },
 
@@ -378,7 +378,7 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         if (b.cookie) await consumeGoods(o, GOODS.luckyCookie, b.cookNum);
         const snap = await world.ensure(o.shardId, o.now, o.tx);
         const weather = snap.weather.effects;
-        // 时令（天气改版设计 §3.2）：下锅那一刻生效天气（道具盖着按盖的）当令这道菜所在的道，整批应时
+        // 时令（时令值改法 2026-10-13）：应时按吃的那一轮判（settlement/runner.ts）；下锅那一刻当令只用来触发支线“做应时特色菜”
         const shiling = cookInSeason(o.tuning.shiling, o.rest.star_level, snap.weather.id, mc.road);
         const others = (
           await o.tx
@@ -436,6 +436,14 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
             duel_price: out.duelPrice,
             luck: out.luck,
             shiling,
+            // 每份时令值下锅时定下来，之后菜场改价、调 k 不影响这一批
+            shiling_per: perPortion(
+              o.tuning.shiling,
+              t,
+              o.tuning.market,
+              mc.foods.map((f) => o.config.requireFood(f)),
+              out.grade,
+            ),
             created_at: o.now,
           })
           .returningAll()

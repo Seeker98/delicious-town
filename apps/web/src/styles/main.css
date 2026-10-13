@@ -9231,6 +9231,12 @@ a.dt-entry-row::after {
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
+.dt-sl-num-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--dt-muted);
+}
 .dt-sl-now {
   display: flex;
   flex-wrap: wrap;

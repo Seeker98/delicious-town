@@ -1,4 +1,5 @@
-import type { Tuning } from '@dt/config';
+import type { Food, Tuning } from '@dt/config';
+import { foodPrice } from '../../core/prices';
 
 type T = Tuning['shiling'];
 
@@ -7,14 +8,30 @@ export function roadsOf(t: T, weatherId: number): number[] {
   return t.roads.find(([id]) => id === weatherId)?.[1] ?? [];
 }
 
-/** 下锅那一刻算不算应时（§3.2）：够星、生效天气当令这道菜所在的道 */
+/** 这一轮算不算应时（时令值改法 2026-10-13：按吃的那一轮判）：够星、本轮生效天气（道具盖着按盖的）当令这道菜所在的道 */
 export function cookInSeason(t: T, star: number, weatherId: number, road: number): boolean {
   return star >= t.minStar && roadsOf(t, weatherId).includes(road);
 }
 
-/** 每份的时令值（§3.3）：菜等级 × (1 + gradeStep × (品级 − 1)) ÷ divisor，再乘 (1 + 天气的 shilingRate) */
-export function portionPoints(t: T, level: number, grade: number, rate = 0): number {
-  return ((level * (1 + t.gradeStep * (grade - 1))) / t.divisor) * (1 + rate);
+/**
+ * 每份的时令值（时令值改法 2026-10-13）：这道菜每种食材的现价（同菜场）之和 ÷ baseNum ÷ k × (1 + gradeStep × (品级 − 1))。
+ * 按配方算：每种 1 份（下锅时每种扣 cookNum 份），烹饪魔书免掉的也算；用 baseNum 不用这一批的实际份数。
+ * 天气的 shilingRate 入账时再乘，不在这里
+ */
+export function perPortion(
+  t: T,
+  mt: Pick<Tuning['mysterious'], 'baseNum'>,
+  market: Pick<Tuning['market'], 'levelPriceRate'>,
+  foods: readonly Food[],
+  grade: number,
+): number {
+  const cost = foods.reduce((sum, f) => sum + foodPrice(f, market), 0);
+  return (cost / mt.baseNum / t.k) * (1 + t.gradeStep * (grade - 1));
+}
+
+/** 每日衰减（时令值改法 2026-10-13）：余额超过 floor 的部分扣 rate，向下取整；返回要扣的点数 */
+export function decayOf(balance: number, d: T['decay']): number {
+  return balance > d.floor ? Math.floor((balance - d.floor) * d.rate + 1e-9) : 0;
 }
 
 /**

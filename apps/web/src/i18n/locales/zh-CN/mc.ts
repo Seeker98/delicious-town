@@ -82,13 +82,13 @@ export default {
   season: {
     now: (roads: string) => `现在当令: ${roads}`,
     roadTag: (road: string) => `${road} · 当令`,
-    shiling: '应时',
+    shiling: '当令',
     pts: (n: string) => ` · 已攒时令值 +${n}`,
-    note: '在售那一批是下锅时定的: 中途换天, 应时不变。',
-    yes: '现在下锅应时',
+    note: '在售这一批: 当令的时候挑剔顾客吃掉才攒时令值, 换天后跟着变。',
+    yes: '现在当令',
     yesText: (weather: string, road: string) =>
-      ` · ${weather}, ${road}当令。整批卖完前顾客吃掉的每份都攒时令值。`,
-    no: '现在下锅不应时',
+      ` · ${weather}, ${road}当令。挑剔顾客现在吃掉的每份都攒时令值, 换天后按新的天气算。`,
+    no: '现在不当令',
     noText: (
       road: string,
       weather: string,
@@ -99,5 +99,7 @@ export default {
       sure: boolean,
     ) =>
       ` · ${road}, ${weather}当令的是${roads}。${hour} 点换天, 预报${sure ? '多半' : '可能'}${same ? '还是' : '转'}${type}。`,
+    /** 这道菜当令的天气（时令值改法 2026-10-13）：特殊天气全部当令，写在最后 */
+    weathers: (names: string, special: string) => `这道菜当令的天气: ${names}, 还有${special}`,
   },
 };

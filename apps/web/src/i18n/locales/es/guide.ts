@@ -158,7 +158,7 @@ const guide: Messages['guide'] = {
       a: [
         'Desde 1 estrella. Cada clima pone de temporada dos vías de platos estrella (mira la tabla en la ',
         { to: '/weather', text: 'página del clima' },
-        '). Si cocinas cuando tu vía está de temporada, toda la tanda es de temporada hasta agotarse, aunque cambie el clima. Cada ración de temporada que se come un cliente da nivel del plato × bonus de calidad ÷ 10 puntos; las raciones tiradas o probadas no cuentan. Con aguacero +25\u00a0%, con arcoíris +10\u00a0%.',
+        '). Mientras el plato en venta está de temporada, cada ración que se comen los clientes exigentes o Calamardo da puntos de temporada, según el clima de la ronda en que se come; las raciones de clientes normales, tiradas o probadas no cuentan. Los puntos por ración siguen el precio de los ingredientes del plato: más o menos 1 punto por cada 1100 monedas de ingredientes, algo más con calidad alta. Con aguacero +25\u00a0%, con arcoíris +10\u00a0%. Por encima de 500, los puntos de temporada bajan un 1\u00a0% al día.',
         'Gástalos en la tienda de temporada de la página del clima en fragmentos de platos, brújulas celestes y palillos del tiempo (se repone cada lunes); elegir el plato de prueba en el templo también cuesta puntos de temporada.',
       ],
     },

@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    shiling1014:
+      'Seasonal points rework: only servings eaten by picky customers and Squidward earn seasonal points, not regular customers; whether a dish is in season is now judged by the weather of the round it’s eaten in, not when it was cooked; points per serving follow the dish’s ingredient prices, about 1 point per 1,100 coins of ingredients; seasonal points above 500 decay by 1% a day',
     mccut1013:
       'Signature dish cleanup: 27 signature dishes removed (10 empty dishes with no ingredients, plus the 17 beast-path dishes that needed Lv. 6 ingredients); 250 remain. With no beast-path dishes left, special weather (Rainbow, Hurricane, Acid Rain, Severe Thunderstorm, Deep Freeze) now puts all six paths in season',
     cuts41013:

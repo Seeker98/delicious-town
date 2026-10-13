@@ -3,7 +3,7 @@ import type { TownRewardDto } from './town';
 
 /** 现在的当令（天气改版设计 §3.1）：生效天气（道具盖着按盖的）当令哪几道、到几点；下一轮最可能的类型 */
 export interface SeasonDto {
-  /** 够星才开放（下锅才算应时） */
+  /** 够星才开放（挑剔顾客在当令的那一轮吃掉才攒时令值） */
   open: boolean;
   minStar: number;
   weatherId: number;
@@ -29,9 +29,11 @@ export interface ShilingShopItemDto {
 export interface ShilingDto {
   season: SeasonDto;
   balance: number;
+  /** 每日衰减（时令值改法 2026-10-13）：余额超过 floor 的部分每天扣 rate */
+  decay: { rate: number; floor: number };
   /** 本周获得（周一 0 点起，花掉不减） */
   weekGain: number;
-  /** 你会的菜里现在下锅应时的 */
+  /** 你会的菜里现在当令的 */
   inSeason: number[];
   shop: ShilingShopItemDto[];
   /** 时令铺能选的菜：残卷是可鉴定、还没学会的 1~5 级；珍稀残卷是不能鉴定、还没学会的 */

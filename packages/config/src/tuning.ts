@@ -420,13 +420,18 @@ export const tuningSchema = z.object({
   /** 时令（天气改版设计 §3）：当令表、每份点数、时令铺 */
   shiling: z.object({
     minStar: int.min(0),
-    /** 每份点数 = 菜等级 × (1 + gradeStep × (品级 − 1)) ÷ divisor */
-    divisor: num.positive(),
+    /**
+     * 每份点数 = 这道菜每种食材的现价之和 ÷ mysterious.baseNum ÷ k × (1 + gradeStep × (品级 − 1))（时令值改法 2026-10-13）；
+     * 食材现价同菜场（基价 × market.levelPriceRate），每种按 1 份算（下锅时每种扣 cookNum 份）
+     */
+    k: num.positive(),
     gradeStep: num.min(0),
     /** 神殿试炼用时令值指定试炼菜 */
     trialPick: int.min(0),
     /** 支线“一周获得多少时令值” */
     week200: int.min(1),
+    /** 每个游戏日余额超过 floor 的部分扣 rate（向下取整） */
+    decay: z.object({ rate: num.min(0), floor: int.min(0) }),
     shop: z.object({
       remnantPerLevel: int.min(1),
       remnantWeekly: int.min(0),

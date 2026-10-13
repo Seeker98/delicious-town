@@ -301,6 +301,8 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
       [0.5, 0.65, 0.9, 0.9, 0.9, 0.9, 0.9],
     );
     expect(r.specialUsed).toBe(1);
+    // 普通顾客吃的不攒时令值（时令值改法 2026-10-13）
+    expect(r.specialPicky).toBe(0);
     // 每桌银币 10 + 100 × 2.5 × 半价
     expect(r.tables[0]!.last).toMatchObject({ coin: 135, exp: 3 });
   });
@@ -311,6 +313,7 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     const base = settle(patch, {}, rng);
     const r = settle({ ...patch, special: { price: 100, level: 3, leftNum: 5 } }, {}, rng);
     expect(r.specialUsed).toBe(2);
+    expect(r.specialPicky).toBe(2);
     expect(r.tables[0]!.last).toMatchObject({ type: 2, satisfied: true });
     // 100 × 2.5 × 2 份
     expect(r.coin - base.coin).toBe(500);
@@ -364,6 +367,8 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
       [0.5, 0.65, 0.9, 0.001, 0.9, 0.9, 0.9, 0.9, 0.9],
     );
     expect(r.tables[0]!.last).toMatchObject({ type: 6, mcId: 7, mcNum: rules.settlement.squidwardPortions });
+    // 章鱼哥吃的和挑剔顾客一样攒时令值（时令值改法 2026-10-13）
+    expect(r.specialPicky).toBe(rules.settlement.squidwardPortions);
   });
 
   it('特色菜卖出倍率按特色菜等级：1 级 ×1.3', () => {
@@ -389,6 +394,7 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
       const r = settle({ ...full, special: { price: 100, level: 3, leftNum: 10, mcId: 5 } }, {}, rng);
       expect(r.customers).toEqual({ '1': 4 });
       expect(r.specialUsed).toBe(2);
+      expect(r.specialPicky).toBe(0);
       expect(r.tables.map((x) => x.last!.mcNum ?? 0)).toEqual([0, 1, 0, 1]);
       expect(r.tables[1]!.last).toMatchObject({ mcId: 5, coin: 135, exp: 3 });
       expect(r.tables[0]!.last).toMatchObject({ coin: 10, exp: 2 });
@@ -435,6 +441,7 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
       expect(r.tables.slice(1).some((x) => x.last!.type === 1)).toBe(true);
       expect(r.tables.slice(1).every((x) => !x.last!.mcNum)).toBe(true);
       expect(r.specialUsed).toBe(2);
+      expect(r.specialPicky).toBe(2);
     });
   });
 

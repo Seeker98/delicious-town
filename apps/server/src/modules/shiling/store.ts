@@ -3,9 +3,10 @@ import { gameDay, weekStart } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import { notEnough } from '../../core/errors';
 import { recordChange, type GainOptions } from '../../core/resources';
-import type { Op } from '../../core/op';
+import { runSystemOp, type Op } from '../../core/op';
+import type { GameDeps } from '../../core/deps';
 import type { DB } from '../../db/schema';
-import { accrue, portionPoints } from './rules';
+import { accrue, decayOf } from './rules';
 
 /** 本周（周一 0 点起，按游戏日）的键 */
 export const shilingWeek = (now: Date): string => weekStart(gameDay(now));
@@ -92,22 +93,19 @@ export async function spendShiling(op: Op, n: number, opts: GainOptions = {}): P
 }
 
 /**
- * 顾客吃掉一批应时菜的 n 份（结算里调用；品尝、倒掉不算）：点数累计在这一批上，整数部分入账（不写流水、不弹提示）。
+ * 挑剔顾客、章鱼哥在当令的一轮吃掉一批的 n 份（结算里调用；品尝、倒掉不算）：每份 per × (1 + 天气的 rate)，
+ * 点数累计在这一批上，整数部分入账（不写流水、不弹提示）。
  * 本周获得跨过支线门槛时发 shiling.week200
  */
 export async function accrueShiling(
   op: Op,
-  cook: { id: number; level: number; grade: number; shiling_acc: number; shiling_pts: number },
+  cook: { id: number; shiling_acc: number; shiling_pts: number },
   n: number,
+  per: number,
   rate: number,
 ): Promise<number> {
   const t = op.tuning.shiling;
-  const { acc, gain } = accrue(
-    cook.shiling_acc,
-    cook.shiling_pts,
-    n,
-    portionPoints(t, cook.level, cook.grade, rate),
-  );
+  const { acc, gain } = accrue(cook.shiling_acc, cook.shiling_pts, n, per * (1 + rate));
   await op.tx
     .updateTable('mc_cook')
     .set({ shiling_acc: acc, shiling_pts: cook.shiling_pts + gain })
@@ -118,4 +116,57 @@ export async function accrueShiling(
     if (w.before < t.week200 && w.after >= t.week200) await emitAction(op, 'shiling.week200');
   }
   return gain;
+}
+
+/**
+ * 每日衰减（时令值改法 2026-10-13）：余额超过 decay.floor 的店逐家扣 decayOf 算出的点数，记流水、不发提示；
+ * 本周获得、周榜不动。单店出错记日志继续
+ */
+export async function decayShiling(
+  d: GameDeps,
+  shardId: number,
+  now: Date,
+  log?: { error(obj: object, msg: string): void },
+): Promise<{ shops: number; total: number; failed: number }> {
+  const { tuning } = await d.shards.settings(shardId);
+  const dt = tuning.shiling.decay;
+  const rows = await d.db
+    .selectFrom('rest_shiling')
+    .select('rest_id')
+    .where('shard_id', '=', shardId)
+    .where('balance', '>', dt.floor)
+    .orderBy('rest_id')
+    .execute();
+  let shops = 0;
+  let total = 0;
+  let failed = 0;
+  for (const r of rows) {
+    try {
+      const n = await runSystemOp(d, shardId, r.rest_id, { source: 'shiling.decay', now }, async (o) => {
+        const cur = await o.tx
+          .selectFrom('rest_shiling')
+          .select('balance')
+          .where('rest_id', '=', o.rest.id)
+          .forUpdate()
+          .executeTakeFirst();
+        const cut = decayOf(cur?.balance ?? 0, o.tuning.shiling.decay);
+        if (cut <= 0) return 0;
+        await o.tx
+          .updateTable('rest_shiling')
+          .set({ balance: sql<number>`balance - ${cut}` })
+          .where('rest_id', '=', o.rest.id)
+          .execute();
+        recordChange(o, 'shiling', -cut, { event: false });
+        return cut;
+      });
+      if (n > 0) {
+        shops += 1;
+        total += n;
+      }
+    } catch (err) {
+      failed += 1;
+      log?.error({ err, shardId, restId: r.rest_id }, 'shiling decay failed');
+    }
+  }
+  return { shops, total, failed };
 }

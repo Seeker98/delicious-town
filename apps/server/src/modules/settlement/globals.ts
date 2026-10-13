@@ -9,6 +9,7 @@ export function buildGlobals(
 ): SettleGlobals {
   return {
     weather: {},
+    weatherId: 0,
     krabStreet: null,
     planktonRestId: null,
     holidayMultiplier: 1,

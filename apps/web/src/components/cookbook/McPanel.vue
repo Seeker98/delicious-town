@@ -241,23 +241,36 @@ function cook(n: number) {
     t.value.mc.cookFailed,
   );
 }
-/** 时令（天气改版 PR②）：够星时标出当令的道；下锅面板写现在下锅是否应时 */
+/** 时令（时令值改法 2026-10-13）：够星时标出当令的道；在售的标当令；下锅面板写现在是否当令、这道菜当令的天气 */
 const season = computed(() => (o.value?.season.open ? o.value.season : null));
 const roadLabel = (r: number) => t.value.misc.weather.shiling.roads[r] ?? '';
 const seasonRoads = computed(() =>
   (season.value?.roads ?? []).map(roadLabel).join(t.value.misc.weather.shiling.sep),
 );
 const inSeason = (mcId: number) => !!season.value && season.value.roads.includes(dish(mcId)?.road ?? 0);
+/** 这道菜当令的普通天气（当令表一行取第一种，日夜对应的算一种）；特殊天气全部当令，文案里写在最后 */
+const seasonWeathers = (mcId: number) => {
+  const road = dish(mcId)?.road ?? 0;
+  const names = (o.value?.seasonTable ?? [])
+    .filter((r) => r.roads.includes(road) && !catalog.weather(r.ids[0]!)?.special)
+    .map((r) => catalog.weatherName(r.ids[0]!));
+  return t.value.mc.season.weathers(
+    names.join(t.value.misc.weather.shiling.sep),
+    t.value.misc.weather.shiling.table.special,
+  );
+};
 const cookSeason = computed(() => {
   const p = preview.value;
   const s = season.value;
   if (!p || !s) return null;
   const road = roadLabel(dish(p.mcId)?.road ?? 0);
   const weather = catalog.weatherName(s.weatherId);
-  if (inSeason(p.mcId)) return { yes: true, text: t.value.mc.season.yesText(weather, road) };
+  const weathers = seasonWeathers(p.mcId);
+  if (inSeason(p.mcId)) return { yes: true, text: t.value.mc.season.yesText(weather, road), weathers };
   const cur = catalog.weather(s.weatherId)?.type;
   return {
     yes: false,
+    weathers,
     text: t.value.mc.season.noText(
       road,
       weather,
@@ -303,7 +316,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
       <div class="flex-fill">
         {{ t.mc.onSale }}<b>{{ nameOf(o.current.mcId) }}</b> {{ GRADE_NAMES[o.current.grade]
         }}{{ o.current.luck ? t.mc.lucky : ''
-        }}<span v-if="o.current.shiling" class="dt-tag-ok ms-1" data-testid="mc-current-shiling">{{
+        }}<span v-if="inSeason(o.current.mcId)" class="dt-tag-ok ms-1" data-testid="mc-current-shiling">{{
           t.mc.season.shiling
         }}</span>
         <div class="text-muted">
@@ -319,7 +332,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
             o.normalSale
               ? t.mc.normalSale(formatPct(o.normalSale.share), formatPct(o.normalSale.priceRate))
               : ''
-          }}{{ o.current.shiling ? t.mc.season.pts(formatNum(o.current.shilingPts)) : '' }}
+          }}{{ o.current.shilingPts > 0 ? t.mc.season.pts(formatNum(o.current.shilingPts)) : '' }}
         </div>
       </div>
       <button
@@ -459,6 +472,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
         >
           <b>{{ cookSeason.yes ? t.mc.season.yes : t.mc.season.no }}</b
           >{{ cookSeason.text }}
+          <span class="d-block mt-1" data-testid="cook-season-weathers">{{ cookSeason.weathers }}</span>
         </p>
         <label class="dt-row dt-mc-cookie">
           <span class="dt-row-main"

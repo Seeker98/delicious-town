@@ -75,6 +75,7 @@ import * as m0073 from './0073_goods_cut';
 import * as m0074 from './0074_goods_nerf';
 import * as m0075 from './0075_goods_nerf2';
 import * as m0076 from './0076_mc_cut';
+import * as m0077 from './0077_shiling_per';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -154,4 +155,5 @@ export const migrations: Record<string, Migration> = {
   '0074_goods_nerf': m0074,
   '0075_goods_nerf2': m0075,
   '0076_mc_cut': m0076,
+  '0077_shiling_per': m0077,
 };

@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    shiling1014:
+      'Cambio en los puntos de temporada: solo dan puntos las raciones que se comen los clientes exigentes y Calamardo, ya no las de clientes normales; un plato está de temporada según el clima de la ronda en que se come, no al cocinarlo; los puntos por ración siguen el precio de los ingredientes del plato, más o menos 1 punto por cada 1100 monedas de ingredientes; por encima de 500, los puntos de temporada bajan un 1\u00a0% al día',
     mccut1013:
       'Limpieza de platos estrella: se retiran 27 platos estrella (10 platos vacíos sin ingredientes y los 17 platos de la vía bestia que pedían ingredientes de nv. 6); quedan 250. Como ya no hay platos de la vía bestia, el clima especial (arcoíris, huracán, lluvia ácida, tormenta eléctrica, helada) pone ahora de temporada las seis vías',
     cuts41013:

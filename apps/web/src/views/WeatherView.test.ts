@@ -307,6 +307,7 @@ const shiling = (patch: Partial<ShilingDto> = {}): ShilingDto => ({
     next: { at: '2026-10-03T09:00:00.000Z', type: 1, p: 0.6 },
   },
   balance: 1240,
+  decay: { rate: 0.01, floor: 500 },
   weekGain: 380,
   inSeason: [14],
   shop: [
@@ -371,10 +372,11 @@ describe('时令（天气改版 PR②，设计图 Sl-A~Sl-D）', () => {
     expect(w.get('[data-testid="weather-season"]').text()).toBe('当令一道二道');
     expect(w.get('[data-testid="shiling-balance"]').text()).toBe('1,240');
     expect(w.get('[data-testid="shiling-week"]').text()).toBe('380');
+    expect(w.get('[data-testid="shiling-decay"]').text()).toBe('每天衰减 1%, 500 以内不扣');
     const now = w.get('[data-testid="shiling-now"]');
     expect(now.text()).toContain('· 到 17:00');
     expect(now.findAll('.dt-road.is-mine').map((x) => x.text())).toEqual(['一道']);
-    expect(w.get('[data-testid="shiling-mine"]').text()).toBe('你会的菜里, 现在下锅应时: 秘·肉末烧饼');
+    expect(w.get('[data-testid="shiling-mine"]').text()).toBe('你会的菜里, 现在当令: 秘·肉末烧饼');
   });
 
   it('时令周榜（PR③，设计图 Jc-A、Jc-B）：一行写名次；点开列排名、门槛线、工作证和抽不到的原因', async () => {
@@ -431,7 +433,7 @@ describe('时令（天气改版 PR②，设计图 Sl-A~Sl-D）', () => {
     vi.mocked(endpoints.shiling).mockResolvedValue(shiling({ inSeason: [14, 41, 186, 69, 231] }));
     const w = await mountView();
     expect(w.get('[data-testid="shiling-mine"]').text()).toBe(
-      '你会的菜里, 现在下锅应时: 秘·肉末烧饼、秘·龙井金鱼、秘·金糕 等 2 道',
+      '你会的菜里, 现在当令: 秘·肉末烧饼、秘·龙井金鱼、秘·金糕 等 2 道',
     );
     expect(w.findAll('[data-testid="shiling-mine"] a')).toHaveLength(4);
     expect(w.get('[data-testid="shiling-mine-more"]').attributes('href')).toBe('/cookbooks?tab=mc');

@@ -165,6 +165,7 @@ export function createShilingService(d: GameDeps, world: WorldService) {
       return {
         season,
         balance: mine.balance,
+        decay: { rate: t.decay.rate, floor: t.decay.floor },
         weekGain: mine.weekGain,
         inSeason: season.open
           ? learnedMc
