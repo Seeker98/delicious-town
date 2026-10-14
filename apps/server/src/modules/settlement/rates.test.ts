@@ -25,13 +25,36 @@ describe('汇总率（规格书 01 §1.3）', () => {
     expect(r.seated).toBe(1);
   });
 
-  it('食谱加成：各品级食谱数 × r_L × L', () => {
+  it('食谱加成：各品级食谱数 × r_L × L × 菜谱上座率倍数（街道再平衡第二版，默认 0.5）', () => {
     const ids = config.cookbookIndex.allIds;
     const cookbooks: Record<number, number> = {};
     for (const id of ids.slice(0, 10)) cookbooks[id] = 1;
     for (const id of ids.slice(10, 15)) cookbooks[id] = 7;
     const { rates: r } = rates({ cookbooks });
-    expect(r.atRate.parts.cookbook).toBeCloseTo(10 * 0.000098 + 5 * 0.00011 * 7);
+    expect(tuning.settlement.cookbookAtRate).toBe(0.5);
+    expect(r.atRate.parts.cookbook).toBeCloseTo((10 * 0.000098 + 5 * 0.00011 * 7) * 0.5);
+  });
+
+  it('上座率软上限：超过 0.7 的部分只算三分之一再截到 1，压掉的记成负分项；溢出经验按折算前算（街道再平衡第二版）', () => {
+    // 0 星：基础 0.3，浮动 0；加 0.6 → 0.9 → 0.7 + 0.2 ÷ 3 ≈ 0.767
+    const a = rates({ agg: { atRate: 0.6 } }).rates;
+    expect(a.atRate.total).toBeCloseTo(0.7 + 0.2 / 3, 5);
+    expect(a.atRate.parts.softCap).toBeCloseTo(0.7 + 0.2 / 3 - 0.9, 5);
+    expect(a.expRate.parts.atOverflow).toBeUndefined();
+    // 没超过拐点的不记 softCap
+    expect(rates({ agg: { atRate: 0.3 } }).rates.atRate.parts.softCap).toBeUndefined();
+    // 合计 1.8：折算后 0.7 + 1.1 ÷ 3 ≈ 1.07 截到 1；溢出 (1.8 − 1.2) ÷ 1.5 = 0.4 照旧
+    const b = rates({ agg: { atRate: 1.5 } }).rates;
+    expect(b.atRate.total).toBe(1);
+    expect(b.expRate.parts.atOverflow).toBeCloseTo(0.4);
+    // 拐点设 1、比例设 1 就是原版
+    const off = { ...tuning, settlement: { ...tuning.settlement, atSoftCapAt: 1, atSoftCapRate: 1 } };
+    const c = computeRates(
+      buildInput(config, { agg: { atRate: 0.6 } }),
+      buildGlobals(config, off),
+      sequenceRng([0.5, 0.65]),
+    );
+    expect(c.rates.atRate.total).toBeCloseTo(0.9);
   });
 
   it('浮动：(0.3 + 0.1s) × (随机数 - 0.5)', () => {

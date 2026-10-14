@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    streets1014:
+      'Street bonuses adjusted again: final coin and EXP on every street medal were rebalanced, restaurants already on a street included (smaller coin penalty on Fusion Streets I and II and Guangdong Street; Greece Street final EXP +85% → +80% and no coin bonus; Shandong Street loses its -20% occupancy, EXP per table +6 → +2; see the street bonus on the moving page). Occupancy above 70% now counts only a third, occupancy from learned recipes is halved, and the part above 120% still turns into EXP as before',
     fix1014c:
       'Small fixes: the exchange spot list can be filtered by level (works together with For sale / Wanted); recipes in the open API now have descriptions in Traditional Chinese; once a bulk subscription lot enters its blackout, the board stays frozen even if the server shortens the blackout',
     fix1014b:
