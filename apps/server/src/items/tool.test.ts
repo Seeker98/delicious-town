@@ -40,6 +40,17 @@ describe('道具整理工具（问题记录 367）', () => {
     expect(res.report!.rows.find((x) => x.kind === 'goods' && x.id === gid('XXX'))!.retired).toBe(true);
   });
 
+  it('原始数据表读不出来：报表列出原因，不抛错（backlog：原来页面上是 500）', () => {
+    const t = createItemsTool({
+      readSource: () => {
+        throw new Error('Unexpected token in goods.json');
+      },
+      writeRetired: () => undefined,
+      original: new Map(),
+    });
+    expect(t.report()).toMatchObject({ rows: [], errors: [expect.stringContaining('goods.json')] });
+  });
+
   it('保存：还被引用的不写文件，返回构建错误', () => {
     const { t, written } = tool();
     const res = t.save({ goods: [{ id: GOODS.starCert }], foods: [] });

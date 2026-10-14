@@ -55,6 +55,8 @@ const bulk: Messages['bulk'] = {
     `Tramo final: las cifras de arriba se quedaron congeladas a las ${time}; las pujas posteriores se conocen al cierre`,
   blindMine: 'En el tramo final no se muestra quién entra; se sabe al cierre',
   estimateBlind: 'Tramo final: si entras y cuánto pagas se sabe al cierre.',
+  requeueHint:
+    'Volver a pujar (aunque solo añadas unidades) te pone a la cola con la hora de ahora: quien tenga tu mismo precio pasa delante, y en el corte podrías quedarte con menos unidades.',
   partialHint:
     'Si tu precio queda justo en el corte puede que solo consigas parte de las unidades: a igual precio gana la puja anterior, y las que no entren se devuelven íntegras.',
   reasons: {

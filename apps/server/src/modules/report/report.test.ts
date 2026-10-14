@@ -1,3 +1,4 @@
+import { backendPid, waitBlockedBy } from '../../../test/locks';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 
@@ -156,7 +157,8 @@ describe('玩家举报（设计 §3.2）', () => {
       await tx.updateTable('report_case').set({ status: 'resolved' }).where('target_id', '=', id).execute();
       await tx.deleteFrom('news').where('id', '=', id).execute();
       late = report(b, { targetType: 'broadcast', targetId: id }).catch((e: unknown) => e);
-      await new Promise((r) => setTimeout(r, 300));
+      // 举报真的卡在这个事务的锁上了再提交
+      await waitBlockedBy(t.db, await backendPid(tx));
     });
     expect(await late).toMatchObject({ code: 'NOT_FOUND' });
     const cases = await caseOf('broadcast', id);

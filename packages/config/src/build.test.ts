@@ -1347,6 +1347,16 @@ describe('活跃度新增项目（问题记录 318）', () => {
     );
   });
 
+  it('镇长兑换编号重复按原表查：换到的东西下架、被去掉的那条也算（backlog）', () => {
+    const src = readSourceDir(defaultDataDir());
+    const retiredId = (src['game/retired'] as { goods: Array<{ id: number }> }).goods[0]!.id;
+    const ex = structuredClone(src['designed/goods_exchange']) as Array<{ id: number; goodsId: number }>;
+    ex.push({ ...ex[0]!, goodsId: retiredId });
+    expect(buildBundle({ ...src, 'designed/goods_exchange': ex }).errors).toContain(
+      `goods_exchange: duplicate id ${ex[0]!.id}`,
+    );
+  });
+
   it('商店池子：同一个池子不能重复写（特价抽中的概率会翻倍，backlog）', () => {
     const src = readSourceDir(defaultDataDir());
     const dup = structuredClone(src['game/shop']) as { pools?: Record<string, number[]> };

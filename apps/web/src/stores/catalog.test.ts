@@ -52,6 +52,17 @@ describe('道具目录按语言（问题记录 272）', () => {
     expect(endpoints.catalog).toHaveBeenCalledTimes(1);
   });
 
+  it('换了一份 pinia（下一条测试）：不挂到上一份还没读完的请求上（backlog）', async () => {
+    vi.mocked(endpoints.catalog).mockReturnValueOnce(new Promise(() => {}));
+    void useCatalogStore().load();
+    setActivePinia(createPinia());
+    vi.mocked(endpoints.catalog).mockResolvedValue(cat('体力卡'));
+    const c = useCatalogStore();
+    await c.load();
+    expect(endpoints.catalog).toHaveBeenCalledTimes(2);
+    expect(c.goodsName(85)).toBe('体力卡');
+  });
+
   it('读失败不卡住：下次 load 重新请求', async () => {
     vi.mocked(endpoints.catalog).mockRejectedValueOnce(new Error('net')).mockResolvedValue(cat('体力卡'));
     const c = useCatalogStore();

@@ -54,6 +54,8 @@ const bulk: Messages['bulk'] = {
     `Final stretch: the figures above are frozen as of ${time}; later bids are revealed at the close`,
   blindMine: 'Who gets in is hidden in the final stretch and revealed at the close',
   estimateBlind: 'Final stretch: whether you get in and what you pay are revealed at the close.',
+  requeueHint:
+    'Bidding again (even just adding units) re-queues you at this time: others at the same price move ahead of you, so at the cutoff you may end up with fewer units.',
   partialHint:
     'If your price is right at the cutoff you may get only some of the units: earlier bids win ties, and units you miss are fully refunded.',
   reasons: {

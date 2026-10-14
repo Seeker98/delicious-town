@@ -1,3 +1,4 @@
+import { backendPid, waitBlockedBy } from '../../../test/locks';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import { runSystemOp } from '../../core/op';
@@ -99,15 +100,18 @@ describe('重算的终审修复', () => {
     const held = new Promise<void>((res) => (release = res));
     let locked!: () => void;
     const isLocked = new Promise<void>((res) => (locked = res));
+    let pid = 0;
     const holder = t.db.transaction().execute(async (tx) => {
       await tx.selectFrom('restaurant').select('id').where('id', '=', r.restaurantId).forUpdate().execute();
       await tx.updateTable('equip').set({ stress: 4 }).where('id', '=', id).execute();
+      pid = await backendPid(tx);
       locked();
       await held;
     });
     await isLocked;
     const run = rescaleEquips(t.game.deps);
-    await new Promise((res) => setTimeout(res, 300));
+    // 重算真的卡在这家店的锁上了再放开
+    await waitBlockedBy(t.db, pid);
     release();
     await holder;
     await run;

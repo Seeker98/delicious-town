@@ -58,6 +58,8 @@ const bulk: Messages['bulk'] = {
   blindMine: "Pendant la dernière ligne droite, qui est retenu n'est pas affiché\u202f; révélé à la clôture",
   estimateBlind:
     'Dernière ligne droite\u202f: votre résultat et le montant payé seront révélés à la clôture.',
+  requeueHint:
+    'Une nouvelle offre (même en ajoutant seulement des unités) vous replace à cette heure\u202f: à prix égal, les autres passent devant, et à la limite vous pourriez obtenir moins d’unités.',
   partialHint:
     "Si votre prix tombe pile à la limite, vous n'obtiendrez peut-être qu'une partie des unités\u202f: à prix égal l'offre la plus ancienne passe devant, et les unités manquées sont intégralement remboursées.",
   reasons: {

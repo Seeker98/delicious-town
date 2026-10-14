@@ -378,15 +378,20 @@
         });
       }
 
-      const tags = (list) =>
+      // 镇长兑换换到的、声望商店买到的：下架后构建时自动从这两张表去掉，不挡下架（问题记录 501、backlog）
+      const AUTO_DROP = new Set(['镇长兑换', '声望商店']);
+      const tags = (list, gives = false) =>
         list
           .map(
             (t) =>
               '<span class="tag' +
               (t.retired || t.dead ? ' via' : '') +
-              '">' +
+              '"' +
+              (gives && AUTO_DROP.has(t.where) ? ' title="下架后自动从这里去掉，不挡下架"' : '') +
+              '>' +
               esc(t.where) +
               (t.n > 1 ? ' ×' + t.n : '') +
+              (gives && AUTO_DROP.has(t.where) ? '（下架自动去掉）' : '') +
               '</span>',
           )
           .join('');
@@ -399,7 +404,11 @@
           .map((r) => {
             const k = keyOf(r);
             const on = picked.has(k);
-            const gives = r.gives.length ? tags(r.gives) : r.code ? '' : '<span class="tag none">没有</span>';
+            const gives = r.gives.length
+              ? tags(r.gives, true)
+              : r.code
+                ? ''
+                : '<span class="tag none">没有</span>';
             const uses = r.uses.length ? tags(r.uses) : r.code ? '' : '<span class="tag none">没有</span>';
             return (
               '<tr class="' +

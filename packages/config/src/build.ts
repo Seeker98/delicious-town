@@ -1104,9 +1104,10 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     }))
     // 换到的东西下架了，这一条不再出现（问题记录 501）；要用掉的材料下架了仍然报错，要人工处理
     .filter((e) => !retired.goods.has(e.goodsId));
+  // 编号重复按原表查：换到的东西下架了被去掉的那条也算（backlog）
   unique(
     'goods_exchange',
-    goodsExchange.map((e) => e.id),
+    goodsExRaw.map((e) => e.id),
   );
   for (const e of goodsExchange) {
     if (!goodsIds.has(e.goodsId)) errors.push(`goods_exchange ${e.id} references unknown goods ${e.goodsId}`);

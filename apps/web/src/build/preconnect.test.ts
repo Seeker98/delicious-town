@@ -6,8 +6,13 @@ import { preconnectTags } from './preconnect';
 describe('首屏提前连接接口域名（性能排查 2026-10-08）', () => {
   it('接口在单独的域名时，页面头部提前连过去：下载 JS 的同时做完 DNS、TLS 握手', () => {
     expect(preconnectTags('https://api.example.com')).toEqual([
-      // 不写 crossorigin：游戏的请求都带 cookie，带 crossorigin 建的是不带凭证的连接，用不上
+      // 带 cookie 的请求走不写 crossorigin 的连接；POST 的预检不带凭证，走写 crossorigin 的那条（backlog）
       { tag: 'link', attrs: { rel: 'preconnect', href: 'https://api.example.com' }, injectTo: 'head' },
+      {
+        tag: 'link',
+        attrs: { rel: 'preconnect', href: 'https://api.example.com', crossorigin: 'anonymous' },
+        injectTo: 'head',
+      },
     ]);
   });
 

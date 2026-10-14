@@ -33,6 +33,30 @@ describe('新闻读取（设计文档 §3.1）', () => {
     expect(next.map((n) => n.type)).toEqual(['star.up']);
   });
 
+  it('收购新闻的被收购店：还在就用现在的名字，不在了去掉 restId、名字留着（ui1010、backlog）', async () => {
+    const a = await newRestaurant(t);
+    const b = await newRestaurant(t, { shardId: a.shardId });
+    const big = (restId: number, name: string) =>
+      postNews(t.db, {
+        shardId: a.shardId,
+        type: 'acquire.big',
+        restId: a.restaurantId,
+        params: { restId, name, price: 1000, way: 'force' },
+      });
+    await big(b.restaurantId, '当时的名字');
+    await big(999_999_999, '早没了的店');
+    await t.db
+      .updateTable('restaurant')
+      .set({ name: '现在的名字' })
+      .where('id', '=', b.restaurantId)
+      .execute();
+    const page = await listNews(t.db, a.shardId, { limit: 10, only: ['acquire.big'] });
+    expect(page.map((n) => n.params)).toEqual([
+      { name: '早没了的店', price: 1000, way: 'force' },
+      { restId: b.restaurantId, name: '现在的名字', price: 1000, way: 'force' },
+    ]);
+  });
+
   it('头条：最新 2 条非广播 + 最新 1 条广播（首页只列 2 条，问题记录 619）', async () => {
     const a = await newRestaurant(t);
     const s = a.shardId;

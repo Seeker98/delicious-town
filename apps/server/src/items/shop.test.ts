@@ -117,6 +117,31 @@ describe('商店整理工具（问题记录 483）', () => {
     expect(res.report!.rows.find((x) => x.id === MISSILE)!.coin).toBe(2500);
   });
 
+  it('没发上来的池子沿用文件里现有的，不恢复成设计表（backlog）', () => {
+    const design = [
+      { pool: 'special', goods: real.pools!.special! },
+      { pool: 'black', goods: real.pools!.black!.slice(1) },
+    ];
+    const { t, written } = tool([], design);
+    const special = t
+      .report()
+      .rows.filter((x) => x.special)
+      .map((x) => x.id);
+    expect(t.save({ goods: [], pools: { special } }).errors).toEqual([]);
+    const file = JSON.parse(written[0]!) as ShopFile;
+    expect(file.pools!.black).toEqual(real.pools!.black);
+  });
+
+  it('原始数据表读不出来：报表列出原因，不抛错（backlog：原来页面上是 500）', () => {
+    const t = createShopTool({
+      readSource: () => {
+        throw new Error('Unexpected token } in shop.json');
+      },
+      writeShop: () => undefined,
+    });
+    expect(t.report()).toMatchObject({ rows: [], errors: [expect.stringContaining('shop.json')] });
+  });
+
   it('构建不过不写文件，返回原因（黑市池里放没有钻石价的）', () => {
     const { t, written } = tool();
     const black = t

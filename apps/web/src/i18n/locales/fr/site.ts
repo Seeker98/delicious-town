@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    fix1014b:
+      'Encore des petites corrections\u202f: les nouvelles de rachat affichent le nom actuel du restaurant racheté et ne renvoient plus vers un restaurant disparu\u202f; en modifiant une offre de souscription en gros, une note rappelle qu’une nouvelle offre (même en ajoutant seulement des unités) vous replace à la nouvelle heure\u202f; le code du gros pack de bienvenue ne sert qu’aux restaurants ouverts avant le pack, et les nouveaux restaurants ne peuvent pas l’utiliser sur les serveurs qui ne donnent pas le pack\u202f; les deux connexions vers le serveur de jeu sont préparées dès le chargement, la première action est un peu plus rapide',
     fix1014:
       'Petites corrections\u202f: les onglets se changent avec les flèches du clavier, le soulignement suit quand le texte d’un onglet change de largeur, et l’autre ligne de l’Ichiban Kuji est grisée pendant un tirage\u202f; les panneaux du bas ne mettent plus le focus sur un bouton à l’ouverture (Entrée ne valide plus d’office), et Tab reste dans le panneau\u202f; l’activité du jour, les quêtes, les événements, l’arbre à vœux et les infos du restaurant affichent un échec de chargement au lieu de charger sans fin\u202f; les quêtes d’invitation précisent que l’ami doit vérifier son e-mail\u202f; l’aide des contrats à terme reprend les chiffres de ce serveur\u202f; en ouvrant directement un ustensile dans le wiki, le retour mène à la liste des ustensiles\u202f; plus de lots de souscription en gros quand la bourse est fermée',
     shiling1014:
