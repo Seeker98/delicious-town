@@ -46,6 +46,8 @@ export default {
   rulesTitle: '交易规则和系统报价',
   rulesSub: '挂单价在当天参考价的一半到两倍之间',
   filterLabel: '筛选',
+  levelFilterLabel: '按等级筛选',
+  allLevels: '全部等级',
   sideLabel: '买还是卖',
   saleTag: (n: number) => `卖 ${n}`,
   buyTag: (n: number) => `收 ${n}`,

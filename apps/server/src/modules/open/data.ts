@@ -303,8 +303,8 @@ export function createOpenData(config: GameConfig) {
         ...meta(lang),
         ...cookbookBrief(lang, id),
         taste: [...c.taste],
-        // 菜谱描述没有翻译：只在简中给（问题记录 314：不在别的语言里混简中）
-        desc: lang === 'zh-CN' ? c.desc : null,
+        // 菜谱描述没有英法西翻译：简中给原文、繁中给构建时转换的（#115），别的语言为空（问题记录 314：不混简中）
+        desc: lang === 'zh-CN' ? c.desc : (entry(lang, 'cookbooks', id)?.desc ?? null),
         grades: Array.from({ length: 10 }, (_, i) => ({
           grade: i + 1,
           foods: (c.needFoods[i + 1] ?? []).map((f) => ({

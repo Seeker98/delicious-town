@@ -439,7 +439,8 @@ export function localizeCatalog(base: CatalogDto, t: I18nTable | undefined, lang
       const e = table[key(x)];
       if (!e) return x;
       const out = { ...x };
-      for (const f of fields) if (e[f] !== undefined) (out as Record<string, unknown>)[f] = e[f];
+      // 只换目录里本来就有的字段：翻译里多出来的（比如繁中菜谱描述，#115）不带进目录
+      for (const f of fields) if (e[f] !== undefined && f in x) (out as Record<string, unknown>)[f] = e[f];
       return out;
     });
   const suits = base.suits?.map((s) => {

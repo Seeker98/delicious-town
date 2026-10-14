@@ -172,9 +172,16 @@ describe('社交支线：没有进行中的限时活动时跳过活动那两档�
       t.db.insertInto('quest_done').values({ rest_id: ctx.restaurantId, quest_id: id }).execute();
     const current = async () =>
       (await t.game.task.tasks(ctx)).lines.find((l) => l.id === social.id)?.quest?.id;
-    await done(door!.id);
-    expect(await current()).toBe(title!.id);
-    await done(title!.id);
-    expect(await current()).toBe(essence!.id);
+    // 共用测试库里别的测试建的全服活动可能正进行着（backlog）：挪到远离它们的时间再看
+    const was = t.clock.now;
+    t.clock.set(new Date('2099-06-01T04:00:00Z'));
+    try {
+      await done(door!.id);
+      expect(await current()).toBe(title!.id);
+      await done(title!.id);
+      expect(await current()).toBe(essence!.id);
+    } finally {
+      t.clock.set(was);
+    }
   });
 });

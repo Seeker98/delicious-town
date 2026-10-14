@@ -90,13 +90,17 @@ function setFilter(v: Filter) {
   }
 }
 const FILTERS: readonly Filter[] = ['all', 'sale', 'buy'];
+/** 按等级筛（backlog P8：两百来种食材一页太长）；null = 全部等级 */
+const levelPick = ref<number | null>(null);
+const levels = computed(() => [...new Set(foods.value.map((f) => levelOf(f.foodsId)))].sort((a, b) => a - b));
 const groups = computed(() => {
   const q = search.value.trim();
   const list = foods.value.filter(
     (f) =>
       // 不区分大小写、忽略重音（问题记录 316）
       matchText(catalog.foodName(f.foodsId), q) &&
-      (filter.value === 'all' || (filter.value === 'sale' ? saleNum(f) > 0 : f.buying > 0)),
+      (filter.value === 'all' || (filter.value === 'sale' ? saleNum(f) > 0 : f.buying > 0)) &&
+      (levelPick.value === null || levelOf(f.foodsId) === levelPick.value),
   );
   const by = new Map<number, ExchangeFoodDto[]>();
   for (const f of list) by.set(levelOf(f.foodsId), [...(by.get(levelOf(f.foodsId)) ?? []), f]);
@@ -379,6 +383,34 @@ onMounted(async () => {
         @click="setFilter(x)"
       >
         {{ t.exchange.filters[x] }}
+      </button>
+    </div>
+    <div
+      v-if="levels.length > 1"
+      class="dt-pills"
+      role="group"
+      :aria-label="t.exchange.levelFilterLabel"
+      data-testid="ex-levels"
+    >
+      <button
+        type="button"
+        :class="{ active: levelPick === null }"
+        :aria-pressed="levelPick === null"
+        data-testid="ex-level-all"
+        @click="levelPick = null"
+      >
+        {{ t.exchange.allLevels }}
+      </button>
+      <button
+        v-for="lv in levels"
+        :key="lv"
+        type="button"
+        :class="{ active: levelPick === lv }"
+        :aria-pressed="levelPick === lv"
+        :data-testid="`ex-level-${lv}`"
+        @click="levelPick = lv"
+      >
+        {{ t.exchange.level(lv) }}
       </button>
     </div>
     <div class="dt-block-note" data-testid="ex-legend">

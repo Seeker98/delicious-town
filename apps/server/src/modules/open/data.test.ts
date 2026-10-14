@@ -156,12 +156,17 @@ describe('开放接口数据（问题记录 142）', () => {
     expect(data.food('zh-CN', 999_999)).toBeNull();
   });
 
-  it('菜谱详情：10 个品级的食材带名字；描述只在简中给', () => {
+  it('菜谱详情：10 个品级的食材带名字；描述只在简中、繁中给', () => {
     const c = data.cookbook('zh-CN', cid('南煎丸子'))!;
     expect(c.grades).toHaveLength(10);
     expect(c.grades[0]!.foods.map((f) => f.foodsId)).toEqual([fid('猪肉'), fid('鸡蛋'), fid('香葱')]);
     expect(c.desc).toBe(config.cookbooks.get(cid('南煎丸子'))!.desc);
     expect(data.cookbook('en', cid('南煎丸子'))!.desc).toBeNull();
+    // 繁中：构建时用 OpenCC 转好（#115）
+    expect(data.cookbook('zh-TW', cid('南煎丸子'))!.desc).toBe(
+      b.i18n['zh-TW'].cookbooks[String(cid('南煎丸子'))]!.desc,
+    );
+    expect(data.cookbook('zh-TW', cid('南煎丸子'))!.desc).toBeTruthy();
     expect(data.cookbook('en', cid('南煎丸子'))!.name).toBe(
       b.i18n.en!.cookbooks[String(cid('南煎丸子'))]!.name,
     );

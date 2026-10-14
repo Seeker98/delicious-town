@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    fix1014c:
+      'Small fixes: the exchange spot list can be filtered by level (works together with For sale / Wanted); recipes in the open API now have descriptions in Traditional Chinese; once a bulk subscription lot enters its blackout, the board stays frozen even if the server shortens the blackout',
     fix1014b:
       'More small fixes: town news about acquisitions shows the bought restaurant’s current name and no longer links to restaurants that are gone; when changing a bulk subscription bid, a note says bidding again (even just adding units) re-queues you at the new time; the newbie gift pack code is only for restaurants opened before the pack existed, and new restaurants can’t claim it on servers that don’t give the pack; both connections to the API are warmed up on first load, so the first action is a little faster',
     fix1014:

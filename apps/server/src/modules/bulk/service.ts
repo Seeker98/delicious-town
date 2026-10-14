@@ -37,9 +37,10 @@ async function blindOf(
   persist: boolean,
 ): Promise<Snapshot | null> {
   if (blindMin <= 0) return null;
+  // 已经写下快照就一直用它：运营之后把 blindMin 调小，看板也不会先回到实时、再跳回更早的快照（backlog）
+  if (lot.blind_at !== null) return savedSnap(lot);
   const at = new Date(lot.ends_at.getTime() - blindMin * MIN_MS);
   if (now < at) return null;
-  if (lot.blind_at !== null) return savedSnap(lot);
   if (!persist) return snapOf(lot, at, bids);
   return db.transaction().execute(async (tx) => {
     const cur = await tx
@@ -206,36 +207,47 @@ async function viewOf(
             done.map((l) => l.id),
           )
           .execute();
-  const recent: BulkResultDto[] = await Promise.all(
-    done.map(async (l) => {
-      const b = myBids.find((x) => x.lot_id === l.id);
-      const sum = await db
-        .selectFrom('bulk_bid')
-        .select((eb) => eb.fn.coalesce(eb.fn.sum<string>('qty'), eb.lit(0)).as('n'))
-        .where('lot_id', '=', l.id)
-        .executeTakeFirstOrThrow();
-      return {
-        id: Number(l.id),
-        foodsId: l.foods_id,
-        level: l.level,
-        qty: l.qty,
-        sold: l.sold ?? 0,
-        price: l.price === null ? null : Number(l.price),
-        demand: Number(sum.n),
-        status: l.status as BulkResultDto['status'],
-        endsAt: l.ends_at.toISOString(),
-        mine: b
-          ? {
-              qty: b.qty,
-              won: b.won ?? 0,
-              paid: b.paid === null ? null : Number(b.paid),
-              refunded: b.refunded === null ? null : Number(b.refunded),
-              consolation: b.consolation,
-            }
-          : null,
-      };
-    }),
-  );
+  // 各批的认购份数一条查询按批次合计（backlog：原来每批单独查一次）
+  const demand =
+    done.length === 0
+      ? new Map<string, number>()
+      : new Map(
+          (
+            await db
+              .selectFrom('bulk_bid')
+              .select(['lot_id', (eb) => eb.fn.sum<string>('qty').as('n')])
+              .where(
+                'lot_id',
+                'in',
+                done.map((l) => l.id),
+              )
+              .groupBy('lot_id')
+              .execute()
+          ).map((r) => [r.lot_id, Number(r.n)] as const),
+        );
+  const recent: BulkResultDto[] = done.map((l) => {
+    const b = myBids.find((x) => x.lot_id === l.id);
+    return {
+      id: Number(l.id),
+      foodsId: l.foods_id,
+      level: l.level,
+      qty: l.qty,
+      sold: l.sold ?? 0,
+      price: l.price === null ? null : Number(l.price),
+      demand: demand.get(l.id) ?? 0,
+      status: l.status as BulkResultDto['status'],
+      endsAt: l.ends_at.toISOString(),
+      mine: b
+        ? {
+            qty: b.qty,
+            won: b.won ?? 0,
+            paid: b.paid === null ? null : Number(b.paid),
+            refunded: b.refunded === null ? null : Number(b.refunded),
+            consolation: b.consolation,
+          }
+        : null,
+    };
+  });
   return {
     enabled: featureAvailable(s, 'bulk') && featureAvailable(s, 'exchange'),
     blocked,

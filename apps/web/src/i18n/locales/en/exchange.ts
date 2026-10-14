@@ -51,6 +51,8 @@ const exchange: Messages['exchange'] = {
   rulesTitle: 'Trading rules & system prices',
   rulesSub: 'Orders must be between half and double the reference price',
   filterLabel: 'Filter',
+  levelFilterLabel: 'Filter by level',
+  allLevels: 'All levels',
   sideLabel: 'Buy or sell',
   saleTag: (n) => `Sell ${n}`,
   buyTag: (n) => `Buy ${n}`,

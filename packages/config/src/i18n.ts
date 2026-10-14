@@ -25,8 +25,8 @@ export const I18N_FIELDS = {
   tower: ['name', 'title', 'note'],
   kujiThemes: ['name', 'desc'],
   proficiency: ['name'],
-  // 第 9 批：菜名（食谱）
-  cookbooks: ['name'],
+  // 第 9 批：菜名（食谱）；描述（#115）只有繁中（构建时转换），英法西没有翻译
+  cookbooks: ['name', 'desc'],
 } as const;
 export type I18nKind = keyof typeof I18N_FIELDS;
 export const I18N_KINDS = Object.keys(I18N_FIELDS) as I18nKind[];
