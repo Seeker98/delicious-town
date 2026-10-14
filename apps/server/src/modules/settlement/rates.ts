@@ -30,7 +30,7 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
   let cookbook = 0;
   for (let L = 1; L < input.counts.grade.length; L++) {
     const n = input.counts.grade[L] ?? 0;
-    if (n > 0) cookbook += n * g.grade(L).atRatePerCookbook * L;
+    if (n > 0) cookbook += n * g.grade(L).atRatePerCookbook * L * st.cookbookAtRate;
   }
   const atFloat = (st.atFloatBase + st.atFloatPerStar * s) * (rng.next() - 0.5);
   const at = part({
@@ -41,8 +41,10 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
     renown: rest.renown < 0 ? st.negativeRenownAtRate : 0,
     float: atFloat,
   });
+  // 溢出转经验按折算前的合计算（街道再平衡第二版）
   const leftAt = (at.total - st.atOverflowThreshold) / (v(a, 'atToExp') > 0 ? 1 : st.atOverflowDivisor);
-  const atRate = Math.min(Math.max(at.total, 0), 1);
+  const atCapped = atSoftCap(at, st.atSoftCapAt, st.atSoftCapRate);
+  const atRate = Math.min(Math.max(atCapped.total, 0), 1);
 
   const spFloat = st.spFloatPerStar * s * (rng.next() - st.spFloatCenter);
   const sp = part({
@@ -73,7 +75,7 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
 
   const luckSum = rest.luck + v(a, 'luckValue') + v(w, 'luckValue');
   const rates: Rates = {
-    atRate: { total: atRate, parts: at.parts },
+    atRate: { total: atRate, parts: atCapped.parts },
     spRate: softCap(sp, st.spSoftCapAt, st.spSoftCapRate),
     coinRate: coin,
     expRate: part(expParts),
@@ -108,6 +110,16 @@ export function softCap(sp: RatePart, at: number, rate: number): RatePart {
   if (clipped <= at) return { total: clipped, parts: sp.parts };
   const total = round(at + (clipped - at) * rate);
   return { total, parts: { ...sp.parts, softCap: round(total - sp.total) } };
+}
+
+/**
+ * 上座率软上限（街道再平衡第二版 2026-10-14）：超过 at 的部分只算 rate，截到 0~1 在外面做。
+ * 压掉的部分记成负的分项 softCap，分项加起来仍等于折算后的合计
+ */
+export function atSoftCap(p: RatePart, at: number, rate: number): RatePart {
+  if (p.total <= at) return p;
+  const total = round(at + (p.total - at) * rate);
+  return { total, parts: { ...p.parts, softCap: round(total - p.total) } };
 }
 
 /** 低等级经验加成（问题记录 378）：1 级 +rate，线性减到 maxLevel 为 0 */

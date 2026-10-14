@@ -1385,71 +1385,71 @@
   },
   "60001": {
     "name": "Rue du Hunan",
-    "desc": "Pièces finales +10\u202f%, EXP finale +40\u202f%, chance +10"
+    "desc": "Pièces finales +5\u202f%, EXP finale +40\u202f%, chance +10"
   },
   "60002": {
     "name": "Rue du Guangdong",
-    "desc": "Pièces finales -25\u202f%, EXP finale -30\u202f%, fréquentation +10\u202f%, clients difficiles +8\u202f%, huile par table -2"
+    "desc": "Pièces finales -10\u202f%, EXP finale -20\u202f%, fréquentation +10\u202f%, clients difficiles +8\u202f%, huile par table -2"
   },
   "60003": {
     "name": "Rue du Sichuan",
-    "desc": "EXP et pièces finales -10\u202f%, EXP par table +4, huile par table +2"
+    "desc": "Pièces finales -20\u202f%, EXP finale -15\u202f%, EXP par table +4, huile par table +2"
   },
   "60004": {
     "name": "Rue du Fujian",
-    "desc": "EXP finale -20\u202f%, pièces par table +2, EXP par table +3"
+    "desc": "Pièces finales -5\u202f%, EXP finale -20\u202f%, pièces par table +2, EXP par table +3"
   },
   "60005": {
     "name": "Rue de l'Anhui",
-    "desc": "Pièces finales +25\u202f%, pièces par table +3, consommation d'huile -15\u202f%"
+    "desc": "Pièces finales +30\u202f%, EXP finale +5\u202f%, pièces par table +3, consommation d'huile -15\u202f%"
   },
   "60006": {
     "name": "Rue du Shandong",
-    "desc": "Pièces finales +30\u202f%, EXP finale +40\u202f%, EXP par table +6, consommation d'huile -10\u202f%, fréquentation -20\u202f%"
+    "desc": "Pièces finales -35\u202f%, EXP finale +15\u202f%, EXP par table +2, consommation d'huile -10\u202f%"
   },
   "60007": {
     "name": "Rue du Zhejiang",
-    "desc": "Pièces finales -5\u202f%, EXP finale -10\u202f%, clients difficiles +10\u202f%, huile par table -3"
+    "desc": "EXP et pièces finales -5\u202f%, clients difficiles +10\u202f%, huile par table -3"
   },
   "60008": {
     "name": "Rue du Jiangsu",
-    "desc": "Pièces finales -20\u202f%, EXP finale +30\u202f%, clients difficiles +5\u202f%, consommation d'huile -50\u202f%"
+    "desc": "Pièces finales -20\u202f%, EXP finale +40\u202f%, clients difficiles +5\u202f%, consommation d'huile -50\u202f%"
   },
   "60009": {
     "name": "Rue Fusion I",
-    "desc": "Pièces finales -30\u202f%, EXP finale -15\u202f%, clients difficiles +25\u202f%"
+    "desc": "Pièces finales -20\u202f%, EXP finale -10\u202f%, clients difficiles +25\u202f%"
   },
   "60010": {
     "name": "Rue Fusion II",
-    "desc": "Pièces finales -30\u202f%, EXP finale -15\u202f%, clients difficiles +25\u202f%"
+    "desc": "Pièces finales -15\u202f%, EXP finale -10\u202f%, clients difficiles +25\u202f%"
   },
   "60011": {
     "name": "Rue du Jiangxi",
-    "desc": "Pièces finales -20\u202f%, EXP finale +10\u202f%, fréquentation +15\u202f%, pièces par table +3"
+    "desc": "Pièces finales -15\u202f%, EXP finale +15\u202f%, fréquentation +15\u202f%, pièces par table +3"
   },
   "60012": {
     "name": "Rue du Hubei",
-    "desc": "Pièces finales +15\u202f%, EXP finale +40\u202f%, chance +10"
+    "desc": "Pièces finales +10\u202f%, EXP finale +40\u202f%, chance +10"
   },
   "60013": {
     "name": "Rue de Pékin",
-    "desc": "Pièces finales +25\u202f%, EXP finale -5\u202f%, EXP par table +2, consommation d'huile +30\u202f%"
+    "desc": "Pièces finales +20\u202f%, EXP finale -5\u202f%, EXP par table +2, consommation d'huile +30\u202f%"
   },
   "60014": {
     "name": "Rue du Japon",
-    "desc": "Pièces finales +15\u202f%, EXP finale +10\u202f%, clients difficiles +12\u202f%, pièces des clients difficiles satisfaits +15\u202f%, fréquentation -8\u202f%"
+    "desc": "Pièces finales +20\u202f%, EXP finale +10\u202f%, clients difficiles +12\u202f%, pièces des clients difficiles satisfaits +15\u202f%, fréquentation -8\u202f%"
   },
   "60015": {
     "name": "Rue d'Italie",
-    "desc": "Pièces finales -15\u202f%, fréquentation +15\u202f%, pièces par table +1, pièces des commandes à emporter +30\u202f%, consommation d'huile +15\u202f%"
+    "desc": "Pièces finales -10\u202f%, EXP finale +5\u202f%, fréquentation +15\u202f%, pièces par table +1, pièces des commandes à emporter +30\u202f%, consommation d'huile +15\u202f%"
   },
   "60016": {
     "name": "Rue de France",
-    "desc": "Pièces finales +45\u202f%, EXP finale +15\u202f%, clients difficiles +8\u202f%, fréquentation -12\u202f%"
+    "desc": "Pièces finales +45\u202f%, EXP finale +20\u202f%, clients difficiles +8\u202f%, fréquentation -12\u202f%"
   },
   "60017": {
     "name": "Rue d'Espagne",
-    "desc": "EXP finale +15\u202f%, fréquentation +8\u202f%, pièces des clients qui mangent un plat signature +20\u202f%, chance +16, huile par table +1"
+    "desc": "EXP finale +10\u202f%, fréquentation +8\u202f%, pièces des clients qui mangent un plat signature +20\u202f%, chance +16, huile par table +1"
   },
   "60018": {
     "name": "Rue du Mexique",
@@ -1461,7 +1461,7 @@
   },
   "60020": {
     "name": "Rue de l'Inde",
-    "desc": "Pièces finales +25\u202f%, EXP finale -5\u202f%, portions de plats signature +5\u202f%, EXP par table +3, chance +10, clients difficiles -8\u202f%"
+    "desc": "Pièces finales +20\u202f%, EXP finale -10\u202f%, portions de plats signature +5\u202f%, EXP par table +3, chance +10, clients difficiles -8\u202f%"
   },
   "60021": {
     "name": "Rue de Turquie",
@@ -1469,11 +1469,11 @@
   },
   "60022": {
     "name": "Rue du Vietnam",
-    "desc": "Pièces finales -10\u202f%, EXP finale +5\u202f%, consommation d'huile -30\u202f%, EXP par table +3"
+    "desc": "Pièces finales -20\u202f%, EXP finale -5\u202f%, consommation d'huile -30\u202f%, EXP par table +3"
   },
   "60023": {
     "name": "Rue d'Amérique",
-    "desc": "Pièces finales +5\u202f%, EXP finale +25\u202f%, pièces et EXP des commandes à emporter +20\u202f%, fréquentation +25\u202f%, clients difficiles -10\u202f%, consommation d'huile +20\u202f%"
+    "desc": "Pièces finales +10\u202f%, EXP finale +20\u202f%, pièces et EXP des commandes à emporter +20\u202f%, fréquentation +25\u202f%, clients difficiles -10\u202f%, consommation d'huile +20\u202f%"
   },
   "60024": {
     "name": "Rue du Maroc",
@@ -1481,23 +1481,23 @@
   },
   "60025": {
     "name": "Rue d'Argentine",
-    "desc": "Pièces finales +5\u202f%, EXP finale +30\u202f%, pièces par table +4, fréquentation +5\u202f%, consommation d'huile +25\u202f%"
+    "desc": "Pièces finales +10\u202f%, EXP finale +30\u202f%, pièces par table +4, fréquentation +5\u202f%, consommation d'huile +25\u202f%"
   },
   "60026": {
     "name": "Rue de Grèce",
-    "desc": "Pièces finales +10\u202f%, EXP finale +85\u202f%, consommation d'huile -10\u202f%, clients difficiles -5\u202f%"
+    "desc": "EXP finale +80\u202f%, consommation d'huile -10\u202f%, clients difficiles -5\u202f%"
   },
   "60027": {
     "name": "Rue du Pérou",
-    "desc": "Pièces finales +5\u202f%, EXP finale -20\u202f%, chance de meilleure qualité en cuisinant un plat signature +8\u202f%, clients difficiles +8\u202f%"
+    "desc": "Pièces finales +15\u202f%, EXP finale -15\u202f%, chance de meilleure qualité en cuisinant un plat signature +8\u202f%, clients difficiles +8\u202f%"
   },
   "60028": {
     "name": "Rue de Russie",
-    "desc": "Pièces finales -5\u202f%, EXP finale -20\u202f%, EXP par table +5, fréquentation -10\u202f%, chaque cafard qui apparaît a 20\u202f% de risque d'être tué"
+    "desc": "Pièces finales +5\u202f%, EXP finale -10\u202f%, EXP par table +5, fréquentation -10\u202f%, chaque cafard qui apparaît a 20\u202f% de risque d'être tué"
   },
   "60029": {
     "name": "Rue Chop Suey",
-    "desc": "Pièces finales +20\u202f%, EXP finale +55\u202f%, pièces et EXP des commandes à emporter +30\u202f%, fréquentation +10\u202f%, pièces par table +1, clients difficiles -10\u202f%"
+    "desc": "Pièces finales +20\u202f%, EXP finale +45\u202f%, pièces et EXP des commandes à emporter +30\u202f%, fréquentation +10\u202f%, pièces par table +1, clients difficiles -10\u202f%"
   },
   "60101": {
     "name": "Médaille de la bêta fermée (or)",

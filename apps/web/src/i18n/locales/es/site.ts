@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    streets1014:
+      'Bonificaciones de las calles reajustadas: las monedas y la EXP finales de cada medalla de calle se reequilibraron, también para los restaurantes que ya están en una calle (menos penalización de monedas en las Calles Fusión I y II y la Calle Guangdong; Calle Grecia EXP final +85\u00a0% → +80\u00a0% y sin bonificación de monedas; la Calle Shandong pierde la ocupación -20\u00a0%, EXP por mesa +6 → +2; mira la bonificación de la calle en la página de mudanza). La ocupación por encima del 70\u00a0% solo cuenta un tercio, la que dan las recetas aprendidas se reduce a la mitad, y la parte por encima del 120\u00a0% sigue convirtiéndose en EXP',
     fix1014c:
       'Pequeños arreglos: la lista al contado de la bolsa se puede filtrar por nivel (junto con «En venta» y «Se buscan»); las recetas de la API abierta ya tienen descripción en chino tradicional; cuando un lote de suscripción al por mayor entra en la fase sin datos, el tablero sigue congelado aunque el servidor acorte esa fase',
     fix1014b:

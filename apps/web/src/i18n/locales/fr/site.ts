@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    streets1014:
+      'Bonus des rues réajustés\u202f: les pièces et l’EXP finales de chaque médaille de rue sont rééquilibrées, y compris pour les restaurants déjà installés (pénalité de pièces plus faible rues Fusion I et II et rue du Guangdong\u202f; rue de Grèce EXP finale +85\u202f% → +80\u202f% et plus de bonus de pièces\u202f; rue du Shandong sans la fréquentation -20\u202f%, EXP par table +6 → +2\u202f; voir le bonus de rue sur la page de déménagement). La fréquentation au-delà de 70\u202f% ne compte plus que pour un tiers, celle apportée par les recettes apprises est divisée par deux, et la part au-delà de 120\u202f% se transforme toujours en EXP',
     fix1014c:
       'Petites corrections\u202f: la liste au comptant de la bourse se filtre par niveau (avec «\u202fEn vente\u202f» et «\u202fDemandés\u202f»)\u202f; les recettes de l’API ouverte ont leur description en chinois traditionnel\u202f; une fois qu’un lot de souscription en gros est figé, le tableau reste figé même si le serveur raccourcit la période',
     fix1014b:

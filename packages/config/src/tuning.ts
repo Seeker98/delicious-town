@@ -85,6 +85,11 @@ export const tuningSchema = z.object({
     /** 挑剔率软上限（挑剔顾客调整 2026-10-12）：截到 0~1 之后，超过 spSoftCapAt 的部分乘 spSoftCapRate */
     spSoftCapAt: z.number().min(0).max(1),
     spSoftCapRate: z.number().min(0).max(1),
+    /** 上座率软上限（街道再平衡第二版 2026-10-14）：超过 atSoftCapAt 的部分乘 atSoftCapRate，再截到 0~1；溢出经验仍按折算前算 */
+    atSoftCapAt: z.number().min(0),
+    atSoftCapRate: z.number().min(0).max(1),
+    /** 菜谱带来的上座率乘这个倍数（同上，默认 0.5） */
+    cookbookAtRate: z.number().min(0),
     negativeRenownAtRate: num,
     starPotential: z.array(num),
     // 低等级经验加成（问题记录 378）：1 级 +rate，线性减到 maxLevel 为 0
