@@ -718,17 +718,24 @@ describe('终审 I2：冷静期已过的所得能取出', () => {
       expect(w2.get('[data-testid="ex-tab-spot"]').attributes('role')).toBe('tab');
     });
 
-    it('区服关了大宗认购：没有这个标签；期货关了、认购开着时照样有标签栏', async () => {
+    it('区服关了大宗认购：没有这个标签', async () => {
       useRestaurantStore().rest = { id: 1, disabledFeatures: ['bulk'] } as never;
       const w = mountView();
       await flushPromises();
       expect(w.find('[data-testid="ex-tab-bulk"]').exists()).toBe(false);
+      w.unmount();
+    });
+
+    // 原来和上一条写在一起、同一个 pinia 里先后挂两次，CI 上偶发期货标签还在；拆开、各挂各的
+    it('期货关了、认购开着时照样有标签栏，没有进行中的期货单就没有期货标签', async () => {
       useRestaurantStore().rest = { id: 1, disabledFeatures: ['futures'] } as never;
-      const w2 = mountView();
+      const w = mountView();
       await flushPromises();
-      expect(w2.find('[data-testid="ex-tab-futures"]').exists()).toBe(false);
-      expect(w2.find('[data-testid="ex-tab-bulk"]').exists()).toBe(true);
-      expect(w2.find('[data-testid="ex-tab-spot"]').exists()).toBe(true);
+      expect(endpoints.futures).toHaveBeenCalled();
+      expect(w.find('[data-testid="ex-tab-futures"]').exists()).toBe(false);
+      expect(w.find('[data-testid="ex-tab-bulk"]').exists()).toBe(true);
+      expect(w.find('[data-testid="ex-tab-spot"]').exists()).toBe(true);
+      w.unmount();
     });
   });
 });
