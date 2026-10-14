@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    fix1014c:
+      'Pequeños arreglos: la lista al contado de la bolsa se puede filtrar por nivel (junto con «En venta» y «Se buscan»); las recetas de la API abierta ya tienen descripción en chino tradicional; cuando un lote de suscripción al por mayor entra en la fase sin datos, el tablero sigue congelado aunque el servidor acorte esa fase',
     fix1014b:
       'Más pequeños arreglos: las noticias de compras muestran el nombre actual del restaurante comprado y ya no enlazan a restaurantes que ya no existen; al cambiar una puja de suscripción al por mayor, una nota avisa de que volver a pujar (aunque solo añadas unidades) te pone a la cola con la hora nueva; el código del gran paquete de bienvenida solo sirve para restaurantes abiertos antes del paquete, y los nuevos no pueden usarlo en servidores que no dan el paquete; las dos conexiones con el servidor del juego se preparan al cargar, así la primera acción va un poco más rápida',
     fix1014:

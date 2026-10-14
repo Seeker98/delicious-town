@@ -47,6 +47,8 @@ export default {
   rulesTitle: '交易規則和系統報價',
   rulesSub: '掛單價在當天參考價的一半到兩倍之間',
   filterLabel: '篩選',
+  levelFilterLabel: '按等級篩選',
+  allLevels: '全部等級',
   sideLabel: '買還是賣',
   saleTag: (n: number) => `賣 ${n}`,
   buyTag: (n: number) => `收 ${n}`,

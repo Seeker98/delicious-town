@@ -53,6 +53,8 @@ const exchange: Messages['exchange'] = {
   rulesTitle: 'Règles et prix du système',
   rulesSub: 'Un ordre doit être entre la moitié et le double du prix de référence',
   filterLabel: 'Filtrer',
+  levelFilterLabel: 'Filtrer par niveau',
+  allLevels: 'Tous niveaux',
   sideLabel: 'Acheter ou vendre',
   saleTag: (n) => `Vente ${n}`,
   buyTag: (n) => `Achat ${n}`,

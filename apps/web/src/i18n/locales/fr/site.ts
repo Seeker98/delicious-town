@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    fix1014c:
+      'Petites corrections\u202f: la liste au comptant de la bourse se filtre par niveau (avec «\u202fEn vente\u202f» et «\u202fDemandés\u202f»)\u202f; les recettes de l’API ouverte ont leur description en chinois traditionnel\u202f; une fois qu’un lot de souscription en gros est figé, le tableau reste figé même si le serveur raccourcit la période',
     fix1014b:
       'Encore des petites corrections\u202f: les nouvelles de rachat affichent le nom actuel du restaurant racheté et ne renvoient plus vers un restaurant disparu\u202f; en modifiant une offre de souscription en gros, une note rappelle qu’une nouvelle offre (même en ajoutant seulement des unités) vous replace à la nouvelle heure\u202f; le code du gros pack de bienvenue ne sert qu’aux restaurants ouverts avant le pack, et les nouveaux restaurants ne peuvent pas l’utiliser sur les serveurs qui ne donnent pas le pack\u202f; les deux connexions vers le serveur de jeu sont préparées dès le chargement, la première action est un peu plus rapide',
     fix1014:

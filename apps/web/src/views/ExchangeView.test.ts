@@ -239,6 +239,24 @@ describe('ExchangeView（156-1 设计 §8）', () => {
     ]);
     await w.get('[data-testid="ex-filter-all"]').trigger('click');
     expect(w.findAll('[data-testid^="ex-food-"]')).toHaveLength(3);
+    // 按等级筛（backlog P8）：只列有的等级；和在售、在收一起用
+    expect(w.findAll('[data-testid^="ex-level-"]').map((x) => x.text())).toEqual([
+      '全部等级',
+      '3 级',
+      '6 级',
+    ]);
+    await w.get('[data-testid="ex-level-3"]').trigger('click');
+    expect(w.findAll('[data-testid^="ex-food-"]').map((x) => x.attributes('data-testid'))).toEqual([
+      'ex-food-12',
+      'ex-food-13',
+    ]);
+    await w.get('[data-testid="ex-filter-buy"]').trigger('click');
+    expect(w.findAll('[data-testid^="ex-food-"]').map((x) => x.attributes('data-testid'))).toEqual([
+      'ex-food-12',
+    ]);
+    await w.get('[data-testid="ex-level-all"]').trigger('click');
+    await w.get('[data-testid="ex-filter-all"]').trigger('click');
+    expect(w.findAll('[data-testid^="ex-food-"]')).toHaveLength(3);
   });
 
   it('搜索食材不区分大小写、忽略重音（问题记录 316）', async () => {

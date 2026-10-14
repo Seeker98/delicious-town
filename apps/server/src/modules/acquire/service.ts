@@ -122,8 +122,9 @@ export function createAcquireService(d: GameDeps) {
     );
     if (links.size === 0) return;
     const reason = [...links.values()].includes('device') ? 'device' : 'ip';
-    // 记下按这个原因关联上的账号（可能是目标店的老板，不是目标店本身），后台才看得出（收购 PR 3 遗留）
-    const linked = [...links].find(([, why]) => why === reason)![0];
+    // 记下按这个原因关联上的账号（可能是目标店的老板，不是目标店本身），后台才看得出（收购 PR 3 遗留）；
+    // 关联上几个时固定记编号最小的那个（backlog：原来按查询返回的顺序，记哪个不固定）
+    const linked = Math.min(...[...links].filter(([, why]) => why === reason).map(([id]) => id));
     await d.db
       .insertInto('acquire_block')
       .values({

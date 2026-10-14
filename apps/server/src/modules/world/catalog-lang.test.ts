@@ -113,7 +113,8 @@ describe('道具目录按语言（问题记录 272）', () => {
     t.tasks['1'] = { name: 'Refill oil once' };
     t.tower['1'] = { name: 'Apprentice Model Restaurant', title: 'Apprentice Guardian', note: 'Come on' };
     t.kujiThemes['1'] = { name: 'Spring Festival Flavors', desc: 'The drums sound' };
-    t.cookbooks['1'] = { name: 'Southern Pan-fried Meatballs' };
+    // 翻译表里有、目录里本来没有的字段（繁中菜谱描述，#115）不带进目录
+    t.cookbooks['1'] = { name: 'Southern Pan-fried Meatballs', desc: 'Home cooking' };
     const c = localizeCatalog(b, t, 'en');
     expect(c.data!.tasks[0]).toEqual({ id: 1, name: 'Refill oil once' });
     expect(c.data!.activation[0]!.name).toBe('打蟑螂');
@@ -129,7 +130,7 @@ describe('道具目录按语言（问题记录 272）', () => {
       desc: 'The drums sound',
     });
     expect(c.data!.proficiency[0]!.name).toBe('初学');
-    expect(c.data!.cookbooks[0]!.name).toBe('Southern Pan-fried Meatballs');
+    expect(c.data!.cookbooks[0]).toEqual({ id: 1, name: 'Southern Pan-fried Meatballs' });
   });
 
   it('接口：任务名是新的主线、支线、每周任务，带章名和支线名，英文有翻译（问题记录 318）', async () => {

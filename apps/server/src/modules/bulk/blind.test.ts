@@ -89,6 +89,20 @@ describe('大宗认购最后一段停更（问题记录 595）', () => {
     expect(v.blindMin).toBe(0);
   });
 
+  it('写下快照以后运营把停更调小：看板照样停在快照，不先回到实时（backlog）', async () => {
+    const shardId = await createShard(t.db);
+    const lot = await lotIn(shardId);
+    const a = await trader(t, { shardId, coin: 20 * M });
+    const b = await trader(t, { shardId, coin: 20 * M });
+    await svc().bid(a, { lotId: lot.id, price: 60_000, qty: 4 });
+    t.clock.set(new Date(lot.ends_at.getTime() - 30 * MIN));
+    await svc().bid(b, { lotId: lot.id, price: 55_000, qty: 4 });
+    const blindStart = new Date(lot.ends_at.getTime() - 60 * MIN).toISOString();
+    expect((await svc().view(a)).lot).toMatchObject({ demand: 4, blindAt: blindStart });
+    await setTuning(t, shardId, { bulk: { ...t.game.deps.config.tuning.bulk, blindMin: 10 } });
+    expect((await svc().view(a)).lot).toMatchObject({ demand: 4, blindAt: blindStart });
+  });
+
   it('每分钟的任务在进入停更后写快照，写过不再改；还没到停更的不写', async () => {
     const shardId = await createShard(t.db);
     const lot = await lotIn(shardId);
