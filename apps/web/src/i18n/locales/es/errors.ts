@@ -275,7 +275,6 @@ const errors: Messages['errors'] = {
     query_text: 'El texto de búsqueda es demasiado largo (máximo 20 caracteres)',
     cursor: 'Página no válida. Recarga.',
     post_changed: 'La publicación cambió. Recarga e inténtalo de nuevo.',
-    pick_food: 'Elige un ingrediente para dar de propina',
     pick_count: 'Número de ingredientes apostados no válido',
     bad_food: 'Solo puedes apostar por ingredientes de nivel 1 a 2',
     not_visible: 'Esta tarea no se puede reclamar ahora',

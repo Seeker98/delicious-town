@@ -1,7 +1,6 @@
 // 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
 /** 登入、註冊、找回密碼、郵箱驗證、開店（問題記錄 272） */
 export default {
-  loginTitle: '登入美味小鎮',
   username: '使用者名稱',
   password: '密碼',
   login: '登入',
@@ -14,14 +13,12 @@ export default {
   email: '郵箱',
   inviteCode: '邀請碼 (可不填)',
   register: '註冊',
-  toLogin: '已有賬號？去登入',
   registerFailed: '註冊失敗',
   usernameRule: '使用者名稱為 2~9 個字, 只能用中文、字母、數字、下劃線和減號',
   passwordMin: '密碼至少 6 位',
   passwordMismatch: '兩次輸入的密碼不一致',
   forgotTitle: '找回密碼',
   forgotSent: '如果這個郵箱註冊過, 重設郵件已經發出, 請在 1 小時內點連結重設。沒收到的話看看垃圾郵件。',
-  forgotEmail: '註冊時填寫的郵箱',
   sendReset: '傳送重設郵件',
   backToLogin: '返回登入',
   sendFailed: '傳送失敗',
@@ -33,7 +30,6 @@ export default {
   resetFailed: '重置失敗',
   verifying: '正在驗證……',
   verifyOk: '郵箱驗證好了',
-  verifyFailed: '驗證失敗',
   enterTown: '進入小鎮',
   createTitle: '開一家餐廳',
   createHint: '最多 8 個漢字或 12 個字母數字',

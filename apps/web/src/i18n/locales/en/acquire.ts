@@ -25,7 +25,6 @@ const acquire: Messages['acquire'] = {
   confirmListed: (name, coin, seller, got, tax) =>
     `Buy "${name}" at its listed price of ${coin} coins?\n"${seller}" gets ${got} coins; tax is ${tax} coins.`,
   bought: (name) => `"${name}" is now yours`,
-  colRank: 'Rank',
   colHoldings: (n) => `Owns ${n}`,
   colValue: (coin) => `Total valuation ${coin}`,
   colDividend: (coin) => `Dividends to date ${coin}`,
@@ -34,7 +33,6 @@ const acquire: Messages['acquire'] = {
   investEmpty: 'Nobody has acquired a restaurant yet',
   myPrice: 'My valuation',
   ownedBy: (name) => `Your restaurant is owned by "${name}"`,
-  independent: 'Your restaurant is independent',
   tend: (n) => `Tend for the owner (get ${n} ingredients)`,
   tendedToday: 'Already tended for the owner today',
   tendDone: (n) => `Done! You got ${n} ingredients`,
@@ -53,9 +51,6 @@ const acquire: Messages['acquire'] = {
   list: 'List',
   unlist: 'Unlist',
   release: 'Let go',
-  rateOption: (pct, coin) => `${pct} (${coin} coins)`,
-  confirmList: (name, pct, coin, got, days) =>
-    `List "${name}" at ${pct} of its valuation (${coin} coins)?\nAt the current valuation you would get about ${got} coins if someone buys it (valuations change daily). The listing ends after ${days} days.`,
   listDone: (name) => `"${name}" is listed`,
   unlistDone: (name) => `"${name}" is no longer listed`,
   confirmRelease: (name) => `Let go of "${name}"?\nNo refund; it becomes independent again.`,

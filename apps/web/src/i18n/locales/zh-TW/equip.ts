@@ -113,13 +113,10 @@ export default {
     noBackItems: (one: string, all: string) => `沒有${one}或${all}, 不能回退`,
     cost: (essence: number, have: number, coin: string) =>
       `消耗: 精華 ×${essence} (有 ${have})、銀幣 ${coin}`,
-    useStone: (n: number) => `用強化石 (必定成功, 有 ${n})`,
     maxed: '已經強化到最高',
     backOption: (name: string, back: number, num: number) => `${name} (回退 ${back} 級, 有 ${num})`,
     rollback: '回退',
     gems: '寶石',
-    holeNote: (max: number, coinPerLevel: string | null) =>
-      ` (最多 ${max} 孔；${coinPerLevel ? `摘除要花 階數×${coinPerLevel} 銀幣` : '現在摘除免費 (2 星以下或酸雨天)'})`,
     ungem: '摘除',
     gemOption: (name: string, num: number, level: number) => `${name} (有 ${num}, 耗體力 ${level})`,
     inlay: '鑲嵌',

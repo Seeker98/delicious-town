@@ -94,6 +94,5 @@ const society: Messages['society'] = {
     failed: 'Star up failed',
   },
   needs: { level: 'Restaurant level', star: 'Stars', cookbooks: 'Recipes learned', coin: 'Coins' },
-  needLine: (label, have, need) => `${label}: ${have} / ${need}`,
 };
 export default society;

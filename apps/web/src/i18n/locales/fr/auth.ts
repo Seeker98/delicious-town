@@ -1,7 +1,6 @@
 import type { Messages } from '../..';
 
 const auth: Messages['auth'] = {
-  loginTitle: 'Connexion à Delicious Town',
   username: "Nom d'utilisateur",
   password: 'Mot de passe',
   login: 'Se connecter',
@@ -14,7 +13,6 @@ const auth: Messages['auth'] = {
   email: 'E-mail',
   inviteCode: "Code d'invitation (facultatif)",
   register: "S'inscrire",
-  toLogin: 'Déjà un compte\u202f? Se connecter',
   registerFailed: "Échec de l'inscription",
   usernameRule:
     "Le nom d'utilisateur fait 2 à 9 caractères\u202f: caractères chinois, lettres, chiffres, _ et -",
@@ -23,7 +21,6 @@ const auth: Messages['auth'] = {
   forgotTitle: 'Réinitialiser le mot de passe',
   forgotSent:
     'Si cette adresse est enregistrée, un e-mail de réinitialisation est parti. Ouvrez le lien dans l’heure. Rien reçu\u202f? Regardez dans les spams.',
-  forgotEmail: "L'e-mail utilisé à l'inscription",
   sendReset: "Envoyer l'e-mail",
   backToLogin: 'Retour à la connexion',
   sendFailed: "Échec de l'envoi",
@@ -35,7 +32,6 @@ const auth: Messages['auth'] = {
   resetFailed: 'Échec de la réinitialisation',
   verifying: 'Vérification…',
   verifyOk: 'E-mail vérifié',
-  verifyFailed: 'Échec de la vérification',
   enterTown: 'Entrer en ville',
   createTitle: 'Ouvrir un restaurant',
   createHint: 'Jusqu’à 8 caractères chinois ou 12 lettres/chiffres',

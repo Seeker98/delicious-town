@@ -31,7 +31,6 @@ export default {
   filters: { all: '全部', rare: '稀有', normal: '普通', street: '本街要的' },
   search: '搜食材',
   level: (n: number) => `${n} 级`,
-  foodLine: (price: string, left: number) => `${price} 银币 · 今天还剩 ${left} 份`,
   soldOut: '今天订完了',
   /** 银币连 1 份的定金都不够（backlog 期货） */
   noCoin: (need: string) => `银币不够付 1 份的定金 (要 ${need})`,

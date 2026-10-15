@@ -37,8 +37,6 @@ export default {
   /** 分頁時：這一頁幾道 / 一共幾道 */
   learnedOf: (shown: number, total: number) => `已學 (${shown} / ${total})`,
   noLearned: '還沒有學會特色菜: 在神殿鑑定神秘食譜得到殘卷, 3 張殘卷就能學會。',
-  dishMeta: (level: number | undefined, road: string, levelName: string) =>
-    `${level ?? '?'} 級 · ${road} · ${levelName}`,
   proficiency: (cur: string, next: string | null) => `熟練度 ${cur}${next ? ` / ${next}` : ' (滿級)'}`,
   cook: '烹製',
   foods: '食材: ',

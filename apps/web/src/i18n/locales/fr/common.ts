@@ -38,10 +38,6 @@ const common: Messages['common'] = {
   // 不换行的窄空格（U+202F）：窄屏上“Riz ×”和“3”不会折开
   qty: (name, num) => `${name}\u202f×\u202f${num}`,
   times: '\u202f×\u202f',
-  parenOpen: ' (',
-  parenClose: ')',
-  colon: (s) => `${s}\u202f: `,
   levelRing: (level, pct) => `Niveau ${level}, ${pct}\u202f% d’expérience`,
-  semi: '\u202f; ',
 };
 export default common;

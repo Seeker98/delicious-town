@@ -393,7 +393,6 @@ const bar: Messages['bar'] = {
     got: (text) => `Got ${text}`,
     board: 'Target strip: 50 in the middle, then 25, 10 and 5 outwards, 0 at the edges',
     invalid: "This throw's timing didn't match, so it counts as a miss: 0 points",
-    throwLine: (i, score) => `Dart ${i}: ${score}`,
     bossThrows: (list) => `Boss's darts: ${list}`,
     aim: (n) => `Aim dart ${n}`,
     throw: 'Throw!',

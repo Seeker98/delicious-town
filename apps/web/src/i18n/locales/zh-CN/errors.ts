@@ -263,7 +263,6 @@ export default {
     query_text: '搜索词太长了 (最多 20 字)',
     cursor: '翻页参数不对, 请刷新',
     post_changed: '帖子状态变了, 请刷新后再试',
-    pick_food: '请选择要打赏的食材',
     pick_count: '竞猜的食材数量不对',
     bad_food: '只能竞猜 1~2 级食材',
     not_visible: '这个任务现在不能领取',

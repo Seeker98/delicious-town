@@ -25,7 +25,6 @@ const acquire: Messages['acquire'] = {
   confirmListed: (name, coin, seller, got, tax) =>
     `Acheter «\u202f${name}\u202f» à son prix de vente de ${coin} pièces\u202f?\n«\u202f${seller}\u202f» reçoit ${got} pièces\u202f; la taxe est de ${tax} pièces.`,
   bought: (name) => `«\u202f${name}\u202f» est à vous`,
-  colRank: 'Rang',
   colHoldings: (n) => `Possède ${n}`,
   colValue: (coin) => `Valorisation totale ${coin}`,
   colDividend: (coin) => `Dividendes cumulés ${coin}`,
@@ -34,7 +33,6 @@ const acquire: Messages['acquire'] = {
   investEmpty: "Personne n'a encore racheté de restaurant",
   myPrice: 'Ma valorisation',
   ownedBy: (name) => `Votre restaurant appartient à «\u202f${name}\u202f»`,
-  independent: 'Votre restaurant est indépendant',
   tend: (n) => `S'occuper du propriétaire (recevoir ${n} ingrédients)`,
   tendedToday: "Vous vous êtes déjà occupé du propriétaire aujourd'hui",
   tendDone: (n) => `C'est fait\u202f! Vous avez reçu ${n} ingrédients`,
@@ -54,9 +52,6 @@ const acquire: Messages['acquire'] = {
   list: 'Mettre en vente',
   unlist: 'Retirer',
   release: 'Lâcher',
-  rateOption: (pct, coin) => `${pct} (${coin} pièces)`,
-  confirmList: (name, pct, coin, got, days) =>
-    `Mettre «\u202f${name}\u202f» en vente à ${pct} de sa valorisation (${coin} pièces)\u202f?\nÀ la valorisation actuelle, vous recevriez environ ${got} pièces si quelqu'un l'achète (la valorisation change chaque jour). La vente se termine au bout de ${days} jours.`,
   listDone: (name) => `«\u202f${name}\u202f» est en vente`,
   unlistDone: (name) => `«\u202f${name}\u202f» n'est plus en vente`,
   confirmRelease: (name) =>

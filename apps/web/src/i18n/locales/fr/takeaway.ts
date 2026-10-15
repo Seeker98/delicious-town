@@ -52,7 +52,6 @@ const takeaway: Messages['takeaway'] = {
     refreshed: (n) => `${n} ${plFr(n, 'commande privée obtenue', 'commandes privées obtenues')}`,
     refreshFailed: "Échec de l'actualisation",
     renown: (n) => `Renommée ${n}`,
-    riderOption: (name, busy, max) => `${name} (en livraison ${busy}/${max})`,
     allBusy: 'Tous les livreurs sont occupés',
     refresh: (cost) => `Actualisation privée (${cost} ${plFr(cost, 'pièce', 'pièces')})`,
     empty: 'Aucune commande pour le moment. De nouvelles arrivent à chaque heure pile',

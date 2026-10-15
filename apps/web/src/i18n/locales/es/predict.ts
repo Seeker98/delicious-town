@@ -92,12 +92,9 @@ const predict: Messages['predict'] = {
     waiting: 'Cerrada, esperando el resultado',
     summaryHint: '(pago al cerrar − inversión neta)',
     mine: 'Mis operaciones',
-    mineHint: 'Cada operación que hiciste en esta predicción; los importes incluyen comisión',
     mineLine: (action, qty, per, buy, total) =>
       `${action} ${qty} ${plEs(qty, 'participación', 'participaciones')} a unos ${per} cada una, ${buy ? 'gastaste' : 'recibiste'} ${total}`,
     trades: 'Últimas operaciones del servidor',
-    tradesHint:
-      'Las 20 últimas operaciones de todos (anónimas): muestran qué operaciones subieron o bajaron el precio',
     noTrades: 'Aún no hay operaciones',
     tradeLine: (action, qty, per, pct) =>
       `${action} ${qty} ${plEs(qty, 'participación', 'participaciones')} a unos ${per} cada una, «Sí» al ${pct}\u00a0% después`,

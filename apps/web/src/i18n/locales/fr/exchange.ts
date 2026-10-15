@@ -40,7 +40,6 @@ const exchange: Messages['exchange'] = {
     `Votre compte de bourse est gelé\u202f: ${reason}. Contactez un administrateur en cas de question.`,
   intro:
     'Les joueurs achètent et vendent ici des ingrédients rares. Les prix des ordres doivent être entre la moitié et le double du prix de référence du jour\u202f; le vendeur paie des frais à chaque exécution.',
-  sysHelp: 'Comment le système fixe ses prix',
   sysHelpItems: [
     "Prix d'achat du système = référence\u202f×\u202f0,7\u202f; prix de vente du système = référence\u202f×\u202f1,3. Le système ne revend que ce qu'il a acheté aux joueurs.",
     "Le prix de référence est fixé chaque jour d'après les échanges entre joueurs de la veille (ceux du système ne comptent pas), donc les prix du système restent fixes toute la journée.",

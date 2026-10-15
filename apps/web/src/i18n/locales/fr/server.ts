@@ -145,7 +145,6 @@ const server: Messages['server'] = {
     equip: 'Ustensiles',
     hangover: 'Gueule de bois',
     suit: (name, need) => `${name} (${need} ${plFr(need, 'pièce', 'pièces')})`,
-    suitFallback: 'Ensemble',
   },
 };
 export default server;

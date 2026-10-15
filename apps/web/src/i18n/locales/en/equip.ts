@@ -115,14 +115,11 @@ const equip: Messages['equip'] = {
     noBackItems: (one, all) => `No ${one} or ${all}, can't roll back`,
     cost: (essence, have, coin) =>
       `Cost: essence ×${essence} (you have ${have}), ${coin} ${plEn(coin, 'coin', 'coins')}`,
-    useStone: (n) => `Use an Enhancement Stone (always succeeds; you have ${n})`,
     maxed: 'Fully enhanced',
     backOption: (name, back, num) =>
       `${name} (undo ${back} ${plEn(back, 'level', 'levels')}; you have ${num})`,
     rollback: 'Undo',
     gems: 'Gems',
-    holeNote: (max, coinPerLevel) =>
-      `(up to ${max} ${plEn(max, 'socket', 'sockets')}; ${coinPerLevel ? `removing costs tier × ${coinPerLevel} ${plEn(coinPerLevel, 'coin', 'coins')}` : 'removing is free right now (below 2 stars or on acid rain days)'})`,
     ungem: 'Remove',
     gemOption: (name, num, level) => `${name} (you have ${num}; costs ${level} Stamina)`,
     inlay: 'Socket',

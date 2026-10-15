@@ -79,8 +79,6 @@ const friends: Messages['friends'] = {
     equips: 'Ustensiles',
     noticeTitle: 'Annonce',
     special: 'Plat signature\u202f: ',
-    specialLine: (grade, left, price) =>
-      `${grade} · reste ${left} · ${price} ${plFr(price, 'pièce', 'pièces')} la part`,
     tasted: 'Goûté\u202f! Votre énergie a augmenté',
     tasteFailed: 'Impossible de goûter',
     tastedAlready: 'Déjà goûté',

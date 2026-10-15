@@ -52,7 +52,6 @@ export default {
     refreshed: (n: number) => `刷出了 ${n} 張私人單`,
     refreshFailed: '重新整理失敗',
     renown: (n: string) => `聲望 ${n}`,
-    riderOption: (name: string, busy: number, max: number) => `${name} (在送 ${busy}/${max})`,
     allBusy: '騎手都在送單',
     refresh: (cost: string) => `私人重新整理 (${cost} 銀幣)`,
     empty: '現在沒有外賣單, 每個整點會補一批',

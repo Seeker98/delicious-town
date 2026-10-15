@@ -91,5 +91,4 @@ export default {
   },
   /** 升星、扩容的条件清单 */
   needs: { level: '餐厅等级', star: '星级', cookbooks: '已学食谱', coin: '银币' } as Record<string, string>,
-  needLine: (label: string, have: string, need: string) => `${label}: ${have} / ${need}`,
 };

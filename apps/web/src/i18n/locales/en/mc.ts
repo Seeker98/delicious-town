@@ -36,7 +36,6 @@ const mc: Messages['mc'] = {
   learnedOf: (shown, total) => `Learned (${shown} / ${total})`,
   noLearned:
     "You don't know any signature dishes yet: appraise Mystery Recipes at the temple for fragments; 3 fragments teach you a dish.",
-  dishMeta: (level, road, levelName) => `Lv. ${level ?? '?'} · ${road} · ${levelName}`,
   proficiency: (cur, next) => `Mastery ${cur}${next ? ` / ${next}` : ' (max)'}`,
   cook: 'Cook',
   foods: 'Ingredients: ',

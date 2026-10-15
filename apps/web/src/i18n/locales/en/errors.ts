@@ -274,7 +274,6 @@ const errors: Messages['errors'] = {
     query_text: 'The search text is too long (max 20 characters)',
     cursor: 'Invalid page. Please refresh.',
     post_changed: 'The post changed. Refresh and try again.',
-    pick_food: 'Choose an ingredient to tip',
     pick_count: 'Wrong number of ingredients guessed',
     bad_food: 'You can only guess level 1–2 ingredients',
     not_visible: "This task can't be claimed right now",

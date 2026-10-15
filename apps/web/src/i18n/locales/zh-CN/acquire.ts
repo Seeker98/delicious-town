@@ -24,7 +24,6 @@ export default {
   confirmListed: (name: string, coin: string, seller: string, got: string, tax: string) =>
     `花 ${coin} 银币按挂牌价买下「${name}」？\n「${seller}」得 ${got} 银币, 税 ${tax} 银币。`,
   bought: (name: string) => `「${name}」归你了`,
-  colRank: '名次',
   colHoldings: (n: number) => `名下 ${n} 家`,
   colValue: (coin: string) => `身价合计 ${coin}`,
   colDividend: (coin: string) => `累计分红 ${coin}`,
@@ -33,7 +32,6 @@ export default {
   investEmpty: '还没有人收购过餐厅',
   myPrice: '我的身价',
   ownedBy: (name: string) => `你的餐厅归「${name}」所有`,
-  independent: '你的餐厅自主经营',
   tend: (n: number) => `替老板打理 (得 ${n} 份食材)`,
   tendedToday: '今天已经替老板打理过了',
   tendDone: (n: number) => `打理好了, 得到 ${n} 份食材`,
@@ -53,9 +51,6 @@ export default {
   list: '挂牌',
   unlist: '撤牌',
   release: '放手',
-  rateOption: (pct: string, coin: string) => `${pct} (${coin} 银币)`,
-  confirmList: (name: string, pct: string, coin: string, got: string, days: number) =>
-    `把「${name}」按身价的 ${pct} 挂牌 (${coin} 银币)？\n按现在的身价, 别人买下时你约得 ${got} 银币 (身价每天会变)；${days} 天后自动撤下。`,
   listDone: (name: string) => `「${name}」挂牌了`,
   unlistDone: (name: string) => `「${name}」撤牌了`,
   confirmRelease: (name: string) => `放手「${name}」？\n不退钱, 店变回自主经营。`,

@@ -30,7 +30,6 @@ const kuji: Messages['kuji'] = {
   boughtDeluxe: (n) => `Compraste ${n} ${plEs(n, 'boleto', 'boletos')} kuji de lujo`,
   deluxeNote:
     'Sorteo de lujo: el premio A y el Último Premio dan el título limitado del mes y se anuncian a todo el servidor.',
-  buyPrefix: 'Comprar',
   buyTotal: (coin) => `boletos por ${coin} ${plEs(coin, 'moneda', 'monedas')}`,
   buy: 'Comprar boletos',
   buyAria: (n, coin) => `Comprar ${n} por ${coin} monedas`,
@@ -40,7 +39,6 @@ const kuji: Messages['kuji'] = {
   balance: (n) => `Mis monedas: ${n}`,
   draw: (n) => `Sacar ${n}`,
   result: 'Resultado',
-  drawLine: (tier, award) => `${tier}: ${award}`,
   lastWon: (award) => `¡Enhorabuena! Sacaste el último boleto y ganas el Último Premio: ${award}`,
   recent: 'Grandes premios recientes',
   noRecent: 'Nadie ha ganado aún un gran premio',

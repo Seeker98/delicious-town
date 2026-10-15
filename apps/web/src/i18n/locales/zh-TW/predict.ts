@@ -90,11 +90,9 @@ export default {
     waiting: '已截止, 等待判定',
     summaryHint: ' (結算所得 − 淨投入)',
     mine: '我的買賣記錄',
-    mineHint: '我在這個事件裡的每一筆買賣, 花費和得到都含手續費',
     mineLine: (action: string, qty: number, per: string, buy: boolean, total: string) =>
       `${action} ${qty} 份 · 每份約 ${per} · ${buy ? '花費' : '得到'} ${total}`,
     trades: '全服最近成交',
-    tradesHint: '所有人最近 20 筆買賣 (不顯示是誰), 能看出價格是被哪些買賣推上去或拉下來的',
     noTrades: '還沒有成交',
     tradeLine: (action: string, qty: number, per: string, pct: number) =>
       `${action} ${qty} 份 · 每份約 ${per} · 成交後"是" ${pct}%`,

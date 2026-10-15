@@ -28,7 +28,6 @@ export default {
   ticketsDeluxe: (n: number) => `我的豪華籤券: ${n} 張`,
   boughtDeluxe: (n: number) => `買了 ${n} 張豪華籤券`,
   deluxeNote: '豪華池: A 賞和最後賞發當月限定稱號, 並全服廣播。',
-  buyPrefix: '買',
   buyTotal: (coin: string) => `張, 共 ${coin} 銀幣`,
   buy: '買券',
   /** 買券價格按鈕的讀屏名（介面改版 P8） */
@@ -40,7 +39,6 @@ export default {
   balance: (n: string) => `我的銀幣: ${n}`,
   draw: (n: number) => `抽 ${n} 張`,
   result: '抽籤結果',
-  drawLine: (tier: string, award: string) => `${tier}: ${award}`,
   lastWon: (award: string) => `恭喜抽走最後一張籤, 拿下最後賞: ${award}`,
   recent: '最近的大賞',
   noRecent: '還沒有人抽中大賞',

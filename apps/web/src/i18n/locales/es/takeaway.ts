@@ -53,7 +53,6 @@ const takeaway: Messages['takeaway'] = {
       `${plEs(n, 'Apareció', 'Aparecieron')} ${n} ${plEs(n, 'pedido privado', 'pedidos privados')}`,
     refreshFailed: 'No se pudo actualizar',
     renown: (n) => `Renombre ${n}`,
-    riderOption: (name, busy, max) => `${name} (repartiendo ${busy}/${max})`,
     allBusy: 'Todos los repartidores están ocupados',
     refresh: (cost) => `Actualización privada (${cost} ${plEs(cost, 'moneda', 'monedas')})`,
     empty: 'Ahora no hay pedidos. Llegan más cada hora en punto',

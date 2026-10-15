@@ -45,7 +45,6 @@ const town: Messages['town'] = {
     },
   },
   said: (name, talk, rewards) => `${name}: ${talk} Recibiste ${rewards}`,
-  mayorName: 'Alcalde Gran Olla',
   /** 镇长大胃锅页上的问答标题（问题记录 441） */
   mayorAsk: 'Adivina el próximo tiempo',
   mayorFailed: 'No se pudo registrar tu apuesta',
@@ -77,7 +76,6 @@ const town: Messages['town'] = {
   shakeHint: 'Una sacudida al día. Las monedas dependen de tus estrellas',
   shakenToday: 'Ya la sacudiste hoy',
   shake: 'Sacudir',
-  weatherNow: 'Clima actual: ',
   news: {
     title: 'Noticias del pueblo',
     linkNote: 'Toca un nombre para visitarlo',
@@ -252,16 +250,11 @@ const town: Messages['town'] = {
     mineLine: (level, n, max, left) =>
       ` Nv. ${level} · ${n}/${max} ${plEs(max, 'alumno', 'alumnos')} · ${left}`,
     forceClose: 'Terminar ya',
-    openTitle: 'Abrir una clase (gasta 1 fragmento y 1 certificado de profesor):',
     pickMc: 'Elige un plato estrella que sepas',
-    mcOption: (name, level) => `${name} (nv. ${level ?? '?'})`,
     pickCert: 'Elige un certificado de profesor',
-    certOption: (name, strength, hours, max, have) =>
-      `${name} (energía ${strength}, ${hours} h, ${max} ${plEs(max, 'alumno', 'alumnos')}, tienes ${have})`,
     open: 'Abrir clase',
     running: 'Clases en curso',
     none: 'Ahora no hay clases de otros jugadores',
-    lessonLine: (level, teacher) => ` Nv. ${level} · profe ${teacher}`,
     lessonMeta: (n, max, stolen, left) =>
       `${n}/${max} ${plEs(max, 'alumno', 'alumnos')} (${stolen} espiando) · ${left}`,
     learn: 'Aprender',
@@ -280,8 +273,6 @@ const town: Messages['town'] = {
     cats: { bg: 'Cangreburgers', dt: 'Vales Delicioso', chip: 'Fragmentos', so: 'Otros' },
     loadFailed: 'No se pudieron cargar los canjes',
     soldOut: 'Agotado',
-    maxLeft: (n) => `Como mucho ${n} más`,
-    maxOnce: (n) => `Hasta ${n} a la vez`,
     lack: 'Faltan materiales',
     done: (name, num) => `Canjeado: ${name}×${num}`,
     failed: 'No se pudo canjear',

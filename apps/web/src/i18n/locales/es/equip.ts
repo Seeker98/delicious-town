@@ -115,13 +115,10 @@ const equip: Messages['equip'] = {
     noBackItems: (one, all) => `No tienes ${one} ni ${all}, no puedes retroceder`,
     cost: (essence, have, coin) =>
       `Coste: esencia ×${essence} (tienes ${have}), ${coin} ${plEs(coin, 'moneda', 'monedas')}`,
-    useStone: (n) => `Usar una Piedra de mejora (éxito seguro; tienes ${n})`,
     maxed: 'Mejora al máximo',
     backOption: (name, back, num) => `${name} (deshace ${back} nivel(es); tienes ${num})`,
     rollback: 'Deshacer',
     gems: 'Gemas',
-    holeNote: (max, coinPerLevel) =>
-      `(hasta ${max} ${plEs(max, 'engarce', 'engarces')}; ${coinPerLevel ? `quitar cuesta rango × ${coinPerLevel} ${plEs(coinPerLevel, 'moneda', 'monedas')}` : 'quitar es gratis ahora (menos de 2 estrellas o día de lluvia ácida)'})`,
     ungem: 'Quitar',
     gemOption: (name, num, level) => `${name} (tienes ${num}; cuesta ${level} de energía)`,
     inlay: 'Engarzar',

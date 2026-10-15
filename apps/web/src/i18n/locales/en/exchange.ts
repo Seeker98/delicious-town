@@ -38,7 +38,6 @@ const exchange: Messages['exchange'] = {
     `Your exchange account is frozen: ${reason}. Contact an admin if you have questions.`,
   intro:
     "Players buy and sell rare ingredients here. Order prices must be between half and double the day's reference price; the seller pays a fee on each fill.",
-  sysHelp: 'How system prices work',
   sysHelpItems: [
     'System buy price = reference × 0.7; system sell price = reference × 1.3. The system only sells stock it bought from players.',
     "The reference price is set daily from the previous day's player-to-player trades (system trades don't count), so system prices stay the same all day.",
