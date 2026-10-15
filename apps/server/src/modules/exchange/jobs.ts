@@ -1,6 +1,8 @@
 import { addDays, gameDay } from '@dt/shared';
+import type { Insertable } from 'kysely';
 import type { GameDeps } from '../../core/deps';
 import type { PeriodicJob } from '../../core/jobs';
+import type { RestLogTable } from '../../db/schema';
 import { bookLock } from './service';
 import { addCredit, creditWallets, newCredits } from './wallet';
 
@@ -34,7 +36,7 @@ export async function expireOrders(
       .limit(BATCH)
       .execute();
     const credits = newCredits();
-    let n = 0;
+    const logs: Insertable<RestLogTable>[] = [];
     for (const foodsId of [...new Set(due.map((x) => x.foods_id))]) {
       await bookLock(tx, shardId, foodsId);
       const rows = await tx
@@ -52,20 +54,18 @@ export async function expireOrders(
         const left = r.qty - r.filled;
         if (r.side === 'buy') addCredit(credits, r.rest_id, r.price * left);
         else addCredit(credits, r.rest_id, 0, r.foods_id, left);
-        await tx
-          .insertInto('rest_log')
-          .values({
-            rest_id: r.rest_id,
-            type: 'exchange.expire',
-            params: JSON.stringify({ side: r.side, foodsId: r.foods_id, price: r.price, left }),
-            created_at: now,
-          })
-          .execute();
-        n++;
+        logs.push({
+          rest_id: r.rest_id,
+          type: 'exchange.expire',
+          params: JSON.stringify({ side: r.side, foodsId: r.foods_id, price: r.price, left }),
+          created_at: now,
+        });
       }
     }
+    // 日志攒起来一条插入（一批最多 500 张，原来一张一条）
+    if (logs.length > 0) await tx.insertInto('rest_log').values(logs).execute();
     await creditWallets(tx, credits);
-    return { expired: n };
+    return { expired: logs.length };
   });
 }
 

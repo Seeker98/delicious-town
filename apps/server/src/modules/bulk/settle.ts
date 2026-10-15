@@ -1,3 +1,4 @@
+import { sql } from 'kysely';
 import type { GameDeps } from '../../core/deps';
 import { restLog, runSystemOp } from '../../core/op';
 import { gainCoin } from '../../core/resources';
@@ -53,13 +54,14 @@ export async function closeDue(d: GameDeps, shardId: number, now: Date, log: Log
           })
           .where('id', '=', id)
           .execute();
-        for (const b of bids)
-          await tx
-            .updateTable('bulk_bid')
-            .set({ won: ok ? (a.won.get(b.rest_id) ?? 0) : 0 })
-            .where('lot_id', '=', id)
-            .where('rest_id', '=', b.rest_id)
-            .execute();
+        // 每条出价中几份一条更新写完（原来一条出价一条）；流拍和没中的写 0
+        const won = ok ? bids.filter((b) => (a.won.get(b.rest_id) ?? 0) > 0) : [];
+        await sql`
+          update bulk_bid b set won = coalesce(
+            (select u.won from unnest(${won.map((b) => b.rest_id)}::int[], ${won.map((b) => a.won.get(b.rest_id)!)}::int[]) as u(rest_id, won)
+              where u.rest_id = b.rest_id),
+            0)
+          where b.lot_id = ${id}`.execute(tx);
         if (ok)
           await postNews(
             tx,

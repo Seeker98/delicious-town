@@ -65,6 +65,32 @@ describe('撤单、过期、取出（156-1 设计 §6.3~§6.5）', () => {
     expect(await have(r.restaurantId, f.id)).toBe(5);
   });
 
+  it('过期的每张单各写一条个人日志（一批一起插入）：方向、食材、价格、剩余份数', async () => {
+    const shardId = await createShard(t.db);
+    const f = rare();
+    const a = await trader(t, { shardId, coin: 1_000_000, foods: { [f.id]: 5 } });
+    const b = await trader(t, { shardId, coin: 1_000_000 });
+    await svc().place(a, { foodsId: f.id, side: 'sell', price: f.coin * 2, qty: 3 });
+    await svc().place(b, { foodsId: f.id, side: 'buy', price: f.coin, qty: 2 });
+    await svc().place(b, { foodsId: f.id, side: 'buy', price: f.coin + 1, qty: 1 });
+    const res = await expireOrders(t.game.deps, shardId, new Date(t.clock.now.getTime() + 25 * H));
+    expect(res.expired).toBe(3);
+    const logs = await t.db
+      .selectFrom('rest_log')
+      .select(['rest_id', 'params'])
+      .where('rest_id', 'in', [a.restaurantId, b.restaurantId])
+      .where('type', '=', 'exchange.expire')
+      .execute();
+    expect(logs).toHaveLength(3);
+    expect(logs).toEqual(
+      expect.arrayContaining([
+        { rest_id: a.restaurantId, params: { side: 'sell', foodsId: f.id, price: f.coin * 2, left: 3 } },
+        { rest_id: b.restaurantId, params: { side: 'buy', foodsId: f.id, price: f.coin, left: 2 } },
+        { rest_id: b.restaurantId, params: { side: 'buy', foodsId: f.id, price: f.coin + 1, left: 1 } },
+      ]),
+    );
+  });
+
   it('取出：银币全部取出；橱柜放不下的食材留在账户里', async () => {
     const shardId = await createShard(t.db);
     const f = rare();
