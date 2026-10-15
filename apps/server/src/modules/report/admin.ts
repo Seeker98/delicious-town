@@ -127,6 +127,7 @@ export function createAdminReports(game: Game) {
         items: null,
         source: 'report',
         actorAccountId: null,
+        expiresDays: o.tuning.mail.expiresDays,
       });
   }
 
@@ -233,6 +234,7 @@ export function createAdminReports(game: Game) {
           items: null,
           source: 'report',
           actorAccountId: null,
+          expiresDays: o.tuning.mail.expiresDays,
         });
       });
       if (b.banDays !== undefined) await players.ban(actor, c.target_account_id, b.note, b.banDays);

@@ -22,6 +22,7 @@ const shardMail = (shardId: number, patch: Record<string, unknown> = {}) =>
     items: { coin: 100 },
     source: 'admin',
     actorAccountId: null,
+    expiresDays: 30,
     ...patch,
   });
 
@@ -129,6 +130,7 @@ describe('邮箱（设计 §2 裁定 1~9）', () => {
       items: null,
       source: 'admin',
       actorAccountId: null,
+      expiresDays: 30,
     });
     const all = await sendMail(t.db, {
       scope: 'all',
@@ -140,6 +142,7 @@ describe('邮箱（设计 §2 裁定 1~9）', () => {
       items: null,
       source: 'admin',
       actorAccountId: null,
+      expiresDays: 30,
     });
     const before = (await mailSvc().list(r)).unread;
     await mailSvc().read(r, own);

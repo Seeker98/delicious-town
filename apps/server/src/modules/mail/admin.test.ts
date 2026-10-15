@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { userWithRole } from '../../../test/admin';
+import { createShard } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import { call, createTestApp, type TestContext } from '../../../test/helpers';
 
@@ -66,6 +67,27 @@ describe('后台邮件（HTTP）', () => {
         })
       ).status,
     ).toBe(404);
+  });
+
+  it('过期天数取区服调参 mail.expiresDays；全服邮件取默认配置', async () => {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({ shard_id: shardId, override: JSON.stringify({ tuning: { mail: { expiresDays: 3 } } }) })
+      .execute();
+    const days = (m: { createdAt: string; expiresAt: string }) =>
+      (Date.parse(m.expiresAt) - Date.parse(m.createdAt)) / 86_400_000;
+    const shard = await send(admin.cookie, { scope: 'shard', shardId, title: 't', body: 'b' });
+    expect(shard.status).toBe(200);
+    expect(days(shard.json.data[0])).toBeCloseTo(3, 3);
+    const all = await send(admin.cookie, { scope: 'all', title: 't', body: 'b' });
+    expect(all.status).toBe(200);
+    expect(days(all.json.data[0])).toBeCloseTo(30, 3);
+    // 撤回，免得别的测试的邮箱里多出一封
+    await call(ctx.app, 'POST', `/api/v1/admin/mails/${all.json.data[0].id}/revoke`, {
+      cookie: admin.cookie,
+      body: {},
+    });
   });
 
   it('撤回：玩家看不到；领过的人数留在列表里', async () => {
