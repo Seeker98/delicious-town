@@ -328,7 +328,11 @@ function failMailFor(restId: number) {
         const i = cols.indexOf('rest_id');
         const rows = n.values && ValuesNode.is(n.values) ? n.values.values : [];
         for (const row of rows) {
-          const v = row.kind === 'PrimitiveValueListNode' ? row.values[i] : undefined;
+          // expires_at 是 sql 表达式时整行是 ValueListNode，普通值包在 ValueNode 里
+          const v =
+            row.kind === 'PrimitiveValueListNode'
+              ? row.values[i]
+              : (row.values[i] as { value?: unknown } | undefined)?.value;
           if (v === restId) throw new Error(`test: mail for ${restId} fails`);
         }
       }
