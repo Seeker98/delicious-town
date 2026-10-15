@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { PassDef, RewardItems } from '@dt/shared';
-import { errUnder, rowKeys } from '../../../utils/activityForm';
+import { errUnder, inputNum, rowKeys } from '../../../utils/activityForm';
 import RewardItemsEditor from '../RewardItemsEditor.vue';
 import RuleRows from './RuleRows.vue';
 
@@ -24,7 +24,6 @@ const setLevel = (i: number, p: Partial<Level>) =>
   patch({ levels: props.modelValue.levels.map((l, j) => (j === i ? { ...l, ...p } : l)) });
 const orNull = (r: RewardItems) => (Object.keys(r).length === 0 ? null : r);
 const err = (k: string) => props.errors[k];
-const num = (e: Event) => Number((e.target as HTMLInputElement).value);
 </script>
 
 <template>
@@ -46,7 +45,7 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
         class="dt-adm-in"
         style="width: 7rem"
         :value="l.points"
-        @input="setLevel(i, { points: num($event) })"
+        @input="setLevel(i, { points: inputNum($event) })"
       />
       <button
         type="button"
@@ -113,7 +112,7 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
       class="dt-adm-in"
       style="width: 7rem"
       :value="modelValue.unlock.diamond ?? 0"
-      @input="patch({ unlock: { ...modelValue.unlock, diamond: num($event) || undefined } })"
+      @input="patch({ unlock: { ...modelValue.unlock, diamond: inputNum($event) || undefined } })"
     />
   </div>
   <RewardItemsEditor
