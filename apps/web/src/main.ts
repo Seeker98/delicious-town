@@ -1,6 +1,6 @@
-// Bootstrap 只留重置、栅格和工具类（界面改版 P12）；按钮、输入框这些组件的样式在 styles/base.css 里自己写
+// Bootstrap 只留重置和工具类（界面改版 P12）；按钮、输入框这些组件的样式在 styles/base.css 里自己写。
+// 栅格（container、row、col、g-*）没有页面用，不再引入；弹性、间距这些工具类在 utilities 里
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
-import 'bootstrap/dist/css/bootstrap-grid.min.css';
 import 'bootstrap/dist/css/bootstrap-utilities.min.css';
 // 图标只带用到的那些（性能第二轮 A，pnpm -F @dt/web icons 生成）
 import './styles/icons.css';
