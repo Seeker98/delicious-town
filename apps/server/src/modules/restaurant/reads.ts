@@ -1,4 +1,4 @@
-import type { Kysely } from 'kysely';
+import { sql, type Kysely, type RawBuilder, type SqlBool } from 'kysely';
 import type { Device, GameConfig } from '@dt/config';
 import { gameDay, gameTime } from '@dt/shared';
 import type {
@@ -102,11 +102,19 @@ export async function lastRound(db: Kysely<DB>, restId: number): Promise<RoundSu
 }
 
 /** 游标"时间~id"：同一时刻写的多条记录按 id 继续往下翻，不会整组跳过 */
-export function parseCursor(before: string): { at: Date; id: string | null } {
+function parseCursor(before: string): { at: Date; id: string | null } {
   const [at, id] = before.split('~');
   return { at: new Date(at!), id: id ?? null };
 }
 export const cursorOf = (at: Date, id: string | number) => `${at.toISOString()}~${id}`;
+
+/** 早于游标的条件（时间倒序、同一时刻按 id 倒序翻页）；游标没带 id 时只比时间 */
+export function beforeCursor(before: string, at = 'created_at', id = 'id'): RawBuilder<SqlBool> {
+  const c = parseCursor(before);
+  return c.id
+    ? sql<SqlBool>`(${sql.ref(at)} < ${c.at} or (${sql.ref(at)} = ${c.at} and ${sql.ref(id)} < ${Number(c.id)}))`
+    : sql<SqlBool>`${sql.ref(at)} < ${c.at}`;
+}
 
 /** now 给了且是第一页时带今天的小计（问题记录 530） */
 export async function incomePage(
@@ -120,15 +128,7 @@ export async function incomePage(
     .select(['id', 'round_no', 'coin', 'exp', 'oil', 'customers', 'created_at'])
     .where('rest_id', '=', restId);
   if (q.before) {
-    const c = parseCursor(q.before);
-    s = c.id
-      ? s.where((eb) =>
-          eb.or([
-            eb('created_at', '<', c.at),
-            eb.and([eb('created_at', '=', c.at), eb('id', '<', Number(c.id))]),
-          ]),
-        )
-      : s.where('created_at', '<', c.at);
+    s = s.where(beforeCursor(q.before));
   }
   const rows = await s
     .orderBy('created_at', 'desc')
@@ -260,15 +260,7 @@ export async function logPage(
   if (filter.types) s = s.where('type', 'in', [...filter.types]);
   if (filter.since) s = s.where('created_at', '>=', filter.since);
   if (q.before) {
-    const c = parseCursor(q.before);
-    s = c.id
-      ? s.where((eb) =>
-          eb.or([
-            eb('created_at', '<', c.at),
-            eb.and([eb('created_at', '=', c.at), eb('id', '<', Number(c.id))]),
-          ]),
-        )
-      : s.where('created_at', '<', c.at);
+    s = s.where(beforeCursor(q.before));
   }
   const rows = await s
     .orderBy('created_at', 'desc')

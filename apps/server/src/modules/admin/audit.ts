@@ -1,7 +1,7 @@
 import { sql, type Kysely } from 'kysely';
 import type { AuditPageDto } from '@dt/shared';
 import type { DB } from '../../db/schema';
-import { cursorOf, parseCursor } from '../restaurant/reads';
+import { beforeCursor, cursorOf } from '../restaurant/reads';
 import type { AdminActor } from './access';
 
 /** 写审计日志；调用方传入业务事务，保证两者一起成功或一起失败 */
@@ -43,15 +43,7 @@ export async function auditPage(
   if (q.action) s = s.where('a.action', 'ilike', `${likeEscape(q.action)}%`);
   if (q.days) s = s.where('a.created_at', '>=', sql<Date>`now() - make_interval(days => ${q.days})`);
   if (q.before) {
-    const c = parseCursor(q.before);
-    s = c.id
-      ? s.where((eb) =>
-          eb.or([
-            eb('a.created_at', '<', c.at),
-            eb.and([eb('a.created_at', '=', c.at), eb('a.id', '<', Number(c.id))]),
-          ]),
-        )
-      : s.where('a.created_at', '<', c.at);
+    s = s.where(beforeCursor(q.before, 'a.created_at', 'a.id'));
   }
   const rows = await s
     .orderBy('a.created_at', 'desc')

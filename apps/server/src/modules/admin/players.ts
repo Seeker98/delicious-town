@@ -14,7 +14,7 @@ import { uniqueViolation } from '../../db/errors';
 import type { Game } from '../../game';
 import { AppError } from '../../http/errors';
 import { renameProblem } from '../growth/rules';
-import { cursorOf, incomePage, logPage, parseCursor } from '../restaurant/reads';
+import { beforeCursor, cursorOf, incomePage, logPage } from '../restaurant/reads';
 import type { AdminActor } from './access';
 import { writeAudit } from './audit';
 import { equipDisplayName } from '../equip/hats';
@@ -235,15 +235,7 @@ export function createAdminPlayers(game: Game) {
       if (q.kind) s = s.where('kind', '=', q.kind);
       if (q.source) s = s.where('source', '=', q.source);
       if (q.before) {
-        const c = parseCursor(q.before);
-        s = c.id
-          ? s.where((eb) =>
-              eb.or([
-                eb('created_at', '<', c.at),
-                eb.and([eb('created_at', '=', c.at), eb('id', '<', Number(c.id))]),
-              ]),
-            )
-          : s.where('created_at', '<', c.at);
+        s = s.where(beforeCursor(q.before));
       }
       const rows = await s
         .orderBy('created_at', 'desc')
