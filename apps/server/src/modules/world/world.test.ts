@@ -178,7 +178,7 @@ describe('接口', () => {
       id: 14,
       name: 'Japan Street',
       cookName: 'Japanese cuisine',
-      desc: 'Final coins +45%, final EXP +5%, picky rate +12%, coins from satisfied picky customers +15%, occupancy -8%',
+      desc: 'Final coins +40%, final EXP -5%, picky rate +12%, coins from satisfied picky customers +15%, occupancy -5%',
       // 主题说明和街道类型（问题记录 380、378 方案 C）
       theme:
         'Refined cuisine built on fine ingredients and knife skills: many picky customers who pay generously, but the high bar means fewer diners',

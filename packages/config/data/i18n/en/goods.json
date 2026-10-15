@@ -1385,7 +1385,7 @@
   },
   "60001": {
     "name": "Hunan Street",
-    "desc": "Final coins +5%, final EXP +40%, luck +10"
+    "desc": "Final coins -5%, final EXP +20%, occupancy +10%, luck +10"
   },
   "60002": {
     "name": "Guangdong Street",
@@ -1393,7 +1393,7 @@
   },
   "60003": {
     "name": "Sichuan Street",
-    "desc": "Final EXP and coins -15%, EXP per table +4, oil per table +2"
+    "desc": "Final coins -15%, final EXP +25%, EXP per table +2, oil per table +2"
   },
   "60004": {
     "name": "Fujian Street",
@@ -1401,7 +1401,7 @@
   },
   "60005": {
     "name": "Anhui Street",
-    "desc": "Final coins +25%, final EXP -10%, coins per table +3, oil use -15%"
+    "desc": "Final coins +20%, final EXP -15%, occupancy +5%, coins per table +3, oil use -15%"
   },
   "60006": {
     "name": "Shandong Street",
@@ -1429,7 +1429,7 @@
   },
   "60012": {
     "name": "Hubei Street",
-    "desc": "Final coins +5%, final EXP +40%, luck +10"
+    "desc": "Final EXP +30%, occupancy +5%, luck +10"
   },
   "60013": {
     "name": "Beijing Street",
@@ -1437,15 +1437,15 @@
   },
   "60014": {
     "name": "Japan Street",
-    "desc": "Final coins +45%, final EXP +5%, picky rate +12%, coins from satisfied picky customers +15%, occupancy -8%"
+    "desc": "Final coins +40%, final EXP -5%, picky rate +12%, coins from satisfied picky customers +15%, occupancy -5%"
   },
   "60015": {
     "name": "Italy Street",
-    "desc": "Final coins -20%, final EXP -5%, occupancy +15%, coins per table +1, takeaway coins +30%, oil use +15%"
+    "desc": "Final coins -15%, occupancy +10%, coins per table +1, takeaway coins +30%, oil use +15%"
   },
   "60016": {
     "name": "France Street",
-    "desc": "Final coins +70%, final EXP +15%, picky rate +8%, occupancy -12%"
+    "desc": "Final coins +55%, final EXP -20%, EXP per table +1, picky rate +8%, occupancy -5%"
   },
   "60017": {
     "name": "Spain Street",
@@ -1453,7 +1453,7 @@
   },
   "60018": {
     "name": "Mexico Street",
-    "desc": "Final coins -30%, final EXP -20%, occupancy +20%, EXP per table +2, oil per table +2"
+    "desc": "Final coins -20%, final EXP +35%, occupancy +5%, EXP per table +1, oil per table +2"
   },
   "60019": {
     "name": "Thailand Street",
@@ -1461,7 +1461,7 @@
   },
   "60020": {
     "name": "India Street",
-    "desc": "Final coins -5%, final EXP -10%, signature dish portions +5%, EXP per table +3, luck +10, picky rate -8%"
+    "desc": "Final coins -5%, final EXP +40%, signature dish portions +5%, EXP per table +1, luck +10, picky rate -8%"
   },
   "60021": {
     "name": "Turkey Street",
@@ -1469,11 +1469,11 @@
   },
   "60022": {
     "name": "Vietnam Street",
-    "desc": "Final coins -15%, oil use -30%, EXP per table +3"
+    "desc": "Final coins -15%, final EXP +50%, oil use -30%, EXP per table +1"
   },
   "60023": {
     "name": "America Street",
-    "desc": "Final coins -25%, final EXP +20%, takeaway coins and EXP +20%, occupancy +25%, picky rate -10%, oil use +20%"
+    "desc": "Final coins -20%, final EXP +35%, takeaway coins and EXP +20%, occupancy +15%, picky rate -10%, oil use +20%"
   },
   "60024": {
     "name": "Morocco Street",
@@ -1485,7 +1485,7 @@
   },
   "60026": {
     "name": "Greece Street",
-    "desc": "Final coins -15%, final EXP +90%, oil use -10%, picky rate -5%"
+    "desc": "Final coins -15%, final EXP +50%, EXP per table +1, oil use -10%, picky rate -5%"
   },
   "60027": {
     "name": "Peru Street",
