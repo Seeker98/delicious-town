@@ -400,7 +400,10 @@ const onVisible = () => {
 };
 onMounted(() => {
   void load();
-  timer = setInterval(() => void load(), 240_000);
+  // 应用在后台（切走、锁屏）时不读，回到前台时 onVisible 马上读一次
+  timer = setInterval(() => {
+    if (!document.hidden) void load();
+  }, 240_000);
   document.addEventListener('visibilitychange', onVisible);
 });
 onBeforeUnmount(() => {

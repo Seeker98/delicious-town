@@ -1,6 +1,6 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { endpoints } from '../api/endpoints';
 import { takeawayData } from '../components/takeaway/testData';
 import TakeawayView from './TakeawayView.vue';
@@ -19,6 +19,8 @@ const stubs = {
 };
 
 describe('TakeawayView', () => {
+  // 每条测试后卸载：不然上一条挂着的页面也会响应 visibilitychange
+  enableAutoUnmount(afterEach);
   beforeEach(() => {
     vi.clearAllMocks();
     setActivePinia(createPinia());
@@ -70,6 +72,35 @@ describe('TakeawayView', () => {
       expect(endpoints.takeaway).toHaveBeenCalledTimes(2);
     } finally {
       vi.useRealTimers();
+    }
+  });
+
+  it('应用在后台时不定时读取，回到前台马上读一次；离开页面后不再响应', async () => {
+    let hidden = true;
+    const hiddenSpy = vi.spyOn(document, 'hidden', 'get').mockImplementation(() => hidden);
+    const stateSpy = vi
+      .spyOn(document, 'visibilityState', 'get')
+      .mockImplementation(() => (hidden ? 'hidden' : 'visible'));
+    vi.useFakeTimers();
+    try {
+      vi.mocked(endpoints.takeaway).mockResolvedValue(takeawayData());
+      const w = mount(TakeawayView, { global: { stubs } });
+      await flushPromises();
+      expect(endpoints.takeaway).toHaveBeenCalledTimes(1);
+      await vi.advanceTimersByTimeAsync(180_000);
+      expect(endpoints.takeaway).toHaveBeenCalledTimes(1);
+      hidden = false;
+      document.dispatchEvent(new Event('visibilitychange'));
+      await flushPromises();
+      expect(endpoints.takeaway).toHaveBeenCalledTimes(2);
+      w.unmount();
+      document.dispatchEvent(new Event('visibilitychange'));
+      await flushPromises();
+      expect(endpoints.takeaway).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+      hiddenSpy.mockRestore();
+      stateSpy.mockRestore();
     }
   });
 });

@@ -32,14 +32,23 @@ async function load() {
     if (mine === seq) toast.push(errorMessage(e, t.value.takeaway.loadFailed), 'danger');
   }
 }
-/** 停在页面上时每分钟重新读取，倒计时和"已送到"跟着更新（终审 I2） */
+/** 停在页面上时每分钟重新读取，倒计时和"已送到"跟着更新（终审 I2）；应用在后台时不读，回到前台马上读一次 */
 let timer: ReturnType<typeof setInterval> | undefined;
-onBeforeUnmount(() => clearInterval(timer));
+const onVisible = () => {
+  if (document.visibilityState === 'visible') void load();
+};
+onBeforeUnmount(() => {
+  clearInterval(timer);
+  document.removeEventListener('visibilitychange', onVisible);
+});
 // 切标签时重新读取：旧面板卸载后收不到它发出的刷新通知（比如接单后马上切到配送中）
 watch(tab, () => void load());
 onMounted(() => {
   void load();
-  timer = setInterval(() => void load(), 60_000);
+  timer = setInterval(() => {
+    if (!document.hidden) void load();
+  }, 60_000);
+  document.addEventListener('visibilitychange', onVisible);
 });
 
 const tabs = computed(() =>
