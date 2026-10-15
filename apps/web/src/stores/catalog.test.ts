@@ -63,6 +63,27 @@ describe('道具目录按语言（问题记录 272）', () => {
     expect(c.goodsName(85)).toBe('体力卡');
   });
 
+  it('启动时先用浏览器里存的；请求回来内容一样（304）就不再重建、不再写回，变了才换', async () => {
+    localStorage.setItem('dt_catalog_zh-CN', JSON.stringify(cat('体力卡')));
+    vi.mocked(endpoints.catalog).mockResolvedValue(cat('体力卡'));
+    const c = useCatalogStore();
+    const apply = vi.spyOn(c, 'apply');
+    const setItem = vi.spyOn(Storage.prototype, 'setItem');
+    try {
+      await c.load();
+      expect(apply).toHaveBeenCalledTimes(1);
+      expect(setItem).not.toHaveBeenCalled();
+      expect(c.goodsName(85)).toBe('体力卡');
+      vi.mocked(endpoints.catalog).mockResolvedValue(cat('大体力卡', 'v2'));
+      await c.reload();
+      expect(apply).toHaveBeenCalledTimes(2);
+      expect(c.goodsName(85)).toBe('大体力卡');
+      expect(localStorage.getItem('dt_catalog_zh-CN')).toContain('大体力卡');
+    } finally {
+      setItem.mockRestore();
+    }
+  });
+
   it('读失败不卡住：下次 load 重新请求', async () => {
     vi.mocked(endpoints.catalog).mockRejectedValueOnce(new Error('net')).mockResolvedValue(cat('体力卡'));
     const c = useCatalogStore();
