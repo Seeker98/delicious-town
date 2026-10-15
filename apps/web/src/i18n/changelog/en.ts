@@ -2,7 +2,7 @@ import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
   perf1016:
-    'Performance: the game opens faster the first time (the main file is about a fifth smaller, and the update log now loads only when you open its page), the home and Takeaway pages no longer refresh on a timer while the app is in the background, and the Chef power ranking no longer takes several seconds the first time you open it; removed “trial success rate” from the weather and Aztec Gold Coin descriptions, as it never had any effect',
+    'Performance: the game opens faster the first time (the main file is nearly a quarter smaller, and the update log now loads only when you open its page), the home and Takeaway pages no longer refresh on a timer while the app is in the background, and the Chef power ranking no longer takes several seconds the first time you open it; removed “trial success rate” from the weather and Aztec Gold Coin descriptions, as it never had any effect',
   weather1016:
     'Weather effects on business adjusted: weather occupancy and picky rate now apply after your own occupancy and picky rate are worked out (including the reduced part above the caps), so good weather bonuses are no longer cut down and high-star restaurants no longer shrug off bad weather with spare occupancy; most bad weather is milder, e.g. Smog occupancy -80% → -35% and coins and EXP +100% → +60%, Strong Wind picky rate -70% → -25%, Acid Rain occupancy -90% → -40%, and EXP per table in rain and snow roughly halved; Sunny, Overcast, Cloudy, Sandstorm, Clear Night and Cloudy Night give +5% to +10% more final coins, and the picky rate bonus of Fog, Foggy Night and Starry Night is halved; how often each weather appears is unchanged',
   fair1015:
