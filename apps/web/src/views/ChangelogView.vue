@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { CHANGELOG, type ChangelogId } from '../data/changelog';
+import { useChangelog } from '../composables/useChangelog';
 import { useT } from '../composables/useT';
 import { isNewChangelog, markChangelogSeen, readChangelogSeen } from '../utils/changelogSeen';
 import { headBody } from '../utils/headBody';
@@ -12,6 +13,8 @@ import { headBody } from '../utils/headBody';
  */
 const PAGE = 10;
 const t = useT();
+/** 文案分包按需加载，到了再显示各天 */
+const texts = useChangelog();
 /** 进来时记下的“看到哪天”：标完“新”再更新，这一次照样看得到哪些是新的 */
 const seen = readChangelogSeen();
 const shown = ref(PAGE);
@@ -38,7 +41,7 @@ const latest = computed(() => {
   const p = parts(CHANGELOG[0].date);
   return t.value.site.ymd(p.y, p.m, p.d);
 });
-const item = (id: ChangelogId) => headBody(t.value.site.changelog[id]);
+const item = (id: ChangelogId) => headBody(texts.value?.[id] ?? '');
 </script>
 
 <template>
@@ -51,38 +54,40 @@ const item = (id: ChangelogId) => headBody(t.value.site.changelog[id]);
         ><span>{{ t.site.clLatest(latest) }}</span>
       </div>
     </header>
-    <div v-for="d in visible" :key="d.date" class="dt-cl-day" :data-testid="`cl-day-${d.date}`">
-      <div class="dt-cl-date">
-        <b>{{ dayNum(d.date) }}</b>
-        <span>{{ t.site.monthShort(parts(d.date).m) }}</span>
-        <span>{{ t.site.weekday(parts(d.date).w) }}</span>
+    <template v-if="texts">
+      <div v-for="d in visible" :key="d.date" class="dt-cl-day" :data-testid="`cl-day-${d.date}`">
+        <div class="dt-cl-date">
+          <b>{{ dayNum(d.date) }}</b>
+          <span>{{ t.site.monthShort(parts(d.date).m) }}</span>
+          <span>{{ t.site.weekday(parts(d.date).w) }}</span>
+        </div>
+        <ul class="dt-cl-items">
+          <li v-for="id in d.ids" :key="id" data-testid="cl-item">
+            <template v-if="item(id).head"
+              ><b class="dt-cl-head">{{ item(id).head }}</b
+              ><span v-if="isNewChangelog(d.date, seen)" class="dt-cl-new" data-testid="cl-new">{{
+                t.site.newMark
+              }}</span
+              >{{ t.site.clColon }}{{ item(id).body }}</template
+            >
+            <template v-else
+              >{{ item(id).body
+              }}<span v-if="isNewChangelog(d.date, seen)" class="dt-cl-new" data-testid="cl-new">{{
+                t.site.newMark
+              }}</span></template
+            >
+          </li>
+        </ul>
       </div>
-      <ul class="dt-cl-items">
-        <li v-for="id in d.ids" :key="id" data-testid="cl-item">
-          <template v-if="item(id).head"
-            ><b class="dt-cl-head">{{ item(id).head }}</b
-            ><span v-if="isNewChangelog(d.date, seen)" class="dt-cl-new" data-testid="cl-new">{{
-              t.site.newMark
-            }}</span
-            >{{ t.site.clColon }}{{ item(id).body }}</template
-          >
-          <template v-else
-            >{{ item(id).body
-            }}<span v-if="isNewChangelog(d.date, seen)" class="dt-cl-new" data-testid="cl-new">{{
-              t.site.newMark
-            }}</span></template
-          >
-        </li>
-      </ul>
-    </div>
-    <button
-      v-if="shown < days.length"
-      type="button"
-      class="dt-paper-btn"
-      data-testid="cl-more"
-      @click="shown += PAGE"
-    >
-      {{ t.site.clMore(Math.min(PAGE, days.length - shown)) }}
-    </button>
+      <button
+        v-if="shown < days.length"
+        type="button"
+        class="dt-paper-btn"
+        data-testid="cl-more"
+        @click="shown += PAGE"
+      >
+        {{ t.site.clMore(Math.min(PAGE, days.length - shown)) }}
+      </button>
+    </template>
   </section>
 </template>

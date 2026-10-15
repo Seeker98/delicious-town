@@ -16,8 +16,9 @@ describe('名字×数量（backlog #116）', () => {
 
   it('法文文案里不再有紧挨着的“名字×数量”', () => {
     const dir = join(__dirname, 'locales/fr');
-    const bad = readdirSync(dir).flatMap((f) =>
-      readFileSync(join(dir, f), 'utf8')
+    const files = [...readdirSync(dir).map((f) => join(dir, f)), join(__dirname, 'changelog/fr.ts')];
+    const bad = files.flatMap((f) =>
+      readFileSync(f, 'utf8')
         .split('\n')
         .filter((l) => STUCK.test(l))
         .map((l) => `${f}: ${l.trim()}`),
