@@ -1,5 +1,3 @@
-import { z } from 'zod';
-
 /** 支持的语言（问题记录 272）：简中默认 */
 export const LOCALES = ['zh-CN', 'zh-TW', 'en', 'fr', 'es'] as const;
 export type Locale = (typeof LOCALES)[number];
@@ -12,7 +10,6 @@ export const LOCALE_NAMES: Record<Locale, string> = {
   fr: 'Français',
   es: 'Español',
 };
-export const localeSchema = z.enum(LOCALES);
 
 export function isLocale(x: unknown): x is Locale {
   return typeof x === 'string' && (LOCALES as readonly string[]).includes(x);

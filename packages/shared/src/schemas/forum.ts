@@ -1,15 +1,5 @@
 import { z } from 'zod';
-
-/** 论坛（子项目 4E-3） */
-export const FORUM_CATEGORIES = ['chat', 'guide', 'feedback'] as const;
-export type ForumCategory = (typeof FORUM_CATEGORIES)[number];
-export const FORUM_CATEGORY_NAMES: Record<ForumCategory, string> = {
-  chat: '闲聊',
-  guide: '攻略',
-  feedback: '建议反馈',
-};
-export const FORUM_TABS = ['all', 'chat', 'guide', 'feedback', 'featured'] as const;
-export type ForumTab = (typeof FORUM_TABS)[number];
+import { FORUM_CATEGORIES, FORUM_TABS, type ForumCategory } from '../enums';
 
 export const forumListQuery = z.object({
   tab: z.enum(FORUM_TABS).default('all'),

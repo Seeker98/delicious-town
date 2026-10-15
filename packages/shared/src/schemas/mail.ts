@@ -1,14 +1,12 @@
 import { z } from 'zod';
 import { grantItemsShape, grantNonEmpty, grantUnique, type GrantItems } from './admin';
-import { MAIL_ICONS_MAX, MAIL_RESTS_MAX, rewardIcon, type RewardIcon } from './titles';
+import { type HatTierKey } from '../enums';
+import { HAT_NAME_MAX, MAIL_HATS_MAX } from '../limits';
+import { MAIL_ICONS_MAX, MAIL_RESTS_MAX } from '../titleText';
+import { rewardIcon, type RewardIcon } from './titles';
 
-export const HAT_NAME_MAX = 8;
-export const MAIL_HATS_MAX = 5;
 export const MAIL_TITLE_MAX = 40;
 export const MAIL_BODY_MAX = 1000;
-/** 赞助帽子档次的前缀（设计 §5）；放在 shared，服务端和前端共用 */
-export const HAT_PREFIX = { jade: '玉', xuan: '铉' } as const;
-export type HatTierKey = keyof typeof HAT_PREFIX;
 
 /** 按字符计长度（emoji 算 1 个），不按 UTF-16 */
 export const charLen = (s: string) => [...s].length;

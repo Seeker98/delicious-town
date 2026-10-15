@@ -26,7 +26,6 @@ export const BOOSTS = {
   guardianRare: { label: '守护兽稀有掉落', paths: ['temple.guardianRareRate'], min: 1, max: 2, cap: 1 },
   sellRate: { label: '商店卖出价', paths: ['shop.sellRate'], min: 1, max: 1.3, cap: 1 },
 } as const satisfies Record<string, BoostDef>;
-export type BoostKey = keyof typeof BOOSTS;
 
 export interface BoostItem {
   key: string;

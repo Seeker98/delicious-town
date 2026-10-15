@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { localeSchema, type Locale } from '../locale';
-
-export const USERNAME_RE = /^[A-Za-z0-9_\-一-龥]{2,9}$/;
+import type { Locale } from '../locale';
+import { USERNAME_RE } from '../limits';
+import { localeSchema } from './locale';
 
 const email = z
   .string()

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import type { StreetFocus } from './world';
-import { localeSchema, type Locale } from '../locale';
+import type { Locale } from '../locale';
+import { localeSchema } from './locale';
 
 /** 开放接口（问题记录 142）：只读的静态游戏数据，全部来自配置包，不含玩家和区服数据 */
 export const openQuery = z.object({ lang: localeSchema.optional() });
