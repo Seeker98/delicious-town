@@ -15,7 +15,8 @@ const BUDGET: Record<string, number> = {
   '/task/list': 5,
   '/task/activation': 3,
   '/activities/summary': 2,
-  '/town': 10,
+  // 7：镇长和概览共用一次世界状态（性能整理）
+  '/town': 7,
   '/kuji': 9,
   '/market/view': 9,
   '/bar': 7,
@@ -25,6 +26,13 @@ const BUDGET: Record<string, number> = {
   '/store/list': 4,
   '/mail/unread': 2,
   '/world/catalog': 0,
+  // 以下几个是性能整理时补的（2026-10-16）：限购计数一条读完、几条读并发
+  '/shop/items': 5,
+  '/futures': 9,
+  '/bulk': 4,
+  '/wealth': 2,
+  '/wishtree': 3,
+  '/shiling': 7,
 };
 
 const q = queryCounter();
@@ -89,5 +97,34 @@ describe('收购接口的查询条数（收购 PR 1）', () => {
     expect(result.status).toBe(200);
     expect(result.json.data.holdings).toHaveLength(2);
     expect(n).toBeLessThanOrEqual(5);
+  });
+});
+
+/** 期货、大宗认购、理财、许愿树、小镇日报默认关：单独开一个都打开的区服数（性能整理） */
+const FEATURE_BUDGET: Record<string, number> = {
+  '/futures': 10,
+  '/bulk': 5,
+  '/wealth': 2,
+  '/wishtree': 3,
+  '/town/daily': 1,
+};
+
+describe('默认关的功能打开时的查询条数（性能整理）', () => {
+  it.each(Object.entries(FEATURE_BUDGET))('%s 不超过 %i 条', async (path, max) => {
+    const shardId = await createShard(ctx.deps.db);
+    await ctx.deps.db
+      .insertInto('shard_config')
+      .values({
+        shard_id: shardId,
+        override: JSON.stringify({
+          features: { exchange: true, futures: true, bulk: true, wealth: true, wishtree: true, daily: true },
+        }),
+      })
+      .execute();
+    const p = await playerIn(ctx, shardId);
+    await call(ctx.app, 'GET', '/api/v1' + path, { cookie: p.cookie });
+    const { n, result } = await q.count(() => call(ctx.app, 'GET', '/api/v1' + path, { cookie: p.cookie }));
+    expect(result.status).toBe(200);
+    expect(n).toBeLessThanOrEqual(max);
   });
 });

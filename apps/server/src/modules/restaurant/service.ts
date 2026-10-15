@@ -141,6 +141,13 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
             .where('wd.status', '=', 'active')
             .where('wd.matures_at', '<=', now)
             .as('wealth_due'),
+        // 时令说明弹窗看过没有（天气改版设计 指引②）：同上，跟着这条一起读
+        (eb) =>
+          eb
+            .selectFrom('rest_shiling as rs')
+            .select('rs.intro_at')
+            .whereRef('rs.rest_id', '=', 'r.id')
+            .as('shiling_intro_at'),
       ])
       .where('r.id', '=', restId)
       .executeTakeFirst();
@@ -155,6 +162,7 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       acquire_assets: assets,
       thumbs_received: thumbsReceivedNum,
       wealth_due: wealthDueNum,
+      shiling_intro_at: shilingIntroAt,
       account_created_at: accountCreatedAt,
       account_verified_at: accountVerifiedAt,
       bulk_id: bulkId,
@@ -221,15 +229,7 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
     const growth = tuning.growth;
     // 时令说明弹窗（天气改版设计 指引②）：够星、还没看过才弹
     const shilingIntro =
-      row.star_level >= tuning.shiling.minStar &&
-      isFeatureEnabled(settings, 'mysterious') &&
-      !(
-        await d.db
-          .selectFrom('rest_shiling')
-          .select('intro_at')
-          .where('rest_id', '=', restId)
-          .executeTakeFirst()
-      )?.intro_at;
+      row.star_level >= tuning.shiling.minStar && isFeatureEnabled(settings, 'mysterious') && !shilingIntroAt;
     return toRestaurantDto(row, tables.tables, shownEffects(effects, equipOff(settings)), d.config, {
       devices,
       lastRound: last,

@@ -16,6 +16,7 @@ export async function townView(d: GameDeps, world: WorldService, ctx: RestCtx): 
   const now = d.now();
   const day = gameDay(now);
   const restId = ctx.restaurantId;
+  const snapP = world.ensure(ctx.shardId, now);
   // 互不依赖的查询一起发（性能第二轮：原来一条接一条，开发服 16 毫秒左右）
   const [rest, counterRows, tr, shaken, goods, snap, mayor] = await Promise.all([
     d.db
@@ -43,8 +44,9 @@ export async function townView(d: GameDeps, world: WorldService, ctx: RestCtx): 
       .where('rest_id', '=', restId)
       .executeTakeFirst(),
     goodsCounts(d.db, restId, [GOODS.horn], now),
-    world.ensure(ctx.shardId, now),
-    mayorView(d.db, world, ctx.shardId, restId, now),
+    snapP,
+    // 世界状态和上面共用一次读（原来镇长这里又读一遍）
+    mayorView(d.db, world, ctx.shardId, restId, now, snapP),
   ]);
   const counters = new Map(counterRows.map((r) => [r.key, r.count]));
   const talked = Object.fromEntries(NPCS.map((n) => [n, (counters.get(`town.talk.${n}`) ?? 0) > 0]));
