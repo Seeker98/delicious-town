@@ -2,13 +2,13 @@
 import { computed, onMounted, ref } from 'vue';
 import type { TableDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useTableAct } from '../composables/useTableAct';
 import { useT } from '../composables/useT';
 import DtArt from '../components/DtArt.vue';
 import DtSheet from '../components/DtSheet.vue';
 import TableGrid from '../components/TableGrid.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useSessionStore } from '../stores/session';
-import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
 import { useCatalogStore } from '../stores/catalog';
 import { CUSTOMER_NAMES } from '../utils/labels';
@@ -17,7 +17,6 @@ import { serverNowMs } from '../utils/serverNow';
 
 const DINE_MINUTES = 30;
 const session = useSessionStore();
-const toast = useToastStore();
 const t = useT();
 const catalog = useCatalogStore();
 const tables = ref<TableDto[]>([]);
@@ -35,20 +34,8 @@ async function load() {
   }
 }
 
-async function act(fn: () => Promise<unknown>, ok: string, fallback: string) {
-  if (busy.value) return;
-  busy.value = true;
-  try {
-    await fn();
-    toast.push(ok);
-    picked.value = null;
-    await load();
-  } catch (e) {
-    toast.push(errorMessage(e, fallback), 'danger');
-  } finally {
-    busy.value = false;
-  }
-}
+/** 餐桌上的操作：成功了收起面板、重新读取 */
+const act = useTableAct(busy, picked, load);
 
 const dinedMinutes = (x: TableDto) =>
   x.freeloaderSince ? Math.floor((serverNowMs() - Date.parse(x.freeloaderSince)) / 60_000) : 0;

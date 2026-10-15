@@ -27,7 +27,8 @@ export async function drawDue(d: GameDeps, shardId: number, now: Date): Promise<
     .where('ends_at', '<=', now)
     .execute();
   if (due.length === 0) return 0;
-  const titleDays = (await d.shards.settings(shardId)).tuning.wishTree.titleDays;
+  const tuning = (await d.shards.settings(shardId)).tuning;
+  const titleDays = tuning.wishTree.titleDays;
   const icon = d.config.bundle.looks.icons.find((i) => i.key === WISH_TREE_ICON);
   let n = 0;
   for (const { id } of due) {
@@ -90,6 +91,7 @@ export async function drawDue(d: GameDeps, shardId: number, now: Date): Promise<
         items,
         source: 'wishtree',
         actorAccountId: null,
+        expiresDays: tuning.mail.expiresDays,
       });
       await postNews(
         tx,

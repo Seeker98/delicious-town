@@ -17,7 +17,7 @@ import { invalidState, limitReached, requirement } from '../../core/errors';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import { gainCoin, spendCoin, spendDiamond } from '../../core/resources';
 import { AppError } from '../../http/errors';
-import { getDaily, incrementDaily } from '../counter/dailyCounter';
+import { getDailies, getDaily, incrementDaily } from '../counter/dailyCounter';
 import { postNews } from '../news/news';
 import {
   assertStoreRoom,
@@ -106,46 +106,51 @@ export function createShopService(d: GameDeps) {
 
   return {
     async items(ctx: RestCtx): Promise<ShopDto> {
-      const { tuning } = await d.shards.settings(ctx.shardId);
       const now = d.now();
-      const rest = await d.db
-        .selectFrom('restaurant')
-        .select(['coin', 'diamond', 'store_num', 'star_level'])
-        .where('id', '=', ctx.restaurantId)
-        .executeTakeFirstOrThrow();
-      const rows = await d.db
-        .selectFrom('store_item')
-        .select(['goods_id', 'num', 'expires_at'])
-        .where('rest_id', '=', ctx.restaurantId)
-        .execute();
+      const day = gameDay(now);
+      // 几条读互不依赖，一起发（原来一条接一条，每日限购的道具还一个一个查）
+      const settingsP = d.shards.settings(ctx.shardId);
+      const [{ tuning }, rest, rows, loose, bought, boughtWeek] = await Promise.all([
+        settingsP,
+        d.db
+          .selectFrom('restaurant')
+          .select(['coin', 'diamond', 'store_num', 'star_level'])
+          .where('id', '=', ctx.restaurantId)
+          .executeTakeFirstOrThrow(),
+        d.db
+          .selectFrom('store_item')
+          .select(['goods_id', 'num', 'expires_at'])
+          .where('rest_id', '=', ctx.restaurantId)
+          .execute(),
+        looseEquipCount(d.db, ctx.restaurantId),
+        settingsP.then(async (st) => {
+          const ids = [...new Map(st.tuning.shop.dailyLimit).keys()];
+          if (ids.length === 0) return new Map<number, number>();
+          const got = await getDailies(d.db, ctx.restaurantId, ids.map(dailyKey), day);
+          return new Map(ids.map((id) => [id, got[dailyKey(id)] ?? 0]));
+        }),
+        settingsP.then(async (st) => {
+          const ids = [...new Map(st.tuning.shop.weeklyLimit).keys()];
+          if (ids.length === 0) return new Map<string, number>();
+          const weekRows = await d.db
+            .selectFrom('weekly_counter')
+            .select(['key', 'count'])
+            .where('rest_id', '=', ctx.restaurantId)
+            .where('week', '=', weekStart(day))
+            .where('key', 'in', ids.map(dailyKey))
+            .execute();
+          return new Map(weekRows.map((r) => [r.key, r.count]));
+        }),
+      ]);
       const owned = new Map(
         rows.map((r) => [r.goods_id, r.expires_at !== null && r.expires_at <= now ? 0 : r.num]),
       );
       // 仓库占用：与 storeKinds 同一口径（占格道具种数 + 未穿戴厨具件数）
       const kinds =
-        rows.filter((r) => r.num > 0 && takesStoreSlot(d.config.goods.get(r.goods_id))).length +
-        (await looseEquipCount(d.db, ctx.restaurantId));
+        rows.filter((r) => r.num > 0 && takesStoreSlot(d.config.goods.get(r.goods_id))).length + loose;
       const storeFull = kinds >= rest.store_num;
       const limits = new Map(tuning.shop.dailyLimit);
-      const bought = new Map<number, number>();
-      for (const id of limits.keys())
-        bought.set(id, await getDaily(d.db, ctx.restaurantId, dailyKey(id), gameDay(now)));
       const weeklyLimits = new Map(tuning.shop.weeklyLimit);
-      const weekRows =
-        weeklyLimits.size === 0
-          ? []
-          : await d.db
-              .selectFrom('weekly_counter')
-              .select(['key', 'count'])
-              .where('rest_id', '=', ctx.restaurantId)
-              .where('week', '=', weekStart(gameDay(now)))
-              .where(
-                'key',
-                'in',
-                [...weeklyLimits.keys()].map((id) => dailyKey(id)),
-              )
-              .execute();
-      const boughtWeek = new Map(weekRows.map((r) => [r.key, r.count]));
       const limitOf = (g: Goods) => (isPlaque(g) || g.type === GOODS_TYPE.honor || !g.stackable ? 1 : null);
       const row = (g: Goods, price: number, money: number): ShopItemDto => {
         const have = owned.get(g.id) ?? 0;

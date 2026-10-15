@@ -60,7 +60,6 @@ const store: Messages['store'] = {
     buy: 'Buy',
     specialSoon: 'New deal at noon today',
     tier: (off) => `${off}% off`,
-    specialLine: (price, left, stock) => `${price} ${plEn(price, 'coin', 'coins')} · ${left}/${stock} left`,
     grab: 'Grab it',
     myCoin: 'My coins',
     myDiamond: 'My diamonds',

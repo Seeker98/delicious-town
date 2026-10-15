@@ -1,6 +1,6 @@
 import type { Kysely } from 'kysely';
 import { isFeatureEnabled, type EquipAttrs, type ShardSettings, type SuitDef } from '@dt/config';
-import type { DB, RestaurantRow } from '../../db/schema';
+import type { DB, EquipGemRow, EquipRow, RestaurantRow } from '../../db/schema';
 import { loadGems, pieceTotal } from './instances';
 import { activeSuits, addAttrs, attrSummary, suitPct, zeroAttrs, type ActiveSuit } from './rules';
 
@@ -29,6 +29,23 @@ export async function restGear(
     db,
     worn.map((w) => w.id),
   );
+  return gearOf(rest, worn, gems, suits, off);
+}
+
+/** 加点所在的几列（厨力榜整区一起算时只读这几列） */
+export type GearPoints = Pick<
+  RestaurantRow,
+  'attr_cook' | 'attr_cutting' | 'attr_fire' | 'attr_season' | 'attr_creatives' | 'luck'
+>;
+
+/** restGear 的计算部分：穿着的厨具和宝石已经读好 */
+export function gearOf(
+  rest: GearPoints,
+  worn: readonly EquipRow[],
+  gems: ReadonlyMap<number, EquipGemRow[]>,
+  suits: ReadonlyMap<number, SuitDef>,
+  off = false,
+): { total: EquipAttrs; power: number; suits: ActiveSuit[] } {
   const gear = worn.reduce((acc, e) => addAttrs(acc, pieceTotal(e, gems.get(e.id) ?? [])), zeroAttrs());
   const points = {
     cook: rest.attr_cook,

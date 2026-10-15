@@ -12,7 +12,7 @@ import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useConfirmStore } from '../../stores/confirm';
 import { useToastStore } from '../../stores/toast';
-import { formatNum, formatPct, timeHM } from '../../utils/format';
+import { clampQty, formatNum, formatPct, timeHM } from '../../utils/format';
 import { GRADE_NAMES, ROAD_NAMES } from '../../utils/labels';
 
 const catalog = useCatalogStore();
@@ -43,7 +43,7 @@ async function act(fn: () => Promise<unknown>, ok: string | null, fallback: stri
 const dish = (id: number) => catalog.mc(id);
 const nameOf = (id: number) => catalog.mcName(id);
 /** 填的数超过持有时按持有算 */
-const numOf = (mcId: number, max: number) => Math.max(1, Math.min(qty[mcId] ?? 1, max));
+const numOf = (mcId: number, max: number) => clampQty(qty[mcId], max);
 const learnedIds = computed(() => new Set(o.value?.learned.map((m) => m.mcId) ?? []));
 /** 用残卷学会要 3 张 */
 const LEARN_REMNANTS = 3;

@@ -142,6 +142,7 @@ export async function settleActivities(
             items: mergeRewards(items),
             source: 'activity',
             actorAccountId: null,
+            expiresDays: o.tuning.mail.expiresDays,
           });
           return true;
         });
@@ -180,6 +181,7 @@ export async function settleActivities(
                 items: seg.award,
                 source: 'activity',
                 actorAccountId: null,
+                expiresDays: o.tuning.mail.expiresDays,
               });
               return true;
             });

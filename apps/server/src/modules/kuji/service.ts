@@ -49,8 +49,6 @@ async function prize(
 export function createKujiService(d: GameDeps) {
   async function viewOf(
     db: GameDeps['db'],
-    shardId: number,
-    restId: number,
     k: LineConf,
     pool: PoolRow,
     tickets: number,
@@ -200,8 +198,6 @@ export function createKujiService(d: GameDeps) {
     const { pool, closedToday } = await shownPool(o.tx, o.shardId, k, o.now, line);
     return viewOf(
       o.tx,
-      o.shardId,
-      o.rest.id,
       conf(k, line),
       pool,
       await countGoods(o, ticketOf(line)),
@@ -349,17 +345,7 @@ export function createKujiService(d: GameDeps) {
           .where('id', '=', ctx.restaurantId)
           .executeTakeFirstOrThrow(),
       ]);
-      return viewOf(
-        d.db,
-        ctx.shardId,
-        ctx.restaurantId,
-        conf(k, line),
-        pool,
-        t?.num ?? 0,
-        bought,
-        Number(rest.coin),
-        closedToday,
-      );
+      return viewOf(d.db, conf(k, line), pool, t?.num ?? 0, bought, Number(rest.coin), closedToday);
     },
     buy: (ctx: RestCtx, num: number, line: KujiLine = 'normal') => op(ctx, (o) => buy(o, num, line)),
     draw: (ctx: RestCtx, num: number, line: KujiLine = 'normal') => op(ctx, (o) => draw(o, num, line)),

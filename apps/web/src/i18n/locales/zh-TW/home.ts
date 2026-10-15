@@ -32,7 +32,6 @@ export default {
   /** 首頁區塊標題、簽到塊（介面改版 P5） */
   roundTitle: '上一輪',
   todayTitle: '今日',
-  signInTodo: '今天還沒簽',
   roundCoin: '銀幣',
   roundExp: '經驗',
   roundOil: '耗油',
@@ -44,11 +43,9 @@ export default {
   hasRoach: '店裡有蟑螂',
   noRound: '最近沒有結算',
   cookbooks: (learned: string, total: string) => `食譜 ${learned}/${total}`,
-  special: (name: string) => `特色菜: ${name}`,
   specialLevel: (level: number) => ` (${level} 級)`,
   /** 首頁我的店小格里的等級（問題記錄 619） */
   specialLv: (level: number) => `${level} 級`,
-  specialNone: '特色菜: 無',
   assets: (n: string) => `資產: ${n}`,
   todo: '今日待辦',
   signIn: '每日簽到',
@@ -56,33 +53,23 @@ export default {
   signInBtn: '簽到',
   signInFailed: '簽到失敗',
   mainTag: '主線',
-  /** 首頁主線那一行右邊的任務入口（問題記錄：活躍和任務拆頁） */
-  tasksLink: '任務',
   /** 首頁餐廳動態卡（問題記錄 553） */
   feedTitle: '餐廳動態',
   feedNew: '新',
   activation: (n: number) => `今日活躍 ${n}`,
-  activationClaimable: ', 有獎勵可領',
   dining: {
     before: '正在',
     after: (table: number, minutes: number) => `第 ${table} 桌白食, 已 ${minutes} 分鐘`,
     end: '結束白食',
     endFailed: '結束白食失敗',
   },
-  guideHint: '新手看這裡, 有新手兌換碼',
   guideCodes: '有可以領的新手兌換碼',
   /** 到期沒領的理財（理財設計 §3.4） */
   wealthDue: (n: number) => `理財到期 ${n} 筆, 去領取`,
-  /** 首頁待辦的交易所一行（問題記錄 591） */
-  exchangeRow: '交易所: 買賣稀有食材, 期貨點名訂貨',
-  bulkRow: (name: string, level: number, qty: number, demand: number | null) =>
-    `大宗認購: ${name} (${level} 級) 共 ${qty} 份, ${demand === null ? '最後階段停更中' : `已認購 ${demand} 份`}`,
   /** 首頁的短標題和灰色副行（介面改版 P5 返工：標題短、細節放副行） */
   row: {
     claimable: '可領獎',
-    mainClaim: '領主線獎勵',
     activity: '今日活躍',
-    activityPts: (n: number) => `活躍度 ${n}`,
     codes: '新手兌換碼',
     codesSub: '有可以領的碼',
     guide: '新手指引',
@@ -109,7 +96,6 @@ export default {
   },
   devices: '設施',
   notOpened: '未開通',
-  starOpen: (n: number) => `${n} 星開放`,
   empty: '空',
   /** 設施標題右邊、鎖著的格子併成一行（問題記錄 619） */
   emptySlots: (n: number) => `空 ${n} 格`,

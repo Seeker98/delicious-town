@@ -38,10 +38,6 @@ export default {
   qty: (name: string, num: string | number) => `${name}×${num}`,
   /** 名字和數量分開渲染時中間的乘號（名字是連結時） */
   times: '×',
-  parenOpen: ' (',
-  parenClose: ')',
-  colon: (s: string) => `${s}: `,
   /** 等級環的讀屏文字（介面改版 P5） */
   levelRing: (level: number, pct: number) => `等級 ${level}, 經驗 ${pct}%`,
-  semi: '；',
 };

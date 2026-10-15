@@ -21,7 +21,7 @@
   },
   "6": {
     "name": "Rainbow",
-    "note": "Seasonal points +10%!\nTrial success rate +8%!\nBusiness: final EXP +120%\nTakeaway: delivery time -20%, EXP +120%, renown +100%, success rate +20%"
+    "note": "Seasonal points +10%!\nBusiness: final EXP +120%\nTakeaway: delivery time -20%, EXP +120%, renown +100%, success rate +20%"
   },
   "7": {
     "name": "Hurricane",
@@ -73,7 +73,7 @@
   },
   "19": {
     "name": "Hail",
-    "note": "Trial success rate +1%!\nMarket ingredient prices +40%!\nBusiness: occupancy -10%, picky rate -5%, EXP per table +1\nTakeaway: delivery time +15%, coins +150%, EXP +250%, success rate -60%"
+    "note": "Market ingredient prices +40%!\nBusiness: occupancy -10%, picky rate -5%, EXP per table +1\nTakeaway: delivery time +15%, coins +150%, EXP +250%, success rate -60%"
   },
   "20": {
     "name": "Moderate Snow",
@@ -85,11 +85,11 @@
   },
   "22": {
     "name": "Torrential Rain",
-    "note": "Trial success rate +2%!\nMarket ingredient prices +100%!\nBusiness: occupancy -20%, EXP per table +3\nTakeaway: delivery time -30%, coins -60%, EXP +120%, success rate -50%"
+    "note": "Market ingredient prices +100%!\nBusiness: occupancy -20%, EXP per table +3\nTakeaway: delivery time -30%, coins -60%, EXP +120%, success rate -50%"
   },
   "23": {
     "name": "Blizzard",
-    "note": "Signature dish portions +5%!\nTrial success rate +3%!\nMarket ingredient prices +200%!\nBusiness: occupancy -25%, picky rate -20%, EXP per table +2, coins per table +1\nTakeaway: delivery time +55%, coins +110%, EXP -50%, success rate -50%"
+    "note": "Signature dish portions +5%!\nMarket ingredient prices +200%!\nBusiness: occupancy -25%, picky rate -20%, EXP per table +2, coins per table +1\nTakeaway: delivery time +55%, coins +110%, EXP -50%, success rate -50%"
   },
   "24": {
     "name": "Severe Thunderstorm",
@@ -101,7 +101,7 @@
   },
   "27": {
     "name": "Deep Freeze",
-    "note": "Trial success rate +3%!\nMarket ingredient prices +250%!\nBusiness: occupancy -25%, picky rate -35%, EXP per table +3, coins per table +10\nTakeaway: delivery time +150%, coins +200%, EXP +100%, success rate -50%"
+    "note": "Market ingredient prices +250%!\nBusiness: occupancy -25%, picky rate -35%, EXP per table +3, coins per table +10\nTakeaway: delivery time +150%, coins +200%, EXP +100%, success rate -50%"
   },
   "28": {
     "name": "Clear Night",

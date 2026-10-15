@@ -15,6 +15,17 @@ export async function cardValue(
   key: string,
   now: Date,
 ): Promise<number | null> {
+  return (await cardEffects(db, config, restId, goodsId, now))?.[key] ?? null;
+}
+
+/** 持有有效的证时返回证上的全部效果，没有证返回 null：一张证要读几个值时只查一次持有数 */
+export async function cardEffects(
+  db: Kysely<DB>,
+  config: GameConfig,
+  restId: number,
+  goodsId: number,
+  now: Date,
+): Promise<Readonly<Record<string, number>> | null> {
   if ((await validNum(db, restId, goodsId, now)) <= 0) return null;
-  return config.requireGoods(goodsId).effects[key] ?? null;
+  return config.requireGoods(goodsId).effects;
 }

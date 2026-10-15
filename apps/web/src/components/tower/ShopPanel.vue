@@ -6,7 +6,7 @@ import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
-import { formatNum } from '../../utils/format';
+import { clampQty, formatNum } from '../../utils/format';
 import DtArt from '../DtArt.vue';
 import DtRow from '../DtRow.vue';
 import QtySheet from '../QtySheet.vue';
@@ -39,7 +39,7 @@ function blockOf(x: RenownShopItemDto): string {
 }
 const sub = (x: RenownShopItemDto) =>
   x.rare ? t.value.tower.shop.rareLine : t.value.tower.shop.weekLine(x.bought, x.weeklyLimit);
-const n = computed(() => (picked.value ? Math.max(1, Math.min(num.value || 1, maxOf(picked.value))) : 1));
+const n = computed(() => (picked.value ? clampQty(num.value, maxOf(picked.value)) : 1));
 
 function open(x: RenownShopItemDto) {
   pickedId.value = x.goodsId;

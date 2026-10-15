@@ -258,6 +258,8 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
       b: { foodsId: typeof FOODS.masterLevel1 | typeof FOODS.masterLevel2; times: number },
     ) {
       return op(ctx, 'foods.exchange.master', async (o) => {
+        const max = o.tuning.cupboard.exchangeMaxTimes;
+        if (b.times > max) throw limitReached('cupboard_exchange', { max });
         await subFoods(o, b.foodsId, 2 * b.times);
         const lv = b.foodsId === FOODS.masterLevel1 ? 2 : 3;
         const pool = o.config.rareFoodPools.get(lv)!;

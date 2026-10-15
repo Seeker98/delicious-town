@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import DtArt from '../components/DtArt.vue';
+import { useChangelog } from '../composables/useChangelog';
 import { useT } from '../composables/useT';
 import { CHANGELOG } from '../data/changelog';
 import { headBody } from '../utils/headBody';
@@ -26,13 +27,15 @@ onMounted(async () => {
   }
 });
 
+/** 更新记录文案分包按需加载：到了才写最新一条的标题 */
+const changelog = useChangelog();
 const latest = CHANGELOG[0];
 const hasNew = isNewChangelog(latest?.date ?? '', readChangelogSeen());
 const latestText = computed(() => {
-  if (!latest) return '';
+  if (!latest || !changelog.value) return '';
   const [, m, d] = latest.date.split('-').map(Number) as [number, number, number];
   const day = t.value.site.monthDay(m, d);
-  const { head, body } = headBody(t.value.site.changelog[latest.id]);
+  const { head, body } = headBody(changelog.value[latest.id]);
   return t.value.nav.help.changelogSub(day, head || body);
 });
 </script>

@@ -16,6 +16,7 @@ export async function scanHats(
   shardId: number,
 ): Promise<{ sent: number; failed: number }> {
   const db = game.app.db;
+  const expiresDays = (await game.shards.settings(shardId)).tuning.mail.expiresDays;
   const rows = await db
     .selectFrom('equip as e')
     .innerJoin('restaurant as r', 'r.id', 'e.rest_id')
@@ -53,6 +54,7 @@ export async function scanHats(
           items: { hats: [{ tier: 'xuan', name }] },
           source: 'hat',
           actorAccountId: null,
+          expiresDays,
         });
         return true;
       });

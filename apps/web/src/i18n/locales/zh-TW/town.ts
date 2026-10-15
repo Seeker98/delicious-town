@@ -32,7 +32,6 @@ export default {
     carmen: { name: '卡門', desc: '見面禮: 神秘食材兌換券 (每家店一次)' },
   },
   said: (name: string, talk: string, rewards: string) => `${name}: ${talk} 獲得 ${rewards}`,
-  mayorName: '鎮長大胃鍋',
   /** 鎮長大胃鍋頁上的問答標題（問題記錄 441） */
   mayorAsk: '猜下一輪天氣',
   mayorFailed: '猜天氣失敗',
@@ -61,7 +60,6 @@ export default {
   shakeHint: '每天可以搖一次, 搖到的銀幣和星級有關',
   shakenToday: '今天搖過了',
   shake: '搖一搖',
-  weatherNow: '當前天氣: ',
   /** 廣場改天氣的入口（天氣改版：雷神錘換成司天羅盤、晴雨籤，在天氣頁用） */
   weatherTool: '改天氣',
   weatherToolSub: (name: string) => `現在是 ${name} · 司天羅盤、晴雨簽在天氣頁用`,
@@ -221,16 +219,11 @@ export default {
     mineLine: (level: number, n: number, max: number, left: string) =>
       ` ${level} 級 · ${n}/${max} 人 · ${left}`,
     forceClose: '強制結束',
-    openTitle: '開課 (消耗 1 張殘卷和 1 張教師證): ',
     pickMc: '選擇已學的特色菜',
-    mcOption: (name: string, level: number | undefined) => `${name} (${level ?? '?'} 級)`,
     pickCert: '選擇教師證',
-    certOption: (name: string, strength: number, hours: number, max: number, have: number) =>
-      `${name} (體力 ${strength}, ${hours} 小時, ${max} 人, 持有 ${have})`,
     open: '開課',
     running: '正在上的課',
     none: '現在沒有別人開的課',
-    lessonLine: (level: number, teacher: string) => ` ${level} 級 · 老師 ${teacher}`,
     lessonMeta: (n: number, max: number, stolen: number, left: string) =>
       `${n}/${max} 人 (偷學 ${stolen}) · ${left}`,
     learn: '學',
@@ -268,8 +261,6 @@ export default {
     cats: { bg: '蟹黃堡', dt: '美味券', chip: '碎片', so: '其他' },
     loadFailed: '讀取兌換失敗',
     soldOut: '已兌完',
-    maxLeft: (n: number) => `最多還能兌 ${n} 次`,
-    maxOnce: (n: number) => `一次最多 ${n} 份`,
     lack: '材料不夠',
     done: (name: string, num: number) => `兌換成功: ${name}×${num}`,
     failed: '兌換失敗',

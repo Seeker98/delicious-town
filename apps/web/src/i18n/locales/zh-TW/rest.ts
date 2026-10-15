@@ -70,7 +70,6 @@ export default {
     title: '裝扮和稱號',
     loadFailed: '讀取裝扮失敗',
     avatar: '頭像',
-    noAvatar: '還沒有設定頭像 (去好友店裡白食需要頭像)',
     /** 介面改版 P7：沒設頭像的提醒行、門的“使用中”、公告說明、稱號行、圖示計數 */
     noAvatarTitle: '還沒有設定頭像',
     noAvatarSub: '去好友店裡白食需要頭像',
@@ -99,8 +98,6 @@ export default {
     iconUpdated: '已更新',
     iconFailed: '更新圖示失敗',
     shopTitle: '限定稱號',
-    shopMeta: (coin: string, days: number) =>
-      `${coin} 銀幣 · ${days > 0 ? `還剩 ${days} 天下架` : '今天下架'}`,
     buy: '購買',
     owned: '已擁有',
     buyConfirm: (title: string, coin: string) =>
@@ -135,7 +132,6 @@ export default {
     chapter: (n: number, name: string, done: number, total: number) =>
       `第 ${n} 章 ${name} (${done}/${total})`,
     chapterLocked: (n: number, name: string) => `第 ${n} 章 ${name}`,
-    chapterAward: (text: string) => `章末獎勵: ${text}`,
     claimChapter: '領章末獎勵',
     chapterLeft: (n: number) => `還差 ${n} 個任務`,
     claimFirst: '先領完上面的任務',
@@ -146,13 +142,9 @@ export default {
     lockedFrozen: '🔒 交易所已被凍結, 暫時不能做',
     noActivity: '🔒 現在沒有進行中的限時活動',
     lockedStar: (n: number) => `🔒 ${n} 星解鎖`,
-    claimedTask: '✓ 已領',
     lineDone: '已全部完成',
     chapterAwardRow: (n: number, name: string) => `第 ${n} 章 ${name} 章末獎勵`,
     weekly: (group: string) => `每週任務 · ${group} 組`,
-    weeklyFull: (text: string) => `全完成獎勵: ${text}`,
-    claimWeeklyFull: '領取',
-    weeklyFullClaimed: '✓ 已領取',
     /** 介面改版 P7：今日活躍的進度條和檔位行、任務行、章和支線卡片頭 */
     actTitle: '今日活躍',
     kujiTier: (num: number) => `另送一番賞抽賞券 ×${num}`,

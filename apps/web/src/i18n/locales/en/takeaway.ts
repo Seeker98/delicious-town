@@ -52,7 +52,6 @@ const takeaway: Messages['takeaway'] = {
     refreshed: (n) => `${n} private orders appeared`,
     refreshFailed: 'Refresh failed',
     renown: (n) => `Renown ${n}`,
-    riderOption: (name, busy, max) => `${name} (delivering ${busy}/${max})`,
     allBusy: 'All riders are busy',
     refresh: (cost) => `Private refresh (${cost} ${plEn(cost, 'coin', 'coins')})`,
     empty: 'No orders right now. More come every hour on the hour',

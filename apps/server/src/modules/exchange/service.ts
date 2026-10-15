@@ -13,7 +13,7 @@ import {
   type ExchangeWithdrawDto,
 } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
-import { invalidState, limitReached, requirement } from '../../core/errors';
+import { invalidState, limitReached } from '../../core/errors';
 import { actionRests, emitAction, emitActionFor } from '../../core/action';
 import { restLog, runOp, type Op } from '../../core/op';
 import { gainCoin, spendCoin } from '../../core/resources';
@@ -24,7 +24,7 @@ import { refPrice, refPrices } from './ref';
 import { feeOf, isTradable, priceBand } from './rules';
 import { cardValue } from '../jobcard/perks';
 import { addHold, frozenReason, linkedAccounts, tradeFlags } from './guard';
-import { eligibility } from './eligibility';
+import { assertExchangeOpen, eligibility } from './eligibility';
 import { addCredit, creditWallets, newCredits } from './wallet';
 import { incrementDaily } from '../counter/dailyCounter';
 import { addBought, addStock, makerQuote, TO_SYSTEM, type MakerLevel } from './maker';
@@ -83,19 +83,7 @@ export function createExchangeService(d: GameDeps) {
     opts: { toSystem?: boolean } = {},
   ): Promise<ExchangePlaceDto> {
     const t = o.tuning.exchange;
-    // 被冻结的店不能下单（156-2 设计 §6.1）
-    const frozen = await frozenReason(o.tx, o.rest.id);
-    if (frozen !== null) throw invalidState('exchange_frozen', { why: frozen });
-    const reason = await eligibility({
-      db: o.tx,
-      level: o.rest.level,
-      accountId: o.rest.account_id,
-      now: o.now,
-      t,
-    });
-    if (reason === 'exchange_level') throw requirement(reason, { need: t.minLevel });
-    if (reason === 'exchange_age') throw requirement(reason, { days: t.minAccountDays });
-    if (reason) throw requirement(reason);
+    await assertExchangeOpen(o);
     if (!isTradable(o.config.foods.get(b.foodsId), t.closedLevels)) throw invalidState('not_tradable');
     if (b.qty > t.maxQty) throw limitReached('exchange_qty', { max: t.maxQty });
     const day = gameDay(o.now);

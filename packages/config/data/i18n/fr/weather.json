@@ -21,7 +21,7 @@
   },
   "6": {
     "name": "Arc-en-ciel",
-    "note": "Points de saison +10\u202f%\u202f!\nRéussite des épreuves +8\u202f%\u202f!\nService\u202f: EXP finale +120\u202f%\nÀ emporter\u202f: délai de livraison -20\u202f%, EXP +120\u202f%, renommée +100\u202f%, réussite +20\u202f%"
+    "note": "Points de saison +10\u202f%\u202f!\nService\u202f: EXP finale +120\u202f%\nÀ emporter\u202f: délai de livraison -20\u202f%, EXP +120\u202f%, renommée +100\u202f%, réussite +20\u202f%"
   },
   "7": {
     "name": "Ouragan",
@@ -73,7 +73,7 @@
   },
   "19": {
     "name": "Grêle",
-    "note": "Réussite des épreuves +1\u202f%\u202f!\nPrix des ingrédients au marché +40\u202f%\u202f!\nService\u202f: fréquentation -10\u202f%, clients difficiles -5\u202f%, EXP par table +1\nÀ emporter\u202f: délai de livraison +15\u202f%, pièces +150\u202f%, EXP +250\u202f%, réussite -60\u202f%"
+    "note": "Prix des ingrédients au marché +40\u202f%\u202f!\nService\u202f: fréquentation -10\u202f%, clients difficiles -5\u202f%, EXP par table +1\nÀ emporter\u202f: délai de livraison +15\u202f%, pièces +150\u202f%, EXP +250\u202f%, réussite -60\u202f%"
   },
   "20": {
     "name": "Neige modérée",
@@ -85,11 +85,11 @@
   },
   "22": {
     "name": "Pluie diluvienne",
-    "note": "Réussite des épreuves +2\u202f%\u202f!\nPrix des ingrédients au marché +100\u202f%\u202f!\nService\u202f: fréquentation -20\u202f%, EXP par table +3\nÀ emporter\u202f: délai de livraison -30\u202f%, pièces -60\u202f%, EXP +120\u202f%, réussite -50\u202f%"
+    "note": "Prix des ingrédients au marché +100\u202f%\u202f!\nService\u202f: fréquentation -20\u202f%, EXP par table +3\nÀ emporter\u202f: délai de livraison -30\u202f%, pièces -60\u202f%, EXP +120\u202f%, réussite -50\u202f%"
   },
   "23": {
     "name": "Blizzard",
-    "note": "Portions de plats signature +5\u202f%\u202f!\nRéussite des épreuves +3\u202f%\u202f!\nPrix des ingrédients au marché +200\u202f%\u202f!\nService\u202f: fréquentation -25\u202f%, clients difficiles -20\u202f%, EXP par table +2, pièces par table +1\nÀ emporter\u202f: délai de livraison +55\u202f%, pièces +110\u202f%, EXP -50\u202f%, réussite -50\u202f%"
+    "note": "Portions de plats signature +5\u202f%\u202f!\nPrix des ingrédients au marché +200\u202f%\u202f!\nService\u202f: fréquentation -25\u202f%, clients difficiles -20\u202f%, EXP par table +2, pièces par table +1\nÀ emporter\u202f: délai de livraison +55\u202f%, pièces +110\u202f%, EXP -50\u202f%, réussite -50\u202f%"
   },
   "24": {
     "name": "Orage violent",
@@ -101,7 +101,7 @@
   },
   "27": {
     "name": "Grand gel",
-    "note": "Réussite des épreuves +3\u202f%\u202f!\nPrix des ingrédients au marché +250\u202f%\u202f!\nService\u202f: fréquentation -25\u202f%, clients difficiles -35\u202f%, EXP par table +3, pièces par table +10\nÀ emporter\u202f: délai de livraison +150\u202f%, pièces +200\u202f%, EXP +100\u202f%, réussite -50\u202f%"
+    "note": "Prix des ingrédients au marché +250\u202f%\u202f!\nService\u202f: fréquentation -25\u202f%, clients difficiles -35\u202f%, EXP par table +3, pièces par table +10\nÀ emporter\u202f: délai de livraison +150\u202f%, pièces +200\u202f%, EXP +100\u202f%, réussite -50\u202f%"
   },
   "28": {
     "name": "Nuit claire",

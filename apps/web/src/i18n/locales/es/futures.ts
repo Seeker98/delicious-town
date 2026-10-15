@@ -33,7 +33,6 @@ const futures: Messages['futures'] = {
   filters: { all: 'Todos', rare: 'Raros', normal: 'Comunes', street: 'Los que pide mi calle' },
   search: 'Buscar ingrediente',
   level: (n) => `Nivel ${n}`,
-  foodLine: (price, left) => `${price} monedas · quedan ${left} hoy`,
   soldOut: 'Agotado por hoy',
   noCoin: (need) => `No tienes monedas para la señal de 1 (necesitas ${need})`,
   empty: 'Ningún ingrediente coincide',

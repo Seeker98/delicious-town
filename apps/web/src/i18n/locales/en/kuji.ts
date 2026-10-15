@@ -30,7 +30,6 @@ const kuji: Messages['kuji'] = {
   boughtDeluxe: (n) => `Bought ${n} deluxe kuji ${plEn(n, 'ticket', 'tickets')}`,
   deluxeNote:
     "Deluxe pool: the A prize and the Last Prize give this month's limited title and are announced to the whole server.",
-  buyPrefix: 'Buy',
   buyTotal: (coin) => `tickets for ${coin} ${plEn(coin, 'coin', 'coins')}`,
   buy: 'Buy tickets',
   buyAria: (n, coin) => `Buy ${n} for ${coin} coins`,
@@ -40,7 +39,6 @@ const kuji: Messages['kuji'] = {
   balance: (n) => `My coins: ${n}`,
   draw: (n) => `Draw ${n}`,
   result: 'Draw results',
-  drawLine: (tier, award) => `${tier}: ${award}`,
   lastWon: (award) => `Congratulations! You drew the last ticket and won the Last Prize: ${award}`,
   recent: 'Recent big prizes',
   noRecent: 'Nobody has won a big prize yet',

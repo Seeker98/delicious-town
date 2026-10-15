@@ -15,7 +15,7 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useConfirmStore } from '../stores/confirm';
 import { useToastStore } from '../stores/toast';
-import { foodLevelLabel, formatNum } from '../utils/format';
+import { clampQty, foodLevelLabel, formatNum } from '../utils/format';
 import { matchRange, matchText } from '../utils/match';
 
 const catalog = useCatalogStore();
@@ -103,7 +103,7 @@ const MASTER_RULE = computed((): Record<number, string> => {
 /** 一次最多分解几个；合成要偶数个（问题记录：合成不显示最大数） */
 const decomposeMax = computed(() => Math.min(data.value?.handleMax ?? 100, pickedItem.value?.num ?? 0));
 const composeMax = computed(() => Math.floor(decomposeMax.value / 2) * 2);
-const decomposeN = computed(() => Math.max(1, Math.min(num.value || 1, decomposeMax.value)));
+const decomposeN = computed(() => clampQty(num.value, decomposeMax.value));
 /** 兑换稀有食材（问题记录 202）：数量框和合成一样表示消耗几个，2 个换 1 次；一次最多 100 个（50 次） */
 const exchangeMax = computed(() => Math.floor(Math.min(100, pickedItem.value?.num ?? 0) / 2) * 2);
 const exchangeN = computed(() =>

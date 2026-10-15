@@ -1,18 +1,18 @@
 import { sql, type Kysely, type Selectable } from 'kysely';
 import { gameDay, type FuturesContractDto, type FuturesDto, type FuturesFoodDto } from '@dt/shared';
-import { GOODS, type GameConfig, type Tuning } from '@dt/config';
+import { GOODS, type GameConfig, type ShardSettings, type Tuning } from '@dt/config';
 import type { GameDeps, RestCtx } from '../../core/deps';
-import { invalidState, limitReached, requirement } from '../../core/errors';
+import { invalidState, limitReached } from '../../core/errors';
 import { featureAvailable } from '../../core/features';
 import { restLog, runOp, type Op } from '../../core/op';
 import { fairFoodPrice } from '../../core/prices';
 import { spendCoin } from '../../core/resources';
 import type { DB, FuturesContractTable } from '../../db/schema';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
-import { eligibility } from '../exchange/eligibility';
+import { assertExchangeOpen, eligibility } from '../exchange/eligibility';
 import { frozenReason } from '../exchange/guard';
 import { refPrice, refPrices } from '../exchange/ref';
-import { cardValue } from '../jobcard/perks';
+import { cardEffects } from '../jobcard/perks';
 import { futuresDeposit, futuresQuota, futuresUnitPrice } from './rules';
 
 type ContractRow = Selectable<FuturesContractTable>;
@@ -62,10 +62,11 @@ async function perkOf(
   restId: number,
   now: Date,
 ): Promise<{ depositRate: number; personDaily: number; card: number | null }> {
-  const rate = await cardValue(db, config, restId, GOODS.futuresCard, 'futuresDepositRate', now);
-  if (rate === null) return { depositRate: t.depositRate, personDaily: t.personDaily, card: null };
-  const daily = await cardValue(db, config, restId, GOODS.futuresCard, 'futuresPersonDaily', now);
-  return { depositRate: rate, personDaily: daily ?? t.personDaily, card: GOODS.futuresCard };
+  const eff = await cardEffects(db, config, restId, GOODS.futuresCard, now);
+  const rate = eff?.futuresDepositRate;
+  if (eff === null || rate === undefined)
+    return { depositRate: t.depositRate, personDaily: t.personDaily, card: null };
+  return { depositRate: rate, personDaily: eff.futuresPersonDaily ?? t.personDaily, card: GOODS.futuresCard };
 }
 
 /** 食材期货（期货设计 2026-10-10）：下单、撤单、期货标签 */
@@ -77,18 +78,7 @@ export function createFuturesService(d: GameDeps) {
     const t = o.tuning.futures;
     const et = o.tuning.exchange;
     // 门槛和交易所一样（期货设计 §2）
-    const frozen = await frozenReason(o.tx, o.rest.id);
-    if (frozen !== null) throw invalidState('exchange_frozen', { why: frozen });
-    const reason = await eligibility({
-      db: o.tx,
-      level: o.rest.level,
-      accountId: o.rest.account_id,
-      now: o.now,
-      t: et,
-    });
-    if (reason === 'exchange_level') throw requirement(reason, { need: et.minLevel });
-    if (reason === 'exchange_age') throw requirement(reason, { days: et.minAccountDays });
-    if (reason) throw requirement(reason);
+    await assertExchangeOpen(o);
     const row = await o.tx
       .selectFrom('futures_food')
       .select(['foods_id', 'enabled', 'daily_quota'])
@@ -165,60 +155,71 @@ export function createFuturesService(d: GameDeps) {
     return contractDto(c);
   }
 
+  /** 能下单的食材和今天的价、剩余额度；期货或交易所关着时为空 */
+  async function foodList(s: ShardSettings, shardId: number, day: string): Promise<FuturesFoodDto[]> {
+    if (!(featureAvailable(s, 'futures') && featureAvailable(s, 'exchange'))) return [];
+    const t = s.tuning.futures;
+    const [rows, used] = await Promise.all([
+      d.db.selectFrom('futures_food').select(['foods_id', 'enabled', 'daily_quota']).execute(),
+      usedToday(d.db, shardId, day),
+    ]);
+    const list = rows.flatMap((r) => {
+      const food = listable(d.config, r);
+      return food ? [{ food, quota: futuresQuota(food.level, r.daily_quota, t) }] : [];
+    });
+    const ids = list.map((x) => x.food.id);
+    const refs = await refPrices(
+      d.db,
+      d.config,
+      s.tuning.exchange,
+      s.tuning.market.fairPriceRate,
+      shardId,
+      ids,
+      day,
+    );
+    return list
+      .map(({ food, quota }) => ({
+        foodsId: food.id,
+        level: food.level,
+        rare: food.odds < 100,
+        unitPrice: futuresUnitPrice(fairFoodPrice(food, s.tuning.market), refs.get(food.id)!, t),
+        left: Math.max(0, quota - (used.get(food.id) ?? 0)),
+      }))
+      .sort((a, b) => a.level - b.level || a.foodsId - b.foodsId);
+  }
+
   /** 期货标签（期货设计 §9）：开关关着也能看自己的单 */
   async function view(ctx: RestCtx): Promise<FuturesDto> {
-    const s = await d.shards.settings(ctx.shardId);
-    const t = s.tuning.futures;
-    const et = s.tuning.exchange;
     const now = d.now();
     const day = gameDay(now);
+    // 互不依赖的读一起发（原来十来条一条接一条）；食材列表要等区服设置，跟在设置后面
+    const settingsP = d.shards.settings(ctx.shardId);
+    const base = d.db.selectFrom('futures_contract').selectAll().where('rest_id', '=', ctx.restaurantId);
+    const [s, rest, foods, mine, perk, open, closed] = await Promise.all([
+      settingsP,
+      d.db
+        .selectFrom('restaurant')
+        .select(['level', 'coin'])
+        .where('id', '=', ctx.restaurantId)
+        .executeTakeFirstOrThrow(),
+      settingsP.then((st) => foodList(st, ctx.shardId, day)),
+      getDaily(d.db, ctx.restaurantId, DAILY_KEY, day),
+      settingsP.then((st) => perkOf(d.db, d.config, st.tuning.futures, ctx.restaurantId, now)),
+      base.where('status', '=', 'open').orderBy('created_at', 'desc').orderBy('id', 'desc').execute(),
+      base
+        .where('status', '!=', 'open')
+        .orderBy('created_at', 'desc')
+        .orderBy('id', 'desc')
+        .limit(CLOSED_SHOWN)
+        .execute(),
+    ]);
+    const t = s.tuning.futures;
+    const et = s.tuning.exchange;
     const enabled = featureAvailable(s, 'futures') && featureAvailable(s, 'exchange');
-    const rest = await d.db
-      .selectFrom('restaurant')
-      .select(['level', 'coin'])
-      .where('id', '=', ctx.restaurantId)
-      .executeTakeFirstOrThrow();
     const blocked =
       (await frozenReason(d.db, ctx.restaurantId)) !== null
         ? ('exchange_frozen' as const)
         : await eligibility({ db: d.db, level: rest.level, accountId: ctx.accountId, now, t: et });
-    let foods: FuturesFoodDto[] = [];
-    if (enabled) {
-      const rows = await d.db
-        .selectFrom('futures_food')
-        .select(['foods_id', 'enabled', 'daily_quota'])
-        .execute();
-      const list = rows.flatMap((r) => {
-        const food = listable(d.config, r);
-        return food ? [{ food, quota: futuresQuota(food.level, r.daily_quota, t) }] : [];
-      });
-      const ids = list.map((x) => x.food.id);
-      const refs = await refPrices(d.db, d.config, et, s.tuning.market.fairPriceRate, ctx.shardId, ids, day);
-      const used = await usedToday(d.db, ctx.shardId, day);
-      foods = list
-        .map(({ food, quota }) => ({
-          foodsId: food.id,
-          level: food.level,
-          rare: food.odds < 100,
-          unitPrice: futuresUnitPrice(fairFoodPrice(food, s.tuning.market), refs.get(food.id)!, t),
-          left: Math.max(0, quota - (used.get(food.id) ?? 0)),
-        }))
-        .sort((a, b) => a.level - b.level || a.foodsId - b.foodsId);
-    }
-    const mine = await getDaily(d.db, ctx.restaurantId, DAILY_KEY, day);
-    const perk = await perkOf(d.db, d.config, t, ctx.restaurantId, now);
-    const base = d.db.selectFrom('futures_contract').selectAll().where('rest_id', '=', ctx.restaurantId);
-    const open = await base
-      .where('status', '=', 'open')
-      .orderBy('created_at', 'desc')
-      .orderBy('id', 'desc')
-      .execute();
-    const closed = await base
-      .where('status', '!=', 'open')
-      .orderBy('created_at', 'desc')
-      .orderBy('id', 'desc')
-      .limit(CLOSED_SHOWN)
-      .execute();
     const contracts = [...open, ...closed]
       .sort((a, b) => b.created_at.getTime() - a.created_at.getTime() || Number(b.id) - Number(a.id))
       .map(contractDto);

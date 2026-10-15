@@ -122,6 +122,7 @@ const errors: Messages['errors'] = {
     forum_post: (p) => `You've reached today's post limit (${s(p.max)})`,
     presets: (p) => `At most ${s(p.max)} ${plEn(s(p.max), 'preset', 'presets')}`,
     market: (p) => `Each player can buy at most ${s(p.limit)} of this batch`,
+    cupboard_exchange: (p) => `At most ${s(p.max)} exchanges at a time`,
     foods_max: (p) => `At most ${s(p.max)} of each ingredient`,
     tables: (p) =>
       `All tables are placed: at most ${s(p.cap)} (limited by level and floors), you have ${s(p.have)}`,
@@ -274,7 +275,6 @@ const errors: Messages['errors'] = {
     query_text: 'The search text is too long (max 20 characters)',
     cursor: 'Invalid page. Please refresh.',
     post_changed: 'The post changed. Refresh and try again.',
-    pick_food: 'Choose an ingredient to tip',
     pick_count: 'Wrong number of ingredients guessed',
     bad_food: 'You can only guess level 1–2 ingredients',
     not_visible: "This task can't be claimed right now",

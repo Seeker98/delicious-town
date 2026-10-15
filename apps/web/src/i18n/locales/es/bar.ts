@@ -401,7 +401,6 @@ const bar: Messages['bar'] = {
     got: (text) => `Conseguiste ${text}`,
     board: 'Diana: 50 en el centro, luego 25, 10 y 5 hacia fuera, 0 en los bordes',
     invalid: 'El momento del lanzamiento no cuadra: cuenta como fallo, 0 puntos',
-    throwLine: (i, score) => `Dardo ${i}: ${score}`,
     bossThrows: (list) => `Dardos del jefe: ${list}`,
     aim: (n) => `Apuntar el dardo ${n}`,
     throw: '¡Lanzar!',

@@ -51,7 +51,6 @@ export default {
     refreshed: (n: number) => `刷出了 ${n} 张私人单`,
     refreshFailed: '刷新失败',
     renown: (n: string) => `声望 ${n}`,
-    riderOption: (name: string, busy: number, max: number) => `${name} (在送 ${busy}/${max})`,
     allBusy: '骑手都在送单',
     refresh: (cost: string) => `私人刷新 (${cost} 银币)`,
     empty: '现在没有外卖单, 每个整点会补一批',

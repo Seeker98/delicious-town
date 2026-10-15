@@ -1,4 +1,4 @@
-// 从简中翻译源码生成繁中（问题记录 272）：整份文件做 OpenCC 转换（只影响汉字，代码不变），再套用人工修订。
+// 从简中翻译源码生成繁中（问题记录 272；含 i18n/changelog/zh-CN.ts）：整份文件做 OpenCC 转换（只影响汉字，代码不变），再套用人工修订。
 // 用法：pnpm -F @dt/web i18n:tw
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -24,5 +24,8 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   mkdirSync(to, { recursive: true });
   for (const f of readdirSync(from).filter((x) => x.endsWith('.ts')))
     writeFileSync(join(to, f), convertZhTw(readFileSync(join(from, f), 'utf8'), overrides));
+  // 更新记录的文案单独分包（i18n/changelog/），同样从简中生成
+  const cl = join(root, 'changelog');
+  writeFileSync(join(cl, 'zh-TW.ts'), convertZhTw(readFileSync(join(cl, 'zh-CN.ts'), 'utf8'), overrides));
   console.log('zh-TW generated');
 }

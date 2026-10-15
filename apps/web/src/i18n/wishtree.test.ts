@@ -4,7 +4,7 @@ import type { NewsDto } from '@dt/shared';
 import { useLocaleStore } from '../stores/locale';
 import { logText } from '../utils/events';
 import { newsText } from '../utils/news';
-import zhCN from './locales/zh-CN';
+import clZh from './changelog/zh-CN';
 
 const names = {
   goodsName: (id: number) => `G${id}`,
@@ -60,6 +60,6 @@ describe('许愿树文案（终审）', () => {
   });
 
   it('简中更新记录：括号挨着中文引号时不留空格', () => {
-    expect(zhCN.site.changelog.wishtree1011).not.toMatch(/[”」] \(/);
+    expect(clZh.wishtree1011).not.toMatch(/[”」] \(/);
   });
 });

@@ -16,7 +16,6 @@ const wiki: Messages['wiki'] = {
   moreDishes: (n) => `Show ${n} more`,
   maxShown: (n) => `Showing at most ${n}; use search or the street filter to narrow it down`,
   count: (n) => `${formatNum(n)} ${n === 1 ? 'entry' : 'entries'}`,
-  apiLink: 'Open API: for players who want to study the game or build tools',
   kinds: {
     goods: 'Items',
     foods: 'Ingredients',

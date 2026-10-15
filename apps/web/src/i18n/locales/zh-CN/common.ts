@@ -37,10 +37,6 @@ export default {
   qty: (name: string, num: string | number) => `${name}×${num}`,
   /** 名字和数量分开渲染时中间的乘号（名字是链接时） */
   times: '×',
-  parenOpen: ' (',
-  parenClose: ')',
-  colon: (s: string) => `${s}: `,
   /** 等级环的读屏文字（界面改版 P5） */
   levelRing: (level: number, pct: number) => `等级 ${level}, 经验 ${pct}%`,
-  semi: '；',
 };

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { GRANT_LIMITS } from '../limits';
 import type { AccountRole } from './auth';
 import type { BoostActivityDef } from './activity';
 import { pageQuery, type RestaurantDto } from './restaurant';
@@ -132,13 +133,11 @@ export interface AdminLedgerPageDto {
   nextBefore: string | null;
 }
 
-export const reasonBody = z.object({ reason: z.string().trim().min(1).max(200) });
 export const adminRenameBody = z.object({
   name: z.string().max(32),
   reason: z.string().trim().min(1).max(200),
 });
 export const roleBody = z.object({ role: z.enum(['player', 'mod', 'admin']) });
-export const GRANT_LIMITS = { coin: 100_000_000, exp: 100_000_000, diamond: 100_000, item: 9999 } as const;
 
 const idNum = z.object({
   id: z.number().int().positive(),

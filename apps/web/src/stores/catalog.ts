@@ -24,6 +24,11 @@ const keyOf = (l: string) => `dt_catalog_${l}`;
  * 不放模块级变量：测试里没等上一条读完，下一条会挂到旧请求上（backlog）
  */
 const loadingOf = new WeakMap<object, Promise<void>>();
+/**
+ * 当前用着的目录原文和语言（按目录实例记）：启动时先用浏览器里存的，再请求一次；
+ * 没变时服务端回 304，浏览器照样给整份内容，一样就不再重建一遍、不再写回浏览器（约 800KB）
+ */
+const appliedOf = new WeakMap<object, { l: Locale; json: string }>();
 
 export const useCatalogStore = defineStore('catalog', {
   state: () => ({
@@ -48,6 +53,7 @@ export const useCatalogStore = defineStore('catalog', {
   }),
   actions: {
     apply(c: CatalogDto) {
+      appliedOf.delete(this);
       this.goodsMap = new Map(c.goods.map((g) => [g.id, g]));
       this.foodsMap = new Map(c.foods.map((f) => [f.id, f]));
       this.streets = c.streets;
@@ -82,7 +88,10 @@ export const useCatalogStore = defineStore('catalog', {
         const l = activeLocale();
         try {
           const cached = localStorage.getItem(keyOf(l));
-          if (cached) this.apply(JSON.parse(cached) as CatalogDto);
+          if (cached) {
+            this.apply(JSON.parse(cached) as CatalogDto);
+            appliedOf.set(this, { l, json: cached });
+          }
         } catch {
           // 存储不可用时忽略
         }
@@ -98,10 +107,14 @@ export const useCatalogStore = defineStore('catalog', {
       const fresh = await endpoints.catalog(l);
       // 读的过程中又切了语言：丢掉过时的结果，按新语言重读（首次读目录时 set() 不会替我们重读）
       if (l !== activeLocale()) return this.reload(activeLocale());
-      this.apply(fresh);
       this.fetchedAt = Date.now();
+      const json = JSON.stringify(fresh);
+      const was = appliedOf.get(this);
+      if (was && was.l === l && was.json === json) return;
+      this.apply(fresh);
+      appliedOf.set(this, { l, json });
       try {
-        localStorage.setItem(keyOf(l), JSON.stringify(fresh));
+        localStorage.setItem(keyOf(l), json);
       } catch {
         // 忽略
       }

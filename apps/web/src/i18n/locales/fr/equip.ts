@@ -116,13 +116,10 @@ const equip: Messages['equip'] = {
     noBackItems: (one, all) => `Ni ${one} ni ${all}\u202f: impossible de revenir en arrière`,
     cost: (essence, have, coin) =>
       `Coût\u202f: essence\u202f×\u202f${essence} (vous en avez ${have}), ${coin} ${plFr(coin, 'pièce', 'pièces')}`,
-    useStone: (n) => `Utiliser une Pierre de renfort (réussite garantie\u202f; vous en avez ${n})`,
     maxed: 'Renfort au maximum',
     backOption: (name, back, num) => `${name} (annule ${back} niveau(x)\u202f; vous en avez ${num})`,
     rollback: 'Annuler',
     gems: 'Gemmes',
-    holeNote: (max, coinPerLevel) =>
-      `(${max} ${plFr(max, 'chasse', 'chasses')} au maximum\u202f; ${coinPerLevel ? `retirer coûte rang\u202f×\u202f${coinPerLevel} ${plFr(coinPerLevel, 'pièce', 'pièces')}` : 'retirer est gratuit en ce moment (moins de 2 étoiles ou jour de pluie acide)'})`,
     ungem: 'Retirer',
     gemOption: (name, num, level) => `${name} (vous en avez ${num}\u202f; coûte ${level} énergie)`,
     inlay: 'Sertir',

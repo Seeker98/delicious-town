@@ -9,7 +9,20 @@ export interface PeriodicDeps {
   shards: ShardService;
   now: () => Date;
   log: { error(obj: object, msg: string): void };
+  /**
+   * 已经抢过（或看到别人抢了）的周期，跨轮次记住，周期键没变就不再每 5 秒插一次 job_run。
+   * 每个循环自己一份（worker 里快、慢两个循环各一个）；不传就每轮都抢，和原来一样
+   */
+  claims?: ClaimCache;
 }
+
+/** 区服:任务 → 最后一次去抢的周期和时刻 */
+export type ClaimCache = Map<string, { period: string; at: number }>;
+
+/** 开了 retry 的任务同一周期隔多久再去看一次能不能重抢（重抢本身还有 10 / 30 分钟的条件） */
+export const RETRY_CHECK_MS = 60_000;
+/** 没开 retry 的也隔一阵再插一次：job_run 七天后会清掉，周期键很久不变的任务清掉后照旧能再跑 */
+export const CLAIM_RECHECK_MS = 3_600_000;
 
 export interface JobRunResult {
   shardId: number;
@@ -49,6 +62,10 @@ export async function runDueJobs(
       const now = d.now();
       const period = job.period(now, settings);
       if (period === null) continue;
+      const key = `${shardId}:${job.name}`;
+      const seen = d.claims?.get(key);
+      const since = seen && seen.period === period ? now.getTime() - seen.at : null;
+      if (since !== null && since >= 0 && since < (job.retry ? RETRY_CHECK_MS : CLAIM_RECHECK_MS)) continue;
       let attempt = 1;
       let claimed = await d.db
         .insertInto('job_run')
@@ -87,6 +104,8 @@ export async function runDueJobs(
           attempt = Number(again.attempts);
         }
       }
+      // 抢的语句返回了才记（代码审查）：插入或更新本身报错时不记，下一轮照常再抢
+      d.claims?.set(key, { period, at: now.getTime() });
       if (!claimed) continue;
       try {
         const stats = await job.run({ shardId, period, now, settings, log: d.log, signal: opts.signal });

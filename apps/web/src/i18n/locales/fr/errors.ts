@@ -122,6 +122,7 @@ const errors: Messages['errors'] = {
     forum_post: (p) => `Limite de publications du jour atteinte (${s(p.max)})`,
     presets: (p) => `Au plus ${s(p.max)} ${plFr(s(p.max), 'préréglage', 'préréglages')}`,
     market: (p) => `Chaque joueur peut acheter au plus ${s(p.limit)} de ce lot`,
+    cupboard_exchange: (p) => `Au plus ${s(p.max)} échanges à la fois`,
     foods_max: (p) => `Au plus ${s(p.max)} de chaque ingrédient`,
     tables: (p) =>
       `Toutes les tables sont placées\u202f: au plus ${s(p.cap)} (selon le niveau et les étages), vous en avez ${s(p.have)}`,
@@ -274,7 +275,6 @@ const errors: Messages['errors'] = {
     query_text: 'Le texte de recherche est trop long (20 caractères au plus)',
     cursor: 'Page invalide. Actualisez.',
     post_changed: 'La publication a changé. Actualisez et réessayez.',
-    pick_food: 'Choisissez un ingrédient à offrir',
     pick_count: "Nombre d'ingrédients pariés invalide",
     bad_food: 'Vous ne pouvez parier que sur des ingrédients de niveau 1 à 2',
     not_visible: 'Cette tâche ne peut pas être réclamée pour le moment',

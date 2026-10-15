@@ -30,7 +30,6 @@ const kuji: Messages['kuji'] = {
   boughtDeluxe: (n) => `${n} ${plFr(n, 'ticket kuji de luxe acheté', 'tickets kuji de luxe achetés')}`,
   deluxeNote:
     'Tirage de luxe\u202f: le prix A et le Dernier Prix donnent le titre limité du mois et sont annoncés à tout le serveur.',
-  buyPrefix: 'Acheter',
   buyTotal: (coin) => `ticket(s) pour ${coin} ${plFr(coin, 'pièce', 'pièces')}`,
   buy: 'Acheter des tickets',
   buyAria: (n, coin) => `Acheter ${n} pour ${coin} pièces`,
@@ -40,7 +39,6 @@ const kuji: Messages['kuji'] = {
   balance: (n) => `Mes pièces\u202f: ${n}`,
   draw: (n) => `Tirer ${n}`,
   result: 'Résultat du tirage',
-  drawLine: (tier, award) => `${tier}\u202f: ${award}`,
   lastWon: (award) => `Bravo, vous avez tiré le dernier ticket et gagnez le Dernier Prix\u202f: ${award}`,
   recent: 'Gros lots récents',
   noRecent: "Personne n'a encore gagné de gros lot",

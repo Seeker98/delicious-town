@@ -17,7 +17,7 @@ import { useCatalogStore } from '../stores/catalog';
 import { useConfirmStore } from '../stores/confirm';
 import { useToastStore } from '../stores/toast';
 import { recordLabel } from '../utils/events';
-import { formatNum, gameDateTime, gameTimeOfDay } from '../utils/format';
+import { clampQty, formatNum, gameDateTime, gameTimeOfDay } from '../utils/format';
 import { serverNowMs } from '../utils/serverNow';
 import { groupStoreItems } from '../utils/storeSort';
 
@@ -108,10 +108,9 @@ async function run(fn: () => Promise<unknown>, fallback: string) {
   }
 }
 /** 填的数超过上限时按上限算（使用：单次上限 maxUse；出售：持有数） */
-const useN = (it: StoreItemDto) => Math.max(1, Math.min(qty[it.goodsId] ?? 1, it.maxUse));
+const useN = (it: StoreItemDto) => clampQty(qty[it.goodsId], it.maxUse);
 /** 步进器的上限：能批量使用的按一次最多用几个，能卖的按持有（界面改版 P4） */
-const qtyMax = (it: StoreItemDto) =>
-  it.batch && it.usable ? Math.max(1, Math.min(it.num, it.maxUse)) : it.num;
+const qtyMax = (it: StoreItemDto) => (it.batch && it.usable ? clampQty(it.num, it.maxUse) : it.num);
 /** 信息行的各段：只有一段时不带分隔点（终审：开头多一个点） */
 function metaParts(it: StoreItemDto): Array<{ text: string; danger: boolean }> {
   const out: Array<{ text: string; danger: boolean }> = [];
@@ -122,7 +121,7 @@ function metaParts(it: StoreItemDto): Array<{ text: string; danger: boolean }> {
   else if (it.batch) out.push({ text: t.value.store.batchMax(it.maxUse), danger: false });
   return out;
 }
-const sellN = (it: StoreItemDto) => Math.max(1, Math.min(Math.floor(qty[it.goodsId] ?? 1), it.num));
+const sellN = (it: StoreItemDto) => clampQty(Math.floor(qty[it.goodsId] ?? 1), it.num);
 const confirm = useConfirmStore();
 /** 卖出、丢弃收不回来，先确认（问题记录 128；界面改版 P4：确认面板，丢弃是危险操作） */
 async function sell(it: StoreItemDto) {

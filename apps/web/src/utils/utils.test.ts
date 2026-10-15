@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { describeEffects } from './effects';
-import { foodLevelLabel, formatNum } from './format';
+import { clampQty, foodLevelLabel, formatNum } from './format';
 
 describe('formatNum', () => {
   it('千分位', () => {
@@ -29,5 +29,14 @@ describe('foodLevelLabel（问题记录：橱柜分类把神秘、万能食材�
     expect(foodLevelLabel(7)).toBe('神秘');
     expect(foodLevelLabel(9)).toBe('万能');
     expect(foodLevelLabel(3)).toBe('3 级');
+  });
+});
+
+describe('clampQty', () => {
+  it('夹到 1~max；空着、0、负数、NaN 都当 1；max 不到 1 时是 1', () => {
+    expect(clampQty(5, 10)).toBe(5);
+    expect(clampQty(50, 10)).toBe(10);
+    for (const x of [0, -3, Number.NaN, null, undefined]) expect(clampQty(x, 10)).toBe(1);
+    expect(clampQty(5, 0)).toBe(1);
   });
 });

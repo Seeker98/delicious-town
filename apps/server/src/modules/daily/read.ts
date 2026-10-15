@@ -1,4 +1,4 @@
-import type { Kysely } from 'kysely';
+import { sql, type Kysely } from 'kysely';
 import { addDays, gameDay, type DailyDto, type DailyHeadDto, type DailyLang } from '@dt/shared';
 import { ErrorCode } from '@dt/shared';
 import type { DB } from '../../db/schema';
@@ -80,18 +80,21 @@ export async function readDaily(
 /** 首页入口：昨天的日报已发布时给日期和标题 */
 export async function dailyHead(db: Kysely<DB>, shardId: number, now: Date): Promise<DailyHeadDto | null> {
   const day = addDays(gameDay(now), -1);
+  // 只取三种语言的标题，不把整篇正文读出来（首页每次都要）
   const r = await db
     .selectFrom('town_daily')
-    .select('content')
+    .select([
+      sql<string | null>`content -> 'zh-CN' ->> 'title'`.as('zh'),
+      sql<string | null>`content -> 'en' ->> 'title'`.as('en'),
+      sql<string | null>`content -> 'zh-TW' ->> 'title'`.as('tw'),
+    ])
     .where('shard_id', '=', shardId)
     .where('day', '=', day)
     .where('status', '=', 'published')
+    .where('content', 'is not', null)
     .executeTakeFirst();
-  if (!r?.content) return null;
-  const c = r.content as DailyContent;
-  const title = Object.fromEntries(
-    (['zh-CN', 'en', 'zh-TW'] as DailyLang[]).map((l) => [l, c[l].title]),
-  ) as Record<DailyLang, string>;
+  if (!r || r.zh === null) return null;
+  const title: Record<DailyLang, string> = { 'zh-CN': r.zh, en: r.en ?? '', 'zh-TW': r.tw ?? '' };
   // 三种语言的标题都看：英文标题里可以有简中标题里没有的店（终审 I4）
   return { day, title, rests: await restNames(db, shardId, Object.values(title).join('\n')) };
 }

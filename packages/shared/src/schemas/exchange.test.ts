@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { EXCHANGE_FLAGS } from '../enums';
 import {
-  EXCHANGE_FLAGS,
   exchangeConfiscateBody,
   exchangeFreezeBody,
   exchangeOrderBody,

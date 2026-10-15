@@ -37,7 +37,6 @@ const mc: Messages['mc'] = {
   learnedOf: (shown, total) => `Appris (${shown} / ${total})`,
   noLearned:
     'Vous ne connaissez encore aucun plat signature\u202f: expertisez des recettes mystère au temple pour obtenir des fragments\u202f; 3 fragments suffisent pour apprendre un plat.',
-  dishMeta: (level, road, levelName) => `Niv. ${level ?? '?'} · ${road} · ${levelName}`,
   proficiency: (cur, next) => `Maîtrise ${cur}${next ? ` / ${next}` : ' (max)'}`,
   cook: 'Cuisiner',
   foods: 'Ingrédients\u202f: ',

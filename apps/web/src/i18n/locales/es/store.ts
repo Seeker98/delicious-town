@@ -66,8 +66,6 @@ const store: Messages['store'] = {
     buy: 'Comprar',
     specialSoon: 'Nueva oferta hoy a mediodía',
     tier: (off) => `-${off}\u00a0%`,
-    specialLine: (price, left, stock) =>
-      `${price} ${plEs(price, 'moneda', 'monedas')} · quedan ${left}/${stock}`,
     grab: '¡Lo quiero!',
     myCoin: 'Mis monedas',
     myDiamond: 'Mis diamantes',

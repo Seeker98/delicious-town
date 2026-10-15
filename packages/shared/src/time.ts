@@ -1,7 +1,8 @@
 export const GAME_TIME_ZONE = 'Asia/Shanghai';
 /** 北京时间固定 +8 小时，没有夏令时 */
 const OFFSET_MS = 8 * 3600_000;
-const DAY_MS = 86_400_000;
+/** 一天的毫秒数 */
+export const DAY_MS = 86_400_000;
 /** 结算每轮 4 分钟 */
 export const ROUND_MS = 240_000;
 

@@ -13,7 +13,6 @@ export const placeDeviceBody = z.object({
   slot: z.number().int().min(1).max(20),
   goodsId: z.number().int().positive(),
 });
-export const slotBody = z.object({ slot: z.number().int().min(1).max(20) });
 export const renameBody = z.object({ name: z.string().max(32) });
 export const moveBody = z.object({ streetId: z.number().int().min(0).max(50) });
 export const drivePlanktonBody = z.object({ way: z.enum(['strength', 'book']) });

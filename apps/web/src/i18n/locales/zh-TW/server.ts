@@ -143,6 +143,5 @@ export default {
     equip: '廚具',
     hangover: '宿醉',
     suit: (name: string, need: number) => `${name} (${need} 件)`,
-    suitFallback: '套裝',
   },
 };

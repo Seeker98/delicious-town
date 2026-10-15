@@ -12,7 +12,7 @@ import { loadGems } from './instances';
 
 /** IN 列表分批，免得一个区服穿着的厨具太多时超过参数个数上限 */
 const CHUNK = 5000;
-const chunks = <T>(xs: readonly T[]): T[][] => {
+export const chunks = <T>(xs: readonly T[]): T[][] => {
   const out: T[][] = [];
   for (let i = 0; i < xs.length; i += CHUNK) out.push(xs.slice(i, i + CHUNK));
   return out;

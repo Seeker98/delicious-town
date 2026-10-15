@@ -37,10 +37,6 @@ const common: Messages['common'] = {
   paren: (s) => ` (${s})`,
   qty: (name, num) => `${name}×${num}`,
   times: '×',
-  parenOpen: ' (',
-  parenClose: ')',
-  colon: (s) => `${s}: `,
   levelRing: (level, pct) => `Level ${level}, ${pct}% XP`,
-  semi: '; ',
 };
 export default common;

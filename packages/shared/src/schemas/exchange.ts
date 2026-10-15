@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { ExchangeFlag } from '../enums';
 
 export type ExchangeSide = 'buy' | 'sell';
 
@@ -105,15 +106,6 @@ export interface ExchangeWithdrawDto {
   foods: Array<{ foodsId: number; num: number }>;
   left: Array<{ foodsId: number; num: number }>;
 }
-
-/** 可疑成交的标记（156-2 设计 §4） */
-export const EXCHANGE_FLAGS = {
-  same_ip: '同 IP',
-  edge_price: '价格贴边',
-  repeat_pair: '反复对倒',
-  large: '大额',
-} as const;
-export type ExchangeFlag = keyof typeof EXCHANGE_FLAGS;
 
 export const exchangeFreezeBody = z.object({
   restId: z.number().int().positive(),

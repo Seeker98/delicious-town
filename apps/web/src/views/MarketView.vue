@@ -18,7 +18,7 @@ import { useRestaurantStore } from '../stores/restaurant';
 import { useConfirmStore } from '../stores/confirm';
 import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
-import { foodLevelLabel, formatNum, timeHM } from '../utils/format';
+import { clampQty, foodLevelLabel, formatNum, timeHM } from '../utils/format';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
@@ -116,7 +116,7 @@ function openBuy(it: MarketItemDto) {
   buyNum.value = it.shelf === 1 ? Math.max(1, maxBuy(it)) : 1;
 }
 const buyMax = computed(() => (buying.value ? maxBuy(buying.value) : 0));
-const buyNumClamped = computed(() => Math.max(1, Math.min(buyNum.value || 1, Math.max(1, buyMax.value))));
+const buyNumClamped = computed(() => clampQty(buyNum.value, buyMax.value));
 const buyTotal = computed(() => (buying.value ? unitPrice(buying.value) * buyNumClamped.value : 0));
 /** 银币连一个都买不起（限购、库存还有） */
 const coinShort = computed(() => {

@@ -52,7 +52,9 @@ const rewardMail = (restName: string, level: number) =>
  */
 export async function scanInvites(game: Game, log: JobLogger, shardId: number): Promise<InviteScanResult> {
   const db = game.app.db;
-  const tuning = (await game.shards.settings(shardId)).tuning.invite;
+  const all = (await game.shards.settings(shardId)).tuning;
+  const tuning = all.invite;
+  const expiresDays = all.mail.expiresDays;
   const month = gameDay(game.deps.now()).slice(0, 7);
   const out: InviteScanResult = { newbie: 0, sent: 0, pending: 0, capped: 0, failed: 0 };
 
@@ -110,6 +112,7 @@ export async function scanInvites(game: Game, log: JobLogger, shardId: number): 
         items: tuning.newbie as RewardItems,
         source: 'invite',
         actorAccountId: null,
+        expiresDays,
       });
       await tx
         .updateTable('invite_reward')
@@ -177,6 +180,7 @@ export async function scanInvites(game: Game, log: JobLogger, shardId: number): 
             items: tuning.rewards[stage] as RewardItems,
             source: 'invite',
             actorAccountId: null,
+            expiresDays,
           });
           await tx
             .updateTable('invite_reward')
@@ -235,6 +239,7 @@ export async function scanInvites(game: Game, log: JobLogger, shardId: number): 
         items: tuning.rewards[stage] as RewardItems,
         source: 'invite',
         actorAccountId: null,
+        expiresDays,
       });
       await tx
         .updateTable('invite_reward')

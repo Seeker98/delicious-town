@@ -1,6 +1,6 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
 import { createPinia, getActivePinia, setActivePinia } from 'pinia';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { FriendRestDto, RestaurantDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -76,6 +76,8 @@ async function openMenu() {
 }
 
 describe('FriendRestView', () => {
+  // 上一条测试挂着的页面卸掉：全量跑、机器忙时它的读取晚到，会碰到下一条测试（顶栏“⋯”偶发不为空）
+  enableAutoUnmount(afterEach);
   beforeEach(() => {
     setActivePinia(createPinia());
     useSessionStore().me = {

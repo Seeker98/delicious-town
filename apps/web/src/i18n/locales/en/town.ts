@@ -39,7 +39,6 @@ const town: Messages['town'] = {
     carmen: { name: 'Carmen', desc: 'Welcome gift: a mystery ingredient voucher (once per restaurant)' },
   },
   said: (name, talk, rewards) => `${name}: ${talk} You got ${rewards}`,
-  mayorName: 'Mayor Big Pot',
   /** 镇长大胃锅页上的问答标题（问题记录 441） */
   mayorAsk: 'Guess the next weather',
   mayorFailed: "Couldn't place your guess",
@@ -71,7 +70,6 @@ const town: Messages['town'] = {
   shakeHint: 'Shake once a day. The coins depend on your stars',
   shakenToday: 'Shaken today',
   shake: 'Shake',
-  weatherNow: 'Weather now: ',
   news: {
     title: 'Town news',
     linkNote: 'Tap a name to visit',
@@ -246,16 +244,11 @@ const town: Messages['town'] = {
     mineLine: (level, n, max, left) =>
       ` Lv. ${level} · ${n}/${max} ${plEn(max, 'student', 'students')} · ${left}`,
     forceClose: 'End now',
-    openTitle: 'Open a class (uses 1 fragment and 1 Teacher Certificate):',
     pickMc: 'Choose a signature dish you know',
-    mcOption: (name, level) => `${name} (Lv. ${level ?? '?'})`,
     pickCert: 'Choose a Teacher Certificate',
-    certOption: (name, strength, hours, max, have) =>
-      `${name} (Stamina ${strength}, ${hours} h, ${max} ${plEn(max, 'student', 'students')}, own ${have})`,
     open: 'Open class',
     running: 'Classes in session',
     none: "Nobody else's class is running",
-    lessonLine: (level, teacher) => ` Lv. ${level} · teacher ${teacher}`,
     lessonMeta: (n, max, stolen, left) =>
       `${n}/${max} ${plEn(max, 'student', 'students')} (${stolen} sneaked) · ${left}`,
     learn: 'Learn',
@@ -274,8 +267,6 @@ const town: Messages['town'] = {
     cats: { bg: 'Krabby Patties', dt: 'Delicious Tickets', chip: 'Fragments', so: 'Other' },
     loadFailed: "Couldn't load the exchange",
     soldOut: 'All claimed',
-    maxLeft: (n) => `${n} more at most`,
-    maxOnce: (n) => `Up to ${n} at once`,
     lack: 'Not enough materials',
     done: (name, num) => `Exchanged: ${name}×${num}`,
     failed: 'Exchange failed',

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ACTIVITY_ACTIONS, type PassDef } from '@dt/shared';
-import { errsUnder } from '../../../utils/activityForm';
+import { errsUnder, inputNum } from '../../../utils/activityForm';
 
 type Rule = PassDef['rules'][number];
 /** 积分规则表（战令和全服合力共用，148-3）：行为、每次几分、每天上限 */
@@ -11,7 +11,6 @@ const setRule = (i: number, p: Partial<Rule>) =>
     'update:modelValue',
     props.modelValue.map((r, j) => (j === i ? { ...r, ...p } : r)),
   );
-const num = (e: Event) => Number((e.target as HTMLInputElement).value);
 </script>
 
 <template>
@@ -35,7 +34,7 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
         style="width: 5rem"
         :value="r.points"
         :data-testid="`rule-points-${i}`"
-        @input="setRule(i, { points: num($event) })"
+        @input="setRule(i, { points: inputNum($event) })"
       />
       分 每天最多
       <input
@@ -44,7 +43,7 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
         class="dt-adm-in"
         style="width: 6rem"
         :value="r.dailyCap"
-        @input="setRule(i, { dailyCap: num($event) })"
+        @input="setRule(i, { dailyCap: inputNum($event) })"
       />
       分
       <button

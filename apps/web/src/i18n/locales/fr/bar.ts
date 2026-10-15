@@ -419,7 +419,6 @@ const bar: Messages['bar'] = {
     got: (text) => `Vous obtenez ${text}`,
     board: 'Cible\u202f: 50 au centre, puis 25, 10 et 5 vers l’extérieur, 0 sur les bords',
     invalid: 'Le moment du lancer ne correspond pas\u202f: fléchette ratée, 0 point',
-    throwLine: (i, score) => `Fléchette ${i}\u202f: ${score}`,
     bossThrows: (list) => `Fléchettes du patron\u202f: ${list}`,
     aim: (n) => `Viser la fléchette ${n}`,
     throw: 'Lancer\u202f!',

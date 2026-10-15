@@ -1,7 +1,6 @@
 import { z } from 'zod';
+import { MARKET_BUY_MAX } from '../limits';
 
-/** 菜场一次最多买几个（接口校验；网页的“最多”也不超过它） */
-export const MARKET_BUY_MAX = 1000;
 export const marketBuyBody = z.object({
   itemId: z.number().int().positive(),
   num: z.number().int().min(1).max(MARKET_BUY_MAX),

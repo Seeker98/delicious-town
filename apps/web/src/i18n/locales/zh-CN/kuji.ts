@@ -27,7 +27,6 @@ export default {
   ticketsDeluxe: (n: number) => `我的豪华签券: ${n} 张`,
   boughtDeluxe: (n: number) => `买了 ${n} 张豪华签券`,
   deluxeNote: '豪华池: A 赏和最后赏发当月限定称号, 并全服广播。',
-  buyPrefix: '买',
   buyTotal: (coin: string) => `张, 共 ${coin} 银币`,
   buy: '买券',
   /** 买券价格按钮的读屏名（界面改版 P8） */
@@ -39,7 +38,6 @@ export default {
   balance: (n: string) => `我的银币: ${n}`,
   draw: (n: number) => `抽 ${n} 张`,
   result: '抽签结果',
-  drawLine: (tier: string, award: string) => `${tier}: ${award}`,
   lastWon: (award: string) => `恭喜抽走最后一张签, 拿下最后赏: ${award}`,
   recent: '最近的大赏',
   noRecent: '还没有人抽中大赏',

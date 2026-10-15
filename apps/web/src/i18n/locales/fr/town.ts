@@ -46,7 +46,6 @@ const town: Messages['town'] = {
     },
   },
   said: (name, talk, rewards) => `${name}\u202f: ${talk} Vous recevez ${rewards}`,
-  mayorName: 'Maire Grosse Marmite',
   /** 镇长大胃锅页上的问答标题（问题记录 441） */
   mayorAsk: 'Deviner la prochaine météo',
   mayorFailed: 'Impossible d’enregistrer votre pari',
@@ -79,7 +78,6 @@ const town: Messages['town'] = {
   shakeHint: 'Une secousse par jour. Les pièces dépendent de vos étoiles',
   shakenToday: "Déjà secouée aujourd'hui",
   shake: 'Secouer',
-  weatherNow: 'Météo actuelle\u202f: ',
   news: {
     title: 'Nouvelles de la ville',
     linkNote: 'Touchez un nom pour visiter',
@@ -260,16 +258,11 @@ const town: Messages['town'] = {
     mineLine: (level, n, max, left) =>
       ` Niv. ${level} · ${n}/${max} ${plFr(max, 'élève', 'élèves')} · ${left}`,
     forceClose: 'Arrêter',
-    openTitle: "Ouvrir un cours (1 fragment et 1 certificat d'enseignant)\u202f:",
     pickMc: 'Choisir un plat signature appris',
-    mcOption: (name, level) => `${name} (niv. ${level ?? '?'})`,
     pickCert: "Choisir un certificat d'enseignant",
-    certOption: (name, strength, hours, max, have) =>
-      `${name} (énergie ${strength}, ${hours} h, ${max} ${plFr(max, 'élève', 'élèves')}, possédé ${have})`,
     open: 'Ouvrir le cours',
     running: 'Cours en cours',
     none: "Aucun cours d'un autre joueur pour le moment",
-    lessonLine: (level, teacher) => ` Niv. ${level} · prof ${teacher}`,
     lessonMeta: (n, max, stolen, left) =>
       `${n}/${max} ${plFr(max, 'élève', 'élèves')} (${stolen} ${plFr(stolen, 'espion', 'espions')}) · ${left}`,
     learn: 'Apprendre',
@@ -289,8 +282,6 @@ const town: Messages['town'] = {
     cats: { bg: 'Pâtés de crabe', dt: 'Tickets Délice', chip: 'Fragments', so: 'Autres' },
     loadFailed: 'Impossible de charger les échanges',
     soldOut: 'Épuisé',
-    maxLeft: (n) => `Encore ${n} au maximum`,
-    maxOnce: (n) => `${n} max à la fois`,
     lack: 'Matériaux insuffisants',
     done: (name, num) => `Échangé\u202f: ${name}\u202f×\u202f${num}`,
     failed: "Échec de l'échange",

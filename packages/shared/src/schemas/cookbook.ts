@@ -10,12 +10,11 @@ export type CookbookListQuery = z.infer<typeof cookbookListQuery>;
 export const cookbookIdParam = z.object({ id: z.coerce.number().int().positive() });
 export const learnBody = z.object({ cookbookId: z.number().int().positive() });
 
-export const foodsNeedQuery = z.object({
-  street: z.coerce.number().int().min(0).max(50).optional(),
-  target: z.coerce.number().int().min(1).max(10),
-  foodLevel: z.coerce.number().int().min(1).max(9).optional(),
-});
-export type FoodsNeedQuery = z.infer<typeof foodsNeedQuery>;
+export interface FoodsNeedQuery {
+  street?: number;
+  target: number;
+  foodLevel?: number;
+}
 
 /** 学习类型（规格书 03 §3.7）：'0' 可以直接学；'1'~'5' 需要该级万能食材补一种；'z' 不能学；'max' 已是最高品级 */
 /** street：不在这道菜的街道上，不能学也不能升级（问题记录 312） */

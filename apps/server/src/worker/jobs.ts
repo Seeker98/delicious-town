@@ -1,4 +1,5 @@
 import type { Kysely } from 'kysely';
+import { DAY_MS } from '@dt/shared';
 import { dropPartitionsBefore, ensureDailyPartitions } from '../db/partitions';
 import type { DB } from '../db/schema';
 import type { PeriodicJob } from '../core/jobs';
@@ -8,12 +9,11 @@ import { cleanLoginTrace } from '../modules/account/loginTrace';
 import { pruneStreakBest } from '../modules/bar/state';
 import { pruneDailyCounters } from '../modules/counter/dailyCounter';
 import { runOpsScan } from '../modules/ops/scan';
-import { runDueJobs } from './periodic';
+import { runDueJobs, type ClaimCache } from './periodic';
 import { pullOffset } from '../infra/clock';
 import type { Job, JobLogger } from './scheduler';
 
 export const RETENTION_DAYS = { ledger: 30, news: 30, income_round: 3, rest_log: 30 } as const;
-const DAY_MS = 86_400_000;
 
 /** 预建昨天起 5 天的分区，删除超过保留期的分区 */
 export async function maintainPartitions(
@@ -52,6 +52,9 @@ export function workerJobs(game: Game, log: JobLogger): Job[] {
   const { db, redis } = game.app;
   const now = () => game.deps.now();
   const { fast, slow } = splitPeriodic(game.jobs);
+  // 各循环记住已经抢过的周期，周期键没变就不再插 job_run（快的那个每 5 秒一轮）
+  const fastClaims: ClaimCache = new Map();
+  const slowClaims: ClaimCache = new Map();
   return [
     {
       // 登录记录只留 30 天（子项目 6B-2）
@@ -96,14 +99,14 @@ export function workerJobs(game: Game, log: JobLogger): Job[] {
       intervalMs: 5_000,
       run: async (signal) => {
         if (game.app.clock) await pullOffset(game.app.clock, game.app.redis);
-        await runDueJobs({ db, shards: game.shards, now, log }, fast, { signal });
+        await runDueJobs({ db, shards: game.shards, now, log, claims: fastClaims }, fast, { signal });
       },
     },
     {
       name: 'periodic-slow',
       intervalMs: 60_000,
       run: async (signal) => {
-        await runDueJobs({ db, shards: game.shards, now, log }, slow, { signal });
+        await runDueJobs({ db, shards: game.shards, now, log, claims: slowClaims }, slow, { signal });
       },
     },
     {

@@ -94,12 +94,9 @@ const predict: Messages['predict'] = {
     waiting: 'Clos, en attente du résultat',
     summaryHint: '(gain à la clôture − mise nette)',
     mine: 'Mes échanges',
-    mineHint: 'Chacun de vos échanges sur cet événement\u202f; les montants incluent les frais',
     mineLine: (action, qty, per, buy, total) =>
       `${action} ${qty} ${plFr(qty, 'part', 'parts')} à environ ${per} chacune, ${buy ? 'dépensé' : 'reçu'} ${total}`,
     trades: 'Derniers échanges du serveur',
-    tradesHint:
-      'Les 20 derniers échanges de tous (anonymes)\u202f: on voit quels échanges ont fait monter ou baisser le prix',
     noTrades: "Pas encore d'échange",
     tradeLine: (action, qty, per, pct) =>
       `${action} ${qty} ${plFr(qty, 'part', 'parts')} à environ ${per} chacune, «\u202fOui\u202f» à ${pct}\u202f% ensuite`,

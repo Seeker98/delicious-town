@@ -7,7 +7,7 @@ import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
-import { formatNum } from '../../utils/format';
+import { clampQty, formatNum } from '../../utils/format';
 import DtArt from '../DtArt.vue';
 import DtRow from '../DtRow.vue';
 import FoodArt from '../FoodArt.vue';
@@ -30,7 +30,7 @@ const result = ref<MissileResultDto | null>(null);
 
 const held = computed(() => props.data.missiles.find((m) => m.goodsId === goodsId.value)?.num ?? 0);
 const max = computed(() => Math.min(held.value, 99));
-const n = computed(() => Math.max(1, Math.min(num.value || 1, max.value)));
+const n = computed(() => clampQty(num.value, max.value));
 const g = computed(() => props.data.guardian);
 const hpPct = computed(() => `${(g.value.hpLeft / Math.max(1, g.value.hpMax)) * 100}%`);
 const block = computed(() => {

@@ -11,6 +11,8 @@ import { finishedRound } from '../predict/auto/rounds';
 import { grantGoodsOp } from '../store/goods';
 import type { WorldService } from '../world/service';
 
+type WorldSnapshot = Awaited<ReturnType<WorldService['ensure']>>;
+
 /** 今天猜的那一次、现在猜的话哪一轮揭晓和那一轮的预报 */
 export async function mayorView(
   db: Kysely<DB>,
@@ -18,6 +20,8 @@ export async function mayorView(
   shardId: number,
   restId: number,
   now: Date,
+  /** 调用方已经在读世界状态时传进来，不再读一遍 */
+  snapshot?: Promise<WorldSnapshot>,
 ): Promise<MayorDto> {
   const [row, snap] = await Promise.all([
     db
@@ -27,7 +31,7 @@ export async function mayorView(
       .where('day', '=', gameDay(now))
       .executeTakeFirst(),
     // 在玩家事务里调用时 db 是事务，不能另向连接池要连接
-    world.ensure(shardId, now, db),
+    snapshot ?? world.ensure(shardId, now, db),
   ]);
   const f = await world.forecast(shardId, snap);
   return {

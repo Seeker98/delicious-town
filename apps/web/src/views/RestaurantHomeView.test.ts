@@ -179,6 +179,33 @@ describe('RestaurantHomeView', () => {
     expect(endpoints.dineCurrent).toHaveBeenCalled();
   });
 
+  it('每 4 分钟重新读概况；应用在后台时跳过，回到前台马上读一次', async () => {
+    let hidden = false;
+    const hiddenSpy = vi.spyOn(document, 'hidden', 'get').mockImplementation(() => hidden);
+    const stateSpy = vi
+      .spyOn(document, 'visibilityState', 'get')
+      .mockImplementation(() => (hidden ? 'hidden' : 'visible'));
+    vi.useFakeTimers();
+    try {
+      const w = await mountView();
+      expect(endpoints.overview).toHaveBeenCalledTimes(1);
+      await vi.advanceTimersByTimeAsync(240_000);
+      expect(endpoints.overview).toHaveBeenCalledTimes(2);
+      hidden = true;
+      await vi.advanceTimersByTimeAsync(720_000);
+      expect(endpoints.overview).toHaveBeenCalledTimes(2);
+      hidden = false;
+      document.dispatchEvent(new Event('visibilitychange'));
+      await flushPromises();
+      expect(endpoints.overview).toHaveBeenCalledTimes(3);
+      w.unmount();
+    } finally {
+      vi.useRealTimers();
+      hiddenSpy.mockRestore();
+      stateSpy.mockRestore();
+    }
+  });
+
   it('白食读失败照旧整页报错，任务读失败只少主线行', async () => {
     vi.mocked(endpoints.tasks).mockRejectedValue(new Error('x'));
     const w = await mountView();
