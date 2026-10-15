@@ -121,6 +121,7 @@ export default {
     forum_post: (p) => `今天發帖已達上限 (${String(p.max)} 篇)`,
     presets: (p) => `預設最多 ${String(p.max)} 套`,
     market: (p) => `這批貨每人限購 ${String(p.limit)} 份`,
+    cupboard_exchange: (p) => `一次最多換 ${String(p.max)} 次`,
     foods_max: (p) => `單種食材最多 ${String(p.max)} 個`,
     tables: (p) => `餐桌已經擺滿了: 最多 ${String(p.cap)} 張 (受等級和樓層限制), 已有 ${String(p.have)} 張`,
     cupboard_slots: (p) => `櫥櫃格數已經是最大了 (${String(p.max)})`,

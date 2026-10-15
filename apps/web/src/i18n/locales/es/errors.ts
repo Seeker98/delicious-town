@@ -124,6 +124,7 @@ const errors: Messages['errors'] = {
     presets: (p) =>
       `Como máximo ${s(p.max)} ${plEs(s(p.max), 'configuración guardada', 'configuraciones guardadas')}`,
     market: (p) => `Cada jugador puede comprar como máximo ${s(p.limit)} de este lote`,
+    cupboard_exchange: (p) => `Como máximo ${s(p.max)} cambios a la vez`,
     foods_max: (p) => `Como máximo ${s(p.max)} de cada ingrediente`,
     tables: (p) =>
       `Todas las mesas están colocadas: como máximo ${s(p.cap)} (según nivel y plantas), tienes ${s(p.have)}`,

@@ -122,6 +122,7 @@ const errors: Messages['errors'] = {
     forum_post: (p) => `You've reached today's post limit (${s(p.max)})`,
     presets: (p) => `At most ${s(p.max)} ${plEn(s(p.max), 'preset', 'presets')}`,
     market: (p) => `Each player can buy at most ${s(p.limit)} of this batch`,
+    cupboard_exchange: (p) => `At most ${s(p.max)} exchanges at a time`,
     foods_max: (p) => `At most ${s(p.max)} of each ingredient`,
     tables: (p) =>
       `All tables are placed: at most ${s(p.cap)} (limited by level and floors), you have ${s(p.have)}`,

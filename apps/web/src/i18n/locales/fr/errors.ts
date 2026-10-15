@@ -122,6 +122,7 @@ const errors: Messages['errors'] = {
     forum_post: (p) => `Limite de publications du jour atteinte (${s(p.max)})`,
     presets: (p) => `Au plus ${s(p.max)} ${plFr(s(p.max), 'préréglage', 'préréglages')}`,
     market: (p) => `Chaque joueur peut acheter au plus ${s(p.limit)} de ce lot`,
+    cupboard_exchange: (p) => `Au plus ${s(p.max)} échanges à la fois`,
     foods_max: (p) => `Au plus ${s(p.max)} de chaque ingrédient`,
     tables: (p) =>
       `Toutes les tables sont placées\u202f: au plus ${s(p.cap)} (selon le niveau et les étages), vous en avez ${s(p.have)}`,
