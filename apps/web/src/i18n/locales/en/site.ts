@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    float1015:
+      'Business fluctuation adjusted: the random swing in occupancy each round is halved (e.g. 2 stars ±25% → ±12.5%, 7 stars ±50% → ±25%); the random swing in picky rate widens to ±2.5% per star (was ±1.5%), still symmetric with no change on average',
     income1015:
       'Restaurant income reworked: regular customers now also pay for a dish from your street (a learned dish pays 4.8% of its price, at most 64 per table; an unlearned one pays 10 + star level); a satisfied picky customer pays 4 times what a regular customer pays for the same dish; the more dishes of your street you learn, the higher your picky rate (up to +15% when all are learned, still subject to the picky rate cap); final coin and EXP on every street medal were rebalanced for the new rules, and occupancy or EXP per table changed on 12 streets such as Mexico, France and Sichuan, see the street bonus on the moving page',
     streets1014:

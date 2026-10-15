@@ -19,10 +19,10 @@
     "cookbookMaxGrade": 7
   },
   "settlement": {
-    "atFloatBase": 0.3,
-    "atFloatPerStar": 0.1,
-    "spFloatPerStar": 0.1,
-    "spFloatCenter": 0.65,
+    "atFloatBase": 0.15,
+    "atFloatPerStar": 0.05,
+    "spFloatPerStar": 0.05,
+    "spFloatCenter": 0.5,
     "atOverflowThreshold": 1.2,
     "atOverflowDivisor": 1.5,
     "spSoftCapAt": 0.3,

@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    float1015:
+      'Fluctuaciones ajustadas: la variación aleatoria de la ocupación en cada ronda se reduce a la mitad (p. ej., 2 estrellas ±25\u00a0% → ±12,5\u00a0%, 7 estrellas ±50\u00a0% → ±25\u00a0%); la de la tasa de clientes exigentes sube a ±2,5\u00a0% por estrella (antes ±1,5\u00a0%), sigue siendo simétrica y no cambia en promedio',
     income1015:
       'Ingresos del restaurante revisados: los clientes normales también pagan por un plato de tu calle (un plato aprendido paga el 4,8\u00a0% de su precio, como mucho 64 por mesa; uno no aprendido paga 10 + el nivel de estrellas); un cliente exigente satisfecho paga 4 veces lo que paga un cliente normal por el mismo plato; cuantos más platos de tu calle aprendas, más alta es la tasa de clientes exigentes (hasta +15\u00a0% con todos aprendidos, sigue sujeta al tope); las monedas y la EXP finales de cada medalla de calle se reequilibraron para las nuevas reglas, y la ocupación o la EXP por mesa cambian en 12 calles como México, Francia y Sichuan, mira la bonificación de la calle en la página de mudanza',
     streets1014:
