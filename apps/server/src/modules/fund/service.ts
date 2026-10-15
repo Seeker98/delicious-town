@@ -1,5 +1,5 @@
 import { FUND_MEDALS, GOODS, goodsEffectHours, type Tuning } from '@dt/config';
-import type { FundViewDto } from '@dt/shared';
+import { DAY_MS, type FundViewDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
 import { emitAction } from '../../core/action';
@@ -11,7 +11,6 @@ import { cardValue } from '../jobcard/perks';
 import { grantGoodsOp, removeHonor } from '../store/goods';
 
 type F = Tuning['fund'];
-const DAY = 86_400_000;
 /**
  * 领取时一起发的限时称号（用户追加）：和勋章同时到期；先去掉别的基金称号（和勋章一样不叠加），
  * 展示中的称号不满上限时自动展示
@@ -134,7 +133,7 @@ export function createFundService(d: GameDeps) {
             coin: t.coin,
             medal: t.medal,
             started_at: o.now,
-            matures_at: new Date(o.now.getTime() + f.days * DAY),
+            matures_at: new Date(o.now.getTime() + f.days * DAY_MS),
           })
           .execute();
         // A 档用全服广播样式（fund.big 在 BROADCAST_STYLE_NEWS 里），其余普通新闻；文案按档位 key 选句子

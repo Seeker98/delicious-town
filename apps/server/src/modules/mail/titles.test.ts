@@ -51,6 +51,7 @@ const rawMail = (shardId: number, restId: number, items: unknown) =>
     items: items as never,
     source: 'admin',
     actorAccountId: null,
+    expiresDays: 30,
   });
 
 describe('后台发邮件带称号', () => {

@@ -346,21 +346,6 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     expect(r.coin - base.coin).toBe(500);
   });
 
-  it('章鱼哥带魔笛：吃掉的特色菜按原价算经验，不乘卖出倍率（backlog 411~413）', () => {
-    const r = settle(
-      {
-        rest: { star: 3, streetId: 1 },
-        agg: { magicFlute: 1 },
-        special: { price: 100, level: 3, leftNum: 10 },
-      },
-      { krabStreet: 1 },
-      [0.5, 0.65, 0.9, 0.001, 0.9, 0.9, 0.9, 0.9, 0.9],
-    );
-    expect(r.tables[0]!.last).toMatchObject({ type: 6 });
-    const portions = rules.settlement.squidwardPortions;
-    expect(r.tables[0]!.last!.exp).toBe(100 * portions);
-  });
-
   it('每桌记下吃了几份哪道特色菜，餐桌页显示用（问题记录 559）；没吃的桌不记', () => {
     const normal = settle(
       { special: { price: 100, level: 3, leftNum: 1, mcId: 42 } },

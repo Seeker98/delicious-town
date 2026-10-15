@@ -1,6 +1,7 @@
 import { sql, type Kysely } from 'kysely';
 import {
   addDays,
+  DAY_MS,
   ErrorCode,
   gameDay,
   gameParts,
@@ -108,8 +109,6 @@ export function statDailyJob(db: Kysely<DB>): PeriodicJob {
     run: async ({ shardId, period }) => ({ rows: await rollupDay(db, shardId, period) }),
   };
 }
-
-const DAY_MS = 86_400_000;
 
 /** 经济：已汇总的历史 + 今天（和还没汇总的昨天）实时算 */
 export async function economy(

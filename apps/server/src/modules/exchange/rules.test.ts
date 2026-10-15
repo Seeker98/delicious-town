@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { testConfig } from '../../../test/config';
-import { feeOf, initialRef, isTradable, priceBand, weightedPrice } from './rules';
+import { feeOf, initialRef, isTradable, priceBand } from './rules';
 import { fid } from '../../../test/items';
 
 /** 各等级价格倍数全 1（240-1 默认值） */
@@ -22,14 +22,6 @@ describe('交易所规则（156-1 设计 §5、§6）', () => {
   it('价格范围：下限向上取整、上限向下取整，下限至少 1', () => {
     expect(priceBand(1001, t)).toEqual({ min: 501, max: 2002 });
     expect(priceBand(1, t)).toEqual({ min: 1, max: 2 });
-  });
-  it('加权均价四舍五入', () => {
-    expect(
-      weightedPrice([
-        { price: 100, qty: 1 },
-        { price: 200, qty: 2 },
-      ]),
-    ).toBe(167);
   });
   it('手续费向下取整', () => {
     expect(feeOf(333, 3, t.feeRate)).toBe(49);

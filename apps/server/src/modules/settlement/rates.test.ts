@@ -205,15 +205,13 @@ describe('汇总率（规格书 01 §1.3）', () => {
 
   it('开关型荣誉和系数', () => {
     const { flags } = rates({
-      agg: { husky: 1, ali: 1, spCoinRate: 0.5, squidwardExpRate: 1, roachClearRate: 0.2 },
+      agg: { husky: 1, ali: 1, spCoinRate: 0.5, roachClearRate: 0.2 },
     });
     // 二哈、阿狸作废（挑剔顾客调整 2026-10-12）
     expect(flags).not.toHaveProperty('husky');
     expect(flags).not.toHaveProperty('ali');
     expect(flags).toMatchObject({
-      flute: false,
       spCoinRate: 0.5,
-      sqExpRate: 2,
       roachClear: 0.2,
     });
   });

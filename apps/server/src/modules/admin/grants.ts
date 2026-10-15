@@ -176,6 +176,7 @@ export function createAdminGrants(game: Game) {
           .executeTakeFirst();
         if (!rest) throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404);
       }
+      const expiresDays = (await game.shards.settings(b.shardId)).tuning.mail.expiresDays;
       const id = await db.transaction().execute(async (tx) => {
         const mailId = await sendMail(tx, {
           scope: b.target === 'rest' ? 'rest' : 'shard',
@@ -188,6 +189,7 @@ export function createAdminGrants(game: Game) {
           items: b.items,
           source: 'grant',
           actorAccountId: actor.accountId,
+          expiresDays,
         });
         const g = await tx
           .insertInto('admin_grant')

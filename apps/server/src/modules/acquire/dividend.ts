@@ -1,4 +1,4 @@
-import { addDays, gameDay } from '@dt/shared';
+import { addDays, DAY_MS, gameDay } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import { emitAction } from '../../core/action';
 import { restLog, runSystemOp } from '../../core/op';
@@ -10,8 +10,6 @@ import { firstIncomeDay, priceWindow } from './state';
 
 type Log = { error(obj: object, msg: string): void };
 const NO_LOG: Log = { error: () => {} };
-
-const DAY_MS = 86_400_000;
 
 /**
  * 哪些 (老板账号, 被收购店账号) 近 days 天的登录记录共用过设备或 IP：一条查询读出所有相关账号的登录记录，内存里比。

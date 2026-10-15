@@ -68,6 +68,10 @@
   - 餐桌格子一样高只查了 CSS 类，可以加一条端到端的高度对比。
 - e2e 跟不上新界面（CI 不跑 e2e）：`business.spec.ts` 还点首页的“领奖”；`equip.spec.ts` 穿上后部位面板不自动关。
 - 设计文档里格子图形写 44px，实际 40px。
+- 橱柜 `tuning.cupboard.handleMax` 只用来显示，合成分解接口没按它限数量（只有请求体上限 100）。
+- 万能食材兑换次数上限（`cupboard.exchangeMaxTimes`）服务端已按区服限，但橱柜接口没把它给前端：前端照旧最多 50 次，区服调低后玩家只看到通用的“已经达到上限了”（错误原因 `cupboard_exchange` 没有文案）。
+- `sync-data.ts` 按原样复制仓库外的数据，会把本地改过的 dataset、designed 文件（天气说明等）改回原版；现在没人跑。
+- `packages/config/src/renumber.ts` 的 `patchJsonText` 只剩测试在用（重新编号脚本已删）。
 
 ## 四、数值和设计（看线上数据再定）
 

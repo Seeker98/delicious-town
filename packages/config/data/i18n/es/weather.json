@@ -21,7 +21,7 @@
   },
   "6": {
     "name": "Arcoíris",
-    "note": "¡Puntos de temporada +10\u00a0%!\n¡Éxito en las pruebas +8\u00a0%!\nNegocio: EXP final +120\u00a0%\nA domicilio: tiempo de entrega -20\u00a0%, EXP +120\u00a0%, renombre +100\u00a0%, éxito +20\u00a0%"
+    "note": "¡Puntos de temporada +10\u00a0%!\nNegocio: EXP final +120\u00a0%\nA domicilio: tiempo de entrega -20\u00a0%, EXP +120\u00a0%, renombre +100\u00a0%, éxito +20\u00a0%"
   },
   "7": {
     "name": "Huracán",
@@ -73,7 +73,7 @@
   },
   "19": {
     "name": "Granizo",
-    "note": "¡Éxito en las pruebas +1\u00a0%!\n¡Precio de los ingredientes del mercado +40\u00a0%!\nNegocio: ocupación -10\u00a0%, clientes exigentes -5\u00a0%, EXP por mesa +1\nA domicilio: tiempo de entrega +15\u00a0%, monedas +150\u00a0%, EXP +250\u00a0%, éxito -60\u00a0%"
+    "note": "¡Precio de los ingredientes del mercado +40\u00a0%!\nNegocio: ocupación -10\u00a0%, clientes exigentes -5\u00a0%, EXP por mesa +1\nA domicilio: tiempo de entrega +15\u00a0%, monedas +150\u00a0%, EXP +250\u00a0%, éxito -60\u00a0%"
   },
   "20": {
     "name": "Nevada moderada",
@@ -85,11 +85,11 @@
   },
   "22": {
     "name": "Lluvia torrencial",
-    "note": "¡Éxito en las pruebas +2\u00a0%!\n¡Precio de los ingredientes del mercado +100\u00a0%!\nNegocio: ocupación -20\u00a0%, EXP por mesa +3\nA domicilio: tiempo de entrega -30\u00a0%, monedas -60\u00a0%, EXP +120\u00a0%, éxito -50\u00a0%"
+    "note": "¡Precio de los ingredientes del mercado +100\u00a0%!\nNegocio: ocupación -20\u00a0%, EXP por mesa +3\nA domicilio: tiempo de entrega -30\u00a0%, monedas -60\u00a0%, EXP +120\u00a0%, éxito -50\u00a0%"
   },
   "23": {
     "name": "Ventisca",
-    "note": "¡Raciones de platos estrella +5\u00a0%!\n¡Éxito en las pruebas +3\u00a0%!\n¡Precio de los ingredientes del mercado +200\u00a0%!\nNegocio: ocupación -25\u00a0%, clientes exigentes -20\u00a0%, EXP por mesa +2, monedas por mesa +1\nA domicilio: tiempo de entrega +55\u00a0%, monedas +110\u00a0%, EXP -50\u00a0%, éxito -50\u00a0%"
+    "note": "¡Raciones de platos estrella +5\u00a0%!\n¡Precio de los ingredientes del mercado +200\u00a0%!\nNegocio: ocupación -25\u00a0%, clientes exigentes -20\u00a0%, EXP por mesa +2, monedas por mesa +1\nA domicilio: tiempo de entrega +55\u00a0%, monedas +110\u00a0%, EXP -50\u00a0%, éxito -50\u00a0%"
   },
   "24": {
     "name": "Tormenta eléctrica",
@@ -101,7 +101,7 @@
   },
   "27": {
     "name": "Helada",
-    "note": "¡Éxito en las pruebas +3\u00a0%!\n¡Precio de los ingredientes del mercado +250\u00a0%!\nNegocio: ocupación -25\u00a0%, clientes exigentes -35\u00a0%, EXP por mesa +3, monedas por mesa +10\nA domicilio: tiempo de entrega +150\u00a0%, monedas +200\u00a0%, EXP +100\u00a0%, éxito -50\u00a0%"
+    "note": "¡Precio de los ingredientes del mercado +250\u00a0%!\nNegocio: ocupación -25\u00a0%, clientes exigentes -35\u00a0%, EXP por mesa +3, monedas por mesa +10\nA domicilio: tiempo de entrega +150\u00a0%, monedas +200\u00a0%, EXP +100\u00a0%, éxito -50\u00a0%"
   },
   "28": {
     "name": "Noche despejada",

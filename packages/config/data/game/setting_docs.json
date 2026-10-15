@@ -179,7 +179,7 @@
     "tuning.cupboard.freeHandlePerStar": "每颗星增加的每天免费分解合成次数（次）",
     "tuning.cupboard.thawCoinRate": "从冰箱解冻食材的费用 = 食材售价 × 这个值 × 个数（比例）",
     "tuning.cupboard.failCoinRate": "分解合成失败时最多赔回售价的多少（比例，实际在 0~这个值之间随机）",
-    "tuning.cupboard.exchangeMaxTimes": "万能食材一次最多兑换几次稀有食材（次；目前接口另有上限，保留原版数值）",
+    "tuning.cupboard.exchangeMaxTimes": "万能食材一次最多兑换几次稀有食材（次，最多 50）",
     "tuning.market.dailyHours": "日常菜场上新的游戏时间（整点列表）",
     "tuning.market.dailyKinds": "日常菜场每次上几种菜（种）",
     "tuning.market.dailyKindsLastHour": "哪个整点是当天最后一次日常上新（点）",

@@ -326,11 +326,6 @@ export function hardestElder(
   return elderOf(config, spec, best.pts, best.gain);
 }
 
-/** 典型玩家打这个长老的胜率：三项加点、四项加点两种（固定种子、局数多，新旧长老比较用） */
-export function elderRates(config: GameConfig, e: ElderInput, n = 20000): [number, number] {
-  return [elderScore(config, e, [3], n, [0]), elderScore(config, e, [4], n, [0])];
-}
-
 /**
  * 长老的难度得分：同级和低几级的典型玩家（splits 里的加法取赢面大的）胜率的平均，越低越难打。固定种子、局数多，新旧长老比较用。
  * 原来的难度用 splits = [3]（加调味以前只能三项加点）

@@ -1,4 +1,4 @@
-import type { Kysely } from 'kysely';
+import { sql, type Kysely } from 'kysely';
 import type { MailTpl, RewardItems } from '@dt/shared';
 import type { DB } from '../../db/schema';
 
@@ -15,9 +15,11 @@ export interface NewMail {
   items: RewardItems | null;
   source: string;
   actorAccountId: number | null;
+  /** 几天后过期：取区服调参 mail.expiresDays（全服邮件取默认配置） */
+  expiresDays: number;
 }
 
-/** 写一封邮件；created_at、expires_at 用列默认值（数据库时钟，设计 裁定 2、4）。db 可以是调用方的事务 */
+/** 写一封邮件；created_at、expires_at 用数据库时钟（设计 裁定 2、4）。db 可以是调用方的事务 */
 export async function sendMail(db: Kysely<DB>, m: NewMail): Promise<number> {
   const r = await db
     .insertInto('mail')
@@ -33,6 +35,7 @@ export async function sendMail(db: Kysely<DB>, m: NewMail): Promise<number> {
       items: m.items ? JSON.stringify(m.items) : null,
       source: m.source,
       actor_account_id: m.actorAccountId,
+      expires_at: sql<Date>`now() + make_interval(days => ${m.expiresDays})`,
     })
     .returning('id')
     .executeTakeFirstOrThrow();

@@ -1,8 +1,8 @@
 import { sql, type Kysely } from 'kysely';
+import { DAY_MS } from '@dt/shared';
 import type { DB } from './schema';
 
 export type PartitionedTable = 'ledger' | 'news' | 'income_round' | 'rest_log';
-const DAY_MS = 86_400_000;
 
 function utcDay(d: Date): string {
   return d.toISOString().slice(0, 10);

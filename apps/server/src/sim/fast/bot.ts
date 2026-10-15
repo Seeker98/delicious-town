@@ -306,9 +306,7 @@ export function placeDevice(c: FastCtx, r: FastRest, slot: number, goodsId: numb
     for (const [s, d] of r.devices) if (s !== slot && d.goodsId === goodsId) return false;
   } else if (!consumeGoods(c, r, goodsId, 1)) return false;
   const hours = deviceHours(g);
-  const ext = aggOf(c, r).extendTimeRate ?? 0;
-  const expiresAt =
-    hours === null ? null : new Date(c.now.getTime() + Math.round(hours * (1 + ext) * 3600_000));
+  const expiresAt = hours === null ? null : new Date(c.now.getTime() + Math.round(hours * 3600_000));
   r.devices.set(slot, { goodsId, expiresAt });
   const { time: _time, ...effects } = g.effects;
   r.effects = r.effects.filter((e) => !(e.sourceType === 'device' && e.sourceId === slot));

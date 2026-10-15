@@ -1,11 +1,11 @@
 import type { Tuning } from '@dt/config';
+import { DAY_MS } from '@dt/shared';
 
 export type T = Tuning['acquire'];
 
 /** 热度保留 3 位小数 */
 const r3 = (x: number) => Math.round(x * 1000) / 1000;
 
-const DAY_MS = 86_400_000;
 const dayMs = (day: string) => Date.parse(`${day}T00:00:00Z`);
 
 /**

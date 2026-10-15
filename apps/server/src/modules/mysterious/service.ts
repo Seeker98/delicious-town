@@ -371,10 +371,7 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         if (o.rest.mc_cook_id !== null) throw invalidState('mc_cooking');
         const agg = await opAgg(o);
         const { rate: luck } = await opLuck(o);
-        // 烹饪魔书：随机指定一种非 7 级食材不消耗
-        const normal = mc.foods.filter((f) => o.config.requireFood(f).level < 7);
-        const free = (agg.magicBook ?? 0) > 0 && normal.length > 0 ? normal[o.rng.int(normal.length)]! : null;
-        for (const f of mc.foods) if (f !== free) await subFoods(o, f, b.cookNum);
+        for (const f of mc.foods) await subFoods(o, f, b.cookNum);
         if (b.cookie) await consumeGoods(o, GOODS.luckyCookie, b.cookNum);
         const snap = await world.ensure(o.shardId, o.now, o.tx);
         const weather = snap.weather.effects;

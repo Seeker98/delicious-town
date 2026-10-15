@@ -2,14 +2,14 @@ import { sql, type Kysely, type Selectable } from 'kysely';
 import { gameDay, type FuturesContractDto, type FuturesDto, type FuturesFoodDto } from '@dt/shared';
 import { GOODS, type GameConfig, type ShardSettings, type Tuning } from '@dt/config';
 import type { GameDeps, RestCtx } from '../../core/deps';
-import { invalidState, limitReached, requirement } from '../../core/errors';
+import { invalidState, limitReached } from '../../core/errors';
 import { featureAvailable } from '../../core/features';
 import { restLog, runOp, type Op } from '../../core/op';
 import { fairFoodPrice } from '../../core/prices';
 import { spendCoin } from '../../core/resources';
 import type { DB, FuturesContractTable } from '../../db/schema';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
-import { eligibility } from '../exchange/eligibility';
+import { assertExchangeOpen, eligibility } from '../exchange/eligibility';
 import { frozenReason } from '../exchange/guard';
 import { refPrice, refPrices } from '../exchange/ref';
 import { cardEffects } from '../jobcard/perks';
@@ -78,18 +78,7 @@ export function createFuturesService(d: GameDeps) {
     const t = o.tuning.futures;
     const et = o.tuning.exchange;
     // 门槛和交易所一样（期货设计 §2）
-    const frozen = await frozenReason(o.tx, o.rest.id);
-    if (frozen !== null) throw invalidState('exchange_frozen', { why: frozen });
-    const reason = await eligibility({
-      db: o.tx,
-      level: o.rest.level,
-      accountId: o.rest.account_id,
-      now: o.now,
-      t: et,
-    });
-    if (reason === 'exchange_level') throw requirement(reason, { need: et.minLevel });
-    if (reason === 'exchange_age') throw requirement(reason, { days: et.minAccountDays });
-    if (reason) throw requirement(reason);
+    await assertExchangeOpen(o);
     const row = await o.tx
       .selectFrom('futures_food')
       .select(['foods_id', 'enabled', 'daily_quota'])

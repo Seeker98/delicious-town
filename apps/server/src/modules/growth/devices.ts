@@ -1,13 +1,13 @@
 import { deviceHours, DEVICE_TYPE, GOODS_TYPE } from '@dt/config';
 import { emitAction } from '../../core/action';
 import { invalidState, notEnough, requirement } from '../../core/errors';
-import { invalidateAgg, opAgg } from '../../core/luck';
+import { invalidateAgg } from '../../core/luck';
 import { restLog, type Op } from '../../core/op';
-import { removeEffectSource, upsertEffectSource } from '../effects/service';
+import { upsertEffectSource } from '../effects/service';
 import { slotUnlocked } from '../restaurant/reads';
 import { consumeGoods, countGoods } from '../store/goods';
 
-/** 摆放设施（规格书 02 §2.6）：设施消耗 1 个并按时长计时（× 荣誉延时），牌匾不消耗且永久；可以直接替换旧设施 */
+/** 摆放设施（规格书 02 §2.6）：设施消耗 1 个并按时长计时，牌匾不消耗且永久；可以直接替换旧设施 */
 export async function placeDevice(
   op: Op,
   slot: number,
@@ -36,11 +36,7 @@ export async function placeDevice(
     await consumeGoods(op, goodsId, 1);
   }
   const hours = deviceHours(g);
-  const agg = await opAgg(op);
-  const expiresAt =
-    hours === null
-      ? null
-      : new Date(op.now.getTime() + Math.round(hours * (1 + (agg.extendTimeRate ?? 0)) * 3600_000));
+  const expiresAt = hours === null ? null : new Date(op.now.getTime() + Math.round(hours * 3600_000));
   await op.tx
     .insertInto('restaurant_device')
     .values({ rest_id: op.rest.id, slot, goods_id: goodsId, placed_at: op.now, expires_at: expiresAt })
@@ -56,16 +52,4 @@ export async function placeDevice(
   restLog(op, 'device.place', { slot, goodsId });
   await emitAction(op, 'device.place');
   return { slot, goodsId, expiresAt: expiresAt ? expiresAt.toISOString() : null };
-}
-
-/** 撤下设施：设施不退还（牌匾本来就不消耗） */
-export async function removeDevice(op: Op, slot: number): Promise<{ slot: number }> {
-  await op.tx
-    .deleteFrom('restaurant_device')
-    .where('rest_id', '=', op.rest.id)
-    .where('slot', '=', slot)
-    .execute();
-  await removeEffectSource(op.tx, op.rest.id, 'device', slot);
-  invalidateAgg(op);
-  return { slot };
 }

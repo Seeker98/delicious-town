@@ -187,7 +187,8 @@ export const tuningSchema = z.object({
     freeHandlePerStar: int,
     thawCoinRate: num,
     failCoinRate: num,
-    exchangeMaxTimes: int.min(1),
+    /** 请求体另有上限 50（shared exchangeBody） */
+    exchangeMaxTimes: int.min(1).max(50),
   }),
   market: z.object({
     dailyHours: z.array(int).min(1),
