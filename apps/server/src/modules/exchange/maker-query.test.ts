@@ -5,7 +5,7 @@ import { createShardAllLevels as createShard } from './test';
 import { createTestGame, type TestGame } from '../../../test/game';
 import { makerPrices } from './maker';
 import { refPrice } from './ref';
-import { priceBand } from './rules';
+import { initialRef, isTradable, priceBand } from './rules';
 import { createExchangeAdmin } from './admin';
 import { trader } from './test';
 
@@ -95,5 +95,21 @@ describe('backlog 156-1/156-2：me 带上当前等级和区服的上限', () => 
     expect(me.level).toBe(30);
     expect(me.maxQty).toBe(tune().maxQty);
     expect(me.holdHours).toBe(tune().suspicious.holdHours);
+  });
+});
+
+describe('公允价阶梯（2026-10-15）：交易所列表的参考价按公允价', () => {
+  it('新区服没有成交：2~5 级参考价 = 初始参考价 × 公允价倍数（不是菜场价倍数），1 级两者一样', async () => {
+    const shardId = await createShard(t.db);
+    const r = await trader(t, { shardId });
+    const rows = await svc().foods(r);
+    const c = t.deps.config;
+    const mt = c.tuning.market;
+    for (const lv of [1, 2, 3, 4, 5]) {
+      const f = [...c.foods.values()].find((x) => x.level === lv && isTradable(x, tune().closedLevels))!;
+      const row = rows.find((x) => x.foodsId === f.id)!;
+      expect(row.ref, f.name).toBe(initialRef(f, c, mt.fairPriceRate));
+      if (lv >= 3) expect(row.ref, f.name).toBeGreaterThan(initialRef(f, c, mt.levelPriceRate));
+    }
   });
 });

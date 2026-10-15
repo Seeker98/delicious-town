@@ -265,6 +265,8 @@ export function createShopService(d: GameDeps) {
         }
         const g = o.config.requireGoods(row.goods_id);
         await assertBuyable(o, g, b.num);
+        // 每日特价抽到限购道具（体力卡）也算进同一份每天、每周计数（代码审查 2026-10-15）；超了整单回滚，库存不占
+        await claimLimits(o, g.id, b.num);
         spendCoin(o, Math.ceil(g.coin * row.discount) * b.num);
         await grantGoodsOp(o, g.id, b.num);
         await emitAction(o, 'shop.buy');
