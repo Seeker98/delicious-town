@@ -66,7 +66,6 @@ export async function runDueJobs(
       const seen = d.claims?.get(key);
       const since = seen && seen.period === period ? now.getTime() - seen.at : null;
       if (since !== null && since >= 0 && since < (job.retry ? RETRY_CHECK_MS : CLAIM_RECHECK_MS)) continue;
-      d.claims?.set(key, { period, at: now.getTime() });
       let attempt = 1;
       let claimed = await d.db
         .insertInto('job_run')
@@ -105,6 +104,8 @@ export async function runDueJobs(
           attempt = Number(again.attempts);
         }
       }
+      // 抢的语句返回了才记（代码审查）：插入或更新本身报错时不记，下一轮照常再抢
+      d.claims?.set(key, { period, at: now.getTime() });
       if (!claimed) continue;
       try {
         const stats = await job.run({ shardId, period, now, settings, log: d.log, signal: opts.signal });

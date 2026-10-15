@@ -285,6 +285,30 @@ describe('记住已经抢过的周期（性能整理：原来每 5 秒每个区�
     t.clock.set(start);
   });
 
+  it('抢的插入本身报错时不记，下一轮照常再抢（代码审查）', async () => {
+    const shardId = await createShard(t.db);
+    const claims: ClaimCache = new Map();
+    const j = job('cache-claim-error', 'shop', 'k');
+    let broken = true;
+    const db = new Proxy(q.db, {
+      get(target, prop) {
+        if (prop === 'insertInto' && broken)
+          return () => {
+            throw new Error('connection reset');
+          };
+        const v: unknown = Reflect.get(target, prop, target);
+        return typeof v === 'function' ? (v as (...a: unknown[]) => unknown).bind(target) : v;
+      },
+    });
+    await expect(runDueJobs({ ...deps(), db, claims }, [j], { shardIds: [shardId] })).rejects.toThrow(
+      'connection reset',
+    );
+    expect(claims.size).toBe(0);
+    broken = false;
+    await runDueJobs({ ...deps(), db, claims }, [j], { shardIds: [shardId] });
+    expect(j.run).toHaveBeenCalledTimes(1);
+  });
+
   it('别的 worker 抢了的也记住；不传 claims 的每轮照旧去插', async () => {
     const shardId = await createShard(t.db);
     await t.db
