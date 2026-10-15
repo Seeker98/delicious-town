@@ -230,6 +230,41 @@ describe('后期海报奖杯按星级可用（问题记录 146）', () => {
     expect((await restRow(t, ctx.restaurantId)).coin).toBe(1_000_000);
   });
 
+  it('每日特价抽到限购的体力卡：和黑市共用每天 1 张的计数，超了不扣钱、不占库存（代码审查 2026-10-15）', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 10_000_000, diamond: 100 } });
+    const { tuning } = await t.game.shards.settings(ctx.shardId);
+    const day = latestSlot(t.clock.now, [tuning.shop.specialHour]).day;
+    await t.db
+      .insertInto('shop_special')
+      .values({
+        shard_id: ctx.shardId,
+        day,
+        goods_id: gid('体力卡'),
+        discount: 0.1,
+        tier_name: 'x',
+        stock: 50,
+      })
+      .execute();
+    await expect(shop().buySpecial(ctx, { num: 2 })).rejects.toMatchObject({
+      params: { what: 'shop_daily', max: 1 },
+    });
+    await shop().buySpecial(ctx, { num: 1 });
+    await expect(shop().buySpecial(ctx, { num: 1 })).rejects.toMatchObject({
+      params: { what: 'shop_daily', max: 1 },
+    });
+    await expect(shop().buyBlack(ctx, { goodsId: gid('体力卡'), num: 1 })).rejects.toMatchObject({
+      params: { what: 'shop_daily', max: 1 },
+    });
+    expect(await goodsNum(t, ctx.restaurantId, gid('体力卡'))).toBe(1);
+    expect((await restRow(t, ctx.restaurantId)).diamond).toBe(100);
+    const row = await t.db
+      .selectFrom('shop_special')
+      .select('sold')
+      .where('shard_id', '=', ctx.shardId)
+      .executeTakeFirstOrThrow();
+    expect(row.sold).toBe(1);
+  });
+
   it('每日特价抽到高档海报时也看星级：3 星买不了、不扣钱、不占库存（质量期 ②）', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 1_000_000, star_level: 3 } });
     const { tuning } = await t.game.shards.settings(ctx.shardId);

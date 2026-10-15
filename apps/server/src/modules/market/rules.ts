@@ -1,4 +1,4 @@
-import { foodPrice } from '../../core/prices';
+import { foodPrice, specialShelfPrice } from '../../core/prices';
 import type { Food, GameConfig, Tuning } from '@dt/config';
 import { buildPool, pickWeighted, type Rng, type WeightedPool } from '@dt/shared';
 
@@ -88,9 +88,9 @@ export function unitPrice(
   t: MarketTuning,
   weather: Record<string, number>,
 ): number {
-  // 天气系数之后再乘菜场价格倍率（148-4 全服加成，默认 1）；日常、高级货架按食材等级价格倍数（240-1）
+  // 天气系数之后再乘菜场价格倍率（148-4 全服加成，默认 1）；日常、高级货架按菜场价阶梯（240-1），特价货架按等级定价（公允价阶梯 2026-10-15）
   const w = (1 + (weather.marketCoin ?? 0)) * t.priceFactor;
-  if (shelf === 1) return t.specialPrice * w;
+  if (shelf === 1) return specialShelfPrice(food, t) * w;
   if (shelf === 2) return foodPrice(food, t) * t.premiumPriceFactor * w;
   return foodPrice(food, t) * w;
 }

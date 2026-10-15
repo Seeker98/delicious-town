@@ -137,7 +137,10 @@ export interface OpenFoodBrief {
   id: number;
   name: string;
   level: number;
+  /** 菜场价：基价 × 菜场价阶梯（日常、高级货架按它卖） */
   coin: number;
+  /** 公允价：基价 × 公允价阶梯（交易所、期货、大宗按它，公允价阶梯 2026-10-15） */
+  fairCoin: number;
   rare: boolean;
   /** 0 调料坚果 / 1 肉蛋奶 / 2 蔬果 */
   type: number | null;

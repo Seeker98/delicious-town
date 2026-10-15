@@ -204,7 +204,10 @@ export const tuningSchema = z.object({
     specialHotChance: num,
     specialStockBase: int,
     specialStockRand: int,
+    /** 特价货架单价（银币）：specialPrices 里没写的等级按它（公允价阶梯 2026-10-15：2 级热门位仍是 2,999） */
     specialPrice: int,
+    /** 特价货架按食材等级定价（[等级, 银币] 列表），没写的等级按 specialPrice（公允价阶梯 2026-10-15） */
+    specialPrices: z.array(z.tuple([int, int.min(1)])).default([]),
     specialLevelWeights: levelWeights,
     premiumHours: z.array(int).min(1),
     premiumKinds: int,
@@ -216,6 +219,11 @@ export const tuningSchema = z.object({
     priceFactor: z.number().positive(),
     /** 各等级食材的价格倍数，第 N 个是 N 级；没写的等级按 1（问题记录 240-1） */
     levelPriceRate: z.array(z.number().positive()),
+    /**
+     * 公允价阶梯（2026-10-15）：交易所参考价和带、系统做市、期货单价、大宗起拍和底价按它，第 N 个是 N 级，没写的按 1。
+     * 菜场价（levelPriceRate）只管菜场日常、高级货架和时令每份点数（合成失败退款、解冻费按基价，两套都不用）；以后新加食材渠道先定用哪个
+     */
+    fairPriceRate: z.array(z.number().positive()),
     shelfLimits: z.tuple([int, int, int]),
     rareWindowMinutes: int,
     rareLimitOddsFactor: num,

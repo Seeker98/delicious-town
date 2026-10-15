@@ -174,7 +174,7 @@ const status = (r: AdminFuturesFoodDto) => (!r.inList ? '不在表里' : r.enabl
               <th>状态</th>
               <th class="num">街道数</th>
               <th class="num">参考价</th>
-              <th class="num">等级价</th>
+              <th class="num">公允价</th>
               <th class="num">期货价</th>
               <th>额度</th>
               <th class="num">今天已订</th>

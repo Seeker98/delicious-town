@@ -5,7 +5,7 @@ export type FuturesTuning = Tuning['futures'];
 /** 去掉乘法的浮点误差再向上取整：9000 × 1.2 = 10800.000000000002 不能算成 10801 */
 const ceilClean = (x: number): number => Math.ceil(Math.round(x * 1e6) / 1e6);
 
-/** 期货单价（期货设计 §3）：基准 = clamp(参考价, 等级价, 等级价 × capRate)，单价 = ceil(基准 × premium) */
+/** 期货单价（期货设计 §3）：基准 = clamp(参考价, 公允价, 公允价 × capRate)（公允价阶梯 2026-10-15，原来是菜场等级价），单价 = ceil(基准 × premium) */
 export function futuresUnitPrice(levelPrice: number, ref: number, t: FuturesTuning): number {
   const base = Math.min(Math.max(ref, levelPrice), levelPrice * t.capRate);
   return ceilClean(base * t.premium);

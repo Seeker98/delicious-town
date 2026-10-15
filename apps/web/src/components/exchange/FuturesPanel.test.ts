@@ -111,7 +111,7 @@ describe('FuturesPanel（期货设计 §10）', () => {
     const w = await mountPanel();
     await w.get('[data-testid="fu-help"]').trigger('click');
     const text = w.get('.dt-help').text();
-    expect(text).toContain('菜场等级价和它的 3 倍之间, 再加 15%');
+    expect(text).toContain('公允价和它的 3 倍之间, 再加 15%');
     expect(text).toContain('总价的 30% 作为定金, 72 小时后');
   });
 

@@ -312,6 +312,7 @@ describe('游戏资料详情（问题记录 142）', () => {
       name: '松露',
       level: 2,
       coin: 900,
+      fairCoin: 1280,
       rare: true,
       type: 2,
       maxNum: 99,
@@ -320,6 +321,9 @@ describe('游戏资料详情（问题记录 142）', () => {
     };
     vi.mocked(endpoints.openFood).mockResolvedValue(food);
     const w = await mountAt(WikiFoodView, '/wiki/foods/:id', '/wiki/foods/239');
+    // 菜场价、公允价两行（公允价阶梯 2026-10-15）
+    expect(w.get('.dt-entry-dl').text()).toContain('菜场价900 银币');
+    expect(w.get('.dt-entry-dl').text()).toContain('公允价1,280 银币');
     // 稀有写在名字下面那一行分类里（界面改版 P11）
     expect(w.get('.dt-entry-kick').text()).toContain('稀有');
     const cb = w.get('[data-testid="wiki-cookbooks"]');
@@ -397,6 +401,7 @@ describe('食材、菜谱详情：晚到的旧请求不盖新页面（backlog #1
     name,
     level: 1,
     coin: 1,
+    fairCoin: 1,
     rare: false,
     type: 2,
     maxNum: 99,

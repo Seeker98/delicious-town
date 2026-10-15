@@ -76,8 +76,10 @@ const streetName = computed(() => new Map(streets.value.map((s) => [s.id, s.name
       <dl class="dt-entry-dl">
         <dt>{{ w.fields.level }}</dt>
         <dd>{{ w.level(f.level) }}</dd>
-        <dt>{{ w.fields.systemPrice }}</dt>
+        <dt>{{ w.fields.marketPrice }}</dt>
         <dd>{{ w.coin(formatNum(f.coin)) }}</dd>
+        <dt>{{ w.fields.fairPrice }}</dt>
+        <dd>{{ w.coin(formatNum(f.fairCoin)) }}</dd>
         <dt>{{ w.fields.maxHold }}</dt>
         <dd>{{ w.fields.pieces(f.maxNum) }}</dd>
       </dl>

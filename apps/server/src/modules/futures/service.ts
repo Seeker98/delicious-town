@@ -5,7 +5,7 @@ import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, limitReached, requirement } from '../../core/errors';
 import { featureAvailable } from '../../core/features';
 import { restLog, runOp, type Op } from '../../core/op';
-import { foodPrice } from '../../core/prices';
+import { fairFoodPrice } from '../../core/prices';
 import { spendCoin } from '../../core/resources';
 import type { DB, FuturesContractTable } from '../../db/schema';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
@@ -97,8 +97,8 @@ export function createFuturesService(d: GameDeps) {
     const food = listable(o.config, row);
     if (!food || !row) throw invalidState('futures_not_listed');
     const day = gameDay(o.now);
-    const ref = await refPrice(o.tx, o.config, et, o.tuning.market.levelPriceRate, o.shardId, food.id, day);
-    const unit = futuresUnitPrice(foodPrice(food, o.tuning.market), ref, t);
+    const ref = await refPrice(o.tx, o.config, et, o.tuning.market.fairPriceRate, o.shardId, food.id, day);
+    const unit = futuresUnitPrice(fairFoodPrice(food, o.tuning.market), ref, t);
     if (unit !== b.unitPrice) throw invalidState('futures_price_moved', { price: unit });
     // 个人额度：锁着店，不会并发
     const mine = await getDaily(o.tx, o.rest.id, DAILY_KEY, day);
@@ -193,14 +193,14 @@ export function createFuturesService(d: GameDeps) {
         return food ? [{ food, quota: futuresQuota(food.level, r.daily_quota, t) }] : [];
       });
       const ids = list.map((x) => x.food.id);
-      const refs = await refPrices(d.db, d.config, et, s.tuning.market.levelPriceRate, ctx.shardId, ids, day);
+      const refs = await refPrices(d.db, d.config, et, s.tuning.market.fairPriceRate, ctx.shardId, ids, day);
       const used = await usedToday(d.db, ctx.shardId, day);
       foods = list
         .map(({ food, quota }) => ({
           foodsId: food.id,
           level: food.level,
           rare: food.odds < 100,
-          unitPrice: futuresUnitPrice(foodPrice(food, s.tuning.market), refs.get(food.id)!, t),
+          unitPrice: futuresUnitPrice(fairFoodPrice(food, s.tuning.market), refs.get(food.id)!, t),
           left: Math.max(0, quota - (used.get(food.id) ?? 0)),
         }))
         .sort((a, b) => a.level - b.level || a.foodsId - b.foodsId);
@@ -250,7 +250,7 @@ export function createFuturesService(d: GameDeps) {
       d.db,
       d.config,
       tuning.exchange,
-      tuning.market.levelPriceRate,
+      tuning.market.fairPriceRate,
       ctx.shardId,
       foodsId,
       gameDay(d.now()),

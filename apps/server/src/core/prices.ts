@@ -21,11 +21,25 @@ export function levelRateOf(food: Food, rates: readonly number[]): number {
 }
 
 /**
- * 食材售价（问题记录 240-1）：基础价 × 本等级倍数，取整；菜场、交易所做市和参考价都用它。
+ * 菜场价（问题记录 240-1）：基础价 × 菜场价阶梯，取整；菜场日常、高级货架和时令点数用它。
  * 取整免得 1800 × 1.3 = 2340.0000000000005 在菜场向上取整时多收 1 银币
  */
 export function foodPrice(food: Food, mt: { levelPriceRate: readonly number[] }): number {
   return Math.round(food.coin * levelRateOf(food, mt.levelPriceRate));
+}
+
+/** 公允价（公允价阶梯 2026-10-15）：基础价 × 公允价阶梯，取整；期货、大宗和交易所做市用它 */
+export function fairFoodPrice(food: Food, mt: { fairPriceRate: readonly number[] }): number {
+  return Math.round(food.coin * levelRateOf(food, mt.fairPriceRate));
+}
+
+/** 特价货架单价（公允价阶梯 2026-10-15）：按食材等级（万能食材按顶替的等级），没写的等级按 specialPrice */
+export function specialShelfPrice(
+  food: Food,
+  mt: { specialPrice: number; specialPrices: ReadonlyArray<readonly [number, number]> },
+): number {
+  const level = universalLevel(food) ?? food.level;
+  return mt.specialPrices.find(([lv]) => lv === level)?.[1] ?? mt.specialPrice;
 }
 
 /**

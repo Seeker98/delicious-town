@@ -1,7 +1,7 @@
 import { gameDay, gameTime } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import { featureAvailable } from '../../core/features';
-import { foodPrice } from '../../core/prices';
+import { fairFoodPrice } from '../../core/prices';
 import { refPrice } from '../exchange/ref';
 import { futuresUnitPrice } from '../futures/rules';
 import { bulkCap, bulkGroup, bulkReserve, pickCloseAt, pickLevel } from './rules';
@@ -70,12 +70,15 @@ export async function openLot(
     d.db,
     d.config,
     s.tuning.exchange,
-    s.tuning.market.levelPriceRate,
+    s.tuning.market.fairPriceRate,
     shardId,
     food.id,
     day,
   );
-  const reserve = bulkReserve(futuresUnitPrice(foodPrice(food, s.tuning.market), ref, s.tuning.futures), t);
+  const reserve = bulkReserve(
+    futuresUnitPrice(fairFoodPrice(food, s.tuning.market), ref, s.tuning.futures),
+    t,
+  );
   const qty = t.qty[level - 1]!;
   const r = await d.db
     .insertInto('bulk_lot')

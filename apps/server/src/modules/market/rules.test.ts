@@ -82,12 +82,25 @@ describe('价格与限购（规格书 06 §6.2）', () => {
     expect(unitPrice(1, food, t, {})).toBe(2999);
     expect(unitPrice(2, food, t, {})).toBe(food.coin * 2);
   });
-  it('各等级价格倍数（240-1）：日常、高级货架按等级乘倍数；特价货架是固定价不变', () => {
+  it('各等级价格倍数（240-1）：日常、高级货架按等级乘倍数；特价货架不跟倍数', () => {
     const lv3 = [...config.foods.values()].find((f) => f.level === 3)!;
     const t2 = { ...t, levelPriceRate: [1, 1, 2] };
     expect(unitPrice(0, lv3, t2, {})).toBe(lv3.coin * 2);
     expect(unitPrice(2, lv3, t2, {})).toBe(lv3.coin * 2 * t.premiumPriceFactor);
-    expect(unitPrice(1, lv3, t2, {})).toBe(t.specialPrice);
+    expect(unitPrice(1, lv3, t2, {})).toBe(2499);
+  });
+  it('特价货架按等级定价（公允价阶梯 2026-10-15）：3 / 4 / 5 级 2,499 / 5,999 / 14,999，没写的等级按 specialPrice；天气、priceFactor 照乘', () => {
+    const at = (lv: number) => [...config.foods.values()].find((f) => f.level === lv && f.odds < 100)!;
+    expect(unitPrice(1, at(3), t, {})).toBe(2499);
+    expect(unitPrice(1, at(4), t, {})).toBe(5999);
+    expect(unitPrice(1, at(5), t, {})).toBe(14999);
+    expect(unitPrice(1, at(2), t, {})).toBe(t.specialPrice);
+    expect(t.specialPrice).toBe(2999);
+    expect(unitPrice(1, at(5), t, { marketCoin: -0.3 })).toBeCloseTo(14999 * 0.7, 6);
+    expect(unitPrice(1, at(4), { ...t, priceFactor: 0.5 }, { marketCoin: 0.2 })).toBeCloseTo(
+      5999 * 1.2 * 0.5,
+      6,
+    );
   });
   it('日常稀有食材上架 55 分钟内每人最多 odds×2+10 份', () => {
     const opened = new Date('2026-09-30T00:00:00Z');

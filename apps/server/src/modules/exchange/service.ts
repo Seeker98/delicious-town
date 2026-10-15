@@ -99,7 +99,7 @@ export function createExchangeService(d: GameDeps) {
     if (!isTradable(o.config.foods.get(b.foodsId), t.closedLevels)) throw invalidState('not_tradable');
     if (b.qty > t.maxQty) throw limitReached('exchange_qty', { max: t.maxQty });
     const day = gameDay(o.now);
-    const ref = await refPrice(o.tx, o.config, t, o.tuning.market.levelPriceRate, o.shardId, b.foodsId, day);
+    const ref = await refPrice(o.tx, o.config, t, o.tuning.market.fairPriceRate, o.shardId, b.foodsId, day);
     const band = priceBand(ref, t);
     if (!opts.toSystem && (b.price < band.min || b.price > band.max)) throw invalidState('price_band', band);
     const open = await o.tx
@@ -574,7 +574,7 @@ export function createExchangeService(d: GameDeps) {
       .sort((a, b) => a.level - b.level || a.id - b.id);
     const ids = list.map((f) => f.id);
     // 一次批量取参考价；最新成交价每种食材走索引取一条（156-1 终审 I2）
-    const refs = await refPrices(d.db, d.config, t, s.tuning.market.levelPriceRate, ctx.shardId, ids, day);
+    const refs = await refPrices(d.db, d.config, t, s.tuning.market.fairPriceRate, ctx.shardId, ids, day);
     const lasts = await sql<{ foods_id: number; price: number }>`
       select f.id as foods_id, x.price
       from unnest(${ids}::int[]) as f(id)
@@ -627,7 +627,7 @@ export function createExchangeService(d: GameDeps) {
       d.db,
       d.config,
       t,
-      s.tuning.market.levelPriceRate,
+      s.tuning.market.fairPriceRate,
       ctx.shardId,
       foodsId,
       gameDay(now),
@@ -814,7 +814,7 @@ export function createExchangeService(d: GameDeps) {
       d.db,
       d.config,
       tuning.exchange,
-      tuning.market.levelPriceRate,
+      tuning.market.fairPriceRate,
       ctx.shardId,
       foodsId,
       gameDay(d.now()),

@@ -209,11 +209,15 @@ describe('开放接口数据（问题记录 142）', () => {
 });
 
 describe('售价按默认数值算（240-1）', () => {
-  it('菜谱乘菜价倍率，食材乘本等级价格倍数', () => {
+  it('菜谱乘菜价倍率，食材乘本等级价格倍数；公允价按公允价阶梯（2026-10-15）', () => {
     const tuning = {
       ...config.tuning,
       settlement: { ...config.tuning.settlement, dishCoinRate: 0.5 },
-      market: { ...config.tuning.market, levelPriceRate: [2, 2, 2, 2, 2, 2, 2] },
+      market: {
+        ...config.tuning.market,
+        levelPriceRate: [2, 2, 2, 2, 2, 2, 2],
+        fairPriceRate: [3, 3, 3, 3, 3, 3, 3],
+      },
     };
     // 保留原型上的方法，只换 tuning
     const cfg = Object.assign(Object.create(Object.getPrototypeOf(config)), config, {
@@ -224,6 +228,7 @@ describe('售价按默认数值算（240-1）', () => {
     expect(cb.coin).toBe(Math.floor(config.requireCookbook(cid('桑椹葡萄粥')).coin * 0.5));
     const f = d.foods('zh-CN').items[0]!;
     expect(f.coin).toBe(config.requireFood(f.id).coin * 2);
+    expect(f.fairCoin).toBe(config.requireFood(f.id).coin * 3);
   });
 });
 

@@ -38,8 +38,9 @@ describe('交易所规则（156-1 设计 §5、§6）', () => {
 
 describe('初始参考价（问题记录 242）', () => {
   const byName = (n: string) => [...config.foods.values()].find((f) => f.name === n)!;
-  it('普通食材：系统定价夹在同级稀有中位数的 0.75~1.5 倍；雪蛤 9300 → 6300', () => {
-    expect(initialRef(byName('雪蛤'), config, ONE)).toBe(6300);
+  it('普通食材：系统定价夹在同级稀有中位数的 0.75~1.5 倍；辽参 7500 → 8100（5 级稀有中位数 10800 × 0.75）；雪蛤改价 4200 后不用夹', () => {
+    expect(initialRef(byName('辽参'), config, ONE)).toBe(8100);
+    expect(initialRef(byName('雪蛤'), config, ONE)).toBe(4200);
     const ok = [...config.foods.values()].find((f) => f.odds < 100 && f.level === 4)!;
     expect(initialRef(ok, config, ONE)).toBe(ok.coin);
   });
@@ -49,6 +50,16 @@ describe('初始参考价（问题记录 242）', () => {
     expect(initialRef(lv3, config, rates)).toBe(Math.round(initialRef(lv3, config, ONE) * 2));
     expect(initialRef(config.requireFood(fid('三级万能食材')), config, rates)).toBe(6300 * 2);
     expect(initialRef(config.requireFood(fid('二级万能食材')), config, rates)).toBe(4200);
+  });
+  it('公允价阶梯（2026-10-15）：没有成交时参考价按公允价倍数，带 = 参考价 × 0.5~2', () => {
+    const fair = config.tuning.market.fairPriceRate;
+    const ref = initialRef(byName('雪蛤'), config, fair);
+    expect(ref).toBe(Math.round(4200 * 3.1));
+    expect(priceBand(ref, config.tuning.exchange)).toEqual({
+      min: Math.ceil(ref * 0.5),
+      max: Math.floor(ref * 2),
+    });
+    expect(initialRef(byName('辽参'), config, fair)).toBe(Math.round(8100 * 9.4));
   });
   it('万能食材：同级稀有中位数 × 1.5', () => {
     expect(initialRef(config.requireFood(fid('二级万能食材')), config, ONE)).toBe(4200);

@@ -103,9 +103,9 @@ describe('游戏资料列表（问题记录 142）', () => {
     vi.mocked(endpoints.openFoods).mockResolvedValue({
       ...meta,
       items: [
-        { id: 101, name: '大米', level: 1, coin: 10, rare: false, type: 2 },
-        { id: 239, name: '松露', level: 2, coin: 900, rare: true, type: 2 },
-        { id: 240, name: '鱼子酱', level: 1, coin: 800, rare: true, type: 1 },
+        { id: 101, name: '大米', level: 1, coin: 10, fairCoin: 10, rare: false, type: 2 },
+        { id: 239, name: '松露', level: 2, coin: 900, fairCoin: 900, rare: true, type: 2 },
+        { id: 240, name: '鱼子酱', level: 1, coin: 800, fairCoin: 800, rare: true, type: 1 },
       ],
     });
     const w = await mountAt('/wiki/foods');
@@ -212,9 +212,9 @@ describe('游戏资料列表（问题记录 142）', () => {
     vi.mocked(endpoints.openFoods).mockResolvedValue({
       ...meta,
       items: [
-        { id: 101, name: '大米', level: 1, coin: 10, rare: false, type: 2 },
-        { id: 201, name: '松露', level: 2, coin: 99, rare: true, type: 2 },
-        { id: 202, name: '土豆', level: 2, coin: 10, rare: false, type: 2 },
+        { id: 101, name: '大米', level: 1, coin: 10, fairCoin: 10, rare: false, type: 2 },
+        { id: 201, name: '松露', level: 2, coin: 99, fairCoin: 99, rare: true, type: 2 },
+        { id: 202, name: '土豆', level: 2, coin: 10, fairCoin: 10, rare: false, type: 2 },
       ],
     });
     const w = await mountAt('/wiki/foods?f=2&rare=1');
@@ -225,8 +225,8 @@ describe('游戏资料列表（问题记录 142）', () => {
     vi.mocked(endpoints.openFoods).mockResolvedValue({
       ...meta,
       items: [
-        { id: 101, name: '大米', level: 1, coin: 10, rare: false, type: 2 },
-        { id: 201, name: '松露', level: 2, coin: 99, rare: true, type: 2 },
+        { id: 101, name: '大米', level: 1, coin: 10, fairCoin: 10, rare: false, type: 2 },
+        { id: 201, name: '松露', level: 2, coin: 99, fairCoin: 99, rare: true, type: 2 },
       ],
     });
     const w = await mountAt('/wiki/foods?f=9&street=3');

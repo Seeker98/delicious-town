@@ -44,6 +44,7 @@ const exchange: Messages['exchange'] = {
   sysHelpItems: [
     "Prix d'achat du système = référence\u202f×\u202f0,7\u202f; prix de vente du système = référence\u202f×\u202f1,3. Le système ne revend que ce qu'il a acheté aux joueurs.",
     "Le prix de référence est fixé chaque jour d'après les échanges entre joueurs de la veille (ceux du système ne comptent pas), donc les prix du système restent fixes toute la journée.",
+    'La bourse, les contrats à terme et la souscription en gros utilisent le juste prix (prix de base\u202f×\u202fun multiplicateur par niveau\u202f; aux niveaux 3 à 5, il dépasse le prix du marché et se rapproche du coût de fabrication), tandis que le marché du jour et le marché premium utilisent le prix du marché. Un ingrédient sans prix de référence part du juste prix.',
     "Pour les ingrédients aussi vendus au marché, le prix d'achat est plafonné à 0,9\u202f×\u202fle prix le plus bas du marché, pour qu'on ne puisse pas acheter au marché et revendre au système avec profit.",
     "Quand le prix d'achat est sous le minimum autorisé pour un ordre, c'est un «\u202fprix plancher\u202f» (fréquent aux niveaux 3 à 5). On ne peut alors vendre qu'avec le bouton «\u202fVendre au système\u202f», ce qui garantit de toujours pouvoir écouler sa marchandise.",
     'Le système achète au plus 100 unités de chaque ingrédient par jour, et chaque joueur peut lui en vendre au plus 20 par jour.',
