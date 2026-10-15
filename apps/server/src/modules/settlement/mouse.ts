@@ -1,11 +1,9 @@
-import { GOODS } from '@dt/config';
 import { buildPool, pickWeighted, seededRng } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import { opAgg, opLuck } from '../../core/luck';
 import { restLog, runSystemOp, type Op } from '../../core/op';
 import { gainCoin } from '../../core/resources';
 import { subFoods } from '../cupboard/foods';
-import { grantGoodsOp } from '../store/goods';
 import { gameSeed } from '../../core/seed';
 
 export type MouseStats = {
@@ -14,12 +12,11 @@ export type MouseStats = {
   trapped: number;
   stolen: number;
   nothing: number;
-  maps: number;
 };
 
 type Outcome = 'escaped' | 'trapped' | 'stolen' | 'nothing';
 
-async function visit(op: Op): Promise<{ outcome: Outcome; map: boolean }> {
+async function visit(op: Op): Promise<Outcome> {
   const mt = op.tuning.mouse;
   const agg = await opAgg(op);
   const { sum, rate } = await opLuck(op);
@@ -57,12 +54,7 @@ async function visit(op: Op): Promise<{ outcome: Outcome; map: boolean }> {
       restLog(op, 'mouse.steal', { foodsId: pick.foods_id, num });
     }
   }
-  const map = op.rng.chance(agg.earnMapRate ?? 0);
-  if (map) {
-    await grantGoodsOp(op, GOODS.adventureMap, 1, { source: 'mouse', event: false });
-    restLog(op, 'mouse.map');
-  }
-  return { outcome, map };
+  return outcome;
 }
 
 /**
@@ -86,16 +78,14 @@ export async function mouseRound(
     .where('npc', '=', false)
     .orderBy('id')
     .execute();
-  const stats: MouseStats = { triggered: 0, escaped: 0, trapped: 0, stolen: 0, nothing: 0, maps: 0 };
+  const stats: MouseStats = { triggered: 0, escaped: 0, trapped: 0, stolen: 0, nothing: 0 };
   for (const r of rows) {
     const rng = seededRng(gameSeed(shardId, 'mouse', period, r.id));
     const rate = (mt.rateBase - mt.ratePerStar * r.star_level) * (r.street_id === 0 ? mt.newbieFactor : 1);
     if (!rng.chance(rate)) continue;
     stats.triggered += 1;
     try {
-      const res = await runSystemOp(d, shardId, r.id, { source: 'mouse', now, rng }, visit);
-      stats[res.outcome] += 1;
-      if (res.map) stats.maps += 1;
+      stats[await runSystemOp(d, shardId, r.id, { source: 'mouse', now, rng }, visit)] += 1;
     } catch (err) {
       log?.error({ err, shardId, period, restId: r.id }, 'mouse failed');
     }

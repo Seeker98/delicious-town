@@ -15,7 +15,7 @@ export function cookInSeason(t: T, star: number, weatherId: number, road: number
 
 /**
  * 每份的时令值（时令值改法 2026-10-13）：这道菜每种食材的现价（同菜场）之和 ÷ baseNum ÷ k × (1 + gradeStep × (品级 − 1))。
- * 按配方算：每种 1 份（下锅时每种扣 cookNum 份），烹饪魔书免掉的也算；用 baseNum 不用这一批的实际份数。
+ * 按配方算：每种 1 份（下锅时每种扣 cookNum 份）；用 baseNum 不用这一批的实际份数。
  * 天气的 shilingRate 入账时再乘，不在这里
  */
 export function perPortion(

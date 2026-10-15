@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { gameTime, sequenceRng } from '@dt/shared';
-import { originalDishConfig, testConfig } from '../../../test/config';
+import { originalDishConfig } from '../../../test/config';
 import {
   befriend,
   createTestGame,
@@ -14,12 +14,10 @@ import {
 import { eventCount, questIn, showQuest } from '../../../test/quests';
 import { addOrder, addRider, openFor, setWeather, type OrderInit } from '../../../test/takeaway';
 import type { RestCtx } from '../../core/deps';
-import { grantGoods } from '../store/grant';
 import { GOODS } from '@dt/config';
 import { cid, fid, gid } from '../../../test/items';
 
 const DAY = '2026-09-30';
-const config = testConfig();
 let rngValues: number[] = [0.4];
 let t: TestGame;
 beforeAll(async () => {
@@ -143,7 +141,7 @@ describe('领取（设计文档 §3.4）', () => {
     expect(await eventCount(t, ctx.restaurantId, 'takeaway.drone')).toBe(0);
   });
 
-  it('失败：经验减半，没有银币、声望、道具；骑手经验 ×2；给失败原因。有咕咕经验不减', async () => {
+  it('失败：经验减半，没有银币、声望、道具；骑手经验 ×2；给失败原因', async () => {
     rngValues = [0.9];
     const { ctx, rider } = await cook();
     const a = await take(ctx, rider);
@@ -160,10 +158,6 @@ describe('领取（设计文档 §3.4）', () => {
     });
     expect(await restRow(t, ctx.restaurantId)).toMatchObject({ coin: 0, renown: 7 });
     expect(await deliveryState(a)).toBe(3);
-    await grantGoods(t.db, config, ctx.restaurantId, gid('咕咕'), 1, t.clock.now);
-    const b = await take(ctx, rider);
-    later();
-    expect((await claim(ctx, b)).data).toMatchObject({ success: false, exp: 13 });
   });
 
   it('私人单必定成功，经验 ×1.5', async () => {

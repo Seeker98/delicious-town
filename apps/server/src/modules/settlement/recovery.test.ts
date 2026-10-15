@@ -21,18 +21,6 @@ describe('体力恢复（规格书 01 §1.10）', () => {
     expect([51, 52]).toContain((await restRow(t, low.restaurantId)).strength);
     expect((await restRow(t, full.restaurantId)).strength).toBe(100);
   });
-
-  it('沙漏倍率', async () => {
-    const shardId = await createShard(t.db);
-    const ctx = await newRestaurant(t, { shardId, patch: { strength: 10, strength_max: 100 } });
-    await t.db
-      .updateTable('restaurant')
-      .set({ effect_agg: JSON.stringify({ autoReStrength: 2 }) })
-      .where('id', '=', ctx.restaurantId)
-      .execute();
-    await regenStrength(t.game.deps, shardId, 'p1', new Date());
-    expect([12, 14]).toContain((await restRow(t, ctx.restaurantId)).strength);
-  });
 });
 
 describe('老鼠捣乱（规格书 01 §1.9）', () => {

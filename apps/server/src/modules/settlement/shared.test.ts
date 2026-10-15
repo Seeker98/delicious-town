@@ -58,16 +58,11 @@ describe('共用纯函数（快速模拟设计 §4.2）', () => {
     expect(r.agg.atRate).toBeCloseTo(0.1);
   });
 
-  it('strengthGain：满了返回 null；没满按幸运和倍率给', () => {
+  it('strengthGain：满了返回 null；没满按幸运给', () => {
     expect(strengthGain({ strength: 10, strength_max: 10, luck: 0 }, {}, tuning, seededRng(1))).toBeNull();
-    const g = strengthGain(
-      { strength: 0, strength_max: 10, luck: 0 },
-      { autoReStrength: 3 },
-      tuning,
-      seededRng(1),
-    )!;
+    const g = strengthGain({ strength: 0, strength_max: 10, luck: 0 }, {}, tuning, seededRng(1))!;
     expect(g.cap).toBe(10);
-    expect([tuning.strength.regen * 3, tuning.strength.luckyRegen * 3]).toContain(g.add);
+    expect([tuning.strength.regen, tuning.strength.luckyRegen]).toContain(g.add);
   });
 });
 
