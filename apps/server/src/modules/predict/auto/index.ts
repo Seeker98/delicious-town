@@ -3,11 +3,11 @@ import type { GameDeps } from '../../../core/deps';
 import { finalizeEvent } from '../finalize';
 import { krab } from './krab';
 import { market } from './market';
-import { stats } from './stats';
 import type { AutoKind } from './types';
 import { weather } from './weather';
+import { wish } from './wish';
 
-const KINDS: Record<AutoKind['kind'], AutoKind> = { krab, market, weather, stats };
+const KINDS: Record<AutoKind['kind'], AutoKind> = { krab, market, weather, wish };
 const GIVE_UP_MS = 24 * 3_600_000;
 
 type Log = { error(obj: object, msg: string): void; info?(obj: object, msg: string): void };
@@ -29,7 +29,7 @@ export async function createAutoEvents(
   if (t.auto.krab) plan.push(['krab', [krab]]);
   if (t.auto.market) plan.push(['market', [market]]);
   if (t.auto.weather) plan.push(['weather', [weather]]);
-  if (t.auto.stats) plan.push(['stats', [stats]]);
+  if (t.auto.wish) plan.push(['wish', [wish]]);
   const created: string[] = [];
   for (const [flag, kinds] of plan) {
     const autoKey = `${flag}:${day}`;
@@ -100,7 +100,8 @@ export async function resolveAutoEvents(
     .where('shard_id', '=', shardId)
     .where('auto_key', 'is not', null)
     .where('status', 'in', ['open', 'closed'])
-    .where('resolve_at', '<=', now)
+    // 删掉的题型不等判定时间（全服营业银币题，2026-10-16）
+    .where((eb) => eb.or([eb('resolve_at', '<=', now), eb('kind', 'not in', Object.keys(KINDS))]))
     .orderBy('id')
     .execute();
   if (due.length === 0) return { resolved: 0, voided: 0 };
@@ -108,12 +109,26 @@ export async function resolveAutoEvents(
   let resolved = 0;
   let voided = 0;
   for (const e of due) {
-    // 删掉的题型（嘻哈男孩，天气改版 PR③）判不了：和数据缺失一样，过了 24 小时作废退款
     const k = KINDS[e.kind as AutoKind['kind']] as AutoKind | undefined;
+    // 删掉的题型（嘻哈男孩、全服营业银币）判不了：立刻作废退款，不等 24 小时
+    if (!k) {
+      const done = await d.db
+        .transaction()
+        .execute((tx) =>
+          finalizeEvent(
+            tx,
+            e.id,
+            { status: 'void', outcome: null, note: '题型下线, 自动作废', noteParams: { void: 'retired' } },
+            now,
+          ),
+        );
+      if (done) voided++;
+      continue;
+    }
     // 判定出错按"还判不了"处理（终审 I2）：不挡住后面的事件，过了 24 小时照样作废
     let r: Awaited<ReturnType<AutoKind['resolve']>> = null;
     try {
-      r = k ? await k.resolve({ d, shardId, settings }, e.params) : null;
+      r = await k.resolve({ d, shardId, settings }, e.params);
     } catch (err) {
       log.error({ err, shardId, eventId: e.id, kind: e.kind }, 'predict auto resolve failed');
     }

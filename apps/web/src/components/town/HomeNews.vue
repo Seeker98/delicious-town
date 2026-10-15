@@ -24,8 +24,8 @@ const daily = computed(() => {
   const title = d.title[dailyLang(locale.locale).lang];
   return dailyPlain(title, d.rests, catalogNames(catalog), t.value.town.daily.closed);
 });
-/** 首页最多列几条（问题记录 619：原来日报、广播、新闻最多 5 条）；按日报、广播、新闻的先后取 */
-const SHOWN = 2;
+/** 首页最多列几条（问题记录 619：原来日报、广播、新闻最多 5 条，改成 2 条；2026-10-16 改回 3 条）；按日报、广播、新闻的先后取 */
+const SHOWN = 3;
 type Line = { key: string; kind: 'daily' } | { key: string; kind: 'broadcast' | 'news'; n: NewsDto };
 const lines = computed<Line[]>(() => {
   const out: Line[] = [];

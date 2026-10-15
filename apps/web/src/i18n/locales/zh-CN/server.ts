@@ -108,7 +108,14 @@ export default {
       note: (day: string, today: string, prevDay: string, yesterday: string) =>
         `${day} ${today}；${prevDay} ${yesterday}`,
     },
+    /** 许愿树会不会结某样道具（2026-10-16 换掉全服营业银币题；旧的银币题还用上面的 stats） */
+    wish: {
+      title: (hour: number, goods: string) => `今天 ${hour} 点许愿树会结出${goods}吗`,
+      desc: (hour: number) => `以今天 ${hour} 点开的这一轮许愿树结的道具为准, 不看数量。`,
+      note: (day: string, goods: string, num: number) => `${day}许愿树结的是${goods} ×${num}`,
+    },
     voidMissing: '数据缺失, 自动作废',
+    voidRetired: '题型下线, 自动作废',
   },
   /** 广场 NPC 台词（照原版 NPCTools） */
   talk: {

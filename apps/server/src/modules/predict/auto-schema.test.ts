@@ -17,10 +17,10 @@ describe('自动出题的数值、字段和终态函数（238-2 设计 §3、§5
       krab: true,
       market: true,
       weather: true,
-      stats: true,
+      wish: true,
       b: 100,
       marketCloseMin: 5,
-      statsCloseHour: 18,
+      wishCloseMin: 5,
     });
   });
 

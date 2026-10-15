@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  predict1016:
+    'Predictions and activity: the daily question “Will today’s server-wide business coins beat yesterday’s?” is replaced by “Will the Wishing Tree bear a given item at 20:00 today?” (the item is picked from the Wishing Tree’s prizes), and open coin questions are cancelled and refunded; new activity tasks: make a wish at the Wishing Tree and change the weather with an item, 5 points each; the home page shows up to 3 town news lines again',
   perf1016:
     'Performance: the game opens faster the first time (the main file is nearly a quarter smaller, and the update log now loads only when you open its page), the home and Takeaway pages no longer refresh on a timer while the app is in the background, and the Chef power ranking no longer takes several seconds the first time you open it; removed “trial success rate” from the weather descriptions, as it never had any effect',
   weather1016:

@@ -3,6 +3,7 @@ import { ErrorCode, gameDay, type BarAwardDto, type WishTreeResultDto, type Wish
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, requirement } from '../../core/errors';
 import { featureAvailable } from '../../core/features';
+import { emitAction } from '../../core/action';
 import { restLog, runOp, type Op } from '../../core/op';
 import type { DB } from '../../db/schema';
 import { AppError } from '../../http/errors';
@@ -126,6 +127,8 @@ export function createWishTreeService(d: GameDeps) {
       .executeTakeFirst();
     if (!r) throw new AppError(ErrorCode.ALREADY_DONE, 400, { what: 'wishtree' });
     restLog(o, 'wishtree.wish', { roundId: Number(round.id), goodsId: round.goods_id, num: round.num });
+    // 活跃“许愿树许愿”（2026-10-16）
+    await emitAction(o, 'wishtree.wish');
     return viewOf(o.tx, t, true, o.shardId, o.rest.id, o.rest.level, o.now);
   }
 

@@ -71,6 +71,8 @@ async function mountView() {
 
 /** 顶栏右边的“⋯”在 AppHeader 里：这里直接调页面登记的 open（界面改版 P10） */
 async function openMenu() {
+  // 全量跑、机器忙时页面的读取可能还没回来：等顶栏登记了“⋯”再点
+  await vi.waitFor(() => expect(usePageTitleStore().menu).not.toBeNull());
   usePageTitleStore().menu!.open();
   await flushPromises();
 }
@@ -313,6 +315,8 @@ describe('FriendRestView', () => {
     vi.mocked(endpoints.friendDetail).mockResolvedValue(detail({ npc: true }));
     const w = await mountView();
     // 蟹老板不能举报也不能删：顶栏不放“⋯”
+    // 等店头出来（读取回来了）再看顶栏，免得机器忙时还没读到就算通过
+    await vi.waitFor(() => expect(w.find('[data-testid="friend-hero"]').exists()).toBe(true));
     expect(usePageTitleStore().menu).toBeNull();
     expect(w.find('[data-testid="rest-name-report-open"]').exists()).toBe(false);
     await w.get('[data-testid="friend-notice"]').trigger('click');

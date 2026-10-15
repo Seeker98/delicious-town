@@ -112,7 +112,14 @@ const server: Messages['server'] = {
         `Según las monedas que ganen hoy todos los restaurantes del servidor; se decide después de las 0:00 de mañana. Solo cuenta como «Sí» si es estrictamente mayor que ayer. Las operaciones cierran a las ${close}:00.`,
       note: (day, today, prevDay, yesterday) => `${day}: ${today}; ${prevDay}: ${yesterday}`,
     },
+    wish: {
+      title: (hour, goods) => `¿Dará hoy el Árbol de los deseos ${goods} a las ${hour}:00?`,
+      desc: (hour) =>
+        `Según el objeto que dé el Árbol de los deseos en la ronda que abre hoy a las ${hour}:00, sin importar la cantidad.`,
+      note: (day, goods, num) => `${day}: el Árbol de los deseos dio ${goods} ×${num}`,
+    },
     voidMissing: 'Faltan datos, anulado automáticamente',
+    voidRetired: 'Tipo de pregunta retirado, anulado automáticamente',
   },
   talk: {
     bigEater: '¡Tienes buen gusto! ¡Yo también lo creo! ¡Jajaja!',
