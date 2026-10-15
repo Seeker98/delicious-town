@@ -47,6 +47,7 @@ export default {
     pot: '集盆栽',
     painting: '集名画',
     softCap: '超出部分折算',
+    learn: '本街学菜',
     atOverflow: '上座溢出',
     starPotential: '星潜力',
     newbie: '新手经验',

@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    income1015:
+      'Restaurant income reworked: regular customers now also pay for a dish from your street (a learned dish pays 4.8% of its price, at most 64 per table; an unlearned one pays 10 + star level); a satisfied picky customer pays 4 times what a regular customer pays for the same dish; the more dishes of your street you learn, the higher your picky rate (up to +15% when all are learned, still subject to the picky rate cap); final coin and EXP on every street medal were rebalanced for the new rules, and occupancy or EXP per table changed on 12 streets such as Mexico, France and Sichuan, see the street bonus on the moving page',
     streets1014:
       'Street bonuses adjusted again: final coin and EXP on every street medal were rebalanced, restaurants already on a street included (smaller coin penalty on Fusion Streets I and II and Guangdong Street; Greece Street final EXP +85% → +80% and no coin bonus; Shandong Street loses its -20% occupancy, EXP per table +6 → +2; see the street bonus on the moving page). Occupancy above 70% now counts only a third, occupancy from learned recipes is halved, and the part above 120% still turns into EXP as before',
     fix1014c:

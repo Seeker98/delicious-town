@@ -53,6 +53,24 @@ export function missedDish(
   return left.length > 0 ? left[rng.int(left.length)]! : null;
 }
 
+/**
+ * 普通顾客付的银币（收益模型改版 2026-10-15）：从本街全部菜里随机点一道（取一次随机数）。
+ * 学会了按 菜价 × rate × (1 + 普通品级加成) 付，不超过 cap、不低于基础价；没学会时付基础价。
+ * 本街一道都没学会时一定付基础价，不取随机数
+ */
+export function normalDishCoin(
+  streetIds: readonly number[],
+  learned: ReadonlySet<number>,
+  price: (id: number) => number,
+  p: { base: number; rate: number; gradeAdd: number; cap: number },
+  rng: Rng,
+): number {
+  if (streetIds.length === 0 || learned.size === 0) return p.base;
+  const id = streetIds[rng.int(streetIds.length)]!;
+  if (!learned.has(id)) return p.base;
+  return Math.max(p.base, Math.min(price(id) * p.rate * (1 + p.gradeAdd), p.cap));
+}
+
 /** 规格书 01 §1.5E：原值为 0 或加上之后 ≤0 时为 0 */
 export function realValue(x: number, add: number): number {
   return x === 0 ? 0 : Math.max(0, x + add);
@@ -129,6 +147,14 @@ export function allocateTables(
   const expBase = rt.expBase + Math.floor(s / 2);
   const oilBase = rt.oilBase;
   const learned = splitLearned(input.levels, g.cookbooks, rest.streetId);
+  const streetIds = g.cookbooks.idsByStreet.get(rest.streetId) ?? [];
+  const learnedLocal = new Set(learned.local);
+  const normalPay = {
+    base: rt.coinBase + rt.normalCoinPerStar * s,
+    rate: t.normalDishRate,
+    gradeAdd: g.grade(1).spCoinAddRate,
+    cap: t.normalCoinCap,
+  };
   const sameKrabStreet = g.krabStreet !== null && g.krabStreet === rest.streetId;
   const isHost = g.planktonRestId === rest.id;
   const special = input.special ? { ...input.special } : null;
@@ -366,9 +392,10 @@ export function allocateTables(
         }
       }
     } else {
-      // 普通顾客：特色菜等全部桌子分完再挑（见循环后面）
+      // 普通顾客：按点的本街菜付钱（收益模型改版 2026-10-15）；特色菜等全部桌子分完再挑（见循环后面）
       type = 1;
       next.customer = 1;
+      coin = normalDishCoin(streetIds, learnedLocal, (id) => g.cookbooks.coin[id]!, normalPay, rng);
       normals.push({ at: out.tables.length, coin, exp });
     }
 

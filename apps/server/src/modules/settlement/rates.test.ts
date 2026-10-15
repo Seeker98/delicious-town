@@ -93,6 +93,26 @@ describe('汇总率（规格书 01 §1.3）', () => {
     expect(low.parts.softCap).toBeUndefined();
   });
 
+  it('学菜加挑剔率：本街学会道数 ÷ 本街菜数 × 0.15，不看品级，照样走软上限（收益模型改版 2026-10-15）', () => {
+    const newbie = config.cookbookIndex.idsByStreet.get(0)!;
+    const half = Object.fromEntries(newbie.slice(0, 23).map((id) => [id, 1]));
+    const halfHigh = Object.fromEntries(newbie.slice(0, 23).map((id) => [id, 5]));
+    expect(tuning.settlement.spLearnRate).toBe(0.15);
+    expect(rates({ cookbooks: half }).rates.spRate.parts.learn).toBeCloseTo((0.15 * 23) / newbie.length, 5);
+    expect(rates({ cookbooks: halfHigh }).rates.spRate.parts.learn).toBeCloseTo(
+      (0.15 * 23) / newbie.length,
+      5,
+    );
+    // 外街的菜不算
+    const other = Object.fromEntries(config.cookbookIndex.idsByStreet.get(1)!.map((id) => [id, 1]));
+    expect(rates({ cookbooks: other }).rates.spRate.parts.learn).toBeUndefined();
+    // 学满 + 2 星 0.14 + 加成 0.2 = 0.49 → 0.3 + 0.19 ÷ 3
+    const all = Object.fromEntries(newbie.map((id) => [id, 1]));
+    const r = rates({ rest: { star: 2 }, cookbooks: all, agg: { spRate: 0.2 } }).rates.spRate;
+    expect(r.parts.learn).toBeCloseTo(0.15, 5);
+    expect(r.total).toBeCloseTo(0.3 + 0.19 / 3, 5);
+  });
+
   it('阿雕作废：挑剔率超过 1 也不再转成银币率', () => {
     const { rates: r } = rates({ rest: { star: 2 }, agg: { spRate: 1, adiao: 1 } });
     expect(r.coinRate.parts.spOverflow).toBeUndefined();
