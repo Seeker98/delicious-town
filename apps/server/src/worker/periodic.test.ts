@@ -2,7 +2,8 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { createShard } from '../../test/fixtures';
 import { createTestGame, type TestGame } from '../../test/game';
 import { JobError, type PeriodicJob } from '../core/jobs';
-import { runDueJobs } from './periodic';
+import { queryCounter } from '../../test/queries';
+import { CLAIM_RECHECK_MS, RETRY_CHECK_MS, runDueJobs, type ClaimCache } from './periodic';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -243,5 +244,87 @@ describe('停止时不再抢新的（稳健性收尾批终审 I2：停止等待�
     expect(second.run).not.toHaveBeenCalled();
     const claimed = await t.db.selectFrom('job_run').select('job').where('shard_id', '=', shardId).execute();
     expect(claimed.map((x) => x.job)).toEqual(['stop-first']);
+  });
+});
+
+describe('记住已经抢过的周期（性能整理：原来每 5 秒每个区服每个任务都插一次 job_run）', () => {
+  const q = queryCounter();
+  afterAll(() => q.db.destroy());
+  const cached = (claims: ClaimCache) => ({ ...deps(), db: q.db, claims });
+  /** 这一轮对 job_run 发了几条语句 */
+  const jobRunSqls = async (fn: () => Promise<unknown>) =>
+    (await q.count(fn)).sqls.filter((s) => s.includes('"job_run"')).length;
+
+  it('周期键没变就不再插 job_run；变了照常抢；隔一小时再插一次（job_run 清掉后还能再跑）', async () => {
+    const shardId = await createShard(t.db);
+    const claims: ClaimCache = new Map();
+    let p = 'c1';
+    const run = vi.fn(async () => ({}));
+    const j: PeriodicJob = { name: 'cache-skip', feature: 'shop', period: () => p, run };
+    const start = t.clock.now;
+    // 第一轮：插入、跑完写完成
+    expect(await jobRunSqls(() => runDueJobs(cached(claims), [j], { shardIds: [shardId] }))).toBe(2);
+    t.clock.set(new Date(start.getTime() + 5_000));
+    expect(await jobRunSqls(() => runDueJobs(cached(claims), [j], { shardIds: [shardId] }))).toBe(0);
+    expect(run).toHaveBeenCalledTimes(1);
+    p = 'c2';
+    await runDueJobs(cached(claims), [j], { shardIds: [shardId] });
+    expect(run).toHaveBeenCalledTimes(2);
+    // 一小时后再插一次：还在就冲突、不跑；被清掉了就再跑
+    t.clock.set(new Date(start.getTime() + CLAIM_RECHECK_MS + 10_000));
+    expect(await jobRunSqls(() => runDueJobs(cached(claims), [j], { shardIds: [shardId] }))).toBe(1);
+    expect(run).toHaveBeenCalledTimes(2);
+    await t.db
+      .deleteFrom('job_run')
+      .where('shard_id', '=', shardId)
+      .where('job', '=', 'cache-skip')
+      .execute();
+    t.clock.set(new Date(start.getTime() + 2 * CLAIM_RECHECK_MS + 20_000));
+    await runDueJobs(cached(claims), [j], { shardIds: [shardId] });
+    expect(run).toHaveBeenCalledTimes(3);
+    t.clock.set(start);
+  });
+
+  it('别的 worker 抢了的也记住；不传 claims 的每轮照旧去插', async () => {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('job_run')
+      .values({ shard_id: shardId, job: 'cache-other', period: 'k', started_at: t.clock.now })
+      .execute();
+    const j = job('cache-other', 'shop', 'k');
+    const claims: ClaimCache = new Map();
+    expect(await jobRunSqls(() => runDueJobs(cached(claims), [j], { shardIds: [shardId] }))).toBe(1);
+    expect(await jobRunSqls(() => runDueJobs(cached(claims), [j], { shardIds: [shardId] }))).toBe(0);
+    const plain = { ...deps(), db: q.db };
+    expect(await jobRunSqls(() => runDueJobs(plain, [j], { shardIds: [shardId] }))).toBe(1);
+    expect(await jobRunSqls(() => runDueJobs(plain, [j], { shardIds: [shardId] }))).toBe(1);
+    expect(j.run).not.toHaveBeenCalled();
+  });
+
+  it('开了 retry 的失败后最多每分钟去看一次能不能重抢，10 分钟后照常重跑', async () => {
+    const shardId = await createShard(t.db);
+    const claims: ClaimCache = new Map();
+    let fail = true;
+    const run = vi.fn(async () => {
+      if (fail) throw new Error('not ready');
+      return { ok: 1 };
+    });
+    const j: PeriodicJob = { name: 'cache-retry', feature: 'shop', period: () => 'k', run, retry: true };
+    const start = t.clock.now;
+    await runDueJobs(cached(claims), [j], { shardIds: [shardId] });
+    expect(run).toHaveBeenCalledTimes(1);
+    // 一分钟内不再碰 job_run
+    t.clock.set(new Date(start.getTime() + 30_000));
+    expect(await jobRunSqls(() => runDueJobs(cached(claims), [j], { shardIds: [shardId] }))).toBe(0);
+    // 过了一分钟：插入冲突，再试条件更新（还没到 10 分钟，抢不到）
+    t.clock.set(new Date(start.getTime() + RETRY_CHECK_MS + 1_000));
+    expect(await jobRunSqls(() => runDueJobs(cached(claims), [j], { shardIds: [shardId] }))).toBe(2);
+    expect(run).toHaveBeenCalledTimes(1);
+    fail = false;
+    t.clock.set(new Date(start.getTime() + 11 * 60_000));
+    const r = await runDueJobs(cached(claims), [j], { shardIds: [shardId] });
+    expect(r.map((x) => x.ok)).toEqual([true]);
+    expect(run).toHaveBeenCalledTimes(2);
+    t.clock.set(start);
   });
 });
