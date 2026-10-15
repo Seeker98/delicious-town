@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    prices1015:
+      'Item prices revised (1 diamond now counts as 10,000 coins): most black market prices changed, with fragments, mid and high teacher licenses, oil savers and mystery crystals cheaper, and expansion cards, exploration maps, enhancement stones and respec cards pricier; insurance cards and Sky Compasses join the black market, while purple conches, level 6 fragments and junior teacher licenses leave it; coin shop prices changed for build cards, posters, trophies, oil savers, missiles and exploration maps, small Stamina Cards and Sky Compasses are now sold there, and Stamina Cards are black market only; small Stamina Cards and Stamina Cards are limited to 1 per day, enhancement stones to 2 per week; Ichiban Kuji tickets cost 45,000 and deluxe tickets 320,000, with prizes reworked; opening takeaway now costs 5.88 million coins and 100 diamonds; exploration maps use 5 Stamina; the Exploration Guide wage is now 1 map, the Wealth Advisor wage 3 level 5 supply packs, and the Exploration Guide mystery ingredient bonus +1%',
     float1015:
       'Business fluctuation adjusted: the random swing in occupancy each round is halved (e.g. 2 stars ±25% → ±12.5%, 7 stars ±50% → ±25%); the random swing in picky rate widens to ±2.5% per star (was ±1.5%), still symmetric with no change on average',
     income1015:

@@ -133,6 +133,7 @@ const errors: Messages['errors'] = {
     bar_daily: (p) =>
       `Vous avez joué ${s(p.max)} ${plFr(s(p.max), 'partie', 'parties')} aujourd'hui. Revenez demain.`,
     shop_daily: (p) => `Achat limité à ${s(p.max)} par jour\u202f; déjà fait aujourd'hui`,
+    shop_weekly: (p) => `Achat limité à ${s(p.max)} par semaine\u202f; déjà atteint cette semaine`,
     town_exchange: (p) => `Chaque joueur peut échanger cet objet ${s(p.max)} fois (déjà ${s(p.used)})`,
     max: (p) => `Vous pouvez en posséder au plus ${s(p.max)}`,
     friends: (p) => `Votre liste d'amis est pleine (${s(p.max)} au plus)`,

@@ -14,6 +14,8 @@ export interface BuyState {
   star: number;
   /** 每日限购今天还能买几个；不限购为 undefined */
   dailyLeft?: number;
+  /** 每周限购本周还能买几个；不限购为 undefined（道具价格迁移 2026-10-15） */
+  weeklyLeft?: number;
 }
 
 /** 一次最多能买几个，和买不了的原因（与 buy 里的 assertBuyable 同一套规则） */
@@ -28,7 +30,8 @@ export function buyCap(g: Goods, s: BuyState, maxBuy: number): { max: number; bl
   const cap = plaque || honor ? 1 : Math.min(g.stackable ? maxBuy : 1, g.maxNum - s.owned);
   if (cap <= 0) return { max: 0, blocked: 'max' };
   if (s.dailyLeft !== undefined && s.dailyLeft <= 0) return { max: 0, blocked: 'daily' };
-  const capped = s.dailyLeft === undefined ? cap : Math.min(cap, s.dailyLeft);
+  if (s.weeklyLeft !== undefined && s.weeklyLeft <= 0) return { max: 0, blocked: 'weekly' };
+  const capped = Math.min(cap, s.dailyLeft ?? cap, s.weeklyLeft ?? cap);
   const newKind = !honor && (g.type === GOODS_TYPE.equip || s.owned === 0);
   if (newKind && s.storeFull) return { max: 0, blocked: 'store' };
   const afford = s.price > 0 ? Math.floor(s.money / s.price) : capped;

@@ -146,7 +146,7 @@
     "guessBonusHours": [12, 18],
     "manualCost": 1000000, "manualKinds": 4, "manualStock": 1000, "manualPersonMax": 99, "manualShare": 0.25
   },
-  "shop": { "sellRate": 0.7, "specialHour": 12, "specialFallbackGoods": 30201, "discardable": [60202], "noSell": [10006, 10110, 10210, 10704, 10705, 10706, 10707, 10801, 10802, 10803, 10804, 10805, 10806], "diamondSellCoin": 2000, "maxBuy": 999, "dailyLimit": [[10420, 1]] },
+  "shop": { "sellRate": 0.7, "specialHour": 12, "specialFallbackGoods": 30201, "discardable": [60202], "noSell": [10006, 10110, 10210, 10704, 10705, 10706, 10707, 10801, 10802, 10803, 10804, 10805, 10806], "diamondSellCoin": 2000, "maxBuy": 999, "dailyLimit": [[10420, 1], [10409, 1], [10410, 1]], "weeklyLimit": [[10601, 2]] },
   "store": { "maxBatch": 99 },
   "world": {
     "weatherHours": [1, 5, 9, 13, 17, 21],
@@ -345,7 +345,7 @@
     "watchmanCook": { "hour": 5, "minute": 58, "priceSpread": 0.3 }
   },
   "takeaway": {
-    "openStar": 2, "openRenown": 888, "openCoin": 8880000, "openDiamond": 300,
+    "openStar": 2, "openRenown": 888, "openCoin": 5880000, "openDiamond": 100,
     "publicBase": 5, "publicRand": 18, "publicPerOpen": 15, "publicMinOpen": 10, "publicOpenFloor": 30,
     "gradeRates": [0.4, 0.25, 0.15, 0.1, 0.05, 0.035, 0.015],
     "minutesBase": 20, "minutesPerGrade": 10, "renownPerGrade": 2,
@@ -399,18 +399,18 @@
   },
   "predict": { "unit": 1000, "feeRate": 0.02, "maxHold": 200, "maxTrade": 100, "defaultB": 100, "minLevel": 20, "minAccountDays": 7, "auto": { "krab": true, "market": true, "weather": true, "stats": true, "b": 100, "marketCloseMin": 5, "statsCloseHour": 18 } },
   "kuji": {
-    "price": 40000, "dailyBuy": 10, "maxDraw": 10, "activeTickets": 1, "activeTicketPoints": 120, "maxPools": 3,
+    "price": 45000, "dailyBuy": 10, "maxDraw": 10, "activeTickets": 1, "activeTicketPoints": 120, "maxPools": 3,
     "tiers": [
-      { "key": "A", "count": 1, "award": { "diamond": 300 }, "icon": "kuji_a", "news": "broadcast" },
-      { "key": "B", "count": 2, "award": { "diamond": 100 } },
-      { "key": "C", "count": 4, "award": { "diamond": 30 } },
-      { "key": "D", "count": 8, "award": { "coin": 30000 } },
-      { "key": "E", "count": 15, "award": { "coin": 15000 } },
-      { "key": "F", "count": 50, "award": { "coin": 5000 } }
+      { "key": "A", "count": 1, "award": { "diamond": 35 }, "icon": "kuji_a", "news": "broadcast" },
+      { "key": "B", "count": 2, "award": { "diamond": 10 } },
+      { "key": "C", "count": 4, "award": { "diamond": 5 } },
+      { "key": "D", "count": 8, "award": { "coin": 10000 } },
+      { "key": "E", "count": 15, "award": { "coin": 5000 } },
+      { "key": "F", "count": 50, "award": { "coin": 2000 } }
     ],
-    "last": { "award": { "diamond": 200, "goods": [{ "id": 10005, "num": 1 }, { "id": 10419, "num": 1 }] }, "icon": "kuji_last", "news": "broadcast" },
+    "last": { "award": { "diamond": 35, "goods": [{ "id": 10005, "num": 1 }, { "id": 10419, "num": 1 }] }, "icon": "kuji_last", "news": "broadcast" },
     "deluxe": {
-      "price": 300000,
+      "price": 320000,
       "dailyBuy": 10,
       "maxDraw": 10,
       "maxPools": 3,
@@ -420,7 +420,7 @@
         { "key": "C", "count": 5, "award": { "coin": 100000 } },
         { "key": "D", "count": 12, "award": { "coin": 50000 } }
       ],
-      "last": { "award": { "diamond": 50, "goods": [{ "id": 10005, "num": 1 }, { "id": 10419, "num": 1 }] }, "icon": "kuji_dx_last", "news": "broadcast" }
+      "last": { "award": { "diamond": 35, "goods": [{ "id": 10005, "num": 1 }, { "id": 10419, "num": 1 }] }, "icon": "kuji_dx_last", "news": "broadcast" }
     }
   },
   "scarcity": { "needBase": 0.05, "needLuckFactor": 0.6, "needMax": 0.3 },

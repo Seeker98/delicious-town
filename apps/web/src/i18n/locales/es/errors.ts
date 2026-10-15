@@ -135,6 +135,7 @@ const errors: Messages['errors'] = {
     bar_daily: (p) =>
       `Hoy ya has jugado ${s(p.max)} ${plEs(s(p.max), 'partida', 'partidas')} a este juego. Vuelve mañana.`,
     shop_daily: (p) => `Límite de ${String(p.max)} al día; ya lo compraste hoy`,
+    shop_weekly: (p) => `Límite de ${String(p.max)} a la semana; ya lo alcanzaste esta semana`,
     town_exchange: (p) =>
       `Cada jugador puede canjear esto ${s(p.max)} ${plEs(s(p.max), 'vez', 'veces')} (usadas ${s(p.used)})`,
     max: (p) => `Puedes tener como máximo ${s(p.max)}`,

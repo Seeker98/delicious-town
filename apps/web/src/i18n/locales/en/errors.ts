@@ -133,6 +133,7 @@ const errors: Messages['errors'] = {
     bar_daily: (p) =>
       `You've played this game ${s(p.max)} ${plEn(s(p.max), 'time', 'times')} today. Come back tomorrow.`,
     shop_daily: (p) => `You can buy ${String(p.max)} of this per day; you already have today`,
+    shop_weekly: (p) => `You can buy ${String(p.max)} of this per week; you've reached that this week`,
     town_exchange: (p) =>
       `Each player can exchange this ${s(p.max)} ${plEn(s(p.max), 'time', 'times')} (used ${s(p.used)})`,
     max: (p) => `You can hold at most ${s(p.max)}`,

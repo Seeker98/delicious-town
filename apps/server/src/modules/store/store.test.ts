@@ -183,7 +183,8 @@ describe('仓库列表与流水', () => {
     expect(l.items.find((x) => x.goodsId === gid('金币'))).toMatchObject({ usable: true, batch: true });
     expect(l.items.find((x) => x.goodsId === gid('普通宣传海报'))).toMatchObject({
       usable: false,
-      sellPrice: 700,
+      // 普通宣传海报 5,000 × 0.7（道具价格迁移 2026-10-15）
+      sellPrice: 3500,
     });
     expect(l.items.some((x) => x.goodsId === GOODS.krabHappy)).toBe(false);
     expect(l.kinds).toBe(2);

@@ -14,13 +14,33 @@ const RED = gid('[一阶]•红晶原石');
 type Design = Array<{ pool: string; goods: number[] }>;
 const RETIRED = (src['game/retired'] as { goods: Array<{ id: number }> }).goods.map((g) => g.id);
 
+/** 原版钻石价（master/goods.json），不含 shop.json 的覆盖 */
+const MASTER_DIAMOND = new Map(
+  (src['master/goods'] as Array<{ id: number; diamond: number }>).map((g) => [g.id, g.diamond]),
+);
+/**
+ * 测试换掉 goods 时，真实黑市池里只靠 shop.json 覆盖才有钻石价的道具（道具价格迁移 2026-10-15 新进的保险卡、司天罗盘）
+ * 没了价格会报构建错误：池子里去掉它们，除非测试自己给了钻石价
+ */
+function poolsFor(goods: ShopFile['goods']): ShopFile['pools'] {
+  const priced = (id: number) =>
+    (MASTER_DIAMOND.get(id) ?? 0) > 0 ||
+    goods.some((g) => g.id === id && ((g as { diamond?: number }).diamond ?? 0) > 0);
+  return { ...real.pools, black: real.pools!.black!.filter(priced) };
+}
+
+/** 不写覆盖时能用的黑市池（去掉只靠覆盖才有钻石价的） */
+const BLACK0 = () => poolsFor([])!.black!;
+
 function tool(goods: ShopFile['goods'] = real.goods, design?: Design) {
   const written: string[] = [];
   const t = createShopTool({
     readSource: () => ({
       ...src,
       ...(design ? { 'designed/shop_pools': design } : {}),
-      'game/shop': written.length ? (JSON.parse(written.at(-1)!) as unknown) : { ...real, goods },
+      'game/shop': written.length
+        ? (JSON.parse(written.at(-1)!) as unknown)
+        : { ...real, goods, pools: poolsFor(goods) },
     }),
     writeShop: (text) => written.push(text),
   });
@@ -120,7 +140,7 @@ describe('商店整理工具（问题记录 483）', () => {
   it('没发上来的池子沿用文件里现有的，不恢复成设计表（backlog）', () => {
     const design = [
       { pool: 'special', goods: real.pools!.special! },
-      { pool: 'black', goods: real.pools!.black!.slice(1) },
+      { pool: 'black', goods: BLACK0().slice(1) },
     ];
     const { t, written } = tool([], design);
     const special = t
@@ -129,7 +149,7 @@ describe('商店整理工具（问题记录 483）', () => {
       .map((x) => x.id);
     expect(t.save({ goods: [], pools: { special } }).errors).toEqual([]);
     const file = JSON.parse(written[0]!) as ShopFile;
-    expect(file.pools!.black).toEqual(real.pools!.black);
+    expect(file.pools!.black).toEqual(BLACK0());
   });
 
   it('原始数据表读不出来：报表列出原因，不抛错（backlog：原来页面上是 500）', () => {
@@ -196,7 +216,7 @@ describe('商店整理工具（问题记录 483）', () => {
     // 设计表的池子换成和 shop.json 一样的：保存同样的池子时不写进 shop.json
     const design = [
       { pool: 'special', goods: real.pools!.special! },
-      { pool: 'black', goods: real.pools!.black! },
+      { pool: 'black', goods: BLACK0() },
     ];
     const written: string[] = [];
     const t = createShopTool({
@@ -207,7 +227,7 @@ describe('商店整理工具（问题记录 483）', () => {
       }),
       writeShop: (text) => written.push(text),
     });
-    const res = t.save({ goods: [], pools: { special: real.pools!.special!, black: real.pools!.black! } });
+    const res = t.save({ goods: [], pools: { special: real.pools!.special!, black: BLACK0() } });
     expect(res.errors).toEqual([]);
     expect(JSON.parse(written.at(-1)!).pools).toBeUndefined();
   });
@@ -215,7 +235,7 @@ describe('商店整理工具（问题记录 483）', () => {
   it('设计表池子里有下架的道具：原版按去掉它算，不显示“和原版不同”，池子不写进 shop.json（backlog）', () => {
     const design = [
       { pool: 'special', goods: [...real.pools!.special!, RETIRED[0]!] },
-      { pool: 'black', goods: real.pools!.black! },
+      { pool: 'black', goods: BLACK0() },
     ];
     const written: string[] = [];
     const t = createShopTool({
@@ -229,7 +249,7 @@ describe('商店整理工具（问题记录 483）', () => {
     const row = t.report().rows.find((x) => x.id === RETIRED[0]);
     expect(row).toBeDefined();
     expect(row!.orig.special).toBe(false);
-    const res = t.save({ goods: [], pools: { special: real.pools!.special!, black: real.pools!.black! } });
+    const res = t.save({ goods: [], pools: { special: real.pools!.special!, black: BLACK0() } });
     expect(res.errors).toEqual([]);
     expect(JSON.parse(written.at(-1)!).pools).toBeUndefined();
   });

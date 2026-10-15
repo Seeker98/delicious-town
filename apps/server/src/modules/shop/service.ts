@@ -8,6 +8,7 @@ import {
   type ShopItemDto,
   type ShopSpecialDto,
   type Slot,
+  weekStart,
 } from '@dt/shared';
 import { sql } from 'kysely';
 import { emitAction } from '../../core/action';
@@ -45,10 +46,48 @@ async function assertBuyable(o: Op, g: Goods, num: number): Promise<void> {
   await assertStoreRoom(o, g.id);
 }
 
-/** 每日限购的计数键（daily_counter，天气改版：晴雨签每天 1 个） */
+/** 每日限购的计数键（daily_counter，天气改版：晴雨签每天 1 个）；每周限购用同一个键记在 weekly_counter */
 const dailyKey = (goodsId: number) => `shop.buy:${goodsId}`;
 const dailyLimitOf = (o: { tuning: Tuning }, goodsId: number) =>
   new Map(o.tuning.shop.dailyLimit).get(goodsId);
+const weeklyLimitOf = (o: { tuning: Tuning }, goodsId: number) =>
+  new Map(o.tuning.shop.weeklyLimit).get(goodsId);
+
+/**
+ * 限购（每天、每周）检查并记数：银币店和黑市共用计数（道具价格迁移 2026-10-15：体力卡、强化石只在黑市卖也要限）。
+ * 周按游戏日所在的周一起算
+ */
+async function claimLimits(o: Op, goodsId: number, num: number): Promise<void> {
+  const day = gameDay(o.now);
+  const daily = dailyLimitOf(o, goodsId);
+  if (daily !== undefined) {
+    const used = await getDaily(o.tx, o.rest.id, dailyKey(goodsId), day);
+    if (used + num > daily) throw limitReached('shop_daily', { max: daily, used });
+    await incrementDaily(o.tx, o.rest.id, dailyKey(goodsId), num, day);
+  }
+  const weekly = weeklyLimitOf(o, goodsId);
+  if (weekly !== undefined) {
+    const week = weekStart(day);
+    const row = await o.tx
+      .selectFrom('weekly_counter')
+      .select('count')
+      .where('rest_id', '=', o.rest.id)
+      .where('week', '=', week)
+      .where('key', '=', dailyKey(goodsId))
+      .executeTakeFirst();
+    const used = row?.count ?? 0;
+    if (used + num > weekly) throw limitReached('shop_weekly', { max: weekly, used });
+    await o.tx
+      .insertInto('weekly_counter')
+      .values({ rest_id: o.rest.id, week, key: dailyKey(goodsId), count: num })
+      .onConflict((oc) =>
+        oc
+          .columns(['rest_id', 'week', 'key'])
+          .doUpdateSet((eb) => ({ count: eb('weekly_counter.count', '+', num) })),
+      )
+      .execute();
+  }
+}
 
 export function createShopService(d: GameDeps) {
   const op = <T>(ctx: RestCtx, source: string, fn: (o: Op) => Promise<T>): Promise<OpResult<T>> =>
@@ -91,14 +130,41 @@ export function createShopService(d: GameDeps) {
       const bought = new Map<number, number>();
       for (const id of limits.keys())
         bought.set(id, await getDaily(d.db, ctx.restaurantId, dailyKey(id), gameDay(now)));
+      const weeklyLimits = new Map(tuning.shop.weeklyLimit);
+      const weekRows =
+        weeklyLimits.size === 0
+          ? []
+          : await d.db
+              .selectFrom('weekly_counter')
+              .select(['key', 'count'])
+              .where('rest_id', '=', ctx.restaurantId)
+              .where('week', '=', weekStart(gameDay(now)))
+              .where(
+                'key',
+                'in',
+                [...weeklyLimits.keys()].map((id) => dailyKey(id)),
+              )
+              .execute();
+      const boughtWeek = new Map(weekRows.map((r) => [r.key, r.count]));
       const limitOf = (g: Goods) => (isPlaque(g) || g.type === GOODS_TYPE.honor || !g.stackable ? 1 : null);
       const row = (g: Goods, price: number, money: number): ShopItemDto => {
         const have = owned.get(g.id) ?? 0;
         const limit = limits.get(g.id);
         const left = limit === undefined ? undefined : Math.max(0, limit - (bought.get(g.id) ?? 0));
+        const wLimit = weeklyLimits.get(g.id);
+        const wLeft =
+          wLimit === undefined ? undefined : Math.max(0, wLimit - (boughtWeek.get(dailyKey(g.id)) ?? 0));
         const cap = buyCap(
           g,
-          { owned: have, money, price, storeFull, star: rest.star_level, dailyLeft: left },
+          {
+            owned: have,
+            money,
+            price,
+            storeFull,
+            star: rest.star_level,
+            dailyLeft: left,
+            weeklyLeft: wLeft,
+          },
           tuning.shop.maxBuy,
         );
         return {
@@ -110,6 +176,7 @@ export function createShopService(d: GameDeps) {
           blocked: cap.blocked,
           ...(g.needStar ? { needStar: g.needStar } : {}),
           ...(limit !== undefined ? { daily: { limit, left: left! } } : {}),
+          ...(wLimit !== undefined ? { weekly: { limit: wLimit, left: wLeft! } } : {}),
         };
       };
       const coin = d.config.bundle.goods
@@ -167,13 +234,7 @@ export function createShopService(d: GameDeps) {
         const g = o.config.requireGoods(b.goodsId);
         if (!g.onSale || g.coin <= 0) throw invalidState('not_on_sale', { goodsId: g.id });
         await assertBuyable(o, g, b.num);
-        const limit = dailyLimitOf(o, g.id);
-        if (limit !== undefined) {
-          const day = gameDay(o.now);
-          const used = await getDaily(o.tx, o.rest.id, dailyKey(g.id), day);
-          if (used + b.num > limit) throw limitReached('shop_daily', { max: limit, used });
-          await incrementDaily(o.tx, o.rest.id, dailyKey(g.id), b.num, day);
-        }
+        await claimLimits(o, g.id, b.num);
         spendCoin(o, g.coin * b.num);
         await grantGoodsOp(o, g.id, b.num);
         await emitAction(o, 'shop.buy');
@@ -217,6 +278,7 @@ export function createShopService(d: GameDeps) {
         if (!o.config.bundle.shopPools.black.includes(g.id) || g.diamond <= 0)
           throw invalidState('not_on_sale', { goodsId: g.id });
         await assertBuyable(o, g, b.num);
+        await claimLimits(o, g.id, b.num);
         spendDiamond(o, g.diamond * b.num);
         await grantGoodsOp(o, g.id, b.num);
         return { goodsId: g.id, num: b.num };

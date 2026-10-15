@@ -78,6 +78,7 @@ function reason(it: ShopItemDto): string {
     owned: s.why.owned,
     store: s.why.store,
     daily: s.why.daily,
+    weekly: s.why.weekly,
   };
   return it.blocked ? why[it.blocked] : s.why.other;
 }
@@ -202,6 +203,9 @@ async function buy() {
             >{{ reason(it) }}</span
           ><span v-else-if="it.daily" class="dt-tag-mute" :data-testid="`cap-${it.goodsId}`">{{
             t.store.shop.dailyLimit(it.daily.limit)
+          }}</span
+          ><span v-else-if="it.weekly" class="dt-tag-mute" :data-testid="`cap-${it.goodsId}`">{{
+            t.store.shop.weeklyLimit(it.weekly.limit)
           }}</span
           ><span v-else-if="it.limit === 1" class="dt-tag-mute" :data-testid="`cap-${it.goodsId}`">{{
             t.store.shop.limitOne

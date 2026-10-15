@@ -37,7 +37,7 @@ describe('看板（一番赏设计 §7.1）', () => {
       ['F', 50, 50],
     ]);
     expect(v.tiers[0]).toMatchObject({ icon: 'kuji_a', big: true });
-    expect(v).toMatchObject({ tickets: 3, price: 40000, buyLeft: 10, maxDraw: 10, recent: [] });
+    expect(v).toMatchObject({ tickets: 3, price: 45000, buyLeft: 10, maxDraw: 10, recent: [] });
   });
 });
 
@@ -46,7 +46,7 @@ describe('买券（一番赏设计 §5.3）', () => {
     const shardId = await createShard(t.db);
     const r = await player(shardId);
     await svc().buy(r, 4);
-    expect(await coin(r.restaurantId)).toBe(1_000_000 - 160_000);
+    expect(await coin(r.restaurantId)).toBe(1_000_000 - 4 * 45_000);
     expect(await goodsNum(t, r.restaurantId, T)).toBe(4);
     await expect(svc().buy(r, 7)).rejects.toMatchObject({ params: { what: 'kuji_buy', max: 10, left: 6 } });
     await svc().buy(r, 6);
@@ -362,7 +362,7 @@ describe('backlog 一番赏：抽签结果和看板', () => {
     const shardId = await createShard(t.db);
     const r = await player(shardId, { coin: 100_000 });
     expect((await svc().view(r)).coin).toBe(100_000);
-    expect((await svc().buy(r, 2)).data.coin).toBe(20_000);
+    expect((await svc().buy(r, 2)).data.coin).toBe(100_000 - 2 * 45_000);
   });
 });
 
@@ -403,23 +403,23 @@ describe('豪华一番赏（240-2）', () => {
       .map((x) => x.icon_key)
       .sort();
 
-  it('看板：豪华池 20 张、每张 30 万、没有月度主题；普通看板不受影响', async () => {
+  it('看板：豪华池 20 张、每张 32 万（道具价格迁移 2026-10-15）、没有月度主题；普通看板不受影响', async () => {
     const shardId = await createShard(t.db);
     const r = await dxPlayer(shardId);
     const v = await svc().view(r, 'deluxe');
-    expect(v).toMatchObject({ line: 'deluxe', price: 300000, buyLeft: 10, maxDraw: 10, theme: null });
+    expect(v).toMatchObject({ line: 'deluxe', price: 320000, buyLeft: 10, maxDraw: 10, theme: null });
     expect(v.pool).toMatchObject({ seq: 1, total: 20, left: 20 });
     const n = await svc().view(r);
-    expect(n).toMatchObject({ line: 'normal', price: 40000 });
+    expect(n).toMatchObject({ line: 'normal', price: 45000 });
     expect(n.pool.total).toBe(80);
   });
 
-  it('买豪华券扣 30 万；限购和普通券分开计（Review Focus 3）', async () => {
+  it('买豪华券扣 32 万；限购和普通券分开计（Review Focus 3）', async () => {
     const shardId = await createShard(t.db);
     const r = await dxPlayer(shardId);
     await svc().buy(r, 10);
     await svc().buy(r, 2, 'deluxe');
-    expect(await coin(r.restaurantId)).toBe(10_000_000 - 400_000 - 600_000);
+    expect(await coin(r.restaurantId)).toBe(10_000_000 - 10 * 45_000 - 2 * 320_000);
     expect(await goodsNum(t, r.restaurantId, DX)).toBe(2);
     expect((await svc().view(r, 'deluxe')).buyLeft).toBe(8);
     expect((await svc().view(r)).buyLeft).toBe(0);

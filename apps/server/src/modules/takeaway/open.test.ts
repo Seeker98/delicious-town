@@ -21,7 +21,7 @@ describe('开通（设计文档 §3.1）', () => {
     const ctx = await newRestaurant(t, { patch: READY, goods: { [GOODS.takeawayTicket]: 1 } });
     expect(await t.game.takeaway.overview(ctx)).toMatchObject({
       opened: false,
-      open: { needStar: 2, needRenown: 888, needCoin: 8_880_000, needDiamond: 300, tickets: 1 },
+      open: { needStar: 2, needRenown: 888, needCoin: 5_880_000, needDiamond: 100, tickets: 1 },
       orders: [],
       deliveries: [],
       riders: [],
@@ -72,7 +72,8 @@ describe('开通（设计文档 §3.1）', () => {
   });
 
   it('用银币和钻石开通', async () => {
-    const ctx = await newRestaurant(t, { patch: { ...READY, coin: 9_000_000, diamond: 300 } });
+    // 道具价格迁移（2026-10-15）：开通费 588 万 + 100 钻
+    const ctx = await newRestaurant(t, { patch: { ...READY, coin: 6_000_000, diamond: 100 } });
     await open(ctx, 'coin');
     expect(await restRow(t, ctx.restaurantId)).toMatchObject({ coin: 120_000, diamond: 0, renown: 112 });
   });

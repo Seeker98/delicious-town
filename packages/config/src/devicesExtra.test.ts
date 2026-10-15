@@ -28,12 +28,12 @@ describe('更多宣传海报和奖杯（问题记录 146）', () => {
       return [g.type, g.deviceType, g.effects, g.coin, g.onSale, g.needStar, g.awardFlag, g.level];
     });
     expect(rows).toEqual([
-      [GOODS_TYPE.device, 1, { time: 24, coinValue: 8 }, 30000, true, 4, null, 4],
-      [GOODS_TYPE.device, 1, { time: 24, coinValue: 15 }, 50000, true, 6, null, 5],
-      [GOODS_TYPE.device, 1, { time: 24, coinValue: 30 }, 80000, true, 8, null, 6],
-      [GOODS_TYPE.device, 1, { time: 24, coinValue: 50 }, 150000, true, 10, null, 7],
-      [GOODS_TYPE.device, 2, { time: 24, expValue: 4 }, 30000, true, 4, null, 4],
-      [GOODS_TYPE.device, 2, { time: 24, expValue: 5 }, 50000, true, 6, null, 5],
+      [GOODS_TYPE.device, 1, { time: 24, coinValue: 8 }, 40000, true, 4, null, 4],
+      [GOODS_TYPE.device, 1, { time: 24, coinValue: 15 }, 70000, true, 6, null, 5],
+      [GOODS_TYPE.device, 1, { time: 24, coinValue: 30 }, 120000, true, 8, null, 6],
+      [GOODS_TYPE.device, 1, { time: 24, coinValue: 50 }, 240000, true, 10, null, 7],
+      [GOODS_TYPE.device, 2, { time: 24, expValue: 4 }, 40000, true, 4, null, 4],
+      [GOODS_TYPE.device, 2, { time: 24, expValue: 5 }, 60000, true, 6, null, 5],
       [GOODS_TYPE.device, 2, { time: 24, expValue: 6 }, 80000, true, 8, null, 6],
       [GOODS_TYPE.device, 2, { time: 24, expValue: 7 }, 150000, true, 10, null, 7],
     ]);

@@ -34,7 +34,8 @@ describe('探险（规格书 09 §9.2）', () => {
     expect(sum(r.data.foods)).toBe(15);
     for (const f of r.data.foods) expect([4, 5]).toContain(config.requireFood(f.foodsId).level);
     expect(await goodsNum(win, ctx.restaurantId, gid('探险图'))).toBe(2);
-    expect((await restRow(win, ctx.restaurantId)).strength).toBe(94);
+    // 探险图每次 5 体力（道具价格迁移 2026-10-15，原 2）
+    expect((await restRow(win, ctx.restaurantId)).strength).toBe(85);
     const news = await win.db
       .selectFrom('news')
       .select('type')

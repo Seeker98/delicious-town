@@ -207,15 +207,15 @@ describe('概览、目录、任务、功能开关', () => {
       max: 5,
       rate: 1,
       perNum: 2,
-      // 怎么获得（问题记录 415）：不在商店卖；黑市 30 钻；随机奖励；昨日冠军
+      // 怎么获得（问题记录 415）：不在商店卖；黑市 43 钻（道具价格迁移 2026-10-15，原 30）；随机奖励；昨日冠军
       shopCoin: null,
-      blackDiamond: 30,
+      blackDiamond: 43,
       award: true,
       champion: true,
     });
     expect(o.tools.find((x) => x.goodsId === gid('厨神玉玺'))).toMatchObject({
       shopCoin: 300000,
-      blackDiamond: 14,
+      blackDiamond: 30,
       champion: false,
     });
     expect(o.cookNums).toEqual([1, 5, 10, 15, 25, 50]);

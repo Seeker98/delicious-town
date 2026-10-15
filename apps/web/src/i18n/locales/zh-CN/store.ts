@@ -48,6 +48,7 @@ export default {
       owned: '已经拥有',
       store: '仓库满了',
       daily: '今天买过了',
+      weekly: '本周买够了',
       other: '买不了',
       /** 后期海报奖杯按星级可用（问题记录 146） */
       star: (n: number) => `${n} 星可用`,
@@ -56,6 +57,7 @@ export default {
     owned: (n: number) => `已有 ${n}`,
     limitOne: '限 1 个',
     dailyLimit: (n: number) => `每天限 ${n} 个`,
+    weeklyLimit: (n: number) => `每周限 ${n} 个`,
     buy: '买',
     specialSoon: '今天中午 12 点上新',
     /** 特价折扣档名：简中用服务端给的原名（九折、八折……），其他语言按减了多少显示 */

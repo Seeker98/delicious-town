@@ -150,7 +150,7 @@ const guide: Messages['guide'] = {
       q: `Comment change la météo\u202f? Comment la changer\u202f?`,
       a: [
         `La météo change toutes les 4 heures (1 h, 5 h, 9 h, 13 h, 17 h, 21 h) et suit le temps actuel\u202f: le beau temps a tendance à rester, la neige ne vient jamais juste après le soleil, et la forte pluie s'installe petit à petit. Les météos spéciales (orage, pluie acide, gel, ouragan, arc-en-ciel) n'arrivent qu'après leurs signes avant-coureurs. La page météo donne la probabilité de chaque type au prochain changement.`,
-        `Pour la changer, utilisez une boussole céleste (choisir un type\u202f; le maire en échange 1 par semaine, et on en trouve aussi au dernier lot de l'Ichiban Kuji et à l'arbre à vœux) ou des bâtonnets du temps (en tirer deux, en garder un\u202f; la boutique en vend 1 par jour). Cela dure 1 heure pour toute la ville. Chaque joueur peut en utiliser une toutes les 4 heures, et personne ne peut la rechanger dans l'heure qui suit. Les restaurants à 0 étoile ne sont pas affectés par la météo.`,
+        `Pour la changer, utilisez une boussole céleste (choisir un type\u202f; vendue à la boutique et au marché noir, le maire en échange 1 par semaine, et on en trouve aussi au dernier lot de l'Ichiban Kuji et à l'arbre à vœux) ou des bâtonnets du temps (en tirer deux, en garder un\u202f; la boutique en vend 1 par jour). Cela dure 1 heure pour toute la ville. Chaque joueur peut en utiliser une toutes les 4 heures, et personne ne peut la rechanger dans l'heure qui suit. Les restaurants à 0 étoile ne sont pas affectés par la météo.`,
       ],
     },
     {
