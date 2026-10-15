@@ -2,6 +2,7 @@ import { toSettleInput, type SettleSource } from '../../modules/settlement/globa
 import { settleRestaurant } from '../../modules/settlement/settle';
 import { strengthGain } from '../../modules/settlement/strength';
 import type { SettleGlobals } from '../../modules/settlement/types';
+import { GOODS } from '@dt/config';
 import { buildPool, pickWeighted } from '@dt/shared';
 import { aggOf, gainCoin, gainExp, gainRenown, grantGoods, luckOf, subFoods } from './ops';
 import type { FastCtx, FastRest } from './state';
@@ -67,7 +68,7 @@ export function regenRound(c: FastCtx, r: FastRest): void {
 
 /**
  * 老鼠捣乱一次（settlement/mouse.ts 的 visit）：有老鼠夹先按概率夹住给银币；再按幸运逃走；
- * 否则从数量大于 0 的食材里按数量加权挑一种（问题记录 581），偷 1~(2×星级+1) 个（快速模型的机器人不锁食材）
+ * 否则从数量大于 0 的食材里按数量加权挑一种（问题记录 581），偷 1~(2×星级+1) 个（快速模型的机器人不锁食材）；另有概率掉探险图
  */
 export function mouseVisit(c: FastCtx, r: FastRest): 'escaped' | 'trapped' | 'stolen' | 'nothing' {
   const mt = c.tuning.mouse;
@@ -90,5 +91,6 @@ export function mouseVisit(c: FastCtx, r: FastRest): 'escaped' | 'trapped' | 'st
       out = 'stolen';
     }
   }
+  if (c.rng.chance(agg.earnMapRate ?? 0)) grantGoods(c, r, GOODS.adventureMap, 1, 'mouse');
   return out;
 }

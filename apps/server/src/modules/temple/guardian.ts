@@ -2,7 +2,7 @@ import { GOODS } from '@dt/config';
 import { gameDay, pickWeighted, type MissileResultDto } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import { invalidState, notEnough, requirement } from '../../core/errors';
-import { opLuck } from '../../core/luck';
+import { opAgg, opLuck } from '../../core/luck';
 import { opNeedPick } from '../../core/scarcity';
 import { opNews, type Op } from '../../core/op';
 import { drawDtTickets } from '../../core/tickets';
@@ -39,12 +39,13 @@ export async function shootMissiles(
   let hpLeft = Math.max(0, hpMax - (await getDaily(o.tx, o.rest.id, 'guardian.damage', day)));
   if (hpLeft === 0) throw invalidState('guardian_down');
 
+  const agg = await opAgg(o);
   const { rate: luck } = await opLuck(o);
   const input = {
     def,
     luckRate: luck,
     hitBonus: weather.hitRate ?? 0,
-    critBonus: weather.missileCrit ?? 0,
+    critBonus: (agg.missileCritRate ?? 0) + (weather.missileCrit ?? 0),
   };
   const shots: MissileResultDto['shots'] = [];
   let total = 0;

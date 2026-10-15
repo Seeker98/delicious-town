@@ -32,7 +32,7 @@ export interface ShotInput {
   luckRate: number;
   /** 天气 hitRate */
   hitBonus: number;
-  /** 天气 missileCrit */
+  /** 加成 missileCritRate + 天气 missileCrit */
   critBonus: number;
 }
 

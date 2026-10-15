@@ -31,6 +31,17 @@ describe('设施（规格书 02 §2.6）', () => {
     t.clock.set(new Date());
   });
 
+  it('荣誉延长设施时长（幻紫沙漏 +15%）', async () => {
+    const ctx = await newRestaurant(t, { goods: { [gid('普通宣传海报')]: 1 } });
+    await grant(ctx.restaurantId, gid('幻紫沙漏'));
+    t.clock.set(new Date('2026-09-30T00:00:00Z'));
+    const r = await g().placeDevice(ctx, { slot: 1, goodsId: gid('普通宣传海报') });
+    expect(new Date(r.data.expiresAt!).getTime() - t.clock.now.getTime()).toBe(
+      Math.round(24 * 1.15 * 3600_000),
+    );
+    t.clock.set(new Date());
+  });
+
   it('类型不对、设施位未开放时报错', async () => {
     const ctx = await newRestaurant(t, { goods: { [gid('小镇食神奖杯(铜)')]: 1, [gid('老鼠夹')]: 1 } });
     await expect(g().placeDevice(ctx, { slot: 1, goodsId: gid('小镇食神奖杯(铜)') })).rejects.toMatchObject({

@@ -54,7 +54,9 @@ function cookFoods(
       if (food.level === 5) odds5 += 101 - food.odds;
       krab += food.level * (101 - food.odds);
     }
-    exp += Math.floor(Math.floor(price / 100) * (1 + rates.expRate.total) * t.expMultiplier);
+    exp += Math.floor(
+      Math.floor(price / 100) * (1 + rates.expRate.total) * (1 + flags.cookfoodSpExpRate) * t.expMultiplier,
+    );
     const times = Math.floor(1 + odds5 / t.dtTicketOddsDivisor);
     const tickets = dtTicketDraws(times, flags.luckRate, g.holidayMultiplier, t, rng).num;
     if (tickets > 0) drops.push({ goodsId: GOODS.dtTicket, num: tickets });
@@ -67,7 +69,7 @@ function cookFoods(
     ) {
       drops.push({ goodsId: GOODS.krabCoin, num: 1 });
     }
-    if (rng.chance(t.renownRate) || curOdd > t.renownOddThreshold) renown += 1;
+    if (flags.pinkBook || rng.chance(t.renownRate) || curOdd > t.renownOddThreshold) renown += 1;
   }
   return { exp, renown, drops, foodsUsed: [...used].map(([foodsId, num]) => ({ foodsId, num })) };
 }

@@ -90,9 +90,13 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
     seated: Math.round(atRate * input.tables.length),
   };
   const flags: Flags = {
+    flute: v(a, 'magicFlute') > 0,
+    pinkBook: v(a, 'pinkBook') > 0,
     spCoinRate: v(a, 'spCoinRate'),
     mcCoinRate: v(a, 'mcCoinRate'),
     mcExpRate: v(a, 'mcExpRate'),
+    cookfoodSpExpRate: v(a, 'cookfoodSpExpRate'),
+    sqExpRate: 1 + v(a, 'squidwardExpRate'),
     roachMul: 1 + v(w, 'roachRate'),
     roachClear: v(a, 'roachClearRate'),
     luckRate: luckRate(luckSum),

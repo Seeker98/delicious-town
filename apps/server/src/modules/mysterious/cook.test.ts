@@ -3,7 +3,9 @@ import { sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import type { RestCtx } from '../../core/deps';
+import { grantGoods } from '../store/grant';
 import { GOODS } from '@dt/config';
+import { gid } from '../../../test/items';
 
 const config = testConfig();
 let t: TestGame;
@@ -151,6 +153,16 @@ describe('烹制（规格书 04 §4.5）', () => {
     });
     await t.game.mysterious.cook(ctx, { mcId: MC, cookNum: 1, cookie: true });
     expect(await goodsNum(t, ctx.restaurantId, GOODS.luckyCookie)).toBe(2);
+  });
+
+  it('烹饪魔书：随机一种非 7 级食材不扣（rng 0.5 → 第 2 种）', async () => {
+    const ctx = await cookReady(fixed);
+    await grantGoods(fixed.db, config, ctx.restaurantId, gid('烹饪魔书'), 1, new Date());
+    await fixed.game.mysterious.cook(ctx, { mcId: MC, cookNum: 5, cookie: false });
+    const [a, b, c] = foodsOf(MC);
+    expect((await foodNum(fixed, ctx.restaurantId, a!)).num).toBe(5);
+    expect((await foodNum(fixed, ctx.restaurantId, b!)).num).toBe(10);
+    expect((await foodNum(fixed, ctx.restaurantId, c!)).num).toBe(5);
   });
 
   it('6 级特色菜必得海绵宝宝；熟练度到 200 升到 2 级', async () => {

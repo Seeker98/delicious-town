@@ -75,9 +75,13 @@ export interface Rates {
 
 /** 开关型荣誉和其他系数 */
 export interface Flags {
+  flute: boolean;
+  pinkBook: boolean;
   spCoinRate: number;
   mcCoinRate: number;
   mcExpRate: number;
+  cookfoodSpExpRate: number;
+  sqExpRate: number;
   roachMul: number;
   roachClear: number;
   luckRate: number;

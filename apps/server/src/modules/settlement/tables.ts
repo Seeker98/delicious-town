@@ -310,7 +310,12 @@ export function allocateTables(
         out.specialUsed += n;
         out.specialPicky += n;
         mcNum += n;
+        if (flags.flute) {
+          exp = special.price * t.squidwardPortions * (1 + flags.mcCoinRate);
+          satisfied = true;
+        }
       }
+      exp *= flags.sqExpRate;
     } else if (rng.chance(rates.spRate.total)) {
       if (
         rest.streetId !== 0 &&

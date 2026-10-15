@@ -16,7 +16,8 @@ export function strengthGain(
   const base = rng.chance(luckRate(r.luck + (agg.luckValue ?? 0)))
     ? tuning.strength.luckyRegen
     : tuning.strength.regen;
-  return { add: Math.round(base), cap };
+  const mult = (agg.autoReStrength ?? 0) > 0 ? agg.autoReStrength! : 1;
+  return { add: Math.round(base * mult), cap };
 }
 
 /**

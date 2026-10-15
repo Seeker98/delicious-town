@@ -66,7 +66,7 @@ export async function settleDelivery(
     const id = pickAward(o.rng.next(), v.grade, t);
     const num = id === GOODS.mysteryTicket ? o.rng.intMin1(2 * v.grade) + (drone ? v.grade : 0) : 1;
     goods = { id, num: await grantGoodsOp(o, id, num) };
-  } else {
+  } else if (!((agg.gugu ?? 0) > 0)) {
     exp = fl(exp * t.failExpRate);
   }
   gainExp(o, exp);
