@@ -62,14 +62,6 @@ export const giftItemSchema = z.union([
   z.object({ type: z.literal('renown'), num: z.number(), rate: z.number() }),
 ]);
 
-export const rawCookbook = z.object({
-  id: int,
-  name: z.string(),
-  streetId: int,
-  taste: z.array(int).nullish(),
-  needFoodsByLevel: z.record(z.string(), z.array(z.object({ foodsId: int, num: int }))),
-});
-
 /** 街道 → 街道勋章（问题记录 284） */
 export const rawStreetMedal = z.object({ streetId: int, goodsId: int });
 

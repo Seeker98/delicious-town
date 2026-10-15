@@ -1597,10 +1597,8 @@ export interface DB {
 
 export type RestaurantRow = Selectable<RestaurantTable>;
 export type McCookRow = Selectable<McCookTable>;
-export type McLessonRow = Selectable<McLessonTable>;
 export type BarStateRow = Selectable<BarStateTable>;
 export type TowerStateRow = Selectable<TowerStateTable>;
 export type TakeawayStateRow = Selectable<TakeawayStateTable>;
 export type TakeawayRiderRow = Selectable<TakeawayRiderTable>;
 export type TakeawayOrderRow = Selectable<TakeawayOrderTable>;
-export type TakeawayDeliveryRow = Selectable<TakeawayDeliveryTable>;
