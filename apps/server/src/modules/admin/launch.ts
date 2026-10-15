@@ -1,3 +1,4 @@
+import { resolveShardSettings } from '@dt/config';
 import { ErrorCode, type LaunchCheckDto } from '@dt/shared';
 import type { Game } from '../../game';
 import { AppError } from '../../http/errors';
@@ -34,25 +35,33 @@ export function createLaunchCheck(game: Game, log?: WarnLog) {
   const shards = createAdminShards(game, log);
 
   async function check(): Promise<LaunchCheckDto> {
+    // 一条查询读全部开着的区服和覆盖；覆盖一样的只解析一次（性能排查 10-16：原来一个区服 3 条查询加一次完整解析）
     const open = await db
-      .selectFrom('shard')
-      .select(['id', 'name'])
-      .where('status', '=', 'open')
-      .orderBy('id')
+      .selectFrom('shard as s')
+      .leftJoin('shard_config as c', 'c.shard_id', 's.id')
+      .select(['s.id', 's.name', 'c.version', 'c.override'])
+      .where('s.status', '=', 'open')
+      .orderBy('s.id')
       .execute();
-    const list: LaunchCheckDto['shards'] = [];
-    for (const s of open) {
-      const settings = await shards.settings(s.id);
-      list.push({
+    const resolved = new Map<string, unknown>();
+    const effectiveOf = (override: unknown): unknown => {
+      const key = JSON.stringify(override ?? {});
+      if (!resolved.has(key))
+        resolved.set(key, resolveShardSettings(game.app.config, isObj(override) ? override : {}));
+      return resolved.get(key);
+    };
+    const list: LaunchCheckDto['shards'] = open.map((s) => {
+      const effective = effectiveOf(s.override);
+      return {
         shardId: s.id,
         shardName: s.name,
-        version: settings.version,
+        version: s.version ?? 0,
         items: LAUNCH_CHECKS.map((c) => {
-          const current = getAt(settings.effective, c.path);
+          const current = getAt(effective, c.path);
           return { path: c.path, want: c.want, current: current ?? null, ok: current === c.want, why: c.why };
         }),
-      });
-    }
+      };
+    });
     return { shards: list, allOk: list.every((s) => s.items.every((i) => i.ok)) };
   }
 
