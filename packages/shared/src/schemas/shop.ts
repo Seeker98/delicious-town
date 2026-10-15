@@ -10,8 +10,8 @@ export const discardBody = z.object({ goodsId: z.number().int().positive() });
 
 /** 买不了的原因：钱不够、到持有上限、已拥有（永久勋章 / 牌匾）、仓库满 */
 /** star：餐厅星级不够（问题记录 146 的后期海报奖杯） */
-/** daily：今天的限购买满了（天气改版：晴雨签每天 1 个） */
-export type BuyBlock = 'money' | 'max' | 'owned' | 'store' | 'star' | 'daily' | null;
+/** daily：今天的限购买满了（天气改版：晴雨签每天 1 个）；weekly：本周的限购买满了（道具价格迁移 2026-10-15：强化石每周 2 块） */
+export type BuyBlock = 'money' | 'max' | 'owned' | 'store' | 'star' | 'daily' | 'weekly' | null;
 
 export interface ShopItemDto {
   goodsId: number;
@@ -26,6 +26,8 @@ export interface ShopItemDto {
   needStar?: number;
   /** 每日限购（tuning.shop.dailyLimit）：每天几个、今天还能买几个；不限购的没有这一项 */
   daily?: { limit: number; left: number };
+  /** 每周限购（tuning.shop.weeklyLimit）：每周几个、本周还能买几个；银币店和黑市共用计数 */
+  weekly?: { limit: number; left: number };
 }
 
 export interface ShopDto {

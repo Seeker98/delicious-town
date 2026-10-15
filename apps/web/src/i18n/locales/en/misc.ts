@@ -175,7 +175,7 @@ const misc: Messages['misc'] = {
           60401: 'Buy stock by hand at the market and earn a wholesale cut',
           60402: 'Refresh delivery orders privately',
           60403: 'Fragment appraisal success +5% (all appraisal items)',
-          60404: 'Mystery ingredient chance while exploring +2.5%',
+          60404: 'Mystery ingredient chance while exploring +1%',
           60405: 'Moving costs no Moving Card',
           60406: 'Exchange selling fee 5% → 2.5%',
           60407: 'Futures deposit 30% → 20%, daily order limit 50 → 75',

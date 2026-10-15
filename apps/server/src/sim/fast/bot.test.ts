@@ -280,7 +280,7 @@ describe('机器人决策（终审 I-3，设计 §9）', () => {
     b.rest.counts.learned = need.needCookbooks;
     b.rest.tableNum = 7;
     b.rest.daily.set('signin', 1);
-    b.rest.coin = 40_000; // 凭证 55000 买不起；不攒钱的话够买 3 张桌子
+    b.rest.coin = 8_000; // 凭证 30000（道具价格迁移 2026-10-15）这一轮赚到的也不够买；不攒钱的话够买桌子
     botTurn(c, b, newMarket(), world(), null);
     expect(b.rest.star).toBe(0);
     expect(b.rest.tables).toHaveLength(4);

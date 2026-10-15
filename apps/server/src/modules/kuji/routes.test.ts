@@ -19,7 +19,7 @@ describe('一番赏接口的 line 参数（240-2 终审：路由漏传 line 时�
       .where('id', '=', p.restId)
       .execute();
     const dx = await call(ctx.app, 'GET', '/api/v1/kuji?line=deluxe', { cookie: p.cookie });
-    expect(dx.json.data).toMatchObject({ line: 'deluxe', price: 300000, pool: { total: 20 } });
+    expect(dx.json.data).toMatchObject({ line: 'deluxe', price: 320000, pool: { total: 20 } });
     const normal = await call(ctx.app, 'GET', '/api/v1/kuji', { cookie: p.cookie });
     expect(normal.json.data).toMatchObject({ line: 'normal', pool: { total: 80 } });
 
@@ -27,7 +27,7 @@ describe('一番赏接口的 line 参数（240-2 终审：路由漏传 line 时�
       cookie: p.cookie,
       body: { num: 1, line: 'deluxe' },
     });
-    expect(buy.json.data).toMatchObject({ line: 'deluxe', tickets: 1, coin: 10_000_000 - 300000 });
+    expect(buy.json.data).toMatchObject({ line: 'deluxe', tickets: 1, coin: 10_000_000 - 320000 });
     const draw = await call(ctx.app, 'POST', '/api/v1/kuji/draw', {
       cookie: p.cookie,
       body: { num: 1, line: 'deluxe' },

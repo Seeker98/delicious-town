@@ -26,7 +26,8 @@ describe('一番赏配置（设计 §3、§4）', () => {
     }
     expect(b.looks.icons.map((i) => i.key)).toEqual(expect.arrayContaining(['kuji_a', 'kuji_last']));
     const k = b.tuning.kuji;
-    expect(k).toMatchObject({ price: 40000, dailyBuy: 10, maxDraw: 10, activeTickets: 1 });
+    // 道具价格迁移（2026-10-15）：券价 4 万 → 4.5 万
+    expect(k).toMatchObject({ price: 45000, dailyBuy: 10, maxDraw: 10, activeTickets: 1 });
     expect(k.tiers.map((x) => [x.key, x.count])).toEqual([
       ['A', 1],
       ['B', 2],
@@ -111,5 +112,46 @@ describe('一番赏配置（设计 §3、§4）', () => {
     const { errors } = buildBundle({ ...src, 'game/tuning': t });
     expect(errors).toContain('tuning.kuji.deluxe.tiers duplicate key A');
     expect(errors).toContain('tuning.kuji.deluxe.last icon nope not in looks.icons');
+  });
+});
+
+describe('一番赏奖池按道具价格迁移定稿（2026-10-15）', () => {
+  /** 价值表的锚：1 钻 = 1 万银币，蟹黄堡 50 万，司天罗盘 30 万（银币店价）；月度主题手办不算 */
+  const VALUE: Record<number, number> = { [GOODS.krabBurger]: 500_000, [GOODS.compass]: 300_000 };
+  type Award = { coin?: number; diamond?: number; goods?: Array<{ id: number; num: number }> };
+  const worth = (a: Award) =>
+    (a.coin ?? 0) +
+    (a.diamond ?? 0) * 10_000 +
+    (a.goods ?? []).reduce((s, g) => s + (VALUE[g.id] ?? NaN) * g.num, 0);
+  const round = (p: { tiers: Array<{ count: number; award: Award }>; last: { award: Award } }) =>
+    p.tiers.reduce((s, x) => s + x.count * worth(x.award), 0) + worth(p.last.award);
+
+  it('普通池：券 4.5 万；A 35 钻、B 10、C 5、D 1 万、E 5,000、F 2,000，最后赏 35 钻 + 蟹黄堡 + 罗盘；一轮合计 215.5 万', () => {
+    const k = buildBundle(source()).bundle!.tuning.kuji;
+    expect(k.price).toBe(45_000);
+    expect(k.tiers.map((x) => [x.key, x.count, x.award])).toEqual([
+      ['A', 1, { diamond: 35 }],
+      ['B', 2, { diamond: 10 }],
+      ['C', 4, { diamond: 5 }],
+      ['D', 8, { coin: 10_000 }],
+      ['E', 15, { coin: 5_000 }],
+      ['F', 50, { coin: 2_000 }],
+    ]);
+    expect(k.last.award).toEqual({
+      diamond: 35,
+      goods: [
+        { id: GOODS.krabBurger, num: 1 },
+        { id: GOODS.compass, num: 1 },
+      ],
+    });
+    // 价值表算的 185.5 万没算最后赏的罗盘（30 万），工单要求罗盘留着
+    expect(round(k)).toBe(2_155_000);
+  });
+
+  it('豪华池：券 32 万；A 50 钻、B 2×30 万、C 5×10 万、D 12×5 万，最后赏 35 钻 + 蟹黄堡 + 罗盘；一轮合计 335 万', () => {
+    const dx = buildBundle(source()).bundle!.tuning.kuji.deluxe;
+    expect(dx.price).toBe(320_000);
+    expect(dx.last.award).toMatchObject({ diamond: 35 });
+    expect(round(dx)).toBe(3_350_000);
   });
 });

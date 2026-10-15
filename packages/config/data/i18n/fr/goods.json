@@ -517,7 +517,7 @@
   },
   "20405": {
     "name": "Salaire (Guide d'exploration)",
-    "desc": "Salaire hebdomadaire (Guide d'exploration)\u202f: 2 cartes d'exploration, 5 packs d'ingrédient universel au hasard"
+    "desc": "Salaire hebdomadaire (Guide d'exploration)\u202f: 1 carte d'exploration, 5 packs d'ingrédient universel au hasard"
   },
   "20406": {
     "name": "Salaire (Courtier de la Bourse)",
@@ -529,7 +529,7 @@
   },
   "20408": {
     "name": "Salaire (Conseiller en placements)",
-    "desc": "Salaire hebdomadaire (Conseiller en placements)\u202f: 8 colis de ravitaillement du marché niv. 5"
+    "desc": "Salaire hebdomadaire (Conseiller en placements)\u202f: 3 colis de ravitaillement du marché niv. 5"
   },
   "20409": {
     "name": "Salaire (Conseiller en fusions)",
@@ -1581,7 +1581,7 @@
   },
   "60404": {
     "name": "Guide d'exploration",
-    "desc": "Carte de métier du classement de saison: chance d'ingrédient mystère en exploration +2,5\u202f%; pièces finales +5\u202f%, EXP finale +5\u202f% (salaire hebdo: 2 cartes d'exploration, 5 packs d'ingrédient universel au hasard)"
+    "desc": "Carte de métier du classement de saison: chance d'ingrédient mystère en exploration +1\u202f%; pièces finales +5\u202f%, EXP finale +5\u202f% (salaire hebdo: 1 carte d'exploration, 5 packs d'ingrédient universel au hasard)"
   },
   "60405": {
     "name": "Répartiteur de déménagement",
@@ -1597,7 +1597,7 @@
   },
   "60408": {
     "name": "Conseiller en placements",
-    "desc": "Carte de métier du classement de saison: remboursement du fonds de développement à l'échéance 90\u202f% → 95\u202f%; pièces finales +5\u202f%, EXP finale +5\u202f% (salaire hebdo: 8 colis de ravitaillement du marché niv. 5)"
+    "desc": "Carte de métier du classement de saison: remboursement du fonds de développement à l'échéance 90\u202f% → 95\u202f%; pièces finales +5\u202f%, EXP finale +5\u202f% (salaire hebdo: 3 colis de ravitaillement du marché niv. 5)"
   },
   "60409": {
     "name": "Conseiller en fusions",

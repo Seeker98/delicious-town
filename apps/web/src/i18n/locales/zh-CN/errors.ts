@@ -130,6 +130,7 @@ export default {
     bar_daily: (p) => `这个游戏今天已经玩了 ${String(p.max)} 局, 明天再来`,
     town_exchange: (p) => `这一项每人限兑 ${String(p.max)} 次 (已兑 ${String(p.used)} 次)`,
     shop_daily: (p) => `这件每天限买 ${String(p.max)} 个, 今天买过了`,
+    shop_weekly: (p) => `这件每周限买 ${String(p.max)} 个, 本周已经买够了`,
     max: (p) => `最多持有 ${String(p.max)} 个`,
     friends: (p) => `好友已满 (最多 ${String(p.max)} 个)`,
     target_friends: () => '对方的好友已满',

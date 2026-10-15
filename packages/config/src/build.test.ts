@@ -317,12 +317,10 @@ describe('buildBundle（真实数据）', () => {
         creatives: 0,
         luck: 0,
       });
+    // 道具价格迁移（2026-10-15）：幸运值钱，天机原石 25 万 / 25 钻，红晶原石还是 15 万 / 15 钻
     const red = goods.get(gid('[一阶]•红晶原石'))!;
-    expect([tiers[0]!.coin, tiers[0]!.diamond, tiers[0]!.onSale]).toEqual([
-      red.coin,
-      red.diamond,
-      red.onSale,
-    ]);
+    expect([tiers[0]!.coin, tiers[0]!.diamond, tiers[0]!.onSale]).toEqual([250000, 25, true]);
+    expect([red.coin, red.diamond, red.onSale]).toEqual([150000, 15, true]);
     expect(bundle!.shopPools.special).toContain(tiers[0]!.id);
     expect(bundle!.shopPools.black).toContain(tiers[0]!.id);
   });
@@ -379,13 +377,26 @@ describe('商店整理（问题记录 483）：game/shop.json 盖在道具表上
    * 测试只换 goods 和指定的池子，其余池子沿用真实的 shop.json：设计表的池子里还有下架的道具，
    * 退回设计表会报“下架的道具还在特价/黑市”（2026-10-07 一批下架后）
    */
-  const realShop = source()['game/shop'] as { pools?: Record<string, number[]> };
-  const withShop = (shop: { goods: unknown[]; pools?: Record<string, number[]> }) =>
-    buildBundle({ ...source(), 'game/shop': { ...shop, pools: { ...realShop.pools, ...shop.pools } } });
+  const realShop = source()['game/shop'] as {
+    goods: Array<{ id: number }>;
+    pools?: Record<string, number[]>;
+  };
+  /** 测试没写到的道具沿用真实 shop.json 的覆盖：黑市池里有只靠覆盖才有钻石价的（道具价格迁移 2026-10-15 新进的保险卡、罗盘） */
+  const withShop = (shop: {
+    goods: Array<{ id: number; [k: string]: unknown }>;
+    pools?: Record<string, number[]>;
+  }) =>
+    buildBundle({
+      ...source(),
+      'game/shop': {
+        goods: [...shop.goods, ...realShop.goods.filter((g) => !shop.goods.some((x) => x.id === g.id))],
+        pools: { ...realShop.pools, ...shop.pools },
+      },
+    });
   const good = (b: ReturnType<typeof buildBundle>, id: number) => b.bundle!.goods.find((g) => g.id === id)!;
 
-  it('现有文件：普通飞弹 2400、集束飞弹 10 万（用户 2026-10-07 定，原版 4000、15 万）', () => {
-    expect(good(realBuild(), MISSILE).coin).toBe(2400);
+  it('现有文件：普通飞弹 3750（道具价格迁移 2026-10-15）、集束飞弹 10 万（用户 2026-10-07 定，原版 4000、15 万）', () => {
+    expect(good(realBuild(), MISSILE).coin).toBe(3750);
     expect(good(realBuild(), GOODS.missileCluster).coin).toBe(100000);
     const raw = (source()['master/goods'] as Array<{ id: number; coin: number }>).find(
       (g) => g.id === MISSILE,
@@ -393,12 +404,12 @@ describe('商店整理（问题记录 483）：game/shop.json 盖在道具表上
     expect(raw.coin).toBe(4000);
   });
 
-  it('扩建卡上架银币商店（问题记录 513）：小 3 万、中 12 万、大 20 万；保险卡不上', () => {
+  it('扩建卡上架银币商店（问题记录 513；道具价格迁移 2026-10-15 翻倍）：小 6 万、中 24 万、大 40 万；保险卡不上', () => {
     const b = realBuild();
     expect([gid('小扩建卡'), gid('中扩建卡'), gid('大扩建卡')].map((id) => good(b, id))).toMatchObject([
-      { onSale: true, coin: 30000 },
-      { onSale: true, coin: 120000 },
-      { onSale: true, coin: 200000 },
+      { onSale: true, coin: 60000 },
+      { onSale: true, coin: 240000 },
+      { onSale: true, coin: 400000 },
     ]);
     expect(good(b, gid('保险卡')).onSale).toBe(false);
   });
@@ -1631,11 +1642,11 @@ describe('限定称号（240-2 称号商店）', () => {
 });
 
 describe('豪华一番赏（240-2）', () => {
-  it('真实数据：豪华池 20 张、每张 30 万；豪华签券 90202；十月、十一月的轮换称号', () => {
+  it('真实数据：豪华池 20 张、每张 32 万（道具价格迁移 2026-10-15，原 30 万）；豪华签券 90202；十月、十一月的轮换称号', () => {
     const { bundle, errors } = buildBundle(readSourceDir(defaultDataDir()));
     expect(errors).toEqual([]);
     const dx = bundle!.tuning.kuji.deluxe;
-    expect(dx).toMatchObject({ price: 300000, dailyBuy: 10, maxDraw: 10, maxPools: 3 });
+    expect(dx).toMatchObject({ price: 320000, dailyBuy: 10, maxDraw: 10, maxPools: 3 });
     expect(dx.tiers.map((x) => [x.key, x.count])).toEqual([
       ['A', 1],
       ['B', 2],

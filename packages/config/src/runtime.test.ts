@@ -225,8 +225,9 @@ describe('外卖数值（子项目 4D）', () => {
     expect(config.tuning.takeaway).toMatchObject({
       openStar: 2,
       openRenown: 888,
-      openCoin: 8_880_000,
-      openDiamond: 300,
+      // 道具价格迁移（2026-10-15）：888 万 + 300 钻 → 588 万 + 100 钻
+      openCoin: 5_880_000,
+      openDiamond: 100,
       refreshNum: 15,
       refreshCoin: 1_000_000,
       refreshRenown: 160,
@@ -251,8 +252,8 @@ describe('守护兽数值（试玩修复 14，问题记录：守护兽太脆）'
     expect(config.missiles.get(gid('普通飞弹'))!.attack).toEqual([90, 110]);
     expect(config.missiles.get(gid('爆裂飞弹'))!.attack).toEqual([80, 130]);
   });
-  it('普通飞弹 2400 银币（用户 2026-10-07 定略低于投入：击败奖励加暴击掉的探险图约为银币投入的 90%）；集束飞弹标价 10 万；击败奖励以 3 万血为 1 倍', () => {
-    expect(config.requireGoods(gid('普通飞弹')).coin).toBe(2400);
+  it('普通飞弹 3750 银币（道具价格迁移 2026-10-15 定稿；原 2400）；集束飞弹标价 10 万；击败奖励以 3 万血为 1 倍', () => {
+    expect(config.requireGoods(gid('普通飞弹')).coin).toBe(3750);
     expect(config.requireGoods(gid('集束飞弹')).coin).toBe(100000);
     expect(config.tuning.temple.guardianRewardHp).toBe(30000);
   });
@@ -304,5 +305,27 @@ describe('旧编号（重新编号 PR 4）', () => {
     const c = createGameConfig(buildBundle(readSourceDir(defaultDataDir())).bundle!);
     expect(c.legacy.goods.get(1)).toBe(GOODS.mysteryTicket);
     expect(c.legacy.goods.get(GOODS.mysteryTicket)).toBeUndefined();
+  });
+});
+
+describe('道具价格迁移（2026-10-15）的非商店配置', () => {
+  it('探险图每次 5 体力；探险向导工资 1 张探险图 + 5 个万能礼包；理财顾问工资 3 个五级补给包；探险向导证神秘食材 +1%', () => {
+    expect(config.requireGoods(gid('探险图')).value).toMatchObject({ needStrength: 5 });
+    expect(config.requireGoods(gid('探险向导的工资')).value).toEqual([
+      { type: 'goods', id: gid('探险图'), num: 1, rate: 1 },
+      { type: 'goods', id: gid('随机万能食材礼包'), num: 5, rate: 1 },
+    ]);
+    expect(config.requireGoods(gid('银行理财顾问的工资')).value).toMatchObject([{ num: 3 }]);
+    expect(config.requireGoods(gid('探险向导')).value).toMatchObject({ mysteriousRate: 0.01 });
+    expect(config.requireGoods(gid('探险向导')).desc).toContain('+1%');
+  });
+
+  it('每天限购晴雨签、小体力卡、体力卡各 1；每周限购强化石 2', () => {
+    expect(config.tuning.shop.dailyLimit).toEqual([
+      [gid('晴雨签'), 1],
+      [gid('小体力卡'), 1],
+      [gid('体力卡'), 1],
+    ]);
+    expect(config.tuning.shop.weeklyLimit).toEqual([[gid('强化石'), 2]]);
   });
 });

@@ -243,6 +243,8 @@ export const tuningSchema = z.object({
     maxBuy: int.min(1),
     /** 每人每天限买几个：[道具, 个数]（天气改版：晴雨签每天 1 个） */
     dailyLimit: z.array(z.tuple([int, int.min(1)])).default([]),
+    /** 每周限购（道具价格迁移 2026-10-15）：[道具 id, 个数]，按游戏周（周一起）计，银币店和黑市共用 */
+    weeklyLimit: z.array(z.tuple([int, int.min(1)])).default([]),
   }),
   store: z.object({ maxBatch: int.min(1) }),
   world: z.object({

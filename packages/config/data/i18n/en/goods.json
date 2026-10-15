@@ -517,7 +517,7 @@
   },
   "20405": {
     "name": "Exploration Guide Wage",
-    "desc": "Weekly wage of the Exploration Guide: 2 Exploration Maps, 5 Random Universal Ingredient Packs"
+    "desc": "Weekly wage of the Exploration Guide: 1 Exploration Map, 5 Random Universal Ingredient Packs"
   },
   "20406": {
     "name": "Exchange Broker Wage",
@@ -529,7 +529,7 @@
   },
   "20408": {
     "name": "Bank Wealth Advisor Wage",
-    "desc": "Weekly wage of the Bank Wealth Advisor: 8 Level 5 Market Supply Packs"
+    "desc": "Weekly wage of the Bank Wealth Advisor: 3 Level 5 Market Supply Packs"
   },
   "20409": {
     "name": "M&A Advisor Wage",
@@ -1581,7 +1581,7 @@
   },
   "60404": {
     "name": "Exploration Guide",
-    "desc": "Job permit from the weekly Season ranking: mystery ingredient chance while exploring +2.5%; final coin income +5%, final EXP +5% (weekly wage: 2 Exploration Maps, 5 Random Universal Ingredient Packs)"
+    "desc": "Job permit from the weekly Season ranking: mystery ingredient chance while exploring +1%; final coin income +5%, final EXP +5% (weekly wage: 1 Exploration Map, 5 Random Universal Ingredient Packs)"
   },
   "60405": {
     "name": "Moving Company Dispatcher",
@@ -1597,7 +1597,7 @@
   },
   "60408": {
     "name": "Bank Wealth Advisor",
-    "desc": "Job permit from the weekly Season ranking: Development Fund return at maturity 90% → 95%; final coin income +5%, final EXP +5% (weekly wage: 8 Level 5 Market Supply Packs)"
+    "desc": "Job permit from the weekly Season ranking: Development Fund return at maturity 90% → 95%; final coin income +5%, final EXP +5% (weekly wage: 3 Level 5 Market Supply Packs)"
   },
   "60409": {
     "name": "M&A Advisor",

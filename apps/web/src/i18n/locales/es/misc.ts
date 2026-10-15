@@ -178,7 +178,7 @@ const misc: Messages['misc'] = {
           60401: 'Compra a mano en el mercado con comisión de mayorista',
           60402: 'Renueva los pedidos a domicilio en privado',
           60403: 'Éxito al tasar fragmentos +5\u00a0% (todos los objetos de tasación)',
-          60404: 'Probabilidad de ingrediente misterioso al explorar +2,5\u00a0%',
+          60404: 'Probabilidad de ingrediente misterioso al explorar +1\u00a0%',
           60405: 'Mudarse no gasta tarjeta de mudanza',
           60406: 'Comisión de venta en la bolsa 5\u00a0% → 2,5\u00a0%',
           60407: 'Depósito de futuros 30\u00a0% → 20\u00a0%, límite diario 50 → 75',

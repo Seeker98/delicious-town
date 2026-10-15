@@ -178,7 +178,7 @@ const misc: Messages['misc'] = {
           60401: 'Achat à la main au marché avec commission de gros',
           60402: 'Rafraîchir les livraisons en privé',
           60403: 'Réussite de l’expertise des fragments +5\u202f% (tous les objets d’expertise)',
-          60404: 'Chance d’ingrédient mystère en exploration +2,5\u202f%',
+          60404: 'Chance d’ingrédient mystère en exploration +1\u202f%',
           60405: 'Déménager ne consomme pas de carte de déménagement',
           60406: 'Frais de vente à la Bourse 5\u202f% → 2,5\u202f%',
           60407: 'Acompte des contrats à terme 30\u202f% → 20\u202f%, limite quotidienne 50 → 75',

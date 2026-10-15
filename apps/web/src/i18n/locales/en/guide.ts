@@ -143,7 +143,7 @@ const guide: Messages['guide'] = {
       q: 'How does the weather change? How can I change it?',
       a: [
         'The weather changes every 4 hours (1:00, 5:00, 9:00, 13:00, 17:00, 21:00) and follows the current weather: good weather tends to stay, snow never comes right after sun, and heavy rain builds up from light rain step by step. Special weather (thunderstorm, acid rain, freezing, hurricane, rainbow) only comes after its warning signs. The weather page shows the chance of each type next time.',
-        'To change it, use a Sky Compass (pick a type; the mayor trades 1 per week, and it also comes from the Ichiban Kuji last prize and the wish tree) or Weather Lots (shake out two, keep one; the coin shop sells 1 per day). It lasts 1 hour and the whole town does business under it. Each player can use one every 4 hours, and nobody else can change it in the hour after a change. Restaurants at 0 stars are not affected by the weather.',
+        'To change it, use a Sky Compass (pick a type; sold in the coin shop and the black market, the mayor trades 1 per week, and it also comes from the Ichiban Kuji last prize and the wish tree) or Weather Lots (shake out two, keep one; the coin shop sells 1 per day). It lasts 1 hour and the whole town does business under it. Each player can use one every 4 hours, and nobody else can change it in the hour after a change. Restaurants at 0 stars are not affected by the weather.',
       ],
     },
     {

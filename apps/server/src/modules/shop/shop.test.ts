@@ -18,9 +18,10 @@ const shop = () => t.game.shop;
 
 describe('银币商店（规格书 06 §6.5）', () => {
   it('买 3 张普通宣传海报：扣银币、进仓库、写流水', async () => {
-    const ctx = await newRestaurant(t, { patch: { coin: 10000 } });
+    // 道具价格迁移（2026-10-15）：普通宣传海报 5,000
+    const ctx = await newRestaurant(t, { patch: { coin: 20000 } });
     await shop().buy(ctx, { goodsId: gid('普通宣传海报'), num: 3 });
-    expect((await restRow(t, ctx.restaurantId)).coin).toBe(7000);
+    expect((await restRow(t, ctx.restaurantId)).coin).toBe(5000);
     expect(await goodsNum(t, ctx.restaurantId, gid('普通宣传海报'))).toBe(3);
     const l = await t.db.selectFrom('ledger').selectAll().where('rest_id', '=', ctx.restaurantId).execute();
     expect(l.every((x) => x.source === 'shop.buy')).toBe(true);
@@ -42,8 +43,8 @@ describe('银币商店（规格书 06 §6.5）', () => {
   it('列表：银币商店和黑市', async () => {
     const ctx = await newRestaurant(t);
     const l = await shop().items(ctx);
-    expect(l.coin.find((x) => x.goodsId === gid('普通宣传海报'))).toMatchObject({ price: 1000 });
-    expect(l.black.find((x) => x.goodsId === GOODS.starCert)).toMatchObject({ price: 5 });
+    expect(l.coin.find((x) => x.goodsId === gid('普通宣传海报'))).toMatchObject({ price: 5000 });
+    expect(l.black.find((x) => x.goodsId === GOODS.starCert)).toMatchObject({ price: 3 });
   });
 });
 
@@ -92,7 +93,7 @@ describe('黑市、出售、丢弃', () => {
   it('黑市用钻石买', async () => {
     const ctx = await newRestaurant(t, { patch: { diamond: 20 } });
     await shop().buyBlack(ctx, { goodsId: GOODS.starCert, num: 2 });
-    expect((await restRow(t, ctx.restaurantId)).diamond).toBe(10);
+    expect((await restRow(t, ctx.restaurantId)).diamond).toBe(14);
   });
   it('出售 = 单价 × 数量 × 0.7；勋章不能卖；牌匾至少留 1 个', async () => {
     const ctx = await newRestaurant(t, {
@@ -100,7 +101,7 @@ describe('黑市、出售、丢弃', () => {
       goods: { [gid('普通宣传海报')]: 2, [gid('[新春牌匾]')]: 1 },
     });
     await shop().sell(ctx, { goodsId: gid('普通宣传海报'), num: 2 });
-    expect((await restRow(t, ctx.restaurantId)).coin).toBe(1400);
+    expect((await restRow(t, ctx.restaurantId)).coin).toBe(7000);
     await expect(shop().sell(ctx, { goodsId: gid('[新春牌匾]'), num: 1 })).rejects.toMatchObject({
       params: { reason: 'keep_one_plaque' },
     });
@@ -117,8 +118,9 @@ describe('黑市、出售、丢弃', () => {
     const sp = (name: string) => sellPrice(config.requireGoods(gid(name)), config.tuning);
     expect(config.tuning.shop.diamondSellCoin).toBe(2_000);
     expect(sp('鞋带')).toBe(2_000);
-    expect(sp('中扩容卡')).toBe(50_000);
-    expect(sp('神秘食谱')).toBe(10_000);
+    // 道具价格迁移（2026-10-15）：中扩容卡 72 钻、神秘食谱 16 钻
+    expect(sp('中扩容卡')).toBe(144_000);
+    expect(sp('神秘食谱')).toBe(32_000);
     // 银币价 × 0.7 更低的照旧
     expect(sellPrice({ ...config.requireGoods(gid('鞋带')), coin: 1_000 }, config.tuning)).toBe(700);
     // 到账和页面上的单价一致
@@ -173,7 +175,8 @@ describe('列表给出一次最多能买几个（问题记录：商店不显示�
   ) => l[tab].find((x) => x.goodsId === id)!;
 
   it('受银币 / 钻石限制，买不起时给出原因', async () => {
-    const ctx = await newRestaurant(t, { patch: { coin: 3500, diamond: 12 } });
+    // 普通宣传海报 5,000；升星凭证银币 30,000、黑市 3 钻
+    const ctx = await newRestaurant(t, { patch: { coin: 17500, diamond: 7 } });
     const l = await shop().items(ctx);
     expect(item(l, 'coin', gid('普通宣传海报'))).toMatchObject({ maxBuy: 3, blocked: null });
     expect(item(l, 'coin', GOODS.starCert)).toMatchObject({ maxBuy: 0, blocked: 'money' });
@@ -183,10 +186,11 @@ describe('列表给出一次最多能买几个（问题记录：商店不显示�
   it('受持有上限和单次 999 个限制；厨具一次只能买 1 件', async () => {
     const ctx = await newRestaurant(t, {
       patch: { coin: 1_000_000_000_000 },
-      goods: { [gid('体力卡')]: 9998, [GOODS.essence]: 9999 },
+      // 体力卡 2026-10-15 起不在银币商店卖，换成普通飞弹
+      goods: { [gid('普通飞弹')]: 9998, [GOODS.essence]: 9999 },
     });
     const l = await shop().items(ctx);
-    expect(item(l, 'coin', gid('体力卡'))).toMatchObject({ maxBuy: 1, blocked: null });
+    expect(item(l, 'coin', gid('普通飞弹'))).toMatchObject({ maxBuy: 1, blocked: null });
     expect(item(l, 'coin', GOODS.essence)).toMatchObject({ maxBuy: 0, blocked: 'max' });
     expect(item(l, 'coin', gid('普通宣传海报'))).toMatchObject({ maxBuy: 999, blocked: null });
     expect(item(l, 'coin', gid('见习之铲'))).toMatchObject({ maxBuy: 1, blocked: null });
@@ -205,7 +209,7 @@ describe('列表给出一次最多能买几个（问题记录：商店不显示�
     });
     const l = await shop().items(ctx);
     expect(item(l, 'coin', gid('普通宣传海报'))).toMatchObject({ maxBuy: 0, blocked: 'store' });
-    expect(item(l, 'coin', GOODS.starCert)).toMatchObject({ maxBuy: 18, blocked: null });
+    expect(item(l, 'coin', GOODS.starCert)).toMatchObject({ maxBuy: 33, blocked: null });
   });
 });
 
@@ -261,7 +265,7 @@ describe('后期海报奖杯按星级可用（问题记录 146）', () => {
       needStar: 4,
     });
     await shop().buy(ctx, { goodsId: gid('13 哥宣传海报'), num: 1 });
-    expect((await restRow(t, ctx.restaurantId)).coin).toBe(970_000);
+    expect((await restRow(t, ctx.restaurantId)).coin).toBe(960_000);
     expect(await goodsNum(t, ctx.restaurantId, gid('13 哥宣传海报'))).toBe(1);
   });
 });
@@ -313,5 +317,59 @@ describe('每日限购（天气改版：晴雨签每天 1 个）', () => {
     t.clock.set(gameTime('2026-10-01', 12));
     await shop().buy(ctx, { goodsId: GOODS.weatherLots, num: 1 });
     expect(await goodsNum(t, ctx.restaurantId, GOODS.weatherLots)).toBe(2);
+  });
+});
+
+describe('限购：每天、每周，银币店和黑市共用计数（道具价格迁移 2026-10-15）', () => {
+  it('体力卡只在黑市卖也每天限 1 张；小体力卡银币店买过，当天黑市也不能再买', async () => {
+    expect(config.tuning.shop.dailyLimit).toEqual(
+      expect.arrayContaining([
+        [gid('小体力卡'), 1],
+        [gid('体力卡'), 1],
+      ]),
+    );
+    const ctx = await newRestaurant(t, { patch: { coin: 1_000_000, diamond: 100 } });
+    await shop().buyBlack(ctx, { goodsId: gid('体力卡'), num: 1 });
+    await expect(shop().buyBlack(ctx, { goodsId: gid('体力卡'), num: 1 })).rejects.toMatchObject({
+      params: { what: 'shop_daily', max: 1 },
+    });
+    await shop().buy(ctx, { goodsId: gid('小体力卡'), num: 1 });
+    await expect(shop().buyBlack(ctx, { goodsId: gid('小体力卡'), num: 1 })).rejects.toMatchObject({
+      params: { what: 'shop_daily', max: 1 },
+    });
+    expect((await restRow(t, ctx.restaurantId)).diamond).toBe(100 - 16);
+    const l = await shop().items(ctx);
+    expect(l.black.find((x) => x.goodsId === gid('体力卡'))).toMatchObject({
+      maxBuy: 0,
+      blocked: 'daily',
+      daily: { limit: 1, left: 0 },
+    });
+  });
+
+  it('强化石每周限 2 块：买满后报 shop_weekly、列表标 weekly；下周一重新算', async () => {
+    expect(config.tuning.shop.weeklyLimit).toEqual([[gid('强化石'), 2]]);
+    const stone = gid('强化石');
+    const ctx = await newRestaurant(t, { patch: { diamond: 1000 } });
+    // 2026-10-14 是周三，2026-10-19 是下周一
+    t.clock.set(gameTime('2026-10-14', 12));
+    await shop().buyBlack(ctx, { goodsId: stone, num: 1 });
+    await shop().buyBlack(ctx, { goodsId: stone, num: 1 });
+    await expect(shop().buyBlack(ctx, { goodsId: stone, num: 1 })).rejects.toMatchObject({
+      params: { what: 'shop_weekly', max: 2, used: 2 },
+    });
+    expect((await shop().items(ctx)).black.find((x) => x.goodsId === stone)).toMatchObject({
+      maxBuy: 0,
+      blocked: 'weekly',
+      weekly: { limit: 2, left: 0 },
+    });
+    expect((await restRow(t, ctx.restaurantId)).diamond).toBe(1000 - 2 * 75);
+    t.clock.set(gameTime('2026-10-19', 12));
+    expect((await shop().items(ctx)).black.find((x) => x.goodsId === stone)).toMatchObject({
+      maxBuy: 2,
+      weekly: { limit: 2, left: 2 },
+    });
+    await shop().buyBlack(ctx, { goodsId: stone, num: 2 });
+    expect(await goodsNum(t, ctx.restaurantId, stone)).toBe(4);
+    t.clock.set(new Date());
   });
 });

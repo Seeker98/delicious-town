@@ -517,7 +517,7 @@
   },
   "20405": {
     "name": "Sueldo de guía de exploración",
-    "desc": "Sueldo semanal de guía de exploración: 2 mapas de exploración, 5 packs de ingrediente universal al azar"
+    "desc": "Sueldo semanal de guía de exploración: 1 mapa de exploración, 5 packs de ingrediente universal al azar"
   },
   "20406": {
     "name": "Sueldo de corredor de la bolsa",
@@ -529,7 +529,7 @@
   },
   "20408": {
     "name": "Sueldo de asesor de inversiones",
-    "desc": "Sueldo semanal de asesor de inversiones: 8 paquetes de suministros del mercado nv. 5"
+    "desc": "Sueldo semanal de asesor de inversiones: 3 paquetes de suministros del mercado nv. 5"
   },
   "20409": {
     "name": "Sueldo de asesor de fusiones",
@@ -1581,7 +1581,7 @@
   },
   "60404": {
     "name": "Guía de exploración",
-    "desc": "Permiso de trabajo del ranking de temporada: probabilidad de ingrediente misterioso al explorar +2,5\u00a0%; monedas finales +5\u00a0%, EXP final +5\u00a0% (sueldo semanal: 2 mapas de exploración, 5 packs de ingrediente universal al azar)"
+    "desc": "Permiso de trabajo del ranking de temporada: probabilidad de ingrediente misterioso al explorar +1\u00a0%; monedas finales +5\u00a0%, EXP final +5\u00a0% (sueldo semanal: 1 mapa de exploración, 5 packs de ingrediente universal al azar)"
   },
   "60405": {
     "name": "Coordinador de mudanzas",
@@ -1597,7 +1597,7 @@
   },
   "60408": {
     "name": "Asesor de inversiones",
-    "desc": "Permiso de trabajo del ranking de temporada: devolución del fondo de desarrollo al vencer 90\u00a0% → 95\u00a0%; monedas finales +5\u00a0%, EXP final +5\u00a0% (sueldo semanal: 8 paquetes de suministros del mercado nv. 5)"
+    "desc": "Permiso de trabajo del ranking de temporada: devolución del fondo de desarrollo al vencer 90\u00a0% → 95\u00a0%; monedas finales +5\u00a0%, EXP final +5\u00a0% (sueldo semanal: 3 paquetes de suministros del mercado nv. 5)"
   },
   "60409": {
     "name": "Asesor de fusiones",
