@@ -1,5 +1,5 @@
 import { sql } from 'kysely';
-import { addDays, gameDay, gameParts } from '@dt/shared';
+import { addDays, DAY_MS, gameDay, gameParts } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import { JobError, type PeriodicJob } from '../../core/jobs';
 import { payDividends } from './dividend';
@@ -11,7 +11,6 @@ import { firstIncomeDay, priceWindow } from './state';
 const LOG_KEEP_DAYS = 30;
 /** 基础身价一次写多少家（每家 4 个参数，远低于参数个数上限） */
 const UPSERT_CHUNK = 1000;
-const DAY_MS = 86_400_000;
 
 /** 游戏时间 00:05 以后才跑（前一天最后一轮结算已经写完）；返回当天的游戏日 */
 function after0005(now: Date): string | null {

@@ -1,4 +1,5 @@
 import type { Kysely } from 'kysely';
+import { DAY_MS } from '@dt/shared';
 import { invalidState, requirement } from '../../core/errors';
 import type { Op } from '../../core/op';
 import type { DB } from '../../db/schema';
@@ -16,7 +17,7 @@ export function eligibilityOf(
   now: Date,
 ): EligibilityReason | null {
   if (f.level < t.minLevel) return 'exchange_level';
-  if (now.getTime() - f.createdAt.getTime() < t.minAccountDays * 86_400_000) return 'exchange_age';
+  if (now.getTime() - f.createdAt.getTime() < t.minAccountDays * DAY_MS) return 'exchange_age';
   if (!f.verified) return 'exchange_email';
   return null;
 }

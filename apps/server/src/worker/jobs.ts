@@ -1,4 +1,5 @@
 import type { Kysely } from 'kysely';
+import { DAY_MS } from '@dt/shared';
 import { dropPartitionsBefore, ensureDailyPartitions } from '../db/partitions';
 import type { DB } from '../db/schema';
 import type { PeriodicJob } from '../core/jobs';
@@ -13,7 +14,6 @@ import { pullOffset } from '../infra/clock';
 import type { Job, JobLogger } from './scheduler';
 
 export const RETENTION_DAYS = { ledger: 30, news: 30, income_round: 3, rest_log: 30 } as const;
-const DAY_MS = 86_400_000;
 
 /** 预建昨天起 5 天的分区，删除超过保留期的分区 */
 export async function maintainPartitions(

@@ -12,7 +12,7 @@ import {
   type AcquireTendDto,
   type AcquireViewDto,
 } from '@dt/shared';
-import { addDays, gameDay, gameTime } from '@dt/shared';
+import { addDays, DAY_MS, gameDay, gameTime } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
 import { emitAction } from '../../core/action';
@@ -69,8 +69,6 @@ function briefOf(x: BriefRow, now: Date): AcquireBriefDto {
     listed: listed ? { rate: x.list_rate!, price: listPrice(x)!, until: x.list_until!.toISOString() } : null,
   };
 }
-
-const DAY_MS = 86_400_000;
 
 /** 收购的“不能这样做”：带 scope，前端按收购自己的文案表显示（原因名 not_owned、npc 等和别的玩法重名） */
 const bad = (reason: string, params: Record<string, unknown> = {}) =>

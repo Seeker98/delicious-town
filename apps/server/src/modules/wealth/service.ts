@@ -1,5 +1,5 @@
 import type { Tuning } from '@dt/config';
-import { ErrorCode, type WealthDepositInput, type WealthViewDto } from '@dt/shared';
+import { DAY_MS, ErrorCode, type WealthDepositInput, type WealthViewDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, limitReached, requirement } from '../../core/errors';
 import { restLog, runOp, type Op } from '../../core/op';
@@ -10,7 +10,6 @@ import { grantGoodsOp } from '../store/goods';
 
 type W = Tuning['wealth'];
 type Db = GameDeps['db'];
-const DAY = 86_400_000;
 
 const activeOf = (db: Db, restId: number) =>
   db
@@ -117,7 +116,7 @@ export function createWealthService(d: GameDeps) {
             goods_id: term.goods,
             packs,
             started_at: o.now,
-            matures_at: new Date(o.now.getTime() + term.days * DAY),
+            matures_at: new Date(o.now.getTime() + term.days * DAY_MS),
           })
           .execute();
         restLog(o, 'wealth.deposit', { coin: input.coin, days: term.days, goodsId: term.goods, packs });
