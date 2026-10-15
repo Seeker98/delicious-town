@@ -1,8 +1,10 @@
 import { sql, type Kysely, type RawBuilder } from 'kysely';
 import type { GameConfig } from '@dt/config';
 import { addDays, gameDay, gameTime } from '@dt/shared';
-import type { DB } from '../../db/schema';
-import { restPower } from '../equip/power';
+import type { DB, EquipGemRow, EquipRow } from '../../db/schema';
+import { gearOf } from '../equip/power';
+import { loadGems } from '../equip/instances';
+import { chunks } from '../equip/incomeResync';
 import { mondayOf } from '../friend/weekly';
 import { weekGains } from '../jobcard/weekly';
 import { shilingWeek } from '../shiling/store';
@@ -122,19 +124,55 @@ const cookbook =
     }));
   };
 
+/**
+ * 厨力：和 restPower 同一个算法，但整区一起读（原来一家店两条查询，一千多家要两秒多）：
+ * 店只读加点几列，穿着的厨具一条查询，宝石分批读
+ */
 const power: Source = async (c) => {
-  const rows = await c.db
-    .selectFrom('restaurant as r')
-    .innerJoin('account as a', 'a.id', 'r.account_id')
-    .selectAll('r')
-    .where('r.shard_id', '=', c.shardId)
-    .where('r.npc', '=', false)
-    .where(notBannedSql())
-    .execute();
-  const out: RankSource[] = [];
-  for (const r of rows)
-    out.push({ restId: r.id, name: r.name, value: await restPower(c.db, r, c.config.suits) });
-  return out;
+  const [rows, worn] = await Promise.all([
+    c.db
+      .selectFrom('restaurant as r')
+      .innerJoin('account as a', 'a.id', 'r.account_id')
+      .select([
+        'r.id',
+        'r.name',
+        'r.attr_cook',
+        'r.attr_cutting',
+        'r.attr_fire',
+        'r.attr_season',
+        'r.attr_creatives',
+        'r.luck',
+      ])
+      .where('r.shard_id', '=', c.shardId)
+      .where('r.npc', '=', false)
+      .where(notBannedSql())
+      .execute(),
+    c.db
+      .selectFrom('equip as e')
+      .innerJoin('restaurant as r', 'r.id', 'e.rest_id')
+      .innerJoin('account as a', 'a.id', 'r.account_id')
+      .selectAll('e')
+      .where('e.worn', '=', true)
+      .where('r.shard_id', '=', c.shardId)
+      .where('r.npc', '=', false)
+      .where(notBannedSql())
+      .orderBy('e.id')
+      .execute(),
+  ]);
+  const gems = new Map<number, EquipGemRow[]>();
+  for (const ids of chunks(worn.map((e) => e.id)))
+    for (const [k, v] of await loadGems(c.db, ids)) gems.set(k, v);
+  const byRest = new Map<number, EquipRow[]>();
+  for (const e of worn) {
+    const list = byRest.get(e.rest_id);
+    if (list) list.push(e);
+    else byRest.set(e.rest_id, [e]);
+  }
+  return rows.map((r) => ({
+    restId: r.id,
+    name: r.name,
+    value: gearOf(r, byRest.get(r.id) ?? [], gems, c.config.suits).power,
+  }));
 };
 
 const thumbs =
