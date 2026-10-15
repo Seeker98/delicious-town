@@ -62,7 +62,7 @@ describe('游戏资料首页（问题记录 142）', () => {
     });
     vi.mocked(endpoints.openFoods).mockResolvedValue({
       ...meta,
-      items: [{ id: 239, name: '松露', level: 2, coin: 900, rare: true, type: 2 }],
+      items: [{ id: 239, name: '松露', level: 2, coin: 900, fairCoin: 900, rare: true, type: 2 }],
     });
     vi.mocked(endpoints.openCookbooks).mockResolvedValue({
       ...meta,

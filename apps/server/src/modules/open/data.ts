@@ -1,4 +1,4 @@
-import { dishCoin, foodPrice } from '../../core/prices';
+import { dishCoin, fairFoodPrice, foodPrice } from '../../core/prices';
 import {
   WIKI_HIDDEN_GOODS,
   type GameConfig,
@@ -174,7 +174,8 @@ export function createOpenData(config: GameConfig) {
       id: f.id,
       name: foodName(lang, f.id),
       level: f.level,
-      coin: Math.round(foodPrice(f, config.tuning.market)),
+      coin: foodPrice(f, config.tuning.market),
+      fairCoin: fairFoodPrice(f, config.tuning.market),
       rare: f.odds < 100,
       type: f.type,
     };

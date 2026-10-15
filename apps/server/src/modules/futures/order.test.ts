@@ -6,7 +6,7 @@ import { createShard } from '../../../test/fixtures';
 import { createTestGame, restRow, type TestGame } from '../../../test/game';
 import { setTuning } from '../../../test/town';
 import type { RestCtx } from '../../core/deps';
-import { foodPrice } from '../../core/prices';
+import { fairFoodPrice } from '../../core/prices';
 import { FUTURES_INITIAL } from '../../db/migrations/0063_futures';
 import { refPrice } from '../exchange/ref';
 import { trader } from '../exchange/test';
@@ -32,19 +32,19 @@ const NORMAL2 = FUTURES_INITIAL.find(
 )!;
 const HOUR = 3_600_000;
 
-/** 服务端会算出的单价（参考价 + 等级价，期货设计 §3） */
+/** 服务端会算出的单价（参考价 + 公允价，期货设计 §3、公允价阶梯 2026-10-15） */
 async function priceOf(shardId: number, foodsId: number): Promise<number> {
   const s = await t.game.shards.settings(shardId);
   const ref = await refPrice(
     t.db,
     config,
     s.tuning.exchange,
-    s.tuning.market.levelPriceRate,
+    s.tuning.market.fairPriceRate,
     shardId,
     foodsId,
     gameDay(t.clock.now),
   );
-  return futuresUnitPrice(foodPrice(config.foods.get(foodsId)!, s.tuning.market), ref, s.tuning.futures);
+  return futuresUnitPrice(fairFoodPrice(config.foods.get(foodsId)!, s.tuning.market), ref, s.tuning.futures);
 }
 const order = async (r: RestCtx, foodsId: number, qty: number, shardId: number) =>
   svc().order(r, { foodsId, qty, unitPrice: await priceOf(shardId, foodsId) });
@@ -92,9 +92,10 @@ describe('期货下单（期货设计 §2、§4）', () => {
     expect(logs[0]!.params).toMatchObject({ foodsId: RARE3, qty: 3, unitPrice: unit, deposit });
   });
 
-  it('单价按锚点 B：不低于等级价 × 1.2', async () => {
+  it('单价按锚点 B：不低于公允价 × 1.2，不高于公允价 × 2 × 1.2（公允价阶梯 2026-10-15）', async () => {
     const shardId = await createShard(t.db);
-    const level = foodPrice(config.foods.get(RARE3)!, config.tuning.market);
+    const level = fairFoodPrice(config.foods.get(RARE3)!, config.tuning.market);
+    expect(level).toBe(Math.round(config.foods.get(RARE3)!.coin * 3.1));
     expect(await priceOf(shardId, RARE3)).toBeGreaterThanOrEqual(Math.ceil(level * 1.2));
     expect(await priceOf(shardId, RARE3)).toBeLessThanOrEqual(Math.ceil(level * 2 * 1.2));
   });

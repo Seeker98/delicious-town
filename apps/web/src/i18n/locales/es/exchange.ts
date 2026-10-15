@@ -42,6 +42,7 @@ const exchange: Messages['exchange'] = {
   sysHelpItems: [
     'Precio de compra del sistema = referencia × 0,7; precio de venta del sistema = referencia × 1,3. El sistema solo vende lo que compró a los jugadores.',
     'El precio de referencia se fija cada día con las operaciones entre jugadores del día anterior (las del sistema no cuentan), así que los precios del sistema no cambian en todo el día.',
+    'La bolsa, los futuros y la suscripción mayorista usan el precio justo (precio base × un multiplicador por nivel; en los niveles 3 a 5 supera el precio del mercado y se acerca al coste de fabricarlo), mientras que el mercado diario y el premium usan el precio del mercado. Los ingredientes sin precio de referencia parten del precio justo.',
     'En los ingredientes que también vende el mercado, el precio de compra no supera 0,9 × el precio más bajo del mercado, para que nadie gane comprando en el mercado y vendiendo al sistema.',
     'Cuando el precio de compra queda por debajo del mínimo permitido para órdenes es un «precio suelo» (habitual en los niveles 3 a 5). Entonces solo se puede vender con el botón «Vender al sistema», para que siempre puedas vender lo que tienes.',
     'El sistema compra como mucho 100 unidades de cada ingrediente al día, y cada jugador puede venderle como mucho 20 al día.',

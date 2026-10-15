@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { tuningSchema, type Food } from '@dt/config';
 import { testConfig } from '../../../test/config';
+import { specialShelfPrice } from '../../core/prices';
 import { makerBase, makerBuyQty, makerPrices, marketFloor } from './maker';
 import { initialRef, priceBand } from './rules';
 
@@ -22,17 +23,19 @@ describe('菜场最低价（156-3 设计 §4.1）', () => {
     expect(marketFloor(f, config, mt)).toBeCloseTo(f.coin * CHEAPEST, 6);
   });
 
-  it('特价货架的等级按 specialPrice；高级货架等级取两者便宜的', () => {
+  it('特价货架的等级按该等级的特价（公允价阶梯 2026-10-15：3 级 2,499、4 级 5,999）；高级货架等级取两者便宜的', () => {
     const f3 = rareAt(3);
-    expect(marketFloor(f3, config, mt)).toBeCloseTo(mt.specialPrice * CHEAPEST, 6);
+    expect(specialShelfPrice(f3, mt)).toBe(2499);
+    expect(marketFloor(f3, config, mt)).toBeCloseTo(2499 * CHEAPEST, 6);
     const f4 = rareAt(4);
+    expect(specialShelfPrice(f4, mt)).toBe(5999);
     expect(marketFloor(f4, config, mt)).toBeCloseTo(
-      Math.min(mt.specialPrice, f4.coin * mt.premiumPriceFactor) * CHEAPEST,
+      Math.min(5999, f4.coin * 3 * mt.premiumPriceFactor) * CHEAPEST,
       6,
     );
   });
 
-  it('热门稀缺池里的食材也算特价货架', () => {
+  it('热门稀缺池里的食材也算特价货架；没单独定价的等级按 specialPrice', () => {
     const f6 = rareAt(6);
     const hot = { ...config, hotFoodPool: { items: [f6], prefix: [1], total: 1 } } as typeof config;
     expect(marketFloor(f6, hot, mt)).toBeCloseTo(mt.specialPrice * CHEAPEST, 6);
@@ -49,7 +52,7 @@ describe('菜场最低价（156-3 设计 §4.1）', () => {
     expect(marketFloor(f1, config, rates)).toBeCloseTo(f1.coin * 3 * CHEAPEST, 6);
     const f4 = rareAt(4);
     expect(marketFloor(f4, config, rates)).toBeCloseTo(
-      Math.min(mt.specialPrice, f4.coin * 2 * mt.premiumPriceFactor) * CHEAPEST,
+      Math.min(specialShelfPrice(f4, mt), f4.coin * 2 * mt.premiumPriceFactor) * CHEAPEST,
       6,
     );
   });
@@ -102,17 +105,17 @@ describe('系统买卖价（156-3 设计 §4.2）', () => {
 });
 
 describe('3~5 级兜底收购（问题记录 244）', () => {
-  it('真实配置：3~5 级特价货架上的食材都有兜底买价，且低于特价货架最便宜的价格，买来卖给系统必亏', () => {
-    const cheapestSpecial = mt.specialPrice * CHEAPEST * mt.priceFactor;
+  it('真实配置：3~5 级特价货架上的食材都有兜底买价，且低于本级特价最便宜的价格，买来卖给系统必亏', () => {
     for (const lv of [3, 4, 5]) {
       for (const food of config.foodPools.get(lv)?.items ?? []) {
-        const ref = initialRef(food, config, ONE);
+        const cheapestSpecial = specialShelfPrice(food, mt) * CHEAPEST * mt.priceFactor;
+        const ref = initialRef(food, config, mt.fairPriceRate);
         const p = makerPrices(
           ref,
           marketFloor(food, config, mt),
           priceBand(ref, ex),
           m,
-          makerBase(food, config, ex, ONE),
+          makerBase(food, config, ex, mt.fairPriceRate),
         );
         expect(p.bid, food.name).not.toBeNull();
         expect(p.bid!, food.name).toBeLessThan(cheapestSpecial);

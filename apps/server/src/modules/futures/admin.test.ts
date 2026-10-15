@@ -4,7 +4,7 @@ import { userWithRole } from '../../../test/admin';
 import { testConfig } from '../../../test/config';
 import { createShard } from '../../../test/fixtures';
 import { call, createTestApp, type TestContext } from '../../../test/helpers';
-import { foodPrice } from '../../core/prices';
+import { fairFoodPrice } from '../../core/prices';
 import { FUTURES_INITIAL } from '../../db/migrations/0063_futures';
 import { futuresUnitPrice } from './rules';
 
@@ -45,7 +45,7 @@ describe('后台期货食材', () => {
     const food = config.foods.get(IN)!;
     expect(inRow).toMatchObject({ inList: true, enabled: true, dailyQuota: null, ordered: 7 });
     expect(inRow.defaultQuota).toBe(config.tuning.futures.dailyQuota[food.level - 1]);
-    expect(inRow.levelPrice).toBe(foodPrice(food, config.tuning.market));
+    expect(inRow.levelPrice).toBe(fairFoodPrice(food, config.tuning.market));
     expect(inRow.unitPrice).toBe(futuresUnitPrice(inRow.levelPrice, inRow.ref, config.tuning.futures));
     expect(inRow.streets.length).toBeGreaterThan(0);
     expect(rows.find((r) => r.foodsId === OUTSIDE)).toMatchObject({ inList: false, enabled: false });

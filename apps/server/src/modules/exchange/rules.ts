@@ -51,7 +51,7 @@ function rareMedians(config: GameConfig): Map<number, number> {
  * 没有成交前的初始参考价（问题记录 242）：
  * 普通食材用系统定价，但夹在同级稀有中位数的 0.75~1.5 倍（原作数据里个别 3 级食材比 4 级还贵）；
  * 万能食材能顶替任意同级食材，取同级稀有中位数 × 1.5；
- * 最后乘食材等级价格倍数（240-1，万能食材按它顶替的等级）
+ * 最后乘公允价阶梯（2026-10-15，万能食材按它顶替的等级）
  */
 export function initialRef(food: Food, config: GameConfig, rates: readonly number[]): number {
   return Math.round(baseRef(food, config) * levelRateOf(food, rates));

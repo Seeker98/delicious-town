@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { FOODS } from '@dt/config';
 import { testConfig } from '../../test/config';
-import { dishCoin, foodPrice, levelRateOf, universalLevel } from './prices';
+import { dishCoin, fairFoodPrice, foodPrice, levelRateOf, specialShelfPrice, universalLevel } from './prices';
 import { fid } from '../../test/items';
 
 const config = testConfig();
@@ -56,5 +56,52 @@ describe('价格函数（问题记录 240-1）', () => {
     expect(Number.isInteger(foodPrice({ ...level(3), coin: 3600 }, { levelPriceRate: [1, 1, 1.3] }))).toBe(
       true,
     );
+  });
+});
+
+describe('公允价阶梯（2026-10-15）', () => {
+  const mt = config.tuning.market;
+
+  it('默认配置：菜场价 [1, 1.3, 2, 3, 4]、公允价 [1, 1.85, 3.1, 5.85, 9.4]，6、7 级都按 1', () => {
+    expect(mt.levelPriceRate).toEqual([1, 1.3, 2, 3, 4, 1, 1]);
+    expect(mt.fairPriceRate).toEqual([1, 1.85, 3.1, 5.85, 9.4, 1, 1]);
+  });
+
+  it('fairFoodPrice：1~5 级各一种 = 基础价 × 公允价倍数（取整）；1 级和菜场价相同', () => {
+    const rates = [1, 1.85, 3.1, 5.85, 9.4];
+    for (let lv = 1; lv <= 5; lv++) {
+      const f = level(lv);
+      expect(fairFoodPrice(f, mt), f.name).toBe(Math.round(f.coin * rates[lv - 1]!));
+    }
+    expect(fairFoodPrice(level(1), mt)).toBe(foodPrice(level(1), mt));
+    // 万能食材按顶替的等级
+    expect(fairFoodPrice(config.requireFood(fid('五级万能食材')), mt)).toBe(
+      Math.round(config.requireFood(fid('五级万能食材')).coin * 9.4),
+    );
+  });
+
+  it('雪蛤、鹅肝基价 4,200，全麦粉 9,300：两套价都跟着变', () => {
+    for (const [name, coin, lv] of [
+      ['雪蛤', 4200, 3],
+      ['鹅肝', 4200, 3],
+      ['全麦粉', 9300, 5],
+    ] as const) {
+      const f = config.requireFood(fid(name));
+      expect(f.coin, name).toBe(coin);
+      expect(f.level, name).toBe(lv);
+    }
+    expect(foodPrice(config.requireFood(fid('雪蛤')), mt)).toBe(8400);
+    expect(fairFoodPrice(config.requireFood(fid('雪蛤')), mt)).toBe(13020);
+    expect(foodPrice(config.requireFood(fid('全麦粉')), mt)).toBe(37200);
+    expect(fairFoodPrice(config.requireFood(fid('全麦粉')), mt)).toBe(87420);
+  });
+
+  it('specialShelfPrice：3 / 4 / 5 级 2,499 / 5,999 / 14,999，2 级等没写的按 specialPrice 2,999', () => {
+    expect(specialShelfPrice(level(3), mt)).toBe(2499);
+    expect(specialShelfPrice(level(4), mt)).toBe(5999);
+    expect(specialShelfPrice(level(5), mt)).toBe(14999);
+    expect(specialShelfPrice(level(2), mt)).toBe(2999);
+    expect(specialShelfPrice(level(6), mt)).toBe(2999);
+    expect(specialShelfPrice(level(3), { specialPrice: 100, specialPrices: [] })).toBe(100);
   });
 });

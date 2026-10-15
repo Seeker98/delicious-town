@@ -1,4 +1,4 @@
-import { foodPrice } from '../../core/prices';
+import { foodPrice, specialShelfPrice } from '../../core/prices';
 import { sql, type Kysely } from 'kysely';
 import type { Food, GameConfig, Tuning } from '@dt/config';
 import type { WeightedPool } from '@dt/shared';
@@ -39,7 +39,7 @@ export function marketFloor(food: Food, config: GameConfig, mt: Tuning['market']
   const prices: number[] = [];
   if (inLevel && hasLevel(mt.dailyLevelWeights, food.level)) prices.push(foodPrice(food, mt));
   if ((inLevel && hasLevel(mt.specialLevelWeights, food.level)) || inPool(config.hotFoodPool, food))
-    prices.push(mt.specialPrice);
+    prices.push(specialShelfPrice(food, mt));
   if (inLevel && food.level === mt.premiumLevel) prices.push(foodPrice(food, mt) * mt.premiumPriceFactor);
   if (prices.length === 0) return null;
   return Math.min(...prices) * cheapestWeather(config) * mt.priceFactor;
@@ -186,7 +186,7 @@ export async function makerQuote(
     marketFloor(food, x.config, x.tuning.market),
     priceBand(x.ref, x.tuning.exchange),
     m,
-    makerBase(food, x.config, x.tuning.exchange, x.tuning.market.levelPriceRate),
+    makerBase(food, x.config, x.tuning.exchange, x.tuning.market.fairPriceRate),
   );
   const st = await makerState(db, x.shardId, x.foodsId, x.day);
   const mine = await getDaily(db, x.restId, TO_SYSTEM, x.day);

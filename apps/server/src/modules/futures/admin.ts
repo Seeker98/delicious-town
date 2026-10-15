@@ -1,7 +1,7 @@
 import { sql } from 'kysely';
 import { ErrorCode, gameDay, type AdminFuturesFoodDto, type AdminFuturesUpdateInput } from '@dt/shared';
 import type { Game } from '../../game';
-import { foodPrice } from '../../core/prices';
+import { fairFoodPrice } from '../../core/prices';
 import { AppError } from '../../http/errors';
 import type { AdminActor } from '../admin/access';
 import { writeAudit } from '../admin/audit';
@@ -49,7 +49,7 @@ export function createAdminFutures(game: Game) {
           db,
           config,
           s.tuning.exchange,
-          s.tuning.market.levelPriceRate,
+          s.tuning.market.fairPriceRate,
           shardId,
           foods.map((f) => f.id),
           day,
@@ -60,7 +60,7 @@ export function createAdminFutures(game: Game) {
       const streets = streetsOf();
       return foods.map((f) => {
         const r = byId.get(f.id);
-        const levelPrice = foodPrice(f, s.tuning.market);
+        const levelPrice = fairFoodPrice(f, s.tuning.market);
         const ref = refs.get(f.id)!;
         return {
           foodsId: f.id,

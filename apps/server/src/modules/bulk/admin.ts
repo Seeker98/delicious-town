@@ -8,7 +8,7 @@ import {
 } from '@dt/shared';
 import type { Game } from '../../game';
 import { invalidState } from '../../core/errors';
-import { foodPrice } from '../../core/prices';
+import { fairFoodPrice } from '../../core/prices';
 import { AppError } from '../../http/errors';
 import type { AdminActor } from '../admin/access';
 import { writeAudit } from '../admin/audit';
@@ -41,7 +41,7 @@ export function createAdminBulk(game: Game) {
           db,
           config,
           s.tuning.exchange,
-          s.tuning.market.levelPriceRate,
+          s.tuning.market.fairPriceRate,
           shardId,
           foods.map((f) => f.id),
           gameDay(game.deps.now()),
@@ -57,7 +57,7 @@ export function createAdminBulk(game: Game) {
         enabled: mine.get(f.id) ?? false,
         futuresEnabled: fut.get(f.id) ?? null,
         reserve: bulkReserve(
-          futuresUnitPrice(foodPrice(f, s.tuning.market), refs.get(f.id)!, s.tuning.futures),
+          futuresUnitPrice(fairFoodPrice(f, s.tuning.market), refs.get(f.id)!, s.tuning.futures),
           s.tuning.bulk,
         ),
       }));

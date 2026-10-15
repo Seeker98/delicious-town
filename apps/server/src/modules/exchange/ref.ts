@@ -33,7 +33,7 @@ export async function refPrices(
   db: Kysely<DB>,
   config: GameConfig,
   t: ExchangeTuning,
-  /** 食材等级价格倍数（240-1），没有成交时的初始参考价按它放大 */
+  /** 公允价阶梯（2026-10-15，原来是菜场的等级价格倍数 240-1），没有成交时的初始参考价按它放大 */
   rates: readonly number[],
   shardId: number,
   foodsIds: number[],

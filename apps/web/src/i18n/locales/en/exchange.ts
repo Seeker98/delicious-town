@@ -42,6 +42,7 @@ const exchange: Messages['exchange'] = {
   sysHelpItems: [
     'System buy price = reference × 0.7; system sell price = reference × 1.3. The system only sells stock it bought from players.',
     "The reference price is set daily from the previous day's player-to-player trades (system trades don't count), so system prices stay the same all day.",
+    "The exchange, futures and bulk subscriptions use the fair price (base price × a level multiplier; for levels 3–5 it's above the market price, close to the cost of crafting it yourself), while the market's daily and premium shelves use the market price. Ingredients without a reference price start from the fair price.",
     "For ingredients the market also sells, the buy price is capped at 0.9 × the market's lowest price, so nobody profits by buying at the market and selling to the system.",
     'When the buy price is below the lowest allowed order price it is a "floor price" (common for levels 3–5). You can only use the "Sell to system" button then, so you can always sell what you have.',
     'The system buys at most 100 of each ingredient a day, and each player can sell it at most 20 a day.',

@@ -3,7 +3,7 @@ import { gameTime, seededRng } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, type TestGame } from '../../../test/game';
 import { setTuning } from '../../../test/town';
-import { foodPrice } from '../../core/prices';
+import { fairFoodPrice } from '../../core/prices';
 import { refPrice } from '../exchange/ref';
 import { futuresUnitPrice } from '../futures/rules';
 import { openLot } from './open';
@@ -39,13 +39,13 @@ describe('开批次（大宗认购设计 §1.1）', () => {
       t.db,
       c,
       c.tuning.exchange,
-      c.tuning.market.levelPriceRate,
+      c.tuning.market.fairPriceRate,
       shardId,
       food.id,
       day,
     );
     expect(Number(lot!.reserve)).toBe(
-      bulkReserve(futuresUnitPrice(foodPrice(food, c.tuning.market), ref, c.tuning.futures), tb),
+      bulkReserve(futuresUnitPrice(fairFoodPrice(food, c.tuning.market), ref, c.tuning.futures), tb),
     );
     expect(lot!.opens_at.getTime()).toBe(gameTime(day, 20).getTime());
     const end = lot!.ends_at.getTime();
