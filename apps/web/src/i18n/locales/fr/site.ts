@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('fr', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    float1015:
+      'Fluctuations ajustées\u202f: la variation aléatoire de la fréquentation à chaque tour est divisée par deux (par ex. 2 étoiles ±25\u202f% → ±12,5\u202f%, 7 étoiles ±50\u202f% → ±25\u202f%)\u202f; celle du taux de clients difficiles passe à ±2,5\u202f% par étoile (au lieu de ±1,5\u202f%), toujours symétrique et sans changement en moyenne',
     income1015:
       'Revenus du restaurant revus\u202f: les clients ordinaires paient eux aussi un plat de votre rue (un plat appris rapporte 4,8\u202f% de son prix, 64 au plus par table\u202f; un plat non appris rapporte 10 + le niveau d’étoiles)\u202f; un client difficile satisfait paie 4 fois ce que paie un client ordinaire pour le même plat\u202f; plus vous apprenez de plats de votre rue, plus le taux de clients difficiles monte (jusqu’à +15\u202f% quand tout est appris, toujours soumis au plafond)\u202f; les pièces et l’EXP finales de chaque médaille de rue sont rééquilibrées pour les nouvelles règles, et la fréquentation ou l’EXP par table change sur 12 rues comme le Mexique, la France et le Sichuan, voir le bonus de rue sur la page de déménagement',
     streets1014:

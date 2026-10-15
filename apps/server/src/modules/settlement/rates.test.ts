@@ -11,7 +11,7 @@ const tuning = {
   ...config.tuning,
   settlement: { ...config.tuning.settlement, newbieExp: { ...config.tuning.settlement.newbieExp, rate: 0 } },
 };
-const rates = (patch: InputPatch = {}, g: Partial<SettleGlobals> = {}, rng = [0.5, 0.65]) =>
+const rates = (patch: InputPatch = {}, g: Partial<SettleGlobals> = {}, rng = [0.5, 0.5]) =>
   computeRates(buildInput(config, patch), buildGlobals(config, tuning, g), sequenceRng(rng));
 
 describe('汇总率（规格书 01 §1.3）', () => {
@@ -52,15 +52,22 @@ describe('汇总率（规格书 01 §1.3）', () => {
     const c = computeRates(
       buildInput(config, { agg: { atRate: 0.6 } }),
       buildGlobals(config, off),
-      sequenceRng([0.5, 0.65]),
+      sequenceRng([0.5, 0.5]),
     );
     expect(c.rates.atRate.total).toBeCloseTo(0.9);
   });
 
-  it('浮动：(0.3 + 0.1s) × (随机数 - 0.5)', () => {
-    const { rates: r } = rates({}, {}, [0.9, 0.65]);
-    expect(r.atRate.total).toBeCloseTo(0.42);
-    expect(r.atRate.parts.float).toBeCloseTo(0.12);
+  it('浮动（2026-10-15）：上座 (0.15 + 0.05s) × (随机数 - 0.5)，挑剔 0.05s × (随机数 - 0.5)，上下对称', () => {
+    const { rates: r } = rates({}, {}, [0.9, 0.5]);
+    expect(r.atRate.total).toBeCloseTo(0.36);
+    expect(r.atRate.parts.float).toBeCloseTo(0.06);
+    // 2 星：上座 ±0.125、挑剔 ±0.05
+    const hi = rates({ rest: { star: 2 } }, {}, [1, 1]).rates;
+    const lo = rates({ rest: { star: 2 } }, {}, [0, 0]).rates;
+    expect(hi.atRate.parts.float).toBeCloseTo(0.125);
+    expect(lo.atRate.parts.float).toBeCloseTo(-0.125);
+    expect(hi.spRate.parts.float).toBeCloseTo(0.05);
+    expect(lo.spRate.parts.float).toBeCloseTo(-0.05);
   });
 
   it('上座率超过 1.2 的部分按 1.5 折算进经验率；有史前怪石(atToExp)时不折算', () => {
@@ -127,7 +134,7 @@ describe('汇总率（规格书 01 §1.3）', () => {
       return computeRates(
         buildInput(config, { rest: { level, star: 4 } }),
         buildGlobals(config, tuning, {}),
-        sequenceRng([0.5, 0.65]),
+        sequenceRng([0.5, 0.5]),
       ).rates.expRate;
     };
     expect(at(1, 1).parts.newbie).toBeCloseTo(1);
