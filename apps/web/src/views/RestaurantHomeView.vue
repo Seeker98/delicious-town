@@ -221,9 +221,6 @@ const lockedText = computed(() => {
   if (notOpened > 0) list.push(h.notOpened);
   return h.lockedLine(lockedDevices.value.length, list.join(' · '));
 });
-/** 没开的设施位的全称：名字 + 几星开放（小格子里只写“12★”，全称给悬停和读屏） */
-const lockedLabel = (d: { slot: number; name: string; needStar: number }) =>
-  `${catalog.deviceName(d.slot) ?? d.name} · ${d.slot === PLAQUE2_SLOT && plaque2Offer.value ? t.value.home.notOpened : t.value.home.starOpen(needStarOf(d))}`;
 /** 正在换的那个设施位（面板上写现在摆的是什么、还剩多久） */
 const pickingDevice = computed(() => rest.value?.devices.find((d) => d.slot === pickingSlot.value) ?? null);
 const choices = computed(() => {
@@ -353,12 +350,6 @@ const showTasks = computed(() => store.featureOn('task'));
 /** 店里有蟑螂时“楼层餐桌”前加虫子图标（问题记录 561） */
 const hasRoach = computed(() => !!store.rest?.tables.some((x) => x.customer === 3));
 const showSpecial = computed(() => store.featureOn('mysterious'));
-/** 菜名和几级分两段：放不下时只截菜名（审查 I2） */
-const specialName = computed(() => {
-  const sp = rest.value?.special;
-  return sp ? t.value.home.special(catalog.mcName(sp.id)) : t.value.home.specialNone;
-});
-
 /** 生效的加成按来源分组，默认只显示前几条（问题记录：展示凌乱） */
 const EFFECTS_SHOWN = 5;
 type GroupKey = keyof Messages['home']['groups'];

@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { PENDING } from './pending';
 
 const SOURCES = import.meta.glob<string>(['../**/*.vue', '!../**/admin/**'], {
   query: '?raw',
@@ -19,9 +18,8 @@ function hanLines(src: string): string[] {
 }
 
 describe('文案抽取守卫（问题记录 272）', () => {
-  it('玩家界面除待抽取白名单外没有写死的中文（注释除外）', () => {
+  it('玩家界面没有写死的中文（注释除外）', () => {
     const bad = Object.entries(SOURCES)
-      .filter(([p]) => !PENDING.includes(p))
       .filter(([, src]) => hanLines(src).length > 0)
       .map(([p, src]) => `${p}: ${hanLines(src)[0]!.trim()}`);
     expect(bad).toEqual([]);
@@ -36,12 +34,5 @@ describe('文案抽取守卫（问题记录 272）', () => {
   it('图片路径里的中文不算', () => {
     expect(hanLines('<MascotCard img="npc/菜园姐" />')).toEqual([]);
     expect(hanLines('<b>菜园姐</b>')).toHaveLength(1);
-  });
-
-  it('白名单里的文件都还存在、确实还有中文（抽完了就要从白名单删掉）', () => {
-    for (const p of PENDING) {
-      expect(SOURCES[p], p).toBeDefined();
-      expect(hanLines(SOURCES[p]!).length, p).toBeGreaterThan(0);
-    }
   });
 });
