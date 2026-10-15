@@ -175,6 +175,34 @@ describe('汇总率（规格书 01 §1.3）', () => {
     expect(flags.luckRate).toBeCloseTo(Math.sqrt(3 * 146) / 100);
   });
 
+  it('天气的上座、挑剔在软上限之后按点数加，记成分项 weather；溢出经验不受天气影响（天气加算修正 2026-10-16）', () => {
+    // 1 星：基础上座 0.35，加 0.65 → 1.0 → 软上限后 0.7 + 0.3 ÷ 3 = 0.8
+    const at = (w: number, agg = 0.65) =>
+      rates({ rest: { star: 1 }, agg: { atRate: agg } }, { weather: { atRate: w } }).rates;
+    expect(at(0).atRate.total).toBeCloseTo(0.8);
+    // 好天气不再被打成三分之一；坏天气直接扣在软上限之后
+    expect(at(0.1).atRate.total).toBeCloseTo(0.9);
+    expect(at(-0.3).atRate.total).toBeCloseTo(0.5);
+    expect(at(0.1).atRate.parts.weather).toBeCloseTo(0.1);
+    expect(at(-2).atRate.total).toBe(0);
+    expect(at(0.5).atRate.total).toBe(1);
+    // 溢出经验按天气之前的合计：1.35 − 1.2 = 0.15 ÷ 1.5 = 0.1
+    expect(at(-0.5, 1).expRate.parts.atOverflow).toBeCloseTo(0.1);
+    expect(at(0, 1).expRate.parts.atOverflow).toBeCloseTo(0.1);
+    // 挑剔：1 星基础 0.12，加 0.38 → 0.5 → 0.3 + 0.2 × 0.333333
+    const sp = (w: number) =>
+      rates({ rest: { star: 1 }, agg: { spRate: 0.38 } }, { weather: { spRate: w } }).rates.spRate;
+    const capped = 0.3 + 0.2 * 0.333333;
+    expect(sp(0).total).toBeCloseTo(capped);
+    expect(sp(0.1).total).toBeCloseTo(capped + 0.1);
+    expect(sp(0.1).parts.weather).toBeCloseTo(0.1);
+    expect(sp(-0.5).total).toBe(0);
+    // 0 星照旧不受天气影响
+    expect(rates({}, { weather: { atRate: -0.5, spRate: -0.5 } }).rates.atRate.parts).not.toHaveProperty(
+      'weather',
+    );
+  });
+
   it('开关型荣誉和系数', () => {
     const { flags } = rates({
       agg: { husky: 1, ali: 1, spCoinRate: 0.5, squidwardExpRate: 1, roachClearRate: 0.2 },

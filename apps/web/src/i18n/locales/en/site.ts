@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('en', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    weather1016:
+      'Weather effects on business adjusted: weather occupancy and picky rate now apply after your own occupancy and picky rate are worked out (including the reduced part above the caps), so good weather bonuses are no longer cut down and high-star restaurants no longer shrug off bad weather with spare occupancy; most bad weather is milder, e.g. Smog occupancy -80% → -35% and coins and EXP +100% → +60%, Strong Wind picky rate -70% → -25%, Acid Rain occupancy -90% → -40%, and EXP per table in rain and snow roughly halved; Sunny, Overcast, Cloudy, Sandstorm, Clear Night and Cloudy Night give +5% to +10% more final coins, and the picky rate bonus of Fog, Foggy Night and Starry Night is halved; how often each weather appears is unchanged',
     fair1015:
       'The exchange, futures and bulk subscriptions now use the fair price (above the market price for levels 3–5, close to the cost of crafting): futures unit prices and bulk starting prices go up, and exchange reference prices for level 2–5 ingredients restart from the previous day’s trades or the new fair price; the Bargain market is now priced by level: level 3 2,499, level 4 5,999, level 5 14,999 (level 2 hot ingredients stay at 2,999); Snow Frog and Foie Gras base prices drop to 4,200 and Whole Wheat Flour rises to 9,300 (cooking EXP for dishes that use them changes too); ingredient pages in the game wiki show both the market price and the fair price',
     prices1015:

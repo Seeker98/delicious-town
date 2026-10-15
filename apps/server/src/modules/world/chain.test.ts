@@ -1,7 +1,7 @@
 import { seededRng } from '@dt/shared';
 import { describe, expect, it } from 'vitest';
 import { testConfig } from '../../../test/config';
-import { chainRow, compassRow, drawLots, stayOf, typeShares } from './chain';
+import { chainRow, compassRow, drawLots, stayOf, typeShares, weatherScore } from './chain';
 
 const config = testConfig();
 const chain = config.bundle.weatherChain;
@@ -44,6 +44,16 @@ describe('天气链（天气改版设计 §1）', () => {
     const night = chainRow(chain, W, id('晴'), true);
     expect(night.get(id('晴')) ?? 0).toBe(0);
     expect(night.get(id('夜间晴'))!).toBeGreaterThanOrEqual(0.4);
+  });
+
+  it('stayFixed 写了的天气按它，不看经营分：霾公式分过 95 也只留 0.1（天气加算修正 2026-10-16）', () => {
+    const haze = W.get(id('霾'))!;
+    expect(chain.stayFixed).toEqual({ [String(haze.id)]: 0.1 });
+    expect(weatherScore(haze, chain.score)).toBeGreaterThan(95);
+    expect(stayOf(chain, haze)).toBe(0.1);
+    expect(stayOf({ ...chain, stayFixed: {} }, haze)).toBe(0.4);
+    // 特殊天气仍只持续一轮
+    expect(stayOf({ ...chain, stayFixed: { [String(id('雷暴'))]: 0.5 } }, W.get(id('雷暴'))!)).toBe(0);
   });
 });
 

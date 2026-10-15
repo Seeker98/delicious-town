@@ -170,6 +170,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     note: '',
     score: { at: 0.9, sp: 0.16, k: 4, perTable: 56 },
     stay: [{ min: -Infinity, p: 0 }],
+    stayFixed: {},
     intensity: {},
     counter: [],
     precursors: {},
@@ -665,7 +666,12 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
         errors.push(`weather_chain precursor target ${sp} is not a special weather`);
       for (const [p] of list) if (!byId.has(p)) errors.push(`weather_chain precursor ${p} is not a weather`);
     }
-    for (const id of [...weatherChain.compassBanned, weatherChain.rainbow.id, ...weatherChain.counter.flat()])
+    for (const id of [
+      ...weatherChain.compassBanned,
+      weatherChain.rainbow.id,
+      ...weatherChain.counter.flat(),
+      ...Object.keys(weatherChain.stayFixed).map(Number),
+    ])
       if (!byId.has(id)) errors.push(`weather_chain references unknown weather ${id}`);
   }
 

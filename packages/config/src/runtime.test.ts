@@ -162,12 +162,13 @@ describe('2026-09-30 抓取的数据（问题记录）', () => {
     expect(config.weather.get(31)!.effects).toMatchObject({
       starMCBookRate: 0.05,
       missileCrit: 0.15,
-      spRate: 0.2,
+      // 天气加算修正 2026-10-16：挑剔 +20% → +10%、血月上座 -50% → -15%
+      spRate: 0.1,
     });
     expect(config.weather.get(32)!.effects).toMatchObject({
       roachRate: 1,
       mysteriousRate: 0.015,
-      atRate: -0.5,
+      atRate: -0.15,
     });
     for (const id of [28, 29, 30, 31, 32]) expect(config.weather.get(id)!.note).not.toBe('');
     expect(config.tuning.world.nightWeatherOdds).toEqual([
