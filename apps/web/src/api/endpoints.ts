@@ -93,7 +93,6 @@ import type {
   ExchangeResultDto,
   FlipResultDto,
   FlipSlotsDto,
-  FoodsNeedDto,
   ForgotPasswordInput,
   FridgeDto,
   GemLevelUpDto,
@@ -240,7 +239,6 @@ export const endpoints = {
   oilExpand: () => api.post<Anything>('/api/v1/growth/oil-expand'),
   placeDevice: (slot: number, goodsId: number) =>
     api.post<Anything>('/api/v1/growth/device/place', { slot, goodsId }),
-  removeDevice: (slot: number) => api.post<Anything>('/api/v1/growth/device/remove', { slot }),
   openPlaque2: () => api.post<Anything>('/api/v1/growth/plaque2'),
   rename: (name: string) => api.post<{ name: string }>('/api/v1/growth/rename', { name }),
   moveCost: () => api.get<MoveCostDto>('/api/v1/growth/move'),
@@ -253,8 +251,6 @@ export const endpoints = {
     api.get<CookbookListDto>(`/api/v1/cookbook/list${qs(q)}`),
   cookbookProgress: () => api.get<CookbookProgressDto>('/api/v1/cookbook/progress'),
   cookbookDetail: (id: number) => api.get<CookbookDetailDto>(`/api/v1/cookbook/detail/${id}`),
-  foodsNeed: (q: { street?: number; target: number; foodLevel?: number }) =>
-    api.get<FoodsNeedDto>(`/api/v1/cookbook/foods-need${qs(q)}`),
   learn: (cookbookId: number) => api.post<LearnResultDto>('/api/v1/cookbook/learn', { cookbookId }),
 
   cupboard: () => api.get<CupboardDto>('/api/v1/cupboard/list'),

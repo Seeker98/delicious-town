@@ -2,7 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { grantIconBody } from './admin';
 import { activityBody } from './activity';
 import { rewardItems, rewardItemsNoIcons, sendMailBody } from './mail';
-import { cleanTitleText, graphemeLen, titleText, updateTitleBody } from './titles';
+import { cleanTitleText, graphemeLen } from '../titleText';
+import { titleText, updateTitleBody } from './titles';
 
 const cp = (...xs: number[]) => String.fromCodePoint(...xs);
 const CHEF = cp(0x1f468, 0x200d, 0x1f373);
@@ -127,7 +128,7 @@ describe('没有 Intl.Segmenter 的环境（老 WebView）', () => {
     delete Intl.Segmenter;
     try {
       vi.resetModules();
-      const m = await import('./titles');
+      const m = await import('../titleText');
       expect(m.graphemeLen('ab')).toBe(2);
     } finally {
       Object.defineProperty(Intl, 'Segmenter', { value: saved, configurable: true, writable: true });

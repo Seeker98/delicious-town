@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { CoopDef } from '@dt/shared';
-import { rowKeys } from '../../../utils/activityForm';
+import { inputNum, rowKeys } from '../../../utils/activityForm';
 import RewardItemsEditor from '../RewardItemsEditor.vue';
 import RuleRows from './RuleRows.vue';
 
@@ -10,7 +10,6 @@ const props = defineProps<{ modelValue: CoopDef; errors: Record<string, string> 
 const emit = defineEmits<{ 'update:modelValue': [CoopDef] }>();
 type Def = CoopDef;
 const patch = (p: Partial<Def>) => emit('update:modelValue', { ...props.modelValue, ...p });
-const num = (e: Event) => Number((e.target as HTMLInputElement).value);
 /** 行的稳定 key（终审 I1）：删掉中间一行时，下面的奖励编辑器不错位 */
 const msKeys = ref(rowKeys(props.modelValue.milestones.length));
 const rankKeys = ref(rowKeys(props.modelValue.ranks.length));
@@ -64,7 +63,7 @@ const errsUnder = (prefix: string) => Object.entries(props.errors).filter(([k]) 
         style="width: 8rem"
         :value="m.target"
         :data-testid="`ms-target-${i}`"
-        @input="setMs(i, { target: num($event) })"
+        @input="setMs(i, { target: inputNum($event) })"
       />
       分，个人至少
       <input
@@ -74,7 +73,7 @@ const errsUnder = (prefix: string) => Object.entries(props.errors).filter(([k]) 
         style="width: 6rem"
         :value="m.minContribution"
         :data-testid="`ms-min-${i}`"
-        @input="setMs(i, { minContribution: num($event) })"
+        @input="setMs(i, { minContribution: inputNum($event) })"
       />
       分
       <button
@@ -129,7 +128,7 @@ const errsUnder = (prefix: string) => Object.entries(props.errors).filter(([k]) 
         style="width: 5rem"
         :value="r.from"
         :data-testid="`rank-from-${i}`"
-        @input="setRank(i, { from: num($event) })"
+        @input="setRank(i, { from: inputNum($event) })"
       />
       ~
       <input
@@ -140,7 +139,7 @@ const errsUnder = (prefix: string) => Object.entries(props.errors).filter(([k]) 
         style="width: 5rem"
         :value="r.to"
         :data-testid="`rank-to-${i}`"
-        @input="setRank(i, { to: num($event) })"
+        @input="setRank(i, { to: inputNum($event) })"
       />
       名
       <button

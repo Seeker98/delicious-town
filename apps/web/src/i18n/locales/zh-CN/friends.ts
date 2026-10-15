@@ -76,8 +76,6 @@ export default {
     equips: '厨具',
     noticeTitle: '公告',
     special: '特色菜: ',
-    specialLine: (grade: string, left: number, price: number) =>
-      `${grade} · 剩 ${left} 份 · 每份 ${price} 银币`,
     tasted: '品尝成功, 体力增加了',
     tasteFailed: '品尝失败',
     tastedAlready: '已品尝',

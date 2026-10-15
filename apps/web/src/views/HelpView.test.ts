@@ -3,6 +3,8 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { endpoints } from '../api/endpoints';
 import { CHANGELOG } from '../data/changelog';
+import zhCL from '../i18n/changelog/zh-CN';
+import { headBody } from '../utils/headBody';
 import HelpView from './HelpView.vue';
 
 vi.mock('../api/endpoints', () => ({ endpoints: { openIndex: vi.fn() } }));
@@ -61,5 +63,11 @@ describe('帮助中心（界面改版 P2a，设计 §4.1；P11 重排）', () =>
     localStorage.setItem('dt_changelog_seen', CHANGELOG[0]!.date);
     const seen = await mountView();
     expect(seen.find('[data-testid="help-changelog-new"]').exists()).toBe(false);
+  });
+
+  it('更新记录图块写最新一条的标题（文案分包加载完才有）', async () => {
+    const w = await mountView();
+    const { head, body } = headBody(zhCL[CHANGELOG[0]!.id]);
+    await vi.waitFor(() => expect(w.get('[data-testid="help-changelog"]').text()).toContain(head || body));
   });
 });

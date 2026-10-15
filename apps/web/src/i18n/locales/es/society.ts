@@ -98,6 +98,5 @@ const society: Messages['society'] = {
     cookbooks: 'Recetas aprendidas',
     coin: 'Monedas',
   },
-  needLine: (label, have, need) => `${label}: ${have} / ${need}`,
 };
 export default society;

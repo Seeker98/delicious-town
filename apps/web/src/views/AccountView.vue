@@ -1,19 +1,18 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { RouterLink, useRouter } from 'vue-router';
+import { RouterLink } from 'vue-router';
 import { LOCALE_NAMES, type AccountProfileDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import LangSheet from '../components/account/LangSheet.vue';
 import PasswordSheet from '../components/account/PasswordSheet.vue';
 import ThemeSheet from '../components/account/ThemeSheet.vue';
 import DtArt from '../components/DtArt.vue';
+import { useAccountActions } from '../composables/useAccountActions';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
-import { useConfirmStore } from '../stores/confirm';
 import { useLocaleStore } from '../stores/locale';
 import { useSessionStore } from '../stores/session';
 import { useShardsStore } from '../stores/shards';
-import { useToastStore } from '../stores/toast';
 import { gameDate } from '../utils/format';
 import { readThemePref, type ThemePref } from '../utils/theme';
 
@@ -25,14 +24,12 @@ import { readThemePref, type ThemePref } from '../utils/theme';
 const session = useSessionStore();
 const locale = useLocaleStore();
 const shards = useShardsStore();
-const toast = useToastStore();
-const confirm = useConfirmStore();
-const router = useRouter();
 const p = ref<AccountProfileDto | null>(null);
 const loadError = ref('');
 const sheet = ref<'lang' | 'theme' | 'pw' | null>(null);
 const theme = ref<ThemePref>(readThemePref());
 const t = useT();
+const { resend, logout } = useAccountActions();
 
 onMounted(async () => {
   void shards.load();
@@ -51,21 +48,6 @@ const themeName = computed(() =>
       : t.value.common.themeDark,
 );
 const shardName = computed(() => shards.nameOf(session.me?.shardId));
-
-async function resend() {
-  try {
-    await endpoints.sendVerifyEmail();
-    toast.push(t.value.account.verifySent, 'success');
-  } catch (e) {
-    toast.push(errorMessage(e, t.value.account.sendFailed), 'danger');
-  }
-}
-async function logout() {
-  if (!(await confirm.ask({ title: t.value.account.logoutAsk, ok: t.value.account.logout, danger: true })))
-    return;
-  await session.logout();
-  await router.replace({ name: 'login' });
-}
 </script>
 
 <template>

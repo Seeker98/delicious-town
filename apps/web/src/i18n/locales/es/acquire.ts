@@ -25,7 +25,6 @@ const acquire: Messages['acquire'] = {
   confirmListed: (name, coin, seller, got, tax) =>
     `¿Comprar «${name}» a su precio de venta de ${coin} monedas?\n«${seller}» recibe ${got} monedas; el impuesto es de ${tax} monedas.`,
   bought: (name) => `«${name}» ahora es tuyo`,
-  colRank: 'Puesto',
   colHoldings: (n) => `Tiene ${n}`,
   colValue: (coin) => `Valoración total ${coin}`,
   colDividend: (coin) => `Dividendos acumulados ${coin}`,
@@ -34,7 +33,6 @@ const acquire: Messages['acquire'] = {
   investEmpty: 'Todavía nadie ha adquirido un restaurante',
   myPrice: 'Mi valoración',
   ownedBy: (name) => `Tu restaurante pertenece a «${name}»`,
-  independent: 'Tu restaurante es independiente',
   tend: (n) => `Atender para el dueño (recibes ${n} ingredientes)`,
   tendedToday: 'Hoy ya atendiste para el dueño',
   tendDone: (n) => `¡Hecho! Recibiste ${n} ingredientes`,
@@ -53,9 +51,6 @@ const acquire: Messages['acquire'] = {
   list: 'Poner en venta',
   unlist: 'Retirar',
   release: 'Soltar',
-  rateOption: (pct, coin) => `${pct} (${coin} monedas)`,
-  confirmList: (name, pct, coin, got, days) =>
-    `¿Poner «${name}» en venta al ${pct} de su valoración (${coin} monedas)?\nCon la valoración actual recibirías unas ${got} monedas si alguien lo compra (la valoración cambia cada día). La venta termina a los ${days} días.`,
   listDone: (name) => `«${name}» está en venta`,
   unlistDone: (name) => `«${name}» ya no está en venta`,
   confirmRelease: (name) => `¿Soltar «${name}»?\nNo se devuelve el dinero; vuelve a ser independiente.`,

@@ -1,9 +1,5 @@
 import { z } from 'zod';
-
-/** 友情链接（问题记录 348）：后台维护，游戏里“更多”能看到 */
-export const LINK_NAME_MAX = 20;
-export const LINK_NOTE_MAX = 60;
-export const LINK_URL_MAX = 300;
+import { LINK_NAME_MAX, LINK_NOTE_MAX, LINK_URL_MAX } from '../limits';
 
 export const linkBody = z.object({
   name: z.string().trim().min(1).max(LINK_NAME_MAX),

@@ -76,8 +76,6 @@ const friends: Messages['friends'] = {
     equips: 'Cookware',
     noticeTitle: 'Notice',
     special: 'Signature dish: ',
-    specialLine: (grade, left, price) =>
-      `${grade} · ${left} left · ${price} ${plEn(price, 'coin', 'coins')} each`,
     tasted: 'Tasted! Your Stamina went up',
     tasteFailed: "Couldn't taste it",
     tastedAlready: 'Tasted',

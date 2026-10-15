@@ -393,7 +393,6 @@ export default {
     got: (text: string) => `得到 ${text}`,
     board: '靶条: 正中 50 分, 向外依次 25、10、5 分, 边缘 0 分',
     invalid: '这一镖出手时间对不上, 判为脱靶, 记 0 分',
-    throwLine: (i: number, score: number) => `第 ${i} 镖: ${score} 分`,
     bossThrows: (list: string) => `老板三镖: ${list}`,
     aim: (n: number) => `瞄准第 ${n} 镖`,
     throw: '投掷！',

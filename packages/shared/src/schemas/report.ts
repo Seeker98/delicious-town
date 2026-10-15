@@ -1,24 +1,6 @@
 import { z } from 'zod';
+import { REPORT_REASONS, REPORT_TARGETS, type ReportReason, type ReportTarget } from '../enums';
 import { limitedText } from './mail';
-
-export const REPORT_TARGETS = ['post', 'reply', 'broadcast', 'rest_name', 'notice'] as const;
-export type ReportTarget = (typeof REPORT_TARGETS)[number];
-export const REPORT_TARGET_NAMES: Record<ReportTarget, string> = {
-  post: '帖子',
-  reply: '回复',
-  broadcast: '喇叭',
-  rest_name: '店名',
-  notice: '店铺公告',
-};
-export const REPORT_REASONS = ['abuse', 'porn', 'ad', 'politics', 'other'] as const;
-export type ReportReason = (typeof REPORT_REASONS)[number];
-export const REPORT_REASON_NAMES: Record<ReportReason, string> = {
-  abuse: '辱骂',
-  porn: '色情',
-  ad: '广告',
-  politics: '政治',
-  other: '其他',
-};
 
 export const reportBody = z.object({
   targetType: z.enum(REPORT_TARGETS),

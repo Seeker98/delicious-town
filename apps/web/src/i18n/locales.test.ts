@@ -14,6 +14,12 @@ const ZH_TW = import.meta.glob<string>('./locales/zh-TW/*.ts', {
   import: 'default',
   eager: true,
 });
+/** 更新记录的文案单独分包，繁中同样由简中生成 */
+const CL = import.meta.glob<string>(['./changelog/zh-CN.ts', './changelog/zh-TW.ts'], {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
 
 /** 对象的键路径（值是函数时只看到这一层） */
 function keys(o: unknown, prefix = ''): string[] {
@@ -60,6 +66,9 @@ describe('各语言的翻译（问题记录 272）', () => {
       expect(ZH_TW[path.replace('/zh-CN/', '/zh-TW/')], path).toBe(
         convertZhTw(src, overrides as Array<[string, string]>),
       );
+    expect(CL['./changelog/zh-TW.ts'], 'changelog/zh-TW.ts').toBe(
+      convertZhTw(CL['./changelog/zh-CN.ts']!, overrides as Array<[string, string]>),
+    );
   });
 
   it('转换示例：用台湾用词', () => {

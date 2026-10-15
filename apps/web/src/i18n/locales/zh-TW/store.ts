@@ -63,7 +63,6 @@ export default {
     specialSoon: '今天中午 12 點上新',
     /** 特價折扣檔名：簡中用服務端給的原名（九折、八折……），其他語言按減了多少顯示 */
     tier: (_off: number, cn: string) => cn,
-    specialLine: (price: string, left: number, stock: number) => `${price} 銀幣 · 剩 ${left}/${stock}`,
     grab: '搶購',
     /** 介面改版 P8：餘額、小類膠囊、購買面板 */
     myCoin: '我的銀幣',

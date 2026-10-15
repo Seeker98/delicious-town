@@ -90,12 +90,9 @@ const predict: Messages['predict'] = {
     waiting: 'Closed, awaiting the result',
     summaryHint: '(payout − net cost)',
     mine: 'My trades',
-    mineHint: 'Every trade you made in this event; amounts include fees',
     mineLine: (action, qty, per, buy, total) =>
       `${action} ${qty} ${plEn(qty, 'share', 'shares')} at about ${per} each, ${buy ? 'spent' : 'received'} ${total}`,
     trades: 'Recent server trades',
-    tradesHint:
-      'The last 20 trades by everyone (anonymous), showing which trades pushed the price up or down',
     noTrades: 'No trades yet',
     tradeLine: (action, qty, per, pct) =>
       `${action} ${qty} ${plEn(qty, 'share', 'shares')} at about ${per} each, "Yes" at ${pct}% after`,

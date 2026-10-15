@@ -93,6 +93,5 @@ const society: Messages['society'] = {
     failed: "Échec du passage d'étoile",
   },
   needs: { level: 'Niveau du restaurant', star: 'Étoiles', cookbooks: 'Recettes apprises', coin: 'Pièces' },
-  needLine: (label, have, need) => `${label}\u202f: ${have} / ${need}`,
 };
 export default society;

@@ -1,8 +1,9 @@
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { CHANGELOG } from '../data/changelog';
-import zhCN from '../i18n/locales/zh-CN';
+import { loadChangelog } from '../i18n/changelog';
+import zhCN from '../i18n/changelog/zh-CN';
 import { headBody } from '../utils/headBody';
 import ChangelogView from './ChangelogView.vue';
 
@@ -12,6 +13,8 @@ const DATES = [...new Set(CHANGELOG.map((x) => x.date))];
 const countOn = (dates: string[]) => CHANGELOG.filter((x) => dates.includes(x.date)).length;
 
 describe('ChangelogView（问题记录 348；界面改版 P11 报刊风）', () => {
+  // 文案分包按需加载：先加载好，挂载时直接有
+  beforeAll(() => loadChangelog('zh-CN'));
   beforeEach(() => {
     setActivePinia(createPinia());
     localStorage.clear();
@@ -35,8 +38,8 @@ describe('ChangelogView（问题记录 348；界面改版 P11 报刊风）', () 
 
   it('每条在第一个“: ”处拆开：前面是加粗标题，后面是说明', () => {
     const w = mount(ChangelogView);
-    const first = CHANGELOG.find((x) => headBody(zhCN.site.changelog[x.id]).head)!;
-    const { head, body } = headBody(zhCN.site.changelog[first.id]);
+    const first = CHANGELOG.find((x) => headBody(zhCN[x.id]).head)!;
+    const { head, body } = headBody(zhCN[first.id]);
     const li = w
       .get(`[data-testid="cl-day-${first.date}"]`)
       .findAll('[data-testid="cl-item"]')

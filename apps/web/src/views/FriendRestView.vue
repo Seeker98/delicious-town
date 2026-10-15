@@ -6,6 +6,7 @@ import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { FriendRestDto, TableDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { formatNum } from '../utils/format';
+import { useTableAct } from '../composables/useTableAct';
 import { useT } from '../composables/useT';
 import DtArt from '../components/DtArt.vue';
 import DtLevelRing from '../components/DtLevelRing.vue';
@@ -22,7 +23,6 @@ import { useConfirmStore } from '../stores/confirm';
 import { usePageMenu } from '../stores/pageTitle';
 import { useRestaurantStore } from '../stores/restaurant';
 import { useSessionStore } from '../stores/session';
-import { useToastStore } from '../stores/toast';
 import { GRADE_NAMES, PART_NAMES } from '../utils/labels';
 import { equipName } from '../utils/equipName';
 import { restName, restNotice } from '../utils/npcName';
@@ -34,7 +34,6 @@ import { restName, restNotice } from '../utils/npcName';
  */
 const route = useRoute();
 const router = useRouter();
-const toast = useToastStore();
 const confirm = useConfirmStore();
 const t = useT();
 const catalog = useCatalogStore();
@@ -60,20 +59,8 @@ async function load() {
   }
 }
 
-async function act(fn: () => Promise<unknown>, ok: string, fallback: string) {
-  if (busy.value) return;
-  busy.value = true;
-  try {
-    await fn();
-    toast.push(ok);
-    picked.value = null;
-    await load();
-  } catch (e) {
-    toast.push(errorMessage(e, fallback), 'danger');
-  } finally {
-    busy.value = false;
-  }
-}
+/** 餐桌上的操作：成功了收起面板、重新读取 */
+const act = useTableAct(busy, picked, load);
 
 const isEmpty = (t: TableDto) =>
   (t.customer === 0 || t.customer === -3 || t.customer === -2) && !t.roach && !t.freeloaderRestId;

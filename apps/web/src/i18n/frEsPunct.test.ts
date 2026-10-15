@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 
@@ -18,8 +18,10 @@ export const BAD: Record<'fr' | 'es', RegExp> = {
 function texts(lang: 'fr' | 'es'): Array<[string, string]> {
   const dir = join(__dirname, 'locales', lang);
   const out: Array<[string, string]> = [];
-  for (const name of readdirSync(dir)) {
-    const file = join(dir, name);
+  // 更新记录的文案单独分包，也查
+  const files = [...readdirSync(dir).map((n) => join(dir, n)), join(__dirname, 'changelog', `${lang}.ts`)];
+  for (const file of files) {
+    const name = basename(file);
     const src = ts.createSourceFile(file, readFileSync(file, 'utf8'), ts.ScriptTarget.Latest, true);
     const visit = (node: ts.Node): void => {
       if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) {

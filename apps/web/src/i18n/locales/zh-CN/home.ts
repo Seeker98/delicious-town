@@ -31,7 +31,6 @@ export default {
   /** 首页区块标题、签到块（界面改版 P5） */
   roundTitle: '上一轮',
   todayTitle: '今日',
-  signInTodo: '今天还没签',
   roundCoin: '银币',
   roundExp: '经验',
   roundOil: '耗油',
@@ -43,11 +42,9 @@ export default {
   hasRoach: '店里有蟑螂',
   noRound: '最近没有结算',
   cookbooks: (learned: string, total: string) => `食谱 ${learned}/${total}`,
-  special: (name: string) => `特色菜: ${name}`,
   specialLevel: (level: number) => ` (${level} 级)`,
   /** 首页我的店小格里的等级（问题记录 619） */
   specialLv: (level: number) => `${level} 级`,
-  specialNone: '特色菜: 无',
   assets: (n: string) => `资产: ${n}`,
   todo: '今日待办',
   signIn: '每日签到',
@@ -55,33 +52,23 @@ export default {
   signInBtn: '签到',
   signInFailed: '签到失败',
   mainTag: '主线',
-  /** 首页主线那一行右边的任务入口（问题记录：活跃和任务拆页） */
-  tasksLink: '任务',
   /** 首页餐厅动态卡（问题记录 553） */
   feedTitle: '餐厅动态',
   feedNew: '新',
   activation: (n: number) => `今日活跃 ${n}`,
-  activationClaimable: ', 有奖励可领',
   dining: {
     before: '正在',
     after: (table: number, minutes: number) => `第 ${table} 桌白食, 已 ${minutes} 分钟`,
     end: '结束白食',
     endFailed: '结束白食失败',
   },
-  guideHint: '新手看这里, 有新手兑换码',
   guideCodes: '有可以领的新手兑换码',
   /** 到期没领的理财（理财设计 §3.4） */
   wealthDue: (n: number) => `理财到期 ${n} 笔, 去领取`,
-  /** 首页待办的交易所一行（问题记录 591） */
-  exchangeRow: '交易所: 买卖稀有食材, 期货点名订货',
-  bulkRow: (name: string, level: number, qty: number, demand: number | null) =>
-    `大宗认购: ${name} (${level} 级) 共 ${qty} 份, ${demand === null ? '最后阶段停更中' : `已认购 ${demand} 份`}`,
   /** 首页的短标题和灰色副行（界面改版 P5 返工：标题短、细节放副行） */
   row: {
     claimable: '可领奖',
-    mainClaim: '领主线奖励',
     activity: '今日活跃',
-    activityPts: (n: number) => `活跃度 ${n}`,
     codes: '新手兑换码',
     codesSub: '有可以领的码',
     guide: '新手指引',
@@ -108,7 +95,6 @@ export default {
   },
   devices: '设施',
   notOpened: '未开通',
-  starOpen: (n: number) => `${n} 星开放`,
   empty: '空',
   /** 设施标题右边、锁着的格子并成一行（问题记录 619） */
   emptySlots: (n: number) => `空 ${n} 格`,

@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 import ts from 'typescript';
 import zhCN from './locales/zh-CN';
 import { describe, expect, it } from 'vitest';
@@ -12,8 +12,10 @@ describe('简中文案不用中文括号', () => {
   it('locales/zh-CN 里的字符串没有（）', () => {
     const dir = join(__dirname, 'locales', 'zh-CN');
     const bad: string[] = [];
-    for (const name of readdirSync(dir)) {
-      const file = join(dir, name);
+    // 更新记录的文案单独分包，也查
+    const files = [...readdirSync(dir).map((n) => join(dir, n)), join(__dirname, 'changelog', 'zh-CN.ts')];
+    for (const file of files) {
+      const name = basename(file);
       const src = ts.createSourceFile(file, readFileSync(file, 'utf8'), ts.ScriptTarget.Latest, true);
       const visit = (node: ts.Node): void => {
         if (

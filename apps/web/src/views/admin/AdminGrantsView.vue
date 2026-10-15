@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { adminShort } from '../../utils/gameInput';
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import type { GrantDto, GrantItems, RewardItems } from '@dt/shared';
 import { adminApi } from '../../api/admin';

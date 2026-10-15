@@ -17,7 +17,6 @@ export default {
   moreDishes: (n: number) => `再顯示 ${n} 道`,
   maxShown: (n: string) => `最多顯示 ${n} 條, 用搜索或街道縮小範圍`,
   count: (n: number) => `${formatNum(n)} 條`,
-  apiLink: '開放介面: 給想研究遊戲、做小工具的玩家',
   kinds: { goods: '道具', foods: '食材', cookbooks: '食譜', equips: '廚具', streets: '街道' },
   all: '全部',
   rareOnly: '只看稀有',

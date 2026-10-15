@@ -62,7 +62,6 @@ export default {
     specialSoon: '今天中午 12 点上新',
     /** 特价折扣档名：简中用服务端给的原名（九折、八折……），其他语言按减了多少显示 */
     tier: (_off: number, cn: string) => cn,
-    specialLine: (price: string, left: number, stock: number) => `${price} 银币 · 剩 ${left}/${stock}`,
     grab: '抢购',
     /** 界面改版 P8：余额、小类胶囊、购买面板 */
     myCoin: '我的银币',

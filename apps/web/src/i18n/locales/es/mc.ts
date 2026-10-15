@@ -36,7 +36,6 @@ const mc: Messages['mc'] = {
   learnedOf: (shown, total) => `Aprendidos (${shown} / ${total})`,
   noLearned:
     'Aún no sabes ningún plato estrella: tasa recetas misteriosas en el templo para conseguir fragmentos; con 3 fragmentos aprendes un plato.',
-  dishMeta: (level, road, levelName) => `Nv. ${level ?? '?'} · ${road} · ${levelName}`,
   proficiency: (cur, next) => `Dominio ${cur}${next ? ` / ${next}` : ' (máx.)'}`,
   cook: 'Cocinar',
   foods: 'Ingredientes: ',

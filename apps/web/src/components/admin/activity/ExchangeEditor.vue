@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ACTIVITY_ACTIONS, type ExchangeDef } from '@dt/shared';
-import { rowKeys } from '../../../utils/activityForm';
+import { inputNum, rowKeys } from '../../../utils/activityForm';
 import RewardItemsEditor from '../RewardItemsEditor.vue';
 
 const props = defineProps<{ modelValue: ExchangeDef; errors: Record<string, string> }>();
 const emit = defineEmits<{ 'update:modelValue': [ExchangeDef] }>();
 type Def = ExchangeDef;
 const patch = (p: Partial<Def>) => emit('update:modelValue', { ...props.modelValue, ...p });
-const num = (e: Event) => Number((e.target as HTMLInputElement).value);
 const val = (e: Event) => (e.target as HTMLInputElement | HTMLSelectElement).value;
 const shopKeys = ref(rowKeys(props.modelValue.shop.length));
 const setDrop = (i: number, p: Partial<Def['drops'][number]>) =>
@@ -96,9 +95,9 @@ const inUse = (i: number) =>
       style="width: 5rem"
       :value="Math.round(d.chance * 10000) / 100"
       :data-testid="`drop-chance-${i}`"
-      @input="setDrop(i, { chance: Math.round(num($event) * 100) / 10000 })"
+      @input="setDrop(i, { chance: Math.round(inputNum($event) * 100) / 10000 })"
     />% 掉
-    <select class="dt-adm-in" :value="d.currency" @change="setDrop(i, { currency: num($event) })">
+    <select class="dt-adm-in" :value="d.currency" @change="setDrop(i, { currency: inputNum($event) })">
       <option v-for="(c, k) in modelValue.currencies" :key="k" :value="k">
         {{ c.name || `货币 ${k + 1}` }}
       </option>
@@ -109,7 +108,7 @@ const inUse = (i: number) =>
       class="dt-adm-in"
       style="width: 4rem"
       :value="d.num"
-      @input="setDrop(i, { num: num($event) })"
+      @input="setDrop(i, { num: inputNum($event) })"
     />
     每天最多
     <input
@@ -118,7 +117,7 @@ const inUse = (i: number) =>
       class="dt-adm-in"
       style="width: 5rem"
       :value="d.dailyCap"
-      @input="setDrop(i, { dailyCap: num($event) })"
+      @input="setDrop(i, { dailyCap: inputNum($event) })"
     />
     <button
       type="button"
@@ -157,7 +156,7 @@ const inUse = (i: number) =>
         class="dt-adm-in"
         :value="c.currency"
         :data-testid="`shop-cost-cur-${i}-${k}`"
-        @change="setCost(i, k, { currency: num($event) })"
+        @change="setCost(i, k, { currency: inputNum($event) })"
       >
         <option v-for="(cu, j) in modelValue.currencies" :key="j" :value="j">
           {{ cu.name || `货币 ${j + 1}` }}
@@ -169,7 +168,7 @@ const inUse = (i: number) =>
         class="dt-adm-in"
         style="width: 5rem"
         :value="c.num"
-        @input="setCost(i, k, { num: num($event) })"
+        @input="setCost(i, k, { num: inputNum($event) })"
       />
       <button
         type="button"
@@ -205,7 +204,7 @@ const inUse = (i: number) =>
         style="width: 5rem"
         :value="s.limit"
         :data-testid="`shop-limit-${i}`"
-        @input="setShop(i, { limit: num($event) })"
+        @input="setShop(i, { limit: inputNum($event) })"
       />
       次
       <button
@@ -242,7 +241,7 @@ const inUse = (i: number) =>
       style="width: 5rem"
       :value="modelValue.graceHours"
       data-testid="ex-grace"
-      @input="patch({ graceHours: num($event) })"
+      @input="patch({ graceHours: inputNum($event) })"
     />
     <span v-if="err('def.graceHours')" class="dt-adm-err" data-testid="err-def.graceHours">{{
       err('def.graceHours')

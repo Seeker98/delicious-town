@@ -66,3 +66,11 @@ export function foodLevelLabel(level: number): string {
 export function shortNum(n: number): string {
   return activeMessages().labels.shortNum(n) ?? formatNum(n);
 }
+
+/**
+ * 数量框的值夹到 1~max：空着、0、负数、NaN（v-model.number 清空或乱填）都当 1；max 不到 1 时也是 1。
+ * 原来各面板各写一份，有的用 ?? 1，NaN 会漏过去
+ */
+export function clampQty(x: number | null | undefined, max: number): number {
+  return Math.max(1, Math.min(x || 1, max));
+}

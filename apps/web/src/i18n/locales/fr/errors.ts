@@ -274,7 +274,6 @@ const errors: Messages['errors'] = {
     query_text: 'Le texte de recherche est trop long (20 caractères au plus)',
     cursor: 'Page invalide. Actualisez.',
     post_changed: 'La publication a changé. Actualisez et réessayez.',
-    pick_food: 'Choisissez un ingrédient à offrir',
     pick_count: "Nombre d'ingrédients pariés invalide",
     bad_food: 'Vous ne pouvez parier que sur des ingrédients de niveau 1 à 2',
     not_visible: 'Cette tâche ne peut pas être réclamée pour le moment',

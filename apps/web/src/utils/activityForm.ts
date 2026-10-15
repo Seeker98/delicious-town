@@ -10,6 +10,10 @@ import type {
 import { ApiError } from '../api/client';
 
 type Goal = GoalsDef['goals'][number];
+
+/** 输入框事件里的数（各活动编辑器的 @input / @change 用） */
+export const inputNum = (e: Event) => Number((e.target as HTMLInputElement).value);
+
 export const newGoal = (key = 'signin', target = 1): Goal => ({ key, target, award: {} as Goal['award'] });
 
 export function defaultDef(kind: 'goals'): GoalsDef;

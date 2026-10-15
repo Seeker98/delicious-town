@@ -1,8 +1,10 @@
 /**
  * 游戏内“更新记录”（问题记录 348）：每个玩家看得到的改动在 PR 里加一条，从新到旧。
- * 文字在各语言的 site.changelog 里，按 id 对应；繁中由 pnpm i18n:tw 生成
+ * 加一条：这里最前面加 id 和日期，i18n/changelog/ 下每种语言的文件加同一个 id 的一句话（简中、英、法、西），
+ * 繁中由 pnpm -F @dt/web i18n:tw 生成。这里只有 id 和日期，打进主包（“新”标记要用）；文字按需加载
  */
 export const CHANGELOG = [
+  { id: 'perf1016', date: '2026-10-16' },
   { id: 'weather1016', date: '2026-10-16' },
   { id: 'fair1015', date: '2026-10-15' },
   { id: 'prices1015', date: '2026-10-15' },

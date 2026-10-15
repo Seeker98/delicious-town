@@ -1,7 +1,6 @@
 import type { Messages } from '../..';
 
 const auth: Messages['auth'] = {
-  loginTitle: 'Log in to Delicious Town',
   username: 'Username',
   password: 'Password',
   login: 'Log in',
@@ -14,7 +13,6 @@ const auth: Messages['auth'] = {
   email: 'Email',
   inviteCode: 'Invite code (optional)',
   register: 'Sign up',
-  toLogin: 'Already have an account? Log in',
   registerFailed: 'Sign-up failed',
   usernameRule: 'Usernames are 2–9 characters: Chinese characters, letters, digits, _ and -',
   passwordMin: 'Password must be at least 6 characters',
@@ -22,7 +20,6 @@ const auth: Messages['auth'] = {
   forgotTitle: 'Reset password',
   forgotSent:
     "If this email is registered, a reset email is on its way. Open the link within 1 hour. Didn't get it? Check your spam folder.",
-  forgotEmail: 'The email you signed up with',
   sendReset: 'Send reset email',
   backToLogin: 'Back to login',
   sendFailed: 'Failed to send',
@@ -34,7 +31,6 @@ const auth: Messages['auth'] = {
   resetFailed: 'Reset failed',
   verifying: 'Verifying…',
   verifyOk: 'Email verified',
-  verifyFailed: 'Verification failed',
   enterTown: 'Enter town',
   createTitle: 'Open a restaurant',
   createHint: 'Up to 8 Chinese characters or 12 letters/digits',

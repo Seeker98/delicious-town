@@ -264,7 +264,6 @@ export default {
     query_text: '搜尋詞太長了 (最多 20 字)',
     cursor: '翻頁引數不對, 請重新整理',
     post_changed: '帖子狀態變了, 請重新整理後再試',
-    pick_food: '請選擇要打賞的食材',
     pick_count: '競猜的食材數量不對',
     bad_food: '只能競猜 1~2 級食材',
     not_visible: '這個任務現在不能領取',

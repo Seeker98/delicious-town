@@ -36,8 +36,6 @@ export default {
   /** 分页时：这一页几道 / 一共几道 */
   learnedOf: (shown: number, total: number) => `已学 (${shown} / ${total})`,
   noLearned: '还没有学会特色菜: 在神殿鉴定神秘食谱得到残卷, 3 张残卷就能学会。',
-  dishMeta: (level: number | undefined, road: string, levelName: string) =>
-    `${level ?? '?'} 级 · ${road} · ${levelName}`,
   proficiency: (cur: string, next: string | null) => `熟练度 ${cur}${next ? ` / ${next}` : ' (满级)'}`,
   cook: '烹制',
   foods: '食材: ',

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { formatNum } from '../../utils/format';
+import { clampQty, formatNum } from '../../utils/format';
 import { computed, ref } from 'vue';
 import type { BarAwardDto, ExploreResultDto, TempleDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
@@ -30,7 +30,7 @@ const result = ref<ExploreResultDto | null>(null);
 const map = computed(() => props.data.maps.find((m) => m.goodsId === goodsId.value));
 const byStrength = computed(() => (map.value ? Math.floor(props.data.strength / map.value.needStrength) : 0));
 const max = computed(() => Math.min(map.value?.num ?? 0, byStrength.value, 99));
-const n = computed(() => Math.max(1, Math.min(times.value || 1, max.value)));
+const n = computed(() => clampQty(times.value, max.value));
 const block = computed(() => {
   const x = t.value.temple.explore;
   if ((map.value?.num ?? 0) < 1) return x.noMap;
