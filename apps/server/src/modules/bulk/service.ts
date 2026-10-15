@@ -3,12 +3,12 @@ import type { BulkBidInput, BulkDto, BulkResultDto } from '@dt/shared';
 import type { ShardSettings } from '@dt/config';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import type { BidIn } from './rules';
-import { invalidState, limitReached, requirement } from '../../core/errors';
+import { invalidState, limitReached } from '../../core/errors';
 import { featureAvailable } from '../../core/features';
 import { restLog, runOp, type Op } from '../../core/op';
 import { spendCoin } from '../../core/resources';
 import type { BulkLotTable, DB } from '../../db/schema';
-import { eligibility } from '../exchange/eligibility';
+import { assertExchangeOpen, eligibility } from '../exchange/eligibility';
 import { frozenReason } from '../exchange/guard';
 import { minRaisePrice, standing } from './rules';
 
@@ -269,20 +269,8 @@ async function viewOf(
 export function createBulkService(d: GameDeps) {
   async function bid(o: Op, b: BulkBidInput): Promise<BulkDto> {
     const t = o.tuning.bulk;
-    const et = o.tuning.exchange;
     // 门槛和交易所一样（设计 §1.2）
-    const frozen = await frozenReason(o.tx, o.rest.id);
-    if (frozen !== null) throw invalidState('exchange_frozen', { why: frozen });
-    const reason = await eligibility({
-      db: o.tx,
-      level: o.rest.level,
-      accountId: o.rest.account_id,
-      now: o.now,
-      t: et,
-    });
-    if (reason === 'exchange_level') throw requirement(reason, { need: et.minLevel });
-    if (reason === 'exchange_age') throw requirement(reason, { days: et.minAccountDays });
-    if (reason) throw requirement(reason);
+    await assertExchangeOpen(o);
     // 对批次行拿共享锁：结算第一段拿排他锁，正在提交的出价先提交，之后的出价看到状态已变（设计 §3.2）
     const lot = await o.tx
       .selectFrom('bulk_lot')

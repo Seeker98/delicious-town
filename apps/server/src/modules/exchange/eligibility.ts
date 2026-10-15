@@ -1,5 +1,8 @@
 import type { Kysely } from 'kysely';
+import { invalidState, requirement } from '../../core/errors';
+import type { Op } from '../../core/op';
 import type { DB } from '../../db/schema';
+import { frozenReason } from './guard';
 
 export type EligibilityReason = 'exchange_level' | 'exchange_age' | 'exchange_email';
 
@@ -37,4 +40,22 @@ export async function eligibility(o: {
     o.t,
     o.now,
   );
+}
+
+/** 交易所、大宗认购、期货下单前的检查：没被冻结、满足开通门槛（门槛用交易所的 tuning） */
+export async function assertExchangeOpen(o: Op): Promise<void> {
+  const t = o.tuning.exchange;
+  // 被冻结的店不能下单（156-2 设计 §6.1）
+  const frozen = await frozenReason(o.tx, o.rest.id);
+  if (frozen !== null) throw invalidState('exchange_frozen', { why: frozen });
+  const reason = await eligibility({
+    db: o.tx,
+    level: o.rest.level,
+    accountId: o.rest.account_id,
+    now: o.now,
+    t,
+  });
+  if (reason === 'exchange_level') throw requirement(reason, { need: t.minLevel });
+  if (reason === 'exchange_age') throw requirement(reason, { days: t.minAccountDays });
+  if (reason) throw requirement(reason);
 }
