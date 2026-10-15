@@ -2,8 +2,10 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { FOODS } from '@dt/config';
 import { gameDay, sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
+import { createShard } from '../../../test/fixtures';
 import { createTestGame, foodNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { fid } from '../../../test/items';
+import { setTuning } from '../../../test/town';
 
 const config = testConfig();
 let t: TestGame;
@@ -203,6 +205,19 @@ describe('万能食材兑换（规格书 05 §5.5）', () => {
       expect(f.level).toBe(2);
       expect(f.odds).toBeLessThan(100);
     }
+  });
+
+  it('一次兑换次数不超过区服调参 cupboard.exchangeMaxTimes', async () => {
+    const shardId = await createShard(t.db);
+    await setTuning(t, shardId, { cupboard: { exchangeMaxTimes: 3 } });
+    const ctx = await newRestaurant(t, { shardId, foods: { [fid('一级万能食材')]: 8 } });
+    await expect(c().exchange(ctx, { foodsId: FOODS.masterLevel1, times: 4 })).rejects.toMatchObject({
+      code: 'LIMIT_REACHED',
+      params: { what: 'cupboard_exchange', max: 3 },
+    });
+    expect((await foodNum(t, ctx.restaurantId, fid('一级万能食材'))).num).toBe(8);
+    await c().exchange(ctx, { foodsId: FOODS.masterLevel1, times: 3 });
+    expect((await foodNum(t, ctx.restaurantId, fid('一级万能食材'))).num).toBe(2);
   });
 });
 

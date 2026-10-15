@@ -79,7 +79,7 @@ export function createAdminMail(game: Game) {
       }
       // 全服邮件没有区服，取默认配置
       const expiresDays = (
-        b.scope === 'all' ? config.bundle.tuning : (await game.shards.settings(b.shardId!)).tuning
+        b.scope === 'all' ? config.tuning : (await game.shards.settings(b.shardId!)).tuning
       ).mail.expiresDays;
       const ids = await db.transaction().execute(async (tx) => {
         await lockRewardIcons(tx, items);
