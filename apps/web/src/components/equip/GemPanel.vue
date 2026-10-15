@@ -8,7 +8,7 @@ import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
-import { formatNum, formatPct } from '../../utils/format';
+import { clampQty, formatNum, formatPct } from '../../utils/format';
 import { ATTR_KEYS, ATTR_NAMES } from '../../utils/labels';
 
 const catalog = useCatalogStore();
@@ -25,7 +25,7 @@ async function load() {
 /** 最多能升几组：持有 / 2、体力 / 阶数、99 */
 const maxOf = (x: GemItemDto) =>
   Math.min(Math.floor(x.num / 2), Math.floor((g.value?.strength ?? 0) / x.level), 99);
-const numOf = (x: GemItemDto) => Math.max(1, Math.min(nums[x.goodsId] ?? 1, maxOf(x)));
+const numOf = (x: GemItemDto) => clampQty(nums[x.goodsId], maxOf(x));
 
 async function levelUp(x: GemItemDto) {
   busy.value = true;

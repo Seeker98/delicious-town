@@ -5,7 +5,7 @@ import { computed, onMounted, ref } from 'vue';
 import type { AppraiseResultDto, McOverviewDto, McToolDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
-import { formatNum } from '../../utils/format';
+import { clampQty, formatNum } from '../../utils/format';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
@@ -50,7 +50,7 @@ function rangeLine(x: McToolDto): string {
   return a.range(x.min, x.max, x.rate >= 1 ? a.sure : a.rate(Math.round(x.rate * 100)), x.perNum);
 }
 const maxTimes = computed(() => Math.min(o.value?.recipes ?? 0, tool.value?.num ?? 0, 99));
-const n = computed(() => Math.max(1, Math.min(times.value || 1, maxTimes.value)));
+const n = computed(() => clampQty(times.value, maxTimes.value));
 /** 不能鉴定的原因（问题记录：下拉框里的道具有，按钮却是灰的） */
 const blockReason = computed(() => {
   if (!o.value) return '';

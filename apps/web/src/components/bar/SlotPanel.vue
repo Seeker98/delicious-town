@@ -7,7 +7,7 @@ import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
-import { formatNum, formatPct } from '../../utils/format';
+import { clampQty, formatNum, formatPct } from '../../utils/format';
 import DtArt from '../DtArt.vue';
 import DtSheet from '../DtSheet.vue';
 import QtySheet from '../QtySheet.vue';
@@ -72,7 +72,7 @@ const statsText = computed(() =>
         .join(t.value.events.sep),
 );
 const exMax = computed(() => Math.min(99, Math.floor(props.data.tickets / props.data.krabCoinTickets)));
-const exN = computed(() => Math.max(1, Math.min(exNum.value || 1, exMax.value)));
+const exN = computed(() => clampQty(exNum.value, exMax.value));
 const exBlock = computed(() =>
   exMax.value < 1 ? t.value.bar.slot.noTickets(props.data.krabCoinTickets) : '',
 );

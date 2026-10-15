@@ -15,7 +15,7 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
-import { formatNum } from '../utils/format';
+import { clampQty, formatNum } from '../utils/format';
 import { SHOP_CATS, shopCat, type ShopCat } from '../utils/shopCats';
 
 /**
@@ -108,9 +108,7 @@ const sheetGoods = computed(() =>
   pickedSpecial.value ? (special.value?.goodsId ?? null) : picked.value?.goodsId,
 );
 const unit = computed(() => (pickedSpecial.value ? (special.value?.price ?? 0) : (picked.value?.price ?? 0)));
-const count = computed(() =>
-  pickedSpecial.value ? 1 : Math.max(1, Math.min(num.value, picked.value?.maxBuy ?? 1)),
-);
+const count = computed(() => (pickedSpecial.value ? 1 : clampQty(num.value, picked.value?.maxBuy ?? 1)));
 const total = computed(() => unit.value * count.value);
 /** 限时折扣用的是银币 */
 const sheetDiamond = computed(() => !pickedSpecial.value && diamond.value);
