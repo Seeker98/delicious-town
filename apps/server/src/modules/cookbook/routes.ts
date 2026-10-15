@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { cookbookIdParam, cookbookListQuery, foodsNeedQuery, learnBody } from '@dt/shared';
+import { cookbookIdParam, cookbookListQuery, learnBody } from '@dt/shared';
 import { restCtxOf } from '../../core/deps';
 import { ok, okOp } from '../../http/reply';
 import { parse } from '../../http/validate';
@@ -11,9 +11,6 @@ export function cookbookRoutes(svc: CookbookService): FastifyPluginAsync {
     r.get('/progress', async (req) => ok(await svc.progress(restCtxOf(req))));
     r.get('/detail/:id', async (req) =>
       ok(await svc.detail(restCtxOf(req), parse(cookbookIdParam, req.params).id)),
-    );
-    r.get('/foods-need', async (req) =>
-      ok(await svc.foodsNeed(restCtxOf(req), parse(foodsNeedQuery, req.query))),
     );
     r.post('/learn', async (req) =>
       okOp(await svc.learn(restCtxOf(req), parse(learnBody, req.body).cookbookId)),

@@ -23,7 +23,7 @@ import { deviceSlots } from '../restaurant/reads';
 import { normalizeCounts } from '../settlement/globals';
 import { consumeGoods, grantGoodsOp, hasValidHonor, removeHonor } from '../store/goods';
 import type { WorldService } from '../world/service';
-import { placeDevice, removeDevice } from './devices';
+import { placeDevice } from './devices';
 import { moveCost, oilChecks, renameProblem, starChecks, starCoinOf } from './rules';
 
 export function createGrowthService(d: GameDeps, world: WorldService) {
@@ -201,10 +201,6 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
 
     placeDevice(ctx: RestCtx, b: { slot: number; goodsId: number }) {
       return op(ctx, 'device.place', (o) => placeDevice(o, b.slot, b.goodsId));
-    },
-
-    removeDevice(ctx: RestCtx, b: { slot: number }) {
-      return op(ctx, 'device.remove', (o) => removeDevice(o, b.slot));
     },
 
     openPlaque2(ctx: RestCtx) {

@@ -6,7 +6,6 @@ import {
   moveBody,
   placeDeviceBody,
   renameBody,
-  slotBody,
   toggleBody,
 } from '@dt/shared';
 import { restCtxOf } from '../../core/deps';
@@ -27,9 +26,6 @@ export function growthRoutes(svc: GrowthService): FastifyPluginAsync {
     r.get('/devices', async (req) => ok(await svc.devices(restCtxOf(req))));
     r.post('/device/place', async (req) =>
       okOp(await svc.placeDevice(restCtxOf(req), parse(placeDeviceBody, req.body))),
-    );
-    r.post('/device/remove', async (req) =>
-      okOp(await svc.removeDevice(restCtxOf(req), parse(slotBody, req.body))),
     );
     r.post('/plaque2', async (req) => okOp(await svc.openPlaque2(restCtxOf(req))));
     r.post('/rename', async (req) =>

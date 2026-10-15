@@ -3,7 +3,7 @@ import { emitAction } from '../../core/action';
 import { invalidState, notEnough, requirement } from '../../core/errors';
 import { invalidateAgg } from '../../core/luck';
 import { restLog, type Op } from '../../core/op';
-import { removeEffectSource, upsertEffectSource } from '../effects/service';
+import { upsertEffectSource } from '../effects/service';
 import { slotUnlocked } from '../restaurant/reads';
 import { consumeGoods, countGoods } from '../store/goods';
 
@@ -52,16 +52,4 @@ export async function placeDevice(
   restLog(op, 'device.place', { slot, goodsId });
   await emitAction(op, 'device.place');
   return { slot, goodsId, expiresAt: expiresAt ? expiresAt.toISOString() : null };
-}
-
-/** 撤下设施：设施不退还（牌匾本来就不消耗） */
-export async function removeDevice(op: Op, slot: number): Promise<{ slot: number }> {
-  await op.tx
-    .deleteFrom('restaurant_device')
-    .where('rest_id', '=', op.rest.id)
-    .where('slot', '=', slot)
-    .execute();
-  await removeEffectSource(op.tx, op.rest.id, 'device', slot);
-  invalidateAgg(op);
-  return { slot };
 }

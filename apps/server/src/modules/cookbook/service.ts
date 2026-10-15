@@ -197,6 +197,7 @@ export function createCookbookService(d: GameDeps) {
       };
     },
 
+    /** 还缺多少食材：网页不再调，只有全真模拟器（sim/bot.ts）用 */
     async foodsNeed(ctx: RestCtx, q: FoodsNeedQuery): Promise<FoodsNeedDto> {
       const [levels, have, max] = await Promise.all([
         levelsOf(d.db, ctx.restaurantId),

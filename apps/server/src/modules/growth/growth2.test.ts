@@ -66,14 +66,6 @@ describe('设施（规格书 02 §2.6）', () => {
     await expect(g().openPlaque2(ctx)).rejects.toMatchObject({ code: 'ALREADY_DONE' });
   });
 
-  it('撤下设施：加成消失', async () => {
-    const ctx = await newRestaurant(t, { goods: { [gid('普通宣传海报')]: 1 } });
-    await g().placeDevice(ctx, { slot: 1, goodsId: gid('普通宣传海报') });
-    await g().removeDevice(ctx, { slot: 1 });
-    const effects = await listActiveEffects(t.db, ctx.restaurantId, new Date());
-    expect(effects.some((e) => e.sourceType === 'device')).toBe(false);
-  });
-
   it('设施选项：设施位 + 仓库里的设施道具', async () => {
     const ctx = await newRestaurant(t, { goods: { [gid('普通宣传海报')]: 2, [GOODS.starCert]: 1 } });
     const d = await g().devices(ctx);
