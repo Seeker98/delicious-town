@@ -1,23 +1,23 @@
 {
   "1": {
     "name": "Ensoleillé",
-    "note": "Service\u202f: fréquentation +3\u202f%"
+    "note": "Service\u202f: fréquentation +3\u202f%, pièces finales +10\u202f%"
   },
   "2": {
     "name": "Couvert",
-    "note": "Service\u202f: fréquentation +5\u202f%, EXP finale +10\u202f%\nÀ emporter\u202f: pièces +10\u202f%"
+    "note": "Service\u202f: fréquentation +5\u202f%, EXP finale +10\u202f%, pièces finales +5\u202f%\nÀ emporter\u202f: pièces +10\u202f%"
   },
   "3": {
     "name": "Nuageux",
-    "note": "Prix des ingrédients au marché -20\u202f%\u202f!\nService\u202f: fréquentation +5\u202f%, pièces finales +5\u202f%\nÀ emporter\u202f: pièces +5\u202f%"
+    "note": "Prix des ingrédients au marché -20\u202f%\u202f!\nService\u202f: fréquentation +5\u202f%, pièces finales +10\u202f%\nÀ emporter\u202f: pièces +5\u202f%"
   },
   "4": {
     "name": "Tempête de sable",
-    "note": "Réussite de la combinaison et de la décomposition d'ingrédients -50\u202f%\u202f!\nPrix des ingrédients au marché +50\u202f%\u202f!\nPrécision des missiles -25\u202f%\u202f!\nRisque de se perdre en exploration +25\u202f%\u202f!\nService\u202f: fréquentation +3\u202f%, pièces finales +5\u202f%, EXP finale -50\u202f%\nÀ emporter\u202f: délai de livraison +60\u202f%, réussite -30\u202f%"
+    "note": "Réussite de la combinaison et de la décomposition d'ingrédients -50\u202f%\u202f!\nPrix des ingrédients au marché +50\u202f%\u202f!\nPrécision des missiles -25\u202f%\u202f!\nRisque de se perdre en exploration +25\u202f%\u202f!\nService\u202f: fréquentation +3\u202f%, pièces finales +15\u202f%, EXP finale -50\u202f%\nÀ emporter\u202f: délai de livraison +60\u202f%, réussite -30\u202f%"
   },
   "5": {
     "name": "Grand vent",
-    "note": "Combinaison et décomposition d'ingrédients réussies à 100\u202f%\u202f!\nChance d'ingrédients mystère en exploration +0,8\u202f%\u202f!\nPrécision des missiles -20\u202f%\u202f!\nService\u202f: clients difficiles -70\u202f%\nÀ emporter\u202f: délai de livraison +50\u202f%, réussite -10\u202f%"
+    "note": "Combinaison et décomposition d'ingrédients réussies à 100\u202f%\u202f!\nChance d'ingrédients mystère en exploration +0,8\u202f%\u202f!\nPrécision des missiles -20\u202f%\u202f!\nService\u202f: clients difficiles -25\u202f%\nÀ emporter\u202f: délai de livraison +50\u202f%, réussite -10\u202f%"
   },
   "6": {
     "name": "Arc-en-ciel",
@@ -25,15 +25,15 @@
   },
   "7": {
     "name": "Ouragan",
-    "note": "Combinaison et décomposition d'ingrédients réussies à 100\u202f%\u202f!\nÉchange possible d'ingrédients verrouillés d'amis (frais doublés)\u202f!\nChance d'ingrédients mystère en exploration +1,2\u202f%\u202f!\nPrécision des missiles -35\u202f%\u202f!\nService\u202f: clients difficiles -120\u202f%\nÀ emporter\u202f: délai de livraison +80\u202f%, réussite -80\u202f%"
+    "note": "Combinaison et décomposition d'ingrédients réussies à 100\u202f%\u202f!\nÉchange possible d'ingrédients verrouillés d'amis (frais doublés)\u202f!\nChance d'ingrédients mystère en exploration +1,2\u202f%\u202f!\nPrécision des missiles -35\u202f%\u202f!\nService\u202f: clients difficiles -25\u202f%\nÀ emporter\u202f: délai de livraison +80\u202f%, réussite -80\u202f%"
   },
   "8": {
     "name": "Brouillard",
-    "note": "Chance de meilleure qualité en cuisinant un plat signature +20\u202f%\u202f!\nPrécision des missiles -40\u202f%\u202f!\nRisque de se perdre en exploration +40\u202f%\u202f!\nService\u202f: clients difficiles +20\u202f%, fréquentation +3\u202f%, pièces finales +5\u202f%\nÀ emporter\u202f: délai de livraison +20\u202f%, pièces +20\u202f%, réussite -60\u202f%"
+    "note": "Chance de meilleure qualité en cuisinant un plat signature +20\u202f%\u202f!\nPrécision des missiles -40\u202f%\u202f!\nRisque de se perdre en exploration +40\u202f%\u202f!\nService\u202f: clients difficiles +10\u202f%, fréquentation +3\u202f%, pièces finales +5\u202f%\nÀ emporter\u202f: délai de livraison +20\u202f%, pièces +20\u202f%, réussite -60\u202f%"
   },
   "9": {
     "name": "Smog",
-    "note": "Précision des missiles -10\u202f%\u202f!\nRisque de se perdre en exploration +10\u202f%\u202f!\nService\u202f: clients difficiles +36\u202f%, fréquentation -80\u202f%, pièces finales +100\u202f%, EXP finale +100\u202f%\nÀ emporter\u202f: délai de livraison +40\u202f%, pièces +30\u202f%, réussite -30\u202f%"
+    "note": "Précision des missiles -10\u202f%\u202f!\nRisque de se perdre en exploration +10\u202f%\u202f!\nService\u202f: clients difficiles +35\u202f%, fréquentation -35\u202f%, pièces finales +60\u202f%, EXP finale +60\u202f%\nÀ emporter\u202f: délai de livraison +40\u202f%, pièces +30\u202f%, réussite -30\u202f%"
   },
   "10": {
     "name": "Pluie fine",
@@ -41,27 +41,27 @@
   },
   "11": {
     "name": "Pluie modérée",
-    "note": "Prix des ingrédients au marché +30\u202f%\u202f!\nService\u202f: fréquentation -8\u202f%, EXP par table +1\nÀ emporter\u202f: délai de livraison -10\u202f%, pièces -20\u202f%, EXP +40\u202f%"
+    "note": "Prix des ingrédients au marché +30\u202f%\u202f!\nService\u202f: fréquentation -5\u202f%, EXP par table +1\nÀ emporter\u202f: délai de livraison -10\u202f%, pièces -20\u202f%, EXP +40\u202f%"
   },
   "12": {
     "name": "Forte pluie",
-    "note": "Prix des ingrédients au marché +45\u202f%\u202f!\nService\u202f: fréquentation -12\u202f%, EXP par table +2\nÀ emporter\u202f: délai de livraison -15\u202f%, pièces -30\u202f%, EXP +60\u202f%"
+    "note": "Prix des ingrédients au marché +45\u202f%\u202f!\nService\u202f: fréquentation -10\u202f%, EXP par table +1\nÀ emporter\u202f: délai de livraison -15\u202f%, pièces -30\u202f%, EXP +60\u202f%"
   },
   "13": {
     "name": "Averse",
-    "note": "Prix des ingrédients au marché +60\u202f%\u202f!\nPoints de saison +25\u202f%\u202f!\nService\u202f: fréquentation -20\u202f%, EXP par table +3\nÀ emporter\u202f: délai de livraison -20\u202f%, pièces -40\u202f%, EXP +80\u202f%, réussite -30\u202f%"
+    "note": "Prix des ingrédients au marché +60\u202f%\u202f!\nPoints de saison +25\u202f%\u202f!\nService\u202f: fréquentation -10\u202f%, EXP par table +2\nÀ emporter\u202f: délai de livraison -20\u202f%, pièces -40\u202f%, EXP +80\u202f%, réussite -30\u202f%"
   },
   "14": {
     "name": "Neige fondue",
-    "note": "Portions de plats signature +8\u202f%\u202f!\nPrix des ingrédients au marché +35\u202f%\u202f!\nService\u202f: fréquentation -25\u202f%, clients difficiles -10\u202f%, EXP par table +2\nÀ emporter\u202f: délai de livraison +15\u202f%, pièces +30\u202f%"
+    "note": "Portions de plats signature +8\u202f%\u202f!\nPrix des ingrédients au marché +35\u202f%\u202f!\nService\u202f: fréquentation -15\u202f%, clients difficiles -5\u202f%, EXP par table +1\nÀ emporter\u202f: délai de livraison +15\u202f%, pièces +30\u202f%"
   },
   "15": {
     "name": "Neige légère",
-    "note": "Portions de plats signature +2\u202f%\u202f!\nPrix des ingrédients au marché +65\u202f%\u202f!\nService\u202f: fréquentation -30\u202f%, clients difficiles -20\u202f%, EXP par table +3\nÀ emporter\u202f: délai de livraison +25\u202f%, pièces +50\u202f%, EXP -20\u202f%"
+    "note": "Portions de plats signature +2\u202f%\u202f!\nPrix des ingrédients au marché +65\u202f%\u202f!\nService\u202f: fréquentation -15\u202f%, clients difficiles -10\u202f%, EXP par table +2\nÀ emporter\u202f: délai de livraison +25\u202f%, pièces +50\u202f%, EXP -20\u202f%"
   },
   "16": {
     "name": "Orage",
-    "note": "Réussite du renfort d'ustensiles +10\u202f%\u202f!\nPrix des ingrédients au marché +50\u202f%\u202f!\nCoups critiques des missiles +5\u202f%\u202f!\nService\u202f: fréquentation -10\u202f%, EXP par table +2\nÀ emporter\u202f: délai de livraison -15\u202f%, pièces -15\u202f%, EXP +50\u202f%"
+    "note": "Réussite du renfort d'ustensiles +10\u202f%\u202f!\nPrix des ingrédients au marché +50\u202f%\u202f!\nCoups critiques des missiles +5\u202f%\u202f!\nService\u202f: fréquentation -5\u202f%, EXP par table +1\nÀ emporter\u202f: délai de livraison -15\u202f%, pièces -15\u202f%, EXP +50\u202f%"
   },
   "17": {
     "name": "Averses",
@@ -69,58 +69,58 @@
   },
   "18": {
     "name": "Pluie acide",
-    "note": "Réussite de l'amélioration des gemmes +5\u202f%\u202f!\nRetirer des gemmes est gratuit\u202f!\nPrix des ingrédients au marché +300\u202f%\u202f!\nService\u202f: fréquentation -90\u202f%, EXP par table +2\nÀ emporter\u202f: délai de livraison +100\u202f%, pièces +200\u202f%, EXP +400\u202f%"
+    "note": "Réussite de l'amélioration des gemmes +5\u202f%\u202f!\nRetirer des gemmes est gratuit\u202f!\nPrix des ingrédients au marché +300\u202f%\u202f!\nService\u202f: fréquentation -40\u202f%, EXP par table +1\nÀ emporter\u202f: délai de livraison +100\u202f%, pièces +200\u202f%, EXP +400\u202f%"
   },
   "19": {
     "name": "Grêle",
-    "note": "Réussite des épreuves +1\u202f%\u202f!\nPrix des ingrédients au marché +40\u202f%\u202f!\nService\u202f: fréquentation -20\u202f%, clients difficiles -10\u202f%, EXP par table +1\nÀ emporter\u202f: délai de livraison +15\u202f%, pièces +150\u202f%, EXP +250\u202f%, réussite -60\u202f%"
+    "note": "Réussite des épreuves +1\u202f%\u202f!\nPrix des ingrédients au marché +40\u202f%\u202f!\nService\u202f: fréquentation -10\u202f%, clients difficiles -5\u202f%, EXP par table +1\nÀ emporter\u202f: délai de livraison +15\u202f%, pièces +150\u202f%, EXP +250\u202f%, réussite -60\u202f%"
   },
   "20": {
     "name": "Neige modérée",
-    "note": "Portions de plats signature +3\u202f%\u202f!\nPrix des ingrédients au marché +100\u202f%\u202f!\nService\u202f: fréquentation -40\u202f%, clients difficiles -30\u202f%, EXP par table +3\nÀ emporter\u202f: délai de livraison +35\u202f%, pièces +70\u202f%, EXP -30\u202f%"
+    "note": "Portions de plats signature +3\u202f%\u202f!\nPrix des ingrédients au marché +100\u202f%\u202f!\nService\u202f: fréquentation -20\u202f%, clients difficiles -15\u202f%, EXP par table +2\nÀ emporter\u202f: délai de livraison +35\u202f%, pièces +70\u202f%, EXP -30\u202f%"
   },
   "21": {
     "name": "Forte neige",
-    "note": "Portions de plats signature +4\u202f%\u202f!\nPrix des ingrédients au marché +150\u202f%\u202f!\nService\u202f: fréquentation -50\u202f%, clients difficiles -40\u202f%, EXP par table +4, pièces par table +1\nÀ emporter\u202f: délai de livraison +45\u202f%, pièces +90\u202f%, EXP -40\u202f%"
+    "note": "Portions de plats signature +4\u202f%\u202f!\nPrix des ingrédients au marché +150\u202f%\u202f!\nService\u202f: fréquentation -25\u202f%, clients difficiles -20\u202f%, EXP par table +2, pièces par table +1\nÀ emporter\u202f: délai de livraison +45\u202f%, pièces +90\u202f%, EXP -40\u202f%"
   },
   "22": {
     "name": "Pluie diluvienne",
-    "note": "Réussite des épreuves +2\u202f%\u202f!\nPrix des ingrédients au marché +100\u202f%\u202f!\nService\u202f: fréquentation -30\u202f%, EXP par table +5\nÀ emporter\u202f: délai de livraison -30\u202f%, pièces -60\u202f%, EXP +120\u202f%, réussite -50\u202f%"
+    "note": "Réussite des épreuves +2\u202f%\u202f!\nPrix des ingrédients au marché +100\u202f%\u202f!\nService\u202f: fréquentation -20\u202f%, EXP par table +3\nÀ emporter\u202f: délai de livraison -30\u202f%, pièces -60\u202f%, EXP +120\u202f%, réussite -50\u202f%"
   },
   "23": {
     "name": "Blizzard",
-    "note": "Portions de plats signature +5\u202f%\u202f!\nRéussite des épreuves +3\u202f%\u202f!\nPrix des ingrédients au marché +200\u202f%\u202f!\nService\u202f: fréquentation -60\u202f%, clients difficiles -50\u202f%, EXP par table +4, pièces par table +1\nÀ emporter\u202f: délai de livraison +55\u202f%, pièces +110\u202f%, EXP -50\u202f%, réussite -50\u202f%"
+    "note": "Portions de plats signature +5\u202f%\u202f!\nRéussite des épreuves +3\u202f%\u202f!\nPrix des ingrédients au marché +200\u202f%\u202f!\nService\u202f: fréquentation -25\u202f%, clients difficiles -20\u202f%, EXP par table +2, pièces par table +1\nÀ emporter\u202f: délai de livraison +55\u202f%, pièces +110\u202f%, EXP -50\u202f%, réussite -50\u202f%"
   },
   "24": {
     "name": "Orage violent",
-    "note": "Réussite du renfort d'ustensiles +12\u202f%\u202f!\nCoups critiques des missiles +8\u202f%\u202f!\nService\u202f: clients difficiles -80\u202f%, fréquentation -30\u202f%, EXP par table +3\nÀ emporter\u202f: délai de livraison -15\u202f%, pièces -80\u202f%, EXP +80\u202f%"
+    "note": "Réussite du renfort d'ustensiles +12\u202f%\u202f!\nCoups critiques des missiles +8\u202f%\u202f!\nService\u202f: clients difficiles -25\u202f%, fréquentation -10\u202f%, EXP par table +2\nÀ emporter\u202f: délai de livraison -15\u202f%, pièces -80\u202f%, EXP +80\u202f%"
   },
   "25": {
     "name": "Orage de neige",
-    "note": "Portions de plats signature +15\u202f%\u202f!\nRéussite du renfort d'ustensiles +5\u202f%\u202f!\nPrix des ingrédients au marché +100\u202f%\u202f!\nCoups critiques des missiles +8\u202f%\u202f!\nService\u202f: fréquentation -55\u202f%, clients difficiles -30\u202f%, EXP par table +5\nÀ emporter\u202f: délai de livraison +25\u202f%, pièces +50\u202f%"
+    "note": "Portions de plats signature +15\u202f%\u202f!\nRéussite du renfort d'ustensiles +5\u202f%\u202f!\nPrix des ingrédients au marché +100\u202f%\u202f!\nCoups critiques des missiles +8\u202f%\u202f!\nService\u202f: fréquentation -25\u202f%, clients difficiles -15\u202f%, EXP par table +3\nÀ emporter\u202f: délai de livraison +25\u202f%, pièces +50\u202f%"
   },
   "27": {
     "name": "Grand gel",
-    "note": "Réussite des épreuves +3\u202f%\u202f!\nPrix des ingrédients au marché +250\u202f%\u202f!\nService\u202f: fréquentation -70\u202f%, clients difficiles -100\u202f%, EXP par table +5, pièces par table +10\nÀ emporter\u202f: délai de livraison +150\u202f%, pièces +200\u202f%, EXP +100\u202f%, réussite -50\u202f%"
+    "note": "Réussite des épreuves +3\u202f%\u202f!\nPrix des ingrédients au marché +250\u202f%\u202f!\nService\u202f: fréquentation -25\u202f%, clients difficiles -35\u202f%, EXP par table +3, pièces par table +10\nÀ emporter\u202f: délai de livraison +150\u202f%, pièces +200\u202f%, EXP +100\u202f%, réussite -50\u202f%"
   },
   "28": {
     "name": "Nuit claire",
-    "note": "Service\u202f: fréquentation +10\u202f%, clients difficiles -5\u202f%"
+    "note": "Service\u202f: fréquentation +10\u202f%, clients difficiles -5\u202f%, pièces finales +10\u202f%"
   },
   "29": {
     "name": "Nuit nuageuse",
-    "note": "Prix des ingrédients au marché -30\u202f%\u202f!\nService\u202f: fréquentation +5\u202f%"
+    "note": "Prix des ingrédients au marché -30\u202f%\u202f!\nService\u202f: fréquentation +5\u202f%, pièces finales +5\u202f%"
   },
   "30": {
     "name": "Nuit brumeuse",
-    "note": "Chance de meilleure qualité en cuisinant un plat signature +25\u202f%\u202f!\nPrécision des missiles -50\u202f%\u202f!\nService\u202f: fréquentation +5\u202f%, clients difficiles +10\u202f%"
+    "note": "Chance de meilleure qualité en cuisinant un plat signature +25\u202f%\u202f!\nPrécision des missiles -50\u202f%\u202f!\nService\u202f: fréquentation +5\u202f%, clients difficiles +5\u202f%"
   },
   "31": {
     "name": "Nuit étoilée",
-    "note": "Réussite de l'expertise des recettes mystère +5\u202f%\u202f!\nCoups critiques des missiles +15\u202f%\u202f!\nService\u202f: clients difficiles +20\u202f%"
+    "note": "Réussite de l'expertise des recettes mystère +5\u202f%\u202f!\nCoups critiques des missiles +15\u202f%\u202f!\nService\u202f: clients difficiles +10\u202f%"
   },
   "32": {
     "name": "Lune de sang",
-    "note": "Risque d'un cafard à chaque table doublé\u202f!\nChance d'ingrédients mystère en exploration +1,5\u202f%\u202f!\nPrix des ingrédients au marché +100\u202f%\u202f!\nService\u202f: fréquentation -50\u202f%, clients difficiles -99\u202f%\u202f!"
+    "note": "Risque d'un cafard à chaque table doublé\u202f!\nChance d'ingrédients mystère en exploration +1,5\u202f%\u202f!\nPrix des ingrédients au marché +100\u202f%\u202f!\nService\u202f: fréquentation -15\u202f%, clients difficiles -30\u202f%"
   }
 }

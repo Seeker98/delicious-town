@@ -81,6 +81,11 @@ const PRECURSORS: Record<string, Array<[number, number]>> = {
 const RAINBOW = { id: 6, from: 2, to: 1 };
 /** 司天罗盘不出酸雨、冰冻（用户 2026-10-12） */
 const COMPASS_BANNED = [18, 27];
+/**
+ * 写死的留在原地概率（天气加算修正 2026-10-16）：霾的经营分公式按上座 0.9、挑剔不过软上限算，
+ * 把挑剔 +35% 算得很值钱（167 分），真实结算里低星店只有五六成，仍按坏天气一闪就过
+ */
+const STAY_FIXED: Record<string, number> = { 9: 0.1 };
 /** 特殊天气的目标占比（白天 / 夜间） */
 const SP_TARGET: Record<'day' | 'night', Record<string, number>> = {
   day: { 6: 0.008, 18: 0.004, 27: 0.003, 7: 0.003, 24: 0.003 },
@@ -166,6 +171,7 @@ export function fitChain(config: GameConfig): { chain: WeatherChain; report: str
     note: '天气马尔可夫链（天气改版设计 §1）：由 pnpm -F @dt/server weather-chain 生成，别手改；规则改 apps/server/src/sim/weatherChain.ts',
     score: SCORE,
     stay: STAY,
+    stayFixed: STAY_FIXED,
     intensity: INTENSITY,
     counter: COUNTER,
     precursors: PRECURSORS,

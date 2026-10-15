@@ -11,9 +11,10 @@
    "specialflag": 0,
    "probability": 0.1793,
    "value": {
-    "atRate": 0.03
+    "atRate": 0.03,
+    "coinRate": 0.1
    },
-   "note": "经营: 上座率+3%",
+   "note": "经营: 上座率+3%, 最终银币+10%",
    "valueSource": "har"
   },
   {
@@ -26,9 +27,10 @@
    "value": {
     "atRate": 0.05,
     "expRate": 0.1,
-    "taCoinRate": 0.1
+    "taCoinRate": 0.1,
+    "coinRate": 0.05
    },
-   "note": "经营: 上座率+5%, 最终经验+10%\r\n外卖: 银币+10%",
+   "note": "经营: 上座率+5%, 最终经验+10%, 最终银币+5%\r\n外卖: 银币+10%",
    "valueSource": "har"
   },
   {
@@ -40,11 +42,11 @@
    "probability": 0.1195,
    "value": {
     "atRate": 0.05,
-    "coinRate": 0.05,
+    "coinRate": 0.1,
     "marketCoin": -0.2,
     "taCoinRate": 0.05
    },
-   "note": "菜场食材价格-20%!\r\n经营: 上座率+5%, 最终银币+5%\r\n外卖: 银币+5%",
+   "note": "菜场食材价格-20%!\r\n经营: 上座率+5%, 最终银币+10%\r\n外卖: 银币+5%",
    "valueSource": "har"
   },
   {
@@ -56,7 +58,7 @@
    "probability": 0.012,
    "value": {
     "atRate": 0.03,
-    "coinRate": 0.05,
+    "coinRate": 0.15,
     "expRate": -0.5,
     "marketCoin": 0.5,
     "foodsOperRate": -0.5,
@@ -65,7 +67,7 @@
     "hitRate": -0.25,
     "mapLostRate": 0.25
    },
-   "note": "合成与分解食材成功率-50%!\r\n菜场食材价格+50%!\r\n导弹命中率-25%!\r\n探险时迷路概率+25%!\r\n经营: 上座率+3%, 最终银币+5%, 最终经验-50%\r\n外卖: 配送时间+60%, 成功率-30%",
+   "note": "合成与分解食材成功率-50%!\r\n菜场食材价格+50%!\r\n导弹命中率-25%!\r\n探险时迷路概率+25%!\r\n经营: 上座率+3%, 最终银币+15%, 最终经验-50%\r\n外卖: 配送时间+60%, 成功率-30%",
    "valueSource": "har"
   },
   {
@@ -76,14 +78,14 @@
    "specialflag": 0,
    "probability": 0.0478,
    "value": {
-    "spRate": -0.7,
+    "spRate": -0.25,
     "foodsOperRate": 1,
     "taNeedtimeRate": 0.5,
     "taSuccessoddsRate": -0.1,
     "hitRate": -0.2,
     "mysteriousRate": 0.008
    },
-   "note": "合成与分解食材100%成功!\r\n探险时获得神秘食材概率+0.8%!\r\n导弹命中率-20%!\r\n经营: 挑剔率-70%\r\n外卖: 配送时间+50%, 成功率-10%",
+   "note": "合成与分解食材100%成功!\r\n探险时获得神秘食材概率+0.8%!\r\n导弹命中率-20%!\r\n经营: 挑剔率-25%\r\n外卖: 配送时间+50%, 成功率-10%",
    "valueSource": "har"
   },
   {
@@ -114,14 +116,14 @@
    "probability": 0.0079,
    "value": {
     "changeFoodsFlag": 1,
-    "spRate": -1.2,
+    "spRate": -0.25,
     "foodsOperRate": 1.2,
     "taNeedtimeRate": 0.8,
     "taSuccessoddsRate": -0.8,
     "hitRate": -0.35,
     "mysteriousRate": 0.012
    },
-   "note": "合成与分解食材100%成功!\r\n可交换好友加锁食材(手续费翻倍)!\r\n探险时获得神秘食材概率+1.2%!\r\n导弹命中率-35%!\r\n经营: 挑剔率-120%\r\n外卖: 配送时间+80%, 成功率-80%",
+   "note": "合成与分解食材100%成功!\r\n可交换好友加锁食材(手续费翻倍)!\r\n探险时获得神秘食材概率+1.2%!\r\n导弹命中率-35%!\r\n经营: 挑剔率-25%\r\n外卖: 配送时间+80%, 成功率-80%",
    "valueSource": "har"
   },
   {
@@ -132,7 +134,7 @@
    "specialflag": 0,
    "probability": 0.0598,
    "value": {
-    "spRate": 0.2,
+    "spRate": 0.1,
     "atRate": 0.03,
     "coinRate": 0.05,
     "mcGoldRate": 0.2,
@@ -142,7 +144,7 @@
     "hitRate": -0.4,
     "mapLostRate": 0.4
    },
-   "note": "烹制特色菜时高品级概率+20%!\r\n导弹命中率-40%!\r\n探险时迷路概率+40%!\r\n经营: 挑剔率+20%, 上座率+3%, 最终银币+5%\r\n外卖: 配送时间+20%, 银币+20%, 成功率-60%",
+   "note": "烹制特色菜时高品级概率+20%!\r\n导弹命中率-40%!\r\n探险时迷路概率+40%!\r\n经营: 挑剔率+10%, 上座率+3%, 最终银币+5%\r\n外卖: 配送时间+20%, 银币+20%, 成功率-60%",
    "valueSource": "har"
   },
   {
@@ -153,17 +155,17 @@
    "specialflag": 0,
    "probability": 0.0478,
    "value": {
-    "spRate": 0.36,
-    "atRate": -0.8,
-    "coinRate": 1,
-    "expRate": 1,
+    "spRate": 0.35,
+    "atRate": -0.35,
+    "coinRate": 0.6,
+    "expRate": 0.6,
     "taNeedtimeRate": 0.4,
     "taCoinRate": 0.3,
     "taSuccessoddsRate": -0.3,
     "hitRate": -0.1,
     "mapLostRate": 0.1
    },
-   "note": "导弹命中率-10%!\r\n探险时迷路概率+10%!\r\n经营: 挑剔率+36%, 上座率-80%, 最终银币+100%, 最终经验+100%\r\n外卖: 配送时间+40%, 银币+30%, 成功率-30%",
+   "note": "导弹命中率-10%!\r\n探险时迷路概率+10%!\r\n经营: 挑剔率+35%, 上座率-35%, 最终银币+60%, 最终经验+60%\r\n外卖: 配送时间+40%, 银币+30%, 成功率-30%",
    "valueSource": "har"
   },
   {
@@ -193,13 +195,13 @@
    "probability": 0.0598,
    "value": {
     "marketCoin": 0.3,
-    "atRate": -0.08,
+    "atRate": -0.05,
     "expValue": 1,
     "taNeedtimeRate": -0.1,
     "taCoinRate": -0.2,
     "taExpRate": 0.4
    },
-   "note": "菜场食材价格+30%!\r\n经营: 上座率-8%, 每桌经验+1\r\n外卖: 配送时间-10%, 银币-20%, 经验+40%",
+   "note": "菜场食材价格+30%!\r\n经营: 上座率-5%, 每桌经验+1\r\n外卖: 配送时间-10%, 银币-20%, 经验+40%",
    "valueSource": "parsed"
   },
   {
@@ -210,14 +212,14 @@
    "specialflag": 0,
    "probability": 0.0359,
    "value": {
-    "atRate": -0.12,
-    "expValue": 2,
+    "atRate": -0.1,
+    "expValue": 1,
     "marketCoin": 0.45,
     "taNeedtimeRate": -0.15,
     "taCoinRate": -0.3,
     "taExpRate": 0.6
    },
-   "note": "菜场食材价格+45%!\r\n经营: 上座率-12%, 每桌经验+2\r\n外卖: 配送时间-15%, 银币-30%, 经验+60%",
+   "note": "菜场食材价格+45%!\r\n经营: 上座率-10%, 每桌经验+1\r\n外卖: 配送时间-15%, 银币-30%, 经验+60%",
    "valueSource": "har"
   },
   {
@@ -230,14 +232,14 @@
    "value": {
     "marketCoin": 0.6,
     "shilingRate": 0.25,
-    "atRate": -0.2,
-    "expValue": 3,
+    "atRate": -0.1,
+    "expValue": 2,
     "taNeedtimeRate": -0.2,
     "taCoinRate": -0.4,
     "taExpRate": 0.8,
     "taSuccessoddsRate": -0.3
    },
-   "note": "菜场食材价格+60%!\r\n时令值+25%!\r\n经营: 上座率-20%, 每桌经验+3\r\n外卖: 配送时间-20%, 银币-40%, 经验+80%, 成功率-30%",
+   "note": "菜场食材价格+60%!\r\n时令值+25%!\r\n经营: 上座率-10%, 每桌经验+2\r\n外卖: 配送时间-20%, 银币-40%, 经验+80%, 成功率-30%",
    "valueSource": "parsed"
   },
   {
@@ -250,13 +252,13 @@
    "value": {
     "mcNumRate": 0.08,
     "marketCoin": 0.35,
-    "atRate": -0.25,
-    "spRate": -0.1,
-    "expValue": 2,
+    "atRate": -0.15,
+    "spRate": -0.05,
+    "expValue": 1,
     "taNeedtimeRate": 0.15,
     "taCoinRate": 0.3
    },
-   "note": "特色菜烹制份数+8%!\r\n菜场食材价格+35%!\r\n经营: 上座率-25%, 挑剔率-10%, 每桌经验+2\r\n外卖: 配送时间+15%, 银币+30%",
+   "note": "特色菜烹制份数+8%!\r\n菜场食材价格+35%!\r\n经营: 上座率-15%, 挑剔率-5%, 每桌经验+1\r\n外卖: 配送时间+15%, 银币+30%",
    "valueSource": "parsed"
   },
   {
@@ -269,14 +271,14 @@
    "value": {
     "mcNumRate": 0.02,
     "marketCoin": 0.65,
-    "atRate": -0.3,
-    "spRate": -0.2,
-    "expValue": 3,
+    "atRate": -0.15,
+    "spRate": -0.1,
+    "expValue": 2,
     "taNeedtimeRate": 0.25,
     "taCoinRate": 0.5,
     "taExpRate": -0.2
    },
-   "note": "特色菜烹制份数+2%!\r\n菜场食材价格+65%!\r\n经营: 上座率-30%, 挑剔率-20%, 每桌经验+3\r\n外卖: 配送时间+25%, 银币+50%, 经验-20%",
+   "note": "特色菜烹制份数+2%!\r\n菜场食材价格+65%!\r\n经营: 上座率-15%, 挑剔率-10%, 每桌经验+2\r\n外卖: 配送时间+25%, 银币+50%, 经验-20%",
    "valueSource": "parsed"
   },
   {
@@ -287,8 +289,8 @@
    "specialflag": 0,
    "probability": 0.0299,
    "value": {
-    "atRate": -0.1,
-    "expValue": 2,
+    "atRate": -0.05,
+    "expValue": 1,
     "marketCoin": 0.5,
     "equipRate": 0.1,
     "taNeedtimeRate": -0.15,
@@ -296,7 +298,7 @@
     "taExpRate": 0.5,
     "missileCrit": 0.05
    },
-   "note": "强化厨具成功率+10%!\r\n菜场食材价格+50%!\r\n导弹暴击率+5%!\r\n经营: 上座率-10%, 每桌经验+2\r\n外卖: 配送时间-15%, 银币-15%, 经验+50%",
+   "note": "强化厨具成功率+10%!\r\n菜场食材价格+50%!\r\n导弹暴击率+5%!\r\n经营: 上座率-5%, 每桌经验+1\r\n外卖: 配送时间-15%, 银币-15%, 经验+50%",
    "valueSource": "har"
   },
   {
@@ -328,14 +330,14 @@
    "value": {
     "gemLevelUpRate": 0.05,
     "removeGemFree": 1,
-    "atRate": -0.9,
-    "expValue": 2,
+    "atRate": -0.4,
+    "expValue": 1,
     "marketCoin": 3,
     "taNeedtimeRate": 1,
     "taCoinRate": 2,
     "taExpRate": 4
    },
-   "note": "宝石升阶成功率+5%!\r\n摘除宝石无需费用!\r\n菜场食材价格+300%!\r\n经营: 上座率-90%, 每桌经验+2\r\n外卖: 配送时间+100%, 银币+200%, 经验+400%",
+   "note": "宝石升阶成功率+5%!\r\n摘除宝石无需费用!\r\n菜场食材价格+300%!\r\n经营: 上座率-40%, 每桌经验+1\r\n外卖: 配送时间+100%, 银币+200%, 经验+400%",
    "valueSource": "har"
   },
   {
@@ -348,15 +350,15 @@
    "value": {
     "trialRate": 0.01,
     "marketCoin": 0.4,
-    "atRate": -0.2,
-    "spRate": -0.1,
+    "atRate": -0.1,
+    "spRate": -0.05,
     "expValue": 1,
     "taNeedtimeRate": 0.15,
     "taCoinRate": 1.5,
     "taExpRate": 2.5,
     "taSuccessoddsRate": -0.6
    },
-   "note": "试炼时成功率+1%!\r\n菜场食材价格+40%!\r\n经营: 上座率-20%, 挑剔率-10%, 每桌经验+1\r\n外卖: 配送时间+15%, 银币+150%, 经验+250%, 成功率-60%",
+   "note": "试炼时成功率+1%!\r\n菜场食材价格+40%!\r\n经营: 上座率-10%, 挑剔率-5%, 每桌经验+1\r\n外卖: 配送时间+15%, 银币+150%, 经验+250%, 成功率-60%",
    "valueSource": "parsed"
   },
   {
@@ -369,14 +371,14 @@
    "value": {
     "mcNumRate": 0.03,
     "marketCoin": 1.0,
-    "atRate": -0.4,
-    "spRate": -0.3,
-    "expValue": 3,
+    "atRate": -0.2,
+    "spRate": -0.15,
+    "expValue": 2,
     "taNeedtimeRate": 0.35,
     "taCoinRate": 0.7,
     "taExpRate": -0.3
    },
-   "note": "特色菜烹制份数+3%!\r\n菜场食材价格+100%!\r\n经营: 上座率-40%, 挑剔率-30%, 每桌经验+3\r\n外卖: 配送时间+35%, 银币+70%, 经验-30%",
+   "note": "特色菜烹制份数+3%!\r\n菜场食材价格+100%!\r\n经营: 上座率-20%, 挑剔率-15%, 每桌经验+2\r\n外卖: 配送时间+35%, 银币+70%, 经验-30%",
    "valueSource": "parsed"
   },
   {
@@ -389,15 +391,15 @@
    "value": {
     "mcNumRate": 0.04,
     "marketCoin": 1.5,
-    "atRate": -0.5,
-    "spRate": -0.4,
-    "expValue": 4,
+    "atRate": -0.25,
+    "spRate": -0.2,
+    "expValue": 2,
     "coinValue": 1,
     "taNeedtimeRate": 0.45,
     "taCoinRate": 0.9,
     "taExpRate": -0.4
    },
-   "note": "特色菜烹制份数+4%!\r\n菜场食材价格+150%!\r\n经营: 上座率-50%, 挑剔率-40%, 每桌经验+4, 每桌银币+1\r\n外卖: 配送时间+45%, 银币+90%, 经验-40%",
+   "note": "特色菜烹制份数+4%!\r\n菜场食材价格+150%!\r\n经营: 上座率-25%, 挑剔率-20%, 每桌经验+2, 每桌银币+1\r\n外卖: 配送时间+45%, 银币+90%, 经验-40%",
    "valueSource": "parsed"
   },
   {
@@ -410,14 +412,14 @@
    "value": {
     "trialRate": 0.02,
     "marketCoin": 1.0,
-    "atRate": -0.3,
-    "expValue": 5,
+    "atRate": -0.2,
+    "expValue": 3,
     "taNeedtimeRate": -0.3,
     "taCoinRate": -0.6,
     "taExpRate": 1.2,
     "taSuccessoddsRate": -0.5
    },
-   "note": "试炼时成功率+2%!\r\n菜场食材价格+100%!\r\n经营: 上座率-30%, 每桌经验+5\r\n外卖: 配送时间-30%, 银币-60%, 经验+120%, 成功率-50%",
+   "note": "试炼时成功率+2%!\r\n菜场食材价格+100%!\r\n经营: 上座率-20%, 每桌经验+3\r\n外卖: 配送时间-30%, 银币-60%, 经验+120%, 成功率-50%",
    "valueSource": "parsed"
   },
   {
@@ -431,16 +433,16 @@
     "mcNumRate": 0.05,
     "trialRate": 0.03,
     "marketCoin": 2.0,
-    "atRate": -0.6,
-    "spRate": -0.5,
-    "expValue": 4,
+    "atRate": -0.25,
+    "spRate": -0.2,
+    "expValue": 2,
     "coinValue": 1,
     "taNeedtimeRate": 0.55,
     "taCoinRate": 1.1,
     "taExpRate": -0.5,
     "taSuccessoddsRate": -0.5
    },
-   "note": "特色菜烹制份数+5%!\r\n试炼时成功率+3%!\r\n菜场食材价格+200%!\r\n经营: 上座率-60%, 挑剔率-50%, 每桌经验+4, 每桌银币+1\r\n外卖: 配送时间+55%, 银币+110%, 经验-50%, 成功率-50%",
+   "note": "特色菜烹制份数+5%!\r\n试炼时成功率+3%!\r\n菜场食材价格+200%!\r\n经营: 上座率-25%, 挑剔率-20%, 每桌经验+2, 每桌银币+1\r\n外卖: 配送时间+55%, 银币+110%, 经验-50%, 成功率-50%",
    "valueSource": "parsed"
   },
   {
@@ -453,14 +455,14 @@
    "value": {
     "equipRate": 0.12,
     "missileCrit": 0.08,
-    "atRate": -0.3,
-    "spRate": -0.8,
-    "expValue": 3,
+    "atRate": -0.1,
+    "spRate": -0.25,
+    "expValue": 2,
     "taNeedtimeRate": -0.15,
     "taCoinRate": -0.8,
     "taExpRate": 0.8
    },
-   "note": "强化厨具成功率+12%!\r\n导弹暴击率+8%!\r\n经营: 挑剔率-80%, 上座率-30%, 每桌经验+3\r\n外卖: 配送时间-15%, 银币-80%, 经验+80%",
+   "note": "强化厨具成功率+12%!\r\n导弹暴击率+8%!\r\n经营: 挑剔率-25%, 上座率-10%, 每桌经验+2\r\n外卖: 配送时间-15%, 银币-80%, 经验+80%",
    "valueSource": "parsed"
   },
   {
@@ -471,9 +473,9 @@
    "specialflag": 0,
    "probability": 0.006,
    "value": {
-    "atRate": -0.55,
-    "spRate": -0.3,
-    "expValue": 5,
+    "atRate": -0.25,
+    "spRate": -0.15,
+    "expValue": 3,
     "marketCoin": 1,
     "mcNumRate": 0.15,
     "equipRate": 0.05,
@@ -481,7 +483,7 @@
     "taCoinRate": 0.5,
     "missileCrit": 0.08
    },
-   "note": "特色菜烹制份数+15%!\r\n强化厨具成功率+5%!\r\n菜场食材价格+100%!\r\n导弹暴击率+8%!\r\n经营: 上座率-55%, 挑剔率-30%, 每桌经验+5\r\n外卖: 配送时间+25%, 银币+50%",
+   "note": "特色菜烹制份数+15%!\r\n强化厨具成功率+5%!\r\n菜场食材价格+100%!\r\n导弹暴击率+8%!\r\n经营: 上座率-25%, 挑剔率-15%, 每桌经验+3\r\n外卖: 配送时间+25%, 银币+50%",
    "valueSource": "har"
   },
   {
@@ -492,10 +494,10 @@
    "specialflag": 1,
    "probability": 0.0096,
    "value": {
-    "atRate": -0.7,
-    "spRate": -1,
+    "atRate": -0.25,
+    "spRate": -0.35,
     "coinValue": 10,
-    "expValue": 5,
+    "expValue": 3,
     "marketCoin": 2.5,
     "taNeedtimeRate": 1.5,
     "taCoinRate": 2,
@@ -503,7 +505,7 @@
     "trialRate": 0.03,
     "taSuccessoddsRate": -0.5
    },
-   "note": "试炼时成功率+3%!\r\n菜场食材价格+250%!\r\n经营: 上座率-70%, 挑剔率-100%, 每桌经验+5, 每桌银币+10\r\n外卖: 配送时间+150%, 银币+200%, 经验+100%, 成功率-50%",
+   "note": "试炼时成功率+3%!\r\n菜场食材价格+250%!\r\n经营: 上座率-25%, 挑剔率-35%, 每桌经验+3, 每桌银币+10\r\n外卖: 配送时间+150%, 银币+200%, 经验+100%, 成功率-50%",
    "valueSource": "har"
   },
   {
@@ -515,9 +517,10 @@
    "probability": null,
    "value": {
     "atRate": 0.1,
-    "spRate": -0.05
+    "spRate": -0.05,
+    "coinRate": 0.1
    },
-   "note": "经营: 上座率+10%, 挑剔率-5%",
+   "note": "经营: 上座率+10%, 挑剔率-5%, 最终银币+10%",
    "valueSource": "har"
   },
   {
@@ -529,9 +532,10 @@
    "probability": null,
    "value": {
     "atRate": 0.05,
-    "marketCoin": -0.3
+    "marketCoin": -0.3,
+    "coinRate": 0.05
    },
-   "note": "菜场食材价格-30%!\r\n经营: 上座率+5%",
+   "note": "菜场食材价格-30%!\r\n经营: 上座率+5%, 最终银币+5%",
    "valueSource": "har"
   },
   {
@@ -543,11 +547,11 @@
    "probability": null,
    "value": {
     "atRate": 0.05,
-    "spRate": 0.1,
+    "spRate": 0.05,
     "mcGoldRate": 0.25,
     "hitRate": -0.5
    },
-   "note": "烹制特色菜时高品级概率+25%!\r\n导弹命中率-50%!\r\n经营: 上座率+5%, 挑剔率+10%",
+   "note": "烹制特色菜时高品级概率+25%!\r\n导弹命中率-50%!\r\n经营: 上座率+5%, 挑剔率+5%",
    "valueSource": "har"
   },
   {
@@ -560,9 +564,9 @@
    "value": {
     "starMCBookRate": 0.05,
     "missileCrit": 0.15,
-    "spRate": 0.2
+    "spRate": 0.1
    },
-   "note": "神秘食谱鉴定成功率+5%!\r\n导弹暴击率+15%!\r\n经营: 挑剔率+20%",
+   "note": "神秘食谱鉴定成功率+5%!\r\n导弹暴击率+15%!\r\n经营: 挑剔率+10%",
    "valueSource": "parsed"
   },
   {
@@ -576,10 +580,10 @@
     "roachRate": 1,
     "mysteriousRate": 0.015,
     "marketCoin": 1,
-    "atRate": -0.5,
-    "spRate": -0.99
+    "atRate": -0.15,
+    "spRate": -0.3
    },
-   "note": "每桌出现蟑螂概率提升1倍!\r\n探险时获得神秘食材概率+1.5%!\r\n菜场食材价格+100%!\r\n经营: 上座率-50%, 挑剔率-99%!",
+   "note": "每桌出现蟑螂概率提升1倍!\r\n探险时获得神秘食材概率+1.5%!\r\n菜场食材价格+100%!\r\n经营: 上座率-15%, 挑剔率-30%",
    "valueSource": "parsed"
   }
  ]

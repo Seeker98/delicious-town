@@ -282,6 +282,8 @@ export const weatherChainFile = z
     note: z.string(),
     score: z.object({ at: z.number(), sp: z.number(), k: z.number(), perTable: z.number() }).strict(),
     stay: z.array(z.object({ min: z.number(), p: prob }).strict()).min(1),
+    /** 按天气写死的留在原地概率，优先于按经营分分档（天气加算修正 2026-10-16：霾） */
+    stayFixed: z.record(z.string(), prob).default({}),
     intensity: z.record(z.string(), int),
     counter: z.array(z.tuple([int, int])),
     precursors: z.record(z.string(), z.array(z.tuple([int, prob]))),

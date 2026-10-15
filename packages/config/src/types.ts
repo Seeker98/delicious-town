@@ -165,7 +165,7 @@ export interface Weather {
 
 /**
  * 天气马尔可夫链（天气改版设计 §1，game/weather_chain.json）：键都是编号的字符串。
- * score 经营分模型；stay 按经营分从高到低分档；intensity 雨类、雪冰类的强度；counter 日夜对应天气；
+ * score 经营分模型；stay 按经营分从高到低分档；stayFixed 按天气写死的留在原地概率（优先于分档）；intensity 雨类、雪冰类的强度；counter 日夜对应天气；
  * precursors 特殊天气 → [前兆, 相对系数]；rainbow 虹（从哪类转到哪类时出）；compassBanned 司天罗盘不出的天气；
  * types 类型矩阵；spk 特殊天气系数；q 类型内权重
  */
@@ -173,6 +173,7 @@ export interface WeatherChain {
   note: string;
   score: { at: number; sp: number; k: number; perTable: number };
   stay: Array<{ min: number; p: number }>;
+  stayFixed: Record<string, number>;
   intensity: Record<string, number>;
   counter: Array<[number, number]>;
   precursors: Record<string, Array<[number, number]>>;

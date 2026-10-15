@@ -28,9 +28,11 @@ export function weatherScore(w: Weather, m: WeatherChain['score']): number {
   );
 }
 
-/** 留在原地的概率：按经营分分档；特殊天气只持续一轮 */
+/** 留在原地的概率：按经营分分档，stayFixed 里写了的按它；特殊天气只持续一轮 */
 export function stayOf(chain: WeatherChain, w: Weather): number {
   if (w.special) return 0;
+  const fixed = chain.stayFixed[String(w.id)];
+  if (fixed !== undefined) return fixed;
   const s = weatherScore(w, chain.score);
   for (const tier of chain.stay) if (s >= tier.min) return tier.p;
   return 0;

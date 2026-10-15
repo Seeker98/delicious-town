@@ -37,13 +37,13 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
     base: rt.atRateBase + rt.atRatePerStar * s,
     cookbook,
     effects: v(a, 'atRate'),
-    weather: v(w, 'atRate'),
     renown: rest.renown < 0 ? st.negativeRenownAtRate : 0,
     float: atFloat,
   });
   // 溢出转经验按折算前的合计算（街道再平衡第二版）
   const leftAt = (at.total - st.atOverflowThreshold) / (v(a, 'atToExp') > 0 ? 1 : st.atOverflowDivisor);
-  const atCapped = atSoftCap(at, st.atSoftCapAt, st.atSoftCapRate);
+  // 天气在软上限之后按点数加（天气加算修正 2026-10-16）：好天气不被打成 1/3，高星店也不靠软上限以上的余量抵掉坏天气
+  const atCapped = afterCap(atSoftCap(at, st.atSoftCapAt, st.atSoftCapRate), v(w, 'atRate'));
   const atRate = Math.min(Math.max(atCapped.total, 0), 1);
 
   const spFloat = st.spFloatPerStar * s * (rng.next() - st.spFloatCenter);
@@ -54,7 +54,6 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
     base: rt.spRateBase + rt.spRatePerStar * s,
     learn: streetTotal > 0 ? st.spLearnRate * Math.min(1, localLearned / streetTotal) : 0,
     effects: v(a, 'spRate'),
-    weather: v(w, 'spRate'),
     float: spFloat,
   });
 
@@ -80,7 +79,7 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
   const luckSum = rest.luck + v(a, 'luckValue') + v(w, 'luckValue');
   const rates: Rates = {
     atRate: { total: atRate, parts: atCapped.parts },
-    spRate: softCap(sp, st.spSoftCapAt, st.spSoftCapRate),
+    spRate: clip01(afterCap(softCap(sp, st.spSoftCapAt, st.spSoftCapRate), v(w, 'spRate'))),
     coinRate: coin,
     expRate: part(expParts),
     coinValue: part({ effects: v(a, 'coinValue'), weather: v(w, 'coinValue') }),
@@ -104,6 +103,15 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
   };
   return { rates, flags };
 }
+
+/** 天气在软上限之后加（天气加算修正 2026-10-16）：记成分项 weather，合计不截断，截断在外面做 */
+export function afterCap(p: RatePart, weather: number): RatePart {
+  if (weather === 0) return p;
+  return { total: round(p.total + weather), parts: { ...p.parts, weather: round(weather) } };
+}
+
+/** 合计截到 0~1，分项不动 */
+const clip01 = (p: RatePart): RatePart => ({ ...p, total: Math.min(Math.max(p.total, 0), 1) });
 
 /**
  * 挑剔率截到 0~1，再过软上限（挑剔顾客调整 2026-10-12）：超过 at 的部分只算 rate。
