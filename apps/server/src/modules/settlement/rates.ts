@@ -47,8 +47,12 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
   const atRate = Math.min(Math.max(atCapped.total, 0), 1);
 
   const spFloat = st.spFloatPerStar * s * (rng.next() - st.spFloatCenter);
+  // 学菜（收益模型改版 2026-10-15）：本街学会的道数 ÷ 本街菜数 × spLearnRate，只看道数不看品级，照样走软上限
+  const streetTotal = g.cookbooks.idsByStreet.get(rest.streetId)?.length ?? 0;
+  const localLearned = input.counts.street[String(rest.streetId)] ?? 0;
   const sp = part({
     base: rt.spRateBase + rt.spRatePerStar * s,
+    learn: streetTotal > 0 ? st.spLearnRate * Math.min(1, localLearned / streetTotal) : 0,
     effects: v(a, 'spRate'),
     weather: v(w, 'spRate'),
     float: spFloat,

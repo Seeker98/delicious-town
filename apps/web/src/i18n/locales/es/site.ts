@@ -31,6 +31,8 @@ const site: Messages['site'] = {
     new Date(Date.UTC(2000, 0, 2 + w)).toLocaleDateString('es', { timeZone: 'UTC', weekday: 'short' }),
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    income1015:
+      'Ingresos del restaurante revisados: los clientes normales también pagan por un plato de tu calle (un plato aprendido paga el 4,8\u00a0% de su precio, como mucho 64 por mesa; uno no aprendido paga 10 + el nivel de estrellas); un cliente exigente satisfecho paga 4 veces lo que paga un cliente normal por el mismo plato; cuantos más platos de tu calle aprendas, más alta es la tasa de clientes exigentes (hasta +15\u00a0% con todos aprendidos, sigue sujeta al tope); las monedas y la EXP finales de cada medalla de calle se reequilibraron para las nuevas reglas, mira la bonificación de la calle en la página de mudanza',
     streets1014:
       'Bonificaciones de las calles reajustadas: las monedas y la EXP finales de cada medalla de calle se reequilibraron, también para los restaurantes que ya están en una calle (menos penalización de monedas en las Calles Fusión I y II y la Calle Guangdong; Calle Grecia EXP final +85\u00a0% → +80\u00a0% y sin bonificación de monedas; la Calle Shandong pierde la ocupación -20\u00a0%, EXP por mesa +6 → +2; mira la bonificación de la calle en la página de mudanza). La ocupación por encima del 70\u00a0% solo cuenta un tercio, la que dan las recetas aprendidas se reduce a la mitad, y la parte por encima del 120\u00a0% sigue convirtiéndose en EXP',
     fix1014c:

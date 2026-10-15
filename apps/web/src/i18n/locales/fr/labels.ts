@@ -59,6 +59,7 @@ const labels: Messages['labels'] = {
     pot: 'Collection de plantes',
     painting: 'Collection de tableaux',
     softCap: 'Réduction au-delà du seuil',
+    learn: 'Recettes locales apprises',
     atOverflow: 'Excédent de fréquentation',
     starPotential: "Potentiel d'étoiles",
     newbie: 'EXP débutant',

@@ -50,6 +50,32 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     expect(r.tables[0]).toMatchObject({ customer: 1, last: { type: 1, coin: 10, exp: 2, oil: 2 } });
   });
 
+  describe('普通顾客按本街菜价付（收益模型改版 2026-10-15）', () => {
+    const newbie = config.cookbookIndex.idsByStreet.get(0)!;
+    const all = Object.fromEntries(newbie.map((id) => [id, 1]));
+    // 浮动两个、第 1 桌蟑螂和挑剔各一个、点菜一个、后 3 张空桌蟑螂各一个
+    const seq = (pick: number) => [0.5, 0.65, 0.9, 0.9, pick, 0.9, 0.9, 0.9];
+
+    it('点到学会的本街菜：菜价 × 4% × 1.2，不超过 64、不低于 10 + 星级', () => {
+      expect(rules.settlement.normalDishRate).toBe(0.04);
+      expect(rules.settlement.normalCoinCap).toBe(64);
+      const r = settle({ cookbooks: all }, {}, seq(0));
+      const want = Math.max(10, Math.min(price(newbie[0]!) * 0.04 * 1.2, 64));
+      expect(r.tables[0]!.last).toMatchObject({ type: 1, coin: Math.round(want * 100) / 100 });
+    });
+
+    it('点到没学会的本街菜付基础价 10 + 星级', () => {
+      const one = { [newbie[68]!]: 1 };
+      const r = settle({ rest: { star: 2 }, cookbooks: one }, {}, [0.5, 0.65, 0.9, 0.9, 0, 0.9, 0.9, 0.9]);
+      expect(r.tables.find((x) => x.last?.type === 1)!.last).toMatchObject({ coin: 12 });
+    });
+
+    it('外街的菜不算：只学外街菜时付基础价', () => {
+      const r = settle({ cookbooks: { [street1]: 5 } }, {}, seq(0));
+      expect(r.tables[0]!.last).toMatchObject({ type: 1, coin: 10 });
+    });
+  });
+
   it('经验倍率：每桌经验先乘倍率，再吃经验加成', () => {
     const r = settle({}, { tuning: withMultiplier(5) }, [0.5, 0.65, 0.9, 0.9, 0.9, 0.9, 0.9]);
     expect(r.tables[0]!.last).toMatchObject({ exp: 10, coin: 10 });
@@ -291,7 +317,8 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     );
     expect(r.customers).toEqual({ '6': 1, '1': 1, '0': 2 });
     expect(r.tables[0]!.last).toMatchObject({ type: 6, coin: 1, exp: 1, oil: 1 });
-    expect(r.coin).toBe(10);
+    // 章鱼哥 1 + 普通顾客基础价 10 + 3 星（收益模型改版 2026-10-15）
+    expect(r.coin).toBe(14);
   });
 
   it('特色菜（输入存在时）：普通顾客吃 1 份半价；卖出时乘这一级的倍率（3 级 ×2.5，问题记录 412）', () => {

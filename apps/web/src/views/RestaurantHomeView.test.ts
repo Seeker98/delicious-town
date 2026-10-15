@@ -455,7 +455,7 @@ describe('RestaurantHomeView', () => {
     const w = await mountView();
     const box = w.find('[data-testid="plankton"]');
     expect(box.text()).toContain('挑剔率 -120%');
-    expect(box.text()).toContain('没人点菜');
+    expect(box.text()).toContain('只剩普通顾客付钱');
     expect(box.text()).toContain('每桌耗油 +5');
   });
 

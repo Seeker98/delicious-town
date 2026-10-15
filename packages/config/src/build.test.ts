@@ -1569,11 +1569,15 @@ describe('新手大礼包和食材随机券（问题记录 331）', () => {
 });
 
 describe('货币回收 240-1 的区服数值（默认值见 docs/design/银币回收-数值.md）', () => {
-  it('菜价倍率 0.15；2~5 级食材 ×1.3/2/3/4；2~4 星收 200 万、500 万、1000 万；搬街费星级系数 0.5', () => {
+  it('菜价倍率 0.16（收益模型改版 2026-10-15，原 0.15）；2~5 级食材 ×1.3/2/3/4；2~4 星收 200 万、500 万、1000 万；搬街费星级系数 0.5', () => {
     const { bundle, errors } = buildBundle(readSourceDir(defaultDataDir()));
     expect(errors).toEqual([]);
     const t = bundle!.tuning;
-    expect(t.settlement.dishCoinRate).toBe(0.15);
+    expect(t.settlement.dishCoinRate).toBe(0.16);
+    // 普通顾客按菜价 4%，满意的挑剔顾客是它的 4 倍；上限 64 不超过最便宜的菜（360）满意挑剔顾客付的钱
+    expect(t.settlement.normalDishRate).toBe(0.04);
+    expect(t.settlement.dishCoinRate).toBeCloseTo(t.settlement.normalDishRate * 4, 9);
+    expect(t.settlement.normalCoinCap).toBeLessThanOrEqual(Math.floor(360 * t.settlement.dishCoinRate) * 1.2);
     expect(t.market.levelPriceRate).toEqual([1, 1.3, 2, 3, 4, 1, 1]);
     expect(t.growth.starCoin).toEqual([0, 2000000, 5000000, 10000000]);
     expect(t.growth.moveStarRate).toBe(0.5);

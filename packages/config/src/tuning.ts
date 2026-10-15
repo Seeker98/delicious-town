@@ -66,6 +66,8 @@ export const tuningSchema = z.object({
     localRatePerStar: num,
     oilBase: num,
     coinBase: num,
+    /** 普通顾客基础价每星加多少（收益模型改版 2026-10-15）：没学会点的菜时付 coinBase + 它 × 星级 */
+    normalCoinPerStar: num.min(0),
     expBase: num,
     handleRateBase: num,
     handleRatePerStar: num,
@@ -105,6 +107,12 @@ export const tuningSchema = z.object({
     coinMultiplier: z.number().positive(),
     /** 菜价倍率（问题记录 240-1）：挑剔顾客、蟹老板按菜价付钱和外卖单价都乘它 */
     dishCoinRate: z.number().positive(),
+    /** 普通顾客按菜价付的比例（收益模型改版 2026-10-15）：点到本街学会的菜付 菜价 × 它 × (1 + 普通品级加成) */
+    normalDishRate: z.number().min(0),
+    /** 普通顾客按菜价付的上限（不含加成）；不超过最便宜的菜满意挑剔顾客付的钱 */
+    normalCoinCap: z.number().min(0),
+    /** 学菜加挑剔率（收益模型改版 2026-10-15）：本街学满时加多少，按本街学会的道数比例 */
+    spLearnRate: z.number().min(0),
     roachRateBase: num,
     roachRatePerStar: num,
     /** 一家店同时最多多少比例的桌子是蟑螂桌（向上取整，至少 1 张）；自然长的和好友放的合计（问题记录 228） */
