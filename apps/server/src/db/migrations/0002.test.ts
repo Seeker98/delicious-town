@@ -24,7 +24,6 @@ describe('迁移 0002', () => {
       promo_on: false,
       cookfoods_flag: 0,
       plaque2_open: false,
-      main_task_step: 1,
       state_reason: null,
     });
     expect(r.cookbook_counts).toEqual({ learned: 0, grade: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], street: {} });

@@ -122,7 +122,6 @@ export interface RestaurantTable {
   promo_on: Default<boolean>;
   cookfoods_flag: Default<number>;
   plaque2_open: Default<boolean>;
-  main_task_step: Default<number>;
   /** 问题记录 318：0 = 还没按新任务换算过老号进度；1 = 已换算 */
   quest_version: Default<number>;
   state_reason: Nullable<string>;
@@ -321,12 +320,6 @@ export interface WeeklyClaimTable {
   week: string;
   quest_id: number;
   claimed_at: TsDefault;
-}
-
-export interface TaskDoneTable {
-  rest_id: number;
-  task_id: number;
-  done_at: Ts;
 }
 
 export interface IncomeRoundTable {
@@ -1490,7 +1483,6 @@ export interface DB {
   market_guess: MarketGuessTable;
   shop_special: ShopSpecialTable;
   event_counter: EventCounterTable;
-  task_done: TaskDoneTable;
   quest_done: QuestDoneTable;
   weekly_counter: WeeklyCounterTable;
   weekly_claim: WeeklyClaimTable;
