@@ -171,11 +171,9 @@ export async function payDividends(
             .insertInto('acquire_holder')
             .values({ rest_id: ownerId, dividend_total: done.coin })
             .onConflict((oc) =>
-              oc
-                .column('rest_id')
-                .doUpdateSet((eb) => ({
-                  dividend_total: eb('acquire_holder.dividend_total', '+', done.coin),
-                })),
+              oc.column('rest_id').doUpdateSet((eb) => ({
+                dividend_total: eb('acquire_holder.dividend_total', '+', done.coin),
+              })),
             )
             .execute();
           restLog(op, 'acquire.dividend', { n: done.rests.size, coin: done.coin });

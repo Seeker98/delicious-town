@@ -5,6 +5,7 @@ import type {
   AcquireRankDto,
   AcquireRestDto,
   AcquireResultDto,
+  AcquireTendAllDto,
   AcquireTendDto,
   AcquireViewDto,
   OpenCookbookBrief,
@@ -541,7 +542,8 @@ export const endpoints = {
   acquireList: (restId: number, rate: number) =>
     api.post<{ restId: number; rate: number; until: string }>('/api/v1/acquire/list', { restId, rate }),
   acquireUnlist: (restId: number) => api.post<{ restId: number }>('/api/v1/acquire/unlist', { restId }),
-  acquireTend: () => api.post<AcquireTendDto>('/api/v1/acquire/tend', {}),
+  acquireTend: (restId: number) => api.post<AcquireTendDto>('/api/v1/acquire/tend', { restId }),
+  acquireTendAll: () => api.post<AcquireTendAllDto>('/api/v1/acquire/tend-all', {}),
   fund: () => api.get<FundViewDto>('/api/v1/fund'),
   fundDeposit: (tier: string) => api.post<FundViewDto>('/api/v1/fund/deposit', { tier }),
   fundClaim: () => api.post<FundViewDto>('/api/v1/fund/claim', {}),

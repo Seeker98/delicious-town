@@ -4001,6 +4001,62 @@ button.dt-row {
   min-height: 40px;
   white-space: nowrap;
 }
+/* 收购改版（2026-10-16）：被收购中、名下的店的几格数，两列 */
+.dt-acq-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 12px 14px;
+}
+/* 被收购中：老板今天打理了没有那一行 */
+.dt-acq-line {
+  padding: 0 14px 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--dt-muted);
+}
+/* 名下的店：全部打理那一行 */
+.dt-acq-all {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-acq-all > .dt-row-sub {
+  flex: 1;
+  min-width: 0;
+}
+.dt-acq-all > .btn,
+.dt-acq-hold > .btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+/* 名下一家：左边整块点开面板，右边打理按钮 */
+.dt-acq-hold-open {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dt-acq-hold-open {
+    transition: transform var(--dt-dur-press) var(--dt-ease-out);
+  }
+  .dt-acq-hold-open:active {
+    transform: scale(0.98);
+  }
+}
+/* 有老板的店：为什么不能强收 */
+.dt-acq-why {
+  padding: 10px 12px;
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-soft-warning);
+  color: var(--dt-ink-warning);
+}
 .dt-num {
   font-variant-numeric: tabular-nums;
 }

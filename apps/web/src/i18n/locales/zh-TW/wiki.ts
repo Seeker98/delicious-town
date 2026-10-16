@@ -195,7 +195,7 @@ export default {
           (n: G) =>
             `${n.newbieExp.maxLevel} 級以下結算經驗有額外加成 (1 級 ${formatPct(n.newbieExp.rate, { sign: true })}, 逐級減少), 前期升級很快。`,
           (n: G) =>
-            `${n.acquire.minStar} 星以上的餐廳有身價、可以被收購: 在首頁“資產”那一行點“收購”進去, 付它的身價就能收下, 原主人得 ${formatPct(1 - n.acquire.taxRate, { digits: 0 })}, ${formatPct(n.acquire.taxRate, { digits: 0 })} 是稅, 名下最多 ${n.acquire.maxHoldings} 家。被收購的店每天給老闆分紅 (前一天結算銀幣的 ${formatPct(n.acquire.dividendRate, { digits: 0 })}, 滿 ${n.acquire.minRounds} 輪才發), 被收購的店每天替老闆打理一次能得 ${n.acquire.tendFoods} 份食材, 老闆那天的分紅再多 ${formatPct(n.acquire.tendBonus, { digits: 0 })}。被收購了也可以按身價贖身, 贖身後 ${n.acquire.protectDays} 天內不會再被收購。`,
+            `${n.acquire.minStar} 星以上的餐廳有身價 (近 7 天日均結算銀幣 × ${formatNum(n.acquire.priceMultiple)}), 可以被收購: 在首頁“資產”那一行點“收購”進去。自己 ${n.acquire.buyerMinStar} 星以上、註冊滿 ${n.acquire.buyerMinAccountDays} 天才能收購, 名下最多 ${n.acquire.maxHoldings} 家。強收只能收沒有老闆的店: 店自己得 ${formatPct(n.acquire.firstStoreRate, { digits: 0 })}, 併購諮詢費 ${formatPct(n.acquire.firstBurnRate, { digits: 0 })} 和 ${formatPct(n.acquire.taxRate, { digits: 0 })} 的稅銷燬; 有老闆的店只能等老闆掛牌後買下, 原老闆得 ${formatPct(1 - n.acquire.resaleStoreRate - n.acquire.taxRate, { digits: 0 })}, 店得 ${formatPct(n.acquire.resaleStoreRate, { digits: 0 })}。被收購的店每輪結算讓 ${formatPct(n.acquire.cedeRate, { digits: 1 })} 給老闆; 老闆每天可以打理一次 (付這家店日均的 ${formatPct(n.acquire.tendCostRate, { digits: 0 })}), 之後這家店的結算 × ${formatNum(n.acquire.tendMultiplier)}, 讓給老闆的變成 ${formatPct(n.acquire.cedeTendRate, { digits: 1 })}; 老闆 ${n.acquire.tendReleaseDays} 天沒打理會自動放手。被收購的店可以按基礎身價贖身, 老闆得 ${formatPct(1 - n.acquire.redeemBurnRate - n.acquire.taxRate, { digits: 0 })}, 贖身後 ${n.acquire.protectDays} 天內不會再被收購。`,
         ],
       },
       {

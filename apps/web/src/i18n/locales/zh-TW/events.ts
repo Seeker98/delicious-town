@@ -203,7 +203,8 @@ export default {
     // 收購（問題記錄 421）
     'acquire.bought': (p) =>
       `花 ${formatNum(n(p, 'price'))} 銀幣${p.way === 'listed' ? '買下了掛牌的' : '收購了'}「${String(p.name ?? '')}」`,
-    'acquire.taken': (p) => `「${String(p.byName ?? '')}」花 ${formatNum(n(p, 'price'))} 銀幣收購了你的餐廳`,
+    'acquire.taken': (p) =>
+      `「${String(p.byName ?? '')}」花 ${formatNum(n(p, 'price'))} 銀幣收購了你的餐廳${n(p, 'got') > 0 ? `, 你得到 ${formatNum(n(p, 'got'))} 銀幣` : ''}`,
     'acquire.sold': (p) =>
       `名下的「${String(p.name ?? '')}」被「${String(p.to ?? '')}」買走, 你得到 ${formatNum(n(p, 'got'))} 銀幣`,
     'acquire.redeemed': (p) =>
@@ -211,8 +212,18 @@ export default {
     'acquire.lost': (p) => `「${String(p.name ?? '')}」贖回了自己, 你得到 ${formatNum(n(p, 'got'))} 銀幣`,
     'acquire.released': (p) => `放手了名下的「${String(p.name ?? '')}」`,
     'acquire.freed': (p) => `「${String(p.byName ?? '')}」放手了你的餐廳, 你又自主經營了`,
-    'acquire.dividend': (p) => `昨天名下 ${n(p, 'n')} 家店分紅共 ${formatNum(n(p, 'coin'))} 銀幣`,
-    'acquire.tended': (p) => `替老闆「${String(p.ownerName ?? '')}」打理了餐廳, 得到 ${n(p, 'n')} 份食材`,
+    'acquire.dividend': (p) => `名下 ${n(p, 'n')} 家店的抽成到賬 ${formatNum(n(p, 'coin'))} 銀幣`,
+    // 改版前是被收購的店替老闆打理、得食材（老記錄帶 n）；改版後是老闆打理名下的店
+    'acquire.tended': (p) =>
+      p.n !== undefined
+        ? `替老闆「${String(p.ownerName ?? '')}」打理了餐廳, 得到 ${n(p, 'n')} 份食材`
+        : `打理了「${String(p.name ?? '')}」, 付了 ${formatNum(n(p, 'cost'))} 銀幣${n(p, 'packs') > 0 ? `, 送了 ${n(p, 'packs')} 個補給包` : ''}`,
+    'acquire.tendedBy': (p) =>
+      `老闆「${String(p.ownerName ?? '')}」打理了你的餐廳${n(p, 'packs') > 0 ? `, 送來 ${n(p, 'packs')} 個補給包` : ''}`,
+    'acquire.refund': (p) => `讓給老闆的 ${formatNum(n(p, 'coin'))} 銀幣退回來了`,
+    'acquire.autoReleased': (p) => `「${String(p.name ?? '')}」${n(p, 'days')} 天沒打理, 自動放手了`,
+    'acquire.autoFreed': (p) =>
+      `老闆「${String(p.byName ?? '')}」${n(p, 'days')} 天沒打理, 你的餐廳又自主經營了`,
     'dine.started': (p) => `去「${String(p.hostName ?? '')}」白食`,
     'dine.ended': (p) => `在「${String(p.hostName ?? '')}」白食結束`,
     /** 白食者吃完走了（店主那邊，問題記錄 553）；店主得到的道具或銀幣寫在後面（565） */
