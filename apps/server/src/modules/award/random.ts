@@ -23,6 +23,8 @@ export interface RandomAwardOptions {
   level: number;
   /** 厨具档：物品池里放进奖励等级 ≤ 它的厨具；经验、银币 × (厨具档 + 1) */
   equipFlag?: number;
+  /** 物品池里不放厨具，经验、银币照样按厨具档算（切磋，2026-10-16） */
+  noEquip?: boolean;
   onlyGoods?: boolean;
   /** 不出神秘礼券（酒吧的奖励、白食店主的道具） */
   noTicket?: boolean;
@@ -51,19 +53,20 @@ export function awardExp(luckSum: number, level: number, equipFlag: number): num
   return Math.max(0, 50 + luckSum) * level * (equipFlag + 1);
 }
 
-/** 物品池：非厨具且 等级−4 ≤ 奖励等级 ≤ 等级，或厨具且奖励等级 ≤ 厨具档；按 id 排序 */
+/** 物品池：非厨具且 等级−4 ≤ 奖励等级 ≤ 等级，或厨具且奖励等级 ≤ 厨具档（noEquip 时不放厨具）；按 id 排序 */
 export function awardGoodsPool(
   goods: readonly Goods[],
   level: number,
   equipFlag: number,
   noTicket: boolean,
+  noEquip = false,
 ): number[] {
   return goods
     .filter((g) => {
       if (g.awardFlag === null) return false;
       if (noTicket && g.id === GOODS.mysteryTicket) return false;
       return g.type === GOODS_TYPE.equip
-        ? g.awardFlag <= equipFlag
+        ? !noEquip && g.awardFlag <= equipFlag
         : g.awardFlag >= level - 4 && g.awardFlag <= level;
     })
     .map((g) => g.id)
@@ -160,7 +163,13 @@ export async function randomAward(o: Op, opts: RandomAwardOptions): Promise<Rand
   const lucky = o.rng.next() < luck.rate;
   const num = lucky ? 2 : 1;
   if (kind === 'goods') {
-    const pool = awardGoodsPool(o.config.bundle.goods, level, equipFlag, opts.noTicket ?? false);
+    const pool = awardGoodsPool(
+      o.config.bundle.goods,
+      level,
+      equipFlag,
+      opts.noTicket ?? false,
+      opts.noEquip ?? false,
+    );
     if (pool.length === 0) return coinOrExp('coin');
     const id = pool[o.rng.int(pool.length)]!;
     // 勋章只能有 1 个，不翻倍；返回实际到账的数量（持有上限会丢掉超出的部分）

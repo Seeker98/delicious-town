@@ -40,7 +40,6 @@ const panel = ref<'none' | 'presets' | 'batch'>('none');
 const presetName = ref('');
 const all = ref<EquipDto[]>([]);
 const picked = ref(new Set<number>());
-const way = ref<'salvage' | 'sell'>('salvage');
 const busy = ref(false);
 const route = useRoute();
 const router = useRouter();
@@ -142,22 +141,14 @@ async function deletePreset(id: number) {
   if (yes) await run(() => endpoints.equipPresetDelete(id), t.value.equip.deleteFailed);
 }
 
-/** 一键处理只能选"未锁定、未穿戴、没强化、没宝石、不在预设"的；出售还要有价格 */
+/** 一键处理只能选"未锁定、未穿戴、没强化、没宝石、不在预设"的；只能分解（2026-10-16 起厨具不能卖店） */
 const candidates = computed(() =>
   all.value.filter(
-    (e) =>
-      !e.locked &&
-      !e.worn &&
-      e.stress === 0 &&
-      e.gems.length === 0 &&
-      e.inPresets.length === 0 &&
-      (way.value === 'salvage' || e.sellPrice !== null),
+    (e) => !e.locked && !e.worn && e.stress === 0 && e.gems.length === 0 && e.inPresets.length === 0,
   ),
 );
 const batchTotal = computed(() =>
-  candidates.value
-    .filter((e) => picked.value.has(e.id))
-    .reduce((s, e) => s + (way.value === 'salvage' ? e.salvage : (e.sellPrice ?? 0)), 0),
+  candidates.value.filter((e) => picked.value.has(e.id)).reduce((s, e) => s + e.salvage, 0),
 );
 async function openBatch() {
   panel.value = panel.value === 'batch' ? 'none' : 'batch';
@@ -174,12 +165,10 @@ function toggle(id: number) {
 async function doBatch() {
   const ids = candidates.value.filter((e) => picked.value.has(e.id)).map((e) => e.id);
   if (ids.length === 0) return;
-  const salvage = way.value === 'salvage';
-  const total = salvage ? String(batchTotal.value) : formatNum(batchTotal.value);
   // 确认面板和一键处理面板不叠两层：先收起，取消了再打开（界面改版 P3）
   panel.value = 'none';
   const yes = await confirm.ask({
-    title: t.value.equip.batchConfirm(ids.length, salvage, total),
+    title: t.value.equip.batchConfirm(ids.length, String(batchTotal.value)),
     ok: t.value.equip.process,
     danger: true,
   });
@@ -187,7 +176,7 @@ async function doBatch() {
     panel.value = 'batch';
     return;
   }
-  await run(() => endpoints.equipBatch(ids, way.value), t.value.equip.processFailed);
+  await run(() => endpoints.equipBatch(ids, 'salvage'), t.value.equip.processFailed);
   all.value = await endpoints.equipList();
   picked.value = new Set(candidates.value.map((e) => e.id));
 }
@@ -401,12 +390,6 @@ onMounted(async () => {
 
     <DtSheet :open="panel === 'batch'" :title="t.equip.batch" @close="panel = 'none'">
       <div class="small" data-testid="sheet-batch">
-        <div class="mb-1">
-          <label class="me-2"
-            ><input v-model="way" type="radio" value="salvage" /> {{ t.equip.salvageWay }}</label
-          >
-          <label><input v-model="way" type="radio" value="sell" /> {{ t.equip.sellWay }}</label>
-        </div>
         <div class="text-muted mb-1">{{ t.equip.batchNote }}</div>
         <div v-for="e in candidates" :key="e.id" :data-testid="`batch-item-${e.id}`">
           <label
@@ -414,11 +397,7 @@ onMounted(async () => {
           >
         </div>
         <div class="d-flex align-items-center mt-2">
-          <span data-testid="batch-total">{{
-            t.equip.batchTotal(
-              way === 'salvage' ? t.equip.essence(batchTotal) : t.equip.coins(formatNum(batchTotal)),
-            )
-          }}</span>
+          <span data-testid="batch-total">{{ t.equip.batchTotal(t.equip.essence(batchTotal)) }}</span>
           <button
             class="btn btn-sm btn-danger ms-auto"
             :disabled="busy"

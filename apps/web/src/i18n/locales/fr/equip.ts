@@ -62,15 +62,11 @@ const equip: Messages['equip'] = {
   saveCurrent: "Enregistrer l'actuel",
   saveFailed: "Impossible d'enregistrer",
   skipped: (parts) => `Niveau insuffisant\u202f; ces emplacements restent vides\u202f: ${parts}`,
-  salvageWay: 'Démonter en essence',
-  sellWay: 'Vendre',
   batchNote:
     'Seuls les ustensiles non verrouillés, non équipés, non renforcés, sans gemme et hors préréglage sont listés',
   essence: (n) => `${n} essence`,
-  coins: (n) => `${n} ${plFr(n, 'pièce', 'pièces')}`,
   batchTotal: (text) => `Total ${text}`,
-  batchConfirm: (n, salvage, total) =>
-    `Traiter ${n} ustensile${n > 1 ? 's' : ''} pour ${salvage ? `${total} essence` : `${total} ${plFr(total, 'pièce', 'pièces')}`}\u202f?`,
+  batchConfirm: (n, total) => `Démonter ${n} ustensile${n > 1 ? 's' : ''} pour ${total} essence\u202f?`,
   process: 'Valider',
   processFailed: 'Échec du traitement',
   loadFailed: 'Impossible de charger les ustensiles',

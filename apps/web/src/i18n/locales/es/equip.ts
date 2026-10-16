@@ -62,15 +62,11 @@ const equip: Messages['equip'] = {
   saveCurrent: 'Guardar actual',
   saveFailed: 'No se pudo guardar',
   skipped: (parts) => `Nivel insuficiente; estas ranuras quedan vacías: ${parts}`,
-  salvageWay: 'Desmontar en esencia',
-  sellWay: 'Vender',
   batchNote:
     'Solo se muestran utensilios sin bloquear, sin equipar, sin mejorar, sin gemas y fuera de los preajustes',
   essence: (n) => `${n} de esencia`,
-  coins: (n) => `${n} ${plEs(n, 'moneda', 'monedas')}`,
   batchTotal: (text) => `Total ${text}`,
-  batchConfirm: (n, salvage, total) =>
-    `¿Procesar ${n} utensilio${n === 1 ? '' : 's'} por ${salvage ? `${total} de esencia` : `${total} ${plEs(total, 'moneda', 'monedas')}`}?`,
+  batchConfirm: (n, total) => `¿Desmontar ${n} utensilio${n === 1 ? '' : 's'} por ${total} de esencia?`,
   process: 'Procesar',
   processFailed: 'No se pudo procesar',
   loadFailed: 'No se pudieron cargar los utensilios',

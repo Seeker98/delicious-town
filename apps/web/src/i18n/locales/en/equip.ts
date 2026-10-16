@@ -62,15 +62,12 @@ const equip: Messages['equip'] = {
   saveCurrent: 'Save current',
   saveFailed: 'Could not save',
   skipped: (parts) => `Level too low; these slots were left empty: ${parts}`,
-  salvageWay: 'Salvage into essence',
-  sellWay: 'Sell',
   batchNote:
     'Only cookware that is unlocked, not equipped, not enhanced, without gems and not in a preset is listed',
   essence: (n) => `${n} essence`,
-  coins: (n) => `${n} ${plEn(n, 'coin', 'coins')}`,
   batchTotal: (text) => `Total ${text}`,
-  batchConfirm: (n, salvage, total) =>
-    `Clear out ${n} ${n === 1 ? 'piece' : 'pieces'} of cookware for ${salvage ? `${total} essence` : `${total} ${plEn(total, 'coin', 'coins')}`}?`,
+  batchConfirm: (n, total) =>
+    `Salvage ${n} ${n === 1 ? 'piece' : 'pieces'} of cookware for ${total} essence?`,
   process: 'Go',
   processFailed: 'Could not clear out',
   loadFailed: 'Could not load cookware',

@@ -70,19 +70,20 @@ describe('分解（设计文档 §3.7）', () => {
   });
 });
 
-describe('出售（计划裁定 1）', () => {
-  it('价格 = 道具 coin × 0.7，与强化等级无关；没有价格的不能卖', async () => {
+describe('出售（2026-10-16 起厨具不能卖店）', () => {
+  it('哪件厨具都不能卖：报 not_sellable，厨具还在，银币不变', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 0 } });
     const id = await piece(ctx, gid('见习之铲'), { stress: 5 });
-    expect((await eq().sell(ctx, { id })).data).toEqual({ coin: 42_000 });
-    expect((await restRow(t, ctx.restaurantId)).coin).toBe(42_000);
+    await expect(eq().sell(ctx, { id })).rejects.toMatchObject({ params: { reason: 'not_sellable' } });
+    expect(await exists(id)).toBe(true);
+    expect((await restRow(t, ctx.restaurantId)).coin).toBe(0);
     const love = await piece(ctx, gid('真爱之铲'));
     await expect(eq().sell(ctx, { id: love })).rejects.toMatchObject({ params: { reason: 'not_sellable' } });
   });
 });
 
 describe('一键处理（设计文档 §3.11）', () => {
-  it('全部干净：分解得精华合计 / 出售得银币合计', async () => {
+  it('全部干净：分解得精华合计；按出售处理整批拒绝（厨具不能卖店）', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 0 } });
     const a = await piece(ctx, gid('见习之铲'));
     const b = await piece(ctx, gid('沉默之度玛的静谧之镬'));
@@ -93,11 +94,10 @@ describe('一键处理（设计文档 §3.11）', () => {
     });
     const c = await piece(ctx, gid('见习之铲'));
     const d = await piece(ctx, gid('见习之刀'));
-    expect((await eq().batch(ctx, { ids: [c, d], way: 'sell' })).data).toEqual({
-      count: 2,
-      essence: 0,
-      coin: 84_000,
+    await expect(eq().batch(ctx, { ids: [c, d], way: 'sell' })).rejects.toMatchObject({
+      params: { reason: 'batch_dirty', ids: [c, d] },
     });
+    expect(await exists(c)).toBe(true);
     expect(await exists(a)).toBe(false);
   });
 
@@ -127,14 +127,14 @@ describe('一键处理（设计文档 §3.11）', () => {
 });
 
 describe('删除厨具留流水（终审 Important 1）', () => {
-  it('分解、出售、一键处理都记一条 厨具 -1', async () => {
+  it('分解、一键处理都记一条 厨具 -1', async () => {
     const ctx = await newRestaurant(t);
     const a = await piece(ctx, gid('见习之铲'));
     const b = await piece(ctx, gid('见习之刀'));
     const c = await piece(ctx, gid('见习之锅'));
     const d = await piece(ctx, gid('中厨之铲'));
     await eq().salvage(ctx, { id: a });
-    await eq().sell(ctx, { id: b });
+    await eq().salvage(ctx, { id: b });
     await eq().batch(ctx, { ids: [c, d], way: 'salvage' });
     const rows = await t.db
       .selectFrom('ledger')
@@ -146,7 +146,7 @@ describe('删除厨具留流水（终审 Important 1）', () => {
       .execute();
     expect(rows).toEqual([
       { item_id: gid('见习之铲'), delta: -1, source: 'equip.salvage' },
-      { item_id: gid('见习之刀'), delta: -1, source: 'equip.sell' },
+      { item_id: gid('见习之刀'), delta: -1, source: 'equip.salvage' },
       { item_id: gid('见习之锅'), delta: -1, source: 'equip.batch' },
       { item_id: gid('中厨之铲'), delta: -1, source: 'equip.batch' },
     ]);
