@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { sql } from 'kysely';
 import { GOODS } from '@dt/config';
 import { gameTime, latestSlot } from '@dt/shared';
 import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
@@ -50,16 +51,50 @@ describe('镇长猜天气（天气改版设计 §5）', () => {
     const a = await newRestaurant(t);
     await t.game.town.mayor(a, 2);
     const at = gameTime(DAY, 13);
-    expect(await resolveMayor(t.game.deps, a.shardId, at)).toEqual({ resolved: 0 });
+    expect(await resolveMayor(t.game.deps, a.shardId, at)).toEqual({ resolved: 0, failed: 0 });
     await weatherRan(a.shardId, at, weatherOf(2).id);
-    expect(await resolveMayor(t.game.deps, a.shardId, at)).toEqual({ resolved: 1 });
+    expect(await resolveMayor(t.game.deps, a.shardId, at)).toEqual({ resolved: 1, failed: 0 });
     expect(await goodsNum(t, a.restaurantId, GOODS.mayorFavor)).toBe(1);
     expect(await eventCount(t, a.restaurantId, 'town.mayor.right')).toBe(1);
     t.clock.set(gameTime(DAY, 14));
     expect((await t.game.town.overview(a)).mayor.today).toMatchObject({ type: 2, right: true, actual: 2 });
     // 再跑一次不重复发
-    expect(await resolveMayor(t.game.deps, a.shardId, at)).toEqual({ resolved: 0 });
+    expect(await resolveMayor(t.game.deps, a.shardId, at)).toEqual({ resolved: 0, failed: 0 });
     expect(await goodsNum(t, a.restaurantId, GOODS.mayorFavor)).toBe(1);
+  });
+
+  it('一家揭晓出错只跳过它，别家照常；下次再揭晓它（backlog：原来一家出错整轮作废）', async () => {
+    const a = await newRestaurant(t);
+    const b = await newRestaurant(t, { shardId: a.shardId });
+    await t.game.town.mayor(a, 2);
+    await t.game.town.mayor(b, 2);
+    const at = gameTime(DAY, 13);
+    await weatherRan(a.shardId, at, weatherOf(2).id);
+    // 只让 b 那一行写不进去（触发器按店号过滤，不影响别的测试）
+    const fn = sql.raw(`test_fail_mayor_${b.restaurantId}`);
+    await sql`create function ${fn}() returns trigger language plpgsql as $$
+      begin
+        if new.rest_id = ${sql.raw(String(b.restaurantId))} then raise exception 'test mayor fail'; end if;
+        return new;
+      end $$`.execute(t.db);
+    await sql`create trigger ${fn} before update on mayor_guess for each row execute function ${fn}()`.execute(
+      t.db,
+    );
+    const errors: unknown[] = [];
+    try {
+      expect(await resolveMayor(t.game.deps, a.shardId, at, { error: (o) => errors.push(o) })).toEqual({
+        resolved: 1,
+        failed: 1,
+      });
+    } finally {
+      await sql`drop trigger if exists ${fn} on mayor_guess`.execute(t.db);
+      await sql`drop function if exists ${fn}()`.execute(t.db);
+    }
+    expect(errors).toHaveLength(1);
+    expect(await goodsNum(t, a.restaurantId, GOODS.mayorFavor)).toBe(1);
+    expect(await goodsNum(t, b.restaurantId, GOODS.mayorFavor)).toBe(0);
+    expect(await resolveMayor(t.game.deps, a.shardId, at)).toEqual({ resolved: 1, failed: 0 });
+    expect(await goodsNum(t, b.restaurantId, GOODS.mayorFavor)).toBe(1);
   });
 
   it('猜错不罚（用户 2026-10-12）', async () => {

@@ -32,6 +32,8 @@ export interface CupboardDto {
   freeHandleLeft: number;
   /** 一次最多分解 / 合成几个 */
   handleMax: number;
+  /** 万能食材一次最多换几次（区服数值 cupboard.exchangeMaxTimes） */
+  exchangeMaxTimes: number;
   items: CupboardFoodDto[];
 }
 

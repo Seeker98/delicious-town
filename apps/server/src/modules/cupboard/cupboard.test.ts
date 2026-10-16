@@ -34,6 +34,7 @@ describe('橱柜列表', () => {
       lockSlots: 15,
       targetGrade: 5,
       handleMax: 100,
+      exchangeMaxTimes: t.deps.config.tuning.cupboard.exchangeMaxTimes,
     });
     expect(l.items.find((x) => x.foodsId === fid('葡萄'))!.streetNeed).toBeGreaterThan(0);
   });
@@ -218,6 +219,20 @@ describe('万能食材兑换（规格书 05 §5.5）', () => {
     expect((await foodNum(t, ctx.restaurantId, fid('一级万能食材'))).num).toBe(8);
     await c().exchange(ctx, { foodsId: FOODS.masterLevel1, times: 3 });
     expect((await foodNum(t, ctx.restaurantId, fid('一级万能食材'))).num).toBe(2);
+  });
+
+  it('一次合成、分解的个数不超过区服调参 cupboard.handleMax，列表里也按它给（backlog：原来只显示、接口不限）', async () => {
+    const shardId = await createShard(t.db);
+    await setTuning(t, shardId, { cupboard: { handleMax: 4, exchangeMaxTimes: 3 } });
+    const ctx = await newRestaurant(t, { shardId, patch: { coin: 100_000 }, foods: { [fid('葡萄')]: 10 } });
+    expect(await c().list(ctx)).toMatchObject({ handleMax: 4, exchangeMaxTimes: 3 });
+    await expect(c().handle(ctx, { foodsId: fid('葡萄'), way: 'compose', num: 6 })).rejects.toMatchObject({
+      code: 'LIMIT_REACHED',
+      params: { what: 'cupboard_handle', max: 4 },
+    });
+    expect((await foodNum(t, ctx.restaurantId, fid('葡萄'))).num).toBe(10);
+    await c().handle(ctx, { foodsId: fid('葡萄'), way: 'compose', num: 4 });
+    expect((await foodNum(t, ctx.restaurantId, fid('葡萄'))).num).toBe(6);
   });
 });
 

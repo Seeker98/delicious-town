@@ -17,6 +17,9 @@ const als = new AsyncLocalStorage<Stats>();
 /** 慢查询日志里语句最多留多长 */
 const SQL_MAX = 500;
 
+/** 不算进当前请求的后台工作（请求返回后才写完的登录记录等）：在请求的计数之外跑 */
+export const outsideRequestStats = <T>(fn: () => T): T => als.exit(fn);
+
 /** 给 createDb 的回调；两个开关都关时为 undefined */
 export function queryHook(env: Pick<Env, 'DB_QUERY_STATS' | 'DB_SLOW_MS'>): OnQuery | undefined {
   if (!env.DB_QUERY_STATS && env.DB_SLOW_MS <= 0) return undefined;

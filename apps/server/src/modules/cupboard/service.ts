@@ -25,6 +25,9 @@ import { composePool, handleStrength, handleTargetLevel, runHandle, type HandleW
 
 const HANDLE_KEY = 'foods.handle';
 
+/** 一次最多分解 / 合成几个：区服数值 handleMax，不超过请求体上限 100 */
+const handleCap = (c: { handleMax: number }): number => Math.min(c.handleMax, 100);
+
 export function createCupboardService(d: GameDeps, world: WorldService) {
   const op = <T>(ctx: RestCtx, source: string, fn: (o: Op) => Promise<T>): Promise<OpResult<T>> =>
     runOp(d, ctx, { feature: 'cupboard', source }, fn);
@@ -66,8 +69,8 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
             .where('fridge_num', '>', 0)
             .executeTakeFirst()) !== undefined,
         freeHandleLeft: Math.max(0, freeHandles(rest.star_level, tuning.cupboard) - used),
-        // 接口参数上限是 100
-        handleMax: Math.min(tuning.cupboard.handleMax, 100),
+        handleMax: handleCap(tuning.cupboard),
+        exchangeMaxTimes: tuning.cupboard.exchangeMaxTimes,
         items: all
           .filter(([, r]) => r.num > 0)
           .map(([foodsId, r]) => ({
@@ -198,6 +201,9 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
         const target = handleTargetLevel(b.way, food.level);
         if (target === null) throw invalidState('cannot_handle', { foodsId: b.foodsId });
         if (b.way === 'compose' && b.num % 2 !== 0) throw invalidState('odd_num');
+        // 区服数值的一次上限（backlog：原来只显示，接口只按请求体上限 100 限）
+        const cap = handleCap(o.tuning.cupboard);
+        if (b.num > cap) throw limitReached('cupboard_handle', { max: cap });
         if (o.rest.coin <= 0) throw notEnough('coin', 1, o.rest.coin);
         await subFoods(o, b.foodsId, b.num);
         const used = await incrementDaily(o.tx, o.rest.id, HANDLE_KEY, 1, gameDay(o.now));
