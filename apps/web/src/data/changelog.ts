@@ -4,6 +4,8 @@
  * 繁中由 pnpm -F @dt/web i18n:tw 生成。这里只有 id 和日期，打进主包（“新”标记要用）；文字按需加载
  */
 export const CHANGELOG = [
+  { id: 'tower1016', date: '2026-10-16' },
+  { id: 'spar1016', date: '2026-10-16' },
   { id: 'equip1016', date: '2026-10-16' },
   { id: 'commission1016', date: '2026-10-16' },
   { id: 'smurf1016', date: '2026-10-16' },

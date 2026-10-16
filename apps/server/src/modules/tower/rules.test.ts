@@ -201,11 +201,14 @@ describe('切磋（设计文档裁定 7、8）', () => {
     expect(duelTier(70, 48, t)).toBe('weak');
   });
 
-  it('声望：普通胜 +5，满 20 次 +2，满 50 次 0；负声望照扣；以弱胜强不受上限', () => {
+  it('声望：普通胜 +5，满 sparMaxAt（10）次 0；负声望照扣；以弱胜强不受上限', () => {
+    expect(t.sparMaxAt).toBe(10);
     expect(duelRenown('normal', true, 0, t)).toBe(5);
-    expect(duelRenown('normal', true, 20, t)).toBe(2);
-    expect(duelRenown('normal', true, 50, t)).toBe(0);
-    expect(duelRenown('normal', false, 50, t)).toBe(-2);
+    expect(duelRenown('normal', true, 9, t)).toBe(5);
+    expect(duelRenown('normal', true, 10, t)).toBe(0);
+    expect(duelRenown('normal', false, 10, t)).toBe(-2);
+    // sparFullAt 比 sparMaxAt 大时不起作用
+    expect(duelRenown('normal', true, t.sparFullAt, t)).toBe(0);
     expect(duelRenown('strong', true, 60, t)).toBe(6);
     expect(duelRenown('strong', false, 0, t)).toBe(-2);
     expect(duelRenown('weak', true, 0, t)).toBe(0);

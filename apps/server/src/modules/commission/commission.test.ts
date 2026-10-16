@@ -206,7 +206,10 @@ describe('委员会公报（后台）', () => {
       cookie: admin.cookie,
       body: { shardId: null, member: 'mayor', body: '委员会成立' },
     });
-    expect((await newsOf(c.json.data.id as number)).length).toBe(shards.length);
+    // 别的测试文件会同时建区服：只要求发之前已有的区服每个都有一条、没有重复
+    const got = (await newsOf(c.json.data.id as number)).map((n) => n.shard_id);
+    expect(new Set(got).size).toBe(got.length);
+    for (const sh of shards) expect(got).toContain(sh.id);
     for (const body of [
       { shardId: 999999, member: 'mayor', body: 'x' },
       { shardId: null, member: 'krab', body: 'x' },

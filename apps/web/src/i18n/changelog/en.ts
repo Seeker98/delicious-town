@@ -1,6 +1,10 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  tower1016:
+    "Tower drops: each tower win now has a 10% chance to drop a piece of that floor's elder gear (was 20% on floors 1–3, then 12%, 8% and 5% higher up); random rewards from the tower and friend duels no longer include cookware and give coins instead, while other items keep their odds",
+  spar1016:
+    'Friend duel limit: only the first 10 friend duels each day give rewards and renown (was 50); renown for beating a stronger opponent is not affected, and losses still cost renown',
   equip1016:
     'Cookware can no longer be sold: cookware and cookware essence can no longer be sold to the shop; salvage spare cookware into essence and use it for enhancing; friend duel rewards no longer include cookware, while coins and EXP stay the same',
   commission1016:

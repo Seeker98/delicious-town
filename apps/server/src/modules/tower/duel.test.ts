@@ -65,13 +65,13 @@ describe('好友切磋（设计文档 §3.4）', () => {
     expect((await restRow(t, e.restaurantId)).renown).toBe(-2);
   });
 
-  it('上限：今日切磋满 20 次后普通胜只给 +2、奖励 1 次；满 50 次后 0 且没有奖励', async () => {
+  it('上限（2026-10-16 改成 10 次）：前 10 次普通胜 +5、奖励 2 次；满 10 次后 0 且没有奖励', async () => {
     const [a, b] = await pair(STRONG, MID);
-    await setDaily(a.restaurantId, 'tower.spar', 20);
+    await setDaily(a.restaurantId, 'tower.spar', 9);
     const r1 = await duel(a, b);
-    expect(r1.data).toMatchObject({ win: true, renown: 2 });
-    expect(r1.data.awards).toHaveLength(1);
-    await setDaily(a.restaurantId, 'tower.spar', 50);
+    expect(r1.data).toMatchObject({ win: true, renown: 5 });
+    expect(r1.data.awards).toHaveLength(2);
+    await setDaily(a.restaurantId, 'tower.spar', 10);
     expect((await duel(a, b)).data).toMatchObject({ win: true, renown: 0, awards: [] });
   });
 
