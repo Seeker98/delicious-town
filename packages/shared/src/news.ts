@@ -70,4 +70,6 @@ export const NEWS_TYPES: readonly string[] = [
   'bulk.deal',
   'wishtree.win',
   'icon.buy',
+  /** 小镇委员会的公报（后台发） */
+  'commission.notice',
 ];

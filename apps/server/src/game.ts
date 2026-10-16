@@ -50,6 +50,8 @@ import { createRedeemService, type RedeemService } from './modules/redeem/servic
 import { createInviteService, type InviteService } from './modules/invite/service';
 import { createReportService, type ReportService } from './modules/report/service';
 import { createAnnounceService, type AnnounceService } from './modules/announce/service';
+import { commissionJobs } from './modules/commission/hygiene';
+import { createCommissionService, type CommissionService } from './modules/commission/service';
 import { createRestaurantService, type RestaurantService } from './modules/restaurant/service';
 import { createShardService, type ShardService } from './modules/shard/service';
 import { shopJobs } from './modules/shop/jobs';
@@ -98,6 +100,7 @@ export interface Game {
   invite: InviteService;
   report: ReportService;
   announce: AnnounceService;
+  commission: CommissionService;
   activity: ActivityService;
   exchange: ExchangeService;
   predict: PredictService;
@@ -153,6 +156,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...wishTreeJobs(deps));
   jobs.push(...predictJobs(deps));
   jobs.push(...dailyJobs(deps, app.writer));
+  jobs.push(...commissionJobs(deps));
   return {
     app,
     deps,
@@ -179,6 +183,7 @@ export function createGame(app: AppDeps): Game {
     invite: createInviteService(deps),
     report: createReportService(deps),
     announce: createAnnounceService(deps),
+    commission: createCommissionService(deps, world),
     activity: createActivityService(deps),
     exchange: createExchangeService(deps),
     predict: createPredictService(deps),

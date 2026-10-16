@@ -28,6 +28,7 @@ const groups = computed<Array<{ name: string; items: NavItem[] }>>(() => [
       { to: '/admin', label: '概览', match: '' },
       { to: `/admin/shards/${admin.shardId ?? 1}`, label: '区服数值', match: '/admin/shards' },
       { to: '/admin/announce', label: '公告', match: '/admin/announce' },
+      { to: '/admin/commission', label: '委员会公报', match: '/admin/commission' },
       // 小镇日报只有管理员能看、能审
       ...(admin.isAdmin ? [{ to: '/admin/daily', label: '日报', match: '/admin/daily' }] : []),
       { to: '/admin/activities', label: '活动', match: '/admin/activities' },

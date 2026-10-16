@@ -43,6 +43,8 @@ const GROUPS: Array<{ key: keyof Messages['nav']['map']['groups']; places: Place
     key: 'public',
     places: [
       { key: 'society', to: '/society', art: 'place-society' },
+      // 小镇委员会（2026-10-16）：页面读广场的数据，跟着广场开关
+      { key: 'commission', to: '/commission', art: 'place-commission', feature: 'town' },
       { key: 'town', to: '/town', art: 'place-plaza', feature: 'town' },
       { key: 'forum', to: '/forum', art: 'place-forum', feature: 'forum' },
       { key: 'activities', to: '/activities', art: 'place-activities', feature: 'activity' },

@@ -29,9 +29,10 @@ export function markFeedSeen(restId: number, items: RestLogDto[]): void {
 
 /**
  * 动态点了去哪：帖子被回复的去那个帖子；别的好友互动（带对方餐厅编号 by）去对方餐厅，
- * 方便马上回访（问题记录 587）；系统事件（老鼠、冰箱、交割等）不链接
+ * 方便马上回访（问题记录 587）；章鱼哥的卫生巡查去委员会页打开他的面板；别的系统事件（老鼠、冰箱、交割等）不链接
  */
 export function feedLink(item: RestLogDto): string | null {
+  if (item.type === 'hygiene.report') return '/commission?m=squid';
   if (item.type === 'forum.replied' && typeof item.params.postId === 'number')
     return `/forum/${item.params.postId}`;
   return typeof item.params.by === 'number' ? `/friends/${item.params.by}` : null;

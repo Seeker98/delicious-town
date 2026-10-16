@@ -4,6 +4,7 @@ import acquire from './acquire';
 import activity from './activity';
 import auth from './auth';
 import bar from './bar';
+import commission from './commission';
 import common from './common';
 import cookbook from './cookbook';
 import cupboard from './cupboard';
@@ -45,6 +46,7 @@ import util from './util';
 
 const messages: Messages = {
   common,
+  commission,
   errors,
   news,
   events,

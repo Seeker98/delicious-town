@@ -13,6 +13,7 @@ let ids: {
   iconId: number;
   mailId: number;
   announcementId: number;
+  noticeId: number;
   linkId: number;
   activityId: number;
   codeId: number;
@@ -56,6 +57,11 @@ beforeAll(async () => {
       ends_at: new Date(Date.now() + 3_600_000),
       actor_account_id: target.accountId,
     })
+    .returning('id')
+    .executeTakeFirstOrThrow();
+  const notice = await ctx.deps.db
+    .insertInto('commission_notice')
+    .values({ shard_id: null, member: 'mayor', body: '权限测试' })
     .returning('id')
     .executeTakeFirstOrThrow();
   // 未开始的活动：编辑、提前结束、删除都能走到业务逻辑（矩阵末尾才删除）
@@ -154,6 +160,7 @@ beforeAll(async () => {
     iconId: icon.id,
     mailId: mail.id,
     announcementId: announcement.id,
+    noticeId: notice.id,
     linkId: link.id,
     activityId: activity.id,
     codeId: code.id,
@@ -482,6 +489,20 @@ const CASES: Case[] = [
     method: 'POST',
     route: '/api/v1/admin/access-bans/:id/remove',
     url: () => '/api/v1/admin/access-bans/999999/remove',
+    min: 'admin',
+  },
+  { method: 'GET', route: '/api/v1/admin/commission', url: () => '/api/v1/admin/commission', min: 'mod' },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/commission',
+    url: () => '/api/v1/admin/commission',
+    body: () => ({ shardId: ids.shardId, member: 'squid', body: '权限测试' }),
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/commission/:id/remove',
+    url: () => `/api/v1/admin/commission/${ids.noticeId}/remove`,
     min: 'admin',
   },
   ...(['bar', 'surge', 'multi', 'redeem', 'exchange', 'acquire'] as const).map((k) => ({

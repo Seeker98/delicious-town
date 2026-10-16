@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  commission1016:
+    'Commission de la ville\u202f: une Commission ouvre en ville, présidée par le Maire Grosse Marmite, avec Carlo, le taoïste Fan, Sœur du Potager, Gary et Frère 13, chacun responsable d’un domaine et donnant un point du jour\u202f; les changements de règles sont annoncés par des communiqués, sur sa page et dans les nouvelles\u202f; chaque jour à 0 h, Carlo inspecte l’hygiène des restaurants de 2 étoiles et plus et la note dans l’activité du restaurant, à titre indicatif, sans amende',
   smurf1016:
     'Mesures contre les comptes secondaires\u202f: l’Ichiban Kuji demande désormais un e-mail vérifié pour acheter des tickets et tirer, ainsi qu’un restaurant niveau 10 pour le tirage normal, et niveau 20 avec un compte d’au moins 3 jours pour le tirage de luxe\u202f; le Pack de départ et les codes demandent un e-mail vérifié\u202f; le nombre de comptes créés depuis un même réseau ou un même appareil est limité',
   predict1016:

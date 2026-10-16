@@ -15,6 +15,7 @@ const t = useT();
   <MascotCard
     :name="t.market.sis.name"
     icon="bi-flower2"
+    art="npc-garden"
     :lines="lines"
     :ready="data !== null"
     testid="garden-sis"

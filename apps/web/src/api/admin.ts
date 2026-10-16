@@ -1,5 +1,7 @@
 import type {
   AccessBanDto,
+  AdminCommissionNoticeDto,
+  CommissionNoticeInput,
   AccessBanKind,
   AccessBanResultDto,
   AccountRole,
@@ -169,6 +171,10 @@ export const adminApi = {
   updateAnnouncement: (id: number, b: AnnouncementInput) =>
     api.post<AdminAnnouncementDto>(`${A}/announcements/${id}`, b),
   deleteAnnouncement: (id: number) => api.post<null>(`${A}/announcements/${id}/delete`, {}),
+  /** 委员会公报（小镇委员会 2026-10-16） */
+  commissionNotices: () => api.get<AdminCommissionNoticeDto[]>(`${A}/commission`),
+  createCommissionNotice: (b: CommissionNoticeInput) => api.post<{ id: number }>(`${A}/commission`, b),
+  removeCommissionNotice: (id: number) => api.post<null>(`${A}/commission/${id}/remove`, {}),
   links: () => api.get<AdminLinkDto[]>(`${A}/links`),
   createLink: (b: LinkInput) => api.post<AdminLinkDto>(`${A}/links`, b),
   updateLink: (id: number, b: LinkInput) => api.post<AdminLinkDto>(`${A}/links/${id}`, b),

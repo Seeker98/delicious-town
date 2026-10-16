@@ -197,7 +197,7 @@ export async function buffsOf(
 
 /**
  * 餐厅动态：别人对我做的操作（设计文档 §4.10），加上不在线时店里发生的事（问题记录 553：被收购 / 放手 / 赎回、
- * 老鼠偷食材、手动进货被买、冰箱满了丢食材）。好友页"动态"卡和首页的"餐厅动态"都用它
+ * 老鼠偷食材、手动进货被买、冰箱满了丢食材），以及章鱼哥每天的卫生巡查。好友页"动态"卡和首页的"餐厅动态"都用它
  */
 export const FEED_TYPES = [
   'bulk.won',
@@ -225,6 +225,8 @@ export const FEED_TYPES = [
   'fridge.drop',
   'futures.delivered',
   'futures.defaulted',
+  // 章鱼哥的卫生巡查（小镇委员会 2026-10-16）
+  'hygiene.report',
 ] as const;
 const FEED_DAYS = 3;
 

@@ -1,5 +1,6 @@
 import type {
   AccountProfileDto,
+  CommissionDto,
   AcquireMarketDto,
   AcquireRankDto,
   AcquireRestDto,
@@ -441,6 +442,8 @@ export const endpoints = {
   takeawayDismiss: (riderId: number) =>
     api.post<{ coin: number; exp: number }>('/api/v1/takeaway/dismiss', { riderId }),
   town: () => api.get<TownDto>('/api/v1/town'),
+  /** 小镇委员会（2026-10-16）：公报、今日要点、本店最近一次卫生巡查 */
+  commission: () => api.get<CommissionDto>('/api/v1/commission'),
   townNews: (before?: number) =>
     api.get<NewsPageDto>(before === undefined ? '/api/v1/town/news' : `/api/v1/town/news?before=${before}`),
   /** 小镇日报（2026-10-08）：不带日期取最近一份已发布的 */

@@ -88,6 +88,32 @@ function describeFeed(
   }
 }
 
+/** Inspection d’hygiène de Carlo (Commission de la ville 2026-10-16) : uniquement des faits */
+const leftH = (h: number) => (h >= 24 ? `${Math.floor(h / 24)} j ${h % 24} h` : `${h} h`);
+function hygiene(p: P, names: Names): string {
+  const [, m, d] = String(p.day ?? '').split('-');
+  const rh = n(p, 'roachHours');
+  const roach =
+    rh > 0
+      ? `cafards sur les tables pendant ${formatNum(rh)} ${plFr(rh, 'table-heure', 'tables-heures')}`
+      : 'aucun cafard sur les tables';
+  const auto =
+    n(p, 'roachAuto') > 0
+      ? `, ${n(p, 'roachAuto')} ${plFr(n(p, 'roachAuto'), 'tué', 'tués')} par les équipements`
+      : '';
+  const mouse =
+    n(p, 'mouse') > 0
+      ? `souris venues ${n(p, 'mouse')} fois, ${n(p, 'stolen')} ${plFr(n(p, 'stolen'), 'portion volée', 'portions volées')}, ${n(p, 'trapped')} ${plFr(n(p, 'trapped'), 'prise', 'prises')}`
+      : 'aucune souris';
+  const dev = (x: unknown, none: string) => {
+    const o = x as P | null;
+    return o && typeof o === 'object'
+      ? `${names.goodsName(n(o, 'goodsId'))}\u202f: encore ${leftH(n(o, 'hours'))}`
+      : none;
+  };
+  return `Inspection d’hygiène de Carlo (${Number(d)}/${Number(m)})\u202f: ${roach}${auto}\u202f; ${mouse}\u202f; ${dev(p.roachDevice, 'aucun anti-cafards installé')}, ${dev(p.mouseDevice, 'aucun anti-souris installé')}`;
+}
+
 const events: Messages['events'] = {
   gain: 'Obtenu',
   loss: 'Dépensé',
@@ -152,6 +178,7 @@ const events: Messages['events'] = {
       `Une souris a volé ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'num')}`,
     'mouse.nothing': () => "Une souris est passée mais n'a rien volé",
     'mouse.map': () => "Une souris a laissé une carte d'exploration",
+    'hygiene.report': (p, names) => hygiene(p, names),
     'krab.happy': () => 'M. Krab a adoré le repas',
     'krab.angry': () => 'M. Krab est reparti déçu',
     'krab.husky': () => "M. Krab a caressé le husky et ne s'est pas fâché",

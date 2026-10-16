@@ -988,6 +988,17 @@ export interface AccessBanTable {
   created_at: TsDefault;
 }
 
+/** 委员会公报（迁移 0082）：shard_id 为空是全部区服 */
+export interface CommissionNoticeTable {
+  id: Generated<number>;
+  shard_id: Nullable<number>;
+  member: string;
+  body: string;
+  actor_account_id: Nullable<number>;
+  created_at: TsDefault;
+  deleted_at: TsNullable;
+}
+
 export interface LoginTraceTable {
   account_id: number;
   ip: string;
@@ -1548,6 +1559,7 @@ export interface DB {
   report_entry: ReportEntryTable;
   login_trace: LoginTraceTable;
   access_ban: AccessBanTable;
+  commission_notice: CommissionNoticeTable;
   activity: ActivityTable;
   activity_counter: ActivityCounterTable;
   activity_claim: ActivityClaimTable;

@@ -250,6 +250,7 @@ export function allocateTables(
       const killed = rng.chance(flags.roachClear);
       if (killed) roaches -= 1;
       type = killed ? -3 : 3;
+      if (!killed && table.roach?.by == null) out.customers.n3 = (out.customers.n3 ?? 0) + 1;
       next = killed
         ? { ...next, customer: -3 }
         : { ...next, customer: 3, ...(table.roach ? { roach: table.roach } : {}) };
@@ -290,6 +291,7 @@ export function allocateTables(
       // A2. 蟑螂（到上限就不再长）
       roaches += 1;
       type = 3;
+      out.customers.n3 = (out.customers.n3 ?? 0) + 1;
       next = { ...next, customer: 3, roach: { by: null, at: input.now.toISOString() } };
     } else if (table.no > seatedLimit) {
       // A3. 空桌

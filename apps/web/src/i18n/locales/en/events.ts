@@ -87,6 +87,29 @@ function describeFeed(
   }
 }
 
+/** Squidward's hygiene check (Town Commission 2026-10-16): facts only; a day or more left shows days and hours */
+const leftH = (h: number) => (h >= 24 ? `${Math.floor(h / 24)}d ${h % 24}h` : `${h}h`);
+function hygiene(p: P, names: Names): string {
+  const [, m, d] = String(p.day ?? '').split('-');
+  const rh = n(p, 'roachHours');
+  const roach =
+    rh > 0
+      ? `roaches took up tables for ${formatNum(rh)} table-${plEn(rh, 'hour', 'hours')}`
+      : 'no roaches took up tables';
+  const auto = n(p, 'roachAuto') > 0 ? `, pest control killed ${n(p, 'roachAuto')}` : '';
+  const mouse =
+    n(p, 'mouse') > 0
+      ? `mice came ${n(p, 'mouse')} ${plEn(n(p, 'mouse'), 'time', 'times')}, stole ${n(p, 'stolen')} ${plEn(n(p, 'stolen'), 'serving', 'servings')}, ${n(p, 'trapped')} trapped`
+      : 'no mice came';
+  const dev = (x: unknown, none: string) => {
+    const o = x as P | null;
+    return o && typeof o === 'object'
+      ? `${names.goodsName(n(o, 'goodsId'))}: ${leftH(n(o, 'hours'))} left`
+      : none;
+  };
+  return `Squidward's hygiene check (${Number(m)}/${Number(d)}): ${roach}${auto}; ${mouse}; ${dev(p.roachDevice, 'no roach control placed')}, ${dev(p.mouseDevice, 'no mouse control placed')}`;
+}
+
 const events: Messages['events'] = {
   gain: 'Gained',
   loss: 'Used',
@@ -146,6 +169,7 @@ const events: Messages['events'] = {
     'mouse.steal': (p, names) => `A mouse stole ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')}`,
     'mouse.nothing': () => 'A mouse came by but stole nothing',
     'mouse.map': () => 'A mouse left an exploration map behind',
+    'hygiene.report': (p, names) => hygiene(p, names),
     'krab.happy': () => 'Mr. Krab loved the meal',
     'krab.angry': () => 'Mr. Krab left disappointed',
     'krab.husky': () => "Mr. Krab petted the husky and didn't get angry",

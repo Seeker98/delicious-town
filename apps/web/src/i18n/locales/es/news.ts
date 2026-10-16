@@ -1,3 +1,4 @@
+import commission from './commission';
 import { SHARED_GOODS } from '@dt/shared';
 import type { Messages } from '../..';
 import { formatNum } from '../../../utils/format';
@@ -143,6 +144,10 @@ const news: Messages['news'] = {
     'town.exchange': (w, p, x) =>
       `${w} canjeó ${x.goodsName(num(p.goodsId))}×${num(p.num)} con el Alcalde Gran Olla`,
     'predict.result': (_w, p) => predictResult(p),
+    'commission.notice': (_w, p) => {
+      const m = commission.members[str(p.member) as keyof typeof commission.members];
+      return m ? `[Comunicado] ${m.name} (${m.role}): ${str(p.text)}` : `[Comunicado] ${str(p.text)}`;
+    },
     'bulk.deal': (_w, p, x) =>
       `Suscripción mayorista: ${x.foodName(num(p.foodsId))} ×${num(p.sold)} vendido a ${formatNum(num(p.price))} monedas, suscrito ${Math.round((num(p.demand) / Math.max(1, num(p.qty))) * 10) / 10} veces`,
     'wishtree.win': (w, p, x) =>

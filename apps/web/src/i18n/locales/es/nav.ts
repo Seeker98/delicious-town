@@ -47,6 +47,7 @@ const nav: Messages['nav'] = {
       temple: { name: 'Templo', sub: 'Tasación · Pruebas' },
       tower: { name: 'Torre de chefs', sub: 'Ascenso · Duelos' },
       society: { name: 'Gremio', sub: 'Estrellas · Canjes' },
+      commission: { name: 'Comisión', sub: 'Comunicados · Puntos del día' },
       town: { name: 'Plaza', sub: 'Noticias · Clasificaciones' },
       forum: { name: 'Foro', sub: 'Charla · Consejos' },
       activities: { name: 'Eventos', sub: 'Abierto por tiempo limitado' },
