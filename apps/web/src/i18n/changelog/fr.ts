@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  tower1016:
+    'Butin de la tour\u202f: chaque victoire dans la tour a 10\u202f% de chances de donner une pièce de l’équipement de l’ancien de l’étage (20\u202f% aux étages 1 à 3 auparavant, puis 12, 8 et 5\u202f% plus haut)\u202f; les récompenses aléatoires de la tour et des duels amicaux ne donnent plus d’ustensiles mais des pièces à la place, les autres objets gardent leurs chances',
   spar1016:
     'Limite des duels amicaux\u202f: seuls les 10 premiers duels amicaux de la journée donnent des récompenses et de la renommée (50 auparavant)\u202f; la renommée pour avoir battu plus fort que soi ne change pas, et une défaite en fait toujours perdre',
   equip1016:

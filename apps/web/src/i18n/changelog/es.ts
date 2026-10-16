@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  tower1016:
+    'Botín de la torre: cada victoria en la torre tiene un 10\u00a0% de probabilidad de dar una pieza del equipo del anciano de ese piso (antes 20\u00a0% en los pisos 1 a 3 y luego 12, 8 y 5\u00a0% más arriba); las recompensas aleatorias de la torre y de los duelos amistosos ya no dan utensilios sino monedas, y los demás objetos mantienen su probabilidad',
   spar1016:
     'Límite de duelos amistosos: solo los 10 primeros duelos amistosos del día dan recompensas y renombre (antes 50); el renombre por vencer a alguien más fuerte no cambia, y perder sigue restando renombre',
   equip1016:

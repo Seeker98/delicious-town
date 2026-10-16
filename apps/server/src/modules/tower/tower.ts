@@ -143,8 +143,9 @@ export async function challengeTower(o: Op, floorNo: number, test: boolean): Pro
     renown = towerRenown(floorNo, r.win, t);
     gainRenown(o, renown);
     if (r.win) {
+      // 随机奖励抽到厨具改发银币（2026-10-16）：厨塔的厨具只从下面的长老掉落来，每赢一次最多一件
       for (let i = 0; i < floorNo; i++)
-        awards.push(await randomAward(o, { level: floorNo + 2, equipFlag: floorNo }));
+        awards.push(await randomAward(o, { level: floorNo + 2, equipFlag: floorNo, equipToCoin: true }));
       // 长老的套装（问题记录 408）：按这一层的概率掉一件，掉哪件平均抽
       const drops = f.elder.drops;
       if (drops.length > 0 && o.rng.next() < (t.elderDropRates[floorNo - 1] ?? 0)) {

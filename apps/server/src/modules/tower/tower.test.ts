@@ -64,7 +64,7 @@ describe('厨塔概览', () => {
       points: f1.elder.points,
       attrs: f1.attrs,
       drops: f1.elder.drops,
-      dropRate: 0.2,
+      dropRate: 0.1,
     });
     const p0 = f1.elder.pieces[0]!;
     expect(v.floors[0]!.elder.pieces[0]).toEqual({ id: p0.id, attrs: addAttrs(p0.base, p0.gain) });

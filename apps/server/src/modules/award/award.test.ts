@@ -6,6 +6,7 @@ import { createShard } from '../../../test/fixtures';
 import { setTuning } from '../../../test/town';
 import { runOp } from '../../core/op';
 import { grantAward, openGift } from './award';
+import { randomAward } from './random';
 import { GOODS } from '@dt/config';
 import { fid, gid } from '../../../test/items';
 
@@ -91,6 +92,25 @@ describe('openGift（规格书 07 §7.5）', () => {
     expect((await foodNum(t, ctx.restaurantId, fid('一级万能食材'))).num).toBe(1);
     const firstLevel1 = config.foodPools.get(1)!.items[0]!.id;
     expect((await foodNum(t, ctx.restaurantId, firstLevel1)).num).toBe(0);
+    rngValues = [0.5];
+  });
+});
+
+describe('randomAward 的 equipToCoin（好友对决、厨塔，2026-10-16）', () => {
+  // 类型 0.3 落在道具；0.99 不翻倍；0.99 抽池子最后一个：等级 4、厨具档 3 的池子按 id 排序，最后一个是宋嫂之镬
+  it('抽到厨具时改发银币，不给厨具；不带时照旧给厨具', async () => {
+    rngValues = [0.3, 0.99, 0.99];
+    const shardId = await noTiltShard(t);
+    const ctx = await newRestaurant(t, { shardId, patch: { coin: 0 } });
+    const equips = () =>
+      t.db.selectFrom('equip').select('goods_id').where('rest_id', '=', ctx.restaurantId).execute();
+    const r = (await run(ctx, (op) => randomAward(op, { level: 4, equipFlag: 3, equipToCoin: true }))).data;
+    expect(r.kind).toBe('coin');
+    expect(r.num).toBeGreaterThan(0);
+    expect(await equips()).toEqual([]);
+    const plain = (await run(ctx, (op) => randomAward(op, { level: 4, equipFlag: 3 }))).data;
+    expect(plain).toMatchObject({ kind: 'goods', id: gid('宋嫂之镬') });
+    expect(await equips()).toEqual([{ goods_id: gid('宋嫂之镬') }]);
     rngValues = [0.5];
   });
 });
