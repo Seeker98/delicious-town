@@ -72,6 +72,13 @@ describe('物品池、食材池', () => {
     expect(awardGoodsPool(config.bundle.goods, 100, 0, false)).toEqual([]);
   });
 
+  it('noEquip（切磋，2026-10-16）：池里没有厨具，别的和不带时一样', () => {
+    const all = awardGoodsPool(config.bundle.goods, 4, 3, false);
+    const noEquip = awardGoodsPool(config.bundle.goods, 4, 3, false, true);
+    expect(all.some((id) => config.requireGoods(id).type === GOODS_TYPE.equip)).toBe(true);
+    expect(noEquip).toEqual(all.filter((id) => config.requireGoods(id).type !== GOODS_TYPE.equip));
+  });
+
   it('物品池各等级的大小锁住：加减了能进随机奖励的道具要有意改这张表（backlog 天机石审查）', () => {
     // 等级 → 非厨具物品池的种数（2026-10-07 用户用道具整理工具又下架一批后更新；含天机石一~五阶）
     // 时令改版（2026-10-12）：菜园道具低级肥料（5）、高级肥料（7）、玄奥配方（8）不再进随机奖励

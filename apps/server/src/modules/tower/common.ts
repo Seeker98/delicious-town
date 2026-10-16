@@ -34,11 +34,15 @@ export async function lockTowerState(o: Op): Promise<TowerStateRow> {
     .executeTakeFirstOrThrow();
 }
 
-/** 切磋奖励（设计文档裁定 7）：before = 本次之前的今日切磋总次数 */
+/**
+ * 切磋奖励（设计文档裁定 7）：before = 本次之前的今日切磋总次数。
+ * 不出厨具（2026-10-16：切磋刷厨具卖店）；经验、银币仍按 sparEquipFlag 算
+ */
 export async function sparAwards(o: Op, before: number): Promise<RandomAward[]> {
   const t = o.tuning.tower;
   const { times, level } = sparAward(before, t);
   const out: RandomAward[] = [];
-  for (let i = 0; i < times; i++) out.push(await randomAward(o, { level, equipFlag: t.sparEquipFlag }));
+  for (let i = 0; i < times; i++)
+    out.push(await randomAward(o, { level, equipFlag: t.sparEquipFlag, noEquip: true }));
   return out;
 }

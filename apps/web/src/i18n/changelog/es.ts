@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  equip1016:
+    'Los utensilios ya no se venden: los utensilios y la esencia de utensilio ya no se pueden vender a la tienda; desmonta los utensilios que sobren para obtener esencia y úsala para mejorar; las recompensas de los duelos amistosos ya no incluyen utensilios, las monedas y la EXP siguen igual',
   commission1016:
     'Comisión del pueblo: abre una Comisión en el pueblo, presidida por el Alcalde Gran Olla, con Calamardo, el Taoísta Fan, la Hermana del Huerto, Gary y el Hermano 13, cada uno a cargo de un área y dando un punto del día; los cambios de reglas se anuncian como comunicados en su página y en las noticias; cada día a las 0:00 Calamardo revisa la higiene de los restaurantes de 2 estrellas o más y la anota en la actividad del restaurante, solo como registro, sin multas',
   smurf1016:

@@ -5,7 +5,7 @@ import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from 
 import { runDueJobs } from '../../worker/periodic';
 import { grantGoods } from '../store/grant';
 import { sellPrice } from '../store/rules';
-import { FUND, GOODS, createGameConfig } from '@dt/config';
+import { FUND, GOODS, GOODS_TYPE, createGameConfig } from '@dt/config';
 import { gid } from '../../../test/items';
 
 const config = testConfig();
@@ -153,6 +153,16 @@ describe('黑市、出售、丢弃', () => {
     expect(sellPrice(config.requireGoods(GOODS.krabCoin), config.tuning)).toBeNull();
     const ctx = await newRestaurant(t, { goods: { [GOODS.krabCoin]: 1 } });
     await expect(shop().sell(ctx, { goodsId: GOODS.krabCoin, num: 1 })).rejects.toMatchObject({
+      params: { reason: 'not_sellable' },
+    });
+  });
+  it('厨具、厨具精华不能卖回商店（2026-10-16：切磋刷厨具卖店）', async () => {
+    const equips = config.bundle.goods.filter((g) => g.type === GOODS_TYPE.equip && g.coin > 0);
+    expect(equips.length).toBeGreaterThan(10);
+    for (const g of equips) expect(sellPrice(g, config.tuning), g.name).toBeNull();
+    expect(sellPrice(config.requireGoods(GOODS.essence), config.tuning)).toBeNull();
+    const ctx = await newRestaurant(t, { goods: { [GOODS.essence]: 3 } });
+    await expect(shop().sell(ctx, { goodsId: GOODS.essence, num: 1 })).rejects.toMatchObject({
       params: { reason: 'not_sellable' },
     });
   });

@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  equip1016:
+    'Les ustensiles ne se vendent plus\u202f: les ustensiles et l’essence d’ustensile ne peuvent plus être vendus à la boutique\u202f; démontez les ustensiles en trop pour en tirer de l’essence et servez-vous-en pour les renforcer\u202f; les récompenses des duels amicaux ne contiennent plus d’ustensiles, les pièces et l’EXP ne changent pas',
   commission1016:
     'Commission de la ville\u202f: une Commission ouvre en ville, présidée par le Maire Grosse Marmite, avec Carlo, le taoïste Fan, Sœur du Potager, Gary et Frère 13, chacun responsable d’un domaine et donnant un point du jour\u202f; les changements de règles sont annoncés par des communiqués, sur sa page et dans les nouvelles\u202f; chaque jour à 0 h, Carlo inspecte l’hygiène des restaurants de 2 étoiles et plus et la note dans l’activité du restaurant, à titre indicatif, sans amende',
   smurf1016:

@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  equip1016:
+    'Cookware can no longer be sold: cookware and cookware essence can no longer be sold to the shop; salvage spare cookware into essence and use it for enhancing; friend duel rewards no longer include cookware, while coins and EXP stay the same',
   commission1016:
     'Town Commission: a new Commission opens in town, with Mayor Big Pot as president and Squidward, Taoist Fan, Garden Sis, Gary and Brother 13 each in charge of an area and giving a daily highlight; rule changes are announced as commission notices there and in the town news; every day at 0:00 Squidward checks the hygiene of restaurants with 2 stars or more and notes it in your restaurant activity, for the record only, with no fines',
   smurf1016:
