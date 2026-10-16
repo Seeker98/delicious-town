@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  smurf1016:
+    'Medidas contra cuentas secundarias: el Ichiban Kuji ahora pide un correo verificado para comprar boletos y sacar, además de restaurante nivel 10 en el sorteo normal, y nivel 20 con una cuenta de al menos 3 días en el sorteo de lujo; el Pack de inicio y los códigos piden un correo verificado; hay un límite de cuentas que se pueden registrar desde la misma red o el mismo dispositivo',
   predict1016:
     'Predicciones y actividad: la pregunta diaria «¿Superarán hoy las monedas de negocio de todo el servidor a las de ayer?» se sustituye por «¿Dará hoy el Árbol de los deseos un objeto concreto a las 20:00?» (el objeto se elige entre los premios del Árbol de los deseos), y las preguntas de monedas aún abiertas se anulan y se reembolsan; nuevas tareas de actividad: pedir un deseo en el Árbol de los deseos y cambiar el tiempo con un objeto, 5 puntos cada una; el inicio vuelve a mostrar hasta 3 líneas de noticias del pueblo',
   perf1016:

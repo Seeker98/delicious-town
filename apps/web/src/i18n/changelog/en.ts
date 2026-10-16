@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  smurf1016:
+    'Anti-alt measures: Ichiban Kuji now requires a verified email to buy tickets and draw, plus restaurant level 10 for the regular pool, and level 20 and an account at least 3 days old for the deluxe pool; the Starter Pack and redeem codes require a verified email; there is a limit on how many accounts can be registered from the same network or device',
   predict1016:
     'Predictions and activity: the daily question “Will today’s server-wide business coins beat yesterday’s?” is replaced by “Will the Wishing Tree bear a given item at 20:00 today?” (the item is picked from the Wishing Tree’s prizes), and open coin questions are cancelled and refunded; new activity tasks: make a wish at the Wishing Tree and change the weather with an item, 5 points each; the home page shows up to 3 town news lines again',
   perf1016:

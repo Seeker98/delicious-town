@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  smurf1016:
+    'Mesures contre les comptes secondaires\u202f: l’Ichiban Kuji demande désormais un e-mail vérifié pour acheter des tickets et tirer, ainsi qu’un restaurant niveau 10 pour le tirage normal, et niveau 20 avec un compte d’au moins 3 jours pour le tirage de luxe\u202f; le Pack de départ et les codes demandent un e-mail vérifié\u202f; le nombre de comptes créés depuis un même réseau ou un même appareil est limité',
   predict1016:
     'Prédictions et activité\u202f: la question quotidienne «\u202fLes pièces gagnées aujourd’hui par tout le serveur dépasseront-elles celles d’hier\u202f?\u202f» est remplacée par «\u202fL’Arbre à vœux portera-t-il un objet donné à 20 h aujourd’hui\u202f?\u202f» (l’objet est tiré parmi les lots de l’Arbre à vœux), et les questions sur les pièces encore ouvertes sont annulées et remboursées\u202f; nouvelles tâches d’activité\u202f: faire un vœu à l’Arbre à vœux et changer la météo avec un objet, 5 points chacune\u202f; l’accueil affiche de nouveau jusqu’à 3 lignes de nouvelles de la ville',
   perf1016:

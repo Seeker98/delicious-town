@@ -143,7 +143,7 @@ describe('缺料抽取器按需准备（质量期 ③）', () => {
   it('开只有银币、钻石、道具的礼包（新手大礼包）：不读菜谱等级和橱柜', async () => {
     const shardId = await createShard(qt.db);
     await setTuning(qt, shardId, ALWAYS);
-    const r = await newRestaurant(qt, { shardId, goods: { [NEWBIE.pack]: 1 } });
+    const r = await newRestaurant(qt, { shardId, verified: true, goods: { [NEWBIE.pack]: 1 } });
     const { sqls } = await q.count(() => qt.game.store.use(r, { goodsId: NEWBIE.pack, num: 1 }));
     expect(sqls.filter((s) => /from "restaurant_cookbooks"/.test(s))).toEqual([]);
   });

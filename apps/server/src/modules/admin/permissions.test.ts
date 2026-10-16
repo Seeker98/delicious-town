@@ -469,6 +469,21 @@ const CASES: Case[] = [
     body: () => ({ restId: ids.restId }),
     min: 'admin',
   },
+  { method: 'GET', route: '/api/v1/admin/access-bans', url: () => '/api/v1/admin/access-bans', min: 'mod' },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/access-bans',
+    url: () => '/api/v1/admin/access-bans',
+    // 文档专用的 IP 段：别的测试都从 127.0.0.1 来
+    body: () => ({ kind: 'ip', value: '192.0.2.77', reason: '权限测试' }),
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/access-bans/:id/remove',
+    url: () => '/api/v1/admin/access-bans/999999/remove',
+    min: 'admin',
+  },
   ...(['bar', 'surge', 'multi', 'redeem', 'exchange', 'acquire'] as const).map((k) => ({
     method: 'GET' as const,
     route: `/api/v1/admin/suspicious/${k}`,

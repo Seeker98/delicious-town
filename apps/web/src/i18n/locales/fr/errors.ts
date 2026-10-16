@@ -17,6 +17,8 @@ const errors: Messages['errors'] = {
     EMAIL_TAKEN: 'Cette adresse e-mail est déjà enregistrée',
     INVALID_CREDENTIALS: "Nom d'utilisateur ou mot de passe incorrect",
     ACCOUNT_BANNED: 'Ce compte a été banni. Contactez un administrateur pour toute question.',
+    ACCESS_BANNED:
+      'Votre réseau ou votre appareil a été banni. Contactez un administrateur pour toute question.',
     EMAIL_NOT_VERIFIED: "Veuillez d'abord vérifier votre e-mail",
     TOKEN_INVALID: 'Le lien est invalide ou a expiré. Demandez-en un nouveau.',
     EMAIL_COOLDOWN: "Trop d'e-mails envoyés. Réessayez dans 1 minute.",
@@ -142,6 +144,9 @@ const errors: Messages['errors'] = {
     town_exchange: (p) => `Chaque joueur peut échanger cet objet ${s(p.max)} fois (déjà ${s(p.used)})`,
     max: (p) => `Vous pouvez en posséder au plus ${s(p.max)}`,
     friends: (p) => `Votre liste d'amis est pleine (${s(p.max)} au plus)`,
+    register_ip: (p) =>
+      `Au plus ${s(p.max)} comptes peuvent être créés depuis le même réseau en 24 heures. Réessayez plus tard.`,
+    register_device: (p) => `Au plus ${s(p.max)} comptes peuvent être créés sur le même appareil`,
     target_friends: () => "Sa liste d'amis est pleine",
     dine: () => "Vous avez déjà mangé à l'œil aujourd'hui. Revenez demain.",
     seats: (p) => `Ses places gratuites sont toutes prises (${s(p.max)} au plus)`,
@@ -212,6 +217,8 @@ const errors: Messages['errors'] = {
     mail_no_items: "Ce courrier n'a pas de pièce jointe",
     mail_broken: "Les pièces jointes de ce courrier ne sont plus valides. Contactez l'assistance.",
     code_not_found: "Ce code n'existe pas",
+    ban_value: 'IP, plage d’IP ou identifiant d’appareil invalide',
+    ban_self: 'Vous ne pouvez pas bannir votre propre IP actuelle',
     code_not_started: "Ce code n'est pas encore actif",
     code_expired: 'Ce code a expiré',
     code_used_up: 'Ce code a été entièrement utilisé',

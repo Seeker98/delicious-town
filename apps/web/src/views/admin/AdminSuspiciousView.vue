@@ -13,6 +13,7 @@ import type {
 import { adminApi } from '../../api/admin';
 import ExchangeGuardPanel from '../../components/admin/ExchangeGuardPanel.vue';
 import ExchangeMakerPanel from '../../components/admin/ExchangeMakerPanel.vue';
+import AccessBanPanel from '../../components/admin/AccessBanPanel.vue';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
 import { useToastStore } from '../../stores/toast';
@@ -23,11 +24,12 @@ import AdmHead from '../../components/admin/kit/AdmHead.vue';
 import AdmTabs from '../../components/admin/kit/AdmTabs.vue';
 
 /** 可疑数据（子项目 6B-2，设计 §5）：只读，只作提醒 */
-type Tab = 'bar' | 'surge' | 'multi' | 'redeem' | 'exchange' | 'acquire';
+type Tab = 'bar' | 'surge' | 'multi' | 'bans' | 'redeem' | 'exchange' | 'acquire';
 const TABS: Array<[Tab, string]> = [
   ['bar', '酒吧'],
   ['surge', '资源暴涨'],
   ['multi', '多号'],
+  ['bans', '封禁名单'],
   ['redeem', '兑换码被锁'],
   ['exchange', '交易所'],
   ['acquire', '收购拦截'],
@@ -47,6 +49,12 @@ const multi = ref<SuspiciousMultiGroup[]>([]);
 const redeem = ref<SuspiciousRedeemRow[]>([]);
 const acquire = ref<SuspiciousAcquireRow[]>([]);
 const loading = ref(false);
+/** 多号里点“封禁”：切到封禁名单、把 IP 或设备号填好（2026-10-16） */
+const banPrefill = ref<{ kind: 'ip' | 'device'; value: string } | null>(null);
+function banGroup(g: SuspiciousMultiGroup) {
+  banPrefill.value = { kind: g.kind, value: g.key };
+  tab.value = 'bans';
+}
 /** 请求序号：快速切换区服或标签时，丢弃先发出、后回来的旧响应（backlog 6B-2） */
 let seq = 0;
 
@@ -73,7 +81,7 @@ async function load() {
       const r = await adminApi.suspiciousAcquire(shardId);
       if (fresh()) acquire.value = r;
     }
-    // 交易所标签由 ExchangeGuardPanel 自己读取（156-2）
+    // 交易所、封禁名单标签由 ExchangeGuardPanel、AccessBanPanel 自己读取（156-2；2026-10-16）
   } catch (e) {
     if (fresh()) toast.push(errorMessage(e, '读取失败'), 'danger');
   } finally {
@@ -99,6 +107,8 @@ const player = (accountId: number) => `/admin/players/${accountId}`;
       <ExchangeGuardPanel />
       <ExchangeMakerPanel />
     </template>
+    <!-- 封禁名单不分区服（2026-10-16） -->
+    <AccessBanPanel v-else-if="tab === 'bans'" :prefill="banPrefill" />
 
     <AdmBox
       v-else-if="tab === 'bar'"
@@ -179,6 +189,15 @@ const player = (accountId: number) => `/admin/players/${accountId}`;
           <b
             >{{ g.kind === 'ip' ? '同一 IP' : '同一设备' }}：<span class="dt-adm-mono">{{ g.key }}</span></b
           >
+          <button
+            v-if="admin.isAdmin"
+            type="button"
+            class="dt-adm-btn is-d is-sm ms-2"
+            :data-testid="`sus-multi-ban-${g.kind}-${g.key}`"
+            @click="banGroup(g)"
+          >
+            封禁…
+          </button>
           <!-- 账号太多时服务端只列最近的一部分（backlog 6B-2） -->
           <span v-if="g.total > g.accounts.length" class="dt-adm-mu dt-adm-small"
             >共 {{ g.total }} 个账号，只列最近 {{ g.accounts.length }} 个</span
