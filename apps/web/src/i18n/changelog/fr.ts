@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  spar1016:
+    'Limite des duels amicaux\u202f: seuls les 10 premiers duels amicaux de la journée donnent des récompenses et de la renommée (50 auparavant)\u202f; la renommée pour avoir battu plus fort que soi ne change pas, et une défaite en fait toujours perdre',
   equip1016:
     'Les ustensiles ne se vendent plus\u202f: les ustensiles et l’essence d’ustensile ne peuvent plus être vendus à la boutique\u202f; démontez les ustensiles en trop pour en tirer de l’essence et servez-vous-en pour les renforcer\u202f; les récompenses des duels amicaux ne contiennent plus d’ustensiles, les pièces et l’EXP ne changent pas',
   commission1016:

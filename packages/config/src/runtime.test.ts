@@ -209,7 +209,7 @@ describe('厨塔索引（子项目 4C-2）', () => {
       openHour: 6,
       rankSize: 15,
       duelPerFriend: 10,
-      sparMaxAt: 50,
+      sparMaxAt: 10,
       rankGifts: [
         [1, gid('赛厨第1名礼包')],
         [2, gid('赛厨第2名礼包')],

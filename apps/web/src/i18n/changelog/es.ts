@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  spar1016:
+    'Límite de duelos amistosos: solo los 10 primeros duelos amistosos del día dan recompensas y renombre (antes 50); el renombre por vencer a alguien más fuerte no cambia, y perder sigue restando renombre',
   equip1016:
     'Los utensilios ya no se venden: los utensilios y la esencia de utensilio ya no se pueden vender a la tienda; desmonta los utensilios que sobren para obtener esencia y úsala para mejorar; las recompensas de los duelos amistosos ya no incluyen utensilios, las monedas y la EXP siguen igual',
   commission1016:
