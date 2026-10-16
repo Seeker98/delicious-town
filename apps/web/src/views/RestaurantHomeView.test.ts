@@ -172,6 +172,18 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([quest()]));
   });
 
+  it('上一轮的客人只写认识的顾客类型：结算记录里的内部统计（n3）不显示', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      ...dto,
+      lastRound: { ...dto.lastRound!, customers: { '1': 2, '0': 3, n3: 1 } },
+    });
+    const w = await mountView();
+    const guests = w.get('[data-testid="last-round-guests"]').text();
+    expect(guests).toBe('普通顾客×2');
+    expect(guests).not.toContain('n3');
+    w.unmount();
+  });
+
   it('概况、任务、白食一起读，不等概况回来（性能排查 2026-10-08：原来一个接一个，线上多两轮往返）', async () => {
     vi.mocked(endpoints.overview).mockReturnValue(new Promise(() => undefined));
     await mountView();

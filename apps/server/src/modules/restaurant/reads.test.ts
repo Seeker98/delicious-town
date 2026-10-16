@@ -103,6 +103,28 @@ describe('餐厅读接口', () => {
     expect(overview.lastRound.roundNo).toBe(round);
   });
 
+  it('结算记录里的内部统计 n3（卫生巡查用）不给网页：概况的上一轮、收益记录都没有', async () => {
+    const p = await playerWithRestaurant();
+    await http.deps.db
+      .insertInto('income_round')
+      .values({
+        rest_id: p.restId,
+        round_no: roundOf(new Date()),
+        coin: 10,
+        exp: 1,
+        oil: 1,
+        customers: JSON.stringify({ '1': 2, '3': 1, n3: 1 }),
+        rates: '{}',
+        drops: '[]',
+        created_at: new Date(),
+      })
+      .execute();
+    const overview = (await get(p.cookie, '/overview')).json.data;
+    expect(overview.lastRound.customers).toEqual({ '1': 2, '3': 1 });
+    const income = (await get(p.cookie, '/income')).json.data;
+    expect(income.items[0].customers).toEqual({ '1': 2, '3': 1 });
+  });
+
   it('个人日志分页', async () => {
     const p = await playerWithRestaurant();
     const base = Date.now();

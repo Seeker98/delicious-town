@@ -190,8 +190,9 @@ const expPercent = computed(() =>
 );
 const customers = computed(() =>
   Object.entries(rest.value?.lastRound?.customers ?? {})
-    .filter(([k]) => k !== '0')
-    .map(([k, v]) => t.value.common.qty(CUSTOMER_NAMES[k] ?? k, v))
+    // 只写认识的顾客类型：结算记录里还有内部统计（n3），不显示
+    .filter(([k]) => k !== '0' && CUSTOMER_NAMES[k] !== undefined)
+    .map(([k, v]) => t.value.common.qty(CUSTOMER_NAMES[k]!, v))
     .join(t.value.events.sep),
 );
 
