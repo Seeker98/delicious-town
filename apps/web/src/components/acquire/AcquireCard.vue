@@ -5,7 +5,6 @@ import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
 import { acquireReason, errorMessage } from '../../i18n/zh-CN';
 import { useToastStore } from '../../stores/toast';
-import { sellerGets } from '../../utils/acquire';
 import { formatNum, formatPct } from '../../utils/format';
 import { remainText } from '../../utils/remain';
 
@@ -31,11 +30,23 @@ async function buy(way: 'acquire' | 'listed') {
   const x = r.value;
   if (!x || busy.value) return;
   const cost = way === 'acquire' ? x.price : (x.listed?.price ?? x.price);
-  const got = sellerGets(cost, x.taxRate);
+  const split = way === 'acquire' ? x.acquireSplit : x.listedSplit;
+  if (!split) return;
   const a = t.value.acquire;
-  const ask = way === 'acquire' ? a.confirmAcquire : a.confirmListed;
   const coin = formatNum;
-  if (!window.confirm(ask(x.name, coin(cost), x.owner?.name ?? x.name, coin(got), coin(cost - got)))) return;
+  // 强收：店得、并购咨询费、税；买挂牌：原老板得、店得转会费、税（收购改版 2026-10-16）
+  const text =
+    way === 'acquire'
+      ? a.confirmAcquire(x.name, coin(cost), coin(split.storeGot), coin(split.burn), coin(split.tax))
+      : a.confirmListed(
+          x.name,
+          coin(cost),
+          x.owner?.name ?? x.name,
+          coin(split.sellerGot),
+          coin(split.storeGot),
+          coin(split.tax),
+        );
+  if (!window.confirm(text)) return;
   busy.value = true;
   try {
     await endpoints.acquireBuy(x.restId, way, cost);
@@ -82,7 +93,11 @@ onMounted(load);
       </button>
       <!-- 被封号的店不写原因（审查 Minor 3；终审：只有封号用笼统说法，反而认得出来） -->
       <span
-        v-else-if="r.acquireBlock !== 'self' && r.acquireBlock !== 'banned'"
+        v-else-if="
+          r.acquireBlock !== 'self' &&
+          r.acquireBlock !== 'banned' &&
+          !(r.acquireBlock === 'owned' && r.listed)
+        "
         class="text-muted"
         data-testid="card-block"
         >{{ reasonText(r.acquireBlock) }}</span

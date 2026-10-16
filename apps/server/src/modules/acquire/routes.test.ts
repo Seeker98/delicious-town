@@ -22,14 +22,31 @@ async function openShard(): Promise<number> {
 }
 const setRest = (id: number, patch: { coin?: number; star_level?: number }) =>
   ctx.deps.db.updateTable('restaurant').set(patch).where('id', '=', id).execute();
+/** 买家门槛（收购改版 2026-10-16）：2 星、注册满 7 天 */
+async function asBuyer(p: { accountId: number; restId: number }, coin: number) {
+  await setRest(p.restId, { coin, star_level: 2 });
+  await ctx.deps.db
+    .updateTable('account')
+    .set({ created_at: new Date(FROZEN.getTime() - 30 * 86_400_000) })
+    .where('id', '=', p.accountId)
+    .execute();
+}
+/** 已经有身价的 2 星店（每天的任务建过行，不在新店保护期） */
+async function priced(shardId: number, restId: number, base = 100_000) {
+  await setRest(restId, { star_level: 2 });
+  await ctx.deps.db
+    .insertInto('acquire_state')
+    .values({ rest_id: restId, shard_id: shardId, base, heat: 1 })
+    .execute();
+}
 
 describe('收购接口（收购 PR 1）', () => {
   it('看一家店 → 收购 → 我的、身价榜、投资榜 → 挂牌 → 在售 → 对方看到自己的老板', async () => {
     const shardId = await openShard();
     const a = await playerIn(ctx, shardId);
     const b = await playerIn(ctx, shardId);
-    await setRest(a.restId, { coin: 10_000_000 });
-    await setRest(b.restId, { star_level: 2 });
+    await asBuyer(a, 10_000_000);
+    await priced(shardId, b.restId);
     // 测试里都从 127.0.0.1 注册，会被当成关联账号拦下：给 b 换一个 IP
     await ctx.deps.db
       .updateTable('login_trace')
@@ -54,19 +71,25 @@ describe('收购接口（收购 PR 1）', () => {
       body: { restId: b.restId, way: 'acquire', expect: 100_000 },
     });
     expect(buy.status).toBe(200);
-    expect(buy.json.data).toMatchObject({ price: 100_000, sellerGot: 90_000 });
+    expect(buy.json.data).toMatchObject({
+      price: 100_000,
+      sellerGot: 0,
+      storeGot: 50_000,
+      burn: 40_000,
+      tax: 10_000,
+    });
 
     const view = await call(ctx.app, 'GET', '/api/v1/acquire', { cookie: a.cookie });
     expect(view.json.data).toMatchObject({
-      holdings: [{ restId: b.restId, price: 120_000, heat: 1.2 }],
-      maxHoldings: 10,
-      taxRate: 0.1,
+      holdings: [{ restId: b.restId, price: 110_000, heat: 1.1, tendedToday: false, tendCost: 285 }],
+      boughtToday: 1,
+      rules: { maxHoldings: 10, taxRate: 0.1, cedeRate: 0.035 },
     });
 
     const rank = await call(ctx.app, 'GET', '/api/v1/acquire/rank?board=price', { cookie: a.cookie });
     expect(rank.json.data.price[0]).toMatchObject({ restId: b.restId, owner: { restId: a.restId } });
     const invest = await call(ctx.app, 'GET', '/api/v1/acquire/rank?board=invest', { cookie: a.cookie });
-    expect(invest.json.data.invest[0]).toMatchObject({ restId: a.restId, holdings: 1, value: 120_000 });
+    expect(invest.json.data.invest[0]).toMatchObject({ restId: a.restId, holdings: 1, value: 110_000 });
 
     // 正好 .5 时身价、投资榜、首页资产都按 JS 的四舍五入（4.5 → 5），不能用 Postgres 的 round（double 时 4.5 → 4，#189 遗留）
     await ctx.deps.db
@@ -99,7 +122,7 @@ describe('收购接口（收购 PR 1）', () => {
 
     // 关联账号：页面上就标出来，不用等点了才报错
     const c = await playerIn(ctx, shardId);
-    await setRest(c.restId, { star_level: 2 });
+    await priced(shardId, c.restId);
     const linked = await call(ctx.app, 'GET', `/api/v1/acquire/rest/${c.restId}`, { cookie: a.cookie });
     expect(linked.json.data).toMatchObject({ acquireBlock: 'linked' });
 
@@ -122,62 +145,105 @@ describe('收购接口（收购 PR 1）', () => {
     expect(row).toBeUndefined();
   });
 
-  it('打理 → 我的页面看到今天打理过；老板看到名下那家昨天的分红和今天打理；投资榜有累计分红（收购 PR 2）', async () => {
+  it('老板打理 → 名下那家今天打理过、昨天到账的抽成；被收购的店看到老板打理了、今天让了多少；投资榜有累计（改版 2026-10-16）', async () => {
     const shardId = await openShard();
     const a = await playerIn(ctx, shardId);
     const b = await playerIn(ctx, shardId);
+    await setRest(a.restId, { coin: 1_000_000 });
     await ctx.deps.db
       .insertInto('acquire_state')
-      .values({ rest_id: b.restId, shard_id: shardId, base: 100_000, heat: 1, owner_rest_id: a.restId })
+      .values({
+        rest_id: b.restId,
+        shard_id: shardId,
+        base: 3_395_000,
+        heat: 1,
+        owner_rest_id: a.restId,
+        acquired_at: FROZEN,
+      })
       .execute();
-    const before = await call(ctx.app, 'GET', '/api/v1/acquire', { cookie: b.cookie });
-    expect(before.json.data).toMatchObject({ tendedToday: false, tendFoods: 5 });
-    const tend = await call(ctx.app, 'POST', '/api/v1/acquire/tend', { cookie: b.cookie });
-    expect(tend.status).toBe(200);
-    expect(tend.json.data.foods.reduce((s: number, f: { num: number }) => s + f.num, 0)).toBe(5);
-    expect((await call(ctx.app, 'GET', '/api/v1/acquire', { cookie: b.cookie })).json.data.tendedToday).toBe(
-      true,
-    );
-
-    const yday = addDays(gameDay(ctx.deps.now()), -1);
+    // 测试里都从 127.0.0.1 注册，会被当成关联账号：给 b 换一个 IP
     await ctx.deps.db
-      .insertInto('acquire_dividend')
-      .values({ rest_id: b.restId, day: yday, owner_rest_id: a.restId, coin: 1234, tended: true })
+      .updateTable('login_trace')
+      .set({ ip: '10.20.30.41' })
+      .where('account_id', '=', b.accountId)
+      .execute();
+    const before = await call(ctx.app, 'GET', '/api/v1/acquire', { cookie: a.cookie });
+    expect(before.json.data.holdings).toMatchObject([
+      { restId: b.restId, tendedToday: false, tendCost: 9_700, tendPacks: 2 },
+    ]);
+    const tend = await call(ctx.app, 'POST', '/api/v1/acquire/tend', {
+      cookie: a.cookie,
+      body: { restId: b.restId },
+    });
+    expect(tend.status).toBe(200);
+    expect(tend.json.data).toEqual({ restId: b.restId, cost: 9_700, packs: 2 });
+    const again = await call(ctx.app, 'POST', '/api/v1/acquire/tend-all', { cookie: a.cookie });
+    expect(again.json.params).toMatchObject({ reason: 'tended' });
+
+    const today = gameDay(ctx.deps.now());
+    const yday = addDays(today, -1);
+    await ctx.deps.db
+      .insertInto('acquire_due')
+      .values([
+        { rest_id: b.restId, day: yday, owner_rest_id: a.restId, coin: 1234, tended: true, paid_at: FROZEN },
+        { rest_id: b.restId, day: today, owner_rest_id: a.restId, coin: 300, tended: true },
+      ])
       .execute();
     await ctx.deps.db
       .insertInto('acquire_holder')
       .values({ rest_id: a.restId, dividend_total: 5678 })
       .execute();
-    // 今天刚从前任（b）手里买来的店：昨天的分红是给前任的，新老板看到 null
+    // 今天刚从前任（b）手里买来的店：昨天的让渡是给前任的
     const c = await playerIn(ctx, shardId);
     await ctx.deps.db
       .insertInto('acquire_state')
-      .values({ rest_id: c.restId, shard_id: shardId, base: 50_000, heat: 1, owner_rest_id: a.restId })
+      .values({
+        rest_id: c.restId,
+        shard_id: shardId,
+        base: 50_000,
+        heat: 1,
+        owner_rest_id: a.restId,
+        acquired_at: FROZEN,
+      })
       .execute();
     await ctx.deps.db
-      .insertInto('acquire_dividend')
-      .values({ rest_id: c.restId, day: yday, owner_rest_id: b.restId, coin: 99, tended: false })
+      .insertInto('acquire_due')
+      .values({ rest_id: c.restId, day: yday, owner_rest_id: b.restId, coin: 99 })
       .execute();
-    // 今天的分红任务还没跑完：页面写“还没发”，不写“昨天没有分红”（收购 PR 2 遗留）
+    // 今天的发放任务还没跑完：页面写“还没发”，不写 0（收购 PR 2 遗留）
     const early = await call(ctx.app, 'GET', '/api/v1/acquire', { cookie: a.cookie });
     expect(early.json.data.dividendPaid).toBe(false);
+    expect(
+      early.json.data.holdings.find((h: { restId: number }) => h.restId === c.restId).yesterday,
+    ).toBeNull();
     await ctx.deps.db
       .insertInto('job_run')
       .values({
         shard_id: shardId,
         job: 'acquire-dividend',
-        period: `acquire-dividend-${gameDay(ctx.deps.now())}`,
+        period: `acquire-dividend-${today}`,
         started_at: ctx.deps.now(),
         finished_at: ctx.deps.now(),
       })
       .execute();
     const mine = await call(ctx.app, 'GET', '/api/v1/acquire', { cookie: a.cookie });
-    expect(mine.json.data.dividendPaid).toBe(true);
+    expect(mine.json.data).toMatchObject({ dividendPaid: true, pendingTotal: 300, yesterdayTotal: 1234 });
     expect(mine.json.data.holdings).toMatchObject([
-      { restId: b.restId, dividend: { coin: 1234, tended: true }, tendedToday: true },
-      { restId: c.restId, dividend: null, tendedToday: false },
+      { restId: b.restId, tendedToday: true, cedeRate: 0.049, pending: 300, yesterday: 1234 },
+      { restId: c.restId, tendedToday: false, cedeRate: 0.035, pending: 0, yesterday: 0 },
     ]);
-    expect(mine.json.data.tendedToday).toBe(false);
+    const owned = await call(ctx.app, 'GET', '/api/v1/acquire', { cookie: b.cookie });
+    expect(owned.json.data.owned).toMatchObject({
+      cededToday: 300,
+      ceded30: 1534,
+      cedeRate: 0.049,
+      tendedToday: true,
+      packsToday: 2,
+      tendDays7: 1,
+      redeemPrice: 3_395_000,
+      redeemSplit: { sellerGot: 2_037_000, burn: 1_018_500, tax: 339_500 },
+    });
+    expect((await call(ctx.app, 'GET', '/api/v1/acquire', { cookie: a.cookie })).json.data.owned).toBeNull();
     const invest = await call(ctx.app, 'GET', '/api/v1/acquire/rank?board=invest', { cookie: a.cookie });
     expect(invest.json.data.invest).toMatchObject([{ restId: a.restId, holdings: 2, dividendTotal: 5678 }]);
   });
@@ -267,7 +333,7 @@ describe('收购接口（收购 PR 1）', () => {
   });
 });
 
-describe('分红有老板没发成（稳健性收尾批终审 I1：任务记成出错后，整个区服都写“还没发”）', () => {
+describe('让渡有老板没发成（稳健性收尾批终审 I1：任务记成出错后，整个区服都写“还没发”）', () => {
   it('只有没发成的老板看到“还没发”，别的老板照常', async () => {
     const shardId = await openShard();
     const [a, b, x, y] = [

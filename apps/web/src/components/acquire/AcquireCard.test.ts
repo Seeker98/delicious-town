@@ -15,14 +15,16 @@ const rest = (o: Partial<AcquireRestDto> = {}): AcquireRestDto => ({
   level: 10,
   star: 2,
   base: 1_000_000,
+  avg: 285_714,
   heat: 1,
   price: 1_000_000,
   owner: null,
   listed: null,
-  taxRate: 0.1,
   protectedUntil: null,
   acquireBlock: null,
   listedBlock: 'not_listed',
+  acquireSplit: { sellerGot: 0, storeGot: 500_000, burn: 400_000, tax: 100_000 },
+  listedSplit: null,
   ...o,
 });
 
@@ -31,7 +33,14 @@ describe('AcquireCard（对方餐厅页，收购 PR 3）', () => {
     vi.clearAllMocks();
     vi.restoreAllMocks();
     setActivePinia(createPinia());
-    vi.mocked(endpoints.acquireBuy).mockResolvedValue({ restId: 2, price: 1, tax: 0, sellerGot: 1 });
+    vi.mocked(endpoints.acquireBuy).mockResolvedValue({
+      restId: 2,
+      price: 1,
+      tax: 0,
+      sellerGot: 1,
+      storeGot: 0,
+      burn: 0,
+    });
   });
 
   it('身价、自主经营；能收时确认后按身价收购', async () => {
@@ -46,7 +55,9 @@ describe('AcquireCard（对方餐厅页，收购 PR 3）', () => {
     expect(w.find('[data-testid="card-listed"]').exists()).toBe(false);
     await w.get('[data-testid="card-acquire"]').trigger('click');
     await flushPromises();
-    expect(confirm.mock.calls[0]![0]).toContain('「乙店」得 900,000 银币, 税 100,000 银币');
+    expect(confirm.mock.calls[0]![0]).toContain(
+      '「乙店」得 500,000 银币, 并购咨询费 400,000 银币销毁, 税 100,000 银币',
+    );
     expect(endpoints.acquireBuy).toHaveBeenCalledWith(2, 'acquire', 1_000_000);
     expect(endpoints.acquireRest).toHaveBeenCalledTimes(2);
   });
@@ -59,7 +70,7 @@ describe('AcquireCard（对方餐厅页，收购 PR 3）', () => {
     await flushPromises();
     expect(w.find('[data-testid="card-acquire"]').exists()).toBe(false);
     expect(w.get('[data-testid="card-block"]').text()).toBe(
-      '你和这家店 (或它的老板) 最近在同一台设备或同一网络登录过, 不能收购',
+      '你和这家店 (或它的老板) 最近在同一台设备或同一网络登录过, 不能收购或打理',
     );
   });
 
@@ -69,17 +80,25 @@ describe('AcquireCard（对方餐厅页，收购 PR 3）', () => {
       rest({
         owner: { restId: 9, name: '老板店' },
         listed: { rate: 0.6, price: 600_000, until },
-        acquireBlock: null,
+        acquireBlock: 'owned',
         listedBlock: null,
+        acquireSplit: null,
+        listedSplit: { sellerGot: 510_000, storeGot: 30_000, burn: 0, tax: 60_000 },
       }),
     );
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
     const w = mount(AcquireCard, { props: { restId: 2 } });
     await flushPromises();
     expect(w.text()).toContain('老板: 老板店');
     expect(w.text()).toContain('挂牌 60%: 600,000 银币');
+    // 有老板的店不能强收：没有收购按钮；在挂牌时也不写“不能强收”，只给买下
+    expect(w.find('[data-testid="card-acquire"]').exists()).toBe(false);
+    expect(w.find('[data-testid="card-block"]').exists()).toBe(false);
     await w.get('[data-testid="card-listed"]').trigger('click');
     await flushPromises();
+    expect(confirm.mock.calls[0]![0]).toContain(
+      '「老板店」得 510,000 银币, 「乙店」得 30,000 银币, 税 60,000 银币',
+    );
     expect(endpoints.acquireBuy).toHaveBeenCalledWith(2, 'listed', 600_000);
   });
 

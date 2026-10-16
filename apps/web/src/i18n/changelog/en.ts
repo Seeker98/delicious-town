@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  acquire1016:
+    'Acquisitions rework: the system no longer pays out dividends; instead an acquired restaurant gives 3.5% of each round’s settlement to its owner (4.9% after the owner tends it that day), and acquired restaurants no longer get free ingredients; tending is now done by the owner, who pays 1% of the restaurant’s daily average, after which its settlements are × 1.035 and it gets level-2 market supply packs; restaurants not tended for 14 days are let go automatically; takeovers only work on restaurants with no owner: the restaurant gets 50%, while a 40% M&A advisory fee and 10% tax are destroyed, and restaurants with an owner can only change hands through a listing; buy-backs use the base valuation and the owner gets 60%; valuations are now 3.5× the daily average; buyers need 2+ stars, an account at least 7 days old, and can buy up to 3 a day; the M&A Advisor permit no longer cuts tax',
   tower1016:
     "Tower drops: each tower win now has a 10% chance to drop a piece of that floor's elder gear (was 20% on floors 1–3, then 12%, 8% and 5% higher up); random rewards from the tower and friend duels no longer include cookware and give coins instead, while other items keep their odds",
   spar1016:

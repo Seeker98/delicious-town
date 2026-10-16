@@ -334,6 +334,8 @@ export interface IncomeRoundTable {
   customers: Json<Record<string, number>>;
   rates: Json<Record<string, unknown>>;
   drops: Json<Array<{ goodsId: number; num: number }>>;
+  /** 这一轮让给老板的银币（收购改版 2026-10-16）；coin 是让之前的 */
+  ceded: Default<number>;
   created_at: Ts;
 }
 
@@ -1237,13 +1239,20 @@ export interface AcquireStateTable {
   list_rate: Nullable<number>;
   list_until: TsNullable;
   acquired_at: TsNullable;
+  /** 现在的老板最近一次打理（收购改版 2026-10-16）；换老板时清空 */
+  tended_at: TsNullable;
 }
 
-/** 被收购的店替老板打理（收购 PR 2）：每家店每个游戏日一行 */
+/** 老板打理名下的店（收购改版 2026-10-16）：每家店、每个游戏日、每个老板一行 */
 export interface AcquireTendTable {
   rest_id: number;
   /** 游戏日 YYYY-MM-DD */
   day: string;
+  owner_rest_id: number;
+  /** 老板付的银币（销毁） */
+  cost: number;
+  /** 送店的补给包个数 */
+  packs: number;
   created_at: Ts;
 }
 
@@ -1283,13 +1292,19 @@ export interface FuturesQuotaTable {
 }
 
 /** 每家被收购的店每天给老板的分红（压过封顶以后的）；day 是结算的那天 */
-export interface AcquireDividendTable {
+/**
+ * 被收购的店让给老板的银币（收购改版 2026-10-16）：结算每轮累加到当天、当时的老板那一行，00:05 的任务发出去写 paid_at；
+ * 老板被封、和店是关联账号的退回店（refunded）
+ */
+export interface AcquireDueTable {
   rest_id: number;
   day: string;
   owner_rest_id: number;
-  coin: number;
-  /** 那天打理过（分红 × 1.5） */
-  tended: boolean;
+  coin: Default<number>;
+  /** 这一天有轮次是在老板打理以后结算的 */
+  tended: Default<boolean>;
+  paid_at: TsNullable;
+  refunded: Default<boolean>;
 }
 
 /** 每个老板的累计分红（投资榜用，免得每次加总全表） */
@@ -1311,6 +1326,10 @@ export interface AcquireLogTable {
   seller_rest_id: Nullable<number>;
   price: number;
   tax: number;
+  /** 店自己得的（强收的 50%、转手的转会费）；迁移 0083 以前的记录为 0 */
+  store_got: Default<number>;
+  /** 销毁的（并购咨询费、赎身销毁），不含税 */
+  burn: Default<number>;
   heat_after: number;
   created_at: Ts;
 }
@@ -1596,7 +1615,7 @@ export interface DB {
   acquire_log: AcquireLogTable;
   acquire_block: AcquireBlockTable;
   acquire_tend: AcquireTendTable;
-  acquire_dividend: AcquireDividendTable;
+  acquire_due: AcquireDueTable;
   acquire_holder: AcquireHolderTable;
   kuji_ticket: KujiTicketTable;
   tower_state: TowerStateTable;

@@ -14,7 +14,7 @@ import type { AcquireService } from './service';
 
 const restParam = z.object({ restId: z.coerce.number().int().positive() });
 
-/** 收购（问题记录 421） */
+/** 收购（问题记录 421；改版 2026-10-16：打理改成老板点，可以全部打理） */
 export function acquireRoutes(svc: AcquireService): FastifyPluginAsync {
   return async (r) => {
     r.get('/acquire', async (req) => ok(await svc.view(restCtxOf(req))));
@@ -40,6 +40,9 @@ export function acquireRoutes(svc: AcquireService): FastifyPluginAsync {
     r.post('/acquire/unlist', async (req) =>
       okOp(await svc.unlist(restCtxOf(req), parse(acquireRestBody, req.body))),
     );
-    r.post('/acquire/tend', async (req) => okOp(await svc.tend(restCtxOf(req))));
+    r.post('/acquire/tend', async (req) =>
+      okOp(await svc.tend(restCtxOf(req), parse(acquireRestBody, req.body))),
+    );
+    r.post('/acquire/tend-all', async (req) => okOp(await svc.tendAll(restCtxOf(req))));
   };
 }

@@ -385,13 +385,18 @@ const errors: Messages['errors'] = {
     not_listed: () => 'Este restaurante no está en venta',
     star: () => 'Este restaurante aún no tiene estrellas suficientes para ser adquirido',
     no_state: () => 'Este restaurante aún no tiene estrellas suficientes para tener valoración',
-    protected: () => 'Este restaurante acaba de recomprarse y sigue protegido',
-    daily: () => 'Este restaurante ya fue adquirido demasiadas veces hoy. Vuelve mañana',
+    protected: () => 'Este restaurante acaba de recomprarse o de ganar una estrella y sigue protegido',
+    daily: () => 'Este restaurante ya fue adquirido a la fuerza hoy. Vuelve mañana',
+    owned: () =>
+      'Un restaurante con dueño no se puede adquirir a la fuerza; cómpralo en «En venta» cuando su dueño lo ponga a la venta',
+    buyer_star: () => 'Tu restaurante aún no tiene estrellas suficientes para adquirir otros',
+    buyer_new: () => 'Tu cuenta es demasiado nueva para adquirir restaurantes. Inténtalo dentro de unos días',
+    buyer_daily: () => 'Hoy ya adquiriste suficientes restaurantes. Vuelve mañana',
     pair: () => 'Vuestros dos restaurantes negociaron hace poco. Inténtalo dentro de unos días',
     buyer_owned: () => 'Mientras tu restaurante tenga dueño, no puedes adquirir otros',
     holdings: () => 'No puedes tener más restaurantes',
     linked: () =>
-      'Tú y este restaurante (o su dueño) habéis iniciado sesión hace poco desde el mismo dispositivo o la misma red, así que no puedes adquirirlo',
+      'Tú y este restaurante (o su dueño) habéis iniciado sesión hace poco desde el mismo dispositivo o la misma red, así que no puedes adquirirlo ni atenderlo',
     other_shard: () => 'Ese restaurante no está en este servidor',
     owner_changed: () => 'Este restaurante acaba de cambiar de dueño. Actualiza y vuelve a mirar',
     price_changed: (p) =>
@@ -401,8 +406,8 @@ const errors: Messages['errors'] = {
     not_owned: () => 'Tu restaurante no tiene dueño',
     not_owner: () => 'Este restaurante no es tuyo',
     list_rate: (p) =>
-      `El precio de venta debe estar entre el ${formatPct(Number(p.min ?? 0.5), { digits: 0 })} y el 100\u00a0% de la valoración, en pasos del 5\u00a0%`,
-    tended: () => 'Hoy ya atendiste para el dueño',
+      `El precio de venta debe estar entre el ${formatPct(Number(p.min ?? 0.5), { digits: 0 })} y el ${formatPct(Number(p.max ?? 1.2), { digits: 0 })} de la valoración, en pasos del 5\u00a0%`,
+    tended: () => 'Hoy ya atendiste este restaurante',
   },
   already: {
     activity_reward: 'Ya has reclamado esta recompensa',

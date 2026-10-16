@@ -902,33 +902,70 @@ export const tuningSchema = z.object({
     maxEvents: int.min(5).max(60),
   }),
   /**
-   * 收购（问题记录 421）：身价 = 基础身价 × 热度；基础身价 = 近 priceDays 天日均结算银币 × priceMultiple，不低于 minPrice。
-   * 钱只在玩家之间流动，系统只收 taxRate；分红、打理的数值在收购 PR 2 用到
+   * 收购（问题记录 421；改版 2026-10-16）：身价 = 基础身价 × 热度；基础身价 = 近 priceDays 天日均结算银币 × priceMultiple，不低于 minPrice。
+   * 系统不印钱：被收购的店每轮结算让 cedeRate 给老板（老板当天打理过 cedeTendRate），买卖、赎身按各自比例分账，其余销毁
    */
-  acquire: z.object({
-    priceDays: int.min(1),
-    priceMultiple: num.min(0),
-    minPrice: int.min(1),
-    heatStep: num.min(0),
-    heatListDrop: num.min(0),
-    heatMax: num.min(1),
-    heatDecay: z.number().min(0).max(1),
-    taxRate: z.number().min(0).max(1),
-    protectDays: int.min(0),
-    maxHoldings: int.min(1),
-    maxPerDay: int.min(1),
-    pairDays: int.min(0),
-    linkDays: int.min(1),
-    minStar: int.min(0),
-    listMinRate: z.number().min(0.05).max(1),
-    listDays: int.min(1),
-    dividendRate: z.number().min(0).max(1),
-    tendBonus: num.min(0),
-    minRounds: int.min(0),
-    dividendCapRate: z.number().min(0).max(1),
-    tendFoods: int.min(0),
-    newsMinPrice: int.min(0),
-  }),
+  acquire: z
+    .object({
+      priceDays: int.min(1),
+      priceMultiple: num.gt(0),
+      minPrice: int.min(1),
+      heatStep: num.min(0),
+      heatListDrop: num.min(0),
+      heatMax: num.min(1),
+      heatDecay: z.number().min(0).max(1),
+      taxRate: z.number().min(0).max(1),
+      protectDays: int.min(0),
+      /** 刚到 minStar 星的店几天内不能被强收 */
+      newStarProtectDays: int.min(0),
+      maxHoldings: int.min(1),
+      /** 一家店每天最多被强收几次 */
+      maxPerDay: int.min(1),
+      pairDays: int.min(0),
+      linkDays: int.min(1),
+      minStar: int.min(0),
+      listMinRate: z.number().min(0.05).max(1),
+      listMaxRate: z.number().min(1).max(5),
+      listDays: int.min(1),
+      /** 买家（强收、买挂牌）至少几星、注册满几天、每天最多买几家 */
+      buyerMinStar: int.min(0),
+      buyerMinAccountDays: int.min(0),
+      buyerMaxPerDay: int.min(1),
+      /** 强收没有老板的店：店得 firstStoreRate，并购咨询费 firstBurnRate 销毁，其余是税 */
+      firstStoreRate: z.number().min(0).max(1),
+      firstBurnRate: z.number().min(0).max(1),
+      /** 买挂牌：店得 resaleStoreRate，税 taxRate，其余给原老板 */
+      resaleStoreRate: z.number().min(0).max(1),
+      /** 赎身：redeemBurnRate 销毁，税 taxRate，其余给老板 */
+      redeemBurnRate: z.number().min(0).max(1),
+      cedeRate: z.number().min(0).max(1),
+      cedeTendRate: z.number().min(0).max(1),
+      /** 老板打理以后这家店当天之后的结算银币 × tendMultiplier */
+      tendMultiplier: num.min(1),
+      /** 老板打理一次付这家店日均的多少（销毁） */
+      tendCostRate: z.number().min(0).max(1),
+      /** 打理送店的补给包：日均每满 tendPackStep 送 1 个，最多 tendPackMax 个 */
+      tendPackGoods: int.min(1),
+      tendPackStep: int.min(1),
+      tendPackMax: int.min(0),
+      /** 老板几天没打理：抽成减半、不再抽成、自动放手 */
+      tendHalfDays: int.min(1),
+      tendStopDays: int.min(1),
+      tendReleaseDays: int.min(1),
+      newsMinPrice: int.min(0),
+    })
+    .refine((a) => a.firstStoreRate + a.firstBurnRate + a.taxRate <= 1 + 1e-9, {
+      message: 'firstStoreRate + firstBurnRate + taxRate 不能超过 1',
+    })
+    .refine((a) => a.resaleStoreRate + a.taxRate <= 1 + 1e-9, {
+      message: 'resaleStoreRate + taxRate 不能超过 1',
+    })
+    .refine((a) => a.redeemBurnRate + a.taxRate <= 1 + 1e-9, {
+      message: 'redeemBurnRate + taxRate 不能超过 1',
+    })
+    .refine((a) => a.tendHalfDays <= a.tendStopDays && a.tendStopDays <= a.tendReleaseDays, {
+      message: 'tendHalfDays ≤ tendStopDays ≤ tendReleaseDays',
+    }),
   /** 小镇发展基金（240-2）：存期、到期领回和提前取出的比例、三档 */
   fund: z.object({
     days: int.min(1),

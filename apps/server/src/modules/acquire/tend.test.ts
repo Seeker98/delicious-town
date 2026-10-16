@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { gameTime } from '@dt/shared';
-import { acquireShard, setAcquireState } from '../../../test/acquire';
+import { acquireShard, acquireStateOf, setAcquireState } from '../../../test/acquire';
 import { createTestGame, newRestaurant, restRow, type TestGame } from '../../../test/game';
 
 let t: TestGame;
@@ -11,94 +11,161 @@ afterAll(() => t.close());
 beforeEach(() => t.clock.set(gameTime('2026-10-10', 12)));
 
 const svc = () => t.game.acquire;
-const foods = async (restId: number) => {
-  const rows = await t.db
-    .selectFrom('cupboard_food')
-    .select(['foods_id', 'num', 'fridge_num'])
-    .where('rest_id', '=', restId)
-    .execute();
-  return new Map(rows.map((r) => [r.foods_id, r.num + r.fridge_num]));
-};
-const total = (m: Map<number, number>) => [...m.values()].reduce((a, b) => a + b, 0);
+const PACK = () => t.deps.config.tuning.acquire.tendPackGoods;
+const coin = async (id: number) => (await restRow(t, id)).coin;
+const packs = async (restId: number) =>
+  (
+    await t.db
+      .selectFrom('store_item')
+      .select('num')
+      .where('rest_id', '=', restId)
+      .where('goods_id', '=', PACK())
+      .executeTakeFirst()
+  )?.num ?? 0;
 
-/** 一家被收购的店（老板另开一家） */
-async function owned() {
+/** 老板名下一家店：基础身价 3,395,000（日均 97 万：打理付 9,700，送 2 个补给包） */
+async function owned(base = 3_395_000) {
   const shardId = await acquireShard(t);
-  const owner = await newRestaurant(t, { shardId, patch: { name: '老板的店' } });
-  const me = await newRestaurant(t, { shardId, patch: { level: 3 } });
-  await setAcquireState(t, me.restaurantId, shardId, { owner_rest_id: owner.restaurantId });
-  return { shardId, owner, me };
+  const owner = await newRestaurant(t, { shardId, patch: { name: '老板的店', coin: 1_000_000 } });
+  const store = await newRestaurant(t, { shardId, patch: { name: '小熊面馆' } });
+  await setAcquireState(t, store.restaurantId, shardId, {
+    owner_rest_id: owner.restaurantId,
+    base,
+    acquired_at: gameTime('2026-10-08', 9),
+  });
+  return { shardId, owner, store };
 }
 
-describe('打理（收购 PR 2）', () => {
-  it('被收购的店替老板打理：得 5 份食材（等级不超过店的等级）、记下今天、写日志', async () => {
-    const { owner, me } = await owned();
-    const before = await foods(me.restaurantId);
-    const r = await svc().tend(me);
-    const after = await foods(me.restaurantId);
-    expect(total(after) - total(before)).toBe(5);
-    expect(r.data.foods.reduce((a, f) => a + f.num, 0)).toBe(5);
-    for (const f of r.data.foods) expect(t.deps.config.requireFood(f.id).level).toBeLessThanOrEqual(3);
+describe('老板打理（收购改版 2026-10-16）', () => {
+  it('付这家日均的 1%（销毁），送店补给包，记下打理时间，两边写动态', async () => {
+    const { owner, store } = await owned();
+    const r = await svc().tend(owner, { restId: store.restaurantId });
+    expect(r.data).toEqual({ restId: store.restaurantId, cost: 9_700, packs: 2 });
+    expect(await coin(owner.restaurantId)).toBe(1_000_000 - 9_700);
+    expect(await packs(store.restaurantId)).toBe(2);
+    expect((await acquireStateOf(t, store.restaurantId)).tended_at).toEqual(t.clock.now);
     expect(
-      await t.db.selectFrom('acquire_tend').select('day').where('rest_id', '=', me.restaurantId).execute(),
-    ).toEqual([{ day: '2026-10-10' }]);
-    const log = await t.db
-      .selectFrom('rest_log')
-      .select(['type', 'params'])
-      .where('rest_id', '=', me.restaurantId)
-      .where('type', '=', 'acquire.tended')
-      .executeTakeFirstOrThrow();
-    expect(log.params).toEqual({ owner: owner.restaurantId, ownerName: '老板的店', n: 5 });
+      await t.db
+        .selectFrom('acquire_tend')
+        .select(['day', 'owner_rest_id', 'cost', 'packs'])
+        .where('rest_id', '=', store.restaurantId)
+        .execute(),
+    ).toEqual([{ day: '2026-10-10', owner_rest_id: owner.restaurantId, cost: 9_700, packs: 2 }]);
+    const log = async (restId: number, type: string) =>
+      (
+        await t.db
+          .selectFrom('rest_log')
+          .select('params')
+          .where('rest_id', '=', restId)
+          .where('type', '=', type)
+          .executeTakeFirstOrThrow()
+      ).params;
+    expect(await log(owner.restaurantId, 'acquire.tended')).toEqual({
+      restId: store.restaurantId,
+      name: '小熊面馆',
+      cost: 9_700,
+      packs: 2,
+    });
+    expect(await log(store.restaurantId, 'acquire.tendedBy')).toEqual({ ownerName: '老板的店', packs: 2 });
+  });
+
+  it('日均不到 43 万不送包，成本照付', async () => {
+    const { owner, store } = await owned(1_260_000);
+    const r = await svc().tend(owner, { restId: store.restaurantId });
+    expect(r.data).toMatchObject({ cost: 3_600, packs: 0 });
+    expect(await packs(store.restaurantId)).toBe(0);
   });
 
   it('一天一次；第二天又能打理', async () => {
-    const { me } = await owned();
-    await svc().tend(me);
-    const once = total(await foods(me.restaurantId));
-    await expect(svc().tend(me)).rejects.toMatchObject({ params: { reason: 'tended' } });
-    expect(total(await foods(me.restaurantId))).toBe(once);
+    const { owner, store } = await owned();
+    await svc().tend(owner, { restId: store.restaurantId });
+    await expect(svc().tend(owner, { restId: store.restaurantId })).rejects.toMatchObject({
+      params: { reason: 'tended' },
+    });
+    expect(await coin(owner.restaurantId)).toBe(1_000_000 - 9_700);
     t.clock.set(gameTime('2026-10-11', 0, 1));
-    await svc().tend(me);
-    expect(total(await foods(me.restaurantId))).toBe(once + 5);
+    await svc().tend(owner, { restId: store.restaurantId });
+    expect(await coin(owner.restaurantId)).toBe(1_000_000 - 19_400);
+    expect(await packs(store.restaurantId)).toBe(4);
   });
 
-  it('橱柜冰箱都满了：照样算打理过，放不下的不列在结果里', async () => {
-    const { me } = await owned();
+  it('不是老板不能打理；被收购的店自己也不能', async () => {
+    const { shardId, store } = await owned();
+    const other = await newRestaurant(t, { shardId });
+    await expect(svc().tend(other, { restId: store.restaurantId })).rejects.toMatchObject({
+      params: { reason: 'not_owner' },
+    });
+    await expect(svc().tend(store, { restId: store.restaurantId })).rejects.toMatchObject({
+      params: { reason: 'not_owner' },
+    });
+  });
+
+  it('银币不够：报 NOT_ENOUGH，不算打理', async () => {
+    const { owner, store } = await owned();
+    await t.db.updateTable('restaurant').set({ coin: 100 }).where('id', '=', owner.restaurantId).execute();
+    await expect(svc().tend(owner, { restId: store.restaurantId })).rejects.toMatchObject({
+      code: 'NOT_ENOUGH',
+    });
+    expect((await acquireStateOf(t, store.restaurantId)).tended_at).toBeNull();
+  });
+
+  it('和店是关联账号（共用设备）：不能打理', async () => {
+    const { owner, store } = await owned();
+    const acc = (await restRow(t, store.restaurantId)).account_id;
     await t.db
-      .updateTable('restaurant')
-      .set({ foods_max_num: 0 })
-      .where('id', '=', me.restaurantId)
+      .insertInto('login_trace')
+      .values({ account_id: acc, ip: '10.8.8.8', device_id: 'dev-tend-link-01', last_seen: t.clock.now })
       .execute();
-    const r = await svc().tend(me);
-    expect(r.data.foods).toEqual([]);
-    await expect(svc().tend(me)).rejects.toMatchObject({ params: { reason: 'tended' } });
+    await expect(
+      svc().tend({ ...owner, deviceId: 'dev-tend-link-01' }, { restId: store.restaurantId }),
+    ).rejects.toMatchObject({ params: { reason: 'linked' } });
+    expect(await coin(owner.restaurantId)).toBe(1_000_000);
   });
 
-  it('没被收购不能打理', async () => {
-    const shardId = await acquireShard(t);
-    const free = await newRestaurant(t, { shardId });
-    await expect(svc().tend(free)).rejects.toMatchObject({ params: { reason: 'not_owned' } });
-    await setAcquireState(t, free.restaurantId, shardId, { owner_rest_id: null });
-    await expect(svc().tend(free)).rejects.toMatchObject({ params: { reason: 'not_owned' } });
-  });
-
-  it('同时点两次：只成功一次，食材只发一份', async () => {
-    const { me } = await owned();
-    const before = total(await foods(me.restaurantId));
-    const rs = await Promise.allSettled([svc().tend(me), svc().tend(me)]);
+  it('同时点两次：只成功一次，只扣一次钱', async () => {
+    const { owner, store } = await owned();
+    const rs = await Promise.allSettled([
+      svc().tend(owner, { restId: store.restaurantId }),
+      svc().tend(owner, { restId: store.restaurantId }),
+    ]);
     expect(rs.filter((r) => r.status === 'fulfilled')).toHaveLength(1);
-    expect(total(await foods(me.restaurantId)) - before).toBe(5);
+    expect(await coin(owner.restaurantId)).toBe(1_000_000 - 9_700);
+    expect(await packs(store.restaurantId)).toBe(2);
+  });
+
+  it('全部打理：跳过今天打理过的和关联账号的店，合计成本', async () => {
+    const { shardId, owner, store } = await owned();
+    const b = await newRestaurant(t, { shardId });
+    const c = await newRestaurant(t, { shardId });
+    const linked = await newRestaurant(t, { shardId });
+    for (const x of [b, c, linked])
+      await setAcquireState(t, x.restaurantId, shardId, {
+        owner_rest_id: owner.restaurantId,
+        base: 1_505_000,
+      });
+    await svc().tend(owner, { restId: c.restaurantId });
+    const acc = (await restRow(t, linked.restaurantId)).account_id;
+    await t.db
+      .insertInto('login_trace')
+      .values({ account_id: acc, ip: '10.8.8.9', device_id: 'dev-tend-link-02', last_seen: t.clock.now })
+      .execute();
+    const ctx = { ...owner, deviceId: 'dev-tend-link-02' };
+    const r = await svc().tendAll(ctx);
+    expect(r.data.items.map((x) => x.restId).sort()).toEqual([store.restaurantId, b.restaurantId].sort());
+    expect(r.data.cost).toBe(9_700 + 4_300);
+    expect(await packs(b.restaurantId)).toBe(1);
+    await expect(svc().tendAll(ctx)).rejects.toMatchObject({ params: { reason: 'tended' } });
   });
 
   it('收购关着的区服不能打理', async () => {
-    const { me } = await owned();
-    const shardId = (await restRow(t, me.restaurantId)).shard_id;
+    const { owner, store } = await owned();
+    const shardId = (await restRow(t, store.restaurantId)).shard_id;
     await t.db
       .updateTable('shard_config')
       .set({ override: JSON.stringify({ features: { acquire: false } }) })
       .where('shard_id', '=', shardId)
       .execute();
     t.game.shards.invalidate(shardId);
-    await expect(svc().tend(me)).rejects.toThrow();
+    await expect(svc().tend(owner, { restId: store.restaurantId })).rejects.toThrow();
   });
 });

@@ -140,14 +140,16 @@ describe('FriendRestView', () => {
       level: 5,
       star: 2,
       base: 100_000,
+      avg: 28_571,
       heat: 1,
       price: 100_000,
       owner: null,
       listed: null,
-      taxRate: 0.1,
       protectedUntil: null,
       acquireBlock: null,
       listedBlock: 'not_listed',
+      acquireSplit: { sellerGot: 0, storeGot: 50_000, burn: 40_000, tax: 10_000 },
+      listedSplit: null,
     });
     vi.mocked(endpoints.friendDetail).mockResolvedValue(
       detail({ equips: [{ part: 1, goodsId: 30, stress: 3, name: null }] }),
@@ -331,14 +333,16 @@ describe('FriendRestView', () => {
       level: 5,
       star: 2,
       base: 100_000,
+      avg: 28_571,
       heat: 1,
       price: 100_000,
       owner: null,
       listed: null,
-      taxRate: 0.1,
       protectedUntil: null,
       acquireBlock: null,
       listedBlock: 'not_listed',
+      acquireSplit: { sellerGot: 0, storeGot: 50_000, burn: 40_000, tax: 10_000 },
+      listedSplit: null,
     });
     // “店里”的收购一行，点开面板才是收购卡片（界面改版 P10）
     const w = await mountView();

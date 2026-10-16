@@ -194,7 +194,7 @@ export default {
           (n: G) =>
             `${n.newbieExp.maxLevel} 级以下结算经验有额外加成 (1 级 ${formatPct(n.newbieExp.rate, { sign: true })}, 逐级减少), 前期升级很快。`,
           (n: G) =>
-            `${n.acquire.minStar} 星以上的餐厅有身价、可以被收购: 在首页“资产”那一行点“收购”进去, 付它的身价就能收下, 原主人得 ${formatPct(1 - n.acquire.taxRate, { digits: 0 })}, ${formatPct(n.acquire.taxRate, { digits: 0 })} 是税, 名下最多 ${n.acquire.maxHoldings} 家。被收购的店每天给老板分红 (前一天结算银币的 ${formatPct(n.acquire.dividendRate, { digits: 0 })}, 满 ${n.acquire.minRounds} 轮才发), 被收购的店每天替老板打理一次能得 ${n.acquire.tendFoods} 份食材, 老板那天的分红再多 ${formatPct(n.acquire.tendBonus, { digits: 0 })}。被收购了也可以按身价赎身, 赎身后 ${n.acquire.protectDays} 天内不会再被收购。`,
+            `${n.acquire.minStar} 星以上的餐厅有身价 (近 7 天日均结算银币 × ${formatNum(n.acquire.priceMultiple)}), 可以被收购: 在首页“资产”那一行点“收购”进去。自己 ${n.acquire.buyerMinStar} 星以上、注册满 ${n.acquire.buyerMinAccountDays} 天才能收购, 名下最多 ${n.acquire.maxHoldings} 家。强收只能收没有老板的店: 店自己得 ${formatPct(n.acquire.firstStoreRate, { digits: 0 })}, 并购咨询费 ${formatPct(n.acquire.firstBurnRate, { digits: 0 })} 和 ${formatPct(n.acquire.taxRate, { digits: 0 })} 的税销毁; 有老板的店只能等老板挂牌后买下, 原老板得 ${formatPct(1 - n.acquire.resaleStoreRate - n.acquire.taxRate, { digits: 0 })}, 店得 ${formatPct(n.acquire.resaleStoreRate, { digits: 0 })}。被收购的店每轮结算让 ${formatPct(n.acquire.cedeRate, { digits: 1 })} 给老板; 老板每天可以打理一次 (付这家店日均的 ${formatPct(n.acquire.tendCostRate, { digits: 0 })}), 之后这家店的结算 × ${formatNum(n.acquire.tendMultiplier)}, 让给老板的变成 ${formatPct(n.acquire.cedeTendRate, { digits: 1 })}; 老板 ${n.acquire.tendReleaseDays} 天没打理会自动放手。被收购的店可以按基础身价赎身, 老板得 ${formatPct(1 - n.acquire.redeemBurnRate - n.acquire.taxRate, { digits: 0 })}, 赎身后 ${n.acquire.protectDays} 天内不会再被收购。`,
         ],
       },
       {

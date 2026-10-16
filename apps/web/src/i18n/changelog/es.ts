@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  acquire1016:
+    'Rediseño de las adquisiciones: el sistema ya no paga dividendos; ahora un restaurante adquirido da a su dueño el 3,5\u00a0% de cada liquidación (el 4,9\u00a0% después de que el dueño lo atienda ese día) y los restaurantes adquiridos ya no reciben ingredientes gratis; ahora atiende el dueño, que paga el 1\u00a0% de la media diaria del restaurante, y después sus liquidaciones son × 1,035 y recibe paquetes de suministros de nivel 2; si no se atiende en 14 días, el restaurante se suelta automáticamente; solo se adquieren a la fuerza restaurantes sin dueño: el restaurante recibe el 50\u00a0%, mientras que una comisión de asesoría del 40\u00a0% y el 10\u00a0% de impuesto se destruyen, y un restaurante con dueño solo cambia de manos poniéndolo en venta; la recompra usa la valoración base y el dueño recibe el 60\u00a0%; la valoración pasa a 3,5 veces la media diaria; para adquirir hacen falta 2 estrellas o más, una cuenta de al menos 7 días y como mucho 3 compras al día; el permiso de Asesor de fusiones ya no reduce impuestos',
   tower1016:
     'Botín de la torre: cada victoria en la torre tiene un 10\u00a0% de probabilidad de dar una pieza del equipo del anciano de ese piso (antes 20\u00a0% en los pisos 1 a 3 y luego 12, 8 y 5\u00a0% más arriba); las recompensas aleatorias de la torre y de los duelos amistosos ya no dan utensilios sino monedas, y los demás objetos mantienen su probabilidad',
   spar1016:

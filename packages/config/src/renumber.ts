@@ -64,6 +64,8 @@ export const TUNING_ID_PATHS: readonly PathRule[] = [
   [['jobCard', 'cards', '*', 1], 'goods'],
   [['temple', 'missileAttack', '*', 0], 'goods'],
   [['mysterious', 'championGoodsId'], 'goods'],
+  // 收购打理送店的补给包（收购改版 2026-10-16）
+  [['acquire', 'tendPackGoods'], 'goods'],
   [['town', 'mysteryExclude', '*'], 'foods'],
 ];
 

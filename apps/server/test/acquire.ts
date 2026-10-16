@@ -1,5 +1,5 @@
 import { createShard } from './fixtures';
-import type { TestGame } from './game';
+import { newRestaurant, type NewRestaurantOptions, type TestGame } from './game';
 
 /** 新区服并打开收购（收购默认关） */
 export async function acquireShard(t: TestGame): Promise<number> {
@@ -24,6 +24,8 @@ export async function setAcquireState(
     protected_until?: Date | null;
     list_rate?: number | null;
     list_until?: Date | null;
+    acquired_at?: Date | null;
+    tended_at?: Date | null;
   } = {},
 ): Promise<void> {
   await t.db
@@ -35,3 +37,10 @@ export async function setAcquireState(
 
 export const acquireStateOf = (t: TestGame, restId: number) =>
   t.db.selectFrom('acquire_state').selectAll().where('rest_id', '=', restId).executeTakeFirstOrThrow();
+
+/** 能收购的买家（收购改版 2026-10-16 的门槛）：2 星、注册满 30 天 */
+export const acquireBuyer = (
+  t: TestGame,
+  shardId: number,
+  patch: NonNullable<NewRestaurantOptions['patch']> = {},
+) => newRestaurant(t, { shardId, accountDays: 30, patch: { star_level: 2, ...patch } });

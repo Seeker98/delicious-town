@@ -65,14 +65,36 @@ describe('功能开关默认值（收购 PR 1）', () => {
     );
   });
 
-  it('收购的默认数值', () => {
+  it('收购的默认数值（改版 2026-10-16）', () => {
     expect(config.tuning.acquire).toMatchObject({
       priceDays: 7,
-      priceMultiple: 5,
+      priceMultiple: 3.5,
       minPrice: 100000,
+      heatStep: 0.1,
+      heatMax: 2,
       taxRate: 0.1,
       maxHoldings: 10,
+      maxPerDay: 1,
       listMinRate: 0.5,
+      listMaxRate: 1.2,
+      buyerMinStar: 2,
+      buyerMinAccountDays: 7,
+      buyerMaxPerDay: 3,
+      newStarProtectDays: 3,
+      firstStoreRate: 0.5,
+      firstBurnRate: 0.4,
+      resaleStoreRate: 0.05,
+      redeemBurnRate: 0.3,
+      cedeRate: 0.035,
+      cedeTendRate: 0.049,
+      tendMultiplier: 1.035,
+      tendCostRate: 0.01,
+      tendPackGoods: 10212,
+      tendPackStep: 430000,
+      tendPackMax: 3,
+      tendHalfDays: 3,
+      tendStopDays: 7,
+      tendReleaseDays: 14,
     });
   });
 });

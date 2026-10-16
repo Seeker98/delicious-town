@@ -30,15 +30,23 @@ export interface OpenGuideNumbers {
   predict: { level: number; days: number };
   /** 低等级经验加成：maxLevel 级以下有，1 级是 +rate（比例） */
   newbieExp: { maxLevel: number; rate: number };
-  /** 收购（收购 PR 3）：几星能被收购、税率、名下上限、分红比例、打理加成、分红要满几轮、打理得几份食材、赎身保护几天 */
+  /** 收购（收购改版 2026-10-16）：几星能被收购、买家门槛、名下上限、身价倍数、各项分账和让渡比例、赎身保护几天 */
   acquire: {
     minStar: number;
-    taxRate: number;
+    buyerMinStar: number;
+    buyerMinAccountDays: number;
     maxHoldings: number;
-    dividendRate: number;
-    tendBonus: number;
-    minRounds: number;
-    tendFoods: number;
+    priceMultiple: number;
+    taxRate: number;
+    firstStoreRate: number;
+    firstBurnRate: number;
+    resaleStoreRate: number;
+    redeemBurnRate: number;
+    cedeRate: number;
+    cedeTendRate: number;
+    tendMultiplier: number;
+    tendCostRate: number;
+    tendReleaseDays: number;
     protectDays: number;
   };
 }

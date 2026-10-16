@@ -19,7 +19,7 @@ const income = (restId: number, day: string, coin: number) =>
   t.db.insertInto('rest_income_day').values({ rest_id: restId, day, coin, rounds: 100 }).execute();
 
 describe('每天的收购任务（收购 PR 1）', () => {
-  it('2 星以上的店建行、按前 7 天算基础身价；热度回落；挂牌到期清掉；1 星的不建', async () => {
+  it('2 星以上的店建行（带 3 天新店保护期）、按前 7 天算基础身价；热度回落；挂牌到期清掉；1 星的不建', async () => {
     const shardId = await createShard(t.db);
     const now = gameTime('2026-10-10', 0, 6);
     const star2 = await newRestaurant(t, { shardId, patch: { star_level: 2 } });
@@ -40,14 +40,21 @@ describe('每天的收购任务（收购 PR 1）', () => {
       })
       .execute();
     const r = await runAcquireDay(t.game.deps, shardId, now, a());
-    expect(r).toMatchObject({ bases: 2, decayed: 1, unlisted: 1 });
-    expect(await state(star2.restaurantId)).toMatchObject({ base: 1_000_000, heat: 1, owner_rest_id: null });
+    expect(r).toMatchObject({ bases: 2, released: 0, decayed: 1, unlisted: 1 });
+    expect(await state(star2.restaurantId)).toMatchObject({
+      base: 700_000,
+      heat: 1,
+      owner_rest_id: null,
+      protected_until: new Date(now.getTime() + 3 * 86_400_000),
+    });
     expect(await state(star1.restaurantId)).toBeUndefined();
+    // 已经有行的店不加保护期
     expect(await state(hot.restaurantId)).toMatchObject({
       base: 100_000,
       heat: 1.9,
       list_rate: null,
       list_until: null,
+      protected_until: null,
     });
   });
 
@@ -74,8 +81,9 @@ describe('每天的收购任务（收购 PR 1）', () => {
     const old = await newRestaurant(t, { shardId });
     await income(old.restaurantId, addDays(today, -30), 1);
     const s = await ensureState(t.db, shardId, r.restaurantId, a(), new Date());
-    expect(s).toMatchObject({ base: 5_000_000, heat: 1, owner_rest_id: null });
-    expect((await ensureState(t.db, shardId, r.restaurantId, a(), new Date())).base).toBe(5_000_000);
+    expect(s).toMatchObject({ base: 3_500_000, heat: 1, owner_rest_id: null });
+    expect(s.protected_until).not.toBeNull();
+    expect((await ensureState(t.db, shardId, r.restaurantId, a(), new Date())).base).toBe(3_500_000);
   });
 
   it('收入汇总每次补前两天（某天任务失败、最后一轮结算晚写进来时下一天补上）；只清本区服的旧收入', async () => {
@@ -170,7 +178,7 @@ describe('每天的收购任务（收购 PR 1）', () => {
     ).toEqual([{ created_at: recent }]);
   });
 
-  it('分红、打理记录留 30 天，只清本区服的（收购 PR 2）', async () => {
+  it('让渡、打理记录留 30 天，只清本区服的（收购 PR 2；改版 2026-10-16）', async () => {
     const shardId = await createShard(t.db);
     const other = await createShard(t.db);
     const r = await newRestaurant(t, { shardId });
@@ -178,18 +186,86 @@ describe('每天的收购任务（收购 PR 1）', () => {
     for (const id of [r.restaurantId, o.restaurantId])
       for (const day of ['2000-01-01', '2000-02-05']) {
         await t.db
-          .insertInto('acquire_dividend')
-          .values({ rest_id: id, day, owner_rest_id: id, coin: 1, tended: false })
+          .insertInto('acquire_due')
+          .values({ rest_id: id, day, owner_rest_id: id, coin: 1 })
           .execute();
-        await t.db.insertInto('acquire_tend').values({ rest_id: id, day, created_at: new Date() }).execute();
+        await t.db
+          .insertInto('acquire_tend')
+          .values({ rest_id: id, day, owner_rest_id: id, cost: 1, packs: 0, created_at: new Date() })
+          .execute();
       }
     await runAcquireDay(t.game.deps, shardId, gameTime('2000-02-10', 1), a());
-    const days = (table: 'acquire_dividend' | 'acquire_tend', id: number) =>
+    const days = (table: 'acquire_due' | 'acquire_tend', id: number) =>
       t.db.selectFrom(table).select('day').where('rest_id', '=', id).orderBy('day').execute();
-    expect(await days('acquire_dividend', r.restaurantId)).toEqual([{ day: '2000-02-05' }]);
+    expect(await days('acquire_due', r.restaurantId)).toEqual([{ day: '2000-02-05' }]);
     expect(await days('acquire_tend', r.restaurantId)).toEqual([{ day: '2000-02-05' }]);
-    expect(await days('acquire_dividend', o.restaurantId)).toHaveLength(2);
+    expect(await days('acquire_due', o.restaurantId)).toHaveLength(2);
     expect(await days('acquire_tend', o.restaurantId)).toHaveLength(2);
+  });
+
+  it('老板 14 天没打理（从没打理按收购那天算）自动放手：两边写动态、记一条放手；13 天的不动', async () => {
+    const shardId = await createShard(t.db);
+    const owner = await newRestaurant(t, { shardId, patch: { name: '懒老板' } });
+    const [stale, fresh, never] = [
+      await newRestaurant(t, { shardId, patch: { name: '久没人管' } }),
+      await newRestaurant(t, { shardId }),
+      await newRestaurant(t, { shardId }),
+    ];
+    const now = gameTime('2026-10-20', 0, 6);
+    const own = (restId: number, patch: { tended_at: Date | null; acquired_at: Date }) =>
+      t.db
+        .insertInto('acquire_state')
+        .values({
+          rest_id: restId,
+          shard_id: shardId,
+          base: 1_000_000,
+          heat: 1.2,
+          owner_rest_id: owner.restaurantId,
+          ...patch,
+        })
+        .execute();
+    await own(stale.restaurantId, {
+      tended_at: gameTime('2026-10-06', 20),
+      acquired_at: gameTime('2026-10-01', 9),
+    });
+    await own(fresh.restaurantId, {
+      tended_at: gameTime('2026-10-07', 9),
+      acquired_at: gameTime('2026-10-01', 9),
+    });
+    await own(never.restaurantId, { tended_at: null, acquired_at: gameTime('2026-10-05', 9) });
+    const r = await runAcquireDay(t.game.deps, shardId, now, a());
+    expect(r.released).toBe(2);
+    expect(await state(stale.restaurantId)).toMatchObject({
+      owner_rest_id: null,
+      tended_at: null,
+      acquired_at: null,
+      heat: 1.18,
+    });
+    expect(await state(never.restaurantId)).toMatchObject({ owner_rest_id: null });
+    expect(await state(fresh.restaurantId)).toMatchObject({ owner_rest_id: owner.restaurantId });
+    const logs = await t.db
+      .selectFrom('rest_log')
+      .select(['rest_id', 'type', 'params'])
+      .where('rest_id', 'in', [owner.restaurantId, stale.restaurantId])
+      .orderBy('id')
+      .execute();
+    expect(logs).toContainEqual({
+      rest_id: owner.restaurantId,
+      type: 'acquire.autoReleased',
+      params: { restId: stale.restaurantId, name: '久没人管', days: 14 },
+    });
+    expect(logs).toContainEqual({
+      rest_id: stale.restaurantId,
+      type: 'acquire.autoFreed',
+      params: { byName: '懒老板', days: 14 },
+    });
+    expect(
+      await t.db
+        .selectFrom('acquire_log')
+        .select(['kind', 'seller_rest_id'])
+        .where('target_rest_id', '=', stale.restaurantId)
+        .execute(),
+    ).toEqual([{ kind: 'release', seller_rest_id: owner.restaurantId }]);
   });
 
   it('00:05 之前不跑；之后每个游戏日一个周期键；收入汇总挂在结算上', () => {
@@ -207,8 +283,8 @@ describe('每天的收购任务（收购 PR 1）', () => {
   });
 });
 
-describe('分红任务失败后重试（稳健性批）', () => {
-  it('分红要等前一天的收入汇总好，没汇总好会失败：打开 retry；汇总、身价任务不重试', () => {
+describe('发让渡的任务失败后重试（稳健性批）', () => {
+  it('发让渡打开 retry；汇总、身价任务不重试', () => {
     const jobs = acquireJobs(t.game.deps);
     expect(jobs.find((j) => j.name === 'acquire-dividend')!.retry).toBe(true);
     expect(jobs.find((j) => j.name === 'acquire-day')!.retry).toBeUndefined();

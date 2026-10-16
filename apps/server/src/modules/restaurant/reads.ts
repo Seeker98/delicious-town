@@ -221,6 +221,11 @@ export const FEED_TYPES = [
   'acquire.taken',
   'acquire.freed',
   'acquire.lost',
+  // 收购改版（2026-10-16）：老板打理了、让渡退回来了、没人打理被自动放手
+  'acquire.tendedBy',
+  'acquire.refund',
+  'acquire.autoFreed',
+  'acquire.autoReleased',
   'mouse.steal',
   'market.share',
   'fridge.drop',

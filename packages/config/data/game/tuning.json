@@ -471,11 +471,15 @@
     ]
   },
   "acquire": {
-    "priceDays": 7, "priceMultiple": 5, "minPrice": 100000,
-    "heatStep": 0.2, "heatListDrop": 0.1, "heatMax": 3, "heatDecay": 0.1,
-    "taxRate": 0.1, "protectDays": 3, "maxHoldings": 10, "maxPerDay": 3, "pairDays": 7, "linkDays": 30,
-    "minStar": 2, "listMinRate": 0.5, "listDays": 3,
-    "dividendRate": 0.05, "tendBonus": 0.5, "minRounds": 90, "dividendCapRate": 0.25, "tendFoods": 5,
+    "priceDays": 7, "priceMultiple": 3.5, "minPrice": 100000,
+    "heatStep": 0.1, "heatListDrop": 0.1, "heatMax": 2, "heatDecay": 0.1,
+    "taxRate": 0.1, "protectDays": 3, "newStarProtectDays": 3, "maxHoldings": 10, "maxPerDay": 1, "pairDays": 7, "linkDays": 30,
+    "minStar": 2, "listMinRate": 0.5, "listMaxRate": 1.2, "listDays": 3,
+    "buyerMinStar": 2, "buyerMinAccountDays": 7, "buyerMaxPerDay": 3,
+    "firstStoreRate": 0.5, "firstBurnRate": 0.4, "resaleStoreRate": 0.05, "redeemBurnRate": 0.3,
+    "cedeRate": 0.035, "cedeTendRate": 0.049, "tendMultiplier": 1.035, "tendCostRate": 0.01,
+    "tendPackGoods": 10212, "tendPackStep": 430000, "tendPackMax": 3,
+    "tendHalfDays": 3, "tendStopDays": 7, "tendReleaseDays": 14,
     "newsMinPrice": 10000000
   },
   "fund": {

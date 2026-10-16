@@ -7,27 +7,10 @@ const db = testDb();
 afterAll(() => db.destroy());
 
 describe('迁移 0051：收购的分红和打理（收购 PR 2）', () => {
-  it('同一家店同一天只能打理一次、只有一条分红；累计分红默认 0', async () => {
+  // 打理、分红两张表在迁移 0083（收购改版）换成了 acquire_tend（带老板）和 acquire_due，见 0083.test.ts
+  it('累计分红默认 0', async () => {
     const shardId = await createShard(db);
-    const restId = await createRestaurantFull(db, shardId, await createAccountRow(db));
     const ownerId = await createRestaurantFull(db, shardId, await createAccountRow(db));
-    const tend = () =>
-      db
-        .insertInto('acquire_tend')
-        .values({ rest_id: restId, day: '2026-10-01', created_at: new Date() })
-        .execute();
-    await tend();
-    await expect(tend()).rejects.toThrow();
-    const dividend = () =>
-      db
-        .insertInto('acquire_dividend')
-        .values({ rest_id: restId, day: '2026-10-01', owner_rest_id: ownerId, coin: 5, tended: true })
-        .execute();
-    await dividend();
-    await expect(dividend()).rejects.toThrow();
-    expect(
-      await db.selectFrom('acquire_dividend').selectAll().where('rest_id', '=', restId).executeTakeFirst(),
-    ).toEqual({ rest_id: restId, day: '2026-10-01', owner_rest_id: ownerId, coin: 5, tended: true });
     await db.insertInto('acquire_holder').values({ rest_id: ownerId }).execute();
     expect(
       await db.selectFrom('acquire_holder').selectAll().where('rest_id', '=', ownerId).executeTakeFirst(),
