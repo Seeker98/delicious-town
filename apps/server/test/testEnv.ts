@@ -12,4 +12,7 @@ export const testEnv: Record<string, string> = {
   WEB_ORIGIN: 'http://localhost:5173',
   TURNSTILE_SECRET: '',
   SMTP_URL: 'smtp://localhost:1025',
+  // 测试都从 127.0.0.1 注册：注册限量另有专门的测试
+  REGISTER_PER_IP: '0',
+  REGISTER_PER_DEVICE: '0',
 };

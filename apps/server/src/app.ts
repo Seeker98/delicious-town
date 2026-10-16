@@ -31,6 +31,7 @@ import {
   type RateRuleName,
 } from './security/rateLimiter';
 import { registerSession } from './security/session';
+import { createAccessGuard, registerAccessGuard, type AccessGuard } from './security/accessBan';
 import type { SessionStore } from './security/sessionStore';
 
 export interface AppDeps {
@@ -50,9 +51,11 @@ export interface AppDeps {
   rng?: () => Rng;
   /** 可推进的时钟（ENABLE_TEST_API 时由 createDeps 提供） */
   clock?: ShiftClock;
+  /** IP、设备封禁名单（2026-10-16）；不传时 buildApp 按 db 建一个，后台改名单时用它清缓存 */
+  accessGuard?: AccessGuard;
 }
 
-/** 组装应用。钩子顺序：Cookie → 真实 IP → 会话 → 限流 → 幂等 → 业务路由 */
+/** 组装应用。钩子顺序：Cookie → 真实 IP → IP、设备封禁 → 会话 → 限流 → 幂等 → 业务路由 */
 export async function buildApp(
   deps: AppDeps,
   extend?: (app: FastifyInstance) => void,
@@ -76,6 +79,8 @@ export async function buildApp(
   });
   registerClientIp(app, deps.env.TRUST_CF_HEADER);
   registerErrorHandling(app);
+  deps.accessGuard ??= createAccessGuard(deps.db);
+  registerAccessGuard(app, deps.accessGuard);
   registerSession(app, deps.sessions, deps.env);
   registerRateLimit(
     app,

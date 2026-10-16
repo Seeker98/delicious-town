@@ -25,6 +25,7 @@ import {
   grantPreviewQuery,
   idParam,
   banBody,
+  accessBanBody,
   launchCheckFixBody,
   reportListQuery,
   suspiciousQuery,
@@ -63,6 +64,7 @@ import { createAdminFutures } from '../futures/admin';
 import { createAdminBulk } from '../bulk/admin';
 import { createLaunchCheck } from './launch';
 import { createAdminPlayers } from './players';
+import { createAccessBans } from './accessBans';
 import { createAdminShards } from './shards';
 import { createAdminMail } from '../mail/admin';
 import { createAdminCodes } from '../redeem/admin';
@@ -266,6 +268,19 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     r.get('/suspicious/redeem', async (req) => {
       await requireRole(db, req, 'mod');
       return ok(await suspicious.redeemLocked(parse(suspiciousQuery, req.query).shardId));
+    });
+    const accessBans = createAccessBans(game);
+    r.get('/access-bans', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await accessBans.list());
+    });
+    r.post('/access-bans', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await accessBans.add(a, parse(accessBanBody, req.body)));
+    });
+    r.post('/access-bans/:id/remove', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await accessBans.remove(a, id(req)));
     });
     r.get('/suspicious/acquire', async (req) => {
       await requireRole(db, req, 'mod');

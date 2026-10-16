@@ -106,3 +106,31 @@ export interface AdminItemsDto {
   grades: AdminItemGradeRow[];
   rows: AdminItemRow[];
 }
+
+/** IP、设备封禁（2026-10-16 小号刷一番赏）：命中的请求一律拒绝，注册、登录、已登录的都挡 */
+export const accessBanKind = z.enum(['ip', 'device']);
+export type AccessBanKind = z.infer<typeof accessBanKind>;
+export const accessBanBody = z.object({
+  kind: accessBanKind,
+  /** IP、IP 段（CIDR，如 38.28.0.0/16）或设备号 */
+  value: z.string().trim().min(1).max(64),
+  reason: z.string().trim().min(1).max(200),
+  /** 一并永久封掉最近 30 天用这个 IP（段）或设备登录过的账号（管理员、协管不封） */
+  banAccounts: z.boolean().default(false),
+});
+export type AccessBanBody = z.infer<typeof accessBanBody>;
+export interface AccessBanDto {
+  id: number;
+  kind: AccessBanKind;
+  value: string;
+  reason: string;
+  actor: string | null;
+  createdAt: string;
+  /** 最近 30 天用它登录过的账号数 */
+  accounts: number;
+}
+export interface AccessBanResultDto {
+  ban: AccessBanDto;
+  /** 一并封掉的账号 */
+  bannedAccounts: number[];
+}
