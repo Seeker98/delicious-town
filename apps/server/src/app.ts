@@ -31,6 +31,7 @@ import {
   type RateRuleName,
 } from './security/rateLimiter';
 import { registerSession } from './security/session';
+import { registerPlayTrace } from './modules/account/loginTrace';
 import { createAccessGuard, registerAccessGuard, type AccessGuard } from './security/accessBan';
 import type { SessionStore } from './security/sessionStore';
 
@@ -82,6 +83,7 @@ export async function buildApp(
   deps.accessGuard ??= createAccessGuard(deps.db);
   registerAccessGuard(app, deps.accessGuard);
   registerSession(app, deps.sessions, deps.env);
+  registerPlayTrace(app, deps.db, deps.redis);
   registerRateLimit(
     app,
     createRateLimiter(deps.redis),

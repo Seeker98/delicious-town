@@ -55,6 +55,7 @@ describe('CupboardView', () => {
       fridgeUnread: false,
       freeHandleLeft: 20,
       handleMax: 100,
+      exchangeMaxTimes: 50,
       items: [{ foodsId: 302, num: 4, locked: false, streetNeed: 3 }],
     });
     vi.mocked(endpoints.handleFoods).mockResolvedValue({
@@ -182,6 +183,7 @@ describe('CupboardView', () => {
       fridgeUnread: false,
       freeHandleLeft: 20,
       handleMax: 100,
+      exchangeMaxTimes: 50,
       items: [
         { foodsId: 302, num: 4, locked: false, streetNeed: 0 },
         { foodsId: 101, num: 9, locked: false, streetNeed: 0 },
@@ -356,6 +358,7 @@ describe('CupboardView', () => {
       fridgeUnread: false,
       freeHandleLeft: 20,
       handleMax: 100,
+      exchangeMaxTimes: 50,
       items: [
         { foodsId: M1, num: 4, locked: false, streetNeed: 0 },
         { foodsId: M1 + 2, num: 4, locked: false, streetNeed: 0 },
@@ -381,6 +384,7 @@ describe('CupboardView', () => {
       fridgeUnread: false,
       freeHandleLeft: 20,
       handleMax: 100,
+      exchangeMaxTimes: 50,
       items: [{ foodsId: M1 + 1, num: 300, locked: false, streetNeed: 0 }],
     });
     vi.mocked(endpoints.exchangeMaster).mockResolvedValue({ gained: [] });
@@ -571,6 +575,7 @@ describe('CupboardView', () => {
       fridgeUnread: false,
       freeHandleLeft: 20,
       handleMax: 100,
+      exchangeMaxTimes: 50,
       items: [],
     });
     const w = mountView({ stubs: { RouterLink: { props: ['to'], template: '<a :href="to"><slot /></a>' } } });

@@ -125,6 +125,7 @@ export default {
     presets: (p) => `预设最多 ${String(p.max)} 套`,
     market: (p) => `这批货每人限购 ${String(p.limit)} 份`,
     cupboard_exchange: (p) => `一次最多换 ${String(p.max)} 次`,
+    cupboard_handle: (p) => `一次最多合成或分解 ${String(p.max)} 个`,
     foods_max: (p) => `单种食材最多 ${String(p.max)} 个`,
     tables: (p) => `餐桌已经摆满了: 最多 ${String(p.cap)} 张 (受等级和楼层限制), 已有 ${String(p.have)} 张`,
     cupboard_slots: (p) => `橱柜格数已经是最大了 (${String(p.max)})`,

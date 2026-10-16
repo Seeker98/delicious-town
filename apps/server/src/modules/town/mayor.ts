@@ -61,11 +61,21 @@ export async function askMayor(o: Op, world: WorldService, type: number): Promis
   return mayorView(o.tx, world, o.shardId, o.rest.id, o.now);
 }
 
+/** 一次最多揭晓几条：剩下的下一个 10 分钟接着来（backlog：原来不分批） */
+export const MAYOR_BATCH = 500;
+
+type Log = { error(obj: object, msg: string): void };
+
 /**
  * 揭晓到时间的猜测：读那一轮换天任务记下的自然天气（weather 任务的 stats.to）；那一轮还没跑完的先不揭晓，
- * 下次再来。每家店单独一个事务
+ * 下次再来。每家店单独一个事务；某家出错只记日志、跳过，下一个 10 分钟再揭晓它（backlog：原来一家出错整轮作废）
  */
-export async function resolveMayor(d: GameDeps, shardId: number, now: Date): Promise<{ resolved: number }> {
+export async function resolveMayor(
+  d: GameDeps,
+  shardId: number,
+  now: Date,
+  log?: Log,
+): Promise<{ resolved: number; failed: number }> {
   const rows = await d.db
     .selectFrom('mayor_guess')
     .select(['rest_id', 'day', 'type', 'at'])
@@ -73,11 +83,14 @@ export async function resolveMayor(d: GameDeps, shardId: number, now: Date): Pro
     .where('right', 'is', null)
     .where('at', '<=', now)
     .orderBy('at')
+    .orderBy('rest_id')
+    .limit(MAYOR_BATCH)
     .execute();
-  if (rows.length === 0) return { resolved: 0 };
+  if (rows.length === 0) return { resolved: 0, failed: 0 };
   const { tuning } = await d.shards.settings(shardId);
   const actualAt = new Map<number, number | null>();
   let resolved = 0;
+  let failed = 0;
   for (const r of rows) {
     const key = r.at.getTime();
     if (!actualAt.has(key)) {
@@ -93,26 +106,31 @@ export async function resolveMayor(d: GameDeps, shardId: number, now: Date): Pro
     const actual = actualAt.get(key);
     if (actual === null || actual === undefined) continue;
     const right = actual === r.type;
-    await runSystemOp(d, shardId, r.rest_id, { source: 'town.mayor', now }, async (o) => {
-      const done = await o.tx
-        .updateTable('mayor_guess')
-        .set({ actual, right })
-        .where('rest_id', '=', r.rest_id)
-        .where('day', '=', r.day)
-        .where('right', 'is', null)
-        .returning('rest_id')
-        .executeTakeFirst();
-      if (!done) return;
-      if (right) {
-        await grantGoodsOp(o, GOODS.mayorFavor, 1);
-        // “小镇”支线：答对的次数
-        await emitAction(o, 'town.mayor.right');
-      }
-      restLog(o, 'town.mayor', { type: r.type, actual, right });
-    });
-    resolved += 1;
+    try {
+      await runSystemOp(d, shardId, r.rest_id, { source: 'town.mayor', now }, async (o) => {
+        const done = await o.tx
+          .updateTable('mayor_guess')
+          .set({ actual, right })
+          .where('rest_id', '=', r.rest_id)
+          .where('day', '=', r.day)
+          .where('right', 'is', null)
+          .returning('rest_id')
+          .executeTakeFirst();
+        if (!done) return;
+        if (right) {
+          await grantGoodsOp(o, GOODS.mayorFavor, 1);
+          // “小镇”支线：答对的次数
+          await emitAction(o, 'town.mayor.right');
+        }
+        restLog(o, 'town.mayor', { type: r.type, actual, right });
+      });
+      resolved += 1;
+    } catch (err) {
+      failed += 1;
+      log?.error({ err, shardId, restId: r.rest_id, day: r.day }, 'mayor resolve failed');
+    }
   }
-  return { resolved };
+  return { resolved, failed };
 }
 
 /** 每 10 分钟揭晓一次到时间的镇长猜测（换天任务跑完之后才揭晓得了） */
@@ -122,7 +140,7 @@ export function mayorJobs(d: GameDeps): PeriodicJob[] {
       name: 'mayor-resolve',
       feature: 'town',
       period: (now) => String(Math.floor(now.getTime() / 600_000)),
-      run: ({ shardId, now }) => resolveMayor(d, shardId, now),
+      run: ({ shardId, now, log }) => resolveMayor(d, shardId, now, log),
     },
   ];
 }

@@ -58,7 +58,6 @@ export {
 } from './itemRefs';
 export {
   isNewId,
-  patchJsonText,
   rewriteIds,
   TUNING_ID_PATHS,
   TUNING_KEY_PATHS,

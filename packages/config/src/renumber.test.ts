@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { patchJsonText, rewriteIds, TUNING_ID_PATHS, type IdMaps } from './renumber';
+import { rewriteIds, TUNING_ID_PATHS, type IdMaps } from './renumber';
 import { tuningRefs } from './itemRefs';
 import { realBuild } from './testBundle';
 
@@ -121,29 +121,6 @@ describe('按键名改写编号（重新编号 PR 4）', () => {
     const input = { goodsId: 1 };
     run(input);
     expect(input).toEqual({ goodsId: 1 });
-  });
-});
-
-describe('按路径替换 JSON 文本里的数字（保留排版）', () => {
-  it('只换指定位置，空格、换行、键顺序原样', () => {
-    const text = '{\n  "a": [ 1, {"goodsId":87} ],\n "b" : -2.5e3, "c": "1"\n}\n';
-    const out = patchJsonText(
-      text,
-      new Map([
-        ['["a",0]', 10001],
-        ['["a",1,"goodsId"]', 60301],
-      ]),
-    );
-    expect(out).toBe('{\n  "a": [ 10001, {"goodsId":60301} ],\n "b" : -2.5e3, "c": "1"\n}\n');
-  });
-
-  it('有没用上的路径时报错（防止规则和文件对不上）', () => {
-    expect(() => patchJsonText('{"a":1}', new Map([['["b"]', 2]]))).toThrow('["b"]');
-  });
-
-  it('字符串里的转义引号、括号不影响定位', () => {
-    const text = '{"s":"a\\"]}[","n":1}';
-    expect(patchJsonText(text, new Map([['["n"]', 2]]))).toBe('{"s":"a\\"]}[","n":2}');
   });
 });
 
