@@ -31,6 +31,7 @@ import { redeemRoutes } from './redeem/routes';
 import { inviteRoutes } from './invite/routes';
 import { reportRoutes } from './report/routes';
 import { announceRoutes } from './announce/routes';
+import { commissionRoutes } from './commission/routes';
 import { socialRoutes } from './friend/routes';
 import { growthRoutes } from './growth/routes';
 import { marketRoutes } from './market/routes';
@@ -88,4 +89,5 @@ export function registerModules(app: FastifyInstance, game: Game): void {
   app.register(inviteRoutes(game.invite), { prefix: '/api/v1' });
   app.register(reportRoutes(game.report), { prefix: '/api/v1' });
   app.register(announceRoutes(game.announce), { prefix: '/api/v1' });
+  app.register(commissionRoutes(game.commission), { prefix: '/api/v1' });
 }

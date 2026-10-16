@@ -107,7 +107,7 @@ export interface SettleResult {
   exp: number;
   /** 本轮实际耗油（≥0，不超过当前油量） */
   oil: number;
-  /** 顾客类型 → 桌数 */
+  /** 顾客类型 → 桌数；另有 n3：自己长的蟑螂占着的桌数（章鱼哥的卫生巡查用，好友放的不算） */
   customers: Record<string, number>;
   rates: Rates | null;
   drops: Drop[];

@@ -9,6 +9,7 @@ import {
   adminRenameBody,
   activityBody,
   announcementBody,
+  commissionNoticeBody,
   adminDailyEditBody,
   adminDailyListQuery,
   adminDailyParams,
@@ -74,6 +75,7 @@ import { createPredictAdmin } from '../predict/admin';
 import { createAdminReports } from '../report/admin';
 import { createAdminActivity } from '../activity/admin';
 import { createAdminAnnounce } from '../announce/admin';
+import { createAdminCommission } from '../commission/admin';
 import { createAdminDaily } from '../daily/admin';
 import { createSite } from '../site/service';
 import { distribution, economy, settlementRounds } from './stats';
@@ -454,6 +456,22 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     r.post('/announcements/:id/delete', async (req) => {
       const a = await requireRole(db, req, 'admin');
       await announces.remove(a, id(req));
+      return ok(null);
+    });
+
+    // 小镇委员会的公报（2026-10-16）：协管能看，管理员发、撤回
+    const commission = createAdminCommission(game);
+    r.get('/commission', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await commission.list());
+    });
+    r.post('/commission', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await commission.create(a, parse(commissionNoticeBody, req.body)));
+    });
+    r.post('/commission/:id/remove', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      await commission.remove(a, id(req));
       return ok(null);
     });
 

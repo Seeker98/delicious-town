@@ -41,3 +41,8 @@ export type ExchangeFlag = keyof typeof EXCHANGE_FLAGS;
 
 /** 付钱的顾客类型：普通、挑剔、章鱼哥、痞老板、蟹老板（不算空桌、蟑螂、白食）；结算和收益记录的“客人”列共用 */
 export const PAYING_CUSTOMERS: readonly number[] = [1, 2, 6, 7, 8];
+
+/** 小镇委员会（2026-10-16）：主席和五位委员，按页面顺序；公报最多几个字 */
+export const COMMISSION_MEMBERS = ['mayor', 'squid', 'fandao', 'garden', 'gary', 'bro13'] as const;
+export type CommissionMember = (typeof COMMISSION_MEMBERS)[number];
+export const COMMISSION_NOTICE_MAX = 120;

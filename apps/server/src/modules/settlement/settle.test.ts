@@ -232,6 +232,8 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     expect(r.tables[0]!.roach).toBeUndefined();
     expect(r.tables[1]).toMatchObject({ customer: 3, roach: { by: 7 } });
     expect(r.tables[2]).toMatchObject({ customer: 3, roach: { by: null } });
+    // 章鱼哥的卫生巡查只数自己长的（n3），好友放的不算
+    expect(r.customers.n3).toBe(1);
   });
 
   it('关闭自然蟑螂时不产生新蟑螂，原有蟑螂照常处理', () => {
@@ -530,13 +532,16 @@ describe('问题记录 228：一家店的蟑螂上限', () => {
   it('同时最多 ⌈桌数 × 0.33⌉ 张蟑螂桌：6 桌每张都判定会长时也只长 2 只', () => {
     const r = settle({ tables: empty(6) }, {}, Array(80).fill(0.0001) as number[]);
     expect(roaches(r)).toBe(2);
+    expect(r.customers.n3).toBe(2);
   });
   it('原有的蟑螂算在上限里；被蟑螂药消灭的腾出名额', () => {
     const tables = [
       { no: 1, floor: 1, customer: 3, roach: { by: 7, at: '2026-09-30T03:00:00.000Z' } },
       ...empty(6).slice(1),
     ];
-    expect(roaches(settle({ tables }, {}, Array(80).fill(0.0001) as number[]))).toBe(2);
+    const kept = settle({ tables }, {}, Array(80).fill(0.0001) as number[]);
+    expect(roaches(kept)).toBe(2);
+    expect(kept.customers.n3).toBe(1);
     const cleared = settle({ tables, agg: { roachClearRate: 0.5 } }, {}, Array(80).fill(0.0001) as number[]);
     expect(cleared.tables[0]!.customer).toBe(-3);
     expect(roaches(cleared)).toBe(2);
