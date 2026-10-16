@@ -85,7 +85,8 @@ function roundDto(r: IncomeRow): RoundSummaryDto {
     coin: r.coin,
     exp: r.exp,
     oil: r.oil,
-    customers: r.customers,
+    // n3（自己长的蟑螂占桌，卫生巡查用）是内部统计，不给网页
+    customers: Object.fromEntries(Object.entries(r.customers).filter(([k]) => k !== 'n3')),
     at: r.created_at.toISOString(),
   };
 }
