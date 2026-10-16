@@ -91,6 +91,7 @@ async function recordStreak(db: Kysely<DB>, restId: number, day: string): Promis
 const ACT_EXCHANGE = 901;
 const ACT_PREDICT = 902;
 const ACT_ACTIVITY = 904;
+const ACT_WISH = 907;
 const ACT_TAKEAWAY = 50;
 
 export function createTaskService(d: GameDeps) {
@@ -330,6 +331,7 @@ export function createTaskService(d: GameDeps) {
     const t = settings.tuning;
     if (id === ACT_EXCHANGE) return t.exchange.minLevel;
     if (id === ACT_PREDICT) return t.predict.minLevel;
+    if (id === ACT_WISH) return t.wishTree.minLevel;
     return 0;
   }
 

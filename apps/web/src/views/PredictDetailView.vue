@@ -169,7 +169,7 @@ async function submit() {
   <DtSkeleton v-else-if="!detail || !ev || !list" :rows="6" />
   <template v-else>
     <h1 class="dt-pd-title" data-testid="pd-title">
-      {{ predictTitle(ev) }}<span v-if="ev.auto" class="dt-tag-primary">{{ t.predict.auto }}</span>
+      {{ predictTitle(ev, catalog) }}<span v-if="ev.auto" class="dt-tag-primary">{{ t.predict.auto }}</span>
     </h1>
     <div class="dt-pd-meta">
       {{ t.predict.detail.closeAt(time(ev.closeAt)) }}
@@ -362,7 +362,7 @@ async function submit() {
       </div>
     </section>
 
-    <DtSheet :open="trading" :title="predictTitle(ev)" @close="trading = false">
+    <DtSheet :open="trading" :title="predictTitle(ev, catalog)" @close="trading = false">
       <div data-testid="pd-trade-sheet">
         <div class="dt-detail-sub">
           {{ t.predict.yesPct(yesPct) }} · {{ t.predict.detail.unitLine(formatNum(ev.unit)) }}

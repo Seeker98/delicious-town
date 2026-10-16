@@ -23,7 +23,7 @@ export interface AutoDraft {
 }
 
 export interface AutoKind {
-  kind: 'krab' | 'market' | 'weather' | 'stats';
+  kind: 'krab' | 'market' | 'weather' | 'wish';
   create(c: AutoCtx): Promise<AutoDraft | null>;
   /** 判出来返回结果和判定依据（中文原文 + 给前端按语言渲染的参数，问题记录 272）；数据还没生成返回 null */
   resolve(

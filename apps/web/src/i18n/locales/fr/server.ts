@@ -115,7 +115,14 @@ const server: Messages['server'] = {
       note: (day, today, prevDay, yesterday) =>
         `${day}\u202f: ${today}\u202f; ${prevDay}\u202f: ${yesterday}`,
     },
+    wish: {
+      title: (hour, goods) => `L’Arbre à vœux portera-t-il ${goods} à ${hour} h aujourd’hui\u202f?`,
+      desc: (hour) =>
+        `Selon l’objet que porte l’Arbre à vœux dans la manche qui s’ouvre aujourd’hui à ${hour} h, quelle que soit la quantité.`,
+      note: (day, goods, num) => `${day}\u202f: l’Arbre à vœux a porté ${goods}\u202f×\u202f${num}`,
+    },
     voidMissing: 'Données manquantes, annulé automatiquement',
+    voidRetired: 'Type de question retiré, annulé automatiquement',
   },
   talk: {
     bigEater: "Vous avez du goût\u202f! C'est aussi mon avis\u202f! Hahaha\u202f!",

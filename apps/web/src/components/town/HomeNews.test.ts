@@ -35,7 +35,7 @@ describe('HomeNews 小镇日报入口', () => {
     expect(mountIt(head(null)).find('[data-testid="home-daily"]').exists()).toBe(false);
   });
 
-  it('首页最多列 2 条：按日报、广播、新闻的先后取（问题记录 619）', () => {
+  it('首页最多列 3 条：按日报、广播、新闻的先后取（问题记录 619；2026-10-16 改回 3 条）', () => {
     const n = (id: number) => ({
       id,
       type: 'x',
@@ -44,11 +44,11 @@ describe('HomeNews 小镇日报入口', () => {
       params: {},
       createdAt: '2026-10-13T01:00:00.000Z',
     });
-    const w = mountIt({ news: [n(1), n(2)], broadcast: { ...n(9), type: 'broadcast' }, daily });
+    const w = mountIt({ news: [n(1), n(2), n(3)], broadcast: { ...n(9), type: 'broadcast' }, daily });
     expect(w.find('[data-testid="home-daily"]').exists()).toBe(true);
     expect(w.findAll('[data-testid="home-broadcast"]')).toHaveLength(1);
-    expect(w.findAll('[data-testid="home-news"]')).toHaveLength(0);
-    const w2 = mountIt({ news: [n(1), n(2)], broadcast: null, daily: null });
-    expect(w2.findAll('[data-testid="home-news"]')).toHaveLength(2);
+    expect(w.findAll('[data-testid="home-news"]')).toHaveLength(1);
+    const w2 = mountIt({ news: [n(1), n(2), n(3)], broadcast: null, daily: null });
+    expect(w2.findAll('[data-testid="home-news"]')).toHaveLength(3);
   });
 });

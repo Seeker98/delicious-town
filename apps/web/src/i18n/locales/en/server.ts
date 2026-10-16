@@ -106,7 +106,14 @@ const server: Messages['server'] = {
         `Based on the coins all restaurants on the server earn from business today; settled after 0:00 tomorrow. Only strictly more than yesterday counts as "Yes". Trading closes at ${close}:00.`,
       note: (day, today, prevDay, yesterday) => `${day}: ${today}; ${prevDay}: ${yesterday}`,
     },
+    wish: {
+      title: (hour, goods) => `Will the Wishing Tree bear ${goods} at ${hour}:00 today?`,
+      desc: (hour) =>
+        `Based on the item on the Wishing Tree round that opens at ${hour}:00 today; the quantity doesn't matter.`,
+      note: (day, goods, num) => `${day}: the Wishing Tree bore ${goods} ×${num}`,
+    },
     voidMissing: 'Data missing, cancelled automatically',
+    voidRetired: 'Question type retired, cancelled automatically',
   },
   talk: {
     bigEater: 'You have real taste! I think so too! Hahaha!',

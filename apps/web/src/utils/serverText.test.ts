@@ -115,6 +115,25 @@ describe('服务端代码 → 文字（问题记录 272）', () => {
     expect(predictNote({ kind: 'market', resultNote: '旧', resultParams: { void: 'missing' } }, names)).toBe(
       '数据缺失, 自动作废',
     );
+    // 许愿树题（2026-10-16 换掉银币题）：题目要道具名，没传名字时用原文；银币题作废写题型下线
+    const wish = {
+      kind: 'wish',
+      title: '旧',
+      description: '旧说明',
+      params: { day: '2026-11-03', hour: 20, goods: 7 },
+    };
+    expect(predictTitle(wish, names)).toBe('今天 20 点许愿树会结出道具7吗');
+    expect(predictTitle(wish)).toBe('旧');
+    expect(predictDesc(wish)).toBe('以今天 20 点开的这一轮许愿树结的道具为准, 不看数量。');
+    expect(
+      predictNote(
+        { kind: 'wish', resultNote: '旧', resultParams: { day: '2026-11-03', goods: 7, num: 3 } },
+        names,
+      ),
+    ).toBe('11月3日许愿树结的是道具7 ×3');
+    expect(predictNote({ kind: 'stats', resultNote: '旧', resultParams: { void: 'retired' } }, names)).toBe(
+      '题型下线, 自动作废',
+    );
     expect(predictTitle({ kind: 'hiphop', title: '旧', params: { place: 9 } })).toBe(
       '明天嘻哈男孩会去某家玩家餐厅吗',
     );

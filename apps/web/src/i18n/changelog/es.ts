@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  predict1016:
+    'Predicciones y actividad: la pregunta diaria «¿Superarán hoy las monedas de negocio de todo el servidor a las de ayer?» se sustituye por «¿Dará hoy el Árbol de los deseos un objeto concreto a las 20:00?» (el objeto se elige entre los premios del Árbol de los deseos), y las preguntas de monedas aún abiertas se anulan y se reembolsan; nuevas tareas de actividad: pedir un deseo en el Árbol de los deseos y cambiar el tiempo con un objeto, 5 puntos cada una; el inicio vuelve a mostrar hasta 3 líneas de noticias del pueblo',
   perf1016:
     'Rendimiento: el juego abre más rápido la primera vez (el archivo principal pesa casi una cuarta parte menos y el registro de cambios solo se carga al abrir su página), el inicio y A domicilio ya no se actualizan cada cierto tiempo mientras la aplicación está en segundo plano, y la clasificación de Poder de chef ya no tarda varios segundos la primera vez que se abre; se quita el «éxito en las pruebas» de las descripciones del tiempo, porque nunca tuvo efecto',
   weather1016:

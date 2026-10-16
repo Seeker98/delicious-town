@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  predict1016:
+    'Prédictions et activité\u202f: la question quotidienne «\u202fLes pièces gagnées aujourd’hui par tout le serveur dépasseront-elles celles d’hier\u202f?\u202f» est remplacée par «\u202fL’Arbre à vœux portera-t-il un objet donné à 20 h aujourd’hui\u202f?\u202f» (l’objet est tiré parmi les lots de l’Arbre à vœux), et les questions sur les pièces encore ouvertes sont annulées et remboursées\u202f; nouvelles tâches d’activité\u202f: faire un vœu à l’Arbre à vœux et changer la météo avec un objet, 5 points chacune\u202f; l’accueil affiche de nouveau jusqu’à 3 lignes de nouvelles de la ville',
   perf1016:
     'Performances\u202f: le jeu s’ouvre plus vite la première fois (le fichier principal est presque un quart plus léger, et le journal des mises à jour ne se charge plus qu’à l’ouverture de sa page), l’accueil et la page À emporter ne se rafraîchissent plus à intervalles réguliers quand l’application est en arrière-plan, et le classement Puissance ne fait plus attendre plusieurs secondes à la première ouverture\u202f; la «\u202fréussite des épreuves\u202f», qui n’a jamais eu d’effet, est retirée des descriptions de la météo',
   weather1016:

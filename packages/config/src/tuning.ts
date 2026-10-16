@@ -852,10 +852,10 @@ export const tuningSchema = z.object({
       krab: z.boolean(),
       market: z.boolean(),
       weather: z.boolean(),
-      stats: z.boolean(),
+      wish: z.boolean(),
       b: int.min(10).max(10000),
       marketCloseMin: int.min(1).max(60),
-      statsCloseHour: int.min(1).max(23),
+      wishCloseMin: int.min(1).max(60),
     }),
   }),
   /** 一番赏 */

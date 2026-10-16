@@ -5,9 +5,9 @@ import { createShard } from '../../../../test/fixtures';
 import { createTestGame, newRestaurant, type TestGame } from '../../../../test/game';
 import { krab } from './krab';
 import { market } from './market';
-import { stats } from './stats';
 import type { AutoCtx } from './types';
 import { weather } from './weather';
+import { wish } from './wish';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -169,53 +169,66 @@ describe('天气（238-2 设计 §4.4）', () => {
   });
 });
 
-describe('全服数据（238-2 设计 §4.5）', () => {
-  it('出题：只问营业银币（活跃店数太容易被小号刷，终审 I1），概率 50%，当天 18 点截止，明天 0:10 判定', async () => {
+describe('许愿树（2026-10-16 换掉全服营业银币题）', () => {
+  it('出题：从奖品表里等概率挑一样，概率按权重占比；20 点开树前 5 分钟截止，开树时判定', async () => {
     const shardId = await createShard(t.db);
-    for (const day of [DAY, addDays(DAY, 1)]) {
-      const dr = (await stats.create({ ...(await ctx(shardId)), day, now: gameTime(day, 0, 5) }))!;
-      expect(dr.title).toBe('今天全服营业银币会超过昨天吗');
-      expect(dr.params).toEqual({ day, metric: 'coin', close: 18 });
-      expect(dr.p0).toBe(0.5);
-      expect(dr.closeAt).toEqual(gameTime(day, 18));
-      expect(dr.resolveAt).toEqual(gameTime(addDays(day, 1), 0, 10));
+    const c = await ctx(shardId);
+    const prizes = c.settings.tuning.wishTree.prizes;
+    const total = prizes.reduce((s, p) => s + p.weight, 0);
+    const seen = new Set<number>();
+    for (let seed = 1; seed <= 40; seed++) {
+      const dr = (await wish.create({ ...c, rng: seededRng(seed) }))!;
+      const goods = Number(dr.params.goods);
+      seen.add(goods);
+      const w = prizes.filter((p) => p.goods === goods).reduce((s, p) => s + p.weight, 0);
+      expect(dr.p0).toBeCloseTo(Math.min(0.95, Math.max(0.05, w / total)), 9);
+      expect(dr.title).toBe(`今天 20 点许愿树会结出${t.game.deps.config.goods.get(goods)!.name}吗`);
+      expect(dr.params).toEqual({ day: DAY, hour: 20, goods });
+      expect(dr.closeAt).toEqual(gameTime(DAY, 19, 55));
+      expect(dr.resolveAt).toEqual(gameTime(DAY, 20));
     }
+    expect([...seen].every((g) => prizes.some((p) => p.goods === g))).toBe(true);
+    expect(seen.size).toBeGreaterThan(3);
   });
 
-  it('出题任务过了早上 6 点才跑的那天不出这题（大半天的数据已经能看出趋势，终审 I1）', async () => {
+  it('离截止不到 1 小时、区服关了许愿树：不出', async () => {
     const shardId = await createShard(t.db);
-    expect(await stats.create({ ...(await ctx(shardId)), now: gameTime(DAY, 6, 1) })).toBeNull();
-    expect(await stats.create({ ...(await ctx(shardId)), now: gameTime(DAY, 5, 59) })).not.toBeNull();
+    expect(await wish.create({ ...(await ctx(shardId)), now: gameTime(DAY, 18, 56) })).toBeNull();
+    expect(await wish.create({ ...(await ctx(shardId)), now: gameTime(DAY, 18, 54) })).not.toBeNull();
+    const off = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({ shard_id: off, override: JSON.stringify({ features: { wishtree: false } }) })
+      .execute();
+    t.game.shards.invalidate(off);
+    expect(await wish.create(await ctx(off))).toBeNull();
   });
 
-  it('判定：今天严格大于昨天才算"是"', async () => {
+  it('判定：当天那一轮还没开返回 null；开了按结的道具判，不看数量', async () => {
     const shardId = await createShard(t.db);
-    const r = await newRestaurant(t, { shardId });
-    const income = (day: string, coin: number) =>
-      t.db
-        .insertInto('income_round')
-        .values({
-          rest_id: r.restaurantId,
-          round_no: 1,
-          coin,
-          exp: 0,
-          oil: 0,
-          customers: JSON.stringify([]),
-          rates: JSON.stringify({}),
-          drops: JSON.stringify([]),
-          created_at: gameTime(day, 12),
-        })
-        .execute();
-    await income(addDays(DAY, -1), 1000);
-    await income(DAY, 1000);
-    const tie = (await stats.resolve(await rctx(shardId), { day: DAY, metric: 'coin' }))!;
-    expect(tie).toEqual({
-      outcome: false,
-      note: '11月3日 1,000；11月2日 1,000',
-      noteParams: { day: DAY, today: 1000, prevDay: addDays(DAY, -1), yesterday: 1000 },
+    const goods = t.game.deps.config.tuning.wishTree.prizes[0]!.goods;
+    const other = t.game.deps.config.tuning.wishTree.prizes.find((p) => p.goods !== goods)!.goods;
+    expect(await wish.resolve(await rctx(shardId), { day: DAY, hour: 20, goods })).toBeNull();
+    await t.db
+      .insertInto('wish_round')
+      .values({
+        shard_id: shardId,
+        day: DAY,
+        goods_id: goods,
+        num: 3,
+        opens_at: gameTime(DAY, 20),
+        ends_at: gameTime(addDays(DAY, 1), 20),
+      })
+      .execute();
+    const yes = (await wish.resolve(await rctx(shardId), { day: DAY, hour: 20, goods }))!;
+    expect(yes).toEqual({
+      outcome: true,
+      note: `11月3日许愿树结的是${t.game.deps.config.goods.get(goods)!.name} ×3`,
+      noteParams: { day: DAY, goods, num: 3 },
     });
-    await income(DAY, 1);
-    expect((await stats.resolve(await rctx(shardId), { day: DAY, metric: 'coin' }))!.outcome).toBe(true);
+    expect((await wish.resolve(await rctx(shardId), { day: DAY, hour: 20, goods: other }))!.outcome).toBe(
+      false,
+    );
   });
 });
 

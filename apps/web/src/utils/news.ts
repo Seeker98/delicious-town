@@ -84,11 +84,14 @@ function render(n: NewsDto, x: NewsNames, mark: { who: boolean; other: boolean }
       : n.type === 'predict.result' && typeof p.kind === 'string'
         ? {
             ...p,
-            title: predictTitle({
-              kind: p.kind,
-              title: String(p.title ?? ''),
-              params: (p.eventParams ?? {}) as Record<string, unknown>,
-            }),
+            title: predictTitle(
+              {
+                kind: p.kind,
+                title: String(p.title ?? ''),
+                params: (p.eventParams ?? {}) as Record<string, unknown>,
+              },
+              x,
+            ),
           }
         : p;
   return r(who, mark?.other ? { ...params, name: OTHER } : params, x);

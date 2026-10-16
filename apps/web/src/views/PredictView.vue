@@ -99,7 +99,7 @@ onMounted(() => void loadList());
         >
           <span class="dt-pd-ev-head">
             <span class="dt-pd-ev-title"
-              >{{ predictTitle(e)
+              >{{ predictTitle(e, catalog)
               }}<span v-if="e.auto" class="dt-tag-primary" :data-testid="`pd-auto-${e.id}`">{{
                 t.predict.auto
               }}</span></span
@@ -132,7 +132,7 @@ onMounted(() => void loadList());
           :data-testid="`pd-ended-${e.id}`"
         >
           <span class="dt-row-main">
-            <span class="dt-row-title is-strong">{{ predictTitle(e) }}</span>
+            <span class="dt-row-title is-strong">{{ predictTitle(e, catalog) }}</span>
             <span class="dt-row-sub"
               ><span :class="endedTagClass(e)" data-testid="pd-ended-tag">{{ endedTag(e) }}</span
               >{{ t.predict.endedHold(e.yes, e.no)

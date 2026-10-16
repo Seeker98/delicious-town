@@ -59,8 +59,8 @@ interface PredictLike {
   params: Record<string, unknown>;
 }
 
-/** 自动题按参数渲染题目；参数不全（旧题）或手动题用原文 */
-export function predictTitle(e: PredictLike): string {
+/** 自动题按参数渲染题目；参数不全（旧题）或手动题用原文。许愿树题要道具名：没传 names 时用原文 */
+export function predictTitle(e: PredictLike, names?: Pick<PredictNames, 'goodsName'>): string {
   const t = activeMessages().server.predict;
   const p = e.params;
   if (e.kind === 'krab' && isNum(p.from) && isNum(p.to)) return t.krab.title(p.from, p.to);
@@ -69,6 +69,8 @@ export function predictTitle(e: PredictLike): string {
   if (e.kind === 'weather' && isNum(p.hour) && isNum(p.type))
     return t.weather.title(p.hour, t.weather.types[p.type] ?? String(p.type));
   if (e.kind === 'stats') return t.stats.title;
+  if (e.kind === 'wish' && names && isNum(p.hour) && isNum(p.goods))
+    return t.wish.title(p.hour, names.goodsName(p.goods));
   return e.title;
 }
 
@@ -84,10 +86,12 @@ export function predictDesc(e: {
   if (e.kind === 'market' && isNum(p.hour)) return t.market.desc(p.hour);
   if (e.kind === 'weather' && isNum(p.hour)) return t.weather.desc(p.hour);
   if (e.kind === 'stats' && isNum(p.close)) return t.stats.desc(p.close);
+  if (e.kind === 'wish' && isNum(p.hour)) return t.wish.desc(p.hour);
   return e.description;
 }
 
 export interface PredictNames {
+  goodsName(id: number): string;
   foodName(id: number): string;
   weatherName(id: number): string;
 }
@@ -101,6 +105,7 @@ export function predictNote(
   const p = e.resultParams;
   if (!p) return e.resultNote;
   if (p.void === 'missing') return t.voidMissing;
+  if (p.void === 'retired') return t.voidRetired;
   const day = isStr(p.day) ? dayLabel(p.day) : '';
   if (e.kind === 'krab' && isNum(p.hour) && isNum(p.street)) return t.krab.note(day, p.hour, p.street);
   if (e.kind === 'hiphop' && isNum(p.place)) return t.hiphop.note(day, placeName(p.place));
@@ -123,6 +128,8 @@ export function predictNote(
   }
   if (e.kind === 'stats' && isNum(p.today) && isNum(p.yesterday) && isStr(p.prevDay))
     return t.stats.note(day, formatNum(p.today), dayLabel(p.prevDay), formatNum(p.yesterday));
+  if (e.kind === 'wish' && isNum(p.goods) && isNum(p.num))
+    return t.wish.note(day, x.goodsName(p.goods), p.num);
   return e.resultNote;
 }
 

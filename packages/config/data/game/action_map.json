@@ -30,7 +30,9 @@
     "post.create": "论坛发帖或回复",
     "post.reply": "论坛发帖或回复",
     "thumbs.up": "点赞或被赞",
-    "thumbs.received": "点赞或被赞"
+    "thumbs.received": "点赞或被赞",
+    "wishtree.wish": "许愿树许愿",
+    "weather.tool": "改天气"
   },
   "features": {
     "rest.": "restaurant",

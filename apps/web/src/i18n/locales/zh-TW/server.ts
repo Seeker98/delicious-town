@@ -109,7 +109,14 @@ export default {
       note: (day: string, today: string, prevDay: string, yesterday: string) =>
         `${day} ${today}；${prevDay} ${yesterday}`,
     },
+    /** 許願樹會不會結某樣道具（2026-10-16 換掉全服營業銀幣題；舊的銀幣題還用上面的 stats） */
+    wish: {
+      title: (hour: number, goods: string) => `今天 ${hour} 點許願樹會結出${goods}嗎`,
+      desc: (hour: number) => `以今天 ${hour} 點開的這一輪許願樹結的道具為準, 不看數量。`,
+      note: (day: string, goods: string, num: number) => `${day}許願樹結的是${goods} ×${num}`,
+    },
     voidMissing: '資料缺失, 自動作廢',
+    voidRetired: '題型下線, 自動作廢',
   },
   /** 廣場 NPC 臺詞（照原版 NPCTools） */
   talk: {
