@@ -1,4 +1,7 @@
 import type {
+  AccessBanDto,
+  AccessBanKind,
+  AccessBanResultDto,
   AccountRole,
   AdminTitleDto,
   AdminFuturesFoodDto,
@@ -86,6 +89,11 @@ export const adminApi = {
       ...(days === undefined ? {} : { days }),
     }),
   unban: (id: number) => api.post<{ banned: boolean }>(`${A}/players/${id}/unban`, {}),
+  /** IP、设备封禁（2026-10-16） */
+  accessBans: () => api.get<AccessBanDto[]>(`${A}/access-bans`),
+  addAccessBan: (b: { kind: AccessBanKind; value: string; reason: string; banAccounts: boolean }) =>
+    api.post<AccessBanResultDto>(`${A}/access-bans`, b),
+  removeAccessBan: (id: number) => api.post<{ removed: boolean }>(`${A}/access-bans/${id}/remove`, {}),
   rename: (restId: number, name: string, reason: string) =>
     api.post<{ name: string }>(`${A}/restaurants/${restId}/rename`, { name, reason }),
   setRole: (id: number, role: AccountRole) =>

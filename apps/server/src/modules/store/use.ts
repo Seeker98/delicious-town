@@ -1,6 +1,7 @@
-import type { GoodsUse, Tuning } from '@dt/config';
+import { NEWBIE, type GoodsUse, type Tuning } from '@dt/config';
 import { ErrorCode, gameDay, pickWeighted } from '@dt/shared';
 import { featureAvailable } from '../../core/features';
+import { assertVerified } from '../../core/verified';
 import { invalidState, limitReached } from '../../core/errors';
 import { restLog, setRest, type Op } from '../../core/op';
 import { gainCoin, gainDiamond, gainStrength } from '../../core/resources';
@@ -96,6 +97,8 @@ export async function useGoods(
   const g = op.config.requireGoods(goodsId);
   const use = g.use;
   if (!use) throw new AppError(ErrorCode.NOT_USABLE, 400, { goodsId });
+  // 新手大礼包要验证邮箱才能拆（2026-10-16：小号拆礼包、卖店凑钱刷一番赏）
+  if (goodsId === NEWBIE.pack) await assertVerified(op);
   if (use.kind === 'towerTicket' && !featureAvailable(op.settings, 'tower'))
     throw new AppError(ErrorCode.NOT_USABLE, 400, { goodsId, reason: 'feature' });
   if (num > 1 && NO_BATCH_KINDS.has(use.kind)) throw invalidState('no_batch', { goodsId });

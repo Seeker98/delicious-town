@@ -90,7 +90,7 @@ describe('指引页新手码状态（设计 §4.3）', () => {
     ];
     await syncNewbieCodes(t.db, codes.slice(0, 3), log());
     await t.db.updateTable('redeem_code').set({ disabled_at: new Date() }).where('code', '=', c).execute();
-    const ctx = await newRestaurant(t);
+    const ctx = await newRestaurant(t, { verified: true });
     const list = await guideCodes(t.db, codes, ctx.restaurantId);
     expect(list.map((x) => [x.code, x.state])).toEqual([
       [a, 'ok'],
@@ -106,7 +106,7 @@ describe('指引页新手码状态（设计 §4.3）', () => {
   it('领过的码后来停用，仍显示已领', async () => {
     const a = randomCode();
     await syncNewbieCodes(t.db, [nc(a, { minLevel: 1 })], log());
-    const ctx = await newRestaurant(t);
+    const ctx = await newRestaurant(t, { verified: true });
     await t.game.redeem.redeem(ctx, a);
     await t.db.updateTable('redeem_code').set({ disabled_at: new Date() }).where('code', '=', a).execute();
     expect((await guideCodes(t.db, [nc(a, { minLevel: 1 })], ctx.restaurantId))[0]!.state).toBe('used');
@@ -118,7 +118,7 @@ describe('backlog 新手码', () => {
     const [a, b] = [randomCode(), randomCode()];
     const codes = [nc(a, { minLevel: 1 }), nc(b, { minLevel: 1 })];
     await syncNewbieCodes(t.db, codes, log());
-    const ctx = await newRestaurant(t);
+    const ctx = await newRestaurant(t, { verified: true });
     await t.game.redeem.redeem(ctx, a);
     const list = await guideCodes(t.db, codes, ctx.restaurantId, { redeemOn: false });
     expect(list.map((x) => x.state)).toEqual(['used', 'unavailable']);

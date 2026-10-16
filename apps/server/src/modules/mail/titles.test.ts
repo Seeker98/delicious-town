@@ -197,8 +197,8 @@ describe('兑换码带称号', () => {
         actor_account_id: actor,
       })
       .execute();
-    const a = await newRestaurant(t);
-    const b = await newRestaurant(t);
+    const a = await newRestaurant(t, { verified: true });
+    const b = await newRestaurant(t, { verified: true });
     const t0 = t.clock.now.getTime();
     await t.game.redeem.redeem(a, c);
     t.clock.advance(DAY);

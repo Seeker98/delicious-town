@@ -79,6 +79,7 @@ import * as m0077 from './0077_shiling_per';
 import * as m0078 from './0078_fair_price_refs';
 import * as m0079 from './0079_perf_indexes';
 import * as m0080 from './0080_predict_wish';
+import * as m0081 from './0081_access_ban';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -162,4 +163,5 @@ export const migrations: Record<string, Migration> = {
   '0078_fair_price_refs': m0078,
   '0079_perf_indexes': m0079,
   '0080_predict_wish': m0080,
+  '0081_access_ban': m0081,
 };

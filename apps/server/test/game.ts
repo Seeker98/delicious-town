@@ -74,6 +74,8 @@ export interface NewRestaurantOptions extends FullRestaurantOptions {
   /** 道具 id → 数量（直接写仓库，不写加成来源；勋章请用 grantGoods） */
   goods?: Record<number, number>;
   verified?: boolean;
+  /** 账号注册了几天（改 created_at；一番赏、交易所这些按注册天数设门槛） */
+  accountDays?: number;
 }
 
 export async function newRestaurant(t: TestGame, opts: NewRestaurantOptions = {}): Promise<RestCtx> {
@@ -83,6 +85,13 @@ export async function newRestaurant(t: TestGame, opts: NewRestaurantOptions = {}
     await t.db
       .updateTable('account')
       .set({ email_verified_at: new Date() })
+      .where('id', '=', accountId)
+      .execute();
+  }
+  if (opts.accountDays !== undefined) {
+    await t.db
+      .updateTable('account')
+      .set({ created_at: new Date(Date.now() - opts.accountDays * 86_400_000) })
       .where('id', '=', accountId)
       .execute();
   }

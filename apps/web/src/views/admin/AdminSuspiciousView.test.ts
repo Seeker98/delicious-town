@@ -13,13 +13,16 @@ vi.mock('../../api/admin', () => ({
     suspiciousMulti: vi.fn(),
     suspiciousRedeem: vi.fn(),
     suspiciousAcquire: vi.fn(),
+    accessBans: vi.fn(),
+    addAccessBan: vi.fn(),
+    removeAccessBan: vi.fn(),
   },
 }));
 
 const who = { restId: 3, restName: '可疑店', accountId: 9, username: 'sus' };
 
-async function mountView() {
-  useAdminStore().me = { accountId: 1, username: 'boss', role: 'mod' };
+async function mountView(role: 'mod' | 'admin' = 'mod') {
+  useAdminStore().me = { accountId: 1, username: 'boss', role };
   useAdminStore().shardId = 1;
   const router = createRouter({
     history: createMemoryHistory(),
@@ -178,5 +181,54 @@ describe('backlog 6B-2：多号分组只列一部分账号时写明总数', () =
       '/admin/players/11',
     ]);
     expect(row.text()).toContain('boss');
+  });
+
+  it('封禁名单（2026-10-16）：多号里点“封禁…”切到封禁名单、填好 IP；确认后封禁并一并封号；协管看不到封禁按钮', async () => {
+    vi.mocked(adminApi.accessBans).mockResolvedValue([]);
+    vi.mocked(adminApi.suspiciousMulti).mockResolvedValue([
+      {
+        kind: 'ip',
+        key: '10.0.0.1',
+        total: 1,
+        accounts: [
+          { accountId: 1, username: 'u1', restId: 1, restName: '店1', lastSeen: '2026-10-01T00:00:00.000Z' },
+        ],
+      },
+    ]);
+    vi.mocked(adminApi.addAccessBan).mockResolvedValue({
+      ban: {
+        id: 1,
+        kind: 'ip',
+        value: '10.0.0.1',
+        reason: '刷号',
+        actor: 'boss',
+        createdAt: '2026-10-16T00:00:00.000Z',
+        accounts: 3,
+      },
+      bannedAccounts: [1, 2, 3],
+    });
+    const modView = await mountView();
+    await modView.find('[data-testid="sus-tab-multi"]').trigger('click');
+    await flushPromises();
+    expect(modView.find('[data-testid="sus-multi-ban-ip-10.0.0.1"]').exists()).toBe(false);
+    modView.unmount();
+
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const w = await mountView('admin');
+    await w.find('[data-testid="sus-tab-multi"]').trigger('click');
+    await flushPromises();
+    await w.find('[data-testid="sus-multi-ban-ip-10.0.0.1"]').trigger('click');
+    await flushPromises();
+    expect((w.find('[data-testid="ban-value"]').element as HTMLInputElement).value).toBe('10.0.0.1');
+    await w.find('[data-testid="ban-reason"]').setValue('刷号');
+    await w.find('[data-testid="ban-add"]').trigger('click');
+    await flushPromises();
+    expect(adminApi.addAccessBan).toHaveBeenCalledWith({
+      kind: 'ip',
+      value: '10.0.0.1',
+      reason: '刷号',
+      banAccounts: true,
+    });
+    expect(adminApi.accessBans).toHaveBeenCalledTimes(2);
   });
 });

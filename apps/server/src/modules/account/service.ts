@@ -1,3 +1,4 @@
+import { isIP } from 'node:net';
 import type { Redis } from 'ioredis';
 import { sql, type Kysely } from 'kysely';
 import {
@@ -25,7 +26,8 @@ import { npcInvite } from '../npc/npc';
 import { hashPassword, verifyPassword } from './password';
 import { isBanned } from '../admin/ban';
 import { writeAudit } from '../admin/audit';
-import { invalidState } from '../../core/errors';
+import { invalidState, limitReached } from '../../core/errors';
+import { canonicalEmail } from './email';
 
 export interface AccountDeps {
   db: Kysely<DB>;
@@ -93,10 +95,50 @@ export function createAccountService(d: AccountDeps) {
     return row.account_id;
   }
 
+  /**
+   * 注册限量（2026-10-16 小号刷一番赏）：同一 IP（IPv6 按 /64）24 小时内注册的号、同一设备登录过的号
+   * 到了上限就不让再注册。按登录记录数（注册时也写一条）；设备号能换、IP 能挂代理，只挡住成批注册
+   */
+  async function assertRegisterQuota(ip: string, deviceId: string | null): Promise<void> {
+    const perIp = d.env.REGISTER_PER_IP;
+    if (perIp > 0 && isIP(ip) !== 0) {
+      const { rows } = await sql<{ n: number }>`
+        select count(distinct lt.account_id)::int as n
+        from login_trace lt join account a on a.id = lt.account_id
+        where a.created_at > now() - interval '24 hours'
+          and lt.ip ~ '^[0-9A-Fa-f:.]+$'
+          and case when family(${ip}::inet) = 6 then lt.ip::inet <<= set_masklen(${ip}::inet, 64)
+            else lt.ip = ${ip} end`.execute(d.db);
+      if ((rows[0]?.n ?? 0) >= perIp) throw limitReached('register_ip', { max: perIp });
+    }
+    const perDevice = d.env.REGISTER_PER_DEVICE;
+    if (perDevice > 0 && deviceId) {
+      const r = await d.db
+        .selectFrom('login_trace')
+        .select((eb) => eb.fn.count<string>('account_id').distinct().as('n'))
+        .where('device_id', '=', deviceId)
+        .executeTakeFirstOrThrow();
+      if (Number(r.n) >= perDevice) throw limitReached('register_device', { max: perDevice });
+    }
+  }
+
   return {
-    async register(input: RegisterInput, ip: string): Promise<{ token: string; accountId: number }> {
+    async register(
+      input: RegisterInput,
+      ip: string,
+      deviceId: string | null = null,
+    ): Promise<{ token: string; accountId: number }> {
       if (!(await d.captcha.verify(input.captchaToken, ip)))
         throw new AppError(ErrorCode.CAPTCHA_FAILED, 400);
+      await assertRegisterQuota(ip, deviceId);
+      // 同一个邮箱换写法（大小写、+ 后缀、Gmail 的点）也算已注册（2026-10-16 防小号）
+      const emailCanon = canonicalEmail(input.email);
+      const dup = await d.db
+        .selectFrom('account')
+        .select('id')
+        .where('email_canon', '=', emailCanon)
+        .executeTakeFirst();
+      if (dup) throw new AppError(ErrorCode.EMAIL_TAKEN, 409);
       let invitedBy: number | null = null;
       if (input.inviteCode) {
         const inviter = await d.db
@@ -115,6 +157,7 @@ export function createAccountService(d: AccountDeps) {
             username: input.username,
             password_hash: passwordHash,
             email: input.email,
+            email_canon: emailCanon,
             invited_by: invitedBy,
             lang: input.lang ?? null,
           })

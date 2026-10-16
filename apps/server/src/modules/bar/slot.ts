@@ -1,23 +1,13 @@
 import { sql } from 'kysely';
 import { GOODS } from '@dt/config';
-import { ErrorCode, pickWeighted, type SlotResultDto } from '@dt/shared';
+import { pickWeighted, type SlotResultDto } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import { opNews, type Op } from '../../core/op';
-import { AppError } from '../../http/errors';
+import { assertVerified } from '../../core/verified';
 import { addFoods } from '../cupboard/foods';
 import { consumeGoods, countGoods, grantGoodsOp } from '../store/goods';
 import { slotFloorLeft, slotFloorRate, slotForced } from './rules';
 import { lockBarState, saveBarState } from './state';
-
-/** 老虎机要验证邮箱（设计文档裁定 7） */
-async function assertVerified(o: Op): Promise<void> {
-  const acc = await o.tx
-    .selectFrom('account')
-    .select('email_verified_at')
-    .where('id', '=', o.rest.account_id)
-    .executeTakeFirstOrThrow();
-  if (!acc.email_verified_at) throw new AppError(ErrorCode.EMAIL_NOT_VERIFIED, 403);
-}
 
 /**
  * 老虎机（设计文档 §3.5）：每次 slotCells 格；同一请求里相同奖项合并发放，稀有或标了新闻的每种发一条新闻。

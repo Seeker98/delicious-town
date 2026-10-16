@@ -26,7 +26,11 @@ export function accountRoutes(svc: AccountService, deps: AppDeps): FastifyPlugin
     );
   return async (r) => {
     r.post('/register', { config: { rateLimit: 'auth' } }, async (req, reply) => {
-      const { token, accountId } = await svc.register(parse(registerBody, req.body), req.clientIp);
+      const { token, accountId } = await svc.register(
+        parse(registerBody, req.body),
+        req.clientIp,
+        deviceIdOf(req),
+      );
       setSessionCookie(reply, token, deps.env);
       await trace(req, accountId);
       try {

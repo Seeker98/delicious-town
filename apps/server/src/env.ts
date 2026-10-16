@@ -40,6 +40,12 @@ const envSchema = z.object({
   DAILY_AI_BASE_URL: z.string().url().default('https://api.deepseek.com'),
   /** V4.1 Flash 的模型名（官方文档：旧名 deepseek-v4-flash 也指向它） */
   DAILY_AI_MODEL: z.string().min(1).default('deepseek-flash'),
+  /**
+   * 注册限量（2026-10-16 小号刷一番赏）：同一 IP（IPv6 按 /64）24 小时内最多注册几个号、同一设备最多注册几个号
+   * （按登录记录，留 30 天）；0 = 不限
+   */
+  REGISTER_PER_IP: z.coerce.number().int().min(0).default(3),
+  REGISTER_PER_DEVICE: z.coerce.number().int().min(0).default(3),
 });
 
 export type Env = z.infer<typeof envSchema>;

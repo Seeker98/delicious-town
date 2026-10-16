@@ -20,7 +20,13 @@ async function drawAll(line: 'normal' | 'deluxe') {
   const total = conf.tiers.reduce((a, x) => a + x.count, 0);
   const shardId = await createShard(t.db);
   const ticket = line === 'deluxe' ? GOODS.kujiDeluxeTicket : GOODS.kujiTicket;
-  const r = await newRestaurant(t, { shardId, goods: { [ticket]: total } });
+  const r = await newRestaurant(t, {
+    shardId,
+    goods: { [ticket]: total },
+    verified: true,
+    accountDays: 30,
+    patch: { level: 30 },
+  });
   for (let left = total; left > 0; left -= conf.maxDraw)
     await svc().draw(r, Math.min(conf.maxDraw, left), line);
   return { r, total };

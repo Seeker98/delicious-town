@@ -2,11 +2,12 @@ import { sql } from 'kysely';
 import { GOODS, type Tuning } from '@dt/config';
 import { gameDay, type KujiAwardDto, type KujiDrawDto, type KujiLine, type KujiViewDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
-import { invalidState, limitReached } from '../../core/errors';
+import { invalidState, limitReached, requirement } from '../../core/errors';
 import { emitAction } from '../../core/action';
 import { opNews, restLog, runOp, type Op } from '../../core/op';
 import { spendCoin } from '../../core/resources';
 import { grantAward } from '../award/award';
+import { eligibility } from '../exchange/eligibility';
 import { grantIcon } from '../icons/grant';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { consumeGoods, countGoods, grantGoodsOp } from '../store/goods';
@@ -15,13 +16,33 @@ import { currentPool, latestToday, prizesOf, tierLeft, type PoolRow } from './po
 type K = Tuning['kuji'];
 const BUY_KEY = 'kuji.buy';
 /** 一条奖池线的配置（240-2）：普通池就是 tuning.kuji，豪华池是 tuning.kuji.deluxe */
-type LineConf = Pick<K, 'price' | 'dailyBuy' | 'maxDraw' | 'maxPools' | 'tiers' | 'last'>;
+type LineConf = Pick<
+  K,
+  'price' | 'dailyBuy' | 'maxDraw' | 'maxPools' | 'minLevel' | 'minAccountDays' | 'tiers' | 'last'
+>;
 const conf = (k: K, line: KujiLine): LineConf => (line === 'deluxe' ? k.deluxe : k);
 const ticketOf = (line: KujiLine) => (line === 'deluxe' ? GOODS.kujiDeluxeTicket : GOODS.kujiTicket);
 const buyKeyOf = (line: KujiLine) => (line === 'deluxe' ? 'kuji.deluxe.buy' : BUY_KEY);
 const RECENT = 10;
 
 const awardDto = (a: K['last']['award']): KujiAwardDto => JSON.parse(JSON.stringify(a)) as KujiAwardDto;
+
+/**
+ * 买券、抽签门槛（2026-10-16 小号刷豪华池）：等级、注册天数、验证邮箱，和交易所同一套判断；
+ * 两条线各有各的等级和天数
+ */
+async function assertKujiOpen(o: Op, k: { minLevel: number; minAccountDays: number }): Promise<void> {
+  const reason = await eligibility({
+    db: o.tx,
+    level: o.rest.level,
+    accountId: o.rest.account_id,
+    now: o.now,
+    t: k,
+  });
+  if (reason === 'exchange_level') throw requirement('kuji_level', { need: k.minLevel });
+  if (reason === 'exchange_age') throw requirement('kuji_age', { days: k.minAccountDays });
+  if (reason) throw requirement('kuji_email');
+}
 
 /** 称号永久：已有限时的同一称号会变永久（定制称号设计 三） */
 const grantKujiIcon = (o: Op, key: string) =>
@@ -209,6 +230,7 @@ export function createKujiService(d: GameDeps) {
 
   async function buy(o: Op, num: number, line: KujiLine) {
     const k = conf(o.tuning.kuji, line);
+    await assertKujiOpen(o, k);
     const day = gameDay(o.now);
     const bought = await getDaily(o.tx, o.rest.id, buyKeyOf(line), day);
     if (bought + num > k.dailyBuy)
@@ -224,6 +246,7 @@ export function createKujiService(d: GameDeps) {
 
   async function draw(o: Op, num: number, line: KujiLine): Promise<KujiDrawDto> {
     const k = conf(o.tuning.kuji, line);
+    await assertKujiOpen(o, k);
     if (num > k.maxDraw) throw limitReached('kuji_draw', { max: k.maxDraw });
     // 加锁顺序：店（runOp）→（要开池时）区服锁 → 池行。刚被别人抽完就换下一池，同样加锁后再看状态
     let pool: PoolRow | undefined;

@@ -61,6 +61,8 @@ export interface AccountTable {
   /** 语言（问题记录 272）；null 表示还没选过 */
   lang: Nullable<string>;
   created_at: TsDefault;
+  /** 查重用的邮箱写法（2026-10-16）：小写、去掉 + 后缀，Gmail 再去掉点；注册时按它查重 */
+  email_canon: Nullable<string>;
 }
 
 export interface EmailTokenTable {
@@ -976,6 +978,16 @@ export interface ReportEntryTable {
 }
 
 /** 登录记录（子项目 6B-2，多号检测）：每账号、IP、设备一行，只留 30 天 */
+/** IP、设备封禁（2026-10-16）：value 是 IP、IP 段（CIDR）或设备号；命中的请求一律拒绝 */
+export interface AccessBanTable {
+  id: Generated<number>;
+  kind: 'ip' | 'device';
+  value: string;
+  reason: string;
+  actor_account_id: Nullable<number>;
+  created_at: TsDefault;
+}
+
 export interface LoginTraceTable {
   account_id: number;
   ip: string;
@@ -1535,6 +1547,7 @@ export interface DB {
   report_case: ReportCaseTable;
   report_entry: ReportEntryTable;
   login_trace: LoginTraceTable;
+  access_ban: AccessBanTable;
   activity: ActivityTable;
   activity_counter: ActivityCounterTable;
   activity_claim: ActivityClaimTable;

@@ -18,6 +18,7 @@ const errors: Messages['errors'] = {
     EMAIL_TAKEN: 'That email is already registered',
     INVALID_CREDENTIALS: 'Wrong username or password',
     ACCOUNT_BANNED: 'This account has been banned. Contact an admin if you have questions.',
+    ACCESS_BANNED: 'Your network or device has been banned. Contact an admin if you have questions.',
     EMAIL_NOT_VERIFIED: 'Please verify your email first',
     TOKEN_INVALID: 'The link is invalid or has expired. Please request a new one.',
     EMAIL_COOLDOWN: 'Emails are being sent too often. Try again in 1 minute.',
@@ -72,6 +73,10 @@ const errors: Messages['errors'] = {
     predict_age: (p) =>
       `Your account must be at least ${s(p.days)} ${plEn(s(p.days), 'day', 'days')} old to make predictions`,
     predict_email: () => 'Verify your email to make predictions',
+    kuji_level: (p) => `Your restaurant must be level ${s(p.need)} to play Ichiban Kuji`,
+    kuji_age: (p) =>
+      `Your account must be at least ${s(p.days)} ${plEn(s(p.days), 'day', 'days')} old to play Ichiban Kuji`,
+    kuji_email: () => 'Verify your email to play Ichiban Kuji',
     level: (p) => `Restaurant level too low (level ${s(p.need)} required)`,
     star: (p) =>
       p.have === undefined
@@ -139,6 +144,9 @@ const errors: Messages['errors'] = {
       `Each player can exchange this ${s(p.max)} ${plEn(s(p.max), 'time', 'times')} (used ${s(p.used)})`,
     max: (p) => `You can hold at most ${s(p.max)}`,
     friends: (p) => `Your friend list is full (max ${s(p.max)})`,
+    register_ip: (p) =>
+      `At most ${s(p.max)} accounts can be registered from the same network in 24 hours. Please try again later.`,
+    register_device: (p) => `At most ${s(p.max)} accounts can be registered on the same device`,
     target_friends: () => 'Their friend list is full',
     dine: () => "You've already dined for free today. Come back tomorrow.",
     seats: (p) => `Their free-dining seats are full (max ${s(p.max)})`,
@@ -208,6 +216,8 @@ const errors: Messages['errors'] = {
     mail_no_items: 'This mail has no attachments',
     mail_broken: 'The attachments in this mail are no longer valid. Please contact support.',
     code_not_found: "That code doesn't exist",
+    ban_value: 'Invalid IP, IP range or device ID',
+    ban_self: 'You cannot ban your own current IP',
     code_not_started: "That code isn't active yet",
     code_expired: 'That code has expired',
     code_used_up: 'That code has been fully redeemed',

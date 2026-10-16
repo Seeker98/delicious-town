@@ -108,8 +108,21 @@ describe('使用道具（规格书 07 §7.4）', () => {
     expect(foods.length).toBeLessThan(50);
   });
 
+  it('新手大礼包要验证邮箱才能拆（2026-10-16 小号刷一番赏）：没验证报 EMAIL_NOT_VERIFIED，礼包不扣', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 0 }, goods: { [gid('新手大礼包')]: 1 } });
+    await expect(s().use(ctx, { goodsId: gid('新手大礼包'), num: 1 })).rejects.toMatchObject({
+      code: 'EMAIL_NOT_VERIFIED',
+    });
+    expect(await goodsNum(t, ctx.restaurantId, gid('新手大礼包'))).toBe(1);
+    expect(Number((await restRow(t, ctx.restaurantId)).coin)).toBe(0);
+  });
+
   it('新手大礼包打开后：银币 5 万、钻石 50、喇叭 3、一二三级食材随机券 50、20、10 张等（问题记录 331）', async () => {
-    const ctx = await newRestaurant(t, { patch: { coin: 0, diamond: 0 }, goods: { [gid('新手大礼包')]: 1 } });
+    const ctx = await newRestaurant(t, {
+      verified: true,
+      patch: { coin: 0, diamond: 0 },
+      goods: { [gid('新手大礼包')]: 1 },
+    });
     await s().use(ctx, { goodsId: gid('新手大礼包'), num: 1 });
     const row = await restRow(t, ctx.restaurantId);
     expect([row.coin, row.diamond]).toEqual([50000, 50]);

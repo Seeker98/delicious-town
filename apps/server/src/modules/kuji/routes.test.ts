@@ -15,8 +15,14 @@ describe('一番赏接口的 line 参数（240-2 终审：路由漏传 line 时�
     const p = await playerIn(ctx, shardId);
     await ctx.deps.db
       .updateTable('restaurant')
-      .set({ coin: 10_000_000 })
+      .set({ coin: 10_000_000, level: 30 })
       .where('id', '=', p.restId)
+      .execute();
+    // 豪华池要注册满 3 天（2026-10-16）
+    await ctx.deps.db
+      .updateTable('account')
+      .set({ created_at: new Date(Date.now() - 30 * 86_400_000) })
+      .where('id', '=', p.accountId)
       .execute();
     const dx = await call(ctx.app, 'GET', '/api/v1/kuji?line=deluxe', { cookie: p.cookie });
     expect(dx.json.data).toMatchObject({ line: 'deluxe', price: 320000, pool: { total: 20 } });

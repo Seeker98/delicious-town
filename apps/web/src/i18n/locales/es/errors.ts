@@ -17,6 +17,8 @@ const errors: Messages['errors'] = {
     EMAIL_TAKEN: 'Ese correo ya está registrado',
     INVALID_CREDENTIALS: 'Usuario o contraseña incorrectos',
     ACCOUNT_BANNED: 'Esta cuenta ha sido bloqueada. Contacta con un administrador si tienes dudas.',
+    ACCESS_BANNED:
+      'Tu red o tu dispositivo ha sido bloqueado. Contacta con un administrador si tienes dudas.',
     EMAIL_NOT_VERIFIED: 'Primero verifica tu correo',
     TOKEN_INVALID: 'El enlace no es válido o ha caducado. Solicita uno nuevo.',
     EMAIL_COOLDOWN: 'Se están enviando demasiados correos. Inténtalo de nuevo en 1 minuto.',
@@ -71,6 +73,10 @@ const errors: Messages['errors'] = {
     predict_age: (p) =>
       `Tu cuenta debe tener al menos ${s(p.days)} ${plEs(s(p.days), 'día', 'días')} para hacer predicciones`,
     predict_email: () => 'Verifica tu correo para hacer predicciones',
+    kuji_level: (p) => `Tu restaurante debe ser nivel ${s(p.need)} para jugar al Ichiban Kuji`,
+    kuji_age: (p) =>
+      `Tu cuenta debe tener al menos ${s(p.days)} ${plEs(s(p.days), 'día', 'días')} para jugar al Ichiban Kuji`,
+    kuji_email: () => 'Verifica tu correo para jugar al Ichiban Kuji',
     level: (p) => `Nivel del restaurante insuficiente (se requiere nivel ${s(p.need)})`,
     star: (p) =>
       p.have === undefined
@@ -141,6 +147,9 @@ const errors: Messages['errors'] = {
       `Cada jugador puede canjear esto ${s(p.max)} ${plEs(s(p.max), 'vez', 'veces')} (usadas ${s(p.used)})`,
     max: (p) => `Puedes tener como máximo ${s(p.max)}`,
     friends: (p) => `Tu lista de amigos está llena (máximo ${s(p.max)})`,
+    register_ip: (p) =>
+      `Se pueden registrar como máximo ${s(p.max)} cuentas desde la misma red en 24 horas. Inténtalo más tarde.`,
+    register_device: (p) => `Se pueden registrar como máximo ${s(p.max)} cuentas en el mismo dispositivo`,
     target_friends: () => 'Su lista de amigos está llena',
     dine: () => 'Hoy ya has comido gratis. Vuelve mañana.',
     seats: (p) => `Sus plazas para comer gratis están llenas (máximo ${s(p.max)})`,
@@ -209,6 +218,8 @@ const errors: Messages['errors'] = {
     mail_no_items: 'Este correo no tiene adjuntos',
     mail_broken: 'Los adjuntos de este correo ya no son válidos. Contacta con soporte.',
     code_not_found: 'Ese código no existe',
+    ban_value: 'IP, rango de IP o identificador de dispositivo no válido',
+    ban_self: 'No puedes bloquear tu propia IP actual',
     code_not_started: 'Ese código todavía no está activo',
     code_expired: 'Ese código ha caducado',
     code_used_up: 'Ese código ya se ha canjeado por completo',

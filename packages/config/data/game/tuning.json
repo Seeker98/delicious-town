@@ -401,7 +401,7 @@
   },
   "predict": { "unit": 1000, "feeRate": 0.02, "maxHold": 200, "maxTrade": 100, "defaultB": 100, "minLevel": 20, "minAccountDays": 7, "auto": { "krab": true, "market": true, "weather": true, "wish": true, "b": 100, "marketCloseMin": 5, "wishCloseMin": 5 } },
   "kuji": {
-    "price": 45000, "dailyBuy": 10, "maxDraw": 10, "activeTickets": 1, "activeTicketPoints": 120, "maxPools": 3,
+    "price": 45000, "dailyBuy": 10, "maxDraw": 10, "activeTickets": 1, "activeTicketPoints": 120, "maxPools": 3, "minLevel": 10, "minAccountDays": 0,
     "tiers": [
       { "key": "A", "count": 1, "award": { "diamond": 35 }, "icon": "kuji_a", "news": "broadcast" },
       { "key": "B", "count": 2, "award": { "diamond": 10 } },
@@ -416,6 +416,8 @@
       "dailyBuy": 10,
       "maxDraw": 10,
       "maxPools": 3,
+      "minLevel": 20,
+      "minAccountDays": 3,
       "tiers": [
         { "key": "A", "count": 1, "award": { "diamond": 50 }, "icon": "kuji_dx_a", "news": "broadcast" },
         { "key": "B", "count": 2, "award": { "coin": 300000 }, "news": "news" },

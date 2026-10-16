@@ -18,7 +18,10 @@ const coin = async (id: number) => Number((await restRow(t, id)).coin);
 const player = (shardId: number, o: { coin?: number; tickets?: number } = {}) =>
   newRestaurant(t, {
     shardId,
-    patch: { coin: o.coin ?? 1_000_000 },
+    // 买券、抽签门槛（2026-10-16）：验证邮箱、20 级、注册满 3 天的老玩家
+    verified: true,
+    accountDays: 30,
+    patch: { coin: o.coin ?? 1_000_000, level: 30 },
     goods: o.tickets ? { [T]: o.tickets } : {},
   });
 
@@ -395,7 +398,9 @@ describe('豪华一番赏（240-2）', () => {
   const dxPlayer = (shardId: number, o: { coin?: number; tickets?: number } = {}) =>
     newRestaurant(t, {
       shardId,
-      patch: { coin: o.coin ?? 10_000_000 },
+      verified: true,
+      accountDays: 30,
+      patch: { coin: o.coin ?? 10_000_000, level: 30 },
       goods: o.tickets ? { [DX]: o.tickets } : {},
     });
   const iconsOf = async (restId: number) =>
@@ -427,7 +432,7 @@ describe('豪华一番赏（240-2）', () => {
 
   it('普通券不能抽豪华池，豪华券不能抽普通池；什么都不扣（Review Focus 2）', async () => {
     const shardId = await createShard(t.db);
-    const r = await newRestaurant(t, { shardId, goods: { [T]: 3 } });
+    const r = await player(shardId, { tickets: 3 });
     await expect(svc().draw(r, 1, 'deluxe')).rejects.toMatchObject({ params: { reason: 'kuji_ticket' } });
     expect(await goodsNum(t, r.restaurantId, T)).toBe(3);
     const s = await dxPlayer(shardId, { tickets: 3 });
@@ -535,5 +540,46 @@ describe('券价（经济分析 2026-10-08：一番赏的钻石换道具卖店�
     const tickets = tu.kuji.tiers.reduce((s, x) => s + x.count, 0);
     const total = tu.kuji.tiers.reduce((s, x) => s + x.count * worth(x.award), 0) + worth(tu.kuji.last.award);
     expect(total / tickets).toBeLessThan(tu.kuji.price);
+  });
+});
+
+describe('买券、抽签门槛（2026-10-16 小号刷豪华池）', () => {
+  const fresh = (shardId: number, o: { level: number; days: number; verified: boolean }) =>
+    newRestaurant(t, {
+      shardId,
+      verified: o.verified,
+      accountDays: o.days,
+      patch: { coin: 10_000_000, level: o.level },
+      goods: { [T]: 1, [GOODS.kujiDeluxeTicket]: 1 },
+    });
+
+  it('普通池：没验证邮箱、不到 10 级都不能买、不能抽；什么都不扣', async () => {
+    const shardId = await createShard(t.db);
+    const unverified = await fresh(shardId, { level: 30, days: 30, verified: false });
+    await expect(svc().buy(unverified, 1)).rejects.toMatchObject({ params: { reason: 'kuji_email' } });
+    await expect(svc().draw(unverified, 1)).rejects.toMatchObject({ params: { reason: 'kuji_email' } });
+    const low = await fresh(shardId, { level: 9, days: 30, verified: true });
+    await expect(svc().buy(low, 1)).rejects.toMatchObject({ params: { reason: 'kuji_level', need: 10 } });
+    expect(await coin(low.restaurantId)).toBe(10_000_000);
+    expect(await goodsNum(t, low.restaurantId, T)).toBe(1);
+    const ok = await fresh(shardId, { level: 10, days: 1, verified: true });
+    await svc().draw(ok, 1);
+    expect(await goodsNum(t, ok.restaurantId, T)).toBe(0);
+  });
+
+  it('豪华池：还要 20 级、注册满 3 天', async () => {
+    const shardId = await createShard(t.db);
+    const young = await fresh(shardId, { level: 30, days: 1, verified: true });
+    await expect(svc().buy(young, 1, 'deluxe')).rejects.toMatchObject({
+      params: { reason: 'kuji_age', days: 3 },
+    });
+    await expect(svc().draw(young, 1, 'deluxe')).rejects.toMatchObject({ params: { reason: 'kuji_age' } });
+    const low = await fresh(shardId, { level: 19, days: 30, verified: true });
+    await expect(svc().buy(low, 1, 'deluxe')).rejects.toMatchObject({
+      params: { reason: 'kuji_level', need: 20 },
+    });
+    const ok = await fresh(shardId, { level: 20, days: 4, verified: true });
+    await svc().draw(ok, 1, 'deluxe');
+    expect(await goodsNum(t, ok.restaurantId, GOODS.kujiDeluxeTicket)).toBe(0);
   });
 });
