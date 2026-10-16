@@ -868,6 +868,9 @@ export const tuningSchema = z.object({
     activeTicketPoints: int.min(1),
     /** 每个区服每天最多开几池（问题记录 274） */
     maxPools: int.min(1),
+    /** 买券、抽签门槛（2026-10-16 小号刷豪华池）：餐厅等级、账号注册天数，另外都要验证邮箱 */
+    minLevel: int.min(1),
+    minAccountDays: int.min(0),
     tiers: kujiTiers,
     last: kujiLast,
     /** 豪华一番赏（240-2）：一条独立的奖池线，结构和普通池的价格、限购、档位、最后赏相同 */
@@ -876,6 +879,8 @@ export const tuningSchema = z.object({
       dailyBuy: int.min(1),
       maxDraw: int.min(1).max(100),
       maxPools: int.min(1),
+      minLevel: int.min(1),
+      minAccountDays: int.min(0),
       tiers: kujiTiers,
       last: kujiLast,
     }),

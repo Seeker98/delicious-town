@@ -78,6 +78,9 @@ export default {
     predict_level: (p) => `餐廳 ${String(p.need)} 級才能參與預測`,
     predict_age: (p) => `賬號註冊滿 ${String(p.days)} 天才能參與預測`,
     predict_email: () => '驗證郵箱後才能參與預測',
+    kuji_level: (p) => `餐廳 ${String(p.need)} 級才能參與一番賞`,
+    kuji_age: (p) => `賬號註冊滿 ${String(p.days)} 天才能參與一番賞`,
+    kuji_email: () => '驗證郵箱後才能參與一番賞',
     level: (p) => `餐廳等級不夠 (需要 ${String(p.need)} 級)`,
     star: (p) =>
       p.have === undefined

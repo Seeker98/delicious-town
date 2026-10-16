@@ -77,6 +77,9 @@ export default {
     predict_level: (p) => `餐厅 ${String(p.need)} 级才能参与预测`,
     predict_age: (p) => `账号注册满 ${String(p.days)} 天才能参与预测`,
     predict_email: () => '验证邮箱后才能参与预测',
+    kuji_level: (p) => `餐厅 ${String(p.need)} 级才能参与一番赏`,
+    kuji_age: (p) => `账号注册满 ${String(p.days)} 天才能参与一番赏`,
+    kuji_email: () => '验证邮箱后才能参与一番赏',
     level: (p) => `餐厅等级不够 (需要 ${String(p.need)} 级)`,
     star: (p) =>
       p.have === undefined

@@ -2,6 +2,7 @@ import type { RedeemResultDto, RewardItems } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
 import type { Op } from '../../core/op';
+import { assertVerified } from '../../core/verified';
 import { brokenItems, liveIconKeys, retiredItems, grantRewardOp } from '../mail/reward';
 
 const failKey = (accountId: number) => `redeem:fail:${accountId}`;
@@ -11,6 +12,8 @@ const failKey = (accountId: number) => `redeem:fail:${accountId}`;
  * `redeem_use` 唯一约束防同一家店重复兑换，`used_count` 条件更新防超发；后面抛错会回滚前面的插入
  */
 export async function redeemOp(o: Op, d: GameDeps, ctx: RestCtx, input: string): Promise<RedeemResultDto> {
+  // 兑换码要验证邮箱（2026-10-16：小号靠兑换码凑钱刷一番赏）
+  await assertVerified(o);
   const code = input.trim().toUpperCase();
   const { failLimit, failWindowSec } = o.tuning.redeem;
   const key = failKey(ctx.accountId);

@@ -71,6 +71,10 @@ const errors: Messages['errors'] = {
     predict_age: (p) =>
       `Votre compte doit avoir au moins ${s(p.days)} ${plFr(s(p.days), 'jour', 'jours')} pour faire des prédictions`,
     predict_email: () => 'Vérifiez votre e-mail pour faire des prédictions',
+    kuji_level: (p) => `Votre restaurant doit être niveau ${s(p.need)} pour jouer à l’Ichiban Kuji`,
+    kuji_age: (p) =>
+      `Votre compte doit avoir au moins ${s(p.days)} ${plFr(s(p.days), 'jour', 'jours')} pour jouer à l’Ichiban Kuji`,
+    kuji_email: () => 'Vérifiez votre e-mail pour jouer à l’Ichiban Kuji',
     level: (p) => `Niveau du restaurant insuffisant (niveau ${s(p.need)} requis)`,
     star: (p) =>
       p.have === undefined

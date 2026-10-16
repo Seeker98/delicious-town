@@ -132,6 +132,12 @@ describe('开店', () => {
     const shardId = await createShard(ctx.deps.db);
     const u = await playerIn(shardId);
     await create(u.cookie, '大礼包小店');
+    // 兑换码要验证邮箱（2026-10-16）
+    await ctx.deps.db
+      .updateTable('account')
+      .set({ email_verified_at: new Date() })
+      .where('id', '=', u.accountId)
+      .execute();
     const guide = await call(ctx.app, 'GET', '/api/v1/guide/codes', { cookie: u.cookie });
     const codes = guide.json.data as { code: string; state: string }[];
     expect(codes.find((c) => c.code === NEWBIE.packCode)?.state).toBe('used');
