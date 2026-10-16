@@ -383,13 +383,18 @@ const errors: Messages['errors'] = {
     not_listed: () => "This restaurant isn't listed for sale",
     star: () => "This restaurant doesn't have enough stars to be acquired yet",
     no_state: () => "This restaurant doesn't have enough stars to have a valuation yet",
-    protected: () => 'This restaurant just bought itself back and is still protected',
-    daily: () => 'This restaurant has been acquired too many times today. Come back tomorrow',
+    protected: () => 'This restaurant just bought itself back or gained a star, and is still protected',
+    daily: () => 'This restaurant was already taken over today. Come back tomorrow',
+    owned: () =>
+      "A restaurant with an owner can't be taken over; buy it under For sale once the owner lists it",
+    buyer_star: () => "Your restaurant doesn't have enough stars to acquire others yet",
+    buyer_new: () => 'Your account is too new to acquire restaurants. Try again in a few days',
+    buyer_daily: () => "You've acquired enough restaurants today. Come back tomorrow",
     pair: () => 'Your two restaurants traded recently. Try again in a few days',
     buyer_owned: () => "While your restaurant is owned, you can't acquire others",
     holdings: () => "You can't own any more restaurants",
     linked: () =>
-      "You and this restaurant (or its owner) recently logged in on the same device or network, so you can't acquire it",
+      "You and this restaurant (or its owner) recently logged in on the same device or network, so you can't acquire or tend it",
     other_shard: () => "That restaurant isn't on this server",
     owner_changed: () => 'This restaurant just changed owners. Refresh and look again',
     price_changed: (p) =>
@@ -399,8 +404,8 @@ const errors: Messages['errors'] = {
     not_owned: () => "Your restaurant isn't owned by anyone",
     not_owner: () => "You don't own this restaurant",
     list_rate: (p) =>
-      `The listing price must be ${formatPct(Number(p.min ?? 0.5), { digits: 0 })}–100% of the valuation, in 5% steps`,
-    tended: () => "You've already tended for the owner today",
+      `The listing price must be ${formatPct(Number(p.min ?? 0.5), { digits: 0 })}–${formatPct(Number(p.max ?? 1.2), { digits: 0 })} of the valuation, in 5% steps`,
+    tended: () => "You've already tended this restaurant today",
   },
   already: {
     activity_reward: "You've already claimed this reward",

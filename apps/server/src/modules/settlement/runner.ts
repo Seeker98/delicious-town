@@ -1,4 +1,6 @@
-import { seededRng } from '@dt/shared';
+import { gameDay, seededRng } from '@dt/shared';
+import type { Tuning } from '@dt/config';
+import { sql } from 'kysely';
 import type { GameDeps } from '../../core/deps';
 import { opAggAtStart } from '../../core/luck';
 import { featureAvailable } from '../../core/features';
@@ -16,6 +18,7 @@ import { buildGlobals, toSettleInput, type SettleSource } from './globals';
 import { settleRestaurant } from './settle';
 import type { SettleGlobals, SpecialDish } from './types';
 import { gameSeed } from '../../core/seed';
+import { cedeRound, cedeState } from '../acquire/rules';
 
 export type RoundStats = {
   round: number;
@@ -26,6 +29,12 @@ export type RoundStats = {
   failed: number;
   ms: number;
 };
+
+/** 这一轮要让渡的店（收购改版 2026-10-16）：区服开着收购时，本轮开始时有老板的店和收购数值 */
+export interface CedeCtx {
+  owned: ReadonlySet<number>;
+  t: Tuning['acquire'];
+}
 
 export interface RoundOptions {
   onRestaurant?: (restId: number, ms: number) => void;
@@ -85,6 +94,7 @@ export async function settleOne(
   op: Op,
   g: SettleGlobals,
   round: number,
+  cede?: CedeCtx,
 ): Promise<'settled' | 'skipped' | 'closed'> {
   if (op.rest.state !== 1) return 'skipped';
   const tr = await op.tx
@@ -150,8 +160,11 @@ export async function settleOne(
       .execute();
     return 'closed';
   }
+  // 被收购的店（收购改版 2026-10-16）：老板打理以后结算银币 × tendMultiplier，再按抽成比例让一份记到 acquire_due，
+  // 00:05 发给老板。锁着这家店读收购状态：强收、赎身、放手、打理都要锁这家店，读到的就是这一刻的老板
+  const { coin, ceded } = await cedeOf(op, r.coin, cede);
   // 结算的银币经验由 income_round 记录，不写流水；银币最低到 0
-  gainCoin(op, r.coin, { ledger: false, event: false });
+  gainCoin(op, coin - ceded, { ledger: false, event: false });
   gainExp(op, r.exp, { ledger: false, event: false });
   if (r.oil > 0) setRest(op, 'oil', op.rest.oil - r.oil);
   if (r.renown !== 0) gainRenown(op, r.renown, { source: 'settlement', event: false });
@@ -196,7 +209,8 @@ export async function settleOne(
     .values({
       rest_id: op.rest.id,
       round_no: round,
-      coin: r.coin,
+      coin,
+      ceded,
       exp: r.exp,
       oil: r.oil,
       customers: JSON.stringify(r.customers),
@@ -206,6 +220,42 @@ export async function settleOne(
     })
     .execute();
   return 'settled';
+}
+
+/** 这一轮的让渡：不在本轮开始时有老板的店里，或者现在已经没有老板时不让 */
+async function cedeOf(
+  op: Op,
+  coin: number,
+  cede: CedeCtx | undefined,
+): Promise<{ coin: number; ceded: number }> {
+  if (!cede?.owned.has(op.rest.id) || coin <= 0) return { coin, ceded: 0 };
+  const s = await op.tx
+    .selectFrom('acquire_state')
+    .select(['owner_rest_id', 'tended_at', 'acquired_at'])
+    .where('rest_id', '=', op.rest.id)
+    .executeTakeFirst();
+  if (!s || s.owner_rest_id === null) return { coin, ceded: 0 };
+  const day = gameDay(op.now);
+  const st = cedeState(s, day, cede.t);
+  const out = cedeRound(coin, st, cede.t);
+  if (out.ceded > 0)
+    await op.tx
+      .insertInto('acquire_due')
+      .values({
+        rest_id: op.rest.id,
+        day,
+        owner_rest_id: s.owner_rest_id,
+        coin: out.ceded,
+        tended: st.tendedToday,
+      })
+      .onConflict((oc) =>
+        oc.columns(['rest_id', 'day', 'owner_rest_id']).doUpdateSet((eb) => ({
+          coin: eb('acquire_due.coin', '+', eb.ref('excluded.coin')),
+          tended: sql<boolean>`acquire_due.tended or excluded.tended`,
+        })),
+      )
+      .execute();
+  return out;
 }
 
 /** 一个区服的一轮结算（设计文档 §4.1）：单店出错只记日志 */
@@ -258,6 +308,22 @@ export async function settleShardRound(
       .orderBy('id')
       .execute()
   ).map((r) => r.id);
+  // 本轮有老板的店（一条查询，不多的几行）；之后才被收购的店下一轮开始让
+  const cede: CedeCtx | undefined = featureAvailable(settings, 'acquire')
+    ? {
+        owned: new Set(
+          (
+            await d.db
+              .selectFrom('acquire_state')
+              .select('rest_id')
+              .where('shard_id', '=', shardId)
+              .where('owner_rest_id', 'is not', null)
+              .execute()
+          ).map((x) => x.rest_id),
+        ),
+        t: settings.tuning.acquire,
+      }
+    : undefined;
   const stats: RoundStats = {
     round,
     restaurants: ids.length,
@@ -276,7 +342,7 @@ export async function settleShardRound(
           shardId,
           restId,
           { source: 'settlement', now, rng: seededRng(gameSeed(shardId, round, restId)) },
-          (op) => settleOne(op, globals, round),
+          (op) => settleOne(op, globals, round, cede),
         );
         stats[result] += 1;
       } catch (err) {

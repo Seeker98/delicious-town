@@ -212,7 +212,7 @@ const events: Messages['events'] = {
     'acquire.bought': (p) =>
       `${p.way === 'listed' ? 'Compraste' : 'Adquiriste'} «${String(p.name ?? '')}»${p.way === 'listed' ? ' (en venta)' : ''} por ${formatNum(n(p, 'price'))} monedas`,
     'acquire.taken': (p) =>
-      `«${String(p.byName ?? '')}» adquirió tu restaurante por ${formatNum(n(p, 'price'))} monedas`,
+      `«${String(p.byName ?? '')}» adquirió tu restaurante por ${formatNum(n(p, 'price'))} monedas${n(p, 'got') > 0 ? `; recibiste ${formatNum(n(p, 'got'))} monedas` : ''}`,
     'acquire.sold': (p) =>
       `«${String(p.to ?? '')}» te compró «${String(p.name ?? '')}»; recibiste ${formatNum(n(p, 'got'))} monedas`,
     'acquire.redeemed': (p) =>
@@ -222,9 +222,18 @@ const events: Messages['events'] = {
     'acquire.released': (p) => `Soltaste «${String(p.name ?? '')}»`,
     'acquire.freed': (p) => `«${String(p.byName ?? '')}» soltó tu restaurante; vuelves a ser independiente`,
     'acquire.dividend': (p) =>
-      `Dividendos de ayer de tus ${n(p, 'n')} restaurante(s): ${formatNum(n(p, 'coin'))} monedas`,
+      `Llegó la comisión de tus ${n(p, 'n')} restaurante(s): ${formatNum(n(p, 'coin'))} monedas`,
     'acquire.tended': (p) =>
-      `Atendiste el restaurante para tu dueño «${String(p.ownerName ?? '')}» y recibiste ${n(p, 'n')} ingredientes`,
+      p.n !== undefined
+        ? `Atendiste el restaurante para tu dueño «${String(p.ownerName ?? '')}» y recibiste ${n(p, 'n')} ingredientes`
+        : `Atendiste «${String(p.name ?? '')}» por ${formatNum(n(p, 'cost'))} monedas${n(p, 'packs') > 0 ? ` y enviaste ${n(p, 'packs')} paquete(s) de suministros` : ''}`,
+    'acquire.tendedBy': (p) =>
+      `Tu dueño «${String(p.ownerName ?? '')}» atendió tu restaurante${n(p, 'packs') > 0 ? ` y te envió ${n(p, 'packs')} paquete(s) de suministros` : ''}`,
+    'acquire.refund': (p) => `Te devolvieron las ${formatNum(n(p, 'coin'))} monedas que diste a tu dueño`,
+    'acquire.autoReleased': (p) =>
+      `Nadie atendió «${String(p.name ?? '')}» en ${n(p, 'days')} días y se soltó automáticamente`,
+    'acquire.autoFreed': (p) =>
+      `Tu dueño «${String(p.byName ?? '')}» no atendió tu restaurante en ${n(p, 'days')} días; vuelves a ser independiente`,
     'dine.started': (p) => `Empezaste a comer gratis en «${String(p.hostName ?? '')}»`,
     'dine.ended': (p) => `Terminaste de comer gratis en «${String(p.hostName ?? '')}»`,
     'dine.left': (p, names) => {

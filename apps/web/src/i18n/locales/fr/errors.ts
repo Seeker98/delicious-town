@@ -385,13 +385,19 @@ const errors: Messages['errors'] = {
     not_listed: () => "Ce restaurant n'est pas en vente",
     star: () => "Ce restaurant n'a pas encore assez d'étoiles pour être racheté",
     no_state: () => "Ce restaurant n'a pas encore assez d'étoiles pour avoir une valorisation",
-    protected: () => 'Ce restaurant vient de se racheter et est encore protégé',
-    daily: () => "Ce restaurant a été racheté trop de fois aujourd'hui. Revenez demain",
+    protected: () => 'Ce restaurant vient de se racheter ou de gagner une étoile et est encore protégé',
+    daily: () => "Ce restaurant a déjà été racheté de force aujourd'hui. Revenez demain",
+    owned: () =>
+      'Un restaurant qui a un propriétaire ne peut pas être racheté de force\u202f; achetez-le dans «\u202fEn vente\u202f» quand il est mis en vente',
+    buyer_star: () => "Votre restaurant n'a pas encore assez d'étoiles pour en racheter d'autres",
+    buyer_new: () =>
+      'Votre compte est trop récent pour racheter des restaurants. Réessayez dans quelques jours',
+    buyer_daily: () => "Vous avez déjà racheté assez de restaurants aujourd'hui. Revenez demain",
     pair: () => 'Vos deux restaurants ont fait affaire récemment. Réessayez dans quelques jours',
     buyer_owned: () => "Tant que votre restaurant a un propriétaire, vous ne pouvez pas en racheter d'autres",
     holdings: () => 'Vous ne pouvez plus posséder de restaurants supplémentaires',
     linked: () =>
-      'Vous et ce restaurant (ou son propriétaire) vous êtes connectés récemment depuis le même appareil ou le même réseau\u202f: vous ne pouvez pas le racheter',
+      'Vous et ce restaurant (ou son propriétaire) vous êtes connectés récemment depuis le même appareil ou le même réseau\u202f: vous ne pouvez ni le racheter ni vous en occuper',
     other_shard: () => "Ce restaurant n'est pas sur ce serveur",
     owner_changed: () => 'Ce restaurant vient de changer de propriétaire. Actualisez et regardez à nouveau',
     price_changed: (p) =>
@@ -401,8 +407,8 @@ const errors: Messages['errors'] = {
     not_owned: () => "Votre restaurant n'appartient à personne",
     not_owner: () => 'Ce restaurant ne vous appartient pas',
     list_rate: (p) =>
-      `Le prix de vente doit être compris entre ${formatPct(Number(p.min ?? 0.5), { digits: 0 })} et 100\u202f% de la valorisation, par paliers de 5\u202f%`,
-    tended: () => "Vous vous êtes déjà occupé du propriétaire aujourd'hui",
+      `Le prix de vente doit être compris entre ${formatPct(Number(p.min ?? 0.5), { digits: 0 })} et ${formatPct(Number(p.max ?? 1.2), { digits: 0 })} de la valorisation, par paliers de 5\u202f%`,
+    tended: () => "Vous vous êtes déjà occupé de ce restaurant aujourd'hui",
   },
   already: {
     activity_reward: 'Vous avez déjà réclamé cette récompense',

@@ -49,16 +49,24 @@ describe('开放接口数据（问题记录 142）', () => {
       maxLevel: t.settlement.newbieExp.maxLevel,
       rate: t.settlement.newbieExp.rate,
     });
-    // 收购（收购 PR 3）
+    // 收购（收购 PR 3；改版 2026-10-16）
     const a = t.acquire;
     expect(g.acquire).toEqual({
       minStar: a.minStar,
-      taxRate: a.taxRate,
+      buyerMinStar: a.buyerMinStar,
+      buyerMinAccountDays: a.buyerMinAccountDays,
       maxHoldings: a.maxHoldings,
-      dividendRate: a.dividendRate,
-      tendBonus: a.tendBonus,
-      minRounds: a.minRounds,
-      tendFoods: a.tendFoods,
+      priceMultiple: a.priceMultiple,
+      taxRate: a.taxRate,
+      firstStoreRate: a.firstStoreRate,
+      firstBurnRate: a.firstBurnRate,
+      resaleStoreRate: a.resaleStoreRate,
+      redeemBurnRate: a.redeemBurnRate,
+      cedeRate: a.cedeRate,
+      cedeTendRate: a.cedeTendRate,
+      tendMultiplier: a.tendMultiplier,
+      tendCostRate: a.tendCostRate,
+      tendReleaseDays: a.tendReleaseDays,
       protectDays: a.protectDays,
     });
   });

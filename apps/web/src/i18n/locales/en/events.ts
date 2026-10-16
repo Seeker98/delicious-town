@@ -212,7 +212,7 @@ const events: Messages['events'] = {
     'acquire.bought': (p) =>
       `${p.way === 'listed' ? 'Bought the listed' : 'Acquired'} "${String(p.name ?? '')}" for ${formatNum(n(p, 'price'))} coins`,
     'acquire.taken': (p) =>
-      `"${String(p.byName ?? '')}" acquired your restaurant for ${formatNum(n(p, 'price'))} coins`,
+      `"${String(p.byName ?? '')}" acquired your restaurant for ${formatNum(n(p, 'price'))} coins${n(p, 'got') > 0 ? `; you got ${formatNum(n(p, 'got'))} coins` : ''}`,
     'acquire.sold': (p) =>
       `"${String(p.to ?? '')}" bought "${String(p.name ?? '')}" from you; you got ${formatNum(n(p, 'got'))} coins`,
     'acquire.redeemed': (p) =>
@@ -222,9 +222,18 @@ const events: Messages['events'] = {
     'acquire.released': (p) => `Let go of "${String(p.name ?? '')}"`,
     'acquire.freed': (p) => `"${String(p.byName ?? '')}" let go of your restaurant; it's independent again`,
     'acquire.dividend': (p) =>
-      `Yesterday's dividends from ${n(p, 'n')} restaurant(s) you own: ${formatNum(n(p, 'coin'))} coins`,
+      `Your cut from ${n(p, 'n')} restaurant(s) you own arrived: ${formatNum(n(p, 'coin'))} coins`,
     'acquire.tended': (p) =>
-      `Tended the restaurant for your owner "${String(p.ownerName ?? '')}" and got ${n(p, 'n')} ingredients`,
+      p.n !== undefined
+        ? `Tended the restaurant for your owner "${String(p.ownerName ?? '')}" and got ${n(p, 'n')} ingredients`
+        : `Tended "${String(p.name ?? '')}" for ${formatNum(n(p, 'cost'))} coins${n(p, 'packs') > 0 ? ` and sent ${n(p, 'packs')} supply pack(s)` : ''}`,
+    'acquire.tendedBy': (p) =>
+      `Your owner "${String(p.ownerName ?? '')}" tended your restaurant${n(p, 'packs') > 0 ? ` and sent ${n(p, 'packs')} supply pack(s)` : ''}`,
+    'acquire.refund': (p) => `The ${formatNum(n(p, 'coin'))} coins you gave your owner came back to you`,
+    'acquire.autoReleased': (p) =>
+      `"${String(p.name ?? '')}" wasn't tended for ${n(p, 'days')} days and was let go automatically`,
+    'acquire.autoFreed': (p) =>
+      `Your owner "${String(p.byName ?? '')}" didn't tend your restaurant for ${n(p, 'days')} days; it's independent again`,
     'dine.started': (p) => `Started eating for free at "${String(p.hostName ?? '')}"`,
     'dine.ended': (p) => `Finished eating for free at "${String(p.hostName ?? '')}"`,
     'dine.left': (p, names) => {

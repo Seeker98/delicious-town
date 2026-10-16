@@ -10,6 +10,8 @@ import { describe, expect, it } from 'vitest';
  * 只扫 grantGoodsOp / grantGoods 本身；经别的函数转一道的（extendHonor、openGift 的礼包内容）由调用处或礼包配置负责。
  */
 const KNOWN: Record<string, string[]> = {
+  // 老板打理送店的补给包：区服数值 acquire.tendPackGoods（tuningRefs）
+  'modules/acquire/service.ts': ['t.tendPackGoods'],
   // 配置里的奖励（任务、活跃、竞猜、新手码……）：itemRefs 的 award()
   'modules/award/award.ts': ['g.id', 'x.id'],
   // 随机奖励物品池（awardFlag）

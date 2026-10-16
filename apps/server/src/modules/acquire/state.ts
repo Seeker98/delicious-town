@@ -1,5 +1,5 @@
 import { sql, type Kysely, type Selectable, type Transaction } from 'kysely';
-import { addDays, gameDay } from '@dt/shared';
+import { addDays, DAY_MS, gameDay } from '@dt/shared';
 import type { AcquireStateTable, DB } from '../../db/schema';
 import { basePrice, windowDays, type T } from './rules';
 
@@ -40,7 +40,7 @@ export function lockState(tx: Transaction<DB>, restId: number): Promise<AcquireS
     .executeTakeFirst();
 }
 
-/** 没有行时按近几天的收入算出基础身价建行（今天刚到 2 星、还没跑过每天的任务） */
+/** 没有行时按近几天的收入算出基础身价建行（今天刚到 2 星、还没跑过每天的任务），带新店保护期 */
 export async function ensureState(
   db: Kysely<DB>,
   shardId: number,
@@ -56,7 +56,14 @@ export async function ensureState(
   if (found) return found;
   await db
     .insertInto('acquire_state')
-    .values({ rest_id: restId, shard_id: shardId, base: await baseOf(db, restId, t, now), heat: 1 })
+    .values({
+      rest_id: restId,
+      shard_id: shardId,
+      base: await baseOf(db, restId, t, now),
+      heat: 1,
+      // 刚到 minStar 星：newStarProtectDays 天内不能被强收（收购改版 2026-10-16）
+      protected_until: new Date(now.getTime() + t.newStarProtectDays * DAY_MS),
+    })
     .onConflict((oc) => oc.column('rest_id').doNothing())
     .execute();
   return db.selectFrom('acquire_state').selectAll().where('rest_id', '=', restId).executeTakeFirstOrThrow();

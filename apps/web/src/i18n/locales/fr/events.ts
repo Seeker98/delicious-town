@@ -221,7 +221,7 @@ const events: Messages['events'] = {
     'acquire.bought': (p) =>
       `${p.way === 'listed' ? 'Achat de' : 'Rachat de'} «\u202f${String(p.name ?? '')}\u202f»${p.way === 'listed' ? ' (en vente)' : ''} pour ${formatNum(n(p, 'price'))} pièces`,
     'acquire.taken': (p) =>
-      `«\u202f${String(p.byName ?? '')}\u202f» a racheté votre restaurant pour ${formatNum(n(p, 'price'))} pièces`,
+      `«\u202f${String(p.byName ?? '')}\u202f» a racheté votre restaurant pour ${formatNum(n(p, 'price'))} pièces${n(p, 'got') > 0 ? `\u202f; vous avez reçu ${formatNum(n(p, 'got'))} pièces` : ''}`,
     'acquire.sold': (p) =>
       `«\u202f${String(p.to ?? '')}\u202f» vous a acheté «\u202f${String(p.name ?? '')}\u202f»\u202f; vous avez reçu ${formatNum(n(p, 'got'))} pièces`,
     'acquire.redeemed': (p) =>
@@ -232,9 +232,19 @@ const events: Messages['events'] = {
     'acquire.freed': (p) =>
       `«\u202f${String(p.byName ?? '')}\u202f» a libéré votre restaurant\u202f; vous êtes de nouveau indépendant`,
     'acquire.dividend': (p) =>
-      `Dividendes d'hier de vos ${n(p, 'n')} restaurant(s)\u202f: ${formatNum(n(p, 'coin'))} pièces`,
+      `Commission de vos ${n(p, 'n')} restaurant(s) reçue\u202f: ${formatNum(n(p, 'coin'))} pièces`,
     'acquire.tended': (p) =>
-      `Vous avez entretenu le restaurant pour votre propriétaire «\u202f${String(p.ownerName ?? '')}\u202f» et reçu ${n(p, 'n')} ingrédients`,
+      p.n !== undefined
+        ? `Vous avez entretenu le restaurant pour votre propriétaire «\u202f${String(p.ownerName ?? '')}\u202f» et reçu ${n(p, 'n')} ingrédients`
+        : `Vous vous êtes occupé de «\u202f${String(p.name ?? '')}\u202f» pour ${formatNum(n(p, 'cost'))} pièces${n(p, 'packs') > 0 ? ` et avez envoyé ${n(p, 'packs')} colis de ravitaillement` : ''}`,
+    'acquire.tendedBy': (p) =>
+      `Votre propriétaire «\u202f${String(p.ownerName ?? '')}\u202f» s’est occupé de votre restaurant${n(p, 'packs') > 0 ? ` et vous a envoyé ${n(p, 'packs')} colis de ravitaillement` : ''}`,
+    'acquire.refund': (p) =>
+      `Les ${formatNum(n(p, 'coin'))} pièces versées à votre propriétaire vous ont été rendues`,
+    'acquire.autoReleased': (p) =>
+      `Personne ne s’est occupé de «\u202f${String(p.name ?? '')}\u202f» pendant ${n(p, 'days')} jours\u202f: il a été libéré automatiquement`,
+    'acquire.autoFreed': (p) =>
+      `Votre propriétaire «\u202f${String(p.byName ?? '')}\u202f» ne s’est pas occupé de votre restaurant pendant ${n(p, 'days')} jours\u202f; vous êtes de nouveau indépendant`,
     'dine.started': (p) => `A commencé à manger gratis chez «\u202f${String(p.hostName ?? '')}\u202f»`,
     'dine.ended': (p) => `A fini de manger gratis chez «\u202f${String(p.hostName ?? '')}\u202f»`,
     'dine.left': (p, names) => {
