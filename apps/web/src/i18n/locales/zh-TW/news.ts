@@ -1,4 +1,5 @@
 // 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
+import commission from './commission';
 import { SHARED_GOODS } from '@dt/shared';
 import type { NewsNames } from '../../../utils/news';
 import { formatNum } from '../../../utils/format';
@@ -135,6 +136,10 @@ export default {
     'icon.buy': (w, p, x) => `${w}買下了限定稱號「${x.icon?.(str(p.key))?.title ?? str(p.title)}」`,
     'town.exchange': (w, p, x) => `${w}在鎮長大胃鍋處兌換了 ${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
     'predict.result': (_w, p) => predictResult(p),
+    'commission.notice': (_w, p) => {
+      const m = commission.members[str(p.member) as keyof typeof commission.members];
+      return m ? `【公報】${m.name} (${m.role}): ${str(p.text)}` : `【公報】${str(p.text)}`;
+    },
     'bulk.deal': (_w, p, x) =>
       `特許大宗認購: ${x.foodName(num(p.foodsId))}×${num(p.sold)} 以 ${formatNum(num(p.price))} 銀幣成交, 認購 ${Math.round((num(p.demand) / Math.max(1, num(p.qty))) * 10) / 10} 倍`,
     'wishtree.win': (w, p, x) =>

@@ -9505,3 +9505,60 @@ a.dt-entry-row::after {
   font-size: 13px;
   line-height: 1.5;
 }
+
+/* 小镇委员会（2026-10-16）：主席卡浮起；今日要点一行一位委员，副行是正文色、可折行；公报一条一块 */
+.dt-commission .dt-hero-card {
+  border-radius: var(--dt-radius-lg);
+  box-shadow: var(--dt-shadow-card);
+}
+.dt-cm-row .dt-npc-ava,
+.dt-cm-by .dt-npc-ava {
+  background: var(--dt-plate);
+}
+.dt-cm-brief {
+  margin-top: 2px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--dt-text);
+}
+.dt-npc-ava.is-xs {
+  width: 20px;
+  height: 20px;
+}
+.dt-cm-notice {
+  padding: 8px 0;
+}
+.dt-cm-by {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+.dt-cm-when {
+  margin-left: auto;
+  white-space: nowrap;
+}
+.dt-cm-notice p {
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.dt-cm-foot {
+  margin-top: 6px;
+}
+.dt-cm-hint {
+  margin: -4px 2px 0;
+}
+.dt-cm-sum > div {
+  justify-content: flex-start;
+}
+.dt-cm-sum dt {
+  flex-shrink: 0;
+  min-width: 4.5em;
+}
+.dt-cm-sum dd {
+  text-align: left;
+}

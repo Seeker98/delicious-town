@@ -87,6 +87,29 @@ function describeFeed(
   }
 }
 
+/** Inspección de higiene de Calamardo (Comisión del pueblo 2026-10-16): solo hechos */
+const leftH = (h: number) => (h >= 24 ? `${Math.floor(h / 24)} d ${h % 24} h` : `${h} h`);
+function hygiene(p: P, names: Names): string {
+  const [, m, d] = String(p.day ?? '').split('-');
+  const rh = n(p, 'roachHours');
+  const roach =
+    rh > 0
+      ? `cucarachas en las mesas durante ${formatNum(rh)} ${plEs(rh, 'hora-mesa', 'horas-mesa')}`
+      : 'ninguna cucaracha en las mesas';
+  const auto = n(p, 'roachAuto') > 0 ? `, las instalaciones mataron ${n(p, 'roachAuto')}` : '';
+  const mouse =
+    n(p, 'mouse') > 0
+      ? `ratones vinieron ${n(p, 'mouse')} ${plEs(n(p, 'mouse'), 'vez', 'veces')}, robaron ${n(p, 'stolen')} ${plEs(n(p, 'stolen'), 'porción', 'porciones')}, ${n(p, 'trapped')} ${plEs(n(p, 'trapped'), 'atrapado', 'atrapados')}`
+      : 'no vinieron ratones';
+  const dev = (x: unknown, none: string) => {
+    const o = x as P | null;
+    return o && typeof o === 'object'
+      ? `${names.goodsName(n(o, 'goodsId'))}: quedan ${leftH(n(o, 'hours'))}`
+      : none;
+  };
+  return `Inspección de higiene de Calamardo (${Number(d)}/${Number(m)}): ${roach}${auto}; ${mouse}; ${dev(p.roachDevice, 'sin antiplagas para cucarachas')}, ${dev(p.mouseDevice, 'sin antiplagas para ratones')}`;
+}
+
 const events: Messages['events'] = {
   gain: 'Obtenido',
   loss: 'Gastado',
@@ -146,6 +169,7 @@ const events: Messages['events'] = {
     'mouse.steal': (p, names) => `Un ratón robó ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')}`,
     'mouse.nothing': () => 'Vino un ratón pero no robó nada',
     'mouse.map': () => 'Un ratón dejó un mapa de exploración',
+    'hygiene.report': (p, names) => hygiene(p, names),
     'krab.happy': () => 'A Don Krab le encantó la comida',
     'krab.angry': () => 'Don Krab se fue decepcionado',
     'krab.husky': () => 'Don Krab acarició al husky y no se enfadó',

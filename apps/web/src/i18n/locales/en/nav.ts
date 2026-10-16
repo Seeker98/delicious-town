@@ -47,6 +47,7 @@ const nav: Messages['nav'] = {
       temple: { name: 'Temple', sub: 'Appraisal · Trials' },
       tower: { name: 'Chef Tower', sub: 'Climb · Duels' },
       society: { name: 'Guild', sub: 'Stars · Exchange' },
+      commission: { name: 'Commission', sub: 'Notices · Highlights' },
       town: { name: 'Square', sub: 'News · Rankings' },
       forum: { name: 'Forum', sub: 'Chat · Tips' },
       activities: { name: 'Events', sub: 'Open for a limited time' },

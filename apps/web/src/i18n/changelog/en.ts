@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  commission1016:
+    'Town Commission: a new Commission opens in town, with Mayor Big Pot as president and Squidward, Taoist Fan, Garden Sis, Gary and Brother 13 each in charge of an area and giving a daily highlight; rule changes are announced as commission notices there and in the town news; every day at 0:00 Squidward checks the hygiene of restaurants with 2 stars or more and notes it in your restaurant activity, for the record only, with no fines',
   smurf1016:
     'Anti-alt measures: Ichiban Kuji now requires a verified email to buy tickets and draw, plus restaurant level 10 for the regular pool, and level 20 and an account at least 3 days old for the deluxe pool; the Starter Pack and redeem codes require a verified email; there is a limit on how many accounts can be registered from the same network or device',
   predict1016:

@@ -4,6 +4,7 @@ import acquire from './acquire';
 import activity from './activity';
 import auth from './auth';
 import bar from './bar';
+import commission from './commission';
 import common from './common';
 import cookbook from './cookbook';
 import cupboard from './cupboard';
@@ -46,6 +47,7 @@ import util from './util';
 /** 簡中翻譯：所有語言的結構以它為準（問題記錄 272） */
 const zhCN = {
   common,
+  commission,
   errors,
   news,
   events,

@@ -8,6 +8,26 @@ import { awardWords, n, table, type P } from '../../helpers';
 type LogFn = (p: P, names: Names) => string;
 /** 天气四大类（镇长猜天气的消息用） */
 const WT = ['', '晴', '雨', '雪冰', '风沙雾'];
+/** 章鱼哥的卫生巡查（小镇委员会 2026-10-16）：只写事实；剩一天以上写天和小时 */
+const leftH = (h: number) => (h >= 24 ? `${Math.floor(h / 24)} 天 ${h % 24} 小时` : `${h} 小时`);
+function hygiene(p: P, names: Names): string {
+  const [, m, d] = String(p.day ?? '').split('-');
+  const rh = n(p, 'roachHours');
+  const roach = rh > 0 ? `蟑螂占桌 ${formatNum(rh)} 桌·小时` : '没有蟑螂占桌';
+  const auto = n(p, 'roachAuto') > 0 ? `, 防虫设施灭了 ${n(p, 'roachAuto')} 只` : '';
+  const mouse =
+    n(p, 'mouse') > 0
+      ? `老鼠来了 ${n(p, 'mouse')} 次, 偷走 ${n(p, 'stolen')} 份, 夹住 ${n(p, 'trapped')} 次`
+      : '老鼠没来';
+  const dev = (x: unknown, none: string) => {
+    const o = x as P | null;
+    return o && typeof o === 'object'
+      ? `${names.goodsName(n(o, 'goodsId'))}还剩 ${leftH(n(o, 'hours'))}`
+      : none;
+  };
+  return `章鱼哥来巡查 (${Number(m)}/${Number(d)}): ${roach}${auto}；${mouse}；${dev(p.roachDevice, '没摆防蟑螂的设施')}, ${dev(p.mouseDevice, '没摆防老鼠的设施')}`;
+}
+
 const logs = table<LogFn>();
 const mcNameOf = (names: Names, id: number) => names.mcName?.(id) ?? `特色菜${id}`;
 /** 可疑成交的所得进冷静期（156-2） */
@@ -144,6 +164,7 @@ export default {
     'mouse.steal': (p, names) => `老鼠偷走了 ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')}`,
     'mouse.nothing': () => '老鼠来了, 什么也没偷到',
     'mouse.map': () => '老鼠留下了一张探险图',
+    'hygiene.report': (p, names) => hygiene(p, names),
     'krab.happy': () => '蟹老板吃得很满意, 回味无穷',
     'krab.angry': () => '蟹老板扫兴而归',
     'krab.husky': () => '蟹老板摸了摸二哈, 没有生气',

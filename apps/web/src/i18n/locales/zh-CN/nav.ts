@@ -46,6 +46,7 @@ export default {
       temple: { name: '神殿', sub: '鉴定 · 试炼' },
       tower: { name: '厨塔', sub: '挑战 · 赛厨' },
       society: { name: '协会', sub: '升星 · 兑换' },
+      commission: { name: '委员会', sub: '公报 · 今日要点' },
       town: { name: '广场', sub: '新闻 · 排行' },
       forum: { name: '论坛', sub: '闲聊 · 攻略' },
       activities: { name: '活动', sub: '限时开放' },

@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  commission1016:
+    'Comisión del pueblo: abre una Comisión en el pueblo, presidida por el Alcalde Gran Olla, con Calamardo, el Taoísta Fan, la Hermana del Huerto, Gary y el Hermano 13, cada uno a cargo de un área y dando un punto del día; los cambios de reglas se anuncian como comunicados en su página y en las noticias; cada día a las 0:00 Calamardo revisa la higiene de los restaurantes de 2 estrellas o más y la anota en la actividad del restaurante, solo como registro, sin multas',
   smurf1016:
     'Medidas contra cuentas secundarias: el Ichiban Kuji ahora pide un correo verificado para comprar boletos y sacar, además de restaurante nivel 10 en el sorteo normal, y nivel 20 con una cuenta de al menos 3 días en el sorteo de lujo; el Pack de inicio y los códigos piden un correo verificado; hay un límite de cuentas que se pueden registrar desde la misma red o el mismo dispositivo',
   predict1016:

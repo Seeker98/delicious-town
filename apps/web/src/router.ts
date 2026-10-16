@@ -416,6 +416,13 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/SocietyView.vue'),
     meta: { needRestaurant: true, section: 'map', title: T((t) => t.society.title), parent: '/map' },
   },
+  // 小镇委员会（2026-10-16）：公报、今日要点；?m= 打开某位委员的面板（餐厅动态里的卫生巡查链过来）
+  {
+    path: '/commission',
+    name: 'commission',
+    component: () => import('./views/CommissionView.vue'),
+    meta: { needRestaurant: true, section: 'map', title: T((t) => t.commission.title), parent: '/map' },
+  },
   // 盖乐瑞的基金、理财搬到银行（界面改版 P2b）
   { path: '/society/fund', redirect: '/bank?tab=fund' },
   { path: '/society/wealth', redirect: '/bank?tab=wealth' },
@@ -557,6 +564,7 @@ export const routes: RouteRecordRaw[] = [
       { path: 'futures', component: () => import('./views/admin/AdminFuturesView.vue') },
       { path: 'bulk', component: () => import('./views/admin/AdminBulkView.vue') },
       { path: 'announce', component: () => import('./views/admin/AdminAnnounceView.vue') },
+      { path: 'commission', component: () => import('./views/admin/AdminCommissionView.vue') },
       { path: 'daily', component: () => import('./views/admin/AdminDailyView.vue') },
       { path: 'links', component: () => import('./views/admin/AdminLinksView.vue') },
       { path: 'activities', component: () => import('./views/admin/AdminActivitiesView.vue') },
