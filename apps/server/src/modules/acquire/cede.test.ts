@@ -22,6 +22,18 @@ const lastIncome = (restId: number) =>
     .where('rest_id', '=', restId)
     .orderBy('round_no', 'desc')
     .executeTakeFirstOrThrow();
+/**
+ * 从 from 轮起往后结算，直到这家店有收入：一轮坐下几位客人是随机的，偶尔一位都没有、收入是 0，
+ * 那一轮也就没有让渡（CI 2026-10-17 因此失败过）。返回结算到的轮次和那一轮的收益
+ */
+async function settleUntilIncome(shardId: number, restId: number, from: number) {
+  for (let r = from; r < from + 10; r++) {
+    await settle(shardId, r);
+    const inc = await lastIncome(restId);
+    if (inc.coin > 0) return { round: r, ...inc };
+  }
+  throw new Error('10 轮都没有收入');
+}
 const dues = (restId: number) =>
   t.db
     .selectFrom('acquire_due')
@@ -52,13 +64,17 @@ describe('结算时让渡（收购改版 2026-10-16）', () => {
       owner_rest_id: owner.restaurantId,
       acquired_at: NOW,
     });
-    await settle(shardId);
-    const r1 = await lastIncome(store.restaurantId);
+    const r1 = await settleUntilIncome(shardId, store.restaurantId, ROUND);
     expect(r1.coin).toBeGreaterThan(100);
     expect(r1.ceded).toBe(share(r1.coin, 0.035));
     expect((await restRow(t, store.restaurantId)).coin).toBe(1000 + r1.coin - r1.ceded);
     // 老板只拿到自己那家的结算：让渡 00:05 才发
-    expect((await restRow(t, owner.restaurantId)).coin).toBe((await lastIncome(owner.restaurantId)).coin);
+    const ownerIncome = await t.db
+      .selectFrom('income_round')
+      .select('coin')
+      .where('rest_id', '=', owner.restaurantId)
+      .execute();
+    expect((await restRow(t, owner.restaurantId)).coin).toBe(ownerIncome.reduce((x, r) => x + r.coin, 0));
     expect(await dues(store.restaurantId)).toEqual([
       { day: gameDay(NOW), owner_rest_id: owner.restaurantId, coin: r1.ceded, tended: false },
     ]);
@@ -68,8 +84,7 @@ describe('结算时让渡（收购改版 2026-10-16）', () => {
       acquired_at: NOW,
       tended_at: NOW,
     });
-    await settle(shardId, ROUND + 1);
-    const r2 = await lastIncome(store.restaurantId);
+    const r2 = await settleUntilIncome(shardId, store.restaurantId, r1.round + 1);
     expect(r2.ceded).toBe(share(r2.coin, 0.049));
     expect(await dues(store.restaurantId)).toEqual([
       { day: gameDay(NOW), owner_rest_id: owner.restaurantId, coin: r1.ceded + r2.ceded, tended: true },
@@ -80,9 +95,9 @@ describe('结算时让渡（收购改版 2026-10-16）', () => {
     const shardId = await richShard();
     const free = await newRestaurant(t, { shardId, patch: { oil: 100_000 } });
     await setAcquireState(t, free.restaurantId, shardId);
-    await settle(shardId);
-    expect(await lastIncome(free.restaurantId)).toMatchObject({ ceded: 0 });
-    expect((await lastIncome(free.restaurantId)).coin).toBeGreaterThan(100);
+    const inc = await settleUntilIncome(shardId, free.restaurantId, ROUND);
+    expect(inc.ceded).toBe(0);
+    expect(inc.coin).toBeGreaterThan(100);
 
     const off = await richShard(false);
     const owner = await newRestaurant(t, { shardId: off });
