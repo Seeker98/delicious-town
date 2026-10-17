@@ -28,6 +28,9 @@ const market: Messages['market'] = {
   specialWait: (min) => `You just bought a bargain. Your network must wait ${min} min to buy another`,
   empty: 'Nothing in stock yet',
   hot: 'Hot',
+  newbie: 'Newbie St.',
+  newbieTip:
+    "This slot always stocks an ingredient Newbie Street needs; market prediction questions don't count it",
   ownFree: 'Your own stock, free',
   stockedBy: (name) => `Stocked by ${name}`,
   left: (n) => `${n} left`,

@@ -23,6 +23,9 @@ export default {
   specialWait: (min: number) => `剛搶過特價, 同一網路還要等 ${min} 分鐘才能再搶`,
   empty: '還沒有進貨',
   hot: '熱門',
+  /** 日常貨架的新手格（2026-10-17） */
+  newbie: '新手街',
+  newbieTip: '這一格專上新手街缺的食材, 事件預測的菜場題不算它',
   ownFree: '自己的貨, 免費',
   stockedBy: (name: string) => `${name} 進的貨`,
   left: (n: string) => `剩 ${n}`,

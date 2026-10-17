@@ -385,6 +385,7 @@ export function createMarketService(d: GameDeps, world: WorldService) {
           stock: r.stock,
           left: r.stock - r.sold,
           hot: r.hot,
+          newbie: r.newbie,
           limit,
           bought,
           sharedBought,
@@ -454,6 +455,7 @@ export function createMarketService(d: GameDeps, world: WorldService) {
                 foods_id: x.foodsId,
                 stock: x.stock,
                 hot: x.hot,
+                newbie: x.newbie ?? false,
                 opened_at: now,
               })),
             )
@@ -463,7 +465,16 @@ export function createMarketService(d: GameDeps, world: WorldService) {
         if (shelf !== 2)
           await postNews(
             tx,
-            { shardId, type: 'market.restock', params: { shelf, foods: items.map((x) => x.foodsId) } },
+            {
+              shardId,
+              type: 'market.restock',
+              // newbie：日常货架新手格的食材，事件预测的菜场题判定时不算它
+              params: {
+                shelf,
+                foods: items.map((x) => x.foodsId),
+                ...(shelf === 0 && { newbie: items.filter((x) => x.newbie).map((x) => x.foodsId) }),
+              },
+            },
             now,
           );
       });

@@ -9,7 +9,10 @@ export const WEATHER_TYPE_NAMES: Record<number, string> = { 1: '晴', 2: '雨', 
 /** 初始概率夹到 5%~95%（238-1 出题范围） */
 export const clampP = (p: number) => Math.min(0.95, Math.max(0.05, p));
 
-/** H 点日常货架至少上一种 level 级稀有食材（odds < 100）的概率：按进货算法模拟 n 次估算 */
+/**
+ * H 点日常货架至少上一种 level 级稀有食材（odds < 100）的概率：按进货算法模拟 n 次估算。
+ * 新手格不算（用户 2026-10-17）：它每轮专从新手街缺的 2 级食材里抽一种，算进来 2 级稀有大半是它出的
+ */
 export function marketRareChance(
   config: GameConfig,
   mt: Tuning['market'],
@@ -23,6 +26,7 @@ export function marketRareChance(
     const items = rollShelf(0, hour, config, mt, rng);
     if (
       items.some((x) => {
+        if (x.newbie) return false;
         const f = config.requireFood(x.foodsId);
         return f.level === level && f.odds < 100;
       })

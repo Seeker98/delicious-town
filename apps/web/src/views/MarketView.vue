@@ -236,7 +236,14 @@ onMounted(() =>
             }}<span v-if="levelOf(it.foodsId) >= 2" :class="['dt-tag', 'dt-lv', lvClass(it.foodsId)]">{{
               foodLevelLabel(levelOf(it.foodsId))
             }}</span
-            ><span v-if="it.hot" class="dt-tag dt-tag-hot">{{ t.market.hot }}</span></template
+            ><span v-if="it.hot" class="dt-tag dt-tag-hot">{{ t.market.hot }}</span
+            ><span
+              v-if="it.newbie"
+              class="dt-tag dt-tag-newbie"
+              :title="t.market.newbieTip"
+              :data-testid="`newbie-${it.id}`"
+              >{{ t.market.newbie }}</span
+            ></template
           >
           <template #sub>
             <span v-if="it.owner" :data-testid="`owner-${it.id}`"

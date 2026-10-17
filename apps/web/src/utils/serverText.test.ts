@@ -102,6 +102,23 @@ describe('服务端代码 → 文字（问题记录 272）', () => {
         names,
       ),
     ).toBe('11月3日 12 点日常货架上了 2 级稀有食材: 食材1、食材2');
+    // 新手街那一格不算（用户 2026-10-17）：说明换成新的那句，判定依据写明不算的那种
+    expect(
+      predictDesc({ kind: 'market', description: '旧', params: { hour: 12, level: 2, noNewbie: true } }),
+    ).toBe('以 12 点系统进货的日常货架为准, 新手街那一格和玩家手动进的货不算。');
+    expect(predictDesc({ kind: 'market', description: '旧', params: { hour: 12, level: 2 } })).toBe(
+      '以 12 点系统进货的日常货架为准, 玩家手动进的货不算。',
+    );
+    expect(
+      predictNote(
+        {
+          kind: 'market',
+          resultNote: '旧',
+          resultParams: { day: '2026-11-03', hour: 12, level: 2, foods: [], newbie: [3] },
+        },
+        names,
+      ),
+    ).toBe('11月3日 12 点日常货架没有 2 级稀有食材；新手街那一格的食材3不算');
     expect(
       predictNote(
         {

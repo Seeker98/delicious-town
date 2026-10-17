@@ -8,6 +8,8 @@ export interface ShelfItem {
   foodsId: number;
   stock: number;
   hot: boolean;
+  /** 日常货架的新手格（问题记录 378 N3）；事件预测的菜场题不算它 */
+  newbie?: true;
 }
 
 type MarketTuning = Tuning['market'];
@@ -49,7 +51,13 @@ export function rollShelf(
     // 新手格（问题记录 378 N3）：新手街要的十三香这类 2 级食材，按等级抽好几天才出现一次，新手学不动菜
     for (let k = 0; k < t.dailyNewbieKinds; k++) {
       const f = pickDistinct(config.newbieFoodPool);
-      if (f) out.push({ foodsId: f.id, stock: f.odds < 100 ? t.dailyRareStock : t.dailyStock, hot: false });
+      if (f)
+        out.push({
+          foodsId: f.id,
+          stock: f.odds < 100 ? t.dailyRareStock : t.dailyStock,
+          hot: false,
+          newbie: true,
+        });
     }
   } else if (shelf === 1) {
     for (let k = 0; k < t.specialKinds; k++) {

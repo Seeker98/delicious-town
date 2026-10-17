@@ -22,6 +22,9 @@ export default {
   specialWait: (min: number) => `刚抢过特价, 同一网络还要等 ${min} 分钟才能再抢`,
   empty: '还没有进货',
   hot: '热门',
+  /** 日常货架的新手格（2026-10-17） */
+  newbie: '新手街',
+  newbieTip: '这一格专上新手街缺的食材, 事件预测的菜场题不算它',
   ownFree: '自己的货, 免费',
   stockedBy: (name: string) => `${name} 进的货`,
   left: (n: string) => `剩 ${n}`,

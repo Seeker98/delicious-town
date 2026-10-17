@@ -264,6 +264,8 @@ export interface MarketItemTable {
   stock: number;
   sold: Default<number>;
   hot: Default<boolean>;
+  /** 日常货架的新手格（2026-10-17）：页面上加标记，事件预测的菜场题不算它 */
+  newbie: Default<boolean>;
   opened_at: Ts;
   /** 菜场工作证手动进货的进货人（4E-2）；系统货为 null */
   owner_rest_id: Default<number | null>;

@@ -88,9 +88,12 @@ const server: Messages['server'] = {
         `Will level-${level} rare ingredients appear on the daily market shelf at ${hour}:00 today?`,
       desc: (hour) =>
         `Based on the daily shelf the system stocks at ${hour}:00; goods restocked by players don't count.`,
+      descNoNewbie: (hour) =>
+        `Based on the daily shelf the system stocks at ${hour}:00; the Newbie Street slot and goods restocked by players don't count.`,
       yes: (day, hour, level, foods) =>
         `${day}, ${hour}:00: the daily shelf had level-${level} rare ingredients: ${foods}`,
       no: (day, hour, level) => `${day}, ${hour}:00: the daily shelf had no level-${level} rare ingredients`,
+      newbie: (foods) => `; the Newbie Street slot doesn't count (${foods})`,
     },
     weather: {
       title: (hour, type) => `Will the weather after the ${hour}:00 change today be ${type}?`,

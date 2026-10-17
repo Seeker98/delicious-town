@@ -92,10 +92,13 @@ const server: Messages['server'] = {
         `Le rayon du marché du jour aura-t-il des ingrédients rares de niveau ${level} aujourd'hui à ${hour} h\u202f?`,
       desc: (hour) =>
         `Selon le rayon du jour approvisionné par le système à ${hour} h\u202f; les réapprovisionnements des joueurs ne comptent pas.`,
+      descNoNewbie: (hour) =>
+        `Selon le rayon du jour approvisionné par le système à ${hour} h\u202f; la place de la Rue des débutants et les réapprovisionnements des joueurs ne comptent pas.`,
       yes: (day, hour, level, foods) =>
         `${day}, ${hour} h\u202f: le rayon du jour avait des ingrédients rares de niveau ${level}\u202f: ${foods}`,
       no: (day, hour, level) =>
         `${day}, ${hour} h\u202f: le rayon du jour n'avait aucun ingrédient rare de niveau ${level}`,
+      newbie: (foods) => `\u202f; la place de la Rue des débutants ne compte pas (${foods})`,
     },
     weather: {
       title: (hour, type) =>

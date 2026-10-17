@@ -2314,6 +2314,12 @@ details.dt-card > summary {
   background: var(--dt-soft-danger);
   color: var(--dt-ink-danger);
 }
+/* 日常货架的新手格（2026-10-17）：灰底小字，不抢等级、热门的颜色 */
+.dt-tag-newbie {
+  border-radius: var(--dt-radius-xs);
+  font-size: 11px;
+  color: var(--dt-muted);
+}
 /* 价格按钮：描边胶囊，银币图 + 价格；点了弹出购买面板 */
 .dt-price-btn {
   display: inline-flex;

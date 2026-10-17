@@ -93,10 +93,13 @@ const server: Messages['server'] = {
         `¿Saldrán ingredientes raros de nivel ${level} en el estante diario del mercado hoy a las ${hour}:00?`,
       desc: (hour) =>
         `Según el estante diario que repone el sistema a las ${hour}:00; lo que reponen los jugadores no cuenta.`,
+      descNoNewbie: (hour) =>
+        `Según el estante diario que repone el sistema a las ${hour}:00; el hueco de la Calle de los novatos y lo que reponen los jugadores no cuentan.`,
       yes: (day, hour, level, foods) =>
         `${day}, ${hour}:00: el estante diario tuvo ingredientes raros de nivel ${level}: ${foods}`,
       no: (day, hour, level) =>
         `${day}, ${hour}:00: el estante diario no tuvo ingredientes raros de nivel ${level}`,
+      newbie: (foods) => `; el hueco de la Calle de los novatos no cuenta (${foods})`,
     },
     weather: {
       title: (hour, type) => `¿Tras el cambio de hoy a las ${hour}:00, el tiempo será de tipo ${type}?`,

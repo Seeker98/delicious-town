@@ -18,6 +18,7 @@ describe('菜场稀有食材概率估算（238-2 设计 §4.3）', () => {
       for (let i = 0; i < 4000; i++)
         if (
           rollShelf(0, 12, config, mt, rng).some((x) => {
+            if (x.newbie) return false;
             const f = config.requireFood(x.foodsId);
             return f.level === level && f.odds < 100;
           })
@@ -25,6 +26,13 @@ describe('菜场稀有食材概率估算（238-2 设计 §4.3）', () => {
           hit++;
       expect(Math.abs(est - hit / 4000)).toBeLessThan(0.03);
     }
+  });
+
+  it('新手格不算（用户 2026-10-17）：只有新手格时概率是 0', () => {
+    const only = { ...mt, dailyKinds: 0, dailyKindsLast: 0 };
+    expect(config.newbieFoodPool.items.some((f) => f.level === 2 && f.odds < 100)).toBe(true);
+    expect(rollShelf(0, 12, config, only, seededRng(1))).toHaveLength(mt.dailyNewbieKinds);
+    expect(marketRareChance(config, only, 12, 2, 200, seededRng(1))).toBe(0);
   });
 });
 
