@@ -2,7 +2,7 @@ import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
   predict1017:
-    'Market prediction questions: whether the daily shelf gets rare ingredients of a given level no longer counts the Newbie Street slot (it always stocks a level-2 ingredient Newbie Street needs, which used to decide most level-2 questions), and starting odds are estimated without it; questions posted earlier are judged as before',
+    'Market prediction questions: whether the daily shelf gets rare ingredients of a given level no longer counts the Newbie Street slot (it always stocks a level-2 ingredient Newbie Street needs, which used to decide most level-2 questions), and starting odds are estimated without it; questions posted earlier are judged as before; that slot now has a “Newbie St.” tag on the daily market',
   acquire1016:
     'Acquisitions rework: the system no longer pays out dividends; instead an acquired restaurant gives 3.5% of each round’s settlement to its owner (4.9% after the owner tends it that day), and acquired restaurants no longer get free ingredients; tending is now done by the owner, who pays 1% of the restaurant’s daily average, after which its settlements are × 1.035 and it gets level-2 market supply packs; restaurants not tended for 14 days are let go automatically; takeovers only work on restaurants with no owner: the restaurant gets 50%, while a 40% M&A advisory fee and 10% tax are destroyed, and restaurants with an owner can only change hands through a listing; buy-backs use the base valuation and the owner gets 60%; valuations are now 3.5× the daily average; buyers need 2+ stars, an account at least 7 days old, and can buy up to 3 a day; the M&A Advisor permit no longer cuts tax',
   tower1016:

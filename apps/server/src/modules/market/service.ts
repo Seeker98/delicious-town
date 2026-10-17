@@ -385,6 +385,7 @@ export function createMarketService(d: GameDeps, world: WorldService) {
           stock: r.stock,
           left: r.stock - r.sold,
           hot: r.hot,
+          newbie: r.newbie,
           limit,
           bought,
           sharedBought,
@@ -454,6 +455,7 @@ export function createMarketService(d: GameDeps, world: WorldService) {
                 foods_id: x.foodsId,
                 stock: x.stock,
                 hot: x.hot,
+                newbie: x.newbie ?? false,
                 opened_at: now,
               })),
             )

@@ -15,6 +15,8 @@ export interface MarketItemDto {
   stock: number;
   left: number;
   hot: boolean;
+  /** 日常货架的新手格：专上新手街缺的食材（问题记录 378 N3）；事件预测的菜场题不算它 */
+  newbie: boolean;
   /** 本轮每人限购 */
   limit: number;
   /** 本轮我已经买了多少 */

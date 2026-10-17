@@ -27,6 +27,7 @@ const view: MarketDto = {
       stock: 5999,
       left: 5990,
       hot: false,
+      newbie: false,
       limit: 1000,
       bought: 0,
       sharedBought: 0,
@@ -88,6 +89,19 @@ describe('MarketView', () => {
     expect(head.get('.dt-block-more').text()).toContain('下次进货');
     expect(w.get('[data-testid="section-daily"]').classes()).toContain('dt-block');
     expect(w.find('h6.dt-section').exists()).toBe(false);
+  });
+
+  it('日常货架的新手格带“新手街”标记，悬停写明事件预测不算它（2026-10-17）', async () => {
+    vi.mocked(endpoints.market).mockResolvedValue({
+      ...structuredClone(view),
+      daily: [view.daily[0]!, { ...view.daily[0]!, id: 12, foodsId: 102, newbie: true }],
+    });
+    const w = mountView();
+    await flushPromises();
+    expect(w.find('[data-testid="newbie-11"]').exists()).toBe(false);
+    const tag = w.get('[data-testid="newbie-12"]');
+    expect(tag.text()).toBe('新手街');
+    expect(tag.attributes('title')).toBe('这一格专上新手街缺的食材, 事件预测的菜场题不算它');
   });
 
   it('高级菜场暂时隐藏（问题记录 477）：服务端有货也不显示', async () => {

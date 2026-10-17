@@ -51,6 +51,23 @@ describe('日常菜场', () => {
     expect(view.daily.find((x) => x.id === it0.id)).toMatchObject({ bought: 10, left: it0.stock - 10 });
   });
 
+  it('新手格（2026-10-17）：进货时记在货上和进货新闻里，接口带出来给页面加标记', async () => {
+    const ctx = await newRestaurant(t);
+    const items = await openShelf(ctx.shardId, 0);
+    const nb = items.filter((x) => x.newbie);
+    expect(nb).toHaveLength(config.tuning.market.dailyNewbieKinds);
+    expect(config.newbieFoodPool.items.map((f) => f.id)).toContain(nb[0]!.foods_id);
+    const news = await t.db
+      .selectFrom('news')
+      .select('params')
+      .where('shard_id', '=', ctx.shardId)
+      .where('type', '=', 'market.restock')
+      .executeTakeFirstOrThrow();
+    expect(news.params).toMatchObject({ newbie: nb.map((x) => x.foods_id) });
+    const view = await m().view(ctx);
+    expect(view.daily.filter((x) => x.newbie).map((x) => x.id)).toEqual(nb.map((x) => x.id));
+  });
+
   it('高级菜场暂时隐藏（问题记录 477）：照常进货，但不发“菜场进货了”的新闻，免得玩家去找看不到的货', async () => {
     const ctx = await newRestaurant(t);
     const items = await openShelf(ctx.shardId, 2);

@@ -29,6 +29,9 @@ const market: Messages['market'] = {
   specialWait: (min) => `Acabas de comprar una oferta. Tu red debe esperar ${min} min para comprar otra`,
   empty: 'Aún no hay género',
   hot: 'Popular',
+  newbie: 'Novatos',
+  newbieTip:
+    'Este hueco siempre trae un ingrediente que necesita la Calle de los novatos; las preguntas de predicción del mercado no lo cuentan',
   ownFree: 'Tu propio género, gratis',
   stockedBy: (name) => `Puesto por ${name}`,
   left: (n) => `Quedan ${n}`,

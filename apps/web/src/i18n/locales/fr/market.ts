@@ -30,6 +30,9 @@ const market: Messages['market'] = {
     `Vous venez d'acheter une promo. Votre réseau doit attendre ${min} min avant la suivante`,
   empty: 'Rien en rayon pour le moment',
   hot: 'Populaire',
+  newbie: 'Débutants',
+  newbieTip:
+    'Cette place propose toujours un ingrédient dont la Rue des débutants a besoin\u202f; les questions de prédiction du marché ne la comptent pas',
   ownFree: 'Votre propre stock, gratuit',
   stockedBy: (name) => `Mis en rayon par ${name}`,
   left: (n) => `Reste ${n}`,
