@@ -34,10 +34,11 @@ const failed = ref(false);
 const guessOpen = ref(false);
 
 const time = timeHM;
-/** 高级菜场暂时隐藏（问题记录 477）：服务端照常进货，恢复时把 premium 加回来 */
+/** 三个货架；高级菜场 2026-10-17 恢复（问题记录 477 隐藏过） */
 const sections = [
   { key: 'daily', next: 'nextDaily' },
   { key: 'special', next: 'nextSpecial' },
+  { key: 'premium', next: 'nextPremium' },
 ] as const;
 
 /** 页面上的“现在”：每 15 秒走一次，特价冷却到点后价格按钮自己恢复（backlog P6） */

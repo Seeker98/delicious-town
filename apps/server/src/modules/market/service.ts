@@ -461,22 +461,20 @@ export function createMarketService(d: GameDeps, world: WorldService) {
             )
             .execute();
         }
-        // 高级菜场暂时在页面上隐藏（问题记录 477）：照常进货，但不发新闻，恢复时去掉这个判断（见 docs/backlog.md）
-        if (shelf !== 2)
-          await postNews(
-            tx,
-            {
-              shardId,
-              type: 'market.restock',
-              // newbie：日常货架新手格的食材，事件预测的菜场题判定时不算它
-              params: {
-                shelf,
-                foods: items.map((x) => x.foodsId),
-                ...(shelf === 0 && { newbie: items.filter((x) => x.newbie).map((x) => x.foodsId) }),
-              },
+        await postNews(
+          tx,
+          {
+            shardId,
+            type: 'market.restock',
+            // newbie：日常货架新手格的食材，事件预测的菜场题判定时不算它
+            params: {
+              shelf,
+              foods: items.map((x) => x.foodsId),
+              ...(shelf === 0 && { newbie: items.filter((x) => x.newbie).map((x) => x.foodsId) }),
             },
-            now,
-          );
+          },
+          now,
+        );
       });
       const foods = items.map((x) => x.foodsId);
       // 货架已经换好：开奖出错只记日志，这一轮照样算刷新成功（周期任务写完成时间，菜场题不按“没刷新”作废）；

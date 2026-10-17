@@ -77,16 +77,16 @@ describe('货架（规格书 06 §6.1）', () => {
 
 describe('价格与限购（规格书 06 §6.2）', () => {
   const food = config.requireFood(fid('大米'));
-  it('价格随天气浮动；特价固定 2999；高级 ×2', () => {
+  it('价格随天气浮动；特价固定 2999；高级 ×1.8（投资者九折，2026-10-17；原来 ×2）', () => {
     expect(unitPrice(0, food, t, { marketCoin: -0.2 })).toBeCloseTo(food.coin * 0.8);
     expect(unitPrice(1, food, t, {})).toBe(2999);
-    expect(unitPrice(2, food, t, {})).toBe(food.coin * 2);
+    expect(unitPrice(2, food, t, {})).toBeCloseTo(food.coin * 1.8);
   });
   it('各等级价格倍数（240-1）：日常、高级货架按等级乘倍数；特价货架不跟倍数', () => {
     const lv3 = [...config.foods.values()].find((f) => f.level === 3)!;
     const t2 = { ...t, levelPriceRate: [1, 1, 2] };
     expect(unitPrice(0, lv3, t2, {})).toBe(lv3.coin * 2);
-    expect(unitPrice(2, lv3, t2, {})).toBe(lv3.coin * 2 * t.premiumPriceFactor);
+    expect(unitPrice(2, lv3, t2, {})).toBeCloseTo(lv3.coin * 2 * t.premiumPriceFactor);
     expect(unitPrice(1, lv3, t2, {})).toBe(2499);
   });
   it('特价货架按等级定价（公允价阶梯 2026-10-15）：3 / 4 / 5 级 2,499 / 5,999 / 14,999，没写的等级按 specialPrice；天气、priceFactor 照乘', () => {
