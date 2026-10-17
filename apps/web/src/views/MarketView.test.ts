@@ -104,7 +104,7 @@ describe('MarketView', () => {
     expect(tag.attributes('title')).toBe('这一格专上新手街缺的食材, 事件预测的菜场题不算它');
   });
 
-  it('高级菜场暂时隐藏（问题记录 477）：服务端有货也不显示', async () => {
+  it('高级菜场（2026-10-17 恢复，问题记录 477 隐藏过）：有货时显示一节，能买', async () => {
     vi.mocked(endpoints.market).mockResolvedValue({
       ...structuredClone(view),
       premium: [{ ...view.daily[0]!, id: 31, shelf: 2 as const }],
@@ -112,9 +112,9 @@ describe('MarketView', () => {
     const w = mountView();
     await flushPromises();
     expect(w.find('[data-testid="section-head-daily"]').exists()).toBe(true);
-    expect(w.find('[data-testid="section-head-premium"]').exists()).toBe(false);
-    expect(w.find('[data-testid="buy-31"]').exists()).toBe(false);
-    expect(w.text()).not.toContain('高级菜场');
+    expect(w.find('[data-testid="section-head-premium"]').exists()).toBe(true);
+    expect(w.find('[data-testid="buy-31"]').exists()).toBe(true);
+    expect(w.text()).toContain('高级菜场');
   });
 
   it('买菜：点价格按钮弹出购买面板，按输入的数量购买，买完刷新（界面改版 P6）', async () => {

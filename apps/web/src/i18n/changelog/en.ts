@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  premium1017:
+    'The premium market is back: it restocks 3 kinds of level-4 ingredients at 6:00, 12:00 and 18:00, only restaurants holding a tier B or higher fund medal can buy, up to 9 of each per restock; the price is 1.8× the market price (was 2×), a 10% discount for investors, and weather still affects it; the tier B and A medal descriptions now mention it',
   wikimc1017:
     'Game data now has “Signature dishes”: all 250 show their level, path, nutrition, sale multiplier and ingredients, plus which weathers put them in season, where fragments come from (appraisal items, shard exchange, seasonal shop, lessons) and the path bonus; the list filters by path and shows that path’s in-season weathers; “Signature dishes that use it” on ingredients now links to them; the open API has signature dishes too',
   art1017:

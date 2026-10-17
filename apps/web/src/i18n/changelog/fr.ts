@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  premium1017:
+    'Le marché premium rouvre\u202f: il propose 3 ingrédients de niveau 4 à 6 h, 12 h et 18 h, réservé aux restaurants qui détiennent une médaille du fonds B ou plus, 9 de chaque au maximum par réassort\u202f; le prix est 1,8 fois le prix du marché (au lieu de 2), soit 10\u202f% de remise pour les investisseurs, et la météo l’influence toujours\u202f; les descriptions des médailles B et A le mentionnent désormais',
   wikimc1017:
     'Les données du jeu ont maintenant les «\u202fPlats signature\u202f»\u202f: les 250 plats indiquent niveau, voie, valeur nutritive, multiplicateur de vente et ingrédients, ainsi que les météos où ils sont de saison, l’origine des fragments (objets d’expertise, échange d’éclats, boutique de saison, leçons) et le bonus de voie\u202f; la liste se filtre par voie et indique les météos de saison de cette voie\u202f; «\u202fPlats signature qui l’utilisent\u202f» sur les ingrédients mène à leur fiche\u202f; l’API ouverte a aussi les plats signature',
   art1017:

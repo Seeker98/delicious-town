@@ -68,7 +68,7 @@ describe('日常菜场', () => {
     expect(view.daily.filter((x) => x.newbie).map((x) => x.id)).toEqual(nb.map((x) => x.id));
   });
 
-  it('高级菜场暂时隐藏（问题记录 477）：照常进货，但不发“菜场进货了”的新闻，免得玩家去找看不到的货', async () => {
+  it('高级菜场进货也发“菜场进货了”的新闻（2026-10-17 恢复；问题记录 477 隐藏期间不发）', async () => {
     const ctx = await newRestaurant(t);
     const items = await openShelf(ctx.shardId, 2);
     expect(items.length).toBeGreaterThan(0);
@@ -78,7 +78,7 @@ describe('日常菜场', () => {
       .where('shard_id', '=', ctx.shardId)
       .where('type', '=', 'market.restock')
       .execute();
-    expect(news.filter((n) => (n.params as { shelf?: number }).shelf === 2)).toEqual([]);
+    expect(news.filter((n) => (n.params as { shelf?: number }).shelf === 2)).toHaveLength(1);
   });
 
   it('最多还能买几个 = 限购剩余、库存剩余、橱柜单种上限剩余取小（问题记录：显示能买 1000 实际只能买 996）', async () => {
@@ -230,7 +230,7 @@ describe('特价和高级菜场', () => {
     expect(row.sold).toBe(1);
   });
 
-  it('高级菜场要持有 B 档或以上的基金勋章（道具减法 2026-10-13）；价格 ×2 再乘等级价格倍数', async () => {
+  it('高级菜场要持有 B 档或以上的基金勋章（道具减法 2026-10-13）；价格 ×1.8 再乘等级价格倍数', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 1_000_000 } });
     const [item] = await openShelf(ctx.shardId, 2, 12);
     const buy = () => m().buy({ ...ctx, ip: uniqueIp() }, { itemId: item!.id, num: 1 });
@@ -255,9 +255,10 @@ describe('特价和高级菜场', () => {
     await buy();
     const food = config.requireFood(item!.foods_id);
     const snap = await t.game.world.ensure(ctx.shardId);
-    // 高级货架 ×2，再乘食材等级价格倍数（240-1，默认 4 级 ×3）
+    // 高级货架 ×1.8（投资者九折，2026-10-17），再乘食材等级价格倍数（240-1，默认 4 级 ×3）
+    expect(config.tuning.market.premiumPriceFactor).toBe(1.8);
     const expected = Math.ceil(
-      foodPrice(food, config.tuning.market) * 2 * (1 + (snap.weather.effects.marketCoin ?? 0)),
+      foodPrice(food, config.tuning.market) * 1.8 * (1 + (snap.weather.effects.marketCoin ?? 0)),
     );
     expect(before - (await restRow(t, ctx.restaurantId)).coin).toBe(expected);
     await medal(FUND.A);

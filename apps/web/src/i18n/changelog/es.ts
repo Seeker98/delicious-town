@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  premium1017:
+    'Vuelve el mercado premium: repone 3 ingredientes de nivel 4 a las 6:00, 12:00 y 18:00, solo pueden comprar los restaurantes con medalla del fondo B o superior, hasta 9 de cada uno por reposición; el precio es 1,8 veces el del mercado (antes 2), un 10 % de descuento para inversores, y el clima sigue influyendo; las descripciones de las medallas B y A ya lo mencionan',
   wikimc1017:
     'Los datos del juego ahora tienen «Platos estrella»: los 250 muestran nivel, vía, valor nutritivo, multiplicador de venta e ingredientes, además de con qué climas están de temporada, de dónde salen los fragmentos (objetos de tasación, canje de trozos, tienda de temporada, clases) y la bonificación de vía; la lista se filtra por vía y muestra los climas de temporada de esa vía; «Platos estrella que lo usan» en los ingredientes ahora enlaza a ellos; la API abierta también tiene platos estrella',
   art1017:

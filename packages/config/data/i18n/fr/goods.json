@@ -2093,11 +2093,11 @@
   },
   "61905": {
     "name": "Médaille Capital de croissance",
-    "desc": "A tenu un terme complet du Fonds de développement, B · Capital de croissance. EXP finale +10\u202f%"
+    "desc": "A tenu un terme complet du Fonds de développement, B · Capital de croissance. EXP finale +10\u202f%\u202f; permet d’acheter au marché premium tant qu’elle est détenue"
   },
   "61906": {
     "name": "Médaille Investisseur pilier",
-    "desc": "A tenu un terme complet du Fonds de développement, A · Investisseur pilier. EXP finale +15\u202f%"
+    "desc": "A tenu un terme complet du Fonds de développement, A · Investisseur pilier. EXP finale +15\u202f%\u202f; permet d’acheter au marché premium tant qu’elle est détenue"
   },
   "62001": {
     "name": "Da Ju",
