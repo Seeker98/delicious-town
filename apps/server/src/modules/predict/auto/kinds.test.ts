@@ -86,6 +86,105 @@ describe('菜场（238-2 设计 §4.3）', () => {
     expect(dr.closeAt.getTime() - at0.getTime()).toBeGreaterThanOrEqual(3_600_000);
     expect(dr.p0).toBeGreaterThanOrEqual(0.05);
     expect(dr.p0).toBeLessThanOrEqual(0.95);
+    // 新手格不算（用户 2026-10-17）
+    expect(dr.params).toMatchObject({ noNewbie: true });
+    expect(dr.description).toBe(`以 ${hour} 点系统进货的日常货架为准, 新手街那一格和玩家手动进的货不算。`);
+  });
+
+  it('判定：新手格上的稀有食材不算，判定依据写明；之前出的题（没有 noNewbie）照旧算上（用户 2026-10-17）', async () => {
+    const shardId = await createShard(t.db);
+    const hour = 12;
+    const period = slotKey(DAY, hour);
+    const rare2 = [...t.deps.config.foods.values()].filter(
+      (f) => f.level === 2 && f.odds < 100 && f.odds > 0,
+    );
+    const [a, b] = [rare2[0]!, rare2[1]!];
+    const common1 = [...t.deps.config.foods.values()].find((f) => f.level === 1 && f.odds >= 100)!;
+    const params = { hour, level: 2, period, noNewbie: true };
+    await t.db
+      .insertInto('market_item')
+      .values(
+        [common1.id, a.id].map((id) => ({
+          shard_id: shardId,
+          shelf: 0,
+          period,
+          foods_id: id,
+          stock: 10,
+          opened_at: gameTime(DAY, hour),
+        })),
+      )
+      .execute();
+    // 新手格要看那一轮的进货新闻：那一轮没跑完先不判
+    expect(await market.resolve(await rctx(shardId), params)).toBeNull();
+    await ran(shardId, 'market-daily', period, gameTime(DAY, hour));
+    await t.db
+      .insertInto('news')
+      .values({
+        shard_id: shardId,
+        type: 'market.restock',
+        params: JSON.stringify({ shelf: 0, foods: [common1.id, a.id], newbie: [a.id] }),
+        created_at: gameTime(DAY, hour),
+      })
+      .execute();
+    expect(await market.resolve(await rctx(shardId), params)).toEqual({
+      outcome: false,
+      note: `11月3日 12 点日常货架没有 2 级稀有食材；新手街那一格的${a.name}不算`,
+      noteParams: { day: DAY, hour, level: 2, foods: [], newbie: [a.id] },
+    });
+    // 旧题照旧连新手格一起判
+    const { noNewbie: _, ...old } = params;
+    expect(await market.resolve(await rctx(shardId), old)).toMatchObject({
+      outcome: true,
+      noteParams: { foods: [a.id] },
+    });
+    // 普通格也上了一种：算出现，新手格那种照样写明不算
+    await t.db
+      .insertInto('market_item')
+      .values({
+        shard_id: shardId,
+        shelf: 0,
+        period,
+        foods_id: b.id,
+        stock: 10,
+        opened_at: gameTime(DAY, hour),
+      })
+      .execute();
+    expect(await market.resolve(await rctx(shardId), params)).toEqual({
+      outcome: true,
+      note: `11月3日 12 点日常货架上了 2 级稀有食材: ${b.name}；新手街那一格的${a.name}不算`,
+      noteParams: { day: DAY, hour, level: 2, foods: [b.id], newbie: [a.id] },
+    });
+  });
+
+  it('判定：新闻里没记新手格（老数据）按种子重算出新手格；真实刷新出的新手格不算', async () => {
+    const shardId = await createShard(t.db);
+    const hour = 12;
+    const period = slotKey(DAY, hour);
+    const slot = { key: period, day: DAY, hour, start: gameTime(DAY, hour) };
+    const { foods } = await t.game.market.refresh(shardId, 0, slot, gameTime(DAY, hour));
+    await ran(shardId, 'market-daily', period, gameTime(DAY, hour));
+    const news = await t.db
+      .selectFrom('news')
+      .select('params')
+      .where('shard_id', '=', shardId)
+      .where('type', '=', 'market.restock')
+      .executeTakeFirstOrThrow();
+    const logged = news.params as { foods: number[]; newbie: number[] };
+    expect(logged.foods).toEqual(foods);
+    expect(logged.newbie).toHaveLength(t.deps.config.tuning.market.dailyNewbieKinds);
+    const nb = logged.newbie[0]!;
+    const level = t.deps.config.requireFood(nb).level;
+    const params = { hour, level, period, noNewbie: true };
+    const want = (await market.resolve(await rctx(shardId), params))!;
+    expect(want.noteParams.foods).not.toContain(nb);
+    // 去掉新闻里的 newbie：按种子重算出同一个新手格
+    await t.db
+      .updateTable('news')
+      .set({ params: JSON.stringify({ shelf: 0, foods }) })
+      .where('shard_id', '=', shardId)
+      .where('type', '=', 'market.restock')
+      .execute();
+    expect(await market.resolve(await rctx(shardId), params)).toEqual(want);
   });
 
   it('判定：货架还没生成返回 null；只看系统进货，不看玩家手动进的货（Review Focus 4、5）', async () => {

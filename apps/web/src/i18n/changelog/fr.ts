@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  predict1017:
+    'Questions de prédiction du marché\u202f: la place de la Rue des débutants ne compte plus pour savoir si le rayon du jour aura des ingrédients rares d’un niveau donné (elle propose toujours un ingrédient de niveau 2 dont la Rue des débutants a besoin, ce qui décidait la plupart des questions de niveau 2), et les probabilités de départ sont estimées sans elle\u202f; les questions déjà publiées sont jugées comme avant',
   acquire1016:
     'Refonte des rachats\u202f: le système ne verse plus de dividendes\u202f; un restaurant racheté verse désormais 3,5\u202f% de chaque règlement à son propriétaire (4,9\u202f% après que celui-ci s’en est occupé dans la journée), et les restaurants rachetés ne reçoivent plus d’ingrédients gratuits\u202f; c’est désormais le propriétaire qui s’en occupe, en payant 1\u202f% de la moyenne quotidienne du restaurant, après quoi ses règlements sont × 1,035 et il reçoit des colis de ravitaillement de niveau 2\u202f; sans soins pendant 14 jours, le restaurant est lâché automatiquement\u202f; le rachat de force ne vise que les restaurants sans propriétaire\u202f: le restaurant reçoit 50\u202f%, tandis que 40\u202f% de frais de conseil et 10\u202f% de taxe sont détruits, et un restaurant qui a un propriétaire ne change de mains que par une mise en vente\u202f; le rachat de soi se fait à la valorisation de base et le propriétaire reçoit 60\u202f%\u202f; la valorisation passe à 3,5 fois la moyenne quotidienne\u202f; pour racheter, il faut au moins 2 étoiles et un compte d’au moins 7 jours, 3 achats par jour au plus\u202f; la carte Conseiller en fusions ne réduit plus la taxe',
   tower1016:

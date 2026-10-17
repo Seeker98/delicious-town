@@ -89,9 +89,13 @@ export default {
     market: {
       title: (hour: number, level: number) => `今天 ${hour} 點的日常貨架會出現 ${level} 級稀有食材嗎`,
       desc: (hour: number) => `以 ${hour} 點系統進貨的日常貨架為準, 玩家手動進的貨不算。`,
+      /** 新手街那一格不算（使用者 2026-10-17）；之前出的題還用上面那句 */
+      descNoNewbie: (hour: number) =>
+        `以 ${hour} 點系統進貨的日常貨架為準, 新手街那一格和玩家手動進的貨不算。`,
       yes: (day: string, hour: number, level: number, foods: string) =>
         `${day} ${hour} 點日常貨架上了 ${level} 級稀有食材: ${foods}`,
       no: (day: string, hour: number, level: number) => `${day} ${hour} 點日常貨架沒有 ${level} 級稀有食材`,
+      newbie: (foods: string) => `；新手街那一格的${foods}不算`,
     },
     weather: {
       title: (hour: number, type: string) => `今天 ${hour} 點換天后是${type}類天氣嗎`,

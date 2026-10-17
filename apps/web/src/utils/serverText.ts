@@ -83,7 +83,8 @@ export function predictDesc(e: {
   const p = e.params;
   if (e.kind === 'krab' && isNum(p.hour)) return t.krab.desc(p.hour);
   if (e.kind === 'hiphop' && isNum(p.hour)) return t.hiphop.desc(p.hour);
-  if (e.kind === 'market' && isNum(p.hour)) return t.market.desc(p.hour);
+  if (e.kind === 'market' && isNum(p.hour))
+    return p.noNewbie === true ? t.market.descNoNewbie(p.hour) : t.market.desc(p.hour);
   if (e.kind === 'weather' && isNum(p.hour)) return t.weather.desc(p.hour);
   if (e.kind === 'stats' && isNum(p.close)) return t.stats.desc(p.close);
   if (e.kind === 'wish' && isNum(p.hour)) return t.wish.desc(p.hour);
@@ -110,10 +111,16 @@ export function predictNote(
   if (e.kind === 'krab' && isNum(p.hour) && isNum(p.street)) return t.krab.note(day, p.hour, p.street);
   if (e.kind === 'hiphop' && isNum(p.place)) return t.hiphop.note(day, placeName(p.place));
   if (e.kind === 'market' && isNum(p.hour) && isNum(p.level) && Array.isArray(p.foods)) {
+    const sep = activeMessages().events.sep;
     const foods = p.foods.map((id) => x.foodName(Number(id)));
-    return foods.length > 0
-      ? t.market.yes(day, p.hour, p.level, foods.join(activeMessages().events.sep))
-      : t.market.no(day, p.hour, p.level);
+    const note =
+      foods.length > 0
+        ? t.market.yes(day, p.hour, p.level, foods.join(sep))
+        : t.market.no(day, p.hour, p.level);
+    // 新手街那一格上的这一级稀有食材不算（用户 2026-10-17）
+    return Array.isArray(p.newbie) && p.newbie.length > 0
+      ? note + t.market.newbie(p.newbie.map((id) => x.foodName(Number(id))).join(sep))
+      : note;
   }
   if (e.kind === 'weather' && isNum(p.hour) && isNum(p.weather) && isNum(p.type)) {
     const note = t.weather.note(
