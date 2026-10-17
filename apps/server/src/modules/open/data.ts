@@ -1,4 +1,5 @@
 import { dishCoin, fairFoodPrice, foodPrice } from '../../core/prices';
+import { LEARN_REMNANTS } from '../mysterious/rules';
 import {
   WIKI_HIDDEN_GOODS,
   type GameConfig,
@@ -7,6 +8,7 @@ import {
   type GoodsExchange,
   type I18nEntry,
   type I18nKind,
+  type MysteriousCookbook,
   type RenownShopItem,
 } from '@dt/config';
 import {
@@ -25,6 +27,10 @@ import {
   type OpenGoodsDto,
   type OpenIndexDto,
   type OpenListDto,
+  type OpenMysteriousBrief,
+  type OpenMysteriousDto,
+  type OpenMysteriousListDto,
+  type OpenMysteriousRoad,
   type OpenStreetDto,
 } from '@dt/shared';
 
@@ -36,6 +42,8 @@ export const OPEN_ENDPOINTS = [
   '/api/v1/open/foods/:id',
   '/api/v1/open/cookbooks',
   '/api/v1/open/cookbooks/:id',
+  '/api/v1/open/mysterious',
+  '/api/v1/open/mysterious/:id',
   '/api/v1/open/equips',
   '/api/v1/open/streets',
 ];
@@ -82,6 +90,13 @@ export function createOpenData(config: GameConfig) {
   const renown = new Map<number, RenownShopItem>(
     b.renownShop.filter((r) => r.require === null).map((r) => [r.goodsId, r]),
   );
+  // 当令表（资料库特色菜 2026-10-17）：按默认配置；特殊天气一道到六道全部当令，单独列
+  const shilingRoads = new Map(b.tuning.shiling.roads);
+  const specialWeathers = b.weather.filter((w) => w.special && shilingRoads.has(w.id));
+  const roadWeathers = (road: number) =>
+    b.weather.filter((w) => !w.special && (shilingRoads.get(w.id) ?? []).includes(road));
+  // 鉴定道具：按等级范围对上特色菜
+  const appraisers = [...config.appraiseTools].filter(([id]) => visible(id));
   const cookbookCount = new Map<number, number>();
   for (const c of b.cookbooks) cookbookCount.set(c.streetId, (cookbookCount.get(c.streetId) ?? 0) + 1);
 
@@ -203,6 +218,22 @@ export function createOpenData(config: GameConfig) {
     };
   };
 
+  const mcName = (lang: Locale, id: number) =>
+    entry(lang, 'mysterious', id)?.name ?? config.mysterious.get(id)?.name ?? String(id);
+  const weatherBrief = (lang: Locale, w: { id: number; name: string }) => ({
+    id: w.id,
+    name: entry(lang, 'weather', w.id)?.name ?? w.name,
+  });
+  const mcBrief = (lang: Locale, m: MysteriousCookbook): OpenMysteriousBrief => ({
+    id: m.id,
+    name: mcName(lang, m.id),
+    level: m.level,
+    road: m.road,
+    nutritive: m.nutritive,
+    mainFoodId: m.foods[0] ?? null,
+  });
+  const mcRoads = [...new Set(b.mysteriousCookbooks.map((m) => m.road))].sort((x, y) => x - y);
+
   /** 重新编号前的编号对应的新编号（设计 §5）；不是旧编号时 undefined */
   const moved = (kind: 'goods' | 'foods' | 'cookbooks', id: number) => config.legacy[kind].get(id);
 
@@ -216,6 +247,7 @@ export function createOpenData(config: GameConfig) {
           goods: goodsList.length,
           foods: foodsList.length,
           cookbooks: b.cookbooks.length,
+          mysterious: b.mysteriousCookbooks.length,
           equips: equipGoods.length,
           streets: b.streets.length,
         },
@@ -294,10 +326,7 @@ export function createOpenData(config: GameConfig) {
             grade,
             mainFoodId: mainFood(cid),
           })),
-        mysterious: (foodMc.get(id) ?? []).map((mid) => ({
-          id: mid,
-          name: entry(lang, 'mysterious', mid)?.name ?? config.mysterious.get(mid)?.name ?? String(mid),
-        })),
+        mysterious: (foodMc.get(id) ?? []).map((mid) => ({ id: mid, name: mcName(lang, mid) })),
       };
     },
 
@@ -322,6 +351,55 @@ export function createOpenData(config: GameConfig) {
             num: f.num,
           })),
         })),
+      };
+    },
+
+    mysterious(lang: Locale): OpenMysteriousListDto {
+      const m = b.tuning.mysterious;
+      return {
+        ...meta(lang),
+        items: b.mysteriousCookbooks.map((x) => mcBrief(lang, x)),
+        roads: mcRoads.map((road): OpenMysteriousRoad => ({
+          road,
+          weathers: roadWeathers(road).map((w) => weatherBrief(lang, w)),
+        })),
+        special: specialWeathers.map((w) => weatherBrief(lang, w)),
+        rules: {
+          remnants: LEARN_REMNANTS,
+          shilingMinStar: b.tuning.shiling.minStar,
+          same: m.roadSame,
+          sameMax: m.roadSameMax,
+          other: m.roadOther,
+          otherMax: m.roadOtherMax,
+        },
+      };
+    },
+
+    /** 残卷来源和时令铺的规则同游戏（shiling/service shopPools）：可鉴定的 1~5 级是残卷，其余是珍稀残卷 */
+    mysteriousDetail(lang: Locale, id: number): OpenMysteriousDto | null {
+      const m = config.mysterious.get(id);
+      if (!m) return null;
+      const shop = b.tuning.shiling.shop;
+      const rare = !m.appraisable || m.level >= 6;
+      return {
+        ...meta(lang),
+        ...mcBrief(lang, m),
+        taste: [...m.taste],
+        coin: m.coin,
+        saleRate: b.tuning.mysterious.saleRates[m.level - 1] ?? 1,
+        foods: [...new Set(m.foods)].map((f) => ({ id: f, name: foodName(lang, f) })),
+        inSeason: roadWeathers(m.road).map((w) => weatherBrief(lang, w)),
+        sources: {
+          appraise: m.appraisable
+            ? appraisers
+                .filter(([, a]) => m.level >= a.min && m.level <= a.max)
+                .map(([gid, a]) => ({ id: gid, name: nameOf(lang, gid), rate: a.rate }))
+            : [],
+          fragments: m.appraisable ? b.tuning.mysterious.fragmentPerRemnant : null,
+          shilingShop: rare
+            ? { rare: true, price: shop.rarePrice, weekly: shop.rareWeekly }
+            : { rare: false, price: shop.remnantPerLevel * m.level, weekly: shop.remnantWeekly },
+        },
       };
     },
 

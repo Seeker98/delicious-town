@@ -12,6 +12,7 @@ vi.mock('../../api/endpoints', () => ({
     openGoods: vi.fn(),
     openFoods: vi.fn(),
     openCookbooks: vi.fn(),
+    openMysterious: vi.fn(),
     openStreets: vi.fn(),
   },
 }));
@@ -34,7 +35,7 @@ describe('游戏资料首页（问题记录 142）', () => {
     vi.mocked(endpoints.openIndex).mockResolvedValue({
       ...meta,
       langs: ['zh-CN'],
-      counts: { goods: 695, foods: 336, cookbooks: 3810, equips: 118, streets: 30 },
+      counts: { goods: 695, foods: 336, cookbooks: 3810, mysterious: 250, equips: 118, streets: 30 },
       endpoints: [],
       guide: {
         startStreet: { name: '新手街', cookbooks: 69 },
@@ -76,15 +77,42 @@ describe('游戏资料首页（问题记录 142）', () => {
       ...meta,
       items: [{ id: 1, name: '松露炒饭', streetId: 0, level: 5, coin: 100, mainFoodId: 239 }],
     });
+    vi.mocked(endpoints.openMysterious).mockResolvedValue({
+      ...meta,
+      items: [
+        { id: 9, name: '秘·佛跳墙', level: 5, road: 2, nutritive: 120, mainFoodId: 239 },
+        { id: 7, name: '秘·松露蛋', level: 1, road: 1, nutritive: 8, mainFoodId: 239 },
+        { id: 8, name: '秘·松露汤', level: 3, road: 2, nutritive: 40, mainFoodId: null },
+      ],
+      roads: [
+        { road: 1, weathers: [{ id: 1, name: '晴' }] },
+        {
+          road: 2,
+          weathers: [
+            { id: 2, name: '阴' },
+            { id: 10, name: '小雨' },
+          ],
+        },
+      ],
+      special: [
+        { id: 6, name: '虹' },
+        { id: 7, name: '飓风' },
+      ],
+      rules: { remnants: 3, shilingMinStar: 1, same: 0.02, sameMax: 0.3, other: 0.005, otherMax: 0.1 },
+    });
     vi.mocked(endpoints.openStreets).mockResolvedValue({ ...meta, items: [] });
   });
 
   it('五类卡片带数量和链接；有开放接口说明的链接', async () => {
     const w = await mountView();
-    for (const k of ['goods', 'foods', 'cookbooks', 'equips', 'streets'])
+    for (const k of ['goods', 'foods', 'cookbooks', 'mysterious', 'equips', 'streets'])
       expect(w.get(`[data-testid="wiki-kind-${k}"]`).attributes('href')).toBe(`/wiki/${k}`);
     expect(w.get('[data-testid="wiki-kind-cookbooks"]').text()).toContain('3,810 条');
     expect(w.get('[data-testid="wiki-kind-cookbooks"]').attributes('href')).toBe('/wiki/cookbooks');
+    // 特色菜（2026-10-17）占一整行，写条数和说明
+    expect(w.get('[data-testid="wiki-kind-mysterious"]').text()).toContain(
+      '250 条 · 每道菜的道、当令天气和残卷来源',
+    );
     expect(w.get('[data-testid="wiki-api-link"]').attributes('href')).toBe('/wiki/api');
     // 玩法攻略（问题记录 384）
     expect(w.get('[data-testid="wiki-guide-link"]').attributes('href')).toBe('/wiki/guide');
@@ -100,7 +128,12 @@ describe('游戏资料首页（问题记录 142）', () => {
     expect(hits.map((h) => h.attributes('data-testid'))).toEqual([
       'wiki-hit-foods-239',
       'wiki-hit-cookbooks-1',
+      'wiki-hit-mysterious-7',
+      'wiki-hit-mysterious-8',
     ]);
+    // 特色菜写道（2026-10-17）
+    expect(w.get('[data-testid="wiki-hit-mysterious-8"]').attributes('href')).toBe('/wiki/mysterious/8');
+    expect(w.get('[data-testid="wiki-hit-mysterious-8"]').text()).toContain('二道');
     expect(hits[1]!.attributes('href')).toBe('/wiki/cookbooks/1');
     // 界面改版 P11：结果按类分组，组头写类目和条数
     expect(w.get('[data-testid="wiki-group-foods"] .dt-wiki-group').text()).toBe('食材 · 1');

@@ -6,6 +6,8 @@ import type {
   OpenEquipBrief,
   OpenFoodBrief,
   OpenGoodsBrief,
+  OpenMysteriousBrief,
+  OpenMysteriousListDto,
   OpenStreetDto,
   OpenSuitDto,
 } from '@dt/shared';
@@ -18,20 +20,22 @@ import { useCatalogStore } from '../../stores/catalog';
 import { usePageTitle } from '../../stores/pageTitle';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
-import { PART_NAMES, STREET_FOCUS } from '../../utils/labels';
+import { PART_NAMES, ROAD_NAMES, STREET_FOCUS } from '../../utils/labels';
 import { matchText } from '../../utils/match';
 import { queryInt } from '../../utils/query';
 import { isWikiKind, PART_ART, useWikiData, wikiPath, type WikiKind } from './wiki';
 
 /**
- * 游戏资料列表（问题记录 142；界面改版 P11）：五类共用，按类目换筛选和信息行。
- * 一行一条，左边 44px 图（道具按类别、食材按类别、食谱用主料、厨具用部位图标），名字后面按等级标角标；
+ * 游戏资料列表（问题记录 142；界面改版 P11）：六类共用，按类目换筛选和信息行。
+ * 一行一条，左边 44px 图（道具按类别、食材按类别、食谱和特色菜用主料、厨具用部位图标），名字后面按等级标角标；
+ * 特色菜（2026-10-17）按道筛选，选了一道就在条数上面写这一道哪些天气当令；
  * 筛选胶囊放得下就换行，条数写在列表右上；食谱的街道是整宽胶囊，点开底部面板选
  */
 const PAGE = 50;
 const GOODS_TYPES = [0, 1, 2, 3, 4, 5, 9, 10];
 const FOOD_LEVELS = [1, 2, 3, 4, 5, 6, 7];
 const PARTS = [1, 2, 3, 4, 5];
+const ROADS = [1, 2, 3, 4, 5, 6];
 /** 菜谱推荐等级分段 */
 const LEVEL_BANDS: Array<[number, number]> = [
   [1, 20],
@@ -48,6 +52,7 @@ function filtersOf(k: WikiKind | null): number[] {
   if (k === 'foods') return FOOD_LEVELS;
   if (k === 'cookbooks') return LEVEL_BANDS.map((_, i) => i);
   if (k === 'equips') return PARTS;
+  if (k === 'mysterious') return ROADS;
   return [];
 }
 
@@ -61,6 +66,8 @@ const kind = computed<WikiKind | null>(() => (isWikiKind(route.params.kind) ? ro
 const goods = shallowRef<OpenGoodsBrief[]>([]);
 const foods = shallowRef<OpenFoodBrief[]>([]);
 const cookbooks = shallowRef<OpenCookbookBrief[]>([]);
+const mysterious = shallowRef<OpenMysteriousBrief[]>([]);
+const mcRoads = shallowRef<OpenMysteriousListDto['roads']>([]);
 const equips = shallowRef<OpenEquipBrief[]>([]);
 const suits = shallowRef<OpenSuitDto[]>([]);
 const streets = shallowRef<OpenStreetDto[]>([]);
@@ -101,7 +108,9 @@ async function load(k: WikiKind) {
             ? (await data.cookbooks()).items
             : k === 'equips'
               ? await data.equips()
-              : null;
+              : k === 'mysterious'
+                ? await data.mysterious()
+                : null;
     if (mine !== seq) return;
     streets.value = s;
     // 地址里的街道不存在（backlog 第 ⑧ 批审查）：当成全部
@@ -117,6 +126,9 @@ async function load(k: WikiKind) {
     else if (k === 'equips' && items && 'suits' in items) {
       equips.value = items.items;
       suits.value = items.suits;
+    } else if (k === 'mysterious' && items && 'roads' in items) {
+      mysterious.value = items.items;
+      mcRoads.value = items.roads;
     }
   } catch {
     if (mine !== seq) return;
@@ -239,6 +251,18 @@ const all = computed<Row[]>(() => {
           .filter(Boolean)
           .join(' · '),
       }));
+  // 特色菜按等级排，同级按编号
+  if (k === 'mysterious')
+    return [...mysterious.value]
+      .filter((m) => filter.value === null || m.road === filter.value)
+      .sort((x, y) => x.level - y.level || x.id - y.id)
+      .map((m) => ({
+        id: m.id,
+        name: m.name,
+        art: m.mainFoodId ? catalog.foodArt(m.mainFoodId) : 'goods-scroll',
+        level: m.level,
+        sub: [ROAD_NAMES[m.road] ?? '', `${w.value.fields.nutritive} ${formatNum(m.nutritive)}`].join(' · '),
+      }));
   if (k === 'streets')
     return streets.value.map((s) => ({
       id: s.id,
@@ -263,9 +287,18 @@ const pills = computed<Array<{ value: number; label: string }>>(() => {
     return GOODS_TYPES.map((x) => ({ value: x, label: w.value.goodsTypes[String(x)] ?? '' }));
   if (k === 'foods') return FOOD_LEVELS.map((x) => ({ value: x, label: w.value.level(x) }));
   if (k === 'equips') return PARTS.map((x) => ({ value: x, label: PART_NAMES[x] ?? '' }));
+  if (k === 'mysterious') return ROADS.map((x) => ({ value: x, label: ROAD_NAMES[x] ?? '' }));
   if (k === 'cookbooks')
     return LEVEL_BANDS.map(([a, b], i) => ({ value: i, label: b >= 999 ? `${a}+` : `${a}~${b}` }));
   return [];
+});
+/** 特色菜选了一道时：这一道当令的天气（特殊天气全部当令） */
+const roadSeason = computed(() => {
+  if (kind.value !== 'mysterious' || filter.value === null) return '';
+  const r = mcRoads.value.find((x) => x.road === filter.value);
+  return r
+    ? w.value.mc.roadSeason(ROAD_NAMES[r.road] ?? '', r.weathers.map((x) => x.name).join(t.value.events.sep))
+    : '';
 });
 /** 食谱的街道：整宽胶囊，点开从底部弹出街道单选面板 */
 const streetSheet = ref(false);
@@ -332,6 +365,7 @@ function pickStreet(id: number | null) {
           {{ t.wiki.rareOnly }}
         </button>
       </div>
+      <p v-if="roadSeason" class="dt-meta mb-1" data-testid="wiki-road-season">{{ roadSeason }}</p>
       <div class="dt-wiki-count dt-meta">{{ t.wiki.count(matched.length) }}</div>
       <div v-if="error" class="dt-empty" data-testid="wiki-error">{{ t.wiki.loadFailed }}</div>
       <template v-else-if="loaded">

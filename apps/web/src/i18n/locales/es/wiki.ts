@@ -5,7 +5,7 @@ import { plEs } from '../../helpers';
 const wiki: Messages['wiki'] = {
   title: 'Datos del juego',
   intro:
-    'Objetos, ingredientes, recetas, utensilios y calles del juego, sincronizados con los datos del juego.',
+    'Objetos, ingredientes, recetas, platos estrella, utensilios y calles del juego, sincronizados con los datos del juego.',
   searchAll: 'Buscar en todos los nombres',
   search: 'Buscar por nombre',
   noResult: 'No se encontró nada',
@@ -21,6 +21,7 @@ const wiki: Messages['wiki'] = {
     goods: 'Objetos',
     foods: 'Ingredientes',
     cookbooks: 'Recetas',
+    mysterious: 'Platos estrella',
     equips: 'Utensilios',
     streets: 'Calles',
   },
@@ -33,6 +34,7 @@ const wiki: Messages['wiki'] = {
   moreIn: (n, kind) => `${n} más · ver todo (${kind})`,
   catalogTitle: 'Secciones',
   streetsNote: 'Cocina, bonificación y medalla de cada calle',
+  mysteriousNote: 'Vía, clima de temporada y origen de los fragmentos de cada plato',
   columns: 'Columnas',
   columnKick: 'Biblioteca · Columnas',
   toc: 'Índice',
@@ -68,6 +70,10 @@ const wiki: Messages['wiki'] = {
     grades: 'Ingredientes por calidad',
     medal: 'Medalla de calle',
     streetCookbooks: 'Recetas de esta calle',
+    mcFoods: 'Ingredientes',
+    inSeason: 'Clima de temporada',
+    remnantSources: 'De dónde salen los fragmentos',
+    roadRule: 'Bonificación de vía',
   },
   fields: {
     star: 'Estrellas',
@@ -108,6 +114,11 @@ const wiki: Messages['wiki'] = {
     theme: 'Ambiente',
     cookbookCount: (n) => `${n} ${plEs(n, 'plato', 'platos')}`,
     suitTier: (n) => `${n} ${plEs(n, 'pieza', 'piezas')}`,
+    road: 'Vía',
+    nutritive: 'Valor nutritivo',
+    saleRate: 'Venta a clientes',
+    saleRateVal: (r) => `×${r} por ración`,
+    remnantPrice: 'Precio del fragmento',
   },
   gift: {
     randomGoods: (level, num) => `Un objeto de nv. ${level} al azar×${num}`,
@@ -127,6 +138,26 @@ const wiki: Messages['wiki'] = {
     exchange: 'Canje: ',
     times: (n) => (n < 0 ? '' : ` (${n} por jugador)`),
     none: 'No hay una fuente directa en los datos del juego: puede venir de eventos, packs de regalo, misiones u otras actividades.',
+  },
+  /** 特色菜词条（资料库特色菜 2026-10-17）：当令、残卷来源、道的加成 */
+  mc: {
+    roadSeason: (road, names) => `${road} de temporada: ${names}, y todos los climas especiales.`,
+    inSeason: (names, special) =>
+      `${names}; con clima especial (${special}) las seis vías están de temporada.`,
+    inSeasonNote: (star) =>
+      `Desde ${star}★: mientras este plato está en venta y de temporada, cada ración que se comen los clientes exigentes o Calamardo da puntos de temporada, según el clima de la ronda en que se come.`,
+    learn: (n) => `Reúne ${n} fragmentos para aprenderlo; puedes cocinarlo desde 1★.`,
+    appraise: 'Tasación: ',
+    sure: 'acierto seguro',
+    fragments: (n, level) => `Canje de trozos: ${n} trozos de nv. ${level} por 1 fragmento`,
+    shop: (price, weekly) =>
+      `Tienda de temporada: ${price} puntos de temporada cada uno (${weekly} por semana)`,
+    shopRare: (price, weekly) =>
+      `Fragmento raro en la tienda de temporada: ${price} puntos de temporada cada uno (${weekly} por semana)`,
+    lesson: 'Clases: aprende con un jugador que sepa el plato y dé clase',
+    roadRule: (road, same, sameMax, other, otherMax) =>
+      `Cada otro plato estrella de la ${road} que sabes sube en ${same} las raciones por tanda de este plato (hasta ${sameMax}); cada plato de otra vía, en ${other} (hasta ${otherMax}).`,
+    guide: 'Cómo aprender platos estrella: ver la guía',
   },
   /** 玩法攻略（问题记录 384）：来自快速模拟里三种机器人的做法 */
   guide: {
@@ -236,6 +267,9 @@ const wiki: Messages['wiki'] = {
       foodsId: 'Detalle de ingrediente: recetas y platos estrella que lo usan',
       cookbooks: 'Lista de recetas (sin ingredientes)',
       cookbooksId: 'Detalle de receta: ingredientes de las calidades 1 a 10',
+      mysterious: 'Lista de platos estrella, tabla de temporada y bonificación de vía',
+      mysteriousId:
+        'Detalle de un plato estrella: ingredientes, clima de temporada, origen de los fragmentos',
       equips: 'Lista de utensilios y conjuntos',
       streets: 'Calles, cocinas, bonificaciones y medallas de calle',
     },

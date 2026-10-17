@@ -30,10 +30,13 @@ describe('开放接口（问题记录 142）', () => {
       '/api/v1/open/cookbooks',
       '/api/v1/open/equips',
       '/api/v1/open/streets',
+      '/api/v1/open/mysterious',
+      `/api/v1/open/mysterious/${ctx.deps.config.bundle.mysteriousCookbooks[0]!.id}`,
     ])
       expect((await call(ctx.app, 'GET', url)).status, url).toBe(200);
     expect((await call(ctx.app, 'GET', `/api/v1/open/goods/${gid('开发测试礼包')}`)).status).toBe(404);
     expect((await call(ctx.app, 'GET', '/api/v1/open/cookbooks/999999')).status).toBe(404);
+    expect((await call(ctx.app, 'GET', '/api/v1/open/mysterious/999999')).status).toBe(404);
     expect((await call(ctx.app, 'GET', '/api/v1/open/goods?lang=xx')).json.code).toBe('VALIDATION_FAILED');
   });
 

@@ -18,6 +18,7 @@ describe('开放接口数据（问题记录 142）', () => {
       goods: b.goods.filter((g) => !WIKI_HIDDEN_GOODS.has(g.id) && !g.retired).length,
       foods: b.foods.filter((f) => !f.retired).length,
       cookbooks: b.cookbooks.length,
+      mysterious: b.mysteriousCookbooks.length,
       equips: b.goods.filter((g) => g.equip && !WIKI_HIDDEN_GOODS.has(g.id) && !g.retired).length,
       streets: b.streets.length,
     });
@@ -163,6 +164,72 @@ describe('开放接口数据（问题记录 142）', () => {
     const mc = b.mysteriousCookbooks[0]!;
     expect(data.food('zh-CN', mc.foods[0]!)!.mysterious.map((m) => m.id)).toContain(mc.id);
     expect(data.food('zh-CN', 999_999)).toBeNull();
+  });
+
+  it('特色菜列表（资料库特色菜 2026-10-17）：当令表按道列、特殊天气单列，带道的加成规则', () => {
+    const x = data.mysterious('zh-CN');
+    expect(x.items).toHaveLength(b.mysteriousCookbooks.length);
+    const m = b.mysteriousCookbooks[0]!;
+    expect(x.items[0]).toEqual({
+      id: m.id,
+      name: m.name,
+      level: m.level,
+      road: m.road,
+      nutritive: m.nutritive,
+      mainFoodId: m.foods[0],
+    });
+    const roads = new Map(b.tuning.shiling.roads);
+    expect(x.roads.map((r) => r.road)).toEqual([1, 2, 3, 4, 5, 6]);
+    for (const r of x.roads)
+      for (const w of r.weathers) {
+        expect(roads.get(w.id)).toContain(r.road);
+        expect(config.weather.get(w.id)!.special).toBe(false);
+      }
+    expect(x.special.map((w) => w.id).sort((p, q) => p - q)).toEqual(
+      b.weather
+        .filter((w) => w.special)
+        .map((w) => w.id)
+        .sort((p, q) => p - q),
+    );
+    const t = b.tuning.mysterious;
+    expect(x.rules).toEqual({
+      remnants: 3,
+      shilingMinStar: b.tuning.shiling.minStar,
+      same: t.roadSame,
+      sameMax: t.roadSameMax,
+      other: t.roadOther,
+      otherMax: t.roadOtherMax,
+    });
+    // 天气名按语言
+    const en = data.mysterious('en');
+    expect(en.special[0]!.name).not.toBe(x.special[0]!.name);
+  });
+
+  it('特色菜词条：食材、卖出倍率、当令天气；残卷来源按等级对上鉴定道具和时令铺', () => {
+    const low = b.mysteriousCookbooks.find((m) => m.appraisable && m.level === 2)!;
+    const d = data.mysteriousDetail('zh-CN', low.id)!;
+    expect(d.foods.map((f) => f.id)).toEqual([...new Set(low.foods)]);
+    expect(d.saleRate).toBe(b.tuning.mysterious.saleRates[1]);
+    expect(d.coin).toBe(low.coin);
+    expect(d.inSeason).toEqual(data.mysterious('zh-CN').roads.find((r) => r.road === low.road)!.weathers);
+    const ids = d.sources.appraise.map((a) => a.id);
+    for (const [gidx, a] of config.appraiseTools)
+      expect(ids.includes(gidx)).toBe(low.level >= a.min && low.level <= a.max);
+    expect(d.sources.fragments).toBe(b.tuning.mysterious.fragmentPerRemnant);
+    const shop = b.tuning.shiling.shop;
+    expect(d.sources.shilingShop).toEqual({
+      rare: false,
+      price: shop.remnantPerLevel * 2,
+      weekly: shop.remnantWeekly,
+    });
+    // 6 级在时令铺是珍稀残卷
+    const top = b.mysteriousCookbooks.find((m) => m.level === 6)!;
+    expect(data.mysteriousDetail('zh-CN', top.id)!.sources.shilingShop).toEqual({
+      rare: true,
+      price: shop.rarePrice,
+      weekly: shop.rareWeekly,
+    });
+    expect(data.mysteriousDetail('zh-CN', 999_999)).toBeNull();
   });
 
   it('菜谱详情：10 个品级的食材带名字；描述只在简中、繁中给', () => {

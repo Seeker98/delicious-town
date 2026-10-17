@@ -15,6 +15,7 @@ vi.mock('../../api/endpoints', () => ({
     openFoods: vi.fn(),
     openCookbooks: vi.fn(),
     openEquips: vi.fn(),
+    openMysterious: vi.fn(),
     openStreets: vi.fn(),
   },
 }));
@@ -329,6 +330,71 @@ describe('游戏资料列表（问题记录 142）', () => {
     await w.get('[data-testid="wiki-filter-2"]').trigger('click');
     expect(rows(w)).toEqual(['31']);
     expect(w.get('[data-testid="wiki-row-31"]').attributes('href')).toBe('/wiki/goods/31');
+  });
+
+  it('特色菜（2026-10-17）：按等级排，按道筛选；选了一道写这一道当令的天气', async () => {
+    vi.mocked(endpoints.openMysterious).mockResolvedValue({
+      ...meta,
+      items: [
+        { id: 9, name: '秘·佛跳墙', level: 5, road: 2, nutritive: 120, mainFoodId: 239 },
+        { id: 7, name: '秘·松露蛋', level: 1, road: 1, nutritive: 8, mainFoodId: 239 },
+        { id: 8, name: '秘·松露汤', level: 3, road: 2, nutritive: 40, mainFoodId: null },
+      ],
+      roads: [
+        { road: 1, weathers: [{ id: 1, name: '晴' }] },
+        {
+          road: 2,
+          weathers: [
+            { id: 2, name: '阴' },
+            { id: 10, name: '小雨' },
+          ],
+        },
+      ],
+      special: [
+        { id: 6, name: '虹' },
+        { id: 7, name: '飓风' },
+      ],
+      rules: { remnants: 3, shilingMinStar: 1, same: 0.02, sameMax: 0.3, other: 0.005, otherMax: 0.1 },
+    });
+    const w = await mountAt('/wiki/mysterious');
+    expect(rows(w)).toEqual(['7', '8', '9']);
+    expect(w.get('[data-testid="wiki-row-8"]').attributes('href')).toBe('/wiki/mysterious/8');
+    expect(w.get('[data-testid="wiki-row-8"]').text()).toContain('二道 · 营养值 40');
+    expect(w.find('[data-testid="wiki-road-season"]').exists()).toBe(false);
+    await w.get('[data-testid="wiki-filter-2"]').trigger('click');
+    expect(rows(w)).toEqual(['8', '9']);
+    expect(w.get('[data-testid="wiki-road-season"]').text()).toBe(
+      '二道当令的天气: 阴、小雨, 还有全部特殊天气。',
+    );
+  });
+
+  it('特色菜：地址里的道能恢复（词条里点“道”跳过来）', async () => {
+    vi.mocked(endpoints.openMysterious).mockResolvedValue({
+      ...meta,
+      items: [
+        { id: 9, name: '秘·佛跳墙', level: 5, road: 2, nutritive: 120, mainFoodId: 239 },
+        { id: 7, name: '秘·松露蛋', level: 1, road: 1, nutritive: 8, mainFoodId: 239 },
+        { id: 8, name: '秘·松露汤', level: 3, road: 2, nutritive: 40, mainFoodId: null },
+      ],
+      roads: [
+        { road: 1, weathers: [{ id: 1, name: '晴' }] },
+        {
+          road: 2,
+          weathers: [
+            { id: 2, name: '阴' },
+            { id: 10, name: '小雨' },
+          ],
+        },
+      ],
+      special: [
+        { id: 6, name: '虹' },
+        { id: 7, name: '飓风' },
+      ],
+      rules: { remnants: 3, shilingMinStar: 1, same: 0.02, sameMax: 0.3, other: 0.005, otherMax: 0.1 },
+    });
+    const w = await mountAt('/wiki/mysterious?f=1');
+    expect(rows(w)).toEqual(['7']);
+    expect(w.get('[data-testid="wiki-filter-1"]').attributes('aria-pressed')).toBe('true');
   });
 
   it('街道：直接列出，写菜系和菜谱数', async () => {

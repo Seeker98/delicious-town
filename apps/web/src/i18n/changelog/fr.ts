@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  wikimc1017:
+    'Les données du jeu ont maintenant les «\u202fPlats signature\u202f»\u202f: les 250 plats indiquent niveau, voie, valeur nutritive, multiplicateur de vente et ingrédients, ainsi que les météos où ils sont de saison, l’origine des fragments (objets d’expertise, échange d’éclats, boutique de saison, leçons) et le bonus de voie\u202f; la liste se filtre par voie et indique les météos de saison de cette voie\u202f; «\u202fPlats signature qui l’utilisent\u202f» sur les ingrédients mène à leur fiche\u202f; l’API ouverte a aussi les plats signature',
   art1017:
     'Nouvel équipement, les œuvres d’art\u202f: sous les équipements de l’accueil, deux nouvelles places, la scène musicale et le paravent (ouvertes à 1 étoile). Installez une musique ou un tableau pour 24 heures afin d’attirer plus de clients, d’attirer les clients exigeants, ou d’en accueillir plus quand la salle est pleine. La boutique a une nouvelle catégorie Œuvres d’art, et quelques chefs-d’œuvre ne se vendent qu’au marché noir. Le dernier lot du kuji (normal et de luxe) donne désormais le Disque d’or de Voyager, qui va sur l’une ou l’autre place, à la place du Krabby Patty et de la Boussole céleste',
   streets1017:
