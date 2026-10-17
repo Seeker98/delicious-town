@@ -25,7 +25,7 @@ import { slotFloorErrors } from './slot';
 import { checkSettingDocs } from './settingDocs';
 import { applyStressTables } from './stressTable';
 import { isNewId, type IdKind } from './renumber';
-import { checkStreetDescs } from './streetDesc';
+import { checkStreetDescs, checkStreetMedals } from './streetDesc';
 import { elderAttrs, elderErrors, elderLevelErrors } from './towerFloor';
 import type {
   ActivationReward,
@@ -1340,6 +1340,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     errors,
   );
   checkStreetDescs(streets, goods, i18n, errors);
+  checkStreetMedals(streets, goods, errors);
   if (errors.length > 0) return { bundle: null, errors };
 
   const body: Omit<ConfigBundle, 'version'> = {

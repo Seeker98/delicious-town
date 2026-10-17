@@ -1,9 +1,9 @@
 {
   "rest": {
-    "atRateBase": 0.3,
-    "atRatePerStar": 0.05,
-    "spRateBase": 0.1,
-    "spRatePerStar": 0.02,
+    "atRateBase": 0.25,
+    "atRatePerStar": 0.07,
+    "spRateBase": 0.12,
+    "spRatePerStar": 0.03,
     "localRateBase": 0.9,
     "localRatePerStar": 0,
     "oilBase": 2,

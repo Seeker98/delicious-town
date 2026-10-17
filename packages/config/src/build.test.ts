@@ -1922,6 +1922,31 @@ describe('主表手写定义的格式检查（质量期第 ⑦ 批）', () => {
     );
   });
 
+  it('街道勋章的规矩（街道再平衡第三版 2026-10-17）：不能有上座率、挑剔率，减成不超过 10%，耗油有上限；新手街例外', () => {
+    const src = source();
+    const goods = structuredClone(src['master/goods']) as M[];
+    const set = (id: number, value: Record<string, number>) => {
+      const g = goods.find((x) => x.id === id)!;
+      g.value = { ...(g.value as Record<string, number>), ...value };
+    };
+    set(60016, { atRate: 0.05 });
+    set(60026, { coinRate: -0.15 });
+    set(60013, { oilRate: 0.2 });
+    set(60003, { oilValue: 3 });
+    set(60000, { atRate: 0.4 });
+    const { errors } = buildBundle({ ...src, 'master/goods': goods });
+    expect(errors).toEqual(
+      expect.arrayContaining([
+        'street medal 60016 has atRate',
+        'street medal 60026 coinRate -0.15 < -0.1',
+        'street medal 60013 oilRate 0.2 > 0.15',
+        'street medal 60003 oilValue 3 > 2',
+      ]),
+    );
+    expect(errors.filter((e) => e.startsWith('street medal 60000'))).toEqual([]);
+    expect(realBuild().errors.filter((e) => e.startsWith('street medal'))).toEqual([]);
+  });
+
   it('街道带主题说明和类型（问题记录 380、378 方案 C）：除新手街外都要写，英法西有主题译文', () => {
     const b = realBuild().bundle!;
     const japan = b.streets.find((s) => s.id === 14)!;

@@ -95,7 +95,7 @@ describe('餐厅读接口', () => {
     expect(income.today).toEqual({ rounds: 1, coin: it0.coin, exp: it0.exp, oil: it0.oil });
     const buffs = (await get(p.cookie, '/buffs')).json.data;
     expect(buffs.roundNo).toBe(round);
-    expect(buffs.rates.atRate.parts.base).toBeCloseTo(0.3);
+    expect(buffs.rates.atRate.parts.base).toBeCloseTo(0.25);
     expect(buffs.sources.map((s: { sourceId: number }) => s.sourceId).sort()).toEqual(
       [GOODS.redPants, gid('新手街'), gid('开张大吉')].sort(),
     );
