@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  streets1017:
+    'Street rebalance: the 29 streets (except Newbie Street) no longer change occupancy or picky rate and give coins per table, coins from satisfied picky customers and the like instead; street strength is evened out, no street cuts final coins or EXP by more than 10%, and the mystery-ingredient bonus when exploring goes from +2% to +1%. The star base for occupancy and picky rate is now 0.25 + 0.07 × stars and 0.12 + 0.03 × stars: about the same at 2 stars, and it grows faster at higher stars',
   predict1017:
     'Market prediction questions: whether the daily shelf gets rare ingredients of a given level no longer counts the Newbie Street slot (it always stocks a level-2 ingredient Newbie Street needs, which used to decide most level-2 questions), and starting odds are estimated without it; questions posted earlier are judged as before; that slot now has a “Newbie St.” tag on the daily market',
   acquire1016:

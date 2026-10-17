@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  streets1017:
+    'Reequilibrio de calles: las 29 calles (salvo la Calle de los novatos) ya no cambian la ocupación ni la tasa de exigentes, y dan en su lugar monedas por mesa, monedas de clientes exigentes satisfechos, etc.; la fuerza de las calles se iguala, ninguna calle reduce las monedas o la EXP finales más de un 10\u00a0%, y la probabilidad de ingredientes misteriosos al explorar pasa de +2\u00a0% a +1\u00a0%. La base por estrella de la ocupación y de los exigentes pasa a 0,25 + 0,07 × estrellas y 0,12 + 0,03 × estrellas: casi igual con 2 estrellas, y sube más rápido con más estrellas',
   predict1017:
     'Preguntas de predicción del mercado: el hueco de la Calle de los novatos ya no cuenta para saber si el estante diario tendrá ingredientes raros de un nivel (siempre trae un ingrediente de nivel 2 que necesita la Calle de los novatos, y decidía la mayoría de las preguntas de nivel 2), y las probabilidades iniciales se calculan sin él; las preguntas ya publicadas se juzgan como antes; ese hueco ahora lleva la etiqueta «Novatos» en el Mercado diario',
   acquire1016:

@@ -171,17 +171,17 @@ describe('接口', () => {
     const zh = await call(http.app, 'GET', '/api/v1/world/catalog');
     expect(zh.json.data.streets.find((s: { id: number }) => s.id === 24)).toMatchObject({
       name: '摩洛哥街',
-      desc: '最终银币收益+10%, 最终经验收益+25%, 探险时获得神秘食材概率+2%, 幸运值+25',
+      desc: '最终银币收益+4%, 最终经验收益+10%, 探险时获得神秘食材概率+1%, 幸运值+25',
     });
     const en = await call(http.app, 'GET', '/api/v1/world/catalog?lang=en');
     expect(en.json.data.streets.find((s: { id: number }) => s.id === 14)).toEqual({
       id: 14,
       name: 'Japan Street',
       cookName: 'Japanese cuisine',
-      desc: 'Final coins +40%, final EXP -5%, picky rate +12%, coins from satisfied picky customers +15%, occupancy -5%',
+      desc: 'Final coins +10%, final EXP -5%, coins from satisfied picky customers +30%',
       // 主题说明和街道类型（问题记录 380、378 方案 C）
       theme:
-        'Refined cuisine built on fine ingredients and knife skills: many picky customers who pay generously, but the high bar means fewer diners',
+        'Refined cuisine built on fine ingredients and knife skills: satisfied picky customers pay the most generously',
       focus: 'coin',
     });
     expect(zh.json.data.streets.find((s: { id: number }) => s.id === 0)).toMatchObject({ focus: null });

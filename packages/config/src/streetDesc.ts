@@ -146,3 +146,46 @@ export function checkStreetDescs(
     }
   }
 }
+
+/** 街道勋章允许的效果（街道再平衡第三版 2026-10-17）：街道只管“住在哪”，不碰上座率、挑剔率 */
+const STREET_MEDAL_KEYS = new Set([
+  'coinRate',
+  'expRate',
+  'oilRate',
+  'oilValue',
+  'coinValue',
+  'expValue',
+  'luckValue',
+  'taCoinRate',
+  'taExpRate',
+  'mcCoinRate',
+  'mcNumRate',
+  'mcGoldRate',
+  'spCoinRate',
+  'mysteriousRate',
+  'roachClearRate',
+]);
+
+/**
+ * 构建检查：街道勋章的规矩（街道再平衡第三版 2026-10-17）。只用允许的效果；最终银币、经验不低于 −10%；
+ * 耗油不超过 +15%、每桌耗油不超过 +2。新手街（0 星教学期）例外，保留上座率、挑剔率
+ */
+export function checkStreetMedals(
+  streets: readonly Street[],
+  goods: readonly Goods[],
+  errors: string[],
+): void {
+  const byId = new Map(goods.map((g) => [g.id, g]));
+  for (const s of streets) {
+    if (s.id === 0) continue;
+    const medal = byId.get(s.medalId);
+    if (!medal) continue;
+    const e = medal.effects;
+    for (const k of Object.keys(e))
+      if (k !== 'time' && !STREET_MEDAL_KEYS.has(k)) errors.push(`street medal ${medal.id} has ${k}`);
+    for (const k of ['coinRate', 'expRate'] as const)
+      if ((e[k] ?? 0) < -0.1 - 1e-9) errors.push(`street medal ${medal.id} ${k} ${e[k]} < -0.1`);
+    if ((e.oilRate ?? 0) > 0.15 + 1e-9) errors.push(`street medal ${medal.id} oilRate ${e.oilRate} > 0.15`);
+    if ((e.oilValue ?? 0) > 2) errors.push(`street medal ${medal.id} oilValue ${e.oilValue} > 2`);
+  }
+}

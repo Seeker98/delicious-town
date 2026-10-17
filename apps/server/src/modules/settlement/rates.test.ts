@@ -6,9 +6,13 @@ import { computeRates } from './rates';
 import type { SettleGlobals } from './types';
 
 const config = testConfig();
-/** 其它规则按原作数值断言：低等级经验加成关掉（问题记录 378，下面单独测） */
+/**
+ * 其它规则按原作数值断言：低等级经验加成关掉（问题记录 378，下面单独测）；
+ * 星级底数固定成原来的 0.3 + 0.05s、0.1 + 0.02s，下面软上限、浮动的手算都按它（新默认值单独测，街道再平衡第三版 2026-10-17）
+ */
 const tuning = {
   ...config.tuning,
+  rest: { ...config.tuning.rest, atRateBase: 0.3, atRatePerStar: 0.05, spRateBase: 0.1, spRatePerStar: 0.02 },
   settlement: { ...config.tuning.settlement, newbieExp: { ...config.tuning.settlement.newbieExp, rate: 0 } },
 };
 const rates = (patch: InputPatch = {}, g: Partial<SettleGlobals> = {}, rng = [0.5, 0.5]) =>
@@ -23,6 +27,25 @@ describe('汇总率（规格书 01 §1.3）', () => {
     expect(r.expRate.parts).toEqual({ starPotential: 0.6 });
     expect(r.coinRate.total).toBe(0);
     expect(r.seated).toBe(1);
+  });
+
+  it('星级底数（街道再平衡第三版 2026-10-17）：上座 0.25 + 0.07s、挑剔 0.12 + 0.03s', () => {
+    const def = { ...tuning, rest: config.tuning.rest };
+    const at = (star: number) =>
+      computeRates(buildInput(config, { rest: { star } }), buildGlobals(config, def), sequenceRng([0.5, 0.5]))
+        .rates;
+    expect(config.tuning.rest).toMatchObject({
+      atRateBase: 0.25,
+      atRatePerStar: 0.07,
+      spRateBase: 0.12,
+      spRatePerStar: 0.03,
+    });
+    expect(at(0).atRate.parts.base).toBeCloseTo(0.25);
+    expect(at(0).spRate.parts.base).toBeCloseTo(0.12);
+    expect(at(2).atRate.parts.base).toBeCloseTo(0.39);
+    expect(at(2).spRate.parts.base).toBeCloseTo(0.18);
+    expect(at(7).atRate.parts.base).toBeCloseTo(0.74);
+    expect(at(7).spRate.parts.base).toBeCloseTo(0.33);
   });
 
   it('食谱加成：各品级食谱数 × r_L × L × 菜谱上座率倍数（街道再平衡第二版，默认 0.5）', () => {

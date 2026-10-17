@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  streets1017:
+    'Rééquilibrage des rues\u202f: les 29 rues (sauf la Rue des débutants) ne modifient plus la fréquentation ni le taux de clients difficiles, et donnent à la place des pièces par table, des pièces des clients difficiles satisfaits, etc.\u202f; la force des rues est harmonisée, aucune rue ne réduit les pièces ou l’EXP finales de plus de 10\u202f%, et le bonus d’ingrédients mystères en exploration passe de +2\u202f% à +1\u202f%. La base par étoile de la fréquentation et des clients difficiles devient 0,25 + 0,07 × étoiles et 0,12 + 0,03 × étoiles\u202f: presque pareil à 2 étoiles, et elle monte plus vite aux étoiles supérieures',
   predict1017:
     'Questions de prédiction du marché\u202f: la place de la Rue des débutants ne compte plus pour savoir si le rayon du jour aura des ingrédients rares d’un niveau donné (elle propose toujours un ingrédient de niveau 2 dont la Rue des débutants a besoin, ce qui décidait la plupart des questions de niveau 2), et les probabilités de départ sont estimées sans elle\u202f; les questions déjà publiées sont jugées comme avant\u202f; cette place porte désormais l’étiquette «\u202fDébutants\u202f» au Marché du jour',
   acquire1016:

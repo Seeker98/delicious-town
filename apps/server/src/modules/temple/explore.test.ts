@@ -97,8 +97,8 @@ describe('探险（规格书 09 §9.2）', () => {
 });
 
 describe('街道勋章的神秘食材概率（问题记录 284）', () => {
-  it('摩洛哥街 +2%，别的街 0', () => {
-    expect(streetMysteriousRate(config, 24)).toBeCloseTo(0.02);
+  it('摩洛哥街 +1%（街道再平衡第三版 2026-10-17，原 +2%），别的街 0', () => {
+    expect(streetMysteriousRate(config, 24)).toBeCloseTo(0.01);
     expect(streetMysteriousRate(config, 1)).toBe(0);
   });
 });

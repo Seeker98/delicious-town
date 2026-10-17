@@ -13,6 +13,8 @@ const street1 = config.cookbookIndex.idsByStreet.get(1)![0]!;
 /** 规则测试按原作数值断言，经验倍率、菜价倍率固定为 1 */
 const withMultiplier = (m: number) => ({
   ...config.tuning,
+  // 星级底数按原来的 0.3 + 0.05s、0.1 + 0.02s（街道再平衡第三版 2026-10-17 改了默认值，下面固定随机数排的桌按它）
+  rest: { ...config.tuning.rest, atRateBase: 0.3, atRatePerStar: 0.05, spRateBase: 0.1, spRatePerStar: 0.02 },
   // 菜价倍率也按原版 1（240-1 的效果由“菜价倍率”那条单独测）；低等级经验加成关掉（问题记录 378，rates.test 单独测）
   settlement: {
     ...config.tuning.settlement,
