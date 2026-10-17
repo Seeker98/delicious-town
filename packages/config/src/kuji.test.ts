@@ -64,12 +64,8 @@ describe('一番赏配置（设计 §3、§4）', () => {
     const k = b.tuning.kuji;
     expect(k.maxPools).toBe(3);
     for (const tier of k.tiers) expect(tier.award.goods ?? []).toEqual([]);
-    // 最后赏默认只多给 1 个蟹黄堡（问题记录 515），当月手办开池时另外追加
-    // 天气改版：最后赏多一个司天罗盘（用户 2026-10-12）
-    expect(k.last.award.goods).toEqual([
-      { id: GOODS.krabBurger, num: 1 },
-      { id: GOODS.compass, num: 1 },
-    ]);
+    // 最后赏默认的道具：原来是蟹黄堡（问题记录 515）+ 司天罗盘（天气改版），艺术品设施 2026-10-17 换成金唱片；当月手办开池时另外追加
+    expect(k.last.award.goods).toEqual([{ id: GOODS.goldenRecord, num: 1 }]);
   });
 
   it('月度主题校验：缺月份、重复月份报错', () => {
@@ -116,8 +112,15 @@ describe('一番赏配置（设计 §3、§4）', () => {
 });
 
 describe('一番赏奖池按道具价格迁移定稿（2026-10-15）', () => {
-  /** 价值表的锚：1 钻 = 1 万银币，蟹黄堡 50 万，司天罗盘 30 万（银币店价）；月度主题手办不算 */
-  const VALUE: Record<number, number> = { [GOODS.krabBurger]: 500_000, [GOODS.compass]: 300_000 };
+  /**
+   * 价值表的锚：1 钻 = 1 万银币，蟹黄堡 50 万，司天罗盘 30 万（银币店价）；月度主题手办不算。
+   * 金唱片（24 小时）按 2 星头部店一天的使用价 75 万（艺术品设施定价 §9.4）
+   */
+  const VALUE: Record<number, number> = {
+    [GOODS.krabBurger]: 500_000,
+    [GOODS.compass]: 300_000,
+    [GOODS.goldenRecord]: 750_000,
+  };
   type Award = { coin?: number; diamond?: number; goods?: Array<{ id: number; num: number }> };
   const worth = (a: Award) =>
     (a.coin ?? 0) +
@@ -126,7 +129,7 @@ describe('一番赏奖池按道具价格迁移定稿（2026-10-15）', () => {
   const round = (p: { tiers: Array<{ count: number; award: Award }>; last: { award: Award } }) =>
     p.tiers.reduce((s, x) => s + x.count * worth(x.award), 0) + worth(p.last.award);
 
-  it('普通池：券 4.5 万；A 35 钻、B 10、C 5、D 1 万、E 5,000、F 2,000，最后赏 35 钻 + 蟹黄堡 + 罗盘；一轮合计 215.5 万', () => {
+  it('普通池：券 4.5 万；A 35 钻、B 10、C 5、D 1 万、E 5,000、F 2,000，最后赏 35 钻 + 金唱片（艺术品设施 2026-10-17，原蟹黄堡 + 罗盘）；一轮合计 210.5 万', () => {
     const k = buildBundle(source()).bundle!.tuning.kuji;
     expect(k.price).toBe(45_000);
     expect(k.tiers.map((x) => [x.key, x.count, x.award])).toEqual([
@@ -137,21 +140,14 @@ describe('一番赏奖池按道具价格迁移定稿（2026-10-15）', () => {
       ['E', 15, { coin: 5_000 }],
       ['F', 50, { coin: 2_000 }],
     ]);
-    expect(k.last.award).toEqual({
-      diamond: 35,
-      goods: [
-        { id: GOODS.krabBurger, num: 1 },
-        { id: GOODS.compass, num: 1 },
-      ],
-    });
-    // 价值表算的 185.5 万没算最后赏的罗盘（30 万），工单要求罗盘留着
-    expect(round(k)).toBe(2_155_000);
+    expect(k.last.award).toEqual({ diamond: 35, goods: [{ id: GOODS.goldenRecord, num: 1 }] });
+    expect(round(k)).toBe(2_105_000);
   });
 
-  it('豪华池：券 32 万；A 50 钻、B 2×30 万、C 5×10 万、D 12×5 万，最后赏 35 钻 + 蟹黄堡 + 罗盘；一轮合计 335 万', () => {
+  it('豪华池：券 32 万；A 50 钻、B 2×30 万、C 5×10 万、D 12×5 万，最后赏 35 钻 + 金唱片；一轮合计 330 万', () => {
     const dx = buildBundle(source()).bundle!.tuning.kuji.deluxe;
     expect(dx.price).toBe(320_000);
-    expect(dx.last.award).toMatchObject({ diamond: 35 });
-    expect(round(dx)).toBe(3_350_000);
+    expect(dx.last.award).toEqual({ diamond: 35, goods: [{ id: GOODS.goldenRecord, num: 1 }] });
+    expect(round(dx)).toBe(3_300_000);
   });
 });

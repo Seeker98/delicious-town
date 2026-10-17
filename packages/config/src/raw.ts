@@ -536,6 +536,7 @@ const goodsSrc = z.enum([
   'poster',
   'luckGem',
   'wealth',
+  'art',
 ]);
 export const masterGoods = z
   .object({

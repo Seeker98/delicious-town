@@ -439,6 +439,85 @@ describe('RestaurantHomeView', () => {
     setServerOffset(new Date().toISOString());
   });
 
+  it('艺术品（乐台、屏风，2026-10-17）：不在设施格子里，一位一行；作用写白话不写数值；金唱片另一个位置摆着时灰掉', async () => {
+    const future = new Date(Date.now() + 5 * 3_600_000).toISOString();
+    const stage = {
+      slot: 10,
+      name: '乐台',
+      deviceType: 7,
+      needStar: 1,
+      unlocked: true,
+      goodsId: 30609,
+      expiresAt: future,
+    };
+    const screen = {
+      slot: 11,
+      name: '屏风',
+      deviceType: 8,
+      needStar: 1,
+      unlocked: true,
+      goodsId: null,
+      expiresAt: null,
+    };
+    const devices = [...dto.devices, stage, screen];
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, starLevel: 1, devices });
+    vi.mocked(endpoints.devices).mockResolvedValue({
+      slots: devices,
+      store: [
+        { goodsId: 30704, deviceType: 8, num: 3 },
+        { goodsId: 30701, deviceType: 8, num: 1, needStar: 2 },
+        { goodsId: 30609, deviceType: 9, num: 1 },
+        { goodsId: 30601, deviceType: 7, num: 1 },
+      ],
+    } as never);
+    vi.mocked(endpoints.placeDevice).mockResolvedValue({} as never);
+    const w = await mountView();
+    expect(w.get('[data-testid="home-devices"]').find('[data-testid="slot-10"]').exists()).toBe(false);
+    const art = w.get('[data-testid="home-art"]');
+    expect(art.get('[data-testid="art-10"]').text()).toContain(
+      '客人、挑剔的贵客、满座时的容量, 样样大幅提升',
+    );
+    expect(art.get('[data-testid="art-10"] [data-testid="art-remain"]').text()).toMatch(/^剩余 [45] 小时/);
+    expect(art.get('[data-testid="art-11"]').text()).toContain('屏风 · 空着');
+    expect(art.text()).not.toMatch(/挑剔率|软上限|%/);
+    await art.get('[data-testid="art-11"]').trigger('click');
+    await flushPromises();
+    const pick = w.get('[data-testid="art-pick"]');
+    // 名画和金唱片列出来，名曲不在
+    expect(pick.findAll('[data-testid^="art-choice-"]').map((x) => x.attributes('data-testid'))).toEqual([
+      'art-choice-30704',
+      'art-choice-30701',
+      'art-choice-30609',
+    ]);
+    expect(w.get('[data-testid="art-choice-30701"]').text()).toContain('2 星可用');
+    expect(w.get('[data-testid="art-choice-30609"]').text()).toContain('乐台已摆一张');
+    expect(w.get('[data-testid="art-choice-30609"]').find('button').exists()).toBe(false);
+    expect(pick.text()).not.toMatch(/挑剔率|软上限|%/);
+    await w.get('[data-testid="art-choice-30704"] button').trigger('click');
+    await flushPromises();
+    expect(endpoints.placeDevice).toHaveBeenCalledWith(11, 30704);
+  });
+
+  it('艺术品：0 星时两个位置各一行写几星开放，不并进设施的“锁着”那一行', async () => {
+    const lock = (slot: number, name: string, deviceType: number) => ({
+      slot,
+      name,
+      deviceType,
+      needStar: 1,
+      unlocked: false,
+      goodsId: null,
+      expiresAt: null,
+    });
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      ...dto,
+      devices: [...dto.devices, lock(10, '乐台', 7), lock(11, '屏风', 8)],
+    });
+    const w = await mountView();
+    expect(w.get('[data-testid="art-10"]').text()).toContain('1 星开放 · 摆一首名曲');
+    expect(w.get('[data-testid="art-11"]').text()).toContain('1 星开放 · 摆一幅名画');
+    expect(w.get('[data-testid="fac-locked"]').text()).toContain('还有 1 格锁着');
+  });
+
   it('设施选择：星级不够的高档海报变灰并写几星可用（backlog 146）', async () => {
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, starLevel: 3 });
     vi.mocked(endpoints.devices).mockResolvedValue({

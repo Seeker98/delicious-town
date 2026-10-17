@@ -243,6 +243,7 @@ export default {
     max_oil: '油壺已經是最高階了',
     wrong_device: '這個道具不能擺在這個位置',
     plaque_in_use: '這塊牌匾已經擺在別的位置了',
+    art_in_use: '金唱片已經擺在另一個位置了, 全店同時只能擺一張',
     same_name: '新名字和現在一樣',
     bad_street: '不能搬到這條街',
     already_on: '已經開啟了',

@@ -22,6 +22,7 @@ export const SOURCE_FILES = [
   'dataset/tower_floors',
   // 新街道（问题记录 284）：构建时和 dataset 里的同类数据拼在一起
   'designed/streets_new',
+  'designed/devices_new',
   'designed/street_medal_map',
   'designed/cookbook_grades',
   'designed/weather',

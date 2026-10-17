@@ -257,6 +257,7 @@ const errors: Messages['errors'] = {
     max_oil: 'Tu bidón de aceite ya está al nivel más alto',
     wrong_device: 'Este objeto no se puede colocar en este espacio',
     plaque_in_use: 'Esta placa ya está colocada en otro espacio',
+    art_in_use: 'El Disco de Oro ya está en el otro hueco; solo puede haber uno a la vez',
     same_name: 'El nuevo nombre es igual al actual',
     bad_street: 'No puedes mudarte a esta calle',
     already_on: 'Ya está activado',

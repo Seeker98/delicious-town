@@ -1,4 +1,4 @@
-import { deviceHours, DEVICE_TYPE, GOODS_TYPE } from '@dt/config';
+import { artFits, deviceHours, DEVICE_TYPE, GOODS_TYPE } from '@dt/config';
 import { emitAction } from '../../core/action';
 import { invalidState, notEnough, requirement } from '../../core/errors';
 import { invalidateAgg, opAgg } from '../../core/luck';
@@ -17,8 +17,21 @@ export async function placeDevice(
   if (!dev) throw invalidState('no_slot', { slot });
   if (!slotUnlocked(dev, op.rest)) throw requirement('slot_locked', { slot, needStar: dev.needStar });
   const g = op.config.requireGoods(goodsId);
-  if (g.type !== GOODS_TYPE.device || g.deviceType !== dev.deviceType)
+  // 艺术品设施（2026-10-17）：金唱片（设施类型 9）乐台、屏风都能摆
+  if (g.type !== GOODS_TYPE.device || !artFits(g.deviceType, dev.deviceType))
     throw invalidState('wrong_device', { slot, goodsId });
+  // 金唱片全店同时只能摆一件：另一个艺术品位上还没到期的那张挡着（同一个位置上换掉自己不算）
+  if (g.deviceType === DEVICE_TYPE.anyArt) {
+    const other = await op.tx
+      .selectFrom('restaurant_device')
+      .select('slot')
+      .where('rest_id', '=', op.rest.id)
+      .where('goods_id', '=', goodsId)
+      .where('slot', '!=', slot)
+      .where((eb) => eb.or([eb('expires_at', 'is', null), eb('expires_at', '>', op.now)]))
+      .executeTakeFirst();
+    if (other) throw invalidState('art_in_use', { slot: other.slot });
+  }
   // 后期海报奖杯按星级可用（问题记录 146）：从别处拿到的也装不上，道具不消耗
   if ((g.needStar ?? 0) > op.rest.star_level)
     throw requirement('star', { need: g.needStar, have: op.rest.star_level });

@@ -32,10 +32,10 @@ async function playerWithRestaurant() {
 const get = (cookie: string, path: string) => call(http.app, 'GET', `/api/v1/restaurant${path}`, { cookie });
 
 describe('餐厅读接口', () => {
-  it('概况：9 个设施位（0 星只开前三个）、营业中、还没有收益、带天气', async () => {
+  it('概况：11 个设施位（9 个原有 + 乐台、屏风；0 星只开前三个）、营业中、还没有收益、带天气', async () => {
     const p = await playerWithRestaurant();
     const d = (await get(p.cookie, '/overview')).json.data;
-    expect(d.devices).toHaveLength(9);
+    expect(d.devices).toHaveLength(11);
     expect(
       d.devices.filter((x: { unlocked: boolean }) => x.unlocked).map((x: { slot: number }) => x.slot),
     ).toEqual([1, 2, 3]);

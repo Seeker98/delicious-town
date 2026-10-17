@@ -18,7 +18,16 @@ import { bulkErrors } from './bulk';
 import { wishTreeErrors } from './wishtree';
 import { shilingErrors } from './shiling';
 import { foodWeights } from './foodSupply';
-import { FUND_MEDALS, GOODS, GOODS_TYPE, NEWBIE, NON_SUIT_IDS, WEALTH } from './ids';
+import {
+  ART_DEVICE_TYPES,
+  ART_EFFECT_KEYS,
+  FUND_MEDALS,
+  GOODS,
+  GOODS_TYPE,
+  NEWBIE,
+  NON_SUIT_IDS,
+  WEALTH,
+} from './ids';
 import { tuningSchema } from './tuning';
 import { checkNewbieCodes } from './newbieCodes';
 import { slotFloorErrors } from './slot';
@@ -133,7 +142,11 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   );
   const medalMapRaw = parse('designed/street_medal_map', z.array(raw.rawStreetMedal));
   const mysteriousRaw = parse('dataset/mysterious_cookbooks', z.array(raw.rawMysterious));
-  const devicesRaw = parse('dataset/devices', z.array(raw.rawDevice));
+  // 新加的设施位（艺术品设施 2026-10-17）单独一个设计文件：dataset 是从分析目录同步来的，手改会被冲掉
+  const devicesRaw = both(
+    parse('dataset/devices', z.array(raw.rawDevice)),
+    parse('designed/devices_new', z.array(raw.rawDevice)),
+  );
   const actTasksRaw = parse('dataset/activation_tasks', z.array(raw.rawActivationTask));
   const actRewardsRaw = parse('dataset/activation_rewards', z.array(raw.rawActivationReward));
   const actExtra = parse('designed/activation_extra', raw.rawActivationExtra);
@@ -333,8 +346,22 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     if (m.src === 'poster' && m.deviceType !== 1 && m.deviceType !== 2)
       errors.push(`goods ${m.id} poster deviceType ${m.deviceType}`);
     // 主表里手写的几类定义，原来各自文件的格式检查（质量期第 ⑦ 批）
-    if (m.needStar !== undefined && m.src !== 'poster')
-      errors.push(`goods ${m.id} needStar only for posters`);
+    if (m.needStar !== undefined && m.src !== 'poster' && m.src !== 'art')
+      errors.push(`goods ${m.id} needStar only for posters and art`);
+    // 艺术品（乐台、屏风，2026-10-17）：设施、摆在乐台(7)/屏风(8)/任一(9)，只加上座率、挑剔率和两个软上限
+    if (m.src === 'art') {
+      const v = (m.value ?? {}) as Record<string, unknown>;
+      if (m.type !== GOODS_TYPE.device) errors.push(`goods ${m.id} art must be a device`);
+      if (!ART_DEVICE_TYPES.includes(m.deviceType as number))
+        errors.push(`goods ${m.id} art deviceType ${m.deviceType}`);
+      if (typeof v.time !== 'number' || !Number.isInteger(v.time) || v.time < 1)
+        errors.push(`goods ${m.id} art value time must be an integer >= 1`);
+      for (const [k, x] of Object.entries(v)) {
+        if (k === 'time') continue;
+        if (!ART_EFFECT_KEYS.includes(k)) errors.push(`goods ${m.id} art value key ${k} not allowed`);
+        else if (typeof x !== 'number' || x <= 0) errors.push(`goods ${m.id} art value ${k} must be > 0`);
+      }
+    }
     if (m.src === 'poster') {
       const v = (m.value ?? {}) as Record<string, unknown>;
       if (typeof v.time !== 'number' || !Number.isInteger(v.time) || v.time < 1)

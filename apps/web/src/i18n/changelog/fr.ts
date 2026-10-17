@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  art1017:
+    'Nouvel équipement, les œuvres d’art\u202f: sous les équipements de l’accueil, deux nouvelles places, la scène musicale et le paravent (ouvertes à 1 étoile). Installez une musique ou un tableau pour 24 heures afin d’attirer plus de clients, d’attirer les clients exigeants, ou d’en accueillir plus quand la salle est pleine. La boutique a une nouvelle catégorie Œuvres d’art, et quelques chefs-d’œuvre ne se vendent qu’au marché noir. Le dernier lot du kuji (normal et de luxe) donne désormais le Disque d’or de Voyager, qui va sur l’une ou l’autre place, à la place du Krabby Patty et de la Boussole céleste',
   streets1017:
     'Rééquilibrage des rues\u202f: les 29 rues (sauf la Rue des débutants) ne modifient plus la fréquentation ni le taux de clients difficiles, et donnent à la place des pièces par table, des pièces des clients difficiles satisfaits, etc.\u202f; la force des rues est harmonisée, aucune rue ne réduit les pièces ou l’EXP finales de plus de 10\u202f%, et le bonus d’ingrédients mystères en exploration passe de +2\u202f% à +1\u202f%. La base par étoile de la fréquentation et des clients difficiles devient 0,25 + 0,07 × étoiles et 0,12 + 0,03 × étoiles\u202f: presque pareil à 2 étoiles, et elle monte plus vite aux étoiles supérieures',
   predict1017:

@@ -7,6 +7,7 @@ import DtSkeleton from '../components/DtSkeleton.vue';
 import DtStepper from '../components/DtStepper.vue';
 import DtTabs from '../components/DtTabs.vue';
 import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import type { BuyBlock, ShopDto, ShopItemDto, ShopSpecialDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
@@ -35,7 +36,15 @@ const shop = ref<ShopDto | null>(null);
 const special = ref<ShopSpecialDto | null>(null);
 const failed = ref(false);
 const busy = ref(false);
-const cat = ref<ShopCat | 'all'>('all');
+// 别的页面带 ?cat= 进来时先选中那一类（艺术品设施 2026-10-17：首页“去商店看看艺术品”）
+const route = useRoute();
+// 测试里不装路由时 useRoute() 是空的
+const queryCat = route?.query.cat;
+const cat = ref<ShopCat | 'all'>(
+  typeof queryCat === 'string' && (SHOP_CATS as readonly string[]).includes(queryCat)
+    ? (queryCat as ShopCat)
+    : 'all',
+);
 watch(tab, () => {
   cat.value = 'all';
 });

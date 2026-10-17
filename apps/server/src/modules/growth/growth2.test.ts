@@ -80,8 +80,72 @@ describe('设施（规格书 02 §2.6）', () => {
   it('设施选项：设施位 + 仓库里的设施道具', async () => {
     const ctx = await newRestaurant(t, { goods: { [gid('普通宣传海报')]: 2, [GOODS.starCert]: 1 } });
     const d = await g().devices(ctx);
-    expect(d.slots).toHaveLength(9);
+    // 9 个原有位置 + 乐台、屏风（艺术品设施 2026-10-17）
+    expect(d.slots).toHaveLength(11);
     expect(d.store).toEqual([{ goodsId: gid('普通宣传海报'), num: 2, deviceType: 1 }]);
+  });
+});
+
+describe('艺术品设施（乐台、屏风，2026-10-17）', () => {
+  const STAGE = 10;
+  const SCREEN = 11;
+  const record = gid('【旅行者号·金唱片】星际留声祭坛');
+
+  it('1 星开放；名曲摆乐台、名画摆屏风，放错位置报错；效果进加成，软上限两项也记上', async () => {
+    const zero = await newRestaurant(t, { goods: { [gid('柴可夫斯基《花之圆舞曲》')]: 1 } });
+    await expect(
+      g().placeDevice(zero, { slot: STAGE, goodsId: gid('柴可夫斯基《花之圆舞曲》') }),
+    ).rejects.toMatchObject({
+      params: { reason: 'slot_locked' },
+    });
+    const ctx = await newRestaurant(t, {
+      patch: { star_level: 2 },
+      goods: { [gid('贝多芬《第五交响曲 (命运)》')]: 1, [gid('葛饰北斋《神奈川冲浪里》浮世绘屏')]: 1 },
+    });
+    await expect(
+      g().placeDevice(ctx, { slot: SCREEN, goodsId: gid('贝多芬《第五交响曲 (命运)》') }),
+    ).rejects.toMatchObject({ params: { reason: 'wrong_device' } });
+    t.clock.set(new Date('2026-10-17T00:00:00Z'));
+    const r = await g().placeDevice(ctx, { slot: STAGE, goodsId: gid('贝多芬《第五交响曲 (命运)》') });
+    expect(r.data.expiresAt).toBe('2026-10-18T00:00:00.000Z');
+    await g().placeDevice(ctx, { slot: SCREEN, goodsId: gid('葛饰北斋《神奈川冲浪里》浮世绘屏') });
+    const agg = await getEffectAgg(
+      t.db,
+      ctx.restaurantId,
+      t.clock.now,
+      config,
+      await t.game.deps.shards.settings(ctx.shardId),
+    );
+    expect(agg.atSoftCapAdd).toBeCloseTo(0.11);
+    expect(agg.spRate).toBeCloseTo(0.04);
+    t.clock.set(new Date());
+  });
+
+  it('软上限组 2 星可用；金唱片两个位置都能摆，但全店同时只能摆一件', async () => {
+    const one = await newRestaurant(t, {
+      patch: { star_level: 1 },
+      goods: { [gid('维瓦尔第《四季·夏》')]: 1 },
+    });
+    await expect(
+      g().placeDevice(one, { slot: STAGE, goodsId: gid('维瓦尔第《四季·夏》') }),
+    ).rejects.toMatchObject({
+      code: 'REQUIREMENT_NOT_MET',
+      params: { reason: 'star' },
+    });
+    const ctx = await newRestaurant(t, { patch: { star_level: 1 }, goods: { [record]: 3 } });
+    await g().placeDevice(ctx, { slot: SCREEN, goodsId: record });
+    await expect(g().placeDevice(ctx, { slot: STAGE, goodsId: record })).rejects.toMatchObject({
+      code: 'INVALID_STATE',
+      params: { reason: 'art_in_use', slot: SCREEN },
+    });
+    // 同一个位置上换一张新的可以
+    await g().placeDevice(ctx, { slot: SCREEN, goodsId: record });
+    expect(await goodsNum(t, ctx.restaurantId, record)).toBe(1);
+    // 那张到期以后另一个位置就能摆
+    t.clock.set(new Date(Date.now() + 30 * 3600_000));
+    await g().placeDevice(ctx, { slot: STAGE, goodsId: record });
+    expect(await goodsNum(t, ctx.restaurantId, record)).toBe(0);
+    t.clock.set(new Date());
   });
 });
 

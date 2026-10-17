@@ -42,7 +42,9 @@ describe('更多宣传海报和奖杯（问题记录 146）', () => {
       effects: { time: 24, coinValue: 2 },
     });
     expect(
-      bundle!.goods.filter((g) => !POSTERS().includes(g.id)).every((g) => g.needStar === undefined),
+      bundle!.goods
+        .filter((g) => !POSTERS().includes(g.id) && !(g.id >= 30600 && g.id < 30800))
+        .every((g) => g.needStar === undefined),
     ).toBe(true);
   });
 
@@ -60,5 +62,61 @@ describe('更多宣传海报和奖杯（问题记录 146）', () => {
     expect(errs).toContain(`goods ${gid('食神宣传海报')} needStar -1`);
     expect(errs).toContain(`goods ${posters[1]!.id as number} poster deviceType 6`);
     expect(errs).toContain(`goods: duplicate id ${gid('普通宣传海报')}`);
+  });
+});
+
+describe('艺术品设施（乐台、屏风，2026-10-17）', () => {
+  it('两个设施位 1 星开；18 件 24 小时的道具；8 件银币店、4 件只在黑市、其余没有渠道；软上限两组 2 星可用', () => {
+    const { bundle, errors } = buildBundle(source());
+    expect(errors).toEqual([]);
+    const b = bundle!;
+    expect(b.devices.filter((d) => d.id >= 10)).toEqual([
+      expect.objectContaining({ id: 10, name: '乐台', deviceType: 7, needStar: 1 }),
+      expect.objectContaining({ id: 11, name: '屏风', deviceType: 8, needStar: 1 }),
+    ]);
+    const art = b.goods.filter((g) => g.id >= 30600 && g.id < 30800);
+    expect(art).toHaveLength(18);
+    for (const g of art) {
+      expect(g.type).toBe(GOODS_TYPE.device);
+      expect(g.effects.time).toBe(24);
+    }
+    const coin = Object.fromEntries(art.filter((g) => g.onSale && g.coin > 0).map((g) => [g.id, g.coin]));
+    expect(coin).toEqual({
+      30601: 17000,
+      30602: 30000,
+      30604: 16000,
+      30605: 25000,
+      30701: 8000,
+      30702: 12000,
+      30704: 20000,
+      30705: 28000,
+    });
+    const black = Object.fromEntries(
+      b.shopPools.black
+        .filter((id) => id >= 30600 && id < 30800)
+        .map((id) => [id, b.goods.find((g) => g.id === id)!.diamond]),
+    );
+    expect(black).toEqual({ 30603: 4, 30606: 4, 30703: 2, 30706: 3 });
+    expect(art.filter((g) => g.needStar === 2).map((g) => g.id)).toEqual([
+      30604, 30605, 30606, 30701, 30702, 30703,
+    ]);
+    // 金唱片两个位置都能摆（设施类型 9），四项全加
+    expect(b.goods.find((g) => g.id === 30609)).toMatchObject({
+      deviceType: 9,
+      effects: { time: 24, atRate: 0.1, atSoftCapAdd: 0.11, spRate: 0.09, spSoftCapAdd: 0.08 },
+    });
+  });
+
+  it('检查：艺术品必须是设施、设施类型 7/8/9、只能加上座率挑剔率和两个软上限', () => {
+    const src = source();
+    const goods = structuredClone(src['master/goods']) as Array<Record<string, unknown> & { id: number }>;
+    const g = (id: number) => goods.find((x) => x.id === id)!;
+    g(30601).deviceType = 1;
+    g(30602).value = { time: 24, coinRate: 0.1 };
+    g(30701).type = 1;
+    const errs = buildBundle({ ...src, 'master/goods': goods }).errors;
+    expect(errs).toContain('goods 30601 art deviceType 1');
+    expect(errs).toContain('goods 30602 art value key coinRate not allowed');
+    expect(errs).toContain('goods 30701 art must be a device');
   });
 });

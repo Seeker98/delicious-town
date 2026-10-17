@@ -2958,5 +2958,77 @@
   "71124": {
     "name": "Adorno del banquete de olla caliente en noche nevada",
     "desc": "Nieva fuera mientras dentro hierve una olla caliente en la mesa; el Último Premio limitado. (Ichiban Kuji · Olla caliente de invierno)"
+  },
+  "30601": {
+    "name": "Chaikovski: Vals de las flores",
+    "desc": "Una pieza orquestal dulce y soñadora, tan tentadora como el olor a pastelería recién hecha, que atrae a algunos transeúntes más. Se coloca en el escenario musical y dura 24 horas."
+  },
+  "30602": {
+    "name": "Mozart: Serenata en sol mayor (Pequeña serenata nocturna)",
+    "desc": "Música ligera y elegante del clasicismo que pone de buen humor a los transeúntes y atrae a más clientes de forma constante. Se coloca en el escenario musical y dura 24 horas."
+  },
+  "30603": {
+    "name": "Vivaldi: Las cuatro estaciones, la Primavera",
+    "desc": "Cuerdas alegres y luminosas, llenas de vida, que atraen a muchos más transeúntes. Se coloca en el escenario musical y dura 24 horas."
+  },
+  "30604": {
+    "name": "Vivaldi: Las cuatro estaciones, el Verano",
+    "desc": "Tras el calor sofocante, el presto tormentoso del último movimiento cae como un chaparrón y despeja el bochorno y el ruido de una sala llena, para sentar todavía a algunos clientes más. Se coloca en el escenario musical y dura 24 horas."
+  },
+  "30605": {
+    "name": "Noche de flores y luna en el río primaveral (pieza tradicional)",
+    "desc": "La pipa y la flauta xiao fluyen como un río crecido y calman sin ruido el bullicio de una sala llena, para sentar a bastantes clientes más. Se coloca en el escenario musical y dura 24 horas."
+  },
+  "30606": {
+    "name": "Beethoven: Sinfonía n.º 5 (el Destino)",
+    "desc": "Los famosos golpes a la puerta derriban las paredes de la sala: aunque esté llena, el restaurante recibe a muchos más clientes. Se coloca en el escenario musical y dura 24 horas."
+  },
+  "30607": {
+    "name": "Beethoven: Sinfonía n.º 9 (Oda a la alegría), manuscrito autógrafo",
+    "desc": "Un coro grandioso que supera el sufrimiento y abraza a toda la humanidad retumba bajo la cúpula. Ante esta ola de celebración, la duda en la puerta y la estrechez de la sala desaparecen: rico o pobre, cada transeúnte entra a compartir un banquete con todos los asientos ocupados. Se coloca en el escenario musical y dura 24 horas."
+  },
+  "30608": {
+    "name": "Bach: Variaciones Goldberg, clave dorado",
+    "desc": "Un contrapunto tan preciso como el giro de las estrellas teje treinta variaciones en un templo sonoro sin fisuras. Su ritmo encanta a los clientes corrientes y su belleza matemática oculta deleita a los más refinados, y el restaurante alcanza un equilibrio milagroso entre bullicio y elegancia. Se coloca en el escenario musical y dura 24 horas."
+  },
+  "30609": {
+    "name": "Disco de Oro de las Voyager: altar fonográfico interestelar",
+    "desc": "Un disco de oro eterno grabado con el contrapunto de Bach, la pieza de guqin Agua que fluye e imágenes de la civilización humana, enviado a saludar al espacio profundo dentro de mil millones de años. Cuando gira despacio en medio de la sala, el ruido, la estrechez y los prejuicios de clase caen como polvo: viajeros hambrientos y gourmets curtidos, como atraídos por las estrellas, llenan todos los asientos. Va en el escenario musical o en el hueco del biombo, solo uno a la vez por restaurante, y dura 24 horas."
+  },
+  "30701": {
+    "name": "Velázquez: Las Meninas, biombo de doble cara",
+    "desc": "Su extraña perspectiva regia hace más honda la sala: cuando se llena de clientes exigentes, todavía puedes atender a algunos más. Se coloca en el hueco del biombo y dura 24 horas."
+  },
+  "30702": {
+    "name": "Monet: Los nenúfares, biombo de nueve paneles",
+    "desc": "El brillo del agua divide la sala en rincones tranquilos y privados, para atender de forma constante a más clientes distinguidos sin agobios. Se coloca en el hueco del biombo y dura 24 horas."
+  },
+  "30703": {
+    "name": "Wang Ximeng: Mil li de ríos y montañas, biombo azul y verde",
+    "desc": "Grandes montañas en azul y verde intensos dan al restaurante un aire regio con una vista nueva a cada paso: vengan los notables exigentes que vengan, hay sitio para ellos. Se coloca en el hueco del biombo y dura 24 horas."
+  },
+  "30704": {
+    "name": "Hokusai: La gran ola de Kanagawa, biombo ukiyo-e",
+    "desc": "Una ola impactante que atrae a algunos gourmets exigentes amantes del arte de Asia oriental. Se coloca en el hueco del biombo y dura 24 horas."
+  },
+  "30705": {
+    "name": "Van Gogh: La noche estrellada, biombo plegable",
+    "desc": "Pinceladas arremolinadas y ardientes, llenas de emoción, que traen a más clientes exigentes. Se coloca en el hueco del biombo y dura 24 horas."
+  },
+  "30706": {
+    "name": "Vermeer: La joven de la perla, biombo",
+    "desc": "Una mirada repentina por encima del hombro sobre un negro profundo, un turbante ultramar y el brillo de una perla, serena y noble. Esta belleza que pide mirarse de cerca detiene a los notables más entendidos y atrae a muchos más clientes exigentes. Se coloca en el hueco del biombo y dura 24 horas."
+  },
+  "30707": {
+    "name": "Miguel Ángel: El techo de la Sixtina (el Génesis), biombo plegable",
+    "desc": "La chispa divina de dos dedos a punto de tocarse recorre el gran biombo con una majestad que corta la respiración. Los clientes corrientes se sienten pequeños ante él, mientras los notables más exigentes y ricos de la ciudad lo ven como el lugar donde hay que dejarse ver y se disputan un asiento aunque la sala esté a rebosar. Se coloca en el hueco del biombo y dura 24 horas."
+  },
+  "30708": {
+    "name": "Leonardo da Vinci: La última cena, biombo mural",
+    "desc": "La cena más famosa del mundo. Todas las líneas de la pared van a un punto en el centro de la larga mesa, y la perspectiva perfecta alarga la sala hasta el infinito; la mesa de los trece parece no tener fin, siempre cabe un invitado más y hasta los nobles más exigentes se sientan con gusto. Los límites de cuántos clientes y notables puede atender el restaurante quedan reescritos. Se coloca en el hueco del biombo y dura 24 horas."
+  },
+  "30709": {
+    "name": "Gu Kaizhi (atribuido): La ninfa del río Luo, biombo bordado de doble cara",
+    "desc": "Grácil como un cisne sobresaltado, ágil como un dragón que nada. Bordado a doble cara en dos colores al estilo de Suzhou, un lado muestra a la ninfa del Luo en todo su esplendor para recibir a clientes de todas partes; el otro es un refugio tranquilo e íntimo donde hasta los jóvenes nobles más exigentes se sienten a gusto. Se coloca en el hueco del biombo y dura 24 horas."
   }
 }

@@ -7,6 +7,7 @@ export const SHOP_CATS = [
   'forge',
   'temple',
   'promo',
+  'art',
   'facility',
   'equip',
   'other',
@@ -29,6 +30,9 @@ const BY_GROUP: Record<string, ShopCat> = {
   oilSaver: 'facility',
   mouseTrap: 'facility',
   roach: 'facility',
+  // 艺术品设施（乐台、屏风，2026-10-17）
+  artMusic: 'art',
+  artPainting: 'art',
 };
 
 /** 道具归哪一类：宝石算强化，厨具套装算厨具，没列的算其他 */

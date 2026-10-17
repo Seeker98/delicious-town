@@ -242,6 +242,7 @@ export default {
     max_oil: '油壶已经是最高级了',
     wrong_device: '这个道具不能摆在这个位置',
     plaque_in_use: '这块牌匾已经摆在别的位置了',
+    art_in_use: '金唱片已经摆在另一个位置了, 全店同时只能摆一张',
     same_name: '新名字和现在一样',
     bad_street: '不能搬到这条街',
     already_on: '已经开启了',
