@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  art1017:
+    'New facility, Art: below Facilities on the home page there are now two slots, the music stage and the folding screen (open at 1 star). Place a piece of music or a painting for 24 hours to draw more guests, attract picky diners, or host more when the house is full or crowded with notables. The shop has a new Art category, and a few masterpieces are sold only on the black market. The kuji last prize (regular and deluxe) now gives the Voyager Golden Record, which fits either slot, instead of the Krabby Patty and the Sky Compass',
   streets1017:
     'Street rebalance: the 29 streets (except Newbie Street) no longer change occupancy or picky rate and give coins per table, coins from satisfied picky customers and the like instead; street strength is evened out, no street cuts final coins or EXP by more than 10%, and the mystery-ingredient bonus when exploring goes from +2% to +1%. The star base for occupancy and picky rate is now 0.25 + 0.07 × stars and 0.12 + 0.03 × stars: about the same at 2 stars, and it grows faster at higher stars',
   predict1017:

@@ -43,7 +43,10 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
   // 溢出转经验按折算前的合计算（街道再平衡第二版）
   const leftAt = (at.total - st.atOverflowThreshold) / (v(a, 'atToExp') > 0 ? 1 : st.atOverflowDivisor);
   // 天气在软上限之后按点数加（天气加算修正 2026-10-16）：好天气不被打成 1/3，高星店也不靠软上限以上的余量抵掉坏天气
-  const atCapped = afterCap(atSoftCap(at, st.atSoftCapAt, st.atSoftCapRate), v(w, 'atRate'));
+  // 艺术品设施（2026-10-17）：乐台、屏风的道具能把两个软上限的拐点往上抬（atSoftCapAdd / spSoftCapAdd），拐点不超过 1
+  const atCapAt = Math.min(1, st.atSoftCapAt + v(a, 'atSoftCapAdd'));
+  const spCapAt = Math.min(1, st.spSoftCapAt + v(a, 'spSoftCapAdd'));
+  const atCapped = afterCap(atSoftCap(at, atCapAt, st.atSoftCapRate), v(w, 'atRate'));
   const atRate = Math.min(Math.max(atCapped.total, 0), 1);
 
   const spFloat = st.spFloatPerStar * s * (rng.next() - st.spFloatCenter);
@@ -79,7 +82,7 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
   const luckSum = rest.luck + v(a, 'luckValue') + v(w, 'luckValue');
   const rates: Rates = {
     atRate: { total: atRate, parts: atCapped.parts },
-    spRate: clip01(afterCap(softCap(sp, st.spSoftCapAt, st.spSoftCapRate), v(w, 'spRate'))),
+    spRate: clip01(afterCap(softCap(sp, spCapAt, st.spSoftCapRate), v(w, 'spRate'))),
     coinRate: coin,
     expRate: part(expParts),
     coinValue: part({ effects: v(a, 'coinValue'), weather: v(w, 'coinValue') }),

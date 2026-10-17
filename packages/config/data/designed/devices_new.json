@@ -1,0 +1,19 @@
+{
+ "rule": "新加的设施位（艺术品设施 2026-10-17）: 乐台摆名曲（设施类型 7）, 屏风摆名画（8）；金唱片（9）两个位置都能摆, 全店限一件",
+ "data": [
+  {
+   "deviceid": 10,
+   "devicename": "乐台",
+   "devicetype": 7,
+   "needreststar": 1,
+   "devicenote": "摆一首名曲: 招揽客人, 或让满座时坐得下更多"
+  },
+  {
+   "deviceid": 11,
+   "devicename": "屏风",
+   "devicetype": 8,
+   "needreststar": 1,
+   "devicenote": "摆一幅名画: 吸引挑剔的食客, 或让贵客多时也接待得下"
+  }
+ ]
+}

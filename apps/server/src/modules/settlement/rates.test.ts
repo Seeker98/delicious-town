@@ -80,6 +80,20 @@ describe('汇总率（规格书 01 §1.3）', () => {
     expect(c.rates.atRate.total).toBeCloseTo(0.9);
   });
 
+  it('艺术品设施抬软上限（2026-10-17）：拐点 = 区服数值 + atSoftCapAdd / spSoftCapAdd，超出部分仍按三分之一，拐点不超过 1', () => {
+    // 0 星：上座 0.3 + 0.6 = 0.9，拐点 0.7 + 0.1 = 0.8 → 0.8 + 0.1 ÷ 3
+    const a = rates({ agg: { atRate: 0.6, atSoftCapAdd: 0.1 } }).rates;
+    expect(a.atRate.total).toBeCloseTo(0.8 + 0.1 / 3, 5);
+    expect(a.atRate.parts.softCap).toBeCloseTo(0.8 + 0.1 / 3 - 0.9, 5);
+    // 挑剔 0.1 + 0.5 = 0.6，拐点 0.3 + 0.1 = 0.4 → 0.4 + 0.2 ÷ 3
+    const s = rates({ agg: { spRate: 0.5, spSoftCapAdd: 0.1 } }).rates;
+    expect(s.spRate.total).toBeCloseTo(0.4 + 0.2 / 3, 5);
+    // 拐点到 1 为止：0.9 不再折算
+    const c = rates({ agg: { atRate: 0.6, atSoftCapAdd: 0.5 } }).rates;
+    expect(c.atRate.total).toBeCloseTo(0.9, 5);
+    expect(c.atRate.parts.softCap).toBeUndefined();
+  });
+
   it('浮动（2026-10-15）：上座 (0.15 + 0.05s) × (随机数 - 0.5)，挑剔 0.05s × (随机数 - 0.5)，上下对称', () => {
     const { rates: r } = rates({}, {}, [0.9, 0.5]);
     expect(r.atRate.total).toBeCloseTo(0.36);

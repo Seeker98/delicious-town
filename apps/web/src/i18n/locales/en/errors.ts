@@ -255,6 +255,7 @@ const errors: Messages['errors'] = {
     max_oil: 'Your oil tank is already at the highest level',
     wrong_device: "This item can't be placed in this slot",
     plaque_in_use: 'This plaque is already placed in another slot',
+    art_in_use: 'The Golden Record is already placed in the other slot; only one can be placed at a time',
     same_name: 'The new name is the same as the current one',
     bad_street: "You can't move to this street",
     already_on: "It's already on",

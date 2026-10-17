@@ -70,6 +70,7 @@ const store: Messages['store'] = {
       forge: 'Renforts et gemmes',
       temple: 'Temple et spécialités',
       promo: 'Affiches et trophées',
+      art: 'Œuvres d’art',
       facility: 'Équipements',
       equip: 'Ustensiles',
       other: 'Autres',

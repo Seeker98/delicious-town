@@ -193,7 +193,7 @@ describe('buildBundle（真实数据）', () => {
     const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     expect(bundle!.foods).toHaveLength(336); // 313 + 新街道 23 种（问题记录 284）
-    expect(bundle!.goods).toHaveLength(740); // 天气改版 工作证 6 张、工资礼包 6 个（PR③）+ 司天罗盘、晴雨签 2 件 + 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件 + 一到五级食材随机券 5 张（问题记录 331）+ 豪华签券 1 张（240-2） + 基金勋章 3 枚（240-2） + 后期海报奖杯 8 个（146）+ 天机石 6 阶（419）+ 街市补给包 5 个（理财）
+    expect(bundle!.goods).toHaveLength(758); // 艺术品设施 18 件（2026-10-17）+ 天气改版 工作证 6 张、工资礼包 6 个（PR③）+ 司天罗盘、晴雨签 2 件 + 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件 + 一到五级食材随机券 5 张（问题记录 331）+ 豪华签券 1 张（240-2） + 基金勋章 3 枚（240-2） + 后期海报奖杯 8 个（146）+ 天机石 6 阶（419）+ 街市补给包 5 个（理财）
     expect(bundle!.cookbooks).toHaveLength(3810);
     expect(bundle!.streets).toHaveLength(30);
     expect(bundle!.starNeed).toHaveLength(12);
@@ -1859,7 +1859,7 @@ describe('主表手写定义的格式检查（质量期第 ⑦ 批）', () => {
     expect(errors.some((e) => e.includes(`goods ${id}`))).toBe(true);
   });
 
-  it('只有海报奖杯能写 needStar；纪念品、一番赏手办必须是纪念品类型；抽赏券必须是消耗品', () => {
+  it('只有海报奖杯和艺术品能写 needStar；纪念品、一番赏手办必须是纪念品类型；抽赏券必须是消耗品', () => {
     let ids: number[] = [];
     const errors = withGoods((goods) => {
       const o = first(goods, 'original');
@@ -1872,7 +1872,7 @@ describe('主表手写定义的格式检查（质量期第 ⑦ 批）', () => {
     });
     expect(errors).toEqual(
       expect.arrayContaining([
-        `goods ${ids[0]} needStar only for posters`,
+        `goods ${ids[0]} needStar only for posters and art`,
         `goods ${ids[1]} src souvenir must be type souvenir`,
         `goods ${ids[2]} kuji ticket must be a consumable`,
       ]),
@@ -2012,11 +2012,11 @@ describe('任务清单的修改（问题记录 515，用户 2026-10-08 定）', 
     expect(b.weeklyGroups.find((x) => x.key === 'A')!.quests.some((q) => q.target === 0)).toBe(false);
   });
 
-  it('去掉“集齐 4 株盆栽”；一番赏两条线的最后赏都多给 1 个蟹黄堡', () => {
+  it('去掉“集齐 4 株盆栽”；一番赏两条线的最后赏（当时补的蟹黄堡 2026-10-17 换成金唱片）', () => {
     expect(b.quests.some((q) => q.cond.key === 'honor.potCount')).toBe(false);
     const t = realBuild().bundle!.tuning.kuji;
-    expect(t.last.award.goods).toContainEqual({ id: gid('蟹黄堡'), num: 1 });
-    expect(t.deluxe.last.award.goods).toContainEqual({ id: gid('蟹黄堡'), num: 1 });
+    expect(t.last.award.goods).toEqual([{ id: gid('【旅行者号·金唱片】星际留声祭坛'), num: 1 }]);
+    expect(t.deluxe.last.award.goods).toEqual([{ id: gid('【旅行者号·金唱片】星际留声祭坛'), num: 1 }]);
   });
 
   it('暂未开放的藏起来：第 12 章（泛紫）和它的任务、支线“把一道食谱升到天馔”', () => {

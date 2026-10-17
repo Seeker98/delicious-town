@@ -204,9 +204,17 @@ async function openSlot(slot: number) {
     toast.push(errorMessage(e, t.value.home.devicesFailed), 'danger');
   }
 }
+/** 乐台、屏风（艺术品设施 2026-10-17）单独一块，不在设施格子里；金唱片（设施类型 9）两个位置都能摆 */
+const ART_TYPES: readonly number[] = [7, 8];
+const ANY_ART = 9;
+const isArt = (d: { deviceType: number }) => ART_TYPES.includes(d.deviceType);
+const fits = (goodsType: number, slotType: number) =>
+  goodsType === slotType || (goodsType === ANY_ART && ART_TYPES.includes(slotType));
 /** 设施位：开了的、没开的分开排（P5 返工） */
-const openDevices = computed(() => (rest.value?.devices ?? []).filter((d) => d.unlocked));
-const lockedDevices = computed(() => (rest.value?.devices ?? []).filter((d) => !d.unlocked));
+const plainDevices = computed(() => (rest.value?.devices ?? []).filter((d) => !isArt(d)));
+const openDevices = computed(() => plainDevices.value.filter((d) => d.unlocked));
+const lockedDevices = computed(() => plainDevices.value.filter((d) => !d.unlocked));
+const artSlots = computed(() => (rest.value?.devices ?? []).filter(isArt));
 /** 设施标题右边写空着几格（问题记录 619） */
 const emptySlots = computed(() => openDevices.value.filter((d) => !d.goodsId).length);
 /** 锁着的设施位并成一行字（问题记录 619）：按几星开放归在一起，“2★ ×2 · 3★ · 12★”；没开通的第二块牌匾写“未开通” */
@@ -227,8 +235,22 @@ const pickingDevice = computed(() => rest.value?.devices.find((d) => d.slot === 
 const choices = computed(() => {
   const slot = options.value?.slots.find((s) => s.slot === pickingSlot.value);
   if (!slot || !options.value) return [];
-  return options.value.store.filter((x) => x.deviceType === slot.deviceType);
+  return options.value.store.filter((x) => fits(x.deviceType, slot.deviceType));
 });
+const pickingArt = computed(() => !!pickingDevice.value && isArt(pickingDevice.value));
+const slotName = (d: { slot: number; name: string }) => catalog.deviceName(d.slot) ?? d.name;
+const artBrief = (goodsId: number) => t.value.home.art.brief[goodsId] ?? '';
+const live = (d: { goodsId: number | null; expiresAt: string | null }) =>
+  !!d.goodsId && (d.expiresAt === null || new Date(d.expiresAt).getTime() > serverNowMs());
+/** 这件艺术品现在不能摆的原因：星级不够；金唱片已经摆在另一个位置（全店限一件） */
+function artBlock(c: { goodsId: number; deviceType: number; needStar?: number }): string | null {
+  if ((c.needStar ?? 0) > (rest.value?.starLevel ?? 0)) return t.value.store.shop.why.star(c.needStar!);
+  if (c.deviceType !== ANY_ART) return null;
+  const other = artSlots.value.find(
+    (d) => d.slot !== pickingSlot.value && d.goodsId === c.goodsId && live(d),
+  );
+  return other ? t.value.home.art.inUse(slotName(other)) : null;
+}
 async function place(goodsId: number) {
   const slot = pickingSlot.value!;
   pickingSlot.value = null;
@@ -254,6 +276,8 @@ const DEVICE_ART: Record<number, UiArtName> = {
   4: 'fac-mousetrap',
   5: 'fac-roach',
   6: 'fac-plaque',
+  7: 'fac-stage',
+  8: 'fac-screen',
 };
 
 /** 第二块牌匾位（设施位 7）：满星级后还要花银币和钻石开通 */
@@ -796,7 +820,7 @@ onBeforeUnmount(() => {
           </template>
         </DtRow>
       </div>
-      <div v-if="pickingSlot !== null" class="dt-card mt-2 small">
+      <div v-if="pickingSlot !== null && !pickingArt" class="dt-card mt-2 small">
         <!-- 取消的点击区域往外扩了 8px（.dt-link-btn::before），下面留 8px 别盖住第一排选项（终审） -->
         <div class="d-flex justify-content-between mb-2" data-testid="pick-head">
           <b>{{ t.home.pick }}</b>
@@ -822,6 +846,93 @@ onBeforeUnmount(() => {
             t.store.shop.why.star(c.needStar!)
           }}</span>
         </button>
+      </div>
+    </section>
+
+    <!-- 艺术品（乐台、屏风，2026-10-17）：一位一行，道具名长、可以换行；作用写白话，不写数值 -->
+    <section v-if="artSlots.length > 0" class="dt-block dt-home-art" data-testid="home-art">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.home.art.title }}</h2>
+        <span class="dt-block-more">{{ t.home.art.more }}</span>
+      </div>
+      <div class="dt-card dt-rows-card">
+        <template v-for="d in artSlots" :key="d.slot">
+          <div v-if="!d.unlocked" class="dt-row dt-art-row is-locked" :data-testid="`art-${d.slot}`">
+            <span class="dt-row-ico"><DtArt :name="DEVICE_ART[d.deviceType]!" :size="22" /></span>
+            <span class="dt-row-main">
+              <span class="dt-row-title">{{ slotName(d) }}</span>
+              <span class="dt-row-sub">{{
+                t.home.art.locked(needStarOf(d), t.home.art.hint[d.deviceType] ?? '')
+              }}</span>
+            </span>
+          </div>
+          <button
+            v-else
+            type="button"
+            :class="[
+              'dt-row',
+              'dt-art-row',
+              'is-link',
+              { 'is-empty': !d.goodsId, 'is-picking': pickingSlot === d.slot },
+            ]"
+            :data-testid="`art-${d.slot}`"
+            :disabled="busy"
+            @click="openSlot(d.slot)"
+          >
+            <span class="dt-row-ico"><DtArt :name="DEVICE_ART[d.deviceType]!" :size="22" /></span>
+            <span class="dt-row-main">
+              <template v-if="d.goodsId">
+                <span class="dt-art-slot">{{ slotName(d) }}</span>
+                <span class="dt-row-title is-strong">{{ catalog.goodsName(d.goodsId) }}</span>
+                <span class="dt-row-sub"
+                  >{{ artBrief(d.goodsId) }} ·
+                  <span class="dt-art-remain" data-testid="art-remain">{{
+                    expiresText(d.expiresAt)
+                  }}</span></span
+                >
+              </template>
+              <template v-else>
+                <span class="dt-row-title">{{ t.home.art.empty(slotName(d)) }}</span>
+                <span class="dt-row-sub">{{ t.home.art.hint[d.deviceType] }}</span>
+              </template>
+            </span>
+          </button>
+        </template>
+      </div>
+      <div v-if="pickingArt && pickingDevice" class="dt-card mt-2 dt-art-pick" data-testid="art-pick">
+        <div class="dt-art-pick-head">
+          <b>{{ t.home.art.pick(slotName(pickingDevice)) }}</b>
+          <button type="button" class="dt-link-btn" @click="pickingSlot = null">{{ t.common.cancel }}</button>
+        </div>
+        <div v-if="pickingDevice.goodsId" class="dt-pick-current" data-testid="art-pick-current">
+          {{
+            t.home.pickCurrent(catalog.goodsName(pickingDevice.goodsId), expiresText(pickingDevice.expiresAt))
+          }}
+        </div>
+        <div v-if="choices.length === 0" class="text-muted small">{{ t.home.art.none }}</div>
+        <div v-else class="dt-art-choices">
+          <div
+            v-for="c in choices"
+            :key="c.goodsId"
+            :class="['dt-row', 'dt-art-choice', { 'is-off': !!artBlock(c) }]"
+            :data-testid="`art-choice-${c.goodsId}`"
+          >
+            <span class="dt-row-ico"><DtArt :name="catalog.goodsArt(c.goodsId)" :size="26" /></span>
+            <span class="dt-row-main">
+              <span class="dt-row-title">{{ catalog.goodsName(c.goodsId) }}</span>
+              <span class="dt-row-sub">{{ artBrief(c.goodsId) }} · {{ t.home.art.stock(c.num) }}</span>
+            </span>
+            <span class="dt-row-end">
+              <span v-if="artBlock(c)" class="dt-art-why">{{ artBlock(c) }}</span>
+              <button v-else type="button" class="btn btn-sm btn-outline-primary" @click="place(c.goodsId)">
+                {{ t.home.art.place }}
+              </button>
+            </span>
+          </div>
+        </div>
+        <RouterLink class="dt-art-shop" :to="{ path: '/shop', query: { cat: 'art' } }"
+          >{{ t.home.art.shop }} ›</RouterLink
+        >
       </div>
     </section>
 

@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  art1017:
+    'Nueva instalación, el arte: debajo de las instalaciones del inicio hay dos huecos nuevos, el escenario musical y el biombo (se abren con 1 estrella). Coloca una pieza musical o un cuadro durante 24 horas para atraer más clientes, atraer clientes exigentes o atender a más cuando la sala está llena. La tienda tiene una nueva categoría Arte, y algunas obras maestras solo se venden en el mercado negro. El último premio del kuji (normal y de lujo) ahora da el Disco de Oro de las Voyager, que va en cualquiera de los dos huecos, en lugar de la Cangreburger y la Brújula celeste',
   streets1017:
     'Reequilibrio de calles: las 29 calles (salvo la Calle de los novatos) ya no cambian la ocupación ni la tasa de exigentes, y dan en su lugar monedas por mesa, monedas de clientes exigentes satisfechos, etc.; la fuerza de las calles se iguala, ninguna calle reduce las monedas o la EXP finales más de un 10\u00a0%, y la probabilidad de ingredientes misteriosos al explorar pasa de +2\u00a0% a +1\u00a0%. La base por estrella de la ocupación y de los exigentes pasa a 0,25 + 0,07 × estrellas y 0,12 + 0,03 × estrellas: casi igual con 2 estrellas, y sube más rápido con más estrellas',
   predict1017:

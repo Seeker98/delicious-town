@@ -1871,6 +1871,84 @@ details.dt-card > summary {
   font-size: 12px;
   color: var(--dt-muted);
 }
+/* 艺术品（乐台、屏风，2026-10-17）：一位一行，道具名长、可以换行；整行是按钮 */
+.dt-art-row {
+  width: 100%;
+  align-items: flex-start;
+  border: 0;
+  border-top: 1px solid var(--dt-line);
+  background: transparent;
+  font: inherit;
+  text-align: left;
+}
+.dt-art-row:first-child {
+  border-top: 0;
+}
+.dt-art-row .dt-row-ico {
+  margin-top: 2px;
+}
+.dt-art-row .dt-row-title {
+  overflow-wrap: anywhere;
+}
+.dt-art-row .dt-row-sub,
+.dt-art-choice .dt-row-sub {
+  white-space: normal;
+}
+.dt-art-row.is-link::after {
+  align-self: center;
+}
+.dt-art-row.is-empty .dt-row-title {
+  color: var(--dt-muted);
+}
+.dt-art-row.is-picking {
+  background: var(--dt-surface-2);
+}
+.dt-art-row.is-locked {
+  opacity: 0.7;
+}
+.dt-art-slot {
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--dt-muted);
+}
+.dt-art-remain {
+  color: var(--dt-ink-success);
+}
+.dt-art-pick {
+  padding: 10px 12px;
+  font-size: 13px;
+}
+.dt-art-pick-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.dt-art-choices {
+  margin: 0 -12px;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-art-choice {
+  padding: 8px 12px;
+}
+.dt-art-choice .dt-row-ico {
+  background: transparent;
+}
+.dt-art-choice.is-off .dt-row-main,
+.dt-art-choice.is-off .dt-row-ico {
+  opacity: 0.5;
+}
+.dt-art-why {
+  font-size: 12px;
+  color: var(--dt-muted);
+  white-space: nowrap;
+}
+.dt-art-shop {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  text-align: right;
+}
 /* 生效的加成（P5 返工）：收起时一行摘要和一个会转的箭头；展开后按来源分组，每条名字和剩余时间一行、标签换行 */
 .dt-effects {
   padding: 0;

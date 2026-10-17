@@ -71,6 +71,7 @@ export const GOODS = {
   compass: 10419, // 司天罗盘
   weatherLots: 10420, // 晴雨签
   krabBurger: 10005, // 蟹黄堡
+  goldenRecord: 30609, // 旅行者号·金唱片（艺术品设施，一番赏最后赏）
   levelTicketBase: 10100, // N 级食材兑换券 = 10100 + N（10101~10105）
 } as const;
 
@@ -95,7 +96,23 @@ export const GOODS_TYPE = {
 } as const;
 
 /** 牌匾的 devicetype；盆栽勋章的 devicetype */
-export const DEVICE_TYPE = { plaque: 6, pot: 36 } as const;
+export const DEVICE_TYPE = { plaque: 6, pot: 36, stage: 7, screen: 8, anyArt: 9 } as const;
+
+/**
+ * 艺术品设施（2026-10-17）：乐台摆名曲（设施类型 7）、屏风摆名画（8）；金唱片是 9，两个位置都能摆、全店限一件。
+ * 只加上座率、挑剔率和两个软上限（结算时拐点 = 区服数值 + atSoftCapAdd / spSoftCapAdd）
+ */
+export const ART_DEVICE_TYPES: readonly number[] = [
+  DEVICE_TYPE.stage,
+  DEVICE_TYPE.screen,
+  DEVICE_TYPE.anyArt,
+];
+export const ART_EFFECT_KEYS: readonly string[] = ['atRate', 'spRate', 'atSoftCapAdd', 'spSoftCapAdd'];
+/** 这件艺术品能不能摆在这个设施位（位置的设施类型） */
+export const artFits = (goodsDeviceType: number | null, slotDeviceType: number): boolean =>
+  goodsDeviceType === slotDeviceType ||
+  (goodsDeviceType === DEVICE_TYPE.anyArt &&
+    (slotDeviceType === DEVICE_TYPE.stage || slotDeviceType === DEVICE_TYPE.screen));
 
 /** 厨具六项属性（生成、强化、宝石都按这个名字） */
 export const EQUIP_ATTRS = ['cook', 'cutting', 'fire', 'season', 'creatives', 'luck'] as const;

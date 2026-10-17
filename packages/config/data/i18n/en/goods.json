@@ -2958,5 +2958,77 @@
   "71124": {
     "name": "Snowy Night Hot Pot Feast Ornament",
     "desc": "Snow falling outside while a hot pot bubbles at the table inside; the limited Last Prize. (Ichiban Kuji · Winter Hot Pot)"
+  },
+  "30601": {
+    "name": "Tchaikovsky: Waltz of the Flowers",
+    "desc": "A sweet, dreamy orchestral piece as tempting as the smell of fresh baking; it draws in a few more passers-by. Placed on the music stage, it lasts 24 hours."
+  },
+  "30602": {
+    "name": "Mozart: Serenade in G major (Eine kleine Nachtmusik)",
+    "desc": "Light, elegant music of the Classical era that puts passers-by in a good mood and steadily brings in more guests. Placed on the music stage, it lasts 24 hours."
+  },
+  "30603": {
+    "name": "Vivaldi: The Four Seasons, Spring",
+    "desc": "Bright, joyful strings full of life that draw in many more passers-by. Placed on the music stage, it lasts 24 hours."
+  },
+  "30604": {
+    "name": "Vivaldi: The Four Seasons, Summer",
+    "desc": "After the scorching heat, the thunderstorm presto of the last movement breaks like a sudden shower, clearing the stuffy noise of a packed room so a few more guests can still be seated. Placed on the music stage, it lasts 24 hours."
+  },
+  "30605": {
+    "name": "Spring River in the Flower Moon Night (traditional)",
+    "desc": "Pipa and xiao flow like a brimming river, quietly smoothing the bustle of a full house so quite a few more guests can be seated. Placed on the music stage, it lasts 24 hours."
+  },
+  "30606": {
+    "name": "Beethoven: Symphony No. 5 (Fate)",
+    "desc": "The famous knock at the door breaks the walls of the room, so even a full house can welcome many more guests. Placed on the music stage, it lasts 24 hours."
+  },
+  "30607": {
+    "name": "Beethoven: Symphony No. 9 (Ode to Joy), autograph score",
+    "desc": "A mighty chorus that rises above suffering and embraces all of humanity thunders under the dome. Before this tide of celebration, the hesitation at the door and the crowding inside are swept away: rich or poor, every passing soul is drawn in to share a feast where every seat is taken. Placed on the music stage, it lasts 24 hours."
+  },
+  "30608": {
+    "name": "Bach: Goldberg Variations, golden harpsichord",
+    "desc": "Counterpoint as precise as the turning of the stars weaves thirty variations into a flawless temple of sound. Its rhythm enchants ordinary diners while its hidden mathematical beauty delights the most refined guests, holding the restaurant in a miraculous balance between bustle and elegance. Placed on the music stage, it lasts 24 hours."
+  },
+  "30609": {
+    "name": "Voyager Golden Record: Interstellar Gramophone Altar",
+    "desc": "An everlasting golden disc engraved with Bach’s counterpoint, the Chinese guqin piece Flowing Water and images of human civilization, sent to greet deep space a billion years from now. As it turns slowly in the middle of the dining room, noise, crowding and class prejudice all fall away like dust: hungry travellers and seasoned gourmets alike, as if pulled by the stars, fill every seat. It fits on the music stage or in the screen slot, only one can be placed per restaurant at a time, and it lasts 24 hours."
+  },
+  "30701": {
+    "name": "Velázquez: Las Meninas, double-sided screen",
+    "desc": "Its uncanny royal perspective deepens the hall, so when picky guests crowd in you can still host a few more. Placed in the screen slot, it lasts 24 hours."
+  },
+  "30702": {
+    "name": "Monet: Water Lilies, nine-panel screen",
+    "desc": "Shimmering water divides the hall into quiet, private corners, so you can steadily host more distinguished guests without crowding. Placed in the screen slot, it lasts 24 hours."
+  },
+  "30703": {
+    "name": "Wang Ximeng: A Thousand Li of Rivers and Mountains, blue-green screen",
+    "desc": "Vast mountains in rich blue and green give the restaurant a royal air with a new view at every step, so however many picky notables come, there is room for them. Placed in the screen slot, it lasts 24 hours."
+  },
+  "30704": {
+    "name": "Hokusai: The Great Wave off Kanagawa, ukiyo-e screen",
+    "desc": "A striking wave that draws a few more picky gourmets who love East Asian art. Placed in the screen slot, it lasts 24 hours."
+  },
+  "30705": {
+    "name": "Van Gogh: The Starry Night, folding screen",
+    "desc": "Swirling, burning brushstrokes full of feeling that bring in more picky diners. Placed in the screen slot, it lasts 24 hours."
+  },
+  "30706": {
+    "name": "Vermeer: Girl with a Pearl Earring, screen",
+    "desc": "A sudden glance over the shoulder against deep black, with an ultramarine turban and a glint of pearl, quiet and noble. This beauty that rewards a closer look stops the most discerning notables in their tracks and draws in many more picky diners. Placed in the screen slot, it lasts 24 hours."
+  },
+  "30707": {
+    "name": "Michelangelo: The Sistine Ceiling (Genesis), folding screen",
+    "desc": "The divine spark of fingers about to touch plays across the great screen with breathtaking majesty. Ordinary diners feel small before it, while the pickiest and richest notables in town treat it as the ultimate place to be seen and fight for a seat even when the room is packed. Placed in the screen slot, it lasts 24 hours."
+  },
+  "30708": {
+    "name": "Leonardo da Vinci: The Last Supper, mural screen",
+    "desc": "The most famous dinner in the world. Every line on the wall runs to one point at the centre of the long table, and the perfect one-point perspective stretches the hall into the distance; the table for thirteen seems endless, so there is always room for one more guest and even the pickiest nobles are glad to sit down. The limits of how many guests and notables the restaurant can host are rewritten. Placed in the screen slot, it lasts 24 hours."
+  },
+  "30709": {
+    "name": "Gu Kaizhi (attributed): Nymph of the Luo River, double-sided embroidered screen",
+    "desc": "Graceful as a startled swan, supple as a swimming dragon. Made with Suzhou double-sided embroidery in two different colours, one side shows the nymph of the Luo River in all her splendour to welcome guests from everywhere; the other is a quiet, intimate retreat where even the pickiest young nobles can feel at ease. Placed in the screen slot, it lasts 24 hours."
   }
 }

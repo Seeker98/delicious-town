@@ -256,6 +256,7 @@ const errors: Messages['errors'] = {
     max_oil: "Votre bidon d'huile est déjà au niveau maximal",
     wrong_device: 'Cet objet ne peut pas être placé à cet emplacement',
     plaque_in_use: 'Cette plaque est déjà placée ailleurs',
+    art_in_use: 'Le Disque d’or est déjà installé à l’autre place\u202f; un seul à la fois',
     same_name: 'Le nouveau nom est identique au nom actuel',
     bad_street: 'Vous ne pouvez pas déménager dans cette rue',
     already_on: 'Déjà activé',

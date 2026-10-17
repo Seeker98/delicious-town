@@ -128,6 +128,18 @@
    "size": 100
   },
   {
+   "key": "artMusic",
+   "name": "名曲",
+   "base": 30600,
+   "size": 100
+  },
+  {
+   "key": "artPainting",
+   "name": "名画",
+   "base": 30700,
+   "size": 100
+  },
+  {
    "key": "suit0",
    "name": "厨具·见习、中厨",
    "base": 40000,

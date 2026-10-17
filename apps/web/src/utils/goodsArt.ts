@@ -26,6 +26,8 @@ export const GOODS_GROUPS: ReadonlyArray<readonly [key: string, base: number, si
   ['mouseTrap', 30300, 100],
   ['roach', 30400, 100],
   ['plaque', 30500, 100],
+  ['artMusic', 30600, 100],
+  ['artPainting', 30700, 100],
   ['suit0', 40000, 100],
   ['suit3', 40100, 100],
   ['suit4', 40200, 100],
@@ -89,6 +91,8 @@ const ART: Record<string, ArtName> = {
   oilSaver: 'goods-oil',
   mouseTrap: 'goods-trap',
   roach: 'goods-bait',
+  artMusic: 'goods-music',
+  artPainting: 'goods-painting',
   honorStatue: 'goods-statue',
 };
 const PREFIX: Array<[string, ArtName]> = [

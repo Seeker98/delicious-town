@@ -73,6 +73,7 @@ export default {
       forge: '强化、宝石',
       temple: '神殿、特色菜',
       promo: '海报奖杯',
+      art: '艺术品',
       facility: '设施道具',
       equip: '厨具',
       other: '其他',

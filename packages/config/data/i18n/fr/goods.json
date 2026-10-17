@@ -2958,5 +2958,77 @@
   "71124": {
     "name": "Décor du festin de fondue par une nuit de neige",
     "desc": "La neige tombe dehors pendant qu'une fondue bouillonne sur la table\u202f; le Dernier Prix limité. (Ichiban Kuji · Fondue chinoise d'hiver)"
+  },
+  "30601": {
+    "name": "Tchaïkovski, Valse des fleurs",
+    "desc": "Une pièce orchestrale douce et rêveuse, aussi tentante que l’odeur d’une pâtisserie, qui attire un peu plus de passants. À installer sur la scène musicale, dure 24 heures."
+  },
+  "30602": {
+    "name": "Mozart, Sérénade en sol majeur (Une petite musique de nuit)",
+    "desc": "Une musique légère et élégante de l’époque classique qui met les passants de bonne humeur et attire régulièrement plus de clients. À installer sur la scène musicale, dure 24 heures."
+  },
+  "30603": {
+    "name": "Vivaldi, Les Quatre Saisons, le Printemps",
+    "desc": "Des cordes vives et joyeuses, pleines de vie, qui attirent beaucoup plus de passants. À installer sur la scène musicale, dure 24 heures."
+  },
+  "30604": {
+    "name": "Vivaldi, Les Quatre Saisons, l’Été",
+    "desc": "Après la canicule, le presto orageux du dernier mouvement tombe comme une averse et dissipe la chaleur et le bruit d’une salle comble, pour asseoir encore quelques clients de plus. À installer sur la scène musicale, dure 24 heures."
+  },
+  "30605": {
+    "name": "Nuit de fleurs et de lune sur le fleuve printanier (air ancien)",
+    "desc": "Le pipa et la flûte xiao coulent comme un fleuve en crue et apaisent en douceur l’agitation d’une salle pleine, pour asseoir bien plus de clients. À installer sur la scène musicale, dure 24 heures."
+  },
+  "30606": {
+    "name": "Beethoven, Symphonie n° 5 (le Destin)",
+    "desc": "Les fameux coups à la porte font tomber les murs de la salle\u202f: même complet, le restaurant accueille encore beaucoup plus de clients. À installer sur la scène musicale, dure 24 heures."
+  },
+  "30607": {
+    "name": "Beethoven, Symphonie n° 9 (l’Ode à la joie), manuscrit autographe",
+    "desc": "Un chœur grandiose qui dépasse la souffrance et embrasse l’humanité entière résonne sous la coupole. Face à cette vague de fête, l’hésitation à la porte et l’étroitesse de la salle disparaissent\u202f: riche ou pauvre, chaque passant entre partager un festin où toutes les places sont prises. À installer sur la scène musicale, dure 24 heures."
+  },
+  "30608": {
+    "name": "Bach, Variations Goldberg, clavecin doré",
+    "desc": "Un contrepoint aussi précis que la course des étoiles tisse trente variations en un temple sonore sans faille. Son rythme enchante les clients ordinaires et sa beauté mathématique cachée ravit les plus raffinés, et le restaurant tient un équilibre miraculeux entre affluence et élégance. À installer sur la scène musicale, dure 24 heures."
+  },
+  "30609": {
+    "name": "Disque d’or de Voyager, autel phonographique interstellaire",
+    "desc": "Un disque d’or éternel gravé du contrepoint de Bach, de la pièce de guqin L’Eau qui coule et d’images de la civilisation humaine, envoyé saluer l’espace lointain dans un milliard d’années. Quand il tourne lentement au milieu de la salle, le bruit, l’étroitesse et les préjugés de classe tombent comme de la poussière\u202f: voyageurs affamés et fins gourmets, comme attirés par les étoiles, remplissent chaque place. Il va sur la scène musicale ou à la place du paravent, un seul à la fois par restaurant, et dure 24 heures."
+  },
+  "30701": {
+    "name": "Vélasquez, Les Ménines, paravent double face",
+    "desc": "Son étrange perspective royale agrandit la salle\u202f: quand les clients exigeants affluent, vous en recevez encore quelques-uns de plus. À installer à la place du paravent, dure 24 heures."
+  },
+  "30702": {
+    "name": "Monet, Les Nymphéas, paravent à neuf panneaux",
+    "desc": "Les reflets de l’eau découpent la salle en coins calmes et intimes, pour recevoir régulièrement plus de clients de marque sans les serrer. À installer à la place du paravent, dure 24 heures."
+  },
+  "30703": {
+    "name": "Wang Ximeng, Mille Li de fleuves et de montagnes, paravent bleu-vert",
+    "desc": "De vastes montagnes bleu et vert donnent au restaurant un air royal, avec une vue nouvelle à chaque pas\u202f: autant de notables exigeants qu’il en vient, il y a de la place pour eux. À installer à la place du paravent, dure 24 heures."
+  },
+  "30704": {
+    "name": "Hokusai, La Grande Vague de Kanagawa, paravent ukiyo-e",
+    "desc": "Une vague saisissante qui attire quelques fins gourmets exigeants épris d’art d’Asie de l’Est. À installer à la place du paravent, dure 24 heures."
+  },
+  "30705": {
+    "name": "Van Gogh, La Nuit étoilée, paravent pliant",
+    "desc": "Des coups de pinceau tourbillonnants et brûlants, pleins d’émotion, qui font entrer plus de clients exigeants. À installer à la place du paravent, dure 24 heures."
+  },
+  "30706": {
+    "name": "Vermeer, La Jeune Fille à la perle, paravent",
+    "desc": "Un regard soudain par-dessus l’épaule sur un fond noir profond, un turban outremer et l’éclat d’une perle, calme et noble. Cette beauté qui se mérite arrête les notables les plus fins et attire beaucoup plus de clients exigeants. À installer à la place du paravent, dure 24 heures."
+  },
+  "30707": {
+    "name": "Michel-Ange, Le plafond de la Sixtine (la Genèse), paravent pliant",
+    "desc": "L’étincelle divine des doigts qui vont se toucher parcourt l’immense paravent avec une majesté à couper le souffle. Les clients ordinaires se sentent tout petits devant lui, tandis que les notables les plus exigeants et les plus riches de la ville y voient le lieu où il faut être vu et se disputent une place même quand la salle est bondée. À installer à la place du paravent, dure 24 heures."
+  },
+  "30708": {
+    "name": "Léonard de Vinci, La Cène, paravent mural",
+    "desc": "Le dîner le plus célèbre du monde. Toutes les lignes du mur convergent vers un point au centre de la longue table, et la perspective parfaite prolonge la salle à l’infini\u202f; la table des treize semble sans fin, il y a toujours de la place pour un convive de plus et même les nobles les plus exigeants s’y assoient volontiers. Les limites de ce que le restaurant peut accueillir sont réécrites. À installer à la place du paravent, dure 24 heures."
+  },
+  "30709": {
+    "name": "Gu Kaizhi (attribué), La Nymphe de la rivière Luo, paravent brodé double face",
+    "desc": "Gracieuse comme un cygne effarouché, souple comme un dragon qui nage. Brodée en double face de deux couleurs à la manière de Suzhou, une face montre la nymphe de la Luo dans toute sa splendeur pour accueillir des clients de partout\u202f; l’autre est un refuge calme et intime où même les jeunes nobles les plus exigeants se sentent à l’aise. À installer à la place du paravent, dure 24 heures."
   }
 }
