@@ -6,6 +6,7 @@ import type {
   OpenFoodBrief,
   OpenGoodsBrief,
   OpenIndexDto,
+  OpenMysteriousBrief,
   OpenStreetDto,
 } from '@dt/shared';
 import type { ArtName } from '../../art/generated/names';
@@ -15,12 +16,13 @@ import { useT } from '../../composables/useT';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
+import { ROAD_NAMES } from '../../utils/labels';
 import { matchText } from '../../utils/match';
 import { KIND_ART, useWikiData, wikiPath, type WikiKind } from './wiki';
 
 /**
  * 资料库首页（问题记录 142；界面改版 P11 报刊目录）：整页米色纸，报头宋体“小镇资料库”、双线，下面一行写总条数；
- * 分类目录是带图的格子（宋体名字 + 条数），街道占一整行；“专栏”两条是玩法攻略和开放接口。
+ * 分类目录是带图的格子（宋体名字 + 条数），特色菜（2026-10-17）、街道各占一整行；“专栏”两条是玩法攻略和开放接口。
  * 输入搜索后目录收起，结果按类分组，每组最多 3 条，多的给“看全部”（跳到那一类的列表并带上搜索词）。
  * 没登录的玩家也能看
  */
@@ -32,11 +34,12 @@ const index = ref<OpenIndexDto | null>(null);
 const error = ref(false);
 const q = ref('');
 const toast = useToastStore();
-/** 搜索用的四类列表：第一次输入时才读 */
+/** 搜索用的五类列表：第一次输入时才读 */
 const lists = shallowRef<{
   goods: OpenGoodsBrief[];
   foods: OpenFoodBrief[];
   cookbooks: OpenCookbookBrief[];
+  mysterious: OpenMysteriousBrief[];
   streets: OpenStreetDto[];
 } | null>(null);
 
@@ -51,16 +54,18 @@ onMounted(async () => {
 watch(q, async (v) => {
   if (!v || lists.value) return;
   try {
-    const [goods, foods, cookbooks, streets] = await Promise.all([
+    const [goods, foods, cookbooks, mysterious, streets] = await Promise.all([
       data.goods(),
       data.foods(),
       data.cookbooks(),
+      data.mysterious(),
       data.streets(),
     ]);
     lists.value = {
       goods: goods.items,
       foods: foods.items,
       cookbooks: cookbooks.items,
+      mysterious: mysterious.items,
       streets: streets.items,
     };
   } catch {
@@ -72,7 +77,7 @@ watch(q, async (v) => {
 const total = computed(() =>
   index.value ? Object.values(index.value.counts).reduce((a, b) => a + b, 0) : null,
 );
-const KINDS: Exclude<WikiKind, 'streets'>[] = ['goods', 'foods', 'cookbooks', 'equips'];
+const KINDS: Exclude<WikiKind, 'streets' | 'mysterious'>[] = ['goods', 'foods', 'cookbooks', 'equips'];
 
 interface Hit {
   id: number;
@@ -126,6 +131,18 @@ const groups = computed<Array<{ kind: WikiKind; hits: Hit[] }>>(() => {
           sub: [streetName.value.get(c.streetId) ?? '', w.value.fields.recommend(c.level)]
             .filter(Boolean)
             .join(' · '),
+        })),
+    },
+    {
+      kind: 'mysterious',
+      hits: l.mysterious
+        .filter((x) => m(x.name))
+        .map((x) => ({
+          id: x.id,
+          name: x.name,
+          art: x.mainFoodId ? catalog.foodArt(x.mainFoodId) : KIND_ART.mysterious,
+          level: x.level,
+          sub: ROAD_NAMES[x.road] ?? '',
         })),
     },
     {
@@ -207,6 +224,16 @@ const groups = computed<Array<{ kind: WikiKind; hits: Hit[] }>>(() => {
           <span
             ><b>{{ t.wiki.kinds[k] }}</b
             ><span class="dt-wiki-kind-count">{{ index ? t.wiki.count(index.counts[k]) : '' }}</span></span
+          >
+        </RouterLink>
+        <RouterLink to="/wiki/mysterious" class="dt-wiki-kind is-wide" data-testid="wiki-kind-mysterious">
+          <span class="dt-wiki-kind-art"><DtArt :name="KIND_ART.mysterious" :size="30" /></span>
+          <span
+            ><b>{{ t.wiki.kinds.mysterious }}</b
+            ><span class="dt-wiki-kind-count"
+              >{{ index ? `${t.wiki.count(index.counts.mysterious)} · ` : ''
+              }}{{ t.wiki.mysteriousNote }}</span
+            ></span
           >
         </RouterLink>
         <RouterLink to="/wiki/streets" class="dt-wiki-kind is-wide" data-testid="wiki-kind-streets">

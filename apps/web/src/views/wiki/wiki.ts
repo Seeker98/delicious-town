@@ -3,8 +3,8 @@ import { ApiError } from '../../api/client';
 import { endpoints } from '../../api/endpoints';
 import { useWikiStore } from '../../stores/wiki';
 
-/** 游戏资料的五类（问题记录 142） */
-export const WIKI_KINDS = ['goods', 'foods', 'cookbooks', 'equips', 'streets'] as const;
+/** 游戏资料的六类（问题记录 142；特色菜 2026-10-17） */
+export const WIKI_KINDS = ['goods', 'foods', 'cookbooks', 'mysterious', 'equips', 'streets'] as const;
 export type WikiKind = (typeof WIKI_KINDS)[number];
 export const isWikiKind = (k: unknown): k is WikiKind => WIKI_KINDS.includes(k as WikiKind);
 
@@ -25,11 +25,14 @@ export function useWikiData() {
     goods: () => wiki.get('goods', endpoints.openGoods),
     foods: () => wiki.get('foods', endpoints.openFoods),
     cookbooks: () => wiki.get('cookbooks', endpoints.openCookbooks),
+    mysterious: () => wiki.get('mysterious', endpoints.openMysterious),
     equips: () => wiki.get('equips', endpoints.openEquips),
     streets: () => wiki.get('streets', endpoints.openStreets),
     goodsDetail: (id: number) => wiki.get(`goods/${id}`, (l) => endpoints.openGoodsDetail(l, id)),
     food: (id: number) => wiki.get(`foods/${id}`, (l) => endpoints.openFood(l, id)),
     cookbook: (id: number) => wiki.get(`cookbooks/${id}`, (l) => endpoints.openCookbook(l, id)),
+    mysteriousDetail: (id: number) =>
+      wiki.get(`mysterious/${id}`, (l) => endpoints.openMysteriousDetail(l, id)),
   };
 }
 
@@ -44,11 +47,12 @@ export const PART_ART: Record<number, UiArtName> = {
   4: 'slot-bottle',
   5: 'slot-hat',
 };
-/** 资料库五类的图（首页目录、搜索分组） */
+/** 资料库各类的图（首页目录、搜索分组）；特色菜用残卷的图 */
 export const KIND_ART: Record<WikiKind, ArtName> = {
   goods: 'wiki-goods',
   foods: 'wiki-foods',
   cookbooks: 'wiki-books',
+  mysterious: 'goods-scroll',
   equips: 'wiki-equips',
   streets: 'wiki-streets',
 };

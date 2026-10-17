@@ -2,13 +2,14 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
-import type { OpenCookbookDto, OpenFoodDto, OpenGoodsDto } from '@dt/shared';
+import type { OpenCookbookDto, OpenFoodDto, OpenGoodsDto, OpenMysteriousDto } from '@dt/shared';
 import { ApiError } from '../../api/client';
 import { endpoints } from '../../api/endpoints';
 import { useToastStore } from '../../stores/toast';
 import WikiCookbookView from './WikiCookbookView.vue';
 import WikiFoodView from './WikiFoodView.vue';
 import WikiGoodsView from './WikiGoodsView.vue';
+import WikiMysteriousView from './WikiMysteriousView.vue';
 import WikiStreetView from './WikiStreetView.vue';
 import { usePageTitleStore } from '../../stores/pageTitle';
 
@@ -21,6 +22,8 @@ vi.mock('../../api/endpoints', () => ({
     openStreets: vi.fn(),
     openGoods: vi.fn(),
     openEquips: vi.fn(),
+    openMysterious: vi.fn(),
+    openMysteriousDetail: vi.fn(),
   },
 }));
 
@@ -334,6 +337,134 @@ describe('游戏资料详情（问题记录 142）', () => {
     expect(cb.text()).toContain('上品起');
     expect(hrefs(w, '[data-testid="wiki-cookbooks"]')).toEqual(['/wiki/cookbooks/1']);
     expect(w.get('[data-testid="wiki-mysterious"]').text()).toContain('佛跳墙');
+    // 点进特色菜词条（2026-10-17）
+    expect(hrefs(w, '[data-testid="wiki-mysterious"]')).toEqual(['/wiki/mysterious/7']);
+  });
+
+  it('特色菜（2026-10-17）：资料表、食材链接、当令天气、残卷来源、道的加成', async () => {
+    vi.mocked(endpoints.openMysterious).mockResolvedValue({
+      ...meta,
+      items: [
+        { id: 9, name: '秘·佛跳墙', level: 5, road: 2, nutritive: 120, mainFoodId: 239 },
+        { id: 7, name: '秘·松露蛋', level: 1, road: 1, nutritive: 8, mainFoodId: 239 },
+        { id: 8, name: '秘·松露汤', level: 3, road: 2, nutritive: 40, mainFoodId: null },
+      ],
+      roads: [
+        { road: 1, weathers: [{ id: 1, name: '晴' }] },
+        {
+          road: 2,
+          weathers: [
+            { id: 2, name: '阴' },
+            { id: 10, name: '小雨' },
+          ],
+        },
+      ],
+      special: [
+        { id: 6, name: '虹' },
+        { id: 7, name: '飓风' },
+      ],
+      rules: { remnants: 3, shilingMinStar: 1, same: 0.02, sameMax: 0.3, other: 0.005, otherMax: 0.1 },
+    });
+    const mc: OpenMysteriousDto = {
+      ...meta,
+      id: 8,
+      name: '秘·松露汤',
+      level: 3,
+      road: 2,
+      nutritive: 40,
+      mainFoodId: 239,
+      taste: [1],
+      coin: 12_000,
+      saleRate: 2.5,
+      foods: [
+        { id: 239, name: '松露' },
+        { id: 240, name: '鸡蛋' },
+      ],
+      inSeason: [
+        { id: 2, name: '阴' },
+        { id: 10, name: '小雨' },
+      ],
+      sources: {
+        appraise: [
+          { id: 10812, name: '美味印章', rate: 0.4 },
+          { id: 10814, name: '蟹黄堡秘方', rate: 1 },
+        ],
+        fragments: 3,
+        shilingShop: { rare: false, price: 240, weekly: 6 },
+      },
+    };
+    vi.mocked(endpoints.openMysteriousDetail).mockResolvedValue(mc);
+    const w = await mountAt(WikiMysteriousView, '/wiki/mysterious/:id', '/wiki/mysterious/8');
+    expect(w.get('.dt-entry-kick').text()).toContain('特色菜 · 二道');
+    const dl = w.get('.dt-entry-dl').text();
+    expect(dl).toContain('等级3 级');
+    expect(dl).toContain('营养值40');
+    expect(dl).toContain('卖给顾客每份价值 ×2.5');
+    expect(dl).toContain('残卷单价12,000 银币');
+    expect(w.get('[data-testid="wiki-road-link"]').attributes('href')).toBe('/wiki/mysterious?f=2');
+    expect(hrefs(w, '[data-testid="wiki-mc-foods"]')).toEqual(['/wiki/foods/239', '/wiki/foods/240']);
+    expect(w.get('[data-testid="wiki-mc-season"]').text()).toBe(
+      '阴、小雨；特殊天气 (虹、飓风) 一道到六道全部当令。',
+    );
+    const src = w.get('[data-testid="wiki-mc-sources"]').text();
+    expect(src).toContain('鉴定: 美味印章 (40%)、蟹黄堡秘方 (必定成功)');
+    expect(src).toContain('碎片兑换: 3 张 3 级碎片换 1 张');
+    expect(src).toContain('时令铺: 240 时令值一张 (每周限 6 张)');
+    expect(src).toContain('学艺');
+    expect(hrefs(w, '[data-testid="wiki-mc-sources"]')).toEqual(['/wiki/goods/10812', '/wiki/goods/10814']);
+    expect(w.get('[data-testid="wiki-mc-road"]').text()).toBe(
+      '已学会的其他二道特色菜, 每道让这道菜下锅的份数 +2% (最多 +30%)；别的道每道 +0.5% (最多 +10%)。',
+    );
+    expect(w.get('[data-testid="wiki-mc-guide"]').attributes('href')).toBe('/wiki/guide');
+  });
+
+  it('特色菜：时令铺里 6 级是珍稀残卷；不存在写没有这一条', async () => {
+    vi.mocked(endpoints.openMysterious).mockResolvedValue({
+      ...meta,
+      items: [
+        { id: 9, name: '秘·佛跳墙', level: 5, road: 2, nutritive: 120, mainFoodId: 239 },
+        { id: 7, name: '秘·松露蛋', level: 1, road: 1, nutritive: 8, mainFoodId: 239 },
+        { id: 8, name: '秘·松露汤', level: 3, road: 2, nutritive: 40, mainFoodId: null },
+      ],
+      roads: [
+        { road: 1, weathers: [{ id: 1, name: '晴' }] },
+        {
+          road: 2,
+          weathers: [
+            { id: 2, name: '阴' },
+            { id: 10, name: '小雨' },
+          ],
+        },
+      ],
+      special: [
+        { id: 6, name: '虹' },
+        { id: 7, name: '飓风' },
+      ],
+      rules: { remnants: 3, shilingMinStar: 1, same: 0.02, sameMax: 0.3, other: 0.005, otherMax: 0.1 },
+    });
+    vi.mocked(endpoints.openMysteriousDetail).mockResolvedValue({
+      ...meta,
+      id: 9,
+      name: '秘·佛跳墙',
+      level: 6,
+      road: 2,
+      nutritive: 120,
+      mainFoodId: null,
+      taste: [],
+      coin: 1,
+      saleRate: 1,
+      foods: [],
+      inSeason: [],
+      sources: { appraise: [], fragments: null, shilingShop: { rare: true, price: 1500, weekly: 1 } },
+    });
+    const w = await mountAt(WikiMysteriousView, '/wiki/mysterious/:id', '/wiki/mysterious/9');
+    const src = w.get('[data-testid="wiki-mc-sources"]').text();
+    expect(src).toContain('时令铺珍稀残卷: 1,500 时令值一张 (每周限 1 张)');
+    expect(src).not.toContain('鉴定');
+    expect(src).not.toContain('碎片');
+    vi.mocked(endpoints.openMysteriousDetail).mockRejectedValue(new ApiError('NOT_FOUND'));
+    const w2 = await mountAt(WikiMysteriousView, '/wiki/mysterious/:id', '/wiki/mysterious/99');
+    expect(w2.get('[data-testid="wiki-error"]').text()).toBe('没有这一条');
   });
 
   it('菜谱：名字下面写食谱 · 菜系 · 口味；资料表写街道链接、推荐等级、售价；各品级食材带链接', async () => {

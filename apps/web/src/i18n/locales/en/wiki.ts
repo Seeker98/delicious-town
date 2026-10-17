@@ -4,7 +4,8 @@ import { plEn } from '../../helpers';
 
 const wiki: Messages['wiki'] = {
   title: 'Game data',
-  intro: 'Items, ingredients, recipes, cookware and streets in the game, kept in sync with the game data.',
+  intro:
+    'Items, ingredients, recipes, signature dishes, cookware and streets in the game, kept in sync with the game data.',
   searchAll: 'Search all names',
   search: 'Search by name',
   noResult: 'Nothing found',
@@ -20,6 +21,7 @@ const wiki: Messages['wiki'] = {
     goods: 'Items',
     foods: 'Ingredients',
     cookbooks: 'Recipes',
+    mysterious: 'Signature dishes',
     equips: 'Cookware',
     streets: 'Streets',
   },
@@ -32,6 +34,7 @@ const wiki: Messages['wiki'] = {
   moreIn: (n, kind) => `${n} more · see all ${kind}`,
   catalogTitle: 'Sections',
   streetsNote: "Each street's cuisine, bonus and street medal",
+  mysteriousNote: "Each dish's path, in-season weather and fragment sources",
   columns: 'Columns',
   columnKick: 'Town Library · Columns',
   toc: 'Contents',
@@ -67,6 +70,10 @@ const wiki: Messages['wiki'] = {
     grades: 'Ingredients by grade',
     medal: 'Street medal',
     streetCookbooks: 'Recipes on this street',
+    mcFoods: 'Ingredients',
+    inSeason: 'In-season weather',
+    remnantSources: 'Where fragments come from',
+    roadRule: 'Path bonus',
   },
   fields: {
     star: 'Stars',
@@ -107,6 +114,11 @@ const wiki: Messages['wiki'] = {
     theme: 'About',
     cookbookCount: (n) => `${n} ${plEn(n, 'dish', 'dishes')}`,
     suitTier: (n) => `${n} ${plEn(n, 'piece', 'pieces')}`,
+    road: 'Path',
+    nutritive: 'Nutrition',
+    saleRate: 'Sold to customers',
+    saleRateVal: (r) => `×${r} per serving`,
+    remnantPrice: 'Fragment price',
   },
   gift: {
     randomGoods: (level, num) => `A random Lv. ${level} item×${num}`,
@@ -126,6 +138,24 @@ const wiki: Messages['wiki'] = {
     exchange: 'Exchange: ',
     times: (n) => (n < 0 ? '' : ` (${n} per player)`),
     none: 'No direct source in the game data: it may come from events, gift packs, quests or other features.',
+  },
+  /** 特色菜词条（资料库特色菜 2026-10-17）：当令、残卷来源、道的加成 */
+  mc: {
+    roadSeason: (road, names) => `${road} is in season in: ${names}, plus every special weather.`,
+    inSeason: (names, special) => `${names}; in special weather (${special}) all six paths are in season.`,
+    inSeasonNote: (star) =>
+      `From ${star}★: while this dish is on sale and in season, each serving picky customers or Squidward eat earns seasonal points, based on the weather of the round it is eaten in.`,
+    learn: (n) => `Collect ${n} fragments to learn it; you can cook it from 1★.`,
+    appraise: 'Appraisal: ',
+    sure: 'always succeeds',
+    fragments: (n, level) => `Shard exchange: ${n} Lv. ${level} shards for 1 fragment`,
+    shop: (price, weekly) => `Seasonal shop: ${price} seasonal points each (${weekly} a week)`,
+    shopRare: (price, weekly) =>
+      `Seasonal shop rare fragment: ${price} seasonal points each (${weekly} a week)`,
+    lesson: 'Lessons: learn from a player who knows the dish and runs a class',
+    roadRule: (road, same, sameMax, other, otherMax) =>
+      `Each other ${road} signature dish you know adds ${same} to this dish's servings per batch (up to ${sameMax}); each dish of another path adds ${other} (up to ${otherMax}).`,
+    guide: 'How to learn signature dishes: see the play guide',
   },
   /** 玩法攻略（问题记录 384）：来自快速模拟里三种机器人的做法 */
   guide: {
@@ -234,6 +264,8 @@ const wiki: Messages['wiki'] = {
       foodsId: 'Ingredient details: recipes and signature dishes that use it',
       cookbooks: 'Recipe list (without ingredients)',
       cookbooksId: 'Recipe details: ingredients for grades 1–10',
+      mysterious: 'Signature dish list, season chart and path bonus',
+      mysteriousId: 'Signature dish details: ingredients, in-season weather, fragment sources',
       equips: 'Cookware list and sets',
       streets: 'Streets, cuisines, bonuses and street medals',
     },

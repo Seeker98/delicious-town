@@ -110,8 +110,14 @@ const streetName = computed(() => new Map(streets.value.map((s) => [s.id, s.name
 
       <template v-if="f.mysterious.length > 0">
         <h3 class="dt-entry-h">{{ w.sections.mysterious }}</h3>
+        <!-- 点进特色菜词条（资料库特色菜 2026-10-17） -->
         <p class="dt-entry-p" data-testid="wiki-mysterious">
-          {{ f.mysterious.map((m) => m.name).join(t.events.sep) }}
+          <template v-for="(m, i) in f.mysterious" :key="m.id"
+            >{{ i > 0 ? t.events.sep : ''
+            }}<RouterLink :to="`/wiki/mysterious/${m.id}`" :data-testid="`wiki-mc-${m.id}`">{{
+              m.name
+            }}</RouterLink></template
+          >
         </p>
       </template>
     </WikiEntry>

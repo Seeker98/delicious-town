@@ -10,6 +10,8 @@ import type {
   AcquireViewDto,
   OpenCookbookBrief,
   OpenCookbookDto,
+  OpenMysteriousDto,
+  OpenMysteriousListDto,
   OpenEquipsDto,
   OpenFoodBrief,
   OpenFoodDto,
@@ -227,6 +229,10 @@ export const endpoints = {
     api.getPublic<OpenListDto<OpenCookbookBrief>>(`/api/v1/open/cookbooks?lang=${lang}`),
   openCookbook: (lang: Locale, id: number) =>
     api.getPublic<OpenCookbookDto>(`/api/v1/open/cookbooks/${id}?lang=${lang}`),
+  openMysterious: (lang: Locale) =>
+    api.getPublic<OpenMysteriousListDto>(`/api/v1/open/mysterious?lang=${lang}`),
+  openMysteriousDetail: (lang: Locale, id: number) =>
+    api.getPublic<OpenMysteriousDto>(`/api/v1/open/mysterious/${id}?lang=${lang}`),
   openEquips: (lang: Locale) => api.getPublic<OpenEquipsDto>(`/api/v1/open/equips?lang=${lang}`),
   openStreets: (lang: Locale) =>
     api.getPublic<OpenListDto<OpenStreetDto>>(`/api/v1/open/streets?lang=${lang}`),

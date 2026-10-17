@@ -16,6 +16,7 @@ describe('routes', () => {
       '/wiki/goods/:id(\\d+)',
       '/wiki/foods/:id(\\d+)',
       '/wiki/cookbooks/:id(\\d+)',
+      '/wiki/mysterious/:id(\\d+)',
       '/wiki/streets/:id(\\d+)',
       '/wiki/:kind',
     ]);

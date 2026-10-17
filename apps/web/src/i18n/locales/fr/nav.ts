@@ -75,8 +75,9 @@ const nav: Messages['nav'] = {
     changelog: 'Mises à jour',
     links: 'Liens',
     guideSub: 'Commencez ici\u202f: premier jour, routine quotidienne, questions fréquentes',
-    wikiSub: 'Objets, ingrédients, recettes, ustensiles, rues',
-    wikiSubCount: (n) => `Objets, ingrédients, recettes, ustensiles, rues\u202f: ${n} entrées`,
+    wikiSub: 'Objets, ingrédients, recettes, plats signature, ustensiles, rues',
+    wikiSubCount: (n) =>
+      `Objets, ingrédients, recettes, plats signature, ustensiles, rues\u202f: ${n} entrées`,
     wikiGuideSub: 'Les trois rythmes, où dépenser en premier',
     apiSub: 'Pour les joueurs qui créent des outils',
     changelogSub: (day, head) => `${day}\u202f: ${head}`,

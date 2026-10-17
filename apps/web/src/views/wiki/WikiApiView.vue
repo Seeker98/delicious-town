@@ -19,6 +19,8 @@ const ROWS: Array<[string, string]> = [
   ['/foods/:id', 'foodsId'],
   ['/cookbooks', 'cookbooks'],
   ['/cookbooks/:id', 'cookbooksId'],
+  ['/mysterious', 'mysterious'],
+  ['/mysterious/:id', 'mysteriousId'],
   ['/equips', 'equips'],
   ['/streets', 'streets'],
 ];

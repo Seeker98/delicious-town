@@ -263,6 +263,18 @@ export const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/wiki/mysterious/:id(\\d+)',
+    name: 'wiki-mysterious',
+    component: () => import('./views/wiki/WikiMysteriousView.vue'),
+    meta: {
+      public: true,
+      gameChrome: true,
+      section: 'home',
+      title: T((t) => t.nav.titles.wikiItem),
+      parent: (_to, back) => listBack('/wiki/mysterious', back),
+    },
+  },
+  {
     path: '/wiki/streets/:id(\\d+)',
     name: 'wiki-street',
     component: () => import('./views/wiki/WikiStreetView.vue'),

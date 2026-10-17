@@ -18,7 +18,7 @@ function legacyRedirect(req: FastifyRequest, reply: FastifyReply, now: number) {
 
 /** If-None-Match 里有没有这个 ETag：认弱 ETag（CDN 重新压缩时改成 W/）和逗号分隔的多个 */
 /** 开放接口返回格式的版本：改了返回的结构（加减字段）要加一，ETag 带着它，客户端才会重新取（第 ⑧ 批审查） */
-const OPEN_FORMAT = 4;
+const OPEN_FORMAT = 5;
 
 export function etagMatches(header: string | undefined, etag: string): boolean {
   return !!header && header.split(',').some((t) => t.trim().replace(/^W\//, '') === etag);
@@ -147,6 +147,15 @@ export function openRoutes(
       const now = data.moved('cookbooks', id);
       if (now !== undefined) return legacyRedirect(req, reply, now);
       return send(req, reply, lang, `cookbooks/${id}`, () => data.cookbook(lang, id));
+    });
+    r.get('/mysterious', { config }, async (req, reply) => {
+      const lang = langOf(req);
+      return send(req, reply, lang, 'mysterious', () => data.mysterious(lang));
+    });
+    r.get('/mysterious/:id', { config }, async (req, reply) => {
+      const lang = langOf(req);
+      const { id } = parse(idParam, req.params);
+      return send(req, reply, lang, `mysterious/${id}`, () => data.mysteriousDetail(lang, id));
     });
     r.get('/equips', { config }, async (req, reply) => {
       const lang = langOf(req);

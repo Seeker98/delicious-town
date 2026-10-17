@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  wikimc1017:
+    'Game data now has “Signature dishes”: all 250 show their level, path, nutrition, sale multiplier and ingredients, plus which weathers put them in season, where fragments come from (appraisal items, shard exchange, seasonal shop, lessons) and the path bonus; the list filters by path and shows that path’s in-season weathers; “Signature dishes that use it” on ingredients now links to them; the open API has signature dishes too',
   art1017:
     'New facility, Art: below Facilities on the home page there are now two slots, the music stage and the folding screen (open at 1 star). Place a piece of music or a painting for 24 hours to draw more guests, attract picky diners, or host more when the house is full or crowded with notables. The shop has a new Art category, and a few masterpieces are sold only on the black market. The kuji last prize (regular and deluxe) now gives the Voyager Golden Record, which fits either slot, instead of the Krabby Patty and the Sky Compass',
   streets1017:

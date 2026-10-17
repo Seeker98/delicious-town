@@ -12,7 +12,7 @@ export interface OpenMeta {
   lang: Locale;
 }
 
-export type OpenKind = 'goods' | 'foods' | 'cookbooks' | 'equips' | 'streets';
+export type OpenKind = 'goods' | 'foods' | 'cookbooks' | 'mysterious' | 'equips' | 'streets';
 
 /** 玩法攻略里用到的数（backlog 384：原来写死在文案里），按默认配置算 */
 export interface OpenGuideNumbers {
@@ -179,6 +179,60 @@ export interface OpenCookbookDto extends OpenMeta, OpenCookbookBrief {
   desc: string | null;
   /** 1~10 品级各自的食材 */
   grades: Array<{ grade: number; foods: Array<{ foodsId: number; name: string; num: number }> }>;
+}
+
+export interface OpenMysteriousBrief {
+  id: number;
+  name: string;
+  level: number;
+  /** 1~6 一道~六道 */
+  road: number;
+  /** 营养值：每份价值的基数 */
+  nutritive: number;
+  /** 第一样食材（资料库里特色菜的图用它的图）；没有食材时为 null */
+  mainFoodId: number | null;
+}
+
+/** 当令表的一行：这一道在哪些天气当令（不含特殊天气，特殊天气全部当令） */
+export interface OpenMysteriousRoad {
+  road: number;
+  weathers: Array<{ id: number; name: string }>;
+}
+
+/** 特色菜列表（资料库特色菜 2026-10-17）：带当令表和道的规则，列表页和词条页共用 */
+export interface OpenMysteriousListDto extends OpenListDto<OpenMysteriousBrief> {
+  roads: OpenMysteriousRoad[];
+  /** 特殊天气：一道到六道全部当令 */
+  special: Array<{ id: number; name: string }>;
+  rules: {
+    /** 学会要几张残卷 */
+    remnants: number;
+    /** 几星起有当令、时令值 */
+    shilingMinStar: number;
+    /** 道的份数加成：每学会一道同道的特色菜 +same（最多 sameMax），别的道 +other（最多 otherMax） */
+    same: number;
+    sameMax: number;
+    other: number;
+    otherMax: number;
+  };
+}
+
+export interface OpenMysteriousDto extends OpenMeta, OpenMysteriousBrief {
+  taste: number[];
+  /** 残卷出售单价，也是学费的基数 */
+  coin: number;
+  /** 卖给顾客时每份价值的倍率（按等级） */
+  saleRate: number;
+  foods: Array<{ id: number; name: string }>;
+  /** 这一道当令的天气（不含特殊天气） */
+  inSeason: Array<{ id: number; name: string }>;
+  /** 残卷从哪来：能鉴定的才有鉴定、碎片；时令铺按等级是残卷或珍稀残卷 */
+  sources: {
+    appraise: Array<{ id: number; name: string; rate: number }>;
+    /** 几张同级碎片换一张；不能鉴定的为 null */
+    fragments: number | null;
+    shilingShop: { rare: boolean; price: number; weekly: number } | null;
+  };
 }
 
 export interface OpenEquipBrief {

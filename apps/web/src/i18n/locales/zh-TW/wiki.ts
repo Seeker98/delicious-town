@@ -5,7 +5,7 @@ import { formatNum, formatPct } from '../../../utils/format';
 /** 遊戲資料（Wiki）和開放介面說明（問題記錄 142） */
 export default {
   title: '遊戲資料',
-  intro: '遊戲裡的道具、食材、食譜、廚具和街道, 資料和遊戲配置同步。',
+  intro: '遊戲裡的道具、食材、食譜、特色菜、廚具和街道, 資料和遊戲配置同步。',
   searchAll: '在全部資料裡搜名字',
   search: '搜尋名字',
   noResult: '沒有找到',
@@ -17,7 +17,14 @@ export default {
   moreDishes: (n: number) => `再顯示 ${n} 道`,
   maxShown: (n: string) => `最多顯示 ${n} 條, 用搜索或街道縮小範圍`,
   count: (n: number) => `${formatNum(n)} 條`,
-  kinds: { goods: '道具', foods: '食材', cookbooks: '食譜', equips: '廚具', streets: '街道' },
+  kinds: {
+    goods: '道具',
+    foods: '食材',
+    cookbooks: '食譜',
+    mysterious: '特色菜',
+    equips: '廚具',
+    streets: '街道',
+  },
   all: '全部',
   rareOnly: '只看稀有',
   allStreets: '全部街道',
@@ -28,6 +35,7 @@ export default {
   moreIn: (n: number, kind: string) => `還有 ${n} 條 · 看全部${kind}`,
   catalogTitle: '分類目錄',
   streetsNote: '每條街的菜系、加成和街道勳章',
+  mysteriousNote: '每道菜的道、當令天氣和殘卷來源',
   columns: '專欄',
   columnKick: '小鎮資料庫 · 專欄',
   toc: '目錄',
@@ -63,6 +71,10 @@ export default {
     grades: '各品級食材',
     medal: '街道勳章',
     streetCookbooks: '這條街的食譜',
+    mcFoods: '食材',
+    inSeason: '當令天氣',
+    remnantSources: '殘卷從哪來',
+    roadRule: '道的加成',
   },
   fields: {
     star: '星級',
@@ -103,6 +115,11 @@ export default {
     theme: '特色',
     cookbookCount: (n: number) => `${n} 道菜`,
     suitTier: (n: number) => `${n} 件`,
+    road: '道',
+    nutritive: '營養值',
+    saleRate: '賣給顧客',
+    saleRateVal: (r: string) => `每份價值 ×${r}`,
+    remnantPrice: '殘卷單價',
   },
   gift: {
     randomGoods: (level: number, num: number) => `隨機一件 ${level} 級道具×${num}`,
@@ -122,6 +139,23 @@ export default {
     exchange: '兌換: ',
     times: (n: number) => (n < 0 ? '' : ` (每人限兌 ${n} 次)`),
     none: '遊戲配置裡沒有直接的獲得途徑, 可能來自活動、禮包、任務或其他玩法。',
+  },
+  /** 特色菜詞條（資料庫特色菜 2026-10-17）：當令、殘卷來源、道的加成 */
+  mc: {
+    roadSeason: (road: string, names: string) => `${road}當令的天氣: ${names}, 還有全部特殊天氣。`,
+    inSeason: (names: string, special: string) => `${names}；特殊天氣 (${special}) 一道到六道全部當令。`,
+    inSeasonNote: (star: number) =>
+      `${star} 星起有當令: 在售的這道菜當令時, 挑剔顧客和章魚哥每吃掉一份就攢時令值, 按吃的那一輪的天氣算。`,
+    learn: (n: number) => `湊齊 ${n} 張殘卷就能學會, 1 星以後能烹製。`,
+    appraise: '鑑定: ',
+    sure: '必定成功',
+    fragments: (n: number, level: number) => `碎片兌換: ${n} 張 ${level} 級碎片換 1 張`,
+    shop: (price: string, weekly: number) => `時令鋪: ${price} 時令值一張 (每週限 ${weekly} 張)`,
+    shopRare: (price: string, weekly: number) => `時令鋪珍稀殘卷: ${price} 時令值一張 (每週限 ${weekly} 張)`,
+    lesson: '學藝: 找會這道菜、開了課的玩家學',
+    roadRule: (road: string, same: string, sameMax: string, other: string, otherMax: string) =>
+      `已學會的其他${road}特色菜, 每道讓這道菜下鍋的份數 +${same} (最多 +${sameMax})；別的道每道 +${other} (最多 +${otherMax})。`,
+    guide: '怎麼學特色菜, 看玩法攻略',
   },
   /** 玩法攻略（問題記錄 384）：來自快速模擬裡三種機器人的做法 */
   guide: {
@@ -230,6 +264,8 @@ export default {
       foodsId: '食材詳情: 用到它的食譜和特色菜',
       cookbooks: '食譜列表 (不含配方)',
       cookbooksId: '食譜詳情: 1~10 品級的食材',
+      mysterious: '特色菜列表、當令表和道的加成',
+      mysteriousId: '特色菜詳情: 食材、當令天氣、殘卷來源',
       equips: '廚具列表和套裝',
       streets: '街道、菜系、加成和街道勳章',
     } as Record<string, string>,

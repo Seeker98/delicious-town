@@ -76,8 +76,8 @@ export default {
     links: '友情連結',
     /** 介面改版 P11：圖塊裡一句話寫裡面有什麼 */
     guideSub: '剛開店先看這裡: 第一天做什麼、每天的固定事項、常見問題',
-    wikiSub: '道具、食材、食譜、廚具、街道',
-    wikiSubCount: (n: string) => `道具、食材、食譜、廚具、街道, ${n} 條`,
+    wikiSub: '道具、食材、食譜、特色菜、廚具、街道',
+    wikiSubCount: (n: string) => `道具、食材、食譜、特色菜、廚具、街道, ${n} 條`,
     wikiGuideSub: '三種節奏怎麼玩、錢先花在哪',
     apiSub: '給想做小工具的玩家',
     changelogSub: (day: string, head: string) => `${day}: ${head}`,

@@ -4,7 +4,8 @@ import { plFr } from '../../helpers';
 
 const wiki: Messages['wiki'] = {
   title: 'Données du jeu',
-  intro: 'Objets, ingrédients, recettes, ustensiles et rues du jeu, synchronisés avec les données du jeu.',
+  intro:
+    'Objets, ingrédients, recettes, plats signature, ustensiles et rues du jeu, synchronisés avec les données du jeu.',
   searchAll: 'Chercher dans tous les noms',
   search: 'Chercher un nom',
   noResult: 'Aucun résultat',
@@ -20,6 +21,7 @@ const wiki: Messages['wiki'] = {
     goods: 'Objets',
     foods: 'Ingrédients',
     cookbooks: 'Recettes',
+    mysterious: 'Plats signature',
     equips: 'Ustensiles',
     streets: 'Rues',
   },
@@ -32,6 +34,7 @@ const wiki: Messages['wiki'] = {
   moreIn: (n, kind) => `Encore ${n} · tout voir (${kind})`,
   catalogTitle: 'Rubriques',
   streetsNote: 'Cuisine, bonus et médaille de chaque rue',
+  mysteriousNote: 'Voie, météo de saison et origine des fragments de chaque plat',
   columns: 'Chroniques',
   columnKick: 'Bibliothèque · Chroniques',
   toc: 'Sommaire',
@@ -67,6 +70,10 @@ const wiki: Messages['wiki'] = {
     grades: 'Ingrédients par qualité',
     medal: 'Médaille de rue',
     streetCookbooks: 'Recettes de cette rue',
+    mcFoods: 'Ingrédients',
+    inSeason: 'Météo de saison',
+    remnantSources: 'D’où viennent les fragments',
+    roadRule: 'Bonus de voie',
   },
   fields: {
     star: 'Étoiles',
@@ -107,6 +114,11 @@ const wiki: Messages['wiki'] = {
     theme: 'Ambiance',
     cookbookCount: (n) => `${n} ${plFr(n, 'plat', 'plats')}`,
     suitTier: (n) => `${n} ${plFr(n, 'pièce', 'pièces')}`,
+    road: 'Voie',
+    nutritive: 'Valeur nutritive',
+    saleRate: 'Vendu aux clients',
+    saleRateVal: (r) => `×${r} par part`,
+    remnantPrice: 'Prix du fragment',
   },
   gift: {
     randomGoods: (level, num) => `Un objet de niv. ${level} au hasard\u202f×\u202f${num}`,
@@ -127,6 +139,26 @@ const wiki: Messages['wiki'] = {
     exchange: 'Échange\u202f: ',
     times: (n) => (n < 0 ? '' : ` (${n} par joueur)`),
     none: 'Aucune source directe dans les données du jeu\u202f: peut venir d’événements, de packs cadeaux, de quêtes ou d’autres activités.',
+  },
+  /** 特色菜词条（资料库特色菜 2026-10-17）：当令、残卷来源、道的加成 */
+  mc: {
+    roadSeason: (road, names) => `${road} de saison\u202f: ${names}, plus toutes les météos spéciales.`,
+    inSeason: (names, special) =>
+      `${names}\u202f; par météo spéciale (${special}), les six voies sont de saison.`,
+    inSeasonNote: (star) =>
+      `Dès ${star} étoile${star > 1 ? 's' : ''}\u202f: tant que ce plat est en vente et de saison, chaque part mangée par un client difficile ou par Carlo rapporte des points de saison, selon la météo du tour où elle est mangée.`,
+    learn: (n) => `Réunissez ${n} fragments pour l’apprendre\u202f; on peut le cuisiner dès 1 étoile.`,
+    appraise: 'Expertise\u202f: ',
+    sure: 'réussite assurée',
+    fragments: (n, level) => `Échange d’éclats\u202f: ${n} éclats niv. ${level} pour 1 fragment`,
+    shop: (price, weekly) =>
+      `Boutique de saison\u202f: ${price} points de saison l’unité (${weekly} par semaine)`,
+    shopRare: (price, weekly) =>
+      `Fragment rare à la boutique de saison\u202f: ${price} points de saison l’unité (${weekly} par semaine)`,
+    lesson: 'Leçons\u202f: apprenez auprès d’un joueur qui connaît le plat et donne un cours',
+    roadRule: (road, same, sameMax, other, otherMax) =>
+      `Chaque autre plat signature de la ${road} que vous connaissez augmente de ${same} les parts de ce plat par fournée (jusqu’à ${sameMax})\u202f; chaque plat d’une autre voie, de ${other} (jusqu’à ${otherMax}).`,
+    guide: 'Comment apprendre les plats signature\u202f: voir le guide',
   },
   /** 玩法攻略（问题记录 384）：来自快速模拟里三种机器人的做法 */
   guide: {
@@ -236,6 +268,8 @@ const wiki: Messages['wiki'] = {
       foodsId: 'Détail d’un ingrédient\u202f: recettes et plats signature qui l’utilisent',
       cookbooks: 'Liste des recettes (sans ingrédients)',
       cookbooksId: 'Détail d’une recette\u202f: ingrédients des qualités 1 à 10',
+      mysterious: 'Liste des plats signature, calendrier des saisons et bonus de voie',
+      mysteriousId: 'Détail d’un plat signature\u202f: ingrédients, météo de saison, origine des fragments',
       equips: 'Liste des ustensiles et ensembles',
       streets: 'Rues, cuisines, bonus et médailles de rue',
     },

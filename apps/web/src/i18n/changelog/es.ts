@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  wikimc1017:
+    'Los datos del juego ahora tienen «Platos estrella»: los 250 muestran nivel, vía, valor nutritivo, multiplicador de venta e ingredientes, además de con qué climas están de temporada, de dónde salen los fragmentos (objetos de tasación, canje de trozos, tienda de temporada, clases) y la bonificación de vía; la lista se filtra por vía y muestra los climas de temporada de esa vía; «Platos estrella que lo usan» en los ingredientes ahora enlaza a ellos; la API abierta también tiene platos estrella',
   art1017:
     'Nueva instalación, el arte: debajo de las instalaciones del inicio hay dos huecos nuevos, el escenario musical y el biombo (se abren con 1 estrella). Coloca una pieza musical o un cuadro durante 24 horas para atraer más clientes, atraer clientes exigentes o atender a más cuando la sala está llena. La tienda tiene una nueva categoría Arte, y algunas obras maestras solo se venden en el mercado negro. El último premio del kuji (normal y de lujo) ahora da el Disco de Oro de las Voyager, que va en cualquiera de los dos huecos, en lugar de la Cangreburger y la Brújula celeste',
   streets1017:
