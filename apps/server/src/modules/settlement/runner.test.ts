@@ -166,7 +166,12 @@ describe('特色菜（子项目 4A，规格书 01 §1.7）', () => {
       .insertInto('shard_config')
       .values({ shard_id: shardId, override: JSON.stringify(busy) })
       .execute();
-    const ctx = await newRestaurant(t, { shardId, patch: { coin: 1000, oil: 100000, star_level: 1 } });
+    // 12 张桌：章鱼哥、蟹老板、吃白食、蟑螂是随机来的，只有 4 张桌时偶尔剩不到 2 桌普通顾客，
+    // 按一半的桌吃特色菜就一份都卖不出去（CI 偶发失败）
+    const ctx = await newRestaurant(t, {
+      shardId,
+      patch: { coin: 1000, oil: 100000, star_level: 1, table_num: 12 },
+    });
     const c = await t.db
       .insertInto('mc_cook')
       .values({
