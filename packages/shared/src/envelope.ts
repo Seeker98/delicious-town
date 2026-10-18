@@ -14,10 +14,14 @@ export interface GameEvent {
     | 'strength'
     | 'remnant'
     | 'shiling'
-    | 'activityCurrency';
+    | 'activityCurrency'
+    /** 达成成就（成就系统 2026-10-19）：key 是成就编号，num 是点数 */
+    | 'achievement';
   id?: number;
   /** 活动货币的名字（问题记录 224）：活动货币没有道具 id */
   name?: string;
+  /** 成就编号（kind = achievement） */
+  key?: string;
   num: number;
   lucky?: boolean;
 }

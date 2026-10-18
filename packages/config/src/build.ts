@@ -18,6 +18,7 @@ import { bulkErrors } from './bulk';
 import { wishTreeErrors } from './wishtree';
 import { shilingErrors } from './shiling';
 import { foodWeights } from './foodSupply';
+import { buildAchievements, rawAchLine, rawTrophy } from './achievements';
 import {
   ART_DEVICE_TYPES,
   ART_EFFECT_KEYS,
@@ -168,6 +169,8 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   const specialTiersRaw = parse('designed/shop_special_rate', z.array(raw.rawSpecialTier));
   const shopPoolsRaw = parse('designed/shop_pools', z.array(raw.rawShopPool));
   const suitsRaw = parse('designed/equip_suits', z.array(raw.rawSuit));
+  const achRaw = parse('designed/achievements', z.array(rawAchLine));
+  const trophiesRaw = parse('designed/trophies', z.array(rawTrophy));
   const mcProfRaw = parse('designed/mc_proficiency', z.array(raw.rawMcProficiency));
   const tuning = parse('game/tuning', tuningSchema);
   const holidays = parse('game/holidays', raw.holidaysFile);
@@ -242,6 +245,8 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     !specialTiersRaw ||
     !shopPoolsRaw ||
     !suitsRaw ||
+    !achRaw ||
+    !trophiesRaw ||
     !tuning ||
     !holidays ||
     !guessAwardRaw ||
@@ -1332,6 +1337,13 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     cookbooks: legacyPairs('cookbooks', cookbooksRaw),
   };
 
+  const { lines: achievements, trophies } = buildAchievements(
+    achRaw,
+    trophiesRaw,
+    { streetIds: streets.map((s) => s.id), iconKeys: new Set(looks.icons.map((x) => x.key)) },
+    errors,
+  );
+
   if (errors.length > 0) return { bundle: null, errors };
 
   const i18n = buildI18n(
@@ -1362,6 +1374,14 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
       kujiThemes: kujiThemes.map((x) => ({ id: x.month, name: x.name, desc: x.desc })),
       proficiency: mcProficiency.map((x) => ({ id: x.curlevel, name: x.name })),
       cookbooks,
+      // 菜系线展开前的那一条（cuisine）也要翻：网页按它取口径和各档名
+      achievements: achRaw.map((l) => ({
+        id: l.key,
+        name: l.name,
+        desc: l.desc,
+        ...(l.labels ? { tiers: l.labels } : {}),
+      })),
+      trophies: trophiesRaw.map((t) => ({ id: t.key, name: t.name })),
     },
     src,
     errors,
@@ -1413,6 +1433,8 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     looks,
     suits,
     goodsExchange,
+    achievements,
+    trophies,
     extra: {},
   };
   errors.push(...retiredErrors(itemRefs(body), retired));

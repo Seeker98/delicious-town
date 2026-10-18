@@ -32,6 +32,9 @@ import { jobCardJobs } from './modules/jobcard/jobs';
 import { shilingJobs } from './modules/shiling/jobs';
 import { mayorJobs } from './modules/town/mayor';
 import { createRankService, type RankService } from './modules/rank/service';
+import { createAchieveService, type AchieveService } from './modules/achieve/service';
+import { registerAchieveHandlers } from './modules/achieve/counters';
+import { achieveJobs } from './modules/achieve/jobs';
 import { createForumService, type ForumService } from './modules/forum/service';
 import { createActivityService, type ActivityService } from './modules/activity/service';
 import { createExchangeService, type ExchangeService } from './modules/exchange/service';
@@ -94,6 +97,7 @@ export interface Game {
   takeaway: TakeawayService;
   town: TownService;
   rank: RankService;
+  achieve: AchieveService;
   forum: ForumService;
   mail: MailService;
   redeem: RedeemService;
@@ -129,6 +133,8 @@ export function createGame(app: AppDeps): Game {
   registerTaskHandlers(app.bus, app.config);
   registerNpcHandlers(app.bus);
   registerActivityHandlers(app.bus, deps);
+  // 成就要读任务处理器加好的计数：注册在它后面
+  registerAchieveHandlers(app.bus, deps);
   const jobs: PeriodicJob[] = [];
   jobs.push(...worldJobs(world));
   jobs.push(...settlementJobs(deps, world));
@@ -157,6 +163,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...predictJobs(deps));
   jobs.push(...dailyJobs(deps, app.writer));
   jobs.push(...commissionJobs(deps));
+  jobs.push(...achieveJobs(deps));
   return {
     app,
     deps,
@@ -177,6 +184,7 @@ export function createGame(app: AppDeps): Game {
     takeaway: createTakeawayService(deps, world),
     town: createTownService(deps, world),
     rank: createRankService(deps),
+    achieve: createAchieveService(deps),
     forum: createForumService(deps),
     mail: createMailService(deps),
     redeem: createRedeemService(deps),

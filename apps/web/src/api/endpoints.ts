@@ -167,6 +167,7 @@ import type {
   BulkBidInput,
   BulkDto,
   WishTreeDto,
+  AchievementsDto,
   PredictListDto,
   PredictTradeDto,
   ActivitySummaryDto,
@@ -557,6 +558,11 @@ export const endpoints = {
   bulk: () => api.get<BulkDto>('/api/v1/bulk'),
   bulkBid: (body: BulkBidInput) => api.post<BulkDto>('/api/v1/bulk/bid', body),
   wishTree: () => api.get<WishTreeDto>('/api/v1/wishtree'),
+  // 成就（成就系统 2026-10-19）
+  achievements: () => api.get<AchievementsDto>('/api/v1/achievements'),
+  achievementsOf: (restId: number) => api.get<AchievementsDto>(`/api/v1/achievements/${restId}`),
+  achievementShelf: (trophies: string[]) =>
+    api.post<AchievementsDto>('/api/v1/achievements/shelf', { trophies }),
   wishTreeWish: () => api.post<WishTreeDto>('/api/v1/wishtree/wish', {}),
   wealth: () => api.get<WealthViewDto>('/api/v1/wealth'),
   wealthDeposit: (days: number, coin: number) =>

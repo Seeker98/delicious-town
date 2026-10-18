@@ -1,0 +1,173 @@
+{
+  "lv99": {
+    "name": "Level-99 Chef"
+  },
+  "lv114": {
+    "name": "Summit"
+  },
+  "star7": {
+    "name": "Seven-Star Restaurant"
+  },
+  "star12": {
+    "name": "Purple Dawn"
+  },
+  "renown5k": {
+    "name": "Household Name"
+  },
+  "renown20k": {
+    "name": "In the History Books"
+  },
+  "coin1e8": {
+    "name": "Deep Pockets"
+  },
+  "coin1e9": {
+    "name": "Richer Than Kings"
+  },
+  "rounds25k": {
+    "name": "Time-Honored Brand"
+  },
+  "rounds100k": {
+    "name": "Century-Old Shop"
+  },
+  "signin365": {
+    "name": "Time Flies"
+  },
+  "signin730": {
+    "name": "For the Ages"
+  },
+  "streak100": {
+    "name": "Early Bird, Night Owl"
+  },
+  "active365": {
+    "name": "Burning the Midnight Oil"
+  },
+  "story12": {
+    "name": "Tale of the Town"
+  },
+  "streets30": {
+    "name": "Grand Ambitions"
+  },
+  "mayor150": {
+    "name": "Head of the Weather Bureau"
+  },
+  "handle60k": {
+    "name": "Lost in a Dream"
+  },
+  "learn2000": {
+    "name": "Walking Encyclopedia"
+  },
+  "learn3810": {
+    "name": "The Complete Cookbook"
+  },
+  "g5_600": {
+    "name": "Gold Head Chef"
+  },
+  "g6_300": {
+    "name": "Rare Head Chef"
+  },
+  "g7_300": {
+    "name": "Delicacy Head Chef"
+  },
+  "g7_all": {
+    "name": "God of Cookery"
+  },
+  "cuisine": {
+    "name": "Grandmaster"
+  },
+  "mc40": {
+    "name": "Mystery Scholar"
+  },
+  "mc_max": {
+    "name": "Transcendence"
+  },
+  "champ1": {
+    "name": "First Taste of Glory"
+  },
+  "champ50": {
+    "name": "Defending Champion"
+  },
+  "roach1": {
+    "name": "Bronze Roach"
+  },
+  "roach2": {
+    "name": "Silver Roach"
+  },
+  "roach3": {
+    "name": "Golden Roach"
+  },
+  "roachlay": {
+    "name": "Pure Mischief"
+  },
+  "flip10k": {
+    "name": "Bottomless Appetite"
+  },
+  "exchange": {
+    "name": "Priceless"
+  },
+  "refuel": {
+    "name": "Friends in Need"
+  },
+  "thumbs": {
+    "name": "Known by All"
+  },
+  "fg10k": {
+    "name": "Surrounded"
+  },
+  "fgwin": {
+    "name": "Fist God"
+  },
+  "fglose": {
+    "name": "Fist Ghost"
+  },
+  "cup5k": {
+    "name": "Poker Face"
+  },
+  "cupclear": {
+    "name": "God of Gamblers"
+  },
+  "numwin": {
+    "name": "Well Deserved"
+  },
+  "slot": {
+    "name": "Jackpot King"
+  },
+  "devil": {
+    "name": "Iron Stomach"
+  },
+  "memory": {
+    "name": "Photographic Memory"
+  },
+  "darts": {
+    "name": "Sharpshooter"
+  },
+  "nim": {
+    "name": "Mastermind"
+  },
+  "spice": {
+    "name": "Spice Master"
+  },
+  "deal": {
+    "name": "High Roller"
+  },
+  "floor10": {
+    "name": "Top of the Tower"
+  },
+  "rank1": {
+    "name": "First Crown"
+  },
+  "rank1_26": {
+    "name": "Eternal Chef God"
+  },
+  "suits": {
+    "name": "Legendary Arsenal"
+  },
+  "guardian": {
+    "name": "Slayer"
+  },
+  "ta1000": {
+    "name": "Single-Minded"
+  },
+  "ta2000": {
+    "name": "Lightning Fast"
+  }
+}

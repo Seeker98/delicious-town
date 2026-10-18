@@ -1044,6 +1044,16 @@ export const tuningSchema = z.object({
     consolationLevel: int.min(1),
     prizes: z.array(z.object({ goods: int.min(1), num: int.min(1), weight: num.gt(0) })).min(1),
   }),
+  /** 成就（设计稿 2026-10-19）：排行门槛、展示柜格数、首达和新闻的点数线 */
+  achieve: z.object({
+    rankMinLevel: int.min(1),
+    rankMinAccountDays: int.min(0),
+    /** [成就点, 展示柜格数]，按成就点从小到大 */
+    shelfSlots: z.array(z.tuple([int.min(0), int.min(1)])).min(1),
+    firstMinPts: int.min(1),
+    newsMinPts: int.min(1),
+    rarityCacheSeconds: int.min(0),
+  }),
 });
 
 export type Tuning = z.infer<typeof tuningSchema>;

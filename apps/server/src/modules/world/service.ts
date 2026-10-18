@@ -398,6 +398,8 @@ export function createWorldService(d: GameDeps) {
         foods: m.foods,
         appraisable: m.appraisable,
       })),
+      achievements: d.config.bundle.achievements,
+      trophies: d.config.bundle.trophies,
       data: {
         // 问题记录 318：主线、支线、每周任务的名字；章名、支线名
         tasks: [...d.config.bundle.quests, ...d.config.bundle.weeklyGroups.flatMap((g) => g.quests)].map(
@@ -472,6 +474,30 @@ export function localizeCatalog(base: CatalogDto, t: I18nTable | undefined, lang
     ...(suits ? { suits } : {}),
     ...(looks ? { looks } : {}),
     ...(base.mysterious ? { mysterious: pick(base.mysterious, t.mysterious, ['name']) } : {}),
+    // 成就线、奖杯按展开前的 key 翻（菜系线、菜系奖杯共用一条翻译）
+    ...(base.achievements
+      ? {
+          achievements: base.achievements.map((l) => {
+            const e = t.achievements[l.key.split('.')[0]!];
+            return e
+              ? {
+                  ...l,
+                  name: e.name ?? l.name,
+                  desc: e.desc ?? l.desc,
+                  labels: l.labels && (e.tiers ?? l.labels),
+                }
+              : l;
+          }),
+        }
+      : {}),
+    ...(base.trophies
+      ? {
+          trophies: base.trophies.map((x) => {
+            const e = t.trophies[x.key.split('.')[0]!];
+            return e?.name ? { ...x, name: e.name } : x;
+          }),
+        }
+      : {}),
     ...(base.data
       ? {
           data: Object.fromEntries(

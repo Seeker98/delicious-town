@@ -145,6 +145,13 @@ const events: Messages['events'] = {
         : `"${mcNameOf(names, n(p, 'mcId'))}" failed the trial`,
     'equip.stress': (p, names) =>
       `Enhancing ${names.goodsName(n(p, 'goodsId'))} to +${n(p, 'to')} ${p.success ? 'succeeded' : 'failed'}`,
+    'achieve.got': (p, names) => {
+      const name = names.achName?.(String(p.id ?? '')) ?? String(p.id ?? '');
+      const trophy = p.trophy
+        ? `, new trophy “${names.trophyName?.(String(p.trophy)) ?? String(p.trophy)}”`
+        : '';
+      return `${p.first ? 'First on the server to earn' : 'Achievement earned:'} “${name}” (+${n(p, 'pts')} pts)${trophy}`;
+    },
     'level.up': (p) => `Restaurant reached level ${n(p, 'to')}`,
     'table.auto': (p, names) => {
       const extra = [

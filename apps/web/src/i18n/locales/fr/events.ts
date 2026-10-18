@@ -150,6 +150,13 @@ const events: Messages['events'] = {
         : `«\u202f${mcNameOf(names, n(p, 'mcId'))}\u202f» a échoué à l'épreuve`,
     'equip.stress': (p, names) =>
       `Renforcement de ${names.goodsName(n(p, 'goodsId'))} à +${n(p, 'to')}\u202f: ${p.success ? 'réussi' : 'raté'}`,
+    'achieve.got': (p, names) => {
+      const name = names.achName?.(String(p.id ?? '')) ?? String(p.id ?? '');
+      const trophy = p.trophy
+        ? `, nouveau trophée «\u202f${names.trophyName?.(String(p.trophy)) ?? String(p.trophy)}\u202f»`
+        : '';
+      return `${p.first ? 'Premier du serveur à obtenir' : 'Succès obtenu'}\u202f: «\u202f${name}\u202f» (+${n(p, 'pts')} pts)${trophy}`;
+    },
     'level.up': (p) => `Le restaurant passe au niveau ${n(p, 'to')}`,
     'table.auto': (p, names) => {
       const extra = [

@@ -1,0 +1,340 @@
+{
+  "level": {
+    "name": "Renommée",
+    "desc": "Niveau du restaurant"
+  },
+  "star": {
+    "name": "Chasseur d’étoiles",
+    "desc": "Étoiles du restaurant",
+    "tiers": [
+      "2 étoiles",
+      "3 étoiles",
+      "5 étoiles",
+      "7 étoiles",
+      "1 étoile pourpre",
+      "3 étoiles pourpres",
+      "5 étoiles pourpres"
+    ]
+  },
+  "renown": {
+    "name": "Grande réputation",
+    "desc": "Renommée"
+  },
+  "coin": {
+    "name": "L’argent coule à flots",
+    "desc": "Pièces gagnées au total en service"
+  },
+  "rounds": {
+    "name": "Le feu ne s’éteint jamais",
+    "desc": "Tours de service au total"
+  },
+  "signin": {
+    "name": "Qu’il pleuve ou qu’il vente",
+    "desc": "Jours de présence"
+  },
+  "streak": {
+    "name": "Persévérance",
+    "desc": "Plus longue série de présence"
+  },
+  "active": {
+    "name": "Assiduité",
+    "desc": "Jours d’activité complète"
+  },
+  "weekly": {
+    "name": "Chaque semaine",
+    "desc": "Semaines avec toutes les quêtes hebdo faites"
+  },
+  "story": {
+    "name": "Histoire principale",
+    "desc": "Chapitres de l’histoire terminés"
+  },
+  "streets": {
+    "name": "Tour des rues",
+    "desc": "Rues où vous avez tenu boutique"
+  },
+  "wish": {
+    "name": "Faire un vœu",
+    "desc": "Jours où vous avez fait un vœu"
+  },
+  "wishwin": {
+    "name": "Vœu exaucé",
+    "desc": "Gains à l’arbre à vœux"
+  },
+  "mayor": {
+    "name": "Oracle météo",
+    "desc": "Bons pronostics météo"
+  },
+  "mayorstreak": {
+    "name": "Série gagnante",
+    "desc": "Plus longue série de bons pronostics météo"
+  },
+  "guess": {
+    "name": "Devin des prix",
+    "desc": "Pronostics du marché avec 3 bons ou plus"
+  },
+  "handle": {
+    "name": "Toucher de Midas",
+    "desc": "Ingrédients combinés ou décomposés"
+  },
+  "buy": {
+    "name": "Acheteur",
+    "desc": "Achats au marché"
+  },
+  "learn": {
+    "name": "Apprendre sans fin",
+    "desc": "Recettes apprises"
+  },
+  "g3": {
+    "name": "Supérieur",
+    "desc": "Recettes Supérieur ou mieux"
+  },
+  "g5": {
+    "name": "Médaille d’or",
+    "desc": "Recettes Médaille d’or ou mieux"
+  },
+  "g6": {
+    "name": "Rare",
+    "desc": "Recettes Rare ou mieux"
+  },
+  "g7": {
+    "name": "Délice",
+    "desc": "Recettes Délice"
+  },
+  "cuisine": {
+    "name": "Cuisine",
+    "desc": "La cuisine de cette rue",
+    "tiers": [
+      "Toutes apprises",
+      "Toutes médaille d’or ou mieux",
+      "Toutes en Délice"
+    ]
+  },
+  "mclearn": {
+    "name": "Apprenti mystère",
+    "desc": "Recettes mystères apprises"
+  },
+  "mclevel": {
+    "name": "Maîtrise parfaite",
+    "desc": "Meilleure maîtrise d’un plat spécial",
+    "tiers": [
+      "Habile",
+      "Expert",
+      "Chef",
+      "Dieu cuisinier",
+      "Transcendant"
+    ]
+  },
+  "mccook": {
+    "name": "Au fourneau",
+    "desc": "Plats spéciaux cuisinés"
+  },
+  "champion": {
+    "name": "Champion du plat spécial",
+    "desc": "Titres quotidiens du plat spécial"
+  },
+  "shiling": {
+    "name": "De saison",
+    "desc": "Plats de saison cuisinés"
+  },
+  "shilingtop": {
+    "name": "Premier de la saison",
+    "desc": "Semaines en tête du classement de saison"
+  },
+  "lesson": {
+    "name": "Cours de maître",
+    "desc": "Cours de plat spécial donnés"
+  },
+  "roach": {
+    "name": "Chasseur de cafards",
+    "desc": "Cafards écrasés"
+  },
+  "roachlay": {
+    "name": "Farceur",
+    "desc": "Cafards déposés chez les autres"
+  },
+  "flip": {
+    "name": "Doigts de fée",
+    "desc": "Placards d’amis fouillés"
+  },
+  "exchange": {
+    "name": "Échange équitable",
+    "desc": "Échanges d’ingrédients avec des amis"
+  },
+  "refuel": {
+    "name": "Station-service",
+    "desc": "Pleins d’huile faits à des amis"
+  },
+  "dine": {
+    "name": "Repas gratuit",
+    "desc": "Repas filés à l’anglaise"
+  },
+  "thumbs": {
+    "name": "Chouchou du public",
+    "desc": "J’aime reçus"
+  },
+  "friends": {
+    "name": "Papillon social",
+    "desc": "Amis de niveau 10 ou plus"
+  },
+  "duel": {
+    "name": "Partenaire d’entraînement",
+    "desc": "Duels amicaux"
+  },
+  "featured": {
+    "name": "Plume",
+    "desc": "Messages mis en avant"
+  },
+  "invite": {
+    "name": "Guide",
+    "desc": "Joueurs invités arrivés au niveau 30"
+  },
+  "fg": {
+    "name": "Jeu de doigts",
+    "desc": "Parties de jeu de doigts"
+  },
+  "fgwin": {
+    "name": "Dieu du poing",
+    "desc": "Plus longue série de victoires au jeu de doigts"
+  },
+  "fglose": {
+    "name": "Fantôme du poing",
+    "desc": "Plus longue série de défaites au jeu de doigts"
+  },
+  "cup": {
+    "name": "Devine la coupe",
+    "desc": "Parties de devine la coupe"
+  },
+  "cupclear": {
+    "name": "Devine la coupe\u202f: sans faute",
+    "desc": "Parties réussies jusqu’au dernier tour"
+  },
+  "numwin": {
+    "name": "Roue des nombres\u202f: lot",
+    "desc": "Lots du top 3 à la roue des nombres"
+  },
+  "slot": {
+    "name": "Machine à sous",
+    "desc": "Tours de machine à sous"
+  },
+  "devil": {
+    "name": "Coupe du diable",
+    "desc": "Parties de coupe du diable"
+  },
+  "memory": {
+    "name": "Cocktail mémoire",
+    "desc": "Parties de cocktail mémoire"
+  },
+  "darts": {
+    "name": "Fléchettes",
+    "desc": "Parties de fléchettes"
+  },
+  "nim": {
+    "name": "Dernier bonbon",
+    "desc": "Parties de dernier bonbon"
+  },
+  "spice": {
+    "name": "Épices secrètes",
+    "desc": "Parties de épices secrètes"
+  },
+  "deal": {
+    "name": "Flambeur",
+    "desc": "Parties de flambeur"
+  },
+  "barall": {
+    "name": "Habitué du bar",
+    "desc": "Jeux du bar joués (sur 10)"
+  },
+  "floor": {
+    "name": "Grimpeur de la tour",
+    "desc": "Plus haut étage de la tour"
+  },
+  "towerwin": {
+    "name": "Challenger",
+    "desc": "Défis de la tour gagnés"
+  },
+  "rank15": {
+    "name": "Classement des duels",
+    "desc": "Semaines dans le top 15 des duels"
+  },
+  "rank1": {
+    "name": "Dieu cuisinier",
+    "desc": "Semaines en tête des duels"
+  },
+  "suits": {
+    "name": "Collectionneur",
+    "desc": "Ensembles d’ustensiles complets"
+  },
+  "gemfull": {
+    "name": "Couvert de bijoux",
+    "desc": "Ustensiles entièrement sertis"
+  },
+  "explore": {
+    "name": "Explorateur",
+    "desc": "Explorations du temple"
+  },
+  "guardian": {
+    "name": "Tueur de dragons",
+    "desc": "Bêtes gardiennes vaincues"
+  },
+  "trial": {
+    "name": "Épreuves",
+    "desc": "Épreuves du temple réussies"
+  },
+  "takeaway": {
+    "name": "Livreur",
+    "desc": "Commandes livrées"
+  },
+  "takeaway5": {
+    "name": "Livraison premium",
+    "desc": "Commandes de niveau 5+ livrées"
+  },
+  "predict": {
+    "name": "Prévisionniste",
+    "desc": "Événements de prédiction rejoints"
+  },
+  "market": {
+    "name": "Premiers pas en bourse",
+    "desc": "Ordres exécutés à la bourse"
+  },
+  "futures": {
+    "name": "Livraison à terme",
+    "desc": "Contrats à terme livrés"
+  },
+  "fund": {
+    "name": "Trio des fonds",
+    "desc": "Placements du fonds menés à terme",
+    "tiers": [
+      "C\u202f: Liquidité",
+      "B\u202f: Capital de croissance",
+      "A\u202f: Investisseur pilier"
+    ]
+  },
+  "acquire": {
+    "name": "Acquéreur",
+    "desc": "Restaurants rachetés"
+  },
+  "talk": {
+    "name": "Ami de la ville",
+    "desc": "Habitants avec qui vous avez discuté (sur 4)"
+  },
+  "activity": {
+    "name": "Citoyen actif",
+    "desc": "Événements de la ville rejoints"
+  },
+  "activitytop": {
+    "name": "Top 10 des événements",
+    "desc": "Places dans le top 10 des événements"
+  },
+  "mouse": {
+    "name": "Attrape-souris",
+    "desc": "Souris prises au piège"
+  },
+  "plankton": {
+    "name": "Chasseur de Plancton",
+    "desc": "Fois où vous avez chassé Plancton"
+  },
+  "krab": {
+    "name": "M. Krab comblé",
+    "desc": "Fois où M. Krab a eu son festin"
+  }
+}

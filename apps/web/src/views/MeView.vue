@@ -48,6 +48,7 @@ onMounted(() => {
   <div class="dt-group-card dt-me-group">
     <NavRow to="/rest/info" art="me-info" :label="t.nav.me.info" />
     <NavRow to="/rest/look" art="me-look" :label="t.nav.me.look" />
+    <NavRow to="/achievements" art="fac-trophy" :label="t.nav.me.achieve" />
     <NavRow v-if="on('equip')" to="/rest/equip" art="me-equip" :label="t.nav.me.equip" />
     <NavRow v-if="on('store')" to="/store" art="me-store" :label="t.nav.me.store" />
   </div>

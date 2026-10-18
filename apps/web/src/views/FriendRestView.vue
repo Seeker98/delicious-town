@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import IconTag from '../components/IconTag.vue';
+import AchTrophy from '../components/achieve/AchTrophy.vue';
 import AcquireCard from '../components/acquire/AcquireCard.vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
@@ -26,6 +27,7 @@ import { useSessionStore } from '../stores/session';
 import { GRADE_NAMES, PART_NAMES } from '../utils/labels';
 import { equipName } from '../utils/equipName';
 import { restName, restNotice } from '../utils/npcName';
+import { trophyName } from '../utils/achieve';
 
 /**
  * 好友餐厅（界面改版 P10）：店头和自己首页一样（门面、等级环、店名），称号一排；
@@ -158,6 +160,24 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
     <div v-if="rest.icons.length > 0" class="dt-friend-icons" data-testid="friend-icons">
       <IconTag v-for="i in rest.icons" :key="i.key" :title="catalog.icon(i.key)?.title ?? i.title" />
     </div>
+    <!-- 展示柜（成就系统 2026-10-19）：成就点和摆出来的奖杯，整张卡去对方的成就墙 -->
+    <RouterLink
+      v-if="rest.ach && !rest.npc && (rest.ach.points > 0 || rest.ach.shelf.length > 0)"
+      :to="`/achievements/${rest.id}`"
+      class="dt-card dt-ach-mini"
+      data-testid="friend-ach"
+    >
+      <span class="dt-ach-mini-head">
+        <span class="dt-meta">{{ t.achieve.friendPoints(formatNum(rest.ach.points)) }}</span>
+        <span class="dt-go">{{ t.achieve.friendWall }}</span>
+      </span>
+      <span v-if="rest.ach.shelf.length > 0" class="dt-ach-mini-shelf">
+        <span v-for="k in rest.ach.shelf" :key="k" class="dt-ach-slot is-mini">
+          <AchTrophy :tone="catalog.trophyMap.get(k)?.tone ?? 'bronze'" :size="34" />
+          <span class="dt-ach-slot-name">{{ trophyName(k, catalog) }}</span>
+        </span>
+      </span>
+    </RouterLink>
 
     <!-- 操作块：好友才有；不是好友时一个整宽“加好友” -->
     <div v-if="rest.isFriend" class="dt-do-grid mt-3" data-testid="act-bar">

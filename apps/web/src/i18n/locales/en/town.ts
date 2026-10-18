@@ -132,6 +132,7 @@ const town: Messages['town'] = {
       'Deal or No Deal',
       'Signature dishes',
       'Season',
+      'Achievements',
     ],
     periods: { today: 'Today', yesterday: 'Yesterday', thisWeek: 'This week', lastWeek: 'Last week' },
     boards: {
@@ -186,6 +187,8 @@ const town: Messages['town'] = {
       'mc.learned': 'Learned',
       'shiling.week': 'This week',
       'shiling.lastWeek': 'Last week',
+      'achieve.points': 'Points',
+      'achieve.week': 'New this week',
     },
     rewards: {
       'roach.kill.lastWeek': "Last week's top 2: Midnight Roach Killer (Mon 7:59)",

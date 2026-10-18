@@ -27,6 +27,9 @@ export const I18N_FIELDS = {
   proficiency: ['name'],
   // 第 9 批：菜名（食谱）；描述（#115）只有繁中（构建时转换），英法西没有翻译
   cookbooks: ['name', 'desc'],
+  // 成就系统（2026-10-19）：成就线的名字、口径和各档显示名（tiers）；奖杯名字
+  achievements: ['name', 'desc', 'tiers'],
+  trophies: ['name'],
 } as const;
 export type I18nKind = keyof typeof I18N_FIELDS;
 export const I18N_KINDS = Object.keys(I18N_FIELDS) as I18nKind[];

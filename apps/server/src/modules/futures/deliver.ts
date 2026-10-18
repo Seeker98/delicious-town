@@ -4,6 +4,7 @@ import { restLog, runSystemOp } from '../../core/op';
 import { gainCoin, spendCoin } from '../../core/resources';
 import { addFoods } from '../cupboard/foods';
 import { addCredit, creditWallets, newCredits } from '../exchange/wallet';
+import { bumpCounters } from '../achieve/counters';
 
 type Log = { error(obj: object, msg: string): void };
 const NO_LOG: Log = { error: () => {} };
@@ -77,6 +78,7 @@ export async function deliverDue(
             if (plan.dropped > 0) addCredit(credits, op.rest.id, 0, r.foods_id, plan.dropped);
             await settle({ status: 'delivered', to_cupboard: r.qty - plan.dropped, to_wallet: plan.dropped });
             restLog(op, 'futures.delivered', { foodsId: r.foods_id, qty: r.qty, toWallet: plan.dropped });
+            await bumpCounters(op, [['futures.delivered', 1]]);
             out.delivered++;
           } else {
             await settle({ status: 'defaulted' });

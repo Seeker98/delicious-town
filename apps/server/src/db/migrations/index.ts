@@ -85,6 +85,7 @@ import * as m0083 from './0083_acquire_cede';
 import * as m0084 from './0084_market_newbie';
 import * as m0085 from './0085_food_cut';
 import * as m0086 from './0086_oil_saver';
+import * as m0087 from './0087_achievements';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -174,4 +175,5 @@ export const migrations: Record<string, Migration> = {
   '0084_market_newbie': m0084,
   '0085_food_cut': m0085,
   '0086_oil_saver': m0086,
+  '0087_achievements': m0087,
 };

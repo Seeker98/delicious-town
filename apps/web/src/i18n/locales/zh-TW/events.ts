@@ -146,6 +146,14 @@ export default {
         : `「${mcNameOf(names, n(p, 'mcId'))}」試煉失敗`,
     'equip.stress': (p, names) =>
       `${names.goodsName(n(p, 'goodsId'))}強化到 +${n(p, 'to')}${p.success ? '成功' : '失敗'}`,
+    // 達成成就（成就係統 2026-10-19）
+    'achieve.got': (p, names) => {
+      const name = names.achName?.(String(p.id ?? '')) ?? String(p.id ?? '');
+      const trophy = p.trophy
+        ? `, 得到獎盃「${names.trophyName?.(String(p.trophy)) ?? String(p.trophy)}」`
+        : '';
+      return `${p.first ? '全服第一個達成' : '達成成就'}「${name}」(+${n(p, 'pts')} 點)${trophy}`;
+    },
     'level.up': (p) => `餐廳升到了 ${n(p, 'to')} 級`,
     /** 升級自動擺餐桌（使用者 2026-10-12）：用了倉庫的幾張、花了多少銀幣；沒買成寫原因和去哪買 */
     'table.auto': (p, names) =>

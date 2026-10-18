@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, inject, onMounted, ref, watch } from 'vue';
+import { routeLocationKey } from 'vue-router';
 import { RANK_BOARDS, RANK_GROUPS, type LeaderboardDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
@@ -24,7 +25,11 @@ const restStore = useRestaurantStore();
 const t = useT();
 const KEY = 'dt_rank_board';
 
+/** 网址里带 ?board= 时直接打开那个榜（成就墙的“排行”链接），其次是上次看的 */
+const route = inject(routeLocationKey, null);
 function initialKey(): string {
+  const q = route?.query.board;
+  if (typeof q === 'string' && RANK_BOARDS.some((b) => b.key === q)) return q;
   try {
     const v = localStorage.getItem(KEY);
     if (v && RANK_BOARDS.some((b) => b.key === v)) return v;

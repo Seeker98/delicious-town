@@ -1,0 +1,340 @@
+{
+  "level": {
+    "name": "Town Fame",
+    "desc": "Restaurant level"
+  },
+  "star": {
+    "name": "Star Hunter",
+    "desc": "Restaurant stars",
+    "tiers": [
+      "2 stars",
+      "3 stars",
+      "5 stars",
+      "7 stars",
+      "Purple 1 star",
+      "Purple 3 stars",
+      "Purple 5 stars"
+    ]
+  },
+  "renown": {
+    "name": "Far and Wide",
+    "desc": "Renown"
+  },
+  "coin": {
+    "name": "Money Pours In",
+    "desc": "Total coins earned from business"
+  },
+  "rounds": {
+    "name": "Stove Always Lit",
+    "desc": "Total business rounds"
+  },
+  "signin": {
+    "name": "Rain or Shine",
+    "desc": "Days checked in"
+  },
+  "streak": {
+    "name": "Persistence",
+    "desc": "Longest check-in streak"
+  },
+  "active": {
+    "name": "Diligence",
+    "desc": "Days with full daily activity"
+  },
+  "weekly": {
+    "name": "Every Single Week",
+    "desc": "Weeks with all weekly quests done"
+  },
+  "story": {
+    "name": "Main Story",
+    "desc": "Main story chapters finished"
+  },
+  "streets": {
+    "name": "Street Hopper",
+    "desc": "Streets you have run a shop on"
+  },
+  "wish": {
+    "name": "Making Wishes",
+    "desc": "Days you made a wish"
+  },
+  "wishwin": {
+    "name": "Wish Come True",
+    "desc": "Wishing tree wins"
+  },
+  "mayor": {
+    "name": "Weather Oracle",
+    "desc": "Correct weather guesses"
+  },
+  "mayorstreak": {
+    "name": "Hot Streak",
+    "desc": "Longest run of correct weather guesses"
+  },
+  "guess": {
+    "name": "Price Prophet",
+    "desc": "Market guesses with 3+ hits"
+  },
+  "handle": {
+    "name": "Midas Touch",
+    "desc": "Ingredients combined or broken down"
+  },
+  "buy": {
+    "name": "Buyer",
+    "desc": "Market purchases"
+  },
+  "learn": {
+    "name": "Never Stop Learning",
+    "desc": "Recipes learned"
+  },
+  "g3": {
+    "name": "Superior",
+    "desc": "Recipes at Superior or better"
+  },
+  "g5": {
+    "name": "Gold",
+    "desc": "Recipes at Gold or better"
+  },
+  "g6": {
+    "name": "Rare",
+    "desc": "Recipes at Rare or better"
+  },
+  "g7": {
+    "name": "Delicacy",
+    "desc": "Recipes at Delicacy"
+  },
+  "cuisine": {
+    "name": "Cuisine",
+    "desc": "This street’s cuisine",
+    "tiers": [
+      "All learned",
+      "All Gold or better",
+      "All Delicacy"
+    ]
+  },
+  "mclearn": {
+    "name": "Mystery Apprentice",
+    "desc": "Mystery recipes learned"
+  },
+  "mclevel": {
+    "name": "Perfect Mastery",
+    "desc": "Best proficiency on one special dish",
+    "tiers": [
+      "Skilled",
+      "Expert",
+      "Head Chef",
+      "Cooking God",
+      "Transcendent"
+    ]
+  },
+  "mccook": {
+    "name": "At the Wok",
+    "desc": "Special dishes cooked"
+  },
+  "champion": {
+    "name": "Special Dish Champion",
+    "desc": "Daily special dish titles"
+  },
+  "shiling": {
+    "name": "In Season",
+    "desc": "Seasonal dishes cooked"
+  },
+  "shilingtop": {
+    "name": "Top of the Season",
+    "desc": "Weeks at #1 on the seasonal board"
+  },
+  "lesson": {
+    "name": "Master Class",
+    "desc": "Special dish classes taught"
+  },
+  "roach": {
+    "name": "Roach Buster",
+    "desc": "Roaches squashed"
+  },
+  "roachlay": {
+    "name": "Mischief Maker",
+    "desc": "Roaches planted on others"
+  },
+  "flip": {
+    "name": "Sticky Fingers",
+    "desc": "Friend cupboards searched"
+  },
+  "exchange": {
+    "name": "Fair Trade",
+    "desc": "Ingredient swaps with friends"
+  },
+  "refuel": {
+    "name": "Filling Station",
+    "desc": "Times you refilled a friend’s oil"
+  },
+  "dine": {
+    "name": "Free Lunch",
+    "desc": "Dine-and-dash meals"
+  },
+  "thumbs": {
+    "name": "Crowd Favorite",
+    "desc": "Likes received"
+  },
+  "friends": {
+    "name": "Social Butterfly",
+    "desc": "Friends at level 10 or above"
+  },
+  "duel": {
+    "name": "Sparring Partner",
+    "desc": "Friendly cook-offs"
+  },
+  "featured": {
+    "name": "Wordsmith",
+    "desc": "Posts featured"
+  },
+  "invite": {
+    "name": "Guide",
+    "desc": "Invited players who reached level 30"
+  },
+  "fg": {
+    "name": "Finger Guessing",
+    "desc": "Finger-guessing games played"
+  },
+  "fgwin": {
+    "name": "Fist God",
+    "desc": "Longest finger-guessing win streak"
+  },
+  "fglose": {
+    "name": "Fist Ghost",
+    "desc": "Longest finger-guessing losing streak"
+  },
+  "cup": {
+    "name": "Cup Guessing",
+    "desc": "Cup-guessing games played"
+  },
+  "cupclear": {
+    "name": "Cup Guessing: Clear",
+    "desc": "Games guessed through the last round"
+  },
+  "numwin": {
+    "name": "Number Wheel: Prize",
+    "desc": "Top-three prizes at the number wheel"
+  },
+  "slot": {
+    "name": "Slot Machine",
+    "desc": "Slot machine spins"
+  },
+  "devil": {
+    "name": "Devil’s Chili Cup",
+    "desc": "Devil’s Chili Cup games played"
+  },
+  "memory": {
+    "name": "Memory Mixing",
+    "desc": "Memory Mixing games played"
+  },
+  "darts": {
+    "name": "Darts",
+    "desc": "Darts games played"
+  },
+  "nim": {
+    "name": "Last Candy",
+    "desc": "Last Candy games played"
+  },
+  "spice": {
+    "name": "Secret Spices",
+    "desc": "Secret Spices games played"
+  },
+  "deal": {
+    "name": "High Roller",
+    "desc": "High Roller games played"
+  },
+  "barall": {
+    "name": "Bar Regular",
+    "desc": "Bar games played (out of 10)"
+  },
+  "floor": {
+    "name": "Tower Climber",
+    "desc": "Highest chef tower floor"
+  },
+  "towerwin": {
+    "name": "Challenger",
+    "desc": "Chef tower challenges won"
+  },
+  "rank15": {
+    "name": "Cook-off Board",
+    "desc": "Weeks in the cook-off top 15"
+  },
+  "rank1": {
+    "name": "Chef God",
+    "desc": "Weeks at #1 in the cook-off"
+  },
+  "suits": {
+    "name": "Set Collector",
+    "desc": "Complete utensil sets owned"
+  },
+  "gemfull": {
+    "name": "Bejeweled",
+    "desc": "Utensils fully set with gems"
+  },
+  "explore": {
+    "name": "Explorer",
+    "desc": "Temple explorations"
+  },
+  "guardian": {
+    "name": "Dragon Slayer",
+    "desc": "Guardian beasts defeated"
+  },
+  "trial": {
+    "name": "Trials",
+    "desc": "Temple trials passed"
+  },
+  "takeaway": {
+    "name": "Delivery Rider",
+    "desc": "Takeaway orders delivered"
+  },
+  "takeaway5": {
+    "name": "Premium Delivery",
+    "desc": "Level 5+ takeaway orders delivered"
+  },
+  "predict": {
+    "name": "Forecaster",
+    "desc": "Prediction events joined"
+  },
+  "market": {
+    "name": "Market Debut",
+    "desc": "Exchange trades filled"
+  },
+  "futures": {
+    "name": "Futures Delivery",
+    "desc": "Futures contracts delivered"
+  },
+  "fund": {
+    "name": "Fund Trio",
+    "desc": "Development fund terms completed",
+    "tiers": [
+      "C: Liquidity",
+      "B: Growth Capital",
+      "A: Cornerstone"
+    ]
+  },
+  "acquire": {
+    "name": "Acquirer",
+    "desc": "Restaurants acquired"
+  },
+  "talk": {
+    "name": "Friend of the Town",
+    "desc": "Townsfolk you have chatted with (out of 4)"
+  },
+  "activity": {
+    "name": "Active Citizen",
+    "desc": "Town events joined"
+  },
+  "activitytop": {
+    "name": "Event Top Ten",
+    "desc": "Top-ten finishes in events"
+  },
+  "mouse": {
+    "name": "Mouse Catcher",
+    "desc": "Mice caught in traps"
+  },
+  "plankton": {
+    "name": "Plankton Chaser",
+    "desc": "Times you drove Plankton out"
+  },
+  "krab": {
+    "name": "Happy Mr. Krab",
+    "desc": "Times Mr. Krab got his feast"
+  }
+}

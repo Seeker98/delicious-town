@@ -7,6 +7,8 @@ export * from './envelope';
 export * from './rules/restaurantName';
 export * from './rules/duelJudges';
 export * from './schemas/auth';
+export * from './schemas/achieve';
+export * from './achieve';
 export * from './schemas/shard';
 export * from './schemas/restaurant';
 export * from './schemas/world';

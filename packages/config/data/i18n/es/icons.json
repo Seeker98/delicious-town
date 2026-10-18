@@ -94,5 +94,69 @@
   "wish_tree": {
     "title": "Deseo cumplido",
     "desc": "Ganó el sorteo del Árbol de los deseos (temporal)"
+  },
+  "ach-legend": {
+    "title": "Leyenda del pueblo",
+    "desc": "Restaurante al nivel 114"
+  },
+  "ach-purple": {
+    "title": "Aurora púrpura",
+    "desc": "Restaurante con 5 estrellas púrpura"
+  },
+  "ach-wealth": {
+    "title": "Dios de la riqueza",
+    "desc": "3.000 millones de monedas ganadas con el negocio"
+  },
+  "ach-oldshop": {
+    "title": "Local centenario",
+    "desc": "200.000 rondas de negocio"
+  },
+  "ach-attend": {
+    "title": "Asistencia perfecta",
+    "desc": "365 días seguidos de registro"
+  },
+  "ach-weather": {
+    "title": "Jefe de meteorología",
+    "desc": "10 aciertos del tiempo seguidos"
+  },
+  "ach-foodgod": {
+    "title": "Dios de la cocina",
+    "desc": "Todas las recetas en Manjar"
+  },
+  "ach-mcmaster": {
+    "title": "Maestro del misterio",
+    "desc": "Aprendidas las 250 recetas misteriosas"
+  },
+  "ach-mcking": {
+    "title": "Rey del plato especial",
+    "desc": "100 títulos diarios del plato especial"
+  },
+  "ach-refuel": {
+    "title": "Encargado de gasolinera",
+    "desc": "730 veces llenando aceite a amigos"
+  },
+  "ach-writer": {
+    "title": "Pluma del pueblo",
+    "desc": "5 publicaciones destacadas"
+  },
+  "ach-fist": {
+    "title": "Dios del puño",
+    "desc": "10 victorias seguidas en el juego de dedos"
+  },
+  "ach-fistghost": {
+    "title": "Fantasma del puño",
+    "desc": "14 derrotas seguidas en el juego de dedos"
+  },
+  "ach-gambler": {
+    "title": "Dios del juego",
+    "desc": "200 partidas completas de adivina la copa"
+  },
+  "ach-towertop": {
+    "title": "Dueño de la torre",
+    "desc": "Piso 10 de la torre superado"
+  },
+  "ach-chefgod": {
+    "title": "Dios cocinero eterno",
+    "desc": "26 semanas en el #1 de duelos"
   }
 }

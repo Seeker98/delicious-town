@@ -94,5 +94,69 @@
   "wish_tree": {
     "title": "Vœu exaucé",
     "desc": "Gagnant du tirage de l’Arbre à vœux (temporaire)"
+  },
+  "ach-legend": {
+    "title": "Légende de la ville",
+    "desc": "Restaurant au niveau 114"
+  },
+  "ach-purple": {
+    "title": "Aube pourpre",
+    "desc": "Restaurant à 5 étoiles pourpres"
+  },
+  "ach-wealth": {
+    "title": "Dieu de la fortune",
+    "desc": "3 milliards de pièces gagnées en service"
+  },
+  "ach-oldshop": {
+    "title": "Maison centenaire",
+    "desc": "200 000 tours de service"
+  },
+  "ach-attend": {
+    "title": "Assiduité parfaite",
+    "desc": "365 jours de présence d’affilée"
+  },
+  "ach-weather": {
+    "title": "Chef de la météo",
+    "desc": "10 bons pronostics météo d’affilée"
+  },
+  "ach-foodgod": {
+    "title": "Dieu de la cuisine",
+    "desc": "Toutes les recettes en Délice"
+  },
+  "ach-mcmaster": {
+    "title": "Maître du mystère",
+    "desc": "Les 250 recettes mystères apprises"
+  },
+  "ach-mcking": {
+    "title": "Roi du plat spécial",
+    "desc": "100 titres quotidiens du plat spécial"
+  },
+  "ach-refuel": {
+    "title": "Gérant de station-service",
+    "desc": "730 pleins d’huile faits à des amis"
+  },
+  "ach-writer": {
+    "title": "Plume de la ville",
+    "desc": "5 messages mis en avant"
+  },
+  "ach-fist": {
+    "title": "Dieu du poing",
+    "desc": "10 victoires d’affilée au jeu de doigts"
+  },
+  "ach-fistghost": {
+    "title": "Fantôme du poing",
+    "desc": "14 défaites d’affilée au jeu de doigts"
+  },
+  "ach-gambler": {
+    "title": "Dieu du jeu",
+    "desc": "200 parties sans faute à devine la coupe"
+  },
+  "ach-towertop": {
+    "title": "Maître de la tour",
+    "desc": "Étage 10 de la tour réussi"
+  },
+  "ach-chefgod": {
+    "title": "Dieu cuisinier éternel",
+    "desc": "26 semaines en tête des duels"
   }
 }

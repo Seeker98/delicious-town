@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  achieve1019:
+    'New: achievements. 410 achievements across ten categories (restaurant, daily, recipes, special dishes, friends, bar, tower, temple, finance, town) give achievement points, and some also give trophies and permanent titles. See your progress under Me → Achievements and put trophies in a showcase your friends can see. The rankings have a new Achievements board (points, new this week). Progress since the server opened has been backfilled',
   oilsaver1019:
     'Oil saver revamp: the ten old oil savers become two lines, Oil Savers (a fixed cut per table) and Oil Valves (a percentage cut), each in Basic, Intermediate and Advanced (24 hours, 10,000 / 30,000 / 80,000 coins in the shop) plus a Premium tier in the black market (36 hours, 12 / 24 diamonds); Krab Coins can be exchanged for the Premium tier (1 for the Premium Oil Saver, 2 for the Premium Oil Valve). Any placed oil saver has been replaced with an Oil Seller’s Copper-Coin Valve (total oil use -90% for 24 hours), Medium-acting and Special Oil Savers in storage became Intermediate Oil Savers, and every restaurant got a mail with one more Oil Seller’s Copper-Coin Valve',
   champion1019:

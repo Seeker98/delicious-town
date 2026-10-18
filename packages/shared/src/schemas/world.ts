@@ -102,6 +102,35 @@ export interface CatalogDto {
   mysterious?: CatalogMcDto[];
   /** 服务端接口直接给名字的数据，前端按 id 取当前语言的名字（问题记录 272）；旧缓存里没有 */
   data?: Record<CatalogDataKind, CatalogDataEntry[]>;
+  /** 成就线和奖杯（成就系统 2026-10-19）；旧缓存里没有 */
+  achievements?: CatalogAchLineDto[];
+  trophies?: CatalogTrophyDto[];
+}
+
+/** 成就线：菜系线按街道展开（streetId 不是 null，名字用街道的菜系名）；labels 是各档显示名 */
+export interface CatalogAchLineDto {
+  key: string;
+  cat: string;
+  name: string;
+  desc: string;
+  streetId: number | null;
+  labels: string[] | null;
+  tiers: Array<{
+    id: string;
+    tier: number;
+    n: number;
+    pts: number;
+    metric: string;
+    trophy: string | null;
+    icon: string | null;
+  }>;
+}
+/** 奖杯：tone 是底色；菜系奖杯（streetId 不是 null）名字是街道菜系名 + name */
+export interface CatalogTrophyDto {
+  key: string;
+  name: string;
+  tone: 'bronze' | 'silver' | 'gold' | 'rainbow';
+  streetId: number | null;
 }
 
 /** 任务（主线、支线、每周）、主线章节、玩法支线、活跃项、厨塔各层（id = 层）、一番赏主题（id = 月）、特色菜熟练度（id = 等级）、菜名 */

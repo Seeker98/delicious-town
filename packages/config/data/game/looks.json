@@ -261,6 +261,86 @@
       "key": "wish_tree",
       "title": "许愿成真",
       "desc": "许愿树开奖中奖 (限时)"
+    },
+    {
+      "key": "ach-legend",
+      "title": "小镇传奇",
+      "desc": "餐厅升到 114 级"
+    },
+    {
+      "key": "ach-purple",
+      "title": "紫气东来",
+      "desc": "餐厅升到泛紫 5 星"
+    },
+    {
+      "key": "ach-wealth",
+      "title": "财神爷",
+      "desc": "累计营业银币 30 亿"
+    },
+    {
+      "key": "ach-oldshop",
+      "title": "百年老店",
+      "desc": "累计营业 20 万轮"
+    },
+    {
+      "key": "ach-attend",
+      "title": "全勤",
+      "desc": "连续签到 365 天"
+    },
+    {
+      "key": "ach-weather",
+      "title": "气象台台长",
+      "desc": "猜天气连中 10 天"
+    },
+    {
+      "key": "ach-foodgod",
+      "title": "食神",
+      "desc": "全部食谱升到佳肴"
+    },
+    {
+      "key": "ach-mcmaster",
+      "title": "神秘大师",
+      "desc": "学会全部 250 道神秘食谱"
+    },
+    {
+      "key": "ach-mcking",
+      "title": "特色菜之王",
+      "desc": "拿到 100 次特色菜日冠军"
+    },
+    {
+      "key": "ach-refuel",
+      "title": "加油站站长",
+      "desc": "帮好友加满油 730 次"
+    },
+    {
+      "key": "ach-writer",
+      "title": "小镇笔杆子",
+      "desc": "5 个帖子被加精"
+    },
+    {
+      "key": "ach-fist",
+      "title": "拳神",
+      "desc": "划拳 10 连胜"
+    },
+    {
+      "key": "ach-fistghost",
+      "title": "拳鬼",
+      "desc": "划拳 14 连败"
+    },
+    {
+      "key": "ach-gambler",
+      "title": "赌神",
+      "desc": "猜酒杯通关 200 次"
+    },
+    {
+      "key": "ach-towertop",
+      "title": "塔顶的人",
+      "desc": "厨塔打到第 10 层"
+    },
+    {
+      "key": "ach-chefgod",
+      "title": "万世厨神",
+      "desc": "赛厨周榜第一 26 周"
     }
   ]
 }

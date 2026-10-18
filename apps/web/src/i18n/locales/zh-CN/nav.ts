@@ -56,6 +56,7 @@ export default {
     groups: { shop: '我的店', account: '账号', help: '帮助' },
     info: '餐厅信息',
     look: '装扮和称号',
+    achieve: '成就',
     equip: '厨具',
     store: '仓库',
     redeem: '兑换码和邀请',

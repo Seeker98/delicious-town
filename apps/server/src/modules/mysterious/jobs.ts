@@ -5,6 +5,7 @@ import { opNews, restLog, runSystemOp } from '../../core/op';
 import { BOARD_SOURCES } from '../rank/boards';
 import { rankRows } from '../rank/ranking';
 import { grantGoodsOp } from '../store/goods';
+import { bumpCounters } from '../achieve/counters';
 
 /**
  * 昨日特色菜榜发奖（规格书 16，设计文档 §4.7；2026-10-19 改成前几名）：day 为今天（区服时区），统计昨天开始烹制的批次。
@@ -31,7 +32,10 @@ export async function awardChampion(
     await runSystemOp(d, shardId, row.restId, { source: 'mc.champion', now }, async (op) => {
       await grantGoodsOp(op, tuning.mysterious.championGoodsId, num);
       restLog(op, 'mc.champion', { day, rank: row.rank, value: row.value, goodsId: t.championGoodsId, num });
-      if (row.rank === 1) opNews(op, 'mc.champion', { value: top });
+      if (row.rank === 1) {
+        opNews(op, 'mc.champion', { value: top });
+        await bumpCounters(op, [['mc.champion', 1]]);
+      }
     });
     awarded += 1;
   }

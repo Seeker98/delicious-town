@@ -19,6 +19,7 @@ import { settleRestaurant } from './settle';
 import type { SettleGlobals, SpecialDish } from './types';
 import { gameSeed } from '../../core/seed';
 import { cedeRound, cedeState } from '../acquire/rules';
+import { awardCounters } from '../achieve/counters';
 
 export type RoundStats = {
   round: number;
@@ -197,13 +198,31 @@ export async function settleOne(
   }
   for (const l of r.logs) restLog(op, l.type, l.params);
   if (r.planktonAppeared) opNews(op, 'plankton.appear');
+  // 成就（2026-10-19）：累计营业银币（让渡前，和每日汇总一致）、轮数、蟹老板吃到大餐。
+  // 加计数也放进这条语句（问题记录 258：一轮的语句数不加），加完的值从 returning 带回来看门槛
+  const bump = (
+    [
+      ['income.coin', coin],
+      ['income.rounds', 1],
+      ['krab.happy', r.logs.filter((l) => l.type === 'krab.happy').length],
+    ] as Array<[string, number]>
+  ).filter(([, n]) => n > 0);
   // 写餐桌放在 WITH 里和插收益记录合成一条语句（Postgres 的数据修改 CTE 不被引用也会执行）
-  await op.tx
+  const written = await op.tx
     .with('t', (db) =>
       db
         .updateTable('restaurant_tables')
         .set({ round_no: round, tables: JSON.stringify(r.tables) })
         .where('rest_id', '=', op.rest.id),
+    )
+    .with('c', (db) =>
+      db
+        .insertInto('event_counter')
+        .values(bump.map(([key, n]) => ({ rest_id: op.rest.id, key, count: n })))
+        .onConflict((oc) =>
+          oc.columns(['rest_id', 'key']).doUpdateSet({ count: sql`event_counter.count + excluded.count` }),
+        )
+        .returning(['key', 'count']),
     )
     .insertInto('income_round')
     .values({
@@ -218,7 +237,16 @@ export async function settleOne(
       drops: JSON.stringify(r.drops),
       created_at: op.now,
     })
-    .execute();
+    .returning(
+      sql<Array<{
+        key: string;
+        count: number;
+      }> | null>`(select json_agg(json_build_object('key', c.key, 'count', c.count::float8)) from c)`.as(
+        'counters',
+      ),
+    )
+    .executeTakeFirstOrThrow();
+  await awardCounters(op, bump, written.counters ?? []);
   return 'settled';
 }
 

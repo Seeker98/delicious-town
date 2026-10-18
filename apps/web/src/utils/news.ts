@@ -11,6 +11,9 @@ export interface NewsNames {
   streetName(id: number): string;
   /** 称号名按目录取（240-2 称号商店，跟着语言）；测试里可以不传 */
   icon?(key: string): { title: string } | undefined;
+
+  /** 成就名（成就系统 2026-10-19：全服首达的新闻）；测试里可以不传 */
+  achName?(id: string): string;
 }
 
 /** 有文案的新闻类型（测试用来对照 NEWS_TYPES） */

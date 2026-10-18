@@ -13,6 +13,7 @@ import { towerRoutes } from './tower/routes';
 import { takeawayRoutes } from './takeaway/routes';
 import { townRoutes } from './town/routes';
 import { rankRoutes } from './rank/routes';
+import { achieveRoutes } from './achieve/routes';
 import { forumRoutes } from './forum/routes';
 import { activityRoutes } from './activity/routes';
 import { exchangeRoutes } from './exchange/routes';
@@ -72,6 +73,7 @@ export function registerModules(app: FastifyInstance, game: Game): void {
   app.register(takeawayRoutes(game.takeaway), { prefix: '/api/v1' });
   app.register(townRoutes(game.town), { prefix: '/api/v1' });
   app.register(rankRoutes(game.rank), { prefix: '/api/v1' });
+  app.register(achieveRoutes(game.achieve), { prefix: '/api/v1' });
   app.register(forumRoutes(game.forum), { prefix: '/api/v1' });
   app.register(mailRoutes(game.mail), { prefix: '/api/v1' });
   app.register(activityRoutes(game.activity), { prefix: '/api/v1' });

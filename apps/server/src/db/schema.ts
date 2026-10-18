@@ -1504,6 +1504,31 @@ export interface ServerSecretTable {
   created_at: TsDefault;
 }
 
+/** 达成的成就（成就系统 2026-10-19）：ach_id 是配置里的成就编号；backfilled 是上线补发的 */
+export interface RestAchievementTable {
+  rest_id: number;
+  ach_id: string;
+  /** 达成时那一档的点数（本周新增榜按它求和） */
+  pts: number;
+  achieved_at: Ts;
+  backfilled: Default<boolean>;
+  first_in_shard: Default<boolean>;
+}
+
+/** 每家店的成就点、达到当前点数的时间、展示柜（奖杯 key 列表） */
+export interface RestAchTable {
+  rest_id: number;
+  points: Default<number>;
+  points_at: TsNullable;
+  shelf: JsonDefault<string[]>;
+}
+
+/** 区服的成就补发完成时间：补发完以前不算首达、不发新闻 */
+export interface AchShardTable {
+  shard_id: number;
+  backfilled_at: Ts;
+}
+
 export interface DB {
   account: AccountTable;
   email_token: EmailTokenTable;
@@ -1631,6 +1656,9 @@ export interface DB {
   takeaway_order: TakeawayOrderTable;
   takeaway_delivery: TakeawayDeliveryTable;
   server_secret: ServerSecretTable;
+  rest_achievement: RestAchievementTable;
+  rest_ach: RestAchTable;
+  ach_shard: AchShardTable;
 }
 
 export type RestaurantRow = Selectable<RestaurantTable>;

@@ -321,6 +321,8 @@ const errors: Messages['errors'] = {
     wealth_mature: 'Déjà échu\u202f: récupérez-le plutôt',
     bulk_not_open: 'Ce lot est déjà terminé ou annulé',
     wishtree_closed: 'Ce tour est arrivé à l’heure du tirage\u202f; attendez le prochain',
+    shelf_full: 'La vitrine est pleine. Retirez d’abord un trophée',
+    trophy_missing: 'Vous n’avez pas encore ce trophée',
     bulk_closed: 'Le lot a clôturé\u202f; cette offre ne compte pas',
     bulk_cooldown: 'Trop rapide\u202f; attendez quelques secondes et réessayez',
     bulk_raise: 'Hausse insuffisante\u202f; proposez au moins le prix indiqué sur la page',

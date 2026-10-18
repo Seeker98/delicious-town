@@ -25,6 +25,7 @@ import { consumeGoods, grantGoodsOp, hasValidHonor, removeHonor } from '../store
 import type { WorldService } from '../world/service';
 import { placeDevice } from './devices';
 import { moveCost, oilChecks, renameProblem, starChecks, starCoinOf } from './rules';
+import { bumpCounters } from '../achieve/counters';
 
 export function createGrowthService(d: GameDeps, world: WorldService) {
   const op = <T>(ctx: RestCtx, source: string, fn: (op: Op) => Promise<T>): Promise<OpResult<T>> =>
@@ -290,6 +291,11 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
         // 支线“四海为家”按搬到哪条街记（问题记录 515：搬到杂碎街）；只记任务用得上的街
         const moveTo = `rest.moveTo.${streetId}`;
         if (questCounterKeys(o.config).has(moveTo)) await emitAction(o, moveTo);
+        // 成就“走街串巷”（2026-10-19）：搬出、搬入的街都记下
+        await bumpCounters(o, [
+          [`street.seen.${from}`, 1],
+          [`street.seen.${streetId}`, 1],
+        ]);
         opNews(o, 'rest.move', { from, to: streetId, name: o.rest.name });
         return { streetId };
       });
@@ -351,6 +357,7 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
           .execute();
         await removeHonor(o, GOODS.plankton);
         restLog(o, 'plankton.driven', { way, renown });
+        await bumpCounters(o, [['plankton.driven', 1]]);
         opNews(o, 'plankton.driven', { way, name: o.rest.name });
         return { renown };
       });

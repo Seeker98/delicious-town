@@ -78,6 +78,7 @@ export default {
       `菜场进货了: ${list(p.foods)
         .map((id) => x.foodName(num(id)))
         .join('、')}`,
+    'achieve.first': (w, p, x) => `${w}全服第一个达成成就「${x.achName?.(str(p.id)) ?? str(p.id)}」`,
     'mc.champion': (w, p) => `${w}成为昨日特色菜价值第一 (${formatNum(num(p.value))})`,
     'mc.cook': (w, p, x) => `${w}烹制出 ${x.mcName(num(p.mcId))}×${num(p.num)}`,
     'oil.expand': (w, p) => `${w}把油壶扩容到 ${num(p.level)} 级`,

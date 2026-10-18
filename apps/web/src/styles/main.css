@@ -9702,3 +9702,449 @@ a.dt-entry-row::after {
 .dt-cm-sum dd {
   text-align: left;
 }
+
+/* ———— 成就（成就系统 2026-10-19，样稿 ①~⑥） ———— */
+/* 奖杯：杯身、底座用亮色，耳朵和柱子用暗色；没拿到的是灰色剪影 */
+.dt-trophy {
+  flex-shrink: 0;
+}
+.dt-trophy-ear {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.dt-trophy-shine {
+  fill: var(--dt-trophy-shine);
+}
+.dt-trophy.is-bronze .dt-trophy-a {
+  fill: var(--dt-trophy-bronze);
+}
+.dt-trophy.is-bronze .dt-trophy-b {
+  fill: var(--dt-trophy-bronze-2);
+}
+.dt-trophy.is-bronze .dt-trophy-ear {
+  stroke: var(--dt-trophy-bronze-2);
+}
+.dt-trophy.is-silver .dt-trophy-a {
+  fill: var(--dt-trophy-silver);
+}
+.dt-trophy.is-silver .dt-trophy-b {
+  fill: var(--dt-trophy-silver-2);
+}
+.dt-trophy.is-silver .dt-trophy-ear {
+  stroke: var(--dt-trophy-silver-2);
+}
+.dt-trophy.is-gold .dt-trophy-a {
+  fill: var(--dt-trophy-gold);
+}
+.dt-trophy.is-gold .dt-trophy-b {
+  fill: var(--dt-trophy-gold-2);
+}
+.dt-trophy.is-gold .dt-trophy-ear {
+  stroke: var(--dt-trophy-gold-2);
+}
+.dt-trophy.is-rainbow .dt-trophy-a {
+  fill: var(--dt-trophy-rainbow);
+}
+.dt-trophy.is-rainbow .dt-trophy-b {
+  fill: var(--dt-trophy-rainbow-2);
+}
+.dt-trophy.is-rainbow .dt-trophy-ear {
+  stroke: var(--dt-trophy-rainbow-2);
+}
+.dt-trophy.is-locked .dt-trophy-a {
+  fill: var(--dt-trophy-locked);
+}
+.dt-trophy.is-locked .dt-trophy-b {
+  fill: var(--dt-trophy-locked-2);
+}
+.dt-trophy.is-locked .dt-trophy-ear {
+  stroke: var(--dt-trophy-locked-2);
+}
+.dt-trophy.is-locked .dt-trophy-shine {
+  fill: none;
+}
+
+/* 主角卡：成就点、名次、三格数字、下一次展示柜加格 */
+.dt-ach-hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px 12px;
+  align-items: center;
+  padding: 14px;
+  box-shadow: var(--dt-shadow-card);
+}
+.dt-ach-pts {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+.dt-ach-pts small {
+  margin-left: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--dt-muted);
+}
+.dt-ach-rank {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.dt-ach-rank b {
+  font-size: 20px;
+}
+.dt-ach-stats {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.dt-ach-stats > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 6px 8px;
+  border-radius: var(--dt-radius-sm);
+  background: var(--dt-surface-2);
+}
+.dt-ach-stats b {
+  font-size: 16px;
+}
+.dt-ach-stats span {
+  font-size: 11px;
+  color: var(--dt-muted);
+}
+.dt-ach-next {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dt-ach-next .dt-meta,
+.dt-ach-sum .dt-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.dt-ach-next .dt-meter,
+.dt-ach-sum .dt-meter {
+  height: 6px;
+  border-radius: 3px;
+}
+
+/* 行：左边小图，右边“+点数 / 下一档” */
+.dt-ach-ico {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--dt-radius-sm);
+  background: var(--dt-plate);
+  color: var(--dt-primary);
+  font-size: 15px;
+}
+.dt-ach-side {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--dt-muted);
+  text-align: right;
+  white-space: nowrap;
+}
+.dt-ach-side b {
+  display: block;
+  font-size: 14px;
+  color: var(--dt-text);
+}
+.dt-row-main .dt-meter {
+  margin-top: 3px;
+}
+/* 档位条：达成的实心紫，带奖杯的档金色（没拿到只有金边） */
+.dt-ach-tiers {
+  display: flex;
+  gap: 3px;
+  margin-top: 3px;
+}
+.dt-ach-tiers i {
+  width: 14px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--dt-bar-track);
+}
+.dt-ach-tiers i.is-on {
+  background: var(--dt-primary);
+}
+.dt-ach-tiers i.is-cup {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--dt-trophy-gold-2);
+}
+.dt-ach-tiers i.is-cup.is-on {
+  background: var(--dt-trophy-gold);
+  box-shadow: none;
+}
+
+/* 成就线面板：现在多少、下一档，各档一行 */
+.dt-ach-sum {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  border-radius: var(--dt-radius-sm);
+  background: var(--dt-surface-2);
+}
+.dt-ach-sum b {
+  color: var(--dt-text);
+}
+.dt-ach-tier-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.dt-ach-tier {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 7px 0;
+  border-top: 1px solid var(--dt-line);
+}
+.dt-ach-tier:first-child {
+  border-top: 0;
+}
+.dt-ach-dot {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid var(--dt-line-strong);
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--dt-muted);
+}
+.dt-ach-tier.is-done .dt-ach-dot {
+  border-color: var(--dt-primary);
+  background: var(--dt-primary);
+  color: var(--dt-on-primary);
+}
+.dt-ach-tier.is-next .dt-ach-dot {
+  border-color: var(--dt-primary);
+  color: var(--dt-primary-ink);
+}
+.dt-ach-tier-main {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+.dt-ach-tier.is-locked .dt-ach-tier-main {
+  font-weight: 500;
+  color: var(--dt-muted);
+}
+
+/* 展示柜和奖杯格子 */
+.dt-ach-shelf {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.dt-ach-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  min-height: 92px;
+  padding: 10px 4px 8px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--dt-plate);
+  color: var(--dt-text);
+  font: inherit;
+}
+.dt-ach-slot.is-empty {
+  border: 1.5px dashed var(--dt-line-strong);
+  background: transparent;
+  color: var(--dt-muted);
+  font-size: 12px;
+  text-align: center;
+}
+.dt-ach-slot-name {
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.dt-ach-case {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+.dt-ach-cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 8px 4px 6px;
+  border: 1px solid var(--dt-line);
+  border-radius: 12px;
+  background: var(--dt-surface);
+  color: var(--dt-text);
+  font: inherit;
+  transition: transform var(--dt-dur-press) var(--dt-ease-out);
+}
+.dt-ach-cell:active,
+.dt-ach-slot:not(:disabled):not(.is-empty):active {
+  transform: scale(0.97);
+}
+.dt-ach-cell-name {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 11px;
+  line-height: 1.25;
+  text-align: center;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.dt-ach-cell.is-off .dt-ach-cell-name {
+  color: var(--dt-muted);
+}
+.dt-ach-pin {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--dt-primary);
+  color: var(--dt-on-primary);
+  font-size: 11px;
+}
+
+/* 好友餐厅的展示柜：一张卡，成就点 + 摆出来的奖杯 */
+.dt-ach-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+  color: var(--dt-text);
+  text-decoration: none;
+}
+.dt-ach-mini-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.dt-ach-mini-shelf {
+  display: flex;
+  gap: 6px;
+}
+.dt-ach-slot.is-mini {
+  flex: 1;
+  min-height: 0;
+  padding: 6px 2px;
+}
+.dt-ach-slot.is-mini .dt-ach-slot-name {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* 达成提示：顶栏下面浮出的卡，点一下收起 */
+.dt-ach-toasts {
+  position: fixed;
+  top: calc(54px + env(safe-area-inset-top, 0px));
+  left: 50%;
+  z-index: 1081;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: calc(100% - 32px);
+  max-width: 420px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.dt-ach-toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 12px 8px 8px;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-radius-lg);
+  background: var(--dt-surface);
+  box-shadow: var(--dt-shadow-float);
+  color: var(--dt-text);
+  font: inherit;
+  text-align: left;
+  pointer-events: auto;
+}
+.dt-ach-toast-art {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--dt-radius-sm);
+  background: var(--dt-plate);
+  color: var(--dt-primary);
+}
+.dt-ach-toast-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.dt-ach-toast-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+.dt-ach-toast-pts {
+  margin-left: auto;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--dt-warning);
+  white-space: nowrap;
+}
+.dt-ach-toast-enter-active {
+  transition:
+    opacity var(--dt-dur-panel) var(--dt-ease-out),
+    transform var(--dt-dur-panel) var(--dt-ease-out);
+}
+.dt-ach-toast-leave-active {
+  transition:
+    opacity var(--dt-dur-base) var(--dt-ease-out),
+    transform var(--dt-dur-base) var(--dt-ease-out);
+}
+.dt-ach-toast-enter-from,
+.dt-ach-toast-leave-to {
+  opacity: 0;
+  transform: translateY(-8px) scale(0.97);
+}
+@media (prefers-reduced-motion: reduce) {
+  .dt-ach-toast-enter-from,
+  .dt-ach-toast-leave-to {
+    transform: none;
+  }
+}
+/* 分类页顶上一行：分类下拉框 + 筛选胶囊 */
+.dt-ach-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.dt-ach-rank-hint {
+  max-width: 150px;
+  text-align: right;
+}
