@@ -1,0 +1,2105 @@
+{
+  "source": "新设计（成就系统 2026-10-19，设计稿 docs/superpowers/specs/2026-10-19-achievements-design.md）",
+  "rule": "metric: counter:<event_counter 键> 或 state:<状态名>（服务端 achieve 模块计算）；档的 metric 可以覆盖整条线的；perStreet 的线构建时按街道展开（键 cuisine.<街道>）；labels 是各档的显示名（不写就显示门槛数字）",
+  "count": 78,
+  "data": [
+    {
+      "key": "level",
+      "cat": "rest",
+      "name": "名扬小镇",
+      "desc": "餐厅等级",
+      "metric": "state:level",
+      "tiers": [
+        {
+          "n": 20,
+          "pts": 10
+        },
+        {
+          "n": 40,
+          "pts": 10
+        },
+        {
+          "n": 60,
+          "pts": 20
+        },
+        {
+          "n": 80,
+          "pts": 40
+        },
+        {
+          "n": 99,
+          "pts": 60,
+          "trophy": "lv99"
+        },
+        {
+          "n": 105,
+          "pts": 60
+        },
+        {
+          "n": 110,
+          "pts": 80
+        },
+        {
+          "n": 114,
+          "pts": 100,
+          "trophy": "lv114",
+          "icon": "ach-legend"
+        }
+      ]
+    },
+    {
+      "key": "star",
+      "cat": "rest",
+      "name": "摘星",
+      "desc": "餐厅星级",
+      "metric": "state:star",
+      "labels": [
+        "2 星",
+        "3 星",
+        "5 星",
+        "7 星",
+        "泛紫 1 星",
+        "泛紫 3 星",
+        "泛紫 5 星"
+      ],
+      "tiers": [
+        {
+          "n": 2,
+          "pts": 10
+        },
+        {
+          "n": 3,
+          "pts": 20
+        },
+        {
+          "n": 5,
+          "pts": 40
+        },
+        {
+          "n": 7,
+          "pts": 60,
+          "trophy": "star7"
+        },
+        {
+          "n": 8,
+          "pts": 60
+        },
+        {
+          "n": 10,
+          "pts": 80
+        },
+        {
+          "n": 12,
+          "pts": 100,
+          "trophy": "star12",
+          "icon": "ach-purple"
+        }
+      ]
+    },
+    {
+      "key": "renown",
+      "cat": "rest",
+      "name": "声名远扬",
+      "desc": "声望",
+      "metric": "state:renown",
+      "tiers": [
+        {
+          "n": 500,
+          "pts": 10
+        },
+        {
+          "n": 2000,
+          "pts": 20
+        },
+        {
+          "n": 5000,
+          "pts": 40,
+          "trophy": "renown5k"
+        },
+        {
+          "n": 10000,
+          "pts": 60
+        },
+        {
+          "n": 20000,
+          "pts": 80,
+          "trophy": "renown20k"
+        },
+        {
+          "n": 30000,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "coin",
+      "cat": "rest",
+      "name": "日进斗金",
+      "desc": "累计营业银币",
+      "metric": "counter:income.coin",
+      "tiers": [
+        {
+          "n": 1000000,
+          "pts": 10
+        },
+        {
+          "n": 20000000,
+          "pts": 20
+        },
+        {
+          "n": 100000000,
+          "pts": 40,
+          "trophy": "coin1e8"
+        },
+        {
+          "n": 300000000,
+          "pts": 60
+        },
+        {
+          "n": 1000000000,
+          "pts": 80,
+          "trophy": "coin1e9"
+        },
+        {
+          "n": 3000000000,
+          "pts": 100,
+          "icon": "ach-wealth"
+        }
+      ]
+    },
+    {
+      "key": "rounds",
+      "cat": "rest",
+      "name": "灶火不熄",
+      "desc": "累计营业轮数",
+      "metric": "counter:income.rounds",
+      "tiers": [
+        {
+          "n": 1000,
+          "pts": 10
+        },
+        {
+          "n": 8000,
+          "pts": 20
+        },
+        {
+          "n": 25000,
+          "pts": 40,
+          "trophy": "rounds25k"
+        },
+        {
+          "n": 50000,
+          "pts": 60
+        },
+        {
+          "n": 100000,
+          "pts": 80,
+          "trophy": "rounds100k"
+        },
+        {
+          "n": 200000,
+          "pts": 100,
+          "icon": "ach-oldshop"
+        }
+      ]
+    },
+    {
+      "key": "signin",
+      "cat": "daily",
+      "name": "风雨无阻",
+      "desc": "累计签到天数",
+      "metric": "counter:signin",
+      "tiers": [
+        {
+          "n": 7,
+          "pts": 10
+        },
+        {
+          "n": 30,
+          "pts": 20
+        },
+        {
+          "n": 100,
+          "pts": 60
+        },
+        {
+          "n": 180,
+          "pts": 60
+        },
+        {
+          "n": 365,
+          "pts": 80,
+          "trophy": "signin365"
+        },
+        {
+          "n": 500,
+          "pts": 100
+        },
+        {
+          "n": 730,
+          "pts": 100,
+          "trophy": "signin730"
+        }
+      ]
+    },
+    {
+      "key": "streak",
+      "cat": "daily",
+      "name": "持之以恒",
+      "desc": "最长连续签到天数",
+      "metric": "state:signinBest",
+      "tiers": [
+        {
+          "n": 7,
+          "pts": 10
+        },
+        {
+          "n": 30,
+          "pts": 20
+        },
+        {
+          "n": 60,
+          "pts": 40
+        },
+        {
+          "n": 100,
+          "pts": 60,
+          "trophy": "streak100"
+        },
+        {
+          "n": 365,
+          "pts": 80,
+          "icon": "ach-attend"
+        }
+      ]
+    },
+    {
+      "key": "active",
+      "cat": "daily",
+      "name": "勤勉",
+      "desc": "活跃满 100 的天数",
+      "metric": "counter:activation.100",
+      "tiers": [
+        {
+          "n": 7,
+          "pts": 10
+        },
+        {
+          "n": 30,
+          "pts": 20
+        },
+        {
+          "n": 100,
+          "pts": 60
+        },
+        {
+          "n": 365,
+          "pts": 80,
+          "trophy": "active365"
+        },
+        {
+          "n": 730,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "weekly",
+      "cat": "daily",
+      "name": "周周不落",
+      "desc": "周常全部完成的周数",
+      "metric": "state:weeklyFull",
+      "tiers": [
+        {
+          "n": 4,
+          "pts": 20
+        },
+        {
+          "n": 12,
+          "pts": 40
+        },
+        {
+          "n": 26,
+          "pts": 60
+        },
+        {
+          "n": 52,
+          "pts": 80
+        }
+      ]
+    },
+    {
+      "key": "story",
+      "cat": "daily",
+      "name": "主线",
+      "desc": "完成的主线章数",
+      "metric": "state:chapters",
+      "tiers": [
+        {
+          "n": 6,
+          "pts": 20
+        },
+        {
+          "n": 12,
+          "pts": 60,
+          "trophy": "story12"
+        }
+      ]
+    },
+    {
+      "key": "streets",
+      "cat": "daily",
+      "name": "走街串巷",
+      "desc": "开过店的街道数",
+      "metric": "state:streets",
+      "tiers": [
+        {
+          "n": 3,
+          "pts": 10
+        },
+        {
+          "n": 10,
+          "pts": 40
+        },
+        {
+          "n": 20,
+          "pts": 60
+        },
+        {
+          "n": 30,
+          "pts": 80,
+          "trophy": "streets30"
+        }
+      ]
+    },
+    {
+      "key": "wish",
+      "cat": "daily",
+      "name": "许愿",
+      "desc": "许愿天数",
+      "metric": "counter:wishtree.wish",
+      "tiers": [
+        {
+          "n": 7,
+          "pts": 10
+        },
+        {
+          "n": 30,
+          "pts": 20
+        },
+        {
+          "n": 180,
+          "pts": 60
+        },
+        {
+          "n": 365,
+          "pts": 80
+        }
+      ]
+    },
+    {
+      "key": "wishwin",
+      "cat": "daily",
+      "name": "心想事成",
+      "desc": "许愿树中奖次数",
+      "metric": "state:wishWins",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        },
+        {
+          "n": 10,
+          "pts": 40
+        }
+      ]
+    },
+    {
+      "key": "mayor",
+      "cat": "daily",
+      "name": "神算子",
+      "desc": "猜天气猜中次数",
+      "metric": "counter:town.mayor.right",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 5
+        },
+        {
+          "n": 10,
+          "pts": 20
+        },
+        {
+          "n": 30,
+          "pts": 40
+        },
+        {
+          "n": 80,
+          "pts": 60
+        },
+        {
+          "n": 150,
+          "pts": 80,
+          "trophy": "mayor150"
+        }
+      ]
+    },
+    {
+      "key": "mayorstreak",
+      "cat": "daily",
+      "name": "连中",
+      "desc": "猜天气最长连中天数",
+      "metric": "state:mayorStreak",
+      "tiers": [
+        {
+          "n": 3,
+          "pts": 10
+        },
+        {
+          "n": 5,
+          "pts": 20
+        },
+        {
+          "n": 7,
+          "pts": 40
+        },
+        {
+          "n": 10,
+          "pts": 60,
+          "icon": "ach-weather"
+        }
+      ]
+    },
+    {
+      "key": "guess",
+      "cat": "daily",
+      "name": "菜价神算",
+      "desc": "菜场猜价猜中 3 个以上的次数",
+      "metric": "counter:market.guess.hit3",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        },
+        {
+          "n": 10,
+          "pts": 40
+        },
+        {
+          "n": 50,
+          "pts": 80
+        }
+      ]
+    },
+    {
+      "key": "handle",
+      "cat": "daily",
+      "name": "点石成金",
+      "desc": "合成或分解食材次数",
+      "metric": "counter:foods.handle",
+      "tiers": [
+        {
+          "n": 1000,
+          "pts": 10
+        },
+        {
+          "n": 5000,
+          "pts": 20
+        },
+        {
+          "n": 15000,
+          "pts": 40
+        },
+        {
+          "n": 60000,
+          "pts": 80,
+          "trophy": "handle60k"
+        },
+        {
+          "n": 120000,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "buy",
+      "cat": "daily",
+      "name": "采购员",
+      "desc": "菜场购买次数",
+      "metric": "counter:market.buy",
+      "tiers": [
+        {
+          "n": 100,
+          "pts": 10
+        },
+        {
+          "n": 1500,
+          "pts": 40
+        },
+        {
+          "n": 6000,
+          "pts": 80
+        },
+        {
+          "n": 12000,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "learn",
+      "cat": "cookbook",
+      "name": "学无止境",
+      "desc": "学会的食谱",
+      "metric": "state:cookLearned",
+      "tiers": [
+        {
+          "n": 50,
+          "pts": 5
+        },
+        {
+          "n": 300,
+          "pts": 10
+        },
+        {
+          "n": 1000,
+          "pts": 40
+        },
+        {
+          "n": 2000,
+          "pts": 60,
+          "trophy": "learn2000"
+        },
+        {
+          "n": 3000,
+          "pts": 80
+        },
+        {
+          "n": 3810,
+          "pts": 100,
+          "trophy": "learn3810"
+        }
+      ]
+    },
+    {
+      "key": "g3",
+      "cat": "cookbook",
+      "name": "上品",
+      "desc": "上品以上的食谱",
+      "metric": "state:grade:3",
+      "tiers": [
+        {
+          "n": 100,
+          "pts": 10
+        },
+        {
+          "n": 600,
+          "pts": 40
+        },
+        {
+          "n": 2000,
+          "pts": 60
+        },
+        {
+          "n": 3810,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "g5",
+      "cat": "cookbook",
+      "name": "金牌",
+      "desc": "金牌以上的食谱",
+      "metric": "state:grade:5",
+      "tiers": [
+        {
+          "n": 10,
+          "pts": 10
+        },
+        {
+          "n": 100,
+          "pts": 40
+        },
+        {
+          "n": 600,
+          "pts": 60,
+          "trophy": "g5_600"
+        },
+        {
+          "n": 2000,
+          "pts": 100
+        },
+        {
+          "n": 3810,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "g6",
+      "cat": "cookbook",
+      "name": "珍品",
+      "desc": "珍品以上的食谱",
+      "metric": "state:grade:6",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        },
+        {
+          "n": 50,
+          "pts": 40
+        },
+        {
+          "n": 300,
+          "pts": 60,
+          "trophy": "g6_300"
+        },
+        {
+          "n": 1000,
+          "pts": 100
+        },
+        {
+          "n": 3810,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "g7",
+      "cat": "cookbook",
+      "name": "佳肴",
+      "desc": "佳肴食谱",
+      "metric": "state:grade:7",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 20
+        },
+        {
+          "n": 50,
+          "pts": 60
+        },
+        {
+          "n": 300,
+          "pts": 80,
+          "trophy": "g7_300"
+        },
+        {
+          "n": 1000,
+          "pts": 100
+        },
+        {
+          "n": 3810,
+          "pts": 100,
+          "trophy": "g7_all",
+          "icon": "ach-foodgod"
+        }
+      ]
+    },
+    {
+      "key": "cuisine",
+      "cat": "cookbook",
+      "name": "菜系",
+      "desc": "这条街的菜系",
+      "labels": [
+        "学全",
+        "全部金牌以上",
+        "全部佳肴"
+      ],
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 15,
+          "metric": "state:cuisine:1"
+        },
+        {
+          "n": 1,
+          "pts": 30,
+          "metric": "state:cuisine:5"
+        },
+        {
+          "n": 1,
+          "pts": 60,
+          "metric": "state:cuisine:7",
+          "trophy": "cuisine"
+        }
+      ],
+      "perStreet": true
+    },
+    {
+      "key": "mclearn",
+      "cat": "mc",
+      "name": "神秘学徒",
+      "desc": "学会的神秘食谱",
+      "metric": "state:mcLearned",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        },
+        {
+          "n": 5,
+          "pts": 20
+        },
+        {
+          "n": 20,
+          "pts": 60
+        },
+        {
+          "n": 40,
+          "pts": 80,
+          "trophy": "mc40"
+        },
+        {
+          "n": 100,
+          "pts": 100
+        },
+        {
+          "n": 250,
+          "pts": 100,
+          "icon": "ach-mcmaster"
+        }
+      ]
+    },
+    {
+      "key": "mclevel",
+      "cat": "mc",
+      "name": "炉火纯青",
+      "desc": "单道特色菜最高熟练等级",
+      "metric": "state:mcLevel",
+      "labels": [
+        "熟练",
+        "专家",
+        "大厨",
+        "厨神",
+        "化境"
+      ],
+      "tiers": [
+        {
+          "n": 3,
+          "pts": 20
+        },
+        {
+          "n": 5,
+          "pts": 40
+        },
+        {
+          "n": 7,
+          "pts": 60
+        },
+        {
+          "n": 9,
+          "pts": 80
+        },
+        {
+          "n": 10,
+          "pts": 100,
+          "trophy": "mc_max"
+        }
+      ]
+    },
+    {
+      "key": "mccook",
+      "cat": "mc",
+      "name": "掌勺",
+      "desc": "烹制特色菜次数",
+      "metric": "counter:mc.cook",
+      "tiers": [
+        {
+          "n": 10,
+          "pts": 10
+        },
+        {
+          "n": 50,
+          "pts": 20
+        },
+        {
+          "n": 200,
+          "pts": 40
+        },
+        {
+          "n": 1000,
+          "pts": 80
+        }
+      ]
+    },
+    {
+      "key": "champion",
+      "cat": "mc",
+      "name": "特色菜冠军",
+      "desc": "特色菜日冠军次数",
+      "metric": "counter:mc.champion",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 20,
+          "trophy": "champ1"
+        },
+        {
+          "n": 5,
+          "pts": 40
+        },
+        {
+          "n": 20,
+          "pts": 60
+        },
+        {
+          "n": 50,
+          "pts": 80,
+          "trophy": "champ50"
+        },
+        {
+          "n": 100,
+          "pts": 100,
+          "icon": "ach-mcking"
+        }
+      ]
+    },
+    {
+      "key": "shiling",
+      "cat": "mc",
+      "name": "当令",
+      "desc": "时令烹制次数",
+      "metric": "counter:shiling.cook",
+      "tiers": [
+        {
+          "n": 10,
+          "pts": 20
+        },
+        {
+          "n": 50,
+          "pts": 40
+        },
+        {
+          "n": 200,
+          "pts": 60
+        },
+        {
+          "n": 500,
+          "pts": 80
+        }
+      ]
+    },
+    {
+      "key": "shilingtop",
+      "cat": "mc",
+      "name": "时令榜首",
+      "desc": "时令周榜第一次数",
+      "metric": "counter:shiling.top",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 20
+        },
+        {
+          "n": 5,
+          "pts": 40
+        },
+        {
+          "n": 20,
+          "pts": 80
+        }
+      ]
+    },
+    {
+      "key": "lesson",
+      "cat": "mc",
+      "name": "开坛授课",
+      "desc": "开特色菜课程次数",
+      "metric": "counter:lesson.start",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 20
+        },
+        {
+          "n": 10,
+          "pts": 40
+        },
+        {
+          "n": 50,
+          "pts": 80
+        }
+      ]
+    },
+    {
+      "key": "roach",
+      "cat": "friend",
+      "name": "灭蟑达人",
+      "desc": "打蟑螂次数",
+      "metric": "counter:roach.kill",
+      "tiers": [
+        {
+          "n": 100,
+          "pts": 10
+        },
+        {
+          "n": 1500,
+          "pts": 20,
+          "trophy": "roach1"
+        },
+        {
+          "n": 5000,
+          "pts": 40
+        },
+        {
+          "n": 10000,
+          "pts": 60,
+          "trophy": "roach2"
+        },
+        {
+          "n": 20000,
+          "pts": 80,
+          "trophy": "roach3"
+        },
+        {
+          "n": 40000,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "roachlay",
+      "cat": "friend",
+      "name": "缺德",
+      "desc": "给别人放蟑螂次数",
+      "metric": "counter:roach.lay",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 5
+        },
+        {
+          "n": 100,
+          "pts": 20
+        },
+        {
+          "n": 300,
+          "pts": 40
+        },
+        {
+          "n": 1500,
+          "pts": 80,
+          "trophy": "roachlay"
+        }
+      ]
+    },
+    {
+      "key": "flip",
+      "cat": "friend",
+      "name": "顺手牵羊",
+      "desc": "翻好友橱柜次数",
+      "metric": "counter:cupboard.flip",
+      "tiers": [
+        {
+          "n": 100,
+          "pts": 10
+        },
+        {
+          "n": 500,
+          "pts": 20
+        },
+        {
+          "n": 2000,
+          "pts": 40
+        },
+        {
+          "n": 10000,
+          "pts": 80,
+          "trophy": "flip10k"
+        },
+        {
+          "n": 20000,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "exchange",
+      "cat": "friend",
+      "name": "互通有无",
+      "desc": "和好友换食材次数",
+      "metric": "counter:foods.exchange",
+      "tiers": [
+        {
+          "n": 50,
+          "pts": 10
+        },
+        {
+          "n": 200,
+          "pts": 20
+        },
+        {
+          "n": 600,
+          "pts": 40
+        },
+        {
+          "n": 3650,
+          "pts": 80,
+          "trophy": "exchange"
+        },
+        {
+          "n": 7300,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "refuel",
+      "cat": "friend",
+      "name": "加油站",
+      "desc": "帮好友加满油次数",
+      "metric": "counter:friend.refuel",
+      "tiers": [
+        {
+          "n": 10,
+          "pts": 10
+        },
+        {
+          "n": 50,
+          "pts": 20
+        },
+        {
+          "n": 150,
+          "pts": 40
+        },
+        {
+          "n": 730,
+          "pts": 80,
+          "trophy": "refuel",
+          "icon": "ach-refuel"
+        }
+      ]
+    },
+    {
+      "key": "dine",
+      "cat": "friend",
+      "name": "蹭饭",
+      "desc": "吃白食次数",
+      "metric": "counter:friend.dineAndDash",
+      "tiers": [
+        {
+          "n": 7,
+          "pts": 10
+        },
+        {
+          "n": 30,
+          "pts": 20
+        },
+        {
+          "n": 90,
+          "pts": 40
+        },
+        {
+          "n": 365,
+          "pts": 80
+        }
+      ]
+    },
+    {
+      "key": "thumbs",
+      "cat": "friend",
+      "name": "人见人爱",
+      "desc": "收到的点赞",
+      "metric": "counter:thumbs.received",
+      "tiers": [
+        {
+          "n": 50,
+          "pts": 20
+        },
+        {
+          "n": 200,
+          "pts": 40
+        },
+        {
+          "n": 500,
+          "pts": 60
+        },
+        {
+          "n": 1000,
+          "pts": 80,
+          "trophy": "thumbs"
+        },
+        {
+          "n": 2000,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "friends",
+      "cat": "friend",
+      "name": "广结善缘",
+      "desc": "10 级以上的好友",
+      "metric": "state:friends",
+      "tiers": [
+        {
+          "n": 10,
+          "pts": 10
+        },
+        {
+          "n": 20,
+          "pts": 20
+        },
+        {
+          "n": 50,
+          "pts": 40
+        }
+      ]
+    },
+    {
+      "key": "duel",
+      "cat": "friend",
+      "name": "切磋",
+      "desc": "和好友切磋次数",
+      "metric": "counter:tower.friendDuel",
+      "tiers": [
+        {
+          "n": 100,
+          "pts": 10
+        },
+        {
+          "n": 500,
+          "pts": 20
+        },
+        {
+          "n": 2000,
+          "pts": 40
+        },
+        {
+          "n": 10000,
+          "pts": 80
+        }
+      ]
+    },
+    {
+      "key": "featured",
+      "cat": "friend",
+      "name": "笔杆子",
+      "desc": "帖子被加精",
+      "metric": "counter:post.featured",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 40
+        },
+        {
+          "n": 5,
+          "pts": 100,
+          "icon": "ach-writer"
+        }
+      ]
+    },
+    {
+      "key": "invite",
+      "cat": "friend",
+      "name": "引路人",
+      "desc": "邀请的玩家升到 30 级的人数",
+      "metric": "state:invite30",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 20
+        },
+        {
+          "n": 3,
+          "pts": 40
+        },
+        {
+          "n": 10,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "fg",
+      "cat": "bar",
+      "name": "划拳",
+      "desc": "划拳局数",
+      "metric": "counter:bar.fg",
+      "tiers": [
+        {
+          "n": 100,
+          "pts": 10
+        },
+        {
+          "n": 500,
+          "pts": 20
+        },
+        {
+          "n": 2000,
+          "pts": 40
+        },
+        {
+          "n": 10000,
+          "pts": 80,
+          "trophy": "fg10k"
+        },
+        {
+          "n": 20000,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "fgwin",
+      "cat": "bar",
+      "name": "拳神",
+      "desc": "划拳最长连胜",
+      "metric": "counter:streak.fg.win",
+      "tiers": [
+        {
+          "n": 4,
+          "pts": 10
+        },
+        {
+          "n": 5,
+          "pts": 20
+        },
+        {
+          "n": 6,
+          "pts": 40
+        },
+        {
+          "n": 8,
+          "pts": 80,
+          "trophy": "fgwin"
+        },
+        {
+          "n": 10,
+          "pts": 100,
+          "icon": "ach-fist"
+        }
+      ]
+    },
+    {
+      "key": "fglose",
+      "cat": "bar",
+      "name": "拳鬼",
+      "desc": "划拳最长连败",
+      "metric": "counter:streak.fg.lose",
+      "tiers": [
+        {
+          "n": 6,
+          "pts": 5
+        },
+        {
+          "n": 8,
+          "pts": 10
+        },
+        {
+          "n": 10,
+          "pts": 20
+        },
+        {
+          "n": 12,
+          "pts": 40,
+          "trophy": "fglose"
+        },
+        {
+          "n": 14,
+          "pts": 80,
+          "icon": "ach-fistghost"
+        }
+      ]
+    },
+    {
+      "key": "cup",
+      "cat": "bar",
+      "name": "猜酒杯",
+      "desc": "猜酒杯局数",
+      "metric": "counter:bar.cup",
+      "tiers": [
+        {
+          "n": 100,
+          "pts": 10
+        },
+        {
+          "n": 300,
+          "pts": 20
+        },
+        {
+          "n": 1000,
+          "pts": 40
+        },
+        {
+          "n": 5000,
+          "pts": 80,
+          "trophy": "cup5k"
+        }
+      ]
+    },
+    {
+      "key": "cupclear",
+      "cat": "bar",
+      "name": "猜酒杯·通关",
+      "desc": "一局猜到最后一轮",
+      "metric": "counter:bar.cup.clear",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        },
+        {
+          "n": 5,
+          "pts": 20
+        },
+        {
+          "n": 20,
+          "pts": 40
+        },
+        {
+          "n": 100,
+          "pts": 80,
+          "trophy": "cupclear"
+        },
+        {
+          "n": 200,
+          "pts": 100,
+          "icon": "ach-gambler"
+        }
+      ]
+    },
+    {
+      "key": "numwin",
+      "cat": "bar",
+      "name": "转数字·中奖",
+      "desc": "转数字拿一二三等奖次数",
+      "metric": "counter:bar.num.win",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        },
+        {
+          "n": 3,
+          "pts": 20
+        },
+        {
+          "n": 10,
+          "pts": 40
+        },
+        {
+          "n": 50,
+          "pts": 80,
+          "trophy": "numwin"
+        }
+      ]
+    },
+    {
+      "key": "slot",
+      "cat": "bar",
+      "name": "老虎机",
+      "desc": "老虎机次数",
+      "metric": "counter:bar.slot",
+      "tiers": [
+        {
+          "n": 10,
+          "pts": 20
+        },
+        {
+          "n": 50,
+          "pts": 40
+        },
+        {
+          "n": 400,
+          "pts": 80,
+          "trophy": "slot"
+        }
+      ]
+    },
+    {
+      "key": "devil",
+      "cat": "bar",
+      "name": "魔鬼辣杯",
+      "desc": "魔鬼辣杯局数",
+      "metric": "counter:bar.devil",
+      "tiers": [
+        {
+          "n": 140,
+          "pts": 10
+        },
+        {
+          "n": 600,
+          "pts": 20
+        },
+        {
+          "n": 1800,
+          "pts": 40
+        },
+        {
+          "n": 7300,
+          "pts": 80,
+          "trophy": "devil"
+        },
+        {
+          "n": 14600,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "memory",
+      "cat": "bar",
+      "name": "记忆调酒",
+      "desc": "记忆调酒局数",
+      "metric": "counter:bar.memory",
+      "tiers": [
+        {
+          "n": 140,
+          "pts": 10
+        },
+        {
+          "n": 600,
+          "pts": 20
+        },
+        {
+          "n": 1800,
+          "pts": 40
+        },
+        {
+          "n": 7300,
+          "pts": 80,
+          "trophy": "memory"
+        },
+        {
+          "n": 14600,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "darts",
+      "cat": "bar",
+      "name": "飞镖",
+      "desc": "飞镖局数",
+      "metric": "counter:bar.darts",
+      "tiers": [
+        {
+          "n": 140,
+          "pts": 10
+        },
+        {
+          "n": 600,
+          "pts": 20
+        },
+        {
+          "n": 1800,
+          "pts": 40
+        },
+        {
+          "n": 7300,
+          "pts": 80,
+          "trophy": "darts"
+        },
+        {
+          "n": 14600,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "nim",
+      "cat": "bar",
+      "name": "最后一颗糖",
+      "desc": "最后一颗糖局数",
+      "metric": "counter:bar.nim",
+      "tiers": [
+        {
+          "n": 70,
+          "pts": 10
+        },
+        {
+          "n": 300,
+          "pts": 20
+        },
+        {
+          "n": 900,
+          "pts": 40
+        },
+        {
+          "n": 3650,
+          "pts": 80,
+          "trophy": "nim"
+        },
+        {
+          "n": 7300,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "spice",
+      "cat": "bar",
+      "name": "秘制调料",
+      "desc": "秘制调料局数",
+      "metric": "counter:bar.spice",
+      "tiers": [
+        {
+          "n": 35,
+          "pts": 10
+        },
+        {
+          "n": 150,
+          "pts": 20
+        },
+        {
+          "n": 450,
+          "pts": 40
+        },
+        {
+          "n": 1825,
+          "pts": 80,
+          "trophy": "spice"
+        },
+        {
+          "n": 3650,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "deal",
+      "cat": "bar",
+      "name": "一掷千金",
+      "desc": "一掷千金局数",
+      "metric": "counter:bar.deal",
+      "tiers": [
+        {
+          "n": 21,
+          "pts": 10
+        },
+        {
+          "n": 90,
+          "pts": 20
+        },
+        {
+          "n": 270,
+          "pts": 40
+        },
+        {
+          "n": 1095,
+          "pts": 80,
+          "trophy": "deal"
+        },
+        {
+          "n": 2190,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "barall",
+      "cat": "bar",
+      "name": "夜店常客",
+      "desc": "玩过的酒吧游戏（共 10 个）",
+      "metric": "state:barPlayed",
+      "tiers": [
+        {
+          "n": 10,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "floor",
+      "cat": "tower",
+      "name": "登塔",
+      "desc": "厨塔最高层",
+      "metric": "state:towerFloor",
+      "tiers": [
+        {
+          "n": 2,
+          "pts": 10
+        },
+        {
+          "n": 4,
+          "pts": 20
+        },
+        {
+          "n": 6,
+          "pts": 40
+        },
+        {
+          "n": 8,
+          "pts": 60
+        },
+        {
+          "n": 9,
+          "pts": 80
+        },
+        {
+          "n": 10,
+          "pts": 100,
+          "trophy": "floor10",
+          "icon": "ach-towertop"
+        }
+      ]
+    },
+    {
+      "key": "towerwin",
+      "cat": "tower",
+      "name": "挑战",
+      "desc": "厨塔挑战赢的次数",
+      "metric": "counter:tower.win",
+      "tiers": [
+        {
+          "n": 10,
+          "pts": 10
+        },
+        {
+          "n": 100,
+          "pts": 20
+        },
+        {
+          "n": 400,
+          "pts": 40
+        },
+        {
+          "n": 1000,
+          "pts": 80
+        }
+      ]
+    },
+    {
+      "key": "rank15",
+      "cat": "tower",
+      "name": "赛厨榜",
+      "desc": "进赛厨周榜前 15 的周数",
+      "metric": "state:towerWeeks:15",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        },
+        {
+          "n": 10,
+          "pts": 40
+        },
+        {
+          "n": 52,
+          "pts": 80
+        }
+      ]
+    },
+    {
+      "key": "rank1",
+      "cat": "tower",
+      "name": "厨神",
+      "desc": "赛厨周榜第一的周数",
+      "metric": "state:towerWeeks:1",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 20,
+          "trophy": "rank1"
+        },
+        {
+          "n": 4,
+          "pts": 40
+        },
+        {
+          "n": 10,
+          "pts": 60
+        },
+        {
+          "n": 26,
+          "pts": 80,
+          "trophy": "rank1_26",
+          "icon": "ach-chefgod"
+        },
+        {
+          "n": 52,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "suits",
+      "cat": "tower",
+      "name": "套装收藏家",
+      "desc": "集齐的厨具套装",
+      "metric": "state:suits",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 20
+        },
+        {
+          "n": 3,
+          "pts": 40
+        },
+        {
+          "n": 5,
+          "pts": 60
+        },
+        {
+          "n": 7,
+          "pts": 80,
+          "trophy": "suits"
+        }
+      ]
+    },
+    {
+      "key": "gemfull",
+      "cat": "tower",
+      "name": "珠光宝气",
+      "desc": "镶满宝石的次数",
+      "metric": "counter:equip.gemFull",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 20
+        },
+        {
+          "n": 5,
+          "pts": 40
+        },
+        {
+          "n": 20,
+          "pts": 80
+        }
+      ]
+    },
+    {
+      "key": "explore",
+      "cat": "temple",
+      "name": "探险家",
+      "desc": "神殿探险次数",
+      "metric": "counter:temple.explore",
+      "tiers": [
+        {
+          "n": 10,
+          "pts": 10
+        },
+        {
+          "n": 50,
+          "pts": 20
+        },
+        {
+          "n": 150,
+          "pts": 40
+        },
+        {
+          "n": 550,
+          "pts": 80
+        },
+        {
+          "n": 1100,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "guardian",
+      "cat": "temple",
+      "name": "屠龙",
+      "desc": "击败守护兽次数",
+      "metric": "counter:temple.guardian.kill",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 20
+        },
+        {
+          "n": 5,
+          "pts": 40
+        },
+        {
+          "n": 20,
+          "pts": 60,
+          "trophy": "guardian"
+        },
+        {
+          "n": 50,
+          "pts": 80
+        },
+        {
+          "n": 100,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "trial",
+      "cat": "temple",
+      "name": "试炼",
+      "desc": "神殿试炼成功次数",
+      "metric": "counter:temple.trial.success",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 20
+        },
+        {
+          "n": 10,
+          "pts": 40
+        },
+        {
+          "n": 50,
+          "pts": 80
+        }
+      ]
+    },
+    {
+      "key": "takeaway",
+      "cat": "temple",
+      "name": "外卖小哥",
+      "desc": "外卖送达单数",
+      "metric": "counter:takeaway.deliver",
+      "tiers": [
+        {
+          "n": 10,
+          "pts": 10
+        },
+        {
+          "n": 50,
+          "pts": 20
+        },
+        {
+          "n": 200,
+          "pts": 40
+        },
+        {
+          "n": 1000,
+          "pts": 80,
+          "trophy": "ta1000"
+        },
+        {
+          "n": 2000,
+          "pts": 100,
+          "trophy": "ta2000"
+        }
+      ]
+    },
+    {
+      "key": "takeaway5",
+      "cat": "temple",
+      "name": "高档外卖",
+      "desc": "5 级以上外卖送达单数",
+      "metric": "counter:takeaway.grade5",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 20
+        },
+        {
+          "n": 10,
+          "pts": 40
+        },
+        {
+          "n": 50,
+          "pts": 60
+        },
+        {
+          "n": 200,
+          "pts": 80
+        }
+      ]
+    },
+    {
+      "key": "predict",
+      "cat": "finance",
+      "name": "预言家",
+      "desc": "参与过的预测事件",
+      "metric": "state:predictEvents",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 5
+        },
+        {
+          "n": 10,
+          "pts": 10
+        },
+        {
+          "n": 50,
+          "pts": 15
+        },
+        {
+          "n": 150,
+          "pts": 20
+        }
+      ]
+    },
+    {
+      "key": "market",
+      "cat": "finance",
+      "name": "初入市场",
+      "desc": "交易所成交笔数",
+      "metric": "counter:exchange.fill",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 5
+        },
+        {
+          "n": 50,
+          "pts": 15
+        }
+      ]
+    },
+    {
+      "key": "futures",
+      "cat": "finance",
+      "name": "期货交割",
+      "desc": "期货交割次数",
+      "metric": "counter:futures.delivered",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 5
+        },
+        {
+          "n": 10,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "fund",
+      "cat": "finance",
+      "name": "基金三杰",
+      "desc": "发展基金存满一期",
+      "labels": [
+        "C 流动赋能",
+        "B 增值资本",
+        "A 基石领投"
+      ],
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10,
+          "metric": "state:fund:C"
+        },
+        {
+          "n": 1,
+          "pts": 15,
+          "metric": "state:fund:B"
+        },
+        {
+          "n": 1,
+          "pts": 20,
+          "metric": "state:fund:A"
+        }
+      ]
+    },
+    {
+      "key": "acquire",
+      "cat": "finance",
+      "name": "并购者",
+      "desc": "收购过的店",
+      "metric": "counter:acquire.buy",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "talk",
+      "cat": "town",
+      "name": "镇上的朋友",
+      "desc": "聊过天的镇民（共 5 位）",
+      "metric": "state:talkAll",
+      "tiers": [
+        {
+          "n": 5,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "activity",
+      "cat": "town",
+      "name": "热心镇民",
+      "desc": "参加小镇活动次数",
+      "metric": "counter:activity.join",
+      "tiers": [
+        {
+          "n": 5,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "activitytop",
+      "cat": "town",
+      "name": "活动前十",
+      "desc": "活动排名前十次数",
+      "metric": "counter:activity.top10",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        },
+        {
+          "n": 10,
+          "pts": 40
+        }
+      ]
+    },
+    {
+      "key": "mouse",
+      "cat": "town",
+      "name": "捕鼠能手",
+      "desc": "捕鼠夹抓到老鼠次数",
+      "metric": "counter:mouse.trap",
+      "tiers": [
+        {
+          "n": 10,
+          "pts": 10
+        },
+        {
+          "n": 50,
+          "pts": 20
+        },
+        {
+          "n": 200,
+          "pts": 40
+        }
+      ]
+    },
+    {
+      "key": "plankton",
+      "cat": "town",
+      "name": "赶走痞老板",
+      "desc": "赶走痞老板次数",
+      "metric": "counter:plankton.driven",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        },
+        {
+          "n": 10,
+          "pts": 40
+        },
+        {
+          "n": 50,
+          "pts": 80
+        }
+      ]
+    },
+    {
+      "key": "krab",
+      "cat": "town",
+      "name": "蟹老板开心",
+      "desc": "蟹老板吃到大餐次数",
+      "metric": "counter:krab.happy",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        },
+        {
+          "n": 10,
+          "pts": 80
+        }
+      ]
+    }
+  ]
+}

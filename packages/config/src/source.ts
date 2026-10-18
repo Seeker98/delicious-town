@@ -40,6 +40,8 @@ export const SOURCE_FILES = [
   'designed/shop_pools',
   'designed/equip_suits',
   'designed/mc_proficiency',
+  'designed/achievements',
+  'designed/trophies',
   'game/tuning',
   'game/holidays',
   'game/market_guess_award',

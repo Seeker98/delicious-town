@@ -1,5 +1,17 @@
 export * from './types';
 export {
+  ACH_CATS,
+  ACH_STATE_METRICS,
+  TROPHY_TONES,
+  type AchCat,
+  type AchIndex,
+  type AchLine,
+  type AchStateMetric,
+  type AchTier,
+  type Trophy,
+  type TrophyTone,
+} from './achievements';
+export {
   I18N_FIELDS,
   I18N_KINDS,
   type BundleI18n,

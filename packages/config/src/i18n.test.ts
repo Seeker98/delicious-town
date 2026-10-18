@@ -65,6 +65,8 @@ describe('第 8 批常见数据翻译（问题记录 272）', () => {
     'proficiency',
     'cookbooks',
     'mysterious',
+    'achievements',
+    'trophies',
   ] as const;
 
   it('繁中也转换街道菜系名、天气说明、套装各档说明和装扮', () => {
@@ -107,6 +109,13 @@ describe('第 8 批常见数据翻译（问题记录 272）', () => {
       proficiency: b.mcProficiency.map((x) => ({ id: String(x.curlevel), fields: ['name'] })),
       cookbooks: b.cookbooks.map((x) => ({ id: String(x.id), fields: ['name'] })),
       mysterious: b.mysteriousCookbooks.map((x) => ({ id: String(x.id), fields: ['name'] })),
+      // 菜系线、菜系奖杯按街道展开：翻译按展开前的 key
+      achievements: [...new Map(b.achievements.map((x) => [x.key.split('.')[0]!, x])).entries()].map(([id, x]) => ({
+        id,
+        fields: ['name', 'desc'],
+        ...(x.labels ? { tiers: x.labels.length } : {}),
+      })),
+      trophies: [...new Set(b.trophies.map((x) => x.key.split('.')[0]!))].map((id) => ({ id, fields: ['name'] })),
     };
     for (const l of ['en', 'fr', 'es'] as const)
       for (const k of FULL)
@@ -114,7 +123,7 @@ describe('第 8 批常见数据翻译（问题记录 272）', () => {
           const e = b.i18n[l][k][x.id] as Record<string, unknown> | undefined;
           for (const f of x.fields) expect(e?.[f], `${l} ${k} ${x.id} ${f}`).toEqual(expect.any(String));
           if (x.tiers !== undefined)
-            expect((e?.tiers as unknown[]).length, `${l} suits ${x.id} tiers`).toBe(x.tiers);
+            expect((e?.tiers as unknown[]).length, `${l} ${k} ${x.id} tiers`).toBe(x.tiers);
         }
   });
 

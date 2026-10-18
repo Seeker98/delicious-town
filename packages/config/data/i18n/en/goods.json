@@ -1797,15 +1797,15 @@
   },
   "61104": {
     "name": "Starlight",
-    "desc": "An achievement for restaurants with every recipe at Rare grade or above; picky rate +5%, final EXP income +20%"
+    "desc": "A medal for restaurants with every recipe at Rare grade or above; picky rate +5%, final EXP income +20%"
   },
   "61105": {
     "name": "Peak of Perfection",
-    "desc": "Reach the peak and unfold grand plans!\nReach the peak and unfold grand plans, pluck the moon and stars to paint a new chapter! An achievement for restaurants with every recipe at Delicacy grade; picky rate +8%, final coin income +20%"
+    "desc": "Reach the peak and unfold grand plans!\nReach the peak and unfold grand plans, pluck the moon and stars to paint a new chapter! A medal for restaurants with every recipe at Delicacy grade; picky rate +8%, final coin income +20%"
   },
   "61106": {
     "name": "Heavenly Feast Complete",
-    "desc": "Stars light up the sky and the road of fine food stretches wide; heavenly delicacies overflow every dish! An achievement for restaurants with every recipe at Ambrosia grade: chance of higher grades when cooking signature dishes +36%, final coin income +20%, final EXP income +20%, luck +99"
+    "desc": "Stars light up the sky and the road of fine food stretches wide; heavenly delicacies overflow every dish! A medal for restaurants with every recipe at Ambrosia grade: chance of higher grades when cooking signature dishes +36%, final coin income +20%, final EXP income +20%, luck +99"
   },
   "61107": {
     "name": "Holy Feast Stone",
@@ -1813,7 +1813,7 @@
   },
   "61108": {
     "name": "Star of Divine Fare",
-    "desc": "How many seasons spent seeking at the stove, with fine dishes for company! Today I pluck the star of Divine Fare, all thanks to everyone along the way! An achievement for restaurants with every recipe at Divine grade! No special effect!"
+    "desc": "How many seasons spent seeking at the stove, with fine dishes for company! Today I pluck the star of Divine Fare, all thanks to everyone along the way! A medal for restaurants with every recipe at Divine grade! No special effect!"
   },
   "61201": {
     "name": "The Scream (Masterpiece)",

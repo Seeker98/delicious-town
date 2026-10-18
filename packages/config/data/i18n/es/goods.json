@@ -1797,15 +1797,15 @@
   },
   "61104": {
     "name": "Brillo estelar",
-    "desc": "Logro para restaurantes con todas las recetas en calidad Raro o superior; clientes exigentes +5\u00a0%, EXP final +20\u00a0%"
+    "desc": "Medalla para restaurantes con todas las recetas en calidad Raro o superior; clientes exigentes +5\u00a0%, EXP final +20\u00a0%"
   },
   "61105": {
     "name": "Cima de la perfección",
-    "desc": "¡Llegar a la cima y soñar a lo grande!\n¡Llegar a la cima y soñar a lo grande, alcanzar la luna y las estrellas para escribir un nuevo capítulo! Logro para restaurantes con todas las recetas en calidad Manjar; clientes exigentes +8\u00a0%, ingresos finales de monedas +20\u00a0%"
+    "desc": "¡Llegar a la cima y soñar a lo grande!\n¡Llegar a la cima y soñar a lo grande, alcanzar la luna y las estrellas para escribir un nuevo capítulo! Medalla para restaurantes con todas las recetas en calidad Manjar; clientes exigentes +8\u00a0%, ingresos finales de monedas +20\u00a0%"
   },
   "61106": {
     "name": "Banquete celestial completo",
-    "desc": "¡Las estrellas iluminan el cielo, el camino de la buena mesa se ensancha y los manjares celestiales rebosan en cada plato! Logro para restaurantes con todas las recetas en calidad Ambrosía: probabilidad de mejor calidad al cocinar platos estrella +36\u00a0%, ingresos finales de monedas +20\u00a0%, EXP final +20\u00a0%, suerte +99"
+    "desc": "¡Las estrellas iluminan el cielo, el camino de la buena mesa se ensancha y los manjares celestiales rebosan en cada plato! Medalla para restaurantes con todas las recetas en calidad Ambrosía: probabilidad de mejor calidad al cocinar platos estrella +36\u00a0%, ingresos finales de monedas +20\u00a0%, EXP final +20\u00a0%, suerte +99"
   },
   "61107": {
     "name": "Piedra del Festín sagrado",
@@ -1813,7 +1813,7 @@
   },
   "61108": {
     "name": "Estrella de los Manjares divinos",
-    "desc": "¡Cuántas estaciones buscando junto al fogón, con buenos platos por compañía! Hoy alcanzo la estrella de los Manjares divinos, gracias a todos los que hicieron el camino conmigo. Logro para restaurantes con todas las recetas en calidad Manjar divino. ¡Sin efecto especial!"
+    "desc": "¡Cuántas estaciones buscando junto al fogón, con buenos platos por compañía! Hoy alcanzo la estrella de los Manjares divinos, gracias a todos los que hicieron el camino conmigo. Medalla para restaurantes con todas las recetas en calidad Manjar divino. ¡Sin efecto especial!"
   },
   "61201": {
     "name": "El grito (obra maestra)",

@@ -4,6 +4,7 @@ import type { NewbieCode } from './newbieCodes';
 import type { GoodsUse } from './goodsUse';
 import type { EQUIP_ATTRS } from './ids';
 import type { Tuning } from './tuning';
+import type { AchLine, Trophy } from './achievements';
 
 export interface IdNum {
   id: number;
@@ -416,6 +417,9 @@ export interface ConfigBundle {
   newbieCodes: NewbieCode[];
   looks: Looks;
   suits: SuitDef[];
+  /** 成就线（菜系线已按街道展开）和奖杯（2026-10-19） */
+  achievements: AchLine[];
+  trophies: Trophy[];
   /** 以后子项目才用到的表：已校验引用，结构暂不规范化 */
   extra: Record<string, unknown[]>;
 }

@@ -1,0 +1,173 @@
+{
+  "lv99": {
+    "name": "Chef niveau 99"
+  },
+  "lv114": {
+    "name": "Au sommet"
+  },
+  "star7": {
+    "name": "Restaurant sept étoiles"
+  },
+  "star12": {
+    "name": "Aube pourpre"
+  },
+  "renown5k": {
+    "name": "Nom connu de tous"
+  },
+  "renown20k": {
+    "name": "Dans les livres d’histoire"
+  },
+  "coin1e8": {
+    "name": "Poches pleines"
+  },
+  "coin1e9": {
+    "name": "Plus riche qu’un roi"
+  },
+  "rounds25k": {
+    "name": "Maison de tradition"
+  },
+  "rounds100k": {
+    "name": "Maison centenaire"
+  },
+  "signin365": {
+    "name": "Le temps file"
+  },
+  "signin730": {
+    "name": "Pour l’éternité"
+  },
+  "streak100": {
+    "name": "Du matin au soir"
+  },
+  "active365": {
+    "name": "Travail acharné"
+  },
+  "story12": {
+    "name": "L’histoire de la ville"
+  },
+  "streets30": {
+    "name": "Grandes ambitions"
+  },
+  "mayor150": {
+    "name": "Chef de la météo"
+  },
+  "handle60k": {
+    "name": "Comme dans un rêve"
+  },
+  "learn2000": {
+    "name": "Encyclopédie vivante"
+  },
+  "learn3810": {
+    "name": "Le livre de cuisine complet"
+  },
+  "g5_600": {
+    "name": "Chef de cuisine médaille d’or"
+  },
+  "g6_300": {
+    "name": "Chef de cuisine rare"
+  },
+  "g7_300": {
+    "name": "Chef de cuisine délice"
+  },
+  "g7_all": {
+    "name": "Dieu de la cuisine"
+  },
+  "cuisine": {
+    "name": "Grand maître"
+  },
+  "mc40": {
+    "name": "Érudit du mystère"
+  },
+  "mc_max": {
+    "name": "Transcendance"
+  },
+  "champ1": {
+    "name": "Premier coup d’éclat"
+  },
+  "champ50": {
+    "name": "Champion en titre"
+  },
+  "roach1": {
+    "name": "Cafard de bronze"
+  },
+  "roach2": {
+    "name": "Cafard d’argent"
+  },
+  "roach3": {
+    "name": "Cafard d’or"
+  },
+  "roachlay": {
+    "name": "Farceur invétéré"
+  },
+  "flip10k": {
+    "name": "Appétit sans fond"
+  },
+  "exchange": {
+    "name": "Inestimable"
+  },
+  "refuel": {
+    "name": "Amis dans le besoin"
+  },
+  "thumbs": {
+    "name": "Connu de tous"
+  },
+  "fg10k": {
+    "name": "Encerclé"
+  },
+  "fgwin": {
+    "name": "Dieu du poing"
+  },
+  "fglose": {
+    "name": "Fantôme du poing"
+  },
+  "cup5k": {
+    "name": "Visage impassible"
+  },
+  "cupclear": {
+    "name": "Dieu du jeu"
+  },
+  "numwin": {
+    "name": "Bien mérité"
+  },
+  "slot": {
+    "name": "Roi du jackpot"
+  },
+  "devil": {
+    "name": "Estomac d’acier"
+  },
+  "memory": {
+    "name": "Mémoire photographique"
+  },
+  "darts": {
+    "name": "Tireur d’élite"
+  },
+  "nim": {
+    "name": "Cerveau"
+  },
+  "spice": {
+    "name": "Maître des épices"
+  },
+  "deal": {
+    "name": "Flambeur"
+  },
+  "floor10": {
+    "name": "Au sommet de la tour"
+  },
+  "rank1": {
+    "name": "Première couronne"
+  },
+  "rank1_26": {
+    "name": "Dieu cuisinier éternel"
+  },
+  "suits": {
+    "name": "Arsenal légendaire"
+  },
+  "guardian": {
+    "name": "Pourfendeur"
+  },
+  "ta1000": {
+    "name": "Concentré"
+  },
+  "ta2000": {
+    "name": "Rapide comme l’éclair"
+  }
+}

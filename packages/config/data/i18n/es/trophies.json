@@ -1,0 +1,173 @@
+{
+  "lv99": {
+    "name": "Chef nivel 99"
+  },
+  "lv114": {
+    "name": "En la cima"
+  },
+  "star7": {
+    "name": "Restaurante de siete estrellas"
+  },
+  "star12": {
+    "name": "Aurora púrpura"
+  },
+  "renown5k": {
+    "name": "Nombre conocido"
+  },
+  "renown20k": {
+    "name": "En los libros de historia"
+  },
+  "coin1e8": {
+    "name": "Bolsillos llenos"
+  },
+  "coin1e9": {
+    "name": "Más rico que un rey"
+  },
+  "rounds25k": {
+    "name": "Casa de tradición"
+  },
+  "rounds100k": {
+    "name": "Local centenario"
+  },
+  "signin365": {
+    "name": "El tiempo vuela"
+  },
+  "signin730": {
+    "name": "Para la eternidad"
+  },
+  "streak100": {
+    "name": "De sol a sol"
+  },
+  "active365": {
+    "name": "Quemarse las pestañas"
+  },
+  "story12": {
+    "name": "La historia del pueblo"
+  },
+  "streets30": {
+    "name": "Grandes ambiciones"
+  },
+  "mayor150": {
+    "name": "Jefe de meteorología"
+  },
+  "handle60k": {
+    "name": "Como en un sueño"
+  },
+  "learn2000": {
+    "name": "Enciclopedia andante"
+  },
+  "learn3810": {
+    "name": "El recetario completo"
+  },
+  "g5_600": {
+    "name": "Jefe de cocina medalla de oro"
+  },
+  "g6_300": {
+    "name": "Jefe de cocina raro"
+  },
+  "g7_300": {
+    "name": "Jefe de cocina manjar"
+  },
+  "g7_all": {
+    "name": "Dios de la cocina"
+  },
+  "cuisine": {
+    "name": "Gran maestro"
+  },
+  "mc40": {
+    "name": "Erudito del misterio"
+  },
+  "mc_max": {
+    "name": "Trascendencia"
+  },
+  "champ1": {
+    "name": "Primer destello"
+  },
+  "champ50": {
+    "name": "Campeón defensor"
+  },
+  "roach1": {
+    "name": "Cucaracha de bronce"
+  },
+  "roach2": {
+    "name": "Cucaracha de plata"
+  },
+  "roach3": {
+    "name": "Cucaracha de oro"
+  },
+  "roachlay": {
+    "name": "Travieso sin remedio"
+  },
+  "flip10k": {
+    "name": "Apetito sin fondo"
+  },
+  "exchange": {
+    "name": "Sin precio"
+  },
+  "refuel": {
+    "name": "Amigos en apuros"
+  },
+  "thumbs": {
+    "name": "Conocido por todos"
+  },
+  "fg10k": {
+    "name": "Rodeado"
+  },
+  "fgwin": {
+    "name": "Dios del puño"
+  },
+  "fglose": {
+    "name": "Fantasma del puño"
+  },
+  "cup5k": {
+    "name": "Cara de póquer"
+  },
+  "cupclear": {
+    "name": "Dios del juego"
+  },
+  "numwin": {
+    "name": "Bien merecido"
+  },
+  "slot": {
+    "name": "Rey del premio gordo"
+  },
+  "devil": {
+    "name": "Estómago de hierro"
+  },
+  "memory": {
+    "name": "Memoria fotográfica"
+  },
+  "darts": {
+    "name": "Tirador experto"
+  },
+  "nim": {
+    "name": "Mente maestra"
+  },
+  "spice": {
+    "name": "Maestro de especias"
+  },
+  "deal": {
+    "name": "Gran apostador"
+  },
+  "floor10": {
+    "name": "En lo alto de la torre"
+  },
+  "rank1": {
+    "name": "Primera corona"
+  },
+  "rank1_26": {
+    "name": "Dios cocinero eterno"
+  },
+  "suits": {
+    "name": "Arsenal legendario"
+  },
+  "guardian": {
+    "name": "Matador"
+  },
+  "ta1000": {
+    "name": "Concentrado"
+  },
+  "ta2000": {
+    "name": "Rápido como el rayo"
+  }
+}

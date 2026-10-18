@@ -94,5 +94,69 @@
   "wish_tree": {
     "title": "Wish Come True",
     "desc": "Won the Wishing Tree draw (limited time)"
+  },
+  "ach-legend": {
+    "title": "Town Legend",
+    "desc": "Reached restaurant level 114"
+  },
+  "ach-purple": {
+    "title": "Purple Dawn",
+    "desc": "Reached purple 5 stars"
+  },
+  "ach-wealth": {
+    "title": "God of Wealth",
+    "desc": "Earned 3 billion coins from business"
+  },
+  "ach-oldshop": {
+    "title": "Century-Old Shop",
+    "desc": "Ran 200,000 business rounds"
+  },
+  "ach-attend": {
+    "title": "Perfect Attendance",
+    "desc": "Checked in 365 days in a row"
+  },
+  "ach-weather": {
+    "title": "Weather Bureau Chief",
+    "desc": "Guessed the weather right 10 days in a row"
+  },
+  "ach-foodgod": {
+    "title": "God of Cookery",
+    "desc": "Every recipe at Delicacy"
+  },
+  "ach-mcmaster": {
+    "title": "Mystery Master",
+    "desc": "Learned all 250 mystery recipes"
+  },
+  "ach-mcking": {
+    "title": "Special Dish King",
+    "desc": "Won the daily special dish title 100 times"
+  },
+  "ach-refuel": {
+    "title": "Filling Station Manager",
+    "desc": "Refilled friends’ oil 730 times"
+  },
+  "ach-writer": {
+    "title": "Town Wordsmith",
+    "desc": "5 posts featured"
+  },
+  "ach-fist": {
+    "title": "Fist God",
+    "desc": "Won 10 finger-guessing games in a row"
+  },
+  "ach-fistghost": {
+    "title": "Fist Ghost",
+    "desc": "Lost 14 finger-guessing games in a row"
+  },
+  "ach-gambler": {
+    "title": "God of Gamblers",
+    "desc": "Cleared cup guessing 200 times"
+  },
+  "ach-towertop": {
+    "title": "Tower Topper",
+    "desc": "Cleared chef tower floor 10"
+  },
+  "ach-chefgod": {
+    "title": "Eternal Chef God",
+    "desc": "26 weeks at #1 in the cook-off"
   }
 }

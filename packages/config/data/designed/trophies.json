@@ -1,0 +1,292 @@
+{
+  "source": "新设计（成就系统 2026-10-19）",
+  "rule": "奖杯只是装饰；tone 是底色 bronze / silver / gold / rainbow；cuisine 是菜系奖杯的模板，构建时按街道展开成 cuisine.<街道>",
+  "count": 57,
+  "data": [
+    {
+      "key": "lv99",
+      "name": "百级名厨",
+      "tone": "gold"
+    },
+    {
+      "key": "lv114",
+      "name": "登峰造极",
+      "tone": "rainbow"
+    },
+    {
+      "key": "star7",
+      "name": "七星餐厅",
+      "tone": "gold"
+    },
+    {
+      "key": "star12",
+      "name": "紫气东来",
+      "tone": "rainbow"
+    },
+    {
+      "key": "renown5k",
+      "name": "如雷贯耳",
+      "tone": "silver"
+    },
+    {
+      "key": "renown20k",
+      "name": "名垂竹帛",
+      "tone": "gold"
+    },
+    {
+      "key": "coin1e8",
+      "name": "腰缠万贯",
+      "tone": "silver"
+    },
+    {
+      "key": "coin1e9",
+      "name": "富可敌国",
+      "tone": "gold"
+    },
+    {
+      "key": "rounds25k",
+      "name": "老字号",
+      "tone": "silver"
+    },
+    {
+      "key": "rounds100k",
+      "name": "百年老店",
+      "tone": "gold"
+    },
+    {
+      "key": "signin365",
+      "name": "白驹过隙",
+      "tone": "gold"
+    },
+    {
+      "key": "signin730",
+      "name": "千秋万代",
+      "tone": "rainbow"
+    },
+    {
+      "key": "streak100",
+      "name": "夙兴夜寐",
+      "tone": "gold"
+    },
+    {
+      "key": "active365",
+      "name": "囊萤映雪",
+      "tone": "gold"
+    },
+    {
+      "key": "story12",
+      "name": "小镇的故事",
+      "tone": "gold"
+    },
+    {
+      "key": "streets30",
+      "name": "宏图大展",
+      "tone": "gold"
+    },
+    {
+      "key": "mayor150",
+      "name": "气象台台长",
+      "tone": "gold"
+    },
+    {
+      "key": "handle60k",
+      "name": "恍如梦寐",
+      "tone": "gold"
+    },
+    {
+      "key": "learn2000",
+      "name": "博闻强识",
+      "tone": "gold"
+    },
+    {
+      "key": "learn3810",
+      "name": "食谱全书",
+      "tone": "rainbow"
+    },
+    {
+      "key": "g5_600",
+      "name": "金牌厨师长",
+      "tone": "gold"
+    },
+    {
+      "key": "g6_300",
+      "name": "珍品厨师长",
+      "tone": "gold"
+    },
+    {
+      "key": "g7_300",
+      "name": "佳肴厨师长",
+      "tone": "gold"
+    },
+    {
+      "key": "g7_all",
+      "name": "食神",
+      "tone": "rainbow"
+    },
+    {
+      "key": "cuisine",
+      "name": "宗师",
+      "tone": "gold"
+    },
+    {
+      "key": "mc40",
+      "name": "神秘学者",
+      "tone": "gold"
+    },
+    {
+      "key": "mc_max",
+      "name": "化境",
+      "tone": "rainbow"
+    },
+    {
+      "key": "champ1",
+      "name": "初露锋芒",
+      "tone": "bronze"
+    },
+    {
+      "key": "champ50",
+      "name": "卫冕之王",
+      "tone": "gold"
+    },
+    {
+      "key": "roach1",
+      "name": "小强青铜",
+      "tone": "bronze"
+    },
+    {
+      "key": "roach2",
+      "name": "小强白银",
+      "tone": "gold"
+    },
+    {
+      "key": "roach3",
+      "name": "小强黄金",
+      "tone": "gold"
+    },
+    {
+      "key": "roachlay",
+      "name": "缺德冒烟",
+      "tone": "gold"
+    },
+    {
+      "key": "flip10k",
+      "name": "蚕食鲸吞",
+      "tone": "gold"
+    },
+    {
+      "key": "exchange",
+      "name": "千金不换",
+      "tone": "gold"
+    },
+    {
+      "key": "refuel",
+      "name": "濡沫涸辙",
+      "tone": "gold"
+    },
+    {
+      "key": "thumbs",
+      "name": "家喻户晓",
+      "tone": "gold"
+    },
+    {
+      "key": "fg10k",
+      "name": "四面楚歌",
+      "tone": "gold"
+    },
+    {
+      "key": "fgwin",
+      "name": "拳神",
+      "tone": "gold"
+    },
+    {
+      "key": "fglose",
+      "name": "拳鬼",
+      "tone": "silver"
+    },
+    {
+      "key": "cup5k",
+      "name": "不动声色",
+      "tone": "gold"
+    },
+    {
+      "key": "cupclear",
+      "name": "赌神",
+      "tone": "gold"
+    },
+    {
+      "key": "numwin",
+      "name": "受之无愧",
+      "tone": "gold"
+    },
+    {
+      "key": "slot",
+      "name": "开箱王",
+      "tone": "gold"
+    },
+    {
+      "key": "devil",
+      "name": "铁胃",
+      "tone": "gold"
+    },
+    {
+      "key": "memory",
+      "name": "过目不忘",
+      "tone": "gold"
+    },
+    {
+      "key": "darts",
+      "name": "百步穿杨",
+      "tone": "gold"
+    },
+    {
+      "key": "nim",
+      "name": "算无遗策",
+      "tone": "gold"
+    },
+    {
+      "key": "spice",
+      "name": "调料大师",
+      "tone": "gold"
+    },
+    {
+      "key": "deal",
+      "name": "一掷千金",
+      "tone": "gold"
+    },
+    {
+      "key": "floor10",
+      "name": "登顶",
+      "tone": "rainbow"
+    },
+    {
+      "key": "rank1",
+      "name": "初登神坛",
+      "tone": "bronze"
+    },
+    {
+      "key": "rank1_26",
+      "name": "万世厨神",
+      "tone": "gold"
+    },
+    {
+      "key": "suits",
+      "name": "神兵天降",
+      "tone": "gold"
+    },
+    {
+      "key": "guardian",
+      "name": "屠龙者",
+      "tone": "gold"
+    },
+    {
+      "key": "ta1000",
+      "name": "心无旁骛",
+      "tone": "gold"
+    },
+    {
+      "key": "ta2000",
+      "name": "雷厉风行",
+      "tone": "rainbow"
+    }
+  ]
+}
