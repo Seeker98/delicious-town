@@ -163,6 +163,12 @@ describe('期货到期交割（期货设计 §6）', () => {
     await put(shardId, r.restaurantId, { balance: 100, dueIn: -1 });
     await deliverDue(t.game.deps, shardId, t.clock.now);
     const feed = await t.game.social.reads.feed(r, { limit: 30 });
-    expect(feed.items.map((x) => x.type).sort()).toEqual(['futures.defaulted', 'futures.delivered']);
+    // 第一次交割还会达成成就（成就系统 2026-10-19），这里只看期货的动态
+    expect(
+      feed.items
+        .map((x) => x.type)
+        .filter((x) => x.startsWith('futures.'))
+        .sort(),
+    ).toEqual(['futures.defaulted', 'futures.delivered']);
   });
 });

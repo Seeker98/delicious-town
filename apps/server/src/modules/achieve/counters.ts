@@ -61,6 +61,15 @@ export async function bumpCounters(op: Op, entries: Array<[string, number]>): Pr
     )
     .returning(['key', sql<number>`count::float8`.as('count')])
     .execute();
+  await awardCounters(op, rows, out);
+}
+
+/** 计数加完（rows 是加了多少，out 是加完的值）：跨过门槛的记下来。结算把加计数并进写收益的那条语句，再调这个 */
+export async function awardCounters(
+  op: Op,
+  rows: Array<[string, number]>,
+  out: Array<{ key: string; count: number }>,
+): Promise<void> {
   const add = new Map(rows);
   const ids = out.flatMap((r) => crossed(op.config, r.key, r.count - (add.get(r.key) ?? 0), r.count));
   if (ids.length > 0) await award(op, ids);

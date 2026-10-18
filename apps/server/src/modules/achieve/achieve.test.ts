@@ -5,7 +5,9 @@ import { createTestGame, newRestaurant, type TestGame } from '../../../test/game
 import { emitAction } from '../../core/action';
 import { runSystemOp } from '../../core/op';
 import { backfillCounters } from '../../db/migrations/0087_achievements';
+import { roundOf } from '@dt/shared';
 import { BOARD_SOURCES } from '../rank/boards';
+import { settleShardRound } from '../settlement/runner';
 import { rankRows } from '../rank/ranking';
 import { bumpCounters, crossed, raiseCounter } from './counters';
 import { achieveJobs } from './jobs';
@@ -105,6 +107,34 @@ describe('计数类成就', () => {
       ['income.rounds', 1000],
       ['streak.fg.win', 5],
     ]);
+  });
+});
+
+describe('结算的计数', () => {
+  it('每轮营业把银币、轮数加进计数（和写收益同一条语句），跨门槛照样记', async () => {
+    const shardId = await createShard(t.db);
+    const r = await newRestaurant(t, { shardId, patch: { coin: 1000, oil: 100000 } });
+    await t.db
+      .insertInto('event_counter')
+      .values({ rest_id: r.restaurantId, key: 'income.rounds', count: 999 })
+      .execute();
+    const round = roundOf(new Date());
+    await settleShardRound(t.game.deps, t.game.world, shardId, round, new Date());
+    const c = await t.db
+      .selectFrom('event_counter')
+      .select(['key', 'count'])
+      .where('rest_id', '=', r.restaurantId)
+      .where('key', 'in', ['income.rounds', 'income.coin'])
+      .execute();
+    const inc = await t.db
+      .selectFrom('income_round')
+      .select('coin')
+      .where('rest_id', '=', r.restaurantId)
+      .executeTakeFirstOrThrow();
+    const m = Object.fromEntries(c.map((x) => [x.key, Number(x.count)]));
+    expect(m['income.rounds']).toBe(1000);
+    expect(m['income.coin'] ?? 0).toBe(Number(inc.coin));
+    expect((await got(r.restaurantId)).map((x) => x.ach_id)).toContain('rounds.1');
   });
 });
 
