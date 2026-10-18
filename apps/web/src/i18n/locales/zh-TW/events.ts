@@ -263,6 +263,8 @@ export default {
       `當騎手送外賣, 分到銀幣 ${formatNum(n(p, 'coin'))}、經驗 ${formatNum(n(p, 'exp'))}`,
     'takeaway.hire': () => '僱了一位好友當騎手',
     'takeaway.dismiss': () => '和一位騎手結算後解約',
+    'mc.champion': (p, names) =>
+      `昨日特色菜榜第 ${n(p, 'rank')} 名, 獲得 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}`,
     'tower.rank.week': (p, names) =>
       `賽廚榜周榜第 ${n(p, 'rank')} 名, 獲得 ${names.goodsName(n(p, 'goodsId'))}`,
     'town.exchange': (p) => `在協會兌換了 ${n(p, 'num')} 次`,

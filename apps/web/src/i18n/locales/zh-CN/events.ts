@@ -262,6 +262,8 @@ export default {
       `当骑手送外卖, 分到银币 ${formatNum(n(p, 'coin'))}、经验 ${formatNum(n(p, 'exp'))}`,
     'takeaway.hire': () => '雇了一位好友当骑手',
     'takeaway.dismiss': () => '和一位骑手结算后解约',
+    'mc.champion': (p, names) =>
+      `昨日特色菜榜第 ${n(p, 'rank')} 名, 获得 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}`,
     'tower.rank.week': (p, names) =>
       `赛厨榜周榜第 ${n(p, 'rank')} 名, 获得 ${names.goodsName(n(p, 'goodsId'))}`,
     'town.exchange': (p) => `在协会兑换了 ${n(p, 'num')} 次`,

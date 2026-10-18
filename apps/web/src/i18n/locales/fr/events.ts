@@ -291,6 +291,8 @@ const events: Messages['events'] = {
       `Livraison effectuée comme livreur\u202f: ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce', 'pièces')} et ${formatNum(n(p, 'exp'))} EXP obtenus`,
     'takeaway.hire': () => 'A embauché un ami comme livreur',
     'takeaway.dismiss': () => 'A payé et libéré un livreur',
+    'mc.champion': (p, names) =>
+      `${n(p, 'rank')}e du classement des plats signature d’hier, gagne ${names.goodsName(n(p, 'goodsId'))}\u202f×\u202f${n(p, 'num')}`,
     'tower.rank.week': (p, names) =>
       `${n(p, 'rank')}e du classement hebdomadaire de la Tour des chefs, gagne ${names.goodsName(n(p, 'goodsId'))}`,
     'town.exchange': (p) => `A fait ${n(p, 'num')} ${plFr(n(p, 'num'), 'échange', 'échanges')} à la Guilde`,

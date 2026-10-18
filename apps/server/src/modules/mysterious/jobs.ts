@@ -1,36 +1,41 @@
-import { sql } from 'kysely';
-import { addDays, gameTime, latestSlot, parseSlotKey } from '@dt/shared';
+import { gameTime, latestSlot, parseSlotKey } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import type { PeriodicJob } from '../../core/jobs';
-import { opNews, runSystemOp } from '../../core/op';
+import { opNews, restLog, runSystemOp } from '../../core/op';
+import { BOARD_SOURCES } from '../rank/boards';
+import { rankRows } from '../rank/ranking';
 import { grantGoodsOp } from '../store/goods';
 
-/** 昨日特色菜冠军（规格书 16，设计文档 §4.7）：day 为今天（区服时区），统计昨天开始烹制的批次 */
+/**
+ * 昨日特色菜榜发奖（规格书 16，设计文档 §4.7；2026-10-19 改成前几名）：day 为今天（区服时区），统计昨天开始烹制的批次。
+ * 名次和城镇排行榜的“昨日特色菜”同一个数据源、同一套排名（只算玩家店，同值同名次）；
+ * 第 n 名得 championNums[n-1] 个 championGoodsId，名次超出长度的不给。第 1 名照旧发新闻
+ */
 export async function awardChampion(
   d: GameDeps,
   shardId: number,
   day: string,
   now: Date,
-): Promise<{ winners: number; value: number }> {
+): Promise<{ winners: number; value: number; awarded: number }> {
   const { tuning } = await d.shards.settings(shardId);
-  const rows = await d.db
-    .selectFrom('mc_cook')
-    .select(['rest_id', sql<number>`max(total_num::float8 * price)`.as('v')])
-    .where('shard_id', '=', shardId)
-    .where('created_at', '>=', gameTime(addDays(day, -1), 0))
-    .where('created_at', '<', gameTime(day, 0))
-    .groupBy('rest_id')
-    .execute();
-  if (rows.length === 0) return { winners: 0, value: 0 };
-  const top = Math.max(...rows.map((r) => Number(r.v)));
-  const winners = rows.filter((r) => Number(r.v) === top).map((r) => r.rest_id);
-  for (const restId of winners) {
-    await runSystemOp(d, shardId, restId, { source: 'mc.champion', now }, async (op) => {
-      await grantGoodsOp(op, tuning.mysterious.championGoodsId, 1);
-      opNews(op, 'mc.champion', { value: top });
+  const t = tuning.mysterious;
+  const ranked = rankRows(
+    await BOARD_SOURCES['mc.yesterday']!({ db: d.db, shardId, now: gameTime(day, 0), config: d.config }),
+  );
+  if (ranked.length === 0) return { winners: 0, value: 0, awarded: 0 };
+  const top = ranked[0]!.value;
+  let awarded = 0;
+  for (const row of ranked) {
+    const num = t.championNums[row.rank - 1];
+    if (num === undefined) break;
+    await runSystemOp(d, shardId, row.restId, { source: 'mc.champion', now }, async (op) => {
+      await grantGoodsOp(op, tuning.mysterious.championGoodsId, num);
+      restLog(op, 'mc.champion', { day, rank: row.rank, value: row.value, goodsId: t.championGoodsId, num });
+      if (row.rank === 1) opNews(op, 'mc.champion', { value: top });
     });
+    awarded += 1;
   }
-  return { winners: winners.length, value: top };
+  return { winners: ranked.filter((r) => r.rank === 1).length, value: top, awarded };
 }
 
 export function mysteriousJobs(d: GameDeps): PeriodicJob[] {

@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  champion1019:
+    'Yesterday’s signature dish ranking rewards changed: instead of one Krabby Patty Secret Formula for #1 only, #1 now gets 2 Delicious Seals and #2–4 get 1 each (daily at 9:00); places match the signature dish “Value yesterday” ranking, with ties sharing a place',
   tower1018:
     'Chef Tower weekly ranking rewards changed: #1 gets 25 diamonds, 4 Mystery Recipes, the Chef God title and 50 renown; #2 20 diamonds, 3 recipes, Chef Saint and 40 renown; #3 15 diamonds, 2 recipes, Chef King and 30 renown; #4–8 12 diamonds, 1 recipe and 10 renown; #9–15 5 diamonds and 5 renown; no more Random Mystery Ingredient Vouchers. Last week’s ranking (week of Oct 12) is paid out with the new rewards',
   foodcut1018:

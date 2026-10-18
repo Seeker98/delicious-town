@@ -236,7 +236,8 @@
     "forgetPerLevel": 2, "forgetGrades": 1, "forgetMcFromLevel": 4, "forgetMcPerLevel": 0.02,
     "forceCloseCoinPerLevel": 50000,
     "championHour": 9,
-    "championGoodsId": 10814
+    "championGoodsId": 10812,
+    "championNums": [2, 1, 1, 1]
   },
   "temple": {
     "guardianHpBase": 20000, "guardianHpPerStar": 10000, "missileAttack": [[10701, 3200, 3200]],

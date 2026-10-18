@@ -236,7 +236,7 @@ const wiki: Messages['wiki'] = {
         title: 'How to learn signature dishes',
         items: [
           'You need 3 fragments of a dish to learn it; you can cook from 1 star.',
-          'Appraisal (from 1 star): at the Temple, use 1 Mystery Recipe and 1 appraisal item; on success you get a fragment of a random dish. Delicious Seal gives levels 1–6 and succeeds 40% of the time (90,000 in the shop); God of Cookery Jade Seal levels 2–5, 52% (300,000 in the shop); the Chum Bucket Secret Formula (levels 1–3) and Krabby Patty Secret Formula (levels 3–5) always succeed, are sold for diamonds in the black market and also come from Chef Tower and bar random rewards; the Krabby Patty one is also the prize for yesterday’s signature dish champion.',
+          'Appraisal (from 1 star): at the Temple, use 1 Mystery Recipe and 1 appraisal item; on success you get a fragment of a random dish. Delicious Seal gives levels 1–6 and succeeds 40% of the time (90,000 in the shop, also given to the top 4 of yesterday’s signature dish ranking); God of Cookery Jade Seal levels 2–5, 52% (300,000 in the shop); the Chum Bucket Secret Formula (levels 1–3) and Krabby Patty Secret Formula (levels 3–5) always succeed, are sold for diamonds in the black market and also come from Chef Tower and bar random rewards.',
           'Shard exchange: break fragments you don’t need into shards of the same level; 3 shards of a level get you 1 fragment of any dish of that level, so save shards of the level you want.',
           'Lessons: find a player who knows the dish and runs a class, pay the fee and some Stamina, and you’ll usually learn it on the first try.',
         ],

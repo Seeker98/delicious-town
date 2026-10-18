@@ -138,7 +138,7 @@ describe('AppraisePanel：按钮灰掉时写明原因（问题记录：鉴定按
     // 165：不在商店卖
     await w.find('[data-testid="appraise-open-165"]').trigger('click');
     expect(w.find('[data-testid="tool-how"]').text()).toBe(
-      '获得: 黑市 30 钻、厨塔和酒吧等的随机奖励、昨日特色菜冠军',
+      '获得: 黑市 30 钻、厨塔和酒吧等的随机奖励、昨日特色菜榜前 4 名',
     );
     await w.find('[data-testid="appraise-open-163"]').trigger('click');
     const how = '银币商店 90,000、黑市 8 钻、厨塔和酒吧等的随机奖励';

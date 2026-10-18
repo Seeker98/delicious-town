@@ -197,7 +197,7 @@ const town: Messages['town'] = {
       'roach.kill.lastWeek': 'Top 2 de la semana pasada: Matacucarachas de medianoche (lunes 7:59)',
       'flip.flipped.lastWeek':
         'Top 4 de la semana pasada: Las desgracias nunca vienen solas / Petardo / Farolillo / Fortuna (lunes 7:59)',
-      'mc.yesterday': '1.º: Campeón de platos estrella (cada día)',
+      'mc.yesterday': '1.º: Sello Delicia ×2; 2.º a 4.º: 1 cada uno (cada día a las 9:00)',
       'shiling.week':
         'Los 3 primeros con al menos 200 esta semana sacan un permiso de trabajo cada uno, por orden (domingo 23:00, válido 160 horas, sueldo lunes 7:59)',
     },

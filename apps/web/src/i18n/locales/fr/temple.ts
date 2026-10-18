@@ -53,7 +53,7 @@ const temple: Messages['temple'] = {
     howShop: (coin) => `boutique (pièces) ${coin}`,
     howBlack: (diamond) => `marché noir ${diamond} diamants`,
     howAward: 'récompenses aléatoires de la Tour des chefs, du bar, etc.',
-    howChampion: 'champion des plats signature d’hier',
+    howChampion: '4 premiers du classement des plats signature d’hier',
     howSep: ', ',
     howMany: 'Combien d’expertises',
     btn: (n) => `Expertiser ${n} fois`,

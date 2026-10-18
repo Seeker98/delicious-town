@@ -418,7 +418,10 @@ export const tuningSchema = z.object({
     forgetMcPerLevel: num,
     forceCloseCoinPerLevel: int,
     championHour: int.min(0).max(23),
+    /** 昨日特色菜榜前几名得到的道具（2026-10-19 起是美味印章） */
     championGoodsId: int,
+    /** 按名次给几个：第 1 项是第 1 名，名次超出长度的不给（2026-10-19：第 1 名 2 个、第 2~4 名各 1 个） */
+    championNums: z.array(int.min(1)).min(1),
   }),
   temple: z.object({
     guardianHpBase: int,

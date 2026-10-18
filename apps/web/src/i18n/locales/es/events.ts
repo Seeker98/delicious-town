@@ -281,6 +281,8 @@ const events: Messages['events'] = {
       `Repartiste como repartidor: obtuviste ${formatNum(n(p, 'coin'))} ${plEs(formatNum(n(p, 'coin')), 'moneda', 'monedas')} y ${formatNum(n(p, 'exp'))} EXP`,
     'takeaway.hire': () => 'Contrataste a un amigo como repartidor',
     'takeaway.dismiss': () => 'Pagaste y despediste a un repartidor',
+    'mc.champion': (p, names) =>
+      `${n(p, 'rank')}.º en la clasificación de platos estrella de ayer, ganas ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}`,
     'tower.rank.week': (p, names) =>
       `${n(p, 'rank')}.º en la clasificación semanal de la Torre de chefs, ganas ${names.goodsName(n(p, 'goodsId'))}`,
     'town.exchange': (p) => `Hiciste ${n(p, 'num')} ${plEs(n(p, 'num'), 'canje', 'canjes')} en el Gremio`,

@@ -180,7 +180,7 @@ export default {
     rewards: {
       'roach.kill.lastWeek': '上周前 2 名: 午夜蟑螂杀手 (周一 7:59 发)',
       'flip.flipped.lastWeek': '上周前 4 名: 屋漏偏逢连夜雨 / 鞭炮 / 灯笼 / 福 (周一 7:59 发)',
-      'mc.yesterday': '第一名: 特色菜冠军 (每天发)',
+      'mc.yesterday': '第 1 名美味印章×2, 第 2~4 名各 1 个 (每天 9 点发)',
       'shiling.week':
         '本周获得 ≥ 200 的前 3 名依次抽一张工作证 (周日 23 点发, 有效 160 小时, 周一 7:59 发工资)',
     } as Record<string, string>,
