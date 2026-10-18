@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  tower1018:
+    'Cambian las recompensas de la clasificación semanal de la Torre de chefs: 1.º 25 diamantes, 4 recetas misteriosas, el título Dios de los chefs y 50 de renombre; 2.º 20 diamantes, 3 recetas, Santo de los chefs y 40 de renombre; 3.º 15 diamantes, 2 recetas, Rey de los chefs y 30 de renombre; 4.º–8.º 12 diamantes, 1 receta y 10 de renombre; 9.º–15.º 5 diamantes y 5 de renombre; ya no se dan vales de ingrediente misterioso al azar. La clasificación de la semana pasada (semana del 12 de octubre) se paga con las nuevas recompensas',
   foodcut1018:
     'Se eliminan dos ingredientes que no usaba ningún plato: las nueces y el pez blanco del lago Tai (la nuez de las recetas son las «nueces peladas» y no cambian); las nueces que ya tenías en la despensa o la nevera se convierten en la misma cantidad de panceta, y el pez blanco en anís estrellado',
   premium1017:

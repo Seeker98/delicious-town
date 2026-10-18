@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  tower1018:
+    'Chef Tower weekly ranking rewards changed: #1 gets 25 diamonds, 4 Mystery Recipes, the Chef God title and 50 renown; #2 20 diamonds, 3 recipes, Chef Saint and 40 renown; #3 15 diamonds, 2 recipes, Chef King and 30 renown; #4–8 12 diamonds, 1 recipe and 10 renown; #9–15 5 diamonds and 5 renown; no more Random Mystery Ingredient Vouchers. Last week’s ranking (week of Oct 12) is paid out with the new rewards',
   foodcut1018:
     'Two ingredients no dish used have been removed: Walnuts and Taihu Whitefish (the walnut used in recipes is “Walnut Kernels” and is unaffected); Walnuts already in your pantry or fridge became the same number of Pork Belly, and Taihu Whitefish became Star Anise',
   premium1017:
