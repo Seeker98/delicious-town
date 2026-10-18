@@ -110,12 +110,17 @@ describe('第 8 批常见数据翻译（问题记录 272）', () => {
       cookbooks: b.cookbooks.map((x) => ({ id: String(x.id), fields: ['name'] })),
       mysterious: b.mysteriousCookbooks.map((x) => ({ id: String(x.id), fields: ['name'] })),
       // 菜系线、菜系奖杯按街道展开：翻译按展开前的 key
-      achievements: [...new Map(b.achievements.map((x) => [x.key.split('.')[0]!, x])).entries()].map(([id, x]) => ({
+      achievements: [...new Map(b.achievements.map((x) => [x.key.split('.')[0]!, x])).entries()].map(
+        ([id, x]) => ({
+          id,
+          fields: ['name', 'desc'],
+          ...(x.labels ? { tiers: x.labels.length } : {}),
+        }),
+      ),
+      trophies: [...new Set(b.trophies.map((x) => x.key.split('.')[0]!))].map((id) => ({
         id,
-        fields: ['name', 'desc'],
-        ...(x.labels ? { tiers: x.labels.length } : {}),
+        fields: ['name'],
       })),
-      trophies: [...new Set(b.trophies.map((x) => x.key.split('.')[0]!))].map((id) => ({ id, fields: ['name'] })),
     };
     for (const l of ['en', 'fr', 'es'] as const)
       for (const k of FULL)

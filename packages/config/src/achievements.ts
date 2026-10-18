@@ -4,7 +4,18 @@ import { z } from 'zod';
  * 成就（设计稿 docs/superpowers/specs/2026-10-19-achievements-design.md）：一条成就线有几档，每档一个成就。
  * 成就编号 = 线的 key + "." + 档序号（1 起），菜系线按街道展开成 cuisine.<街道>。只给成就点和装饰（奖杯、称号）。
  */
-export const ACH_CATS = ['rest', 'daily', 'cookbook', 'mc', 'friend', 'bar', 'tower', 'temple', 'finance', 'town'] as const;
+export const ACH_CATS = [
+  'rest',
+  'daily',
+  'cookbook',
+  'mc',
+  'friend',
+  'bar',
+  'tower',
+  'temple',
+  'finance',
+  'town',
+] as const;
 export type AchCat = (typeof ACH_CATS)[number];
 export const TROPHY_TONES = ['bronze', 'silver', 'gold', 'rainbow'] as const;
 export type TrophyTone = (typeof TROPHY_TONES)[number];
@@ -43,7 +54,10 @@ export const rawAchTier = z.object({
   n: z.number().int().min(1),
   pts: z.number().int().min(1).max(100),
   metric: z.string().regex(metricRe).optional(),
-  trophy: z.string().regex(/^[a-z0-9_]+$/).optional(),
+  trophy: z
+    .string()
+    .regex(/^[a-z0-9_]+$/)
+    .optional(),
   icon: z.string().optional(),
 });
 export const rawAchLine = z.object({
@@ -132,7 +146,8 @@ export function buildAchievements(
     const streets = raw.perStreet ? ctx.streetIds : [null];
     for (const streetId of streets) {
       const key = streetId === null ? raw.key : `${raw.key}.${streetId}`;
-      const trophyKey = (k: string | undefined) => (k === undefined ? null : streetId === null ? k : `${k}.${streetId}`);
+      const trophyKey = (k: string | undefined) =>
+        k === undefined ? null : streetId === null ? k : `${k}.${streetId}`;
       lines.push({
         key,
         cat: raw.cat,
@@ -157,7 +172,8 @@ export function buildAchievements(
       }
     }
   }
-  for (const k of trophyTpl.keys()) if (!usedTrophies.has(k)) errors.push(`trophies: ${k} not used by any achievement`);
+  for (const k of trophyTpl.keys())
+    if (!usedTrophies.has(k)) errors.push(`trophies: ${k} not used by any achievement`);
   return { lines, trophies };
 }
 

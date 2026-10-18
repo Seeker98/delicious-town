@@ -19,6 +19,7 @@ import { settleRestaurant } from './settle';
 import type { SettleGlobals, SpecialDish } from './types';
 import { gameSeed } from '../../core/seed';
 import { cedeRound, cedeState } from '../acquire/rules';
+import { bumpCounters } from '../achieve/counters';
 
 export type RoundStats = {
   round: number;
@@ -196,6 +197,12 @@ export async function settleOne(
     }
   }
   for (const l of r.logs) restLog(op, l.type, l.params);
+  // 成就（2026-10-19）：累计营业银币（让渡前，和每日汇总一致）、轮数、蟹老板吃到大餐
+  await bumpCounters(op, [
+    ['income.coin', coin],
+    ['income.rounds', 1],
+    ['krab.happy', r.logs.filter((l) => l.type === 'krab.happy').length],
+  ]);
   if (r.planktonAppeared) opNews(op, 'plankton.appear');
   // 写餐桌放在 WITH 里和插收益记录合成一条语句（Postgres 的数据修改 CTE 不被引用也会执行）
   await op.tx

@@ -1,6 +1,6 @@
 import { sql, type Kysely, type RawBuilder } from 'kysely';
 import type { GameConfig } from '@dt/config';
-import { addDays, gameDay, gameTime } from '@dt/shared';
+import { addDays, DAY_MS, gameDay, gameTime } from '@dt/shared';
 import type { DB, EquipGemRow, EquipRow } from '../../db/schema';
 import { gearOf } from '../equip/power';
 import { loadGems } from '../equip/instances';
@@ -247,6 +247,33 @@ const weekSources = (prefix: string, key: string): Record<string, Source> => ({
 const periodSources = (prefix: string, key: string): Record<string, Source> =>
   Object.fromEntries(PERIODS.map((p) => [`${prefix}.${p}`, counter(key, p)]));
 
+/**
+ * 成就点排行（成就系统 2026-10-19）只排够格的店：等级、注册天数够，验证过邮箱（防小号）。
+ * 同分时先到这个分数的在前；补发那一刻大家时间一样，再按店号小的在前（tie 里带上店号，不并列）
+ */
+function achEligible(c: BoardCtx) {
+  const t = c.config.tuning.achieve;
+  const before = new Date(c.now.getTime() - t.rankMinAccountDays * DAY_MS);
+  return sql`r.level >= ${t.rankMinLevel} and a.email_verified_at is not null and a.created_at <= ${before}`;
+}
+const achPoints: Source = (c) =>
+  run(
+    c,
+    sql<Row>`select x.rest_id, r.name, x.points::float8 as v,
+      -(extract(epoch from x.points_at)::bigint * 100000 + x.rest_id)::float8 as tie
+      from rest_ach x ${JOIN} where ${players(c.shardId)} and ${achEligible(c)}`,
+  );
+const achWeek: Source = (c) =>
+  run(
+    c,
+    sql<Row>`select x.rest_id, r.name, sum(x.pts)::float8 as v,
+      -(extract(epoch from max(x.achieved_at))::bigint * 100000 + x.rest_id)::float8 as tie
+      from rest_achievement x ${JOIN}
+      where ${players(c.shardId)} and ${achEligible(c)} and not x.backfilled
+        and x.achieved_at >= ${range(c.now, 'thisWeek').fromAt}
+      group by x.rest_id, r.name`,
+  );
+
 /** 每个榜一个查询，返回本区玩家店的原始值（未排序、未截断）；key 与 @dt/shared 的 RANK_BOARDS 一一对应 */
 export const BOARD_SOURCES: Record<string, Source> = {
   'income.coin.today': income('coin', 'today'),
@@ -297,4 +324,6 @@ export const BOARD_SOURCES: Record<string, Source> = {
   'mc.learned': mcLearned,
   'shiling.week': shiling('thisWeek'),
   'shiling.lastWeek': shiling('lastWeek'),
+  'achieve.points': achPoints,
+  'achieve.week': achWeek,
 };

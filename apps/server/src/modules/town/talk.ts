@@ -17,6 +17,7 @@ import { opNeedPick } from '../../core/scarcity';
 import { grantGoodsOp } from '../store/goods';
 import { setTownRest, townRest } from './common';
 import { pickBigEaterLevel, rollRange } from './rules';
+import { bumpCounters } from '../achieve/counters';
 
 /**
  * NPC 对话（设计文档 §3.3、裁定 6）：每个 NPC 每天一次。
@@ -55,5 +56,6 @@ export async function talk(o: Op, npc: NpcKey): Promise<TalkResultDto> {
     rewards.push({ kind: 'goods', id: goodsId, num: await grantGoodsOp(o, goodsId, num) });
   }
   restLog(o, 'town.talk', { npc, rewards });
+  await bumpCounters(o, [[`town.talk.${npc}`, 1]]);
   return { npc, talk: line, rewards };
 }

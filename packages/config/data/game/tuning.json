@@ -496,5 +496,10 @@
     "postCooldownSec": 60, "postDailyMax": 10, "replyCooldownSec": 60,
     "pageSize": 20, "excerpt": 60, "readsMax": 200,
     "featureReward": { "goods": [[10001, 20]], "diamond": 50 }
+  },
+  "achieve": {
+    "rankMinLevel": 10, "rankMinAccountDays": 3,
+    "shelfSlots": [[0, 1], [3000, 3], [8000, 5]],
+    "firstMinPts": 40, "newsMinPts": 80, "rarityCacheSeconds": 600
   }
 }

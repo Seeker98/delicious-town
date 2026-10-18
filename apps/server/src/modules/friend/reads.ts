@@ -22,6 +22,7 @@ import { feedPage, restNames, tableDto, thumbsReceived } from '../restaurant/rea
 import { equipDisplayName } from '../equip/hats';
 import { iconLive } from './looks';
 import { iconDefs } from '../icons/defs';
+import { achOf } from '../achieve/service';
 
 const likeEscape = (s: string) => s.replace(/[\\%_]/g, (c) => `\\${c}`);
 
@@ -346,6 +347,7 @@ export function createFriendReads(d: GameDeps) {
               eaten: ate !== undefined,
             }
           : null,
+        ach: await achOf(d.db, restId, d.config),
       };
     },
 

@@ -40,6 +40,8 @@ const empty = (): I18nTable => ({
   kujiThemes: {},
   proficiency: {},
   cookbooks: {},
+  achievements: {},
+  trophies: {},
 });
 
 describe('道具目录按语言（问题记录 272）', () => {

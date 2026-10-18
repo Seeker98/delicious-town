@@ -86,6 +86,8 @@ export interface FriendRestDto {
   equips: Array<{ part: number; goodsId: number; stress: number; name: string | null }>;
   /** 对方当前在售的特色菜（子项目 4A）；eaten = 这一批我已经吃过 */
   special: { mcId: number; grade: number; leftNum: number; price: number; eaten: boolean } | null;
+  /** 成就点和展示柜里的奖杯（成就系统 2026-10-19）；没有成就记录时 0 点、空展示柜 */
+  ach: { points: number; shelf: string[] };
 }
 
 const tableNo = z.number().int().min(1).max(500);

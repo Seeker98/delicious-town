@@ -13,6 +13,8 @@ export const isBroadcastStyle = (type: string): boolean => BROADCAST_STYLE_NEWS.
 
 /** 代码里会写入的全部新闻类型；前端 utils/news.ts 必须为每一种写文案（types.test 钉住） */
 export const NEWS_TYPES: readonly string[] = [
+  // 成就全服首达（成就系统 2026-10-19）
+  'achieve.first',
   'acquire.big',
   'acquire.redeem',
   'activity.coopRank',

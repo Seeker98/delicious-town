@@ -31,6 +31,8 @@ export const RANK_GROUPS: readonly string[] = [
   '一掷千金',
   '特色菜',
   '时令',
+  // 成就系统（2026-10-19）
+  '成就',
 ];
 
 const PERIODS: ReadonlyArray<[string, string]> = [
@@ -110,6 +112,8 @@ export const RANK_BOARDS: readonly RankBoardDef[] = [
     reward: '本周获得 ≥ 200 的前 3 名依次抽一张工作证 (周日 23 点发, 有效 160 小时, 周一 7:59 发工资)',
   },
   { key: 'shiling.lastWeek', group: '时令', label: '上周' },
+  { key: 'achieve.points', group: '成就', label: '成就点' },
+  { key: 'achieve.week', group: '成就', label: '本周新增' },
 ];
 
 export const RANK_KEYS: ReadonlySet<string> = new Set(RANK_BOARDS.map((b) => b.key));

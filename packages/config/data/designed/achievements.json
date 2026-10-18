@@ -2003,11 +2003,11 @@
       "key": "talk",
       "cat": "town",
       "name": "镇上的朋友",
-      "desc": "聊过天的镇民（共 5 位）",
+      "desc": "聊过天的镇民（共 4 位）",
       "metric": "state:talkAll",
       "tiers": [
         {
-          "n": 5,
+          "n": 4,
           "pts": 10
         }
       ]

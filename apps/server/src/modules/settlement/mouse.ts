@@ -7,6 +7,7 @@ import { gainCoin } from '../../core/resources';
 import { subFoods } from '../cupboard/foods';
 import { grantGoodsOp } from '../store/goods';
 import { gameSeed } from '../../core/seed';
+import { bumpCounters } from '../achieve/counters';
 
 export type MouseStats = {
   triggered: number;
@@ -30,6 +31,7 @@ async function visit(op: Op): Promise<{ outcome: Outcome; map: boolean }> {
     const coin = Math.floor(op.rest.level * mt.trapCoinPerLevel * (0.5 + op.rng.next()) + sum);
     gainCoin(op, coin, { source: 'mouse.trap', event: false });
     restLog(op, 'mouse.trap', { coin });
+    await bumpCounters(op, [['mouse.trap', 1]]);
   } else if (op.rng.chance(rate / mt.luckDivisor)) {
     outcome = 'escaped';
     restLog(op, 'mouse.escape');

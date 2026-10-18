@@ -16,7 +16,12 @@ describe('成就配置（设计稿 2026-10-19）', () => {
       ['cuisine.1.2', 'state:cuisine:5', 30, null],
       ['cuisine.1.3', 'state:cuisine:7', 60, 'cuisine.1'],
     ]);
-    expect(b.trophies.find((t) => t.key === 'cuisine.1')).toEqual({ key: 'cuisine.1', name: '宗师', tone: 'gold', streetId: 1 });
+    expect(b.trophies.find((t) => t.key === 'cuisine.1')).toEqual({
+      key: 'cuisine.1',
+      name: '宗师',
+      tone: 'gold',
+      streetId: 1,
+    });
   });
 
   it('总量: PR① 的成就个数、点数、奖杯、称号（改了配置就更新这里）', () => {
@@ -30,7 +35,8 @@ describe('成就配置（设计稿 2026-10-19）', () => {
 
   it('称号都在装扮的称号表里；金融类每档不超过 20 点', () => {
     const icons = new Set(b.looks.icons.map((x) => x.key));
-    for (const t of b.achievements.flatMap((l) => l.tiers)) if (t.icon) expect(icons.has(t.icon), t.icon).toBe(true);
+    for (const t of b.achievements.flatMap((l) => l.tiers))
+      if (t.icon) expect(icons.has(t.icon), t.icon).toBe(true);
     for (const l of b.achievements.filter((x) => x.cat === 'finance'))
       for (const t of l.tiers) expect(t.pts, l.key).toBeLessThanOrEqual(20);
   });

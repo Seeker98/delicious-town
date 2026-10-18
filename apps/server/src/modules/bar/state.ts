@@ -3,6 +3,7 @@ import { addDays, gameDay, weekStart } from '@dt/shared';
 import type { Op } from '../../core/op';
 import type { BarStateRow, DB } from '../../db/schema';
 import type { BarResult } from './rules';
+import { raiseCounter } from '../achieve/counters';
 
 export type BarStatePatch = Partial<Omit<BarStateRow, 'rest_id'>>;
 
@@ -36,6 +37,8 @@ export async function recordStreak(
   times: number,
 ): Promise<void> {
   if (result === 0) return;
+  // 成就（2026-10-19）：划拳历史最长连胜、连败（这张表只留 3 周）
+  if (game === 'fg') await raiseCounter(o, result > 0 ? 'streak.fg.win' : 'streak.fg.lose', times);
   await o.tx
     .insertInto('bar_streak_best')
     .values({ rest_id: o.rest.id, game, result, week: weekStart(gameDay(o.now)), times, reached_at: o.now })

@@ -315,7 +315,7 @@
   },
   "talk": {
     "name": "Friend of the Town",
-    "desc": "Townsfolk you have chatted with (out of 5)"
+    "desc": "Townsfolk you have chatted with (out of 4)"
   },
   "activity": {
     "name": "Active Citizen",

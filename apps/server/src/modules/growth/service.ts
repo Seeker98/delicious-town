@@ -25,6 +25,7 @@ import { consumeGoods, grantGoodsOp, hasValidHonor, removeHonor } from '../store
 import type { WorldService } from '../world/service';
 import { placeDevice } from './devices';
 import { moveCost, oilChecks, renameProblem, starChecks, starCoinOf } from './rules';
+import { bumpCounters } from '../achieve/counters';
 
 export function createGrowthService(d: GameDeps, world: WorldService) {
   const op = <T>(ctx: RestCtx, source: string, fn: (op: Op) => Promise<T>): Promise<OpResult<T>> =>
@@ -351,6 +352,7 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
           .execute();
         await removeHonor(o, GOODS.plankton);
         restLog(o, 'plankton.driven', { way, renown });
+        await bumpCounters(o, [['plankton.driven', 1]]);
         opNews(o, 'plankton.driven', { way, name: o.rest.name });
         return { renown };
       });
