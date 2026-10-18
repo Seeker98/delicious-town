@@ -85,9 +85,17 @@ export async function backfillCounters(db: Kysely<any>, restIds: number[] | null
       db,
     );
   }
+  // 特色菜日冠军：按新闻算（第一名一直发新闻、新闻不清；动态 10-18 才开始写）
   await put(sql`
-    select rest_id, 'mc.champion', count(*) from rest_log
-    where type = 'mc.champion' and params->>'rank' = '1'${only('rest_id')} group by rest_id`).execute(db);
+    select rest_id, 'mc.champion', count(*) from news
+    where type = 'mc.champion' and rest_id is not null${only('rest_id')} group by rest_id`).execute(db);
+  // 开过店的街：搬家动态里搬出、搬入的街（动态留 30 天，开服以来的都在）
+  await put(sql`
+    select rest_id, 'street.seen.' || s, 1 from (
+      select rest_id, params->>'from' as s from rest_log where type = 'rest.move' and params ? 'from'${only('rest_id')}
+      union
+      select rest_id, params->>'to' from rest_log where type = 'rest.move' and params ? 'to'${only('rest_id')}
+    ) x group by rest_id, s`).execute(db);
   await put(sql`
     select rest_id, 'town.talk.' || (params->>'npc'), count(*) from rest_log
     where type = 'town.talk' and params ? 'npc'${only('rest_id')} group by rest_id, params->>'npc'`).execute(

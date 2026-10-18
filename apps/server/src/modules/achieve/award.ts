@@ -67,6 +67,9 @@ export async function awardAchievements(
   if (done) {
     const big = got.filter((x) => x.tier.pts >= t.firstMinPts).map((x) => x.tier.id);
     if (big.length > 0) {
+      // 两家店同时达成同一档时只算一家首达：按区服 + 成就拿事务级锁，排在后面的等前一家提交后再看
+      for (const id of [...big].sort())
+        await sql`select pg_advisory_xact_lock(hashtext(${`ach.first:${a.shardId}:${id}`}))`.execute(tx);
       const taken = await tx
         .selectFrom('rest_achievement as ra')
         .innerJoin('restaurant as r', 'r.id', 'ra.rest_id')

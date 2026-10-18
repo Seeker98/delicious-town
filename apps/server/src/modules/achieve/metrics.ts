@@ -66,8 +66,12 @@ export async function achValues(
       ) x)`.as('mayorStreak'),
       sql<number>`(select count(*) from rest_mc where rest_id = ${rest.id})`.as('mcLearned'),
       sql<number | null>`(select max(curlevel) from rest_mc where rest_id = ${rest.id})`.as('mcLevel'),
+      // 好友：10 级以上、验证过邮箱（小号不算），不算蟹老板
       sql<number>`(select count(*) from friend f join restaurant r on r.id = f.friend_id
-        where f.rest_id = ${rest.id} and not r.npc and r.level >= 10)`.as('friends'),
+        join account a on a.id = r.account_id
+        where f.rest_id = ${rest.id} and not r.npc and r.level >= 10 and a.email_verified_at is not null)`.as(
+        'friends',
+      ),
       sql<number>`(select count(distinct invitee_account_id) from invite_reward
         where inviter_account_id = ${rest.account_id} and stage = 'lv30')`.as('invite30'),
       sql<number | null>`(select best_floor from tower_state where rest_id = ${rest.id})`.as('towerFloor'),
@@ -105,7 +109,11 @@ export async function achValues(
   v.set('state:weeklyFull', Number(f.weeklyFull));
   v.set('state:chapters', Number(f.chapters));
   const streets = new Set([rest.street_id]);
-  for (const k of Object.keys(counters)) if (k.startsWith('rest.moveTo.')) streets.add(Number(k.slice(12)));
+  // 开过店的街：搬家时记的 street.seen.<街>（搬出和搬入的都记），加上任务记的 rest.moveTo.<街>、现在这条街
+  for (const k of Object.keys(counters)) {
+    if (k.startsWith('street.seen.')) streets.add(Number(k.slice(12)));
+    else if (k.startsWith('rest.moveTo.')) streets.add(Number(k.slice(12)));
+  }
   v.set('state:streets', streets.size);
   v.set('state:wishWins', Number(f.wishWins));
   v.set('state:mayorStreak', Number(f.mayorStreak));

@@ -10144,3 +10144,7 @@ a.dt-entry-row::after {
   align-items: center;
   margin-bottom: 8px;
 }
+.dt-ach-rank-hint {
+  max-width: 150px;
+  text-align: right;
+}

@@ -161,6 +161,9 @@ const iconTitle = (key: string | null) => (key ? (catalog.icon(key)?.title ?? ke
         <div class="dt-ach-rank">
           <span class="dt-meta">{{ t.achieve.rank }}</span>
           <b>{{ data.rank ? t.achieve.rankN(data.rank) : t.achieve.unranked }}</b>
+          <span v-if="!data.rank && data.mine" class="dt-meta dt-ach-rank-hint">{{
+            t.achieve.unrankedHint(data.rankRule.minLevel, data.rankRule.minAccountDays)
+          }}</span>
           <RouterLink class="dt-go" to="/town?tab=rank&board=achieve.points">{{
             t.achieve.rankLink
           }}</RouterLink>
@@ -265,11 +268,12 @@ const iconTitle = (key: string | null) => (key ? (catalog.icon(key)?.title ?? ke
           <div
             v-for="i in Math.max(0, data.shelfSlots - shelf.length)"
             :key="`empty-${i}`"
+            v-if="data.mine"
             class="dt-ach-slot is-empty"
           >
             {{ t.achieve.shelfEmpty }}
           </div>
-          <div v-if="data.shelfNext" class="dt-ach-slot is-empty">
+          <div v-if="data.mine && data.shelfNext" class="dt-ach-slot is-empty">
             {{ t.achieve.shelfLocked(formatNum(data.shelfNext.points)) }}
           </div>
         </div>
@@ -289,7 +293,12 @@ const iconTitle = (key: string | null) => (key ? (catalog.icon(key)?.title ?? ke
             @click="openTrophy = k"
           >
             <span v-if="shelf.includes(k)" class="dt-ach-pin">{{ shelf.indexOf(k) + 1 }}</span>
-            <AchTrophy :tone="trophyTone(k)" :locked="!myTrophies.has(k)" :size="40" />
+            <AchTrophy
+              :tone="trophyTone(k)"
+              :locked="!myTrophies.has(k)"
+              :size="40"
+              :label="myTrophies.has(k) ? '' : t.achieve.trophyMissing"
+            />
             <span class="dt-ach-cell-name">{{ trophyName(k, catalog) }}</span>
           </button>
         </div>

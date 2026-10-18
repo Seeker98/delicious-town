@@ -12,6 +12,15 @@ export function revealActive(c: HTMLElement): void {
   else if (r.right > box.right) c.scrollLeft += r.right - box.right;
 }
 
+/** 竖着滚滚轮时横着滑标签栏：放得下、已经滑到头、本来就是横向滚动时不管（让页面照常滚） */
+export function wheelTabs(c: HTMLElement, e: Pick<WheelEvent, 'deltaX' | 'deltaY' | 'preventDefault'>): void {
+  if (c.scrollWidth <= c.clientWidth || Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+  const max = c.scrollWidth - c.clientWidth;
+  if ((e.deltaY < 0 && c.scrollLeft <= 0) || (e.deltaY > 0 && c.scrollLeft >= max - 1)) return;
+  c.scrollLeft = Math.min(max, Math.max(0, c.scrollLeft + e.deltaY));
+  e.preventDefault();
+}
+
 export function markOverflow(c: HTMLElement): void {
   c.classList.toggle('dt-tabs-more', c.scrollLeft + c.clientWidth < c.scrollWidth - 1);
 }
@@ -62,11 +71,18 @@ export function installTabsScroll(root: HTMLElement = document.body): () => void
     if (t instanceof HTMLElement && t.classList.contains('nav-tabs')) markOverflow(t);
   };
   root.addEventListener('scroll', onScroll, true);
+  // 鼠标滚轮横着滑标签栏（电脑上没有滚动条，标签放不下时原来只能按住 Shift 滚）
+  const onWheel = (e: WheelEvent) => {
+    const c = e.target instanceof Element ? e.target.closest<HTMLElement>('.nav-tabs') : null;
+    if (c) wheelTabs(c, e);
+  };
+  root.addEventListener('wheel', onWheel, { passive: false });
   window.addEventListener('resize', schedule);
   schedule();
   return () => {
     observer.disconnect();
     root.removeEventListener('scroll', onScroll, true);
+    root.removeEventListener('wheel', onWheel);
     window.removeEventListener('resize', schedule);
   };
 }

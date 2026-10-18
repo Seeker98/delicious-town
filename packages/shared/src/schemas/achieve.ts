@@ -19,6 +19,8 @@ export interface AchievementsDto {
   points: number;
   /** 成就点排行的名次；没上榜（不够格、0 点）为 null */
   rank: number | null;
+  /** 上榜条件（没上榜时网页写为什么） */
+  rankRule: { minLevel: number; minAccountDays: number };
   /** 本周新增成就点（补发的不算） */
   weekPoints: number;
   got: AchievementGotDto[];

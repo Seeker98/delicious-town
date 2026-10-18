@@ -66,6 +66,7 @@ const dto = (patch: Partial<AchievementsDto> = {}): AchievementsDto => ({
   mine: true,
   points: 30,
   rank: 3,
+  rankRule: { minLevel: 10, minAccountDays: 3 },
   weekPoints: 20,
   got: [
     { id: 'roach.2', at: '2026-10-19T00:12:00.000Z', first: true, backfilled: false },

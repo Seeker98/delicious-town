@@ -1,15 +1,23 @@
 import { sql, type Kysely } from 'kysely';
 import type { GameConfig, Tuning } from '@dt/config';
-import { ErrorCode, gameDay, gameTime, weekStart, type AchievementsDto, type GameEvent } from '@dt/shared';
+import {
+  achProgressKey,
+  ErrorCode,
+  gameDay,
+  gameTime,
+  weekStart,
+  type AchievementsDto,
+  type GameEvent,
+} from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
 import { runOp, type Op } from '../../core/op';
 import type { DB, RestaurantRow } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { BOARD_SOURCES } from '../rank/boards';
-import { rankRows } from '../rank/ranking';
+import { rankRows, type RankedRow } from '../rank/ranking';
 import { awardAchievements } from './award';
-import { achValues, valueOf } from './metrics';
+import { achValues, valueOf, type AchValues } from './metrics';
 
 /** 展示柜格数：成就点到了哪一档就开到几格 */
 export function shelfSlots(t: Tuning['achieve'], points: number): number {
@@ -30,10 +38,10 @@ export async function evaluateRest(
     RestaurantRow,
     'id' | 'shard_id' | 'account_id' | 'level' | 'star_level' | 'renown' | 'street_id' | 'cookbook_counts'
   >,
-  o: { now: Date; backfilled: boolean; events?: GameEvent[] },
+  o: { now: Date; backfilled: boolean; events?: GameEvent[]; values?: AchValues },
 ): Promise<string[]> {
-  // 可能在调用方的事务里跑：一条一条查，不并发
-  const values = await achValues(db, config, rest, o.now);
+  // 可能在调用方的事务里跑：一条一条查，不并发；调用方算过口径值就直接用
+  const values = o.values ?? (await achValues(db, config, rest, o.now));
   const have = await db
     .selectFrom('rest_achievement')
     .select('ach_id')
@@ -45,12 +53,47 @@ export async function evaluateRest(
     for (const tier of line.tiers)
       if (!got.has(tier.id) && valueOf(values, line, tier) >= tier.n) ids.push(tier.id);
   if (ids.length === 0) return [];
-  return awardAchievements(db, config, t, { shardId: rest.shard_id, restId: rest.id, ids, ...o });
+  return awardAchievements(db, config, t, {
+    shardId: rest.shard_id,
+    restId: rest.id,
+    ids,
+    now: o.now,
+    backfilled: o.backfilled,
+    events: o.events,
+  });
+}
+
+/** 区服补发完了没有：补发完以前打开成就页补算的也记成补发（不写动态、不算本周新增） */
+export async function shardBackfilled(db: Kysely<DB>, shardId: number): Promise<boolean> {
+  return !!(await db
+    .selectFrom('ach_shard')
+    .select('shard_id')
+    .where('shard_id', '=', shardId)
+    .executeTakeFirst());
 }
 
 export function createAchieveService(d: GameDeps) {
   /** 稀有度缓存：区服 → 成就编号 → 占比 */
   const rarityCache = new Map<number, { at: number; map: Record<string, number> }>();
+  /** 成就点榜的名次缓存（和排行页同样的秒数）：成就墙每次打开不重算整张榜 */
+  const rankCache = new Map<number, { at: number; rows: RankedRow[] }>();
+  /** 网页要的进度键：配置里用到的口径（菜系按街道），别的计数不发 */
+  const progressKeys = new Set(
+    d.config.bundle.achievements.flatMap((l) =>
+      l.tiers.map((x) => achProgressKey(x.metric, x.metric.startsWith('state:cuisine') ? l.streetId : null)),
+    ),
+  );
+
+  async function rankOf(shardId: number, restId: number, cacheSeconds: number): Promise<number | null> {
+    const now = d.now();
+    let hit = rankCache.get(shardId);
+    if (!hit || now.getTime() - hit.at >= cacheSeconds * 1000) {
+      const rows = await BOARD_SOURCES['achieve.points']!({ db: d.db, shardId, now, config: d.config });
+      hit = { at: now.getTime(), rows: rankRows(rows) };
+      rankCache.set(shardId, hit);
+    }
+    return hit.rows.find((r) => r.restId === restId)?.rank ?? null;
+  }
 
   async function rarity(shardId: number, t: Tuning['achieve']): Promise<Record<string, number>> {
     const hit = rarityCache.get(shardId);
@@ -71,7 +114,7 @@ export function createAchieveService(d: GameDeps) {
     db: Kysely<DB>,
     ctx: RestCtx,
     restId: number,
-    progress: boolean,
+    values: AchValues | null,
   ): Promise<AchievementsDto> {
     const s = await d.shards.settings(ctx.shardId);
     const t = s.tuning.achieve;
@@ -91,19 +134,18 @@ export function createAchieveService(d: GameDeps) {
       .orderBy('achieved_at', 'desc')
       .execute();
     const stat = await db.selectFrom('rest_ach').selectAll().where('rest_id', '=', restId).executeTakeFirst();
-    const values = progress ? await achValues(db, d.config, rest, now) : null;
-    const board = await BOARD_SOURCES['achieve.points']!({ db, shardId: ctx.shardId, now, config: d.config });
+    const rank = await rankOf(ctx.shardId, restId, s.tuning.rank.cacheSeconds);
     const rare = await rarity(ctx.shardId, t);
     const week = gameTime(weekStart(gameDay(now)), 0);
     const points = stat?.points ?? 0;
-    const me = rankRows(board).find((r) => r.restId === restId);
     const known = got.filter((g) => d.config.achievements.byId.has(g.ach_id));
     return {
       restId,
       name: rest.name,
       mine: restId === ctx.restaurantId,
       points,
-      rank: me?.rank ?? null,
+      rank,
+      rankRule: { minLevel: t.rankMinLevel, minAccountDays: t.rankMinAccountDays },
       weekPoints: known.filter((g) => !g.backfilled && g.achieved_at >= week).reduce((a, g) => a + g.pts, 0),
       got: known.map((g) => ({
         id: g.ach_id,
@@ -111,7 +153,7 @@ export function createAchieveService(d: GameDeps) {
         first: g.first_in_shard,
         backfilled: g.backfilled,
       })),
-      progress: values ? Object.fromEntries(values) : {},
+      progress: values ? Object.fromEntries([...values].filter(([k]) => progressKeys.has(k))) : {},
       shelf: (stat?.shelf ?? []).filter((k) => d.config.achievements.trophies.has(k)),
       shelfSlots: shelfSlots(t, points),
       shelfNext: (() => {
@@ -124,16 +166,21 @@ export function createAchieveService(d: GameDeps) {
 
   /** 自己的成就墙：先补算一遍（打开就能看到刚够上的状态类成就），再读 */
   async function mine(ctx: RestCtx): Promise<AchievementsDto> {
-    await d.db.transaction().execute(async (tx) => {
+    const values = await d.db.transaction().execute(async (tx) => {
       const rest = await tx
         .selectFrom('restaurant')
         .selectAll()
         .where('id', '=', ctx.restaurantId)
         .executeTakeFirstOrThrow();
       const s = await d.shards.settings(ctx.shardId, tx);
-      await evaluateRest(tx, d.config, s.tuning.achieve, rest, { now: d.now(), backfilled: false });
+      const now = d.now();
+      const v = await achValues(tx, d.config, rest, now);
+      // 区服还没补发完（刚上线）：这时补算出来的也算补发，不刷动态、不进本周新增
+      const backfilled = !(await shardBackfilled(tx, ctx.shardId));
+      await evaluateRest(tx, d.config, s.tuning.achieve, rest, { now, backfilled, values: v });
+      return v;
     });
-    return viewOf(d.db, ctx, ctx.restaurantId, true);
+    return viewOf(d.db, ctx, ctx.restaurantId, values);
   }
 
   /** 摆展示柜：只能摆自己拿到的奖杯，格数按成就点 */
@@ -159,13 +206,14 @@ export function createAchieveService(d: GameDeps) {
       .values({ rest_id: o.rest.id, shelf: JSON.stringify(keys) })
       .onConflict((oc) => oc.column('rest_id').doUpdateSet({ shelf: JSON.stringify(keys) }))
       .execute();
-    return viewOf(o.tx, o.ctx!, o.rest.id, false);
+    return viewOf(o.tx, o.ctx!, o.rest.id, null);
   }
 
   return {
     mine,
     /** 别人的成就墙（只读，不带进度） */
-    other: (ctx: RestCtx, restId: number) => viewOf(d.db, ctx, restId, false),
+    other: (ctx: RestCtx, restId: number) =>
+      restId === ctx.restaurantId ? mine(ctx) : viewOf(d.db, ctx, restId, null),
     shelf: (ctx: RestCtx, trophies: string[]) =>
       runOp(d, ctx, { feature: 'friend', source: 'achieve' }, (o) => setShelf(o, trophies)),
   };

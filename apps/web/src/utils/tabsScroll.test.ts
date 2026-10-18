@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { markOverflow, revealActive } from './tabsScroll';
+import { markOverflow, revealActive, wheelTabs } from './tabsScroll';
 
 /** jsdom 没有排版：手动给容器和标签设位置 */
 function bar(opts: { left: number; width: number; scrollWidth: number; active: [number, number] }) {
@@ -33,6 +33,37 @@ describe('标签页横向滑动（问题记录 100 终审）', () => {
     c.scrollLeft = 190;
     markOverflow(c);
     expect(c.classList.contains('dt-tabs-more')).toBe(false);
+  });
+});
+
+describe('鼠标滚轮横滑标签栏（成就页审查：电脑上没滚动条滑不动）', () => {
+  const wheel = (deltaY: number, deltaX = 0) => {
+    let prevented = false;
+    return {
+      deltaY,
+      deltaX,
+      preventDefault: () => (prevented = true),
+      get prevented() {
+        return prevented;
+      },
+    };
+  };
+  it('放不下时竖着滚就横着滑，并拦下页面滚动；滑到头或放得下时不管', () => {
+    const c = bar({ left: 0, width: 340, scrollWidth: 530, active: [0, 100] });
+    const e = wheel(100);
+    wheelTabs(c, e);
+    expect(c.scrollLeft).toBe(100);
+    expect(e.prevented).toBe(true);
+    const back = wheel(-300);
+    wheelTabs(c, back);
+    expect(c.scrollLeft).toBe(0);
+    const atStart = wheel(-50);
+    wheelTabs(c, atStart);
+    expect(atStart.prevented).toBe(false);
+    const fits = bar({ left: 0, width: 340, scrollWidth: 340, active: [0, 100] });
+    const f = wheel(100);
+    wheelTabs(fits, f);
+    expect(f.prevented).toBe(false);
   });
 });
 

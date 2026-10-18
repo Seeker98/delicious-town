@@ -11,6 +11,8 @@ import { settleShardRound } from '../settlement/runner';
 import { rankRows } from '../rank/ranking';
 import { bumpCounters, crossed, raiseCounter } from './counters';
 import { achieveJobs } from './jobs';
+import { achValues } from './metrics';
+import { gainExp } from '../../core/resources';
 import { createAchieveService, evaluateRest } from './service';
 
 let t: TestGame;
@@ -191,6 +193,52 @@ describe('状态类成就和首达', () => {
   });
 });
 
+describe('审查后补的几条', () => {
+  it('补发完以前打开成就页：补算出来的记成补发（不写动态）', async () => {
+    const shardId = await createShard(t.db);
+    const r = await newRestaurant(t, { shardId, patch: { level: 45 } });
+    await svc().mine(r);
+    const rows = (await got(r.restaurantId)).filter((x) => x.ach_id.startsWith('level.'));
+    expect(rows.every((x) => x.backfilled)).toBe(true);
+    expect(await logs(r.restaurantId, 'achieve.got')).toEqual([]);
+  });
+
+  it('升级当场记等级成就（提示里带上），不用等打开成就页', async () => {
+    const r = await newRestaurant(t, { patch: { level: 19, exp: 0 } });
+    const events = await runSystemOp(
+      t.game.deps,
+      r.shardId,
+      r.restaurantId,
+      { source: 'test' },
+      async (op) => {
+        gainExp(op, 50_000_000);
+        return op.events;
+      },
+    );
+    expect((await got(r.restaurantId)).map((x) => x.ach_id)).toContain('level.1');
+    expect(events).toContainEqual({ type: 'gain', kind: 'achievement', key: 'level.1', num: 10 });
+  });
+
+  it('开过店的街：搬家记下的街加上现在这条街', async () => {
+    const r = await newRestaurant(t, { patch: { street_id: 5 } });
+    await t.db
+      .insertInto('event_counter')
+      .values([
+        { rest_id: r.restaurantId, key: 'street.seen.0', count: 1 },
+        { rest_id: r.restaurantId, key: 'street.seen.3', count: 1 },
+        { rest_id: r.restaurantId, key: 'rest.moveTo.29', count: 1 },
+      ])
+      .execute();
+    const rest = await t.db
+      .selectFrom('restaurant')
+      .selectAll()
+      .where('id', '=', r.restaurantId)
+      .executeTakeFirstOrThrow();
+    const v = await achValues(t.db, cfg(), rest, t.clock.now);
+    expect(v.get('state:streets')).toBe(4);
+  });
+});
+
 describe('上线补发和每天补算', () => {
   it('补发：记成补发的（不写动态），写 ach_shard；再跑跳过；补发完每天的补算照常写动态', async () => {
     const shardId = await createShard(t.db);
@@ -308,6 +356,19 @@ describe('迁移 0087：补几个新计数', () => {
         { rest_id: id, type: 'mouse.trap', params: '{}', created_at: now },
         { rest_id: id, type: 'town.talk', params: JSON.stringify({ npc: 'wenjie' }), created_at: now },
         { rest_id: id, type: 'town.talk', params: JSON.stringify({ npc: 'wenjie' }), created_at: now },
+        { rest_id: id, type: 'rest.move', params: JSON.stringify({ from: 0, to: 3 }), created_at: now },
+        { rest_id: id, type: 'rest.move', params: JSON.stringify({ from: 3, to: 7 }), created_at: now },
+      ])
+      .execute();
+    // 特色菜冠军按新闻算（动态 10-18 才开始写）：两条冠军新闻，动态里的不算
+    const shardId = (
+      await t.db.selectFrom('restaurant').select('shard_id').where('id', '=', id).executeTakeFirstOrThrow()
+    ).shard_id;
+    await t.db
+      .insertInto('news')
+      .values([
+        { shard_id: shardId, type: 'mc.champion', rest_id: id, params: '{}', created_at: now },
+        { shard_id: shardId, type: 'mc.champion', rest_id: id, params: '{}', created_at: now },
       ])
       .execute();
     await backfillCounters(t.db, [id]);
@@ -320,9 +381,12 @@ describe('迁移 0087：补几个新计数', () => {
     expect(Object.fromEntries(c.map((x) => [x.key, Number(x.count)]))).toEqual({
       'income.coin': 3007,
       'income.rounds': 661,
-      'mc.champion': 1,
+      'mc.champion': 2,
       'mouse.trap': 1,
       'streak.fg.lose': 9,
+      'street.seen.0': 1,
+      'street.seen.3': 1,
+      'street.seen.7': 1,
       'streak.fg.win': 6,
       'town.talk.wenjie': 2,
     });

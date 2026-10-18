@@ -50,7 +50,7 @@ export function achieveJobs(d: GameDeps): PeriodicJob[] {
   return [
     {
       // 上线补发：每个区服跑一次，按现有数据把够得着的成就都记成补发（不进动态、不算首达），记完写 ach_shard。
-      // job_run 七天后清掉会再跑一次，看到 ach_shard 有了就跳过
+      // job_run 七天后清掉会再跑一次，看到 ach_shard 有了就跳过。补发完以前打开成就页补算的也记成补发（service.mine）
       name: 'achieve-backfill',
       feature: 'friend',
       retry: true,
@@ -59,7 +59,7 @@ export function achieveJobs(d: GameDeps): PeriodicJob[] {
         if (await backfilled(d.db, ctx.shardId)) return { skipped: true };
         const now = d.now();
         const r = await scanShard(d, ctx, { now, backfilled: true });
-        if (r.failed > 0) throw new Error(`achieve backfill: ${r.failed} restaurant(s) failed`);
+        // 个别店算失败也写 ach_shard（失败的已记日志，每天的补算会补上）：不然整个区服一直不算首达、不跑每天的补算
         await d.db
           .insertInto('ach_shard')
           .values({ shard_id: ctx.shardId, backfilled_at: now })
