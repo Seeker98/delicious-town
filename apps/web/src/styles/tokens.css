@@ -169,8 +169,8 @@
   /* 纸上的格子、大图托盘（资料库，P11） */
   --dt-paper-card: rgba(255, 255, 255, 0.55);
   /* 成就奖杯（成就系统 2026-10-19）：铜、银、金、彩四档的杯身和暗面，没拿到的剪影 */
-  --dt-trophy-bronze: #d9a766;
-  --dt-trophy-bronze-2: #b9813e;
+  --dt-trophy-bronze: #c27c48;
+  --dt-trophy-bronze-2: #8e5228;
   --dt-trophy-silver: #c7ced6;
   --dt-trophy-silver-2: #8f9aa8;
   --dt-trophy-gold: #f2c14e;
@@ -252,8 +252,8 @@
   --dt-paper-rule: #4a3f2c;
   --dt-paper-sub: #b7a684;
   --dt-paper-card: rgba(0, 0, 0, 0.18);
-  --dt-trophy-bronze: #d9a766;
-  --dt-trophy-bronze-2: #b9813e;
+  --dt-trophy-bronze: #cf8a55;
+  --dt-trophy-bronze-2: #9a5c30;
   --dt-trophy-silver: #c7ced6;
   --dt-trophy-silver-2: #8f9aa8;
   --dt-trophy-gold: #f2c14e;

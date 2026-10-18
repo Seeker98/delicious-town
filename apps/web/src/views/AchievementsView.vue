@@ -68,6 +68,11 @@ const progress = computed(() => (data.value?.mine ? data.value.progress : null))
 const allTiers = computed(() => catalog.achLines.flatMap((l) => l.tiers));
 const totalPts = computed(() => allTiers.value.reduce((a, x) => a + x.pts, 0));
 const trophyKeys = computed(() => [...catalog.trophyMap.keys()]);
+/** 奖杯格子：拿到的排前面，其余按配置顺序 */
+const trophyOrder = computed(() => [
+  ...trophyKeys.value.filter((k) => myTrophies.value.has(k)),
+  ...trophyKeys.value.filter((k) => !myTrophies.value.has(k)),
+]);
 const myTrophies = computed(
   () => new Set(allTiers.value.filter((x) => x.trophy && gotSet.value.has(x.id)).map((x) => x.trophy!)),
 );
@@ -96,9 +101,13 @@ const openLine = ref<CatalogAchLineDto | null>(null);
 const openState = computed(() =>
   openLine.value ? lineState(openLine.value, gotSet.value, progress.value) : null,
 );
-const lineTrophyTone = (l: CatalogAchLineDto) => {
-  const last = [...l.tiers].reverse().find((x) => x.trophy);
-  return last?.trophy ? (catalog.trophyMap.get(last.trophy)?.tone ?? 'gold') : null;
+/** 行首的奖杯：拿到的最高一档奖杯的颜色；还没拿到奖杯时是第一个奖杯的剪影；这条线没有奖杯时 null */
+const lineTrophy = (l: CatalogAchLineDto) => {
+  const cups = l.tiers.filter((x) => x.trophy);
+  if (cups.length === 0) return null;
+  const got = [...cups].reverse().find((x) => gotSet.value.has(x.id));
+  const x = got ?? cups[0]!;
+  return { tone: catalog.trophyMap.get(x.trophy!)?.tone ?? 'gold', locked: !got };
 };
 const meterPct = (cur: number | null, n: number) => `${Math.min(100, ((cur ?? 0) / Math.max(1, n)) * 100)}%`;
 
@@ -149,7 +158,9 @@ const iconTitle = (key: string | null) => (key ? (catalog.icon(key)?.title ?? ke
         <div class="dt-ach-rank">
           <span class="dt-meta">{{ t.achieve.rank }}</span>
           <b>{{ data.rank ? t.achieve.rankN(data.rank) : t.achieve.unranked }}</b>
-          <RouterLink class="dt-go" to="/town?tab=rank">{{ t.achieve.rankLink }}</RouterLink>
+          <RouterLink class="dt-go" to="/town?tab=rank&board=achieve.points">{{
+            t.achieve.rankLink
+          }}</RouterLink>
         </div>
         <div class="dt-ach-stats">
           <div>
@@ -268,7 +279,7 @@ const iconTitle = (key: string | null) => (key ? (catalog.icon(key)?.title ?? ke
         </div>
         <div class="dt-ach-case" data-testid="ach-case">
           <button
-            v-for="k in trophyKeys"
+            v-for="k in trophyOrder"
             :key="k"
             type="button"
             :class="['dt-ach-cell', { 'is-off': !myTrophies.has(k) }]"
@@ -308,9 +319,9 @@ const iconTitle = (key: string | null) => (key ? (catalog.icon(key)?.title ?? ke
           @click="openLine = s.line"
         >
           <AchTrophy
-            v-if="lineTrophyTone(s.line)"
-            :tone="lineTrophyTone(s.line)!"
-            :locked="s.got === 0"
+            v-if="lineTrophy(s.line)"
+            :tone="lineTrophy(s.line)!.tone"
+            :locked="lineTrophy(s.line)!.locked"
             :size="30"
           />
           <span v-else class="dt-ach-ico" aria-hidden="true">★</span>
