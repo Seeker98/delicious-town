@@ -12,7 +12,7 @@ afterAll(() => t.close());
 
 describe('纪念品（148-2 设计 §6.2）', () => {
   it('不占仓库格：仓库满了也能领；仓库页格子数不算纪念品', async () => {
-    const r = await newRestaurant(t, { patch: { store_num: 1 }, goods: { [GOODS.shortOilSaver]: 1 } });
+    const r = await newRestaurant(t, { patch: { store_num: 1 }, goods: { [GOODS.midOilSaver]: 1 } });
     await grantGoods(t.db, t.deps.config, r.restaurantId, gid('小红旗徽章'), 2, new Date());
     expect(await goodsNum(t, r.restaurantId, gid('小红旗徽章'))).toBe(2);
     const view = await t.game.store.list(r, {});

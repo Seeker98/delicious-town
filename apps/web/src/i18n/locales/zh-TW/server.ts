@@ -41,6 +41,11 @@ export default {
       body: (p) => `你舉報的${str(p.targetName)}已處理, 感謝你維護小鎮。`,
     },
     'report.rejected': { title: () => '舉報結果', body: (p) => `你舉報的${str(p.targetName)}經核實未違規。` },
+    'oilsaver.revamp': {
+      title: () => '節油器改版補償',
+      body: () =>
+        '節油器改版了: 擺著的節油器已經換成賣油翁的銅錢閥 (24 小時內總耗油 -90%), 倉庫裡的中效、特供節油器併成了中級節油器。附件再送每家一個賣油翁的銅錢閥。',
+    },
     'wishtree.win': {
       title: () => '許願樹: 願望成真',
       body: (p) =>

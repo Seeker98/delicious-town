@@ -417,15 +417,15 @@
   },
   "20201": {
     "name": "Pack d'économiseurs d'huile (rang 2)",
-    "desc": "Un pack d'économiseurs haut de gamme\u202f! Contient super économiseur x1, économiseur avancé x1, économiseur basique x1"
+    "desc": "Un pack d'économiseurs haut de gamme\u202f! Contient Vanne d'économie d'huile initiale x1, Vanne d'économie d'huile intermédiaire x1, Vanne d'économie d'huile avancée x1"
   },
   "20202": {
     "name": "Pack d'économiseurs d'huile (rang 1)",
-    "desc": "Un pack d'économiseurs ordinaire\u202f! Contient économiseur long x1, économiseur moyen x1, économiseur court x1"
+    "desc": "Un pack d'économiseurs ordinaire\u202f! Contient Économiseur d'huile initial x1, Économiseur d'huile intermédiaire x1, Vanne d'économie d'huile initiale x1"
   },
   "20203": {
     "name": "Pack d'économiseurs d'huile (rang 3)",
-    "desc": "Le meilleur pack d'économiseurs\u202f! Contient économiseur importé x1, économiseur haut de gamme x1"
+    "desc": "Le meilleur pack d'économiseurs\u202f! Contient Économiseur d'huile avancé x1, Vanne d'économie d'huile supérieure x1"
   },
   "20204": {
     "name": "Pack de diamants",
@@ -604,44 +604,48 @@
     "desc": "Trophée légendaire fabriqué par Delicious Town\u202f; EXP par table +7 pendant 24 heures (dès 10★)"
   },
   "30201": {
-    "name": "Économiseur d'huile court",
-    "desc": "Huile par table -4 pendant 8 heures après installation"
+    "name": "Économiseur d'huile intermédiaire",
+    "desc": "Huile par table -4 pendant 24 heures après installation"
   },
   "30202": {
-    "name": "Économiseur d'huile moyen",
-    "desc": "Huile par table -3 pendant 15 heures après installation"
+    "name": "Économiseur d'huile supérieur",
+    "desc": "Huile par table -8 pendant 36 heures après installation"
   },
   "30203": {
-    "name": "Économiseur d'huile long",
-    "desc": "Huile par table -2 pendant 28 heures après installation"
+    "name": "Économiseur d'huile initial",
+    "desc": "Huile par table -2 pendant 24 heures après installation"
   },
   "30204": {
-    "name": "Économiseur d'huile avancé",
-    "desc": "Taux de consommation d'huile final -45\u202f% pendant 18 heures après installation"
+    "name": "Vanne d'économie d'huile intermédiaire",
+    "desc": "Consommation totale d'huile -55\u202f% pendant 24 heures après installation"
   },
   "30205": {
-    "name": "Super économiseur d'huile",
-    "desc": "Taux de consommation d'huile final -60\u202f% pendant 36 heures après installation"
+    "name": "Vanne d'économie d'huile avancée",
+    "desc": "Consommation totale d'huile -70\u202f% pendant 24 heures après installation"
   },
   "30206": {
-    "name": "Économiseur d'huile basique",
-    "desc": "Taux de consommation d'huile final -30\u202f% pendant 12 heures après installation"
+    "name": "Vanne d'économie d'huile initiale",
+    "desc": "Consommation totale d'huile -40\u202f% pendant 24 heures après installation"
   },
   "30207": {
-    "name": "Économiseur d'huile spécial",
-    "desc": "Huile par table -5 pendant 12 heures après installation"
+    "name": "Vanne à pièces du marchand d’huile",
+    "desc": "Les pièces du marchand d’huile coulent de la gourde dans le fourneau\u202f: consommation totale d'huile -90\u202f% pendant 24 heures"
   },
   "30208": {
-    "name": "Économiseur d'huile de M. Krab",
-    "desc": "Huile par table -7 pendant 200 heures après installation"
+    "name": "Économiseur d’huile quantique",
+    "desc": "Quel que soit le nombre de clients, huile par table -15 pendant 24 heures (au moins 1 huile par table)"
   },
   "30209": {
-    "name": "Économiseur d'huile haut de gamme",
-    "desc": "Huile par table -6 pendant 32 heures après installation"
+    "name": "Économiseur d'huile avancé",
+    "desc": "Huile par table -6 pendant 24 heures après installation"
   },
   "30210": {
-    "name": "Économiseur d'huile importé",
-    "desc": "Taux de consommation d'huile final -80\u202f% pendant 36 heures après installation"
+    "name": "Vanne d'économie d'huile supérieure",
+    "desc": "Consommation totale d'huile -85\u202f% pendant 36 heures après installation"
+  },
+  "30211": {
+    "name": "Vanne du feu éternel",
+    "desc": "Le feu éternel ne s’éteint jamais\u202f: consommation totale d'huile -99\u202f% pendant 168 heures"
   },
   "30301": {
     "name": "Tapette à souris",

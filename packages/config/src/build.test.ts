@@ -193,7 +193,7 @@ describe('buildBundle（真实数据）', () => {
     const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     expect(bundle!.foods).toHaveLength(336); // 313 + 新街道 23 种（问题记录 284）
-    expect(bundle!.goods).toHaveLength(758); // 艺术品设施 18 件（2026-10-17）+ 天气改版 工作证 6 张、工资礼包 6 个（PR③）+ 司天罗盘、晴雨签 2 件 + 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件 + 一到五级食材随机券 5 张（问题记录 331）+ 豪华签券 1 张（240-2） + 基金勋章 3 枚（240-2） + 后期海报奖杯 8 个（146）+ 天机石 6 阶（419）+ 街市补给包 5 个（理财）
+    expect(bundle!.goods).toHaveLength(759); // 丙火乾坤省油阀 1 件（节油器改版 2026-10-19）+ 艺术品设施 18 件（2026-10-17）+ 天气改版 工作证 6 张、工资礼包 6 个（PR③）+ 司天罗盘、晴雨签 2 件 + 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件 + 一到五级食材随机券 5 张（问题记录 331）+ 豪华签券 1 张（240-2） + 基金勋章 3 枚（240-2） + 后期海报奖杯 8 个（146）+ 天机石 6 阶（419）+ 街市补给包 5 个（理财）
     expect(bundle!.cookbooks).toHaveLength(3810);
     expect(bundle!.streets).toHaveLength(30);
     expect(bundle!.starNeed).toHaveLength(12);
@@ -537,7 +537,7 @@ describe('2A 新增配置', () => {
     });
     expect(b.shopSpecialTiers.map((t) => t.discount)).toEqual([0.9, 0.8, 0.7, 0.5, 0.1]);
     expect(b.shopSpecialTiers[0]).toMatchObject({ name: '九折', from: 0, to: 0.5, stock: 50 });
-    expect(b.shopPools.special).toContain(gid('短效节油器'));
+    expect(b.shopPools.special).toContain(gid('中级节油器'));
     expect(b.shopPools.black).toContain(gid('升星凭证'));
     // 6 株一档（菜园收获 +1）随菜园删掉（2026-10-13）
     expect(b.potTiers.map((t) => t.count)).toEqual([4, 7]);
@@ -794,7 +794,8 @@ describe('小镇（子项目 4E-1）', () => {
     // 换名画的 12 条随名画删掉，换星月密卷的 1 条随菜园删掉，换边牧、激动的心、星光之钥、捕梦网、星神之书的 5 条删掉，
     // 换 2023、2025 纪念牌匾和马到成功的 3 条删掉（道具减法 2026-10-13）；
     // 换欲望之针、探险者秘籍、巫毒娃娃的 3 条删掉（道具减法第四批（2026-10-13））
-    expect(bundle!.goodsExchange).toHaveLength(13);
+    // 节油器改版（2026-10-19）：多一条 1 蟹币换特级节油器
+    expect(bundle!.goodsExchange).toHaveLength(14);
     // 雷神锤换成司天罗盘：2 个蟹黄堡，每周 1 次（天气改版，用户 2026-10-12）
     expect(bundle!.goodsExchange.find((e) => e.goodsId === gid('司天罗盘'))).toEqual({
       id: 74,

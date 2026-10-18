@@ -41,6 +41,11 @@ const server: Messages['server'] = {
       title: () => 'Report result',
       body: (p) => `The ${str(p.targetName)} you reported was checked and found not to break the rules.`,
     },
+    'oilsaver.revamp': {
+      title: () => 'Oil saver revamp compensation',
+      body: () =>
+        'Oil savers have been revamped: any oil saver you had placed has been replaced with an Oil Seller’s Copper-Coin Valve (total oil use -90% for 24 hours), and Medium-acting and Special Oil Savers in storage became Intermediate Oil Savers. Here is one more Oil Seller’s Copper-Coin Valve for every restaurant.',
+    },
     'wishtree.win': {
       title: () => 'Wishing Tree: your wish came true',
       body: (p) =>

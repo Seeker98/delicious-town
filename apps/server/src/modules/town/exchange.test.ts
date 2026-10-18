@@ -91,7 +91,8 @@ describe('镇长兑换（设计文档 §3.6）', () => {
       },
     });
     const v = await t.game.town.exchangeView(a);
-    expect(v.items).toHaveLength(13);
+    // 节油器改版（2026-10-19）：多一条 1 蟹币换特级节油器
+    expect(v.items).toHaveLength(14);
     expect(v.items.find((x) => x.id === ONCE)).toEqual({
       id: ONCE,
       category: 'chip',

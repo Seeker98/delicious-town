@@ -40,6 +40,11 @@ export default {
       body: (p) => `你举报的${str(p.targetName)}已处理, 感谢你维护小镇。`,
     },
     'report.rejected': { title: () => '举报结果', body: (p) => `你举报的${str(p.targetName)}经核实未违规。` },
+    'oilsaver.revamp': {
+      title: () => '节油器改版补偿',
+      body: () =>
+        '节油器改版了: 摆着的节油器已经换成卖油翁的铜钱阀 (24 小时内总耗油 -90%), 仓库里的中效、特供节油器并成了中级节油器。附件再送每家一个卖油翁的铜钱阀。',
+    },
     'wishtree.win': {
       title: () => '许愿树: 愿望成真',
       body: (p) =>
