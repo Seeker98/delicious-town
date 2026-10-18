@@ -95,6 +95,10 @@ export async function achValues(
       sql<Uint8Array | null>`(select levels from restaurant_cookbooks where rest_id = ${rest.id})`.as(
         'levels',
       ),
+      // 卡门的见面礼领过（含早期在大胃哥那里领的）：卡门不能再聊，按聊过算
+      sql<boolean>`coalesce((select big_eater_gift from town_rest where rest_id = ${rest.id}), false)`.as(
+        'carmenGift',
+      ),
     ])
     .executeTakeFirstOrThrow();
 
@@ -138,7 +142,12 @@ export async function achValues(
   );
   v.set('state:predictEvents', Number(f.predictEvents));
   for (const t of ['A', 'B', 'C']) v.set(`state:fund:${t}`, Number(f.fund[t] ?? 0));
-  v.set('state:talkAll', TALK_NPCS.filter((n) => (counters[`town.talk.${n}`] ?? 0) > 0).length);
+  // 卡门只给一次见面礼，领过就不能再聊（原来这张券是大胃哥第一次聊天送的，问题记录 441 才挪给卡门）：
+  // 领过的店卡门按聊过算，不然早期的店永远凑不齐四位
+  v.set(
+    'state:talkAll',
+    TALK_NPCS.filter((n) => (counters[`town.talk.${n}`] ?? 0) > 0 || (n === 'carmen' && f.carmenGift)).length,
+  );
   v.set('state:barPlayed', BAR_GAMES.filter((g) => (counters[`bar.${g}`] ?? 0) > 0).length);
   // 菜系：这条街的食谱是不是全部学会（1）、全部 ≥ 金牌（5）、全部佳肴（7）
   const levels = f.levels ? new Uint8Array(f.levels) : new Uint8Array(0);

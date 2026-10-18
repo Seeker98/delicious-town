@@ -219,6 +219,26 @@ describe('审查后补的几条', () => {
     expect(events).toContainEqual({ type: 'gain', kind: 'achievement', key: 'level.1', num: 10 });
   });
 
+  it('镇上的朋友：领过卡门见面礼的店（早期在大胃哥那里领的也算）卡门按聊过算', async () => {
+    const r = await newRestaurant(t);
+    await t.db
+      .insertInto('event_counter')
+      .values(
+        ['bigEater', 'wenjie', 'bro13'].map((n) => ({
+          rest_id: r.restaurantId,
+          key: `town.talk.${n}`,
+          count: 3,
+        })),
+      )
+      .execute();
+    const rest = () =>
+      t.db.selectFrom('restaurant').selectAll().where('id', '=', r.restaurantId).executeTakeFirstOrThrow();
+    expect((await achValues(t.db, cfg(), await rest(), t.clock.now)).get('state:talkAll')).toBe(3);
+    await t.db.insertInto('town_rest').values({ rest_id: r.restaurantId, big_eater_gift: true }).execute();
+    expect((await achValues(t.db, cfg(), await rest(), t.clock.now)).get('state:talkAll')).toBe(4);
+    expect(await evaluate(r.restaurantId)).toContain('talk.1');
+  });
+
   it('开过店的街：搬家记下的街加上现在这条街', async () => {
     const r = await newRestaurant(t, { patch: { street_id: 5 } });
     await t.db
