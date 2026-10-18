@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  tower1018:
+    'Récompenses du classement hebdomadaire de la Tour des chefs revues\u202f: 1er 25 diamants, 4 recettes mystère, le titre Dieu des chefs et 50 de renommée\u202f; 2e 20 diamants, 3 recettes, Saint des chefs et 40 de renommée\u202f; 3e 15 diamants, 2 recettes, Roi des chefs et 30 de renommée\u202f; 4e–8e 12 diamants, 1 recette et 10 de renommée\u202f; 9e–15e 5 diamants et 5 de renommée\u202f; plus de bons d’ingrédient mystère au hasard. Le classement de la semaine dernière (semaine du 12 octobre) est versé avec les nouvelles récompenses',
   foodcut1018:
     'Deux ingrédients utilisés par aucun plat sont supprimés\u202f: la noix et le poisson blanc du lac Tai (la noix des recettes, ce sont les «\u202fcerneaux de noix\u202f», non concernés)\u202f; les noix déjà dans votre garde-manger ou frigo deviennent autant de poitrine de porc, et le poisson blanc autant d’anis étoilé',
   premium1017:

@@ -457,23 +457,23 @@
   },
   "20301": {
     "name": "Pack 1re place du classement",
-    "desc": "Pack de la 1re place\u202f: [Dieu des chefs], 100 de renommée, bon d'ingrédient mystère au hasard x1, recette mystère x8, 50 diamants"
+    "desc": "Pack de la 1re place\u202f: [Dieu des chefs], 50 de renommée, recette mystère x4, 25 diamants"
   },
   "20302": {
     "name": "Pack 2e place du classement",
-    "desc": "Pack de la 2e place\u202f: [Saint des chefs], 80 de renommée, bon d'ingrédient mystère au hasard x1, recette mystère x6, 40 diamants"
+    "desc": "Pack de la 2e place\u202f: [Saint des chefs], 40 de renommée, recette mystère x3, 20 diamants"
   },
   "20303": {
     "name": "Pack 3e place du classement",
-    "desc": "Pack de la 3e place\u202f: [Roi des chefs], 60 de renommée, bon d'ingrédient mystère au hasard x1, recette mystère x5, 32 diamants"
+    "desc": "Pack de la 3e place\u202f: [Roi des chefs], 30 de renommée, recette mystère x2, 15 diamants"
   },
   "20304": {
     "name": "Pack 4e–8e place du classement",
-    "desc": "Pack des places 4 à 8\u202f: 20 de renommée, recette mystère x3, 25 diamants"
+    "desc": "Pack des places 4 à 8\u202f: 10 de renommée, recette mystère x1, 12 diamants"
   },
   "20305": {
     "name": "Pack 9e–15e place du classement",
-    "desc": "Pack des places 9 à 15\u202f: 10 de renommée, recette mystère x2, 20 diamants"
+    "desc": "Pack des places 9 à 15\u202f: 5 de renommée, 5 diamants"
   },
   "20306": {
     "name": "Pack 1re place de l'affection mensuelle du Kraken",

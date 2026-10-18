@@ -154,10 +154,17 @@ describe('周结算（设计文档 §3.3）', () => {
       });
     expect(out).toEqual({ awarded: 3, failed: 0 });
     expect(await goodsNum(t, a.restaurantId, gid('厨神'))).toBe(1);
-    // 名次礼包的声望：第 1 名 100、第 4~8 名 20、第 9~15 名 10（道具减法第四批（2026-10-13））
-    expect((await restRow(t, a.restaurantId)).renown).toBe(100);
-    expect((await restRow(t, b.restaurantId)).renown).toBe(20);
-    expect((await restRow(t, c.restaurantId)).renown).toBe(10);
+    // 名次礼包的声望：第 1 名 50、第 4~8 名 10、第 9~15 名 5（厨塔周榜礼包 2026-10-18）
+    expect((await restRow(t, a.restaurantId)).renown).toBe(50);
+    expect((await restRow(t, b.restaurantId)).renown).toBe(10);
+    expect((await restRow(t, c.restaurantId)).renown).toBe(5);
+    // 钻石：第 1 名 25、第 4~8 名 12、第 9~15 名 5；第 1 名 4 张神秘食谱，第 9~15 名没有；不再给神秘食材随机券
+    expect((await restRow(t, a.restaurantId)).diamond).toBe(25);
+    expect((await restRow(t, b.restaurantId)).diamond).toBe(12);
+    expect((await restRow(t, c.restaurantId)).diamond).toBe(5);
+    expect(await goodsNum(t, a.restaurantId, gid('神秘食谱'))).toBe(4);
+    expect(await goodsNum(t, c.restaurantId, gid('神秘食谱'))).toBe(0);
+    expect(await goodsNum(t, a.restaurantId, gid('神秘食材随机劵'))).toBe(0);
     const news = await t.db
       .selectFrom('news')
       .select(['type', 'params'])
@@ -174,7 +181,7 @@ describe('周结算（设计文档 §3.3）', () => {
     await occupy(a, 1);
     await occupy(b, 4);
     await occupy(c, 9);
-    // 第 1 名的礼包加 100 声望会让 integer 溢出，这家店的结算失败
+    // 第 1 名的礼包加 50 声望会让 integer 溢出，这家店的结算失败
     await t.db
       .updateTable('restaurant')
       .set({ renown: 2_147_483_600 })
@@ -193,9 +200,9 @@ describe('周结算（设计文档 §3.3）', () => {
       });
     expect(out).toEqual({ awarded: 2, failed: 1 });
     expect(errors).toHaveLength(1);
-    // 道具减法第四批（2026-10-13）：第 4~8 名 20、第 9~15 名 10 声望
-    expect((await restRow(t, b.restaurantId)).renown).toBe(20);
-    expect((await restRow(t, c.restaurantId)).renown).toBe(10);
+    // 厨塔周榜礼包（2026-10-18）：第 4~8 名 10、第 9~15 名 5 声望
+    expect((await restRow(t, b.restaurantId)).renown).toBe(10);
+    expect((await restRow(t, c.restaurantId)).renown).toBe(5);
     const news = await t.db
       .selectFrom('news')
       .select('rest_id')
