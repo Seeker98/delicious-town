@@ -537,6 +537,8 @@ const goodsSrc = z.enum([
   'luckGem',
   'wealth',
   'art',
+  // 节油器改版（2026-10-19）新加的节油器、省油阀
+  'oil',
 ]);
 export const masterGoods = z
   .object({

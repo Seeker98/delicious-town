@@ -84,7 +84,8 @@ export type MailTplKey =
   | 'report.handled'
   | 'report.rejected'
   | 'report.penalty'
-  | 'wishtree.win';
+  | 'wishtree.win'
+  | 'oilsaver.revamp';
 export interface MailTpl {
   key: MailTplKey;
   params: Record<string, unknown>;

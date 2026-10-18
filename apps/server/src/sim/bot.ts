@@ -130,7 +130,7 @@ export const USE_ALL: ReadonlySet<GoodsUse['kind']> = new Set([
 export const CHEAP_DEVICES: Record<number, number> = {
   1: GOODS.normalPoster,
   2: GOODS.bronzeTrophy,
-  3: GOODS.shortOilSaver,
+  3: GOODS.midOilSaver,
 };
 
 type Attempt = (fn: () => Promise<unknown>) => Promise<boolean>;

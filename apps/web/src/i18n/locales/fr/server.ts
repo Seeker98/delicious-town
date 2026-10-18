@@ -41,6 +41,11 @@ const server: Messages['server'] = {
       title: () => 'Résultat du signalement',
       body: (p) => `Le contenu signalé (${str(p.targetName)}) a été vérifié et n'enfreint pas les règles.`,
     },
+    'oilsaver.revamp': {
+      title: () => 'Compensation pour la refonte des économiseurs d’huile',
+      body: () =>
+        'Les économiseurs d’huile ont été refondus\u202f: celui que vous aviez installé a été remplacé par une Vanne à pièces du marchand d’huile (consommation totale d’huile -90\u202f% pendant 24 heures), et les économiseurs moyens et spéciaux en réserve sont devenus des Économiseurs d’huile intermédiaires. Voici une Vanne à pièces du marchand d’huile de plus pour chaque restaurant.',
+    },
     'wishtree.win': {
       title: () => 'Arbre à vœux\u202f: votre vœu s’est réalisé',
       body: (p) =>

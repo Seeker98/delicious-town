@@ -417,15 +417,15 @@
   },
   "20201": {
     "name": "Oil Saver Pack (Tier 2)",
-    "desc": "A high-end oil saver pack! Contains Super Oil Saver x1, Advanced Oil Saver x1, Basic Oil Saver x1"
+    "desc": "A high-end oil saver pack! Contains Basic Oil Valve x1, Intermediate Oil Valve x1, Advanced Oil Valve x1"
   },
   "20202": {
     "name": "Oil Saver Pack (Tier 1)",
-    "desc": "A regular oil saver pack! Contains Long-acting Oil Saver x1, Medium-acting Oil Saver x1, Short-acting Oil Saver x1"
+    "desc": "A regular oil saver pack! Contains Basic Oil Saver x1, Intermediate Oil Saver x1, Basic Oil Valve x1"
   },
   "20203": {
     "name": "Oil Saver Pack (Tier 3)",
-    "desc": "A top-of-the-line oil saver pack! Contains Imported Oil Saver x1, Top-tier Oil Saver x1"
+    "desc": "A top-of-the-line oil saver pack! Contains Advanced Oil Saver x1, Premium Oil Valve x1"
   },
   "20204": {
     "name": "Diamond Pack",
@@ -604,44 +604,48 @@
     "desc": "A legendary trophy made by Delicious Town; EXP per table +7 for 24 hours (from 10★)"
   },
   "30201": {
-    "name": "Short-acting Oil Saver",
-    "desc": "Oil use per table -4 for 8 hours after placing"
+    "name": "Intermediate Oil Saver",
+    "desc": "Oil use per table -4 for 24 hours after placing"
   },
   "30202": {
-    "name": "Medium-acting Oil Saver",
-    "desc": "Oil use per table -3 for 15 hours after placing"
+    "name": "Premium Oil Saver",
+    "desc": "Oil use per table -8 for 36 hours after placing"
   },
   "30203": {
-    "name": "Long-acting Oil Saver",
-    "desc": "Oil use per table -2 for 28 hours after placing"
+    "name": "Basic Oil Saver",
+    "desc": "Oil use per table -2 for 24 hours after placing"
   },
   "30204": {
-    "name": "Advanced Oil Saver",
-    "desc": "Final oil use rate -45% for 18 hours after placing"
+    "name": "Intermediate Oil Valve",
+    "desc": "Total oil use -55% for 24 hours after placing"
   },
   "30205": {
-    "name": "Super Oil Saver",
-    "desc": "Final oil use rate -60% for 36 hours after placing"
+    "name": "Advanced Oil Valve",
+    "desc": "Total oil use -70% for 24 hours after placing"
   },
   "30206": {
-    "name": "Basic Oil Saver",
-    "desc": "Final oil use rate -30% for 12 hours after placing"
+    "name": "Basic Oil Valve",
+    "desc": "Total oil use -40% for 24 hours after placing"
   },
   "30207": {
-    "name": "Special Oil Saver",
-    "desc": "Oil use per table -5 for 12 hours after placing"
+    "name": "Oil Seller’s Copper-Coin Valve",
+    "desc": "The oil seller’s coins drip from the gourd into the stove: total oil use -90% for 24 hours"
   },
   "30208": {
-    "name": "Mr. Krab's Oil Saver",
-    "desc": "Oil use per table -7 for 200 hours after placing"
+    "name": "Quantum Counter Oil Saver",
+    "desc": "No matter how many guests come, oil use per table -15 for 24 hours (each table still uses at least 1 oil)"
   },
   "30209": {
-    "name": "Top-tier Oil Saver",
-    "desc": "Oil use per table -6 for 32 hours after placing"
+    "name": "Advanced Oil Saver",
+    "desc": "Oil use per table -6 for 24 hours after placing"
   },
   "30210": {
-    "name": "Imported Oil Saver",
-    "desc": "Final oil use rate -80% for 36 hours after placing"
+    "name": "Premium Oil Valve",
+    "desc": "Total oil use -85% for 36 hours after placing"
+  },
+  "30211": {
+    "name": "Eternal Flame Oil Valve",
+    "desc": "The eternal flame never goes out: total oil use -99% for 168 hours"
   },
   "30301": {
     "name": "Mousetrap",

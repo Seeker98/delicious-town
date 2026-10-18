@@ -417,15 +417,15 @@
   },
   "20201": {
     "name": "Pack de ahorradores de aceite (rango 2)",
-    "desc": "¡Un pack de ahorradores de gama alta! Contiene superahorrador x1, ahorrador avanzado x1, ahorrador básico x1"
+    "desc": "¡Un pack de ahorradores de gama alta! Contiene Válvula de ahorro de aceite básica x1, Válvula de ahorro de aceite intermedia x1, Válvula de ahorro de aceite avanzada x1"
   },
   "20202": {
     "name": "Pack de ahorradores de aceite (rango 1)",
-    "desc": "¡Un pack de ahorradores normal! Contiene ahorrador largo x1, ahorrador medio x1, ahorrador corto x1"
+    "desc": "¡Un pack de ahorradores normal! Contiene Ahorrador de aceite básico x1, Ahorrador de aceite intermedio x1, Válvula de ahorro de aceite básica x1"
   },
   "20203": {
     "name": "Pack de ahorradores de aceite (rango 3)",
-    "desc": "¡El mejor pack de ahorradores! Contiene ahorrador importado x1, ahorrador de primera x1"
+    "desc": "¡El mejor pack de ahorradores! Contiene Ahorrador de aceite avanzado x1, Válvula de ahorro de aceite superior x1"
   },
   "20204": {
     "name": "Pack de diamantes",
@@ -604,44 +604,48 @@
     "desc": "Trofeo legendario hecho por Delicious Town; EXP por mesa +7 durante 24 horas (desde 10★)"
   },
   "30201": {
-    "name": "Ahorrador de aceite corto",
-    "desc": "Aceite por mesa -4 durante 8 horas tras colocarlo"
+    "name": "Ahorrador de aceite intermedio",
+    "desc": "Aceite por mesa -4 durante 24 horas tras colocarlo"
   },
   "30202": {
-    "name": "Ahorrador de aceite medio",
-    "desc": "Aceite por mesa -3 durante 15 horas tras colocarlo"
+    "name": "Ahorrador de aceite superior",
+    "desc": "Aceite por mesa -8 durante 36 horas tras colocarlo"
   },
   "30203": {
-    "name": "Ahorrador de aceite largo",
-    "desc": "Aceite por mesa -2 durante 28 horas tras colocarlo"
+    "name": "Ahorrador de aceite básico",
+    "desc": "Aceite por mesa -2 durante 24 horas tras colocarlo"
   },
   "30204": {
-    "name": "Ahorrador de aceite avanzado",
-    "desc": "Consumo final de aceite -45\u00a0% durante 18 horas tras colocarlo"
+    "name": "Válvula de ahorro de aceite intermedia",
+    "desc": "Consumo total de aceite -55\u00a0% durante 24 horas tras colocarlo"
   },
   "30205": {
-    "name": "Superahorrador de aceite",
-    "desc": "Consumo final de aceite -60\u00a0% durante 36 horas tras colocarlo"
+    "name": "Válvula de ahorro de aceite avanzada",
+    "desc": "Consumo total de aceite -70\u00a0% durante 24 horas tras colocarlo"
   },
   "30206": {
-    "name": "Ahorrador de aceite básico",
-    "desc": "Consumo final de aceite -30\u00a0% durante 12 horas tras colocarlo"
+    "name": "Válvula de ahorro de aceite básica",
+    "desc": "Consumo total de aceite -40\u00a0% durante 24 horas tras colocarlo"
   },
   "30207": {
-    "name": "Ahorrador de aceite especial",
-    "desc": "Aceite por mesa -5 durante 12 horas tras colocarlo"
+    "name": "Válvula de monedas del vendedor de aceite",
+    "desc": "Las monedas del vendedor de aceite gotean de la calabaza al fogón: consumo total de aceite -90\u00a0% durante 24 horas"
   },
   "30208": {
-    "name": "Ahorrador de aceite de Don Krab",
-    "desc": "Aceite por mesa -7 durante 200 horas tras colocarlo"
+    "name": "Ahorrador de aceite cuántico",
+    "desc": "Vengan los clientes que vengan, aceite por mesa -15 durante 24 horas (cada mesa gasta al menos 1 de aceite)"
   },
   "30209": {
-    "name": "Ahorrador de aceite de primera",
-    "desc": "Aceite por mesa -6 durante 32 horas tras colocarlo"
+    "name": "Ahorrador de aceite avanzado",
+    "desc": "Aceite por mesa -6 durante 24 horas tras colocarlo"
   },
   "30210": {
-    "name": "Ahorrador de aceite importado",
-    "desc": "Consumo final de aceite -80\u00a0% durante 36 horas tras colocarlo"
+    "name": "Válvula de ahorro de aceite superior",
+    "desc": "Consumo total de aceite -85\u00a0% durante 36 horas tras colocarlo"
+  },
+  "30211": {
+    "name": "Válvula del fuego eterno",
+    "desc": "El fuego eterno nunca se apaga: consumo total de aceite -99\u00a0% durante 168 horas"
   },
   "30301": {
     "name": "Ratonera",

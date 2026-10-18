@@ -42,6 +42,11 @@ const server: Messages['server'] = {
       body: (p) =>
         `El contenido que denunciaste (${str(p.targetName)}) se ha revisado y no incumple las normas.`,
     },
+    'oilsaver.revamp': {
+      title: () => 'Compensación por la renovación de los ahorradores de aceite',
+      body: () =>
+        'Los ahorradores de aceite se han renovado: el que tenías colocado se ha cambiado por una Válvula de monedas del vendedor de aceite (consumo total de aceite -90\u00a0% durante 24 horas), y los ahorradores medios y especiales del almacén pasan a ser Ahorradores de aceite intermedios. Aquí tienes una Válvula de monedas del vendedor de aceite más para cada restaurante.',
+    },
     'wishtree.win': {
       title: () => 'Árbol de los deseos: tu deseo se cumplió',
       body: (p) =>

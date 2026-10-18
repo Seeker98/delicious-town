@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  oilsaver1019:
+    'Renovación de los ahorradores de aceite: los diez ahorradores antiguos pasan a ser dos líneas, ahorradores (recorte fijo por mesa) y válvulas (recorte porcentual), cada una en básico, intermedio y avanzado (24 horas, 10 000 / 30 000 / 80 000 monedas en la tienda) y superior en el mercado negro (36 horas, 12 / 24 diamantes); las monedas Krab se canjean por el nivel superior (1 por el ahorrador superior, 2 por la válvula superior). Los ahorradores colocados se han cambiado por una Válvula de monedas del vendedor de aceite (consumo total de aceite -90\u00a0% durante 24 horas), los ahorradores medios y especiales del almacén pasan a ser ahorradores intermedios, y cada restaurante ha recibido un correo con una Válvula de monedas del vendedor de aceite más',
   champion1019:
     'Cambian las recompensas de la clasificación de platos estrella de ayer: en lugar de una Fórmula secreta de la Cangreburger solo para el 1.º, ahora el 1.º recibe 2 Sellos Delicia y del 2.º al 4.º 1 cada uno (cada día a las 9:00); los puestos son los de la clasificación «Valor ayer» de platos estrella, y los empates comparten puesto',
   tower1018:

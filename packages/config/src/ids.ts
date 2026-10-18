@@ -5,7 +5,9 @@ export const GOODS = {
   mysteryTicket: SHARED_GOODS.mysteryTicket, // 神秘礼券
   moveCard: 10401, // 搬家卡
   mysteryFoodExchange: 10110, // 神秘食材兑换券
-  shortOilSaver: 30201, // 短效节油器
+  midOilSaver: 30201, // 中级节油器（节油器改版 2026-10-19 前是短效节油器）
+  copperOilValve: 30207, // 卖油翁的铜钱阀（活动特典；改版迁移的替换和补偿）
+  oilSaverExclusive: 30211, // 丙火乾坤省油阀（专属，只能后台发放）
   normalPoster: 30001, // 普通宣传海报（模拟器买的便宜海报）
   bronzeTrophy: 30101, // 小镇食神奖杯(铜)（模拟器买的便宜奖杯）
   resetAttrCard: 10412, // 洗点卡

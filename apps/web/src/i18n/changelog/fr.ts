@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  oilsaver1019:
+    'Refonte des économiseurs d’huile\u202f: les dix anciens économiseurs deviennent deux gammes, les économiseurs (réduction fixe par table) et les vannes (réduction en pourcentage), chacune en initial, intermédiaire et avancé (24 heures, 10 000 / 30 000 / 80 000 pièces en boutique) et en supérieur au marché noir (36 heures, 12 / 24 diamants)\u202f; les pièces Krab s’échangent contre le niveau supérieur (1 pour l’économiseur supérieur, 2 pour la vanne supérieure). Les économiseurs installés ont été remplacés par une Vanne à pièces du marchand d’huile (consommation totale d’huile -90\u202f% pendant 24 heures), les économiseurs moyens et spéciaux en réserve sont devenus des économiseurs intermédiaires, et chaque restaurant a reçu un courrier avec une Vanne à pièces du marchand d’huile en plus',
   champion1019:
     'Récompenses du classement des plats signature d’hier revues\u202f: au lieu d’une Formule secrète du Krabby Patty pour le 1er seulement, le 1er reçoit maintenant 2 Sceaux Délice et les 2e à 4e 1 chacun (chaque jour à 9 h)\u202f; les places sont celles du classement «\u202fValeur hier\u202f» des plats signature, les ex æquo partageant la même place',
   tower1018:
