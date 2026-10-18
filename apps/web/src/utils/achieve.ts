@@ -2,7 +2,7 @@ import { achProgressKey, type CatalogAchLineDto, type CatalogTrophyDto } from '@
 import { activeMessages } from '../i18n';
 import { formatNum, formatPct, gameDateTime } from './format';
 
-/** 成就页的标签：总览、奖杯，再是十个分类（和配置 ACH_CATS 同序） */
+/** 十个分类（和配置 ACH_CATS 同序） */
 export const ACH_CATS = [
   'rest',
   'daily',
@@ -16,7 +16,8 @@ export const ACH_CATS = [
   'town',
 ] as const;
 export type AchCatKey = (typeof ACH_CATS)[number];
-export const ACH_TABS = ['overview', 'trophies', ...ACH_CATS] as const;
+/** 一级标签只有三个（视觉规范 §10.1 分区不超过两层）：十个分类在“分类”页里用下拉框选 */
+export const ACH_TABS = ['overview', 'trophies', 'lines'] as const;
 export type AchTab = (typeof ACH_TABS)[number];
 
 type Line = CatalogAchLineDto;

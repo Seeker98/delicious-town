@@ -10136,3 +10136,11 @@ a.dt-entry-row::after {
     transform: none;
   }
 }
+/* 分类页顶上一行：分类下拉框 + 筛选胶囊 */
+.dt-ach-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}

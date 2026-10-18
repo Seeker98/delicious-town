@@ -27,6 +27,7 @@ import {
   tierValue,
   trophyName,
   trophySource,
+  type AchCatKey,
   type AchTab,
 } from '../utils/achieve';
 import { formatNum } from '../utils/format';
@@ -60,6 +61,8 @@ onMounted(() => {
 watch(otherId, () => void load().catch(() => undefined));
 
 const tab = useTabQuery<AchTab>({ tabs: ACH_TABS, storageKey: 'dt_ach_tab' });
+/** 分类页看哪一类（网址 ?cat=，记住上次看的） */
+const cat = useTabQuery<AchCatKey>({ tabs: ACH_CATS, param: 'cat', storageKey: 'dt_ach_cat' });
 const tabItems = computed(() => ACH_TABS.map((k) => ({ key: k, label: t.value.achieve.tabs[k] })));
 
 const gotMap = computed(() => new Map((data.value?.got ?? []).map((g) => [g.id, g])));
@@ -88,7 +91,7 @@ const cats = computed(() =>
 const filter = ref<'all' | 'doing' | 'done'>('all');
 const lines = computed(() =>
   catalog.achLines
-    .filter((l) => l.cat === tab.value)
+    .filter((l) => l.cat === cat.value)
     .map((l) => lineState(l, gotSet.value, progress.value))
     .filter((s) => filter.value === 'all' || (filter.value === 'done') === s.done),
 );
@@ -218,13 +221,12 @@ const iconTitle = (key: string | null) => (key ? (catalog.icon(key)?.title ?? ke
           <h2 class="dt-block-title">{{ t.achieve.categories }}</h2>
         </div>
         <div class="dt-card dt-rows-card" data-testid="ach-cats">
-          <button
+          <RouterLink
             v-for="c in cats"
             :key="c.key"
-            type="button"
+            :to="{ query: { tab: 'lines', cat: c.key } }"
             class="dt-row is-link"
             :data-testid="`ach-cat-${c.key}`"
-            @click="tab = c.key"
           >
             <div class="dt-row-main">
               <span class="dt-row-title">{{ t.achieve.tabs[c.key] }}</span>
@@ -234,7 +236,7 @@ const iconTitle = (key: string | null) => (key ? (catalog.icon(key)?.title ?? ke
               ><b>{{ c.got }} / {{ c.total }}</b
               >{{ t.achieve.catSide(c.pts) }}</span
             >
-          </button>
+          </RouterLink>
         </div>
       </section>
     </template>
@@ -297,17 +299,26 @@ const iconTitle = (key: string | null) => (key ? (catalog.icon(key)?.title ?? ke
 
     <!-- ② 分类 -->
     <template v-else>
-      <div class="dt-pills" role="group" :aria-label="t.achieve.tabs[tab]">
-        <button
-          v-for="f in ['all', 'doing', 'done'] as const"
-          :key="f"
-          type="button"
-          :class="{ active: filter === f }"
-          :aria-pressed="filter === f"
-          @click="filter = f"
-        >
-          {{ t.achieve.filters[f] }}
-        </button>
+      <div class="dt-ach-filter">
+        <span class="dt-select-pill">
+          <select v-model="cat" :aria-label="t.achieve.catLabel" data-testid="ach-cat-select">
+            <option v-for="c in cats" :key="c.key" :value="c.key">
+              {{ t.achieve.catOption(t.achieve.tabs[c.key], c.got, c.total) }}
+            </option>
+          </select>
+        </span>
+        <div class="dt-pills" role="group" :aria-label="t.achieve.filterLabel">
+          <button
+            v-for="f in ['all', 'doing', 'done'] as const"
+            :key="f"
+            type="button"
+            :class="{ active: filter === f }"
+            :aria-pressed="filter === f"
+            @click="filter = f"
+          >
+            {{ t.achieve.filters[f] }}
+          </button>
+        </div>
       </div>
       <div class="dt-card dt-rows-card" data-testid="ach-lines">
         <button

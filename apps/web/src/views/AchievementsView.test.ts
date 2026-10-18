@@ -142,7 +142,7 @@ describe('AchievementsView', () => {
 
   it('分类页：一行一条线，写进度；点开面板列各档和稀有度', async () => {
     vi.mocked(endpoints.achievements).mockResolvedValue(dto());
-    const w = await mountView('/achievements?tab=friend');
+    const w = await mountView('/achievements?tab=lines&cat=friend');
     const row = w.get('[data-testid="ach-line-roach"]');
     expect(row.text()).toContain('打蟑螂次数 1,716 / 5,000');
     expect(row.text()).toContain('+40');
@@ -151,6 +151,18 @@ describe('AchievementsView', () => {
     const tiers = document.body.querySelector('[data-testid="ach-tiers"]')!.textContent!;
     expect(tiers).toContain('奖杯 小强青铜');
     expect(tiers).toContain('本区 <1% 已达成');
+  });
+
+  it('一级标签只有三个；总览的分类行进“分类”页那一类，分类页用下拉框换类', async () => {
+    vi.mocked(endpoints.achievements).mockResolvedValue(dto());
+    const w = await mountView('/achievements?tab=overview');
+    expect(w.findAll('[role="tab"]')).toHaveLength(3);
+    expect(w.get('[data-testid="ach-cat-friend"]').attributes('href')).toContain('cat=friend');
+    const v = await mountView('/achievements?tab=lines&cat=cookbook');
+    expect(v.find('[data-testid="ach-line-roach"]').exists()).toBe(false);
+    await v.get('[data-testid="ach-cat-select"]').setValue('friend');
+    await flushPromises();
+    expect(v.find('[data-testid="ach-line-roach"]').exists()).toBe(true);
   });
 
   it('奖杯：拿到的能摆进展示柜', async () => {
@@ -168,7 +180,7 @@ describe('AchievementsView', () => {
 
   it('别人的成就墙：读那家店的，不显示进度', async () => {
     vi.mocked(endpoints.achievementsOf).mockResolvedValue(dto({ mine: false, progress: {}, name: '乙店' }));
-    const w = await mountView('/achievements/7?tab=friend');
+    const w = await mountView('/achievements/7?tab=lines&cat=friend');
     expect(endpoints.achievementsOf).toHaveBeenCalledWith(7);
     expect(w.get('[data-testid="ach-line-roach"]').text()).not.toContain('1,716');
   });
