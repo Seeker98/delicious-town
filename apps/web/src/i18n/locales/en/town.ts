@@ -191,7 +191,7 @@ const town: Messages['town'] = {
       'roach.kill.lastWeek': "Last week's top 2: Midnight Roach Killer (Mon 7:59)",
       'flip.flipped.lastWeek':
         "Last week's top 4: When It Rains It Pours / Firecracker / Lantern / Fortune (Mon 7:59)",
-      'mc.yesterday': '#1: Signature Dish Champion (daily)',
+      'mc.yesterday': '#1: Delicious Seal ×2; #2–4: 1 each (daily at 9:00)',
       'shiling.week':
         'The top 3 with at least 200 this week each draw a job permit, in rank order (Sun 23:00, valid 160 hours, wages Mon 7:59)',
     },

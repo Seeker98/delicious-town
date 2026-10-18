@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  champion1019:
+    'Récompenses du classement des plats signature d’hier revues\u202f: au lieu d’une Formule secrète du Krabby Patty pour le 1er seulement, le 1er reçoit maintenant 2 Sceaux Délice et les 2e à 4e 1 chacun (chaque jour à 9 h)\u202f; les places sont celles du classement «\u202fValeur hier\u202f» des plats signature, les ex æquo partageant la même place',
   tower1018:
     'Récompenses du classement hebdomadaire de la Tour des chefs revues\u202f: 1er 25 diamants, 4 recettes mystère, le titre Dieu des chefs et 50 de renommée\u202f; 2e 20 diamants, 3 recettes, Saint des chefs et 40 de renommée\u202f; 3e 15 diamants, 2 recettes, Roi des chefs et 30 de renommée\u202f; 4e–8e 12 diamants, 1 recette et 10 de renommée\u202f; 9e–15e 5 diamants et 5 de renommée\u202f; plus de bons d’ingrédient mystère au hasard. Le classement de la semaine dernière (semaine du 12 octobre) est versé avec les nouvelles récompenses',
   foodcut1018:

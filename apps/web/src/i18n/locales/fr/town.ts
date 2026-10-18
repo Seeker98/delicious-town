@@ -204,7 +204,8 @@ const town: Messages['town'] = {
       'roach.kill.lastWeek': 'Top 2 de la semaine dernière\u202f: Tueur de cafards de minuit (lundi 7 h 59)',
       'flip.flipped.lastWeek':
         'Top 4 de la semaine dernière\u202f: Un malheur n’arrive jamais seul / Pétard / Lanterne / Bonheur (lundi 7 h 59)',
-      'mc.yesterday': '1er\u202f: Champion des plats signature (chaque jour)',
+      'mc.yesterday':
+        '1er\u202f: Sceau Délice\u202f×\u202f2\u202f; 2e à 4e\u202f: 1 chacun (chaque jour à 9 h)',
       'shiling.week':
         'Les 3 premiers ayant gagné au moins 200 cette semaine tirent chacun une carte de métier, dans l’ordre (dimanche 23 h, valable 160 heures, salaire lundi 7 h 59)',
     },

@@ -280,6 +280,8 @@ const events: Messages['events'] = {
       `Delivered as a rider: got ${formatNum(n(p, 'coin'))} ${plEn(formatNum(n(p, 'coin')), 'coin', 'coins')} and ${formatNum(n(p, 'exp'))} EXP`,
     'takeaway.hire': () => 'Hired a friend as a rider',
     'takeaway.dismiss': () => 'Paid off and let go of a rider',
+    'mc.champion': (p, names) =>
+      `Ranked #${n(p, 'rank')} in yesterday’s signature dish ranking, got ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}`,
     'tower.rank.week': (p, names) =>
       `Ranked #${n(p, 'rank')} in the weekly Chef Tower ranking, got ${names.goodsName(n(p, 'goodsId'))}`,
     'town.exchange': (p) => `Exchanged ${n(p, 'num')} ${plEn(n(p, 'num'), 'time', 'times')} at the Guild`,
