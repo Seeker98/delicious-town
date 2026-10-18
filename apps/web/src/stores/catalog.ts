@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia';
 import type {
+  CatalogAchLineDto,
+  CatalogTrophyDto,
   CatalogDataEntry,
   CatalogDataKind,
   CatalogDto,
@@ -12,6 +14,7 @@ import type { Locale } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { CONTENT_ART, type ArtName } from '../art/generated/names';
 import { goodsArt } from '../utils/goodsArt';
+import { achName as achNameOf, trophyName as trophyNameOf } from '../utils/achieve';
 import { activeLocale } from '../i18n';
 import { setNameResolver } from '../i18n/zh-CN';
 import { activeMessages } from '../i18n';
@@ -47,6 +50,10 @@ export const useCatalogStore = defineStore('catalog', {
     suitsMap: new Map<number, NonNullable<CatalogDto['suits']>[number]>(),
     /** 任务、厨塔各层等服务端直接给名字的数据（问题记录 272） */
     dataMap: new Map<string, CatalogDataEntry>(),
+    /** 成就线（菜系线已展开）、成就编号、奖杯（成就系统 2026-10-19；旧目录缓存没有） */
+    achLines: [] as CatalogAchLineDto[],
+    achById: new Map<string, { line: CatalogAchLineDto; tier: CatalogAchLineDto['tiers'][number] }>(),
+    trophyMap: new Map<string, CatalogTrophyDto>(),
     loaded: false,
     /** 上次从服务器读目录的时间（毫秒）：refreshIfMissing 限频用 */
     fetchedAt: 0,
@@ -68,6 +75,11 @@ export const useCatalogStore = defineStore('catalog', {
         Object.entries(c.data ?? {}).flatMap(([k, list]) => list.map((x) => [`${k}:${x.id}`, x] as const)),
       );
       this.looks = c.looks ?? null;
+      this.achLines = c.achievements ?? [];
+      this.achById = new Map(
+        this.achLines.flatMap((line) => line.tiers.map((tier) => [tier.id, { line, tier }] as const)),
+      );
+      this.trophyMap = new Map((c.trophies ?? []).map((x) => [x.key, x]));
       this.loaded = true;
       this.mcMap = new Map((c.mysterious ?? []).map((m) => [m.id, m]));
       setNameResolver({
@@ -207,6 +219,13 @@ export const useCatalogStore = defineStore('catalog', {
     },
     suit(id: number): NonNullable<CatalogDto['suits']>[number] | undefined {
       return this.suitsMap.get(id);
+    },
+    /** 成就名（线名 + 档）、奖杯名（成就系统 2026-10-19）；目录里没有时写编号 */
+    achName(id: string): string {
+      return achNameOf(id, this);
+    },
+    trophyName(key: string): string {
+      return trophyNameOf(key, this);
     },
     streetName(id: number, fallback = ''): string {
       return this.streets.find((s) => s.id === id)?.name ?? fallback;

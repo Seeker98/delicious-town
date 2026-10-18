@@ -21,6 +21,7 @@ import wealth from './wealth';
 import bank from './bank';
 import bulk from './bulk';
 import wishtree from './wishtree';
+import achieve from './achieve';
 import futures from './futures';
 import equip from './equip';
 import guide from './guide';
@@ -82,6 +83,7 @@ const messages: Messages = {
   bank,
   bulk,
   wishtree,
+  achieve,
   futures,
   equip,
   rest,

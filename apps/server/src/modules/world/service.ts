@@ -480,7 +480,12 @@ export function localizeCatalog(base: CatalogDto, t: I18nTable | undefined, lang
           achievements: base.achievements.map((l) => {
             const e = t.achievements[l.key.split('.')[0]!];
             return e
-              ? { ...l, name: e.name ?? l.name, desc: e.desc ?? l.desc, labels: l.labels && (e.tiers ?? l.labels) }
+              ? {
+                  ...l,
+                  name: e.name ?? l.name,
+                  desc: e.desc ?? l.desc,
+                  labels: l.labels && (e.tiers ?? l.labels),
+                }
               : l;
           }),
         }

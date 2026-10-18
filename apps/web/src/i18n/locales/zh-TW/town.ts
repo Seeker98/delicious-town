@@ -119,6 +119,7 @@ export default {
       '一擲千金',
       '特色菜',
       '時令',
+      '成就',
     ],
     periods: { today: '今日', yesterday: '昨日', thisWeek: '本週', lastWeek: '上週' } as Record<
       string,
@@ -177,6 +178,8 @@ export default {
       'mc.learned': '已學',
       'shiling.week': '本週',
       'shiling.lastWeek': '上週',
+      'achieve.points': '成就點',
+      'achieve.week': '本週新增',
     } as Record<string, string>,
     rewards: {
       'roach.kill.lastWeek': '上週前 2 名: 午夜蟑螂殺手 (週一 7:59 發)',

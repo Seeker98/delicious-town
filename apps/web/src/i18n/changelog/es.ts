@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  achieve1019:
+    'Nuevo: logros. 410 logros en diez categorías (restaurante, diario, recetas, platos especiales, amigos, bar, torre, templo, finanzas, pueblo) dan puntos de logro, y algunos también trofeos y títulos permanentes. Mira tu progreso en Yo → Logros y pon los trofeos en una vitrina que ven tus amigos. Las clasificaciones tienen una nueva tabla de Logros (puntos, nuevos esta semana). Se ha recuperado el progreso desde la apertura del servidor',
   oilsaver1019:
     'Renovación de los ahorradores de aceite: los diez ahorradores antiguos pasan a ser dos líneas, ahorradores (recorte fijo por mesa) y válvulas (recorte porcentual), cada una en básico, intermedio y avanzado (24 horas, 10 000 / 30 000 / 80 000 monedas en la tienda) y superior en el mercado negro (36 horas, 12 / 24 diamantes); las monedas Krab se canjean por el nivel superior (1 por el ahorrador superior, 2 por la válvula superior). Los ahorradores colocados se han cambiado por una Válvula de monedas del vendedor de aceite (consumo total de aceite -90\u00a0% durante 24 horas), los ahorradores medios y especiales del almacén pasan a ser ahorradores intermedios, y cada restaurante ha recibido un correo con una Válvula de monedas del vendedor de aceite más',
   champion1019:

@@ -114,6 +114,10 @@ export function createAchieveService(d: GameDeps) {
       progress: values ? Object.fromEntries(values) : {},
       shelf: (stat?.shelf ?? []).filter((k) => d.config.achievements.trophies.has(k)),
       shelfSlots: shelfSlots(t, points),
+      shelfNext: (() => {
+        const n = t.shelfSlots.find(([need]) => need > points);
+        return n ? { points: n[0], slots: n[1] } : null;
+      })(),
       rarity: rare,
     };
   }

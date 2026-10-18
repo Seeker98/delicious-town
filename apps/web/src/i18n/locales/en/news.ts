@@ -88,6 +88,8 @@ const news: Messages['news'] = {
       `The market restocked: ${list(p.foods)
         .map((id) => x.foodName(num(id)))
         .join(', ')}`,
+    'achieve.first': (w, p, x) =>
+      `${w} is the first on the server to earn “${x.achName?.(str(p.id)) ?? str(p.id)}”`,
     'mc.champion': (w, p) => `${w} had yesterday's most valuable signature dish (${formatNum(num(p.value))})`,
     'mc.cook': (w, p, x) => `${w} cooked ${x.mcName(num(p.mcId))}×${num(p.num)}`,
     'oil.expand': (w, p) => `${w} expanded their oil tank to level ${num(p.level)}`,

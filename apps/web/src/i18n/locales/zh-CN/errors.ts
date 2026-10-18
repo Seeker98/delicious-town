@@ -307,6 +307,8 @@ export default {
     wealth_mature: '已经到期了, 请直接领取',
     bulk_not_open: '这一批已经结束或取消了',
     wishtree_closed: '这一轮已经到开奖时间了, 等新的一轮',
+    shelf_full: '展示柜满了, 先拿下一个',
+    trophy_missing: '这个奖杯还没拿到',
     bulk_closed: '已经收盘了, 这次出价无效',
     bulk_cooldown: '出价太快了, 等几秒再试',
     bulk_raise: '加价不够, 每次至少要加到页面上写的价格',

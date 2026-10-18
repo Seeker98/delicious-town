@@ -145,6 +145,14 @@ export default {
         : `「${mcNameOf(names, n(p, 'mcId'))}」试炼失败`,
     'equip.stress': (p, names) =>
       `${names.goodsName(n(p, 'goodsId'))}强化到 +${n(p, 'to')}${p.success ? '成功' : '失败'}`,
+    // 达成成就（成就系统 2026-10-19）
+    'achieve.got': (p, names) => {
+      const name = names.achName?.(String(p.id ?? '')) ?? String(p.id ?? '');
+      const trophy = p.trophy
+        ? `, 得到奖杯「${names.trophyName?.(String(p.trophy)) ?? String(p.trophy)}」`
+        : '';
+      return `${p.first ? '全服第一个达成' : '达成成就'}「${name}」(+${n(p, 'pts')} 点)${trophy}`;
+    },
     'level.up': (p) => `餐厅升到了 ${n(p, 'to')} 级`,
     /** 升级自动摆餐桌（用户 2026-10-12）：用了仓库的几张、花了多少银币；没买成写原因和去哪买 */
     'table.auto': (p, names) =>

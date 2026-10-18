@@ -27,6 +27,7 @@ describe('我（界面改版 P2a，设计 §4.1）', () => {
     expect(links(w)).toEqual([
       '/rest/info',
       '/rest/look',
+      '/achievements',
       '/rest/equip',
       '/store',
       '/redeem',

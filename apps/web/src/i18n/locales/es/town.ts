@@ -138,6 +138,7 @@ const town: Messages['town'] = {
       'Trato o no trato',
       'Platos estrella',
       'Temporada',
+      'Logros',
     ],
     periods: { today: 'Hoy', yesterday: 'Ayer', thisWeek: 'Esta semana', lastWeek: 'Semana pasada' },
     boards: {
@@ -192,6 +193,8 @@ const town: Messages['town'] = {
       'mc.learned': 'Aprendidos',
       'shiling.week': 'Esta semana',
       'shiling.lastWeek': 'Semana pasada',
+      'achieve.points': 'Puntos',
+      'achieve.week': 'Nuevos esta semana',
     },
     rewards: {
       'roach.kill.lastWeek': 'Top 2 de la semana pasada: Matacucarachas de medianoche (lunes 7:59)',

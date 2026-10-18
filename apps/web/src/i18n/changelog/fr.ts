@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  achieve1019:
+    'Nouveau\u202f: les succès. 410 succès en dix catégories (restaurant, quotidien, recettes, plats spéciaux, amis, bar, tour, temple, finance, ville) rapportent des points de succès, et certains aussi des trophées et des titres permanents. Suivez votre progression dans Moi → Succès et exposez vos trophées dans une vitrine que vos amis peuvent voir. Les classements ont un nouveau tableau Succès (points, nouveaux cette semaine). La progression depuis l’ouverture du serveur a été rattrapée',
   oilsaver1019:
     'Refonte des économiseurs d’huile\u202f: les dix anciens économiseurs deviennent deux gammes, les économiseurs (réduction fixe par table) et les vannes (réduction en pourcentage), chacune en initial, intermédiaire et avancé (24 heures, 10 000 / 30 000 / 80 000 pièces en boutique) et en supérieur au marché noir (36 heures, 12 / 24 diamants)\u202f; les pièces Krab s’échangent contre le niveau supérieur (1 pour l’économiseur supérieur, 2 pour la vanne supérieure). Les économiseurs installés ont été remplacés par une Vanne à pièces du marchand d’huile (consommation totale d’huile -90\u202f% pendant 24 heures), les économiseurs moyens et spéciaux en réserve sont devenus des économiseurs intermédiaires, et chaque restaurant a reçu un courrier avec une Vanne à pièces du marchand d’huile en plus',
   champion1019:

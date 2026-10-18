@@ -1375,7 +1375,12 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
       proficiency: mcProficiency.map((x) => ({ id: x.curlevel, name: x.name })),
       cookbooks,
       // 菜系线展开前的那一条（cuisine）也要翻：网页按它取口径和各档名
-      achievements: achRaw.map((l) => ({ id: l.key, name: l.name, desc: l.desc, ...(l.labels ? { tiers: l.labels } : {}) })),
+      achievements: achRaw.map((l) => ({
+        id: l.key,
+        name: l.name,
+        desc: l.desc,
+        ...(l.labels ? { tiers: l.labels } : {}),
+      })),
       trophies: trophiesRaw.map((t) => ({ id: t.key, name: t.name })),
     },
     src,

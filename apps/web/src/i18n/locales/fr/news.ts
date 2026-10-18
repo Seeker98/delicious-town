@@ -83,6 +83,8 @@ const news: Messages['news'] = {
       `Le marché s'est réapprovisionné\u202f: ${list(p.foods)
         .map((id) => x.foodName(num(id)))
         .join(', ')}`,
+    'achieve.first': (w, p, x) =>
+      `${w} est le premier du serveur à obtenir «\u202f${x.achName?.(str(p.id)) ?? str(p.id)}\u202f»`,
     'mc.champion': (w, p) =>
       `${w} avait hier le plat signature le plus précieux (${formatNum(num(p.value))})`,
     'mc.cook': (w, p, x) => `${w} a cuisiné ${x.mcName(num(p.mcId))}\u202f×\u202f${num(p.num)}`,

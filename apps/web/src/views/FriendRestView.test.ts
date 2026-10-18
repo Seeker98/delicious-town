@@ -54,6 +54,7 @@ const detail = (patch: Partial<FriendRestDto> = {}): FriendRestDto => ({
   killLeft: 3,
   equips: [],
   special: null,
+  ach: { points: 0, shelf: [] },
   ...patch,
 });
 

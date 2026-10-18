@@ -7,6 +7,8 @@ import AppHeader from './components/AppHeader.vue';
 import BottomNav from './components/BottomNav.vue';
 import DtConfirmHost from './components/DtConfirmHost.vue';
 import EventToast from './components/EventToast.vue';
+import AchieveToast from './components/achieve/AchieveToast.vue';
+import { useAchieveToastStore } from './stores/achieveToast';
 import ShilingIntroPopup from './components/ShilingIntroPopup.vue';
 import { useCatalogStore } from './stores/catalog';
 import { useLocaleStore } from './stores/locale';
@@ -18,6 +20,7 @@ import { isInGame } from './utils/inGame';
 const route = useRoute();
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const achToast = useAchieveToastStore();
 const session = useSessionStore();
 /** 切换语言后整页重新挂载：新闻、日志、标签这些非响应式的文案也跟着换（问题记录 272） */
 const locale = useLocaleStore();
@@ -26,7 +29,10 @@ const inGame = computed(() => isInGame(route.meta, session.me?.restaurantId));
 const wide = computed(() => route.path.startsWith('/admin'));
 
 /** 一次操作的得失合成一条提示（问题记录：弹出的消息框太多） */
-setEventsListener((events) => {
+setEventsListener((all) => {
+  // 达成成就单独弹一张卡（成就系统 2026-10-19），不混进得失提示
+  for (const e of all) if (e.kind === 'achievement' && e.key) achToast.push(e.key, e.num);
+  const events = all.filter((e) => e.kind !== 'achievement');
   if (events.length === 0) return;
   toast.push(
     eventsSummary(events, catalog),
@@ -53,6 +59,7 @@ onMounted(() => {
     <ShilingIntroPopup v-if="inGame" />
     <DtConfirmHost />
     <EventToast :nav="inGame" />
+    <AchieveToast v-if="inGame" />
     <BottomNav v-if="inGame" />
   </div>
 </template>

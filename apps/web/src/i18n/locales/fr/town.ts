@@ -140,6 +140,7 @@ const town: Messages['town'] = {
       'À prendre ou à laisser',
       'Plats signature',
       'Saison',
+      'Succès',
     ],
     periods: {
       today: "Aujourd'hui",
@@ -199,6 +200,8 @@ const town: Messages['town'] = {
       'mc.learned': 'Appris',
       'shiling.week': 'Cette semaine',
       'shiling.lastWeek': 'Semaine dernière',
+      'achieve.points': 'Points',
+      'achieve.week': 'Nouveaux cette semaine',
     },
     rewards: {
       'roach.kill.lastWeek': 'Top 2 de la semaine dernière\u202f: Tueur de cafards de minuit (lundi 7 h 59)',

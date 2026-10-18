@@ -308,6 +308,8 @@ export default {
     wealth_mature: '已經到期了, 請直接領取',
     bulk_not_open: '這一批已經結束或取消了',
     wishtree_closed: '這一輪已經到開獎時間了, 等新的一輪',
+    shelf_full: '展示櫃滿了, 先拿下一個',
+    trophy_missing: '這個獎盃還沒拿到',
     bulk_closed: '已經收盤了, 這次出價無效',
     bulk_cooldown: '出價太快了, 等幾秒再試',
     bulk_raise: '加價不夠, 每次至少要加到頁面上寫的價格',

@@ -119,6 +119,24 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/RestLookView.vue'),
     meta: { needRestaurant: true, section: 'home', title: T((t) => t.rest.look.title), parent: '/me' },
   },
+  // 成就（成就系统 2026-10-19）：自己的成就墙从“我”进；别人的从好友餐厅的展示柜进
+  {
+    path: '/achievements',
+    name: 'achievements',
+    component: () => import('./views/AchievementsView.vue'),
+    meta: { needRestaurant: true, section: 'home', title: T((t) => t.achieve.title), parent: '/me' },
+  },
+  {
+    path: '/achievements/:restId(\\d+)',
+    name: 'achievements-of',
+    component: () => import('./views/AchievementsView.vue'),
+    meta: {
+      needRestaurant: true,
+      section: 'friends',
+      title: T((t) => t.achieve.title),
+      parent: (to) => `/friends/${String(to.params.restId)}`,
+    },
+  },
   {
     path: '/rest/equip',
     name: 'equip',

@@ -168,6 +168,18 @@
   --dt-paper-sub: #7a6a52;
   /* 纸上的格子、大图托盘（资料库，P11） */
   --dt-paper-card: rgba(255, 255, 255, 0.55);
+  /* 成就奖杯（成就系统 2026-10-19）：铜、银、金、彩四档的杯身和暗面，没拿到的剪影 */
+  --dt-trophy-bronze: #d9a766;
+  --dt-trophy-bronze-2: #b9813e;
+  --dt-trophy-silver: #c7ced6;
+  --dt-trophy-silver-2: #8f9aa8;
+  --dt-trophy-gold: #f2c14e;
+  --dt-trophy-gold-2: #c9962a;
+  --dt-trophy-rainbow: #a57be2;
+  --dt-trophy-rainbow-2: #e0a82e;
+  --dt-trophy-locked: #e2dcea;
+  --dt-trophy-locked-2: #cfc7da;
+  --dt-trophy-shine: rgba(255, 255, 255, 0.3);
 }
 [data-theme='dark'] {
   color-scheme: dark;
@@ -240,4 +252,15 @@
   --dt-paper-rule: #4a3f2c;
   --dt-paper-sub: #b7a684;
   --dt-paper-card: rgba(0, 0, 0, 0.18);
+  --dt-trophy-bronze: #d9a766;
+  --dt-trophy-bronze-2: #b9813e;
+  --dt-trophy-silver: #c7ced6;
+  --dt-trophy-silver-2: #8f9aa8;
+  --dt-trophy-gold: #f2c14e;
+  --dt-trophy-gold-2: #c9962a;
+  --dt-trophy-rainbow: #b48bea;
+  --dt-trophy-rainbow-2: #f0c060;
+  --dt-trophy-locked: #342c40;
+  --dt-trophy-locked-2: #463c55;
+  --dt-trophy-shine: rgba(255, 255, 255, 0.22);
 }

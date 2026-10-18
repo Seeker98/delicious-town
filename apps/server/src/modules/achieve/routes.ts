@@ -15,7 +15,7 @@ export function achieveRoutes(svc: AchieveService): FastifyPluginAsync {
     r.get('/achievements/:restId', async (req) =>
       ok(await svc.other(restCtxOf(req), parse(params, req.params).restId)),
     );
-    r.put('/achievements/shelf', async (req) =>
+    r.post('/achievements/shelf', async (req) =>
       okOp(await svc.shelf(restCtxOf(req), parse(achievementShelfBody, req.body).trophies)),
     );
   };

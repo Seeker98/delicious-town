@@ -57,6 +57,7 @@ const nav: Messages['nav'] = {
     groups: { shop: 'My restaurant', account: 'Account', help: 'Help' },
     info: 'Restaurant info',
     look: 'Look and titles',
+    achieve: 'Achievements',
     equip: 'Cookware',
     store: 'Storage',
     redeem: 'Codes and invites',

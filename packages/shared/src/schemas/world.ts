@@ -115,7 +115,15 @@ export interface CatalogAchLineDto {
   desc: string;
   streetId: number | null;
   labels: string[] | null;
-  tiers: Array<{ id: string; tier: number; n: number; pts: number; metric: string; trophy: string | null; icon: string | null }>;
+  tiers: Array<{
+    id: string;
+    tier: number;
+    n: number;
+    pts: number;
+    metric: string;
+    trophy: string | null;
+    icon: string | null;
+  }>;
 }
 /** 奖杯：tone 是底色；菜系奖杯（streetId 不是 null）名字是街道菜系名 + name */
 export interface CatalogTrophyDto {

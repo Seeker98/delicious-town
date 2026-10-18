@@ -27,13 +27,10 @@ export interface AchievementsDto {
   /** 展示柜里的奖杯 key（按顺序） */
   shelf: string[];
   shelfSlots: number;
+  /** 下一次展示柜加格：到多少点、开到几格；已经最多时 null */
+  shelfNext: { points: number; slots: number } | null;
   /** 本区达成这个成就的店的占比（0~1），只列有人达成的 */
   rarity: Record<string, number>;
-}
-
-/** 进度的键：口径本身；菜系线的口径一样、街道不同，后面加 @街道 */
-export function achProgressKey(metric: string, streetId: number | null): string {
-  return streetId === null ? metric : `${metric}@${streetId}`;
 }
 
 export const achievementShelfBody = z.object({ trophies: z.array(z.string().min(1).max(40)).max(10) });
