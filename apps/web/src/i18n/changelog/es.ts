@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  foodcut1018:
+    'Se eliminan dos ingredientes que no usaba ningún plato: las nueces y el pez blanco del lago Tai (la nuez de las recetas son las «nueces peladas» y no cambian); las nueces que ya tenías en la despensa o la nevera se convierten en la misma cantidad de panceta, y el pez blanco en anís estrellado',
   premium1017:
     'Vuelve el mercado premium: repone 3 ingredientes de nivel 4 a las 6:00, 12:00 y 18:00, solo pueden comprar los restaurantes con medalla del fondo B o superior, hasta 9 de cada uno por reposición; el precio es 1,8 veces el del mercado (antes 2), un 10 % de descuento para inversores, y el clima sigue influyendo; las descripciones de las medallas B y A ya lo mencionan',
   wikimc1017:
