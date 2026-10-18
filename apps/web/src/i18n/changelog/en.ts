@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  foodcut1018:
+    'Two ingredients no dish used have been removed: Walnuts and Taihu Whitefish (the walnut used in recipes is “Walnut Kernels” and is unaffected); Walnuts already in your pantry or fridge became the same number of Pork Belly, and Taihu Whitefish became Star Anise',
   premium1017:
     'The premium market is back: it restocks 3 kinds of level-4 ingredients at 6:00, 12:00 and 18:00, only restaurants holding a tier B or higher fund medal can buy, up to 9 of each per restock; the price is 1.8× the market price (was 2×), a 10% discount for investors, and weather still affects it; the tier B and A medal descriptions now mention it',
   wikimc1017:

@@ -119,7 +119,7 @@ describe('物品池、食材池', () => {
   it('食材池：权重 100、等级 ≤ min(等级, 5)，按 id 排序', () => {
     expect(awardFoodsPool(config.bundle.foods, 1)).toHaveLength(16);
     expect(awardFoodsPool(config.bundle.foods, 2)).toHaveLength(80); // 77 + 新街道权重 100 的 3 种（问题记录 284）
-    expect(awardFoodsPool(config.bundle.foods, 9)).toHaveLength(177); // 171 + 新街道权重 100 的 6 种
+    expect(awardFoodsPool(config.bundle.foods, 9)).toHaveLength(175); // 171 + 新街道权重 100 的 6 种 − 下架的核桃、太湖白鱼（2026-10-18）
     const p = awardFoodsPool(config.bundle.foods, 5);
     expect(p).toEqual([...p].sort((a, b) => a - b));
   });

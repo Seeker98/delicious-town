@@ -324,6 +324,6 @@ describe('下架的道具、食材不上开放接口（问题记录 367）', () 
     expect(retired.foods('zh-CN').items.some((f) => f.id === foodId)).toBe(false);
     expect(retired.food('zh-CN', foodId)).toBeNull();
     expect(retired.index('zh-CN').counts.goods).toBe(data.index('zh-CN').counts.goods - 1);
-    expect(retired.index('zh-CN').counts.foods).toBe(b.foods.length - 1);
+    expect(retired.index('zh-CN').counts.foods).toBe(b.foods.filter((f) => !f.retired).length - 1);
   });
 });

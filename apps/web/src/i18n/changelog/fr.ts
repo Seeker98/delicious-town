@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  foodcut1018:
+    'Deux ingrédients utilisés par aucun plat sont supprimés\u202f: la noix et le poisson blanc du lac Tai (la noix des recettes, ce sont les «\u202fcerneaux de noix\u202f», non concernés)\u202f; les noix déjà dans votre garde-manger ou frigo deviennent autant de poitrine de porc, et le poisson blanc autant d’anis étoilé',
   premium1017:
     'Le marché premium rouvre\u202f: il propose 3 ingrédients de niveau 4 à 6 h, 12 h et 18 h, réservé aux restaurants qui détiennent une médaille du fonds B ou plus, 9 de chaque au maximum par réassort\u202f; le prix est 1,8 fois le prix du marché (au lieu de 2), soit 10\u202f% de remise pour les investisseurs, et la météo l’influence toujours\u202f; les descriptions des médailles B et A le mentionnent désormais',
   wikimc1017:
