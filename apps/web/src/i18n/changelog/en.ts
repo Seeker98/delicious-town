@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  wage1019:
+    'Fix: the job card wages (11 kinds such as Market Wholesaler’s and Bank Advisor’s wages) could not be opened in storage; they open now. The Midnight Roach Killer weekly award and the Roach killers ranking now only count roaches squashed at real friends’ restaurants, not your own or Mr. Krabs’ (the last 30 days were recounted from the logs)',
   frames1019:
     'Achievement point milestones: 500, 1,500, 3,000, 5,000, 8,000 and 12,000 points unlock wooden, bronze, silver, gold, jade and rainbow avatar frames. Put one on under Look and titles and it shows on your avatar in friend lists, rankings and the forum. 12,000 points also give the title Achievement Master, and earning every achievement that gives points gives Town Paragon. New Legacy category (no points): Founding Member (opened before 2026-10-31) and Oil Saver Revamp Witness (claimed the compensation mail)',
   hidden1019:

@@ -123,10 +123,12 @@ describe('排行榜（设计文档 §2.6）', () => {
 
   it('灭蟑螂本周、上周：按周一切分', async () => {
     const [a, b] = await rests(2);
-    await counter(a!.restaurantId, 'roach.kill', '2026-09-28', 3);
-    await counter(a!.restaurantId, 'roach.kill', '2026-09-27', 10);
-    await counter(b!.restaurantId, 'roach.kill', '2026-09-21', 4);
-    await counter(b!.restaurantId, 'roach.kill', DAY, 1);
+    // 只算在真实好友店里灭的（roach.killFriend）
+    await counter(a!.restaurantId, 'roach.killFriend', '2026-09-28', 3);
+    await counter(a!.restaurantId, 'roach.killFriend', '2026-09-27', 10);
+    await counter(b!.restaurantId, 'roach.killFriend', '2026-09-21', 4);
+    await counter(b!.restaurantId, 'roach.killFriend', DAY, 1);
+    await counter(b!.restaurantId, 'roach.kill', DAY, 50);
     expect((await board(a!, 'roach.kill.thisWeek')).rows.map((x) => [x.restId, x.value])).toEqual([
       [a!.restaurantId, 3],
       [b!.restaurantId, 1],

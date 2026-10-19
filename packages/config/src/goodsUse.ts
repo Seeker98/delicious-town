@@ -1,3 +1,4 @@
+import { GOODS_TYPE } from './ids';
 import type { Goods } from './types';
 
 /** 道具的使用效果。按名称识别只在这里做一次，运行时只看 kind（设计文档 §5.1） */
@@ -67,6 +68,7 @@ export function deriveGoodsUse(g: Goods): GoodsUse | null {
     case '厨塔挑战券':
       return { kind: 'towerTicket' };
   }
-  if (g.name.includes('礼包') && g.gift !== null) return { kind: 'gift' };
+  // 礼包类（type 2）带礼包内容的都能拆：工作证的“XX 的工资”名字里没有“礼包”，原来一直拆不了
+  if (g.gift !== null && (g.name.includes('礼包') || g.type === GOODS_TYPE.gift)) return { kind: 'gift' };
   return null;
 }

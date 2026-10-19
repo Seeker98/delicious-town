@@ -204,7 +204,8 @@ const town: Messages['town'] = {
       'achieve.week': 'Nouveaux cette semaine',
     },
     rewards: {
-      'roach.kill.lastWeek': 'Top 2 de la semaine dernière\u202f: Tueur de cafards de minuit (lundi 7 h 59)',
+      'roach.kill.lastWeek':
+        'Top 2 de la semaine dernière\u202f: Tueur de cafards de minuit (seulement les cafards écrasés chez des amis, lundi 7 h 59)',
       'flip.flipped.lastWeek':
         'Top 4 de la semaine dernière\u202f: Un malheur n’arrive jamais seul / Pétard / Lanterne / Bonheur (lundi 7 h 59)',
       'mc.yesterday':

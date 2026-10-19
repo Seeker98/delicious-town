@@ -292,7 +292,8 @@ export const BOARD_SOURCES: Record<string, Source> = {
   renown: column('renown'),
   'thumb.received': thumbs('to_rest'),
   'thumb.given': thumbs('from_rest'),
-  ...periodSources('roach.kill', 'roach.kill'),
+  // 灭蟑螂榜和午夜蟑螂杀手的周奖励一样，只算在真实好友店里灭的
+  ...periodSources('roach.kill', 'roach.killFriend'),
   ...periodSources('roach.lay', 'roach.lay'),
   ...periodSources('flip.flipped', 'flip.flipped'),
   'bar.fg.win.thisWeek': bar('fg', 1, 'thisWeek'),

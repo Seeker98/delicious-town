@@ -40,9 +40,11 @@ describe('周奖励（规格书 16）', () => {
     await put(0, 'flip.caught', 3);
     await put(1, 'flip.caught', 1);
     for (const [i, n] of [5, 4, 3, 2, 1].entries()) await put(i, 'flip.flipped', n);
-    await put(2, 'roach.kill', 9);
-    await put(3, 'roach.kill', 9);
-    await put(4, 'roach.kill', 20, '2026-10-05'); // 本周的不算
+    // 午夜蟑螂杀手只按在真实好友店里灭的排（roach.killFriend），自己店、蟹老板的店灭的（只记在 roach.kill）不算
+    await put(2, 'roach.killFriend', 9);
+    await put(3, 'roach.killFriend', 9);
+    await put(4, 'roach.killFriend', 20, '2026-10-05'); // 本周的不算
+    await put(1, 'roach.kill', 50);
     t.clock.set(new Date('2026-10-05T00:30:00Z')); // 北京时间周一 08:30
     const deps = { db: t.db, shards: t.game.shards, now: () => t.clock.now, log: { error: vi.fn() } };
     const job = friendWeeklyJob(t.game.deps);
