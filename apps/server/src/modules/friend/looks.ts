@@ -36,9 +36,14 @@ export function createLooks(d: GameDeps) {
     async mine(ctx: RestCtx): Promise<MyLooksDto> {
       const r = await d.db
         .selectFrom('restaurant')
-        .select(['door', 'avatar', 'notice'])
+        .select(['door', 'avatar', 'frame', 'notice'])
         .where('id', '=', ctx.restaurantId)
         .executeTakeFirstOrThrow();
+      const ach = await d.db
+        .selectFrom('rest_ach')
+        .select('points')
+        .where('rest_id', '=', ctx.restaurantId)
+        .executeTakeFirst();
       const rows = await d.db
         .selectFrom('rest_icon')
         .select(['id', 'icon_key', 'shown', 'expires_at'])
@@ -58,6 +63,8 @@ export function createLooks(d: GameDeps) {
         // 已拥有的门：默认门 0 人人都有（问题记录 350）
         ownedDoors: [0, ...doors.map((x) => x.door_id)].sort((a, b) => a - b),
         avatar: r.avatar,
+        frame: r.frame,
+        achPoints: ach?.points ?? 0,
         notice: r.notice,
         icons: rows.flatMap((x) => {
           const def = defs.get(x.icon_key);
@@ -132,6 +139,26 @@ export function createLooks(d: GameDeps) {
         if (!o.config.bundle.looks.avatars.some((x) => x.id === avatar)) throw invalidState('bad_look');
         setRest(o, 'avatar', avatar);
         return { avatar };
+      });
+    },
+
+    /** 戴头像框（成就 PR③）：成就点够了的才能戴，0 = 不戴；不花钱 */
+    frame(ctx: RestCtx, frame: number) {
+      return op(ctx, 'rest.frame', async (o) => {
+        if (frame === 0) {
+          setRest(o, 'frame', null);
+          return { frame: null };
+        }
+        const f = o.config.bundle.looks.frames.find((x) => x.id === frame);
+        if (!f) throw invalidState('bad_look');
+        const ach = await o.tx
+          .selectFrom('rest_ach')
+          .select('points')
+          .where('rest_id', '=', o.rest.id)
+          .executeTakeFirst();
+        if ((ach?.points ?? 0) < f.points) throw invalidState('frame_locked');
+        setRest(o, 'frame', frame);
+        return { frame };
       });
     },
 

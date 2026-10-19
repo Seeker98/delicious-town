@@ -4,7 +4,7 @@ import type { NewbieCode } from './newbieCodes';
 import type { GoodsUse } from './goodsUse';
 import type { EQUIP_ATTRS } from './ids';
 import type { Tuning } from './tuning';
-import type { AchLine, Trophy } from './achievements';
+import type { AchLine, FrameTone, Trophy } from './achievements';
 
 export interface IdNum {
   id: number;
@@ -429,6 +429,8 @@ export interface Looks {
   doors: Array<{ id: number; name: string; coin: number; art: string }>;
   /** art：头像的图形名，网页画 avatar-<art>（界面改版 P7） */
   avatars: Array<{ id: number; name: string; art: string }>;
+  /** 头像框（成就 PR③）：成就点到 points 解锁，按 points 从小到大；icon 是同一个里程碑一起给的永久称号 */
+  frames: Array<{ id: number; name: string; tone: FrameTone; points: number; icon?: string }>;
   /** shop：称号商店的限时上架（240-2），游戏日期 [from, to) 可买 */
   icons: Array<{
     key: string;

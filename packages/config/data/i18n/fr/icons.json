@@ -158,5 +158,13 @@
   "ach-chefgod": {
     "title": "Dieu cuisinier éternel",
     "desc": "26 semaines en tête des duels"
+  },
+  "ach-master": {
+    "title": "Maître des succès",
+    "desc": "Atteindre 12\u202f000 points de succès"
+  },
+  "ach-perfect": {
+    "title": "Modèle de la ville",
+    "desc": "Obtenir tous les succès qui rapportent des points"
   }
 }

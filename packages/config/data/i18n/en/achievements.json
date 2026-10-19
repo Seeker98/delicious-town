@@ -584,5 +584,13 @@
   "waste": {
     "name": "What a Waste",
     "desc": "Dumped an unsold special dish"
+  },
+  "veteran": {
+    "name": "Founding Member",
+    "desc": "Opened before 2026-10-31"
+  },
+  "oilsaver": {
+    "name": "Oil Saver Revamp Witness",
+    "desc": "Claimed the oil saver revamp compensation mail"
   }
 }

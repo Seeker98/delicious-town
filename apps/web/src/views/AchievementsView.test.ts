@@ -214,6 +214,64 @@ describe('AchievementsView', () => {
     expect(document.body.querySelector('[data-testid="ach-tiers"]')!.textContent).not.toContain('鼠患');
   });
 
+  it('绝版（成就 PR③）：标“绝版”、写“不计点”，分类行不写点数', async () => {
+    const veteran: CatalogAchLineDto = {
+      key: 'veteran',
+      cat: 'legacy',
+      name: '开服元老',
+      desc: '2026-10-31 以前开的店',
+      streetId: null,
+      labels: null,
+      legacy: true,
+      tiers: [
+        { id: 'veteran.1', tier: 1, n: 1, pts: 0, metric: 'state:legacy:veteran', trophy: null, icon: null },
+      ],
+    };
+    const c = useCatalogStore();
+    c.achLines = [...c.achLines, veteran];
+    c.achById.set('veteran.1', { line: veteran, tier: veteran.tiers[0]! });
+    vi.mocked(endpoints.achievements).mockResolvedValue(
+      dto({ got: [{ id: 'veteran.1', at: '2026-10-19T00:00:00.000Z', first: false, backfilled: true }] }),
+    );
+    const w = await mountView('/achievements?tab=lines&cat=legacy');
+    const row = w.get('[data-testid="ach-line-veteran"]').text();
+    expect(row).toContain('绝版');
+    expect(row).toContain('不计点');
+    const o = await mountView('/achievements?tab=overview');
+    const cat = o.get('[data-testid="ach-cat-legacy"]').text();
+    expect(cat).toContain('1 / 1');
+    expect(cat).not.toContain('点');
+  });
+
+  it('里程碑（成就 PR③）：头像框一站一个，写下一个是什么、还差多少', async () => {
+    const c = useCatalogStore();
+    c.looks = {
+      doors: [],
+      avatars: [],
+      frames: [
+        { id: 1, name: '木头像框', tone: 'wood', points: 500 },
+        { id: 2, name: '铜头像框', tone: 'bronze', points: 1500 },
+        { id: 6, name: '彩头像框', tone: 'rainbow', points: 12000, icon: 'ach-master' },
+      ],
+      icons: [
+        { key: 'ach-master', title: '成就大师', desc: '' },
+        { key: 'ach-perfect', title: '小镇完人', desc: '' },
+      ],
+    };
+    vi.mocked(endpoints.achievements).mockResolvedValue(dto({ points: 800 }));
+    const w = await mountView('/achievements?tab=overview');
+    const m = w.get('[data-testid="ach-milestones"]');
+    expect(m.findAll('.dt-ach-stop')).toHaveLength(3);
+    expect(m.findAll('.dt-ach-stop.is-got')).toHaveLength(1);
+    expect(m.text()).toContain('下一个: 1,500 点 · 铜头像框');
+    expect(m.text()).toContain('800 / 1,500');
+    expect(m.text()).toContain('成就大师');
+    expect(m.text()).toContain('小镇完人');
+    vi.mocked(endpoints.achievementsOf).mockResolvedValue(dto({ mine: false, points: 800 }));
+    const other = await mountView('/achievements/7');
+    expect(other.find('[data-testid="ach-milestones"]').exists()).toBe(false);
+  });
+
   it('别人的成就墙：读那家店的，不显示进度', async () => {
     vi.mocked(endpoints.achievementsOf).mockResolvedValue(dto({ mine: false, progress: {}, name: '乙店' }));
     const w = await mountView('/achievements/7?tab=lines&cat=friend');

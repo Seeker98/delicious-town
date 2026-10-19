@@ -2,7 +2,7 @@ import { achProgressKey, type CatalogAchLineDto, type CatalogTrophyDto } from '@
 import { activeMessages } from '../i18n';
 import { formatNum, formatPct, gameDateTime } from './format';
 
-/** 十一个分类（和配置 ACH_CATS 同序；hidden 是隐藏成就） */
+/** 十二个分类（和配置 ACH_CATS 同序；hidden 是隐藏成就，legacy 是绝版成就） */
 export const ACH_CATS = [
   'rest',
   'daily',
@@ -15,6 +15,7 @@ export const ACH_CATS = [
   'finance',
   'town',
   'hidden',
+  'legacy',
 ] as const;
 export type AchCatKey = (typeof ACH_CATS)[number];
 /** 一级标签只有三个（视觉规范 §10.1 分区不超过两层）：十一个分类在“分类”页里用下拉框选 */

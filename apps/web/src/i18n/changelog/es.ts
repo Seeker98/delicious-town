@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  frames1019:
+    'Hitos de puntos de logro: 500, 1.500, 3.000, 5.000, 8.000 y 12.000 puntos desbloquean marcos de avatar de madera, bronce, plata, oro, jade y arcoíris. Ponte uno en Aspecto y títulos y se verá en tu avatar en las listas de amigos, las clasificaciones y el foro. Con 12.000 puntos también consigues el título Maestro de logros, y con todos los logros que dan puntos, Ejemplo del pueblo. Nueva categoría Ediciones pasadas (sin puntos): Miembro fundador (local abierto antes del 31/10/2026) y Testigo de la reforma de los ahorradores (correo de compensación recogido)',
   hidden1019:
     '75 logros nuevos: 57 ocultos (se ven como ??? hasta conseguirlos, en Logros → Categorías → Ocultos), cuatro líneas nuevas, Gusto de todos (clientes exigentes satisfechos), Lleno total (todas las mesas ocupadas), Con las manos en la masa (pillado registrando despensas) y Campeón del bar de la semana, y Cliente habitual suma un nivel por ganar en los diez juegos. Lo que aún constaba en los registros ya se ha contado',
   achieve1019:

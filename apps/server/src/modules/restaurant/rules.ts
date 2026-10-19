@@ -142,6 +142,7 @@ export function toRestaurantDto(
     icons: extra.icons,
     door: r.door,
     avatar: r.avatar,
+    frame: r.frame,
     effects: effects.map((e) => ({
       sourceType: e.sourceType,
       sourceId: e.sourceId,

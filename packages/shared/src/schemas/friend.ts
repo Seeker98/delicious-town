@@ -14,6 +14,8 @@ export interface FriendBriefDto {
   level: number;
   star: number;
   avatar: number | null;
+  /** 戴的头像框（成就 PR③）；旧服务端没有 */
+  frame?: number | null;
   npc: boolean;
   /** 桌上的蟑螂数 */
   roaches: number;
@@ -38,6 +40,8 @@ export interface FriendRequestDto {
   level: number;
   star: number;
   avatar: number | null;
+  /** 戴的头像框（成就 PR③）；旧服务端没有 */
+  frame?: number | null;
   npc: boolean;
   at: string;
 }
@@ -48,6 +52,8 @@ export interface RestBriefDto {
   level: number;
   star: number;
   avatar: number | null;
+  /** 戴的头像框（成就 PR③）；旧服务端没有 */
+  frame?: number | null;
   isFriend: boolean;
   /** 我已经申请过 */
   requested: boolean;
@@ -199,6 +205,8 @@ export interface ReturnAllDto {
 
 export const doorBody = z.object({ door: z.number().int().min(0).max(1000) });
 export const avatarBody = z.object({ avatar: z.number().int().min(1).max(1000) });
+/** 戴头像框（成就 PR③）：0 = 不戴 */
+export const frameBody = z.object({ frame: z.number().int().min(0).max(1000) });
 export const noticeBody = z.object({ text: z.string().max(200) });
 export const iconShowBody = z.object({ iconId: z.number().int().positive(), shown: z.boolean() });
 /** 称号商店购买（240-2） */
@@ -209,6 +217,10 @@ export interface MyLooksDto {
   /** 已拥有的门（含默认门 0）：买过的门换回来免费（问题记录 350） */
   ownedDoors: number[];
   avatar: number | null;
+  /** 戴的头像框（成就 PR③）；null = 不戴。旧服务端没有这一项 */
+  frame?: number | null;
+  /** 成就点（解锁哪几种头像框按它算）。旧服务端没有这一项 */
+  achPoints?: number;
   notice: string;
   /** expiresAt：限时称号（240-2 发展基金）的到期时间，永久的为空 */
   icons: Array<{

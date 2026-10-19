@@ -119,7 +119,7 @@ export async function loadReplies(o: Op, postId: number, admin: boolean): Promis
     .selectFrom('forum_reply as x')
     .innerJoin('restaurant as r', 'r.id', 'x.rest_id')
     .selectAll('x')
-    .select(['r.name as rest_name', 'r.avatar as rest_avatar'])
+    .select(['r.name as rest_name', 'r.avatar as rest_avatar', 'r.frame as rest_frame'])
     .where('x.post_id', '=', postId)
     .orderBy('x.floor')
     .execute();
@@ -133,6 +133,7 @@ export async function loadReplies(o: Op, postId: number, admin: boolean): Promis
       restId: visible ? x.rest_id : null,
       restName: visible ? x.rest_name : '匿名',
       avatar: visible ? x.rest_avatar : null,
+      frame: visible ? x.rest_frame : null,
       anonymous: x.anonymous,
       content: deleted ? '' : x.content,
       createdAt: x.created_at.toISOString(),
@@ -171,7 +172,7 @@ export async function postDetail(o: Op, ctx: RestCtx, id: number): Promise<Forum
   const author = post.rest_id === o.rest.id;
   const writer = await o.tx
     .selectFrom('restaurant')
-    .select(['name', 'avatar'])
+    .select(['name', 'avatar', 'frame'])
     .where('id', '=', post.rest_id)
     .executeTakeFirstOrThrow();
   const mine = await o.tx
@@ -185,6 +186,7 @@ export async function postDetail(o: Op, ctx: RestCtx, id: number): Promise<Forum
     post: {
       ...toItem(post, writer.name, t.excerpt),
       avatar: writer.avatar,
+      frame: writer.frame,
       content: post.content,
       editedAt: post.edited_at?.toISOString() ?? null,
     },

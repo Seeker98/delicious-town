@@ -9,6 +9,7 @@ import type {
   CatalogGoodsDto,
   CatalogMcDto,
   LooksDto,
+  FrameToneDto,
 } from '@dt/shared';
 import type { Locale } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -167,6 +168,11 @@ export const useCatalogStore = defineStore('catalog', {
       const name = `door-${this.looks?.doors.find((d) => d.id === id)?.art || 'wood'}`;
       return (CONTENT_ART as readonly string[]).includes(name) ? (name as ArtName) : 'door-wood';
     },
+    /** 头像框的配色（成就 PR③）：没戴、目录还没读到、查不到都是 null（不画框） */
+    frameTone(id: number | null | undefined): FrameToneDto | null {
+      if (id === null || id === undefined) return null;
+      return this.looks?.frames?.find((f) => f.id === id)?.tone ?? null;
+    },
     /** 头像的图形（界面改版 P7）：没设头像、查不到、网页里还没有这张图都是 null，页面画首字圆圈 */
     avatarArt(id: number | null | undefined): ArtName | null {
       const art = this.looks?.avatars.find((a) => a.id === id)?.art;
@@ -221,6 +227,10 @@ export const useCatalogStore = defineStore('catalog', {
       return this.suitsMap.get(id);
     },
     /** 成就名（线名 + 档）、奖杯名（成就系统 2026-10-19）；目录里没有时写编号 */
+    /** 头像框的名字（成就 PR③）；目录还没读到时写“头像框” */
+    frameName(id: number): string {
+      return this.looks?.frames?.find((f) => f.id === id)?.name ?? activeMessages().achieve.frameFallback;
+    },
     achName(id: string): string {
       return achNameOf(id, this);
     },

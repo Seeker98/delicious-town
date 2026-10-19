@@ -24,9 +24,9 @@ describe('成就配置（设计稿 2026-10-19）', () => {
     });
   });
 
-  it('总量: PR①、PR② 的成就个数、点数、奖杯、称号（改了配置就更新这里）', () => {
+  it('总量: PR①~③ 的成就个数、点数、奖杯、称号（改了配置就更新这里；绝版 0 点）', () => {
     const tiers = b.achievements.flatMap((l) => l.tiers);
-    expect(tiers).toHaveLength(485);
+    expect(tiers).toHaveLength(487);
     expect(tiers.reduce((a, t) => a + t.pts, 0)).toBe(19680);
     expect(b.trophies).toHaveLength(88);
     expect(tiers.filter((t) => t.icon).length).toBe(16);

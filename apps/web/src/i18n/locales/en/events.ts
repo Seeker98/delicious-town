@@ -150,8 +150,10 @@ const events: Messages['events'] = {
       const trophy = p.trophy
         ? `, new trophy “${names.trophyName?.(String(p.trophy)) ?? String(p.trophy)}”`
         : '';
-      return `${p.first ? 'First on the server to earn' : 'Achievement earned:'} “${name}” (+${n(p, 'pts')} pts)${trophy}`;
+      return `${p.first ? 'First on the server to earn' : 'Achievement earned:'} “${name}”${n(p, 'pts') > 0 ? ` (+${n(p, 'pts')} pts)` : ''}${trophy}`;
     },
+    'achieve.milestone': (p, names) =>
+      `${formatNum(n(p, 'points'))} achievement points: ${names.frameName?.(n(p, 'frame')) ?? 'avatar frame'} unlocked`,
     'level.up': (p) => `Restaurant reached level ${n(p, 'to')}`,
     'table.auto': (p, names) => {
       const extra = [

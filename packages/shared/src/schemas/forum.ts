@@ -66,6 +66,8 @@ export interface ForumReplyDto {
   restName: string;
   /** 回复者头像（界面改版 P10）；匿名对他人隐藏时、没设头像时为 null */
   avatar: number | null;
+  /** 戴的头像框（成就 PR③）；旧服务端没有 */
+  frame?: number | null;
   anonymous: boolean;
   /** 已删除时为空串 */
   content: string;
@@ -76,7 +78,13 @@ export interface ForumReplyDto {
 
 export interface ForumPostDetailDto {
   /** avatar：作者头像（界面改版 P10），没设为 null */
-  post: ForumPostItemDto & { content: string; editedAt: string | null; avatar: number | null };
+  post: ForumPostItemDto & {
+    content: string;
+    editedAt: string | null;
+    avatar: number | null;
+    /** 戴的头像框（成就 PR③）；旧服务端没有 */
+    frame?: number | null;
+  };
   mine: ForumReaction | null;
   can: { edit: boolean; delete: boolean; admin: boolean; reads: boolean; reply: boolean };
   replies: ForumReplyDto[];

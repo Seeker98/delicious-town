@@ -308,6 +308,7 @@ export default {
     bulk_not_open: '这一批已经结束或取消了',
     wishtree_closed: '这一轮已经到开奖时间了, 等新的一轮',
     shelf_full: '展示柜满了, 先拿下一个',
+    frame_locked: '成就点还不够, 戴不了这个头像框',
     trophy_missing: '这个奖杯还没拿到',
     bulk_closed: '已经收盘了, 这次出价无效',
     bulk_cooldown: '出价太快了, 等几秒再试',

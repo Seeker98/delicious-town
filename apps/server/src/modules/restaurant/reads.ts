@@ -201,8 +201,9 @@ export async function buffsOf(
  * 老鼠偷食材、手动进货被买、冰箱满了丢食材），以及章鱼哥每天的卫生巡查。好友页"动态"卡和首页的"餐厅动态"都用它
  */
 export const FEED_TYPES = [
-  // 达成成就（成就系统 2026-10-19；补发的不写动态）
+  // 达成成就（成就系统 2026-10-19；补发的不写动态）、跨过成就点里程碑（成就 PR③）
   'achieve.got',
+  'achieve.milestone',
   'bulk.won',
   'bulk.failed',
   'dine.start',

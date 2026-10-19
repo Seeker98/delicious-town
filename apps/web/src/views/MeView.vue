@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
-import DtArt from '../components/DtArt.vue';
+import DtAvatar from '../components/DtAvatar.vue';
 import NavRow from '../components/NavRow.vue';
 import { useT } from '../composables/useT';
 import { useCatalogStore } from '../stores/catalog';
@@ -32,7 +32,7 @@ onMounted(() => {
 <template>
   <section v-if="rest" class="dt-card dt-me-head" data-testid="me-head">
     <span class="dt-me-ava"
-      ><DtArt :name="restAva(rest.id, rest.avatar, catalog.avatarArt)" :size="64"
+      ><DtAvatar :art="restAva(rest.id, rest.avatar, catalog.avatarArt)" :frame="rest.frame" :size="64"
     /></span>
     <div class="dt-min0">
       <div class="dt-me-name">

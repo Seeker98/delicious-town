@@ -11,6 +11,7 @@ vi.mock('../api/endpoints', () => ({
     myLooks: vi.fn(),
     setDoor: vi.fn(),
     setAvatar: vi.fn(),
+    setFrame: vi.fn(),
     setNotice: vi.fn(),
     iconShow: vi.fn(),
     iconBuy: vi.fn(),
@@ -36,6 +37,10 @@ describe('RestLookView', () => {
           { id: 1, name: '小厨师', art: 'chef' },
           { id: 2, name: '大厨', art: 'headchef' },
         ],
+        frames: [
+          { id: 1, name: '木头像框', tone: 'wood', points: 500 },
+          { id: 2, name: '铜头像框', tone: 'bronze', points: 1500 },
+        ],
         icons: [],
       },
     });
@@ -46,7 +51,7 @@ describe('RestLookView', () => {
       notice: '',
       icons: [{ id: 5, key: 'founder', title: '开服元老', desc: 'x', shown: false, expiresAt: null }],
     });
-    for (const f of ['setDoor', 'setAvatar', 'setNotice', 'iconShow'] as const)
+    for (const f of ['setDoor', 'setAvatar', 'setFrame', 'setNotice', 'iconShow'] as const)
       vi.mocked(endpoints[f]).mockResolvedValue({} as never);
   });
 
@@ -271,5 +276,34 @@ describe('RestLookView', () => {
     await w.get('[data-testid="icon-2"]').trigger('change');
     await flushPromises();
     expect(order()).toEqual(['icon-2', 'icon-1']);
+  });
+
+  it('头像框（成就 PR③）：成就点够了的能戴，没够的灰着写要多少点；点一下就换', async () => {
+    vi.mocked(endpoints.myLooks).mockResolvedValue({
+      door: 0,
+      ownedDoors: [0],
+      avatar: 1,
+      frame: null,
+      achPoints: 800,
+      notice: '',
+      icons: [],
+    });
+    const w = mount(RestLookView);
+    await flushPromises();
+    const block = w.get('[data-testid="frames"]');
+    expect(block.text()).toContain('成就点 800');
+    expect(w.get('[data-testid="frame-0"]').attributes('aria-pressed')).toBe('true');
+    expect(w.get('[data-testid="frame-2"]').attributes('disabled')).toBeDefined();
+    expect(w.get('[data-testid="frame-2"]').text()).toContain('1,500 点');
+    expect(block.text()).toContain('还差 700 点');
+    await w.get('[data-testid="frame-1"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.setFrame).toHaveBeenCalledWith(1);
+  });
+
+  it('旧服务端没有头像框：不显示这一块', async () => {
+    const w = mount(RestLookView);
+    await flushPromises();
+    expect(w.find('[data-testid="frames"]').exists()).toBe(false);
   });
 });

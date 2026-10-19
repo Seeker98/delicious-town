@@ -15,6 +15,8 @@ export interface Names {
   /** 成就、奖杯的名字（成就系统 2026-10-19：达成成就的动态、新闻） */
   achName?(id: string): string;
   trophyName?(key: string): string;
+  /** 头像框的名字（成就 PR③：跨过里程碑的动态） */
+  frameName?(id: number): string;
 }
 
 /** 合并同类型、同物品、同幸运标记的事件（一次得到很多东西时不刷屏），保持首次出现的顺序 */
@@ -37,7 +39,7 @@ export function eventText(e: GameEvent, names: Names): string {
 /** 一次操作的所有得失合成一条提示（问题记录：弹出的消息框太多）；超过 max 项时只列前 max 项 */
 export function eventsSummary(events: GameEvent[], names: Names, max = 8): string {
   // 达成成就单独弹卡（成就系统 2026-10-19），不写进得失
-  const merged = mergeEvents(events.filter((e) => e.kind !== 'achievement'));
+  const merged = mergeEvents(events.filter((e) => e.kind !== 'achievement' && e.kind !== 'achFrame'));
   const items = [...merged.filter((e) => e.type === 'gain'), ...merged.filter((e) => e.type !== 'gain')];
   const shown = items.slice(0, max);
   const m = activeMessages().events;

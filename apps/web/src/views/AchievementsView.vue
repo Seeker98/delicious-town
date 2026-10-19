@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router';
 import type { AchievementsDto, CatalogAchLineDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import AchTrophy from '../components/achieve/AchTrophy.vue';
+import DtAvatar from '../components/DtAvatar.vue';
 import DtEmpty from '../components/DtEmpty.vue';
 import DtSheet from '../components/DtSheet.vue';
 import DtSkeleton from '../components/DtSkeleton.vue';
@@ -13,6 +14,7 @@ import { useTabQuery } from '../composables/useTabQuery';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { usePageTitle } from '../stores/pageTitle';
+import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 import {
   ACH_CATS,
@@ -32,6 +34,7 @@ import {
   type AchTab,
 } from '../utils/achieve';
 import { formatNum } from '../utils/format';
+import { restAva } from '../utils/restAva';
 
 /**
  * 成就墙（成就系统 2026-10-19，样稿 ①~④）：总览（成就点主角卡、最近达成、分类）、奖杯（展示柜 + 4 列格子）、
@@ -119,6 +122,28 @@ const shownName = (l: CatalogAchLineDto) =>
 const shownDesc = (l: CatalogAchLineDto) => (isSecret(l, gotSet.value) ? t.value.achieve.hiddenDesc : l.desc);
 const meterPct = (cur: number | null, n: number) => `${Math.min(100, ((cur ?? 0) / Math.max(1, n)) * 100)}%`;
 
+/** 成就点里程碑（成就 PR③）：头像框按成就点从小到大；轨道按站点等分，两站之间按点数插值 */
+const restStore = useRestaurantStore();
+const myArt = computed(() =>
+  restAva(restStore.rest?.id, restStore.rest?.avatar ?? null, (id) => catalog.avatarArt(id)),
+);
+const frames = computed(() => catalog.looks?.frames ?? []);
+const nextFrame = computed(() => frames.value.find((f) => f.points > (data.value?.points ?? 0)) ?? null);
+const masterAt = computed(() => frames.value.find((f) => f.icon === 'ach-master')?.points ?? 0);
+const trackPct = computed(() => {
+  const list = frames.value;
+  const p = data.value?.points ?? 0;
+  if (list.length < 2) return 0;
+  const i = list.findLastIndex((f) => p >= f.points);
+  if (i < 0) return 0;
+  if (i >= list.length - 1) return 100;
+  const a = list[i]!.points;
+  const b = list[i + 1]!.points;
+  return ((i + (p - a) / (b - a)) / (list.length - 1)) * 100;
+});
+/** 1,500 → 1.5k（站点下面地方小） */
+const shortPts = (n: number) => (n >= 1000 ? `${n / 1000}k` : String(n));
+
 /** 奖杯面板、展示柜 */
 const openTrophy = ref<string | null>(null);
 const shelf = computed(() => data.value?.shelf ?? []);
@@ -187,12 +212,40 @@ const iconTitle = (key: string | null) => (key ? (catalog.icon(key)?.title ?? ke
             ><span>{{ t.achieve.statWeek }}</span>
           </div>
         </div>
-        <div v-if="data.mine && data.shelfNext" class="dt-ach-next">
-          <div class="dt-meta">
-            <span>{{ t.achieve.shelfOpen(formatNum(data.shelfNext.points), data.shelfNext.slots) }}</span>
-            <span>{{ formatNum(data.points) }} / {{ formatNum(data.shelfNext.points) }}</span>
+        <!-- 里程碑（成就 PR③ 样稿 ③）：六个头像框一站一个，到了的亮着 -->
+        <div v-if="data.mine && frames.length > 0" class="dt-ach-next" data-testid="ach-milestones">
+          <div class="dt-ach-track" :aria-label="t.achieve.milestones">
+            <span class="dt-ach-track-line"><i :style="{ width: `${trackPct}%` }" /></span>
+            <span class="dt-ach-stops">
+              <span
+                v-for="f in frames"
+                :key="f.id"
+                :class="['dt-ach-stop', { 'is-got': data.points >= f.points }]"
+                :title="f.name"
+              >
+                <span :class="{ 'is-locked': data.points < f.points }"
+                  ><DtAvatar :art="myArt" :frame="f.id" :size="28"
+                /></span>
+                <span class="dt-ach-stop-pts">{{ shortPts(f.points) }}</span>
+              </span>
+            </span>
           </div>
-          <div class="dt-meter"><i :style="{ width: meterPct(data.points, data.shelfNext.points) }" /></div>
+          <div class="dt-meta">
+            <span>{{
+              nextFrame
+                ? t.achieve.milestoneNext(formatNum(nextFrame.points), nextFrame.name)
+                : t.achieve.milestoneAll
+            }}</span>
+            <span v-if="nextFrame">{{ formatNum(data.points) }} / {{ formatNum(nextFrame.points) }}</span>
+          </div>
+          <div class="dt-meta dt-ach-titles">
+            <span
+              >{{ t.achieve.titleAt(formatNum(masterAt)) }}
+              <span class="dt-title-badge">{{ iconTitle('ach-master') }}</span
+              >{{ t.achieve.titleAll }}
+              <span class="dt-title-badge">{{ iconTitle('ach-perfect') }}</span></span
+            >
+          </div>
         </div>
       </section>
 
@@ -218,7 +271,11 @@ const iconTitle = (key: string | null) => (key ? (catalog.icon(key)?.title ?? ke
               </span>
             </div>
             <span class="dt-ach-side"
-              ><b>+{{ catalog.achById.get(g.id)?.tier.pts ?? 0 }}</b></span
+              ><b>{{
+                catalog.achById.get(g.id)?.line.legacy
+                  ? t.achieve.noPts
+                  : `+${catalog.achById.get(g.id)?.tier.pts ?? 0}`
+              }}</b></span
             >
           </div>
         </div>
@@ -242,7 +299,7 @@ const iconTitle = (key: string | null) => (key ? (catalog.icon(key)?.title ?? ke
             </div>
             <span class="dt-ach-side"
               ><b>{{ c.got }} / {{ c.total }}</b
-              >{{ t.achieve.catSide(c.pts) }}</span
+              >{{ c.key === 'legacy' ? '' : t.achieve.catSide(c.pts) }}</span
             >
           </RouterLink>
         </div>
@@ -351,7 +408,10 @@ const iconTitle = (key: string | null) => (key ? (catalog.icon(key)?.title ?? ke
           />
           <span v-else class="dt-ach-ico" aria-hidden="true">★</span>
           <div class="dt-row-main">
-            <span class="dt-row-title">{{ shownName(s.line) }}</span>
+            <span class="dt-row-title"
+              >{{ shownName(s.line) }}
+              <span v-if="s.line.legacy" class="dt-tag dt-tag-warn">{{ t.achieve.legacyTag }}</span></span
+            >
             <span class="dt-meta">
               <template v-if="s.line.hidden">{{ shownDesc(s.line) }}</template>
               <template v-else-if="s.done">{{ t.achieve.maxed(s.line.desc) }}</template>
@@ -364,7 +424,10 @@ const iconTitle = (key: string | null) => (key ? (catalog.icon(key)?.title ?? ke
               <i v-for="x in segs(s.line)" :key="x.id" :class="{ 'is-on': x.on, 'is-cup': x.cup }" />
             </span>
           </div>
-          <span v-if="s.next" class="dt-ach-side"
+          <span v-if="s.line.legacy" class="dt-ach-side"
+            ><b>{{ t.achieve.noPts }}</b></span
+          >
+          <span v-else-if="s.next" class="dt-ach-side"
             ><b>{{ t.achieve.nextPts(s.next.pts) }}</b
             >{{ t.achieve.nextLabel }}</span
           >
@@ -410,7 +473,7 @@ const iconTitle = (key: string | null) => (key ? (catalog.icon(key)?.title ?? ke
             <span v-if="gotMap.get(x.id)?.first" class="dt-tag dt-tag-warn">{{ t.achieve.first }}</span>
           </span>
           <span class="dt-ach-side">
-            <b>{{ t.achieve.tierPts(x.pts) }}</b>
+            <b>{{ openLine.legacy ? t.achieve.noPts : t.achieve.tierPts(x.pts) }}</b>
             {{
               gotMap.get(x.id)
                 ? achWhen(gotMap.get(x.id)!.at)

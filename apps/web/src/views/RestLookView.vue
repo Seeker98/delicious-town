@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import type { MyLooksDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import DtArt from '../components/DtArt.vue';
+import DtAvatar from '../components/DtAvatar.vue';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
@@ -46,6 +47,21 @@ async function act(fn: () => Promise<unknown>, ok: string, fallback: string) {
 /** 限定称号（240-2）：还剩几天下架，不足一天算 0（显示“今天下架”） */
 function daysLeft(endsAt: string): number {
   return Math.max(0, Math.floor((new Date(endsAt).getTime() - serverNowMs()) / 86_400_000));
+}
+
+/** 头像框（成就 PR③ 样稿 ②）：成就点够了的能戴，点一下就换，0 = 不戴 */
+const myArt = computed(() => catalog.avatarArt(mine.value?.avatar) ?? 'avatar-chef');
+const achPoints = computed(() => mine.value?.achPoints ?? 0);
+const frames = computed(() => looks.value?.frames ?? []);
+const frameTiles = computed(() => [
+  { id: 0, name: t.value.rest.look.frameNone, points: 0 },
+  ...frames.value.map((f) => ({ id: f.id, name: f.name, points: f.points })),
+]);
+const wearing = computed(() => mine.value?.frame ?? 0);
+const nextFrame = computed(() => frames.value.find((f) => f.points > achPoints.value) ?? null);
+function setFrame(id: number) {
+  if (id === wearing.value) return;
+  void act(() => endpoints.setFrame(id), t.value.rest.look.frameSet, t.value.rest.look.frameFailed);
 }
 
 /** 个性图标最多展示几个（服务器同样限制） */
@@ -133,6 +149,62 @@ onMounted(async () => {
           <DtArt v-if="catalog.avatarArt(a.id)" :name="catalog.avatarArt(a.id)!" :size="40" />
           <span class="dt-avatar-name">{{ a.name }}</span>
         </button>
+      </div>
+    </section>
+
+    <!-- 头像框（成就 PR③）：上面戴着的预览，下面一格一个框；没解锁的灰着、写要多少点 -->
+    <section v-if="frames.length > 0 && mine.frame !== undefined" class="dt-block" data-testid="frames">
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.rest.look.frame }}</h2>
+        <span class="dt-meta">{{ t.rest.look.framePoints(formatNum(achPoints)) }}</span>
+      </div>
+      <div class="dt-card dt-frame-card">
+        <div class="dt-frame-preview">
+          <DtAvatar :art="myArt" :frame="mine.frame" :size="64" />
+          <div class="dt-min0">
+            <div class="dt-frame-preview-name">
+              {{ frames.find((f) => f.id === mine!.frame)?.name ?? t.rest.look.frameNoneTitle }}
+            </div>
+            <div class="dt-meta">{{ t.rest.look.frameHint }}</div>
+          </div>
+        </div>
+        <div class="dt-frame-grid" role="group" :aria-label="t.rest.look.frame">
+          <button
+            v-for="f in frameTiles"
+            :key="f.id"
+            type="button"
+            class="dt-frame-tile"
+            :aria-pressed="wearing === f.id"
+            :disabled="busy || achPoints < f.points"
+            :data-testid="`frame-${f.id}`"
+            @click="setFrame(f.id)"
+          >
+            <span :class="{ 'is-locked': achPoints < f.points }"
+              ><DtAvatar :art="myArt" :frame="f.id || null" :size="44"
+            /></span>
+            <span class="dt-frame-name">{{ f.name }}</span>
+            <span class="dt-frame-state">{{
+              wearing === f.id
+                ? t.rest.look.doorInUse
+                : achPoints >= f.points
+                  ? t.rest.look.frameOpen
+                  : t.rest.look.frameNeed(formatNum(f.points))
+            }}</span>
+          </button>
+        </div>
+        <div class="dt-meta">
+          <template v-if="nextFrame">
+            {{
+              t.rest.look.frameNext(
+                formatNum(nextFrame.points),
+                nextFrame.name,
+                formatNum(nextFrame.points - achPoints),
+              )
+            }}
+            <RouterLink class="dt-go" to="/achievements">{{ t.rest.look.frameAch }}</RouterLink>
+          </template>
+          <template v-else>{{ t.rest.look.frameAll }}</template>
+        </div>
       </div>
     </section>
 

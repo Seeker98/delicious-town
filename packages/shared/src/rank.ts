@@ -124,6 +124,8 @@ export interface LeaderboardRowDto {
   name: string;
   /** 头像（界面改版 P10），没设为 null */
   avatar: number | null;
+  /** 戴的头像框（成就 PR③）；旧服务端没有 */
+  frame?: number | null;
   value: number;
 }
 

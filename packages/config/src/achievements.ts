@@ -16,9 +16,15 @@ export const ACH_CATS = [
   'finance',
   'town',
   'hidden',
+  'legacy',
 ] as const;
 export type AchCat = (typeof ACH_CATS)[number];
 export const TROPHY_TONES = ['bronze', 'silver', 'gold', 'rainbow'] as const;
+/** 头像框的配色（成就 PR③，looks.frames） */
+export const FRAME_TONES = ['wood', 'bronze', 'silver', 'gold', 'jade', 'rainbow'] as const;
+export type FrameTone = (typeof FRAME_TONES)[number];
+/** 计点成就全部达成给的永久称号（小镇完人） */
+export const ACH_PERFECT_ICON = 'ach-perfect';
 export type TrophyTone = (typeof TROPHY_TONES)[number];
 
 /** 服务端 achieve 模块能算的状态名；grade、cuisine、towerWeeks、fund 后面带参数（冒号分隔） */
@@ -50,6 +56,7 @@ export const ACH_STATE_METRICS = [
   'friendsAll',
   'mayorMiss',
   'wishLose',
+  'legacy',
 ] as const;
 export type AchStateMetric = (typeof ACH_STATE_METRICS)[number];
 
@@ -57,7 +64,8 @@ const metricRe = /^(counter:[a-zA-Z0-9_.:-]+|state:[a-zA-Z0-9]+(:[A-Za-z0-9]+)?)
 
 export const rawAchTier = z.object({
   n: z.number().int().min(1),
-  pts: z.number().int().min(1).max(100),
+  /** 绝版成就是 0（不计点），其余至少 1 */
+  pts: z.number().int().min(0).max(100),
   metric: z.string().regex(metricRe).optional(),
   trophy: z
     .string()
@@ -75,6 +83,8 @@ export const rawAchLine = z.object({
   perStreet: z.boolean().optional(),
   /** 隐藏成就：达成前网页只显示 ???（分类 hidden，点数固定） */
   hidden: z.boolean().optional(),
+  /** 绝版成就：限时活动、开服纪念，只进成就墙、不计点（分类 legacy，点数 0） */
+  legacy: z.boolean().optional(),
   tiers: z.array(rawAchTier).min(1),
 });
 export const rawTrophy = z.object({
@@ -105,6 +115,8 @@ export interface AchLine {
   labels: string[] | null;
   /** 隐藏成就：达成前只显示 ??? */
   hidden: boolean;
+  /** 绝版成就（不计点） */
+  legacy: boolean;
   tiers: AchTier[];
 }
 export interface Trophy {
@@ -133,6 +145,10 @@ export function buildAchievements(
     seenKeys.add(raw.key);
     if ((raw.cat === 'hidden') !== (raw.hidden ?? false))
       errors.push(`achievements ${raw.key}: hidden lines go in cat hidden (and only there)`);
+    if ((raw.cat === 'legacy') !== (raw.legacy ?? false))
+      errors.push(`achievements ${raw.key}: legacy lines go in cat legacy (and only there)`);
+    if (raw.tiers.some((t) => (t.pts === 0) !== (raw.legacy ?? false)))
+      errors.push(`achievements ${raw.key}: legacy tiers have 0 points, the others at least 1`);
     if (raw.labels && raw.labels.length !== raw.tiers.length)
       errors.push(`achievements ${raw.key}: labels count ${raw.labels.length} != tiers ${raw.tiers.length}`);
     for (const [i, t] of raw.tiers.entries()) {
@@ -167,6 +183,7 @@ export function buildAchievements(
         streetId,
         labels: raw.labels ?? null,
         hidden: raw.hidden ?? false,
+        legacy: raw.legacy ?? false,
         tiers: raw.tiers.map((t, i) => ({
           id: `${key}.${i + 1}`,
           tier: i + 1,
@@ -197,6 +214,8 @@ export interface AchIndex {
   /** 状态类的档（每天扫、打开成就页时算） */
   stateTiers: ReadonlyArray<{ line: AchLine; tier: AchTier }>;
   trophies: ReadonlyMap<string, Trophy>;
+  /** 计点成就的总点数（全部达成得「小镇完人」） */
+  totalPts: number;
 }
 
 export function buildAchIndex(lines: AchLine[], trophies: Trophy[]): AchIndex {
@@ -213,5 +232,11 @@ export function buildAchIndex(lines: AchLine[], trophies: Trophy[]): AchIndex {
         byCounter.set(k, list);
       } else stateTiers.push({ line, tier });
     }
-  return { byId, byCounter, stateTiers, trophies: new Map(trophies.map((t) => [t.key, t])) };
+  return {
+    byId,
+    byCounter,
+    stateTiers,
+    trophies: new Map(trophies.map((t) => [t.key, t])),
+    totalPts: lines.flatMap((l) => l.tiers).reduce((a, t) => a + t.pts, 0),
+  };
 }

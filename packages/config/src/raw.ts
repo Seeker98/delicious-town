@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { FOOD_ARTS } from './foodArt';
+import { FRAME_TONES } from './achievements';
 
 const int = z.number().int();
 /** 数量门槛：数字，或 "all" = 菜谱总数（构建时换算，问题记录 284） */
@@ -365,6 +366,16 @@ export const looksFile = z.object({
   avatars: z
     .array(z.object({ id: int.min(1), name: z.string().min(1), art: z.string().regex(/^[a-z]+$/) }))
     .min(1),
+  // 头像框（成就 PR③）：成就点到 points 解锁；tone 是网页画框的配色；icon 是同一个里程碑一起给的永久称号
+  frames: z.array(
+    z.object({
+      id: int.min(1),
+      name: z.string().min(1),
+      tone: z.enum(FRAME_TONES),
+      points: int.min(1),
+      icon: z.string().optional(),
+    }),
+  ),
   icons: z.array(
     z.object({
       key: z.string().regex(/^[a-z0-9_-]{1,32}$/),

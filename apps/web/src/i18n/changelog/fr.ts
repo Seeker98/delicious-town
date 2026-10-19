@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  frames1019:
+    'Paliers de points de succès\u202f: 500, 1\u202f500, 3\u202f000, 5\u202f000, 8\u202f000 et 12\u202f000 points débloquent des cadres d’avatar en bois, bronze, argent, or, jade et arc-en-ciel. Mets-en un dans Tenue et titres et il apparaît sur ton avatar dans les listes d’amis, les classements et le forum. 12\u202f000 points donnent aussi le titre Maître des succès, et tous les succès qui rapportent des points donnent Modèle de la ville. Nouvelle catégorie Éditions passées (sans points)\u202f: Membre fondateur (boutique ouverte avant le 31/10/2026) et Témoin de la refonte des économiseurs (courrier de compensation récupéré)',
   hidden1019:
     '75 nouveaux succès\u202f: 57 succès cachés (masqués tant qu’ils ne sont pas obtenus, dans Succès → Catégories → Cachés), quatre nouvelles lignes, Unanimité (clients exigeants satisfaits), Salle comble (toutes les tables occupées), Pris la main dans le sac (pris à fouiller un placard) et Champion du bar de la semaine, et Habitué du bar gagne un palier pour avoir gagné aux dix jeux. Les historiques encore conservés ont été rattrapés',
   achieve1019:

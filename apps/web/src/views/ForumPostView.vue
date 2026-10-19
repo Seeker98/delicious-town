@@ -5,7 +5,7 @@ import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { ForumAdminAction, ForumPostDetailDto, ForumReadsDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
-import DtArt from '../components/DtArt.vue';
+import DtAvatar from '../components/DtAvatar.vue';
 import DtSheet from '../components/DtSheet.vue';
 import ReportButton from '../components/ReportButton.vue';
 import { useCatalogStore } from '../stores/catalog';
@@ -164,7 +164,9 @@ async function submit() {
     </div>
     <h2 class="dt-post-title" data-testid="post-title">{{ data.post.title }}</h2>
     <div class="dt-post-author">
-      <span class="dt-post-ava"><DtArt :name="ava(data.post.avatar)" :size="40" /></span>
+      <span class="dt-post-ava"
+        ><DtAvatar :art="ava(data.post.avatar)" :frame="data.post.frame" :size="40"
+      /></span>
       <span class="dt-post-author-main">
         <RouterLink :to="`/friends/${data.post.restId}`" class="dt-post-name">{{
           data.post.restName
@@ -226,7 +228,7 @@ async function submit() {
         class="dt-reply"
         :data-testid="`reply-${r.floor}`"
       >
-        <span class="dt-reply-ava"><DtArt :name="ava(r.avatar)" :size="32" /></span>
+        <span class="dt-reply-ava"><DtAvatar :art="ava(r.avatar)" :frame="r.frame" :size="32" /></span>
         <div class="dt-reply-main">
           <div class="dt-reply-head">
             <RouterLink v-if="r.restId !== null" :to="`/friends/${r.restId}`" class="dt-reply-name">{{
