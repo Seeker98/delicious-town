@@ -96,7 +96,7 @@ describe('老鼠和体力恢复的节奏（核对发现，设计 §4.4）', () =
         personas: ['casual'],
         seed: 1,
         start: new Date('2026-10-01T00:00:00+08:00'),
-        tuning: { ...settings.tuning, strength: { regen: 1, luckyRegen: 1 } },
+        tuning: { ...settings.tuning, strength: { regen: 1, luckyRegen: 1, meals: [] } },
         side: null,
         stuckDays: 5,
       },

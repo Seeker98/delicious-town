@@ -12,10 +12,12 @@ import {
   addDays,
   ErrorCode,
   gameDay,
+  gameParts,
   gameTime,
   weekStart,
   type ActivationBlock,
   type ActivationDto,
+  type MealDto,
   type QuestDto,
   type QuestsDto,
 } from '@dt/shared';
@@ -32,6 +34,7 @@ import { collectionCounts } from '../effects/aggregate';
 import { incrementDaily } from '../counter/dailyCounter';
 import { normalizeCounts } from '../settlement/globals';
 import { grantGoodsOp } from '../store/goods';
+import { gainStrength } from '../../core/resources';
 import {
   CHAPTER_MARK,
   convertOld,
@@ -90,6 +93,26 @@ async function recordStreak(db: Kysely<DB>, restId: number, day: string): Promis
     .onConflict((oc) => oc.column('rest_id').doUpdateSet(row))
     .execute();
   return prev && streak === 1 && prev.last_day !== day ? prev.streak : 0;
+}
+
+/** 开饭领体力的每日计数键 */
+export const mealKey = (key: string) => `meal.${key}`;
+
+/**
+ * 现在这一顿（在时段里，open）或下一顿（今天还没到的第一顿；都过了就是明天的第一顿）；没配时段为 null
+ */
+export function mealOf(
+  meals: Tuning['strength']['meals'],
+  hour: number,
+  eatenCount: (key: string) => number,
+): MealDto | null {
+  if (meals.length === 0) return null;
+  const now = meals.find((m) => m.from <= hour && hour < m.to);
+  if (now) return { ...now, open: true, eaten: eatenCount(now.key) > 0, tomorrow: false };
+  const next = meals.find((m) => m.from > hour);
+  return next
+    ? { ...next, open: false, eaten: false, tomorrow: false }
+    : { ...meals[0]!, open: false, eaten: false, tomorrow: true };
 }
 
 /** 活跃项编号（activation_extra.json、原版活跃表） */
@@ -426,6 +449,11 @@ export function createTaskService(d: GameDeps) {
     return {
       total: activationTotal(acts, counts),
       signedIn: (byKey.get(SIGNIN_KEY) ?? 0) > 0,
+      meal: mealOf(
+        settings.tuning.strength.meals,
+        gameParts(facts.now).hour,
+        (k) => byKey.get(mealKey(k)) ?? 0,
+      ),
       star: rest.star_level,
       level: rest.level,
       items: acts.map((a) => {
@@ -566,6 +594,18 @@ export function createTaskService(d: GameDeps) {
           if (kujiTickets > 0) restLog(o, 'kuji.activation', { points, num: kujiTickets });
         }
         return { points, kujiTickets };
+      });
+    },
+
+    /** 开饭领体力（用户 2026-10-19）：开饭时段里每顿领一次，体力直接加（可以超过上限），错过不补 */
+    meal(ctx: RestCtx) {
+      return runOp(d, ctx, { feature: 'task', source: 'meal' }, async (o) => {
+        const m = mealOf(o.tuning.strength.meals, gameParts(o.now).hour, () => 0);
+        if (!m?.open) throw invalidState('meal_closed');
+        if ((await incrementDaily(o.tx, o.rest.id, mealKey(m.key), 1, gameDay(o.now))) > 1)
+          throw new AppError(ErrorCode.ALREADY_DONE, 400);
+        gainStrength(o, m.amount);
+        return { key: m.key, amount: m.amount };
       });
     },
 

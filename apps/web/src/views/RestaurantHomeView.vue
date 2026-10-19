@@ -10,6 +10,7 @@ import type {
   EffectDto,
   QuestDto,
   QuestsDto,
+  MealDto,
 } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import ActivityBanner from '../components/ActivityBanner.vue';
@@ -93,17 +94,23 @@ async function loadAnnouncements() {
 
 /** 首页签到（问题记录 144）和今日活跃点数（问题记录 280）：读失败就不显示 */
 const signedIn = ref<boolean | null>(null);
+/** 开饭领体力（用户 2026-10-19）：这一顿或下一顿；旧服务端、没配时段为 null */
+const meal = ref<MealDto | null>(null);
 const activeTotal = ref<number | null>(null);
 /** 有够了点数还没领的活跃档位（问题记录 481）：今日活跃后面跟一个礼物图标 */
 const activeClaimable = ref(false);
+/** 开饭时间写成 12:00 */
+const hh = (h: number) => `${String(h).padStart(2, '0')}:00`;
 async function loadSignIn() {
   try {
     const a = await endpoints.activation();
     signedIn.value = a.signedIn;
+    meal.value = a.meal ?? null;
     activeTotal.value = a.total;
     activeClaimable.value = a.rewards.some((r) => !r.claimed && a.total >= r.points);
   } catch {
     signedIn.value = null;
+    meal.value = null;
     activeTotal.value = null;
     activeClaimable.value = false;
   }
@@ -622,6 +629,41 @@ onBeforeUnmount(() => {
             <span v-else class="dt-row-done" data-testid="home-signed"
               ><i class="bi bi-check2 me-1" aria-hidden="true"></i>{{ t.home.signedShort }}</span
             >
+          </template>
+        </DtRow>
+        <!-- 开饭领体力（用户 2026-10-19）：开饭时段里右边一个“吃饭”胶囊，领过写已吃；两顿之间写下一顿几点开饭 -->
+        <DtRow v-if="meal" art="nav-cookbooks" data-testid="home-meal-row">
+          <template #title
+            >{{ meal.open ? t.home.mealOpen : t.home.mealTitle }}
+            <span v-if="meal.open" class="dt-tag dt-tag-warn">{{ t.home.mealName[meal.key] }}</span></template
+          >
+          <template #sub>{{
+            t.home.mealSub(
+              meal.open ? '' : t.home.mealName[meal.key],
+              hh(meal.from),
+              hh(meal.to),
+              meal.amount,
+            )
+          }}</template>
+          <template #end>
+            <template v-if="meal.open">
+              <button
+                v-if="!meal.eaten"
+                type="button"
+                class="btn btn-sm btn-primary"
+                data-testid="home-meal"
+                :disabled="busy"
+                @click="act(() => endpoints.meal(), t.home.mealFailed)"
+              >
+                {{ t.home.mealBtn }}
+              </button>
+              <span v-else class="dt-row-done" data-testid="home-meal-done"
+                ><i class="bi bi-check2 me-1" aria-hidden="true"></i>{{ t.home.mealDone }}</span
+              >
+            </template>
+            <span v-else class="dt-meta" data-testid="home-meal-next">{{
+              meal.tomorrow ? t.home.mealTomorrow(hh(meal.from)) : t.home.mealAt(hh(meal.from))
+            }}</span>
           </template>
         </DtRow>
         <DtRow

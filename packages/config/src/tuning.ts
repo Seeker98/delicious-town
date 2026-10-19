@@ -157,7 +157,24 @@ export const tuningSchema = z.object({
     plaquePer: num,
     honorPer: num,
   }),
-  strength: z.object({ regen: int, luckyRegen: int }),
+  strength: z.object({
+    regen: int,
+    luckyRegen: int,
+    /** 开饭领体力（用户 2026-10-19）：每天这几个时段 [from, to) 点（游戏时间）各领一次，可以超过上限、错过不补 */
+    meals: z
+      .array(
+        z.object({
+          key: z.enum(['lunch', 'dinner']),
+          from: int.min(0).max(23),
+          to: int.min(1).max(24),
+          amount: int.min(1),
+        }),
+      )
+      .refine((ms) => ms.every((m, i) => m.from < m.to && (i === 0 || ms[i - 1]!.to <= m.from)), {
+        message: 'meals must be ordered, non-overlapping, from < to',
+      })
+      .default([]),
+  }),
   mouse: z.object({
     rateBase: num,
     ratePerStar: num,

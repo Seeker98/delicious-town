@@ -51,6 +51,17 @@ export default {
   signedShort: '已签到',
   signInBtn: '签到',
   signInFailed: '签到失败',
+  /** 开饭领体力（用户 2026-10-19） */
+  mealTitle: '开饭',
+  mealOpen: '开饭了',
+  mealName: { lunch: '午餐', dinner: '晚餐' },
+  mealSub: (name: string, from: string, to: string, n: number) =>
+    `${name ? `${name} ` : ''}${from}~${to} · 体力 +${n}`,
+  mealBtn: '吃饭',
+  mealDone: '已吃',
+  mealAt: (at: string) => `${at} 开饭`,
+  mealTomorrow: (at: string) => `明天 ${at} 开饭`,
+  mealFailed: '没吃上饭',
   mainTag: '主线',
   /** 首页餐厅动态卡（问题记录 553） */
   feedTitle: '餐厅动态',

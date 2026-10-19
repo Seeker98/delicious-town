@@ -62,6 +62,7 @@ vi.mock('../api/endpoints', () => ({
     announcements: vi.fn(),
     activation: vi.fn(),
     signIn: vi.fn(),
+    meal: vi.fn(),
   },
 }));
 
@@ -727,6 +728,42 @@ describe('RestaurantHomeView', () => {
     const done = await mountView();
     expect(done.find('[data-testid="open-plaque2"]').exists()).toBe(false);
   });
+  it('开饭领体力（用户 2026-10-19）：开饭时间点“吃饭”领；领过写已吃；两顿之间写下一顿几点；旧服务端不显示', async () => {
+    const act = (meal: unknown) =>
+      vi.mocked(endpoints.activation).mockResolvedValue({
+        total: 0,
+        signedIn: true,
+        star: 0,
+        level: 1,
+        items: [],
+        rewards: [],
+        kujiTicket: null,
+        ...(meal === undefined ? {} : { meal }),
+      } as never);
+    const dinner = { key: 'dinner', from: 18, to: 20, amount: 30, open: true, eaten: false, tomorrow: false };
+    act(dinner);
+    vi.mocked(endpoints.meal).mockResolvedValue({ key: 'dinner', amount: 30 } as never);
+    const w = await mountView();
+    const row = w.get('[data-testid="home-meal-row"]');
+    expect(row.text()).toContain('开饭了');
+    expect(row.text()).toContain('晚餐');
+    expect(row.text()).toContain('18:00~20:00 · 体力 +30');
+    act({ ...dinner, eaten: true });
+    await w.get('[data-testid="home-meal"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.meal).toHaveBeenCalled();
+    expect(w.get('[data-testid="home-meal-done"]').text()).toContain('已吃');
+    act({ ...dinner, open: false });
+    const next = await mountView();
+    expect(next.get('[data-testid="home-meal-next"]').text()).toBe('18:00 开饭');
+    act({ key: 'lunch', from: 12, to: 14, amount: 20, open: false, eaten: false, tomorrow: true });
+    const late = await mountView();
+    expect(late.get('[data-testid="home-meal-next"]').text()).toBe('明天 12:00 开饭');
+    act(undefined);
+    const old = await mountView();
+    expect(old.find('[data-testid="home-meal-row"]').exists()).toBe(false);
+  });
+
   it('首页排版（问题记录 280）：第一屏三张卡——餐厅、今日待办、小镇动态；设施、经营开关在下面', async () => {
     vi.mocked(endpoints.activation).mockResolvedValue({
       total: 18,

@@ -20,5 +20,7 @@ export function taskRoutes(svc: TaskService): FastifyPluginAsync {
       okOp(await svc.claimActivation(restCtxOf(req), parse(claimActivationBody, req.body).points)),
     );
     r.post('/signin', async (req) => okOp(await svc.signIn(restCtxOf(req))));
+    // 开饭领体力（用户 2026-10-19）
+    r.post('/meal', async (req) => okOp(await svc.meal(restCtxOf(req))));
   };
 }
