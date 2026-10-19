@@ -16,6 +16,7 @@ import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { consumeGoods, grantGoodsOp } from '../store/goods';
 import { assertNoRound, endRound, loadRound, saveRound } from './round';
 import { dartScore, dartX } from './rules';
+import { bumpCounters } from '../achieve/counters';
 
 /** 服务端局面：老板分数只在这里 */
 interface DartsState {
@@ -84,6 +85,8 @@ export async function dartsThrow(o: Op, elapsedMs: number): Promise<DartsThrowDt
   // 支线“酒桌高手”：赢老板、三镖全中靶心（问题记录 515）
   if (result === 'win') await emitAction(o, 'bar.darts.win');
   if (perfect) await emitAction(o, 'bar.darts.perfect');
+  // 隐藏成就“脱靶”：三镖都是 0 分
+  if (throws.every((x) => x === 0)) await bumpCounters(o, [['bar.darts.miss', 1]]);
   let award: RandomAward | null = null;
   let refund = 0;
   if (result === 'win') {

@@ -20,6 +20,7 @@ import {
   achName,
   achWhen,
   catStats,
+  isSecret,
   lineName,
   lineState,
   rarityText,
@@ -34,7 +35,7 @@ import { formatNum } from '../utils/format';
 
 /**
  * 成就墙（成就系统 2026-10-19，样稿 ①~④）：总览（成就点主角卡、最近达成、分类）、奖杯（展示柜 + 4 列格子）、
- * 十个分类各一页（一条成就线一行，点开从下面弹出各档）。/achievements/:restId 是别人的，只读、不带进度
+ * 十一个分类各一页（一条成就线一行，点开从下面弹出各档；隐藏成就达成前名字、说明都是 ???）。/achievements/:restId 是别人的，只读、不带进度
  */
 const t = useT();
 const route = useRoute();
@@ -112,6 +113,10 @@ const lineTrophy = (l: CatalogAchLineDto) => {
   const x = got ?? cups[0]!;
   return { tone: catalog.trophyMap.get(x.trophy!)?.tone ?? 'gold', locked: !got };
 };
+/** 线名、说明：隐藏成就没达成时是 ??? */
+const shownName = (l: CatalogAchLineDto) =>
+  isSecret(l, gotSet.value) ? t.value.achieve.hiddenName : lineName(l, catalog);
+const shownDesc = (l: CatalogAchLineDto) => (isSecret(l, gotSet.value) ? t.value.achieve.hiddenDesc : l.desc);
 const meterPct = (cur: number | null, n: number) => `${Math.min(100, ((cur ?? 0) / Math.max(1, n)) * 100)}%`;
 
 /** 奖杯面板、展示柜 */
@@ -346,9 +351,10 @@ const iconTitle = (key: string | null) => (key ? (catalog.icon(key)?.title ?? ke
           />
           <span v-else class="dt-ach-ico" aria-hidden="true">★</span>
           <div class="dt-row-main">
-            <span class="dt-row-title">{{ lineName(s.line, catalog) }}</span>
+            <span class="dt-row-title">{{ shownName(s.line) }}</span>
             <span class="dt-meta">
-              <template v-if="s.done">{{ t.achieve.maxed(s.line.desc) }}</template>
+              <template v-if="s.line.hidden">{{ shownDesc(s.line) }}</template>
+              <template v-else-if="s.done">{{ t.achieve.maxed(s.line.desc) }}</template>
               <template v-else-if="s.cur !== null && s.next">{{
                 t.achieve.progress(s.line.desc, formatNum(s.cur), tierText(s.line, s.next))
               }}</template>
@@ -368,14 +374,10 @@ const iconTitle = (key: string | null) => (key ? (catalog.icon(key)?.title ?? ke
   </template>
 
   <!-- ③ 成就线面板 -->
-  <DtSheet
-    :open="openLine !== null"
-    :title="openLine ? lineName(openLine, catalog) : ''"
-    @close="openLine = null"
-  >
+  <DtSheet :open="openLine !== null" :title="openLine ? shownName(openLine) : ''" @close="openLine = null">
     <template v-if="openLine && openState && data">
-      <p class="dt-meta">{{ openLine.desc }}</p>
-      <div v-if="openState.next && openState.cur !== null" class="dt-ach-sum">
+      <p class="dt-meta">{{ shownDesc(openLine) }}</p>
+      <div v-if="!openLine.hidden && openState.next && openState.cur !== null" class="dt-ach-sum">
         <div class="dt-meta">
           <span>{{ t.achieve.now }}</span
           ><b>{{ formatNum(openState.cur) }}</b>
@@ -398,7 +400,7 @@ const iconTitle = (key: string | null) => (key ? (catalog.icon(key)?.title ?? ke
         >
           <span class="dt-ach-dot">{{ gotSet.has(x.id) ? '✓' : x.tier }}</span>
           <span class="dt-ach-tier-main">
-            {{ tierText(openLine, x) }}
+            {{ openLine.hidden ? shownName(openLine) : tierText(openLine, x) }}
             <span v-if="x.trophy" class="dt-tag dt-tag-warn">{{
               t.achieve.trophyTag(trophyName(x.trophy, catalog))
             }}</span>

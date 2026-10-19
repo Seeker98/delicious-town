@@ -644,6 +644,10 @@ export interface BarStateTable {
   num_result: number | null;
   num_times: Default<number>;
   slot_fail: Default<number>;
+  /** 隐藏成就的连续次数（成就 PR②）：魔鬼辣杯连输局数、最后一颗糖新手桌连输局数、老虎机连着全空的次数 */
+  devil_lose: Default<number>;
+  nim_lose: Default<number>;
+  slot_blank: Default<number>;
 }
 
 /** 酒吧连胜、连败的每周最高（问题记录 517）：week 是那一周的周一 */
@@ -1527,6 +1531,8 @@ export interface RestAchTable {
 export interface AchShardTable {
   shard_id: number;
   backfilled_at: Ts;
+  /** 补发到了第几版（ACH_BACKFILL_VERSION）：新版成就上线时再按补发记一遍 */
+  version: Generated<number>;
 }
 
 export interface DB {

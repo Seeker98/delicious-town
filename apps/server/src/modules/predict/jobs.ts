@@ -6,6 +6,7 @@ import { restLog, runSystemOp } from '../../core/op';
 import { gainCoin } from '../../core/resources';
 import { createAutoEvents, resolveAutoEvents } from './auto';
 import { payoutOf } from './service';
+import { bumpCounters } from '../achieve/counters';
 
 const BATCH = 200;
 
@@ -43,7 +44,7 @@ export async function settleEvents(
 ): Promise<{ settled: number; failed: number }> {
   const events = await d.db
     .selectFrom('predict_event')
-    .select(['id', 'title', 'status', 'outcome', 'unit', 'void_ratio'])
+    .select(['id', 'title', 'status', 'outcome', 'unit', 'void_ratio', 'p0'])
     .where('shard_id', '=', shardId)
     .where('status', 'in', ['resolved', 'void'])
     .where('settled_at', 'is', null)
@@ -86,6 +87,17 @@ export async function settleEvents(
           if (e.status === 'resolved' && got > 0) await emitAction(o, 'predict.win');
           // 支线“事件预测”（问题记录 515）：一次结算赚、亏到某个数；作废退款不算
           if (e.status === 'resolved') for (const key of settleQuestKeys(got, net)) await emitAction(o, key);
+          // 隐藏成就“黑天鹅”：押中开盘不到 10% 的一边；“反向指标”：押了开盘 90% 以上的一边却输了
+          if (e.status === 'resolved' && e.outcome !== null) {
+            const p0 = Number(e.p0);
+            const won = e.outcome ? p.yes : p.no;
+            const lost = e.outcome ? p.no : p.yes;
+            const pWon = e.outcome ? p0 : 1 - p0;
+            await bumpCounters(o, [
+              ['predict.blackSwan', won > 0 && pWon < 0.1 ? 1 : 0],
+              ['predict.reverse', lost > 0 && 1 - pWon >= 0.9 ? 1 : 0],
+            ]);
+          }
           return true;
         });
         if (done) settled++;

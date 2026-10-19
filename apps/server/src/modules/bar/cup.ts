@@ -10,6 +10,7 @@ import { badInput } from './common';
 import { endRound, loadRound, saveRound } from './round';
 import { cupWinRate, nextTimes, type BarResult } from './rules';
 import { lockBarState, recordStreak, saveBarState } from './state';
+import { bumpCounters } from '../achieve/counters';
 
 type T = Tuning['bar']['cup'];
 
@@ -46,6 +47,8 @@ async function finish(o: Op, s: CupState, result: 'stop' | 'clear'): Promise<Cup
     awards.push(await randomAward(o, { level: tier.level, noTicket: true, bar: true }));
   await streak(o, 1);
   if (result === 'clear') await emitAction(o, 'bar.cup.clear');
+  // 成就“夜店常客”都赢过：收手或通关
+  await bumpCounters(o, [['bar.cup.won', 1]]);
   const cups = t.cups[s.round]!;
   if (tier.news)
     opNews(o, tier.news === 'broadcast' ? 'bar.cup.big' : 'bar.cup', { round: s.round + 1, cups });

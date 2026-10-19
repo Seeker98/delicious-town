@@ -18,6 +18,22 @@ export const BAR_GAMES = [
   'spice',
   'deal',
 ] as const;
+/**
+ * “都赢过”：每个酒吧游戏算赢过的计数，有一个大于 0 就算（PR② 新加的 bar.<游戏>.won 以前，用原来的计数补）。
+ * 老虎机、记忆调酒、一掷千金没有胜负：有奖、答对第 1 关、拿到的比开局花的多
+ */
+export const BAR_WON: Record<(typeof BAR_GAMES)[number], string[]> = {
+  fg: ['streak.fg.win'],
+  cup: ['bar.cup.won', 'bar.cup.clear'],
+  num: ['bar.num.win'],
+  slot: ['bar.slot.won'],
+  devil: ['bar.devil.win'],
+  memory: ['bar.memory.won', 'bar.memory.top'],
+  darts: ['bar.darts.win'],
+  nim: ['bar.nim.novice', 'bar.nim.expert'],
+  spice: ['bar.spice.won', 'bar.spice.win6', 'bar.spice.win4'],
+  deal: ['bar.deal.won', 'bar.deal.top'],
+};
 /** 能聊天的镇民（计数 town.talk.<镇民>，和 NpcKey 一致） */
 export const TALK_NPCS = ['bigEater', 'wenjie', 'bro13', 'carmen'] as const;
 
@@ -64,6 +80,26 @@ export async function achValues(
           ) d
         ) g group by grp
       ) x)`.as('mayorStreak'),
+      // 隐藏成就“人形反向天气预报”：猜天气最长连错（一天里猜的都错才算这天错）
+      sql<number>`(select coalesce(max(c), 0) from (
+        select count(*) as c from (
+          select day::date - (row_number() over (order by day))::int as grp from (
+            select day from mayor_guess where rest_id = ${rest.id} and "right" is not null
+            group by day having bool_and(not "right")
+          ) d
+        ) g group by grp
+      ) x)`.as('mayorMiss'),
+      // 隐藏成就“许愿池的王八”：最长连着许愿没中的天数（开过奖的轮）
+      sql<number>`(select coalesce(max(c), 0) from (
+        select count(*) as c from (
+          select r.day::date - (row_number() over (order by r.day))::int as grp
+          from wish_entry e join wish_round r on r.id = e.round_id
+          where e.rest_id = ${rest.id} and r.status <> 'open' and not e.won
+        ) g group by grp
+      ) x)`.as('wishLose'),
+      // 隐藏成就“交际花”：好友数（不算蟹老板，不管等级和邮箱）
+      sql<number>`(select count(*) from friend f join restaurant r on r.id = f.friend_id
+        where f.rest_id = ${rest.id} and not r.npc)`.as('friendsAll'),
       sql<number>`(select count(*) from rest_mc where rest_id = ${rest.id})`.as('mcLearned'),
       sql<number | null>`(select max(curlevel) from rest_mc where rest_id = ${rest.id})`.as('mcLevel'),
       // 好友：10 级以上、验证过邮箱（小号不算），不算蟹老板
@@ -121,6 +157,9 @@ export async function achValues(
   v.set('state:streets', streets.size);
   v.set('state:wishWins', Number(f.wishWins));
   v.set('state:mayorStreak', Number(f.mayorStreak));
+  v.set('state:mayorMiss', Number(f.mayorMiss));
+  v.set('state:wishLose', Number(f.wishLose));
+  v.set('state:friendsAll', Number(f.friendsAll));
   v.set('state:cookLearned', counts.learned);
   for (let g = 1; g <= 10; g++)
     v.set(
@@ -149,6 +188,7 @@ export async function achValues(
     TALK_NPCS.filter((n) => (counters[`town.talk.${n}`] ?? 0) > 0 || (n === 'carmen' && f.carmenGift)).length,
   );
   v.set('state:barPlayed', BAR_GAMES.filter((g) => (counters[`bar.${g}`] ?? 0) > 0).length);
+  v.set('state:barWon', BAR_GAMES.filter((g) => BAR_WON[g].some((k) => (counters[k] ?? 0) > 0)).length);
   // 菜系：这条街的食谱是不是全部学会（1）、全部 ≥ 金牌（5）、全部佳肴（7）
   const levels = f.levels ? new Uint8Array(f.levels) : new Uint8Array(0);
   const idx = config.cookbookIndex;

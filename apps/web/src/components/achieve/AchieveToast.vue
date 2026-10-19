@@ -13,6 +13,10 @@ const t = useT();
 const store = useAchieveToastStore();
 const catalog = useCatalogStore();
 const trophyOf = (key: string) => catalog.achById.get(key)?.tier.trophy ?? null;
+const title = (key: string) =>
+  catalog.achById.get(key)?.line.hidden
+    ? t.value.achieve.toastHidden(achName(key, catalog))
+    : t.value.achieve.toast(achName(key, catalog));
 </script>
 
 <template>
@@ -34,7 +38,7 @@ const trophyOf = (key: string) => catalog.achById.get(key)?.tier.trophy ?? null;
         <span v-else aria-hidden="true">★</span>
       </span>
       <span class="dt-ach-toast-text">
-        <span class="dt-ach-toast-title">{{ t.achieve.toast(achName(x.key, catalog)) }}</span>
+        <span class="dt-ach-toast-title">{{ title(x.key) }}</span>
         <span v-if="trophyOf(x.key)" class="dt-meta">{{
           t.achieve.toastTrophy(trophyName(trophyOf(x.key)!, catalog))
         }}</span>

@@ -11,6 +11,7 @@ import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { randomAward } from '../award/random';
 import { dineEndReward, expelReward } from './rules';
 import { clearTable, findTable, isEmptyTable, readTables, writeTables } from './tables';
+import { bumpCounters } from '../achieve/counters';
 
 const row = (db: Kysely<DB>, dinerId: number) =>
   db.selectFrom('dine_dash').selectAll().where('diner_rest_id', '=', dinerId).executeTakeFirst();
@@ -106,6 +107,8 @@ export function createDine(d: GameDeps) {
             .execute();
           // “吃白食”任务开始就算完成，不用等 30 分钟（问题记录 463）；白食本身的结算不变
           await emitAction(me, 'friend.dineAndDash');
+          // 隐藏成就“冤大头”：自己店被吃白食的次数（蟹老板的店不记）
+          await bumpCounters(them, [['dine.victim', 1]]);
           feedLog(p, 'dine.start', { table: b.tableNo });
           restLog(me, 'dine.started', { host: them.rest.id, hostName: them.rest.name, table: b.tableNo });
           return { hostRestId: them.rest.id, tableNo: b.tableNo, startedAt: since };

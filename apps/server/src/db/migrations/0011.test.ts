@@ -26,6 +26,10 @@ describe('迁移 0011', () => {
       num_result: null,
       num_times: 0,
       slot_fail: 0,
+      // 0088 加的隐藏成就连续次数
+      devil_lose: 0,
+      nim_lose: 0,
+      slot_blank: 0,
     });
     await expect(db.insertInto('bar_state').values({ rest_id: a }).execute()).rejects.toThrow();
     const b = await newRest();

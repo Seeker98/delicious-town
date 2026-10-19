@@ -36,9 +36,13 @@ export async function recordStreak(
   result: BarResult,
   times: number,
 ): Promise<void> {
-  if (result === 0) return;
-  // 成就（2026-10-19）：划拳历史最长连胜、连败（这张表只留 3 周）
-  if (game === 'fg') await raiseCounter(o, result > 0 ? 'streak.fg.win' : 'streak.fg.lose', times);
+  // 成就（2026-10-19）：划拳历史最长连胜、连败、连平，猜酒杯、转数字最长连败（这张表只留 3 周、不记平局）
+  if (result === 0) {
+    if (game === 'fg') await raiseCounter(o, 'streak.fg.draw', times);
+    return;
+  }
+  if (game === 'fg' || result < 0)
+    await raiseCounter(o, `streak.${game}.${result > 0 ? 'win' : 'lose'}`, times);
   await o.tx
     .insertInto('bar_streak_best')
     .values({ rest_id: o.rest.id, game, result, week: weekStart(gameDay(o.now)), times, reached_at: o.now })
@@ -49,6 +53,20 @@ export async function recordStreak(
         .where('bar_streak_best.times', '<', sql<number>`excluded.times`),
     )
     .execute();
+}
+
+/** 只给隐藏成就记的连续次数（bar_state 的列）：魔鬼辣杯连输、新手桌连输、老虎机连空 */
+export type BarRunColumn = 'devil_lose' | 'nim_lose' | 'slot_blank';
+
+/**
+ * 隐藏成就的连续次数：hit 时连续数加 add，否则清零；加了就看历史最长（event_counter 的 key）有没有跨过门槛
+ */
+export async function recordRun(o: Op, col: BarRunColumn, key: string, hit: boolean, add = 1): Promise<void> {
+  const s = await lockBarState(o);
+  const times = hit ? s[col] + add : 0;
+  if (times === s[col]) return;
+  await saveBarState(o, { [col]: times });
+  if (hit) await raiseCounter(o, key, times);
 }
 
 /**

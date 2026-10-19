@@ -13,6 +13,10 @@ import { grantGoodsOp } from '../store/goods';
 import { killHostKey, killReward, killStrength, layReward, perHostLeft, type KillPlace } from './rules';
 import { roachCap } from '../settlement/tables';
 import { clearTable, findTable, isEmptyTable, readTables, writeTables } from './tables';
+import { bumpCounters } from '../achieve/counters';
+
+/** 一天里被别人放这么多只蟑螂：隐藏成就“蟑螂乐园” */
+const ROACH_PARK = 20;
 
 /** 在 host 店灭 tableNo 桌的蟑螂；me 和 host 可以是同一个 Op（自己店） */
 async function killIn(
@@ -96,7 +100,9 @@ export function createRoach(d: GameDeps) {
           gainCoin(me, r.coin);
           gainExp(me, r.exp);
           await incrementDaily(me.tx, me.rest.id, 'roach.lay', 1, day);
-          await incrementDaily(me.tx, them.rest.id, 'roach.laidOn', 1, day);
+          // 隐藏成就“蟑螂乐园”：一天里被别人放了 20 只
+          if ((await incrementDaily(me.tx, them.rest.id, 'roach.laidOn', 1, day)) === ROACH_PARK)
+            await bumpCounters(them, [['roach.laidOnDay', 1]]);
           await emitAction(me, 'roach.lay');
           feedLog(p, 'roach.laid', { table: b.tableNo });
           return r;

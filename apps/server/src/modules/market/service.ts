@@ -28,6 +28,7 @@ import { manualStock } from './manual';
 import type { WorldService } from '../world/service';
 import { manualCost, personLimit, rollShelf, unitPrice, type Shelf } from './rules';
 import { gameSeed } from '../../core/seed';
+import { bumpCounters } from '../achieve/counters';
 
 const deviceSubject = (id: string) => `dev:${createHash('sha256').update(id).digest('hex').slice(0, 16)}`;
 
@@ -98,6 +99,14 @@ export function createMarketService(d: GameDeps, world: WorldService) {
       // 支线“菜场竞猜”（问题记录 515）：一次猜中 3 种以上、5 种以上
       if (hits >= 3) await emitAction(o, 'market.guess.hit3');
       if (hits >= 5) await emitAction(o, 'market.guess.hit5');
+      // 隐藏成就：选满时全中（满分）、差一个（失之交臂）、一个没中（菜价盲）
+      const full = g.foods_ids.length;
+      if (full >= o.tuning.market.guessMaxPick)
+        await bumpCounters(o, [
+          ['market.guess.all', hits === full ? 1 : 0],
+          ['market.guess.almost', hits === full - 1 ? 1 : 0],
+          ['market.guess.none', hits === 0 ? 1 : 0],
+        ]);
     });
   }
 

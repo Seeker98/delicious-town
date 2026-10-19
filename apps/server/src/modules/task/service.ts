@@ -46,6 +46,7 @@ import {
 } from './quests';
 import { activationTotal, questVars, stateValue } from './rules';
 import { eligibilityOf } from '../exchange/eligibility';
+import { bumpCounters } from '../achieve/counters';
 
 const SIGNIN_KEY = 'signin';
 const claimKey = (points: number) => `act.claim:${points}`;
@@ -71,8 +72,11 @@ function collectionOf(owned: number[], honors: number[], config: GameConfig) {
   };
 }
 
-/** 连续签到（支线“签到和活跃”，问题记录 515）：昨天签过的接着数，否则从 1 开始；最长的留着 */
-async function recordStreak(db: Kysely<DB>, restId: number, day: string): Promise<void> {
+/**
+ * 连续签到（支线“签到和活跃”，问题记录 515）：昨天签过的接着数，否则从 1 开始；最长的留着。
+ * 返回断掉以前连着签了几天（没断是 0）
+ */
+async function recordStreak(db: Kysely<DB>, restId: number, day: string): Promise<number> {
   const prev = await db
     .selectFrom('signin_streak')
     .select(['last_day', 'streak', 'best'])
@@ -85,6 +89,7 @@ async function recordStreak(db: Kysely<DB>, restId: number, day: string): Promis
     .values({ rest_id: restId, ...row })
     .onConflict((oc) => oc.column('rest_id').doUpdateSet(row))
     .execute();
+  return prev && streak === 1 && prev.last_day !== day ? prev.streak : 0;
 }
 
 /** 活跃项编号（activation_extra.json、原版活跃表） */
@@ -569,7 +574,8 @@ export function createTaskService(d: GameDeps) {
         const day = gameDay(o.now);
         if ((await incrementDaily(o.tx, o.rest.id, SIGNIN_KEY, 1, day)) > 1)
           throw new AppError(ErrorCode.ALREADY_DONE, 400);
-        await recordStreak(o.tx, o.rest.id, day);
+        // 隐藏成就“九十九步”：连签 99 天断了（再签到时才知道断了）
+        if ((await recordStreak(o.tx, o.rest.id, day)) === 99) await bumpCounters(o, [['signin.break99', 1]]);
         await grantGoodsOp(o, GOODS.signInGift, 1);
         await emitAction(o, 'signin');
         return { signedIn: true };

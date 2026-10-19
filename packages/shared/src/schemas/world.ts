@@ -115,6 +115,8 @@ export interface CatalogAchLineDto {
   desc: string;
   streetId: number | null;
   labels: string[] | null;
+  /** 隐藏成就（达成前只显示 ???）；旧缓存里没有 */
+  hidden?: boolean;
   tiers: Array<{
     id: string;
     tier: number;

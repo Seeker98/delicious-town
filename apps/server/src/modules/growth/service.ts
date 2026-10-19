@@ -1,6 +1,7 @@
 import { GOODS, GOODS_TYPE } from '@dt/config';
 import {
   ErrorCode,
+  gameDay,
   type AttrResultDto,
   type DeviceOptionsDto,
   type OilNeedDto,
@@ -26,6 +27,7 @@ import type { WorldService } from '../world/service';
 import { placeDevice } from './devices';
 import { moveCost, oilChecks, renameProblem, starChecks, starCoinOf } from './rules';
 import { bumpCounters } from '../achieve/counters';
+import { incrementDaily } from '../counter/dailyCounter';
 
 export function createGrowthService(d: GameDeps, world: WorldService) {
   const op = <T>(ctx: RestCtx, source: string, fn: (op: Op) => Promise<T>): Promise<OpResult<T>> =>
@@ -291,8 +293,18 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
         // 支线“四海为家”按搬到哪条街记（问题记录 515：搬到杂碎街）；只记任务用得上的街
         const moveTo = `rest.moveTo.${streetId}`;
         if (questCounterKeys(o.config).has(moveTo)) await emitAction(o, moveTo);
+        // 隐藏成就“兜兜转转”：搬回住过的街；“居无定所”：一天里搬 3 次
+        const back = await o.tx
+          .selectFrom('event_counter')
+          .select('count')
+          .where('rest_id', '=', o.rest.id)
+          .where('key', '=', `street.seen.${streetId}`)
+          .executeTakeFirst();
+        const moves = await incrementDaily(o.tx, o.rest.id, 'rest.move', 1, gameDay(o.now));
         // 成就“走街串巷”（2026-10-19）：搬出、搬入的街都记下
         await bumpCounters(o, [
+          ['rest.moveBack', back ? 1 : 0],
+          ['rest.moveDay', moves === 3 ? 1 : 0],
           [`street.seen.${from}`, 1],
           [`street.seen.${streetId}`, 1],
         ]);

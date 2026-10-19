@@ -7,6 +7,7 @@ import { featureAvailable } from '../../core/features';
 import { opNews, restLog, runSystemOp, setRest, type Op } from '../../core/op';
 import { gainCoin, gainExp, gainRenown } from '../../core/resources';
 import { subFoods } from '../cupboard/foods';
+import { getDailies, incrementDaily } from '../counter/dailyCounter';
 import { cookInSeason, perPortion } from '../shiling/rules';
 import { accrueShiling } from '../shiling/store';
 import { consumeSpecial } from '../mysterious/cook';
@@ -19,7 +20,8 @@ import { settleRestaurant } from './settle';
 import type { SettleGlobals, SpecialDish } from './types';
 import { gameSeed } from '../../core/seed';
 import { cedeRound, cedeState } from '../acquire/rules';
-import { awardCounters } from '../achieve/counters';
+import { awardCounters, bumpCounters } from '../achieve/counters';
+import { roundAchCounters } from '../achieve/round';
 
 export type RoundStats = {
   round: number;
@@ -154,6 +156,8 @@ export async function settleOne(
     setRest(op, 'state', 2);
     setRest(op, 'state_reason', 'no_oil');
     restLog(op, 'rest.closed', { reason: 'no_oil' });
+    // 隐藏成就“无米之炊”
+    await bumpCounters(op, [['rest.noOil', 1]]);
     await op.tx
       .updateTable('restaurant_tables')
       .set({ round_no: round })
@@ -164,6 +168,7 @@ export async function settleOne(
   // 被收购的店（收购改版 2026-10-16）：老板打理以后结算银币 × tendMultiplier，再按抽成比例让一份记到 acquire_due，
   // 00:05 发给老板。锁着这家店读收购状态：强收、赎身、放手、打理都要锁这家店，读到的就是这一刻的老板
   const { coin, ceded } = await cedeOf(op, r.coin, cede);
+  const oilBefore = op.rest.oil;
   // 结算的银币经验由 income_round 记录，不写流水；银币最低到 0
   gainCoin(op, coin - ceded, { ledger: false, event: false });
   gainExp(op, r.exp, { ledger: false, event: false });
@@ -198,15 +203,15 @@ export async function settleOne(
   }
   for (const l of r.logs) restLog(op, l.type, l.params);
   if (r.planktonAppeared) opNews(op, 'plankton.appear');
-  // 成就（2026-10-19）：累计营业银币（让渡前，和每日汇总一致）、轮数、蟹老板吃到大餐。
-  // 加计数也放进这条语句（问题记录 258：一轮的语句数不加），加完的值从 returning 带回来看门槛
+  // 成就（2026-10-19）：累计营业银币（让渡前，和每日汇总一致）、轮数、蟹老板吃到大餐，PR② 的这一轮的样子
+  // （满意的挑剔顾客、满座、隐藏成就）。加计数也放进这条语句（问题记录 258：一轮的语句数不加），
+  // 加完的值从 returning 带回来看门槛；今天走掉的挑剔顾客记每日计数，也在这条语句里
   const bump = (
-    [
-      ['income.coin', coin],
-      ['income.rounds', 1],
-      ['krab.happy', r.logs.filter((l) => l.type === 'krab.happy').length],
-    ] as Array<[string, number]>
+    [['income.coin', coin], ['income.rounds', 1], ...roundAchCounters(r, { coin, oilBefore })] as Array<
+      [string, number]
+    >
   ).filter(([, n]) => n > 0);
+  const pickyLeft = r.customers['-2'] ?? 0;
   // 写餐桌放在 WITH 里和插收益记录合成一条语句（Postgres 的数据修改 CTE 不被引用也会执行）
   const written = await op.tx
     .with('t', (db) =>
@@ -224,6 +229,17 @@ export async function settleOne(
         )
         .returning(['key', 'count']),
     )
+    .with('d', (db) =>
+      db
+        .insertInto('daily_counter')
+        .values({ rest_id: op.rest.id, day: gameDay(op.now), key: 'picky.left', count: pickyLeft })
+        .onConflict((oc) =>
+          oc
+            .columns(['rest_id', 'day', 'key'])
+            .doUpdateSet({ count: sql`daily_counter.count + excluded.count` }),
+        )
+        .returning('count'),
+    )
     .insertInto('income_round')
     .values({
       rest_id: op.rest.id,
@@ -237,17 +253,45 @@ export async function settleOne(
       drops: JSON.stringify(r.drops),
       created_at: op.now,
     })
-    .returning(
+    .returning([
       sql<Array<{
         key: string;
         count: number;
       }> | null>`(select json_agg(json_build_object('key', c.key, 'count', c.count::float8)) from c)`.as(
         'counters',
       ),
-    )
+      sql<number>`(select count from d)`.as('pickyToday'),
+    ])
     .executeTakeFirstOrThrow();
   await awardCounters(op, bump, written.counters ?? []);
+  // 隐藏成就“众口难调”：一天里走掉的挑剔顾客跨过门槛的那一轮记一次
+  const today = Number(written.pickyToday);
+  if (pickyLeft > 0 && today >= PICKY_DAY && today - pickyLeft < PICKY_DAY)
+    await bumpCounters(op, [['picky.left.day', 1]]);
+  // 隐藏成就“喜怒无常”：同一天里蟹老板在店里既开心又生气（蟹老板极少来，多两条语句不碍事）
+  const krab = r.logs.filter((l) => l.type === 'krab.happy' || l.type === 'krab.angry');
+  if (krab.length > 0) await krabMood(op, krab);
   return 'settled';
+}
+
+/** 一天里走掉这么多挑剔顾客：隐藏成就“众口难调” */
+const PICKY_DAY = 100;
+
+async function krabMood(op: Op, logs: Array<{ type: string }>): Promise<void> {
+  const day = gameDay(op.now);
+  const seen = new Set<string>();
+  for (const l of logs) {
+    if (seen.has(l.type)) continue;
+    seen.add(l.type);
+    await incrementDaily(op.tx, op.rest.id, l.type, 1, day);
+  }
+  const d = await getDailies(op.tx, op.rest.id, ['krab.happy', 'krab.angry'], day);
+  if (
+    d['krab.happy']! > 0 &&
+    d['krab.angry']! > 0 &&
+    (await incrementDaily(op.tx, op.rest.id, 'krab.mood', 1, day)) === 1
+  )
+    await bumpCounters(op, [['krab.mood', 1]]);
 }
 
 /** 这一轮的让渡：不在本轮开始时有老板的店里，或者现在已经没有老板时不让 */

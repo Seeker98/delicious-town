@@ -24,13 +24,42 @@ describe('成就配置（设计稿 2026-10-19）', () => {
     });
   });
 
-  it('总量: PR① 的成就个数、点数、奖杯、称号（改了配置就更新这里）', () => {
+  it('总量: PR①、PR② 的成就个数、点数、奖杯、称号（改了配置就更新这里）', () => {
     const tiers = b.achievements.flatMap((l) => l.tiers);
-    expect(tiers).toHaveLength(410);
-    expect(tiers.reduce((a, t) => a + t.pts, 0)).toBe(18260);
-    expect(b.trophies).toHaveLength(86);
+    expect(tiers).toHaveLength(485);
+    expect(tiers.reduce((a, t) => a + t.pts, 0)).toBe(19680);
+    expect(b.trophies).toHaveLength(88);
     expect(tiers.filter((t) => t.icon).length).toBe(16);
     expect(new Set(tiers.map((t) => t.id)).size).toBe(tiers.length);
+  });
+
+  it('隐藏成就：57 个，各一档、点数固定不超过 40、不带奖杯和称号', () => {
+    const hidden = b.achievements.filter((l) => l.hidden);
+    expect(hidden).toHaveLength(57);
+    expect(hidden.every((l) => l.cat === 'hidden' && l.tiers.length === 1)).toBe(true);
+    expect(hidden.every((l) => l.tiers[0]!.pts <= 40 && !l.tiers[0]!.trophy && !l.tiers[0]!.icon)).toBe(true);
+    expect(b.achievements.filter((l) => l.cat === 'hidden' && !l.hidden)).toEqual([]);
+  });
+
+  it('隐藏成就的配置校验：hidden 只能在 hidden 分类', () => {
+    const errors: string[] = [];
+    buildAchievements(
+      [
+        {
+          key: 'x',
+          cat: 'bar',
+          name: 'x',
+          desc: 'x',
+          metric: 'counter:x',
+          hidden: true,
+          tiers: [{ n: 1, pts: 5 }],
+        },
+      ],
+      [],
+      { streetIds: [], iconKeys: new Set() },
+      errors,
+    );
+    expect(errors.some((e) => e.includes('hidden'))).toBe(true);
   });
 
   it('称号都在装扮的称号表里；金融类每档不超过 20 点', () => {

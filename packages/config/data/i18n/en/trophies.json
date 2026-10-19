@@ -169,5 +169,11 @@
   },
   "ta2000": {
     "name": "Lightning Fast"
+  },
+  "picky": {
+    "name": "Crowd Pleaser"
+  },
+  "caught": {
+    "name": "Caught Red-Handed"
   }
 }

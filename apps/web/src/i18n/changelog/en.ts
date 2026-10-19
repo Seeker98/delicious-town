@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  hidden1019:
+    '75 new achievements: 57 hidden ones (shown as ??? until earned, under Achievements → Categories → Hidden), plus four new lines, Crowd Pleaser (picky customers satisfied), Full House (every table taken), Caught Red-Handed (caught raiding cupboards) and Bar Champion of the Week, and Bar Regular gets a second tier for winning all ten games. Records still on file have been backfilled',
   achieve1019:
     'New: achievements. 410 achievements across ten categories (restaurant, daily, recipes, special dishes, friends, bar, tower, temple, finance, town) give achievement points, and some also give trophies and permanent titles. See your progress under Me → Achievements and put trophies in a showcase your friends can see. The rankings have a new Achievements board (points, new this week). Progress since the server opened has been backfilled',
   oilsaver1019:

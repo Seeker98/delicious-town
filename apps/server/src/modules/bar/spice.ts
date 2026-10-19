@@ -11,6 +11,7 @@ import { badInput } from './common';
 import { assertNoRound, endRound, loadRound, saveRound } from './round';
 import { recordFewest } from './state';
 import { spiceScore, spiceTier } from './rules';
+import { bumpCounters } from '../achieve/counters';
 
 type T = Tuning['bar']['spice'];
 
@@ -86,6 +87,8 @@ export async function spiceGuess(o: Op, guess: number[]): Promise<SpiceDto> {
     // 支线“酒桌高手”：6 次、4 次以内猜中（问题记录 515）
     if (tries <= 6) await emitAction(o, 'bar.spice.win6');
     if (tries <= 4) await emitAction(o, 'bar.spice.win4');
+    // 成就“夜店常客”都赢过（6 次以上猜中的原来没有全历史计数）
+    await bumpCounters(o, [['bar.spice.won', 1]]);
     // 排行：猜中次数、本周单局最少几次猜中（问题记录 569）
     await incrementDaily(o.tx, o.rest.id, 'bar.spice.win', 1, gameDay(o.now));
     await recordFewest(o, 'spice', tries);

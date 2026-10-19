@@ -2,11 +2,14 @@ import { sql } from 'kysely';
 import { addDays, gameDay, gameTime, ROUND_MS, type HygieneReportParams } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import type { PeriodicJob } from '../../core/jobs';
+import { bumpCountersFor } from '../achieve/counters';
 
 /** 巡查哪些店：和防虫设施开放的星级一致（设施第 4、5 格要 2 星） */
 export const HYGIENE_MIN_STAR = 2;
 const MOUSE_TYPES = ['mouse.trap', 'mouse.escape', 'mouse.nothing', 'mouse.steal'] as const;
 const CHUNK = 500;
+/** 隐藏成就“卫生不合格”：巡查报告里前一天自己长的蟑螂占桌满这么多小时（桌·小时） */
+export const HYGIENE_BAD_HOURS = 24;
 
 type Device = { goodsId: number; hours: number };
 
@@ -109,6 +112,12 @@ export async function hygieneRound(d: GameDeps, shardId: number, now: Date): Pro
       });
     if (rows.length > 0) await d.db.insertInto('rest_log').values(rows).execute();
     reports += rows.length;
+    for (const r of rows) {
+      if ((JSON.parse(r.params) as HygieneReportParams).roachHours < HYGIENE_BAD_HOURS) continue;
+      await d.db
+        .transaction()
+        .execute((tx) => bumpCountersFor(d, tx, { shardId, restId: r.rest_id, now }, [['hygiene.bad', 1]]));
+    }
   }
   return { reports };
 }

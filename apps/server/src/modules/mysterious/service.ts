@@ -43,6 +43,7 @@ import {
   tasteTickets,
   trialRestExp,
 } from './rules';
+import { bumpCounters } from '../achieve/counters';
 
 /** 支线“神秘菜谱”的“一批特色菜价值 10 万以上”（问题记录 515） */
 const BIG_BATCH = 100_000;
@@ -470,6 +471,8 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         const c = await currentCook(o);
         if (!c) throw invalidState('no_cooking');
         await endCook(o, c.id, 'dumped');
+        // 隐藏成就“暴殄天物”
+        await bumpCounters(o, [['mc.dump', 1]]);
         return { id: c.id };
       });
     },

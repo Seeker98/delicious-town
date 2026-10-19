@@ -10,6 +10,7 @@ import { consumeGoods } from '../store/goods';
 import { badInput } from './common';
 import { assertNoRound, endRound, loadRound, saveRound } from './round';
 import { nimBartenderTake } from './rules';
+import { recordRun } from './state';
 
 /** 最后一颗糖的服务端局面（设计 §5）；全部公开，没有要藏的 */
 export interface NimState {
@@ -77,6 +78,8 @@ async function finish(o: Op, s: NimState, win: boolean): Promise<NimDto> {
     await incrementDaily(o.tx, o.rest.id, `bar.nim.win.${s.table}`, 1, gameDay(o.now));
     award = await randomAward(o, { level: t.awardLevel, noTicket: true, bar: true });
   }
+  // 隐藏成就“被新手教做人”：新手桌连输局数（高手桌不打断）
+  if (s.table === 'novice') await recordRun(o, 'nim_lose', 'streak.nim.novice.lose', !win);
   restLog(o, 'bar.nim', { table: s.table, result: win ? 'win' : 'lose' });
   return { ...nimView(s), result: win ? 'win' : 'lose', renown: win ? t.renown : 0, award };
 }

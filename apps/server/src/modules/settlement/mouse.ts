@@ -57,8 +57,12 @@ async function visit(op: Op): Promise<{ outcome: Outcome; map: boolean }> {
       await subFoods(op, pick.foods_id, num, { source: 'mouse', event: false });
       outcome = 'stolen';
       restLog(op, 'mouse.steal', { foodsId: pick.foods_id, num });
+      // 隐藏成就“鼠患”
+      await bumpCounters(op, [['mouse.steal', 1]]);
     }
   }
+  // 隐藏成就“守株待兔”：摆着老鼠夹，老鼠来了却没夹住
+  if (outcome !== 'trapped' && (agg.trapRate ?? 0) > 0) await bumpCounters(op, [['mouse.trapMiss', 1]]);
   const map = op.rng.chance(agg.earnMapRate ?? 0);
   if (map) {
     await grantGoodsOp(op, GOODS.adventureMap, 1, { source: 'mouse', event: false });

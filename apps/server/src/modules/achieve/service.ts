@@ -16,7 +16,7 @@ import type { DB, RestaurantRow } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { BOARD_SOURCES } from '../rank/boards';
 import { rankRows, type RankedRow } from '../rank/ranking';
-import { awardAchievements } from './award';
+import { awardAchievements, shardBackfilled } from './award';
 import { achValues, valueOf, type AchValues } from './metrics';
 
 /** 展示柜格数：成就点到了哪一档就开到几格 */
@@ -63,25 +63,20 @@ export async function evaluateRest(
   });
 }
 
-/** 区服补发完了没有：补发完以前打开成就页补算的也记成补发（不写动态、不算本周新增） */
-export async function shardBackfilled(db: Kysely<DB>, shardId: number): Promise<boolean> {
-  return !!(await db
-    .selectFrom('ach_shard')
-    .select('shard_id')
-    .where('shard_id', '=', shardId)
-    .executeTakeFirst());
-}
-
 export function createAchieveService(d: GameDeps) {
   /** 稀有度缓存：区服 → 成就编号 → 占比 */
   const rarityCache = new Map<number, { at: number; map: Record<string, number> }>();
   /** 成就点榜的名次缓存（和排行页同样的秒数）：成就墙每次打开不重算整张榜 */
   const rankCache = new Map<number, { at: number; rows: RankedRow[] }>();
-  /** 网页要的进度键：配置里用到的口径（菜系按街道），别的计数不发 */
+  /** 网页要的进度键：配置里用到的口径（菜系按街道），别的计数不发；隐藏成就不显示进度，也不发 */
   const progressKeys = new Set(
-    d.config.bundle.achievements.flatMap((l) =>
-      l.tiers.map((x) => achProgressKey(x.metric, x.metric.startsWith('state:cuisine') ? l.streetId : null)),
-    ),
+    d.config.bundle.achievements
+      .filter((l) => !l.hidden)
+      .flatMap((l) =>
+        l.tiers.map((x) =>
+          achProgressKey(x.metric, x.metric.startsWith('state:cuisine') ? l.streetId : null),
+        ),
+      ),
   );
 
   async function rankOf(shardId: number, restId: number, cacheSeconds: number): Promise<number | null> {

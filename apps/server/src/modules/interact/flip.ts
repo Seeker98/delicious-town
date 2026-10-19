@@ -23,6 +23,7 @@ import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { addFoods, subFoods } from '../cupboard/foods';
 import { grantGoodsOp } from '../store/goods';
 import { caughtCoin, flipCoolMs, flipHostKey, flipSlots, perHostLeft } from './rules';
+import { bumpCounters } from '../achieve/counters';
 
 /** 从对方未锁定的 1~5 级食材里按 odds 抽一种；没有返回 null */
 async function pickFood(op: Op, rng: Rng): Promise<number | null> {
@@ -124,7 +125,12 @@ export function createFlip(d: GameDeps) {
                 spendCoin(me, coin);
                 gainCoin(them, coin, { event: false });
               }
-              await incrementDaily(me.tx, me.rest.id, 'flip.caught', 1, day);
+              // 成就“一叶障目”：被抓次数；隐藏成就“惯犯”：一天里被抓 3 次
+              const caught = await incrementDaily(me.tx, me.rest.id, 'flip.caught', 1, day);
+              await bumpCounters(me, [
+                ['flip.caught', 1],
+                ['flip.caughtDay', caught === 3 ? 1 : 0],
+              ]);
             }
           } else {
             let ticket = false;
@@ -165,6 +171,8 @@ export function createFlip(d: GameDeps) {
           await incrementDaily(me.tx, me.rest.id, 'flip.times', 1, day);
           await incrementDaily(me.tx, me.rest.id, hostKey, 1, day);
           await incrementDaily(me.tx, them.rest.id, 'flip.flipped', 1, day);
+          // 隐藏成就“门户大开”：自家橱柜被翻的次数（不论结果；蟹老板的店不记）
+          await bumpCounters(them, [['cupboard.flipped', 1]]);
           await emitAction(me, 'cupboard.flip');
           feedLog(p, 'friend.flip', {
             slot: b.slotNo,

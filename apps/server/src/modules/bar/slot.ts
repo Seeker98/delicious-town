@@ -7,6 +7,7 @@ import { assertVerified } from '../../core/verified';
 import { addFoods } from '../cupboard/foods';
 import { consumeGoods, countGoods, grantGoodsOp } from '../store/goods';
 import { slotFloorLeft, slotFloorRate, slotForced } from './rules';
+import { bumpCounters, raiseCounter } from '../achieve/counters';
 import { lockBarState, saveBarState } from './state';
 
 /**
@@ -23,18 +24,39 @@ export async function playSlot(o: Op, times: number): Promise<SlotResultDto> {
   const spins: number[][] = [];
   /** 奖项 id → 格数 */
   const got = new Map<number, number>();
+  // 成就（PR②）：吃到保底的格数、不靠保底出稀有的格数、有奖的次数、连着全空的次数（跨请求接着数）
+  let floors = 0;
+  let lucky = 0;
+  let won = 0;
+  let blank = s.slot_blank;
+  let blankBest = 0;
   for (let i = 0; i < times; i++) {
     const spin: number[] = [];
+    let empty = true;
     for (let c = 0; c < t.slotCells; c++) {
       const floor = slotForced(fail, t) || o.rng.next() < slotFloorRate(fail, t);
       const a = floor ? floorAward : pickWeighted(o.config.slotPool, o.rng);
       fail = floor || a.rare ? 0 : fail + 1;
+      if (floor) floors++;
+      else if (a.rare) lucky++;
+      if (a.kind !== 'empty') empty = false;
       spin.push(a.id);
       got.set(a.id, (got.get(a.id) ?? 0) + 1);
     }
+    if (empty) blankBest = Math.max(blankBest, ++blank);
+    else {
+      blank = 0;
+      won++;
+    }
     spins.push(spin);
   }
-  await saveBarState(o, { slot_fail: fail });
+  await saveBarState(o, { slot_fail: fail, slot_blank: blank });
+  await bumpCounters(o, [
+    ['bar.slot.floor', floors],
+    ['bar.slot.lucky', lucky],
+    ['bar.slot.won', won],
+  ]);
+  if (blankBest > 0) await raiseCounter(o, 'streak.slot.blank', blankBest);
   await o.tx
     .insertInto('bar_slot_stat')
     .values([...got].map(([award_id, num]) => ({ rest_id: o.rest.id, award_id, num })))

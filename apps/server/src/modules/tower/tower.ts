@@ -21,6 +21,7 @@ import {
   type TowerTuning,
 } from './rules';
 import { cachedSide, playerSide, sideDto, watchmanSide } from './sides';
+import { bumpCounters } from '../achieve/counters';
 
 /** 本区服守塔人当天的菜，键 = 层 */
 async function watchmanMcs(
@@ -167,6 +168,8 @@ export async function challengeTower(o: Op, floorNo: number, test: boolean): Pro
     await incrementDaily(o.tx, o.rest.id, KEY.done, 1, day);
     await incrementDaily(o.tx, o.rest.id, KEY.floor(floorNo), 1, day);
     await emitAction(o, 'tower.challenge');
+    // 隐藏成就“越挫越勇”：挑战输的次数（试打不算）
+    if (!r.win) await bumpCounters(o, [['tower.lose', 1]]);
   }
   return {
     win: r.win,

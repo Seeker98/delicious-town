@@ -15,6 +15,7 @@ import { levelsOf } from '../takeaway/common';
 import type { WorldService } from '../world/service';
 import { extendHonor } from './honor';
 import { bangleRate, exchangeFee, exchangeLimits } from './rules';
+import { bumpCounters } from '../achieve/counters';
 
 const foodRow = (op: Op, foodsId: number) =>
   op.tx
@@ -192,6 +193,8 @@ export function createExchange(d: GameDeps, world: WorldService) {
             }
           }
           await emitAction(me, 'foods.exchange');
+          // 隐藏成就“冤种”：自己的食材被别人换走的次数（蟹老板的店不记）
+          await bumpCounters(them, [['foods.taken', 1]]);
           feedLog(p, 'exchange', { give: give.id, take: take.id, result: 'ok' });
           return { result: 'ok', fee, redPantsFoodsId };
         },

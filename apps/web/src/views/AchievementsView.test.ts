@@ -179,6 +179,41 @@ describe('AchievementsView', () => {
     expect(w.get('[data-testid="ach-shelf"]').text()).toContain('小强青铜');
   });
 
+  it('隐藏成就：没达成的名字、说明都是 ???，不写进度；达成的照常显示，提示写“隐藏成就”', async () => {
+    const hidden = (key: string, name: string): CatalogAchLineDto => ({
+      key,
+      cat: 'hidden',
+      name,
+      desc: `${name}的条件`,
+      streetId: null,
+      labels: null,
+      hidden: true,
+      tiers: [
+        { id: `${key}.1`, tier: 1, n: 100, pts: 5, metric: `counter:${key}`, trophy: null, icon: null },
+      ],
+    });
+    const c = useCatalogStore();
+    const lines = [hidden('mice', '鼠患'), hidden('penny', '一枚铜板')];
+    c.achLines = [...c.achLines, ...lines];
+    for (const line of lines) c.achById.set(line.tiers[0]!.id, { line, tier: line.tiers[0]! });
+    vi.mocked(endpoints.achievements).mockResolvedValue(
+      dto({
+        got: [{ id: 'penny.1', at: '2026-10-19T00:12:00.000Z', first: false, backfilled: false }],
+        progress: { 'counter:mice': 40 },
+      }),
+    );
+    const w = await mountView('/achievements?tab=lines&cat=hidden');
+    const secret = w.get('[data-testid="ach-line-mice"]').text();
+    expect(secret).toContain('???');
+    expect(secret).toContain('达成后揭晓');
+    expect(secret).not.toContain('鼠患');
+    expect(secret).not.toContain('40');
+    expect(w.get('[data-testid="ach-line-penny"]').text()).toContain('一枚铜板的条件');
+    await w.get('[data-testid="ach-line-mice"]').trigger('click');
+    await flushPromises();
+    expect(document.body.querySelector('[data-testid="ach-tiers"]')!.textContent).not.toContain('鼠患');
+  });
+
   it('别人的成就墙：读那家店的，不显示进度', async () => {
     vi.mocked(endpoints.achievementsOf).mockResolvedValue(dto({ mine: false, progress: {}, name: '乙店' }));
     const w = await mountView('/achievements/7?tab=lines&cat=friend');

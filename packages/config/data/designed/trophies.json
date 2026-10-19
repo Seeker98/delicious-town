@@ -1,7 +1,7 @@
 {
   "source": "新设计（成就系统 2026-10-19）",
   "rule": "奖杯只是装饰；tone 是底色 bronze / silver / gold / rainbow；cuisine 是菜系奖杯的模板，构建时按街道展开成 cuisine.<街道>",
-  "count": 57,
+  "count": 59,
   "data": [
     {
       "key": "lv99",
@@ -287,6 +287,16 @@
       "key": "ta2000",
       "name": "雷厉风行",
       "tone": "rainbow"
+    },
+    {
+      "key": "picky",
+      "name": "众口交赞",
+      "tone": "silver"
+    },
+    {
+      "key": "caught",
+      "name": "一叶障目",
+      "tone": "bronze"
     }
   ]
 }
