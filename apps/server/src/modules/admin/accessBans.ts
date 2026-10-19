@@ -73,7 +73,7 @@ export function createAccessBans(game: Game) {
           .execute(db)
           .catch(() => ({ rows: [{ hit: false }] }));
         if (self.rows[0]?.hit) throw invalidState('ban_self');
-      }
+      } else if (actor.deviceId && value === actor.deviceId) throw invalidState('ban_self');
       const result = await db.transaction().execute(async (tx) => {
         const row = await tx
           .insertInto('access_ban')

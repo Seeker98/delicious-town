@@ -42,7 +42,8 @@ describe('每日汇总', () => {
       .values({
         rest_id: b,
         round_no: 1,
-        coin: 50,
+        coin: 60,
+        ceded: 10,
         exp: 20,
         oil: 2,
         customers: JSON.stringify({}),
@@ -56,6 +57,7 @@ describe('每日汇总', () => {
       rows.find((r) => r.kind === kind && r.source === source)?.amount ?? 0;
     expect(amount('coin', 'signin')).toBe(107);
     expect(amount('coin', 'market.buy')).toBe(-30);
+    // 被收购的店让给老板 10：只算店留下的 50（让的那份第二天发放时另有流水）
     expect(amount('coin', 'settlement')).toBe(50);
     expect(amount('exp', 'settlement')).toBe(20);
     expect(amount('foods', 'mouse')).toBe(-1);

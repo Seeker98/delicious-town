@@ -117,11 +117,12 @@ export function afterCap(p: RatePart, weather: number): RatePart {
 const clip01 = (p: RatePart): RatePart => ({ ...p, total: Math.min(Math.max(p.total, 0), 1) });
 
 /**
- * 挑剔率截到 0~1，再过软上限（挑剔顾客调整 2026-10-12）：超过 at 的部分只算 rate。
- * 压掉的部分记成负的分项 softCap，分项加起来仍等于合计
+ * 挑剔率超过 1 的先截到 1，再过软上限（挑剔顾客调整 2026-10-12）：超过 at 的部分只算 rate。
+ * 压掉的部分记成负的分项 softCap，分项加起来仍等于合计。
+ * 负数原样留着、截到 0 在加完天气之后做：痞老板勋章（-120%）的店遇到霾也不该来挑剔顾客（代码审查 2026-10-19）
  */
 export function softCap(sp: RatePart, at: number, rate: number): RatePart {
-  const clipped = Math.min(Math.max(sp.total, 0), 1);
+  const clipped = Math.min(sp.total, 1);
   if (clipped <= at) return { total: clipped, parts: sp.parts };
   const total = round(at + (clipped - at) * rate);
   return { total, parts: { ...sp.parts, softCap: round(total - sp.total) } };

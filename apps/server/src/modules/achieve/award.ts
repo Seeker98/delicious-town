@@ -82,6 +82,9 @@ export async function awardAchievements(
 ): Promise<string[]> {
   const tiers = a.ids.map((id) => config.achievements.byId.get(id)).filter((x) => x !== undefined);
   if (tiers.length === 0) return [];
+  // 蟹老板的店不拿成就：别人给它点赞也会记“被赞”，原来能拿成就、抢全服首达（代码审查 2026-10-19）
+  const owner = await tx.selectFrom('restaurant').select('npc').where('id', '=', a.restId).executeTakeFirst();
+  if (!owner || owner.npc) return [];
   const added = await tx
     .insertInto('rest_achievement')
     .values(
@@ -149,6 +152,7 @@ export async function awardAchievements(
         .distinct()
         .where('ra.ach_id', 'in', big)
         .where('r.shard_id', '=', a.shardId)
+        .where('r.npc', '=', false)
         .where('ra.rest_id', '!=', a.restId)
         .execute();
       const takenIds = new Set(taken.map((r) => r.ach_id));

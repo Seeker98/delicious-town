@@ -90,7 +90,8 @@ export function createAccessGuard(db: Kysely<DB>): AccessGuard {
 export function registerAccessGuard(app: FastifyInstance, guard: AccessGuard): void {
   app.addHook('onClose', async () => guard.close());
   app.addHook('onRequest', async (req) => {
-    if (!req.url.startsWith('/api/')) return;
+    // 按匹配到的路由判断，不看原始 url：/%61pi/... 解码后照样进 /api 的路由（代码审查 2026-10-19）
+    if (!req.routeOptions.url?.startsWith('/api/')) return;
     const hit = await guard.blocked(req.clientIp, deviceIdOf(req));
     if (hit) throw new AppError(ErrorCode.ACCESS_BANNED, 403, { kind: hit });
   });

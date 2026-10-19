@@ -56,4 +56,19 @@ describe('grantGoods', () => {
     await grantGoods(db, config, restId, GOODS.mysteryTicket, 5, new Date());
     expect((await item(restId, GOODS.mysteryTicket))!.num).toBe(max);
   });
+
+  it('已经超过上限的（老数据合并库存）再发只是不加，不往下压（代码审查 2026-10-19）', async () => {
+    const restId = await newRest();
+    const max = config.requireGoods(GOODS.mysteryTicket).maxNum;
+    await grantGoods(db, config, restId, GOODS.mysteryTicket, 1, new Date());
+    await db
+      .updateTable('store_item')
+      .set({ num: max + 5 })
+      .where('rest_id', '=', restId)
+      .where('goods_id', '=', GOODS.mysteryTicket)
+      .execute();
+    const r = await grantGoods(db, config, restId, GOODS.mysteryTicket, 1, new Date());
+    expect(r).toMatchObject({ granted: 0, dropped: 1 });
+    expect((await item(restId, GOODS.mysteryTicket))!.num).toBe(max + 5);
+  });
 });

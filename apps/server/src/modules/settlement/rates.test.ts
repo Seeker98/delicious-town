@@ -234,6 +234,11 @@ describe('汇总率（规格书 01 §1.3）', () => {
     expect(sp(0.1).total).toBeCloseTo(capped + 0.1);
     expect(sp(0.1).parts.weather).toBeCloseTo(0.1);
     expect(sp(-0.5).total).toBe(0);
+    // 挑剔率是负的（痞老板勋章 -120%）：负数不先截成 0，霾 +35% 加上去还是 0（代码审查 2026-10-19）
+    const neg = (w: number) =>
+      rates({ rest: { star: 2 }, agg: { spRate: -1.2 } }, { weather: { spRate: w } }).rates.spRate;
+    expect(neg(0.35).total).toBe(0);
+    expect(neg(0).total).toBe(0);
     // 0 星照旧不受天气影响
     expect(rates({}, { weather: { atRate: -0.5, spRate: -0.5 } }).rates.atRate.parts).not.toHaveProperty(
       'weather',

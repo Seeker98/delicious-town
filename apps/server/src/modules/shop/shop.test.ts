@@ -275,6 +275,23 @@ describe('后期海报奖杯按星级可用（问题记录 146）', () => {
     expect(row.sold).toBe(1);
   });
 
+  it('当天的特价道具后来没有银币价了（节油器改版 30202 改成钻石货）：不显示、买不了、不扣钱（代码审查 2026-10-19）', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 1_000_000 } });
+    const { tuning } = await t.game.shards.settings(ctx.shardId);
+    const day = latestSlot(t.clock.now, [tuning.shop.specialHour]).day;
+    expect(config.requireGoods(30202).coin).toBe(0);
+    await t.db
+      .insertInto('shop_special')
+      .values({ shard_id: ctx.shardId, day, goods_id: 30202, discount: 0.5, tier_name: 'x', stock: 5 })
+      .execute();
+    expect(await shop().special(ctx)).toBeNull();
+    await expect(shop().buySpecial(ctx, { num: 1 })).rejects.toMatchObject({
+      params: { reason: 'not_on_sale' },
+    });
+    expect(await goodsNum(t, ctx.restaurantId, 30202)).toBe(0);
+    expect((await restRow(t, ctx.restaurantId)).coin).toBe(1_000_000);
+  });
+
   it('每日特价抽到高档海报时也看星级：3 星买不了、不扣钱、不占库存（质量期 ②）', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 1_000_000, star_level: 3 } });
     const { tuning } = await t.game.shards.settings(ctx.shardId);

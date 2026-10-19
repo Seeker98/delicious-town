@@ -40,7 +40,8 @@ export async function aggregateDay(db: Kysely<DB>, shardId: number, day: string)
     .selectFrom('income_round as i')
     .innerJoin('restaurant as r', 'r.id', 'i.rest_id')
     .select([
-      sql<number>`coalesce(sum(i.coin), 0)::bigint`.as('coin'),
+      // 让给老板的那份第二天发放时另记一笔流水（抽成或退回），这里只算店自己留下的，不然算两遍（代码审查 2026-10-19）
+      sql<number>`coalesce(sum(i.coin - i.ceded), 0)::bigint`.as('coin'),
       sql<number>`coalesce(sum(i.exp), 0)::bigint`.as('exp'),
     ])
     .where('r.shard_id', '=', shardId)

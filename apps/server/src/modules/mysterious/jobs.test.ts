@@ -45,7 +45,7 @@ describe('昨日特色菜冠军（规格书 16）', () => {
     await cooked(e!.restaurantId, shardId, gameTime(yesterday, 12), 5, 10); // 50，第 4
     await cooked(f!.restaurantId, shardId, gameTime(yesterday, 13), 1, 10); // 10，第 5，不给
     const r = await awardChampion(t.game.deps, shardId, today, gameTime(today, 9));
-    expect(r).toEqual({ winners: 2, value: 1000, awarded: 4 });
+    expect(r).toEqual({ winners: 2, value: 1000, awarded: 4, failed: 0 });
     const seal = gid('美味印章');
     expect(GOODS.krabburgerBook).not.toBe(seal);
     expect(await goodsNum(t, a!.restaurantId, seal)).toBe(2);
@@ -86,6 +86,7 @@ describe('昨日特色菜冠军（规格书 16）', () => {
       winners: 0,
       value: 0,
       awarded: 0,
+      failed: 0,
     });
     const job = mysteriousJobs(t.game.deps)[0]!;
     expect(job).toMatchObject({ name: 'mc-champion', feature: 'mysterious' });

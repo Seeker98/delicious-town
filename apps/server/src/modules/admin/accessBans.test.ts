@@ -47,6 +47,9 @@ describe('IP、设备封禁（2026-10-16 小号刷一番赏）', () => {
     const blocked = await me(u.cookie, ip);
     expect(blocked.status).toBe(403);
     expect(blocked.json.code).toBe('ACCESS_BANNED');
+    // 路径用百分号编码也挡（代码审查 2026-10-19：原来只看原始 url，/%61pi/... 能绕过）
+    for (const path of ['/%61pi/v1/account/me', '/ap%69/v1/account/me'])
+      expect((await call(ctx.app, 'GET', path, { cookie: u.cookie, ip })).json.code).toBe('ACCESS_BANNED');
     const reg = await call(ctx.app, 'POST', '/api/v1/account/register', {
       body: {
         username: uniqueName('u'),
@@ -103,7 +106,7 @@ describe('IP、设备封禁（2026-10-16 小号刷一番赏）', () => {
     await post(admin.cookie, `/access-bans/${r.json.data.ban.id}/remove`, {});
   });
 
-  it('不能把自己当前的 IP 封进去；协管只能看、不能加', async () => {
+  it('不能把自己当前的 IP、设备封进去；协管只能看、不能加', async () => {
     const self = await post(admin.cookie, '/access-bans', { kind: 'ip', value: '127.0.0.0/8', reason: 'x' });
     expect(self.json.params).toMatchObject({ reason: 'ban_self' });
     const rows = await ctx.deps.db
@@ -112,6 +115,14 @@ describe('IP、设备封禁（2026-10-16 小号刷一番赏）', () => {
       .where('value', '=', '127.0.0.0/8')
       .execute();
     expect(rows).toEqual([]);
+    // 自己这台设备也封不了
+    const dev = `dev-${uniqueName('s')}`.slice(0, 40);
+    const selfDev = await call(ctx.app, 'POST', `${A}/access-bans`, {
+      cookie: admin.cookie,
+      body: { kind: 'device', value: dev, reason: 'x' },
+      headers: { 'x-device-id': dev },
+    });
+    expect(selfDev.json.params).toMatchObject({ reason: 'ban_self' });
     // 后台对权限不够的请求一律报 404
     expect(
       (await post(mod.cookie, '/access-bans', { kind: 'ip', value: testIp(), reason: 'x' })).status,

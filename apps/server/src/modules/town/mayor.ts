@@ -75,36 +75,51 @@ export async function resolveMayor(
   shardId: number,
   now: Date,
   log?: Log,
+  batch = MAYOR_BATCH,
 ): Promise<{ resolved: number; failed: number }> {
+  // 先按揭晓时刻判断哪几轮能揭晓：判不了的那一轮（换天任务漏跑）不能占着分批的队头，把后面的天都卡住
+  const ats = await d.db
+    .selectFrom('mayor_guess')
+    .select('at')
+    .distinct()
+    .where('shard_id', '=', shardId)
+    .where('right', 'is', null)
+    .where('at', '<=', now)
+    .execute();
+  if (ats.length === 0) return { resolved: 0, failed: 0 };
+  const { tuning } = await d.shards.settings(shardId);
+  const actualAt = new Map<number, number>();
+  for (const { at } of ats) {
+    const round = await finishedRound(
+      d.db,
+      shardId,
+      'weather',
+      latestSlot(at, tuning.world.weatherHours).key,
+    );
+    const to = Number((round?.stats as { to?: unknown } | undefined)?.to);
+    const type = d.config.weather.get(to)?.type;
+    if (type !== undefined) actualAt.set(at.getTime(), type);
+  }
+  if (actualAt.size === 0) return { resolved: 0, failed: 0 };
   const rows = await d.db
     .selectFrom('mayor_guess')
     .select(['rest_id', 'day', 'type', 'at'])
     .where('shard_id', '=', shardId)
     .where('right', 'is', null)
-    .where('at', '<=', now)
+    .where(
+      'at',
+      'in',
+      [...actualAt.keys()].map((t) => new Date(t)),
+    )
     .orderBy('at')
     .orderBy('rest_id')
-    .limit(MAYOR_BATCH)
+    .limit(batch)
     .execute();
-  if (rows.length === 0) return { resolved: 0, failed: 0 };
-  const { tuning } = await d.shards.settings(shardId);
-  const actualAt = new Map<number, number | null>();
   let resolved = 0;
   let failed = 0;
   for (const r of rows) {
-    const key = r.at.getTime();
-    if (!actualAt.has(key)) {
-      const round = await finishedRound(
-        d.db,
-        shardId,
-        'weather',
-        latestSlot(r.at, tuning.world.weatherHours).key,
-      );
-      const to = Number((round?.stats as { to?: unknown } | undefined)?.to);
-      actualAt.set(key, d.config.weather.get(to)?.type ?? null);
-    }
-    const actual = actualAt.get(key);
-    if (actual === null || actual === undefined) continue;
+    const actual = actualAt.get(r.at.getTime());
+    if (actual === undefined) continue;
     const right = actual === r.type;
     try {
       await runSystemOp(d, shardId, r.rest_id, { source: 'town.mayor', now }, async (o) => {

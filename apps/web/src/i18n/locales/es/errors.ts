@@ -324,6 +324,7 @@ const errors: Messages['errors'] = {
     wishtree_closed: 'Esta ronda ya llegó a la hora del sorteo; espera la siguiente',
     shelf_full: 'La vitrina está llena. Quita uno primero',
     frame_locked: 'Aún no tienes puntos de logro suficientes para este marco',
+    meal_closed: 'Ya pasó la hora de comer. Vuelve en la próxima comida',
     trophy_missing: 'Todavía no tienes este trofeo',
     bulk_closed: 'El lote ya cerró; esta puja no cuenta',
     bulk_cooldown: 'Demasiado rápido; espera unos segundos y vuelve a intentarlo',

@@ -61,6 +61,9 @@ describe('动态的链接（问题记录 587）', () => {
     expect(feedLink(item('forum.replied', { by: 42, postId: 9 }))).toBe('/forum/9');
     expect(feedLink(item('mouse.steal', { foodsId: 1, num: 2 }))).toBeNull();
     expect(feedLink(item('thumb', { by: '42' }))).toBeNull();
+    // 区服关了广场：委员会页进不去，巡查动态不链接
+    expect(feedLink(item('hygiene.report', {}), (f) => f !== 'town')).toBeNull();
+    expect(feedLink(item('hygiene.report', {}), () => true)).toBe('/commission?m=squid');
   });
 });
 
