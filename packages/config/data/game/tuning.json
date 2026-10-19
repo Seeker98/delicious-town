@@ -81,7 +81,14 @@
     "plaquePer": 0.01,
     "honorPer": 0.004
   },
-  "strength": { "regen": 1, "luckyRegen": 2 },
+  "strength": {
+    "regen": 1,
+    "luckyRegen": 2,
+    "meals": [
+      { "key": "lunch", "from": 12, "to": 14, "amount": 20 },
+      { "key": "dinner", "from": 18, "to": 20, "amount": 30 }
+    ]
+  },
   "mouse": { "rateBase": 0.16, "ratePerStar": 0.01, "newbieFactor": 0.5, "luckDivisor": 2, "trapCoinPerLevel": 20 },
   "growth": {
     "plaque2Star": 3,

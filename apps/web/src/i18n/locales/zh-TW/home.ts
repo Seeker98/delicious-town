@@ -52,6 +52,17 @@ export default {
   signedShort: '已簽到',
   signInBtn: '簽到',
   signInFailed: '簽到失敗',
+  /** 開飯領體力（使用者 2026-10-19） */
+  mealTitle: '開飯',
+  mealOpen: '開飯了',
+  mealName: { lunch: '午餐', dinner: '晚餐' },
+  mealSub: (name: string, from: string, to: string, n: number) =>
+    `${name ? `${name} ` : ''}${from}~${to} · 體力 +${n}`,
+  mealBtn: '吃飯',
+  mealDone: '已吃',
+  mealAt: (at: string) => `${at} 開飯`,
+  mealTomorrow: (at: string) => `明天 ${at} 開飯`,
+  mealFailed: '沒吃上飯',
   mainTag: '主線',
   /** 首頁餐廳動態卡（問題記錄 553） */
   feedTitle: '餐廳動態',

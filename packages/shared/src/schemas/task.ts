@@ -67,9 +67,22 @@ export interface QuestsDto {
 /** 活跃项眼下做不了的原因（等级、星级、区服关闭之外的） */
 export type ActivationBlock = 'days' | 'email' | 'frozen' | 'noActivity' | null;
 
+/** 开饭领体力（用户 2026-10-19）：现在这一顿（open）或下一顿；tomorrow 是明天的第一顿 */
+export interface MealDto {
+  key: 'lunch' | 'dinner';
+  from: number;
+  to: number;
+  amount: number;
+  open: boolean;
+  eaten: boolean;
+  tomorrow: boolean;
+}
+
 export interface ActivationDto {
   total: number;
   signedIn: boolean;
+  /** 开饭领体力；区服没配时段为 null。旧服务端没有这一项 */
+  meal?: MealDto | null;
   /** 餐厅星级、等级（活跃项按 needStar、needLevel 判断是否开放） */
   star: number;
   level: number;

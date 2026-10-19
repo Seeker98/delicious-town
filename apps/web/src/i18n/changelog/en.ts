@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  meal1019:
+    'New: mealtime Stamina. Every day, lunch (12:00–14:00) gives 20 Stamina and dinner (18:00–20:00) gives 30. Tap “Eat” in Today’s to-do on the home page; it can go over your Stamina cap, and missed meals are not made up',
   wage1019:
     'Fix: the job card wages (11 kinds such as Market Wholesaler’s and Bank Advisor’s wages) could not be opened in storage; they open now. The Midnight Roach Killer weekly award and the Roach killers ranking now only count roaches squashed at real friends’ restaurants, not your own or Mr. Krabs’ (the last 30 days were recounted from the logs)',
   frames1019:

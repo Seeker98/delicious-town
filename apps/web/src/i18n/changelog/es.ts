@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  meal1019:
+    'Nuevo: energía de las comidas. Cada día, el almuerzo (12:00–14:00) da 20 de energía y la cena (18:00–20:00) da 30. Toca «Comer» en las tareas de hoy de la página de inicio; puede pasar del máximo y las comidas perdidas no se recuperan',
   wage1019:
     'Corrección: los sueldos de las tarjetas de oficio (11 tipos, como los del mayorista del mercado y del asesor bancario) no se podían abrir en el almacén; ahora sí. El premio semanal Matacucarachas de medianoche y la clasificación de cucarachas eliminadas solo cuentan las de locales de amigos reales, ni el tuyo ni el de Don Cangrejo (los últimos 30 días se han recalculado con el registro)',
   frames1019:

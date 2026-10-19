@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  meal1019:
+    'Nouveau\u202f: l’énergie des repas. Chaque jour, le déjeuner (12 h–14 h) donne 20 d’énergie et le dîner (18 h–20 h) en donne 30. Touche «\u202fManger\u202f» dans les tâches du jour sur l’accueil\u202f; ça peut dépasser le maximum, et un repas manqué n’est pas rattrapé',
   wage1019:
     'Correctif\u202f: les salaires des cartes de métier (11 sortes, dont ceux du grossiste du marché et du conseiller bancaire) ne s’ouvraient pas dans la réserve\u202f; ils s’ouvrent maintenant. La récompense hebdo Tueur de cafards de minuit et le classement des cafards écrasés ne comptent plus que les cafards écrasés chez de vrais amis, ni chez toi ni chez M. Krabs (les 30 derniers jours ont été recomptés à partir du journal)',
   frames1019:

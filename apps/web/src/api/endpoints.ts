@@ -300,6 +300,8 @@ export const endpoints = {
   claimChapter: (chapterId: number) => api.post<Anything>('/api/v1/task/chapter', { chapterId }),
   claimActivation: (points: number) => api.post<Anything>('/api/v1/task/activation/claim', { points }),
   signIn: () => api.post<Anything>('/api/v1/task/signin'),
+  /** 开饭领体力（用户 2026-10-19） */
+  meal: () => api.post<{ key: string; amount: number }>('/api/v1/task/meal'),
   friendList: (sort: 'level' | 'star' | 'recent' = 'level') =>
     api.get<FriendsDto>(`/api/v1/friend/list${qs({ sort })}`),
   friendRequests: () => api.get<FriendRequestDto[]>('/api/v1/friend/requests'),
