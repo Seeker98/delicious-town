@@ -279,16 +279,17 @@ describe('后期海报奖杯按星级可用（问题记录 146）', () => {
     const ctx = await newRestaurant(t, { patch: { coin: 1_000_000 } });
     const { tuning } = await t.game.shards.settings(ctx.shardId);
     const day = latestSlot(t.clock.now, [tuning.shop.specialHour]).day;
-    expect(config.requireGoods(30202).coin).toBe(0);
+    const saver = gid('特级节油器');
+    expect(config.requireGoods(saver).coin).toBe(0);
     await t.db
       .insertInto('shop_special')
-      .values({ shard_id: ctx.shardId, day, goods_id: 30202, discount: 0.5, tier_name: 'x', stock: 5 })
+      .values({ shard_id: ctx.shardId, day, goods_id: saver, discount: 0.5, tier_name: 'x', stock: 5 })
       .execute();
     expect(await shop().special(ctx)).toBeNull();
     await expect(shop().buySpecial(ctx, { num: 1 })).rejects.toMatchObject({
       params: { reason: 'not_on_sale' },
     });
-    expect(await goodsNum(t, ctx.restaurantId, 30202)).toBe(0);
+    expect(await goodsNum(t, ctx.restaurantId, saver)).toBe(0);
     expect((await restRow(t, ctx.restaurantId)).coin).toBe(1_000_000);
   });
 
