@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  hidden1019:
+    '75 nouveaux succès\u202f: 57 succès cachés (masqués tant qu’ils ne sont pas obtenus, dans Succès → Catégories → Cachés), quatre nouvelles lignes, Unanimité (clients exigeants satisfaits), Salle comble (toutes les tables occupées), Pris la main dans le sac (pris à fouiller un placard) et Champion du bar de la semaine, et Habitué du bar gagne un palier pour avoir gagné aux dix jeux. Les historiques encore conservés ont été rattrapés',
   achieve1019:
     'Nouveau\u202f: les succès. 410 succès en dix catégories (restaurant, quotidien, recettes, plats spéciaux, amis, bar, tour, temple, finance, ville) rapportent des points de succès, et certains aussi des trophées et des titres permanents. Suivez votre progression dans Moi → Succès et exposez vos trophées dans une vitrine que vos amis peuvent voir. Les classements ont un nouveau tableau Succès (points, nouveaux cette semaine). La progression depuis l’ouverture du serveur a été rattrapée',
   oilsaver1019:

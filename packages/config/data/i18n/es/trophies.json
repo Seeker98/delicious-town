@@ -169,5 +169,11 @@
   },
   "ta2000": {
     "name": "Rápido como el rayo"
+  },
+  "picky": {
+    "name": "Gusto de todos"
+  },
+  "caught": {
+    "name": "Con las manos en la masa"
   }
 }

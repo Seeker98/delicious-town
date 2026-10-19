@@ -10,6 +10,7 @@ import { BOARD_SOURCES } from '../rank/boards';
 import { settleShardRound } from '../settlement/runner';
 import { rankRows } from '../rank/ranking';
 import { bumpCounters, crossed, raiseCounter } from './counters';
+import { ACH_BACKFILL_VERSION } from './award';
 import { achieveJobs } from './jobs';
 import { achValues } from './metrics';
 import { gainExp } from '../../core/resources';
@@ -56,7 +57,10 @@ async function evaluate(restId: number, backfilled = false, events?: GameEvent[]
   return evaluateRest(t.db, cfg(), tuning(), rest, { now: t.clock.now, backfilled, events });
 }
 const markBackfilled = (shardId: number) =>
-  t.db.insertInto('ach_shard').values({ shard_id: shardId, backfilled_at: new Date() }).execute();
+  t.db
+    .insertInto('ach_shard')
+    .values({ shard_id: shardId, backfilled_at: new Date(), version: ACH_BACKFILL_VERSION })
+    .execute();
 
 describe('计数类成就', () => {
   it('跨门槛的档：从 prev 涨到 now 之间的才算', () => {
@@ -263,7 +267,9 @@ describe('上线补发和每天补算', () => {
   it('补发：记成补发的（不写动态），写 ach_shard；再跑跳过；补发完每天的补算照常写动态', async () => {
     const shardId = await createShard(t.db);
     const r = await newRestaurant(t, { shardId, patch: { level: 45 } });
-    const [backfill, scan] = achieveJobs(t.game.deps);
+    const jobs = achieveJobs(t.game.deps);
+    const backfill = jobs.find((j) => j.name === 'achieve-backfill');
+    const scan = jobs.find((j) => j.name === 'achieve-scan');
     const settings = await t.game.deps.shards.settings(shardId);
     const ctx = { shardId, settings, period: 'v1', now: t.clock.now, log: { error: () => {} } };
     expect(await scan!.run(ctx)).toEqual({ skipped: true });

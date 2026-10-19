@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  hidden1019:
+    '75 logros nuevos: 57 ocultos (se ven como ??? hasta conseguirlos, en Logros → Categorías → Ocultos), cuatro líneas nuevas, Gusto de todos (clientes exigentes satisfechos), Lleno total (todas las mesas ocupadas), Con las manos en la masa (pillado registrando despensas) y Campeón del bar de la semana, y Cliente habitual suma un nivel por ganar en los diez juegos. Lo que aún constaba en los registros ya se ha contado',
   achieve1019:
     'Nuevo: logros. 410 logros en diez categorías (restaurante, diario, recetas, platos especiales, amigos, bar, torre, templo, finanzas, pueblo) dan puntos de logro, y algunos también trofeos y títulos permanentes. Mira tu progreso en Yo → Logros y pon los trofeos en una vitrina que ven tus amigos. Las clasificaciones tienen una nueva tabla de Logros (puntos, nuevos esta semana). Se ha recuperado el progreso desde la apertura del servidor',
   oilsaver1019:

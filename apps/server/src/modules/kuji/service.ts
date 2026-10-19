@@ -12,6 +12,8 @@ import { grantIcon } from '../icons/grant';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { consumeGoods, countGoods, grantGoodsOp } from '../store/goods';
 import { currentPool, latestToday, prizesOf, tierLeft, type PoolRow } from './pool';
+import { bumpCounters } from '../achieve/counters';
+import { chosenOneToday } from '../achieve/hidden';
 
 type K = Tuning['kuji'];
 const BUY_KEY = 'kuji.buy';
@@ -329,6 +331,12 @@ export function createKujiService(d: GameDeps) {
     // 支线“一番赏”（问题记录 515）：抽中 A 赏按池子分开记；豪华池另记张数和最后赏
     const deluxe = line === 'deluxe';
     if (tally.A) await emitAction(o, deluxe ? 'kuji.deluxe.a' : 'kuji.a', tally.A);
+    // 隐藏成就“A 赏”（两种池子都算）、“最后赏”、“天选之人”（同一天许愿树也中了）
+    await bumpCounters(o, [
+      ['kuji.anyA', tally.A ?? 0],
+      ['kuji.anyLast', last !== null ? 1 : 0],
+      ['luck.chosen', tally.A && (await chosenOneToday(o.tx, o.rest.id, o.now)) ? 1 : 0],
+    ]);
     if (deluxe) {
       await emitAction(o, 'kuji.deluxe.draw', num);
       if (last !== null) await emitAction(o, 'kuji.deluxe.last');

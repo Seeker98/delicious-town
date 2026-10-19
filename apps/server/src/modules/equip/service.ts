@@ -46,6 +46,7 @@ import {
   suitPct,
   zeroAttrs,
 } from './rules';
+import { raiseCounter } from '../achieve/counters';
 
 export const PART_COLS = ['part1', 'part2', 'part3', 'part4', 'part5'] as const;
 
@@ -428,6 +429,8 @@ export function createEquipService(d: GameDeps, world: WorldService) {
             .set({ fail_streak: e.fail_streak + 1 })
             .where('id', '=', e.id)
             .execute();
+          // 隐藏成就“强化玄学”：同一件厨具连着强化失败
+          await raiseCounter(o, 'equip.failStreak', e.fail_streak + 1);
         }
         await o.tx
           .insertInto('equip_stress_log')

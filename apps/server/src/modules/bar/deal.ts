@@ -9,6 +9,7 @@ import { addFoods } from '../cupboard/foods';
 import { badInput } from './common';
 import { assertNoRound, endRound, loadRound, saveRound } from './round';
 import { dealOffer } from './rules';
+import { bumpCounters } from '../achieve/counters';
 
 /** 一掷千金的服务端局面（设计 §6）：boxes 只在这里，没开的箱子结束时才给前端 */
 export interface DealState {
@@ -154,6 +155,8 @@ export async function dealAnswer(o: Op, deal: boolean): Promise<DealDto> {
     const coin = s.offer;
     await endRound(o, 'deal');
     gainCoin(o, coin);
+    // 成就“夜店常客”都赢过：拿到的比开局花的多
+    if (coin > o.tuning.bar.deal.cost) await bumpCounters(o, [['bar.deal.won', 1]]);
     restLog(o, 'bar.deal', { result: 'deal', coin });
     return ended('deal', coin);
   }
@@ -175,6 +178,11 @@ export async function dealAnswer(o: Op, deal: boolean): Promise<DealDto> {
   // 一路不成交、开出最大奖才写新闻，每家店每天最多一条
   if (s.mine === s.top && (await incrementDaily(o.tx, o.rest.id, 'bar.deal.news', 1, gameDay(o.now))) === 1)
     opNews(o, 'bar.deal', { foodsId: prize.foodsId, num: prize.num });
+  // 成就：一路不成交，开出的比开局花的多算赢过；开出这一局最小的奖是隐藏成就“千金散尽”
+  await bumpCounters(o, [
+    ['bar.deal.won', prize.value > o.tuning.bar.deal.cost ? 1 : 0],
+    ['bar.deal.worst', prize.value === Math.min(...s.boxes.map((x) => x.value)) ? 1 : 0],
+  ]);
   restLog(o, 'bar.deal', { result: 'box', foodsId: prize.foodsId, num: prize.num });
   return ended('box', 0, plan.toFridge, plan.dropped);
 }

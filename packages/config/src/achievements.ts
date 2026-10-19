@@ -15,6 +15,7 @@ export const ACH_CATS = [
   'temple',
   'finance',
   'town',
+  'hidden',
 ] as const;
 export type AchCat = (typeof ACH_CATS)[number];
 export const TROPHY_TONES = ['bronze', 'silver', 'gold', 'rainbow'] as const;
@@ -45,6 +46,10 @@ export const ACH_STATE_METRICS = [
   'fund',
   'talkAll',
   'barPlayed',
+  'barWon',
+  'friendsAll',
+  'mayorMiss',
+  'wishLose',
 ] as const;
 export type AchStateMetric = (typeof ACH_STATE_METRICS)[number];
 
@@ -68,6 +73,8 @@ export const rawAchLine = z.object({
   metric: z.string().regex(metricRe).optional(),
   labels: z.array(z.string().min(1)).optional(),
   perStreet: z.boolean().optional(),
+  /** 隐藏成就：达成前网页只显示 ???（分类 hidden，点数固定） */
+  hidden: z.boolean().optional(),
   tiers: z.array(rawAchTier).min(1),
 });
 export const rawTrophy = z.object({
@@ -96,6 +103,8 @@ export interface AchLine {
   streetId: number | null;
   /** 各档显示名（星级、熟练等级、基金档）；null 显示门槛数字 */
   labels: string[] | null;
+  /** 隐藏成就：达成前只显示 ??? */
+  hidden: boolean;
   tiers: AchTier[];
 }
 export interface Trophy {
@@ -122,6 +131,8 @@ export function buildAchievements(
   for (const raw of rawLines) {
     if (seenKeys.has(raw.key)) errors.push(`achievements: duplicate key ${raw.key}`);
     seenKeys.add(raw.key);
+    if ((raw.cat === 'hidden') !== (raw.hidden ?? false))
+      errors.push(`achievements ${raw.key}: hidden lines go in cat hidden (and only there)`);
     if (raw.labels && raw.labels.length !== raw.tiers.length)
       errors.push(`achievements ${raw.key}: labels count ${raw.labels.length} != tiers ${raw.tiers.length}`);
     for (const [i, t] of raw.tiers.entries()) {
@@ -155,6 +166,7 @@ export function buildAchievements(
         desc: raw.desc,
         streetId,
         labels: raw.labels ?? null,
+        hidden: raw.hidden ?? false,
         tiers: raw.tiers.map((t, i) => ({
           id: `${key}.${i + 1}`,
           tier: i + 1,

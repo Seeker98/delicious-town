@@ -242,7 +242,11 @@
   },
   "barall": {
     "name": "Bar Regular",
-    "desc": "Bar games played (out of 10)"
+    "desc": "Play and win all ten bar games",
+    "tiers": [
+      "Played all",
+      "Won all"
+    ]
   },
   "floor": {
     "name": "Tower Climber",
@@ -336,5 +340,249 @@
   "krab": {
     "name": "Happy Mr. Krab",
     "desc": "Times Mr. Krab got his feast"
+  },
+  "picky": {
+    "name": "Crowd Pleaser",
+    "desc": "Picky customers satisfied"
+  },
+  "full": {
+    "name": "Full House",
+    "desc": "Rounds with every table taken"
+  },
+  "caught": {
+    "name": "Caught Red-Handed",
+    "desc": "Times caught raiding cupboards"
+  },
+  "barweek": {
+    "name": "Bar Champion of the Week",
+    "desc": "Weeks topping a bar weekly board"
+  },
+  "oneoil": {
+    "name": "One Drop",
+    "desc": "A business round that used just 1 oil"
+  },
+  "nooil": {
+    "name": "Empty Tank",
+    "desc": "Forced to close after running out of oil"
+  },
+  "bikini": {
+    "name": "Bikini Bottom Family Photo",
+    "desc": "Mr. Krabs, Squidward and Plankton in your shop in the same round"
+  },
+  "victim": {
+    "name": "Easy Mark",
+    "desc": "Got dined-and-dashed 100 times"
+  },
+  "pickyday": {
+    "name": "Can’t Please Everyone",
+    "desc": "100 picky customers walked out in one day"
+  },
+  "cupmiss": {
+    "name": "Jumping at Shadows",
+    "desc": "Lost 50 cup games in a row"
+  },
+  "pity": {
+    "name": "Unlucky Soul",
+    "desc": "Hit the slot machine pity prize"
+  },
+  "lucky": {
+    "name": "Lucky Devil",
+    "desc": "Got a rare slot prize without the pity"
+  },
+  "blackswan": {
+    "name": "Black Swan",
+    "desc": "Won on an outcome that opened under 10%"
+  },
+  "reverse": {
+    "name": "Contrarian Indicator",
+    "desc": "Lost on a side that opened at 90% or more"
+  },
+  "broke": {
+    "name": "Flat Broke",
+    "desc": "Your coins hit zero"
+  },
+  "almost": {
+    "name": "So Close",
+    "desc": "Market guess with a full pick, one short of perfect"
+  },
+  "perfect": {
+    "name": "Full Marks",
+    "desc": "Market guess with a full pick, all correct"
+  },
+  "krabangry": {
+    "name": "Krabs’ Fury",
+    "desc": "Mr. Krabs got angry in your shop"
+  },
+  "mice": {
+    "name": "Rat Problem",
+    "desc": "Mice stole from you 100 times"
+  },
+  "kujia": {
+    "name": "Prize A",
+    "desc": "Drew an A prize at Ichiban Kuji"
+  },
+  "kujilast": {
+    "name": "Last One Prize",
+    "desc": "Won the Last One prize at Ichiban Kuji"
+  },
+  "free": {
+    "name": "Free at Last",
+    "desc": "Bought yourself back after an acquisition"
+  },
+  "empty": {
+    "name": "Ghost Town",
+    "desc": "Open for a whole round without a single customer"
+  },
+  "negative": {
+    "name": "Paying to Work",
+    "desc": "Lost coins over a business round"
+  },
+  "disaster": {
+    "name": "Disaster Zone",
+    "desc": "A freeloader, a roach and Plankton in your shop in the same round"
+  },
+  "lair": {
+    "name": "Plankton’s Lair",
+    "desc": "Plankton stayed in your shop for 24 rounds"
+  },
+  "mood": {
+    "name": "Mood Swings",
+    "desc": "Mr. Krabs was both happy and angry in your shop on the same day"
+  },
+  "hygiene": {
+    "name": "Failed Inspection",
+    "desc": "Squidward’s report: roaches held tables for 24 hours the day before"
+  },
+  "trapmiss": {
+    "name": "Waiting by the Stump",
+    "desc": "A mouse got past your trap 100 times"
+  },
+  "roachpark": {
+    "name": "Roach Park",
+    "desc": "Others put 20 roaches in your shop in one day"
+  },
+  "opendoor": {
+    "name": "Open House",
+    "desc": "Your cupboard was raided 1,000 times"
+  },
+  "sucker": {
+    "name": "Sucker",
+    "desc": "Others swapped away your ingredients 1,000 times"
+  },
+  "habitual": {
+    "name": "Repeat Offender",
+    "desc": "Caught raiding cupboards 3 times in one day"
+  },
+  "fan": {
+    "name": "Die-Hard Fan",
+    "desc": "Liked the same shop 30 days in a row"
+  },
+  "social": {
+    "name": "Social Butterfly",
+    "desc": "Filled your friend list with 199 friends"
+  },
+  "wenjie": {
+    "name": "Wenjie’s Confidant",
+    "desc": "Chatted with Wenjie 100 times"
+  },
+  "pump": {
+    "name": "Human Gas Pump",
+    "desc": "Filled up 10 different shops in one day"
+  },
+  "draw": {
+    "name": "Evenly Matched",
+    "desc": "5 finger-game draws in a row"
+  },
+  "spicy": {
+    "name": "Speechless",
+    "desc": "Lost 10 Devil Cup games in a row"
+  },
+  "goldfish": {
+    "name": "Goldfish Memory",
+    "desc": "Failed the first level of Memory Mix"
+  },
+  "offboard": {
+    "name": "Off the Board",
+    "desc": "Scored 0 with all three darts"
+  },
+  "schooled": {
+    "name": "Schooled by a Newbie",
+    "desc": "Lost 5 Last Candy games in a row at the novice table"
+  },
+  "loser": {
+    "name": "Also Ran",
+    "desc": "50 number spins in a row without a prize"
+  },
+  "spent": {
+    "name": "All Spent",
+    "desc": "Refused every deal and opened the smallest prize"
+  },
+  "silent": {
+    "name": "Silent Machine",
+    "desc": "6 slot spins in a row with all blanks"
+  },
+  "antiweather": {
+    "name": "Human Reverse Forecast",
+    "desc": "Guessed the weather wrong 10 days in a row"
+  },
+  "turtle": {
+    "name": "Wishing-Well Turtle",
+    "desc": "Made a wish 100 days in a row without winning"
+  },
+  "chosen": {
+    "name": "The Chosen One",
+    "desc": "Won the wishing tree and drew an A prize on the same day"
+  },
+  "hedge": {
+    "name": "Hedging Bets",
+    "desc": "Bought both Yes and No on the same prediction"
+  },
+  "blind": {
+    "name": "Price Blind",
+    "desc": "Market guess with a full pick, none correct"
+  },
+  "unsold": {
+    "name": "No Takers",
+    "desc": "10 exchange orders expired unfilled"
+  },
+  "ninetynine": {
+    "name": "Ninety-Nine Steps",
+    "desc": "A 99-day check-in streak broken on day 100"
+  },
+  "roundtrip": {
+    "name": "Full Circle",
+    "desc": "Moved back to a street you lived on before"
+  },
+  "nomad": {
+    "name": "Nomad",
+    "desc": "Moved 3 times in one day"
+  },
+  "gamble": {
+    "name": "Upgrade Voodoo",
+    "desc": "Failed to upgrade the same gear 10 times in a row"
+  },
+  "fail": {
+    "name": "Never Give Up Delivering",
+    "desc": "20 failed deliveries"
+  },
+  "grit": {
+    "name": "True Grit",
+    "desc": "Lost 100 Chef Tower challenges"
+  },
+  "worker": {
+    "name": "Wage Slave",
+    "desc": "Acquired 3 times"
+  },
+  "eights": {
+    "name": "Triple Fortune",
+    "desc": "Coin balance of exactly 8,888,888"
+  },
+  "penny": {
+    "name": "Last Penny",
+    "desc": "Coin balance of exactly 1"
+  },
+  "waste": {
+    "name": "What a Waste",
+    "desc": "Dumped an unsold special dish"
   }
 }

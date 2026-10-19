@@ -1,3 +1,4 @@
+import { gameDay } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, notEnough } from '../../core/errors';
@@ -5,6 +6,11 @@ import { feedLog, runPairOp } from '../../core/pair';
 import { gainOil, spendCoin } from '../../core/resources';
 import { drawDtTickets } from '../../core/tickets';
 import { refuelDraws } from './rules';
+import { bumpCounters } from '../achieve/counters';
+import { incrementDaily } from '../counter/dailyCounter';
+
+/** 一天里给这么多家不同的店加满油：隐藏成就“人肉加油机” */
+const FULL_HOSTS = 10;
 
 /** 帮好友加油（规格书 13 §13.5） */
 export function createRefuel(d: GameDeps) {
@@ -28,6 +34,14 @@ export function createRefuel(d: GameDeps) {
             refuelDraws(add, them.rest.oil_max, me.tuning.friend.refuel),
           );
           await emitAction(me, 'friend.refuel');
+          // 隐藏成就“人肉加油机”：一天里给 10 家不同的店加满油
+          if (add === need) {
+            const day = gameDay(me.now);
+            if ((await incrementDaily(me.tx, me.rest.id, `refuel.full.${them.rest.id}`, 1, day)) === 1) {
+              const hosts = await incrementDaily(me.tx, me.rest.id, 'refuel.fullHosts', 1, day);
+              if (hosts === FULL_HOSTS) await bumpCounters(me, [['refuel.fullDay', 1]]);
+            }
+          }
           feedLog(p, 'friend.refuel', { oil: add });
           return { oil: add, tickets };
         },

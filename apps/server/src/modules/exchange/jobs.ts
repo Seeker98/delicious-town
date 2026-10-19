@@ -5,6 +5,7 @@ import type { PeriodicJob } from '../../core/jobs';
 import type { RestLogTable } from '../../db/schema';
 import { bookLock } from './service';
 import { addCredit, creditWallets, newCredits } from './wallet';
+import { bumpCountersFor } from '../achieve/counters';
 
 const BATCH = 500;
 
@@ -37,6 +38,7 @@ export async function expireOrders(
       .execute();
     const credits = newCredits();
     const logs: Insertable<RestLogTable>[] = [];
+    const expiredBy = new Map<number, number>();
     for (const foodsId of [...new Set(due.map((x) => x.foods_id))]) {
       await bookLock(tx, shardId, foodsId);
       const rows = await tx
@@ -48,9 +50,11 @@ export async function expireOrders(
           due.filter((x) => x.foods_id === foodsId).map((x) => x.id),
         )
         .where('status', '=', 'open')
-        .returning(['rest_id', 'side', 'foods_id', 'price', 'qty', 'filled'])
+        .returning(['rest_id', 'side', 'foods_id', 'price', 'qty', 'filled', 'expires_at'])
         .execute();
       for (const r of rows) {
+        // 隐藏成就“无人问津”：到期没卖完（关掉的等级强制下架的不算）
+        if (r.expires_at <= now) expiredBy.set(r.rest_id, (expiredBy.get(r.rest_id) ?? 0) + 1);
         const left = r.qty - r.filled;
         if (r.side === 'buy') addCredit(credits, r.rest_id, r.price * left);
         else addCredit(credits, r.rest_id, 0, r.foods_id, left);
@@ -65,6 +69,8 @@ export async function expireOrders(
     // 日志攒起来一条插入（一批最多 500 张，原来一张一条）
     if (logs.length > 0) await tx.insertInto('rest_log').values(logs).execute();
     await creditWallets(tx, credits);
+    for (const [restId, n] of [...expiredBy].sort((a, b) => a[0] - b[0]))
+      await bumpCountersFor(d, tx, { shardId, restId, now }, [['exchange.expired', n]]);
     return { expired: logs.length };
   });
 }

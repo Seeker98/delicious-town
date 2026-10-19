@@ -1,7 +1,7 @@
 {
   "source": "新设计（成就系统 2026-10-19，设计稿 docs/superpowers/specs/2026-10-19-achievements-design.md）",
-  "rule": "metric: counter:<event_counter 键> 或 state:<状态名>（服务端 achieve 模块计算）；档的 metric 可以覆盖整条线的；perStreet 的线构建时按街道展开（键 cuisine.<街道>）；labels 是各档的显示名（不写就显示门槛数字）",
-  "count": 78,
+  "rule": "metric: counter:<event_counter 键> 或 state:<状态名>（服务端 achieve 模块计算）；档的 metric 可以覆盖整条线的；perStreet 的线构建时按街道展开（键 cuisine.<街道>）；labels 是各档的显示名（不写就显示门槛数字）；hidden 是隐藏成就（分类 hidden，达成前网页只显示 ???）",
+  "count": 139,
   "data": [
     {
       "key": "level",
@@ -200,6 +200,65 @@
           "n": 200000,
           "pts": 100,
           "icon": "ach-oldshop"
+        }
+      ]
+    },
+    {
+      "key": "picky",
+      "cat": "rest",
+      "name": "众口交赞",
+      "desc": "满意的挑剔顾客",
+      "metric": "counter:picky.ok",
+      "tiers": [
+        {
+          "n": 1000,
+          "pts": 5
+        },
+        {
+          "n": 10000,
+          "pts": 10
+        },
+        {
+          "n": 50000,
+          "pts": 20
+        },
+        {
+          "n": 150000,
+          "pts": 40,
+          "trophy": "picky"
+        },
+        {
+          "n": 600000,
+          "pts": 80
+        },
+        {
+          "n": 1200000,
+          "pts": 100
+        }
+      ]
+    },
+    {
+      "key": "full",
+      "cat": "rest",
+      "name": "高朋满座",
+      "desc": "所有桌都坐满的轮数",
+      "metric": "counter:round.full",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 5
+        },
+        {
+          "n": 300,
+          "pts": 20
+        },
+        {
+          "n": 1000,
+          "pts": 40
+        },
+        {
+          "n": 6000,
+          "pts": 80
         }
       ]
     },
@@ -1017,6 +1076,32 @@
       ]
     },
     {
+      "key": "caught",
+      "cat": "friend",
+      "name": "一叶障目",
+      "desc": "翻橱柜被抓次数",
+      "metric": "counter:flip.caught",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 5
+        },
+        {
+          "n": 50,
+          "pts": 20
+        },
+        {
+          "n": 150,
+          "pts": 40
+        },
+        {
+          "n": 600,
+          "pts": 80,
+          "trophy": "caught"
+        }
+      ]
+    },
+    {
       "key": "exchange",
       "cat": "friend",
       "name": "互通有无",
@@ -1594,12 +1679,42 @@
       "key": "barall",
       "cat": "bar",
       "name": "夜店常客",
-      "desc": "玩过的酒吧游戏（共 10 个）",
+      "desc": "十个酒吧游戏都玩过、都赢过",
       "metric": "state:barPlayed",
       "tiers": [
         {
           "n": 10,
           "pts": 10
+        },
+        {
+          "n": 10,
+          "pts": 20,
+          "metric": "state:barWon"
+        }
+      ],
+      "labels": [
+        "都玩过",
+        "都赢过"
+      ]
+    },
+    {
+      "key": "barweek",
+      "cat": "bar",
+      "name": "酒吧周冠军",
+      "desc": "拿到酒吧周榜第一的周数",
+      "metric": "counter:bar.weekTop",
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 20
+        },
+        {
+          "n": 5,
+          "pts": 40
+        },
+        {
+          "n": 20,
+          "pts": 80
         }
       ]
     },
@@ -2098,6 +2213,804 @@
         {
           "n": 10,
           "pts": 80
+        }
+      ]
+    },
+    {
+      "key": "oneoil",
+      "cat": "hidden",
+      "name": "一滴入魂",
+      "desc": "一轮营业只耗了 1 油",
+      "metric": "counter:round.oneOil",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "nooil",
+      "cat": "hidden",
+      "name": "无米之炊",
+      "desc": "没油了, 店被迫停业",
+      "metric": "counter:rest.noOil",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 5
+        }
+      ]
+    },
+    {
+      "key": "bikini",
+      "cat": "hidden",
+      "name": "比奇堡全家福",
+      "desc": "同一轮里蟹老板、章鱼哥、痞老板都在店里",
+      "metric": "counter:round.bikini",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 40
+        }
+      ]
+    },
+    {
+      "key": "victim",
+      "cat": "hidden",
+      "name": "冤大头",
+      "desc": "自己店被吃白食 100 次",
+      "metric": "counter:dine.victim",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 100,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "pickyday",
+      "cat": "hidden",
+      "name": "众口难调",
+      "desc": "一天里走掉 100 位挑剔顾客",
+      "metric": "counter:picky.left.day",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 5
+        }
+      ]
+    },
+    {
+      "key": "cupmiss",
+      "cat": "hidden",
+      "name": "杯弓蛇影",
+      "desc": "猜酒杯连输 50 局",
+      "metric": "counter:streak.cup.lose",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 50,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "pity",
+      "cat": "hidden",
+      "name": "非酋",
+      "desc": "老虎机吃到一次保底",
+      "metric": "counter:bar.slot.floor",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "lucky",
+      "cat": "hidden",
+      "name": "欧皇",
+      "desc": "老虎机不靠保底出了稀有奖",
+      "metric": "counter:bar.slot.lucky",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 20
+        }
+      ]
+    },
+    {
+      "key": "blackswan",
+      "cat": "hidden",
+      "name": "黑天鹅",
+      "desc": "押中开盘不到 10% 的预测结果",
+      "metric": "counter:predict.blackSwan",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 20
+        }
+      ]
+    },
+    {
+      "key": "reverse",
+      "cat": "hidden",
+      "name": "反向指标",
+      "desc": "押了开盘 90% 以上的一边却输了",
+      "metric": "counter:predict.reverse",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 5
+        }
+      ]
+    },
+    {
+      "key": "broke",
+      "cat": "hidden",
+      "name": "身无分文",
+      "desc": "银币一度归零",
+      "metric": "counter:coin.zero",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 5
+        }
+      ]
+    },
+    {
+      "key": "almost",
+      "cat": "hidden",
+      "name": "失之交臂",
+      "desc": "菜场猜价选满, 只差一个就全中",
+      "metric": "counter:market.guess.almost",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "perfect",
+      "cat": "hidden",
+      "name": "满分",
+      "desc": "菜场猜价选满并全中",
+      "metric": "counter:market.guess.all",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 40
+        }
+      ]
+    },
+    {
+      "key": "krabangry",
+      "cat": "hidden",
+      "name": "蟹老板的怒火",
+      "desc": "蟹老板在你店里生气了",
+      "metric": "counter:krab.angry",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 5
+        }
+      ]
+    },
+    {
+      "key": "mice",
+      "cat": "hidden",
+      "name": "鼠患",
+      "desc": "被老鼠偷吃 100 次",
+      "metric": "counter:mouse.steal",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 100,
+          "pts": 5
+        }
+      ]
+    },
+    {
+      "key": "kujia",
+      "cat": "hidden",
+      "name": "A 赏",
+      "desc": "一番赏抽到 A 赏",
+      "metric": "counter:kuji.anyA",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "kujilast",
+      "cat": "hidden",
+      "name": "最后赏",
+      "desc": "一番赏拿到最后赏",
+      "metric": "counter:kuji.anyLast",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "free",
+      "cat": "hidden",
+      "name": "重获自由",
+      "desc": "被收购后赎身",
+      "metric": "counter:acquire.redeem",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "empty",
+      "cat": "hidden",
+      "name": "门可罗雀",
+      "desc": "开着门营业, 一轮里一桌客人都没来",
+      "metric": "counter:round.empty",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 5
+        }
+      ]
+    },
+    {
+      "key": "negative",
+      "cat": "hidden",
+      "name": "倒贴",
+      "desc": "一轮营业银币是负的",
+      "metric": "counter:round.negative",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "disaster",
+      "cat": "hidden",
+      "name": "灾难现场",
+      "desc": "同一轮里店里同时有白食客、蟑螂和痞老板",
+      "metric": "counter:round.disaster",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 20
+        }
+      ]
+    },
+    {
+      "key": "lair",
+      "cat": "hidden",
+      "name": "痞老板的老巢",
+      "desc": "痞老板在你店里待满 24 轮",
+      "metric": "counter:plankton.stay",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 24,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "mood",
+      "cat": "hidden",
+      "name": "喜怒无常",
+      "desc": "同一天里蟹老板在你店里既开心又生气",
+      "metric": "counter:krab.mood",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 20
+        }
+      ]
+    },
+    {
+      "key": "hygiene",
+      "cat": "hidden",
+      "name": "卫生不合格",
+      "desc": "章鱼哥巡查: 前一天蟑螂占桌满 24 小时",
+      "metric": "counter:hygiene.bad",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 5
+        }
+      ]
+    },
+    {
+      "key": "trapmiss",
+      "cat": "hidden",
+      "name": "守株待兔",
+      "desc": "老鼠来了, 老鼠夹却没夹住, 100 次",
+      "metric": "counter:mouse.trapMiss",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 100,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "roachpark",
+      "cat": "hidden",
+      "name": "蟑螂乐园",
+      "desc": "一天里被别人放了 20 只蟑螂",
+      "metric": "counter:roach.laidOnDay",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "opendoor",
+      "cat": "hidden",
+      "name": "门户大开",
+      "desc": "自家橱柜被翻 1,000 次",
+      "metric": "counter:cupboard.flipped",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1000,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "sucker",
+      "cat": "hidden",
+      "name": "冤种",
+      "desc": "自己的食材被别人换走 1,000 次",
+      "metric": "counter:foods.taken",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1000,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "habitual",
+      "cat": "hidden",
+      "name": "惯犯",
+      "desc": "一天里翻橱柜被抓 3 次",
+      "metric": "counter:flip.caughtDay",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 5
+        }
+      ]
+    },
+    {
+      "key": "fan",
+      "cat": "hidden",
+      "name": "死忠粉",
+      "desc": "连续 30 天给同一家店点赞",
+      "metric": "counter:thumbs.loyal",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 20
+        }
+      ]
+    },
+    {
+      "key": "social",
+      "cat": "hidden",
+      "name": "交际花",
+      "desc": "好友加满 199 个",
+      "metric": "state:friendsAll",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 199,
+          "pts": 40
+        }
+      ]
+    },
+    {
+      "key": "wenjie",
+      "cat": "hidden",
+      "name": "雯姐的知己",
+      "desc": "和雯姐聊天 100 次",
+      "metric": "counter:town.talk.wenjie",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 100,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "pump",
+      "cat": "hidden",
+      "name": "人肉加油机",
+      "desc": "一天里给 10 家不同的店加满油",
+      "metric": "counter:refuel.fullDay",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "draw",
+      "cat": "hidden",
+      "name": "势均力敌",
+      "desc": "划拳连续 5 局平局",
+      "metric": "counter:streak.fg.draw",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 5,
+          "pts": 20
+        }
+      ]
+    },
+    {
+      "key": "spicy",
+      "cat": "hidden",
+      "name": "辣到失语",
+      "desc": "魔鬼辣杯连输 10 局",
+      "metric": "counter:streak.devil.lose",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 10,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "goldfish",
+      "cat": "hidden",
+      "name": "金鱼的记忆",
+      "desc": "记忆调酒第 1 关就答错",
+      "metric": "counter:bar.memory.zero",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 5
+        }
+      ]
+    },
+    {
+      "key": "offboard",
+      "cat": "hidden",
+      "name": "脱靶",
+      "desc": "飞镖一局三镖都是 0 分",
+      "metric": "counter:bar.darts.miss",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "schooled",
+      "cat": "hidden",
+      "name": "被新手教做人",
+      "desc": "最后一颗糖在新手桌连输 5 局",
+      "metric": "counter:streak.nim.novice.lose",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 5,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "loser",
+      "cat": "hidden",
+      "name": "陪跑",
+      "desc": "转数字连续 50 次没中奖",
+      "metric": "counter:streak.num.lose",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 50,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "spent",
+      "cat": "hidden",
+      "name": "千金散尽",
+      "desc": "一掷千金一路不成交, 开出这一局最小的奖",
+      "metric": "counter:bar.deal.worst",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 5
+        }
+      ]
+    },
+    {
+      "key": "silent",
+      "cat": "hidden",
+      "name": "沉默的机器",
+      "desc": "老虎机连续 6 次全是空格",
+      "metric": "counter:streak.slot.blank",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 6,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "antiweather",
+      "cat": "hidden",
+      "name": "人形反向天气预报",
+      "desc": "猜天气连错 10 天",
+      "metric": "state:mayorMiss",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 10,
+          "pts": 20
+        }
+      ]
+    },
+    {
+      "key": "turtle",
+      "cat": "hidden",
+      "name": "许愿池的王八",
+      "desc": "连续 100 天许愿, 一次没中",
+      "metric": "state:wishLose",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 100,
+          "pts": 20
+        }
+      ]
+    },
+    {
+      "key": "chosen",
+      "cat": "hidden",
+      "name": "天选之人",
+      "desc": "同一天许愿树中奖、一番赏抽到 A 赏",
+      "metric": "counter:luck.chosen",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 40
+        }
+      ]
+    },
+    {
+      "key": "hedge",
+      "cat": "hidden",
+      "name": "两头下注",
+      "desc": "同一个预测事件里“是”和“否”都买过",
+      "metric": "counter:predict.both",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 5
+        }
+      ]
+    },
+    {
+      "key": "blind",
+      "cat": "hidden",
+      "name": "菜价盲",
+      "desc": "菜场猜价选满, 一个没中",
+      "metric": "counter:market.guess.none",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 5
+        }
+      ]
+    },
+    {
+      "key": "unsold",
+      "cat": "hidden",
+      "name": "无人问津",
+      "desc": "交易所挂单到期没卖完 10 次",
+      "metric": "counter:exchange.expired",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 10,
+          "pts": 5
+        }
+      ]
+    },
+    {
+      "key": "ninetynine",
+      "cat": "hidden",
+      "name": "九十九步",
+      "desc": "连续签到 99 天, 第 100 天断了",
+      "metric": "counter:signin.break99",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 20
+        }
+      ]
+    },
+    {
+      "key": "roundtrip",
+      "cat": "hidden",
+      "name": "兜兜转转",
+      "desc": "搬走以后又搬回住过的街",
+      "metric": "counter:rest.moveBack",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "nomad",
+      "cat": "hidden",
+      "name": "居无定所",
+      "desc": "一天里搬家 3 次",
+      "metric": "counter:rest.moveDay",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "gamble",
+      "cat": "hidden",
+      "name": "强化玄学",
+      "desc": "同一件厨具连续强化失败 10 次",
+      "metric": "counter:equip.failStreak",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 10,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "fail",
+      "cat": "hidden",
+      "name": "屡败屡送",
+      "desc": "外卖失败 20 次",
+      "metric": "counter:takeaway.fail",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 20,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "grit",
+      "cat": "hidden",
+      "name": "越挫越勇",
+      "desc": "厨塔挑战输 100 次",
+      "metric": "counter:tower.lose",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 100,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "waste",
+      "cat": "hidden",
+      "name": "暴殄天物",
+      "desc": "倒掉一份没卖完的特色菜",
+      "metric": "counter:mc.dump",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 5
+        }
+      ]
+    },
+    {
+      "key": "worker",
+      "cat": "hidden",
+      "name": "打工人",
+      "desc": "被收购 3 次",
+      "metric": "counter:acquire.taken",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 3,
+          "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "eights",
+      "cat": "hidden",
+      "name": "发发发",
+      "desc": "银币余额恰好是 8,888,888",
+      "metric": "counter:coin.eights",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 20
+        }
+      ]
+    },
+    {
+      "key": "penny",
+      "cat": "hidden",
+      "name": "一枚铜板",
+      "desc": "银币余额恰好是 1",
+      "metric": "counter:coin.one",
+      "hidden": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 10
         }
       ]
     }

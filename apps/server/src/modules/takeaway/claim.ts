@@ -19,6 +19,7 @@ import {
   riderCapAfter,
   riderExpGain,
 } from './rules';
+import { bumpCounters } from '../achieve/counters';
 
 /**
  * 领取（设计文档 §3.4）。riderOp 是好友骑手店的操作（双店操作里的对方），自己当骑手时为 null。
@@ -131,6 +132,8 @@ export async function settleDelivery(
   await o.tx.updateTable('takeaway_order').set({ state: 3 }).where('id', '=', v.order_id).execute();
   restLog(o, 'takeaway.claim', { deliveryId: v.id, success, coin, exp, renown });
   await emitAction(o, 'takeaway.deliver');
+  // 隐藏成就“屡败屡送”
+  if (!success) await bumpCounters(o, [['takeaway.fail', 1]]);
   // 支线“外卖进阶”（问题记录 515）：用无人机送、送成 5 星以上的单
   if (drone) await emitAction(o, 'takeaway.drone');
   if (success && v.grade >= 5) await emitAction(o, 'takeaway.grade5');

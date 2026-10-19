@@ -205,11 +205,11 @@
     "desc": "Parties de devine la coupe"
   },
   "cupclear": {
-    "name": "Devine la coupe\u202f: sans faute",
+    "name": "Devine la coupe : sans faute",
     "desc": "Parties réussies jusqu’au dernier tour"
   },
   "numwin": {
-    "name": "Roue des nombres\u202f: lot",
+    "name": "Roue des nombres : lot",
     "desc": "Lots du top 3 à la roue des nombres"
   },
   "slot": {
@@ -242,7 +242,11 @@
   },
   "barall": {
     "name": "Habitué du bar",
-    "desc": "Jeux du bar joués (sur 10)"
+    "desc": "Jouer et gagner aux dix jeux du bar",
+    "tiers": [
+      "Tous joués",
+      "Tous gagnés"
+    ]
   },
   "floor": {
     "name": "Grimpeur de la tour",
@@ -304,9 +308,9 @@
     "name": "Trio des fonds",
     "desc": "Placements du fonds menés à terme",
     "tiers": [
-      "C\u202f: Liquidité",
-      "B\u202f: Capital de croissance",
-      "A\u202f: Investisseur pilier"
+      "C : Liquidité",
+      "B : Capital de croissance",
+      "A : Investisseur pilier"
     ]
   },
   "acquire": {
@@ -336,5 +340,249 @@
   "krab": {
     "name": "M. Krab comblé",
     "desc": "Fois où M. Krab a eu son festin"
+  },
+  "picky": {
+    "name": "Unanimité",
+    "desc": "Clients exigeants satisfaits"
+  },
+  "full": {
+    "name": "Salle comble",
+    "desc": "Tours où toutes les tables sont occupées"
+  },
+  "caught": {
+    "name": "Pris la main dans le sac",
+    "desc": "Fois pris à fouiller un placard"
+  },
+  "barweek": {
+    "name": "Champion du bar de la semaine",
+    "desc": "Semaines en tête d’un classement hebdo du bar"
+  },
+  "oneoil": {
+    "name": "Une seule goutte",
+    "desc": "Un tour de service qui n’a consommé que 1 huile"
+  },
+  "nooil": {
+    "name": "Panne sèche",
+    "desc": "Fermeture forcée faute d’huile"
+  },
+  "bikini": {
+    "name": "Photo de famille de Bikini Bottom",
+    "desc": "M. Krabs, Carlo et Plankton dans ta boutique au même tour"
+  },
+  "victim": {
+    "name": "Pigeon",
+    "desc": "Victime de 100 grivèleries"
+  },
+  "pickyday": {
+    "name": "On ne peut pas plaire à tout le monde",
+    "desc": "100 clients exigeants partis en une journée"
+  },
+  "cupmiss": {
+    "name": "Peur de son ombre",
+    "desc": "50 parties de gobelets perdues d’affilée"
+  },
+  "pity": {
+    "name": "Poissard",
+    "desc": "Décrocher le lot garanti de la machine à sous"
+  },
+  "lucky": {
+    "name": "Veinard",
+    "desc": "Un lot rare à la machine à sous sans le lot garanti"
+  },
+  "blackswan": {
+    "name": "Cygne noir",
+    "desc": "Gagner sur une issue ouverte sous 10 %"
+  },
+  "reverse": {
+    "name": "Indicateur inversé",
+    "desc": "Perdre sur un côté ouvert à 90 % ou plus"
+  },
+  "broke": {
+    "name": "Fauché",
+    "desc": "Tes pièces sont tombées à zéro"
+  },
+  "almost": {
+    "name": "Si près du but",
+    "desc": "Pronostic du marché complet, à un près du sans-faute"
+  },
+  "perfect": {
+    "name": "Sans-faute",
+    "desc": "Pronostic du marché complet, tout juste"
+  },
+  "krabangry": {
+    "name": "La colère de M. Krabs",
+    "desc": "M. Krabs s’est fâché dans ta boutique"
+  },
+  "mice": {
+    "name": "Invasion de souris",
+    "desc": "Volé par les souris 100 fois"
+  },
+  "kujia": {
+    "name": "Lot A",
+    "desc": "Tirer un lot A à l’Ichiban Kuji"
+  },
+  "kujilast": {
+    "name": "Dernier lot",
+    "desc": "Remporter le dernier lot à l’Ichiban Kuji"
+  },
+  "free": {
+    "name": "Enfin libre",
+    "desc": "Te racheter après une acquisition"
+  },
+  "empty": {
+    "name": "Désert",
+    "desc": "Ouvert tout un tour sans un seul client"
+  },
+  "negative": {
+    "name": "Travailler à perte",
+    "desc": "Perdre des pièces sur un tour de service"
+  },
+  "disaster": {
+    "name": "Zone sinistrée",
+    "desc": "Un pique-assiette, un cafard et Plankton au même tour"
+  },
+  "lair": {
+    "name": "Le repaire de Plankton",
+    "desc": "Plankton est resté 24 tours dans ta boutique"
+  },
+  "mood": {
+    "name": "Sautes d’humeur",
+    "desc": "M. Krabs content et fâché chez toi le même jour"
+  },
+  "hygiene": {
+    "name": "Inspection ratée",
+    "desc": "Rapport de Carlo : des cafards à table pendant 24 h la veille"
+  },
+  "trapmiss": {
+    "name": "Piège à vide",
+    "desc": "Une souris a déjoué ton piège 100 fois"
+  },
+  "roachpark": {
+    "name": "Parc à cafards",
+    "desc": "20 cafards déposés chez toi en une journée"
+  },
+  "opendoor": {
+    "name": "Portes ouvertes",
+    "desc": "Ton placard fouillé 1 000 fois"
+  },
+  "sucker": {
+    "name": "Bonne poire",
+    "desc": "Tes ingrédients échangés par d’autres 1 000 fois"
+  },
+  "habitual": {
+    "name": "Récidiviste",
+    "desc": "Pris à fouiller un placard 3 fois en une journée"
+  },
+  "fan": {
+    "name": "Fan inconditionnel",
+    "desc": "Aimer la même boutique 30 jours d’affilée"
+  },
+  "social": {
+    "name": "Papillon mondain",
+    "desc": "Liste d’amis remplie (199)"
+  },
+  "wenjie": {
+    "name": "Confident de Wenjie",
+    "desc": "Discuter avec Wenjie 100 fois"
+  },
+  "pump": {
+    "name": "Pompe humaine",
+    "desc": "Faire le plein de 10 boutiques différentes en un jour"
+  },
+  "draw": {
+    "name": "Match nul",
+    "desc": "5 égalités d’affilée au jeu des doigts"
+  },
+  "spicy": {
+    "name": "Sans voix",
+    "desc": "10 parties de Verre du diable perdues d’affilée"
+  },
+  "goldfish": {
+    "name": "Mémoire de poisson rouge",
+    "desc": "Rater le premier niveau du Cocktail mémoire"
+  },
+  "offboard": {
+    "name": "À côté de la cible",
+    "desc": "0 point avec les trois fléchettes"
+  },
+  "schooled": {
+    "name": "Leçon de débutant",
+    "desc": "5 parties de Dernier bonbon perdues d’affilée à la table débutant"
+  },
+  "loser": {
+    "name": "Éternel second",
+    "desc": "50 tirages de numéro d’affilée sans lot"
+  },
+  "spent": {
+    "name": "Tout perdu",
+    "desc": "Refuser chaque offre et ouvrir le plus petit lot"
+  },
+  "silent": {
+    "name": "Machine muette",
+    "desc": "6 tirages d’affilée sans rien à la machine à sous"
+  },
+  "antiweather": {
+    "name": "Météo à l’envers",
+    "desc": "Se tromper de météo 10 jours d’affilée"
+  },
+  "turtle": {
+    "name": "Tortue du puits",
+    "desc": "Faire un vœu 100 jours d’affilée sans gagner"
+  },
+  "chosen": {
+    "name": "L’élu",
+    "desc": "Gagner à l’arbre à vœux et tirer un lot A le même jour"
+  },
+  "hedge": {
+    "name": "Ménager la chèvre et le chou",
+    "desc": "Acheter Oui et Non sur la même prédiction"
+  },
+  "blind": {
+    "name": "Aveugle des prix",
+    "desc": "Pronostic du marché complet, rien de juste"
+  },
+  "unsold": {
+    "name": "Personne n’en veut",
+    "desc": "10 ordres de bourse expirés sans être remplis"
+  },
+  "ninetynine": {
+    "name": "Quatre-vingt-dix-neuf pas",
+    "desc": "Une série de 99 jours brisée au 100e"
+  },
+  "roundtrip": {
+    "name": "Retour aux sources",
+    "desc": "Revenir dans une rue où tu as déjà vécu"
+  },
+  "nomad": {
+    "name": "Nomade",
+    "desc": "Déménager 3 fois en une journée"
+  },
+  "gamble": {
+    "name": "Vaudou d’amélioration",
+    "desc": "Rater 10 fois d’affilée l’amélioration du même ustensile"
+  },
+  "fail": {
+    "name": "Livreur obstiné",
+    "desc": "20 livraisons ratées"
+  },
+  "grit": {
+    "name": "Increvable",
+    "desc": "Perdre 100 défis de la Tour des chefs"
+  },
+  "worker": {
+    "name": "Salarié",
+    "desc": "Racheté 3 fois"
+  },
+  "eights": {
+    "name": "Triple fortune",
+    "desc": "Exactement 8 888 888 pièces"
+  },
+  "penny": {
+    "name": "Dernier sou",
+    "desc": "Exactement 1 pièce"
+  },
+  "waste": {
+    "name": "Quel gâchis",
+    "desc": "Jeter un plat spécial invendu"
   }
 }

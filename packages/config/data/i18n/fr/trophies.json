@@ -169,5 +169,11 @@
   },
   "ta2000": {
     "name": "Rapide comme l’éclair"
+  },
+  "picky": {
+    "name": "Unanimité"
+  },
+  "caught": {
+    "name": "Pris la main dans le sac"
   }
 }

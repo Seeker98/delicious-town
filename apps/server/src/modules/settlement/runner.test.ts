@@ -259,7 +259,16 @@ describe('结算的数据库往返（问题记录 258：结算余量）', () => 
       const tx = txs.find((x) => x.some((q) => /from "restaurant" where .* for (no key )?update/.test(q)));
       expect(tx).toBeDefined();
       // 随机事件（掉神秘礼券、蟹币、蟹老板、痞老板）额外写仓库、加成、日志、新闻，种子按区服、店 id 取，不数
-      const fixed = tx!.filter((q) => !/"(store_item|effect_source|rest_log|news)"|"effect_dirty"/.test(q));
+      // 成就（PR②）：门槛为 1 的档（只耗 1 油、满座……）第二轮才跨过、蟹老板来了记每日计数时多几条，也不数；
+      // 写收益那条语句本身（with 开头）带着计数，要留着
+      const fixed = tx!.filter(
+        (q) =>
+          !/"(store_item|effect_source|rest_log|news)"|"effect_dirty"/.test(q) &&
+          !(
+            !q.startsWith('with') &&
+            /"(rest_achievement|rest_ach|ach_shard|event_counter|daily_counter)"/.test(q)
+          ),
+      );
       // 这一轮一桌都没坐（约千分之一，种子跟区服 id 走）时店铺没有变化，不写回店铺：少一条（CI 上偶发 5 ≠ 6）
       const inc = await g.db
         .selectFrom('income_round')

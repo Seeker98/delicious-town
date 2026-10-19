@@ -242,7 +242,11 @@
   },
   "barall": {
     "name": "Cliente habitual",
-    "desc": "Juegos del bar jugados (de 10)"
+    "desc": "Jugar y ganar los diez juegos del bar",
+    "tiers": [
+      "Todos jugados",
+      "Todos ganados"
+    ]
   },
   "floor": {
     "name": "Escalador de la torre",
@@ -336,5 +340,249 @@
   "krab": {
     "name": "Don Krab feliz",
     "desc": "Veces que Don Krab tuvo su festín"
+  },
+  "picky": {
+    "name": "Gusto de todos",
+    "desc": "Clientes exigentes satisfechos"
+  },
+  "full": {
+    "name": "Lleno total",
+    "desc": "Turnos con todas las mesas ocupadas"
+  },
+  "caught": {
+    "name": "Con las manos en la masa",
+    "desc": "Veces pillado registrando despensas"
+  },
+  "barweek": {
+    "name": "Campeón del bar de la semana",
+    "desc": "Semanas en lo más alto de una clasificación semanal del bar"
+  },
+  "oneoil": {
+    "name": "Una sola gota",
+    "desc": "Un turno que solo gastó 1 de aceite"
+  },
+  "nooil": {
+    "name": "Sin aceite",
+    "desc": "Cerrar a la fuerza por quedarte sin aceite"
+  },
+  "bikini": {
+    "name": "Foto familiar de Fondo de Bikini",
+    "desc": "Don Cangrejo, Calamardo y Plankton en tu local en el mismo turno"
+  },
+  "victim": {
+    "name": "Primo",
+    "desc": "Te hicieron un simpa 100 veces"
+  },
+  "pickyday": {
+    "name": "No se puede contentar a todos",
+    "desc": "100 clientes exigentes se fueron en un día"
+  },
+  "cupmiss": {
+    "name": "Miedo a la sombra",
+    "desc": "Perder 50 partidas de vasos seguidas"
+  },
+  "pity": {
+    "name": "Gafe",
+    "desc": "Llevarte el premio garantizado de la tragaperras"
+  },
+  "lucky": {
+    "name": "Suertudo",
+    "desc": "Un premio raro en la tragaperras sin el garantizado"
+  },
+  "blackswan": {
+    "name": "Cisne negro",
+    "desc": "Acertar un resultado que abrió por debajo del 10 %"
+  },
+  "reverse": {
+    "name": "Indicador inverso",
+    "desc": "Perder apostando a un lado que abrió al 90 % o más"
+  },
+  "broke": {
+    "name": "Sin blanca",
+    "desc": "Tus monedas llegaron a cero"
+  },
+  "almost": {
+    "name": "Por un pelo",
+    "desc": "Adivinanza del mercado completa, a uno del pleno"
+  },
+  "perfect": {
+    "name": "Pleno",
+    "desc": "Adivinanza del mercado completa, todo acertado"
+  },
+  "krabangry": {
+    "name": "La furia de Don Cangrejo",
+    "desc": "Don Cangrejo se enfadó en tu local"
+  },
+  "mice": {
+    "name": "Plaga de ratones",
+    "desc": "Los ratones te robaron 100 veces"
+  },
+  "kujia": {
+    "name": "Premio A",
+    "desc": "Sacar un premio A en el Ichiban Kuji"
+  },
+  "kujilast": {
+    "name": "Último premio",
+    "desc": "Llevarte el último premio del Ichiban Kuji"
+  },
+  "free": {
+    "name": "Libre al fin",
+    "desc": "Recomprarte tras una adquisición"
+  },
+  "empty": {
+    "name": "Ni un alma",
+    "desc": "Abierto un turno entero sin un solo cliente"
+  },
+  "negative": {
+    "name": "Pagar por trabajar",
+    "desc": "Perder monedas en un turno"
+  },
+  "disaster": {
+    "name": "Zona catastrófica",
+    "desc": "Un gorrón, una cucaracha y Plankton en el mismo turno"
+  },
+  "lair": {
+    "name": "La guarida de Plankton",
+    "desc": "Plankton se quedó 24 turnos en tu local"
+  },
+  "mood": {
+    "name": "Cambios de humor",
+    "desc": "Don Cangrejo contento y enfadado en tu local el mismo día"
+  },
+  "hygiene": {
+    "name": "Inspección suspendida",
+    "desc": "Informe de Calamardo: cucarachas en las mesas 24 horas el día anterior"
+  },
+  "trapmiss": {
+    "name": "Trampa en vano",
+    "desc": "Un ratón esquivó tu trampa 100 veces"
+  },
+  "roachpark": {
+    "name": "Parque de cucarachas",
+    "desc": "Te pusieron 20 cucarachas en un día"
+  },
+  "opendoor": {
+    "name": "Puertas abiertas",
+    "desc": "Te registraron la despensa 1.000 veces"
+  },
+  "sucker": {
+    "name": "Pringado",
+    "desc": "Te cambiaron ingredientes 1.000 veces"
+  },
+  "habitual": {
+    "name": "Reincidente",
+    "desc": "Te pillaron registrando despensas 3 veces en un día"
+  },
+  "fan": {
+    "name": "Fan incondicional",
+    "desc": "Dar me gusta al mismo local 30 días seguidos"
+  },
+  "social": {
+    "name": "Alma de la fiesta",
+    "desc": "Lista de amigos llena (199)"
+  },
+  "wenjie": {
+    "name": "Confidente de Wenjie",
+    "desc": "Charlar con Wenjie 100 veces"
+  },
+  "pump": {
+    "name": "Surtidor humano",
+    "desc": "Llenar el aceite de 10 locales distintos en un día"
+  },
+  "draw": {
+    "name": "Igualados",
+    "desc": "5 empates seguidos en el juego de dedos"
+  },
+  "spicy": {
+    "name": "Sin palabras",
+    "desc": "Perder 10 partidas de Vaso del diablo seguidas"
+  },
+  "goldfish": {
+    "name": "Memoria de pez",
+    "desc": "Fallar el primer nivel de Cóctel de memoria"
+  },
+  "offboard": {
+    "name": "Fuera de la diana",
+    "desc": "0 puntos con los tres dardos"
+  },
+  "schooled": {
+    "name": "Lección de novato",
+    "desc": "Perder 5 partidas de Último caramelo seguidas en la mesa de novatos"
+  },
+  "loser": {
+    "name": "Eterno aspirante",
+    "desc": "50 giros de número seguidos sin premio"
+  },
+  "spent": {
+    "name": "Todo perdido",
+    "desc": "Rechazar cada oferta y abrir el premio más pequeño"
+  },
+  "silent": {
+    "name": "Máquina muda",
+    "desc": "6 tiradas seguidas en blanco en la tragaperras"
+  },
+  "antiweather": {
+    "name": "Pronóstico al revés",
+    "desc": "Fallar el tiempo 10 días seguidos"
+  },
+  "turtle": {
+    "name": "Tortuga del pozo",
+    "desc": "Pedir un deseo 100 días seguidos sin ganar"
+  },
+  "chosen": {
+    "name": "El elegido",
+    "desc": "Ganar en el árbol de los deseos y sacar un premio A el mismo día"
+  },
+  "hedge": {
+    "name": "Nadar entre dos aguas",
+    "desc": "Comprar Sí y No en la misma predicción"
+  },
+  "blind": {
+    "name": "Ciego de precios",
+    "desc": "Adivinanza del mercado completa, ninguna acertada"
+  },
+  "unsold": {
+    "name": "Nadie lo quiere",
+    "desc": "10 órdenes de la bolsa caducaron sin completarse"
+  },
+  "ninetynine": {
+    "name": "Noventa y nueve pasos",
+    "desc": "Una racha de 99 días rota en el día 100"
+  },
+  "roundtrip": {
+    "name": "Vuelta al origen",
+    "desc": "Volver a una calle donde ya viviste"
+  },
+  "nomad": {
+    "name": "Nómada",
+    "desc": "Mudarte 3 veces en un día"
+  },
+  "gamble": {
+    "name": "Vudú de mejora",
+    "desc": "Fallar 10 veces seguidas la mejora del mismo utensilio"
+  },
+  "fail": {
+    "name": "Repartidor tenaz",
+    "desc": "20 entregas fallidas"
+  },
+  "grit": {
+    "name": "Incansable",
+    "desc": "Perder 100 desafíos de la Torre de chefs"
+  },
+  "worker": {
+    "name": "Asalariado",
+    "desc": "Adquirido 3 veces"
+  },
+  "eights": {
+    "name": "Triple fortuna",
+    "desc": "Exactamente 8.888.888 monedas"
+  },
+  "penny": {
+    "name": "Última moneda",
+    "desc": "Exactamente 1 moneda"
+  },
+  "waste": {
+    "name": "Qué desperdicio",
+    "desc": "Tirar un plato especial sin vender"
   }
 }

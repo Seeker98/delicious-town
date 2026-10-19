@@ -8,6 +8,7 @@ import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { consumeGoods } from '../store/goods';
 import { assertNoRound, endRound, loadRound, saveRound } from './round';
 import { memoryWindow } from './rules';
+import { bumpCounters } from '../achieve/counters';
 
 /** 服务端局面 */
 export interface MemoryState {
@@ -59,10 +60,14 @@ export async function memoryAnswer(o: Op, answer: number[]): Promise<MemoryAnswe
   if (!inTime || !right) {
     await endRound(o, 'memory');
     const reason = elapsed < w.earliest ? 'early' : elapsed > w.latest ? 'late' : 'wrong';
+    // 隐藏成就“金鱼的记忆”：第 1 关就没答对
+    if (s.level === 1) await bumpCounters(o, [['bar.memory.zero', 1]]);
     restLog(o, 'bar.memory', { level: s.level, correct: false, reason });
     return { correct: false, reason, level: s.level, award: null, canNext: false, finished: true };
   }
   const award = await randomAward(o, { level: m.awardLevels[s.level - 1]!, noTicket: true, bar: true });
+  // 成就“夜店常客”都赢过：答对第 1 关算赢过
+  if (s.level === 1) await bumpCounters(o, [['bar.memory.won', 1]]);
   const last = s.level >= m.lengths.length;
   if (last) {
     await endRound(o, 'memory');

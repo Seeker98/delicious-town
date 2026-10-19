@@ -10,6 +10,7 @@ import { upsertEffectSource } from '../effects/service';
 import { consumeGoods, grantGoodsOp } from '../store/goods';
 import { badInput } from './common';
 import { assertNoRound, endRound, loadRound, saveRound } from './round';
+import { recordRun } from './state';
 import { devilPayout } from './rules';
 
 /** 服务端局面：spiked 只在这里 */
@@ -84,6 +85,8 @@ export async function devilDrink(o: Op, cup: number): Promise<DevilDto> {
       expiresAt: until,
     });
     invalidateAgg(o);
+    // 隐藏成就“辣到失语”：连输局数
+    await recordRun(o, 'devil_lose', 'streak.devil.lose', true);
     restLog(o, 'bar.devil', { stake: s.stake, result: 'lose', survived: s.survived });
     return dto(s, { result: 'lose', spiked: s.spiked, hangoverUntil: until.toISOString() });
   }
@@ -101,6 +104,7 @@ export async function devilDrink(o: Op, cup: number): Promise<DevilDto> {
     if (s.survived >= t.newsSurvived) opNews(o, 'bar.devil', { stake: s.stake, payout });
     // 支线“酒运”：赢、活过 3 杯（问题记录 515）
     await emitAction(o, 'bar.devil.win');
+    await recordRun(o, 'devil_lose', 'streak.devil.lose', false);
     if (s.survived >= 3) await emitAction(o, 'bar.devil.survive3');
     restLog(o, 'bar.devil', { stake: s.stake, result: 'win', survived: s.survived, payout });
     return dto(s, { result: 'win', spiked: s.spiked, payout, lastBartender: pick });

@@ -7,6 +7,8 @@ import { randomAward } from '../award/random';
 import { sendMail } from '../mail/send';
 import { postNews } from '../news/news';
 import { pickWinner } from './rules';
+import { bumpCountersFor } from '../achieve/counters';
+import { chosenOneToday } from '../achieve/hidden';
 
 type Log = { error(obj: object, msg: string): void };
 const NO_LOG: Log = { error: () => {} };
@@ -76,6 +78,9 @@ export async function drawDue(d: GameDeps, shardId: number, now: Date): Promise<
         .where('round_id', '=', id)
         .where('rest_id', '=', winner)
         .execute();
+      // 隐藏成就“天选之人”：今天一番赏已经抽到过 A 赏
+      if (await chosenOneToday(tx, winner, now))
+        await bumpCountersFor(d, tx, { shardId, restId: winner, now }, [['luck.chosen', 1]]);
       const items: RewardItems = {
         goods: [{ id: round.goods_id, num: round.num }],
         icons: [{ key: WISH_TREE_ICON, title: icon?.title ?? '许愿成真', days: titleDays }],

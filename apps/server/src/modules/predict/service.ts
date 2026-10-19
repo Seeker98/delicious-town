@@ -22,6 +22,7 @@ import { frozenReason } from '../exchange/guard';
 import { eligibility } from '../exchange/eligibility';
 import { cardValue } from '../jobcard/perks';
 import { holdStep } from './holdStep';
+import { bumpCounters } from '../achieve/counters';
 
 const KEEP_DAYS = 7;
 
@@ -135,6 +136,18 @@ export function createPredictService(d: GameDeps) {
       })
       .execute();
     await emitAction(o, 'predict.trade');
+    // 隐藏成就“两头下注”：同一个事件里“是”和“否”都买过（买了又卖光的也算）
+    if (b.dir === 'buy') {
+      const other = await o.tx
+        .selectFrom('predict_trade')
+        .select('id')
+        .where('event_id', '=', e.id)
+        .where('rest_id', '=', o.rest.id)
+        .where('dir', '=', 'buy')
+        .where('side', '=', b.side === 'yes' ? 'no' : 'yes')
+        .executeTakeFirst();
+      if (other) await bumpCounters(o, [['predict.both', 1]]);
+    }
     // 支线“事件预测”（问题记录 515）：卖出记一次；一边持有越过 100、200 份的那一笔各记一次。
     // 区服把持有上限调低时按上限算（终审：原来调到 200 以下这一档做不了，还挡住后面两档）
     if (b.dir === 'sell') await emitAction(o, 'predict.sell');

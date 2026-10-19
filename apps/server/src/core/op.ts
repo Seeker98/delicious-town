@@ -38,8 +38,8 @@ export interface Op {
   readonly touched: Set<RestColumn>;
   /** 同一个操作内的缓存（加成汇总、幸运等） */
   readonly cache: Map<string, unknown>;
-  /** 操作开始时的等级、星级、声望：写回前比一比，跨档的成就当场记（成就系统 2026-10-19） */
-  readonly initial: { level: number; star_level: number; renown: number };
+  /** 操作开始时的等级、星级、声望、银币：写回前比一比，跨档的成就当场记（成就系统 2026-10-19） */
+  readonly initial: { level: number; star_level: number; renown: number; coin: number };
 }
 
 export interface OpResult<T> {
@@ -72,12 +72,12 @@ export function createOp(
     news: [],
     touched: new Set(),
     cache: new Map(),
-    initial: { level: rest.level, star_level: rest.star_level, renown: rest.renown },
+    initial: { level: rest.level, star_level: rest.star_level, renown: rest.renown, coin: rest.coin },
   };
 }
 
 /**
- * 写回前的钩子：等级、星级、声望变了时调用（成就模块注册，看有没有跨过状态类成就的门槛）。
+ * 写回前的钩子：等级、星级、声望、银币变了时调用（成就模块注册，看有没有跨过状态类成就的门槛）。
  * 用注册的方式免得 core 反过来依赖业务模块
  */
 let statHook: ((op: Op) => Promise<void>) | null = null;
@@ -111,7 +111,13 @@ export async function flushOp(op: Op): Promise<void> {
     op.cache.delete(LEVEL_TABLES_KEY);
     await levelUpTables(op, levels);
   }
-  if (statHook && (op.touched.has('level') || op.touched.has('star_level') || op.touched.has('renown')))
+  if (
+    statHook &&
+    (op.touched.has('level') ||
+      op.touched.has('star_level') ||
+      op.touched.has('renown') ||
+      op.touched.has('coin'))
+  )
     await statHook(op);
   if (op.touched.size > 0) {
     const patch: Record<string, unknown> = {};

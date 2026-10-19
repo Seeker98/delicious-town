@@ -2,7 +2,7 @@ import { achProgressKey, type CatalogAchLineDto, type CatalogTrophyDto } from '@
 import { activeMessages } from '../i18n';
 import { formatNum, formatPct, gameDateTime } from './format';
 
-/** 十个分类（和配置 ACH_CATS 同序） */
+/** 十一个分类（和配置 ACH_CATS 同序；hidden 是隐藏成就） */
 export const ACH_CATS = [
   'rest',
   'daily',
@@ -14,9 +14,10 @@ export const ACH_CATS = [
   'temple',
   'finance',
   'town',
+  'hidden',
 ] as const;
 export type AchCatKey = (typeof ACH_CATS)[number];
-/** 一级标签只有三个（视觉规范 §10.1 分区不超过两层）：十个分类在“分类”页里用下拉框选 */
+/** 一级标签只有三个（视觉规范 §10.1 分区不超过两层）：十一个分类在“分类”页里用下拉框选 */
 export const ACH_TABS = ['overview', 'trophies', 'lines'] as const;
 export type AchTab = (typeof ACH_TABS)[number];
 
@@ -33,6 +34,11 @@ export interface AchCatalog {
 
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV'];
 export const roman = (n: number): string => ROMAN[n - 1] ?? String(n);
+
+/** 隐藏成就还没达成：名字、说明都显示 ??? */
+export function isSecret(line: Line, got: ReadonlySet<string>): boolean {
+  return line.hidden === true && !line.tiers.some((t) => got.has(t.id));
+}
 
 /** 线的名字：菜系线用街道的菜系名 */
 export function lineName(line: Line, c: AchCatalog): string {

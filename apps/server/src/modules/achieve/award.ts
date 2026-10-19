@@ -5,6 +5,24 @@ import type { DB } from '../../db/schema';
 import { grantIcon } from '../icons/grant';
 import { postNews } from '../news/news';
 
+/**
+ * 补发的版本：每次成就配置加了能按历史数据补的成就（PR② 的新计数、隐藏成就），加一，
+ * 补发任务按新版本把整个区服再算一遍（记成补发）
+ */
+export const ACH_BACKFILL_VERSION = 2;
+
+/**
+ * 区服按当前版本补发完了没有：补发完以前打开成就页补算的也记成补发（不写动态、不算本周新增），也不算首达
+ */
+export async function shardBackfilled(db: Kysely<DB>, shardId: number): Promise<boolean> {
+  return !!(await db
+    .selectFrom('ach_shard')
+    .select('shard_id')
+    .where('shard_id', '=', shardId)
+    .where('version', '>=', ACH_BACKFILL_VERSION)
+    .executeTakeFirst());
+}
+
 export interface AwardInput {
   shardId: number;
   restId: number;
@@ -58,11 +76,7 @@ export async function awardAchievements(
   if (a.backfilled) return got.map((x) => x.tier.id);
 
   // 首达：补发完的区服里，别的店都还没有这个成就（补发的也算“有”）
-  const done = await tx
-    .selectFrom('ach_shard')
-    .select('shard_id')
-    .where('shard_id', '=', a.shardId)
-    .executeTakeFirst();
+  const done = await shardBackfilled(tx, a.shardId);
   const firsts = new Set<string>();
   if (done) {
     const big = got.filter((x) => x.tier.pts >= t.firstMinPts).map((x) => x.tier.id);
@@ -107,7 +121,12 @@ export async function awardAchievements(
     )
     .execute();
   for (const { tier } of got)
-    if (firsts.has(tier.id) && tier.pts >= t.newsMinPts)
+    // 隐藏成就不发首达新闻（名字会被别的玩家提前看到）
+    if (
+      firsts.has(tier.id) &&
+      tier.pts >= t.newsMinPts &&
+      !config.achievements.byId.get(tier.id)?.line.hidden
+    )
       await postNews(
         tx,
         { shardId: a.shardId, type: 'achieve.first', restId: a.restId, params: { id: tier.id } },

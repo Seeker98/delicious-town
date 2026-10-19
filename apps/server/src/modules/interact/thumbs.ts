@@ -1,6 +1,7 @@
 import { GOODS } from '@dt/config';
 import {
   ErrorCode,
+  addDays,
   gameDay,
   type GameEvent,
   type ReturnAllDto,
@@ -17,6 +18,10 @@ import { gainRenown, gainStrength } from '../../core/resources';
 import { AppError } from '../../http/errors';
 import { incrementDaily } from '../counter/dailyCounter';
 import { grantGoodsOp } from '../store/goods';
+import { bumpCounters } from '../achieve/counters';
+
+/** 连着这么多天给同一家店点赞：隐藏成就“死忠粉” */
+const LOYAL_DAYS = 30;
 
 /** 点赞、一键回赞（规格书 13 §13.7） */
 export function createThumbs(d: GameDeps) {
@@ -70,6 +75,20 @@ export function createThumbs(d: GameDeps) {
             returned: theyFirst !== undefined,
           })
           .execute();
+        // 隐藏成就“死忠粉”：连着 30 天给同一家店点赞（一天一条，最近 30 天每天都有就是连着）
+        const loyal = await me.tx
+          .selectFrom('thumb')
+          .select((eb) => eb.fn.countAll<string>().as('n'))
+          .where('from_rest', '=', me.rest.id)
+          .where('to_rest', '=', them.rest.id)
+          // 按天列出来走主键点查（主键是 day, from_rest, to_rest；按范围查会扫这 30 天所有店的点赞）
+          .where(
+            'day',
+            'in',
+            Array.from({ length: LOYAL_DAYS }, (_, i) => addDays(day, -i)),
+          )
+          .executeTakeFirstOrThrow();
+        if (Number(loyal.n) >= LOYAL_DAYS) await bumpCounters(me, [['thumbs.loyal', 1]]);
         const count = await incrementDaily(me.tx, me.rest.id, 'thumbs.given', 1, day);
         const rewarded = count <= t.rewardTimes;
         let tickets = 0;

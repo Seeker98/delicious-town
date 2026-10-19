@@ -44,6 +44,7 @@ import {
   type T,
 } from './rules';
 import { baseOf, ensureState, lockState, type AcquireStateRow } from './state';
+import { bumpCounters } from '../achieve/counters';
 
 const RANK_SIZE = 50;
 const MARKET_SIZE = 100;
@@ -356,6 +357,8 @@ export function createAcquireService(d: GameDeps) {
       restLog(me, 'acquire.bought', { restId: b.restId, name: target.rest.name, price, way: b.way });
       // 支线“收购”（问题记录 515）：强收、买挂牌都算
       await emitAction(me, 'acquire.buy');
+      // 隐藏成就“打工人”：被收购的次数（强收、被转手都算）
+      await bumpCounters(target, [['acquire.taken', 1]]);
       restLog(target, 'acquire.taken', {
         by: ctx.restaurantId,
         byName: me.rest.name,
@@ -429,6 +432,8 @@ export function createAcquireService(d: GameDeps) {
         })
         .execute();
       restLog(me, 'acquire.redeemed', { price, from: owner.rest.name });
+      // 隐藏成就“重获自由”
+      await bumpCounters(me, [['acquire.redeem', 1]]);
       restLog(owner, 'acquire.lost', { restId: ctx.restaurantId, name: me.rest.name, got: split.sellerGot });
       // 赎身也按 newsMinPrice 门槛（收购 PR 3 裁定 2：小店赎身不刷屏）
       if (price >= t.newsMinPrice) opNews(me, 'acquire.redeem', { price, ownerName: owner.rest.name });
