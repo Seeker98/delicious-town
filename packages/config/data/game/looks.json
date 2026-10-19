@@ -111,6 +111,45 @@
       "art": "crab"
     }
   ],
+  "frames": [
+    {
+      "id": 1,
+      "name": "木头像框",
+      "tone": "wood",
+      "points": 500
+    },
+    {
+      "id": 2,
+      "name": "铜头像框",
+      "tone": "bronze",
+      "points": 1500
+    },
+    {
+      "id": 3,
+      "name": "银头像框",
+      "tone": "silver",
+      "points": 3000
+    },
+    {
+      "id": 4,
+      "name": "金头像框",
+      "tone": "gold",
+      "points": 5000
+    },
+    {
+      "id": 5,
+      "name": "翡翠头像框",
+      "tone": "jade",
+      "points": 8000
+    },
+    {
+      "id": 6,
+      "name": "彩头像框",
+      "tone": "rainbow",
+      "points": 12000,
+      "icon": "ach-master"
+    }
+  ],
   "icons": [
     {
       "key": "founder",
@@ -341,6 +380,16 @@
       "key": "ach-chefgod",
       "title": "万世厨神",
       "desc": "赛厨周榜第一 26 周"
+    },
+    {
+      "key": "ach-master",
+      "title": "成就大师",
+      "desc": "成就点达到 12,000"
+    },
+    {
+      "key": "ach-perfect",
+      "title": "小镇完人",
+      "desc": "全部计点成就都达成了"
     }
   ]
 }

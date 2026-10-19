@@ -584,5 +584,13 @@
   "waste": {
     "name": "Qué desperdicio",
     "desc": "Tirar un plato especial sin vender"
+  },
+  "veteran": {
+    "name": "Miembro fundador",
+    "desc": "Local abierto antes del 31/10/2026"
+  },
+  "oilsaver": {
+    "name": "Testigo de la reforma de los ahorradores",
+    "desc": "Recoger el correo de compensación de la reforma de los ahorradores de aceite"
   }
 }

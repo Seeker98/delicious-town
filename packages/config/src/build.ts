@@ -18,7 +18,7 @@ import { bulkErrors } from './bulk';
 import { wishTreeErrors } from './wishtree';
 import { shilingErrors } from './shiling';
 import { foodWeights } from './foodSupply';
-import { buildAchievements, rawAchLine, rawTrophy } from './achievements';
+import { ACH_PERFECT_ICON, buildAchievements, rawAchLine, rawTrophy } from './achievements';
 import {
   ART_DEVICE_TYPES,
   ART_EFFECT_KEYS,
@@ -1271,6 +1271,16 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     if (i.shop && i.shop.to <= i.shop.from) errors.push(`looks: icon ${i.key} shop must end after it starts`);
     if (CUSTOM_ICON_KEY.test(i.key)) errors.push(`looks: icon ${i.key} reserved for custom titles`);
   }
+  // 头像框（成就 PR③）：编号不重复，按成就点从小到大，称号要在 icons 里；计点成就全部达成的称号也要在
+  const frameIds = new Set<number>();
+  looks.frames.forEach((f, i) => {
+    if (frameIds.has(f.id)) errors.push(`looks: duplicate frame ${f.id}`);
+    frameIds.add(f.id);
+    if (i > 0 && looks.frames[i - 1]!.points >= f.points)
+      errors.push(`looks: frame ${f.id} points not increasing`);
+    if (f.icon && !iconKeys.has(f.icon)) errors.push(`looks: frame ${f.id} unknown icon ${f.icon}`);
+  });
+  if (!iconKeys.has(ACH_PERFECT_ICON)) errors.push(`looks: icon ${ACH_PERFECT_ICON} missing`);
   if (!avatarIds.has(tuning.friend.npc.avatar))
     errors.push(`tuning.friend.npc.avatar ${tuning.friend.npc.avatar} not in looks`);
   if (!doorIds.has(tuning.friend.npc.door))
@@ -1357,6 +1367,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
       mysterious: mysteriousCookbooks,
       doors: looks.doors,
       avatars: looks.avatars,
+      frames: looks.frames,
       icons: looks.icons.map((x) => ({ id: x.key, title: x.title, desc: x.desc })),
       tasks: [...quests, ...weeklyGroups.flatMap((g) => g.quests), ...hiddenQuests].map((q) => ({
         id: q.id,

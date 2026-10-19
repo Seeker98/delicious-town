@@ -10148,3 +10148,137 @@ a.dt-entry-row::after {
   max-width: 150px;
   text-align: right;
 }
+
+/* ---------- 头像框（成就 PR③，DtAvatar）：头像缩进一圈，外面一层 SVG 环 ---------- */
+.dt-ava-framed {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.dt-ava-face {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--dt-plate);
+}
+.dt-ava-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+/* 装扮页的头像框（成就 PR③ 样稿 ②）：预览 + 4 列格子，选中的紫边（和头像格子一样） */
+.dt-frame-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dt-frame-preview {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+.dt-frame-preview-name {
+  font-weight: 700;
+}
+.dt-frame-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.dt-frame-tile {
+  font: inherit;
+  color: inherit;
+  background: var(--dt-surface);
+  border: 1px solid var(--dt-line);
+  border-radius: 14px;
+  padding: 10px 4px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  transition:
+    transform 140ms var(--dt-ease-out),
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+.dt-frame-tile:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.dt-frame-tile[aria-pressed='true'] {
+  border-color: var(--dt-primary);
+  background: var(--dt-primary-soft);
+}
+.dt-frame-tile .is-locked {
+  filter: grayscale(1);
+  opacity: 0.45;
+}
+.dt-frame-name {
+  font-size: 12px;
+  font-weight: 600;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dt-frame-state {
+  font-size: 11px;
+  color: var(--dt-muted);
+}
+.dt-frame-tile[aria-pressed='true'] .dt-frame-state {
+  color: var(--dt-primary-ink);
+  font-weight: 600;
+}
+/* 成就页的里程碑轨道（成就 PR③ 样稿 ③）：一站一个头像框，线按站点等分 */
+.dt-ach-track {
+  position: relative;
+  padding-top: 2px;
+}
+.dt-ach-track-line {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  top: 14px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--dt-bar-track);
+}
+.dt-ach-track-line i {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--dt-primary);
+}
+.dt-ach-stops {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+}
+.dt-ach-stop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  width: 36px;
+}
+.dt-ach-stop .is-locked {
+  filter: grayscale(1);
+  opacity: 0.45;
+}
+.dt-ach-stop-pts {
+  font-size: 11px;
+  color: var(--dt-muted);
+}
+.dt-ach-stop.is-got .dt-ach-stop-pts {
+  color: var(--dt-text);
+  font-weight: 600;
+}
+.dt-ach-titles {
+  line-height: 1.8;
+}

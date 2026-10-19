@@ -158,5 +158,13 @@
   "ach-chefgod": {
     "title": "Dios cocinero eterno",
     "desc": "26 semanas en el #1 de duelos"
+  },
+  "ach-master": {
+    "title": "Maestro de logros",
+    "desc": "Llegar a 12.000 puntos de logro"
+  },
+  "ach-perfect": {
+    "title": "Ejemplo del pueblo",
+    "desc": "Conseguir todos los logros que dan puntos"
   }
 }

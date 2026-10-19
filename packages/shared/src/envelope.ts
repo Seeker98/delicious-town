@@ -16,7 +16,9 @@ export interface GameEvent {
     | 'shiling'
     | 'activityCurrency'
     /** 达成成就（成就系统 2026-10-19）：key 是成就编号，num 是点数 */
-    | 'achievement';
+    | 'achievement'
+    /** 成就点跨过里程碑、解锁头像框（成就 PR③）：id 是头像框编号，num 是里程碑的成就点 */
+    | 'achFrame';
   id?: number;
   /** 活动货币的名字（问题记录 224）：活动货币没有道具 id */
   name?: string;

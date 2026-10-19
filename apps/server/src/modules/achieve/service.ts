@@ -36,7 +36,15 @@ export async function evaluateRest(
   t: Tuning['achieve'],
   rest: Pick<
     RestaurantRow,
-    'id' | 'shard_id' | 'account_id' | 'level' | 'star_level' | 'renown' | 'street_id' | 'cookbook_counts'
+    | 'id'
+    | 'shard_id'
+    | 'account_id'
+    | 'level'
+    | 'star_level'
+    | 'renown'
+    | 'street_id'
+    | 'cookbook_counts'
+    | 'created_at'
   >,
   o: { now: Date; backfilled: boolean; events?: GameEvent[]; values?: AchValues },
 ): Promise<string[]> {

@@ -31,6 +31,7 @@ const empty = (): I18nTable => ({
   mysterious: {},
   doors: {},
   avatars: {},
+  frames: {},
   icons: {},
   tasks: {},
   chapters: {},

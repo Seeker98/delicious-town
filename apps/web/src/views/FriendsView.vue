@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router';
 import type { FriendRequestDto, FriendsDto, RestBriefDto, RestLogDto, ThumbTodayDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import DtArt from '../components/DtArt.vue';
+import DtAvatar from '../components/DtAvatar.vue';
 import DtEmpty from '../components/DtEmpty.vue';
 import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
@@ -190,7 +191,7 @@ watch(tab, (k) => void show(k), { immediate: true });
         class="dt-row is-link dt-friend-row"
         :data-testid="`friend-row-${f.id}`"
       >
-        <span class="dt-friend-ava"><DtArt :name="ava(f.id, f.avatar)" :size="40" /></span>
+        <span class="dt-friend-ava"><DtAvatar :art="ava(f.id, f.avatar)" :frame="f.frame" :size="40" /></span>
         <span class="dt-row-main">
           <span class="dt-row-title is-strong"
             >{{ restName(f.id, f.name)
@@ -213,7 +214,7 @@ watch(tab, (k) => void show(k), { immediate: true });
     <div v-if="requests.length === 0" class="dt-card dt-up-max">{{ t.friends.noRequests }}</div>
     <div v-else class="dt-card dt-rows-card">
       <div v-for="r in requests" :key="r.id" class="dt-row dt-friend-row" :data-testid="`request-${r.id}`">
-        <span class="dt-friend-ava"><DtArt :name="ava(r.id, r.avatar)" :size="40" /></span>
+        <span class="dt-friend-ava"><DtAvatar :art="ava(r.id, r.avatar)" :frame="r.frame" :size="40" /></span>
         <span class="dt-row-main">
           <span class="dt-row-title is-strong"
             >{{ restName(r.id, r.name)
@@ -269,7 +270,9 @@ watch(tab, (k) => void show(k), { immediate: true });
       </div>
       <div v-if="group.length > 0" :class="['dt-card dt-rows-card', { 'mt-2': gi === 0 }]">
         <div v-for="r in group" :key="r.id" class="dt-row dt-friend-row" :data-testid="`found-${r.id}`">
-          <span class="dt-friend-ava"><DtArt :name="ava(r.id, r.avatar)" :size="40" /></span>
+          <span class="dt-friend-ava"
+            ><DtAvatar :art="ava(r.id, r.avatar)" :frame="r.frame" :size="40"
+          /></span>
           <span class="dt-row-main">
             <RouterLink :to="`/friends/${r.id}`" class="dt-row-title is-strong dt-friend-link"
               >{{ restName(r.id, r.name)

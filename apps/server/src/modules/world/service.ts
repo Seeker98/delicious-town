@@ -458,6 +458,7 @@ export function localizeCatalog(base: CatalogDto, t: I18nTable | undefined, lang
   const looks = base.looks && {
     doors: pick(base.looks.doors, t.doors, ['name']),
     avatars: pick(base.looks.avatars, t.avatars, ['name']),
+    ...(base.looks.frames ? { frames: pick(base.looks.frames, t.frames, ['name']) } : {}),
     icons: base.looks.icons.map((x) => {
       const e = t.icons[x.key];
       return e ? { ...x, ...(e.title ? { title: e.title } : {}), ...(e.desc ? { desc: e.desc } : {}) } : x;

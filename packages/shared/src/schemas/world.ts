@@ -117,6 +117,8 @@ export interface CatalogAchLineDto {
   labels: string[] | null;
   /** 隐藏成就（达成前只显示 ???）；旧缓存里没有 */
   hidden?: boolean;
+  /** 绝版成就（不计点，成就 PR③）；旧缓存里没有 */
+  legacy?: boolean;
   tiers: Array<{
     id: string;
     tier: number;
@@ -172,8 +174,12 @@ export interface LooksDto {
   doors: Array<{ id: number; name: string; coin: number; art: string }>;
   /** art：头像的图形名，网页画 avatar-<art>（界面改版 P7） */
   avatars: Array<{ id: number; name: string; art: string }>;
+  /** 头像框（成就 PR③）：成就点到 points 解锁；旧缓存里没有 */
+  frames?: Array<{ id: number; name: string; tone: FrameToneDto; points: number; icon?: string }>;
   icons: Array<{ key: string; title: string; desc: string }>;
 }
+/** 头像框配色（和配置 FRAME_TONES 一致） */
+export type FrameToneDto = 'wood' | 'bronze' | 'silver' | 'gold' | 'jade' | 'rainbow';
 
 /** 司天罗盘、晴雨签（天气改版设计 §2） */
 export const compassBody = z.object({ type: z.number().int().min(1).max(4) });

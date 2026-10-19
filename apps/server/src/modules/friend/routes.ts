@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from 'fastify';
 import {
   avatarBody,
+  frameBody,
   dineStartBody,
   doorBody,
   exchangeFoodsQuery,
@@ -97,6 +98,9 @@ export function socialRoutes(svc: SocialService): FastifyPluginAsync {
     );
     r.post('/rest/avatar', async (req) =>
       okOp(await svc.looks.avatar(restCtxOf(req), parse(avatarBody, req.body).avatar)),
+    );
+    r.post('/rest/frame', async (req) =>
+      okOp(await svc.looks.frame(restCtxOf(req), parse(frameBody, req.body).frame)),
     );
     r.post('/rest/notice', async (req) =>
       okOp(await svc.looks.notice(restCtxOf(req), parse(noticeBody, req.body).text)),

@@ -1,15 +1,15 @@
 import { sql, type Kysely } from 'kysely';
-import type { GameConfig, Tuning } from '@dt/config';
+import { ACH_PERFECT_ICON, type GameConfig, type Tuning } from '@dt/config';
 import type { GameEvent } from '@dt/shared';
 import type { DB } from '../../db/schema';
 import { grantIcon } from '../icons/grant';
 import { postNews } from '../news/news';
 
 /**
- * 补发的版本：每次成就配置加了能按历史数据补的成就（PR② 的新计数、隐藏成就），加一，
+ * 补发的版本：每次成就配置加了能按历史数据补的成就（2：PR② 的新计数、隐藏成就；3：PR③ 的绝版成就），加一，
  * 补发任务按新版本把整个区服再算一遍（记成补发）
  */
-export const ACH_BACKFILL_VERSION = 2;
+export const ACH_BACKFILL_VERSION = 3;
 
 /**
  * 区服按当前版本补发完了没有：补发完以前打开成就页补算的也记成补发（不写动态、不算本周新增），也不算首达
@@ -21,6 +21,25 @@ export async function shardBackfilled(db: Kysely<DB>, shardId: number): Promise<
     .where('shard_id', '=', shardId)
     .where('version', '>=', ACH_BACKFILL_VERSION)
     .executeTakeFirst());
+}
+
+/** 成就点里程碑（成就 PR③）：头像框（和它一起给的称号），以及计点成就全部达成的「小镇完人」 */
+export interface Milestone {
+  points: number;
+  /** 解锁的头像框编号；「小镇完人」没有框 */
+  frame: number | null;
+  icon: string | null;
+}
+
+/** 成就点从 prev 涨到 now 跨过的里程碑 */
+export function crossedMilestones(config: GameConfig, prev: number, now: number): Milestone[] {
+  const list: Milestone[] = config.bundle.looks.frames.map((f) => ({
+    points: f.points,
+    frame: f.id,
+    icon: f.icon ?? null,
+  }));
+  list.push({ points: config.achievements.totalPts, frame: null, icon: ACH_PERFECT_ICON });
+  return list.filter((m) => m.points > prev && m.points <= now);
 }
 
 export interface AwardInput {
@@ -64,16 +83,39 @@ export async function awardAchievements(
   if (added.length === 0) return [];
   const got = added.map((r) => config.achievements.byId.get(r.ach_id)!);
   const pts = got.reduce((s, x) => s + x.tier.pts, 0);
-  await tx
-    .insertInto('rest_ach')
-    .values({ rest_id: a.restId, points: pts, points_at: a.now })
-    .onConflict((oc) =>
-      oc.column('rest_id').doUpdateSet({ points: sql`rest_ach.points + ${pts}`, points_at: a.now }),
-    )
-    .execute();
+  // 绝版成就 0 点：不动成就点，也不动“达到当前点数的时间”（排行同分按它）
+  let milestones: Milestone[] = [];
+  if (pts > 0) {
+    const row = await tx
+      .insertInto('rest_ach')
+      .values({ rest_id: a.restId, points: pts, points_at: a.now })
+      .onConflict((oc) =>
+        oc.column('rest_id').doUpdateSet({ points: sql`rest_ach.points + ${pts}`, points_at: a.now }),
+      )
+      .returning('points')
+      .executeTakeFirstOrThrow();
+    milestones = crossedMilestones(config, row.points - pts, row.points);
+  }
   for (const { tier } of got)
     if (tier.icon) await grantIcon(tx, { restId: a.restId, key: tier.icon, expiresAt: null, now: a.now });
+  for (const m of milestones)
+    if (m.icon) await grantIcon(tx, { restId: a.restId, key: m.icon, expiresAt: null, now: a.now });
   if (a.backfilled) return got.map((x) => x.tier.id);
+  // 跨过里程碑：写动态、弹提示（解锁的头像框要自己去装扮页戴上）
+  const frames = milestones.filter((m) => m.frame !== null);
+  if (frames.length > 0)
+    await tx
+      .insertInto('rest_log')
+      .values(
+        frames.map((m) => ({
+          rest_id: a.restId,
+          type: 'achieve.milestone',
+          params: JSON.stringify({ points: m.points, frame: m.frame }),
+          created_at: a.now,
+        })),
+      )
+      .execute();
+  for (const m of frames) a.events?.push({ type: 'gain', kind: 'achFrame', id: m.frame!, num: m.points });
 
   // 首达：补发完的区服里，别的店都还没有这个成就（补发的也算“有”）
   const done = await shardBackfilled(tx, a.shardId);

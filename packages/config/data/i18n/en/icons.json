@@ -158,5 +158,13 @@
   "ach-chefgod": {
     "title": "Eternal Chef God",
     "desc": "26 weeks at #1 in the cook-off"
+  },
+  "ach-master": {
+    "title": "Achievement Master",
+    "desc": "Reached 12,000 achievement points"
+  },
+  "ach-perfect": {
+    "title": "Town Paragon",
+    "desc": "Earned every achievement that gives points"
   }
 }

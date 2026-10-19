@@ -63,7 +63,14 @@ export function createFriendReads(d: GameDeps) {
   /** 给一批餐厅标上"是否好友 / 是否已申请" */
   async function annotate(
     ctx: RestCtx,
-    rows: Array<{ id: number; name: string; level: number; star_level: number; avatar: number | null }>,
+    rows: Array<{
+      id: number;
+      name: string;
+      level: number;
+      star_level: number;
+      avatar: number | null;
+      frame: number | null;
+    }>,
   ): Promise<RestBriefDto[]> {
     const ids = rows.map((r) => r.id);
     if (ids.length === 0) return [];
@@ -93,6 +100,7 @@ export function createFriendReads(d: GameDeps) {
       level: r.level,
       star: r.star_level,
       avatar: r.avatar,
+      frame: r.frame,
       isFriend: friends.has(r.id),
       requested: requested.has(r.id),
     }));
@@ -113,6 +121,7 @@ export function createFriendReads(d: GameDeps) {
           'r.level',
           'r.star_level',
           'r.avatar',
+          'r.frame',
           'r.npc',
           'r.state',
           'rt.tables',
@@ -148,6 +157,7 @@ export function createFriendReads(d: GameDeps) {
         level: r.level,
         star: r.star_level,
         avatar: r.avatar,
+        frame: r.frame,
         npc: r.npc,
         roaches: r.tables.filter((x) => x.customer === 3).length,
         dineSeat:
@@ -167,7 +177,7 @@ export function createFriendReads(d: GameDeps) {
       const rows = await d.db
         .selectFrom('friend_request as q')
         .innerJoin('restaurant as r', 'r.id', 'q.from_rest')
-        .select(['r.id', 'r.name', 'r.level', 'r.star_level', 'r.avatar', 'r.npc', 'q.created_at'])
+        .select(['r.id', 'r.name', 'r.level', 'r.star_level', 'r.avatar', 'r.frame', 'r.npc', 'q.created_at'])
         .where('q.to_rest', '=', ctx.restaurantId)
         .orderBy('q.created_at', 'desc')
         .execute();
@@ -177,6 +187,7 @@ export function createFriendReads(d: GameDeps) {
         level: r.level,
         star: r.star_level,
         avatar: r.avatar,
+        frame: r.frame,
         npc: r.npc,
         at: r.created_at.toISOString(),
       }));
@@ -186,7 +197,7 @@ export function createFriendReads(d: GameDeps) {
       const m = await me(ctx);
       const rows = await d.db
         .selectFrom('restaurant')
-        .select(['id', 'name', 'level', 'star_level', 'avatar'])
+        .select(['id', 'name', 'level', 'star_level', 'avatar', 'frame'])
         .where('shard_id', '=', m.shard_id)
         .where('npc', '=', false)
         .where('id', '!=', m.id)
@@ -201,7 +212,7 @@ export function createFriendReads(d: GameDeps) {
       const m = await me(ctx);
       const rows = await d.db
         .selectFrom('restaurant')
-        .select(['id', 'name', 'level', 'star_level', 'avatar'])
+        .select(['id', 'name', 'level', 'star_level', 'avatar', 'frame'])
         .where('shard_id', '=', m.shard_id)
         .where('street_id', '=', m.street_id)
         .where('state', '=', 1)

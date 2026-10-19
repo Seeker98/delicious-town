@@ -1,7 +1,7 @@
 {
   "source": "新设计（成就系统 2026-10-19，设计稿 docs/superpowers/specs/2026-10-19-achievements-design.md）",
-  "rule": "metric: counter:<event_counter 键> 或 state:<状态名>（服务端 achieve 模块计算）；档的 metric 可以覆盖整条线的；perStreet 的线构建时按街道展开（键 cuisine.<街道>）；labels 是各档的显示名（不写就显示门槛数字）；hidden 是隐藏成就（分类 hidden，达成前网页只显示 ???）",
-  "count": 139,
+  "rule": "metric: counter:<event_counter 键> 或 state:<状态名>（服务端 achieve 模块计算）；档的 metric 可以覆盖整条线的；perStreet 的线构建时按街道展开（键 cuisine.<街道>）；labels 是各档的显示名（不写就显示门槛数字）；hidden 是隐藏成就（分类 hidden，达成前网页只显示 ???）；legacy 是绝版成就（分类 legacy，点数 0，只进成就墙）",
+  "count": 141,
   "data": [
     {
       "key": "level",
@@ -3011,6 +3011,34 @@
         {
           "n": 1,
           "pts": 10
+        }
+      ]
+    },
+    {
+      "key": "veteran",
+      "cat": "legacy",
+      "name": "开服元老",
+      "desc": "2026-10-31 以前开的店",
+      "metric": "state:legacy:veteran",
+      "legacy": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 0
+        }
+      ]
+    },
+    {
+      "key": "oilsaver",
+      "cat": "legacy",
+      "name": "节油器改版亲历",
+      "desc": "领过节油器改版的补偿邮件",
+      "metric": "state:legacy:oilsaver",
+      "legacy": true,
+      "tiers": [
+        {
+          "n": 1,
+          "pts": 0
         }
       ]
     }

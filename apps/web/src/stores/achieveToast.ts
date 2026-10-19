@@ -5,6 +5,8 @@ export interface AchToast {
   id: number;
   key: string;
   pts: number;
+  /** 跨过里程碑解锁的头像框编号（成就 PR③）：这时 key 为空，pts 是里程碑的成就点 */
+  frame?: number;
 }
 
 let seq = 0;
@@ -14,9 +16,9 @@ const MS = 3500;
 export const useAchieveToastStore = defineStore('achieveToast', {
   state: () => ({ items: [] as AchToast[] }),
   actions: {
-    push(key: string, pts: number) {
+    push(key: string, pts: number, frame?: number) {
       const id = ++seq;
-      this.items.push({ id, key, pts });
+      this.items.push(frame === undefined ? { id, key, pts } : { id, key, pts, frame });
       while (this.items.length > MAX) this.items.shift();
       setTimeout(() => this.remove(id), MS);
     },

@@ -584,5 +584,13 @@
   "waste": {
     "name": "Quel gâchis",
     "desc": "Jeter un plat spécial invendu"
+  },
+  "veteran": {
+    "name": "Membre fondateur",
+    "desc": "Boutique ouverte avant le 31/10/2026"
+  },
+  "oilsaver": {
+    "name": "Témoin de la refonte des économiseurs",
+    "desc": "Avoir récupéré le courrier de compensation de la refonte des économiseurs d’huile"
   }
 }

@@ -131,6 +131,8 @@ export interface RestaurantTable {
   door: Default<number>;
   /** null = 没设置头像（不能白食） */
   avatar: Nullable<number>;
+  /** 戴的头像框（成就 PR③，looks.frames 的编号）；null = 不戴 */
+  frame: Nullable<number>;
   notice: Default<string>;
   /** 赶走痞老板后到这个时间前不会再被选为驻留店 */
   plankton_cooldown_until: TsNullable;

@@ -10,7 +10,7 @@ import { useRestaurantStore } from '../../stores/restaurant';
 import { useSessionStore } from '../../stores/session';
 import { useToastStore } from '../../stores/toast';
 import { shortNum, timeHM } from '../../utils/format';
-import DtArt from '../DtArt.vue';
+import DtAvatar from '../DtAvatar.vue';
 import DtRow from '../DtRow.vue';
 
 /**
@@ -133,7 +133,10 @@ const elsewhere = computed(() => {
           <template #title
             ><span class="dt-rank-name"
               ><span class="dt-rank-ava"
-                ><DtArt :name="catalog.avatarArt(r.avatar ?? 0) ?? 'avatar-chef'" :size="28" /></span
+                ><DtAvatar
+                  :art="catalog.avatarArt(r.avatar ?? 0) ?? 'avatar-chef'"
+                  :frame="r.frame"
+                  :size="28" /></span
               >{{ r.name }}</span
             ></template
           >

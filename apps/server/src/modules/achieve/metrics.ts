@@ -1,6 +1,6 @@
 import { sql, type Kysely } from 'kysely';
 import { NON_SUIT_IDS, type AchLine, type AchTier, type GameConfig } from '@dt/config';
-import { achProgressKey, gameDay, weekStart } from '@dt/shared';
+import { achProgressKey, gameDay, gameTime, weekStart } from '@dt/shared';
 import type { DB, RestaurantRow } from '../../db/schema';
 import { gradeOf } from '../cookbook/rules';
 import { normalizeCounts } from '../settlement/globals';
@@ -34,6 +34,8 @@ export const BAR_WON: Record<(typeof BAR_GAMES)[number], string[]> = {
   spice: ['bar.spice.won', 'bar.spice.win6', 'bar.spice.win4'],
   deal: ['bar.deal.won', 'bar.deal.top'],
 };
+/** 绝版“开服元老”：这一天（游戏日 0 点）以前开的店 */
+export const VETERAN_BEFORE = '2026-10-31';
 /** 能聊天的镇民（计数 town.talk.<镇民>，和 NpcKey 一致） */
 export const TALK_NPCS = ['bigEater', 'wenjie', 'bro13', 'carmen'] as const;
 
@@ -42,7 +44,7 @@ export type AchValues = Map<string, number>;
 
 type Rest = Pick<
   RestaurantRow,
-  'id' | 'account_id' | 'level' | 'star_level' | 'renown' | 'street_id' | 'cookbook_counts'
+  'id' | 'account_id' | 'level' | 'star_level' | 'renown' | 'street_id' | 'cookbook_counts' | 'created_at'
 >;
 
 /**
@@ -100,6 +102,11 @@ export async function achValues(
       // 隐藏成就“交际花”：好友数（不算蟹老板，不管等级和邮箱）
       sql<number>`(select count(*) from friend f join restaurant r on r.id = f.friend_id
         where f.rest_id = ${rest.id} and not r.npc)`.as('friendsAll'),
+      // 绝版“节油器改版亲历”：领过节油器改版的补偿邮件
+      sql<boolean>`exists (select 1 from mail_state s join mail m on m.id = s.mail_id
+        where s.rest_id = ${rest.id} and s.claimed_at is not null and m.tpl = 'oilsaver.revamp')`.as(
+        'oilsaverMail',
+      ),
       sql<number>`(select count(*) from rest_mc where rest_id = ${rest.id})`.as('mcLearned'),
       sql<number | null>`(select max(curlevel) from rest_mc where rest_id = ${rest.id})`.as('mcLevel'),
       // 好友：10 级以上、验证过邮箱（小号不算），不算蟹老板
@@ -160,6 +167,9 @@ export async function achValues(
   v.set('state:mayorMiss', Number(f.mayorMiss));
   v.set('state:wishLose', Number(f.wishLose));
   v.set('state:friendsAll', Number(f.friendsAll));
+  // 绝版成就（不计点）：开服元老按开店时间，节油器改版按领过补偿邮件
+  v.set('state:legacy:veteran', rest.created_at < gameTime(VETERAN_BEFORE, 0) ? 1 : 0);
+  v.set('state:legacy:oilsaver', f.oilsaverMail ? 1 : 0);
   v.set('state:cookLearned', counts.learned);
   for (let g = 1; g <= 10; g++)
     v.set(

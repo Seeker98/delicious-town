@@ -9,6 +9,7 @@ import type {
   CatalogGoodsDto,
   CatalogMcDto,
   LooksDto,
+  FrameToneDto,
 } from '@dt/shared';
 import type { Locale } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -166,6 +167,11 @@ export const useCatalogStore = defineStore('catalog', {
     doorArt(id: number): ArtName {
       const name = `door-${this.looks?.doors.find((d) => d.id === id)?.art || 'wood'}`;
       return (CONTENT_ART as readonly string[]).includes(name) ? (name as ArtName) : 'door-wood';
+    },
+    /** 头像框的配色（成就 PR③）：没戴、目录还没读到、查不到都是 null（不画框） */
+    frameTone(id: number | null | undefined): FrameToneDto | null {
+      if (id === null || id === undefined) return null;
+      return this.looks?.frames?.find((f) => f.id === id)?.tone ?? null;
     },
     /** 头像的图形（界面改版 P7）：没设头像、查不到、网页里还没有这张图都是 null，页面画首字圆圈 */
     avatarArt(id: number | null | undefined): ArtName | null {

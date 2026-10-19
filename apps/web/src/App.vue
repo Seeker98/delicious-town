@@ -32,7 +32,9 @@ const wide = computed(() => route.path.startsWith('/admin'));
 setEventsListener((all) => {
   // 达成成就单独弹一张卡（成就系统 2026-10-19），不混进得失提示
   for (const e of all) if (e.kind === 'achievement' && e.key) achToast.push(e.key, e.num);
-  const events = all.filter((e) => e.kind !== 'achievement');
+  // 跨过成就点里程碑、解锁头像框（成就 PR③）：同一张卡
+  for (const e of all) if (e.kind === 'achFrame' && e.id) achToast.push('', e.num, e.id);
+  const events = all.filter((e) => e.kind !== 'achievement' && e.kind !== 'achFrame');
   if (events.length === 0) return;
   toast.push(
     eventsSummary(events, catalog),

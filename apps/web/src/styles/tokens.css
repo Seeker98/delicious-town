@@ -180,6 +180,14 @@
   --dt-trophy-locked: #e2dcea;
   --dt-trophy-locked-2: #cfc7da;
   --dt-trophy-shine: rgba(255, 255, 255, 0.3);
+  /* 头像框（成就 PR③）：铜、银、金、彩沿用奖杯色，木、翡翠另配；彩框多两个渐变色 */
+  --dt-frame-wood: #9c6b3f;
+  --dt-frame-wood-2: #5f3d1d;
+  --dt-frame-jade: #6cc39a;
+  --dt-frame-jade-2: #2f8a61;
+  --dt-frame-rainbow-3: #e58bb8;
+  --dt-frame-rainbow-4: #6fc3d9;
+  --dt-frame-grain: rgba(233, 199, 156, 0.7);
 }
 [data-theme='dark'] {
   color-scheme: dark;
@@ -263,4 +271,11 @@
   --dt-trophy-locked: #342c40;
   --dt-trophy-locked-2: #463c55;
   --dt-trophy-shine: rgba(255, 255, 255, 0.22);
+  --dt-frame-wood: #a8774a;
+  --dt-frame-wood-2: #6b4523;
+  --dt-frame-jade: #5fb68e;
+  --dt-frame-jade-2: #2a7a56;
+  --dt-frame-rainbow-3: #e08ab3;
+  --dt-frame-rainbow-4: #67b9cf;
+  --dt-frame-grain: rgba(233, 199, 156, 0.6);
 }

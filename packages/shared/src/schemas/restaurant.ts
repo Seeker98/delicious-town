@@ -88,6 +88,8 @@ export interface RestaurantDto {
   door: number;
   /** null = 没设置头像 */
   avatar: number | null;
+  /** 戴的头像框（成就 PR③）；旧服务端没有 */
+  frame?: number | null;
   effects: EffectDto[];
   boosts: ActiveBoostDto[];
   /** 首页小镇新闻：最新 3 条 + 最新广播 */
