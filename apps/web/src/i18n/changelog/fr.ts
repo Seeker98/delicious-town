@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  wage1019:
+    'Correctif\u202f: les salaires des cartes de métier (11 sortes, dont ceux du grossiste du marché et du conseiller bancaire) ne s’ouvraient pas dans la réserve\u202f; ils s’ouvrent maintenant. La récompense hebdo Tueur de cafards de minuit et le classement des cafards écrasés ne comptent plus que les cafards écrasés chez de vrais amis, ni chez toi ni chez M. Krabs (les 30 derniers jours ont été recomptés à partir du journal)',
   frames1019:
     'Paliers de points de succès\u202f: 500, 1\u202f500, 3\u202f000, 5\u202f000, 8\u202f000 et 12\u202f000 points débloquent des cadres d’avatar en bois, bronze, argent, or, jade et arc-en-ciel. Mets-en un dans Tenue et titres et il apparaît sur ton avatar dans les listes d’amis, les classements et le forum. 12\u202f000 points donnent aussi le titre Maître des succès, et tous les succès qui rapportent des points donnent Modèle de la ville. Nouvelle catégorie Éditions passées (sans points)\u202f: Membre fondateur (boutique ouverte avant le 31/10/2026) et Témoin de la refonte des économiseurs (courrier de compensation récupéré)',
   hidden1019:

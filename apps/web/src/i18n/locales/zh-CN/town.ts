@@ -181,7 +181,7 @@ export default {
       'achieve.week': '本周新增',
     } as Record<string, string>,
     rewards: {
-      'roach.kill.lastWeek': '上周前 2 名: 午夜蟑螂杀手 (周一 7:59 发)',
+      'roach.kill.lastWeek': '上周前 2 名: 午夜蟑螂杀手 (只算在好友店里灭的, 周一 7:59 发)',
       'flip.flipped.lastWeek': '上周前 4 名: 屋漏偏逢连夜雨 / 鞭炮 / 灯笼 / 福 (周一 7:59 发)',
       'mc.yesterday': '第 1 名美味印章×2, 第 2~4 名各 1 个 (每天 9 点发)',
       'shiling.week':

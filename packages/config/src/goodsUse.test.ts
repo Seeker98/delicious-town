@@ -39,6 +39,12 @@ describe('道具用途（构建时推导）', () => {
     expect(use(gid('新手大礼包'))).toEqual({ kind: 'gift' });
     expect(use(gid('开发测试礼包'))).toBeNull();
   });
+  it('工作证的工资（名字里没有“礼包”）也能拆：礼包类带内容的都能拆', () => {
+    const wages = bundle.goods.filter((g) => g.id >= 20401 && g.id <= 20499 && g.gift !== null);
+    expect(wages.length).toBeGreaterThanOrEqual(11);
+    for (const g of wages) expect(g.use, g.name).toEqual({ kind: 'gift' });
+    expect(use(gid('银行理财顾问的工资'))).toEqual({ kind: 'gift' });
+  });
   it('随机万能食材礼包只出 1 个万能食材；新手大礼包另送一级、二级万能食材各 10 个、三级 5 个（问题记录 455）', () => {
     const gift = (id: number) => bundle.goods.find((g) => g.id === id)!.gift;
     expect(gift(gid('随机万能食材礼包'))).toEqual([{ type: 'foods', num: 1, rate: 1, flag: 'master' }]);

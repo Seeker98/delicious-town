@@ -1,3 +1,4 @@
+import { backfillRoachKillFriend } from '../../db/migrations/0090_roach_kill_friend';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { GOODS } from '@dt/config';
 import { gameDay, seededRng, sequenceRng } from '@dt/shared';
@@ -70,6 +71,8 @@ describe('灭蟑螂（规格书 13 §13.4、20 §20.18）', () => {
     expect(await restRow(t, a.restaurantId)).toMatchObject({ strength: 99, coin: 90 });
     expect((await tablesOf(t, a.restaurantId))[0]).toEqual({ no: 1, floor: 1, customer: 0 });
     expect(await getDaily(t.db, a.restaurantId, 'roach.kill', gameDay(t.clock.now))).toBe(1);
+    // 自己店灭的不算进午夜蟑螂杀手的排名
+    expect(await getDaily(t.db, a.restaurantId, 'roach.killFriend', gameDay(t.clock.now))).toBe(0);
   });
 
   it('好友店：2 体力、奖励 ×1；不能灭自己放的；没蟑螂时报错', async () => {
@@ -88,6 +91,7 @@ describe('灭蟑螂（规格书 13 §13.4、20 §20.18）', () => {
       params: { reason: 'no_roach' },
     });
     expect((await t.game.social.reads.feed(b, { limit: 5 })).items[0]!.type).toBe('roach.killed');
+    expect(await getDaily(t.db, a.restaurantId, 'roach.killFriend', gameDay(t.clock.now))).toBe(1);
   });
 
   it('别人的店每人每天最多灭 3 只（问题记录 374）；自己店不限', async () => {
@@ -125,6 +129,9 @@ describe('灭蟑螂（规格书 13 §13.4、20 §20.18）', () => {
     );
     for (const tableNo of [1, 2, 3, 4, 5]) await roach().kill(a, { restId: npc, tableNo });
     expect((await tablesOf(t, npc)).every((tb) => tb.customer === 0)).toBe(true);
+    // 蟹老板的店灭的不算进午夜蟑螂杀手的排名（用户 2026-10-19）
+    expect(await getDaily(t.db, a.restaurantId, 'roach.kill', gameDay(t.clock.now))).toBe(5);
+    expect(await getDaily(t.db, a.restaurantId, 'roach.killFriend', gameDay(t.clock.now))).toBe(0);
   });
 
   it('蟹老板店不耗体力；好友店照常耗体力；礼券和美味券', async () => {
@@ -173,5 +180,38 @@ describe('问题记录 228：好友放的蟑螂也算进上限', () => {
     await setTables(t, npc, six(5));
     await roach().lay(a, { restId: npc, tableNo: 6 });
     expect((await tablesOf(t, npc))[5]!.customer).toBe(3);
+  });
+});
+
+describe('补“好友店灭蟑螂”计数（迁移 0090）', () => {
+  it('按好友店里的灭蟑螂动态补，蟹老板的店不算', async () => {
+    const [a, b] = await friends();
+    const npc = (await ensureNpc(t.db, config, config.tuning.friend.npc, a.shardId, seededRng(1))).id;
+    const at = t.clock.now;
+    await t.db
+      .insertInto('rest_log')
+      .values([
+        {
+          rest_id: b.restaurantId,
+          type: 'roach.killed',
+          params: JSON.stringify({ by: a.restaurantId, table: 1 }),
+          created_at: at,
+        },
+        {
+          rest_id: b.restaurantId,
+          type: 'roach.killed',
+          params: JSON.stringify({ by: a.restaurantId, table: 2 }),
+          created_at: at,
+        },
+        {
+          rest_id: npc,
+          type: 'roach.killed',
+          params: JSON.stringify({ by: a.restaurantId, table: 1 }),
+          created_at: at,
+        },
+      ])
+      .execute();
+    await backfillRoachKillFriend(t.db, [a.restaurantId]);
+    expect(await getDaily(t.db, a.restaurantId, 'roach.killFriend', gameDay(at))).toBe(2);
   });
 });

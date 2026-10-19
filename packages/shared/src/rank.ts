@@ -76,7 +76,7 @@ export const RANK_BOARDS: readonly RankBoardDef[] = [
   { key: 'renown', group: '声望', label: '当前' },
   { key: 'thumb.received', group: '赞', label: '被赞' },
   { key: 'thumb.given', group: '赞', label: '点赞' },
-  ...periodBoards('roach.kill', '灭蟑螂', '上周前 2 名：午夜蟑螂杀手 (周一 7:59 发)'),
+  ...periodBoards('roach.kill', '灭蟑螂', '上周前 2 名：午夜蟑螂杀手 (只算在好友店里灭的, 周一 7:59 发)'),
   ...periodBoards('roach.lay', '产蟑螂'),
   ...periodBoards('flip.flipped', '被翻厨', '上周前 4 名：屋漏偏逢连夜雨 / 鞭炮 / 灯笼 / 福 (周一 7:59 发)'),
   // 酒吧：这一周达到过的最高连胜 / 连败，输一局不掉榜（问题记录 517）

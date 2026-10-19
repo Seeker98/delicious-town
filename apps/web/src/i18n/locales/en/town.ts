@@ -191,7 +191,8 @@ const town: Messages['town'] = {
       'achieve.week': 'New this week',
     },
     rewards: {
-      'roach.kill.lastWeek': "Last week's top 2: Midnight Roach Killer (Mon 7:59)",
+      'roach.kill.lastWeek':
+        "Last week's top 2: Midnight Roach Killer (only roaches squashed at friends' restaurants, Mon 7:59)",
       'flip.flipped.lastWeek':
         "Last week's top 4: When It Rains It Pours / Firecracker / Lantern / Fortune (Mon 7:59)",
       'mc.yesterday': '#1: Delicious Seal ×2; #2–4: 1 each (daily at 9:00)',

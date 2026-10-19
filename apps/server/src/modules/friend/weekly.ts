@@ -5,6 +5,7 @@ import type { GameDeps } from '../../core/deps';
 import type { PeriodicJob } from '../../core/jobs';
 import { opNews, restLog, runSystemOp } from '../../core/op';
 import type { DB } from '../../db/schema';
+import { ROACH_KILL_FRIEND } from '../interact/roach';
 import { grantGoodsOp } from '../store/goods';
 
 /** 游戏日 day 所在周的周一 */
@@ -40,10 +41,12 @@ export function lastWeekCount(db: Kysely<DB>, restId: number, key: string, now: 
   return sumBetween(db, restId, key, addDays(mon, -7), addDays(mon, -1));
 }
 
-const AWARDS: Array<{ key: string; goods: number[] }> = [
+/** key 是动态、新闻里写的奖项；counter 是排名用的每日计数（不写就是 key） */
+const AWARDS: Array<{ key: string; counter?: string; goods: number[] }> = [
   { key: 'flip.caught', goods: [GOODS.godsHand] },
   { key: 'flip.flipped', goods: [GOODS.heartache, GOODS.firecracker, GOODS.lantern, GOODS.fu] },
-  { key: 'roach.kill', goods: [GOODS.roachKiller, GOODS.roachKiller] },
+  // 午夜蟑螂杀手只按在真实好友店里灭的蟑螂排（自己店、蟹老板的店不算）
+  { key: 'roach.kill', counter: ROACH_KILL_FRIEND, goods: [GOODS.roachKiller, GOODS.roachKiller] },
 ];
 
 /** 周奖励（规格书 16）：按上周计数排名，并列按餐厅 id；计数为 0 不发；排除蟹老板 */
@@ -62,7 +65,7 @@ export function friendWeeklyJob(d: GameDeps): PeriodicJob {
           .select(['c.rest_id', sql<number>`sum(c.count)::int`.as('n')])
           .where('r.shard_id', '=', shardId)
           .where('r.npc', '=', false)
-          .where('c.key', '=', a.key)
+          .where('c.key', '=', a.counter ?? a.key)
           .where('c.day', '>=', period)
           .where('c.day', '<=', to)
           .groupBy('c.rest_id')

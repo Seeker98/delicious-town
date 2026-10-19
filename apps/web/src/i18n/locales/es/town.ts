@@ -197,7 +197,8 @@ const town: Messages['town'] = {
       'achieve.week': 'Nuevos esta semana',
     },
     rewards: {
-      'roach.kill.lastWeek': 'Top 2 de la semana pasada: Matacucarachas de medianoche (lunes 7:59)',
+      'roach.kill.lastWeek':
+        'Top 2 de la semana pasada: Matacucarachas de medianoche (solo cucarachas eliminadas en locales de amigos, lunes 7:59)',
       'flip.flipped.lastWeek':
         'Top 4 de la semana pasada: Las desgracias nunca vienen solas / Petardo / Farolillo / Fortuna (lunes 7:59)',
       'mc.yesterday': '1.º: Sello Delicia ×2; 2.º a 4.º: 1 cada uno (cada día a las 9:00)',

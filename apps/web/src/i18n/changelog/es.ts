@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  wage1019:
+    'Corrección: los sueldos de las tarjetas de oficio (11 tipos, como los del mayorista del mercado y del asesor bancario) no se podían abrir en el almacén; ahora sí. El premio semanal Matacucarachas de medianoche y la clasificación de cucarachas eliminadas solo cuentan las de locales de amigos reales, ni el tuyo ni el de Don Cangrejo (los últimos 30 días se han recalculado con el registro)',
   frames1019:
     'Hitos de puntos de logro: 500, 1.500, 3.000, 5.000, 8.000 y 12.000 puntos desbloquean marcos de avatar de madera, bronce, plata, oro, jade y arcoíris. Ponte uno en Aspecto y títulos y se verá en tu avatar en las listas de amigos, las clasificaciones y el foro. Con 12.000 puntos también consigues el título Maestro de logros, y con todos los logros que dan puntos, Ejemplo del pueblo. Nueva categoría Ediciones pasadas (sin puntos): Miembro fundador (local abierto antes del 31/10/2026) y Testigo de la reforma de los ahorradores (correo de compensación recogido)',
   hidden1019:

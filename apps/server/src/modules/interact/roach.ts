@@ -55,6 +55,8 @@ async function killIn(
   }
   if (place !== 'self') await drawDtTickets(me, 1);
   await incrementDaily(me.tx, me.rest.id, 'roach.kill', 1, day);
+  // 午夜蟑螂杀手的周奖励、灭蟑螂排行只算在真实好友店里灭的（自己店、蟹老板的店不算：蟹老板的店不限次数，刷得出来）
+  if (place === 'friend') await incrementDaily(me.tx, me.rest.id, ROACH_KILL_FRIEND, 1, day);
   if (hostKey) await incrementDaily(me.tx, me.rest.id, hostKey, 1, day);
   await emitAction(me, 'roach.kill');
   if (p) feedLog(p, 'roach.killed', { table: tableNo });
@@ -62,6 +64,9 @@ async function killIn(
 }
 
 /** 放蟑螂、灭蟑螂（规格书 13 §13.4） */
+/** 每日计数：在真实好友店里灭的蟑螂（周奖励、排行用） */
+export const ROACH_KILL_FRIEND = 'roach.killFriend';
+
 export function createRoach(d: GameDeps) {
   return {
     lay(ctx: RestCtx, b: { restId: number; tableNo: number }) {
