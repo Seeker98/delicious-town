@@ -56,6 +56,7 @@ const achieve: Messages['achieve'] = {
   titleAll: ', and for every achievement that gives points',
   toastFrame: (n, name) => `${n} achievement points: ${name} unlocked`,
   toastFrameHint: 'Put it on under Look and titles',
+  frameFallback: 'avatar frame',
   toastFrameTitle: (title) => `You also got the title “${title}”`,
   tierPts: (pts) => `${pts} pts`,
   tierAria: (cur, total) => `Tier ${cur} of ${total}`,

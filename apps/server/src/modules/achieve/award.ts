@@ -42,6 +42,22 @@ export function crossedMilestones(config: GameConfig, prev: number, now: number)
   return list.filter((m) => m.points > prev && m.points <= now);
 }
 
+/** 按现在的成就点把到了的里程碑称号都发一遍（补发用；已经有的 grantIcon 合并成永久，不重复） */
+export async function grantMilestoneIcons(
+  tx: Kysely<DB>,
+  config: GameConfig,
+  restId: number,
+  now: Date,
+): Promise<void> {
+  const row = await tx
+    .selectFrom('rest_ach')
+    .select('points')
+    .where('rest_id', '=', restId)
+    .executeTakeFirst();
+  for (const m of crossedMilestones(config, 0, row?.points ?? 0))
+    if (m.icon) await grantIcon(tx, { restId, key: m.icon, expiresAt: null, now });
+}
+
 export interface AwardInput {
   shardId: number;
   restId: number;

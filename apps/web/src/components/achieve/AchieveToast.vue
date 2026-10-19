@@ -42,7 +42,7 @@ const title = (key: string) =>
         <span class="dt-ach-toast-art"><DtAvatar :art="myArt()" :frame="x.frame" :size="30" /></span>
         <span class="dt-ach-toast-text">
           <span class="dt-ach-toast-title">{{
-            t.achieve.toastFrame(formatNum(x.pts), frameOf(x.frame)?.name ?? '')
+            t.achieve.toastFrame(formatNum(x.pts), catalog.frameName(x.frame))
           }}</span>
           <span class="dt-meta">{{
             frameOf(x.frame)?.icon

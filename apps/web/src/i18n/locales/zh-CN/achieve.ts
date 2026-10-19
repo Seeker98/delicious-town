@@ -55,6 +55,7 @@ export default {
   titleAll: ', 计点成就全部达成得',
   toastFrame: (n: string, name: string) => `成就点到 ${n}, 解锁${name}`,
   toastFrameHint: '去“装扮和称号”戴上',
+  frameFallback: '头像框',
   toastFrameTitle: (title: string) => `还得到称号「${title}」`,
   tierPts: (pts: number) => `${pts} 点`,
   tierAria: (cur: number, total: number) => `第 ${cur} 档, 共 ${total} 档`,

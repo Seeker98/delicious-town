@@ -271,7 +271,11 @@ const iconTitle = (key: string | null) => (key ? (catalog.icon(key)?.title ?? ke
               </span>
             </div>
             <span class="dt-ach-side"
-              ><b>+{{ catalog.achById.get(g.id)?.tier.pts ?? 0 }}</b></span
+              ><b>{{
+                catalog.achById.get(g.id)?.line.legacy
+                  ? t.achieve.noPts
+                  : `+${catalog.achById.get(g.id)?.tier.pts ?? 0}`
+              }}</b></span
             >
           </div>
         </div>

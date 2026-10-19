@@ -309,6 +309,7 @@ export default {
     bulk_not_open: '這一批已經結束或取消了',
     wishtree_closed: '這一輪已經到開獎時間了, 等新的一輪',
     shelf_full: '展示櫃滿了, 先拿下一個',
+    frame_locked: '成就點還不夠, 戴不了這個頭像框',
     trophy_missing: '這個獎盃還沒拿到',
     bulk_closed: '已經收盤了, 這次出價無效',
     bulk_cooldown: '出價太快了, 等幾秒再試',

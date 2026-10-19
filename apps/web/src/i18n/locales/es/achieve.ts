@@ -56,6 +56,7 @@ const achieve: Messages['achieve'] = {
   titleAll: ', y por todos los logros que dan puntos',
   toastFrame: (n, name) => `${n} puntos de logro: ${name} desbloqueado`,
   toastFrameHint: 'Póntelo en Aspecto y títulos',
+  frameFallback: 'marco de avatar',
   toastFrameTitle: (title) => `También consigues el título «${title}»`,
   tierPts: (pts) => `${pts} pts`,
   tierAria: (cur, total) => `Nivel ${cur} de ${total}`,

@@ -16,7 +16,7 @@ import type { DB, RestaurantRow } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { BOARD_SOURCES } from '../rank/boards';
 import { rankRows, type RankedRow } from '../rank/ranking';
-import { awardAchievements, shardBackfilled } from './award';
+import { awardAchievements, grantMilestoneIcons, shardBackfilled } from './award';
 import { achValues, valueOf, type AchValues } from './metrics';
 
 /** 展示柜格数：成就点到了哪一档就开到几格 */
@@ -56,6 +56,8 @@ export async function evaluateRest(
     .where('rest_id', '=', rest.id)
     .execute();
   const got = new Set(have.map((r) => r.ach_id));
+  // 补发时把已经到了的里程碑称号补上（上线以前就过了 12,000 点的店不会再“跨过”它；grantIcon 重复发没关系）
+  if (o.backfilled) await grantMilestoneIcons(db, config, rest.id, o.now);
   const ids: string[] = [];
   for (const line of config.bundle.achievements)
     for (const tier of line.tiers)

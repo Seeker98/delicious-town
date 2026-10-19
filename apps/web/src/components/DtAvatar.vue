@@ -7,7 +7,7 @@ import DtArt from './DtArt.vue';
 /**
  * 头像（成就 PR③ 样稿 ①）：戴了头像框时头像往里缩一圈，外面画一层 SVG 环；不戴时就是原来的图。
  * 框宽是尺寸的 1/12（最少 2.5）；40 以上才画点缀（木纹、铆钉、宝石、四角星），小尺寸只有一圈渐变。
- * 环画在方框里的内切圆上，外层容器原来的圆角、overflow:hidden 都裁不到它
+ * 环和顶上的宝石都画在方框以内，外层容器原来的圆角、overflow:hidden 都裁不到
  */
 const props = defineProps<{ art: ArtName; size: number; frame?: number | null; label?: string }>();
 const catalog = useCatalogStore();
@@ -16,8 +16,10 @@ const uid = useId();
 const tone = computed(() => catalog.frameTone(props.frame ?? null));
 const w = computed(() => Math.max(2.5, props.size / 12));
 const c = computed(() => props.size / 2);
-const r = computed(() => c.value - w.value / 2);
-const face = computed(() => Math.round(props.size - (w.value + 1) * 2));
+const big = computed(() => props.size >= 40);
+/** 环的半径：40 以上顶上有宝石，环往里收到宝石顶端正好碰到方框边（外层容器 overflow:hidden 也裁不到） */
+const r = computed(() => c.value - (big.value ? w.value * 1.25 : w.value / 2));
+const face = computed(() => Math.round((r.value - w.value / 2 - 1) * 2));
 const grad = computed(() => `dt-ava-g-${uid}`);
 /** 渐变色：彩框四色，其余是 主色 → 深色 → 主色 */
 const stops = computed(() => {
@@ -37,7 +39,6 @@ const shine = computed(() => {
   const k = r.value;
   return `M${c.value - k * 0.82} ${c.value - k * 0.57} A ${k} ${k} 0 0 1 ${c.value - k * 0.2} ${c.value - k * 0.98}`;
 });
-const big = computed(() => props.size >= 40);
 /** 木纹：环上六道短刻痕 */
 const grain = computed(() =>
   Array.from({ length: 6 }, (_, i) => {

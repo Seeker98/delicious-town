@@ -227,6 +227,10 @@ export const useCatalogStore = defineStore('catalog', {
       return this.suitsMap.get(id);
     },
     /** 成就名（线名 + 档）、奖杯名（成就系统 2026-10-19）；目录里没有时写编号 */
+    /** 头像框的名字（成就 PR③）；目录还没读到时写“头像框” */
+    frameName(id: number): string {
+      return this.looks?.frames?.find((f) => f.id === id)?.name ?? activeMessages().achieve.frameFallback;
+    },
     achName(id: string): string {
       return achNameOf(id, this);
     },

@@ -15,6 +15,8 @@ export interface Names {
   /** 成就、奖杯的名字（成就系统 2026-10-19：达成成就的动态、新闻） */
   achName?(id: string): string;
   trophyName?(key: string): string;
+  /** 头像框的名字（成就 PR③：跨过里程碑的动态） */
+  frameName?(id: number): string;
 }
 
 /** 合并同类型、同物品、同幸运标记的事件（一次得到很多东西时不刷屏），保持首次出现的顺序 */

@@ -48,14 +48,15 @@ export default {
   hiddenDesc: '達成後揭曉',
   legacyTag: '絕版',
   noPts: '不計點',
-  /** 成就點裡程碑、解鎖頭像框（成就 PR③） */
-  milestones: '成就點裡程碑',
+  /** 成就點里程碑、解鎖頭像框（成就 PR③） */
+  milestones: '成就點里程碑',
   milestoneNext: (n: string, name: string) => `下一個: ${n} 點 · ${name}`,
   milestoneAll: '頭像框都解鎖了',
   titleAt: (n: string) => `${n} 點另得稱號`,
   titleAll: ', 計點成就全部達成得',
   toastFrame: (n: string, name: string) => `成就點到 ${n}, 解鎖${name}`,
   toastFrameHint: '去“裝扮和稱號”戴上',
+  frameFallback: '頭像框',
   toastFrameTitle: (title: string) => `還得到稱號「${title}」`,
   tierPts: (pts: number) => `${pts} 點`,
   tierAria: (cur: number, total: number) => `第 ${cur} 檔, 共 ${total} 檔`,

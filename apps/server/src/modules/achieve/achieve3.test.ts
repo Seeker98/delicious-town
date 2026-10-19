@@ -5,6 +5,7 @@ import { createTestGame, newRestaurant, type TestGame } from '../../../test/game
 import { createLooks } from '../friend/looks';
 import { awardAchievements, crossedMilestones } from './award';
 import { achValues } from './metrics';
+import { evaluateRest } from './service';
 
 /** 成就 PR③：头像框、成就点里程碑、绝版成就 */
 let t: TestGame;
@@ -160,5 +161,19 @@ describe('戴头像框', () => {
     expect((await looks.frame(r, 0)).data).toEqual({ frame: null });
     expect((await looks.mine(r)).frame).toBeNull();
     await expect(looks.frame(r, 99)).rejects.toThrow();
+  });
+});
+
+describe('补发时补上里程碑称号', () => {
+  it('上线以前就过了 12,000 点的店：补发时补发「成就大师」', async () => {
+    const r = await newRestaurant(t);
+    await setPoints(r.restaurantId, 12_500);
+    const rest = await t.db
+      .selectFrom('restaurant')
+      .selectAll()
+      .where('id', '=', r.restaurantId)
+      .executeTakeFirstOrThrow();
+    await evaluateRest(t.db, cfg(), tuning(), rest, { now: t.clock.now, backfilled: true });
+    expect(await icons(r.restaurantId)).toContain('ach-master');
   });
 });
