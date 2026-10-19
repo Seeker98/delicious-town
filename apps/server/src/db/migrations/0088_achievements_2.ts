@@ -35,39 +35,39 @@ export async function backfillCounters2(db: Kysely<any>, restIds: number[] | nul
     on conflict (rest_id, key) do update set count = greatest(event_counter.count, excluded.count)`.execute(
       db,
     );
-  /** 动态里某一类的条数 */
-  const logCount = (key: string, type: string, where = sql``) =>
-    put(sql`select rest_id, ${key}::text, count(*) from rest_log
-      where type = ${type}${where}${only('rest_id')} group by rest_id`);
+  /**
+   * 动态里按类型（和参数）数条数：一遍扫完（动态表没有按类型的索引，一样一遍要扫 30 天的数据）。
+   * [计数键, 动态类型, 额外条件]；同一类型的几种条件互斥
+   */
+  const LOG_COUNTS: Array<[string, string, ReturnType<typeof sql>]> = [
+    ['rest.noOil', 'rest.closed', sql`params->>'reason' = 'no_oil'`],
+    ['dine.victim', 'dine.start', sql`true`],
+    ['mouse.steal', 'mouse.steal', sql`true`],
+    ['krab.angry', 'krab.angry', sql`true`],
+    ['hygiene.bad', 'hygiene.report', sql`(params->>'roachHours')::float >= 24`],
+    ['cupboard.flipped', 'friend.flip', sql`true`],
+    ['foods.taken', 'exchange', sql`params->>'result' = 'ok'`],
+    ['acquire.taken', 'acquire.taken', sql`true`],
+    ['acquire.redeem', 'acquire.redeemed', sql`true`],
+    ['takeaway.fail', 'takeaway.claim', sql`params->>'success' = 'false'`],
+    ['bar.cup.won', 'bar.cup', sql`params->>'result' in ('stop', 'clear')`],
+    ['bar.memory.won', 'bar.memory', sql`params->>'level' = '1' and params->>'correct' = 'true'`],
+    ['bar.memory.zero', 'bar.memory', sql`params->>'level' = '1' and params->>'correct' = 'false'`],
+    ['bar.darts.miss', 'bar.darts', sql`params->'throws' = '[0,0,0]'::jsonb`],
+  ];
+  await put(sql`select rest_id, k, count(*) from (
+      select rest_id, case ${sql.join(
+        LOG_COUNTS.map(([key, type, cond]) => sql`when type = ${type} and ${cond} then ${key}::text`),
+        sql` `,
+      )} end as k
+      from rest_log where type in (${sql.join([...new Set(LOG_COUNTS.map((x) => x[1]))])})${only('rest_id')}
+    ) x where k is not null group by rest_id, k`);
   /** 一个游戏日里某一类动态满 n 条的天数 */
   const logDays = (key: string, type: string, n: number, by = sql`rest_id`, where = sql``) =>
     put(sql`select rid, ${key}::text, count(*) from (
       select ${by} as rid from rest_log where type = ${type}${where}${only('rest_id')}
       group by ${by}, (created_at at time zone 'Asia/Shanghai')::date having count(*) >= ${n}
     ) d where rid is not null group by rid`);
-
-  await logCount('rest.noOil', 'rest.closed', sql` and params->>'reason' = 'no_oil'`);
-  await logCount('dine.victim', 'dine.start');
-  await logCount('mouse.steal', 'mouse.steal');
-  await logCount('krab.angry', 'krab.angry');
-  await logCount('hygiene.bad', 'hygiene.report', sql` and (params->>'roachHours')::float >= 24`);
-  await logCount('cupboard.flipped', 'friend.flip');
-  await logCount('foods.taken', 'exchange', sql` and params->>'result' = 'ok'`);
-  await logCount('acquire.taken', 'acquire.taken');
-  await logCount('acquire.redeem', 'acquire.redeemed');
-  await logCount('takeaway.fail', 'takeaway.claim', sql` and params->>'success' = 'false'`);
-  await logCount('bar.cup.won', 'bar.cup', sql` and params->>'result' in ('stop', 'clear')`);
-  await logCount(
-    'bar.memory.won',
-    'bar.memory',
-    sql` and params->>'level' = '1' and params->>'correct' = 'true'`,
-  );
-  await logCount(
-    'bar.memory.zero',
-    'bar.memory',
-    sql` and params->>'level' = '1' and params->>'correct' = 'false'`,
-  );
-  await logCount('bar.darts.miss', 'bar.darts', sql` and params->'throws' = '[0,0,0]'::jsonb`);
   // 翻橱柜被抓记在被翻的店的动态里（by 是翻的人）
   await put(sql`select (params->>'by')::int, 'flip.caught', count(*) from rest_log
     where type = 'friend.flip' and params->>'outcome' = 'caught' and params ? 'by'${only("(params->>'by')::int")}
@@ -99,7 +99,6 @@ export async function backfillCounters2(db: Kysely<any>, restIds: number[] | nul
       sql`coalesce((customers->>'0')::int, 0) + coalesce((customers->>'-2')::int, 0)
       + coalesce((customers->>'-3')::int, 0) = 0`,
     ],
-    ['round.oneOil', sql`oil = 1`],
     ['round.negative', sql`coin < 0`],
     [
       'round.bikini',

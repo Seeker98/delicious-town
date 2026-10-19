@@ -121,7 +121,12 @@ export async function awardAchievements(
     )
     .execute();
   for (const { tier } of got)
-    if (firsts.has(tier.id) && tier.pts >= t.newsMinPts)
+    // 隐藏成就不发首达新闻（名字会被别的玩家提前看到）
+    if (
+      firsts.has(tier.id) &&
+      tier.pts >= t.newsMinPts &&
+      !config.achievements.byId.get(tier.id)?.line.hidden
+    )
       await postNews(
         tx,
         { shardId: a.shardId, type: 'achieve.first', restId: a.restId, params: { id: tier.id } },

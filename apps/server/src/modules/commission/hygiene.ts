@@ -114,9 +114,11 @@ export async function hygieneRound(d: GameDeps, shardId: number, now: Date): Pro
     reports += rows.length;
     for (const r of rows) {
       if ((JSON.parse(r.params) as HygieneReportParams).roachHours < HYGIENE_BAD_HOURS) continue;
+      // 记成就出错不能拦着后面几批店的巡查报告（报告已经写了）
       await d.db
         .transaction()
-        .execute((tx) => bumpCountersFor(d, tx, { shardId, restId: r.rest_id, now }, [['hygiene.bad', 1]]));
+        .execute((tx) => bumpCountersFor(d, tx, { shardId, restId: r.rest_id, now }, [['hygiene.bad', 1]]))
+        .catch(() => undefined);
     }
   }
   return { reports };

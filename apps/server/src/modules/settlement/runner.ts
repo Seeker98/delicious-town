@@ -232,7 +232,12 @@ export async function settleOne(
     .with('d', (db) =>
       db
         .insertInto('daily_counter')
-        .values({ rest_id: op.rest.id, day: gameDay(op.now), key: 'picky.left', count: pickyLeft })
+        .columns(['rest_id', 'day', 'key', 'count'])
+        // 这一轮没有挑剔顾客走掉就一行都不插（不给每家店每天添一行 0）；returning 为空，pickyToday 是 null
+        .expression(
+          sql`select ${op.rest.id}::int, ${gameDay(op.now)}::date, 'picky.left', ${pickyLeft}::int
+            where ${pickyLeft > 0}`,
+        )
         .onConflict((oc) =>
           oc
             .columns(['rest_id', 'day', 'key'])

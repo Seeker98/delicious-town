@@ -81,7 +81,12 @@ export function createThumbs(d: GameDeps) {
           .select((eb) => eb.fn.countAll<string>().as('n'))
           .where('from_rest', '=', me.rest.id)
           .where('to_rest', '=', them.rest.id)
-          .where('day', '>', addDays(day, -LOYAL_DAYS))
+          // 按天列出来走主键点查（主键是 day, from_rest, to_rest；按范围查会扫这 30 天所有店的点赞）
+          .where(
+            'day',
+            'in',
+            Array.from({ length: LOYAL_DAYS }, (_, i) => addDays(day, -i)),
+          )
           .executeTakeFirstOrThrow();
         if (Number(loyal.n) >= LOYAL_DAYS) await bumpCounters(me, [['thumbs.loyal', 1]]);
         const count = await incrementDaily(me.tx, me.rest.id, 'thumbs.given', 1, day);

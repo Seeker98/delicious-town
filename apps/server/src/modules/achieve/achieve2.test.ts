@@ -208,6 +208,16 @@ describe('隐藏成就的判定', () => {
       })
       .execute();
     expect(await chosenOneToday(t.db, r.restaurantId, now)).toBe(false);
+    const pool = await t.db
+      .insertInto('kuji_pool')
+      .values({ shard_id: r.shardId, day: gameDay(now), seq: 1, status: 'open', total: 10, created_at: now })
+      .returning('id')
+      .executeTakeFirstOrThrow();
+    await t.db
+      .insertInto('kuji_ticket')
+      .values({ pool_id: pool.id, idx: 0, tier: 'A', drawn_by: r.restaurantId, drawn_at: now })
+      .execute();
+    expect(await chosenOneToday(t.db, r.restaurantId, now)).toBe(true);
   });
 });
 
@@ -226,7 +236,12 @@ describe('酒吧周冠军', () => {
         { rest_id: a.restaurantId, day: lastMon, key: 'bar.spice.win', count: 2 },
       ])
       .execute();
-    expect(await barWeekChampions(t.game.deps, shardId, now)).toEqual({ champions: 1 });
+    // 连败榜第一不算
+    await t.db
+      .insertInto('bar_streak_best')
+      .values({ rest_id: b.restaurantId, game: 'fg', result: -1, week: lastMon, times: 9, reached_at: now })
+      .execute();
+    expect(await barWeekChampions(t.game.deps, shardId, now)).toEqual({ champions: 1, failed: 0 });
     expect(await counter(a.restaurantId, 'bar.weekTop')).toBe(1);
     expect(await counter(b.restaurantId, 'bar.weekTop')).toBe(0);
     expect(await got(a.restaurantId)).toContain('barweek.1');

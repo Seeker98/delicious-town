@@ -49,20 +49,29 @@ export async function barWeekChampions(
   d: GameDeps,
   shardId: number,
   now: Date,
-): Promise<{ champions: number }> {
+  log: JobContext['log'] = { error: () => {} },
+): Promise<{ champions: number; failed: number }> {
   const winners = new Set<number>();
   for (const b of RANK_BOARDS) {
-    if (!b.key.startsWith('bar.') || !b.key.endsWith('.lastWeek')) continue;
+    // 连败、连不中的榜不算：“拿第一”要是赢来的，不能靠多输刷
+    if (!b.key.startsWith('bar.') || !b.key.endsWith('.lastWeek') || b.key.includes('.lose.')) continue;
     const src = BOARD_SOURCES[b.key];
     if (!src) continue;
     const rows = rankRows(await src({ db: d.db, shardId, now, config: d.config }), { asc: b.asc });
     for (const r of rows) if (r.rank === 1) winners.add(r.restId);
   }
+  // 一家一个事务，一家出错记下来接着记别的（这个任务不重试：重跑会重复记）
+  let failed = 0;
   for (const restId of [...winners].sort((a, b) => a - b))
-    await d.db
-      .transaction()
-      .execute((tx) => bumpCountersFor(d, tx, { shardId, restId, now }, [['bar.weekTop', 1]]));
-  return { champions: winners.size };
+    try {
+      await d.db
+        .transaction()
+        .execute((tx) => bumpCountersFor(d, tx, { shardId, restId, now }, [['bar.weekTop', 1]]));
+    } catch (err) {
+      failed++;
+      log.error({ err, restId }, 'bar week champion failed');
+    }
+  return { champions: winners.size, failed };
 }
 
 export function achieveJobs(d: GameDeps): PeriodicJob[] {
@@ -71,7 +80,7 @@ export function achieveJobs(d: GameDeps): PeriodicJob[] {
       name: 'achieve-bar-week',
       feature: 'bar',
       period: weeklyPeriod,
-      run: ({ shardId, now }) => barWeekChampions(d, shardId, now),
+      run: ({ shardId, now, log }) => barWeekChampions(d, shardId, now, log),
     },
     {
       // 上线补发：每个区服每一版跑一次，按现有数据把够得着的成就都记成补发（不进动态、不算首达），记完写 ach_shard 的版本。
