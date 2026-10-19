@@ -39,6 +39,16 @@ const account: Messages['account'] = {
   pwRange: '6–64 characters',
   pwNote: 'Other devices will be logged out after the change.',
   changePwBtn: 'Change password',
+  changeEmail: 'Change email',
+  newEmail: 'New email',
+  emailNow: (email: string) => `Currently ${email}`,
+  loginPw: 'Password',
+  emailNote:
+    'We’ll send a verification email to the new address; open the link in it to verify. A verified email can’t be changed.',
+  changeEmailBtn: 'Change',
+  emailChanged: (email: string) => `Email changed to ${email}. Verification email sent`,
+  emailChangedNoMail: (email: string) =>
+    `Email changed to ${email}, but the verification email couldn’t be sent. Tap Resend later`,
   themeSub: {
     system: 'Dark when your phone is dark',
     light: 'White with purple',

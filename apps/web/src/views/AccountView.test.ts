@@ -12,6 +12,7 @@ vi.mock('../api/endpoints', () => ({
   endpoints: {
     accountProfile: vi.fn(),
     changePassword: vi.fn(),
+    changeEmail: vi.fn(),
     sendVerifyEmail: vi.fn(),
     selectShard: vi.fn(),
     listShards: vi.fn(),
@@ -89,6 +90,29 @@ describe('AccountView（问题记录 178；界面改版 P11）', () => {
     await flushPromises();
     expect(endpoints.sendVerifyEmail).toHaveBeenCalledTimes(1);
     expect(useToastStore().items.at(-1)?.variant).toBe('success');
+  });
+
+  it('改邮箱（2026-10-19）：验证过的没有入口；没验证的点开面板，填新邮箱和密码，改好后行里换成新邮箱', async () => {
+    const { w: ok } = await mountView();
+    expect(ok.find('[data-testid="acc-email-change"]').exists()).toBe(false);
+
+    vi.mocked(endpoints.accountProfile).mockResolvedValue(
+      profile({ emailVerified: false, email: 'u@x.con' }),
+    );
+    vi.mocked(endpoints.changeEmail).mockResolvedValue({ email: 'u@x.com', mailSent: true });
+    const { w } = await mountView();
+    await w.get('[data-testid="acc-email-change"]').trigger('click');
+    expect(w.text()).toContain('现在是 u@x.con');
+    const save = w.get('[data-testid="acc-email-save"]');
+    expect(save.attributes('disabled')).toBeDefined();
+    await w.get('[data-testid="acc-new-email"]').setValue('u@x.com');
+    await w.get('[data-testid="acc-email-pw"]').setValue('secret123');
+    await w.get('#dt-email-form').trigger('submit');
+    await flushPromises();
+    expect(endpoints.changeEmail).toHaveBeenCalledWith({ email: 'u@x.com', password: 'secret123' });
+    expect(w.get('[data-testid="acc-email"]').text()).toContain('u@x.com');
+    expect(w.find('[data-testid="acc-email-save"]').exists()).toBe(false);
+    expect(useToastStore().items.at(-1)?.text).toBe('邮箱已改成 u@x.com, 验证邮件已发出');
   });
 
   it('“修改密码”行点开密码面板，三格都在', async () => {

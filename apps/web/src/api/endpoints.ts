@@ -20,6 +20,8 @@ import type {
   OpenIndexDto,
   OpenListDto,
   OpenStreetDto,
+  ChangeEmailDto,
+  ChangeEmailInput,
   ChangePasswordInput,
   ForumAdminAction,
   ForumAdminDto,
@@ -207,6 +209,8 @@ export const endpoints = {
   /** relogin：密码已改但本机没换上新会话，要用新密码重新登录 */
   changePassword: (body: ChangePasswordInput) =>
     api.post<{ relogin?: boolean }>('/api/v1/account/change-password', body),
+  /** 改邮箱（2026-10-19）：只有还没验证的能改 */
+  changeEmail: (body: ChangeEmailInput) => api.post<ChangeEmailDto>('/api/v1/account/change-email', body),
   listShards: () => api.get<ShardDto[]>('/api/v1/shard/list'),
   selectShard: (shardId: number) => api.post<SelectShardResult>('/api/v1/shard/select', { shardId }),
   createRestaurant: (name: string) => api.post<RestaurantDto>('/api/v1/restaurant/create', { name }),

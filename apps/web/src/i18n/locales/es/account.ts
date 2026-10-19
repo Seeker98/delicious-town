@@ -39,6 +39,16 @@ const account: Messages['account'] = {
   pwRange: 'De 6 a 64 caracteres',
   pwNote: 'Los otros dispositivos cerrarán sesión tras el cambio.',
   changePwBtn: 'Cambiar',
+  changeEmail: 'Cambiar correo',
+  newEmail: 'Correo nuevo',
+  emailNow: (email: string) => `Ahora es ${email}`,
+  loginPw: 'Contraseña',
+  emailNote:
+    'Enviaremos un correo de verificación a la nueva dirección. Abre el enlace que contiene para verificarla. Un correo verificado ya no se puede cambiar.',
+  changeEmailBtn: 'Cambiar',
+  emailChanged: (email: string) => `Correo cambiado a ${email}. Correo de verificación enviado`,
+  emailChangedNoMail: (email: string) =>
+    `Correo cambiado a ${email}, pero no se pudo enviar el correo de verificación. Toca Reenviar más tarde`,
   themeSub: {
     system: 'Oscuro si el teléfono está en oscuro',
     light: 'Fondo blanco y morado',

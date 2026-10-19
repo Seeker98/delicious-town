@@ -39,6 +39,15 @@ export default {
   pwRange: '6~64 位',
   pwNote: '改好後其他裝置會退出登入。',
   changePwBtn: '改密碼',
+  /** 改郵箱（2026-10-19）：只有還沒驗證的郵箱能改 */
+  changeEmail: '改郵箱',
+  newEmail: '新郵箱',
+  emailNow: (email: string) => `現在是 ${email}`,
+  loginPw: '登入密碼',
+  emailNote: '改好後會往新郵箱發一封驗證郵件, 點裡面的連結完成驗證。驗證過的郵箱不能再改。',
+  changeEmailBtn: '改郵箱',
+  emailChanged: (email: string) => `郵箱已改成 ${email}, 驗證郵件已發出`,
+  emailChangedNoMail: (email: string) => `郵箱已改成 ${email}, 驗證郵件沒發出去, 稍後點“重發”`,
   themeSub: { system: '手機是深色就用深色', light: '白底紫字', dark: '夜裡看不刺眼' } as Record<
     string,
     string

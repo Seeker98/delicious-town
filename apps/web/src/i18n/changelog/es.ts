@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  email1019:
+    'Nuevo: cambiar el correo. Si lo escribiste mal al registrarte y nunca te llegó el correo de verificación, toca «Cambiar correo» en la fila Correo de Mi cuenta, escribe la nueva dirección y tu contraseña, y el correo de verificación irá a la nueva dirección. Un correo verificado ya no se puede cambiar',
   review1019:
     'Correcciones: los restaurantes con la insignia de Plancton ya no reciben clientes exigentes con calima, niebla y climas parecidos; las obras de arte que solo suben la capacidad a tope o la capacidad de exigentes ahora aparecen en las bonificaciones activas de la portada; el restaurante de Don Krab ya no gana logros ni se lleva los primeros del servidor (se quitaron los que tenía); tocar «Comer» justo después de la hora de comer ahora dice que esa comida ya pasó; la tarjeta de compra de otro restaurante explica por qué no puedes comprar su venta',
   meal1019:

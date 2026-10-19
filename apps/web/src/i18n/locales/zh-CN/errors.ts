@@ -80,7 +80,7 @@ export default {
     predict_email: () => '验证邮箱后才能参与预测',
     kuji_level: (p) => `餐厅 ${String(p.need)} 级才能参与一番赏`,
     kuji_age: (p) => `账号注册满 ${String(p.days)} 天才能参与一番赏`,
-    kuji_email: () => '验证邮箱后才能参与一番赏',
+    kuji_email: () => '验证邮箱后才能参与一番赏 (邮箱写错了可以在“我的账号”里改)',
     level: (p) => `餐厅等级不够 (需要 ${String(p.need)} 级)`,
     star: (p) =>
       p.have === undefined
@@ -201,6 +201,9 @@ export default {
     ended: '活动已结束, 不能再改时间',
     wrong_password: '旧密码不对',
     same_password: '新密码不能和旧密码一样',
+    email_verified: '邮箱已经验证过了, 不能再改',
+    same_email: '新邮箱和现在的一样',
+    bad_password: '登录密码不对',
     mail_claimed: '这封邮件已经领过了',
     mail_no_items: '这封邮件没有附件',
     mail_broken: '这封邮件的附件已失效, 请联系运营',

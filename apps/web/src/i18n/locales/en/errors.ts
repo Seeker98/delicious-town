@@ -76,7 +76,7 @@ const errors: Messages['errors'] = {
     kuji_level: (p) => `Your restaurant must be level ${s(p.need)} to play Ichiban Kuji`,
     kuji_age: (p) =>
       `Your account must be at least ${s(p.days)} ${plEn(s(p.days), 'day', 'days')} old to play Ichiban Kuji`,
-    kuji_email: () => 'Verify your email to play Ichiban Kuji',
+    kuji_email: () => 'Verify your email to play Ichiban Kuji (if it’s wrong, change it in My account)',
     level: (p) => `Restaurant level too low (level ${s(p.need)} required)`,
     star: (p) =>
       p.have === undefined
@@ -213,6 +213,9 @@ const errors: Messages['errors'] = {
     ended: "The event has ended; its times can't be changed",
     wrong_password: 'The old password is wrong',
     same_password: "The new password can't be the same as the old one",
+    email_verified: 'Your email is already verified and can’t be changed',
+    same_email: 'The new email is the same as the current one',
+    bad_password: 'Wrong password',
     mail_claimed: 'You have already claimed this mail',
     mail_no_items: 'This mail has no attachments',
     mail_broken: 'The attachments in this mail are no longer valid. Please contact support.',

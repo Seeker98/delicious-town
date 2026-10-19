@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync } from 'fastify';
 import {
+  changeEmailBody,
   changePasswordBody,
   forgotPasswordBody,
   loginBody,
@@ -86,6 +87,16 @@ export function accountRoutes(svc: AccountService, deps: AppDeps): FastifyPlugin
         return ok({ relogin: true });
       }
     });
+
+    /** 改邮箱（2026-10-19）：只有还没验证的能改；限流和发验证邮件共用 */
+    r.post('/change-email', { config: { rateLimit: 'email' } }, async (req) =>
+      ok(
+        await svc.changeEmail(requireAccount(req).data.accountId, parse(changeEmailBody, req.body), {
+          ip: req.clientIp,
+          deviceId: deviceIdOf(req),
+        }),
+      ),
+    );
 
     r.post('/send-verify-email', { config: { rateLimit: 'email' } }, async (req) => {
       await svc.sendVerifyEmail(requireAccount(req).data.accountId);

@@ -38,6 +38,15 @@ export default {
   pwRange: '6~64 位',
   pwNote: '改好后其他设备会退出登录。',
   changePwBtn: '改密码',
+  /** 改邮箱（2026-10-19）：只有还没验证的邮箱能改 */
+  changeEmail: '改邮箱',
+  newEmail: '新邮箱',
+  emailNow: (email: string) => `现在是 ${email}`,
+  loginPw: '登录密码',
+  emailNote: '改好后会往新邮箱发一封验证邮件, 点里面的链接完成验证。验证过的邮箱不能再改。',
+  changeEmailBtn: '改邮箱',
+  emailChanged: (email: string) => `邮箱已改成 ${email}, 验证邮件已发出`,
+  emailChangedNoMail: (email: string) => `邮箱已改成 ${email}, 验证邮件没发出去, 稍后点“重发”`,
   themeSub: { system: '手机是深色就用深色', light: '白底紫字', dark: '夜里看不刺眼' } as Record<
     string,
     string
