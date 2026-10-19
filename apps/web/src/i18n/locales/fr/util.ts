@@ -21,6 +21,8 @@ const util: Messages['util'] = {
     oilValue: 'Huile par table',
     luckValue: 'Chance',
     mcGoldRate: 'Or du plat signature',
+    atSoftCapAdd: 'Capacité salle comble',
+    spSoftCapAdd: 'Capacité clients difficiles',
   },
   effect: (label, value) => `${label} ${value}`,
   reward: {

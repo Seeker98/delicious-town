@@ -19,6 +19,13 @@ describe('effectChips（问题记录：生效的加成展示凌乱）', () => {
     ]);
   });
 
+  it('艺术品设施只加软上限时也有标签（代码审查 2026-10-19）', () => {
+    expect(effectChips({ atSoftCapAdd: 0.05, spSoftCapAdd: 0.08 })).toEqual([
+      { text: '满座容量+5%', good: true },
+      { text: '贵客容量+8%', good: true },
+    ]);
+  });
+
   it('法文：百分数用小数逗号，百分号前有不换行空格（视觉第三轮）', async () => {
     setActivePinia(createPinia());
     await useLocaleStore().set('fr');

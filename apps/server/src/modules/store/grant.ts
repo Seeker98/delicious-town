@@ -47,7 +47,8 @@ export async function grantGoods(
     .where('goods_id', '=', goodsId)
     .executeTakeFirst();
   const have = before?.num ?? 0;
-  const target = isHonor ? 1 : Math.min(have + num, g.maxNum);
+  // 已经超过上限的（节油器改版合并库存时直接相加）只是不再加，不往下压（代码审查 2026-10-19）
+  const target = isHonor ? 1 : Math.max(have, Math.min(have + num, g.maxNum));
   const granted = isHonor ? 1 : target - have;
   const dropped = isHonor ? 0 : num - granted;
   await db

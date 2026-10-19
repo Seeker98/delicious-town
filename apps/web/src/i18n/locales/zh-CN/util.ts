@@ -20,6 +20,9 @@ export default {
     oilValue: '每桌耗油',
     luckValue: '幸运',
     mcGoldRate: '特色菜金牌',
+    /** 艺术品设施抬软上限（2026-10-17）：玩家文字不写“软上限”，写白话 */
+    atSoftCapAdd: '满座容量',
+    spSoftCapAdd: '贵客容量',
   },
   /** 一项加成："挑剔率+10%" */
   effect: (label: string, value: string) => `${label}${value}`,

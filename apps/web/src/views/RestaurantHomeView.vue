@@ -170,7 +170,8 @@ async function load(fresh = false) {
   }
 }
 
-async function act(fn: () => Promise<unknown>, fallback: string) {
+/** reloadOnError：失败了也重新读一次待办（开饭时段刚过还显示“吃饭”，点了以后这一行要跟着变，代码审查 2026-10-19） */
+async function act(fn: () => Promise<unknown>, fallback: string, reloadOnError = false) {
   if (busy.value) return;
   busy.value = true;
   try {
@@ -178,6 +179,7 @@ async function act(fn: () => Promise<unknown>, fallback: string) {
     await load(true);
   } catch (e) {
     toast.push(errorMessage(e, fallback), 'danger');
+    if (reloadOnError) await loadSignIn();
   } finally {
     busy.value = false;
   }
@@ -653,7 +655,7 @@ onBeforeUnmount(() => {
                 class="btn btn-sm btn-primary"
                 data-testid="home-meal"
                 :disabled="busy"
-                @click="act(() => endpoints.meal(), t.home.mealFailed)"
+                @click="act(() => endpoints.meal(), t.home.mealFailed, true)"
               >
                 {{ t.home.mealBtn }}
               </button>

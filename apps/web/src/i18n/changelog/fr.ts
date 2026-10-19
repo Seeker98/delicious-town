@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  review1019:
+    'Corrections. Les restaurants avec le badge Plancton n’attirent plus de clients difficiles par temps de brume, de brouillard, etc. Les œuvres d’art qui augmentent seulement la capacité salle comble ou la capacité clients difficiles apparaissent désormais dans les bonus actifs de l’accueil. Le restaurant de M. Krabs ne gagne plus de succès et ne prend plus de premières du serveur (ceux qu’il avait ont été retirés). Appuyer sur «\u202fManger\u202f» juste après l’heure du repas indique maintenant que le repas est passé. La carte de rachat d’un autre restaurant explique pourquoi vous ne pouvez pas acheter sa mise en vente',
   meal1019:
     'Nouveau\u202f: l’énergie des repas. Chaque jour, le déjeuner (12 h–14 h) donne 20 d’énergie et le dîner (18 h–20 h) en donne 30. Touche «\u202fManger\u202f» dans les tâches du jour sur l’accueil\u202f; ça peut dépasser le maximum, et un repas manqué n’est pas rattrapé',
   wage1019:

@@ -97,6 +97,20 @@ describe('镇长猜天气（天气改版设计 §5）', () => {
     expect(await goodsNum(t, b.restaurantId, GOODS.mayorFavor)).toBe(1);
   });
 
+  it('判不了的那一轮（换天任务漏跑）不占分批的队头，后面的天照常揭晓', async () => {
+    const a = await newRestaurant(t);
+    const b = await newRestaurant(t, { shardId: a.shardId });
+    await t.game.town.mayor(a, 2);
+    t.clock.set(gameTime('2026-10-02', 12));
+    await t.game.town.mayor(b, 2);
+    const at = gameTime('2026-10-02', 13);
+    await weatherRan(a.shardId, at, weatherOf(2).id);
+    // 一批只取 1 条：a 那天的换天没跑，排在前面也不能挡住 b
+    expect(await resolveMayor(t.game.deps, a.shardId, at, undefined, 1)).toEqual({ resolved: 1, failed: 0 });
+    expect(await goodsNum(t, b.restaurantId, GOODS.mayorFavor)).toBe(1);
+    expect(await goodsNum(t, a.restaurantId, GOODS.mayorFavor)).toBe(0);
+  });
+
   it('猜错不罚（用户 2026-10-12）', async () => {
     const a = await newRestaurant(t);
     await t.game.town.mayor(a, 3);

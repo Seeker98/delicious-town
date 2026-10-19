@@ -29,7 +29,7 @@ export function createRankService(d: GameDeps) {
       if (!hit || now.getTime() - hit.at >= ttl || gameDay(new Date(hit.at)) !== gameDay(now)) {
         const entry = {
           at: now.getTime(),
-          rows: source({ db: d.db, shardId: ctx.shardId, now, config: d.config }).then((rows) =>
+          rows: source({ db: d.db, shardId: ctx.shardId, now, config: d.config, tuning }).then((rows) =>
             rankRows(rows, { asc: RANK_BOARDS.find((b) => b.key === key)?.asc }),
           ),
         };

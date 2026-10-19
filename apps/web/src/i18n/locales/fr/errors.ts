@@ -323,6 +323,7 @@ const errors: Messages['errors'] = {
     wishtree_closed: 'Ce tour est arrivé à l’heure du tirage\u202f; attendez le prochain',
     shelf_full: 'La vitrine est pleine. Retirez d’abord un trophée',
     frame_locked: 'Pas encore assez de points de succès pour ce cadre',
+    meal_closed: 'L’heure du repas est passée. Revenez au prochain repas',
     trophy_missing: 'Vous n’avez pas encore ce trophée',
     bulk_closed: 'Le lot a clôturé\u202f; cette offre ne compte pas',
     bulk_cooldown: 'Trop rapide\u202f; attendez quelques secondes et réessayez',

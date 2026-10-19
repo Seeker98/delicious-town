@@ -4,13 +4,17 @@ import { ErrorCode, type AdminRole } from '@dt/shared';
 import type { DB } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { requireAccount } from '../../security/session';
+import { deviceIdOf } from '../../core/deps';
 import { isBanned } from './ban';
 
 export interface AdminActor {
   accountId: number;
   username: string;
   role: AdminRole;
+  /** 真实客户端 IP（走 Cloudflare 时取 CF 头，和封禁名单比对的是同一个） */
   ip: string;
+  /** 管理员这台设备的设备号（没带就是 null），封设备时防止封到自己 */
+  deviceId?: string | null;
 }
 
 const RANK: Record<string, number> = { player: 0, mod: 1, admin: 2 };
@@ -28,5 +32,11 @@ export async function requireRole(db: Kysely<DB>, req: FastifyRequest, min: Admi
     .executeTakeFirst();
   if (!a || isBanned(a, new Date()) || (RANK[a.role] ?? 0) < RANK[min]!)
     throw new AppError(ErrorCode.NOT_FOUND, 404);
-  return { accountId: a.id, username: a.username, role: a.role as AdminRole, ip: req.ip };
+  return {
+    accountId: a.id,
+    username: a.username,
+    role: a.role as AdminRole,
+    ip: req.clientIp,
+    deviceId: deviceIdOf(req),
+  };
 }

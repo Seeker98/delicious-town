@@ -1,5 +1,5 @@
 import { sql, type Kysely, type RawBuilder } from 'kysely';
-import type { GameConfig } from '@dt/config';
+import type { GameConfig, Tuning } from '@dt/config';
 import { addDays, DAY_MS, gameDay, gameTime } from '@dt/shared';
 import type { DB, EquipGemRow, EquipRow } from '../../db/schema';
 import { gearOf } from '../equip/power';
@@ -16,6 +16,8 @@ export interface BoardCtx {
   shardId: number;
   now: Date;
   config: GameConfig;
+  /** 区服数值（成就点榜的上榜门槛按它，和成就页写的一致）；不传用基础配置 */
+  tuning?: Tuning;
 }
 
 type Source = (c: BoardCtx) => Promise<RankSource[]>;
@@ -252,7 +254,7 @@ const periodSources = (prefix: string, key: string): Record<string, Source> =>
  * 同分时先到这个分数的在前；补发那一刻大家时间一样，再按店号小的在前（tie 里带上店号，不并列）
  */
 function achEligible(c: BoardCtx) {
-  const t = c.config.tuning.achieve;
+  const t = (c.tuning ?? c.config.tuning).achieve;
   const before = new Date(c.now.getTime() - t.rankMinAccountDays * DAY_MS);
   return sql`r.level >= ${t.rankMinLevel} and a.email_verified_at is not null and a.created_at <= ${before}`;
 }

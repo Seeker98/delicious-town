@@ -5,6 +5,7 @@ import { createTestGame, newRestaurant, type TestGame } from '../../../test/game
 import { emitAction } from '../../core/action';
 import { runSystemOp } from '../../core/op';
 import { backfillCounters } from '../../db/migrations/0087_achievements';
+import { up as cleanNpcAch } from '../../db/migrations/0091_ach_npc';
 import { roundOf } from '@dt/shared';
 import { BOARD_SOURCES } from '../rank/boards';
 import { settleShardRound } from '../settlement/runner';
@@ -179,6 +180,60 @@ describe('状态类成就和首达', () => {
     const b = await newRestaurant(t, { shardId, patch: { level: 110 } });
     await evaluate(b.restaurantId);
     expect((await got(b.restaurantId)).filter((x) => x.first_in_shard)).toEqual([]);
+  });
+
+  it('蟹老板的店不拿成就、不占首达；迁移 0091 清掉它已经拿到的（代码审查 2026-10-19）', async () => {
+    const shardId = await createShard(t.db);
+    await markBackfilled(shardId);
+    const npc = await newRestaurant(t, { shardId, patch: { level: 110, npc: true } });
+    await evaluate(npc.restaurantId);
+    // 别人给它点赞记的“被赞”走动作计数，也不发
+    await runSystemOp(t.game.deps, shardId, npc.restaurantId, { source: 'test', now: t.clock.now }, (op) =>
+      emitAction(op, 'thumbs.received', 5000),
+    );
+    expect(await got(npc.restaurantId)).toEqual([]);
+    expect(await points(npc.restaurantId)).toBe(0);
+    const a = await newRestaurant(t, { shardId, patch: { level: 110 } });
+    await evaluate(a.restaurantId);
+    expect((await got(a.restaurantId)).filter((x) => x.first_in_shard).map((x) => x.ach_id)).toContain(
+      'level.7',
+    );
+    // 老数据：蟹老板身上已经有的成就、点数、动态、称号、首达新闻都清掉
+    const now = t.clock.now;
+    await t.db
+      .insertInto('rest_achievement')
+      .values({ rest_id: npc.restaurantId, ach_id: 'level.7', pts: 80, achieved_at: now, backfilled: false })
+      .execute();
+    await t.db
+      .insertInto('rest_ach')
+      .values({ rest_id: npc.restaurantId, points: 80, points_at: now })
+      .execute();
+    await t.db
+      .insertInto('rest_log')
+      .values({
+        rest_id: npc.restaurantId,
+        type: 'achieve.got',
+        params: JSON.stringify({ id: 'level.7' }),
+        created_at: now,
+      })
+      .execute();
+    await t.db
+      .insertInto('news')
+      .values({
+        shard_id: shardId,
+        type: 'achieve.first',
+        rest_id: npc.restaurantId,
+        params: JSON.stringify({}),
+      })
+      .execute();
+    await cleanNpcAch(t.db);
+    expect(await got(npc.restaurantId)).toEqual([]);
+    expect(await points(npc.restaurantId)).toBe(0);
+    expect(await logs(npc.restaurantId, 'achieve.got')).toEqual([]);
+    const news = await t.db.selectFrom('news').select('id').where('rest_id', '=', npc.restaurantId).execute();
+    expect(news).toEqual([]);
+    // 真实玩家的不动
+    expect((await got(a.restaurantId)).length).toBeGreaterThan(0);
   });
 
   it('没补发完的区服不算首达、不发新闻', async () => {

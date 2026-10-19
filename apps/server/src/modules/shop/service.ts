@@ -198,6 +198,8 @@ export function createShopService(d: GameDeps) {
       const r = await specialRow(ctx.shardId);
       if (!r) return null;
       const g = d.config.requireGoods(r.goods_id);
+      // 抽好之后道具改成了没有银币价的（节油器改版把 30202、30207 改成黑市钻石货），不再卖
+      if (g.coin <= 0) return null;
       return {
         day: r.day,
         goodsId: r.goods_id,
@@ -269,6 +271,8 @@ export function createShopService(d: GameDeps) {
           throw new AppError(ErrorCode.SOLD_OUT, 400);
         }
         const g = o.config.requireGoods(row.goods_id);
+        // 没有银币价了就不卖，不然按 0 元白拿（代码审查 2026-10-19）；报错整单回滚，库存不占
+        if (g.coin <= 0) throw invalidState('not_on_sale', { goodsId: g.id });
         await assertBuyable(o, g, b.num);
         // 每日特价抽到限购道具（体力卡）也算进同一份每天、每周计数（代码审查 2026-10-15）；超了整单回滚，库存不占
         await claimLimits(o, g.id, b.num);

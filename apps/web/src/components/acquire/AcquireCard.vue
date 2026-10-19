@@ -111,6 +111,19 @@ onMounted(load);
       >
         {{ t.acquire.buyListed }}
       </button>
+      <!-- 有老板、在挂牌、但我买不了挂牌（今天买满、持有上限等）：上面把“有老板”藏了，这里写买不了的原因（代码审查 2026-10-19） -->
+      <span
+        v-else-if="
+          r.listed &&
+          r.listedBlock !== null &&
+          r.acquireBlock === 'owned' &&
+          r.listedBlock !== 'self' &&
+          r.listedBlock !== 'banned'
+        "
+        class="text-muted"
+        data-testid="card-listed-block"
+        >{{ reasonText(r.listedBlock) }}</span
+      >
     </div>
   </div>
 </template>

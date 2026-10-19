@@ -322,6 +322,7 @@ const errors: Messages['errors'] = {
     wishtree_closed: 'This round has reached its draw time; wait for the next round',
     shelf_full: 'The showcase is full. Take one out first',
     frame_locked: 'Not enough achievement points for this frame yet',
+    meal_closed: 'Mealtime is over. Come back for the next meal',
     trophy_missing: 'You have not earned this trophy yet',
     bulk_closed: 'The lot has closed; this bid does not count',
     bulk_cooldown: 'Too fast; wait a few seconds and try again',

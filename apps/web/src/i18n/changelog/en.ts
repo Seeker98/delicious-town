@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  review1019:
+    'Fixes: restaurants with the Plankton badge no longer get picky customers in haze, fog and similar weather; art pieces that only raise Full-house capacity or Picky-guest capacity now show up in the active bonuses on the home page; Mr. Krabs’ restaurant no longer earns achievements or takes server firsts (the ones it had were removed); tapping “Eat” just after mealtime now says the meal is over; the acquisition card on another restaurant now says why you cannot buy its listing',
   meal1019:
     'New: mealtime Stamina. Every day, lunch (12:00–14:00) gives 20 Stamina and dinner (18:00–20:00) gives 30. Tap “Eat” in Today’s to-do on the home page; it can go over your Stamina cap, and missed meals are not made up',
   wage1019:

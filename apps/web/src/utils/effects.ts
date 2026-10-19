@@ -9,6 +9,9 @@ const KEYS: Array<[key: keyof Messages['util']['effects'], kind: 'rate' | 'value
   ['expRate', 'rate'],
   // 特色菜金牌（厨具收益加成，问题记录 411）
   ['mcGoldRate', 'rate'],
+  // 艺术品设施抬上座率、挑剔率的软上限（2026-10-17；代码审查 2026-10-19：原来漏了，只加这两项的设施标签是空的）
+  ['atSoftCapAdd', 'rate'],
+  ['spSoftCapAdd', 'rate'],
   ['oilRate', 'rate'],
   ['coinValue', 'value'],
   ['expValue', 'value'],

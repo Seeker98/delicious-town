@@ -102,6 +102,24 @@ describe('AcquireCard（对方餐厅页，收购 PR 3）', () => {
     expect(endpoints.acquireBuy).toHaveBeenCalledWith(2, 'listed', 600_000);
   });
 
+  it('有老板、在挂牌、但我买不了挂牌：写买不了的原因（代码审查 2026-10-19：原来既没按钮也没原因）', async () => {
+    const until = new Date(Date.now() + 2 * 3600_000).toISOString();
+    vi.mocked(endpoints.acquireRest).mockResolvedValue(
+      rest({
+        owner: { restId: 9, name: '老板店' },
+        listed: { rate: 0.6, price: 600_000, until },
+        acquireBlock: 'owned',
+        listedBlock: 'linked',
+        acquireSplit: null,
+      }),
+    );
+    const w = mount(AcquireCard, { props: { restId: 2 } });
+    await flushPromises();
+    expect(w.find('[data-testid="card-listed"]').exists()).toBe(false);
+    expect(w.find('[data-testid="card-block"]').exists()).toBe(false);
+    expect(w.get('[data-testid="card-listed-block"]').text()).toContain('同一台设备');
+  });
+
   it('读不到（区服关了收购等）就什么都不显示', async () => {
     vi.mocked(endpoints.acquireRest).mockRejectedValue(new Error('x'));
     const w = mount(AcquireCard, { props: { restId: 2 } });

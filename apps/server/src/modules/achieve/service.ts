@@ -89,11 +89,18 @@ export function createAchieveService(d: GameDeps) {
       ),
   );
 
-  async function rankOf(shardId: number, restId: number, cacheSeconds: number): Promise<number | null> {
+  async function rankOf(shardId: number, restId: number, tuning: Tuning): Promise<number | null> {
+    const cacheSeconds = tuning.rank.cacheSeconds;
     const now = d.now();
     let hit = rankCache.get(shardId);
     if (!hit || now.getTime() - hit.at >= cacheSeconds * 1000) {
-      const rows = await BOARD_SOURCES['achieve.points']!({ db: d.db, shardId, now, config: d.config });
+      const rows = await BOARD_SOURCES['achieve.points']!({
+        db: d.db,
+        shardId,
+        now,
+        config: d.config,
+        tuning,
+      });
       hit = { at: now.getTime(), rows: rankRows(rows) };
       rankCache.set(shardId, hit);
     }
@@ -139,7 +146,7 @@ export function createAchieveService(d: GameDeps) {
       .orderBy('achieved_at', 'desc')
       .execute();
     const stat = await db.selectFrom('rest_ach').selectAll().where('rest_id', '=', restId).executeTakeFirst();
-    const rank = await rankOf(ctx.shardId, restId, s.tuning.rank.cacheSeconds);
+    const rank = await rankOf(ctx.shardId, restId, s.tuning);
     const rare = await rarity(ctx.shardId, t);
     const week = gameTime(weekStart(gameDay(now)), 0);
     const points = stat?.points ?? 0;

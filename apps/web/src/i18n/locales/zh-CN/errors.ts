@@ -309,6 +309,7 @@ export default {
     wishtree_closed: '这一轮已经到开奖时间了, 等新的一轮',
     shelf_full: '展示柜满了, 先拿下一个',
     frame_locked: '成就点还不够, 戴不了这个头像框',
+    meal_closed: '这顿饭的时间过了, 下一顿再来',
     trophy_missing: '这个奖杯还没拿到',
     bulk_closed: '已经收盘了, 这次出价无效',
     bulk_cooldown: '出价太快了, 等几秒再试',

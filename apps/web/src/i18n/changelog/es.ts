@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  review1019:
+    'Correcciones: los restaurantes con la insignia de Plancton ya no reciben clientes exigentes con calima, niebla y climas parecidos; las obras de arte que solo suben la capacidad a tope o la capacidad de exigentes ahora aparecen en las bonificaciones activas de la portada; el restaurante de Don Krab ya no gana logros ni se lleva los primeros del servidor (se quitaron los que tenía); tocar «Comer» justo después de la hora de comer ahora dice que esa comida ya pasó; la tarjeta de compra de otro restaurante explica por qué no puedes comprar su venta',
   meal1019:
     'Nuevo: energía de las comidas. Cada día, el almuerzo (12:00–14:00) da 20 de energía y la cena (18:00–20:00) da 30. Toca «Comer» en las tareas de hoy de la página de inicio; puede pasar del máximo y las comidas perdidas no se recuperan',
   wage1019:
