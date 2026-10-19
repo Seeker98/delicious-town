@@ -160,6 +160,55 @@ describe('邮箱验证', () => {
   });
 });
 
+describe('改邮箱（2026-10-19）', () => {
+  // 限流按 IP 一分钟 3 次：每次换一个文档专用地址
+  let n = 0;
+  const ip = () => `198.51.100.${(++n % 250) + 1}`;
+  const change = (cookie: string, body: unknown) =>
+    call(ctx.app, 'POST', `${A}/change-email`, { cookie, body, ip: ip() });
+
+  it('没验证的能改：要登录密码；改好后旧链接作废，新邮箱收到验证邮件，验证后再不能改', async () => {
+    const u = await registerUser(ctx.app);
+    const oldToken = tokenFromMail(ctx.mailer.lastTo(u.email)!.text);
+    const to = `${uniqueName('n')}@test.local`;
+    const bad = await change(u.cookie, { email: to, password: 'wrong123' });
+    expect(bad.json.params).toMatchObject({ reason: 'bad_password' });
+    const same = await change(u.cookie, { email: u.email.toUpperCase(), password: 'secret123' });
+    expect(same.json.params).toMatchObject({ reason: 'same_email' });
+    // 刚注册发过验证邮件（60 秒冷却）也照样发到新邮箱
+    const r = await change(u.cookie, { email: to.toUpperCase(), password: 'secret123' });
+    expect(r.status).toBe(200);
+    expect(r.json.data).toEqual({ email: to, mailSent: true });
+    const me = (await call(ctx.app, 'GET', `${A}/me`, { cookie: u.cookie })).json.data;
+    expect(me).toMatchObject({ email: to, emailVerified: false });
+    const old = await call(ctx.app, 'POST', `${A}/verify-email`, { body: { token: oldToken } });
+    expect(old.json.code).toBe('TOKEN_INVALID');
+    const token = tokenFromMail(ctx.mailer.lastTo(to)!.text);
+    expect((await call(ctx.app, 'POST', `${A}/verify-email`, { body: { token } })).status).toBe(200);
+    const again = await change(u.cookie, { email: `${uniqueName('x')}@test.local`, password: 'secret123' });
+    expect(again.json.params).toMatchObject({ reason: 'email_verified' });
+    const audit = await ctx.deps.db
+      .selectFrom('audit_log')
+      .select('action')
+      .where('target', '=', `account:${u.accountId}`)
+      .where('action', '=', 'account.email')
+      .execute();
+    expect(audit).toHaveLength(1);
+  });
+
+  it('别人用过的邮箱（换写法也算）报 EMAIL_TAKEN；没登录 401', async () => {
+    const a = await registerUser(ctx.app);
+    const b = await registerUser(ctx.app);
+    const [local, host] = a.email.split('@');
+    const r = await change(b.cookie, { email: `${local}+x@${host}`, password: 'secret123' });
+    expect(r.json.code).toBe('EMAIL_TAKEN');
+    const anon = await call(ctx.app, 'POST', `${A}/change-email`, {
+      body: { email: 'a@b.cc', password: 'x' },
+    });
+    expect(anon.status).toBe(401);
+  });
+});
+
 describe('找回密码', () => {
   it('不存在的邮箱也返回成功，但不发信', async () => {
     const before = ctx.mailer.sent.length;

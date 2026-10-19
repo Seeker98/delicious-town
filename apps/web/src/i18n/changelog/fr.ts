@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  email1019:
+    'Nouveau. Vous pouvez changer d’e-mail. Si vous l’avez mal saisi à l’inscription et n’avez jamais reçu l’e-mail de vérification, appuyez sur «\u202fChanger d’e-mail\u202f» dans la ligne E-mail de Mon compte, saisissez la nouvelle adresse et votre mot de passe, et l’e-mail de vérification part vers la nouvelle adresse. Une adresse vérifiée ne peut plus être modifiée',
   review1019:
     'Corrections. Les restaurants avec le badge Plancton n’attirent plus de clients difficiles par temps de brume, de brouillard, etc. Les œuvres d’art qui augmentent seulement la capacité salle comble ou la capacité clients difficiles apparaissent désormais dans les bonus actifs de l’accueil. Le restaurant de M. Krabs ne gagne plus de succès et ne prend plus de premières du serveur (ceux qu’il avait ont été retirés). Appuyer sur «\u202fManger\u202f» juste après l’heure du repas indique maintenant que le repas est passé. La carte de rachat d’un autre restaurant explique pourquoi vous ne pouvez pas acheter sa mise en vente',
   meal1019:

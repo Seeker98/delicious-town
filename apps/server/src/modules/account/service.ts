@@ -4,6 +4,8 @@ import { sql, type Kysely } from 'kysely';
 import {
   accountMail,
   type AccountProfileDto,
+  type ChangeEmailDto,
+  type ChangeEmailInput,
   type ChangePasswordInput,
   ErrorCode,
   isLocale,
@@ -290,6 +292,72 @@ export function createAccountService(d: AccountDeps) {
           ip: meta.ip,
         });
       });
+    },
+
+    /**
+     * 改邮箱（2026-10-19）：只有还没验证的能改（验证过的不开放，免得旧邮箱空出来再去注册小号）；要登录密码；
+     * 新邮箱按注册时的规则查重。改好后旧邮箱里没用过的验证链接作废、写审计，再往新邮箱发一封验证邮件
+     */
+    async changeEmail(
+      accountId: number,
+      input: ChangeEmailInput,
+      meta: { ip: string; deviceId: string | null },
+    ): Promise<ChangeEmailDto> {
+      const a = await d.db
+        .selectFrom('account')
+        .select(['email', 'email_canon', 'email_verified_at', 'password_hash'])
+        .where('id', '=', accountId)
+        .executeTakeFirstOrThrow();
+      if (a.email_verified_at) throw invalidState('email_verified');
+      if (!(await verifyPassword(a.password_hash, input.password))) throw invalidState('bad_password');
+      const email = input.email.trim().toLowerCase();
+      const emailCanon = canonicalEmail(email);
+      if (emailCanon === a.email_canon) throw invalidState('same_email');
+      const dup = await d.db
+        .selectFrom('account')
+        .select('id')
+        .where('email_canon', '=', emailCanon)
+        .where('id', '!=', accountId)
+        .executeTakeFirst();
+      if (dup) throw new AppError(ErrorCode.EMAIL_TAKEN, 409);
+      try {
+        await d.db.transaction().execute(async (tx) => {
+          const done = await tx
+            .updateTable('account')
+            .set({ email, email_canon: emailCanon })
+            .where('id', '=', accountId)
+            .where('email_verified_at', 'is', null)
+            .returning('id')
+            .executeTakeFirst();
+          if (!done) throw invalidState('email_verified');
+          await tx
+            .updateTable('email_token')
+            .set({ used_at: d.now() })
+            .where('account_id', '=', accountId)
+            .where('purpose', '=', 'verify')
+            .where('used_at', 'is', null)
+            .execute();
+          await writeAudit(tx, {
+            actor: null,
+            action: 'account.email',
+            target: `account:${accountId}`,
+            detail: { from: a.email, to: email, deviceId: meta.deviceId },
+            ip: meta.ip,
+          });
+        });
+      } catch (e) {
+        if (uniqueViolation(e) === 'account_email') throw new AppError(ErrorCode.EMAIL_TAKEN, 409);
+        throw e;
+      }
+      // 刚点过“重发”也照样发到新邮箱：冷却是按账号记的，换了邮箱就清掉
+      await d.redis.del(`mailcd:verify:${accountId}`);
+      let mailSent = true;
+      try {
+        await sendTokenMail(accountId, email, 'verify', false);
+      } catch {
+        mailSent = false;
+      }
+      return { email, mailSent };
     },
 
     async sendVerifyEmail(accountId: number): Promise<void> {

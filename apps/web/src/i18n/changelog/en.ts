@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  email1019:
+    'New: change your email. If you typed it wrong at sign-up and never got the verification email, tap “Change email” in the Email row of My account, enter the new address and your password, and the verification email goes to the new address. A verified email can’t be changed',
   review1019:
     'Fixes: restaurants with the Plankton badge no longer get picky customers in haze, fog and similar weather; art pieces that only raise Full-house capacity or Picky-guest capacity now show up in the active bonuses on the home page; Mr. Krabs’ restaurant no longer earns achievements or takes server firsts (the ones it had were removed); tapping “Eat” just after mealtime now says the meal is over; the acquisition card on another restaurant now says why you cannot buy its listing',
   meal1019:

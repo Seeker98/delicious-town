@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { LOCALE_NAMES, type AccountProfileDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import EmailSheet from '../components/account/EmailSheet.vue';
 import LangSheet from '../components/account/LangSheet.vue';
 import PasswordSheet from '../components/account/PasswordSheet.vue';
 import ThemeSheet from '../components/account/ThemeSheet.vue';
@@ -18,7 +19,7 @@ import { readThemePref, type ThemePref } from '../utils/theme';
 
 /**
  * 账号和设置（问题记录 178；界面改版 P11）：顶上一张账号卡（用户名、角色、注册时间、几个区服有店），
- * 下面按“账号 / 偏好 / 区服”分组成设置行：邮箱（没验证时能重发）、修改密码、语言、外观点开都从底部弹面板；
+ * 下面按“账号 / 偏好 / 区服”分组成设置行：邮箱（没验证时能重发、能改，2026-10-19）、修改密码、语言、外观点开都从底部弹面板；
  * 原来的“我的店”列表挪到切换区服页。只要求登录，不要求选区服
  */
 const session = useSessionStore();
@@ -26,7 +27,7 @@ const locale = useLocaleStore();
 const shards = useShardsStore();
 const p = ref<AccountProfileDto | null>(null);
 const loadError = ref('');
-const sheet = ref<'lang' | 'theme' | 'pw' | null>(null);
+const sheet = ref<'lang' | 'theme' | 'pw' | 'email' | null>(null);
 const theme = ref<ThemePref>(readThemePref());
 const t = useT();
 const { resend, logout } = useAccountActions();
@@ -72,7 +73,20 @@ const shardName = computed(() => shards.nameOf(session.me?.shardId));
         <span class="dt-row-ico dt-set-ic"><DtArt name="set-mail" :size="20" /></span>
         <span class="dt-row-main">
           <span class="dt-row-title">{{ t.account.email }}</span>
-          <span class="dt-row-sub">{{ p.email }}</span>
+          <span class="dt-row-sub"
+            >{{ p.email
+            }}<template v-if="!p.emailVerified">
+              ·
+              <button
+                type="button"
+                class="dt-link-btn text-wrap"
+                data-testid="acc-email-change"
+                @click="sheet = 'email'"
+              >
+                {{ t.account.changeEmail }}
+              </button></template
+            ></span
+          >
         </span>
         <span v-if="p.emailVerified" class="dt-tag dt-tag-ok">{{ t.account.verified }}</span>
         <template v-else>
@@ -138,4 +152,11 @@ const shardName = computed(() => shards.nameOf(session.me?.shardId));
   <LangSheet :open="sheet === 'lang'" @close="sheet = null" />
   <ThemeSheet :open="sheet === 'theme'" @close="sheet = null" @picked="theme = $event" />
   <PasswordSheet :open="sheet === 'pw'" @close="sheet = null" />
+  <EmailSheet
+    v-if="p"
+    :open="sheet === 'email'"
+    :current="p.email"
+    @close="sheet = null"
+    @changed="p = { ...p!, email: $event }"
+  />
 </template>

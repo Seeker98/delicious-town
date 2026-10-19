@@ -58,6 +58,15 @@ export const setLangBody = z.object({ lang: localeSchema });
 export const changePasswordBody = z.object({ oldPassword: z.string().min(1).max(64), newPassword: password });
 export type ChangePasswordInput = z.input<typeof changePasswordBody>;
 
+/** 改邮箱（2026-10-19：注册时邮箱写错收不到验证邮件的人一直卡着）：只有还没验证的能改，要登录密码 */
+export const changeEmailBody = z.object({ email, password: z.string().min(1).max(64) });
+export type ChangeEmailInput = z.input<typeof changeEmailBody>;
+/** 改邮箱的结果：新邮箱；验证邮件发没发出去（发失败了邮箱照样改好，玩家可以再点重发） */
+export interface ChangeEmailDto {
+  email: string;
+  mailSent: boolean;
+}
+
 /** 我的账号（问题记录 178） */
 export interface AccountProfileDto {
   username: string;

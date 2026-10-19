@@ -81,7 +81,7 @@ export default {
     predict_email: () => '驗證郵箱後才能參與預測',
     kuji_level: (p) => `餐廳 ${String(p.need)} 級才能參與一番賞`,
     kuji_age: (p) => `賬號註冊滿 ${String(p.days)} 天才能參與一番賞`,
-    kuji_email: () => '驗證郵箱後才能參與一番賞',
+    kuji_email: () => '驗證郵箱後才能參與一番賞 (郵箱寫錯了可以在“我的賬號”裡改)',
     level: (p) => `餐廳等級不夠 (需要 ${String(p.need)} 級)`,
     star: (p) =>
       p.have === undefined
@@ -202,6 +202,9 @@ export default {
     ended: '活動已結束, 不能再改時間',
     wrong_password: '舊密碼不對',
     same_password: '新密碼不能和舊密碼一樣',
+    email_verified: '郵箱已經驗證過了, 不能再改',
+    same_email: '新郵箱和現在的一樣',
+    bad_password: '登入密碼不對',
     mail_claimed: '這封郵件已經領過了',
     mail_no_items: '這封郵件沒有附件',
     mail_broken: '這封郵件的附件已失效, 請聯絡運營',
