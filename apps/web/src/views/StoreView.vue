@@ -9,6 +9,7 @@ import DtEmpty from '../components/DtEmpty.vue';
 import DtSheet from '../components/DtSheet.vue';
 import DtSkeleton from '../components/DtSkeleton.vue';
 import DtStepper from '../components/DtStepper.vue';
+import DtTabPanel from '../components/DtTabPanel.vue';
 import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
 import { useTabQuery } from '../composables/useTabQuery';
@@ -195,221 +196,233 @@ onMounted(() =>
 
 <template>
   <DtTabs v-model="tab" :tabs="tabItems" />
-  <DtEmpty v-if="tab === 'items' && !data && failed" :title="t.store.loadFailed" data-testid="store-failed" />
-  <DtSkeleton v-else-if="tab === 'items' && !data" :rows="5" data-testid="store-skeleton" />
-  <template v-if="tab === 'items' && data">
-    <!-- 用了多少种画成进度条（界面改版 P7，和橱柜一样）；厨具另算一句 -->
-    <div class="dt-cup-meta">
-      <div class="dt-cup-slots">
-        <span
-          class="dt-cup-slotbar"
-          role="progressbar"
-          :aria-valuenow="usedPct"
-          aria-valuemin="0"
-          aria-valuemax="100"
-          :aria-label="t.store.used(data.kinds, data.storeNum)"
-          ><span :style="{ width: `${usedPct}%` }"></span
-        ></span>
-        <span class="dt-cup-slots-label" aria-hidden="true" data-testid="store-used">{{
-          t.store.used(data.kinds, data.storeNum)
-        }}</span>
+  <DtTabPanel :tab="tab">
+    <DtEmpty
+      v-if="tab === 'items' && !data && failed"
+      :title="t.store.loadFailed"
+      data-testid="store-failed"
+    />
+    <DtSkeleton v-else-if="tab === 'items' && !data" :rows="5" data-testid="store-skeleton" />
+    <template v-if="tab === 'items' && data">
+      <!-- 用了多少种画成进度条（界面改版 P7，和橱柜一样）；厨具另算一句 -->
+      <div class="dt-cup-meta">
+        <div class="dt-cup-slots">
+          <span
+            class="dt-cup-slotbar"
+            role="progressbar"
+            :aria-valuenow="usedPct"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            :aria-label="t.store.used(data.kinds, data.storeNum)"
+            ><span :style="{ width: `${usedPct}%` }"></span
+          ></span>
+          <span class="dt-cup-slots-label" aria-hidden="true" data-testid="store-used">{{
+            t.store.used(data.kinds, data.storeNum)
+          }}</span>
+        </div>
+        <div v-if="data.equips > 0" class="dt-cup-rules">
+          {{ t.store.equipsBefore(data.equips) }}
+          <RouterLink to="/rest/equip" class="dt-go">{{ t.store.equipsLink }}</RouterLink
+          >{{ t.store.equipsAfter }}
+        </div>
       </div>
-      <div v-if="data.equips > 0" class="dt-cup-rules">
-        {{ t.store.equipsBefore(data.equips) }}
-        <RouterLink to="/rest/equip" class="dt-go">{{ t.store.equipsLink }}</RouterLink
-        >{{ t.store.equipsAfter }}
-      </div>
-    </div>
-    <!-- 按类型筛选：一排筛选胶囊（原来是下拉框） -->
-    <div
-      class="dt-pills dt-pills-scroll"
-      role="group"
-      :aria-label="t.store.typeLabel"
-      data-testid="store-types"
-    >
-      <button
-        v-for="v in TYPES"
-        :key="String(v)"
-        type="button"
-        :class="{ active: type === v }"
-        :aria-pressed="type === v"
-        :data-testid="`store-type-${v ?? 'all'}`"
-        @click="type = v"
+      <!-- 按类型筛选：一排筛选胶囊（原来是下拉框） -->
+      <div
+        class="dt-pills dt-pills-scroll"
+        role="group"
+        :aria-label="t.store.typeLabel"
+        data-testid="store-types"
       >
-        {{ typeLabel(v) }}
-      </button>
-    </div>
-    <template v-for="g in groups" :key="g.type">
-      <h6 v-if="type === undefined" class="dt-bag-group" :data-testid="`store-group-${g.type}`">
-        {{ typeLabel(g.type) }}<span>{{ g.items.length }}</span>
-      </h6>
-      <!-- 背包格子（界面改版 P7，和橱柜一样）：4 列，道具图、右上角数量、名字；下面一行剩余时间或“已达上限”；点一格弹出面板 -->
-      <div class="dt-bag mb-2">
         <button
-          v-for="it in g.items"
+          v-for="v in TYPES"
+          :key="String(v)"
+          type="button"
+          :class="{ active: type === v }"
+          :aria-pressed="type === v"
+          :data-testid="`store-type-${v ?? 'all'}`"
+          @click="type = v"
+        >
+          {{ typeLabel(v) }}
+        </button>
+      </div>
+      <template v-for="g in groups" :key="g.type">
+        <h6 v-if="type === undefined" class="dt-bag-group" :data-testid="`store-group-${g.type}`">
+          {{ typeLabel(g.type) }}<span>{{ g.items.length }}</span>
+        </h6>
+        <!-- 背包格子（界面改版 P7，和橱柜一样）：4 列，道具图、右上角数量、名字；下面一行剩余时间或“已达上限”；点一格弹出面板 -->
+        <div class="dt-bag mb-2">
+          <button
+            v-for="it in g.items"
+            :key="it.goodsId"
+            type="button"
+            :class="['dt-bag-cell', { 'is-picked': picked === it.goodsId }]"
+            aria-haspopup="dialog"
+            :aria-label="cellLabel(it)"
+            :data-testid="`store-item-${it.goodsId}`"
+            @click="pick(it.goodsId)"
+          >
+            <span v-if="it.num > 1" class="dt-bag-num" aria-hidden="true">{{ formatNum(it.num) }}</span>
+            <DtArt :name="catalog.goodsArt(it.goodsId)" :size="36" />
+            <span class="dt-bag-name" aria-hidden="true">{{ catalog.goodsName(it.goodsId) }}</span>
+            <span
+              :class="['dt-bag-need', { 'is-danger': it.usable && it.maxUse === 0 }]"
+              aria-hidden="true"
+              >{{ cellSub(it) }}</span
+            >
+          </button>
+        </div>
+      </template>
+    </template>
+
+    <!-- 点一件：大图、持有、单价；数量、使用、卖出（卖出、丢弃先确认） -->
+    <DtSheet
+      :open="tab === 'items' && !!pickedItem"
+      :title="pickedItem ? catalog.goodsName(pickedItem.goodsId) : ''"
+      @close="picked = null"
+    >
+      <div v-if="pickedItem" class="dt-detail" data-testid="store-sheet">
+        <div class="dt-detail-head">
+          <span class="dt-detail-art"><DtArt :name="catalog.goodsArt(pickedItem.goodsId)" :size="52" /></span>
+          <div class="dt-detail-info">
+            <div>{{ typeLabel(pickedItem.type) }}</div>
+            <div class="dt-detail-sub">
+              <template v-for="(p, i) in metaParts(pickedItem)" :key="i"
+                ><span v-if="i > 0"> · </span
+                ><span :class="{ 'text-danger': p.danger }">{{ p.text }}</span></template
+              >
+            </div>
+          </div>
+        </div>
+        <p v-if="catalog.goodsMap.get(pickedItem.goodsId)?.desc" class="dt-detail-note">
+          {{ catalog.goodsMap.get(pickedItem.goodsId)?.desc }}
+        </p>
+        <div v-if="pickedItem.batch || pickedItem.sellPrice !== null" class="dt-detail-qty">
+          <span>{{ t.store.howMany }}</span>
+          <button
+            v-if="qtyMax(pickedItem) > 1"
+            type="button"
+            class="btn btn-sm btn-outline-primary"
+            data-testid="store-qty-all"
+            @click="qty[pickedItem.goodsId] = qtyMax(pickedItem)"
+          >
+            {{ t.common.all }}
+          </button>
+          <DtStepper
+            :model-value="pickedItem.batch && pickedItem.usable ? useN(pickedItem) : sellN(pickedItem)"
+            :min="1"
+            :max="qtyMax(pickedItem)"
+            testid="store-qty"
+            @update:model-value="qty[pickedItem.goodsId] = $event"
+          />
+        </div>
+      </div>
+      <template v-if="pickedItem" #actions>
+        <div class="dt-cup-actions">
+          <button
+            v-if="pickedItem.goodsId === SHARED_GOODS.starPromoHonor"
+            type="button"
+            class="btn btn-outline-danger"
+            :disabled="busy"
+            data-testid="store-discard"
+            @click="discard(pickedItem)"
+          >
+            {{ t.store.discard }}
+          </button>
+          <button
+            v-if="pickedItem.sellPrice !== null"
+            type="button"
+            class="btn btn-light"
+            :disabled="busy"
+            data-testid="store-sell"
+            @click="sell(pickedItem)"
+          >
+            {{ t.store.sellFor(formatNum(sellN(pickedItem) * (pickedItem.sellPrice ?? 0))) }}
+          </button>
+          <button
+            v-if="pickedItem.usable"
+            type="button"
+            class="btn btn-primary"
+            :disabled="busy || pickedItem.maxUse === 0"
+            data-testid="store-use"
+            @click="use(pickedItem)"
+          >
+            {{ t.store.useN(pickedItem.batch ? useN(pickedItem) : 1) }}
+          </button>
+        </div>
+      </template>
+    </DtSheet>
+
+    <template v-if="tab === 'records'">
+      <div class="dt-pills dt-pills-scroll" role="group" :aria-label="t.store.rangeLabel">
+        <button
+          v-for="r in RANGES"
+          :key="r"
+          type="button"
+          :class="{ active: range === r }"
+          :aria-pressed="range === r"
+          :data-testid="`range-${r}`"
+          @click="range = r"
+        >
+          {{ t.store.ranges[r] }}
+        </button>
+      </div>
+      <!-- 每条一行（只读行）：时间 + 文字，右边增减 -->
+      <DtSkeleton v-if="records === null" :rows="4" data-testid="records-skeleton" />
+      <div v-else-if="records.length > 0" class="dt-card dt-list-card">
+        <div v-for="(r, i) in records" :key="i" class="dt-feed">
+          <span class="dt-feed-time" :data-testid="`record-time-${i}`">{{ recordTime(r.at) }}</span>
+          <span class="dt-feed-text flex-fill">{{ recordName(r) }}</span>
+          <b :class="['text-nowrap', r.delta >= 0 ? 'text-success' : 'text-danger']"
+            >{{ r.delta >= 0 ? '+' : '' }}{{ formatNum(r.delta) }}</b
+          >
+        </div>
+      </div>
+      <DtEmpty v-else :title="t.store.noRecords" data-testid="records-empty" />
+    </template>
+    <template v-if="tab === 'souvenirs'">
+      <DtSkeleton v-if="souvenirs === null" :rows="3" data-testid="souvenirs-skeleton" />
+      <DtEmpty
+        v-else-if="souvenirs.length === 0"
+        :title="t.store.noSouvenirs"
+        data-testid="souvenirs-empty"
+      />
+      <!-- 纪念品也是格子，名字下面一行说明（只看，不能用）；点一格弹出面板看全部说明 -->
+      <div v-else class="dt-bag">
+        <button
+          v-for="it in souvenirs"
           :key="it.goodsId"
           type="button"
-          :class="['dt-bag-cell', { 'is-picked': picked === it.goodsId }]"
+          class="dt-bag-cell"
           aria-haspopup="dialog"
-          :aria-label="cellLabel(it)"
-          :data-testid="`store-item-${it.goodsId}`"
-          @click="pick(it.goodsId)"
+          :data-testid="`souvenir-${it.goodsId}`"
+          @click="pickedSouvenir = it"
         >
-          <span v-if="it.num > 1" class="dt-bag-num" aria-hidden="true">{{ formatNum(it.num) }}</span>
+          <span v-if="it.num > 1" class="dt-bag-num">{{ formatNum(it.num) }}</span>
           <DtArt :name="catalog.goodsArt(it.goodsId)" :size="36" />
-          <span class="dt-bag-name" aria-hidden="true">{{ catalog.goodsName(it.goodsId) }}</span>
-          <span :class="['dt-bag-need', { 'is-danger': it.usable && it.maxUse === 0 }]" aria-hidden="true">{{
-            cellSub(it)
-          }}</span>
+          <span class="dt-bag-name">{{ catalog.goodsName(it.goodsId) }}</span>
+          <span class="dt-bag-need dt-clamp2">{{ catalog.goodsMap.get(it.goodsId)?.desc }}</span>
         </button>
       </div>
-    </template>
-  </template>
-
-  <!-- 点一件：大图、持有、单价；数量、使用、卖出（卖出、丢弃先确认） -->
-  <DtSheet
-    :open="tab === 'items' && !!pickedItem"
-    :title="pickedItem ? catalog.goodsName(pickedItem.goodsId) : ''"
-    @close="picked = null"
-  >
-    <div v-if="pickedItem" class="dt-detail" data-testid="store-sheet">
-      <div class="dt-detail-head">
-        <span class="dt-detail-art"><DtArt :name="catalog.goodsArt(pickedItem.goodsId)" :size="52" /></span>
-        <div class="dt-detail-info">
-          <div>{{ typeLabel(pickedItem.type) }}</div>
-          <div class="dt-detail-sub">
-            <template v-for="(p, i) in metaParts(pickedItem)" :key="i"
-              ><span v-if="i > 0"> · </span
-              ><span :class="{ 'text-danger': p.danger }">{{ p.text }}</span></template
-            >
-          </div>
-        </div>
-      </div>
-      <p v-if="catalog.goodsMap.get(pickedItem.goodsId)?.desc" class="dt-detail-note">
-        {{ catalog.goodsMap.get(pickedItem.goodsId)?.desc }}
-      </p>
-      <div v-if="pickedItem.batch || pickedItem.sellPrice !== null" class="dt-detail-qty">
-        <span>{{ t.store.howMany }}</span>
-        <button
-          v-if="qtyMax(pickedItem) > 1"
-          type="button"
-          class="btn btn-sm btn-outline-primary"
-          data-testid="store-qty-all"
-          @click="qty[pickedItem.goodsId] = qtyMax(pickedItem)"
-        >
-          {{ t.common.all }}
-        </button>
-        <DtStepper
-          :model-value="pickedItem.batch && pickedItem.usable ? useN(pickedItem) : sellN(pickedItem)"
-          :min="1"
-          :max="qtyMax(pickedItem)"
-          testid="store-qty"
-          @update:model-value="qty[pickedItem.goodsId] = $event"
-        />
-      </div>
-    </div>
-    <template v-if="pickedItem" #actions>
-      <div class="dt-cup-actions">
-        <button
-          v-if="pickedItem.goodsId === SHARED_GOODS.starPromoHonor"
-          type="button"
-          class="btn btn-outline-danger"
-          :disabled="busy"
-          data-testid="store-discard"
-          @click="discard(pickedItem)"
-        >
-          {{ t.store.discard }}
-        </button>
-        <button
-          v-if="pickedItem.sellPrice !== null"
-          type="button"
-          class="btn btn-light"
-          :disabled="busy"
-          data-testid="store-sell"
-          @click="sell(pickedItem)"
-        >
-          {{ t.store.sellFor(formatNum(sellN(pickedItem) * (pickedItem.sellPrice ?? 0))) }}
-        </button>
-        <button
-          v-if="pickedItem.usable"
-          type="button"
-          class="btn btn-primary"
-          :disabled="busy || pickedItem.maxUse === 0"
-          data-testid="store-use"
-          @click="use(pickedItem)"
-        >
-          {{ t.store.useN(pickedItem.batch ? useN(pickedItem) : 1) }}
-        </button>
-      </div>
-    </template>
-  </DtSheet>
-
-  <template v-if="tab === 'records'">
-    <div class="dt-pills dt-pills-scroll" role="group" :aria-label="t.store.rangeLabel">
-      <button
-        v-for="r in RANGES"
-        :key="r"
-        type="button"
-        :class="{ active: range === r }"
-        :aria-pressed="range === r"
-        :data-testid="`range-${r}`"
-        @click="range = r"
+      <DtSheet
+        :open="!!pickedSouvenir"
+        :title="pickedSouvenir ? catalog.goodsName(pickedSouvenir.goodsId) : ''"
+        @close="pickedSouvenir = null"
       >
-        {{ t.store.ranges[r] }}
-      </button>
-    </div>
-    <!-- 每条一行（只读行）：时间 + 文字，右边增减 -->
-    <DtSkeleton v-if="records === null" :rows="4" data-testid="records-skeleton" />
-    <div v-else-if="records.length > 0" class="dt-card dt-list-card">
-      <div v-for="(r, i) in records" :key="i" class="dt-feed">
-        <span class="dt-feed-time" :data-testid="`record-time-${i}`">{{ recordTime(r.at) }}</span>
-        <span class="dt-feed-text flex-fill">{{ recordName(r) }}</span>
-        <b :class="['text-nowrap', r.delta >= 0 ? 'text-success' : 'text-danger']"
-          >{{ r.delta >= 0 ? '+' : '' }}{{ formatNum(r.delta) }}</b
-        >
-      </div>
-    </div>
-    <DtEmpty v-else :title="t.store.noRecords" data-testid="records-empty" />
-  </template>
-  <template v-if="tab === 'souvenirs'">
-    <DtSkeleton v-if="souvenirs === null" :rows="3" data-testid="souvenirs-skeleton" />
-    <DtEmpty v-else-if="souvenirs.length === 0" :title="t.store.noSouvenirs" data-testid="souvenirs-empty" />
-    <!-- 纪念品也是格子，名字下面一行说明（只看，不能用）；点一格弹出面板看全部说明 -->
-    <div v-else class="dt-bag">
-      <button
-        v-for="it in souvenirs"
-        :key="it.goodsId"
-        type="button"
-        class="dt-bag-cell"
-        aria-haspopup="dialog"
-        :data-testid="`souvenir-${it.goodsId}`"
-        @click="pickedSouvenir = it"
-      >
-        <span v-if="it.num > 1" class="dt-bag-num">{{ formatNum(it.num) }}</span>
-        <DtArt :name="catalog.goodsArt(it.goodsId)" :size="36" />
-        <span class="dt-bag-name">{{ catalog.goodsName(it.goodsId) }}</span>
-        <span class="dt-bag-need dt-clamp2">{{ catalog.goodsMap.get(it.goodsId)?.desc }}</span>
-      </button>
-    </div>
-    <DtSheet
-      :open="!!pickedSouvenir"
-      :title="pickedSouvenir ? catalog.goodsName(pickedSouvenir.goodsId) : ''"
-      @close="pickedSouvenir = null"
-    >
-      <div v-if="pickedSouvenir" class="dt-detail" data-testid="souvenir-sheet">
-        <div class="dt-detail-head">
-          <span class="dt-detail-art"
-            ><DtArt :name="catalog.goodsArt(pickedSouvenir.goodsId)" :size="52"
-          /></span>
-          <div class="dt-detail-info">
-            <div>{{ t.store.tabs.souvenirs }}</div>
-            <div class="dt-detail-sub">{{ t.store.shop.owned(pickedSouvenir.num) }}</div>
+        <div v-if="pickedSouvenir" class="dt-detail" data-testid="souvenir-sheet">
+          <div class="dt-detail-head">
+            <span class="dt-detail-art"
+              ><DtArt :name="catalog.goodsArt(pickedSouvenir.goodsId)" :size="52"
+            /></span>
+            <div class="dt-detail-info">
+              <div>{{ t.store.tabs.souvenirs }}</div>
+              <div class="dt-detail-sub">{{ t.store.shop.owned(pickedSouvenir.num) }}</div>
+            </div>
           </div>
+          <p v-if="catalog.goodsMap.get(pickedSouvenir.goodsId)?.desc" class="dt-detail-note">
+            {{ catalog.goodsMap.get(pickedSouvenir.goodsId)?.desc }}
+          </p>
         </div>
-        <p v-if="catalog.goodsMap.get(pickedSouvenir.goodsId)?.desc" class="dt-detail-note">
-          {{ catalog.goodsMap.get(pickedSouvenir.goodsId)?.desc }}
-        </p>
-      </div>
-    </DtSheet>
-  </template>
+      </DtSheet>
+    </template>
+  </DtTabPanel>
 </template>

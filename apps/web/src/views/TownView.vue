@@ -7,6 +7,7 @@ import plazaScene from '../art/scene/plaza.svg?url';
 import DtArt from '../components/DtArt.vue';
 import DtEmpty from '../components/DtEmpty.vue';
 import DtSkeleton from '../components/DtSkeleton.vue';
+import DtTabPanel from '../components/DtTabPanel.vue';
 import DtTabs from '../components/DtTabs.vue';
 import PlaceScene from '../components/place/PlaceScene.vue';
 import NewsPanel from '../components/town/NewsPanel.vue';
@@ -82,16 +83,18 @@ onMounted(() => {
       <RouterLink to="/forum" class="dt-tabs-link" data-testid="town-forum">{{ t.town.forum }}</RouterLink>
     </template>
   </DtTabs>
-  <RankPanel v-if="tab === 'rank'" />
-  <WishTreePanel v-else-if="tab === 'wishtree'" />
-  <template v-else-if="data">
-    <NewsPanel v-if="tab === 'news'" :data="data" @reload="load" />
-    <TownPanel v-else-if="tab === 'town'" :data="data" @reload="load" />
-  </template>
-  <DtEmpty v-else-if="failed" :title="t.town.loadFailed" data-testid="town-failed"
-    ><button type="button" class="btn btn-sm btn-outline-primary" @click="load">
-      {{ t.town.retry }}
-    </button></DtEmpty
-  >
-  <DtSkeleton v-else :rows="6" />
+  <DtTabPanel :tab="tab">
+    <RankPanel v-if="tab === 'rank'" />
+    <WishTreePanel v-else-if="tab === 'wishtree'" />
+    <template v-else-if="data">
+      <NewsPanel v-if="tab === 'news'" :data="data" @reload="load" />
+      <TownPanel v-else-if="tab === 'town'" :data="data" @reload="load" />
+    </template>
+    <DtEmpty v-else-if="failed" :title="t.town.loadFailed" data-testid="town-failed"
+      ><button type="button" class="btn btn-sm btn-outline-primary" @click="load">
+        {{ t.town.retry }}
+      </button></DtEmpty
+    >
+    <DtSkeleton v-else :rows="6" />
+  </DtTabPanel>
 </template>

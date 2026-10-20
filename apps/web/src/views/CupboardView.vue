@@ -7,6 +7,7 @@ import DtRow from '../components/DtRow.vue';
 import DtSheet from '../components/DtSheet.vue';
 import DtSkeleton from '../components/DtSkeleton.vue';
 import DtStepper from '../components/DtStepper.vue';
+import DtTabPanel from '../components/DtTabPanel.vue';
 import DtTabs from '../components/DtTabs.vue';
 import FoodArt from '../components/FoodArt.vue';
 import { useT } from '../composables/useT';
@@ -210,230 +211,46 @@ onMounted(() =>
 
 <template>
   <DtTabs v-model="tab" :tabs="tabItems" />
-
-  <DtEmpty
-    v-if="tab === 'cupboard' && !data && failed"
-    :title="t.cupboard.loadFailed"
-    data-testid="cupboard-failed"
-  />
-  <DtSkeleton v-else-if="tab === 'cupboard' && !data" :rows="5" data-testid="cupboard-skeleton" />
-  <!-- 橱柜空着：写去哪里买（界面改版 P4） -->
-  <DtEmpty
-    v-else-if="tab === 'cupboard' && data && data.items.length === 0"
-    art="empty-cupboard"
-    :title="t.cupboard.empty.title"
-    :body="t.cupboard.empty.body"
-    to="/market"
-    :link="t.cupboard.empty.link"
-    data-testid="cupboard-empty"
-  />
-  <template v-else-if="tab === 'cupboard' && data">
-    <!-- 格子用了多少画成进度条；其余规则一行灰字（界面改版 P6） -->
-    <div class="dt-cup-meta" data-testid="cupboard-meta">
-      <div class="dt-cup-slots">
-        <!-- 进度条自己带同一句读屏名字，看得见的这句不再读一遍（backlog P6） -->
-        <span class="dt-cup-slots-label" aria-hidden="true">{{
-          t.cupboard.meta.slots(data.slotsUsed, data.slots)
-        }}</span>
-        <span
-          class="dt-cup-slotbar"
-          role="progressbar"
-          :aria-valuenow="slotsPct"
-          aria-valuemin="0"
-          aria-valuemax="100"
-          :aria-label="t.cupboard.meta.slots(data.slotsUsed, data.slots)"
-          ><span :style="{ width: `${slotsPct}%` }"></span
-        ></span>
-        <span class="dt-cup-slots-label">{{ t.cupboard.meta.lock(data.lockUsed, data.lockSlots) }}</span>
-      </div>
-      <div class="dt-cup-rules">
-        {{ t.cupboard.meta.rules(data.freeHandleLeft, data.foodsMaxNum, data.targetGrade) }}
-      </div>
-    </div>
-    <label class="dt-search-box dt-cup-search">
-      <i class="bi bi-search" aria-hidden="true"></i>
-      <input
-        v-model="q"
-        type="search"
-        :placeholder="t.cupboard.search.placeholder"
-        :aria-label="t.cupboard.search.placeholder"
-        data-testid="cupboard-q"
-      />
-      <button
-        v-if="q"
-        type="button"
-        class="dt-cup-search-x"
-        :aria-label="t.cupboard.search.clear"
-        data-testid="cupboard-q-clear"
-        @click="q = ''"
-      >
-        <i class="bi bi-x" aria-hidden="true"></i>
-      </button>
-    </label>
-    <div class="dt-pills dt-pills-scroll dt-cup-pills">
-      <button
-        type="button"
-        :class="{ active: level === 0 }"
-        :aria-pressed="level === 0"
-        data-testid="level-all"
-        @click="level = 0"
-      >
-        {{ t.cupboard.levelCount(t.common.all, searched.length) }}
-      </button>
-      <button
-        v-for="x in levels"
-        :key="x.lv"
-        type="button"
-        :class="{ active: level === x.lv }"
-        :aria-pressed="level === x.lv"
-        :data-testid="`level-${x.lv}`"
-        @click="level = x.lv"
-      >
-        {{ t.cupboard.levelCount(foodLevelLabel(x.lv), x.n) }}
-      </button>
-    </div>
-    <!-- 搜不到：写搜的什么，提示去冰箱看看 -->
-    <div
-      v-if="q.trim() && searched.length === 0"
-      class="dt-card dt-cup-nomatch"
-      data-testid="cupboard-nomatch"
-    >
-      <DtEmpty :title="t.cupboard.search.none(q.trim())" :body="t.cupboard.search.elseFridge" />
-    </div>
-    <div v-else-if="shown.length === 0" class="small text-muted">{{ t.cupboard.levelEmpty }}</div>
-    <!-- 列表（橱柜改版，用户 2026-10-12：格子太乱）：一行一种，左边图，名字和等级标签、锁，下面本街还需；右边数量。点一行弹出详情 -->
-    <div v-else class="dt-card dt-cup-list">
-      <button
-        v-for="f in rows"
-        :key="f.foodsId"
-        type="button"
-        :class="['dt-cup-row', { 'is-picked': picked === f.foodsId }]"
-        aria-haspopup="dialog"
-        :aria-label="cellLabel(f)"
-        :data-testid="`pick-${f.foodsId}`"
-        @click="pick(f.foodsId)"
-      >
-        <span class="dt-cup-tray"><FoodArt :id="f.foodsId" :size="30" /></span>
-        <span class="dt-cup-main">
-          <span class="dt-cup-name"
-            ><span
-              >{{ f.name[0] }}<mark v-if="f.name[1]">{{ f.name[1] }}</mark
-              >{{ f.name[2] }}</span
-            ><span v-if="levelOf(f.foodsId) >= 2" :class="['dt-tag', 'dt-lv', tierClass(f.foodsId)]">{{
-              foodLevelLabel(levelOf(f.foodsId))
-            }}</span
-            ><i v-if="f.locked" class="bi bi-lock-fill" aria-hidden="true"></i
+  <DtTabPanel :tab="tab">
+    <DtEmpty
+      v-if="tab === 'cupboard' && !data && failed"
+      :title="t.cupboard.loadFailed"
+      data-testid="cupboard-failed"
+    />
+    <DtSkeleton v-else-if="tab === 'cupboard' && !data" :rows="5" data-testid="cupboard-skeleton" />
+    <!-- 橱柜空着：写去哪里买（界面改版 P4） -->
+    <DtEmpty
+      v-else-if="tab === 'cupboard' && data && data.items.length === 0"
+      art="empty-cupboard"
+      :title="t.cupboard.empty.title"
+      :body="t.cupboard.empty.body"
+      to="/market"
+      :link="t.cupboard.empty.link"
+      data-testid="cupboard-empty"
+    />
+    <template v-else-if="tab === 'cupboard' && data">
+      <!-- 格子用了多少画成进度条；其余规则一行灰字（界面改版 P6） -->
+      <div class="dt-cup-meta" data-testid="cupboard-meta">
+        <div class="dt-cup-slots">
+          <!-- 进度条自己带同一句读屏名字，看得见的这句不再读一遍（backlog P6） -->
+          <span class="dt-cup-slots-label" aria-hidden="true">{{
+            t.cupboard.meta.slots(data.slotsUsed, data.slots)
+          }}</span>
+          <span
+            class="dt-cup-slotbar"
+            role="progressbar"
+            :aria-valuenow="slotsPct"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            :aria-label="t.cupboard.meta.slots(data.slotsUsed, data.slots)"
+            ><span :style="{ width: `${slotsPct}%` }"></span
           ></span>
-          <span v-if="f.streetNeed > 0" class="dt-cup-need">{{ t.cupboard.streetNeed(f.streetNeed) }}</span>
-        </span>
-        <span class="dt-cup-qty">{{ formatNum(f.num) }}</span>
-      </button>
-    </div>
-  </template>
-
-  <!-- 点一行从底部弹出详情：大图、持有、本街还需；数量和分解、合成、兑换、锁定 -->
-  <DtSheet
-    :open="tab === 'cupboard' && !!pickedItem"
-    :title="pickedItem ? catalog.foodName(pickedItem.foodsId) : ''"
-    @close="picked = null"
-  >
-    <div v-if="pickedItem" class="dt-detail" data-testid="picked-card">
-      <div class="dt-detail-head">
-        <span :class="['dt-detail-art', tierClass(pickedItem.foodsId)]"
-          ><FoodArt :id="pickedItem.foodsId" :size="52"
-        /></span>
-        <div class="dt-detail-info">
-          <div>
-            {{ foodLevelLabel(pickedLevel) }}
-            <span v-if="pickedItem.locked" class="dt-tag ms-1">{{ t.cupboard.locked }}</span>
-          </div>
-          <div class="dt-detail-sub">
-            {{ t.cupboard.have(formatNum(pickedItem.num))
-            }}<template v-if="pickedItem.streetNeed > 0">
-              · {{ t.cupboard.streetNeed(pickedItem.streetNeed) }}</template
-            >
-          </div>
+          <span class="dt-cup-slots-label">{{ t.cupboard.meta.lock(data.lockUsed, data.lockSlots) }}</span>
+        </div>
+        <div class="dt-cup-rules">
+          {{ t.cupboard.meta.rules(data.freeHandleLeft, data.foodsMaxNum, data.targetGrade) }}
         </div>
       </div>
-      <div class="dt-detail-qty">
-        <span>{{ t.cupboard.howMany }}</span>
-        <DtStepper v-model="num" :min="1" :max="numMax" />
-      </div>
-      <div v-if="MASTER_RULE[pickedItem.foodsId]" class="dt-detail-note" data-testid="master-rule">
-        {{ MASTER_RULE[pickedItem.foodsId] }}
-      </div>
-      <div class="dt-detail-note">{{ t.cupboard.handleHint(decomposeMax, composeMax) }}</div>
-      <div v-if="paidNote" class="dt-detail-note dt-cup-paid" data-testid="handle-paid">{{ paidNote }}</div>
-    </div>
-    <template #actions>
-      <div v-if="pickedItem" class="dt-cup-actions">
-        <button
-          type="button"
-          class="btn btn-outline-primary"
-          :disabled="busy"
-          data-testid="lock"
-          @click="
-            run(
-              () =>
-                pickedItem!.locked
-                  ? endpoints.unlockFood(pickedItem!.foodsId)
-                  : endpoints.lockFood(pickedItem!.foodsId),
-              t.common.opFailed,
-            )
-          "
-        >
-          {{ pickedItem.locked ? t.cupboard.unlock : t.cupboard.lock }}
-        </button>
-        <button
-          v-if="canDecompose"
-          type="button"
-          class="btn btn-outline-primary"
-          data-testid="decompose"
-          :disabled="busy || decomposeMax < 1"
-          @click="handle('decompose')"
-        >
-          {{ t.cupboard.decompose(decomposeN) }}
-        </button>
-        <button
-          v-if="canCompose"
-          type="button"
-          class="btn btn-primary"
-          data-testid="compose"
-          :disabled="busy || composeMax < 2"
-          @click="handle('compose')"
-        >
-          {{ t.cupboard.compose(composeN) }}
-        </button>
-        <button
-          v-if="
-            pickedItem.foodsId === SHARED_FOODS.masterLevel1 ||
-            pickedItem.foodsId === SHARED_FOODS.masterLevel2
-          "
-          type="button"
-          class="btn btn-primary"
-          data-testid="exchange"
-          :disabled="busy || exchangeMax < 2"
-          @click="
-            run(
-              () =>
-                endpoints.exchangeMaster(
-                  pickedItem!.foodsId as typeof SHARED_FOODS.masterLevel1 | typeof SHARED_FOODS.masterLevel2,
-                  exchangeN / 2,
-                ),
-              t.cupboard.exchangeFailed,
-            )
-          "
-        >
-          {{ t.cupboard.exchange(exchangeN) }}
-        </button>
-      </div>
-    </template>
-  </DtSheet>
-
-  <!-- 冰箱：一种一行（界面改版 P6：和别处同一种行）——食材图、名字和数量、等级和本街还需，右边解冻按钮 -->
-  <template v-if="tab === 'fridge' && fridge">
-    <DtEmpty v-if="fridge.items.length === 0" :title="t.cupboard.fridgeEmpty" data-testid="fridge-empty" />
-    <template v-else>
       <label class="dt-search-box dt-cup-search">
         <i class="bi bi-search" aria-hidden="true"></i>
         <input
@@ -441,49 +258,235 @@ onMounted(() =>
           type="search"
           :placeholder="t.cupboard.search.placeholder"
           :aria-label="t.cupboard.search.placeholder"
-          data-testid="fridge-q"
+          data-testid="cupboard-q"
         />
         <button
           v-if="q"
           type="button"
           class="dt-cup-search-x"
           :aria-label="t.cupboard.search.clear"
-          data-testid="fridge-q-clear"
+          data-testid="cupboard-q-clear"
           @click="q = ''"
         >
           <i class="bi bi-x" aria-hidden="true"></i>
         </button>
       </label>
-      <div v-if="fridgeShown.length === 0" class="dt-card dt-cup-nomatch" data-testid="fridge-nomatch">
-        <DtEmpty :title="t.cupboard.search.none(q.trim())" :body="t.cupboard.search.elseShelf" />
-      </div>
-      <div v-else class="dt-card dt-rows-card">
-        <DtRow
-          v-for="f in fridgeShown"
-          :key="f.foodsId"
-          :title="t.common.qty(catalog.foodName(f.foodsId), f.num)"
-          :data-testid="`fridge-${f.foodsId}`"
+      <div class="dt-pills dt-pills-scroll dt-cup-pills">
+        <button
+          type="button"
+          :class="{ active: level === 0 }"
+          :aria-pressed="level === 0"
+          data-testid="level-all"
+          @click="level = 0"
         >
-          <template #icon><FoodArt :id="f.foodsId" :size="26" /></template>
-          <!-- 和橱柜一样写等级和本街还需几个（问题记录 465） -->
-          <template #sub
-            >{{ foodLevelLabel(levelOf(f.foodsId))
-            }}<template v-if="f.streetNeed > 0"> · {{ t.cupboard.streetNeed(f.streetNeed) }}</template
-            ><template v-if="f.thawable === 0"> · {{ t.cupboard.noRoom }}</template></template
-          >
-          <!-- 解冻要花银币：按钮写明个数和费用，点了再确认（问题记录 206） -->
-          <template #end>
-            <button
-              class="btn btn-sm btn-outline-primary"
-              :disabled="busy || f.thawable === 0"
-              :data-testid="`thaw-${f.foodsId}`"
-              @click="thaw(f)"
-            >
-              {{ t.cupboard.thaw(f.thawable, formatNum(f.thawCoin)) }}
-            </button>
-          </template>
-        </DtRow>
+          {{ t.cupboard.levelCount(t.common.all, searched.length) }}
+        </button>
+        <button
+          v-for="x in levels"
+          :key="x.lv"
+          type="button"
+          :class="{ active: level === x.lv }"
+          :aria-pressed="level === x.lv"
+          :data-testid="`level-${x.lv}`"
+          @click="level = x.lv"
+        >
+          {{ t.cupboard.levelCount(foodLevelLabel(x.lv), x.n) }}
+        </button>
+      </div>
+      <!-- 搜不到：写搜的什么，提示去冰箱看看 -->
+      <div
+        v-if="q.trim() && searched.length === 0"
+        class="dt-card dt-cup-nomatch"
+        data-testid="cupboard-nomatch"
+      >
+        <DtEmpty :title="t.cupboard.search.none(q.trim())" :body="t.cupboard.search.elseFridge" />
+      </div>
+      <div v-else-if="shown.length === 0" class="small text-muted">{{ t.cupboard.levelEmpty }}</div>
+      <!-- 列表（橱柜改版，用户 2026-10-12：格子太乱）：一行一种，左边图，名字和等级标签、锁，下面本街还需；右边数量。点一行弹出详情 -->
+      <div v-else class="dt-card dt-cup-list">
+        <button
+          v-for="f in rows"
+          :key="f.foodsId"
+          type="button"
+          :class="['dt-cup-row', { 'is-picked': picked === f.foodsId }]"
+          aria-haspopup="dialog"
+          :aria-label="cellLabel(f)"
+          :data-testid="`pick-${f.foodsId}`"
+          @click="pick(f.foodsId)"
+        >
+          <span class="dt-cup-tray"><FoodArt :id="f.foodsId" :size="30" /></span>
+          <span class="dt-cup-main">
+            <span class="dt-cup-name"
+              ><span
+                >{{ f.name[0] }}<mark v-if="f.name[1]">{{ f.name[1] }}</mark
+                >{{ f.name[2] }}</span
+              ><span v-if="levelOf(f.foodsId) >= 2" :class="['dt-tag', 'dt-lv', tierClass(f.foodsId)]">{{
+                foodLevelLabel(levelOf(f.foodsId))
+              }}</span
+              ><i v-if="f.locked" class="bi bi-lock-fill" aria-hidden="true"></i
+            ></span>
+            <span v-if="f.streetNeed > 0" class="dt-cup-need">{{ t.cupboard.streetNeed(f.streetNeed) }}</span>
+          </span>
+          <span class="dt-cup-qty">{{ formatNum(f.num) }}</span>
+        </button>
       </div>
     </template>
-  </template>
+
+    <!-- 点一行从底部弹出详情：大图、持有、本街还需；数量和分解、合成、兑换、锁定 -->
+    <DtSheet
+      :open="tab === 'cupboard' && !!pickedItem"
+      :title="pickedItem ? catalog.foodName(pickedItem.foodsId) : ''"
+      @close="picked = null"
+    >
+      <div v-if="pickedItem" class="dt-detail" data-testid="picked-card">
+        <div class="dt-detail-head">
+          <span :class="['dt-detail-art', tierClass(pickedItem.foodsId)]"
+            ><FoodArt :id="pickedItem.foodsId" :size="52"
+          /></span>
+          <div class="dt-detail-info">
+            <div>
+              {{ foodLevelLabel(pickedLevel) }}
+              <span v-if="pickedItem.locked" class="dt-tag ms-1">{{ t.cupboard.locked }}</span>
+            </div>
+            <div class="dt-detail-sub">
+              {{ t.cupboard.have(formatNum(pickedItem.num))
+              }}<template v-if="pickedItem.streetNeed > 0">
+                · {{ t.cupboard.streetNeed(pickedItem.streetNeed) }}</template
+              >
+            </div>
+          </div>
+        </div>
+        <div class="dt-detail-qty">
+          <span>{{ t.cupboard.howMany }}</span>
+          <DtStepper v-model="num" :min="1" :max="numMax" />
+        </div>
+        <div v-if="MASTER_RULE[pickedItem.foodsId]" class="dt-detail-note" data-testid="master-rule">
+          {{ MASTER_RULE[pickedItem.foodsId] }}
+        </div>
+        <div class="dt-detail-note">{{ t.cupboard.handleHint(decomposeMax, composeMax) }}</div>
+        <div v-if="paidNote" class="dt-detail-note dt-cup-paid" data-testid="handle-paid">{{ paidNote }}</div>
+      </div>
+      <template #actions>
+        <div v-if="pickedItem" class="dt-cup-actions">
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            :disabled="busy"
+            data-testid="lock"
+            @click="
+              run(
+                () =>
+                  pickedItem!.locked
+                    ? endpoints.unlockFood(pickedItem!.foodsId)
+                    : endpoints.lockFood(pickedItem!.foodsId),
+                t.common.opFailed,
+              )
+            "
+          >
+            {{ pickedItem.locked ? t.cupboard.unlock : t.cupboard.lock }}
+          </button>
+          <button
+            v-if="canDecompose"
+            type="button"
+            class="btn btn-outline-primary"
+            data-testid="decompose"
+            :disabled="busy || decomposeMax < 1"
+            @click="handle('decompose')"
+          >
+            {{ t.cupboard.decompose(decomposeN) }}
+          </button>
+          <button
+            v-if="canCompose"
+            type="button"
+            class="btn btn-primary"
+            data-testid="compose"
+            :disabled="busy || composeMax < 2"
+            @click="handle('compose')"
+          >
+            {{ t.cupboard.compose(composeN) }}
+          </button>
+          <button
+            v-if="
+              pickedItem.foodsId === SHARED_FOODS.masterLevel1 ||
+              pickedItem.foodsId === SHARED_FOODS.masterLevel2
+            "
+            type="button"
+            class="btn btn-primary"
+            data-testid="exchange"
+            :disabled="busy || exchangeMax < 2"
+            @click="
+              run(
+                () =>
+                  endpoints.exchangeMaster(
+                    pickedItem!.foodsId as
+                      typeof SHARED_FOODS.masterLevel1 | typeof SHARED_FOODS.masterLevel2,
+                    exchangeN / 2,
+                  ),
+                t.cupboard.exchangeFailed,
+              )
+            "
+          >
+            {{ t.cupboard.exchange(exchangeN) }}
+          </button>
+        </div>
+      </template>
+    </DtSheet>
+
+    <!-- 冰箱：一种一行（界面改版 P6：和别处同一种行）——食材图、名字和数量、等级和本街还需，右边解冻按钮 -->
+    <template v-if="tab === 'fridge' && fridge">
+      <DtEmpty v-if="fridge.items.length === 0" :title="t.cupboard.fridgeEmpty" data-testid="fridge-empty" />
+      <template v-else>
+        <label class="dt-search-box dt-cup-search">
+          <i class="bi bi-search" aria-hidden="true"></i>
+          <input
+            v-model="q"
+            type="search"
+            :placeholder="t.cupboard.search.placeholder"
+            :aria-label="t.cupboard.search.placeholder"
+            data-testid="fridge-q"
+          />
+          <button
+            v-if="q"
+            type="button"
+            class="dt-cup-search-x"
+            :aria-label="t.cupboard.search.clear"
+            data-testid="fridge-q-clear"
+            @click="q = ''"
+          >
+            <i class="bi bi-x" aria-hidden="true"></i>
+          </button>
+        </label>
+        <div v-if="fridgeShown.length === 0" class="dt-card dt-cup-nomatch" data-testid="fridge-nomatch">
+          <DtEmpty :title="t.cupboard.search.none(q.trim())" :body="t.cupboard.search.elseShelf" />
+        </div>
+        <div v-else class="dt-card dt-rows-card">
+          <DtRow
+            v-for="f in fridgeShown"
+            :key="f.foodsId"
+            :title="t.common.qty(catalog.foodName(f.foodsId), f.num)"
+            :data-testid="`fridge-${f.foodsId}`"
+          >
+            <template #icon><FoodArt :id="f.foodsId" :size="26" /></template>
+            <!-- 和橱柜一样写等级和本街还需几个（问题记录 465） -->
+            <template #sub
+              >{{ foodLevelLabel(levelOf(f.foodsId))
+              }}<template v-if="f.streetNeed > 0"> · {{ t.cupboard.streetNeed(f.streetNeed) }}</template
+              ><template v-if="f.thawable === 0"> · {{ t.cupboard.noRoom }}</template></template
+            >
+            <!-- 解冻要花银币：按钮写明个数和费用，点了再确认（问题记录 206） -->
+            <template #end>
+              <button
+                class="btn btn-sm btn-outline-primary"
+                :disabled="busy || f.thawable === 0"
+                :data-testid="`thaw-${f.foodsId}`"
+                @click="thaw(f)"
+              >
+                {{ t.cupboard.thaw(f.thawable, formatNum(f.thawCoin)) }}
+              </button>
+            </template>
+          </DtRow>
+        </div>
+      </template>
+    </template>
+  </DtTabPanel>
 </template>

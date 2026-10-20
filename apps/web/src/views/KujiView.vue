@@ -6,6 +6,7 @@ import DtArt from '../components/DtArt.vue';
 import DtEmpty from '../components/DtEmpty.vue';
 import DtSheet from '../components/DtSheet.vue';
 import DtStepper from '../components/DtStepper.vue';
+import DtTabPanel from '../components/DtTabPanel.vue';
 import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
 import { useTabQuery } from '../composables/useTabQuery';
@@ -148,151 +149,158 @@ watch(line, () => {
     testid-prefix="kj-line-"
     @update:model-value="pickLine"
   />
-  <template v-if="data">
-    <!-- 月度主题（问题记录 274）：A/B/C/最后赏的手办只在这个月抽得到 -->
-    <section v-if="data.theme" class="dt-kuji-theme" data-testid="kj-theme">
-      <span class="dt-kuji-theme-art"><DtArt name="goods-souvenir" :size="44" /></span>
-      <div class="dt-min0">
-        <b>{{
-          t.kuji.theme(
-            data.theme.month,
-            catalog.data('kujiThemes', data.theme.month)?.name ?? data.theme.name,
-          )
-        }}</b>
-        <div>
-          {{ catalog.data('kujiThemes', data.theme.month)?.desc ?? data.theme.desc }}{{ t.kuji.themeLimited }}
-        </div>
-      </div>
-    </section>
-    <div v-if="data.closedToday" class="dt-act-note is-warn" data-testid="kj-closed">{{ t.kuji.closed }}</div>
-
-    <section class="dt-card dt-rows-card" data-testid="kj-pool">
-      <div class="dt-kuji-pool">
-        <div class="dt-kuji-pool-head">
-          <b>{{ t.kuji.pool(data.pool.day, data.pool.seq) }}</b>
-          <span>{{ t.kuji.left(data.pool.left, data.pool.total) }}</span>
-        </div>
-        <span class="dt-meter"
-          ><i :style="{ width: `${(data.pool.left / Math.max(1, data.pool.total)) * 100}%` }"></i
-        ></span>
-        <div class="dt-meta mt-2">
-          {{ t.kuji.rule(data.pool.total) }}
-          <span v-if="deluxe" data-testid="kj-deluxe-note">{{ t.kuji.deluxeNote }}</span>
-        </div>
-      </div>
-      <div
-        v-for="x in data.tiers"
-        :key="x.key"
-        :class="['dt-kuji-tier', { 'is-out': x.left === 0 }]"
-        :data-testid="`kj-tier-${x.key}`"
-      >
-        <span :class="['dt-kuji-badge', { 'is-big': x.big }]" :aria-label="tierName(x.key)">{{ x.key }}</span>
-        <span class="dt-kuji-award"
-          >{{ awardText(x.award) }}<span v-if="x.big" class="dt-tag dt-tag-warn ms-1">{{ t.kuji.big }}</span
-          ><span v-if="x.icon" class="dt-kuji-icon">{{ iconText(x.icon) }}</span></span
-        >
-        <span class="dt-kuji-count">{{ x.left }} / {{ x.count }}</span>
-      </div>
-      <div class="dt-kuji-tier" data-testid="kj-last">
-        <span class="dt-kuji-badge is-last">{{ t.kuji.lastTier }}</span>
-        <span class="dt-kuji-award"
-          >{{ awardText(data.last.award)
-          }}<span v-if="data.last.icon" class="dt-kuji-icon"
-            >{{ iconText(data.last.icon) }} · {{ t.kuji.lastWho }}</span
-          ><span v-else class="dt-kuji-icon">{{ t.kuji.lastWho }}</span></span
-        >
-      </div>
-    </section>
-
-    <section class="dt-card dt-kuji-play">
-      <div class="dt-kuji-play-head">
-        <span data-testid="kj-tickets">{{
-          deluxe ? t.kuji.ticketsDeluxe(data.tickets) : t.kuji.tickets(data.tickets)
-        }}</span>
-        <span class="dt-meta" data-testid="kj-coin">{{ t.kuji.balance(formatNum(data.coin)) }}</span>
-      </div>
-      <div class="dt-kuji-draws">
-        <button
-          v-for="(n, i) in drawOptions"
-          :key="n"
-          type="button"
-          :class="['btn', i === 0 ? 'btn-primary' : 'btn-outline-primary']"
-          :disabled="!canDraw(n)"
-          :data-testid="`kj-draw-${n}`"
-          @click="draw(n)"
-        >
-          {{ t.kuji.draw(n) }}
-        </button>
-      </div>
-      <div class="dt-kuji-buy">
-        <span class="dt-field-label"
-          ><b>{{ t.kuji.buy }}</b
-          ><small>{{ t.kuji.buyLeft(data.buyLeft) }}</small></span
-        >
-        <DtStepper
-          v-model="buyNum"
-          :min="1"
-          :max="Math.max(1, data.buyLeft)"
-          :disabled="data.buyLeft === 0"
-          testid="kj-buy-num"
-        />
-        <button
-          type="button"
-          class="dt-price-btn"
-          :disabled="busy || data.buyLeft === 0 || !buyOk"
-          :aria-label="t.kuji.buyAria(buyNum, formatNum(buyNum * data.price))"
-          data-testid="kj-buy"
-          @click="buy"
-        >
-          <DtArt name="res-coin-silver" :size="16" />{{ formatNum(buyNum * data.price) }}
-        </button>
-      </div>
-      <div v-if="buyHint" class="dt-detail-note text-danger" data-testid="kj-buy-hint">{{ buyHint }}</div>
-    </section>
-
-    <section class="dt-block">
-      <div class="dt-block-head">
-        <h2 class="dt-block-title">{{ t.kuji.recent }}</h2>
-      </div>
-      <div data-testid="kj-recent">
-        <DtEmpty v-if="data.recent.length === 0" :title="t.kuji.noRecent" />
-        <div v-else class="dt-card dt-rows-card">
-          <div v-for="(x, i) in data.recent" :key="i" class="dt-row">
-            <span class="dt-row-main"
-              ><span class="dt-row-title">{{ t.kuji.recentLine(x.restName, tierName(x.tier)) }}</span></span
-            >
-            <span class="dt-row-value">{{ recentTime(x.at) }}</span>
+  <DtTabPanel :tab="line">
+    <template v-if="data">
+      <!-- 月度主题（问题记录 274）：A/B/C/最后赏的手办只在这个月抽得到 -->
+      <section v-if="data.theme" class="dt-kuji-theme" data-testid="kj-theme">
+        <span class="dt-kuji-theme-art"><DtArt name="goods-souvenir" :size="44" /></span>
+        <div class="dt-min0">
+          <b>{{
+            t.kuji.theme(
+              data.theme.month,
+              catalog.data('kujiThemes', data.theme.month)?.name ?? data.theme.name,
+            )
+          }}</b>
+          <div>
+            {{ catalog.data('kujiThemes', data.theme.month)?.desc ?? data.theme.desc
+            }}{{ t.kuji.themeLimited }}
           </div>
         </div>
+      </section>
+      <div v-if="data.closedToday" class="dt-act-note is-warn" data-testid="kj-closed">
+        {{ t.kuji.closed }}
       </div>
-    </section>
-  </template>
 
-  <DtSheet :open="!!result" :title="t.kuji.result" @close="result = null">
-    <div v-if="result" data-testid="kj-result">
-      <div class="dt-sheet-list">
-        <div v-for="(x, i) in result.draws" :key="i" class="dt-row">
-          <span :class="['dt-kuji-badge', { 'is-big': isBig(x.tier) }]">{{
-            x.tier === 'last' ? t.kuji.lastTier : x.tier
+      <section class="dt-card dt-rows-card" data-testid="kj-pool">
+        <div class="dt-kuji-pool">
+          <div class="dt-kuji-pool-head">
+            <b>{{ t.kuji.pool(data.pool.day, data.pool.seq) }}</b>
+            <span>{{ t.kuji.left(data.pool.left, data.pool.total) }}</span>
+          </div>
+          <span class="dt-meter"
+            ><i :style="{ width: `${(data.pool.left / Math.max(1, data.pool.total)) * 100}%` }"></i
+          ></span>
+          <div class="dt-meta mt-2">
+            {{ t.kuji.rule(data.pool.total) }}
+            <span v-if="deluxe" data-testid="kj-deluxe-note">{{ t.kuji.deluxeNote }}</span>
+          </div>
+        </div>
+        <div
+          v-for="x in data.tiers"
+          :key="x.key"
+          :class="['dt-kuji-tier', { 'is-out': x.left === 0 }]"
+          :data-testid="`kj-tier-${x.key}`"
+        >
+          <span :class="['dt-kuji-badge', { 'is-big': x.big }]" :aria-label="tierName(x.key)">{{
+            x.key
           }}</span>
-          <span class="dt-row-main"
-            ><span class="dt-row-title">{{ awardText(x.award) }}</span></span
+          <span class="dt-kuji-award"
+            >{{ awardText(x.award) }}<span v-if="x.big" class="dt-tag dt-tag-warn ms-1">{{ t.kuji.big }}</span
+            ><span v-if="x.icon" class="dt-kuji-icon">{{ iconText(x.icon) }}</span></span
+          >
+          <span class="dt-kuji-count">{{ x.left }} / {{ x.count }}</span>
+        </div>
+        <div class="dt-kuji-tier" data-testid="kj-last">
+          <span class="dt-kuji-badge is-last">{{ t.kuji.lastTier }}</span>
+          <span class="dt-kuji-award"
+            >{{ awardText(data.last.award)
+            }}<span v-if="data.last.icon" class="dt-kuji-icon"
+              >{{ iconText(data.last.icon) }} · {{ t.kuji.lastWho }}</span
+            ><span v-else class="dt-kuji-icon">{{ t.kuji.lastWho }}</span></span
           >
         </div>
-      </div>
-      <div v-if="result.last" class="dt-act-note is-warn mt-3 mb-0" data-testid="kj-last-won">
-        {{ t.kuji.lastWon(awardText(result.last)) }}
-      </div>
-    </div>
-    <template #actions>
-      <button
-        type="button"
-        class="btn btn-primary dt-btn-block"
-        data-testid="kj-result-ok"
-        @click="result = null"
-      >
-        {{ t.kuji.ok }}
-      </button>
+      </section>
+
+      <section class="dt-card dt-kuji-play">
+        <div class="dt-kuji-play-head">
+          <span data-testid="kj-tickets">{{
+            deluxe ? t.kuji.ticketsDeluxe(data.tickets) : t.kuji.tickets(data.tickets)
+          }}</span>
+          <span class="dt-meta" data-testid="kj-coin">{{ t.kuji.balance(formatNum(data.coin)) }}</span>
+        </div>
+        <div class="dt-kuji-draws">
+          <button
+            v-for="(n, i) in drawOptions"
+            :key="n"
+            type="button"
+            :class="['btn', i === 0 ? 'btn-primary' : 'btn-outline-primary']"
+            :disabled="!canDraw(n)"
+            :data-testid="`kj-draw-${n}`"
+            @click="draw(n)"
+          >
+            {{ t.kuji.draw(n) }}
+          </button>
+        </div>
+        <div class="dt-kuji-buy">
+          <span class="dt-field-label"
+            ><b>{{ t.kuji.buy }}</b
+            ><small>{{ t.kuji.buyLeft(data.buyLeft) }}</small></span
+          >
+          <DtStepper
+            v-model="buyNum"
+            :min="1"
+            :max="Math.max(1, data.buyLeft)"
+            :disabled="data.buyLeft === 0"
+            testid="kj-buy-num"
+          />
+          <button
+            type="button"
+            class="dt-price-btn"
+            :disabled="busy || data.buyLeft === 0 || !buyOk"
+            :aria-label="t.kuji.buyAria(buyNum, formatNum(buyNum * data.price))"
+            data-testid="kj-buy"
+            @click="buy"
+          >
+            <DtArt name="res-coin-silver" :size="16" />{{ formatNum(buyNum * data.price) }}
+          </button>
+        </div>
+        <div v-if="buyHint" class="dt-detail-note text-danger" data-testid="kj-buy-hint">{{ buyHint }}</div>
+      </section>
+
+      <section class="dt-block">
+        <div class="dt-block-head">
+          <h2 class="dt-block-title">{{ t.kuji.recent }}</h2>
+        </div>
+        <div data-testid="kj-recent">
+          <DtEmpty v-if="data.recent.length === 0" :title="t.kuji.noRecent" />
+          <div v-else class="dt-card dt-rows-card">
+            <div v-for="(x, i) in data.recent" :key="i" class="dt-row">
+              <span class="dt-row-main"
+                ><span class="dt-row-title">{{ t.kuji.recentLine(x.restName, tierName(x.tier)) }}</span></span
+              >
+              <span class="dt-row-value">{{ recentTime(x.at) }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
     </template>
-  </DtSheet>
+
+    <DtSheet :open="!!result" :title="t.kuji.result" @close="result = null">
+      <div v-if="result" data-testid="kj-result">
+        <div class="dt-sheet-list">
+          <div v-for="(x, i) in result.draws" :key="i" class="dt-row">
+            <span :class="['dt-kuji-badge', { 'is-big': isBig(x.tier) }]">{{
+              x.tier === 'last' ? t.kuji.lastTier : x.tier
+            }}</span>
+            <span class="dt-row-main"
+              ><span class="dt-row-title">{{ awardText(x.award) }}</span></span
+            >
+          </div>
+        </div>
+        <div v-if="result.last" class="dt-act-note is-warn mt-3 mb-0" data-testid="kj-last-won">
+          {{ t.kuji.lastWon(awardText(result.last)) }}
+        </div>
+      </div>
+      <template #actions>
+        <button
+          type="button"
+          class="btn btn-primary dt-btn-block"
+          data-testid="kj-result-ok"
+          @click="result = null"
+        >
+          {{ t.kuji.ok }}
+        </button>
+      </template>
+    </DtSheet>
+  </DtTabPanel>
 </template>

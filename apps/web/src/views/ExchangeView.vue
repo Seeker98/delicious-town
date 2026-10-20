@@ -5,6 +5,7 @@ import type { ExchangeBookDto, ExchangeFoodDto, ExchangeMeDto } from '@dt/shared
 import { endpoints } from '../api/endpoints';
 import DtSheet from '../components/DtSheet.vue';
 import DtStepper from '../components/DtStepper.vue';
+import DtTabPanel from '../components/DtTabPanel.vue';
 import DtTabs from '../components/DtTabs.vue';
 import FoodArt from '../components/FoodArt.vue';
 import { useT } from '../composables/useT';
@@ -310,350 +311,356 @@ onMounted(async () => {
 
 <template>
   <DtTabs v-model="tab" :tabs="tabItems" testid-prefix="ex-tab-" />
-  <FuturesPanel v-if="tab === 'futures' && showFutures" />
-  <BulkPanel v-else-if="tab === 'bulk' && showBulk" />
-  <template v-else>
-    <JobCardNote v-if="me?.feeCard" :card="me.feeCard" />
-    <div v-if="me?.frozen" class="dt-act-note is-danger" data-testid="ex-frozen">
-      {{ t.exchange.frozenNotice(me.frozen.reason) }}
-    </div>
-    <div v-else-if="blocked" class="dt-act-note is-warn" data-testid="ex-blocked">{{ blocked }}</div>
-    <div v-if="me" class="dt-card dt-rows-card" data-testid="ex-me">
-      <div class="dt-row dt-row-wrap" data-testid="ex-wallet">
-        <span class="dt-row-main">
-          <span class="dt-row-title">{{ t.exchange.account }}</span>
-          <span class="dt-row-sub">{{ walletText }}</span>
-          <span v-if="readyHolds.length > 0" class="dt-row-sub text-success" data-testid="ex-holds-ready">{{
-            t.exchange.holdsReady(holdText(readyHolds))
-          }}</span>
-          <span v-if="pendingHolds.length > 0" class="dt-row-sub" data-testid="ex-holds">{{
-            t.exchange.holdsPending(holdText(pendingHolds), timeLeft(pendingHolds[0]!.releaseAt))
-          }}</span>
-        </span>
-        <button
-          type="button"
-          class="btn btn-sm btn-outline-secondary"
-          :disabled="
-            busy ||
-            !!me.frozen ||
-            (me.wallet.coin === 0 && me.wallet.foods.length === 0 && readyHolds.length === 0)
-          "
-          data-testid="ex-withdraw"
-          @click="withdraw"
-        >
-          {{ t.exchange.withdraw }}
-        </button>
+  <DtTabPanel :tab="tab">
+    <FuturesPanel v-if="tab === 'futures' && showFutures" />
+    <BulkPanel v-else-if="tab === 'bulk' && showBulk" />
+    <template v-else>
+      <JobCardNote v-if="me?.feeCard" :card="me.feeCard" />
+      <div v-if="me?.frozen" class="dt-act-note is-danger" data-testid="ex-frozen">
+        {{ t.exchange.frozenNotice(me.frozen.reason) }}
       </div>
-      <button type="button" class="dt-row is-link" data-testid="ex-orders-open" @click="panel = 'orders'">
-        <span class="dt-row-main"
-          ><span class="dt-row-title">{{ t.exchange.myOrders }}</span></span
-        >
-        <span class="dt-row-value">{{ me.orders.length }}</span>
-      </button>
-      <button type="button" class="dt-row is-link" data-testid="ex-trades-open" @click="panel = 'trades'">
-        <span class="dt-row-main"
-          ><span class="dt-row-title">{{ t.exchange.trades }}</span></span
-        >
-        <span class="dt-row-value">{{ me.trades.length }}</span>
-      </button>
-      <button type="button" class="dt-row is-link" data-testid="ex-sys-help" @click="panel = 'help'">
-        <span class="dt-row-main"
-          ><span class="dt-row-title">{{ t.exchange.rulesTitle }}</span
-          ><span class="dt-row-sub">{{ t.exchange.rulesSub }}</span></span
-        >
-      </button>
-    </div>
-
-    <input
-      v-model="search"
-      type="search"
-      class="form-control dt-search"
-      :placeholder="t.exchange.search"
-      :aria-label="t.exchange.search"
-      data-testid="ex-search"
-    />
-    <div class="dt-pills" role="group" :aria-label="t.exchange.filterLabel">
-      <button
-        v-for="x in FILTERS"
-        :key="x"
-        type="button"
-        :class="{ active: filter === x }"
-        :aria-pressed="filter === x"
-        :data-testid="`ex-filter-${x}`"
-        @click="setFilter(x)"
-      >
-        {{ t.exchange.filters[x] }}
-      </button>
-    </div>
-    <div
-      v-if="levels.length > 1"
-      class="dt-pills"
-      role="group"
-      :aria-label="t.exchange.levelFilterLabel"
-      data-testid="ex-levels"
-    >
-      <button
-        type="button"
-        :class="{ active: levelPick === null }"
-        :aria-pressed="levelPick === null"
-        data-testid="ex-level-all"
-        @click="levelPick = null"
-      >
-        {{ t.exchange.allLevels }}
-      </button>
-      <button
-        v-for="lv in levels"
-        :key="lv"
-        type="button"
-        :class="{ active: levelPick === lv }"
-        :aria-pressed="levelPick === lv"
-        :data-testid="`ex-level-${lv}`"
-        @click="levelPick = lv"
-      >
-        {{ t.exchange.level(lv) }}
-      </button>
-    </div>
-    <div class="dt-block-note" data-testid="ex-legend">
-      <span class="dt-tag-ok">{{ t.exchange.legendSale }}</span
-      >{{ t.exchange.legendSaleText }}<span class="dt-tag-primary">{{ t.exchange.legendBuy }}</span
-      >{{ t.exchange.legendBuyText }}
-    </div>
-    <section v-for="[lv, list] in groups" :key="lv" class="dt-block">
-      <div class="dt-block-head">
-        <h2 class="dt-block-title">{{ t.exchange.level(lv) }}</h2>
-      </div>
-      <div class="dt-card dt-rows-card">
-        <button
-          v-for="f in list"
-          :key="f.foodsId"
-          type="button"
-          class="dt-row is-link"
-          :data-testid="`ex-food-${f.foodsId}`"
-          @click="pick(f.foodsId)"
-        >
-          <span class="dt-row-ico"><FoodArt :id="f.foodsId" :size="28" /></span>
+      <div v-else-if="blocked" class="dt-act-note is-warn" data-testid="ex-blocked">{{ blocked }}</div>
+      <div v-if="me" class="dt-card dt-rows-card" data-testid="ex-me">
+        <div class="dt-row dt-row-wrap" data-testid="ex-wallet">
           <span class="dt-row-main">
-            <span class="dt-row-title is-strong"
-              >{{ catalog.foodName(f.foodsId)
-              }}<span v-if="saleNum(f) > 0" class="dt-tag-ok">{{ t.exchange.saleTag(saleNum(f)) }}</span
-              ><span v-if="f.buying > 0" class="dt-tag-primary">{{ t.exchange.buyTag(f.buying) }}</span></span
-            >
+            <span class="dt-row-title">{{ t.exchange.account }}</span>
+            <span class="dt-row-sub">{{ walletText }}</span>
+            <span v-if="readyHolds.length > 0" class="dt-row-sub text-success" data-testid="ex-holds-ready">{{
+              t.exchange.holdsReady(holdText(readyHolds))
+            }}</span>
+            <span v-if="pendingHolds.length > 0" class="dt-row-sub" data-testid="ex-holds">{{
+              t.exchange.holdsPending(holdText(pendingHolds), timeLeft(pendingHolds[0]!.releaseAt))
+            }}</span>
           </span>
-          <span class="dt-ex-price">
-            <b>{{ formatNum(f.last ?? f.ref) }}</b>
-            <small
-              v-if="f.changePct !== null && f.changePct !== 0"
-              :class="f.changePct > 0 ? 'is-up' : 'is-down'"
-              >{{ pct(f.changePct) }}</small
-            >
-          </span>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary"
+            :disabled="
+              busy ||
+              !!me.frozen ||
+              (me.wallet.coin === 0 && me.wallet.foods.length === 0 && readyHolds.length === 0)
+            "
+            data-testid="ex-withdraw"
+            @click="withdraw"
+          >
+            {{ t.exchange.withdraw }}
+          </button>
+        </div>
+        <button type="button" class="dt-row is-link" data-testid="ex-orders-open" @click="panel = 'orders'">
+          <span class="dt-row-main"
+            ><span class="dt-row-title">{{ t.exchange.myOrders }}</span></span
+          >
+          <span class="dt-row-value">{{ me.orders.length }}</span>
+        </button>
+        <button type="button" class="dt-row is-link" data-testid="ex-trades-open" @click="panel = 'trades'">
+          <span class="dt-row-main"
+            ><span class="dt-row-title">{{ t.exchange.trades }}</span></span
+          >
+          <span class="dt-row-value">{{ me.trades.length }}</span>
+        </button>
+        <button type="button" class="dt-row is-link" data-testid="ex-sys-help" @click="panel = 'help'">
+          <span class="dt-row-main"
+            ><span class="dt-row-title">{{ t.exchange.rulesTitle }}</span
+            ><span class="dt-row-sub">{{ t.exchange.rulesSub }}</span></span
+          >
         </button>
       </div>
-    </section>
-  </template>
 
-  <!-- 盘口和下单（界面改版 P8 设计图“现货 · 盘口和下单”） -->
-  <DtSheet
-    :open="selected !== null"
-    :title="selected !== null ? catalog.foodName(selected) : ''"
-    @close="closeBook"
-  >
-    <div v-if="selected !== null" data-testid="ex-sheet">
-      <div class="dt-detail-head">
-        <span class="dt-detail-art"><FoodArt :id="selected" :size="52" /></span>
-        <div class="dt-detail-info">
-          <div>{{ foodLevelLabel(levelOf(selected)) }}</div>
-          <div v-if="book" class="dt-detail-sub">
-            {{ t.exchange.ref(formatNum(book.ref)) }} · {{ t.exchange.volume(formatNum(book.volume)) }}
-          </div>
-        </div>
+      <input
+        v-model="search"
+        type="search"
+        class="form-control dt-search"
+        :placeholder="t.exchange.search"
+        :aria-label="t.exchange.search"
+        data-testid="ex-search"
+      />
+      <div class="dt-pills" role="group" :aria-label="t.exchange.filterLabel">
+        <button
+          v-for="x in FILTERS"
+          :key="x"
+          type="button"
+          :class="{ active: filter === x }"
+          :aria-pressed="filter === x"
+          :data-testid="`ex-filter-${x}`"
+          @click="setFilter(x)"
+        >
+          {{ t.exchange.filters[x] }}
+        </button>
       </div>
-      <div v-if="!book" class="dt-detail-note">{{ t.common.loading }}</div>
-      <template v-else>
-        <div class="dt-book" data-testid="ex-book">
-          <button
-            v-for="a in [...book.asks].reverse()"
-            :key="`a${a.system ? 's' : ''}${a.price}`"
-            type="button"
-            class="dt-book-row is-ask"
-            :data-testid="`ex-ask-${a.system ? 'sys-' : ''}${a.price}`"
-            @click="takeLevel(a.price)"
-          >
-            <i :style="{ width: depth(a.qty) }"></i>
-            <span>{{ a.system ? t.exchange.askSys : t.exchange.ask }}</span>
-            <b>{{ formatNum(a.price) }}</b>
-            <span class="dt-book-qty">× {{ formatNum(a.qty) }}</span>
-          </button>
-          <!-- 最新成交价放在卖档和买档中间（156-1 设计 §8，backlog 156-1） -->
-          <div class="dt-book-mid" data-testid="ex-last">
-            {{ book.last === null ? t.exchange.noTrade : t.exchange.last(formatNum(book.last)) }}
-          </div>
-          <button
-            v-for="b in book.bids"
-            :key="`b${b.system ? 's' : ''}${b.price}`"
-            type="button"
-            class="dt-book-row is-bid"
-            :data-testid="`ex-bid-${b.system ? 'sys-' : ''}${b.price}`"
-            @click="takeLevel(b.price, b.floor)"
-          >
-            <i :style="{ width: depth(b.qty) }"></i>
-            <span>{{ b.system ? (b.floor ? t.exchange.bidFloor : t.exchange.bidSys) : t.exchange.bid }}</span>
-            <b>{{ formatNum(b.price) }}</b>
-            <span class="dt-book-qty">× {{ formatNum(b.qty) }}</span>
-          </button>
+      <div
+        v-if="levels.length > 1"
+        class="dt-pills"
+        role="group"
+        :aria-label="t.exchange.levelFilterLabel"
+        data-testid="ex-levels"
+      >
+        <button
+          type="button"
+          :class="{ active: levelPick === null }"
+          :aria-pressed="levelPick === null"
+          data-testid="ex-level-all"
+          @click="levelPick = null"
+        >
+          {{ t.exchange.allLevels }}
+        </button>
+        <button
+          v-for="lv in levels"
+          :key="lv"
+          type="button"
+          :class="{ active: levelPick === lv }"
+          :aria-pressed="levelPick === lv"
+          :data-testid="`ex-level-${lv}`"
+          @click="levelPick = lv"
+        >
+          {{ t.exchange.level(lv) }}
+        </button>
+      </div>
+      <div class="dt-block-note" data-testid="ex-legend">
+        <span class="dt-tag-ok">{{ t.exchange.legendSale }}</span
+        >{{ t.exchange.legendSaleText }}<span class="dt-tag-primary">{{ t.exchange.legendBuy }}</span
+        >{{ t.exchange.legendBuyText }}
+      </div>
+      <section v-for="[lv, list] in groups" :key="lv" class="dt-block">
+        <div class="dt-block-head">
+          <h2 class="dt-block-title">{{ t.exchange.level(lv) }}</h2>
         </div>
-        <div class="dt-seg mt-3" role="group" :aria-label="t.exchange.sideLabel">
+        <div class="dt-card dt-rows-card">
           <button
+            v-for="f in list"
+            :key="f.foodsId"
             type="button"
-            :aria-pressed="side === 'buy'"
-            data-testid="ex-side-buy"
-            @click="side = 'buy'"
+            class="dt-row is-link"
+            :data-testid="`ex-food-${f.foodsId}`"
+            @click="pick(f.foodsId)"
           >
-            {{ t.exchange.buy }}
-          </button>
-          <button
-            type="button"
-            :aria-pressed="side === 'sell'"
-            data-testid="ex-side-sell"
-            @click="side = 'sell'"
-          >
-            {{ t.exchange.sell }}
-          </button>
-        </div>
-        <div class="dt-field-row">
-          <span class="dt-field-label"
-            ><b>{{ t.exchange.price }}</b
-            ><small data-testid="ex-band">{{
-              t.exchange.band(formatNum(book.min), formatNum(book.max))
-            }}</small></span
-          >
-          <DtStepper
-            v-model="price"
-            :min="book.min"
-            :max="book.max"
-            :step="priceStep"
-            testid="ex-price"
-            size="wide"
-          />
-        </div>
-        <div class="dt-field-row">
-          <span class="dt-field-label"
-            ><b>{{ t.exchange.qty }}</b
-            ><small>{{ t.exchange.max(me?.maxQty ?? 999) }}</small></span
-          >
-          <DtStepper v-model="qty" :min="1" :max="me?.maxQty ?? 999" testid="ex-qty" />
-        </div>
-        <div class="dt-ex-estimate" data-testid="ex-estimate">{{ estimate }}</div>
-        <div v-if="overSystem !== null" class="dt-detail-note text-warning" data-testid="ex-over-sys">
-          {{ t.exchange.overSystem(overSystem) }}
-        </div>
-        <div v-if="blocked" class="dt-detail-note text-danger">{{ blocked }}</div>
-        <!-- 卖出时：系统收购那一档可以直接卖给系统（兜底价只能这样卖） -->
-        <div v-if="side === 'sell' && sysBid" class="dt-ex-sys">
-          <button
-            type="button"
-            class="btn btn-outline-primary dt-btn-block"
-            :disabled="busy || !!blocked"
-            data-testid="ex-sell-sys"
-            :aria-expanded="sysOpen"
-            @click="sysOpen = !sysOpen"
-          >
-            {{ t.exchange.sellSys(formatNum(sysBid.price), !!sysBid.floor) }}
-          </button>
-          <template v-if="sysOpen">
-            <div class="dt-field-row">
-              <span class="dt-field-label"
-                ><b>{{ t.exchange.qty }}</b
-                ><small>{{ t.exchange.max(sysBid.qty) }}</small></span
+            <span class="dt-row-ico"><FoodArt :id="f.foodsId" :size="28" /></span>
+            <span class="dt-row-main">
+              <span class="dt-row-title is-strong"
+                >{{ catalog.foodName(f.foodsId)
+                }}<span v-if="saleNum(f) > 0" class="dt-tag-ok">{{ t.exchange.saleTag(saleNum(f)) }}</span
+                ><span v-if="f.buying > 0" class="dt-tag-primary">{{
+                  t.exchange.buyTag(f.buying)
+                }}</span></span
               >
-              <DtStepper v-model="sysQty" :min="1" :max="sysBid.qty" testid="ex-sys-qty" />
+            </span>
+            <span class="dt-ex-price">
+              <b>{{ formatNum(f.last ?? f.ref) }}</b>
+              <small
+                v-if="f.changePct !== null && f.changePct !== 0"
+                :class="f.changePct > 0 ? 'is-up' : 'is-down'"
+                >{{ pct(f.changePct) }}</small
+              >
+            </span>
+          </button>
+        </div>
+      </section>
+    </template>
+
+    <!-- 盘口和下单（界面改版 P8 设计图“现货 · 盘口和下单”） -->
+    <DtSheet
+      :open="selected !== null"
+      :title="selected !== null ? catalog.foodName(selected) : ''"
+      @close="closeBook"
+    >
+      <div v-if="selected !== null" data-testid="ex-sheet">
+        <div class="dt-detail-head">
+          <span class="dt-detail-art"><FoodArt :id="selected" :size="52" /></span>
+          <div class="dt-detail-info">
+            <div>{{ foodLevelLabel(levelOf(selected)) }}</div>
+            <div v-if="book" class="dt-detail-sub">
+              {{ t.exchange.ref(formatNum(book.ref)) }} · {{ t.exchange.volume(formatNum(book.volume)) }}
             </div>
-            <div class="dt-ex-estimate" data-testid="ex-sys-estimate">{{ sysEstimate }}</div>
+          </div>
+        </div>
+        <div v-if="!book" class="dt-detail-note">{{ t.common.loading }}</div>
+        <template v-else>
+          <div class="dt-book" data-testid="ex-book">
+            <button
+              v-for="a in [...book.asks].reverse()"
+              :key="`a${a.system ? 's' : ''}${a.price}`"
+              type="button"
+              class="dt-book-row is-ask"
+              :data-testid="`ex-ask-${a.system ? 'sys-' : ''}${a.price}`"
+              @click="takeLevel(a.price)"
+            >
+              <i :style="{ width: depth(a.qty) }"></i>
+              <span>{{ a.system ? t.exchange.askSys : t.exchange.ask }}</span>
+              <b>{{ formatNum(a.price) }}</b>
+              <span class="dt-book-qty">× {{ formatNum(a.qty) }}</span>
+            </button>
+            <!-- 最新成交价放在卖档和买档中间（156-1 设计 §8，backlog 156-1） -->
+            <div class="dt-book-mid" data-testid="ex-last">
+              {{ book.last === null ? t.exchange.noTrade : t.exchange.last(formatNum(book.last)) }}
+            </div>
+            <button
+              v-for="b in book.bids"
+              :key="`b${b.system ? 's' : ''}${b.price}`"
+              type="button"
+              class="dt-book-row is-bid"
+              :data-testid="`ex-bid-${b.system ? 'sys-' : ''}${b.price}`"
+              @click="takeLevel(b.price, b.floor)"
+            >
+              <i :style="{ width: depth(b.qty) }"></i>
+              <span>{{
+                b.system ? (b.floor ? t.exchange.bidFloor : t.exchange.bidSys) : t.exchange.bid
+              }}</span>
+              <b>{{ formatNum(b.price) }}</b>
+              <span class="dt-book-qty">× {{ formatNum(b.qty) }}</span>
+            </button>
+          </div>
+          <div class="dt-seg mt-3" role="group" :aria-label="t.exchange.sideLabel">
             <button
               type="button"
-              class="btn btn-primary dt-btn-block"
-              :disabled="busy || !sysValid || !!blocked"
-              data-testid="ex-sys-submit"
-              @click="sellToSystem"
+              :aria-pressed="side === 'buy'"
+              data-testid="ex-side-buy"
+              @click="side = 'buy'"
             >
-              {{ t.exchange.confirmSell }}
+              {{ t.exchange.buy }}
             </button>
-          </template>
-        </div>
+            <button
+              type="button"
+              :aria-pressed="side === 'sell'"
+              data-testid="ex-side-sell"
+              @click="side = 'sell'"
+            >
+              {{ t.exchange.sell }}
+            </button>
+          </div>
+          <div class="dt-field-row">
+            <span class="dt-field-label"
+              ><b>{{ t.exchange.price }}</b
+              ><small data-testid="ex-band">{{
+                t.exchange.band(formatNum(book.min), formatNum(book.max))
+              }}</small></span
+            >
+            <DtStepper
+              v-model="price"
+              :min="book.min"
+              :max="book.max"
+              :step="priceStep"
+              testid="ex-price"
+              size="wide"
+            />
+          </div>
+          <div class="dt-field-row">
+            <span class="dt-field-label"
+              ><b>{{ t.exchange.qty }}</b
+              ><small>{{ t.exchange.max(me?.maxQty ?? 999) }}</small></span
+            >
+            <DtStepper v-model="qty" :min="1" :max="me?.maxQty ?? 999" testid="ex-qty" />
+          </div>
+          <div class="dt-ex-estimate" data-testid="ex-estimate">{{ estimate }}</div>
+          <div v-if="overSystem !== null" class="dt-detail-note text-warning" data-testid="ex-over-sys">
+            {{ t.exchange.overSystem(overSystem) }}
+          </div>
+          <div v-if="blocked" class="dt-detail-note text-danger">{{ blocked }}</div>
+          <!-- 卖出时：系统收购那一档可以直接卖给系统（兜底价只能这样卖） -->
+          <div v-if="side === 'sell' && sysBid" class="dt-ex-sys">
+            <button
+              type="button"
+              class="btn btn-outline-primary dt-btn-block"
+              :disabled="busy || !!blocked"
+              data-testid="ex-sell-sys"
+              :aria-expanded="sysOpen"
+              @click="sysOpen = !sysOpen"
+            >
+              {{ t.exchange.sellSys(formatNum(sysBid.price), !!sysBid.floor) }}
+            </button>
+            <template v-if="sysOpen">
+              <div class="dt-field-row">
+                <span class="dt-field-label"
+                  ><b>{{ t.exchange.qty }}</b
+                  ><small>{{ t.exchange.max(sysBid.qty) }}</small></span
+                >
+                <DtStepper v-model="sysQty" :min="1" :max="sysBid.qty" testid="ex-sys-qty" />
+              </div>
+              <div class="dt-ex-estimate" data-testid="ex-sys-estimate">{{ sysEstimate }}</div>
+              <button
+                type="button"
+                class="btn btn-primary dt-btn-block"
+                :disabled="busy || !sysValid || !!blocked"
+                data-testid="ex-sys-submit"
+                @click="sellToSystem"
+              >
+                {{ t.exchange.confirmSell }}
+              </button>
+            </template>
+          </div>
+        </template>
+      </div>
+      <!-- 展开“卖给系统”时只留它的确定按钮，免得两个主按钮叠在一起 -->
+      <template v-if="selected !== null && book && !(side === 'sell' && sysOpen)" #actions>
+        <button
+          type="button"
+          class="btn btn-primary dt-btn-block"
+          :disabled="busy || !valid || !!blocked"
+          data-testid="ex-submit"
+          @click="submit"
+        >
+          {{ side === 'buy' ? t.exchange.placeBuy : t.exchange.placeSell }}
+        </button>
       </template>
-    </div>
-    <!-- 展开“卖给系统”时只留它的确定按钮，免得两个主按钮叠在一起 -->
-    <template v-if="selected !== null && book && !(side === 'sell' && sysOpen)" #actions>
-      <button
-        type="button"
-        class="btn btn-primary dt-btn-block"
-        :disabled="busy || !valid || !!blocked"
-        data-testid="ex-submit"
-        @click="submit"
-      >
-        {{ side === 'buy' ? t.exchange.placeBuy : t.exchange.placeSell }}
-      </button>
-    </template>
-  </DtSheet>
+    </DtSheet>
 
-  <DtSheet :open="panel === 'orders'" :title="t.exchange.myOrders" @close="panel = null">
-    <div v-if="me" data-testid="ex-orders">
-      <div v-if="me.orders.length === 0" class="dt-detail-note">{{ t.exchange.noOrders }}</div>
-      <div v-else class="dt-sheet-list">
-        <div v-for="o in me.orders" :key="o.id" class="dt-row">
-          <span class="dt-row-main">
-            <span class="dt-row-title"
-              ><span :class="o.side === 'buy' ? 'dt-tag-primary' : 'dt-tag-ok'">{{
-                o.side === 'buy' ? t.exchange.bid : t.exchange.ask
-              }}</span>
-              {{
-                t.exchange.orderLine(catalog.foodName(o.foodsId), formatNum(o.price), o.qty, o.filled)
-              }}</span
+    <DtSheet :open="panel === 'orders'" :title="t.exchange.myOrders" @close="panel = null">
+      <div v-if="me" data-testid="ex-orders">
+        <div v-if="me.orders.length === 0" class="dt-detail-note">{{ t.exchange.noOrders }}</div>
+        <div v-else class="dt-sheet-list">
+          <div v-for="o in me.orders" :key="o.id" class="dt-row">
+            <span class="dt-row-main">
+              <span class="dt-row-title"
+                ><span :class="o.side === 'buy' ? 'dt-tag-primary' : 'dt-tag-ok'">{{
+                  o.side === 'buy' ? t.exchange.bid : t.exchange.ask
+                }}</span>
+                {{
+                  t.exchange.orderLine(catalog.foodName(o.foodsId), formatNum(o.price), o.qty, o.filled)
+                }}</span
+              >
+            </span>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-danger"
+              :disabled="busy"
+              :data-testid="`ex-cancel-${o.id}`"
+              @click="cancel(o.id)"
             >
-          </span>
-          <button
-            type="button"
-            class="btn btn-sm btn-outline-danger"
-            :disabled="busy"
-            :data-testid="`ex-cancel-${o.id}`"
-            @click="cancel(o.id)"
-          >
-            {{ t.exchange.cancel }}
-          </button>
+              {{ t.exchange.cancel }}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  </DtSheet>
+    </DtSheet>
 
-  <DtSheet :open="panel === 'trades'" :title="t.exchange.trades" @close="panel = null">
-    <div v-if="me" data-testid="ex-trades">
-      <div v-if="me.trades.length === 0" class="dt-detail-note">{{ t.exchange.noTrades }}</div>
-      <div v-else class="dt-sheet-list">
-        <div v-for="(x, i) in me.trades" :key="i" class="dt-row">
-          <span class="dt-row-main">
-            <span class="dt-row-title"
-              >{{
-                t.exchange.tradeLine(
-                  x.side === 'buy',
-                  catalog.foodName(x.foodsId),
-                  formatNum(x.price),
-                  x.qty,
-                )
-              }}<span v-if="x.system" class="text-muted">{{ t.exchange.system }}</span></span
-            >
-            <span v-if="x.fee > 0" class="dt-row-sub">{{ t.exchange.fee(formatNum(x.fee)) }}</span>
-          </span>
+    <DtSheet :open="panel === 'trades'" :title="t.exchange.trades" @close="panel = null">
+      <div v-if="me" data-testid="ex-trades">
+        <div v-if="me.trades.length === 0" class="dt-detail-note">{{ t.exchange.noTrades }}</div>
+        <div v-else class="dt-sheet-list">
+          <div v-for="(x, i) in me.trades" :key="i" class="dt-row">
+            <span class="dt-row-main">
+              <span class="dt-row-title"
+                >{{
+                  t.exchange.tradeLine(
+                    x.side === 'buy',
+                    catalog.foodName(x.foodsId),
+                    formatNum(x.price),
+                    x.qty,
+                  )
+                }}<span v-if="x.system" class="text-muted">{{ t.exchange.system }}</span></span
+              >
+              <span v-if="x.fee > 0" class="dt-row-sub">{{ t.exchange.fee(formatNum(x.fee)) }}</span>
+            </span>
+          </div>
         </div>
       </div>
-    </div>
-  </DtSheet>
+    </DtSheet>
 
-  <DtSheet :open="panel === 'help'" :title="t.exchange.rulesTitle" @close="panel = null">
-    <div class="dt-help" data-testid="ex-help">
-      <p>{{ t.exchange.intro }}</p>
-      <ul>
-        <li v-for="(x, i) in t.exchange.sysHelpItems" :key="i">{{ x }}</li>
-      </ul>
-    </div>
-  </DtSheet>
+    <DtSheet :open="panel === 'help'" :title="t.exchange.rulesTitle" @close="panel = null">
+      <div class="dt-help" data-testid="ex-help">
+        <p>{{ t.exchange.intro }}</p>
+        <ul>
+          <li v-for="(x, i) in t.exchange.sysHelpItems" :key="i">{{ x }}</li>
+        </ul>
+      </div>
+    </DtSheet>
+  </DtTabPanel>
 </template>

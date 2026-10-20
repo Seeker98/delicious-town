@@ -6,6 +6,7 @@ import towerScene from '../art/scene/tower.svg?url';
 import DtArt from '../components/DtArt.vue';
 import DtEmpty from '../components/DtEmpty.vue';
 import DtSkeleton from '../components/DtSkeleton.vue';
+import DtTabPanel from '../components/DtTabPanel.vue';
 import DtTabs from '../components/DtTabs.vue';
 import PlaceScene from '../components/place/PlaceScene.vue';
 import { useT } from '../composables/useT';
@@ -73,31 +74,33 @@ watch(tab, (k) => void LOAD[k]());
     >
   </PlaceScene>
   <DtTabs v-model="tab" :tabs="tabItems" />
-  <template v-if="tab === 'tower'">
-    <FloorPanel v-if="data" :data="data" @reload="loadAll" />
-    <DtEmpty v-else-if="failed.tower" :title="t.tower.loadFailed" data-testid="tower-failed"
-      ><button type="button" class="btn btn-sm btn-outline-primary" @click="loadTower">
-        {{ t.town.retry }}
-      </button></DtEmpty
-    >
-    <DtSkeleton v-else :rows="6" />
-  </template>
-  <template v-else-if="tab === 'rank'">
-    <RankPanel v-if="rank" :data="rank" :reload="loadAll" @reload="loadAll" />
-    <DtEmpty v-else-if="failed.rank" :title="t.tower.rank.loadFailed" data-testid="rank-failed"
-      ><button type="button" class="btn btn-sm btn-outline-primary" @click="loadRank">
-        {{ t.town.retry }}
-      </button></DtEmpty
-    >
-    <DtSkeleton v-else :rows="6" />
-  </template>
-  <template v-else>
-    <ShopPanel v-if="shop" :data="shop" @reload="loadShop" />
-    <DtEmpty v-else-if="failed.shop" :title="t.tower.shop.loadFailed" data-testid="shop-failed"
-      ><button type="button" class="btn btn-sm btn-outline-primary" @click="loadShop">
-        {{ t.town.retry }}
-      </button></DtEmpty
-    >
-    <DtSkeleton v-else :rows="5" />
-  </template>
+  <DtTabPanel :tab="tab">
+    <template v-if="tab === 'tower'">
+      <FloorPanel v-if="data" :data="data" @reload="loadAll" />
+      <DtEmpty v-else-if="failed.tower" :title="t.tower.loadFailed" data-testid="tower-failed"
+        ><button type="button" class="btn btn-sm btn-outline-primary" @click="loadTower">
+          {{ t.town.retry }}
+        </button></DtEmpty
+      >
+      <DtSkeleton v-else :rows="6" />
+    </template>
+    <template v-else-if="tab === 'rank'">
+      <RankPanel v-if="rank" :data="rank" :reload="loadAll" @reload="loadAll" />
+      <DtEmpty v-else-if="failed.rank" :title="t.tower.rank.loadFailed" data-testid="rank-failed"
+        ><button type="button" class="btn btn-sm btn-outline-primary" @click="loadRank">
+          {{ t.town.retry }}
+        </button></DtEmpty
+      >
+      <DtSkeleton v-else :rows="6" />
+    </template>
+    <template v-else>
+      <ShopPanel v-if="shop" :data="shop" @reload="loadShop" />
+      <DtEmpty v-else-if="failed.shop" :title="t.tower.shop.loadFailed" data-testid="shop-failed"
+        ><button type="button" class="btn btn-sm btn-outline-primary" @click="loadShop">
+          {{ t.town.retry }}
+        </button></DtEmpty
+      >
+      <DtSkeleton v-else :rows="5" />
+    </template>
+  </DtTabPanel>
 </template>

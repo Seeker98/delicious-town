@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { TakeawayDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtTabPanel from '../components/DtTabPanel.vue';
 import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
 import { useTabQuery } from '../composables/useTabQuery';
@@ -67,9 +68,11 @@ const tabs = computed(() =>
     <OpenPanel v-if="!data.opened" :data="data" @reload="load" />
     <template v-else>
       <DtTabs v-model="tab" :tabs="tabs" />
-      <OrdersPanel v-if="tab === 'orders'" :data="data" @reload="load" />
-      <DeliveriesPanel v-else-if="tab === 'deliveries'" :data="data" @reload="load" />
-      <RidersPanel v-else :data="data" @reload="load" />
+      <DtTabPanel :tab="tab">
+        <OrdersPanel v-if="tab === 'orders'" :data="data" @reload="load" />
+        <DeliveriesPanel v-else-if="tab === 'deliveries'" :data="data" @reload="load" />
+        <RidersPanel v-else :data="data" @reload="load" />
+      </DtTabPanel>
     </template>
   </template>
 </template>

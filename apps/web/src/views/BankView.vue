@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import DtTabPanel from '../components/DtTabPanel.vue';
 import DtTabs from '../components/DtTabs.vue';
 import NpcCard from '../components/NpcCard.vue';
 import FundPanel from '../components/town/FundPanel.vue';
@@ -39,9 +40,11 @@ onMounted(() => {
     <div v-if="tabs.length === 0" class="dt-empty" data-testid="bank-off">{{ t.bank.off }}</div>
     <template v-else>
       <DtTabs v-model="tab" :tabs="items" />
-      <NpcCard :key="tab" :npc="tab === 'fund' ? 'gary' : 'garyWealth'" />
-      <FundPanel v-if="tab === 'fund'" />
-      <WealthPanel v-else />
+      <DtTabPanel :tab="tab">
+        <NpcCard :key="tab" :npc="tab === 'fund' ? 'gary' : 'garyWealth'" />
+        <FundPanel v-if="tab === 'fund'" />
+        <WealthPanel v-else />
+      </DtTabPanel>
     </template>
   </template>
 </template>
