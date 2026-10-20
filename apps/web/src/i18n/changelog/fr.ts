@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  batch1020b:
+    'Petits correctifs\u202f: quand un serveur désactive les ustensiles, la récupération d’endurance, les défenseurs du classement et la chance des livreurs amis suivent tout de suite le nouveau réglage\u202f; la tour des chefs se charge en une fois et s’ouvre plus vite\u202f; après un achat au marché et la fermeture d’un panneau, le focus revient sur le bouton utilisé\u202f; les barres d’onglets et leur contenu correspondent pour les lecteurs d’écran',
   batch1020:
     'Une série de petits correctifs\u202f: le retour de pouces en un clic explique les échecs, ne réessaie plus les anciens amis et s’arrête tout de suite si votre renommée est négative\u202f; les résultats du pronostic du marché apparaissent dans l’activité du restaurant avec les récompenses obtenues\u202f; tirer des missiles sur le gardien propose des boutons rapides 5, 10, 20 et 50\u202f; un restaurant racheté voit dans son historique de revenus et la fenêtre des pièces la part versée au propriétaire\u202f; les listes de valorisation, de ventes et d’investisseurs des rachats affichent la porte des restaurants\u202f; les restaurants à compte lié que vous possédez indiquent qu’ils ne peuvent pas être soignés et «\u202fTout soigner\u202f» les ignore\u202f; les règles de rachat, le prix du plat signature d’hier et la provenance des objets d’expertise suivent les réglages du serveur\u202f; le wiki indique que l’expertise donne un plat au hasard de la tranche de niveaux\u202f; le pack de départ prévient quand l’entrepôt est trop plein au lieu de dépasser la limite',
   email1019:
