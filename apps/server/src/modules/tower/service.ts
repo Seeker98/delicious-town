@@ -1,5 +1,4 @@
-import { equipOff } from '../equip/power';
-import type { DuelInfoDto, RankDto, RenownShopDto, TowerDto } from '@dt/shared';
+import type { DuelInfoDto, RankDto, RenownShopDto, TowerDto, TowerHomeDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import { runPairOp } from '../../core/pair';
@@ -15,9 +14,21 @@ export function createTowerService(d: GameDeps) {
     d.db.selectFrom('restaurant').selectAll().where('id', '=', id).executeTakeFirstOrThrow();
 
   return {
+    /** 进页面一次读三份：功能开关、店只读一次 */
+    async home(ctx: RestCtx): Promise<TowerHomeDto> {
+      const s = await d.shards.ensureFeature(ctx.shardId, 'tower');
+      const rest = await restOf(ctx.restaurantId);
+      const now = d.now();
+      const [tower, rank, shop] = await Promise.all([
+        towerView(d.db, d.config, rest, s.tuning.tower, now, s),
+        rankView(d.db, rest, s.tuning.tower, now),
+        shopView(d.db, d.config, rest, now),
+      ]);
+      return { tower, rank, shop };
+    },
     async overview(ctx: RestCtx): Promise<TowerDto> {
       const s = await d.shards.ensureFeature(ctx.shardId, 'tower');
-      return towerView(d.db, d.config, await restOf(ctx.restaurantId), s.tuning.tower, d.now(), equipOff(s));
+      return towerView(d.db, d.config, await restOf(ctx.restaurantId), s.tuning.tower, d.now(), s);
     },
     challenge(ctx: RestCtx, b: { floor: number; test: boolean }) {
       return op(ctx, 'tower.challenge', (o) => challengeTower(o, b.floor, b.test));

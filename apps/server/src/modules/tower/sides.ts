@@ -1,9 +1,10 @@
 import type { Kysely } from 'kysely';
-import type { GameConfig, TowerFloor } from '@dt/config';
+import type { GameConfig, ShardSettings, TowerFloor } from '@dt/config';
 import type { DuelSideDto } from '@dt/shared';
 import { opAgg } from '../../core/luck';
 import type { Op } from '../../core/op';
 import type { DB, RestaurantRow } from '../../db/schema';
+import { cachedAgg } from '../effects/service';
 import { equipOff, restGear, suitEffect } from '../equip/power';
 import { duelPower, type DuelSide, type Scores } from './duel';
 
@@ -62,15 +63,17 @@ export async function playerSide(o: Op, mode: DuelMode): Promise<DuelSide> {
   return sideOf(o.tx, o.config, o.rest, (await opAgg(o)).luckValue ?? 0, mode, equipOff(o.settings));
 }
 
-/** 不锁对方的店：幸运用它缓存的加成汇总（计划裁定 1） */
-export function cachedSide(
+/** 不锁对方的店：幸运用它缓存的加成汇总（计划裁定 1）；缓存按另一种厨具开关算的当场重算（backlog） */
+export async function cachedSide(
   db: Kysely<DB>,
   config: GameConfig,
   rest: RestaurantRow,
   mode: DuelMode,
-  off = false,
+  settings: Pick<ShardSettings, 'tuning' | 'features'>,
+  now: Date,
 ): Promise<DuelSide> {
-  return sideOf(db, config, rest, rest.effect_agg.luckValue ?? 0, mode, off);
+  const agg = await cachedAgg(db, rest, now, config, settings);
+  return sideOf(db, config, rest, agg.luckValue ?? 0, mode, equipOff(settings));
 }
 
 /** 守塔人：属性来自配置；只有比拼特色菜的层才算当天的菜（mc 是这一层当天抽到的菜，没有为 null） */

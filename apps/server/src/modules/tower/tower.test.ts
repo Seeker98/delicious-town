@@ -36,6 +36,14 @@ const setBest = (restId: number, best: number) =>
   t.db.insertInto('tower_state').values({ rest_id: restId, best_floor: best }).execute();
 
 describe('厨塔概览', () => {
+  it('进页面一次读三份（backlog）：和分开读的一样', async () => {
+    const ctx = await newRestaurant(t, { patch: STRONG });
+    const h = await t.game.tower.home(ctx);
+    expect(h.tower).toEqual(await t.game.tower.overview(ctx));
+    expect(h.rank).toEqual(await t.game.tower.rank(ctx));
+    expect(h.shop).toEqual(await t.game.tower.shop(ctx));
+  });
+
   it('新店：1 层解锁、2 层没有；今日 5 次；守塔人厨力；还没换菜', async () => {
     const ctx = await newRestaurant(t, { patch: STRONG });
     const v = await t.game.tower.overview(ctx);

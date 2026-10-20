@@ -6,7 +6,7 @@ import { rankData, shopData, towerData } from '../components/tower/testData';
 import TowerView from './TowerView.vue';
 
 vi.mock('../api/endpoints', () => ({
-  endpoints: { tower: vi.fn(), towerRank: vi.fn(), renownShop: vi.fn() },
+  endpoints: { tower: vi.fn(), towerRank: vi.fn(), renownShop: vi.fn(), towerHome: vi.fn() },
 }));
 
 const stubs = {
@@ -25,6 +25,21 @@ describe('TowerView', () => {
     vi.mocked(endpoints.renownShop).mockResolvedValue(shopData());
   });
 
+  it('进页面先用合并接口一次读三份（backlog）：读到了就不再分开读', async () => {
+    vi.mocked(endpoints.towerHome).mockResolvedValueOnce({
+      tower: towerData(),
+      rank: rankData({ myRank: 2 }),
+      shop: shopData(),
+    });
+    const w = mount(TowerView, { global: { stubs } });
+    await flushPromises();
+    expect(endpoints.towerHome).toHaveBeenCalledTimes(1);
+    expect(endpoints.tower).not.toHaveBeenCalled();
+    expect(endpoints.towerRank).not.toHaveBeenCalled();
+    expect(w.get('[data-testid="tower-rank"]').text()).toBe('赛厨榜 第 2 名');
+  });
+
+  // 下面的用例里合并接口读失败（旧服务端没有），退回分开读
   it('默认厨塔标签并读取厨塔数据；切到赛厨榜并记住', async () => {
     const w = mount(TowerView, { global: { stubs } });
     await flushPromises();

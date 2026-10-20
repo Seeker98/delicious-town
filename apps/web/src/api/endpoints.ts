@@ -141,6 +141,7 @@ import type {
   RankDto,
   RenownShopDto,
   TowerDto,
+  TowerHomeDto,
   RiderCandidateDto,
   TakeawayClaimDto,
   TakeawayDeliveryDto,
@@ -435,6 +436,8 @@ export const endpoints = {
   barSpiceStart: () => api.post<SpiceDto>('/api/v1/bar/spice/start'),
   barSpiceGuess: (guess: number[]) => api.post<SpiceDto>('/api/v1/bar/spice/guess', { guess }),
   tower: () => api.get<TowerDto>('/api/v1/tower'),
+  /** 进厨塔页一次读三份（backlog） */
+  towerHome: () => api.get<TowerHomeDto>('/api/v1/tower/home'),
   towerChallenge: (floor: number, test: boolean) =>
     api.post<DuelResultDto>('/api/v1/tower/challenge', { floor, test }),
   towerRank: () => api.get<RankDto>('/api/v1/tower/rank'),

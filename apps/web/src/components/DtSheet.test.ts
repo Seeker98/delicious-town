@@ -1,5 +1,5 @@
 import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { defineComponent, h, ref } from 'vue';
 import DtSheet from './DtSheet.vue';
 
@@ -71,6 +71,41 @@ describe('底部面板（界面改版 P3，设计 §5 第 6、7 条）', () => {
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     await flushPromises();
     expect(document.activeElement?.id).toBe('opener');
+    w.unmount();
+  });
+
+  it('关掉时打开按钮还灰着（请求中）：等它恢复再把焦点放回去（backlog P6：菜场买完焦点回不去）', async () => {
+    vi.useFakeTimers();
+    const busy = ref(false);
+    const open = ref(false);
+    const Busy = defineComponent({
+      setup: () => () => [
+        h(
+          'button',
+          {
+            id: 'opener3',
+            'data-testid': 'opener3',
+            disabled: busy.value,
+            onClick: () => (open.value = true),
+          },
+          '买',
+        ),
+        h(DtSheet, { open: open.value, title: '买', onClose: () => (open.value = false) }),
+      ],
+    });
+    const w = mount(Busy, { attachTo: document.body, global: { stubs: { teleport: true } } });
+    (document.getElementById('opener3') as HTMLButtonElement).focus();
+    open.value = true;
+    await flushPromises();
+    busy.value = true;
+    open.value = false;
+    await flushPromises();
+    expect(document.activeElement?.id).not.toBe('opener3');
+    busy.value = false;
+    await flushPromises();
+    await vi.advanceTimersByTimeAsync(150);
+    expect(document.activeElement?.id).toBe('opener3');
+    vi.useRealTimers();
     w.unmount();
   });
 

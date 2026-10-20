@@ -51,8 +51,21 @@ const loadRank = () =>
 const loadShop = () =>
   fetchOne('shop', endpoints.renownShop, (v) => (shop.value = v), t.value.tower.shop.loadFailed);
 const LOAD: Record<Tab, () => Promise<void>> = { tower: loadTower, rank: loadRank, shop: loadShop };
-/** 挑战、占位、兑换都会改头图上的数字（厨力不变、名次和声望会变）：三样一起重读 */
-const loadAll = () => Promise.all([loadTower(), loadRank(), loadShop()]).then(() => undefined);
+/**
+ * 挑战、占位、兑换都会改头图上的数字（厨力不变、名次和声望会变）：三样一起重读。
+ * 先用合并的接口一次读完（backlog）；它读失败（旧服务端没有、或某一份出错）再分开读，哪份失败那个标签显示重试
+ */
+async function loadAll() {
+  try {
+    const h = await endpoints.towerHome();
+    data.value = h.tower;
+    rank.value = h.rank;
+    shop.value = h.shop;
+    failed.value = { tower: false, rank: false, shop: false };
+  } catch {
+    await Promise.all([loadTower(), loadRank(), loadShop()]);
+  }
+}
 onMounted(loadAll);
 /** 切标签重读这一页的数据：赛厨榜是抢位的，切回来要看到最新的榜（P9 终审 I5） */
 watch(tab, (k) => void LOAD[k]());

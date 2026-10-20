@@ -1,5 +1,5 @@
 import type { Kysely } from 'kysely';
-import { GOODS, type GameConfig } from '@dt/config';
+import { GOODS, type GameConfig, type ShardSettings } from '@dt/config';
 import { gameParts, type DuelResultDto, type TowerDto } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import { invalidState, limitReached } from '../../core/errors';
@@ -42,7 +42,7 @@ export async function towerView(
   rest: RestaurantRow,
   t: TowerTuning,
   now: Date,
-  off = false,
+  settings: Pick<ShardSettings, 'tuning' | 'features'>,
 ): Promise<TowerDto> {
   const { day, hour } = gameParts(now);
   const state = await db
@@ -67,7 +67,7 @@ export async function towerView(
     .executeTakeFirst();
   const mcs = await watchmanMcs(db, rest.shard_id);
   const total = towerDailyTotal(count(KEY.ticket), t);
-  const me = await cachedSide(db, config, rest, 'attack', off);
+  const me = await cachedSide(db, config, rest, 'attack', settings, now);
   return {
     duelJudges: t.duel.judges,
     duelWeights: t.duel.weights,

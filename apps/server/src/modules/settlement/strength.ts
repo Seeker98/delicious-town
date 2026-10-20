@@ -3,6 +3,7 @@ import type { Tuning } from '@dt/config';
 import { luckRate, seededRng, type Rng } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import { gameSeed } from '../../core/seed';
+import { cachedAgg } from '../effects/service';
 
 /** 一次体力恢复（真实定时任务和快速模型共用）：已满返回 null */
 export function strengthGain(
@@ -30,7 +31,8 @@ export async function regenStrength(
   period: string,
   _now: Date,
 ): Promise<{ updated: number }> {
-  const { tuning } = await d.shards.settings(shardId);
+  const settings = await d.shards.settings(shardId);
+  const { tuning } = settings;
   const rows = await d.db
     .selectFrom('restaurant')
     .select(['id', 'strength', 'strength_max', 'luck', 'effect_agg'])
@@ -40,12 +42,9 @@ export async function regenStrength(
   const adds: number[] = [];
   const caps: number[] = [];
   for (const r of rows) {
-    const g = strengthGain(
-      r,
-      r.effect_agg ?? {},
-      tuning,
-      seededRng(gameSeed(shardId, 'strength', period, r.id)),
-    );
+    // 厨具开关变了的缓存当场重算（backlog）
+    const agg = r.effect_agg ? await cachedAgg(d.db, r, _now, d.config, settings) : {};
+    const g = strengthGain(r, agg, tuning, seededRng(gameSeed(shardId, 'strength', period, r.id)));
     if (!g) continue;
     ids.push(r.id);
     adds.push(g.add);
