@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import CookbookListPanel from '../components/cookbook/CookbookListPanel.vue';
 import McPanel from '../components/cookbook/McPanel.vue';
 import ProgressPanel from '../components/cookbook/ProgressPanel.vue';
+import DtTabPanel from '../components/DtTabPanel.vue';
 import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
 import { useTabQuery } from '../composables/useTabQuery';
@@ -30,7 +31,9 @@ const tabItems = computed(() => TABS.value.map((k) => ({ key: k, label: label(k)
 
 <template>
   <DtTabs v-model="tab" :tabs="tabItems" />
-  <McPanel v-if="tab === 'mc'" />
-  <ProgressPanel v-else-if="tab === 'progress'" />
-  <CookbookListPanel v-else />
+  <DtTabPanel :tab="tab">
+    <McPanel v-if="tab === 'mc'" />
+    <ProgressPanel v-else-if="tab === 'progress'" />
+    <CookbookListPanel v-else />
+  </DtTabPanel>
 </template>

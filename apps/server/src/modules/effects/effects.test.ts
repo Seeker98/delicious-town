@@ -3,7 +3,13 @@ import { FUND } from '@dt/config';
 import { testDb } from '../../../test/db';
 import { testConfig } from '../../../test/config';
 import { createAccountRow, createRestaurantRow, createShard } from '../../../test/fixtures';
-import { getEffectAgg, listActiveEffects, removeEffectSource, upsertEffectSource } from './service';
+import {
+  cachedAgg,
+  getEffectAgg,
+  listActiveEffects,
+  removeEffectSource,
+  upsertEffectSource,
+} from './service';
 import { gid } from '../../../test/items';
 
 const db = testDb();
@@ -28,6 +34,39 @@ describe('基金勋章不算勋章收藏（240-2 终审 I1：设计写明只加�
       expiresAt: new Date(now.getTime() + 3600_000),
     });
     expect(await agg(restId, now)).toEqual({ expRate: 0.15 });
+  });
+});
+
+describe('不锁店读缓存的汇总（backlog：区服关掉厨具后三处读旧缓存）', () => {
+  const row = async (restId: number) =>
+    db
+      .selectFrom('restaurant')
+      .select(['id', 'effect_agg'])
+      .where('id', '=', restId)
+      .executeTakeFirstOrThrow();
+  it('缓存是按另一种厨具开关算的：当场重算并写回；开关一致就直接用缓存；缓存被别处改过就不写回', async () => {
+    const restId = await newRest();
+    const now = new Date();
+    // 开着厨具时算的缓存（里面有厨具给的幸运）
+    await db
+      .updateTable('restaurant')
+      .set({ effect_agg: JSON.stringify({ luckValue: 7 }), effect_dirty: false })
+      .where('id', '=', restId)
+      .execute();
+    const off = { tuning: config.tuning, features: { equip: false } };
+    const on = { tuning: config.tuning, features: {} };
+    expect(await cachedAgg(db, await row(restId), now, config, on)).toEqual({ luckValue: 7 });
+    expect(await cachedAgg(db, await row(restId), now, config, off)).toEqual({ equipOff: 1 });
+    expect((await row(restId)).effect_agg).toEqual({ equipOff: 1 });
+    // 读到以后别的操作改了缓存：重算的结果照样返回，但不盖掉
+    const stale = await row(restId);
+    await db
+      .updateTable('restaurant')
+      .set({ effect_agg: JSON.stringify({ equipOff: 1, luckValue: 3 }) })
+      .where('id', '=', restId)
+      .execute();
+    expect(await cachedAgg(db, stale, now, config, on)).toEqual({});
+    expect((await row(restId)).effect_agg).toEqual({ equipOff: 1, luckValue: 3 });
   });
 });
 

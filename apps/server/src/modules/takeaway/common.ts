@@ -4,6 +4,7 @@ import { invalidState } from '../../core/errors';
 import { opLuck } from '../../core/luck';
 import type { Op } from '../../core/op';
 import type { DB, TakeawayStateRow } from '../../db/schema';
+import { cachedAgg } from '../effects/service';
 
 /** 每日计数键（日期一律传游戏日） */
 export const KEY = { refresh: 'takeaway.refresh' } as const;
@@ -62,10 +63,12 @@ export async function riderLuckRate(o: Op, riderRestId: number): Promise<number>
   if (riderRestId === o.rest.id) return (await opLuck(o)).rate;
   const r = await o.tx
     .selectFrom('restaurant')
-    .select(['luck', 'effect_agg'])
+    .select(['id', 'luck', 'effect_agg'])
     .where('id', '=', riderRestId)
     .executeTakeFirstOrThrow();
-  return luckRate(r.luck + (r.effect_agg.luckValue ?? 0));
+  // 厨具开关变了的缓存当场重算（backlog）
+  const agg = await cachedAgg(o.tx, r, o.now, o.config, o.settings);
+  return luckRate(r.luck + (agg.luckValue ?? 0));
 }
 
 /** 持有数量；已过期的勋章算 0（不在操作里时用） */

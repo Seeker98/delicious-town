@@ -5,6 +5,7 @@ import DtRow from '../components/DtRow.vue';
 import DtSheet from '../components/DtSheet.vue';
 import DtSkeleton from '../components/DtSkeleton.vue';
 import DtStepper from '../components/DtStepper.vue';
+import DtTabPanel from '../components/DtTabPanel.vue';
 import DtTabs from '../components/DtTabs.vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
@@ -156,199 +157,205 @@ async function buy() {
 
 <template>
   <DtTabs v-model="tab" :tabs="tabItems" />
-  <DtEmpty v-if="!shop && failed" :title="t.store.shop.loadFailed" data-testid="shop-failed" />
-  <DtSkeleton v-else-if="!shop" :rows="6" />
-  <template v-else-if="tab !== 'special'">
-    <div v-if="balance !== null" class="dt-block-head" data-testid="shop-balance">
-      <h2 class="dt-block-title">
-        {{ diamond ? t.store.shop.myDiamond : t.store.shop.myCoin }}
-        <span class="dt-shop-bal">{{ formatNum(balance) }}</span>
-      </h2>
-    </div>
-    <div
-      class="dt-pills dt-pills-scroll"
-      role="group"
-      :aria-label="t.store.shop.catLabel"
-      data-testid="shop-cats"
-    >
-      <button
-        type="button"
-        :class="{ active: cat === 'all' }"
-        :aria-pressed="cat === 'all'"
-        data-testid="cat-all"
-        @click="cat = 'all'"
-      >
-        {{ t.common.all }}
-      </button>
-      <button
-        v-for="c in cats"
-        :key="c"
-        type="button"
-        :class="{ active: cat === c }"
-        :aria-pressed="cat === c"
-        :data-testid="`cat-${c}`"
-        @click="cat = c"
-      >
-        {{ t.store.shop.cats[c] }}
-      </button>
-    </div>
-    <div class="dt-card dt-rows-card">
-      <DtRow
-        v-for="it in shown"
-        :key="it.goodsId"
-        class="dt-row-wrap"
-        strong
-        :data-testid="`item-${it.goodsId}`"
-      >
-        <template #icon><DtArt :name="catalog.goodsArt(it.goodsId)" :size="28" /></template>
-        <template #title>{{ catalog.goodsName(it.goodsId) }}</template>
-        <template #sub
-          ><span
-            v-if="reason(it)"
-            :class="it.blocked === 'star' ? 'dt-tag dt-tag-warn' : 'dt-tag-danger'"
-            :data-testid="`cap-${it.goodsId}`"
-            >{{ reason(it) }}</span
-          ><span v-else-if="it.daily" class="dt-tag-mute" :data-testid="`cap-${it.goodsId}`">{{
-            t.store.shop.dailyLimit(it.daily.limit)
-          }}</span
-          ><span v-else-if="it.weekly" class="dt-tag-mute" :data-testid="`cap-${it.goodsId}`">{{
-            t.store.shop.weeklyLimit(it.weekly.limit)
-          }}</span
-          ><span v-else-if="it.limit === 1" class="dt-tag-mute" :data-testid="`cap-${it.goodsId}`">{{
-            t.store.shop.limitOne
-          }}</span>
-          <span :data-testid="`info-${it.goodsId}`">{{ sub(it) }}</span></template
-        >
-        <template #end>
-          <button
-            type="button"
-            :class="['dt-price-btn', { 'is-off': it.maxBuy === 0 }]"
-            :disabled="busy"
-            :aria-label="t.store.shop.open(catalog.goodsName(it.goodsId), formatNum(it.price))"
-            :data-testid="`buy-${it.goodsId}`"
-            @click="open(it)"
-          >
-            <DtArt :name="diamond ? 'res-diamond' : 'res-coin-silver'" :size="16" />{{ formatNum(it.price) }}
-          </button>
-        </template>
-      </DtRow>
-    </div>
-  </template>
-  <template v-else>
-    <div class="dt-block-head">
-      <h2 class="dt-block-title">{{ t.store.shop.specialTitle }}</h2>
-      <span class="dt-block-more">{{ t.store.shop.specialNoon }}</span>
-    </div>
-    <DtEmpty v-if="!special" :title="t.store.shop.specialSoon" data-testid="special-none" />
-    <div v-else class="dt-card dt-rows-card">
-      <DtRow strong data-testid="special">
-        <template #icon><DtArt :name="catalog.goodsArt(special.goodsId)" :size="28" /></template>
-        <template #title
-          ><span data-testid="special-title"
-            >{{ catalog.goodsName(special.goodsId)
-            }}<span class="dt-tag-danger">{{
-              t.store.shop.tier(Math.round((1 - special.discount) * 100), special.tierName)
-            }}</span></span
-          ></template
-        >
-        <template #sub
-          ><span class="dt-row-bar"
-            ><span class="dt-meter"
-              ><i :style="{ width: `${(specialLeft / special.stock) * 100}%` }"></i></span
-            >{{ t.store.shop.left(specialLeft, special.stock) }}</span
-          ></template
-        >
-        <template #end>
-          <button
-            type="button"
-            class="dt-price-btn"
-            :disabled="busy || specialLeft <= 0"
-            :aria-label="t.store.shop.open(catalog.goodsName(special.goodsId), formatNum(special.price))"
-            data-testid="special-buy"
-            @click="openSpecial"
-          >
-            <DtArt name="res-coin-silver" :size="16" />{{ formatNum(special.price) }}
-          </button>
-        </template>
-      </DtRow>
-    </div>
-  </template>
-
-  <DtSheet
-    :open="sheetGoods != null"
-    :title="sheetGoods != null ? catalog.goodsName(sheetGoods) : ''"
-    @close="close"
-  >
-    <div v-if="sheetGoods != null" data-testid="shop-sheet">
-      <div class="dt-detail-head">
-        <span class="dt-detail-art"><DtArt :name="catalog.goodsArt(sheetGoods)" :size="52" /></span>
-        <div class="dt-detail-info">
-          <div v-if="pickedSpecial && special">
-            {{ t.store.shop.tier(Math.round((1 - special.discount) * 100), special.tierName) }}
-          </div>
-          <div v-else-if="picked">{{ t.store.shop.cats[shopCat(picked.goodsId)] }}</div>
-          <div class="dt-detail-sub">
-            <template v-if="pickedSpecial && special">{{
-              t.store.shop.left(specialLeft, special.stock)
-            }}</template>
-            <template v-else-if="picked">{{ sub(picked) }}</template>
-          </div>
-        </div>
+  <DtTabPanel :tab="tab">
+    <DtEmpty v-if="!shop && failed" :title="t.store.shop.loadFailed" data-testid="shop-failed" />
+    <DtSkeleton v-else-if="!shop" :rows="6" />
+    <template v-else-if="tab !== 'special'">
+      <div v-if="balance !== null" class="dt-block-head" data-testid="shop-balance">
+        <h2 class="dt-block-title">
+          {{ diamond ? t.store.shop.myDiamond : t.store.shop.myCoin }}
+          <span class="dt-shop-bal">{{ formatNum(balance) }}</span>
+        </h2>
       </div>
-      <p v-if="catalog.goods(sheetGoods)?.desc" class="dt-detail-note" data-testid="sheet-desc">
-        {{ catalog.goods(sheetGoods)?.desc }}
-      </p>
-      <div v-if="picked && reason(picked)" class="dt-detail-note text-danger" data-testid="sheet-reason">
-        {{ reason(picked) }}
-      </div>
-      <div v-if="picked && picked.maxBuy > 1" class="dt-detail-qty">
-        <span class="flex-fill">{{ t.store.shop.howMany }}</span>
+      <div
+        class="dt-pills dt-pills-scroll"
+        role="group"
+        :aria-label="t.store.shop.catLabel"
+        data-testid="shop-cats"
+      >
         <button
           type="button"
-          class="dt-choice"
-          :aria-pressed="num === picked.maxBuy"
-          data-testid="qty-max"
-          @click="num = picked.maxBuy"
+          :class="{ active: cat === 'all' }"
+          :aria-pressed="cat === 'all'"
+          data-testid="cat-all"
+          @click="cat = 'all'"
         >
-          {{ t.store.shop.max(formatNum(picked.maxBuy)) }}
+          {{ t.common.all }}
         </button>
-        <DtStepper v-model="num" :min="1" :max="picked.maxBuy" testid="qty-sheet" />
-      </div>
-      <dl class="dt-sum" data-testid="sheet-sum">
-        <div>
-          <dt>{{ t.store.shop.unit }}</dt>
-          <dd>{{ t.store.shop.price(formatNum(unit), sheetDiamond) }}</dd>
-        </div>
-        <div>
-          <dt>{{ t.store.shop.total }}</dt>
-          <dd>
-            <b data-testid="sheet-total">{{ t.store.shop.price(formatNum(total), sheetDiamond) }}</b>
-          </dd>
-        </div>
-        <!-- 余额不够时不写“买完剩 0”，写还差多少（backlog P8） -->
-        <div v-if="sheetBalance !== null && sheetBalance >= total">
-          <dt>{{ t.store.shop.after }}</dt>
-          <dd>{{ t.store.shop.price(formatNum(sheetBalance - total), sheetDiamond) }}</dd>
-        </div>
-        <div v-else-if="sheetBalance !== null" data-testid="sheet-short">
-          <dt>{{ t.store.shop.short }}</dt>
-          <dd class="text-danger">{{ t.store.shop.price(formatNum(total - sheetBalance), sheetDiamond) }}</dd>
-        </div>
-      </dl>
-    </div>
-    <template v-if="sheetGoods != null" #actions>
-      <div class="dt-sheet-pair">
-        <button type="button" class="btn btn-light" @click="close">{{ t.common.cancel }}</button>
         <button
+          v-for="c in cats"
+          :key="c"
           type="button"
-          class="btn btn-primary"
-          :disabled="busy || !canBuy"
-          data-testid="sheet-buy"
-          @click="buy"
+          :class="{ active: cat === c }"
+          :aria-pressed="cat === c"
+          :data-testid="`cat-${c}`"
+          @click="cat = c"
         >
-          {{ pickedSpecial ? t.store.shop.grab : t.store.shop.buyN(count) }}
+          {{ t.store.shop.cats[c] }}
         </button>
+      </div>
+      <div class="dt-card dt-rows-card">
+        <DtRow
+          v-for="it in shown"
+          :key="it.goodsId"
+          class="dt-row-wrap"
+          strong
+          :data-testid="`item-${it.goodsId}`"
+        >
+          <template #icon><DtArt :name="catalog.goodsArt(it.goodsId)" :size="28" /></template>
+          <template #title>{{ catalog.goodsName(it.goodsId) }}</template>
+          <template #sub
+            ><span
+              v-if="reason(it)"
+              :class="it.blocked === 'star' ? 'dt-tag dt-tag-warn' : 'dt-tag-danger'"
+              :data-testid="`cap-${it.goodsId}`"
+              >{{ reason(it) }}</span
+            ><span v-else-if="it.daily" class="dt-tag-mute" :data-testid="`cap-${it.goodsId}`">{{
+              t.store.shop.dailyLimit(it.daily.limit)
+            }}</span
+            ><span v-else-if="it.weekly" class="dt-tag-mute" :data-testid="`cap-${it.goodsId}`">{{
+              t.store.shop.weeklyLimit(it.weekly.limit)
+            }}</span
+            ><span v-else-if="it.limit === 1" class="dt-tag-mute" :data-testid="`cap-${it.goodsId}`">{{
+              t.store.shop.limitOne
+            }}</span>
+            <span :data-testid="`info-${it.goodsId}`">{{ sub(it) }}</span></template
+          >
+          <template #end>
+            <button
+              type="button"
+              :class="['dt-price-btn', { 'is-off': it.maxBuy === 0 }]"
+              :disabled="busy"
+              :aria-label="t.store.shop.open(catalog.goodsName(it.goodsId), formatNum(it.price))"
+              :data-testid="`buy-${it.goodsId}`"
+              @click="open(it)"
+            >
+              <DtArt :name="diamond ? 'res-diamond' : 'res-coin-silver'" :size="16" />{{
+                formatNum(it.price)
+              }}
+            </button>
+          </template>
+        </DtRow>
       </div>
     </template>
-  </DtSheet>
+    <template v-else>
+      <div class="dt-block-head">
+        <h2 class="dt-block-title">{{ t.store.shop.specialTitle }}</h2>
+        <span class="dt-block-more">{{ t.store.shop.specialNoon }}</span>
+      </div>
+      <DtEmpty v-if="!special" :title="t.store.shop.specialSoon" data-testid="special-none" />
+      <div v-else class="dt-card dt-rows-card">
+        <DtRow strong data-testid="special">
+          <template #icon><DtArt :name="catalog.goodsArt(special.goodsId)" :size="28" /></template>
+          <template #title
+            ><span data-testid="special-title"
+              >{{ catalog.goodsName(special.goodsId)
+              }}<span class="dt-tag-danger">{{
+                t.store.shop.tier(Math.round((1 - special.discount) * 100), special.tierName)
+              }}</span></span
+            ></template
+          >
+          <template #sub
+            ><span class="dt-row-bar"
+              ><span class="dt-meter"
+                ><i :style="{ width: `${(specialLeft / special.stock) * 100}%` }"></i></span
+              >{{ t.store.shop.left(specialLeft, special.stock) }}</span
+            ></template
+          >
+          <template #end>
+            <button
+              type="button"
+              class="dt-price-btn"
+              :disabled="busy || specialLeft <= 0"
+              :aria-label="t.store.shop.open(catalog.goodsName(special.goodsId), formatNum(special.price))"
+              data-testid="special-buy"
+              @click="openSpecial"
+            >
+              <DtArt name="res-coin-silver" :size="16" />{{ formatNum(special.price) }}
+            </button>
+          </template>
+        </DtRow>
+      </div>
+    </template>
+
+    <DtSheet
+      :open="sheetGoods != null"
+      :title="sheetGoods != null ? catalog.goodsName(sheetGoods) : ''"
+      @close="close"
+    >
+      <div v-if="sheetGoods != null" data-testid="shop-sheet">
+        <div class="dt-detail-head">
+          <span class="dt-detail-art"><DtArt :name="catalog.goodsArt(sheetGoods)" :size="52" /></span>
+          <div class="dt-detail-info">
+            <div v-if="pickedSpecial && special">
+              {{ t.store.shop.tier(Math.round((1 - special.discount) * 100), special.tierName) }}
+            </div>
+            <div v-else-if="picked">{{ t.store.shop.cats[shopCat(picked.goodsId)] }}</div>
+            <div class="dt-detail-sub">
+              <template v-if="pickedSpecial && special">{{
+                t.store.shop.left(specialLeft, special.stock)
+              }}</template>
+              <template v-else-if="picked">{{ sub(picked) }}</template>
+            </div>
+          </div>
+        </div>
+        <p v-if="catalog.goods(sheetGoods)?.desc" class="dt-detail-note" data-testid="sheet-desc">
+          {{ catalog.goods(sheetGoods)?.desc }}
+        </p>
+        <div v-if="picked && reason(picked)" class="dt-detail-note text-danger" data-testid="sheet-reason">
+          {{ reason(picked) }}
+        </div>
+        <div v-if="picked && picked.maxBuy > 1" class="dt-detail-qty">
+          <span class="flex-fill">{{ t.store.shop.howMany }}</span>
+          <button
+            type="button"
+            class="dt-choice"
+            :aria-pressed="num === picked.maxBuy"
+            data-testid="qty-max"
+            @click="num = picked.maxBuy"
+          >
+            {{ t.store.shop.max(formatNum(picked.maxBuy)) }}
+          </button>
+          <DtStepper v-model="num" :min="1" :max="picked.maxBuy" testid="qty-sheet" />
+        </div>
+        <dl class="dt-sum" data-testid="sheet-sum">
+          <div>
+            <dt>{{ t.store.shop.unit }}</dt>
+            <dd>{{ t.store.shop.price(formatNum(unit), sheetDiamond) }}</dd>
+          </div>
+          <div>
+            <dt>{{ t.store.shop.total }}</dt>
+            <dd>
+              <b data-testid="sheet-total">{{ t.store.shop.price(formatNum(total), sheetDiamond) }}</b>
+            </dd>
+          </div>
+          <!-- 余额不够时不写“买完剩 0”，写还差多少（backlog P8） -->
+          <div v-if="sheetBalance !== null && sheetBalance >= total">
+            <dt>{{ t.store.shop.after }}</dt>
+            <dd>{{ t.store.shop.price(formatNum(sheetBalance - total), sheetDiamond) }}</dd>
+          </div>
+          <div v-else-if="sheetBalance !== null" data-testid="sheet-short">
+            <dt>{{ t.store.shop.short }}</dt>
+            <dd class="text-danger">
+              {{ t.store.shop.price(formatNum(total - sheetBalance), sheetDiamond) }}
+            </dd>
+          </div>
+        </dl>
+      </div>
+      <template v-if="sheetGoods != null" #actions>
+        <div class="dt-sheet-pair">
+          <button type="button" class="btn btn-light" @click="close">{{ t.common.cancel }}</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            :disabled="busy || !canBuy"
+            data-testid="sheet-buy"
+            @click="buy"
+          >
+            {{ pickedSpecial ? t.store.shop.grab : t.store.shop.buyN(count) }}
+          </button>
+        </div>
+      </template>
+    </DtSheet>
+  </DtTabPanel>
 </template>

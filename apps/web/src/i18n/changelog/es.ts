@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  batch1020b:
+    'Pequeños arreglos: cuando un servidor desactiva los utensilios, la recuperación de energía, los defensores de la clasificación y la suerte de los repartidores amigos siguen el nuevo ajuste al momento; la torre de chefs carga de una vez y abre más rápido; tras comprar en el mercado y cerrar un panel, el foco vuelve al botón usado; las barras de pestañas y su contenido coinciden para los lectores de pantalla',
   batch1020:
     'Un lote de pequeños arreglos: devolver los me gusta con un toque ahora explica por qué fallaron algunos, deja de reintentar con quienes ya no son amigos y se detiene enseguida si tu renombre es negativo; los resultados de la apuesta del mercado aparecen en la actividad del restaurante con los premios recibidos; disparar misiles al guardián tiene botones rápidos de 5, 10, 20 y 50; un restaurante adquirido ve en su historial de ingresos y en la ventana de monedas cuánto fue para el dueño; las listas de valoración, en venta e inversores de adquisiciones muestran la puerta de cada restaurante; los restaurantes de cuentas vinculadas que posees indican que no se pueden atender y «Atender todos» los omite; las reglas de adquisición, el premio del plato estrella de ayer y de dónde salen los objetos de tasación siguen los ajustes del servidor; la wiki indica que la tasación da un plato al azar de ese rango de niveles; el Pack de inicio avisa si el almacén está demasiado lleno en vez de pasarse del límite',
   email1019:

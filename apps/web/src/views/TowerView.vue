@@ -6,6 +6,7 @@ import towerScene from '../art/scene/tower.svg?url';
 import DtArt from '../components/DtArt.vue';
 import DtEmpty from '../components/DtEmpty.vue';
 import DtSkeleton from '../components/DtSkeleton.vue';
+import DtTabPanel from '../components/DtTabPanel.vue';
 import DtTabs from '../components/DtTabs.vue';
 import PlaceScene from '../components/place/PlaceScene.vue';
 import { useT } from '../composables/useT';
@@ -51,8 +52,21 @@ const loadRank = () =>
 const loadShop = () =>
   fetchOne('shop', endpoints.renownShop, (v) => (shop.value = v), t.value.tower.shop.loadFailed);
 const LOAD: Record<Tab, () => Promise<void>> = { tower: loadTower, rank: loadRank, shop: loadShop };
-/** 挑战、占位、兑换都会改头图上的数字（厨力不变、名次和声望会变）：三样一起重读 */
-const loadAll = () => Promise.all([loadTower(), loadRank(), loadShop()]).then(() => undefined);
+/**
+ * 挑战、占位、兑换都会改头图上的数字（厨力不变、名次和声望会变）：三样一起重读。
+ * 先用合并的接口一次读完（backlog）；它读失败（旧服务端没有、或某一份出错）再分开读，哪份失败那个标签显示重试
+ */
+async function loadAll() {
+  try {
+    const h = await endpoints.towerHome();
+    data.value = h.tower;
+    rank.value = h.rank;
+    shop.value = h.shop;
+    failed.value = { tower: false, rank: false, shop: false };
+  } catch {
+    await Promise.all([loadTower(), loadRank(), loadShop()]);
+  }
+}
 onMounted(loadAll);
 /** 切标签重读这一页的数据：赛厨榜是抢位的，切回来要看到最新的榜（P9 终审 I5） */
 watch(tab, (k) => void LOAD[k]());
@@ -73,31 +87,33 @@ watch(tab, (k) => void LOAD[k]());
     >
   </PlaceScene>
   <DtTabs v-model="tab" :tabs="tabItems" />
-  <template v-if="tab === 'tower'">
-    <FloorPanel v-if="data" :data="data" @reload="loadAll" />
-    <DtEmpty v-else-if="failed.tower" :title="t.tower.loadFailed" data-testid="tower-failed"
-      ><button type="button" class="btn btn-sm btn-outline-primary" @click="loadTower">
-        {{ t.town.retry }}
-      </button></DtEmpty
-    >
-    <DtSkeleton v-else :rows="6" />
-  </template>
-  <template v-else-if="tab === 'rank'">
-    <RankPanel v-if="rank" :data="rank" :reload="loadAll" @reload="loadAll" />
-    <DtEmpty v-else-if="failed.rank" :title="t.tower.rank.loadFailed" data-testid="rank-failed"
-      ><button type="button" class="btn btn-sm btn-outline-primary" @click="loadRank">
-        {{ t.town.retry }}
-      </button></DtEmpty
-    >
-    <DtSkeleton v-else :rows="6" />
-  </template>
-  <template v-else>
-    <ShopPanel v-if="shop" :data="shop" @reload="loadShop" />
-    <DtEmpty v-else-if="failed.shop" :title="t.tower.shop.loadFailed" data-testid="shop-failed"
-      ><button type="button" class="btn btn-sm btn-outline-primary" @click="loadShop">
-        {{ t.town.retry }}
-      </button></DtEmpty
-    >
-    <DtSkeleton v-else :rows="5" />
-  </template>
+  <DtTabPanel :tab="tab">
+    <template v-if="tab === 'tower'">
+      <FloorPanel v-if="data" :data="data" @reload="loadAll" />
+      <DtEmpty v-else-if="failed.tower" :title="t.tower.loadFailed" data-testid="tower-failed"
+        ><button type="button" class="btn btn-sm btn-outline-primary" @click="loadTower">
+          {{ t.town.retry }}
+        </button></DtEmpty
+      >
+      <DtSkeleton v-else :rows="6" />
+    </template>
+    <template v-else-if="tab === 'rank'">
+      <RankPanel v-if="rank" :data="rank" :reload="loadAll" @reload="loadAll" />
+      <DtEmpty v-else-if="failed.rank" :title="t.tower.rank.loadFailed" data-testid="rank-failed"
+        ><button type="button" class="btn btn-sm btn-outline-primary" @click="loadRank">
+          {{ t.town.retry }}
+        </button></DtEmpty
+      >
+      <DtSkeleton v-else :rows="6" />
+    </template>
+    <template v-else>
+      <ShopPanel v-if="shop" :data="shop" @reload="loadShop" />
+      <DtEmpty v-else-if="failed.shop" :title="t.tower.shop.loadFailed" data-testid="shop-failed"
+        ><button type="button" class="btn btn-sm btn-outline-primary" @click="loadShop">
+          {{ t.town.retry }}
+        </button></DtEmpty
+      >
+      <DtSkeleton v-else :rows="5" />
+    </template>
+  </DtTabPanel>
 </template>

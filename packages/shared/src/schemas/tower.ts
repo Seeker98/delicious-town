@@ -171,3 +171,10 @@ export interface RenownShopDto {
   renown: number;
   items: RenownShopItemDto[];
 }
+
+/** 进厨塔页一次读三份（backlog：原来并发三个请求，各查一遍店和功能开关） */
+export interface TowerHomeDto {
+  tower: TowerDto;
+  rank: RankDto;
+  shop: RenownShopDto;
+}

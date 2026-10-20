@@ -76,8 +76,29 @@ function closed() {
   void nextTick(() => {
     const el = justClosedBack;
     justClosedBack = null;
-    if (openCount === 0) el?.focus();
+    restoreFocus(el);
   });
+}
+/**
+ * 焦点回到打开面板的按钮（backlog P6：菜场买完、橱柜用完后焦点回不去）：
+ * 按钮还在请求中被禁用、或列表重新渲染换了元素时，隔 100 毫秒再试（最多 2 秒），按同一个 data-testid 找回来；
+ * 这期间焦点已经去了别处（玩家点了别的、又开了面板）就不抢
+ */
+function restoreFocus(el: HTMLElement | null, tries = 0) {
+  if (!el || openCount > 0) return;
+  const active = document.activeElement;
+  if (tries > 0 && active && active !== document.body) return;
+  const id = el.dataset.testid;
+  const target = el.isConnected
+    ? el
+    : id
+      ? document.querySelector<HTMLElement>(`[data-testid="${id}"]`)
+      : null;
+  if (target && !(target as HTMLButtonElement).disabled) {
+    target.focus();
+    return;
+  }
+  if (tries < 20) setTimeout(() => restoreFocus(el, tries + 1), 100);
 }
 watch(
   () => props.open,

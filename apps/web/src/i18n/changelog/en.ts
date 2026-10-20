@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  batch1020b:
+    'Small fixes: when a server turns Cookware off, Stamina recovery, ranking defenders and friend riders’ luck follow the new setting right away; the Chef Tower page loads in one go and opens faster; after buying at the market and closing a panel, focus returns to the button you used; tab bars and their content now match up for screen readers',
   batch1020:
     'A batch of small fixes: one-tap thumbs back now says why some failed, stops retrying people who are no longer friends and stops right away when your Renown is negative; market guessing results now appear in the restaurant activity with the rewards you got; firing missiles at the guardian has quick 5, 10, 20 and 50 buttons; an acquired restaurant’s income log and coin popup show how much went to the owner; the acquisition valuation, for-sale and investor lists show restaurant doors; linked-account restaurants you own say they can’t be tended and “Tend all” skips them; the acquisition rules, the yesterday’s signature dish prize and where to get appraisal items follow the server settings; the wiki’s signature dish appraisal now says it gives a random dish of that level range; the Starter Pack warns when storage is too full instead of going over the limit',
   email1019:

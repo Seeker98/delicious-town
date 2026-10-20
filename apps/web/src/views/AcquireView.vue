@@ -13,6 +13,7 @@ import DtArt from '../components/DtArt.vue';
 import DtEmpty from '../components/DtEmpty.vue';
 import DtRow from '../components/DtRow.vue';
 import DtSheet from '../components/DtSheet.vue';
+import DtTabPanel from '../components/DtTabPanel.vue';
 import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
 import { useTabQuery } from '../composables/useTabQuery';
@@ -323,545 +324,574 @@ onMounted(load);
 <template>
   <div>
     <DtTabs v-model="tab" :tabs="tabItems" testid-prefix="acquire-tab-" />
-
-    <template v-if="tab === 'price'">
-      <DtEmpty v-if="loaded && price.length === 0" :title="t.acquire.rankEmpty" />
-      <div v-else class="dt-card dt-rows-card">
-        <button
-          v-for="(b, i) in price"
-          :key="b.restId"
-          type="button"
-          class="dt-row is-link"
-          :data-testid="`acquire-price-${b.restId}`"
-          @click="openTarget(b, 'acquire')"
-        >
-          <span :class="['dt-rank-badge', { 'is-top': i < 3 }]">{{ i + 1 }}</span>
-          <DtArt v-if="b.door !== undefined" class="dt-acq-door" :name="catalog.doorArt(b.door)" :size="28" />
-          <span class="dt-row-main">
-            <span class="dt-row-title">{{ b.name }}</span>
-            <span class="dt-row-sub">{{ priceLine(b) }}</span>
-            <span v-if="b.owner" class="dt-row-sub"
-              ><span class="dt-tag-primary">{{ t.acquire.ownerTag(b.owner.name) }}</span></span
-            >
-          </span>
-        </button>
-      </div>
-    </template>
-
-    <template v-else-if="tab === 'market'">
-      <DtEmpty v-if="loaded && market.length === 0" :title="t.acquire.marketEmpty" />
-      <div v-else class="dt-card dt-rows-card">
-        <button
-          v-for="b in market"
-          :key="b.restId"
-          type="button"
-          class="dt-row is-link"
-          :data-testid="`acquire-market-${b.restId}`"
-          @click="openTarget(b, 'listed')"
-        >
-          <DtArt v-if="b.door !== undefined" class="dt-acq-door" :name="catalog.doorArt(b.door)" :size="28" />
-          <span class="dt-row-main">
-            <span class="dt-row-title">{{ b.name }}</span>
-            <span class="dt-row-sub"
-              >{{ t.acquire.price(coin(b.price)) }} ·
-              {{ b.owner ? t.acquire.ownerTag(b.owner.name) : t.acquire.free }}</span
-            >
-            <span v-if="b.listed" class="dt-row-sub"
-              ><span class="dt-tag dt-tag-warn">{{ t.acquire.listedTag(pct(b.listed.rate)) }}</span
-              >{{ t.acquire.leftLine(remainText(b.listed.until)) }}</span
-            >
-          </span>
-          <span v-if="b.listed" class="dt-acq-cost"
-            ><b>{{ coin(b.listed.price) }}</b
-            ><small>{{ t.acquire.coinUnit }}</small></span
+    <DtTabPanel :tab="tab">
+      <template v-if="tab === 'price'">
+        <DtEmpty v-if="loaded && price.length === 0" :title="t.acquire.rankEmpty" />
+        <div v-else class="dt-card dt-rows-card">
+          <button
+            v-for="(b, i) in price"
+            :key="b.restId"
+            type="button"
+            class="dt-row is-link"
+            :data-testid="`acquire-price-${b.restId}`"
+            @click="openTarget(b, 'acquire')"
           >
-        </button>
-      </div>
-    </template>
-
-    <template v-else-if="tab === 'invest'">
-      <DtEmpty v-if="loaded && invest.length === 0" :title="t.acquire.investEmpty" />
-      <div v-else class="dt-card dt-rows-card">
-        <DtRow
-          v-for="(r, i) in invest"
-          :key="r.restId"
-          :to="`/friends/${r.restId}`"
-          class="dt-row-wrap"
-          :data-testid="`acquire-invest-${r.restId}`"
-        >
-          <template #icon
-            ><span :class="['dt-rank-badge', { 'is-top': i < 3 }]">{{ i + 1 }}</span
-            ><DtArt
-              v-if="r.door !== undefined"
+            <span :class="['dt-rank-badge', { 'is-top': i < 3 }]">{{ i + 1 }}</span>
+            <DtArt
+              v-if="b.door !== undefined"
               class="dt-acq-door"
-              :name="catalog.doorArt(r.door)"
+              :name="catalog.doorArt(b.door)"
               :size="28"
-          /></template>
-          <template #title>{{ r.name }}</template>
-          <template #sub
-            >{{ t.acquire.colHoldings(r.holdings) }} · {{ t.acquire.colValue(coin(r.value)) }}<br />{{
-              t.acquire.colDividend(coin(r.dividendTotal))
-            }}</template
+            />
+            <span class="dt-row-main">
+              <span class="dt-row-title">{{ b.name }}</span>
+              <span class="dt-row-sub">{{ priceLine(b) }}</span>
+              <span v-if="b.owner" class="dt-row-sub"
+                ><span class="dt-tag-primary">{{ t.acquire.ownerTag(b.owner.name) }}</span></span
+              >
+            </span>
+          </button>
+        </div>
+      </template>
+
+      <template v-else-if="tab === 'market'">
+        <DtEmpty v-if="loaded && market.length === 0" :title="t.acquire.marketEmpty" />
+        <div v-else class="dt-card dt-rows-card">
+          <button
+            v-for="b in market"
+            :key="b.restId"
+            type="button"
+            class="dt-row is-link"
+            :data-testid="`acquire-market-${b.restId}`"
+            @click="openTarget(b, 'listed')"
           >
-        </DtRow>
-      </div>
-    </template>
-
-    <template v-else-if="view">
-      <div class="dt-card dt-rows-card" data-testid="acquire-me">
-        <div class="dt-row dt-row-wrap">
-          <span class="dt-row-main">
-            <span class="dt-row-title"
-              >{{ t.acquire.myPrice }} <b class="dt-num">{{ coin(view.me.price) }}</b></span
+            <DtArt
+              v-if="b.door !== undefined"
+              class="dt-acq-door"
+              :name="catalog.doorArt(b.door)"
+              :size="28"
+            />
+            <span class="dt-row-main">
+              <span class="dt-row-title">{{ b.name }}</span>
+              <span class="dt-row-sub"
+                >{{ t.acquire.price(coin(b.price)) }} ·
+                {{ b.owner ? t.acquire.ownerTag(b.owner.name) : t.acquire.free }}</span
+              >
+              <span v-if="b.listed" class="dt-row-sub"
+                ><span class="dt-tag dt-tag-warn">{{ t.acquire.listedTag(pct(b.listed.rate)) }}</span
+                >{{ t.acquire.leftLine(remainText(b.listed.until)) }}</span
+              >
+            </span>
+            <span v-if="b.listed" class="dt-acq-cost"
+              ><b>{{ coin(b.listed.price) }}</b
+              ><small>{{ t.acquire.coinUnit }}</small></span
             >
-            <span class="dt-row-sub">{{
-              t.acquire.myPriceSub(coin(view.me.avg), num2(view.rules.priceMultiple), num2(view.me.heat))
-            }}</span>
-            <span v-if="view.me.protectedUntil" class="dt-row-sub">{{
-              t.acquire.protectedLeft(remainText(view.me.protectedUntil))
-            }}</span>
-          </span>
-          <span :class="view.me.owner ? 'dt-tag dt-tag-warn' : 'dt-tag-ok'">{{
-            view.me.owner ? t.acquire.ownerTag(view.me.owner.name) : t.acquire.free
-          }}</span>
+          </button>
         </div>
-      </div>
+      </template>
 
-      <!-- 被收购中：让了多少、老板打理的情况、赎身 -->
-      <section v-if="view.owned" class="dt-block" data-testid="acquire-owned">
-        <div class="dt-block-head">
-          <h2 class="dt-block-title">{{ t.acquire.ownedTitle }}</h2>
-          <span v-if="view.owned.since" class="dt-block-more">{{
-            t.acquire.ownedSince(gameDate(view.owned.since))
-          }}</span>
-        </div>
-        <div class="dt-card dt-rows-card">
-          <div class="dt-acq-stats">
-            <div class="dt-stat">
-              <div class="dt-stat-label">{{ t.acquire.cededToday }}</div>
-              <div class="dt-stat-value">{{ coin(view.owned.cededToday) }}</div>
-            </div>
-            <div class="dt-stat">
-              <div class="dt-stat-label">{{ t.acquire.ceded30 }}</div>
-              <div class="dt-stat-value">{{ coin(view.owned.ceded30) }}</div>
-            </div>
-            <div class="dt-stat">
-              <div class="dt-stat-label">{{ t.acquire.cedeNow }}</div>
-              <div class="dt-stat-value" data-testid="acquire-cede-rate">{{ pct(view.owned.cedeRate) }}</div>
-              <div class="dt-stat-label">{{ cedeNote }}</div>
-            </div>
-            <div class="dt-stat">
-              <div class="dt-stat-label">{{ t.acquire.tendDays7 }}</div>
-              <div class="dt-stat-value">{{ t.acquire.tendDaysVal(view.owned.tendDays7) }}</div>
-            </div>
-          </div>
-          <div class="dt-acq-line" data-testid="acquire-tend-line">
-            {{
-              view.owned.tendedAt
-                ? t.acquire.tendedLine(
-                    timeHM(view.owned.tendedAt),
-                    formatNum(view.rules.tendMultiplier),
-                    view.owned.packsToday,
-                  )
-                : t.acquire.untendedLine(formatNum(view.rules.tendMultiplier))
-            }}
-          </div>
-          <div class="dt-acq-actions">
-            <button
-              type="button"
-              class="btn btn-light"
-              :disabled="busy"
-              data-testid="acquire-redeem"
-              @click="redeem"
-            >
-              {{ t.acquire.redeemBtn(coin(view.owned.redeemPrice)) }}
-            </button>
-          </div>
-        </div>
-        <div class="dt-block-note">
-          {{
-            t.acquire.ownedNote(view.rules.tendHalfDays, view.rules.tendStopDays, view.rules.tendReleaseDays)
-          }}
-        </div>
-      </section>
-
-      <div class="dt-card dt-rows-card mt-3">
-        <button type="button" class="dt-row is-link" data-testid="acquire-rule-open" @click="ruleOpen = true">
-          <span class="dt-row-main"
-            ><span class="dt-row-title">{{ t.acquire.rulesTitle }}</span
-            ><span class="dt-row-sub">{{ t.acquire.rulesSub(pct(view.rules.cedeRate)) }}</span></span
+      <template v-else-if="tab === 'invest'">
+        <DtEmpty v-if="loaded && invest.length === 0" :title="t.acquire.investEmpty" />
+        <div v-else class="dt-card dt-rows-card">
+          <DtRow
+            v-for="(r, i) in invest"
+            :key="r.restId"
+            :to="`/friends/${r.restId}`"
+            class="dt-row-wrap"
+            :data-testid="`acquire-invest-${r.restId}`"
           >
-        </button>
-      </div>
-
-      <section class="dt-block">
-        <div class="dt-block-head">
-          <h2 class="dt-block-title">{{ t.acquire.holdingsTitle }}</h2>
-          <span class="dt-block-more">{{
-            t.acquire.holdHead(view.holdings.length, view.rules.maxHoldings, buyLeft)
-          }}</span>
+            <template #icon
+              ><span :class="['dt-rank-badge', { 'is-top': i < 3 }]">{{ i + 1 }}</span
+              ><DtArt
+                v-if="r.door !== undefined"
+                class="dt-acq-door"
+                :name="catalog.doorArt(r.door)"
+                :size="28"
+            /></template>
+            <template #title>{{ r.name }}</template>
+            <template #sub
+              >{{ t.acquire.colHoldings(r.holdings) }} · {{ t.acquire.colValue(coin(r.value)) }}<br />{{
+                t.acquire.colDividend(coin(r.dividendTotal))
+              }}</template
+            >
+          </DtRow>
         </div>
-        <div v-if="view.me.owner" class="dt-block-note">{{ t.acquire.ownedNoBuy }}</div>
-        <DtEmpty v-if="view.holdings.length === 0" :title="t.acquire.holdingsEmpty" />
-        <template v-else>
-          <div class="dt-card dt-rows-card" data-testid="acquire-hold-sum">
+      </template>
+
+      <template v-else-if="view">
+        <div class="dt-card dt-rows-card" data-testid="acquire-me">
+          <div class="dt-row dt-row-wrap">
+            <span class="dt-row-main">
+              <span class="dt-row-title"
+                >{{ t.acquire.myPrice }} <b class="dt-num">{{ coin(view.me.price) }}</b></span
+              >
+              <span class="dt-row-sub">{{
+                t.acquire.myPriceSub(coin(view.me.avg), num2(view.rules.priceMultiple), num2(view.me.heat))
+              }}</span>
+              <span v-if="view.me.protectedUntil" class="dt-row-sub">{{
+                t.acquire.protectedLeft(remainText(view.me.protectedUntil))
+              }}</span>
+            </span>
+            <span :class="view.me.owner ? 'dt-tag dt-tag-warn' : 'dt-tag-ok'">{{
+              view.me.owner ? t.acquire.ownerTag(view.me.owner.name) : t.acquire.free
+            }}</span>
+          </div>
+        </div>
+
+        <!-- 被收购中：让了多少、老板打理的情况、赎身 -->
+        <section v-if="view.owned" class="dt-block" data-testid="acquire-owned">
+          <div class="dt-block-head">
+            <h2 class="dt-block-title">{{ t.acquire.ownedTitle }}</h2>
+            <span v-if="view.owned.since" class="dt-block-more">{{
+              t.acquire.ownedSince(gameDate(view.owned.since))
+            }}</span>
+          </div>
+          <div class="dt-card dt-rows-card">
             <div class="dt-acq-stats">
               <div class="dt-stat">
-                <div class="dt-stat-label">{{ t.acquire.pendingTotal }}</div>
-                <div class="dt-stat-value">{{ coin(view.pendingTotal) }}</div>
-                <div class="dt-stat-label">{{ t.acquire.pendingSub }}</div>
+                <div class="dt-stat-label">{{ t.acquire.cededToday }}</div>
+                <div class="dt-stat-value">{{ coin(view.owned.cededToday) }}</div>
               </div>
               <div class="dt-stat">
-                <div class="dt-stat-label">{{ t.acquire.yesterdayTotal }}</div>
-                <div class="dt-stat-value">
-                  {{ view.dividendPaid ? coin(view.yesterdayTotal) : t.acquire.yesterdayPending }}
+                <div class="dt-stat-label">{{ t.acquire.ceded30 }}</div>
+                <div class="dt-stat-value">{{ coin(view.owned.ceded30) }}</div>
+              </div>
+              <div class="dt-stat">
+                <div class="dt-stat-label">{{ t.acquire.cedeNow }}</div>
+                <div class="dt-stat-value" data-testid="acquire-cede-rate">
+                  {{ pct(view.owned.cedeRate) }}
                 </div>
+                <div class="dt-stat-label">{{ cedeNote }}</div>
+              </div>
+              <div class="dt-stat">
+                <div class="dt-stat-label">{{ t.acquire.tendDays7 }}</div>
+                <div class="dt-stat-value">{{ t.acquire.tendDaysVal(view.owned.tendDays7) }}</div>
               </div>
             </div>
-            <div class="dt-acq-all">
-              <span class="dt-row-sub">{{
-                untended.length > 0
-                  ? t.acquire.tendAllLine(untended.length, coin(untendedCost))
-                  : t.acquire.allTended
-              }}</span>
+            <div class="dt-acq-line" data-testid="acquire-tend-line">
+              {{
+                view.owned.tendedAt
+                  ? t.acquire.tendedLine(
+                      timeHM(view.owned.tendedAt),
+                      formatNum(view.rules.tendMultiplier),
+                      view.owned.packsToday,
+                    )
+                  : t.acquire.untendedLine(formatNum(view.rules.tendMultiplier))
+              }}
+            </div>
+            <div class="dt-acq-actions">
               <button
-                v-if="untended.length > 0"
                 type="button"
-                class="btn btn-primary btn-sm"
+                class="btn btn-light"
                 :disabled="busy"
-                data-testid="acquire-tend-all"
-                @click="tendAll"
+                data-testid="acquire-redeem"
+                @click="redeem"
               >
-                {{ t.acquire.tendAll }}
+                {{ t.acquire.redeemBtn(coin(view.owned.redeemPrice)) }}
               </button>
             </div>
           </div>
-          <div class="dt-card dt-rows-card mt-2">
-            <div
-              v-for="h in view.holdings"
-              :key="h.restId"
-              class="dt-row dt-row-wrap dt-acq-hold"
-              :data-testid="`acquire-hold-${h.restId}`"
-            >
-              <button
-                type="button"
-                class="dt-row-main dt-acq-hold-open"
-                :data-testid="`acquire-hold-open-${h.restId}`"
-                @click="openHold(h)"
-              >
-                <span class="dt-row-title"
-                  >{{ h.name }}<span :class="holdTag(h).cls">{{ holdTag(h).text }}</span></span
-                >
-                <span class="dt-row-sub">{{
-                  t.acquire.holdSub(coin(h.avg), pct(h.cedeRate), coin(h.pending))
-                }}</span>
-                <span v-if="holdNote(h)" class="dt-row-sub text-danger">{{ holdNote(h) }}</span>
-                <span v-if="h.listed" class="dt-row-sub"
-                  ><span class="dt-tag dt-tag-warn">{{ t.acquire.listedTag(pct(h.listed.rate)) }}</span
-                  >{{ t.acquire.leftLine(remainText(h.listed.until)) }}</span
-                >
-              </button>
-              <span
-                v-if="!h.tendedToday && h.linked"
-                class="dt-row-value"
-                :data-testid="`acquire-linked-${h.restId}`"
-                >{{ t.acquire.holdLinked }}</span
-              >
-              <button
-                v-else-if="!h.tendedToday"
-                type="button"
-                class="btn btn-outline-primary btn-sm"
-                :disabled="busy"
-                :data-testid="`acquire-tend-${h.restId}`"
-                @click="tend(h)"
-              >
-                {{ t.acquire.tendBtn(coin(h.tendCost)) }}
-              </button>
-            </div>
-          </div>
-        </template>
-      </section>
-    </template>
-
-    <!-- 身价榜、在售点开一家 -->
-    <DtSheet :open="!!target" :title="target ? target.brief.name : ''" @close="target = null">
-      <div v-if="target" data-testid="acquire-sheet">
-        <div class="dt-detail-sub">
-          {{ t.acquire.targetSub(coin(target.brief.price), coin(target.brief.avg), num2(target.brief.heat)) }}
-        </div>
-        <div class="mt-1">
-          <span :class="target.brief.owner ? 'dt-tag-primary' : 'dt-tag-ok'">{{
-            target.brief.owner ? t.acquire.ownerTag(target.brief.owner.name) : t.acquire.free
-          }}</span>
-        </div>
-        <div class="dt-sheet-list mt-2">
-          <RouterLink
-            :to="`/friends/${target.brief.restId}`"
-            class="dt-row is-link"
-            data-testid="acquire-visit"
-          >
-            <span class="dt-row-main"
-              ><span class="dt-row-title">{{ t.acquire.visit }}</span></span
-            >
-          </RouterLink>
-          <RouterLink
-            v-if="targetOwned"
-            to="/acquire?tab=market"
-            class="dt-row is-link"
-            data-testid="acquire-go-market"
-            @click="target = null"
-          >
-            <span class="dt-row-main"
-              ><span class="dt-row-title">{{ t.acquire.goMarket }}</span></span
-            >
-          </RouterLink>
-        </div>
-        <div v-if="targetOwned" class="dt-detail-note dt-acq-why" data-testid="acquire-owned-why">
-          {{ t.acquire.ownedWhy }}
-        </div>
-        <template v-else-if="target.rest && targetSplit && rules">
-          <dl class="dt-sum" data-testid="acquire-split">
-            <div>
-              <dt>{{ t.acquire.youPay }}</dt>
-              <dd>
-                <b>{{ coin(targetCost) }}</b>
-              </dd>
-            </div>
-            <div v-if="targetSplit.sellerGot > 0 && target.rest.owner">
-              <dt>
-                {{
-                  t.acquire.sellerGot(target.rest.owner.name, pct(1 - rules.resaleStoreRate - rules.taxRate))
-                }}
-              </dt>
-              <dd>{{ coin(targetSplit.sellerGot) }}</dd>
-            </div>
-            <div>
-              <dt>
-                {{
-                  t.acquire.sellerGot(
-                    target.rest.name,
-                    pct(target.way === 'acquire' ? rules.firstStoreRate : rules.resaleStoreRate),
-                  )
-                }}
-              </dt>
-              <dd>{{ coin(targetSplit.storeGot) }}</dd>
-            </div>
-            <div v-if="targetSplit.burn > 0">
-              <dt>{{ t.acquire.burnLine(pct(rules.firstBurnRate)) }}</dt>
-              <dd>{{ coin(targetSplit.burn) }}</dd>
-            </div>
-            <div>
-              <dt>{{ t.acquire.taxLine(pct(rules.taxRate)) }}</dt>
-              <dd>{{ coin(targetSplit.tax) }}</dd>
-            </div>
-          </dl>
-          <div class="dt-detail-qty mt-3">
-            <span>{{ t.acquire.afterTitle }}</span>
-          </div>
-          <dl v-if="targetAfter && view" class="dt-sum mt-1" data-testid="acquire-after">
-            <div>
-              <dt>{{ t.acquire.afterCede }}</dt>
-              <dd>{{ t.acquire.afterCedeVal(coin(targetAfter.cede), pct(rules.cedeRate)) }}</dd>
-            </div>
-            <div>
-              <dt>{{ t.acquire.afterTend }}</dt>
-              <dd>{{ t.acquire.afterTendVal(pct(rules.cedeTendRate), pct(rules.tendCostRate)) }}</dd>
-            </div>
-            <div v-if="targetAfter.payback">
-              <dt>{{ t.acquire.payback }}</dt>
-              <dd>{{ t.acquire.paybackVal(targetAfter.payback.plain, targetAfter.payback.tended) }}</dd>
-            </div>
-            <div>
-              <dt>{{ t.acquire.afterHold }}</dt>
-              <dd>
-                {{
-                  t.acquire.holdHead(view.holdings.length + 1, rules.maxHoldings, Math.max(0, buyLeft - 1))
-                }}
-              </dd>
-            </div>
-          </dl>
-          <div class="dt-detail-note">
+          <div class="dt-block-note">
             {{
-              t.acquire.buyNote(
-                rules.tendHalfDays,
-                rules.tendStopDays,
-                rules.tendReleaseDays,
-                pct(1 - rules.redeemBurnRate - rules.taxRate),
-                rules.priceDays ?? 7,
+              t.acquire.ownedNote(
+                view.rules.tendHalfDays,
+                view.rules.tendStopDays,
+                view.rules.tendReleaseDays,
               )
             }}
           </div>
-        </template>
-        <div
-          v-if="targetBlock && !targetOwned"
-          class="dt-detail-note text-danger"
-          data-testid="acquire-block"
-        >
-          {{ acquireReason(targetBlock) }}
-        </div>
-      </div>
-      <template v-if="target && canTry(target.brief)" #actions>
-        <div class="dt-sheet-pair">
-          <button type="button" class="btn btn-light" @click="target = null">
-            {{ targetOwned ? t.common.close : t.common.cancel }}
-          </button>
+        </section>
+
+        <div class="dt-card dt-rows-card mt-3">
           <button
             type="button"
-            class="btn btn-primary"
-            :disabled="busy || targetOwned || !target.rest || !!targetBlock"
-            :data-testid="
-              target.way === 'acquire'
-                ? `acquire-buy-${target.brief.restId}`
-                : `acquire-listed-${target.brief.restId}`
-            "
-            @click="buy"
+            class="dt-row is-link"
+            data-testid="acquire-rule-open"
+            @click="ruleOpen = true"
           >
-            {{ target.way === 'acquire' ? t.acquire.acquire : t.acquire.buyListed }}
+            <span class="dt-row-main"
+              ><span class="dt-row-title">{{ t.acquire.rulesTitle }}</span
+              ><span class="dt-row-sub">{{ t.acquire.rulesSub(pct(view.rules.cedeRate)) }}</span></span
+            >
           </button>
         </div>
+
+        <section class="dt-block">
+          <div class="dt-block-head">
+            <h2 class="dt-block-title">{{ t.acquire.holdingsTitle }}</h2>
+            <span class="dt-block-more">{{
+              t.acquire.holdHead(view.holdings.length, view.rules.maxHoldings, buyLeft)
+            }}</span>
+          </div>
+          <div v-if="view.me.owner" class="dt-block-note">{{ t.acquire.ownedNoBuy }}</div>
+          <DtEmpty v-if="view.holdings.length === 0" :title="t.acquire.holdingsEmpty" />
+          <template v-else>
+            <div class="dt-card dt-rows-card" data-testid="acquire-hold-sum">
+              <div class="dt-acq-stats">
+                <div class="dt-stat">
+                  <div class="dt-stat-label">{{ t.acquire.pendingTotal }}</div>
+                  <div class="dt-stat-value">{{ coin(view.pendingTotal) }}</div>
+                  <div class="dt-stat-label">{{ t.acquire.pendingSub }}</div>
+                </div>
+                <div class="dt-stat">
+                  <div class="dt-stat-label">{{ t.acquire.yesterdayTotal }}</div>
+                  <div class="dt-stat-value">
+                    {{ view.dividendPaid ? coin(view.yesterdayTotal) : t.acquire.yesterdayPending }}
+                  </div>
+                </div>
+              </div>
+              <div class="dt-acq-all">
+                <span class="dt-row-sub">{{
+                  untended.length > 0
+                    ? t.acquire.tendAllLine(untended.length, coin(untendedCost))
+                    : t.acquire.allTended
+                }}</span>
+                <button
+                  v-if="untended.length > 0"
+                  type="button"
+                  class="btn btn-primary btn-sm"
+                  :disabled="busy"
+                  data-testid="acquire-tend-all"
+                  @click="tendAll"
+                >
+                  {{ t.acquire.tendAll }}
+                </button>
+              </div>
+            </div>
+            <div class="dt-card dt-rows-card mt-2">
+              <div
+                v-for="h in view.holdings"
+                :key="h.restId"
+                class="dt-row dt-row-wrap dt-acq-hold"
+                :data-testid="`acquire-hold-${h.restId}`"
+              >
+                <button
+                  type="button"
+                  class="dt-row-main dt-acq-hold-open"
+                  :data-testid="`acquire-hold-open-${h.restId}`"
+                  @click="openHold(h)"
+                >
+                  <span class="dt-row-title"
+                    >{{ h.name }}<span :class="holdTag(h).cls">{{ holdTag(h).text }}</span></span
+                  >
+                  <span class="dt-row-sub">{{
+                    t.acquire.holdSub(coin(h.avg), pct(h.cedeRate), coin(h.pending))
+                  }}</span>
+                  <span v-if="holdNote(h)" class="dt-row-sub text-danger">{{ holdNote(h) }}</span>
+                  <span v-if="h.listed" class="dt-row-sub"
+                    ><span class="dt-tag dt-tag-warn">{{ t.acquire.listedTag(pct(h.listed.rate)) }}</span
+                    >{{ t.acquire.leftLine(remainText(h.listed.until)) }}</span
+                  >
+                </button>
+                <span
+                  v-if="!h.tendedToday && h.linked"
+                  class="dt-row-value"
+                  :data-testid="`acquire-linked-${h.restId}`"
+                  >{{ t.acquire.holdLinked }}</span
+                >
+                <button
+                  v-else-if="!h.tendedToday"
+                  type="button"
+                  class="btn btn-outline-primary btn-sm"
+                  :disabled="busy"
+                  :data-testid="`acquire-tend-${h.restId}`"
+                  @click="tend(h)"
+                >
+                  {{ t.acquire.tendBtn(coin(h.tendCost)) }}
+                </button>
+              </div>
+            </div>
+          </template>
+        </section>
       </template>
-    </DtSheet>
 
-    <!-- 名下的一家：打理、挂牌、撤牌、放手 -->
-    <DtSheet :open="!!hold" :title="hold ? hold.name : ''" @close="holdId = null">
-      <div v-if="hold && view" data-testid="acquire-hold-sheet">
-        <div class="dt-detail-sub">
-          {{ t.acquire.holdSheetSub(coin(hold.price), coin(hold.avg)) }} ·
-          <span :class="holdTag(hold).cls">{{ holdTag(hold).text }}</span>
-        </div>
-        <div class="dt-sheet-list mt-2">
-          <RouterLink :to="`/friends/${hold.restId}`" class="dt-row is-link">
-            <span class="dt-row-main"
-              ><span class="dt-row-title">{{ t.acquire.visit }}</span></span
+      <!-- 身价榜、在售点开一家 -->
+      <DtSheet :open="!!target" :title="target ? target.brief.name : ''" @close="target = null">
+        <div v-if="target" data-testid="acquire-sheet">
+          <div class="dt-detail-sub">
+            {{
+              t.acquire.targetSub(coin(target.brief.price), coin(target.brief.avg), num2(target.brief.heat))
+            }}
+          </div>
+          <div class="mt-1">
+            <span :class="target.brief.owner ? 'dt-tag-primary' : 'dt-tag-ok'">{{
+              target.brief.owner ? t.acquire.ownerTag(target.brief.owner.name) : t.acquire.free
+            }}</span>
+          </div>
+          <div class="dt-sheet-list mt-2">
+            <RouterLink
+              :to="`/friends/${target.brief.restId}`"
+              class="dt-row is-link"
+              data-testid="acquire-visit"
             >
-          </RouterLink>
-        </div>
-
-        <div class="dt-detail-qty mt-3">
-          <span>{{ t.acquire.tendTitle }}</span>
-        </div>
-        <dl class="dt-sum mt-1" data-testid="acquire-tend-sum">
-          <div>
-            <dt>{{ t.acquire.tendPay(pct(view.rules.tendCostRate)) }}</dt>
-            <dd>{{ coin(hold.tendCost) }}</dd>
+              <span class="dt-row-main"
+                ><span class="dt-row-title">{{ t.acquire.visit }}</span></span
+              >
+            </RouterLink>
+            <RouterLink
+              v-if="targetOwned"
+              to="/acquire?tab=market"
+              class="dt-row is-link"
+              data-testid="acquire-go-market"
+              @click="target = null"
+            >
+              <span class="dt-row-main"
+                ><span class="dt-row-title">{{ t.acquire.goMarket }}</span></span
+              >
+            </RouterLink>
           </div>
-          <div>
-            <dt>{{ t.acquire.tendMultLine }}</dt>
-            <dd>× {{ formatNum(view.rules.tendMultiplier) }}</dd>
+          <div v-if="targetOwned" class="dt-detail-note dt-acq-why" data-testid="acquire-owned-why">
+            {{ t.acquire.ownedWhy }}
           </div>
-          <div>
-            <dt>{{ t.acquire.tendPack }}</dt>
-            <dd>
+          <template v-else-if="target.rest && targetSplit && rules">
+            <dl class="dt-sum" data-testid="acquire-split">
+              <div>
+                <dt>{{ t.acquire.youPay }}</dt>
+                <dd>
+                  <b>{{ coin(targetCost) }}</b>
+                </dd>
+              </div>
+              <div v-if="targetSplit.sellerGot > 0 && target.rest.owner">
+                <dt>
+                  {{
+                    t.acquire.sellerGot(
+                      target.rest.owner.name,
+                      pct(1 - rules.resaleStoreRate - rules.taxRate),
+                    )
+                  }}
+                </dt>
+                <dd>{{ coin(targetSplit.sellerGot) }}</dd>
+              </div>
+              <div>
+                <dt>
+                  {{
+                    t.acquire.sellerGot(
+                      target.rest.name,
+                      pct(target.way === 'acquire' ? rules.firstStoreRate : rules.resaleStoreRate),
+                    )
+                  }}
+                </dt>
+                <dd>{{ coin(targetSplit.storeGot) }}</dd>
+              </div>
+              <div v-if="targetSplit.burn > 0">
+                <dt>{{ t.acquire.burnLine(pct(rules.firstBurnRate)) }}</dt>
+                <dd>{{ coin(targetSplit.burn) }}</dd>
+              </div>
+              <div>
+                <dt>{{ t.acquire.taxLine(pct(rules.taxRate)) }}</dt>
+                <dd>{{ coin(targetSplit.tax) }}</dd>
+              </div>
+            </dl>
+            <div class="dt-detail-qty mt-3">
+              <span>{{ t.acquire.afterTitle }}</span>
+            </div>
+            <dl v-if="targetAfter && view" class="dt-sum mt-1" data-testid="acquire-after">
+              <div>
+                <dt>{{ t.acquire.afterCede }}</dt>
+                <dd>{{ t.acquire.afterCedeVal(coin(targetAfter.cede), pct(rules.cedeRate)) }}</dd>
+              </div>
+              <div>
+                <dt>{{ t.acquire.afterTend }}</dt>
+                <dd>{{ t.acquire.afterTendVal(pct(rules.cedeTendRate), pct(rules.tendCostRate)) }}</dd>
+              </div>
+              <div v-if="targetAfter.payback">
+                <dt>{{ t.acquire.payback }}</dt>
+                <dd>{{ t.acquire.paybackVal(targetAfter.payback.plain, targetAfter.payback.tended) }}</dd>
+              </div>
+              <div>
+                <dt>{{ t.acquire.afterHold }}</dt>
+                <dd>
+                  {{
+                    t.acquire.holdHead(view.holdings.length + 1, rules.maxHoldings, Math.max(0, buyLeft - 1))
+                  }}
+                </dd>
+              </div>
+            </dl>
+            <div class="dt-detail-note">
               {{
-                hold.tendPacks > 0
-                  ? t.acquire.tendPackN(hold.tendPacks)
-                  : t.acquire.tendPackNone(coin(view.rules.tendPackStep))
+                t.acquire.buyNote(
+                  rules.tendHalfDays,
+                  rules.tendStopDays,
+                  rules.tendReleaseDays,
+                  pct(1 - rules.redeemBurnRate - rules.taxRate),
+                  rules.priceDays ?? 7,
+                )
               }}
-            </dd>
+            </div>
+          </template>
+          <div
+            v-if="targetBlock && !targetOwned"
+            class="dt-detail-note text-danger"
+            data-testid="acquire-block"
+          >
+            {{ acquireReason(targetBlock) }}
           </div>
-          <div>
-            <dt>{{ t.acquire.tendRate }}</dt>
-            <dd>{{ pct(view.rules.cedeRate) }} → {{ pct(view.rules.cedeTendRate) }}</dd>
-          </div>
-        </dl>
-        <button
-          v-if="!hold.tendedToday && !hold.linked"
-          type="button"
-          class="btn btn-primary w-100 mt-2"
-          :disabled="busy"
-          :data-testid="`acquire-tend-sheet-${hold.restId}`"
-          @click="tend(hold)"
-        >
-          {{ t.acquire.tendSheetBtn(coin(hold.tendCost)) }}
-        </button>
-        <div class="dt-detail-note">{{ t.acquire.tendNote }}</div>
-
-        <div v-if="hold.listed" class="dt-detail-note" data-testid="acquire-listed-line">
-          {{
-            t.acquire.listed(pct(hold.listed.rate), coin(hold.listed.price), remainText(hold.listed.until))
-          }}
         </div>
-        <template v-else>
-          <div class="dt-detail-qty mt-3">
-            <span>{{ t.acquire.rateLabel }}</span>
-          </div>
-          <div class="dt-pills dt-pills-scroll mt-2" role="group" :aria-label="t.acquire.rateLabel">
+        <template v-if="target && canTry(target.brief)" #actions>
+          <div class="dt-sheet-pair">
+            <button type="button" class="btn btn-light" @click="target = null">
+              {{ targetOwned ? t.common.close : t.common.cancel }}
+            </button>
             <button
-              v-for="r in rateOptions"
-              :key="r"
               type="button"
-              :class="{ active: rate === r }"
-              :aria-pressed="rate === r"
-              :data-testid="`acquire-rate-${r}`"
-              @click="rate = r"
+              class="btn btn-primary"
+              :disabled="busy || targetOwned || !target.rest || !!targetBlock"
+              :data-testid="
+                target.way === 'acquire'
+                  ? `acquire-buy-${target.brief.restId}`
+                  : `acquire-listed-${target.brief.restId}`
+              "
+              @click="buy"
             >
-              {{ pct(r) }}
+              {{ target.way === 'acquire' ? t.acquire.acquire : t.acquire.buyListed }}
             </button>
           </div>
-          <dl v-if="listSplit" class="dt-sum">
+        </template>
+      </DtSheet>
+
+      <!-- 名下的一家：打理、挂牌、撤牌、放手 -->
+      <DtSheet :open="!!hold" :title="hold ? hold.name : ''" @close="holdId = null">
+        <div v-if="hold && view" data-testid="acquire-hold-sheet">
+          <div class="dt-detail-sub">
+            {{ t.acquire.holdSheetSub(coin(hold.price), coin(hold.avg)) }} ·
+            <span :class="holdTag(hold).cls">{{ holdTag(hold).text }}</span>
+          </div>
+          <div class="dt-sheet-list mt-2">
+            <RouterLink :to="`/friends/${hold.restId}`" class="dt-row is-link">
+              <span class="dt-row-main"
+                ><span class="dt-row-title">{{ t.acquire.visit }}</span></span
+              >
+            </RouterLink>
+          </div>
+
+          <div class="dt-detail-qty mt-3">
+            <span>{{ t.acquire.tendTitle }}</span>
+          </div>
+          <dl class="dt-sum mt-1" data-testid="acquire-tend-sum">
             <div>
-              <dt>{{ t.acquire.listPrice }}</dt>
+              <dt>{{ t.acquire.tendPay(pct(view.rules.tendCostRate)) }}</dt>
+              <dd>{{ coin(hold.tendCost) }}</dd>
+            </div>
+            <div>
+              <dt>{{ t.acquire.tendMultLine }}</dt>
+              <dd>× {{ formatNum(view.rules.tendMultiplier) }}</dd>
+            </div>
+            <div>
+              <dt>{{ t.acquire.tendPack }}</dt>
               <dd>
-                <b>{{ coin(listCost) }}</b>
+                {{
+                  hold.tendPacks > 0
+                    ? t.acquire.tendPackN(hold.tendPacks)
+                    : t.acquire.tendPackNone(coin(view.rules.tendPackStep))
+                }}
               </dd>
             </div>
             <div>
-              <dt>{{ t.acquire.listSellerGot(pct(1 - view.rules.resaleStoreRate - view.rules.taxRate)) }}</dt>
-              <dd>{{ coin(listSplit.sellerGot) }}</dd>
-            </div>
-            <div>
-              <dt>{{ t.acquire.sellerGot(hold.name, pct(view.rules.resaleStoreRate)) }}</dt>
-              <dd>{{ coin(listSplit.storeGot) }}</dd>
-            </div>
-            <div>
-              <dt>{{ t.acquire.taxLine(pct(view.rules.taxRate)) }}</dt>
-              <dd>{{ coin(listSplit.tax) }}</dd>
+              <dt>{{ t.acquire.tendRate }}</dt>
+              <dd>{{ pct(view.rules.cedeRate) }} → {{ pct(view.rules.cedeTendRate) }}</dd>
             </div>
           </dl>
-          <div class="dt-detail-note">{{ t.acquire.listNote(view.rules.listDays) }}</div>
-        </template>
-      </div>
-      <template v-if="hold" #actions>
-        <div class="dt-sheet-pair">
           <button
+            v-if="!hold.tendedToday && !hold.linked"
             type="button"
-            class="btn btn-outline-danger"
+            class="btn btn-primary w-100 mt-2"
             :disabled="busy"
-            :data-testid="`acquire-release-${hold.restId}`"
-            @click="release(hold)"
+            :data-testid="`acquire-tend-sheet-${hold.restId}`"
+            @click="tend(hold)"
           >
-            {{ t.acquire.release }}
+            {{ t.acquire.tendSheetBtn(coin(hold.tendCost)) }}
           </button>
-          <button
-            v-if="hold.listed"
-            type="button"
-            class="btn btn-light"
-            :disabled="busy"
-            :data-testid="`acquire-unlist-${hold.restId}`"
-            @click="unlist(hold)"
-          >
-            {{ t.acquire.unlist }}
-          </button>
-          <button
-            v-else
-            type="button"
-            class="btn btn-outline-primary"
-            :disabled="busy"
-            :data-testid="`acquire-list-${hold.restId}`"
-            @click="list(hold)"
-          >
-            {{ t.acquire.list }}
-          </button>
-        </div>
-      </template>
-    </DtSheet>
+          <div class="dt-detail-note">{{ t.acquire.tendNote }}</div>
 
-    <DtSheet :open="ruleOpen" :title="t.acquire.rulesTitle" @close="ruleOpen = false">
-      <div v-if="view" class="dt-help" data-testid="acquire-rule">
-        <ul>
-          <li v-for="(x, i) in ruleList" :key="i">{{ x }}</li>
-        </ul>
-      </div>
-    </DtSheet>
+          <div v-if="hold.listed" class="dt-detail-note" data-testid="acquire-listed-line">
+            {{
+              t.acquire.listed(pct(hold.listed.rate), coin(hold.listed.price), remainText(hold.listed.until))
+            }}
+          </div>
+          <template v-else>
+            <div class="dt-detail-qty mt-3">
+              <span>{{ t.acquire.rateLabel }}</span>
+            </div>
+            <div class="dt-pills dt-pills-scroll mt-2" role="group" :aria-label="t.acquire.rateLabel">
+              <button
+                v-for="r in rateOptions"
+                :key="r"
+                type="button"
+                :class="{ active: rate === r }"
+                :aria-pressed="rate === r"
+                :data-testid="`acquire-rate-${r}`"
+                @click="rate = r"
+              >
+                {{ pct(r) }}
+              </button>
+            </div>
+            <dl v-if="listSplit" class="dt-sum">
+              <div>
+                <dt>{{ t.acquire.listPrice }}</dt>
+                <dd>
+                  <b>{{ coin(listCost) }}</b>
+                </dd>
+              </div>
+              <div>
+                <dt>
+                  {{ t.acquire.listSellerGot(pct(1 - view.rules.resaleStoreRate - view.rules.taxRate)) }}
+                </dt>
+                <dd>{{ coin(listSplit.sellerGot) }}</dd>
+              </div>
+              <div>
+                <dt>{{ t.acquire.sellerGot(hold.name, pct(view.rules.resaleStoreRate)) }}</dt>
+                <dd>{{ coin(listSplit.storeGot) }}</dd>
+              </div>
+              <div>
+                <dt>{{ t.acquire.taxLine(pct(view.rules.taxRate)) }}</dt>
+                <dd>{{ coin(listSplit.tax) }}</dd>
+              </div>
+            </dl>
+            <div class="dt-detail-note">{{ t.acquire.listNote(view.rules.listDays) }}</div>
+          </template>
+        </div>
+        <template v-if="hold" #actions>
+          <div class="dt-sheet-pair">
+            <button
+              type="button"
+              class="btn btn-outline-danger"
+              :disabled="busy"
+              :data-testid="`acquire-release-${hold.restId}`"
+              @click="release(hold)"
+            >
+              {{ t.acquire.release }}
+            </button>
+            <button
+              v-if="hold.listed"
+              type="button"
+              class="btn btn-light"
+              :disabled="busy"
+              :data-testid="`acquire-unlist-${hold.restId}`"
+              @click="unlist(hold)"
+            >
+              {{ t.acquire.unlist }}
+            </button>
+            <button
+              v-else
+              type="button"
+              class="btn btn-outline-primary"
+              :disabled="busy"
+              :data-testid="`acquire-list-${hold.restId}`"
+              @click="list(hold)"
+            >
+              {{ t.acquire.list }}
+            </button>
+          </div>
+        </template>
+      </DtSheet>
+
+      <DtSheet :open="ruleOpen" :title="t.acquire.rulesTitle" @close="ruleOpen = false">
+        <div v-if="view" class="dt-help" data-testid="acquire-rule">
+          <ul>
+            <li v-for="(x, i) in ruleList" :key="i">{{ x }}</li>
+          </ul>
+        </div>
+      </DtSheet>
+    </DtTabPanel>
   </div>
 </template>

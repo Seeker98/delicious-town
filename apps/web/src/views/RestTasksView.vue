@@ -6,6 +6,7 @@ import { endpoints } from '../api/endpoints';
 import DtArt from '../components/DtArt.vue';
 import DtEmpty from '../components/DtEmpty.vue';
 import DtSkeleton from '../components/DtSkeleton.vue';
+import DtTabPanel from '../components/DtTabPanel.vue';
 import DtTabs from '../components/DtTabs.vue';
 import QuestCard from '../components/QuestCard.vue';
 import ActivationPanel from '../components/tasks/ActivationPanel.vue';
@@ -88,37 +89,101 @@ onMounted(() =>
       <i v-if="giftOn(k)" class="bi bi-gift text-primary ms-1" :data-testid="`gift-tab-${k}`"></i>
     </template>
   </DtTabs>
-  <ActivationPanel v-if="tab === 'today'" />
-  <DtEmpty
-    v-if="!tasks && tab !== 'today' && failed"
-    :title="t.rest.tasks.loadFailed"
-    data-testid="tasks-failed"
-  />
-  <DtSkeleton v-else-if="!tasks && tab !== 'today'" :rows="5" data-testid="tasks-skeleton" />
-  <template v-if="tasks">
-    <!-- 主线：当前章一张卡片（界面改版 P7）——卡片头写第几章、章名、进度条，一行一个任务，卡片底写章末奖励 -->
-    <section v-if="tab === 'main'" class="dt-card dt-rows-card dt-quest-card" data-testid="card-main">
-      <div v-if="tasks.allMainDone" class="dt-row dt-meta">{{ t.rest.tasks.mainDone }}</div>
-      <template v-else-if="tasks.chapter">
-        <div class="dt-quest-head" data-testid="chapter">
-          <div class="dt-quest-head-line">
-            <span class="dt-meta">{{ t.rest.tasks.chapterNo(tasks.chapter.id) }}</span>
-            <b class="dt-quest-head-name">{{
-              catalog.data('chapters', tasks.chapter.id)?.name ?? tasks.chapter.name
-            }}</b>
-            <span v-if="tasks.chapter.locked" class="dt-tag dt-tag-mute"
-              ><i class="bi bi-lock-fill" aria-hidden="true"></i> {{ chapterLock }}</span
-            >
-            <span v-else class="dt-quest-head-count"
-              >{{ tasks.chapter.claimedCount }} / {{ tasks.chapter.total }}</span
-            >
+  <DtTabPanel :tab="tab">
+    <ActivationPanel v-if="tab === 'today'" />
+    <DtEmpty
+      v-if="!tasks && tab !== 'today' && failed"
+      :title="t.rest.tasks.loadFailed"
+      data-testid="tasks-failed"
+    />
+    <DtSkeleton v-else-if="!tasks && tab !== 'today'" :rows="5" data-testid="tasks-skeleton" />
+    <template v-if="tasks">
+      <!-- 主线：当前章一张卡片（界面改版 P7）——卡片头写第几章、章名、进度条，一行一个任务，卡片底写章末奖励 -->
+      <section v-if="tab === 'main'" class="dt-card dt-rows-card dt-quest-card" data-testid="card-main">
+        <div v-if="tasks.allMainDone" class="dt-row dt-meta">{{ t.rest.tasks.mainDone }}</div>
+        <template v-else-if="tasks.chapter">
+          <div class="dt-quest-head" data-testid="chapter">
+            <div class="dt-quest-head-line">
+              <span class="dt-meta">{{ t.rest.tasks.chapterNo(tasks.chapter.id) }}</span>
+              <b class="dt-quest-head-name">{{
+                catalog.data('chapters', tasks.chapter.id)?.name ?? tasks.chapter.name
+              }}</b>
+              <span v-if="tasks.chapter.locked" class="dt-tag dt-tag-mute"
+                ><i class="bi bi-lock-fill" aria-hidden="true"></i> {{ chapterLock }}</span
+              >
+              <span v-else class="dt-quest-head-count"
+                >{{ tasks.chapter.claimedCount }} / {{ tasks.chapter.total }}</span
+              >
+            </div>
+            <span v-if="!tasks.chapter.locked" class="dt-quest-bar"
+              ><span :style="{ width: barPct(tasks.chapter.claimedCount, tasks.chapter.total) }"></span
+            ></span>
           </div>
-          <span v-if="!tasks.chapter.locked" class="dt-quest-bar"
-            ><span :style="{ width: barPct(tasks.chapter.claimedCount, tasks.chapter.total) }"></span
-          ></span>
+          <QuestCard
+            v-for="x in mainList"
+            :key="x.id"
+            :quest="x"
+            :name="questName(x)"
+            :award="awardText(x.award)"
+            :busy="busy"
+            @claim="run(() => endpoints.claimTask(x.id), t.rest.tasks.claimFailed)"
+          />
+          <div v-if="!tasks.chapter.locked" class="dt-quest-foot">
+            <DtArt name="sec-tasks" :size="22" />
+            <span class="dt-row-main"
+              ><span class="dt-row-sub">{{ t.rest.tasks.chapterAwardLabel }}</span
+              ><span class="dt-row-title">{{ awardText(tasks.chapter.award) }}</span></span
+            >
+            <!-- 没领完时写还差几个（问题记录 318 试玩反馈）；只差领时写先领完（backlog 318） -->
+            <button
+              v-if="tasks.chapter.claimable"
+              class="btn btn-sm btn-primary"
+              data-testid="claim-chapter"
+              :disabled="busy"
+              @click="run(() => endpoints.claimChapter(tasks!.chapter!.id), t.rest.tasks.claimFailed)"
+            >
+              {{ t.rest.tasks.claimTask }}
+            </button>
+            <span v-else class="dt-tag dt-tag-mute" data-testid="claim-chapter">{{
+              leftText(tasks.chapter.total - tasks.chapter.doneCount)
+            }}</span>
+          </div>
+        </template>
+      </section>
+      <!-- 章末领过的章里后来补出来的任务（功能后来才打开）：单独一张卡片，不混进本章（backlog 318） -->
+      <section v-if="tab === 'main' && leftoverList.length > 0" class="dt-block" data-testid="main-leftover">
+        <div class="dt-block-head">
+          <h2 class="dt-block-title">{{ t.rest.tasks.leftover }}</h2>
+        </div>
+        <div class="dt-card dt-rows-card">
+          <QuestCard
+            v-for="x in leftoverList"
+            :key="x.id"
+            :quest="x"
+            :name="questName(x)"
+            :award="awardText(x.award)"
+            :busy="busy"
+            @claim="run(() => endpoints.claimTask(x.id), t.rest.tasks.claimFailed)"
+          />
+        </div>
+      </section>
+      <!-- 每周：按当前星级分组，周一 0 点刷新；卡片底写全完成奖励 -->
+      <section v-if="tab === 'weekly' && !tasks.weekly" class="dt-card dt-rows-card">
+        <div class="dt-row dt-meta" data-testid="no-weekly">{{ t.rest.tasks.noWeekly }}</div>
+      </section>
+      <section
+        v-if="tab === 'weekly' && tasks.weekly"
+        class="dt-card dt-rows-card dt-quest-card"
+        data-testid="card-weekly"
+      >
+        <div class="dt-quest-head">
+          <div class="dt-quest-head-line">
+            <b class="dt-quest-head-name">{{ t.rest.tasks.weekly(tasks.weekly.group) }}</b>
+            <span class="dt-quest-head-count">{{ timeLeft(tasks.weekly.endsAt) }}</span>
+          </div>
         </div>
         <QuestCard
-          v-for="x in mainList"
+          v-for="x in weeklyList"
           :key="x.id"
           :quest="x"
           :name="questName(x)"
@@ -126,125 +191,63 @@ onMounted(() =>
           :busy="busy"
           @claim="run(() => endpoints.claimTask(x.id), t.rest.tasks.claimFailed)"
         />
-        <div v-if="!tasks.chapter.locked" class="dt-quest-foot">
+        <div class="dt-quest-foot">
           <DtArt name="sec-tasks" :size="22" />
           <span class="dt-row-main"
-            ><span class="dt-row-sub">{{ t.rest.tasks.chapterAwardLabel }}</span
-            ><span class="dt-row-title">{{ awardText(tasks.chapter.award) }}</span></span
+            ><span class="dt-row-sub">{{ t.rest.tasks.weeklyFullLabel }}</span
+            ><span class="dt-row-title">{{ awardText(tasks.weekly.full.award) }}</span></span
           >
-          <!-- 没领完时写还差几个（问题记录 318 试玩反馈）；只差领时写先领完（backlog 318） -->
+          <span v-if="tasks.weekly.full.claimed" class="dt-tag dt-tag-ok" data-testid="claim-weekly-full">{{
+            t.rest.tasks.claimedShort
+          }}</span>
           <button
-            v-if="tasks.chapter.claimable"
+            v-else-if="tasks.weekly.full.claimable"
             class="btn btn-sm btn-primary"
-            data-testid="claim-chapter"
+            data-testid="claim-weekly-full"
             :disabled="busy"
-            @click="run(() => endpoints.claimChapter(tasks!.chapter!.id), t.rest.tasks.claimFailed)"
+            @click="run(() => endpoints.claimTask(tasks!.weekly!.full.id), t.rest.tasks.claimFailed)"
           >
             {{ t.rest.tasks.claimTask }}
           </button>
-          <span v-else class="dt-tag dt-tag-mute" data-testid="claim-chapter">{{
-            leftText(tasks.chapter.total - tasks.chapter.doneCount)
+          <span v-else class="dt-tag dt-tag-mute" data-testid="claim-weekly-full">{{
+            leftText(tasks.weekly.quests.filter((q) => !q.done && !q.claimed).length)
           }}</span>
         </div>
-      </template>
-    </section>
-    <!-- 章末领过的章里后来补出来的任务（功能后来才打开）：单独一张卡片，不混进本章（backlog 318） -->
-    <section v-if="tab === 'main' && leftoverList.length > 0" class="dt-block" data-testid="main-leftover">
-      <div class="dt-block-head">
-        <h2 class="dt-block-title">{{ t.rest.tasks.leftover }}</h2>
-      </div>
-      <div class="dt-card dt-rows-card">
-        <QuestCard
-          v-for="x in leftoverList"
-          :key="x.id"
-          :quest="x"
-          :name="questName(x)"
-          :award="awardText(x.award)"
-          :busy="busy"
-          @claim="run(() => endpoints.claimTask(x.id), t.rest.tasks.claimFailed)"
-        />
-      </div>
-    </section>
-    <!-- 每周：按当前星级分组，周一 0 点刷新；卡片底写全完成奖励 -->
-    <section v-if="tab === 'weekly' && !tasks.weekly" class="dt-card dt-rows-card">
-      <div class="dt-row dt-meta" data-testid="no-weekly">{{ t.rest.tasks.noWeekly }}</div>
-    </section>
-    <section
-      v-if="tab === 'weekly' && tasks.weekly"
-      class="dt-card dt-rows-card dt-quest-card"
-      data-testid="card-weekly"
-    >
-      <div class="dt-quest-head">
-        <div class="dt-quest-head-line">
-          <b class="dt-quest-head-name">{{ t.rest.tasks.weekly(tasks.weekly.group) }}</b>
-          <span class="dt-quest-head-count">{{ timeLeft(tasks.weekly.endsAt) }}</span>
-        </div>
-      </div>
-      <QuestCard
-        v-for="x in weeklyList"
-        :key="x.id"
-        :quest="x"
-        :name="questName(x)"
-        :award="awardText(x.award)"
-        :busy="busy"
-        @claim="run(() => endpoints.claimTask(x.id), t.rest.tasks.claimFailed)"
-      />
-      <div class="dt-quest-foot">
-        <DtArt name="sec-tasks" :size="22" />
-        <span class="dt-row-main"
-          ><span class="dt-row-sub">{{ t.rest.tasks.weeklyFullLabel }}</span
-          ><span class="dt-row-title">{{ awardText(tasks.weekly.full.award) }}</span></span
-        >
-        <span v-if="tasks.weekly.full.claimed" class="dt-tag dt-tag-ok" data-testid="claim-weekly-full">{{
-          t.rest.tasks.claimedShort
-        }}</span>
-        <button
-          v-else-if="tasks.weekly.full.claimable"
-          class="btn btn-sm btn-primary"
-          data-testid="claim-weekly-full"
-          :disabled="busy"
-          @click="run(() => endpoints.claimTask(tasks!.weekly!.full.id), t.rest.tasks.claimFailed)"
-        >
-          {{ t.rest.tasks.claimTask }}
-        </button>
-        <span v-else class="dt-tag dt-tag-mute" data-testid="claim-weekly-full">{{
-          leftText(tasks.weekly.quests.filter((q) => !q.done && !q.claimed).length)
-        }}</span>
-      </div>
-    </section>
-    <!-- 支线：每条线一张卡片，卡片头写线名和进度，下面是当前这一档 -->
-    <template v-if="tab === 'side'">
-      <section v-if="tasks.lines.length === 0" class="dt-card dt-rows-card" data-testid="card-lines">
-        <div class="dt-row dt-meta">{{ t.rest.tasks.noSide }}</div>
       </section>
-      <div v-else data-testid="card-lines">
-        <section
-          v-for="l in tasks.lines"
-          :key="l.id"
-          class="dt-card dt-rows-card dt-quest-card"
-          :data-testid="`line-${l.id}`"
-        >
-          <div class="dt-quest-head">
-            <div class="dt-quest-head-line">
-              <b class="dt-quest-head-name">{{ catalog.data('questLines', l.id)?.name ?? l.name }}</b>
-              <span class="dt-quest-head-count">{{ l.doneCount }} / {{ l.total }}</span>
-            </div>
-            <span class="dt-quest-bar"><span :style="{ width: barPct(l.doneCount, l.total) }"></span></span>
-          </div>
-          <QuestCard
-            v-if="l.quest"
-            :quest="l.quest"
-            :name="questName(l.quest)"
-            :award="awardText(l.quest.award)"
-            :busy="busy"
-            :locked="l.lockedStar === null ? null : t.rest.tasks.lockedStar(l.lockedStar)"
-            @claim="run(() => endpoints.claimTask(l.quest!.id), t.rest.tasks.claimFailed)"
-          />
-          <div v-else class="dt-row">
-            <span class="dt-tag dt-tag-ok">{{ t.rest.tasks.lineDone }}</span>
-          </div>
+      <!-- 支线：每条线一张卡片，卡片头写线名和进度，下面是当前这一档 -->
+      <template v-if="tab === 'side'">
+        <section v-if="tasks.lines.length === 0" class="dt-card dt-rows-card" data-testid="card-lines">
+          <div class="dt-row dt-meta">{{ t.rest.tasks.noSide }}</div>
         </section>
-      </div>
+        <div v-else data-testid="card-lines">
+          <section
+            v-for="l in tasks.lines"
+            :key="l.id"
+            class="dt-card dt-rows-card dt-quest-card"
+            :data-testid="`line-${l.id}`"
+          >
+            <div class="dt-quest-head">
+              <div class="dt-quest-head-line">
+                <b class="dt-quest-head-name">{{ catalog.data('questLines', l.id)?.name ?? l.name }}</b>
+                <span class="dt-quest-head-count">{{ l.doneCount }} / {{ l.total }}</span>
+              </div>
+              <span class="dt-quest-bar"><span :style="{ width: barPct(l.doneCount, l.total) }"></span></span>
+            </div>
+            <QuestCard
+              v-if="l.quest"
+              :quest="l.quest"
+              :name="questName(l.quest)"
+              :award="awardText(l.quest.award)"
+              :busy="busy"
+              :locked="l.lockedStar === null ? null : t.rest.tasks.lockedStar(l.lockedStar)"
+              @claim="run(() => endpoints.claimTask(l.quest!.id), t.rest.tasks.claimFailed)"
+            />
+            <div v-else class="dt-row">
+              <span class="dt-tag dt-tag-ok">{{ t.rest.tasks.lineDone }}</span>
+            </div>
+          </section>
+        </div>
+      </template>
     </template>
-  </template>
+  </DtTabPanel>
 </template>
