@@ -185,6 +185,8 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
               d.config.bundle.shopPools.black.includes(goodsId) && g.diamond > 0 ? g.diamond : null,
             award: g.awardFlag !== null,
             champion: s.tuning.mysterious.championGoodsId === goodsId,
+            championTop:
+              s.tuning.mysterious.championGoodsId === goodsId ? s.tuning.mysterious.championNums.length : 0,
           };
         }),
         cookies: have(GOODS.luckyCookie),

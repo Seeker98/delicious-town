@@ -55,8 +55,24 @@ const rk = computed(() => t.value.town.rank);
 const groupName = (g: string) => rk.value.groups[RANK_GROUPS.indexOf(g)] ?? g;
 const boardName = (b: { key: string; label: string }) =>
   rk.value.boards[b.key] ?? rk.value.periods[b.key.split('.').at(-1) ?? ''] ?? b.label;
-const rewardOf = (b: { key: string; reward?: string }) =>
-  b.reward ? (rk.value.rewards[b.key] ?? b.reward) : '';
+const rewardOf = (b: { key: string; reward?: string }) => {
+  if (!b.reward) return '';
+  // 昨日特色菜榜：按区服数值写名次、个数、几点发（代码审查 2026-10-19：原来写死前 4 名）
+  const p = data.value?.key === b.key ? data.value.prize : undefined;
+  if (p && p.nums.length > 0)
+    return rk.value.championPrize(prizeGroups(p.nums), catalog.goodsName(p.goodsId), p.hour);
+  return rk.value.rewards[b.key] ?? b.reward;
+};
+/** 连续名次个数相同的并成一段：[2, 1, 1, 1] → 第 1 名 2 个、第 2~4 名各 1 个 */
+function prizeGroups(nums: number[]): Array<{ from: number; to: number; num: number }> {
+  const out: Array<{ from: number; to: number; num: number }> = [];
+  nums.forEach((num, i) => {
+    const last = out.at(-1);
+    if (last && last.num === num) last.to = i + 1;
+    else out.push({ from: i + 1, to: i + 1, num });
+  });
+  return out;
+}
 
 let seq = 0;
 async function load() {

@@ -35,6 +35,7 @@ const rest: Messages['rest'] = {
       `Aujourd’hui\u202f: ${rounds} ${plFr(rounds, 'tour', 'tours')} · ${coin} pièces · ${exp} EXP · ${oil} d’huile`,
     bonus: 'Bonus',
     todayTitle: 'Aujourd’hui',
+    ceded: (n: string) => `dont ${n} au propriétaire`,
     rounds: (n) => `${n} ${plFr(n, 'tour', 'tours')}`,
     chartTitle: (n) => `Pièces des ${n} derniers tours`,
     chartLabel: (n, latest) => `Pièces des ${n} derniers tours, dernier tour ${latest}`,

@@ -305,6 +305,20 @@ describe('竞猜（规格书 06 §6.3）', () => {
       .where('rest_id', '=', five.restaurantId)
       .executeTakeFirstOrThrow();
     expect(g).toMatchObject({ hits: 5 });
+    // 餐厅动态写得到了什么：猜中的奖励和 12 点的加赠合在一起
+    const log = await t.db
+      .selectFrom('rest_log')
+      .select('params')
+      .where('rest_id', '=', five.restaurantId)
+      .where('type', '=', 'market.guess')
+      .executeTakeFirstOrThrow();
+    expect((log.params as { goods: unknown[] }).goods).toEqual(
+      expect.arrayContaining([
+        { id: GOODS.luckyCookie, num: 5 },
+        { id: gid('五级食材兑换券'), num: 5 },
+        { id: gid('蟹币'), num: 15 },
+      ]),
+    );
     // 支线“菜场竞猜”（问题记录 515）：猜中 3 种以上、5 种以上
     expect(await eventCount(t, three.restaurantId, 'market.guess.hit3')).toBe(1);
     expect(await eventCount(t, three.restaurantId, 'market.guess.hit5')).toBe(0);

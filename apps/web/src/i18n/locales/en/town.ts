@@ -199,6 +199,14 @@ const town: Messages['town'] = {
       'shiling.week':
         'The top 3 with at least 200 this week each draw a job permit, in rank order (Sun 23:00, valid 160 hours, wages Mon 7:59)',
     },
+    championPrize: (groups: Array<{ from: number; to: number; num: number }>, name: string, hour: number) =>
+      groups
+        .map((g, i) => {
+          const at = g.from === g.to ? `#${g.from}` : `#${g.from}–${g.to}`;
+          const each = g.from === g.to ? '' : ' each';
+          return i === 0 ? `${at}: ${name} ×${g.num}${each}` : `${at}: ${g.num}${each}`;
+        })
+        .join('; ') + ` (daily at ${hour}:00)`,
     every10: 'Updated every 10 min',
     every1: 'Updated every minute',
     updatedAt: (time) => ` · updated ${time}`,

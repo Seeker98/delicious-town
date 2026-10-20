@@ -47,9 +47,13 @@ test('厨具：买见习之铲 → 穿戴 → 强化 → 打孔 → 镶嵌 → �
   await page.goto('/rest/equip');
   await page.getByTestId('slot-1').click();
   await page.locator('[data-testid^="wear-"]').first().click();
+  // 穿上后部位面板不自己关（界面改版）：按 Esc 关掉再点下一个部位
+  await page.keyboard.press('Escape');
   await expect(page.getByTestId('slot-1')).toContainText('见习之铲');
   await page.getByTestId('slot-3').click();
   await page.locator('[data-testid^="wear-"]').first().click();
+  // 穿上后部位面板不自己关（界面改版）：按 Esc 关掉再点下一个部位
+  await page.keyboard.press('Escape');
   await expect(page.getByTestId('slot-3')).toContainText('沉默之度玛的静谧之镬');
 
   // 铲：用强化石强化到 +1

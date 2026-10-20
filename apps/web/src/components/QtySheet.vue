@@ -27,8 +27,18 @@ const props = withDefaults(
     testid?: string;
     /** 大图的底色（同 .dt-detail-art 的修饰类） */
     artClass?: string;
+    /** 快捷数量（比“最多”少的才给）：守护兽连发飞弹用 5、10、20、50（问题记录：要快捷数字按键） */
+    quick?: number[];
   }>(),
-  { lines: () => [], busy: false, reason: '', sum: () => [], testid: 'qty-num', artClass: '' },
+  {
+    lines: () => [],
+    busy: false,
+    reason: '',
+    sum: () => [],
+    testid: 'qty-num',
+    artClass: '',
+    quick: () => [],
+  },
 );
 const num = defineModel<number>({ required: true });
 const emit = defineEmits<{ close: []; ok: [] }>();
@@ -47,6 +57,17 @@ const t = useT();
     <div v-if="reason" class="dt-detail-note text-danger" data-testid="qty-reason">{{ reason }}</div>
     <div v-if="max > 1" class="dt-detail-qty">
       <span class="flex-fill">{{ label }}</span>
+      <button
+        v-for="q in quick.filter((x) => x > 1 && x < max)"
+        :key="q"
+        type="button"
+        class="dt-choice"
+        :aria-pressed="num === q"
+        :data-testid="`qty-quick-${q}`"
+        @click="num = q"
+      >
+        {{ formatNum(q) }}
+      </button>
       <button
         type="button"
         class="dt-choice"

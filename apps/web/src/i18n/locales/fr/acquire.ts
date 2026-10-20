@@ -9,8 +9,8 @@ const acquire: Messages['acquire'] = {
   loadFailed: 'Impossible de charger les rachats',
   failed: "L'action a échoué",
   ruleItems: (r) => [
-    `Valorisation = moyenne quotidienne des pièces de règlement des 7 derniers jours × ${r.mult} × cote\u202f; chaque rachat de force ajoute ${r.heatStep} de cote, qui redescend vers 1 chaque jour`,
-    `Le rachat de force ne vise que les restaurants sans propriétaire d'au moins ${r.minStar} étoiles, une fois par jour au plus\u202f; un restaurant qui vient d'atteindre ${r.minStar} étoiles est protégé ${days(r.newStarDays)}. Le restaurant reçoit ${r.firstStore}, des frais de conseil en fusion de ${r.firstBurn} sont détruits et ${r.tax} part en taxe`,
+    `Valorisation = moyenne quotidienne des pièces de règlement des ${r.priceDays} derniers jours × ${r.mult} × cote\u202f; chaque rachat de force ajoute ${r.heatStep} de cote, qui redescend vers 1 chaque jour`,
+    `Le rachat de force ne vise que les restaurants sans propriétaire d'au moins ${r.minStar} étoiles, ${r.maxPerDay === 1 ? 'une fois' : `${r.maxPerDay} fois`} par jour au plus\u202f; un restaurant qui vient d'atteindre ${r.minStar} étoiles est protégé ${days(r.newStarDays)}. Le restaurant reçoit ${r.firstStore}, des frais de conseil en fusion de ${r.firstBurn} sont détruits et ${r.tax} part en taxe`,
     `Un restaurant qui a un propriétaire ne change de mains que par une mise en vente (${r.listMin} à ${r.listMax} de sa valorisation)\u202f: l'ancien propriétaire reçoit ${r.resaleSeller}, le restaurant ${r.resaleStore} et ${r.tax} part en taxe`,
     `Pour racheter, il faut au moins ${r.buyerStar} étoiles et un compte d'au moins ${days(r.buyerDays)}\u202f; ${r.buyerPerDay} achats par jour au plus et ${r.maxHoldings} restaurants au plus`,
     `Un restaurant racheté verse ${r.cede} des pièces de chaque règlement à son propriétaire, ${r.cedeTend} une fois que le propriétaire s'en est occupé dans la journée\u202f; la part de la veille est versée à 00:05`,
@@ -76,6 +76,7 @@ const acquire: Messages['acquire'] = {
   holdTended: "Entretenu aujourd'hui",
   holdNotTended: "Pas entretenu aujourd'hui",
   holdIdle: (d) => `Sans soins depuis ${days(d)}`,
+  holdLinked: 'Compte lié, soins impossibles',
   holdSub: (avg, rate, pending) => `Moyenne quotidienne ${avg} · part ${rate} · en attente ${pending}`,
   holdHalfNote: (stopIn, releaseIn) =>
     `Part divisée par deux\u202f; encore ${days(stopIn)} sans soins et elle s'arrête, lâché dans ${days(releaseIn)}`,
@@ -130,8 +131,8 @@ const acquire: Messages['acquire'] = {
   payback: 'Rentabilisé en environ',
   paybackVal: (plain, tended) => `${days(plain)} · ${days(tended)} avec des soins quotidiens`,
   afterHold: 'Restaurants après achat',
-  buyNote: (half, stop, release, redeem) =>
-    `Calculé sur les revenus des 7 derniers jours\u202f; la part suit les revenus du restaurant. Sans soins pendant ${days(half)}\u202f: part divisée par deux\u202f; ${days(stop)}\u202f: elle s'arrête\u202f; ${days(release)}\u202f: lâché automatiquement. Le restaurant peut se racheter à tout moment, et vous ne recevez alors que ${redeem} du prix de rachat.`,
+  buyNote: (half, stop, release, redeem, priceDays) =>
+    `Calculé sur les revenus des ${priceDays} derniers jours\u202f; la part suit les revenus du restaurant. Sans soins pendant ${days(half)}\u202f: part divisée par deux\u202f; ${days(stop)}\u202f: elle s'arrête\u202f; ${days(release)}\u202f: lâché automatiquement. Le restaurant peut se racheter à tout moment, et vous ne recevez alors que ${redeem} du prix de rachat.`,
   ownedWhy:
     "Un restaurant qui a un propriétaire ne peut pas être racheté de force\u202f; attendez qu'il soit mis en vente et achetez-le dans En vente.",
   rateLabel: 'Mettre en vente à quelle part de sa valeur',

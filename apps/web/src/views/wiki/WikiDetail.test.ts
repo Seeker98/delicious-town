@@ -386,8 +386,8 @@ describe('游戏资料详情（问题记录 142）', () => {
       ],
       sources: {
         appraise: [
-          { id: 10812, name: '美味印章', rate: 0.4 },
-          { id: 10814, name: '蟹黄堡秘方', rate: 1 },
+          { id: 10812, name: '美味印章', rate: 0.4, min: 1, max: 3 },
+          { id: 10814, name: '蟹黄堡秘方', rate: 1, min: 3, max: 5 },
         ],
         fragments: 3,
         shilingShop: { rare: false, price: 240, weekly: 6 },
@@ -407,7 +407,7 @@ describe('游戏资料详情（问题记录 142）', () => {
       '阴、小雨；特殊天气 (虹、飓风) 一道到六道全部当令。',
     );
     const src = w.get('[data-testid="wiki-mc-sources"]').text();
-    expect(src).toContain('鉴定: 美味印章 (40%)、蟹黄堡秘方 (必定成功)');
+    expect(src).toContain('鉴定: 美味印章 (1~3 级随机一道, 40%)、蟹黄堡秘方 (3~5 级随机一道, 必定成功)');
     expect(src).toContain('碎片兑换: 3 张 3 级碎片换 1 张');
     expect(src).toContain('时令铺: 240 时令值一张 (每周限 6 张)');
     expect(src).toContain('学艺');

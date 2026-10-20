@@ -9,7 +9,7 @@ export function useCountdown(
   target: () => string | null | undefined,
   serverNow: () => string | null | undefined,
 ): ComputedRef<number> {
-  const clock = useServerClock(() => serverNow() ?? new Date().toISOString());
+  const clock = useServerClock(() => serverNow() ?? null);
   return computed(() => {
     const t = target();
     return t ? clock.secondsLeft(t) : 0;

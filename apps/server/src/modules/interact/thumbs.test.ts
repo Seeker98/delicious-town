@@ -99,6 +99,33 @@ describe('点赞（规格书 13 §13.7）', () => {
     expect((await th().returnAll(b)).data.ok).toEqual([]);
   });
 
+  it('一键回赞：已经不是好友的标成处理过、下次不再重试；声望为负直接停下（代码审查 2026-10-19）', async () => {
+    const [a, b] = await friends();
+    await th().up(a, b.restaurantId);
+    await t.db
+      .deleteFrom('friend')
+      .where((eb) =>
+        eb.or([
+          eb.and([eb('rest_id', '=', a.restaurantId), eb('friend_id', '=', b.restaurantId)]),
+          eb.and([eb('rest_id', '=', b.restaurantId), eb('friend_id', '=', a.restaurantId)]),
+        ]),
+      )
+      .execute();
+    const r = await th().returnAll(b);
+    expect(r.data.failed).toEqual([{ restId: a.restaurantId, code: 'NOT_FRIEND' }]);
+    expect((await th().returnAll(b)).data).toEqual({ ok: [], failed: [] });
+
+    const [c, e] = await friends();
+    const f = await newRestaurant(t, { shardId: c.shardId, verified: true });
+    await befriend(t, f.restaurantId, e.restaurantId);
+    await th().up(c, e.restaurantId);
+    await th().up({ ...f, ip: '10.0.0.4' }, e.restaurantId);
+    await t.db.updateTable('restaurant').set({ renown: -1 }).where('id', '=', e.restaurantId).execute();
+    const s = await th().returnAll(e);
+    expect(s.data.failed).toHaveLength(1);
+    expect(s.data.failed[0]).toMatchObject({ reason: 'renown' });
+  });
+
   it('我先赞了对方、对方后来才赞我：算已经回赞过，一键回赞不再去点、不报失败（问题记录 601）', async () => {
     const [a, b] = await friends();
     await th().up(b, a.restaurantId);

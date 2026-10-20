@@ -13,7 +13,7 @@ import { setServerOffset } from '../utils/serverNow';
  */
 const t = useT();
 const server = ref<string | null>(null);
-const { now } = useServerClock(() => server.value ?? new Date().toISOString());
+const { now } = useServerClock(() => server.value);
 const open = ref(false);
 const root = ref<HTMLElement | null>(null);
 /** 点开后点别处（包括底部导航去别的页面）、按 Esc 就收起（问题记录 358） */
@@ -40,13 +40,13 @@ onBeforeUnmount(() => {
 /** 拿到服务器时间（或读失败）之前不显示，免得先闪一下本机时间 */
 const ready = ref(false);
 
-/** 向服务器对一次时：全站的服务器时差也跟着更新 */
-async function syncTime() {
+/** 向服务器对一次时：全站的服务器时差也跟着更新；读失败隔 1 秒、3 秒再试两次（backlog），都不行就按上次对过的 */
+async function syncTime(retry = 0) {
   try {
     server.value = (await endpoints.serverTime()).now;
     setServerOffset(server.value);
   } catch {
-    // 读不到就按本机时间（或上次对过的）
+    if (retry < 2) setTimeout(() => void syncTime(retry + 1), retry === 0 ? 1000 : 3000);
   }
 }
 /** 从后台切回来重新对一次（稳健性批：原来只在挂载时对一次，手机休眠、设备对时后就不准） */

@@ -1,4 +1,4 @@
-// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
+// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 packages/shared/src/zh-TW-overrides.json
 /** 廣場：新聞、居民、排行（問題記錄 272；教室、兌換、發展基金在 441 搬到協會，文案還在這裡） */
 export default {
   title: '廣場',
@@ -188,6 +188,14 @@ export default {
       'shiling.week':
         '本週獲得 ≥ 200 的前 3 名依次抽一張工作證 (週日 23 點發, 有效 160 小時, 週一 7:59 發工資)',
     } as Record<string, string>,
+    /** 昨日特色菜榜獎勵（按區服數值拼）：第 1 名美味印章×2, 第 2~4 名各 1 個 (每天 9 點發) */
+    championPrize: (groups: Array<{ from: number; to: number; num: number }>, name: string, hour: number) =>
+      groups
+        .map((g, i) => {
+          const at = g.from === g.to ? `第 ${g.from} 名` : `第 ${g.from}~${g.to} 名各`;
+          return i === 0 ? `${at}${name}×${g.num}` : `${at} ${g.num} 個`;
+        })
+        .join(', ') + ` (每天 ${hour} 點發)`,
     every10: '每 10 分鐘更新',
     every1: '每分鐘更新',
     updatedAt: (time: string) => ` · 更新於 ${time}`,

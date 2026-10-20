@@ -78,7 +78,7 @@ describe('收购接口的查询条数（收购 PR 1）', () => {
     expect(n).toBeLessThanOrEqual(max);
   });
 
-  it('名下有两家店时 /acquire 不超过 5 条（收购 PR 2 遗留：原来只测了没有名下店的号）', async () => {
+  it('名下有两家店时 /acquire 不超过 8 条（收购 PR 2 遗留：原来只测了没有名下店的号；代码审查 2026-10-19 加了查关联账号的 3 条）', async () => {
     const shardId = await createShard(ctx.deps.db);
     await ctx.deps.db
       .insertInto('shard_config')
@@ -96,7 +96,7 @@ describe('收购接口的查询条数（收购 PR 1）', () => {
     const { n, result } = await q.count(() => call(ctx.app, 'GET', '/api/v1/acquire', { cookie: p.cookie }));
     expect(result.status).toBe(200);
     expect(result.json.data.holdings).toHaveLength(2);
-    expect(n).toBeLessThanOrEqual(5);
+    expect(n).toBeLessThanOrEqual(8);
   });
 });
 

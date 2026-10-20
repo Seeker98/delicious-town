@@ -1,4 +1,4 @@
-// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
+// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 packages/shared/src/zh-TW-overrides.json
 /** 食譜列表和詳情（問題記錄 272） */
 export default {
   filters: { all: '全部', learnable: '可學', upgradable: '可升級', unlearned: '未學', learned: '已學' },

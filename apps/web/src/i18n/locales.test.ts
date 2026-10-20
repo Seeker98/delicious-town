@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { LOCALES, RANK_BOARDS, RANK_GROUPS } from '@dt/shared';
 import { convertZhTw } from '../../scripts/gen-zh-tw.mjs';
 import { loadMessages } from '.';
-import overrides from './zh-TW-overrides.json';
+import { ZH_TW_OVERRIDES } from '@dt/shared';
 
 const ZH_CN = import.meta.glob<string>('./locales/zh-CN/*.ts', {
   query: '?raw',
@@ -64,10 +64,10 @@ describe('各语言的翻译（问题记录 272）', () => {
     );
     for (const [path, src] of Object.entries(ZH_CN))
       expect(ZH_TW[path.replace('/zh-CN/', '/zh-TW/')], path).toBe(
-        convertZhTw(src, overrides as Array<[string, string]>),
+        convertZhTw(src, ZH_TW_OVERRIDES as Array<[string, string]>),
       );
     expect(CL['./changelog/zh-TW.ts'], 'changelog/zh-TW.ts').toBe(
-      convertZhTw(CL['./changelog/zh-CN.ts']!, overrides as Array<[string, string]>),
+      convertZhTw(CL['./changelog/zh-CN.ts']!, ZH_TW_OVERRIDES as Array<[string, string]>),
     );
   });
 

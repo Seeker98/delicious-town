@@ -64,6 +64,7 @@ interface BriefRow {
   owner_name: string | null;
   list_rate: number | null;
   list_until: Date | null;
+  door?: number;
 }
 
 const isListed = (x: { list_rate: number | null; list_until: Date | null }, now: Date): boolean =>
@@ -82,6 +83,7 @@ function briefOf(x: BriefRow, now: Date, t: T): AcquireBriefDto {
     price: priceOf(x),
     owner: x.owner_rest_id === null ? null : { restId: x.owner_rest_id, name: x.owner_name ?? '' },
     listed: listed ? { rate: x.list_rate!, price: listPrice(x)!, until: x.list_until!.toISOString() } : null,
+    ...(x.door !== undefined ? { door: x.door } : {}),
   };
 }
 
@@ -93,6 +95,7 @@ const rulesOf = (t: T): AcquireRulesDto => ({
   buyerMaxPerDay: t.buyerMaxPerDay,
   maxHoldings: t.maxHoldings,
   maxPerDay: t.maxPerDay,
+  priceDays: t.priceDays,
   newStarProtectDays: t.newStarProtectDays,
   protectDays: t.protectDays,
   priceMultiple: t.priceMultiple,
@@ -580,7 +583,8 @@ export function createAcquireService(d: GameDeps) {
     const todo = mine.filter((s) => !cedeState(s, today, t0).tendedToday).map((s) => s.rest_id);
     const linked = await linkedRests(ctx, todo, t0);
     const ids = todo.filter((id) => !linked.has(id));
-    if (ids.length === 0) throw bad('tended');
+    // 没打理的只剩关联账号的店：报关联，不报“打理过了”（代码审查 2026-10-19）
+    if (ids.length === 0) throw bad(todo.length > 0 ? 'linked' : 'tended');
     return runMulti(ctx, [ctx.restaurantId, ...ids], 'acquire.tend', async (ops, t) => {
       const me = ops.get(ctx.restaurantId)!;
       const items: AcquireTendDto[] = [];
@@ -614,6 +618,7 @@ export function createAcquireService(d: GameDeps) {
         'o.name as owner_name',
         's.list_rate',
         's.list_until',
+        'r.door',
       ])
       .where('s.rest_id', 'in', ids)
       .execute();
@@ -829,6 +834,12 @@ export function createAcquireService(d: GameDeps) {
     ]);
     // 被收购时才多查让渡、打理（没被收购的号不多花查询）
     const owned = me.owner ? await ownedOf(ctx, t, now) : null;
+    // 关联账号的店不能打理：页面上不给按钮、“全部打理”不算它们；只查今天还没打理的（多 3 条查询，都打理过就不查）
+    const linked = await linkedRests(
+      ctx,
+      hold.filter((x) => !cedeState(x, today, t).tendedToday).map((x) => x.rest_id),
+      t,
+    );
     const paid = hold[0]?.paid ?? true;
     const holdings: AcquireHoldingDto[] = hold
       .filter((x) => m.has(x.rest_id))
@@ -845,6 +856,7 @@ export function createAcquireService(d: GameDeps) {
           yesterday,
           tendCost: tendCost(x.base, t),
           tendPacks: tendPacks(x.base, t),
+          linked: linked.has(x.rest_id),
         };
       });
     return {
@@ -876,6 +888,7 @@ export function createAcquireService(d: GameDeps) {
         .select([
           's.owner_rest_id',
           'o.name',
+          'o.door',
           'h.dividend_total',
           (eb) => eb.fn.countAll<number>().as('n'),
           // 和 priceOf 的 Math.round 一样：正好 .5 进位（Postgres 对 double 的 round 是四舍六入五成双，#189 遗留）
@@ -883,7 +896,7 @@ export function createAcquireService(d: GameDeps) {
         ])
         .where('s.shard_id', '=', ctx.shardId)
         .where('s.owner_rest_id', 'is not', null)
-        .groupBy(['s.owner_rest_id', 'o.name', 'h.dividend_total'])
+        .groupBy(['s.owner_rest_id', 'o.name', 'o.door', 'h.dividend_total'])
         .orderBy('value', 'desc')
         .orderBy('s.owner_rest_id')
         .limit(RANK_SIZE)
@@ -894,6 +907,7 @@ export function createAcquireService(d: GameDeps) {
         holdings: Number(r.n),
         value: Number(r.value),
         dividendTotal: Number(r.dividend_total ?? 0),
+        door: r.door,
       }));
       return { board, price: [], invest };
     }

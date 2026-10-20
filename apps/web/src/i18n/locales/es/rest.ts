@@ -35,6 +35,7 @@ const rest: Messages['rest'] = {
       `Hoy: ${rounds} ${plEs(rounds, 'ronda', 'rondas')} · ${coin} monedas · ${exp} EXP · ${oil} de aceite`,
     bonus: 'Bonificaciones',
     todayTitle: 'Hoy',
+    ceded: (n: string) => `incl. ${n} para tu dueño`,
     rounds: (n) => `${n} ${plEs(n, 'ronda', 'rondas')}`,
     chartTitle: (n) => `Monedas, últimas ${n} rondas`,
     chartLabel: (n, latest) => `Monedas de las últimas ${n} rondas, la última ${latest}`,

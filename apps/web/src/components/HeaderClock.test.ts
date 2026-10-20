@@ -19,7 +19,7 @@ describe('HeaderClock（问题记录 348：顶栏的当前时间）', () => {
   });
   afterEach(() => vi.useRealTimers());
 
-  it('拿到服务器时间之前不显示（免得先闪一下本机时间）；读失败就按本机时间', async () => {
+  it('拿到服务器时间之前不显示（免得先闪一下本机时间）；读失败就按上次对过的服务器时间（backlog：原来悄悄按本机时间）', async () => {
     let done: (v: { now: string }) => void = () => undefined;
     vi.mocked(endpoints.serverTime).mockReturnValueOnce(new Promise((r) => (done = r)));
     const w = mount(HeaderClock);
@@ -30,7 +30,7 @@ describe('HeaderClock（问题记录 348：顶栏的当前时间）', () => {
     vi.mocked(endpoints.serverTime).mockRejectedValueOnce(new Error('x'));
     const f = mount(HeaderClock);
     await flushPromises();
-    expect(f.get('[data-testid="clock"]').text()).toBe('13:30');
+    expect(f.get('[data-testid="clock"]').text()).toBe('14:30');
   });
 
   it('读到时间后记下全站用的服务器时差；从后台切回来重新对一次时（稳健性批：原来只在挂载时对一次，休眠、设备对时后就不准）', async () => {

@@ -2,6 +2,7 @@ export * from './rng';
 export * from './weighted';
 export * from './formulas';
 export * from './time';
+export * from './zhTw';
 export * from './errors';
 export * from './envelope';
 export * from './rules/restaurantName';

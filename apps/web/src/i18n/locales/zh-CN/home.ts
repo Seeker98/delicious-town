@@ -201,6 +201,7 @@ export default {
     coin: (n: string) => `银币 ${n}`,
     coinSub: '每轮营业收入是主要来源, 挑剔顾客点到会做的菜付得最多。',
     lastCoin: '上一轮',
+    lastCeded: '让给老板',
     strength: (n: string) => `体力 ${n}`,
     strengthFull: '体力满了。',
     strengthSub: '每轮结算恢复一点, 有时两点。',

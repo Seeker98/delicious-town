@@ -52,6 +52,8 @@ export interface McToolDto {
   blackDiamond: number | null;
   award: boolean;
   champion: boolean;
+  /** 昨日特色菜榜前几名发这个道具（区服数值 championNums 的长度；不是这个道具为 0；旧服务端没有） */
+  championTop?: number;
 }
 
 export interface McOverviewDto {

@@ -9,6 +9,8 @@ export default {
     mult: string;
     heatStep: string;
     minStar: number;
+    maxPerDay: number;
+    priceDays: number;
     newStarDays: number;
     firstStore: string;
     firstBurn: string;
@@ -34,8 +36,8 @@ export default {
     redeemBurn: string;
     protectDays: number;
   }) => [
-    `身价 = 近 7 天日均结算银币 × ${r.mult} × 热度; 强收一次热度 +${r.heatStep}, 每天往 1 回落`,
-    `强收只能收没有老板的 ${r.minStar} 星以上的店, 每家每天最多被强收 1 次, 刚到 ${r.minStar} 星的店 ${r.newStarDays} 天内不能被收: 店得 ${r.firstStore}, 并购咨询费 ${r.firstBurn} 销毁, ${r.tax} 是税`,
+    `身价 = 近 ${r.priceDays} 天日均结算银币 × ${r.mult} × 热度; 强收一次热度 +${r.heatStep}, 每天往 1 回落`,
+    `强收只能收没有老板的 ${r.minStar} 星以上的店, 每家每天最多被强收 ${r.maxPerDay} 次, 刚到 ${r.minStar} 星的店 ${r.newStarDays} 天内不能被收: 店得 ${r.firstStore}, 并购咨询费 ${r.firstBurn} 销毁, ${r.tax} 是税`,
     `有老板的店只能挂牌转手 (身价的 ${r.listMin}~${r.listMax}): 原老板得 ${r.resaleSeller}, 店得 ${r.resaleStore}, ${r.tax} 是税`,
     `自己 ${r.buyerStar} 星以上、注册满 ${r.buyerDays} 天才能收购; 每天最多买 ${r.buyerPerDay} 家, 名下最多 ${r.maxHoldings} 家`,
     `被收购的店每轮结算让 ${r.cede} 给老板, 老板当天打理过让 ${r.cedeTend}; 前一天的抽成 00:05 发给老板`,
@@ -110,6 +112,8 @@ export default {
   holdTended: '今天打理过',
   holdNotTended: '今天没打理',
   holdIdle: (days: number) => `${days} 天没打理`,
+  /** 关联账号的店不能打理（代码审查 2026-10-19） */
+  holdLinked: '关联账号, 不能打理',
   holdSub: (avg: string, rate: string, pending: string) => `日均 ${avg} · 抽成 ${rate} · 今天待发 ${pending}`,
   holdHalfNote: (stopIn: number, releaseIn: number) =>
     `抽成减半; 再 ${stopIn} 天不打理就不再抽成, ${releaseIn} 天后自动放手`,
@@ -165,8 +169,8 @@ export default {
   payback: '回本约',
   paybackVal: (plain: number, tended: number) => `${plain} 天 · 天天打理 ${tended} 天`,
   afterHold: '收购后名下',
-  buyNote: (half: number, stop: number, release: number, redeem: string) =>
-    `按近 7 天收入算, 店的收入变了抽成跟着变。${half} 天没打理抽成减半, ${stop} 天不再抽成, ${release} 天自动放手。店可以随时赎身, 那时你只拿回赎身价的 ${redeem}。`,
+  buyNote: (half: number, stop: number, release: number, redeem: string, priceDays: number) =>
+    `按近 ${priceDays} 天收入算, 店的收入变了抽成跟着变。${half} 天没打理抽成减半, ${stop} 天不再抽成, ${release} 天自动放手。店可以随时赎身, 那时你只拿回赎身价的 ${redeem}。`,
   ownedWhy: '有老板的店不能强收, 只能等老板挂牌后在「在售」里买下。',
   /** 名下一家的挂牌 */
   rateLabel: '按身价的多少挂牌',

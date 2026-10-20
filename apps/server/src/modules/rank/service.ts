@@ -67,6 +67,15 @@ export function createRankService(d: GameDeps) {
         })),
         me: mine ? { rank: mine.rank, value: mine.value } : null,
         updatedAt: new Date(hit.at).toISOString(),
+        ...(key === 'mc.yesterday'
+          ? {
+              prize: {
+                goodsId: tuning.mysterious.championGoodsId,
+                nums: [...tuning.mysterious.championNums],
+                hour: tuning.mysterious.championHour,
+              },
+            }
+          : {}),
       };
     },
   };

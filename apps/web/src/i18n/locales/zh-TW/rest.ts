@@ -1,4 +1,4 @@
-// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
+// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 packages/shared/src/zh-TW-overrides.json
 /** 餐廳資訊、收益、樓層、裝扮、任務與活躍（問題記錄 272） */
 export default {
   info: {
@@ -37,6 +37,8 @@ export default {
     more: '更早的記錄',
     /** 介面改版 P7：今天一張卡片、最近幾輪銀幣的小柱狀圖、加成摺疊卡的摘要 */
     todayTitle: '今天',
+    /** 被收購的店讓給老闆的（程式碼審查 2026-10-19） */
+    ceded: (n: string) => `其中讓給老闆 ${n}`,
     rounds: (n: number) => `${n} 輪`,
     chartTitle: (n: number) => `最近 ${n} 輪銀幣`,
     chartLabel: (n: number, latest: string) => `最近 ${n} 輪銀幣, 最新一輪 ${latest}`,

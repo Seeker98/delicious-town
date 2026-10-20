@@ -143,7 +143,17 @@ function apply(r: RestBriefDto) {
 function returnAll() {
   return run(async () => {
     const r = await endpoints.thumbsReturnAll();
-    toast.push(t.value.friends.returned(r.ok.length, r.failed.length));
+    const f = t.value.friends;
+    // 声望为负时一家也回不了；别的失败多半是不是好友了、同一网络今天已有人赞过（代码审查 2026-10-19）
+    const why = r.failed.some((x) => x.reason === 'renown')
+      ? f.returnWhy.renown
+      : r.failed.length > 0
+        ? f.returnWhy.other
+        : '';
+    toast.push(
+      f.returned(r.ok.length, r.failed.length) + why,
+      r.failed.length > 0 && r.ok.length === 0 ? 'info' : undefined,
+    );
     thumbs.value = await endpoints.thumbsToday();
   }, t.value.friends.returnFailed);
 }

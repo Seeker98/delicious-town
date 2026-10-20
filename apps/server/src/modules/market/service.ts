@@ -84,10 +84,14 @@ export function createMarketService(d: GameDeps, world: WorldService) {
       const hits = g.foods_ids.filter((id) => opened.includes(id)).length;
       const award = o.config.bundle.guessAwards.find((a) => a.hits === hits);
       if (award) await grantAward(o, award.award, { source: 'market.guess' });
-      if (o.tuning.market.guessBonusHours.includes(slot.hour)) {
-        const bonus = o.config.bundle.guessBonus.find((b) => hits >= b.minHits);
-        if (bonus) await grantAward(o, bonus.award, { source: 'market.guess.bonus' });
-      }
+      const bonus = o.tuning.market.guessBonusHours.includes(slot.hour)
+        ? o.config.bundle.guessBonus.find((b) => hits >= b.minHits)
+        : undefined;
+      if (bonus) await grantAward(o, bonus.award, { source: 'market.guess.bonus' });
+      // 动态里写得到了什么（问题记录：竞猜奖励发了什么、在哪看）：两份奖励的道具合在一起
+      const goods = new Map<number, number>();
+      for (const g of [...(award?.award.goods ?? []), ...(bonus?.award.goods ?? [])])
+        goods.set(g.id, (goods.get(g.id) ?? 0) + g.num);
       await o.tx
         .updateTable('market_guess')
         .set({ hits, settled_at: now })
@@ -95,7 +99,11 @@ export function createMarketService(d: GameDeps, world: WorldService) {
         .where('period', '=', slot.key)
         .where('rest_id', '=', restId)
         .execute();
-      restLog(o, 'market.guess', { period: slot.key, hits });
+      restLog(o, 'market.guess', {
+        period: slot.key,
+        hits,
+        goods: [...goods].map(([id, num]) => ({ id, num })),
+      });
       // 支线“菜场竞猜”（问题记录 515）：一次猜中 3 种以上、5 种以上
       if (hits >= 3) await emitAction(o, 'market.guess.hit3');
       if (hits >= 5) await emitAction(o, 'market.guess.hit5');

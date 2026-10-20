@@ -39,7 +39,7 @@ function howParts(x: McToolDto): string {
     x.shopCoin !== null ? a.howShop(formatNum(x.shopCoin)) : '',
     x.blackDiamond !== null ? a.howBlack(x.blackDiamond) : '',
     x.award ? a.howAward : '',
-    x.champion ? a.howChampion : '',
+    x.champion ? a.howChampion(x.championTop ?? 4) : '',
   ]
     .filter(Boolean)
     .join(a.howSep);

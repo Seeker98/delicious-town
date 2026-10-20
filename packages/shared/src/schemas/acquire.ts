@@ -55,6 +55,8 @@ export interface AcquireBriefDto {
   price: number;
   owner: { restId: number; name: string } | null;
   listed: { rate: number; price: number; until: string } | null;
+  /** 店门外观（榜单、在售的行里画门，backlog P8）；旧服务端、对方餐厅页没有 */
+  door?: number;
 }
 
 /** 对方餐厅页、我的身价：再加保护期、“我能不能收”、两种买法各怎么分 */
@@ -81,6 +83,8 @@ export interface AcquireHoldingDto extends AcquireBriefDto {
   yesterday: number | null;
   tendCost: number;
   tendPacks: number;
+  /** 和这家店是关联账号（最近在同一设备或网络登录过）：不能打理，“全部打理”也跳过（旧服务端没有） */
+  linked?: boolean;
 }
 
 /** 我被收购时：今天让了多少、近 30 天让了多少、现在的抽成、老板打理的情况、赎身价和怎么分 */
@@ -109,6 +113,8 @@ export interface AcquireRulesDto {
   buyerMaxPerDay: number;
   maxHoldings: number;
   maxPerDay: number;
+  /** 身价按近几天的日均结算银币算（旧服务端没有，按 7） */
+  priceDays?: number;
   newStarProtectDays: number;
   protectDays: number;
   priceMultiple: number;
@@ -156,6 +162,8 @@ export interface AcquireInvestRowDto {
   value: number;
   /** 累计收到的抽成（原来的分红） */
   dividendTotal: number;
+  /** 老板店的门（backlog P8）；旧服务端没有 */
+  door?: number;
 }
 
 /** 身价榜、投资榜：board 指定的那个有数，另一个是空数组 */

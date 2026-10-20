@@ -213,8 +213,13 @@ describe('概览、目录、任务、功能开关', () => {
       blackDiamond: 43,
       award: true,
       champion: false,
+      championTop: 0,
     });
-    expect(o.tools.find((x) => x.goodsId === gid('美味印章'))).toMatchObject({ champion: true });
+    // 昨日特色菜榜前几名发美味印章：几名按区服数值 championNums 的长度
+    expect(o.tools.find((x) => x.goodsId === gid('美味印章'))).toMatchObject({
+      champion: true,
+      championTop: 4,
+    });
     expect(o.tools.find((x) => x.goodsId === gid('厨神玉玺'))).toMatchObject({
       shopCoin: 300000,
       blackDiamond: 30,

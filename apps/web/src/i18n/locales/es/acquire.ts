@@ -9,8 +9,8 @@ const acquire: Messages['acquire'] = {
   loadFailed: 'No se pudieron cargar las adquisiciones',
   failed: 'La acción falló',
   ruleItems: (r) => [
-    `Valoración = media diaria de monedas de liquidación de los últimos 7 días × ${r.mult} × popularidad; cada adquisición a la fuerza suma ${r.heatStep} de popularidad, que vuelve hacia 1 cada día`,
-    `Solo se pueden adquirir a la fuerza restaurantes sin dueño de ${r.minStar} estrellas o más, como mucho una vez al día por restaurante; los que acaban de llegar a ${r.minStar} estrellas están protegidos ${days(r.newStarDays)}. El restaurante recibe el ${r.firstStore}, una comisión de asesoría de fusiones del ${r.firstBurn} se destruye y el ${r.tax} es impuesto`,
+    `Valoración = media diaria de monedas de liquidación de los últimos ${r.priceDays} días × ${r.mult} × popularidad; cada adquisición a la fuerza suma ${r.heatStep} de popularidad, que vuelve hacia 1 cada día`,
+    `Solo se pueden adquirir a la fuerza restaurantes sin dueño de ${r.minStar} estrellas o más, como mucho ${r.maxPerDay === 1 ? 'una vez' : `${r.maxPerDay} veces`} al día por restaurante; los que acaban de llegar a ${r.minStar} estrellas están protegidos ${days(r.newStarDays)}. El restaurante recibe el ${r.firstStore}, una comisión de asesoría de fusiones del ${r.firstBurn} se destruye y el ${r.tax} es impuesto`,
     `Un restaurante con dueño solo cambia de manos poniéndolo en venta (del ${r.listMin} al ${r.listMax} de su valoración): el dueño anterior recibe el ${r.resaleSeller}, el restaurante el ${r.resaleStore} y el ${r.tax} es impuesto`,
     `Para adquirir necesitas ${r.buyerStar} estrellas o más y una cuenta de al menos ${days(r.buyerDays)}; puedes comprar hasta ${r.buyerPerDay} al día y tener hasta ${r.maxHoldings}`,
     `Un restaurante adquirido da a su dueño el ${r.cede} de las monedas de cada liquidación, o el ${r.cedeTend} después de que el dueño lo atienda ese día; la comisión del día anterior se paga a las 00:05`,
@@ -75,6 +75,7 @@ const acquire: Messages['acquire'] = {
   holdTended: 'Atendido hoy',
   holdNotTended: 'Sin atender hoy',
   holdIdle: (d) => `${days(d)} sin atender`,
+  holdLinked: 'Cuenta vinculada, no se puede atender',
   holdSub: (avg, rate, pending) => `Media diaria ${avg} · comisión ${rate} · pendiente hoy ${pending}`,
   holdHalfNote: (stopIn, releaseIn) =>
     `Comisión a la mitad; ${days(stopIn)} más sin atender y se detiene, se suelta en ${days(releaseIn)}`,
@@ -127,8 +128,8 @@ const acquire: Messages['acquire'] = {
   payback: 'Se recupera en unos',
   paybackVal: (plain, tended) => `${days(plain)} · ${days(tended)} atendiendo a diario`,
   afterHold: 'Restaurantes tras comprar',
-  buyNote: (half, stop, release, redeem) =>
-    `Se calcula con los ingresos de los últimos 7 días; la comisión sigue los ingresos del restaurante. Sin atender ${days(half)}: comisión a la mitad; ${days(stop)}: se detiene; ${days(release)}: se suelta automáticamente. El restaurante puede recomprarse cuando quiera y entonces solo recibes el ${redeem} del precio de recompra.`,
+  buyNote: (half, stop, release, redeem, priceDays) =>
+    `Se calcula con los ingresos de los últimos ${priceDays} días; la comisión sigue los ingresos del restaurante. Sin atender ${days(half)}: comisión a la mitad; ${days(stop)}: se detiene; ${days(release)}: se suelta automáticamente. El restaurante puede recomprarse cuando quiera y entonces solo recibes el ${redeem} del precio de recompra.`,
   ownedWhy:
     'Un restaurante con dueño no se puede adquirir a la fuerza; espera a que su dueño lo ponga a la venta y cómpralo en En venta.',
   rateLabel: 'Poner en venta a qué parte de su valor',

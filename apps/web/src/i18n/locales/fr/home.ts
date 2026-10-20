@@ -193,6 +193,7 @@ const home: Messages['home'] = {
     coinSub:
       "Les recettes de chaque tour sont la source principale\u202f; les clients difficiles servis d'un plat que vous savez cuisiner paient le plus.",
     lastCoin: 'Dernier tour',
+    lastCeded: 'Au propriétaire',
     strength: (n) => `Énergie ${n}`,
     strengthFull: 'Énergie au maximum.',
     strengthSub: 'Chaque tour rend un point, parfois deux.',

@@ -13,6 +13,11 @@ export default {
   applyFailed: '申请失败',
   returned: (ok: number, failed: number) => `回赞了 ${ok} 人${failed > 0 ? `, ${failed} 人没成功` : ''}`,
   returnFailed: '回赞失败',
+  /** 一键回赞没成功的原因（代码审查 2026-10-19） */
+  returnWhy: {
+    renown: ' (声望是负的, 不能点赞)',
+    other: ' (对方已不是好友、被封, 或同一网络今天已有人赞过)',
+  },
   count: (n: number, max: number) => `好友 ${n}/${max}`,
   sorts: { level: '按等级', star: '按星级', recent: '最近加的' },
   /** 界面改版 P10 */

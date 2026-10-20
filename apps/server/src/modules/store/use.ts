@@ -1,4 +1,4 @@
-import { NEWBIE, type GoodsUse, type Tuning } from '@dt/config';
+import { NEWBIE, takesStoreSlot, type GoodsUse, type Tuning } from '@dt/config';
 import { ErrorCode, gameDay, pickWeighted } from '@dt/shared';
 import { featureAvailable } from '../../core/features';
 import { assertVerified } from '../../core/verified';
@@ -10,7 +10,7 @@ import { openGift } from '../award/award';
 import { incrementDaily } from '../counter/dailyCounter';
 import { addFoods } from '../cupboard/foods';
 import { drawNeedFoods, opNeedMap, opNeedPick } from '../../core/scarcity';
-import { consumeGoods, countGoods, grantGoodsOp } from './goods';
+import { consumeGoods, countGoods, grantGoodsOp, storeKinds } from './goods';
 import { KEY } from '../tower/common';
 
 /** 餐桌A：加 num 张桌，不超过餐桌上限和楼层容量（规格书 07 §7.4、02 §2.7） */
@@ -88,6 +88,24 @@ async function opUseCap(op: Op, use: GoodsUse): Promise<number> {
   );
 }
 
+/**
+ * 新手大礼包一次加七八种占格道具：拆之前看仓库格数够不够（backlog：老店补领时快满的仓库拆开会超过上限）。
+ * 只算必出（rate ≥ 1）、自己还没有的占格道具；礼包自己用完会腾出一格
+ */
+async function assertPackRoom(op: Op, goodsId: number, num: number): Promise<void> {
+  const g = op.config.requireGoods(goodsId);
+  let adds = 0;
+  for (const item of g.gift ?? []) {
+    if (item.type !== 'goods' || item.rate < 1 || !(item.id > 0)) continue;
+    if (!takesStoreSlot(op.config.goods.get(item.id))) continue;
+    if ((await countGoods(op, item.id)) === 0) adds += 1;
+  }
+  if (adds === 0) return;
+  const frees = (await countGoods(op, goodsId)) <= num ? 1 : 0;
+  if ((await storeKinds(op)) - frees + adds > op.rest.store_num)
+    throw new AppError(ErrorCode.STORE_FULL, 400, { storeNum: op.rest.store_num });
+}
+
 /** 使用道具：按构建时推导的用途分派（设计文档 §5.1）。先扣道具，任何一步失败整体回滚 */
 export async function useGoods(
   op: Op,
@@ -98,7 +116,10 @@ export async function useGoods(
   const use = g.use;
   if (!use) throw new AppError(ErrorCode.NOT_USABLE, 400, { goodsId });
   // 新手大礼包要验证邮箱才能拆（2026-10-16：小号拆礼包、卖店凑钱刷一番赏）
-  if (goodsId === NEWBIE.pack) await assertVerified(op);
+  if (goodsId === NEWBIE.pack) {
+    await assertVerified(op);
+    await assertPackRoom(op, goodsId, num);
+  }
   if (use.kind === 'towerTicket' && !featureAvailable(op.settings, 'tower'))
     throw new AppError(ErrorCode.NOT_USABLE, 400, { goodsId, reason: 'feature' });
   if (num > 1 && NO_BATCH_KINDS.has(use.kind)) throw invalidState('no_batch', { goodsId });

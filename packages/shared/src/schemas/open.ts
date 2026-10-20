@@ -33,6 +33,8 @@ export interface OpenGuideNumbers {
   /** 收购（收购改版 2026-10-16）：几星能被收购、买家门槛、名下上限、身价倍数、各项分账和让渡比例、赎身保护几天 */
   acquire: {
     minStar: number;
+    /** 身价按近几天的日均结算银币算（旧服务端没有，按 7） */
+    priceDays?: number;
     buyerMinStar: number;
     buyerMinAccountDays: number;
     maxHoldings: number;
@@ -228,7 +230,8 @@ export interface OpenMysteriousDto extends OpenMeta, OpenMysteriousBrief {
   inSeason: Array<{ id: number; name: string }>;
   /** 残卷从哪来：能鉴定的才有鉴定、碎片；时令铺按等级是残卷或珍稀残卷 */
   sources: {
-    appraise: Array<{ id: number; name: string; rate: number }>;
+    /** 鉴定道具：成功率、鉴定出的等级段（成功后在这一段里随机一道，不一定是这道，代码审查 2026-10-19） */
+    appraise: Array<{ id: number; name: string; rate: number; min: number; max: number }>;
     /** 几张同级碎片换一张；不能鉴定的为 null */
     fragments: number | null;
     shilingShop: { rare: boolean; price: number; weekly: number } | null;

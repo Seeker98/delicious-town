@@ -149,7 +149,11 @@ export function createThumbs(d: GameDeps) {
       }));
     },
 
-    /** 逐家回赞，各自独立事务；失败的列出错误码，不影响其他 */
+    /**
+     * 逐家回赞，各自独立事务；失败的列出错误码和原因，不影响其他。
+     * 永远回不了的（已经不是好友、同一网络今天已有人赞过对方、对方被封）标成处理过，不再每次重试；
+     * 自己声望为负时后面每一家都会失败，直接停下（代码审查 2026-10-19：一键回赞一直报失败）
+     */
     async returnAll(ctx: RestCtx): Promise<OpResult<ReturnAllDto>> {
       const day = gameDay(d.now());
       // 今天我已经赞过的店不算没回赞（旧数据里“我先赞、对方后赞”记成了没回赞，问题记录 601）
@@ -181,7 +185,17 @@ export function createThumbs(d: GameDeps) {
           events.push(...r.events);
         } catch (e) {
           if (!(e instanceof AppError)) throw e;
-          data.failed.push({ restId: from_rest, code: e.code });
+          const reason = (e.params?.reason ?? e.params?.what) as string | undefined;
+          data.failed.push({ restId: from_rest, code: e.code, ...(reason ? { reason } : {}) });
+          if (reason === 'renown') break;
+          if (e.code === ErrorCode.NOT_FRIEND || reason === 'thumb_ip' || reason === 'target_banned')
+            await d.db
+              .updateTable('thumb')
+              .set({ returned: true })
+              .where('day', '=', day)
+              .where('from_rest', '=', from_rest)
+              .where('to_rest', '=', ctx.restaurantId)
+              .execute();
         }
       }
       return { data, events };

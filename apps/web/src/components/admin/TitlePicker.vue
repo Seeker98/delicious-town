@@ -42,8 +42,19 @@ const shown = computed(() => {
       t.key === s,
   );
 });
-const custom = computed(() => shown.value.filter((t) => t.source === 'custom'));
-const config = computed(() => shown.value.filter((t) => t.source !== 'custom'));
+/** 按来源分组（backlog：原来只分定制 / 配置两组，每月称号一多就很长） */
+const GROUPS: Array<{ source: string; label: string }> = [
+  { source: 'custom', label: '定制称号' },
+  { source: 'kuji', label: '一番赏' },
+  { source: 'shop', label: '商店' },
+  { source: 'fund', label: '发展基金' },
+  { source: 'general', label: '其他配置称号' },
+];
+const groups = computed(() =>
+  GROUPS.map((g) => ({ ...g, items: shown.value.filter((t) => t.source === g.source) })).filter(
+    (g) => g.items.length > 0,
+  ),
+);
 const titleOf = (k: string) => titles.list.value.find((t) => t.key === k)?.title ?? '';
 
 function emitNow() {
@@ -108,13 +119,11 @@ async function save() {
       />
       <select v-model="key" class="dt-adm-in dt-adm-grow" :data-testid="tid('select')">
         <option value="">选择称号</option>
-        <optgroup v-if="custom.length > 0" label="定制称号">
-          <option v-for="t in custom" :key="t.key" :value="t.key">
-            {{ t.title }}{{ t.note ? `（${t.note}）` : '' }}
+        <optgroup v-for="g in groups" :key="g.source" :label="g.label">
+          <option v-for="t in g.items" :key="t.key" :value="t.key">
+            <template v-if="t.source === 'custom'">{{ t.title }}{{ t.note ? `（${t.note}）` : '' }}</template>
+            <template v-else>{{ t.title }}（{{ t.key }}）</template>
           </option>
-        </optgroup>
-        <optgroup v-if="config.length > 0" label="配置称号">
-          <option v-for="t in config" :key="t.key" :value="t.key">{{ t.title }}（{{ t.key }}）</option>
         </optgroup>
       </select>
       <select v-model="mode" class="dt-adm-in" :data-testid="tid('mode')">

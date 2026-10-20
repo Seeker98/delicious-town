@@ -1,4 +1,4 @@
-// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
+// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 packages/shared/src/zh-TW-overrides.json
 /** 神殿：鑑定、守護獸、探險、試煉（問題記錄 272；介面改版 P9） */
 export default {
   title: '神殿',
@@ -45,7 +45,7 @@ export default {
     howShop: (coin: string) => `銀幣商店 ${coin}`,
     howBlack: (diamond: number) => `黑市 ${diamond} 鑽`,
     howAward: '廚塔和酒吧等的隨機獎勵',
-    howChampion: '昨日特色菜榜前 4 名',
+    howChampion: (n: number) => `昨日特色菜榜前 ${n} 名`,
     howSep: '、',
     howMany: '鑑定幾次',
     btn: (n: number) => `鑑定 ${n} 次`,

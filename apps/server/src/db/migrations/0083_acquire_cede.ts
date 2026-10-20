@@ -46,6 +46,10 @@ export async function up(db: Kysely<any>): Promise<void> {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function down(db: Kysely<any>): Promise<void> {
+  // 还没发的让渡（结算时已经从店里扣下了）先退回店里，不然连表一起丢（代码审查 2026-10-19）
+  await sql`update restaurant r set coin = r.coin + d.coin
+    from (select rest_id, sum(coin)::bigint as coin from acquire_due where paid_at is null group by rest_id) d
+    where r.id = d.rest_id`.execute(db);
   await sql`drop table acquire_due`.execute(db);
   await sql`
     create table acquire_dividend (

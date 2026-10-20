@@ -47,6 +47,19 @@ describe('GuardianPanel', () => {
     expect(w.emitted('reload')).toBeTruthy();
   });
 
+  it('连发快捷数：比最多少的 5、10、20 才给，点了直接按这个数发', async () => {
+    const data = templeData();
+    data.missiles[0]!.num = 30;
+    const w = mountPanel(data);
+    await w.find('[data-testid="fire-open-17"]').trigger('click');
+    expect(w.find('[data-testid="qty-quick-20"]').exists()).toBe(true);
+    expect(w.find('[data-testid="qty-quick-50"]').exists()).toBe(false);
+    await w.find('[data-testid="qty-quick-10"]').trigger('click');
+    await w.find('[data-testid="qty-ok"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.templeMissile).toHaveBeenCalledWith(17, 10);
+  });
+
   it('今天已击败：按钮灰掉并写明原因', async () => {
     const w = mountPanel(templeData({ guardian: { hpMax: 15000, hpLeft: 0, killed: true } }));
     await w.find('[data-testid="fire-open-17"]').trigger('click');
