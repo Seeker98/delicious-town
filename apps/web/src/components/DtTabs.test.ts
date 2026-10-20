@@ -1,5 +1,8 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import { defineComponent, h, ref, type PropType } from 'vue';
+import { tabsShown } from '../utils/tabsIds';
+import DtTabPanel from './DtTabPanel.vue';
 import DtTabs from './DtTabs.vue';
 
 const TABS = [
@@ -64,5 +67,84 @@ describe('DtTabs（界面改版 P2b）', () => {
   it('只有一个标签时不显示标签栏', () => {
     const w = mount(DtTabs, { props: { modelValue: 'a', tabs: [TABS[0]!] } });
     expect(w.find('ul').exists()).toBe(false);
+  });
+});
+
+// 页面里 DtTabs 和 DtTabPanel 是兄弟节点
+const Page = defineComponent({
+  props: { tabs: { type: Array as PropType<typeof TABS>, default: () => TABS }, idPrefix: String },
+  setup(props) {
+    const tab = ref('a');
+    return () =>
+      h('div', [
+        h(DtTabs, {
+          modelValue: tab.value,
+          tabs: props.tabs,
+          idPrefix: props.idPrefix,
+          'onUpdate:modelValue': (k: string) => (tab.value = k),
+        }),
+        h(
+          DtTabPanel,
+          { tab: tab.value, idPrefix: props.idPrefix },
+          { default: () => h('p', { 'data-testid': 'body' }, tab.value) },
+        ),
+      ]);
+  },
+});
+
+describe('DtTabs 和 DtTabPanel（backlog：读屏的 tab ↔ tabpanel 对应）', () => {
+  it('选中的标签 aria-controls 指向内容区，内容区 aria-labelledby 指回标签；切换后跟着变', async () => {
+    const w = mount(Page);
+    const check = (key: string) => {
+      const tab = w.get(`[data-testid="tab-${key}"]`);
+      const panel = w.get('[role="tabpanel"]');
+      expect(tab.attributes('id')).toBe(`dt-tabs-tab-${key}`);
+      expect(tab.attributes('aria-controls')).toBe(panel.attributes('id'));
+      expect(panel.attributes('id')).toBe(`dt-tabs-panel-${key}`);
+      expect(panel.attributes('aria-labelledby')).toBe(tab.attributes('id'));
+      expect(panel.attributes('tabindex')).toBe('0');
+      expect(panel.get('[data-testid="body"]').text()).toBe(key);
+    };
+    check('a');
+    // 没选中的标签有 id，但内容区没渲染，不写 aria-controls
+    expect(w.get('[data-testid="tab-b"]').attributes('id')).toBe('dt-tabs-tab-b');
+    expect(w.get('[data-testid="tab-b"]').attributes('aria-controls')).toBeUndefined();
+    await w.get('[data-testid="tab-b"]').trigger('click');
+    check('b');
+    expect(w.get('[data-testid="tab-a"]').attributes('aria-controls')).toBeUndefined();
+    w.unmount();
+  });
+
+  it('自定 idPrefix：两边用同一个前缀', () => {
+    const w = mount(Page, { props: { idPrefix: 'ex' } });
+    expect(w.get('[data-testid="tab-a"]').attributes('aria-controls')).toBe('ex-panel-a');
+    expect(w.get('[role="tabpanel"]').attributes('aria-labelledby')).toBe('ex-tab-a');
+    w.unmount();
+  });
+
+  it('只有一个标签（标签栏不显示）时内容区不标 tabpanel，只留一个不带属性的 div', async () => {
+    const w = mount(Page, { props: { tabs: [TABS[0]!], idPrefix: 'one' } });
+    expect(w.find('[role="tabpanel"]').exists()).toBe(false);
+    const box = w.get('[data-testid="body"]').element.parentElement!;
+    expect(box.tagName).toBe('DIV');
+    expect(box.getAttributeNames()).toEqual([]);
+    // 标签多了以后标上，里面的东西不重新挂载
+    const body = w.get('[data-testid="body"]').element;
+    await w.setProps({ tabs: TABS });
+    expect(w.get('[role="tabpanel"]').attributes('aria-labelledby')).toBe('one-tab-a');
+    expect(w.get('[data-testid="body"]').element).toBe(body);
+    w.unmount();
+    expect(tabsShown('one')).toBe(false);
+  });
+
+  // 上面几个用例没卸载，默认前缀还登记着，这里用单独的前缀
+  it('换页时新标签栏先挂载、旧的后卸载，登记不会被旧的清掉', () => {
+    const props = { modelValue: 'a', tabs: TABS, idPrefix: 'swap' };
+    const old = mount(DtTabs, { props });
+    const next = mount(DtTabs, { props });
+    old.unmount();
+    expect(tabsShown('swap')).toBe(true);
+    next.unmount();
+    expect(tabsShown('swap')).toBe(false);
   });
 });

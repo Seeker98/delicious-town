@@ -6,6 +6,7 @@ import templeScene from '../art/scene/temple.svg?url';
 import DtArt from '../components/DtArt.vue';
 import DtEmpty from '../components/DtEmpty.vue';
 import DtSkeleton from '../components/DtSkeleton.vue';
+import DtTabPanel from '../components/DtTabPanel.vue';
 import DtTabs from '../components/DtTabs.vue';
 import PlaceScene from '../components/place/PlaceScene.vue';
 import { useT } from '../composables/useT';
@@ -60,16 +61,18 @@ watch(tab, () => void load());
     </template>
   </PlaceScene>
   <DtTabs v-model="tab" :tabs="tabItems" />
-  <AppraisePanel v-if="tab === 'appraise'" />
-  <DtEmpty v-else-if="!data && failed" :title="t.temple.loadFailed" data-testid="temple-failed"
-    ><button type="button" class="btn btn-sm btn-outline-primary" @click="load">
-      {{ t.town.retry }}
-    </button></DtEmpty
-  >
-  <DtSkeleton v-else-if="!data" :rows="4" />
-  <template v-else>
-    <GuardianPanel v-if="tab === 'guardian'" :data="data" @reload="load" />
-    <ExplorePanel v-else-if="tab === 'explore'" :data="data" @reload="load" />
-    <TrialPanel v-else :data="data" @reload="load" />
-  </template>
+  <DtTabPanel :tab="tab">
+    <AppraisePanel v-if="tab === 'appraise'" />
+    <DtEmpty v-else-if="!data && failed" :title="t.temple.loadFailed" data-testid="temple-failed"
+      ><button type="button" class="btn btn-sm btn-outline-primary" @click="load">
+        {{ t.town.retry }}
+      </button></DtEmpty
+    >
+    <DtSkeleton v-else-if="!data" :rows="4" />
+    <template v-else>
+      <GuardianPanel v-if="tab === 'guardian'" :data="data" @reload="load" />
+      <ExplorePanel v-else-if="tab === 'explore'" :data="data" @reload="load" />
+      <TrialPanel v-else :data="data" @reload="load" />
+    </template>
+  </DtTabPanel>
 </template>

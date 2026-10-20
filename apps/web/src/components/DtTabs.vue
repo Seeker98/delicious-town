@@ -2,9 +2,12 @@
 /**
  * 一级标签栏（界面改版设计 §4.2 第 5~7 条）：下划线式、吸顶；选中下划线的位置由 utils/tabsScroll.ts 负责。
  * 键盘（backlog）：只有选中的标签在 Tab 键顺序里，左右方向键、Home、End 在标签之间移动并切换；
- * disabled 时别的标签点不了（一番赏抽签进行中），选中的那个不受影响
+ * disabled 时别的标签点不了（一番赏抽签进行中），选中的那个不受影响。
+ * 读屏（backlog）：每个标签有 id，选中的那个用 aria-controls 指向内容区；内容区由页面包一层 DtTabPanel，
+ * 两边按同一个 idPrefix 拼 id（utils/tabsIds.ts）。没选中的标签不写 aria-controls，因为它们的内容区没渲染
  */
-import { ref } from 'vue';
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import { DT_TABS_ID_PREFIX, dtPanelId, dtTabId, holdTabs, releaseTabs } from '../utils/tabsIds';
 
 const props = withDefaults(
   defineProps<{
@@ -13,11 +16,27 @@ const props = withDefaults(
     /** data-testid 前缀：默认 tab-，交易所沿用 ex-tab-、收购 acquire-tab- */
     testidPrefix?: string;
     disabled?: boolean;
+    /** 标签和内容区 id 的前缀，要和页面里 DtTabPanel 的一致；一屏只有一个标签栏时用默认值 */
+    idPrefix?: string;
   }>(),
-  { testidPrefix: 'tab-', disabled: false },
+  { testidPrefix: 'tab-', disabled: false, idPrefix: DT_TABS_ID_PREFIX },
 );
 const emit = defineEmits<{ 'update:modelValue': [key: string] }>();
 const list = ref<HTMLElement | null>(null);
+
+// 标签栏显示着才登记，DtTabPanel 据此决定要不要标 tabpanel
+const held = computed(() => (props.tabs.length > 1 ? props.idPrefix : null));
+watch(
+  held,
+  (now, before) => {
+    if (before) releaseTabs(before);
+    if (now) holdTabs(now);
+  },
+  { immediate: true },
+);
+onBeforeUnmount(() => {
+  if (held.value) releaseTabs(held.value);
+});
 
 const off = (key: string) => props.disabled && key !== props.modelValue;
 
@@ -53,6 +72,8 @@ function onKey(e: KeyboardEvent) {
         <button
           type="button"
           role="tab"
+          :id="dtTabId(idPrefix, x.key)"
+          :aria-controls="x.key === modelValue ? dtPanelId(idPrefix, x.key) : undefined"
           :class="['nav-link', { active: x.key === modelValue }]"
           :aria-selected="x.key === modelValue"
           :tabindex="x.key === modelValue ? 0 : -1"
