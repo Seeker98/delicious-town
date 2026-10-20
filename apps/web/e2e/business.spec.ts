@@ -31,7 +31,8 @@ test('经营循环：签到 → 推进一轮看到收益 → 加油领主线 →
   // 结算耗了油，加油后领主线（问题记录 318：第 1 章任务同时列出，首页显示第一个可领的——签到或加油）
   await page.getByTestId('refuel').click();
   await expect(page.getByText('消耗 银币')).toBeVisible();
-  // 加油后页面会刷新并重新渲染任务卡片，等进度显示 1/1 再点，并等领奖请求返回
+  // 首页不再直接领任务奖励（界面改版）：去任务页，等进度显示 1/1 再点，并等领奖请求返回
+  await page.goto('/rest/tasks');
   await expect(page.getByText('(1/1)')).toBeVisible();
   const claimed = page.waitForResponse((r) => r.url().includes('/api/v1/task/claim'));
   await page.getByRole('button', { name: '领奖' }).click();

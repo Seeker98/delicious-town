@@ -15,6 +15,10 @@ const friends: Messages['friends'] = {
   applyFailed: "Couldn't send the request",
   returned: (ok, failed) => `Returned thumbs-up to ${ok}${failed > 0 ? `; ${failed} failed` : ''}`,
   returnFailed: "Couldn't return thumbs-up",
+  returnWhy: {
+    renown: ' (your Renown is negative, so you can’t give thumbs up)',
+    other: ' (no longer friends, banned, or someone on the same network already gave them a thumbs up today)',
+  },
   count: (n, max) => `Friends ${n}/${max}`,
   sorts: { level: 'By level', star: 'By stars', recent: 'Recently added' },
   sortLabel: 'Sort',

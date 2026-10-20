@@ -138,6 +138,7 @@ export function createOpenData(config: GameConfig) {
       newbieExp: { maxLevel: t.settlement.newbieExp.maxLevel, rate: t.settlement.newbieExp.rate },
       acquire: {
         minStar: t.acquire.minStar,
+        priceDays: t.acquire.priceDays,
         buyerMinStar: t.acquire.buyerMinStar,
         buyerMinAccountDays: t.acquire.buyerMinAccountDays,
         maxHoldings: t.acquire.maxHoldings,
@@ -393,7 +394,13 @@ export function createOpenData(config: GameConfig) {
           appraise: m.appraisable
             ? appraisers
                 .filter(([, a]) => m.level >= a.min && m.level <= a.max)
-                .map(([gid, a]) => ({ id: gid, name: nameOf(lang, gid), rate: a.rate }))
+                .map(([gid, a]) => ({
+                  id: gid,
+                  name: nameOf(lang, gid),
+                  rate: a.rate,
+                  min: a.min,
+                  max: a.max,
+                }))
             : [],
           fragments: m.appraisable ? b.tuning.mysterious.fragmentPerRemnant : null,
           shilingShop: rare

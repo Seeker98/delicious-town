@@ -390,8 +390,12 @@ const events: Messages['events'] = {
     'mail.claim': (p) => `Reclamaste los adjuntos del correo «${String(p.title ?? '')}»`,
     'admin.rename': (p) =>
       `Un administrador cambió el nombre del restaurante de «${String(p.from ?? '')}» a «${String(p.to ?? '')}»: ${String(p.reason ?? '')}`,
-    'market.guess': (p) =>
-      `Resultado de la apuesta del mercado: ${n(p, 'hits')} ${plEs(n(p, 'hits'), 'acierto', 'aciertos')}`,
+    'market.guess': (p, names) => {
+      const got = ((p.goods ?? []) as Array<{ id: number; num: number }>)
+        .map((g) => `${names.goodsName(g.id)} ×${g.num}`)
+        .join(', ');
+      return `Resultado de la apuesta del mercado: ${n(p, 'hits')} ${plEs(n(p, 'hits'), 'acierto', 'aciertos')}${got ? `; recibes ${got}` : ''}`;
+    },
     'market.guess.refund': (p) => {
       const [day, hour] = String(p.period ?? '').split('@');
       return `La ronda de apuestas del mercado del ${day} a las ${Number(hour)}:00 no se sorteó; se devolvió tu inscripción`;

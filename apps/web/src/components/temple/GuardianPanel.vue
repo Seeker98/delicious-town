@@ -164,6 +164,7 @@ async function fire() {
       [t.temple.guardian.after, t.common.qty(catalog.goodsName(goodsId), Math.max(0, held - n))],
     ]"
     testid="num"
+    :quick="[5, 10, 20, 50]"
     @close="open = false"
     @ok="fire"
   />

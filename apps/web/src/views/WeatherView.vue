@@ -34,7 +34,7 @@ usePageTitle(() =>
   world.value ? catalog.weatherName(world.value.weather.id, world.value.weather.name) : null,
 );
 const error = ref('');
-const clock = useServerClock(() => tools.value?.now ?? new Date().toISOString());
+const clock = useServerClock(() => tools.value?.now ?? null);
 
 /** 天气说明一行一条：“经营: 上座率 −8%” 拆成灰色的小标题和内容；没有冒号的整行写 */
 const fx = computed(() => {

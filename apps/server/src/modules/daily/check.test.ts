@@ -50,6 +50,8 @@ describe('小镇日报：解析和检查 AI 的输出', () => {
     expect(() => checkArticle({ ...ok, body: '{r:12} 开张了' }, facts, 'en')).toThrow('chinese');
     expect(() => checkArticle({ ...ok, body: '{r:12} 开张了' }, facts)).not.toThrow();
     expect(() => checkArticle({ ...ok, body: '**加粗**' }, facts)).toThrow('markdown');
+    // 编号不是标题记号：“#1 …”能过
+    expect(() => checkArticle({ ...ok, body: '#1 {r:12} 收入最高' }, facts)).not.toThrow();
   });
 
   it('英文的记号要和简中一模一样', () => {
@@ -71,6 +73,10 @@ describe('小镇日报：解析和检查 AI 的输出', () => {
     expect(() => parseArticle(JSON.stringify({ title: 't', body: '{r:1}'.repeat(79) }), 'zh-CN', 80)).toThrow(
       'body',
     );
+  });
+
+  it('繁中：套界面同一份人工修订（backlog：原来没套，“类型”会转成“型別”）', () => {
+    expect(toTw({ title: '天气类型', body: '{r:7} 换了类型' }).title).toBe('天氣類型');
   });
 
   it('繁中：简体转台湾正体，记号不变', () => {

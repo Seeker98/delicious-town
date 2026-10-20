@@ -54,6 +54,7 @@ describe('开放接口数据（问题记录 142）', () => {
     const a = t.acquire;
     expect(g.acquire).toEqual({
       minStar: a.minStar,
+      priceDays: a.priceDays,
       buyerMinStar: a.buyerMinStar,
       buyerMinAccountDays: a.buyerMinAccountDays,
       maxHoldings: a.maxHoldings,

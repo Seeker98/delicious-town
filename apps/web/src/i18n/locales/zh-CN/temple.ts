@@ -44,7 +44,7 @@ export default {
     howShop: (coin: string) => `银币商店 ${coin}`,
     howBlack: (diamond: number) => `黑市 ${diamond} 钻`,
     howAward: '厨塔和酒吧等的随机奖励',
-    howChampion: '昨日特色菜榜前 4 名',
+    howChampion: (n: number) => `昨日特色菜榜前 ${n} 名`,
     howSep: '、',
     howMany: '鉴定几次',
     btn: (n: number) => `鉴定 ${n} 次`,

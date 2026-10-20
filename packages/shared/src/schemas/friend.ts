@@ -200,7 +200,8 @@ export interface ThumbTodayDto {
 
 export interface ReturnAllDto {
   ok: number[];
-  failed: Array<{ restId: number; code: string }>;
+  /** reason：错误里的原因（renown 声望为负、thumb_ip 同一网络今天已赞过、target_banned 等）；旧服务端没有 */
+  failed: Array<{ restId: number; code: string; reason?: string }>;
 }
 
 export const doorBody = z.object({ door: z.number().int().min(0).max(1000) });

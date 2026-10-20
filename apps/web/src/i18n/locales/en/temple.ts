@@ -43,7 +43,7 @@ const temple: Messages['temple'] = {
     howShop: (coin) => `coin shop ${coin}`,
     howBlack: (diamond) => `black market ${diamond} diamonds`,
     howAward: 'random rewards from the Chef Tower, the bar and more',
-    howChampion: 'top 4 of yesterday’s signature dish ranking',
+    howChampion: (n: number) => `top ${n} of yesterday’s signature dish ranking`,
     howSep: ', ',
     howMany: 'How many times',
     btn: (n) => `Appraise ${n} ${plEn(n, 'time', 'times')}`,

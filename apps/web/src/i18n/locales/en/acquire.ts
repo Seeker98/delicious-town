@@ -9,8 +9,8 @@ const acquire: Messages['acquire'] = {
   loadFailed: 'Failed to load acquisitions',
   failed: 'Action failed',
   ruleItems: (r) => [
-    `Valuation = average daily settlement coins over the last 7 days × ${r.mult} × heat; each takeover adds ${r.heatStep} heat, which drifts back to 1 every day`,
-    `Takeovers only work on restaurants with no owner and at least ${r.minStar} stars, at most once per restaurant per day; restaurants that just reached ${r.minStar} stars are protected for ${days(r.newStarDays)}. The restaurant gets ${r.firstStore}, an M&A advisory fee of ${r.firstBurn} is destroyed and ${r.tax} is tax`,
+    `Valuation = average daily settlement coins over the last ${days(r.priceDays)} × ${r.mult} × heat; each takeover adds ${r.heatStep} heat, which drifts back to 1 every day`,
+    `Takeovers only work on restaurants with no owner and at least ${r.minStar} stars, at most ${r.maxPerDay === 1 ? 'once' : `${r.maxPerDay} times`} per restaurant per day; restaurants that just reached ${r.minStar} stars are protected for ${days(r.newStarDays)}. The restaurant gets ${r.firstStore}, an M&A advisory fee of ${r.firstBurn} is destroyed and ${r.tax} is tax`,
     `A restaurant with an owner can only change hands through a listing (${r.listMin}–${r.listMax} of its valuation): the previous owner gets ${r.resaleSeller}, the restaurant gets ${r.resaleStore} and ${r.tax} is tax`,
     `You need ${r.buyerStar}+ stars and an account at least ${days(r.buyerDays)} old to acquire; you can buy up to ${r.buyerPerDay} a day and own up to ${r.maxHoldings}`,
     `An acquired restaurant gives ${r.cede} of every round's settlement coins to its owner, or ${r.cedeTend} after the owner tends it that day; the previous day's cut is paid to the owner at 00:05`,
@@ -74,6 +74,7 @@ const acquire: Messages['acquire'] = {
   holdTended: 'Tended today',
   holdNotTended: 'Not tended today',
   holdIdle: (d) => `Not tended for ${days(d)}`,
+  holdLinked: 'Linked account, can’t tend',
   holdSub: (avg, rate, pending) => `Daily average ${avg} · cut ${rate} · pending today ${pending}`,
   holdHalfNote: (stopIn, releaseIn) =>
     `Cut halved; ${days(stopIn)} more without tending and it stops, let go in ${days(releaseIn)}`,
@@ -126,8 +127,8 @@ const acquire: Messages['acquire'] = {
   payback: 'Pays back in about',
   paybackVal: (plain, tended) => `${days(plain)} · ${days(tended)} if tended daily`,
   afterHold: 'Owned after buying',
-  buyNote: (half, stop, release, redeem) =>
-    `Based on the last 7 days' income; the cut follows the restaurant's income. Not tended for ${days(half)}: cut halved; ${days(stop)}: it stops; ${days(release)}: let go automatically. The restaurant can buy itself back at any time, and you then get only ${redeem} of the buy-back price.`,
+  buyNote: (half, stop, release, redeem, priceDays) =>
+    `Based on the last ${days(priceDays)}' income; the cut follows the restaurant's income. Not tended for ${days(half)}: cut halved; ${days(stop)}: it stops; ${days(release)}: let go automatically. The restaurant can buy itself back at any time, and you then get only ${redeem} of the buy-back price.`,
   ownedWhy:
     'A restaurant with an owner can’t be taken over; wait for the owner to list it and buy it under For sale.',
   rateLabel: 'List at what share of its value',

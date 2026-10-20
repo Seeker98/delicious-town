@@ -36,6 +36,8 @@ export default {
     more: '更早的记录',
     /** 界面改版 P7：今天一张卡片、最近几轮银币的小柱状图、加成折叠卡的摘要 */
     todayTitle: '今天',
+    /** 被收购的店让给老板的（代码审查 2026-10-19） */
+    ceded: (n: string) => `其中让给老板 ${n}`,
     rounds: (n: number) => `${n} 轮`,
     chartTitle: (n: number) => `最近 ${n} 轮银币`,
     chartLabel: (n: number, latest: string) => `最近 ${n} 轮银币, 最新一轮 ${latest}`,

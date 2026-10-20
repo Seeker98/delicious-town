@@ -89,6 +89,9 @@ onMounted(async () => {
       <div>
         <span class="dt-stat-label">{{ t.rest.income.cols.coin }}</span>
         <b class="dt-income-num">{{ formatNum(today.coin) }}</b>
+        <span v-if="today.ceded" class="dt-meta" data-testid="income-today-ceded">{{
+          t.rest.income.ceded(formatNum(today.ceded))
+        }}</span>
       </div>
       <div>
         <span class="dt-stat-label">{{ t.rest.income.cols.exp }}</span>
@@ -179,7 +182,12 @@ onMounted(async () => {
           <tr v-for="r in items" :key="r.roundNo">
             <td class="text-nowrap">{{ roundTime(r.at) }}</td>
             <td class="text-end">{{ formatNum(guests(r.customers)) }}</td>
-            <td class="text-end">{{ formatNum(r.coin) }}</td>
+            <td class="text-end">
+              {{ formatNum(r.coin)
+              }}<span v-if="r.ceded" class="dt-meta d-block">{{
+                t.rest.income.ceded(formatNum(r.ceded))
+              }}</span>
+            </td>
             <td class="text-end">{{ formatNum(r.exp) }}</td>
             <td class="text-end">{{ formatNum(r.oil) }}</td>
           </tr>

@@ -154,7 +154,8 @@ describe('老板打理（收购改版 2026-10-16）', () => {
     expect(r.data.items.map((x) => x.restId).sort()).toEqual([store.restaurantId, b.restaurantId].sort());
     expect(r.data.cost).toBe(9_700 + 4_300);
     expect(await packs(b.restaurantId)).toBe(1);
-    await expect(svc().tendAll(ctx)).rejects.toMatchObject({ params: { reason: 'tended' } });
+    // 没打理的只剩关联账号的店：报关联，不报“打理过了”（代码审查 2026-10-19）
+    await expect(svc().tendAll(ctx)).rejects.toMatchObject({ params: { reason: 'linked' } });
   });
 
   it('收购关着的区服不能打理', async () => {

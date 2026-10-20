@@ -9,6 +9,7 @@ import type {
   AcquireViewDto,
 } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import DtArt from '../components/DtArt.vue';
 import DtEmpty from '../components/DtEmpty.vue';
 import DtRow from '../components/DtRow.vue';
 import DtSheet from '../components/DtSheet.vue';
@@ -16,6 +17,7 @@ import DtTabs from '../components/DtTabs.vue';
 import { useT } from '../composables/useT';
 import { useTabQuery } from '../composables/useTabQuery';
 import { acquireReason, errorMessage } from '../i18n/zh-CN';
+import { useCatalogStore } from '../stores/catalog';
 import { useConfirmStore } from '../stores/confirm';
 import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
@@ -32,6 +34,7 @@ import { remainText } from '../utils/remain';
 type Tab = 'price' | 'market' | 'invest' | 'mine';
 const TABS: Tab[] = ['price', 'market', 'invest', 'mine'];
 const t = useT();
+const catalog = useCatalogStore();
 const toast = useToastStore();
 const confirm = useConfirmStore();
 const session = useSessionStore();
@@ -196,8 +199,8 @@ function openHold(h: AcquireHoldingDto) {
 const listCost = computed(() => (hold.value ? Math.round(hold.value.price * rate.value) : 0));
 const listSplit = computed(() => (rules.value ? resaleSplit(listCost.value, rules.value) : null));
 
-/** 名下今天还没打理的店：全部打理的家数和成本 */
-const untended = computed(() => view.value?.holdings.filter((h) => !h.tendedToday) ?? []);
+/** 名下今天还没打理的店：全部打理的家数和成本（关联账号的店不能打理，不算） */
+const untended = computed(() => view.value?.holdings.filter((h) => !h.tendedToday && !h.linked) ?? []);
 const untendedCost = computed(() => untended.value.reduce((s, h) => s + h.tendCost, 0));
 
 function tend(h: AcquireHoldingDto) {
@@ -273,6 +276,8 @@ const ruleList = computed(() => {
     mult: num2(r.priceMultiple),
     heatStep: num2(r.heatStep),
     minStar: r.minStar,
+    maxPerDay: r.maxPerDay,
+    priceDays: r.priceDays ?? 7,
     newStarDays: r.newStarProtectDays,
     firstStore: pct(r.firstStoreRate),
     firstBurn: pct(r.firstBurnRate),
@@ -331,6 +336,7 @@ onMounted(load);
           @click="openTarget(b, 'acquire')"
         >
           <span :class="['dt-rank-badge', { 'is-top': i < 3 }]">{{ i + 1 }}</span>
+          <DtArt v-if="b.door !== undefined" class="dt-acq-door" :name="catalog.doorArt(b.door)" :size="28" />
           <span class="dt-row-main">
             <span class="dt-row-title">{{ b.name }}</span>
             <span class="dt-row-sub">{{ priceLine(b) }}</span>
@@ -353,6 +359,7 @@ onMounted(load);
           :data-testid="`acquire-market-${b.restId}`"
           @click="openTarget(b, 'listed')"
         >
+          <DtArt v-if="b.door !== undefined" class="dt-acq-door" :name="catalog.doorArt(b.door)" :size="28" />
           <span class="dt-row-main">
             <span class="dt-row-title">{{ b.name }}</span>
             <span class="dt-row-sub"
@@ -383,8 +390,13 @@ onMounted(load);
           :data-testid="`acquire-invest-${r.restId}`"
         >
           <template #icon
-            ><span :class="['dt-rank-badge', { 'is-top': i < 3 }]">{{ i + 1 }}</span></template
-          >
+            ><span :class="['dt-rank-badge', { 'is-top': i < 3 }]">{{ i + 1 }}</span
+            ><DtArt
+              v-if="r.door !== undefined"
+              class="dt-acq-door"
+              :name="catalog.doorArt(r.door)"
+              :size="28"
+          /></template>
           <template #title>{{ r.name }}</template>
           <template #sub
             >{{ t.acquire.colHoldings(r.holdings) }} · {{ t.acquire.colValue(coin(r.value)) }}<br />{{
@@ -549,8 +561,14 @@ onMounted(load);
                   >{{ t.acquire.leftLine(remainText(h.listed.until)) }}</span
                 >
               </button>
+              <span
+                v-if="!h.tendedToday && h.linked"
+                class="dt-row-value"
+                :data-testid="`acquire-linked-${h.restId}`"
+                >{{ t.acquire.holdLinked }}</span
+              >
               <button
-                v-if="!h.tendedToday"
+                v-else-if="!h.tendedToday"
                 type="button"
                 class="btn btn-outline-primary btn-sm"
                 :disabled="busy"
@@ -669,6 +687,7 @@ onMounted(load);
                 rules.tendStopDays,
                 rules.tendReleaseDays,
                 pct(1 - rules.redeemBurnRate - rules.taxRate),
+                rules.priceDays ?? 7,
               )
             }}
           </div>
@@ -746,7 +765,7 @@ onMounted(load);
           </div>
         </dl>
         <button
-          v-if="!hold.tendedToday"
+          v-if="!hold.tendedToday && !hold.linked"
           type="button"
           class="btn btn-primary w-100 mt-2"
           :disabled="busy"

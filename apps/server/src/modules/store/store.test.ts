@@ -117,6 +117,19 @@ describe('使用道具（规格书 07 §7.4）', () => {
     expect(Number((await restRow(t, ctx.restaurantId)).coin)).toBe(0);
   });
 
+  it('新手大礼包：仓库放不下里面的新种类就不拆，报 STORE_FULL、礼包不扣（backlog）', async () => {
+    const ctx = await newRestaurant(t, {
+      verified: true,
+      patch: { coin: 0, store_num: 3 },
+      goods: { [gid('新手大礼包')]: 1 },
+    });
+    await expect(s().use(ctx, { goodsId: gid('新手大礼包'), num: 1 })).rejects.toMatchObject({
+      code: 'STORE_FULL',
+    });
+    expect(await goodsNum(t, ctx.restaurantId, gid('新手大礼包'))).toBe(1);
+    expect(Number((await restRow(t, ctx.restaurantId)).coin)).toBe(0);
+  });
+
   it('新手大礼包打开后：银币 5 万、钻石 50、喇叭 3、一二三级食材随机券 50、20、10 张等（问题记录 331）', async () => {
     const ctx = await newRestaurant(t, {
       verified: true,

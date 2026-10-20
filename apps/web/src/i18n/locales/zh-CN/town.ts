@@ -187,6 +187,14 @@ export default {
       'shiling.week':
         '本周获得 ≥ 200 的前 3 名依次抽一张工作证 (周日 23 点发, 有效 160 小时, 周一 7:59 发工资)',
     } as Record<string, string>,
+    /** 昨日特色菜榜奖励（按区服数值拼）：第 1 名美味印章×2, 第 2~4 名各 1 个 (每天 9 点发) */
+    championPrize: (groups: Array<{ from: number; to: number; num: number }>, name: string, hour: number) =>
+      groups
+        .map((g, i) => {
+          const at = g.from === g.to ? `第 ${g.from} 名` : `第 ${g.from}~${g.to} 名各`;
+          return i === 0 ? `${at}${name}×${g.num}` : `${at} ${g.num} 个`;
+        })
+        .join(', ') + ` (每天 ${hour} 点发)`,
     every10: '每 10 分钟更新',
     every1: '每分钟更新',
     updatedAt: (time: string) => ` · 更新于 ${time}`,

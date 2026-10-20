@@ -194,6 +194,7 @@ const home: Messages['home'] = {
     coinSub:
       'Business income each round is the main source; picky customers who get a dish you can cook pay the most.',
     lastCoin: 'Last round',
+    lastCeded: 'To your owner',
     strength: (n) => `Stamina ${n}`,
     strengthFull: 'Stamina is full.',
     strengthSub: 'Each round restores one point, sometimes two.',

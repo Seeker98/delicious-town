@@ -674,10 +674,12 @@ details.dt-card > summary {
 /* 开发用图库 /dev/art：浅色、深色并排 */
 .dt-gallery {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* 手机宽度排成一列，不横向溢出（backlog） */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 8px;
 }
 .dt-gallery-pane {
+  min-width: 0;
   background: var(--dt-surface);
   color: var(--dt-text);
   padding: 8px;
@@ -758,11 +760,12 @@ details.dt-card > summary {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+/* 和 .dt-card 一样用大号圆角（backlog：原来是中号，“我的”页的卡和别处对不上） */
 .dt-group-card {
   overflow: hidden;
   background: var(--dt-surface);
   border: 1px solid var(--dt-line);
-  border-radius: var(--dt-radius-md);
+  border-radius: var(--dt-radius-lg);
 }
 .dt-nav-row {
   display: flex;
@@ -4061,6 +4064,10 @@ button.dt-row {
   width: auto;
 }
 /* 在售一行右边：挂牌价和单位 */
+/* 收购榜单、在售行里的店门（backlog P8） */
+.dt-acq-door {
+  flex-shrink: 0;
+}
 .dt-acq-cost {
   display: flex;
   flex-direction: column;

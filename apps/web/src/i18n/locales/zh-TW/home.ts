@@ -1,4 +1,4 @@
-// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
+// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 packages/shared/src/zh-TW-overrides.json
 /** 餐廳首頁（問題記錄 272） */
 export default {
   loadFailed: '獲取餐廳資訊失敗',
@@ -202,6 +202,7 @@ export default {
     coin: (n: string) => `銀幣 ${n}`,
     coinSub: '每輪營業收入是主要來源, 挑剔顧客點到會做的菜付得最多。',
     lastCoin: '上一輪',
+    lastCeded: '讓給老闆',
     strength: (n: string) => `體力 ${n}`,
     strengthFull: '體力滿了。',
     strengthSub: '每輪結算恢復一點, 有時兩點。',

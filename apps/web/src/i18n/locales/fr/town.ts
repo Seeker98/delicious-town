@@ -213,6 +213,17 @@ const town: Messages['town'] = {
       'shiling.week':
         'Les 3 premiers ayant gagné au moins 200 cette semaine tirent chacun une carte de métier, dans l’ordre (dimanche 23 h, valable 160 heures, salaire lundi 7 h 59)',
     },
+    championPrize: (groups: Array<{ from: number; to: number; num: number }>, name: string, hour: number) =>
+      groups
+        .map((g, i) => {
+          const rk = (n: number) => (n === 1 ? '1er' : `${n}e`);
+          const at = g.from === g.to ? rk(g.from) : `${rk(g.from)} à ${rk(g.to)}`;
+          const each = g.from === g.to ? '' : ' chacun';
+          return i === 0
+            ? `${at}\u202f: ${name}\u202f×\u202f${g.num}${each}`
+            : `${at}\u202f: ${g.num}${each}`;
+        })
+        .join('\u202f; ') + ` (chaque jour à ${hour} h)`,
     every10: 'Mis à jour toutes les 10 min',
     every1: 'Mis à jour chaque minute',
     updatedAt: (time) => ` · mis à jour à ${time}`,

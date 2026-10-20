@@ -1,4 +1,5 @@
 import * as OpenCC from 'opencc-js';
+import { applyZhTwOverrides } from '@dt/shared';
 import { tokensIn, type DailyFacts } from './facts';
 
 /** 一种语言的日报 */
@@ -52,7 +53,8 @@ export function checkArticle(a: Article, facts: DailyFacts, lang: 'zh-CN' | 'en'
     // 写坏的记号（{r: 12}、{r：12}）不认，玩家会看到原样的花括号（终审 I2）
     if (/[{}｛｝]/.test(s.replace(TOKEN_RE, ''))) throw new Error('stray brace');
     // 页面按纯文字显示，Markdown 标记会原样露出来（backlog）
-    if (/\*\*|__|`|^\s*#/m.test(s)) throw new Error('contains markdown');
+    // 标题记号要 # 后面跟空格；“#1 …”这种编号不算（backlog）
+    if (/\*\*|__|`|^\s*#{1,6}\s/m.test(s)) throw new Error('contains markdown');
     // 英文里剩下没翻的中文（backlog）
     if (lang === 'en' && /[\u3400-\u9fff\uff00-\uffef]/.test(s)) throw new Error('chinese left in english');
   }
@@ -67,7 +69,7 @@ export function sameTokens(zh: Article, en: Article): void {
 
 const cnToTw = OpenCC.Converter({ from: 'cn', to: 'twp' });
 
-/** 繁中：和界面文字一样用 OpenCC 从简中转，不调用 AI */
+/** 繁中：和界面文字一样用 OpenCC 从简中转、再套界面的人工修订，不调用 AI */
 export function toTw(a: Article): Article {
-  return { title: cnToTw(a.title), body: cnToTw(a.body) };
+  return { title: applyZhTwOverrides(cnToTw(a.title)), body: applyZhTwOverrides(cnToTw(a.body)) };
 }

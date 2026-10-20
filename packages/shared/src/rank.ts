@@ -134,4 +134,6 @@ export interface LeaderboardDto {
   rows: LeaderboardRowDto[];
   me: { rank: number; value: number } | null;
   updatedAt: string;
+  /** 昨日特色菜榜的奖励（区服数值 tuning.mysterious）：第 n 名 nums[n-1] 个 goodsId，每天 hour 点发；别的榜没有 */
+  prize?: { goodsId: number; nums: number[]; hour: number };
 }

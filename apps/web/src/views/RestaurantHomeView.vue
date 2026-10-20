@@ -346,7 +346,13 @@ const infoView = computed(() => {
     return {
       title: x.coin(formatNum(r.coin)),
       sub: x.coinSub,
-      rows: last ? [[x.lastCoin, `+${formatNum(last.coin)}`]] : [],
+      rows: last
+        ? [
+            [x.lastCoin, `+${formatNum(last.coin)}`],
+            // 被收购的店：这一轮让给老板的（代码审查 2026-10-19）
+            ...(last.ceded ? ([[x.lastCeded, `-${formatNum(last.ceded)}`]] as Array<[string, string]>) : []),
+          ]
+        : [],
       to: '/rest/income',
       link: x.toIncome,
     };

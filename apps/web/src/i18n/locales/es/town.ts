@@ -205,6 +205,14 @@ const town: Messages['town'] = {
       'shiling.week':
         'Los 3 primeros con al menos 200 esta semana sacan un permiso de trabajo cada uno, por orden (domingo 23:00, válido 160 horas, sueldo lunes 7:59)',
     },
+    championPrize: (groups: Array<{ from: number; to: number; num: number }>, name: string, hour: number) =>
+      groups
+        .map((g, i) => {
+          const at = g.from === g.to ? `${g.from}.º` : `${g.from}.º a ${g.to}.º`;
+          const each = g.from === g.to ? '' : ' cada uno';
+          return i === 0 ? `${at}: ${name} ×${g.num}${each}` : `${at}: ${g.num}${each}`;
+        })
+        .join('; ') + ` (cada día a las ${hour}:00)`,
     every10: 'Se actualiza cada 10 min',
     every1: 'Se actualiza cada minuto',
     updatedAt: (time) => ` · actualizado a las ${time}`,

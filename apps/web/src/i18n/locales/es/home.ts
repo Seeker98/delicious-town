@@ -191,6 +191,7 @@ const home: Messages['home'] = {
     coinSub:
       'Los ingresos de cada ronda son la fuente principal; los clientes exigentes que piden un plato que sabes cocinar pagan más.',
     lastCoin: 'Última ronda',
+    lastCeded: 'Para tu dueño',
     strength: (n) => `Energía ${n}`,
     strengthFull: 'Energía al máximo.',
     strengthSub: 'Cada ronda recupera un punto, a veces dos.',

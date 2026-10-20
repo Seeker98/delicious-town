@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import * as OpenCC from 'opencc-js';
 
 const HEADER =
-  '// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json\n';
+  '// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 packages/shared/src/zh-TW-overrides.json\n';
 const toTw = OpenCC.Converter({ from: 'cn', to: 'twp' });
 
 /** overrides：[转换后的写法, 想要的写法] */
@@ -18,7 +18,10 @@ export function convertZhTw(source, overrides) {
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const root = join(dirname(fileURLToPath(import.meta.url)), '../src/i18n');
-  const overrides = JSON.parse(readFileSync(join(root, 'zh-TW-overrides.json'), 'utf8'));
+  // 修订表放在共用包里，服务端小镇日报转繁中也用它
+  const overrides = JSON.parse(
+    readFileSync(join(root, '../../../../packages/shared/src/zh-TW-overrides.json'), 'utf8'),
+  );
   const from = join(root, 'locales/zh-CN');
   const to = join(root, 'locales/zh-TW');
   mkdirSync(to, { recursive: true });

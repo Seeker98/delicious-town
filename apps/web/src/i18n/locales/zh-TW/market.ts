@@ -1,4 +1,4 @@
-// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
+// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 packages/shared/src/zh-TW-overrides.json
 /** 菜場和菜園姐（問題記錄 272） */
 export default {
   sections: { daily: '日常菜場', special: '特價菜場', premium: '高階菜場 (需 B 檔以上基金勳章)' },

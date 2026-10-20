@@ -1,4 +1,4 @@
-// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
+// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 packages/shared/src/zh-TW-overrides.json
 import { n, num, type P, str, table } from '../../helpers';
 
 /** 一封系統郵件的標題和正文；正文為 null 時顯示郵件原文（系統補償的說明是管理員寫的） */

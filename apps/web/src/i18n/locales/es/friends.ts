@@ -15,6 +15,10 @@ const friends: Messages['friends'] = {
   applyFailed: 'No se pudo enviar la solicitud',
   returned: (ok, failed) => `Devolviste el me gusta a ${ok}${failed > 0 ? `; ${failed} fallaron` : ''}`,
   returnFailed: 'No se pudieron devolver los me gusta',
+  returnWhy: {
+    renown: ' (tu renombre es negativo, no puedes dar me gusta)',
+    other: ' (ya no sois amigos, está baneado o alguien de la misma red ya le dio me gusta hoy)',
+  },
   count: (n, max) => `Amigos ${n}/${max}`,
   sorts: { level: 'Por nivel', star: 'Por estrellas', recent: 'Añadidos hace poco' },
   sortLabel: 'Ordenar',

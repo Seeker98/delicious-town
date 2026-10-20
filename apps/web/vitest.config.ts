@@ -2,6 +2,9 @@ import vue from '@vitejs/plugin-vue';
 import { defineProject } from 'vitest/config';
 import { inlineLimit } from './src/build/artAssets';
 
+// 测试机固定在伦敦时区：北京时间的格式化断言在测试机就是 Asia/Shanghai 时会照样通过、测不出问题（backlog）
+process.env.TZ = 'Europe/London';
+
 export default defineProject({
   // 和 vite.config.ts 一致：不带选项式 API
   plugins: [vue({ features: { optionsAPI: false } })],

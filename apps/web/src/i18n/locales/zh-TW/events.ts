@@ -1,4 +1,4 @@
-// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
+// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 packages/shared/src/zh-TW-overrides.json
 import type { RestLogDto } from '@dt/shared';
 import type { Names } from '../../../utils/events';
 import { formatNum } from '../../../utils/format';
@@ -370,7 +370,12 @@ export default {
     'mail.claim': (p) => `領取了郵件「${String(p.title ?? '')}」的附件`,
     'admin.rename': (p) =>
       `管理員把店名從「${String(p.from ?? '')}」改為「${String(p.to ?? '')}」: ${String(p.reason ?? '')}`,
-    'market.guess': (p) => `菜場競猜開獎: 猜中 ${n(p, 'hits')} 種`,
+    'market.guess': (p, names) => {
+      const got = ((p.goods ?? []) as Array<{ id: number; num: number }>)
+        .map((g) => `${names.goodsName(g.id)}×${g.num}`)
+        .join('、');
+      return `菜場競猜開獎: 猜中 ${n(p, 'hits')} 種${got ? `, 得到 ${got}` : ''}`;
+    },
     'market.guess.refund': (p) => {
       const [day, hour] = String(p.period ?? '').split('@');
       return `菜場競猜 ${day} ${Number(hour)} 點那一輪沒有開獎, 退還了報名費`;

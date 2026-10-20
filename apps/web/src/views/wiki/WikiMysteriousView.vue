@@ -124,7 +124,7 @@ const roadRule = computed(() => {
           {{ w.mc.appraise
           }}<template v-for="(a, i) in m.sources.appraise" :key="a.id"
             >{{ i > 0 ? sep : '' }}<RouterLink :to="`/wiki/goods/${a.id}`">{{ a.name }}</RouterLink> ({{
-              a.rate >= 1 ? w.mc.sure : pct(a.rate)
+              w.mc.appraisePick(a.min, a.max, a.rate >= 1 ? w.mc.sure : pct(a.rate))
             }})</template
           >
         </li>

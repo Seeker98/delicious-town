@@ -1,4 +1,4 @@
-// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
+// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 packages/shared/src/zh-TW-overrides.json
 /** 好友列表、好友餐廳、翻櫥櫃、換食材、餐桌、舉報（問題記錄 272） */
 export default {
   tabs: { friends: '我的好友', requests: '申請', find: '找好友', feed: '動態' },
@@ -14,6 +14,11 @@ export default {
   applyFailed: '申請失敗',
   returned: (ok: number, failed: number) => `回讚了 ${ok} 人${failed > 0 ? `, ${failed} 人沒成功` : ''}`,
   returnFailed: '回贊失敗',
+  /** 一鍵回贊沒成功的原因（程式碼審查 2026-10-19） */
+  returnWhy: {
+    renown: ' (聲望是負的, 不能點贊)',
+    other: ' (對方已不是好友、被封, 或同一網路今天已有人贊過)',
+  },
   count: (n: number, max: number) => `好友 ${n}/${max}`,
   sorts: { level: '按等級', star: '按星級', recent: '最近加的' },
   /** 介面改版 P10 */

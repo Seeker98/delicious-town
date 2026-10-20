@@ -33,7 +33,12 @@ if (leader) {
   log.info('became leader, starting jobs');
   const scheduler = startScheduler(workerJobs(game, log), log);
   await untilAborted(ac.signal);
-  if (!(await scheduler.stop(STOP_WAIT_MS))) log.warn('jobs still running at shutdown, exiting anyway');
+  if (!(await scheduler.stop(STOP_WAIT_MS))) {
+    // 还有任务在跑：不先放主节点锁（新 worker 会在旧任务没停时开始，backlog）；直接退出，
+    // 连接一断数据库回滚没提交的事务、同时释放锁
+    log.warn('jobs still running at shutdown, exiting without releasing leadership first');
+    process.exit(1);
+  }
   await leader.end();
 }
 settingsSub.close();

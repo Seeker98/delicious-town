@@ -402,7 +402,12 @@ const events: Messages['events'] = {
     'mail.claim': (p) => `A récupéré les pièces jointes du courrier «\u202f${String(p.title ?? '')}\u202f»`,
     'admin.rename': (p) =>
       `Un administrateur a renommé le restaurant de «\u202f${String(p.from ?? '')}\u202f» en «\u202f${String(p.to ?? '')}\u202f»\u202f: ${String(p.reason ?? '')}`,
-    'market.guess': (p) => `Résultat du pronostic du marché\u202f: ${n(p, 'hits')} bonnes réponses`,
+    'market.guess': (p, names) => {
+      const got = ((p.goods ?? []) as Array<{ id: number; num: number }>)
+        .map((g) => `${names.goodsName(g.id)}\u202f×\u202f${g.num}`)
+        .join(', ');
+      return `Résultat du pronostic du marché\u202f: ${n(p, 'hits')} bonnes réponses${got ? `\u202f; vous recevez ${got}` : ''}`;
+    },
     'market.guess.refund': (p) => {
       const [day, hour] = String(p.period ?? '').split('@');
       return `Le pronostic du marché du ${day} à ${Number(hour)} h n'a pas été tiré\u202f; vos frais d'inscription ont été remboursés`;

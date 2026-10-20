@@ -1,4 +1,4 @@
-// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
+// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 packages/shared/src/zh-TW-overrides.json
 /**
  * 各功能頁的 NPC（問題記錄 441、443）：名字和點一下換一句的臺詞。臺詞只寫遊戲裡真有的規則。
  * 名字和賽廚評委同一個人時要一致（tower.duel.judges）

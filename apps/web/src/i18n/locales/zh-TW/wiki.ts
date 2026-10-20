@@ -1,4 +1,4 @@
-// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
+// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 packages/shared/src/zh-TW-overrides.json
 import type { OpenGuideNumbers as G } from '@dt/shared';
 import { formatNum, formatPct } from '../../../utils/format';
 
@@ -149,6 +149,8 @@ export default {
     learn: (n: number) => `湊齊 ${n} 張殘卷就能學會, 1 星以後能烹製。`,
     appraise: '鑑定: ',
     sure: '必定成功',
+    /** 鑑定成功後在這一段裡隨機一道，不是這道菜的機率（程式碼審查 2026-10-19） */
+    appraisePick: (min: number, max: number, rate: string) => `${min}~${max} 級隨機一道, ${rate}`,
     fragments: (n: number, level: number) => `碎片兌換: ${n} 張 ${level} 級碎片換 1 張`,
     shop: (price: string, weekly: number) => `時令鋪: ${price} 時令值一張 (每週限 ${weekly} 張)`,
     shopRare: (price: string, weekly: number) => `時令鋪珍稀殘卷: ${price} 時令值一張 (每週限 ${weekly} 張)`,
@@ -229,7 +231,7 @@ export default {
           (n: G) =>
             `${n.newbieExp.maxLevel} 級以下結算經驗有額外加成 (1 級 ${formatPct(n.newbieExp.rate, { sign: true })}, 逐級減少), 前期升級很快。`,
           (n: G) =>
-            `${n.acquire.minStar} 星以上的餐廳有身價 (近 7 天日均結算銀幣 × ${formatNum(n.acquire.priceMultiple)}), 可以被收購: 在首頁“資產”那一行點“收購”進去。自己 ${n.acquire.buyerMinStar} 星以上、註冊滿 ${n.acquire.buyerMinAccountDays} 天才能收購, 名下最多 ${n.acquire.maxHoldings} 家。強收只能收沒有老闆的店: 店自己得 ${formatPct(n.acquire.firstStoreRate, { digits: 0 })}, 併購諮詢費 ${formatPct(n.acquire.firstBurnRate, { digits: 0 })} 和 ${formatPct(n.acquire.taxRate, { digits: 0 })} 的稅銷燬; 有老闆的店只能等老闆掛牌後買下, 原老闆得 ${formatPct(1 - n.acquire.resaleStoreRate - n.acquire.taxRate, { digits: 0 })}, 店得 ${formatPct(n.acquire.resaleStoreRate, { digits: 0 })}。被收購的店每輪結算讓 ${formatPct(n.acquire.cedeRate, { digits: 1 })} 給老闆; 老闆每天可以打理一次 (付這家店日均的 ${formatPct(n.acquire.tendCostRate, { digits: 0 })}), 之後這家店的結算 × ${formatNum(n.acquire.tendMultiplier)}, 讓給老闆的變成 ${formatPct(n.acquire.cedeTendRate, { digits: 1 })}; 老闆 ${n.acquire.tendReleaseDays} 天沒打理會自動放手。被收購的店可以按基礎身價贖身, 老闆得 ${formatPct(1 - n.acquire.redeemBurnRate - n.acquire.taxRate, { digits: 0 })}, 贖身後 ${n.acquire.protectDays} 天內不會再被收購。`,
+            `${n.acquire.minStar} 星以上的餐廳有身價 (近 ${n.acquire.priceDays ?? 7} 天日均結算銀幣 × ${formatNum(n.acquire.priceMultiple)}), 可以被收購: 在首頁“資產”那一行點“收購”進去。自己 ${n.acquire.buyerMinStar} 星以上、註冊滿 ${n.acquire.buyerMinAccountDays} 天才能收購, 名下最多 ${n.acquire.maxHoldings} 家。強收只能收沒有老闆的店: 店自己得 ${formatPct(n.acquire.firstStoreRate, { digits: 0 })}, 併購諮詢費 ${formatPct(n.acquire.firstBurnRate, { digits: 0 })} 和 ${formatPct(n.acquire.taxRate, { digits: 0 })} 的稅銷燬; 有老闆的店只能等老闆掛牌後買下, 原老闆得 ${formatPct(1 - n.acquire.resaleStoreRate - n.acquire.taxRate, { digits: 0 })}, 店得 ${formatPct(n.acquire.resaleStoreRate, { digits: 0 })}。被收購的店每輪結算讓 ${formatPct(n.acquire.cedeRate, { digits: 1 })} 給老闆; 老闆每天可以打理一次 (付這家店日均的 ${formatPct(n.acquire.tendCostRate, { digits: 0 })}), 之後這家店的結算 × ${formatNum(n.acquire.tendMultiplier)}, 讓給老闆的變成 ${formatPct(n.acquire.cedeTendRate, { digits: 1 })}; 老闆 ${n.acquire.tendReleaseDays} 天沒打理會自動放手。被收購的店可以按基礎身價贖身, 老闆得 ${formatPct(1 - n.acquire.redeemBurnRate - n.acquire.taxRate, { digits: 0 })}, 贖身後 ${n.acquire.protectDays} 天內不會再被收購。`,
         ],
       },
       {

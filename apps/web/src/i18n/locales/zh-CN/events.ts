@@ -369,7 +369,12 @@ export default {
     'mail.claim': (p) => `领取了邮件「${String(p.title ?? '')}」的附件`,
     'admin.rename': (p) =>
       `管理员把店名从「${String(p.from ?? '')}」改为「${String(p.to ?? '')}」: ${String(p.reason ?? '')}`,
-    'market.guess': (p) => `菜场竞猜开奖: 猜中 ${n(p, 'hits')} 种`,
+    'market.guess': (p, names) => {
+      const got = ((p.goods ?? []) as Array<{ id: number; num: number }>)
+        .map((g) => `${names.goodsName(g.id)}×${g.num}`)
+        .join('、');
+      return `菜场竞猜开奖: 猜中 ${n(p, 'hits')} 种${got ? `, 得到 ${got}` : ''}`;
+    },
     'market.guess.refund': (p) => {
       const [day, hour] = String(p.period ?? '').split('@');
       return `菜场竞猜 ${day} ${Number(hour)} 点那一轮没有开奖, 退还了报名费`;

@@ -388,7 +388,12 @@ const events: Messages['events'] = {
     'mail.claim': (p) => `Claimed the attachments of the mail "${String(p.title ?? '')}"`,
     'admin.rename': (p) =>
       `An admin renamed the restaurant from "${String(p.from ?? '')}" to "${String(p.to ?? '')}": ${String(p.reason ?? '')}`,
-    'market.guess': (p) => `Market guessing results: ${n(p, 'hits')} correct`,
+    'market.guess': (p, names) => {
+      const got = ((p.goods ?? []) as Array<{ id: number; num: number }>)
+        .map((g) => `${names.goodsName(g.id)} ×${g.num}`)
+        .join(', ');
+      return `Market guessing results: ${n(p, 'hits')} correct${got ? `; you got ${got}` : ''}`;
+    },
     'market.guess.refund': (p) => {
       const [day, hour] = String(p.period ?? '').split('@');
       return `The market guessing round on ${day} at ${Number(hour)}:00 wasn't drawn; your entry fee was refunded`;

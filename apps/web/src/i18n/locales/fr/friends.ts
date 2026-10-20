@@ -16,6 +16,10 @@ const friends: Messages['friends'] = {
   returned: (ok, failed) =>
     `Pouce rendu à ${ok} ${plFr(ok, 'personne', 'personnes')}${failed > 0 ? `\u202f; ${failed} ${plFr(failed, 'échec', 'échecs')}` : ''}`,
   returnFailed: 'Impossible de rendre les pouces',
+  returnWhy: {
+    renown: ' (votre renommée est négative, impossible de donner un pouce)',
+    other: ' (plus amis, banni, ou quelqu’un du même réseau lui a déjà donné un pouce aujourd’hui)',
+  },
   count: (n, max) => `Amis ${n}/${max}`,
   sorts: { level: 'Par niveau', star: 'Par étoiles', recent: 'Ajoutés récemment' },
   sortLabel: 'Trier',

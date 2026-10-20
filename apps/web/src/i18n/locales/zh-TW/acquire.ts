@@ -1,4 +1,4 @@
-// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
+// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 packages/shared/src/zh-TW-overrides.json
 /** 收購（問題記錄 421；改版 2026-10-16）。金額、百分數、倍數由呼叫方按語言格式化好再傳進來 */
 export default {
   title: '收購',
@@ -10,6 +10,8 @@ export default {
     mult: string;
     heatStep: string;
     minStar: number;
+    maxPerDay: number;
+    priceDays: number;
     newStarDays: number;
     firstStore: string;
     firstBurn: string;
@@ -35,8 +37,8 @@ export default {
     redeemBurn: string;
     protectDays: number;
   }) => [
-    `身價 = 近 7 天日均結算銀幣 × ${r.mult} × 熱度; 強收一次熱度 +${r.heatStep}, 每天往 1 回落`,
-    `強收只能收沒有老闆的 ${r.minStar} 星以上的店, 每家每天最多被強收 1 次, 剛到 ${r.minStar} 星的店 ${r.newStarDays} 天內不能被收: 店得 ${r.firstStore}, 併購諮詢費 ${r.firstBurn} 銷燬, ${r.tax} 是稅`,
+    `身價 = 近 ${r.priceDays} 天日均結算銀幣 × ${r.mult} × 熱度; 強收一次熱度 +${r.heatStep}, 每天往 1 回落`,
+    `強收只能收沒有老闆的 ${r.minStar} 星以上的店, 每家每天最多被強收 ${r.maxPerDay} 次, 剛到 ${r.minStar} 星的店 ${r.newStarDays} 天內不能被收: 店得 ${r.firstStore}, 併購諮詢費 ${r.firstBurn} 銷燬, ${r.tax} 是稅`,
     `有老闆的店只能掛牌轉手 (身價的 ${r.listMin}~${r.listMax}): 原老闆得 ${r.resaleSeller}, 店得 ${r.resaleStore}, ${r.tax} 是稅`,
     `自己 ${r.buyerStar} 星以上、註冊滿 ${r.buyerDays} 天才能收購; 每天最多買 ${r.buyerPerDay} 家, 名下最多 ${r.maxHoldings} 家`,
     `被收購的店每輪結算讓 ${r.cede} 給老闆, 老闆當天打理過讓 ${r.cedeTend}; 前一天的抽成 00:05 發給老闆`,
@@ -111,6 +113,8 @@ export default {
   holdTended: '今天打理過',
   holdNotTended: '今天沒打理',
   holdIdle: (days: number) => `${days} 天沒打理`,
+  /** 關聯賬號的店不能打理（程式碼審查 2026-10-19） */
+  holdLinked: '關聯賬號, 不能打理',
   holdSub: (avg: string, rate: string, pending: string) => `日均 ${avg} · 抽成 ${rate} · 今天待發 ${pending}`,
   holdHalfNote: (stopIn: number, releaseIn: number) =>
     `抽成減半; 再 ${stopIn} 天不打理就不再抽成, ${releaseIn} 天后自動放手`,
@@ -166,8 +170,8 @@ export default {
   payback: '回本約',
   paybackVal: (plain: number, tended: number) => `${plain} 天 · 天天打理 ${tended} 天`,
   afterHold: '收購後名下',
-  buyNote: (half: number, stop: number, release: number, redeem: string) =>
-    `按近 7 天收入算, 店的收入變了抽成跟著變。${half} 天沒打理抽成減半, ${stop} 天不再抽成, ${release} 天自動放手。店可以隨時贖身, 那時你只拿回贖身價的 ${redeem}。`,
+  buyNote: (half: number, stop: number, release: number, redeem: string, priceDays: number) =>
+    `按近 ${priceDays} 天收入算, 店的收入變了抽成跟著變。${half} 天沒打理抽成減半, ${stop} 天不再抽成, ${release} 天自動放手。店可以隨時贖身, 那時你只拿回贖身價的 ${redeem}。`,
   ownedWhy: '有老闆的店不能強收, 只能等老闆掛牌後在「在售」裡買下。',
   /** 名下一家的掛牌 */
   rateLabel: '按身價的多少掛牌',

@@ -153,13 +153,15 @@ export interface RoundSummaryDto {
   oil: number;
   customers: Record<string, number>;
   at: string;
+  /** 被收购的店这一轮让给老板的银币（coin 是让之前的，实际到手 coin - ceded；没让为 0 时省略） */
+  ceded?: number;
 }
 
 export interface IncomePageDto {
   items: RoundSummaryDto[];
   nextBefore: string | null;
   /** 今天（北京时间）的小计，只在第一页给（问题记录 530：收益记录页优化） */
-  today?: { rounds: number; coin: number; exp: number; oil: number };
+  today?: { rounds: number; coin: number; exp: number; oil: number; ceded?: number };
 }
 
 export interface RateBreakdownDto {

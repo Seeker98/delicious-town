@@ -72,6 +72,7 @@ export async function restNames(db: Kysely<DB>, ids: number[]): Promise<Map<numb
 
 type IncomeRow = {
   round_no: number;
+  ceded: number;
   coin: number;
   exp: number;
   oil: number;
@@ -88,13 +89,14 @@ function roundDto(r: IncomeRow): RoundSummaryDto {
     // n3（自己长的蟑螂占桌，卫生巡查用）是内部统计，不给网页
     customers: Object.fromEntries(Object.entries(r.customers).filter(([k]) => k !== 'n3')),
     at: r.created_at.toISOString(),
+    ...(Number(r.ceded) > 0 ? { ceded: Number(r.ceded) } : {}),
   };
 }
 
 export async function lastRound(db: Kysely<DB>, restId: number): Promise<RoundSummaryDto | null> {
   const r = await db
     .selectFrom('income_round')
-    .select(['round_no', 'coin', 'exp', 'oil', 'customers', 'created_at'])
+    .select(['round_no', 'coin', 'exp', 'oil', 'customers', 'created_at', 'ceded'])
     .where('rest_id', '=', restId)
     .orderBy('created_at', 'desc')
     .limit(1)
@@ -126,7 +128,7 @@ export async function incomePage(
 ): Promise<IncomePageDto> {
   let s = db
     .selectFrom('income_round')
-    .select(['id', 'round_no', 'coin', 'exp', 'oil', 'customers', 'created_at'])
+    .select(['id', 'round_no', 'coin', 'exp', 'oil', 'customers', 'created_at', 'ceded'])
     .where('rest_id', '=', restId);
   if (q.before) {
     s = s.where(beforeCursor(q.before));
@@ -150,11 +152,14 @@ export async function incomePage(
         eb.fn.coalesce(eb.fn.sum<string>('coin'), eb.lit(0)).as('coin'),
         eb.fn.coalesce(eb.fn.sum<string>('exp'), eb.lit(0)).as('exp'),
         eb.fn.coalesce(eb.fn.sum<string>('oil'), eb.lit(0)).as('oil'),
+        eb.fn.coalesce(eb.fn.sum<string>('ceded'), eb.lit(0)).as('ceded'),
       ])
       .where('rest_id', '=', restId)
       .where('created_at', '>=', gameTime(gameDay(now), 0))
       .executeTakeFirstOrThrow();
     out.today = { rounds: Number(t.rounds), coin: Number(t.coin), exp: Number(t.exp), oil: Number(t.oil) };
+    // 被收购的店：今天让给老板的（代码审查 2026-10-19：原来只写让之前的银币，比实际到手多）
+    if (Number(t.ceded) > 0) out.today.ceded = Number(t.ceded);
   }
   return out;
 }
@@ -231,6 +236,8 @@ export const FEED_TYPES = [
   'acquire.autoReleased',
   'mouse.steal',
   'market.share',
+  // 菜场竞猜开奖，带奖励（问题记录：竞猜奖励在哪看）
+  'market.guess',
   'fridge.drop',
   'futures.delivered',
   'futures.defaulted',
