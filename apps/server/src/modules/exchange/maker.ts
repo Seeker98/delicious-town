@@ -4,7 +4,7 @@ import type { Food, GameConfig, Tuning } from '@dt/config';
 import type { WeightedPool } from '@dt/shared';
 import type { DB } from '../../db/schema';
 import { getDaily } from '../counter/dailyCounter';
-import { initialRef, priceBand, type ExchangeTuning } from './rules';
+import { initialRef, isRare, priceBand, type ExchangeTuning } from './rules';
 
 export type MakerTuning = ExchangeTuning['maker'];
 
@@ -179,8 +179,9 @@ export async function makerQuote(
   },
 ): Promise<{ bid: MakerLevel | null; ask: MakerLevel | null }> {
   const m = x.tuning.exchange.maker;
-  if (!m.enabled) return { bid: null, ask: null };
   const food = x.config.requireFood(x.foodsId);
+  // 普通食材只在玩家之间买卖，系统不收不卖（2026-10-22）
+  if (!m.enabled || !isRare(food)) return { bid: null, ask: null };
   const p = makerPrices(
     x.ref,
     marketFloor(food, x.config, x.tuning.market),

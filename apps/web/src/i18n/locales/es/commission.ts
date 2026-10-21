@@ -48,7 +48,7 @@ const commission: Messages['commission'] = {
       duty: 'Mercado y Bolsa',
       lines: [
         'Cuando se agota una tanda del mercado de ofertas, espera a la siguiente.',
-        'La Bolsa solo vende ingredientes raros.',
+        'En la Bolsa se puede comerciar cualquier ingrediente, pero el sistema solo opera con los raros.',
       ],
     },
     gary: {

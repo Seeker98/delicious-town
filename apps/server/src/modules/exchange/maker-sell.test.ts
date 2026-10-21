@@ -9,7 +9,7 @@ import { getDaily } from '../counter/dailyCounter';
 import { grantGoods } from '../store/grant';
 import { makerState, marketFloor, TO_SYSTEM } from './maker';
 import { refPrice } from './ref';
-import { feeOf, isTradable, priceBand } from './rules';
+import { feeOf, isRare, isTradable, priceBand } from './rules';
 import { trader } from './test';
 
 /** 各等级价格倍数全 1（240-1 默认值） */
@@ -31,7 +31,10 @@ const have = async (restId: number, foodsId: number) => {
 const lv3 = () =>
   [...t.deps.config.foods.values()].find(
     (f) =>
-      f.level === 3 && isTradable(f) && marketFloor(f, t.deps.config, t.deps.config.tuning.market) !== null,
+      f.level === 3 &&
+      isRare(f) &&
+      isTradable(f) &&
+      marketFloor(f, t.deps.config, t.deps.config.tuning.market) !== null,
   )!;
 
 async function setup(maker?: Record<string, unknown>) {
@@ -121,7 +124,7 @@ describe('卖给系统（问题记录 244）', () => {
 
   it('7 级食材：盘口里没有系统的买档，卖给系统整单拒绝，食材不扣（经济修正终审遗留：原来只测了报价）', async () => {
     const shardId = await createShard(t.db);
-    const f = [...t.deps.config.foods.values()].find((x) => x.level === 7 && isTradable(x))!;
+    const f = [...t.deps.config.foods.values()].find((x) => x.level === 7 && isRare(x) && isTradable(x))!;
     const seller = await trader(t, { shardId, coin: 0, foods: { [f.id]: 3 } });
     const bk = await svc().book(seller, f.id);
     expect(bk.bids.find((b) => b.system)).toBeUndefined();

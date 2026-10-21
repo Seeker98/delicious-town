@@ -84,9 +84,9 @@ export default {
     codesSub: '有可以领的码',
     guide: '新手指引',
     guideSub: '看看怎么玩',
-    exchangeSub: '买卖稀有食材, 期货点名订货',
+    exchangeSub: '买卖食材, 期货点名订货',
     /** 区服关了期货时（backlog feat/ui-1011） */
-    exchangeSubSpot: '买卖稀有食材',
+    exchangeSubSpot: '买卖食材',
     bulk: '大宗认购',
     bulkSub: (name: string, level: number, qty: number, demand: number | null) =>
       `${name} (${level} 级) 共 ${qty} 份, ${demand === null ? '最后阶段停更中' : `已认购 ${demand} 份`}`,

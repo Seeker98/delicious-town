@@ -418,7 +418,7 @@ describe('合成原料（2026-10-12 线上核对）', () => {
     const cup = settings.tuning.cupboard;
     b.rest.daily.set('handle', cup.freeHandleBase);
     b.rest.strength = 100;
-    const feed = [...config.foods.values()].find((f) => f.level === 1 && f.weight === 100)!;
+    const feed = [...config.foods.values()].find((f) => f.level === 1 && f.odds === 100)!;
     const m = newMarket();
     m.items.push({
       id: 1,

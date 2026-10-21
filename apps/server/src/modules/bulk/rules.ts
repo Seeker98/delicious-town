@@ -63,6 +63,24 @@ export function pickCloseAt(endsAt: Date, windowMin: number, rng: Rng): Date {
   return new Date(endsAt.getTime() - span + Math.floor(rng.next() * span));
 }
 
+/**
+ * 按缺口挑候选（2026-10-22）：至少 minRests 家店缺的，按 缺口 ÷ 这一级每批份数 从高到低（同分按 id），取前 topK 种
+ */
+export function topShort(
+  foods: ReadonlyArray<{ id: number; level: number }>,
+  shortOf: ReadonlyMap<number, { short: number; rests: number }>,
+  qty: readonly number[],
+  pick: { topK: number; minRests: number },
+): number[] {
+  return foods
+    .map((f) => ({ id: f.id, s: shortOf.get(f.id), q: qty[f.level - 1]! }))
+    .filter((x) => x.s !== undefined && x.s.rests >= pick.minRests)
+    .map((x) => ({ id: x.id, score: x.s!.short / x.q }))
+    .sort((a, b) => b.score - a.score || a.id - b.id)
+    .slice(0, pick.topK)
+    .map((x) => x.id);
+}
+
 /** 按权重在有可选食材的等级里选一级（1~5）；都没有时 null */
 export function pickLevel(
   weights: readonly number[],

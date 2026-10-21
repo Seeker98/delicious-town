@@ -181,6 +181,10 @@ describe('bulk（特许大宗认购，大宗认购设计 §2.1）', () => {
     // 最后多久停更（问题记录 595）：0 = 全程实时，不能是负数
     expect(withB((x) => (x.blindMin = 0))).toBe(true);
     expect(withB((x) => (x.blindMin = -1))).toBe(false);
+    // 按缺口挑食材（2026-10-22）
+    expect(withB((x) => ((x.pick as B).topK = 0))).toBe(false);
+    expect(withB((x) => ((x.pick as B).cooldownDays = 0))).toBe(true);
+    expect(withB((x) => ((x.pick as B).activeDays = 0))).toBe(false);
   });
 });
 

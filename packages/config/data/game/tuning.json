@@ -463,7 +463,8 @@
     "cooldownSec": 5,
     "consolationRate": 0.9,
     "consolation": { "goods": 10202, "num": 1 },
-    "blindMin": 60
+    "blindMin": 60,
+    "pick": { "topK": 5, "minRests": 3, "cooldownDays": 3, "activeDays": 7 }
   },
   "wishTree": {
     "hour": 20, "minLevel": 10, "titleDays": 3, "consolationLevel": 1,

@@ -541,8 +541,8 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
       needFoods,
     };
   });
-  // 食材出现权重向全服需求靠 α（问题记录 50）
-  const weights = foodWeights(foods, cookbooks, foodSupply.demandBlend);
+  // 食材出现权重向全服需求靠 α（问题记录 50），需求只算到 demandMaxGrade 品级
+  const weights = foodWeights(foods, cookbooks, foodSupply.demandBlend, foodSupply.demandMaxGrade);
   for (const f of foods) f.weight = weights.get(f.id) ?? f.odds;
   // 食材随机券那一级要有抽得出的食材：配错时用券会白扣（质量期 ②）
   for (const g of goods) {

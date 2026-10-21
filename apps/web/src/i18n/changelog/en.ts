@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  food1022:
+    'Ingredients: the Market, Combine and Decompose now give the ingredients everyone tends to be short of a little more often; every ingredient can now be traded on the Exchange, with common ones traded only between players (the system still deals only in rare ones); Bulk Subscription now picks from the ingredients the server is shortest of',
   feel1021:
     'Feel: buttons now press in on iPhone without the grey flash; panels slide back down when closed, and you can drag the handle at the top down to close them; notices fade in and out instead of popping; a button shows a small spinner while it works instead of just turning grey; hold the + or − on a quantity to keep counting',
   batch1020b:

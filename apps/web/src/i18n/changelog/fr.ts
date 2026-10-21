@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  food1022:
+    'Ingrédients. Le marché, la combinaison et la décomposition donnent un peu plus souvent les ingrédients qui manquent à tout le monde. Tous les ingrédients s’échangent maintenant à la Bourse, les ordinaires seulement entre joueurs (le système ne traite toujours que les rares). La souscription en gros choisit désormais parmi les ingrédients qui manquent le plus sur le serveur',
   feel1021:
     'Sensations\u202f: les boutons s’enfoncent sur iPhone sans le flash gris\u202f; les panneaux redescendent en se fermant, et on peut tirer la poignée du haut vers le bas pour les fermer\u202f; les notifications apparaissent et disparaissent en fondu\u202f; un bouton affiche une petite roue pendant le traitement au lieu de seulement griser\u202f; maintenez + ou − sur une quantité pour compter en continu',
   batch1020b:

@@ -51,13 +51,13 @@ describe('交易所下单（156-1 设计 §6.1）', () => {
     );
   });
 
-  it('非稀有食材、价格越界、挂单数满都拒绝，什么都不扣', async () => {
+  it('下架的食材、价格越界、挂单数满都拒绝，什么都不扣（普通食材 2026-10-22 起可以交易）', async () => {
     const shardId = await createShard(t.db);
     const f = rare();
-    const common = [...t.deps.config.foods.values()].find((x) => x.odds >= 100)!;
+    const retired = [...t.deps.config.foods.values()].find((x) => x.retired)!;
     const r = await trader(t, { shardId, coin: 1_000_000 });
     await expect(
-      svc().place(r, { foodsId: common.id, side: 'buy', price: 10, qty: 1 }),
+      svc().place(r, { foodsId: retired.id, side: 'buy', price: 10, qty: 1 }),
     ).rejects.toMatchObject({
       params: { reason: 'not_tradable' },
     });

@@ -1052,6 +1052,13 @@ export const tuningSchema = z.object({
     consolation: z.object({ goods: int.min(1), num: int.min(1) }),
     /** 名义结束前多少分钟起看板停更（问题记录 595）：0 = 全程实时 */
     blindMin: int.min(0),
+    /** 按全服缺口挑食材（2026-10-22）：缺口 ÷ 每批份数排前 topK、至少 minRests 家店缺，近 cooldownDays 天开过的跳过 */
+    pick: z.object({
+      topK: int.min(1),
+      minRests: int.min(1),
+      cooldownDays: int.min(0),
+      activeDays: int.min(1),
+    }),
   }),
   /** 许愿树（许愿树设计 2026-10-11）：每天一轮，许愿的店里抽 1 家得树上的道具 */
   wishTree: z.object({

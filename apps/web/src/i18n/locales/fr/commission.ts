@@ -48,7 +48,7 @@ const commission: Messages['commission'] = {
       duty: 'Marché et Bourse',
       lines: [
         'Quand un lot du marché des promos est épuisé, attendez le suivant.',
-        'La Bourse ne vend que des ingrédients rares.',
+        'Tout ingrédient s’échange à la Bourse, mais le système ne traite que les rares.',
       ],
     },
     gary: {

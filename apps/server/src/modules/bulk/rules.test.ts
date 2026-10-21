@@ -9,6 +9,7 @@ import {
   pickCloseAt,
   pickLevel,
   standing,
+  topShort,
 } from './rules';
 
 const t = {
@@ -25,6 +26,7 @@ const t = {
   consolationRate: 0.9,
   consolation: { goods: 10202, num: 1 },
   blindMin: 60,
+  pick: { topK: 5, minRests: 3, cooldownDays: 3, activeDays: 7 },
 };
 const at = (s: number) => new Date(1_000_000 + s * 1000);
 const bid = (restId: number, price: number, qty: number, s = restId) => ({
@@ -104,5 +106,27 @@ describe('大宗认购规则（大宗认购设计 §1）', () => {
     expect(pickLevel([0, 0, 0, 0, 1], new Set([2, 5]), seededRng(1))).toBe(5);
     expect(pickLevel([1, 1, 1, 1, 0], new Set([5]), seededRng(1))).toBeNull();
     expect(pickLevel([1, 1, 1, 1, 1], new Set(), seededRng(1))).toBeNull();
+  });
+});
+
+describe('按缺口挑候选（2026-10-22）', () => {
+  const foods = [
+    { id: 1, level: 2 },
+    { id: 2, level: 3 },
+    { id: 3, level: 5 },
+    { id: 4, level: 2 },
+    { id: 5, level: 3 },
+  ];
+  it('按 缺口 ÷ 每批份数 排；缺的店不够 minRests 的不算；同分按 id；只取前 topK', () => {
+    const shortOf = new Map([
+      [1, { short: 220, rests: 9 }], // 220 ÷ 110 = 2
+      [2, { short: 80, rests: 5 }], // 80 ÷ 80 = 1
+      [3, { short: 90, rests: 4 }], // 90 ÷ 45 = 2
+      [4, { short: 999, rests: 2 }], // 只有 2 家店缺
+      [5, { short: 40, rests: 3 }], // 0.5
+    ]);
+    expect(topShort(foods, shortOf, t.qty, { topK: 5, minRests: 3 })).toEqual([1, 3, 2, 5]);
+    expect(topShort(foods, shortOf, t.qty, { topK: 2, minRests: 3 })).toEqual([1, 3]);
+    expect(topShort(foods, new Map(), t.qty, { topK: 5, minRests: 3 })).toEqual([]);
   });
 });

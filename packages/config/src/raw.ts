@@ -480,9 +480,12 @@ export const shopFile = z
 
 /**
  * data/game/food_supply.json：食材出现权重向需求靠的比例（问题记录 50）。
- * 不能取 1：没有需求的食材权重变 0、被剔出池子，某级稀有池可能变空（质量期 ②）
+ * 不能取 1：没有需求的食材权重变 0、被剔出池子，某级稀有池可能变空（质量期 ②）。
+ * demandMaxGrade：需求只算到第几品级（2026-10-22：6~10 品级一次要 10~100 份、还换料，全算会把权重拉向几乎没人做到的高品级）
  */
-export const foodSupplyFile = z.object({ demandBlend: z.number().min(0).lt(1) }).strict();
+export const foodSupplyFile = z
+  .object({ demandBlend: z.number().min(0).lt(1), demandMaxGrade: z.number().int().min(1).max(10) })
+  .strict();
 
 /** data/game/fund.json：小镇发展基金的勋章（240-2） */
 export const fundFile = z

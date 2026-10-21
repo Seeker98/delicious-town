@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  food1022:
+    'Ingredientes: el Mercado, Combinar y Descomponer dan un poco más a menudo los ingredientes que a todos les faltan; ahora todos los ingredientes se pueden comerciar en la Bolsa, los comunes solo entre jugadores (el sistema sigue operando solo con los raros); la suscripción al por mayor elige ahora entre los ingredientes que más faltan en el servidor',
   feel1021:
     'Sensación: los botones se hunden al pulsarlos en iPhone sin el destello gris; los paneles bajan al cerrarse y puedes arrastrar hacia abajo el asa de arriba para cerrarlos; los avisos aparecen y desaparecen con un fundido; un botón muestra una pequeña rueda mientras trabaja en vez de solo ponerse gris; mantén pulsado + o − en una cantidad para seguir contando',
   batch1020b:

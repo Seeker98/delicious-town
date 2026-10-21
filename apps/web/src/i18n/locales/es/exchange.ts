@@ -37,7 +37,7 @@ const exchange: Messages['exchange'] = {
   frozenNotice: (reason) =>
     `Tu cuenta de la bolsa está congelada: ${reason}. Si tienes dudas, contacta con un administrador.`,
   intro:
-    'Aquí los jugadores compran y venden ingredientes raros. El precio de las órdenes debe estar entre la mitad y el doble del precio de referencia del día; el vendedor paga una comisión en cada operación.',
+    'Aquí los jugadores compran y venden ingredientes (el sistema también compra y vende los raros). El precio de las órdenes debe estar entre la mitad y el doble del precio de referencia del día; el vendedor paga una comisión en cada operación.',
   sysHelpItems: [
     'Precio de compra del sistema = referencia × 0,7; precio de venta del sistema = referencia × 1,3. El sistema solo vende lo que compró a los jugadores.',
     'El precio de referencia se fija cada día con las operaciones entre jugadores del día anterior (las del sistema no cuentan), así que los precios del sistema no cambian en todo el día.',

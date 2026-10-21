@@ -5,7 +5,7 @@ import { createShardAllLevels as createShard } from './test';
 import { createTestGame, type TestGame } from '../../../test/game';
 import { makerPrices } from './maker';
 import { refPrice } from './ref';
-import { initialRef, isTradable, priceBand } from './rules';
+import { initialRef, isRare, isTradable, priceBand } from './rules';
 import { createExchangeAdmin } from './admin';
 import { trader } from './test';
 
@@ -106,7 +106,9 @@ describe('公允价阶梯（2026-10-15）：交易所列表的参考价按公允
     const c = t.deps.config;
     const mt = c.tuning.market;
     for (const lv of [1, 2, 3, 4, 5]) {
-      const f = [...c.foods.values()].find((x) => x.level === lv && isTradable(x, tune().closedLevels))!;
+      const f = [...c.foods.values()].find(
+        (x) => x.level === lv && isRare(x) && isTradable(x, tune().closedLevels),
+      )!;
       const row = rows.find((x) => x.foodsId === f.id)!;
       expect(row.ref, f.name).toBe(initialRef(f, c, mt.fairPriceRate));
       if (lv >= 3) expect(row.ref, f.name).toBeGreaterThan(initialRef(f, c, mt.levelPriceRate));

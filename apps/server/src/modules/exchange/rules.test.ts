@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { testConfig } from '../../../test/config';
-import { feeOf, initialRef, isTradable, priceBand } from './rules';
+import { feeOf, initialRef, isRare, isTradable, priceBand } from './rules';
 import { fid } from '../../../test/items';
 
 /** 各等级价格倍数全 1（240-1 默认值） */
@@ -10,12 +10,15 @@ const config = testConfig();
 const t = config.tuning.exchange;
 
 describe('交易所规则（156-1 设计 §5、§6）', () => {
-  it('只有稀有食材（odds < 100）可交易', () => {
+  it('稀有、普通食材都可交易（2026-10-22 起）；稀有 = odds < 100', () => {
     const rare = [...config.foods.values()].find((f) => f.odds < 100)!;
-    const common = [...config.foods.values()].find((f) => f.odds >= 100)!;
+    const common = [...config.foods.values()].find((f) => f.odds >= 100 && !f.retired && f.level <= 5)!;
     expect(isTradable(rare)).toBe(true);
-    expect(isTradable(common)).toBe(false);
+    expect(isTradable(common)).toBe(true);
+    expect(isRare(rare)).toBe(true);
+    expect(isRare(common)).toBe(false);
     expect(isTradable(undefined)).toBe(false);
+    expect(isTradable(rare, [rare.level])).toBe(false);
     // 下架的食材不再上交易所（问题记录 367）
     expect(isTradable({ ...rare, retired: true })).toBe(false);
   });

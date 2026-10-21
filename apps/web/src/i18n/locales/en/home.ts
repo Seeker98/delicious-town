@@ -79,8 +79,8 @@ const home: Messages['home'] = {
     codesSub: 'Ready to claim',
     guide: 'Getting started',
     guideSub: 'How to play',
-    exchangeSub: 'Trade rare ingredients, order futures',
-    exchangeSubSpot: 'Trade rare ingredients',
+    exchangeSub: 'Trade ingredients, order futures',
+    exchangeSubSpot: 'Trade ingredients',
     bulk: 'Bulk subscription',
     bulkSub: (name, level, qty, demand) =>
       `${name} (level ${level}), ${qty} units, ${demand === null ? 'figures frozen' : `${demand} bid so far`}`,
