@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  feel1021:
+    'Sensación: los botones se hunden al pulsarlos en iPhone sin el destello gris; los paneles bajan al cerrarse y puedes arrastrar hacia abajo el asa de arriba para cerrarlos; los avisos aparecen y desaparecen con un fundido; un botón muestra una pequeña rueda mientras trabaja en vez de solo ponerse gris; mantén pulsado + o − en una cantidad para seguir contando',
   batch1020b:
     'Pequeños arreglos: cuando un servidor desactiva los utensilios, la recuperación de energía, los defensores de la clasificación y la suerte de los repartidores amigos siguen el nuevo ajuste al momento; la torre de chefs carga de una vez y abre más rápido; tras comprar en el mercado y cerrar un panel, el foco vuelve al botón usado; las barras de pestañas y su contenido coinciden para los lectores de pantalla',
   batch1020:

@@ -379,6 +379,56 @@ fieldset:disabled .btn {
   border-color: var(--bs-btn-disabled-border-color);
   opacity: var(--bs-btn-disabled-opacity);
 }
+/* 处理中（界面第二批，utils/pressBusy.ts）：刚点的按钮发了写请求。不灰掉、保持原来的颜色；
+   超过 300 毫秒还没回来才把文字换成小转圈，快的请求看不出变化。不改按钮尺寸，旁边的东西不跳 */
+.btn[aria-busy='true'],
+.btn[aria-busy='true']:disabled {
+  position: relative;
+  color: var(--bs-btn-color);
+  background-color: var(--bs-btn-bg);
+  border-color: var(--bs-btn-border-color);
+  opacity: 1;
+  animation: dt-busy-text 0s linear 300ms forwards;
+}
+.btn[aria-busy='true'] > * {
+  animation: dt-busy-hide 0s linear 300ms forwards;
+}
+.btn[aria-busy='true']::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1em;
+  height: 1em;
+  margin: -0.5em 0 0 -0.5em;
+  border: 2px solid var(--bs-btn-color);
+  border-right-color: transparent;
+  border-radius: 50%;
+  opacity: 0;
+  animation:
+    dt-busy-show 0s linear 300ms forwards,
+    dt-busy-spin 0.7s linear infinite;
+}
+@keyframes dt-busy-text {
+  to {
+    color: transparent;
+  }
+}
+@keyframes dt-busy-hide {
+  to {
+    visibility: hidden;
+  }
+}
+@keyframes dt-busy-show {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes dt-busy-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
 .btn-sm {
   --bs-btn-border-radius: var(--dt-radius-pill);
   --bs-btn-padding-y: 0.25rem;

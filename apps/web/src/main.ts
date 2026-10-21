@@ -15,6 +15,7 @@ import { activeMessages } from './i18n';
 import { useLocaleStore } from './stores/locale';
 import { useToastStore } from './stores/toast';
 import { bustThenGo, chunkTarget, goOrReload, reloadOnce } from './utils/chunkReload';
+import { installPressBusy } from './utils/pressBusy';
 import { installTabsScroll } from './utils/tabsScroll';
 import { applyTheme, installThemeWatcher, readThemePref, resolveTheme, systemDark } from './utils/theme';
 
@@ -28,6 +29,11 @@ window.addEventListener('vite:preloadError', (e) => {
   const to = chunkTarget() ?? location.pathname + location.search + location.hash;
   if (reloadOnce(to, bustThenGo(e.payload, goOrReload()))) e.preventDefault();
 });
+
+// iPhone 的 Safari 要页面上有 touchstart 监听，按钮的 :active（按下缩一下）才会生效（界面第二批）
+document.addEventListener('touchstart', () => {}, { passive: true });
+// 点了按钮、随后发写请求时，按钮显示“处理中”
+installPressBusy();
 
 const pinia = createPinia();
 // 先定好语言再挂载（问题记录 272）：避免先闪一下中文。

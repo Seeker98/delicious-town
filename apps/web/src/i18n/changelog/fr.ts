@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  feel1021:
+    'Sensations\u202f: les boutons s’enfoncent sur iPhone sans le flash gris\u202f; les panneaux redescendent en se fermant, et on peut tirer la poignée du haut vers le bas pour les fermer\u202f; les notifications apparaissent et disparaissent en fondu\u202f; un bouton affiche une petite roue pendant le traitement au lieu de seulement griser\u202f; maintenez + ou − sur une quantité pour compter en continu',
   batch1020b:
     'Petits correctifs\u202f: quand un serveur désactive les ustensiles, la récupération d’endurance, les défenseurs du classement et la chance des livreurs amis suivent tout de suite le nouveau réglage\u202f; la tour des chefs se charge en une fois et s’ouvre plus vite\u202f; après un achat au marché et la fermeture d’un panneau, le focus revient sur le bouton utilisé\u202f; les barres d’onglets et leur contenu correspondent pour les lecteurs d’écran',
   batch1020:

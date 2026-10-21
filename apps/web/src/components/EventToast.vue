@@ -8,7 +8,10 @@ const toast = useToastStore();
 
 <template>
   <!-- 问题记录 344：点击穿过提示落到下面的按钮上；545：改成屏幕下方、底栏上面的小胶囊，宽度跟着文字 -->
-  <div
+  <!-- 进出（界面第二批）：从下面淡入、淡出，别的提示平滑让位，不跳 -->
+  <TransitionGroup
+    tag="div"
+    name="dt-toast"
     :class="['dt-toasts', nav ? 'dt-toasts-bottom' : 'dt-toasts-low', 'dt-toasts-passthrough']"
     aria-live="polite"
   >
@@ -20,5 +23,5 @@ const toast = useToastStore();
     >
       {{ t.render ? t.render() : t.text }}
     </div>
-  </div>
+  </TransitionGroup>
 </template>

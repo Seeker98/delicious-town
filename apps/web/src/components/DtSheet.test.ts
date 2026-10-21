@@ -1,6 +1,6 @@
 import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { defineComponent, h, ref } from 'vue';
+import { defineComponent, h, nextTick, ref } from 'vue';
 import DtSheet from './DtSheet.vue';
 
 /** 外面一个打开按钮，里面一个底部面板：看焦点进出 */
@@ -17,6 +17,14 @@ const Harness = defineComponent({
     ];
   },
 });
+
+/** 指针事件（jsdom 没有 PointerEvent）：竖着的位置 y、时间 t 毫秒，指针编号 1 */
+function fire(el: Element, type: string, y: number, t = 0) {
+  const e = new MouseEvent(type, { bubbles: true, clientX: 0, clientY: y });
+  Object.defineProperty(e, 'pointerId', { value: 1 });
+  Object.defineProperty(e, 'timeStamp', { value: t });
+  el.dispatchEvent(e);
+}
 
 // 开着的面板层数是模块里的计数：每条测试后卸载，不留着开着的面板
 enableAutoUnmount(afterEach);
@@ -62,7 +70,8 @@ describe('底部面板（界面改版 P3，设计 §5 第 6、7 条）', () => {
   });
 
   it('打开后焦点在面板本身（不落在按钮上，backlog P3），关掉后回到打开前的按钮', async () => {
-    const w = mount(Harness, { attachTo: document.body, global: { stubs: { teleport: true } } });
+    // 真的 Teleport：替身每次重新渲染都把面板重新插一遍，焦点会掉（面板打开后会再渲染一次加 is-open）
+    const w = mount(Harness, { attachTo: document.body });
     const opener = w.get('#opener');
     (opener.element as HTMLButtonElement).focus();
     await opener.trigger('click');
@@ -129,7 +138,7 @@ describe('底部面板（界面改版 P3，设计 §5 第 6、7 条）', () => {
         ];
       },
     });
-    const w = mount(Disabled, { attachTo: document.body, global: { stubs: { teleport: true } } });
+    const w = mount(Disabled, { attachTo: document.body });
     await w.get('#opener2').trigger('click');
     await flushPromises();
     expect(document.activeElement?.id).toBe('qty');
@@ -159,7 +168,7 @@ describe('底部面板（界面改版 P3，设计 §5 第 6、7 条）', () => {
         ];
       },
     });
-    const w = mount(Two, { attachTo: document.body, global: { stubs: { teleport: true } } });
+    const w = mount(Two, { attachTo: document.body });
     await flushPromises();
     await w.get('#swap').trigger('click');
     await flushPromises();
@@ -167,5 +176,56 @@ describe('底部面板（界面改版 P3，设计 §5 第 6、7 条）', () => {
     expect(document.activeElement?.closest('.dt-sheet')?.textContent).toContain('确认');
     w.unmount();
     expect(document.body.classList.contains('dt-sheet-lock')).toBe(false);
+  });
+
+  it('按住把手往下拖（界面第二批）：面板跟着走；拖过一半松手就关，拖一点点松手弹回', async () => {
+    const w = mount(DtSheet, { props: { open: true, title: 't' }, attachTo: document.body });
+    const panel = () => document.querySelector<HTMLElement>('.dt-sheet')!;
+    // 慢慢拖（1 秒）还是一下甩出去（40 毫秒）
+    const drag = async (to: number, ms: number) => {
+      fire(document.querySelector('.dt-sheet-grip')!, 'pointerdown', 100, 0);
+      fire(panel(), 'pointermove', 110, 10);
+      fire(panel(), 'pointermove', 110 + to, 10 + ms);
+      await nextTick();
+    };
+    await drag(20, 1000);
+    expect(panel().classList.contains('is-dragging')).toBe(true);
+    expect(panel().style.transform).toBe('translateY(20px)');
+    fire(panel(), 'pointerup', 130, 1010);
+    await nextTick();
+    expect(w.emitted('close')).toBeUndefined();
+    expect(panel().style.transform).toBe('');
+
+    // jsdom 里面板高度是 0，按 400 算：慢慢拖过 200 就关
+    await drag(260, 1000);
+    fire(panel(), 'pointerup', 370, 1010);
+    expect(w.emitted('close')).toHaveLength(1);
+    // 只拖了 60 但甩得快：按速度推算的落点过了一半，也关
+    await drag(60, 40);
+    fire(panel(), 'pointerup', 170, 50);
+    expect(w.emitted('close')).toHaveLength(2);
+  });
+
+  it('正文里按下拖动不算（留给滚动）；中间的卡片没有把手', async () => {
+    mount(DtSheet, {
+      props: { open: true, title: 't' },
+      slots: { default: '<p id="body">正文</p>' },
+      attachTo: document.body,
+    });
+    fire(document.getElementById('body')!, 'pointerdown', 100);
+    fire(document.querySelector('.dt-sheet')!, 'pointermove', 400);
+    await nextTick();
+    expect(document.querySelector('.dt-sheet')!.classList.contains('is-dragging')).toBe(false);
+    const c = mount(DtSheet, {
+      props: { open: true, title: 't', center: true },
+      global: { stubs: { teleport: true } },
+    });
+    expect(c.find('.dt-sheet-grip').exists()).toBe(false);
+  });
+
+  it('关掉时没有过渡（样式没加载）就马上拿掉', async () => {
+    const w = mount(DtSheet, { props: { open: true, title: 't' }, global: { stubs: { teleport: true } } });
+    await w.setProps({ open: false });
+    expect(w.find('.dt-sheet-wrap').exists()).toBe(false);
   });
 });

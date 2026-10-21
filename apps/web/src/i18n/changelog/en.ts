@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  feel1021:
+    'Feel: buttons now press in on iPhone without the grey flash; panels slide back down when closed, and you can drag the handle at the top down to close them; notices fade in and out instead of popping; a button shows a small spinner while it works instead of just turning grey; hold the + or − on a quantity to keep counting',
   batch1020b:
     'Small fixes: when a server turns Cookware off, Stamina recovery, ranking defenders and friend riders’ luck follow the new setting right away; the Chef Tower page loads in one go and opens faster; after buying at the market and closing a panel, focus returns to the button you used; tab bars and their content now match up for screen readers',
   batch1020:
