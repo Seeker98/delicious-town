@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { onBeforeUnmount, ref, watch } from 'vue';
 import { useT } from '../composables/useT';
 
 /** 数量步进器（界面改版设计 §5 第 6 条）：取代固定宽度的数字框；中间仍能直接打字，失焦时夹到范围里 */
@@ -67,6 +67,42 @@ function bump(d: number) {
   draft.value = null;
   set(props.modelValue + d);
 }
+/**
+ * 按住连加（界面第二批）：按住 0.4 秒后开始连着加，越按越快；到头了自己停。
+ * 连加过的这一下松手时浏览器还会补一个 click，要吞掉，不然多加一次
+ */
+let holdTimer: ReturnType<typeof setTimeout> | undefined;
+let held = false;
+function holdStart(e: PointerEvent, d: number) {
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+  holdStop();
+  held = false;
+  let n = 0;
+  const tick = () => {
+    const before = props.modelValue;
+    bump(d);
+    held = true;
+    n += 1;
+    // 到上限、下限了（值没变）就停
+    if (props.modelValue === before && clamp(before + d) === before) return holdStop();
+    holdTimer = setTimeout(tick, n < 6 ? 120 : n < 20 ? 60 : 30);
+  };
+  holdTimer = setTimeout(tick, 400);
+}
+function holdStop() {
+  clearTimeout(holdTimer);
+  holdTimer = undefined;
+  // 松手后紧跟着的 click 在同一轮事件里；手指滑出按钮再松开就没有 click，下一轮清掉，免得吞了下一次点击
+  if (held) setTimeout(() => (held = false), 0);
+}
+function onClick(d: number) {
+  if (held) {
+    held = false;
+    return;
+  }
+  bump(d);
+}
+onBeforeUnmount(holdStop);
 // 范围变了（上限变小：体力用掉了、持有变少）：当前值跟着夹
 watch(
   () => [props.min, props.max],
@@ -80,7 +116,12 @@ watch(
       type="button"
       :aria-label="t.common.decrease"
       :disabled="disabled || modelValue <= min"
-      @click="bump(-step)"
+      @click="onClick(-step)"
+      @pointerdown="holdStart($event, -step)"
+      @pointerup="holdStop"
+      @pointerleave="holdStop"
+      @pointercancel="holdStop"
+      @contextmenu.prevent
     >
       −
     </button>
@@ -100,7 +141,12 @@ watch(
       type="button"
       :aria-label="t.common.increase"
       :disabled="disabled || modelValue >= max"
-      @click="bump(step)"
+      @click="onClick(step)"
+      @pointerdown="holdStart($event, step)"
+      @pointerup="holdStop"
+      @pointerleave="holdStop"
+      @pointercancel="holdStop"
+      @contextmenu.prevent
     >
       +
     </button>

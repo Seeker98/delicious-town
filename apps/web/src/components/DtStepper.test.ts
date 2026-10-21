@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import DtStepper from './DtStepper.vue';
 
 const mountIt = (props: Record<string, unknown>) =>
@@ -82,5 +82,43 @@ describe('数量步进器（界面改版 P3，设计 §5 第 6 条）', () => {
   it('紧凑尺寸（列表行里用，界面改版 P4）：多一个 dt-stepper-sm 类', () => {
     expect(mountIt({ size: 'sm' }).classes()).toContain('dt-stepper-sm');
     expect(mountIt({}).classes()).not.toContain('dt-stepper-sm');
+  });
+});
+
+describe('按住连加（界面第二批）', () => {
+  beforeEach(() => setActivePinia(createPinia()));
+  afterEach(() => vi.useRealTimers());
+
+  it('按住 0.4 秒后开始连着加；松手后补来的那次 click 不再多加', async () => {
+    vi.useFakeTimers();
+    const w = mountIt({ modelValue: 5, max: 100 });
+    const inc = w.findAll('button')[1]!;
+    await inc.trigger('pointerdown');
+    vi.advanceTimersByTime(399);
+    expect(w.emitted('update:modelValue')).toBeUndefined();
+    vi.advanceTimersByTime(1 + 120 + 120);
+    expect(w.emitted('update:modelValue')).toHaveLength(3);
+    await inc.trigger('pointerup');
+    await inc.trigger('click');
+    expect(w.emitted('update:modelValue')).toHaveLength(3);
+    // 之后正常点一下照常加
+    vi.advanceTimersByTime(1);
+    await inc.trigger('click');
+    expect(w.emitted('update:modelValue')).toHaveLength(4);
+  });
+
+  it('短按（不到 0.4 秒）就是普通的一下；到上限自己停', async () => {
+    vi.useFakeTimers();
+    const w = mountIt({ modelValue: 9, max: 10 });
+    const inc = w.findAll('button')[1]!;
+    await inc.trigger('pointerdown');
+    vi.advanceTimersByTime(200);
+    await inc.trigger('pointerup');
+    await inc.trigger('click');
+    expect(w.emitted('update:modelValue')).toEqual([[10]]);
+    await w.setProps({ modelValue: 10 });
+    await w.findAll('button')[0]!.trigger('pointerdown');
+    vi.advanceTimersByTime(400);
+    expect(last(w)).toBe(9);
   });
 });

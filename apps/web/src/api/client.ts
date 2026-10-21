@@ -1,4 +1,6 @@
 import type { ApiResponse, GameEvent } from '@dt/shared';
+import { markPressBusy } from '../utils/pressBusy';
+import { uuid } from '../utils/uuid';
 import { deviceId } from './device';
 
 type EventsListener = (events: GameEvent[]) => void;
@@ -36,8 +38,24 @@ export function createApiClient(
     const headers: Record<string, string> = anonymous ? {} : { 'x-device-id': deviceId() };
     if (method === 'POST') {
       headers['content-type'] = 'application/json';
-      headers['idempotency-key'] = crypto.randomUUID();
+      headers['idempotency-key'] = uuid();
     }
+    // 写请求：刚点的按钮标“处理中”（界面第二批）
+    const unbusy = method === 'POST' ? markPressBusy() : null;
+    try {
+      return await send<T>(method, path, body, anonymous, headers);
+    } finally {
+      unbusy?.();
+    }
+  }
+
+  async function send<T>(
+    method: 'GET' | 'POST',
+    path: string,
+    body: unknown,
+    anonymous: boolean,
+    headers: Record<string, string>,
+  ): Promise<T> {
     let res: Response;
     try {
       res = await fetchImpl(base + path, {

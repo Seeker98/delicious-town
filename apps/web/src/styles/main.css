@@ -3,6 +3,8 @@ html {
   touch-action: manipulation;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* 点链接、按钮时不闪系统的灰框：按下反馈由各自的 :active 给（界面第二批） */
+  -webkit-tap-highlight-color: transparent;
 }
 /* 触屏上输入框字号至少 16px：iPhone 点进字号小于 16px 的输入框会自动放大页面 */
 @media (pointer: coarse) {
@@ -27,6 +29,8 @@ html {
   max-width: 720px;
   margin: 0 auto;
   min-height: 100vh;
+  /* 手机地址栏收起、展开时跟着变（界面第二批）；不认 dvh 的浏览器用上一行 */
+  min-height: 100dvh;
   background: var(--dt-surface);
 }
 
@@ -222,6 +226,35 @@ html {
 .dt-toasts-passthrough,
 .dt-toasts-passthrough * {
   pointer-events: none;
+}
+/* 提示进出（界面第二批）：从下面 8px 淡入，出去原路淡回下面；新的一条挤上来时旧的平滑上移 */
+@media (prefers-reduced-motion: no-preference) {
+  .dt-toast-enter-active,
+  .dt-toast-move {
+    transition:
+      opacity var(--dt-dur-base) var(--dt-ease-out),
+      transform var(--dt-dur-base) var(--dt-ease-out);
+  }
+  .dt-toast-leave-active {
+    transition:
+      opacity var(--dt-dur-fast) ease-in,
+      transform var(--dt-dur-fast) ease-in;
+  }
+  .dt-toast-enter-from,
+  .dt-toast-leave-to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dt-toast-enter-active,
+  .dt-toast-leave-active {
+    transition: opacity var(--dt-dur-fast) linear;
+  }
+  .dt-toast-enter-from,
+  .dt-toast-leave-to {
+    opacity: 0;
+  }
 }
 .dt-tag {
   display: inline-block;
@@ -484,6 +517,12 @@ details.dt-card > summary {
   color: var(--dt-primary-ink);
   font-size: 16px;
   line-height: 1;
+  /* 按住连加（界面第二批）：长按不选字、不弹系统菜单 */
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.dt-stepper > button:not(:disabled):active {
+  background: var(--dt-surface-2);
 }
 .dt-stepper > button:disabled {
   color: var(--dt-disabled-text);
@@ -830,12 +869,14 @@ details.dt-card > summary {
   position: absolute;
   inset: 0;
   background: var(--dt-scrim);
+  opacity: 0;
 }
 .dt-sheet {
   position: relative;
   width: 100%;
   max-width: 560px;
   max-height: 85vh;
+  max-height: 85dvh;
   margin: 0 auto;
   overflow-y: auto;
   padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
@@ -865,12 +906,33 @@ details.dt-card > summary {
 .dt-sheet:focus {
   outline: none;
 }
+/* 把手：整条 20px 高都能按住往下拖（界面第二批）；中间那根短条的位置和原来一样，标题位置不变 */
 .dt-sheet-grip {
+  position: relative;
+  height: 20px;
+  margin: -8px -16px 2px;
+  cursor: grab;
+}
+.dt-sheet-grip::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 50%;
   width: 36px;
   height: 4px;
-  margin: 0 auto 10px;
+  margin-left: -18px;
   border-radius: 2px;
   background: var(--dt-line-strong);
+}
+/* 把手、标题、头图上按住往下拖交给面板自己处理：浏览器别拿去滚动，鼠标拖也不选中文字 */
+.dt-sheet-wrap:not(.is-center) .dt-sheet-grip,
+.dt-sheet-wrap:not(.is-center) .dt-sheet-title,
+.dt-sheet-wrap:not(.is-center) .dt-sheet-art {
+  touch-action: none;
+  user-select: none;
+}
+.dt-sheet.is-dragging {
+  cursor: grabbing;
 }
 .dt-sheet-title {
   font-size: 16px;
@@ -892,28 +954,53 @@ details.dt-card > summary {
   flex: 1;
   min-height: 40px;
 }
+/* 进出（界面第二批）：用过渡不用关键帧，关到一半又打开时从当前位置接着走；
+   出去沿原路滑回下面；中间的卡片原地放大淡入、缩小淡出。退场时不挡点击，下面的页面马上能点 */
+.dt-sheet-wrap:not(.is-open) {
+  pointer-events: none;
+}
+.dt-sheet-wrap.is-open > .dt-sheet-scrim {
+  opacity: 1;
+}
 @media (prefers-reduced-motion: no-preference) {
   .dt-sheet-scrim {
-    animation: dt-fade-in var(--dt-dur-base) var(--dt-ease-out);
+    transition: opacity var(--dt-dur-panel) var(--dt-ease-out);
   }
   .dt-sheet {
-    animation: dt-sheet-up var(--dt-dur-panel) var(--dt-ease-drawer);
+    transform: translateY(100%);
+    transition: transform var(--dt-dur-panel) var(--dt-ease-drawer);
+  }
+  .dt-sheet-wrap.is-center > .dt-sheet {
+    opacity: 0;
+    transform: scale(0.96);
+    transition:
+      opacity var(--dt-dur-base) var(--dt-ease-out),
+      transform var(--dt-dur-base) var(--dt-ease-out);
+  }
+  .dt-sheet-wrap.is-open > .dt-sheet {
+    opacity: 1;
+    transform: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .dt-sheet,
   .dt-sheet-scrim {
-    animation: dt-fade-in var(--dt-dur-fast) linear;
+    transition: opacity var(--dt-dur-fast) linear;
   }
+  .dt-sheet {
+    opacity: 0;
+  }
+  .dt-sheet-wrap.is-open > .dt-sheet {
+    opacity: 1;
+  }
+}
+/* 手指拖着时一点不滞后 */
+.dt-sheet-wrap > .is-dragging {
+  transition: none;
 }
 @keyframes dt-fade-in {
   from {
     opacity: 0;
-  }
-}
-@keyframes dt-sheet-up {
-  from {
-    transform: translateY(100%);
   }
 }
 /* ---------- 空状态、加载骨架（界面改版 P3，设计 §5 第 8 条） ---------- */
@@ -6499,6 +6586,10 @@ button.dt-row {
 .dt-pick.is-on {
   background: var(--dt-soft-primary);
 }
+/* 按下就有反馈（界面第二批）：按着时底色变深，选中的那行也一样 */
+.dt-pick:not(:disabled):active {
+  background: var(--dt-surface-2);
+}
 .dt-pick:disabled {
   opacity: 0.55;
 }
@@ -8515,6 +8606,7 @@ a.dt-reply-name {
 /* 整页米色纸（深色是深褐纸）：首页、专栏 */
 .dt-paper-page {
   min-height: calc(100vh - 56px);
+  min-height: calc(100dvh - 56px);
   margin: -8px -8px 0;
   padding: 0 16px 24px;
   background: var(--dt-paper);
