@@ -1,3 +1,5 @@
+import { uuid } from '../utils/uuid';
+
 const KEY = 'dt_device_id';
 let cached: string | null = null;
 
@@ -7,11 +9,11 @@ export function deviceId(): string {
   try {
     cached = localStorage.getItem(KEY);
     if (!cached) {
-      cached = crypto.randomUUID();
+      cached = uuid();
       localStorage.setItem(KEY, cached);
     }
   } catch {
-    cached = crypto.randomUUID();
+    cached = uuid();
   }
   return cached;
 }
