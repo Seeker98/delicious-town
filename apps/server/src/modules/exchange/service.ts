@@ -21,7 +21,7 @@ import type { DB } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { addFoods, cupboardSlotsUsed, planAddFoods, subFoods } from '../cupboard/foods';
 import { refPrice, refPrices } from './ref';
-import { feeOf, isTradable, priceBand } from './rules';
+import { feeOf, isRare, isTradable, priceBand } from './rules';
 import { cardValue } from '../jobcard/perks';
 import { addHold, frozenReason, linkedAccounts, tradeFlags } from './guard';
 import { assertExchangeOpen, eligibility } from './eligibility';
@@ -85,6 +85,7 @@ export function createExchangeService(d: GameDeps) {
     const t = o.tuning.exchange;
     await assertExchangeOpen(o);
     if (!isTradable(o.config.foods.get(b.foodsId), t.closedLevels)) throw invalidState('not_tradable');
+    const rare = isRare(o.config.foods.get(b.foodsId));
     if (b.qty > t.maxQty) throw limitReached('exchange_qty', { max: t.maxQty });
     const day = gameDay(o.now);
     const ref = await refPrice(o.tx, o.config, t, o.tuning.market.fairPriceRate, o.shardId, b.foodsId, day);
@@ -300,7 +301,7 @@ export function createExchangeService(d: GameDeps) {
         fills.push({ price, qty: n, held: false });
         count(o.rest.id, b.side === 'sell' ? 'exchange.system.sell' : 'exchange.system.buy', 1);
         if (b.side === 'sell' && lv.s.floor) count(o.rest.id, 'exchange.system.floor', 1);
-        // 交易所只交易稀有食材（isTradable），成交的都算“买卖稀有食材”
+        // 系统只和稀有食材成交（makerQuote），这里都算“买卖稀有食材”
         count(o.rest.id, `exchange.rare.${b.side}`, n);
         left -= n;
         continue;
@@ -415,7 +416,8 @@ export function createExchangeService(d: GameDeps) {
       else gainCoin(o, price * n - fee, { source: 'exchange' });
       fills.push({ price, qty: n, held });
       if (!held) makers.add(m.rest_id);
-      if (!held) {
+      // 普通食材也能交易以后，“买卖稀有食材”只算稀有的
+      if (!held && rare) {
         count(o.rest.id, `exchange.rare.${b.side}`, n);
         count(m.rest_id, `exchange.rare.${m.side}`, n);
       }

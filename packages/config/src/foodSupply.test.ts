@@ -18,15 +18,40 @@ describe('食材出现权重（问题记录 50）', () => {
     expect(Object.fromEntries(foodWeights(foods, books, 0))).toEqual({ 1: 100, 2: 100, 3: 50 });
   });
 
-  it('真实数据：α 默认 0（模拟发现全服调权重会压低只有本街要的食材，用户定先关掉），出现权重等于 odds；区服数值默认值', () => {
+  it('需求只算到 maxGrade 品级', () => {
+    const foods = [food(1, 1, 100), food(2, 1, 100)];
+    const books = [
+      { needFoods: { 1: [{ foodsId: 1, num: 1 }], 6: [{ foodsId: 2, num: 100 }] } } as unknown as Cookbook,
+    ];
+    // 只算 1 品级：需求全在 1 号；全算：2 号占 100/101
+    expect(foodWeights(foods, books, 0.5, 3).get(1)).toBe(150);
+    expect(foodWeights(foods, books, 0.5).get(1)).toBeCloseTo(50 + 0.5 * (1 / 101) * 200, 6);
+  });
+
+  it('真实数据（2026-10-22）：α 0.02、需求算到 3 品级；缺口大的十三香、鸡肉、海参、鲍鱼份额变大，没有哪种掉 3% 以上', () => {
     const { bundle, errors } = buildBundle(source());
     expect(errors).toEqual([]);
-    expect(bundle!.foods.every((f) => f.weight === f.odds)).toBe(true);
+    const lv = (L: number) => bundle!.foods.filter((x) => x.level === L);
+    const ratio = (f: { level: number; odds: number; weight: number }) => {
+      const same = lv(f.level);
+      return (
+        f.weight / same.reduce((a, x) => a + x.weight, 0) / (f.odds / same.reduce((a, x) => a + x.odds, 0))
+      );
+    };
+    const byName = (n: string) => ratio(bundle!.foods.find((x) => x.name === n)!);
+    expect(byName('十三香')).toBeGreaterThan(1.1);
+    expect(byName('鸡肉')).toBeGreaterThan(1.2);
+    expect(byName('海参')).toBeGreaterThan(1.1);
+    expect(byName('鲍鱼')).toBeGreaterThan(1.2);
+    for (const L of [1, 2, 3, 4, 5]) for (const f of lv(L)) expect(ratio(f)).toBeGreaterThan(0.97);
     expect(bundle!.tuning.scarcity).toEqual({ needBase: 0.05, needLuckFactor: 0.6, needMax: 0.3 });
   });
 
-  it('真实数据把 α 调到 0.2 时：长胡椒、草鸡蛋的同级份额变大', () => {
-    const { bundle, errors } = buildBundle({ ...source(), 'game/food_supply': { demandBlend: 0.2 } });
+  it('真实数据把 α 调到 0.2（需求全品级）时：长胡椒、草鸡蛋的同级份额变大', () => {
+    const { bundle, errors } = buildBundle({
+      ...source(),
+      'game/food_supply': { demandBlend: 0.2, demandMaxGrade: 10 },
+    });
     expect(errors).toEqual([]);
     const share = (name: string) => {
       const f = bundle!.foods.find((x) => x.name === name)!;
@@ -46,13 +71,13 @@ describe('食材出现权重（问题记录 50）', () => {
 
   it('检查：α 越界、needBase 大于 needMax 时报错', () => {
     const src = source();
-    expect(buildBundle({ ...src, 'game/food_supply': { demandBlend: 1.5 } }).errors.join()).toContain(
-      'food_supply',
-    );
+    expect(
+      buildBundle({ ...src, 'game/food_supply': { demandBlend: 1.5, demandMaxGrade: 3 } }).errors.join(),
+    ).toContain('food_supply');
     // α 取 1 时没有需求的食材权重变 0、被剔出池子（某级稀有池可能变空），上限是 < 1（质量期 ②）
-    expect(buildBundle({ ...src, 'game/food_supply': { demandBlend: 1 } }).errors.join()).toContain(
-      'food_supply',
-    );
+    expect(
+      buildBundle({ ...src, 'game/food_supply': { demandBlend: 1, demandMaxGrade: 3 } }).errors.join(),
+    ).toContain('food_supply');
     const t = JSON.parse(JSON.stringify(src['game/tuning']));
     t.scarcity = { needBase: 0.5, needLuckFactor: 0.6, needMax: 0.3 };
     expect(buildBundle({ ...src, 'game/tuning': t }).errors.join()).toContain('scarcity');

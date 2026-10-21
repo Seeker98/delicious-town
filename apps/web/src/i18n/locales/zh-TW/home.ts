@@ -85,9 +85,9 @@ export default {
     codesSub: '有可以領的碼',
     guide: '新手指引',
     guideSub: '看看怎麼玩',
-    exchangeSub: '買賣稀有食材, 期貨點名訂貨',
+    exchangeSub: '買賣食材, 期貨點名訂貨',
     /** 區服關了期貨時（backlog feat/ui-1011） */
-    exchangeSubSpot: '買賣稀有食材',
+    exchangeSubSpot: '買賣食材',
     bulk: '大宗認購',
     bulkSub: (name: string, level: number, qty: number, demand: number | null) =>
       `${name} (${level} 級) 共 ${qty} 份, ${demand === null ? '最後階段停更中' : `已認購 ${demand} 份`}`,

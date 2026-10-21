@@ -155,7 +155,9 @@ describe('查询（156-1 设计 §7）', () => {
       .where('rest_id', '=', s2.restaurantId)
       .execute();
     expect((await svc().foods(b)).find((x) => x.foodsId === f.id)).toMatchObject({ selling: 2, buying: 4 });
-    expect(foods.every((x) => t.deps.config.requireFood(x.foodsId).odds < 100)).toBe(true);
+    // 2026-10-22 起普通食材也在列表里；下架的不在
+    expect(foods.some((x) => t.deps.config.requireFood(x.foodsId).odds >= 100)).toBe(true);
+    expect(foods.every((x) => !t.deps.config.requireFood(x.foodsId).retired)).toBe(true);
   });
 });
 

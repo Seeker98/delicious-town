@@ -3,11 +3,18 @@ import type { Food, GameConfig, Tuning } from '@dt/config';
 
 export type ExchangeTuning = Tuning['exchange'];
 
-/** 可交易：稀有食材，和菜场判断稀有的口径一致（156-1 设计 §2） */
+/** 稀有食材：odds < 100，和菜场判断稀有的口径一致（156-1 设计 §2） */
+export function isRare(food: Food | undefined): boolean {
+  return food !== undefined && food.odds < 100;
+}
+
+/**
+ * 可交易：全部食材（2026-10-22 起普通食材也能挂单，只在玩家之间成交，系统不收不卖，见 makerQuote）
+ */
 export function isTradable(food: Food | undefined, closedLevels: readonly number[] = []): boolean {
   // 下架的食材（问题记录 367）不再上交易所：别人手里的也不能再流到新玩家手上；
   // closedLevels 是区服关掉的等级（问题记录 461：六级暂定不交易）
-  return food !== undefined && food.odds < 100 && !food.retired && !closedLevels.includes(food.level);
+  return food !== undefined && !food.retired && !closedLevels.includes(food.level);
 }
 
 /** 当天允许的挂单价（156-1 设计 §5） */
@@ -31,7 +38,7 @@ function rareMedians(config: GameConfig): Map<number, number> {
   if (hit) return hit;
   const by = new Map<number, number[]>();
   for (const f of config.foods.values())
-    if (isTradable(f) && f.level <= 7) by.set(f.level, [...(by.get(f.level) ?? []), f.coin]);
+    if (isRare(f) && isTradable(f) && f.level <= 7) by.set(f.level, [...(by.get(f.level) ?? []), f.coin]);
   const out = new Map<number, number>();
   for (const [lv, coins] of by) {
     coins.sort((a, b) => a - b);

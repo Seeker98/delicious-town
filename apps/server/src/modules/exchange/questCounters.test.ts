@@ -5,7 +5,7 @@ import { createTestGame, type TestGame } from '../../../test/game';
 import { eventCount } from '../../../test/quests';
 import { makerPrices, marketFloor } from './maker';
 import { refPrice } from './ref';
-import { isTradable, priceBand } from './rules';
+import { isRare, isTradable, priceBand } from './rules';
 
 /** 支线“交易所”的计数（问题记录 515 支线扩充）：和系统买卖、兜底价卖给系统、买卖稀有食材按个数 */
 const ONE = [1, 1, 1, 1, 1, 1, 1];
@@ -23,7 +23,10 @@ const lv6 = () => [...t.deps.config.foods.values()].find((f) => f.level === 6 &&
 const lv3 = () =>
   [...t.deps.config.foods.values()].find(
     (f) =>
-      f.level === 3 && isTradable(f) && marketFloor(f, t.deps.config, t.deps.config.tuning.market) !== null,
+      f.level === 3 &&
+      isRare(f) &&
+      isTradable(f) &&
+      marketFloor(f, t.deps.config, t.deps.config.tuning.market) !== null,
   )!;
 const count = (restId: number, key: string) => eventCount(t, restId, key);
 

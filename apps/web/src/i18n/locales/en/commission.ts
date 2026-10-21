@@ -48,7 +48,7 @@ const commission: Messages['commission'] = {
       duty: 'Market and Exchange',
       lines: [
         'When a bargain batch sells out, wait for the next one.',
-        'The Exchange only trades rare ingredients.',
+        'Any ingredient can be traded on the Exchange; the system only deals in rare ones.',
       ],
     },
     gary: {

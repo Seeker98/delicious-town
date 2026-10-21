@@ -76,8 +76,8 @@ const home: Messages['home'] = {
     codesSub: 'Listo para canjear',
     guide: 'Primeros pasos',
     guideSub: 'Cómo se juega',
-    exchangeSub: 'Ingredientes raros y futuros',
-    exchangeSubSpot: 'Ingredientes raros',
+    exchangeSub: 'Todos los ingredientes y futuros',
+    exchangeSubSpot: 'Todos los ingredientes',
     bulk: 'Suscripción mayorista',
     bulkSub: (name, level, qty, demand) =>
       `${name} (nv. ${level}), ${qty} unidades, ${demand === null ? 'cifras congeladas' : `${demand} pujadas`}`,

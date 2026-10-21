@@ -95,7 +95,7 @@ const guide: Messages['guide'] = {
     {
       q: 'Et s’il me manque toujours le même ingrédient\u202f?',
       a: [
-        'Les ingrédients aléatoires (packs cadeaux, tickets d’ingrédient aléatoire, Combiner, récompenses du Bar et de la Tour, Temple, le Maire Grosse Marmite) ont une chance d’être justement celui qui manque à votre prochaine recette, et plus votre chance est élevée, plus c’est probable. Vous pouvez aussi le remplacer par un ingrédient universel, ou l’acheter au Marché ou à la Bourse (la Bourse ne vend que des ingrédients rares).',
+        'Les ingrédients aléatoires (packs cadeaux, tickets d’ingrédient aléatoire, Combiner, récompenses du Bar et de la Tour, Temple, le Maire Grosse Marmite) ont une chance d’être justement celui qui manque à votre prochaine recette, et plus votre chance est élevée, plus c’est probable. Vous pouvez aussi le remplacer par un ingrédient universel, ou l’acheter au Marché ou à la Bourse (les ingrédients ordinaires ne s’échangent qu’entre joueurs).',
       ],
     },
     {

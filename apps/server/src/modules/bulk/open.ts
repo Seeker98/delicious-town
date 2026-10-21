@@ -1,10 +1,11 @@
-import { gameDay, gameTime } from '@dt/shared';
+import { addDays, gameDay, gameTime } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import { featureAvailable } from '../../core/features';
 import { fairFoodPrice } from '../../core/prices';
 import { refPrice } from '../exchange/ref';
 import { futuresUnitPrice } from '../futures/rules';
-import { bulkCap, bulkGroup, bulkReserve, pickCloseAt, pickLevel } from './rules';
+import { shardShortage } from './demand';
+import { bulkCap, bulkGroup, bulkReserve, pickCloseAt, pickLevel, topShort } from './rules';
 
 const HOUR_MS = 3_600_000;
 const ALL_LEVELS = [1, 1, 1, 1, 1];
@@ -44,28 +45,41 @@ export async function openLot(
   // 任务停了很久、到点时已经进了收盘窗口：今天不开（开了也马上收盘）
   const endsAt = new Date(opensAt.getTime() + t.hours * HOUR_MS);
   if (now.getTime() >= endsAt.getTime() - t.closeWindowMin * 60_000) return 'late';
-  const last = await d.db
+  // 不选上一批的同一种，也不选最近 cooldownDays 天开过的（2026-10-22）
+  const recent = await d.db
     .selectFrom('bulk_lot')
-    .select('foods_id')
+    .select(['foods_id', 'day'])
     .where('shard_id', '=', shardId)
     .orderBy('opens_at', 'desc')
-    .limit(1)
-    .executeTakeFirst();
+    .limit(Math.max(1, t.pick.cooldownDays))
+    .execute();
+  const since = addDays(day, -t.pick.cooldownDays);
+  const skip = new Set(recent.filter((r, i) => i === 0 || r.day >= since).map((r) => r.foods_id));
   const rows = await d.db.selectFrom('bulk_food').select('foods_id').where('enabled', '=', true).execute();
-  // 清单里启用、配置里有、没下架、1~5 级的；不选上一批的同一种
+  // 清单里启用、配置里有、没下架、1~5 级的
   const foods = rows
     .map((r) => d.config.foods.get(r.foods_id))
     .filter(
-      (f): f is NonNullable<typeof f> =>
-        !!f && !f.retired && f.level >= 1 && f.level <= 5 && f.id !== last?.foods_id,
-    );
+      (f): f is NonNullable<typeof f> => !!f && !f.retired && f.level >= 1 && f.level <= 5 && !skip.has(f.id),
+    )
+    .sort((a, b) => a.id - b.id);
+  if (foods.length === 0) return 'empty';
   const rng = d.rng();
-  const levels = new Set(foods.map((f) => f.level));
-  // 按权重选的那几级都没有可选的食材时，在有食材的等级里等概率换一级（设计 §1.1）
-  const level = pickLevel(t.levelWeights, levels, rng) ?? pickLevel(ALL_LEVELS, levels, rng);
-  if (level === null) return 'empty';
-  const pool = foods.filter((f) => f.level === level).sort((a, b) => a.id - b.id);
-  const food = pool[rng.int(pool.length)]!;
+  // 按全服缺口排前 topK 种（2026-10-22）；不够 topK 种时用原来的随机挑法补位：按权重选一级、这一级里随机一种
+  const shortOf = await shardShortage(d.db, d.config, shardId, addDays(day, 1 - t.pick.activeDays));
+  const pool = topShort(foods, shortOf, t.qty, t.pick);
+  const rest = foods.filter((f) => !pool.includes(f.id));
+  while (pool.length < t.pick.topK && rest.length > 0) {
+    const levels = new Set(rest.map((f) => f.level));
+    // 按权重选的那几级都没有可选的食材时，在有食材的等级里等概率换一级（设计 §1.1）
+    const level = pickLevel(t.levelWeights, levels, rng) ?? pickLevel(ALL_LEVELS, levels, rng)!;
+    const same = rest.filter((f) => f.level === level);
+    const f = same[rng.int(same.length)]!;
+    pool.push(f.id);
+    rest.splice(rest.indexOf(f), 1);
+  }
+  const food = d.config.requireFood(pool[rng.int(pool.length)]!);
+  const level = food.level;
   const ref = await refPrice(
     d.db,
     d.config,
