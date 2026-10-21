@@ -1,7 +1,11 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { createTestGame, foodNum, newRestaurant, type TestGame } from '../../../test/game';
+import { testConfig } from '../../../test/config';
+import { createTestGame, foodNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { runOp } from '../../core/op';
 import { addFoods, addFoodsMany, planAddFoods, subFoods } from './foods';
+import { fridgeEntryFee } from './fridgeFee';
+
+const config = testConfig();
 import { fid } from '../../../test/items';
 
 let t: TestGame;
@@ -58,7 +62,13 @@ describe('addFoods / subFoods', () => {
       .selectAll()
       .where('rest_id', '=', ctx.restaurantId)
       .execute();
-    expect(logs.map((l) => [l.type, l.params])).toEqual([['fridge.drop', { foodsId: fid('青椒'), num: 5 }]]);
+    // 进冰箱的 10 个收入库费（冰箱收费 2026-10-22）：新店银币 0，全记欠费
+    const fee = fridgeEntryFee(config.requireFood(fid('青椒')), 10, config.tuning);
+    expect(logs.map((l) => [l.type, l.params])).toEqual([
+      ['fridge.entry', { items: [{ foodsId: fid('青椒'), num: 10 }], coin: fee, owed: fee }],
+      ['fridge.drop', { foodsId: fid('青椒'), num: 5 }],
+    ]);
+    expect((await restRow(t, ctx.restaurantId)).fridge_debt).toBe(fee);
   });
 
   it('得失提示和流水', async () => {
@@ -158,7 +168,16 @@ describe('addFoodsMany（一次加多种，问题记录：多张探险图卡顿�
     const b = await setup();
     const rb = await run(b, (op) => addFoodsMany(op, add, { lucky: true }));
     expect(rb.events).toEqual(ra.events);
-    expect(await snapshot(b.restaurantId)).toEqual(await snapshot(a.restaurantId));
+    // 入库费：逐种加时每种一条动态，一次加多种时合成一条；欠费合计一样
+    const noEntry = (x: Awaited<ReturnType<typeof snapshot>>) => ({
+      ...x,
+      logs: x.logs.filter(([type]) => type !== 'fridge.entry'),
+    });
+    expect(noEntry(await snapshot(b.restaurantId))).toEqual(noEntry(await snapshot(a.restaurantId)));
+    expect((await restRow(t, b.restaurantId)).fridge_debt).toBe(
+      (await restRow(t, a.restaurantId)).fridge_debt,
+    );
+    expect((await restRow(t, b.restaurantId)).fridge_debt).toBeGreaterThan(0);
     expect((await snapshot(b.restaurantId)).rows).toEqual([
       { foods_id: fid('大米'), num: 10, fridge_num: 3, fridge_unread: true },
       { foods_id: fid('青椒'), num: 2, fridge_num: 0, fridge_unread: false },

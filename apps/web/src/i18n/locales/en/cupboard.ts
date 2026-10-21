@@ -53,5 +53,23 @@ const cupboard: Messages['cupboard'] = {
   fridgeEmpty: 'The fridge is empty',
   noRoom: 'No room in the pantry',
   thaw: (n, coin) => `Thaw ×${n} (${coin} ${plEn(coin, 'coin', 'coins')})`,
+  thawDebt: (debt) => ` Your fridge debt of ${debt} ${plEn(debt, 'coin', 'coins')} is paid first.`,
+  freeze: (n) => `To fridge ×${n}`,
+  freezeConfirm: (n, name, coin, kinds, daily) =>
+    `Put ${n} ${name} in the fridge for a storage-in fee of ${coin} ${plEn(coin, 'coin', 'coins')}? The fridge will then hold ${kinds} ${plEn(kinds, 'kind', 'kinds')} and cost about ${daily} ${plEn(daily, 'coin', 'coins')} a day.`,
+  freezeTier: (mult) => ` The fridge moves up a tier: the whole fridge's daily fee ×${mult}.`,
+  freezeFailed: 'Could not put it in the fridge',
+  freezeDebt: 'You owe fridge fees; pay them before putting food in',
+  fee: {
+    summary: (kinds, mult, daily) =>
+      `Fridge: ${kinds} ${plEn(kinds, 'kind', 'kinds')}${mult > 1 ? ` · daily fee ×${mult}` : ''} · about ${daily} ${plEn(daily, 'coin', 'coins')} a day`,
+    rules: (entry, daily, thaw, tiers) =>
+      `Putting food in costs ${entry} of its market price and thawing costs ${thaw}; storage costs ${daily} of the fridge's value each day${tiers}`,
+    tier: (from, mult) => `, the whole fridge ×${mult} from ${from} kinds`,
+    next: (left, mult, daily) =>
+      `${left} more ${plEn(left, 'kind', 'kinds')} and you reach the next tier (×${mult}), about ${daily} ${plEn(daily, 'coin', 'coins')} a day`,
+    debt: (debt, days) =>
+      `You owe ${debt} ${plEn(debt, 'coin', 'coins')} in fridge fees. Until it's paid you can't thaw (thawing pays it first) or put food in; after ${days} days in debt, food in the fridge is sold to pay it`,
+  },
 };
 export default cupboard;

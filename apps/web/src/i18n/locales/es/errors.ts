@@ -270,6 +270,7 @@ const errors: Messages['errors'] = {
     no_food: 'No tienes este ingrediente en la despensa',
     not_locked: 'Este ingrediente no está bloqueado',
     fridge_empty: 'Tu nevera no tiene este ingrediente',
+    fridge_debt: 'Debes tarifas de la nevera; págalas antes de meter comida',
     cannot_handle: 'Los ingredientes de este nivel no se pueden tratar así',
     odd_num: 'Para combinar se necesitan ingredientes por pares',
     other_street: 'Solo puedes aprender o mejorar platos de tu calle; múdate allí primero',

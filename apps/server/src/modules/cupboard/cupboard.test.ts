@@ -6,6 +6,7 @@ import { createShard } from '../../../test/fixtures';
 import { createTestGame, foodNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { fid } from '../../../test/items';
 import { setTuning } from '../../../test/town';
+import { fridgeThawFee } from './fridgeFee';
 
 const config = testConfig();
 let t: TestGame;
@@ -75,7 +76,7 @@ describe('冰箱（规格书 05 §5.2）', () => {
     expect(f.items[0]).toMatchObject({
       num: 5,
       thawable: 3,
-      thawCoin: Math.ceil(3 * config.requireFood(fid('大米')).coin * 0.25),
+      thawCoin: fridgeThawFee(config.requireFood(fid('大米')), 3, config.tuning),
     });
   });
 
@@ -95,7 +96,7 @@ describe('冰箱（规格书 05 §5.2）', () => {
       expect(x.streetNeed).toBe(list.items.find((y) => y.foodsId === x.foodsId)!.streetNeed);
   });
 
-  it('解冻：移回橱柜，花 数量×单价×0.25 银币', async () => {
+  it('解冻：移回橱柜，花 数量×菜场价×thawCoinRate 银币', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 10000 } });
     await t.db
       .insertInto('cupboard_food')
@@ -107,7 +108,8 @@ describe('冰箱（规格书 05 §5.2）', () => {
         fridge_unread: true,
       })
       .execute();
-    const cost = Math.ceil(2 * config.requireFood(fid('大米')).coin * 0.25);
+    const cost = fridgeThawFee(config.requireFood(fid('大米')), 2, config.tuning);
+    expect(cost).toBe(Math.ceil(2 * config.requireFood(fid('大米')).coin * 0.1));
     // 列表先告诉玩家能解冻几个、要花多少银币（问题记录 206）
     const f = await c().fridge(ctx);
     expect(f.items).toEqual([
@@ -115,7 +117,7 @@ describe('冰箱（规格书 05 §5.2）', () => {
     ]);
     await c().readFridge(ctx);
     const r = await c().thaw(ctx, fid('大米'));
-    expect(r.data).toEqual({ foodsId: fid('大米'), moved: 2, coin: cost });
+    expect(r.data).toEqual({ foodsId: fid('大米'), moved: 2, coin: cost, debtPaid: 0 });
     expect(await foodNum(t, ctx.restaurantId, fid('大米'))).toEqual({ num: 2, fridge: 0 });
     expect((await restRow(t, ctx.restaurantId)).coin).toBe(10000 - cost);
   });

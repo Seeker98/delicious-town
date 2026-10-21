@@ -268,6 +268,7 @@ const errors: Messages['errors'] = {
     no_food: "You don't have this ingredient in your pantry",
     not_locked: "This ingredient isn't locked",
     fridge_empty: "Your fridge doesn't have this ingredient",
+    fridge_debt: 'You owe fridge fees; pay them before putting food in',
     cannot_handle: "Ingredients of this level can't be handled this way",
     odd_num: 'Combining needs ingredients in pairs',
     other_street: 'You can only learn or upgrade dishes of the street you are on; move there first',

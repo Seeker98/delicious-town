@@ -20,6 +20,11 @@ const coinFoods = (p: P, names: Names, coin: (s: string) => string) =>
       (f) => `${names.foodName(Number((f as P).foodsId))}×${Number((f as P).num)}`,
     ),
   ].join(', ');
+/** 冰箱入库、抵债日志里的食材清单（冰箱收费 2026-10-22） */
+const fridgeItems = (p: P, names: Names, sep: string) =>
+  (Array.isArray(p.items) ? p.items : [])
+    .map((f) => `${names.foodName(Number((f as P).foodsId))}×${Number((f as P).num)}`)
+    .join(sep);
 function predictNet(p: P): string {
   if (p.net === undefined) return '';
   const d = n(p, 'coin') - n(p, 'net');
@@ -186,6 +191,14 @@ const events: Messages['events'] = {
     'krab.driven': () => 'Drove away the angry Mr. Krab',
     'plankton.appear': () => 'Plankton came to the restaurant',
     'plankton.driven': () => 'Drove Plankton away',
+    'fridge.entry': (p, names) =>
+      `Food went into the fridge (${fridgeItems(p, names, ', ')}); storage-in fee ${formatNum(n(p, 'coin'))} ${plEn(n(p, 'coin'), 'coin', 'coins')}${n(p, 'owed') > 0 ? `, ${formatNum(n(p, 'owed'))} unpaid and added to your fridge debt` : ''}`,
+    'fridge.freeze': (p, names) =>
+      `Put ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} in the fridge; storage-in fee ${formatNum(n(p, 'coin'))} ${plEn(n(p, 'coin'), 'coin', 'coins')}`,
+    'fridge.fee': (p) =>
+      `Fridge storage fee: ${n(p, 'kinds')} ${plEn(n(p, 'kinds'), 'kind', 'kinds')}${n(p, 'mult') > 1 ? ` (×${n(p, 'mult')})` : ''}, ${formatNum(n(p, 'fee'))} today, paid ${formatNum(n(p, 'paid'))}${n(p, 'debt') > 0 ? `, still owe ${formatNum(n(p, 'debt'))}` : ''}`,
+    'fridge.seize': (p, names) =>
+      `Fridge fees were overdue: sold ${fridgeItems(p, names, ', ')} for ${formatNum(n(p, 'coin'))} ${plEn(n(p, 'coin'), 'coin', 'coins')} to pay them${n(p, 'debt') > 0 ? `, still owe ${formatNum(n(p, 'debt'))}` : ', debt cleared'}`,
     'fridge.drop': (p, names) =>
       `The fridge was full; threw away ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')}`,
     'goods.drop': (p, names) =>

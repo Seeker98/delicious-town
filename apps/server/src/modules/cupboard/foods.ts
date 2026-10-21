@@ -3,6 +3,8 @@ import { notEnough } from '../../core/errors';
 import { restLog, type Op } from '../../core/op';
 import { recordChange } from '../../core/resources';
 import type { DB } from '../../db/schema';
+import { chargeFridge } from './fridge';
+import { fridgeEntryFee } from './fridgeFee';
 
 export interface CupboardState {
   have: number;
@@ -99,6 +101,7 @@ export async function addFoods(
       .execute();
     recordChange(op, 'foods', plan.toCupboard + plan.toFridge, opts, foodsId);
   }
+  fridgeEntry(op, [[foodsId, plan.toFridge]]);
   if (plan.dropped > 0 && !opts.keepDropped) restLog(op, 'fridge.drop', { foodsId, num: plan.dropped });
   return plan;
 }
@@ -148,6 +151,10 @@ export async function addFoodsMany(
     if (plan.dropped > 0) restLog(op, 'fridge.drop', { foodsId: id, num: plan.dropped });
   }
   if (values.length === 0) return;
+  fridgeEntry(
+    op,
+    values.map((v) => [v.foods_id, v.fridge_num]),
+  );
   await op.tx
     .insertInto('cupboard_food')
     .values(values.map((v) => ({ rest_id: op.rest.id, ...v })))
@@ -159,6 +166,22 @@ export async function addFoodsMany(
       }),
     )
     .execute();
+}
+
+/**
+ * 进冰箱的入库费（冰箱收费 2026-10-22）：溢出进冰箱的也收，按菜场价 × fridgeEntryRate；
+ * 一次加食材合成一笔，银币不够的记欠费，餐厅动态写一条
+ */
+function fridgeEntry(op: Op, list: ReadonlyArray<readonly [number, number]>): void {
+  const items = list.filter(([, n]) => n > 0).map(([foodsId, num]) => ({ foodsId, num }));
+  if (items.length === 0) return;
+  const coin = items.reduce(
+    (a, x) => a + fridgeEntryFee(op.config.requireFood(x.foodsId), x.num, op.tuning),
+    0,
+  );
+  if (coin <= 0) return;
+  const { owed } = chargeFridge(op, coin, 'fridge.entry');
+  restLog(op, 'fridge.entry', { items, coin, owed });
 }
 
 /** 从橱柜扣食材（不动冰箱）；扣到 0 且冰箱也空、没锁定时删除这一行 */

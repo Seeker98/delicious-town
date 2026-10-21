@@ -142,6 +142,10 @@ export interface RestaurantTable {
   effect_next_expire_at: TsNullable;
   effect_dirty: Default<boolean>;
   created_at: TsDefault;
+  /** 冰箱收费（2026-10-22）：欠的入库费、仓储费（bigint，INT8 解析器读成 number） */
+  fridge_debt: Default<number>;
+  /** 从哪个游戏日开始欠（YYYY-MM-DD）；不欠时 null */
+  fridge_debt_since: Nullable<string>;
 }
 
 export interface RestaurantTablesTable {

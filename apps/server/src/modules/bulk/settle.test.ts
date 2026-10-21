@@ -4,6 +4,7 @@ import { gameTime } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { trader, wallet } from '../exchange/test';
+import { fridgeEntryFee } from '../cupboard/fridgeFee';
 import { closeDue, payOut } from './settle';
 
 let t: TestGame;
@@ -182,7 +183,10 @@ describe('收盘结算（大宗认购设计 §1.4）', () => {
     await settle(shardId);
     expect(await food(a)).toBe(2);
     expect((await wallet(t, a)).foods[FOOD()]).toBe(3);
-    expect(await coin(a)).toBe(M - 250_000);
+    // 进冰箱的 2 份收入库费（冰箱收费 2026-10-22）
+    expect(await coin(a)).toBe(
+      M - 250_000 - fridgeEntryFee(config().requireFood(FOOD()), 2, config().tuning),
+    );
   });
 
   it('某一批收盘一直失败：记日志、跳过，同区服别的批次照常收盘、结算（backlog）', async () => {

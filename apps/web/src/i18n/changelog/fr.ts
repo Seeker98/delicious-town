@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  fridge1022:
+    'Le frigo devient payant. Ce qui y entre (y compris le surplus quand le garde-manger est plein) paie des frais d’entrée de 5\u202f% du prix du marché, la décongélation coûte 10\u202f%, et le stockage coûte chaque jour 0,5\u202f% de la valeur du frigo, tout le frigo ×1,5 dès 21 sortes et ×2,25 dès 41. Vous pouvez maintenant mettre vous-même des aliments du garde-manger au frigo pour libérer des places. S’il vous manque des pièces, les frais deviennent une dette, et tant qu’elle n’est pas réglée vous ne pouvez ni décongeler ni mettre au frigo. Après 3 jours de dette, des aliments du frigo sont vendus pour la payer. La page du frigo indique le nombre de sortes et le coût quotidien approximatif',
   food1022:
     'Ingrédients. Le marché, la combinaison et la décomposition donnent un peu plus souvent les ingrédients qui manquent à tout le monde. Tous les ingrédients s’échangent maintenant à la Bourse, les ordinaires seulement entre joueurs (le système ne traite toujours que les rares). La souscription en gros choisit désormais parmi les ingrédients qui manquent le plus sur le serveur',
   feel1021:

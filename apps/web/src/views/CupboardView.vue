@@ -16,7 +16,7 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useConfirmStore } from '../stores/confirm';
 import { useToastStore } from '../stores/toast';
-import { clampQty, foodLevelLabel, formatNum } from '../utils/format';
+import { clampQty, foodLevelLabel, formatNum, formatPct } from '../utils/format';
 import { matchRange, matchText } from '../utils/match';
 
 const catalog = useCatalogStore();
@@ -147,12 +147,77 @@ async function load() {
 const confirm = useConfirmStore();
 async function thaw(f: FridgeDto['items'][number]) {
   const name = catalog.foodName(f.foodsId);
+  const debt = fridge.value?.fee.debt ?? 0;
   const yes = await confirm.ask({
-    title: t.value.cupboard.thawConfirm(f.thawable, name, formatNum(f.thawCoin)),
+    title:
+      t.value.cupboard.thawConfirm(f.thawable, name, formatNum(f.thawCoin)) +
+      (debt > 0 ? t.value.cupboard.thawDebt(formatNum(debt)) : ''),
   });
   if (!yes) return;
   void run(() => endpoints.thaw(f.foodsId), t.value.cupboard.thawFailed);
 }
+/** 冰箱费用的倍数（冰箱收费 2026-10-22）：到了哪一档整个冰箱都乘，和服务端 fridgeTierMult 一样 */
+function tierMult(kinds: number, tiers: Array<[number, number]>): number {
+  let m = 1;
+  for (const [from, mult] of tiers) if (kinds >= from) m = mult;
+  return m;
+}
+/** 放冰箱：入库费、放完以后冰箱几格、每天约多少、会不会跨档（服务端按同一公式算） */
+const freezeN = computed(() => clampQty(num.value, pickedItem.value?.num ?? 0));
+const freezeQuote = computed(() => {
+  const it = pickedItem.value;
+  const fee = data.value?.fridgeFee;
+  if (!it || !fee) return null;
+  const n = freezeN.value;
+  const kinds = fee.kinds + (it.fridge > 0 ? 0 : 1);
+  const mult = tierMult(kinds, fee.tiers);
+  return {
+    n,
+    coin: Math.ceil(n * it.price * fee.entryRate),
+    kinds,
+    mult,
+    up: mult > fee.mult,
+    daily: Math.ceil((fee.value + n * it.price) * fee.dailyRate * mult),
+  };
+});
+async function freeze() {
+  const it = pickedItem.value;
+  const q = freezeQuote.value;
+  if (!it || !q) return;
+  const c = t.value.cupboard;
+  const yes = await confirm.ask({
+    title:
+      c.freezeConfirm(q.n, catalog.foodName(it.foodsId), formatNum(q.coin), q.kinds, formatNum(q.daily)) +
+      (q.up ? c.freezeTier(q.mult) : ''),
+  });
+  if (!yes) return;
+  void run(async () => {
+    await endpoints.freeze(it.foodsId, q.n);
+    picked.value = null;
+  }, c.freezeFailed);
+}
+/** 冰箱页顶上的费用说明：规则一行、还差几格跨档、欠费 */
+const feeRules = computed(() => {
+  const f = fridge.value?.fee;
+  if (!f) return '';
+  const pct = (x: number) => formatPct(x, { digits: 2 });
+  return t.value.cupboard.fee.rules(
+    pct(f.entryRate),
+    pct(f.dailyRate),
+    pct(f.thawRate),
+    f.tiers.map(([from, mult]) => t.value.cupboard.fee.tier(from, mult)).join(''),
+  );
+});
+const feeNext = computed(() => {
+  const f = fridge.value?.fee;
+  const next = f?.tiers.find(([from]) => from > f.kinds);
+  if (!f || !next || next[0] - f.kinds > 2) return null;
+  return t.value.cupboard.fee.next(
+    next[0] - f.kinds,
+    next[1],
+    formatNum(Math.ceil(f.value * f.dailyRate * next[1])),
+  );
+});
 /** 冰箱用到才读；看过就标成已读（橱柜数据读回来后才知道有没有新的） */
 async function loadFridge() {
   fridge.value = await endpoints.fridge();
@@ -385,6 +450,17 @@ onMounted(() =>
           >
             {{ pickedItem.locked ? t.cupboard.unlock : t.cupboard.lock }}
           </button>
+          <!-- 放冰箱（冰箱收费 2026-10-22）：腾出橱柜格子，当场付入库费；欠着冰箱费用时灰掉 -->
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            data-testid="freeze"
+            :disabled="busy || freezeN < 1 || (data?.fridgeFee.debt ?? 0) > 0"
+            :title="(data?.fridgeFee.debt ?? 0) > 0 ? t.cupboard.freezeDebt : undefined"
+            @click="freeze"
+          >
+            {{ t.cupboard.freeze(freezeN) }}
+          </button>
           <button
             v-if="canDecompose"
             type="button"
@@ -434,6 +510,17 @@ onMounted(() =>
 
     <!-- 冰箱：一种一行（界面改版 P6：和别处同一种行）——食材图、名字和数量、等级和本街还需，右边解冻按钮 -->
     <template v-if="tab === 'fridge' && fridge">
+      <!-- 冰箱费用（冰箱收费 2026-10-22）：几格、哪一档、每天约多少；还差一两格跨档时提醒；欠费写明后果 -->
+      <div class="dt-cup-meta" data-testid="fridge-fee">
+        <div class="dt-cup-slots-label">
+          {{ t.cupboard.fee.summary(fridge.fee.kinds, fridge.fee.mult, formatNum(fridge.fee.daily)) }}
+        </div>
+        <div v-if="feeNext" class="dt-cup-rules" data-testid="fridge-fee-next">{{ feeNext }}</div>
+        <div v-if="fridge.fee.debt > 0" class="dt-cup-rules text-danger" data-testid="fridge-debt">
+          {{ t.cupboard.fee.debt(formatNum(fridge.fee.debt), fridge.fee.debtDays) }}
+        </div>
+        <div class="dt-cup-rules">{{ feeRules }}</div>
+      </div>
       <DtEmpty v-if="fridge.items.length === 0" :title="t.cupboard.fridgeEmpty" data-testid="fridge-empty" />
       <template v-else>
         <label class="dt-search-box dt-cup-search">

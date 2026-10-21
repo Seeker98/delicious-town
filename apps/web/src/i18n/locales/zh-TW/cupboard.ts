@@ -51,4 +51,22 @@ export default {
   fridgeEmpty: '冰箱是空的',
   noRoom: '櫥櫃放不下',
   thaw: (n: number, coin: string) => `解凍 ×${n} (${coin} 銀幣)`,
+  thawDebt: (debt: string) => ` 會先補清冰箱欠費 ${debt} 銀幣。`,
+  freeze: (n: number) => `放冰箱 ×${n}`,
+  freezeConfirm: (n: number, name: string, coin: string, kinds: number, daily: string) =>
+    `把 ${n} 個${name}放進冰箱, 入庫費 ${coin} 銀幣？之後冰箱 ${kinds} 格, 每天倉儲費約 ${daily} 銀幣。`,
+  freezeTier: (mult: number) => ` 冰箱會進到下一檔, 整個冰箱的倉儲費 ×${mult}。`,
+  freezeFailed: '放冰箱失敗',
+  freezeDebt: '冰箱欠著費用, 補清前不能往裡放',
+  fee: {
+    summary: (kinds: number, mult: number, daily: string) =>
+      `冰箱 ${kinds} 格${mult > 1 ? ` · 倉儲費 ×${mult}` : ''} · 每天約 ${daily} 銀幣`,
+    rules: (entry: string, daily: string, thaw: string, tiers: string) =>
+      `進冰箱收菜場價的 ${entry} 入庫費, 解凍收 ${thaw}；存著每天收冰箱裡食材價值的 ${daily}${tiers}`,
+    tier: (from: number, mult: number) => `, ${from} 格起整個冰箱 ×${mult}`,
+    next: (left: number, mult: number, daily: string) =>
+      `再多 ${left} 格進下一檔 (×${mult}), 每天約 ${daily} 銀幣`,
+    debt: (debt: string, days: number) =>
+      `欠冰箱費用 ${debt} 銀幣: 補清前不能解凍 (解凍時會先補)、也不能往冰箱裡放；連續欠滿 ${days} 天會賣冰箱裡的食材抵債`,
+  },
 };

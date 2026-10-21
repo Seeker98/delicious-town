@@ -42,6 +42,11 @@ const coinFoods = (p: P, names: Names, coin: (s: string) => string, sep: string)
       (f) => `${names.foodName(Number((f as P).foodsId))}×${Number((f as P).num)}`,
     ),
   ].join(sep);
+/** 冰箱入库、抵债日志里的食材清单（冰箱收费 2026-10-22） */
+const fridgeItems = (p: P, names: Names, sep: string) =>
+  (Array.isArray(p.items) ? p.items : [])
+    .map((f) => `${names.foodName(Number((f as P).foodsId))}×${Number((f as P).num)}`)
+    .join(sep);
 /** 事件合约结算日志带净投入时写出本局盈亏（问题记录 254） */
 function predictNet(p: P): string {
   if (p.net === undefined) return '';
@@ -182,6 +187,14 @@ export default {
     'krab.driven': () => '赶走了生气的蟹老板',
     'plankton.appear': () => '痞老板来店里了',
     'plankton.driven': () => '赶走了痞老板',
+    'fridge.entry': (p, names) =>
+      `食材进冰箱 (${fridgeItems(p, names, '、')}), 付入库费 ${formatNum(n(p, 'coin'))} 银币${n(p, 'owed') > 0 ? `, 其中 ${formatNum(n(p, 'owed'))} 银币没付, 记为冰箱欠费` : ''}`,
+    'fridge.freeze': (p, names) =>
+      `把 ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} 放进冰箱, 入库费 ${formatNum(n(p, 'coin'))} 银币`,
+    'fridge.fee': (p) =>
+      `冰箱仓储费: ${n(p, 'kinds')} 格${n(p, 'mult') > 1 ? ` (×${n(p, 'mult')})` : ''}, 今天 ${formatNum(n(p, 'fee'))} 银币, 付了 ${formatNum(n(p, 'paid'))}${n(p, 'debt') > 0 ? `, 还欠 ${formatNum(n(p, 'debt'))}` : ''}`,
+    'fridge.seize': (p, names) =>
+      `冰箱欠费太久, 卖掉 ${fridgeItems(p, names, '、')} 抵债, 得 ${formatNum(n(p, 'coin'))} 银币${n(p, 'debt') > 0 ? `, 还欠 ${formatNum(n(p, 'debt'))}` : ', 欠费已清'}`,
     'fridge.drop': (p, names) => `冰箱满了, 丢掉了 ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')}`,
     'goods.drop': (p, names) => `超过持有上限, 丢掉了 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}`,
     'device.place': (p, names) => `摆放了 ${names.goodsName(n(p, 'goodsId'))}`,

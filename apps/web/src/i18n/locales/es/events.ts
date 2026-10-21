@@ -20,6 +20,11 @@ const coinFoods = (p: P, names: Names, coin: (s: string) => string) =>
       (f) => `${names.foodName(Number((f as P).foodsId))}×${Number((f as P).num)}`,
     ),
   ].join(', ');
+/** 冰箱入库、抵债日志里的食材清单（冰箱收费 2026-10-22） */
+const fridgeItems = (p: P, names: Names, sep: string) =>
+  (Array.isArray(p.items) ? p.items : [])
+    .map((f) => `${names.foodName(Number((f as P).foodsId))}×${Number((f as P).num)}`)
+    .join(sep);
 function predictNet(p: P): string {
   if (p.net === undefined) return '';
   const d = n(p, 'coin') - n(p, 'net');
@@ -186,6 +191,14 @@ const events: Messages['events'] = {
     'krab.driven': () => 'Echaste al enfadado Don Krab',
     'plankton.appear': () => 'Plancton vino al restaurante',
     'plankton.driven': () => 'Echaste a Plancton',
+    'fridge.entry': (p, names) =>
+      `Comida a la nevera (${fridgeItems(p, names, ', ')}); tarifa de entrada ${formatNum(n(p, 'coin'))} ${plEs(n(p, 'coin'), 'moneda', 'monedas')}${n(p, 'owed') > 0 ? `, ${formatNum(n(p, 'owed'))} sin pagar se suman a la deuda de la nevera` : ''}`,
+    'fridge.freeze': (p, names) =>
+      `Metiste ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} en la nevera; tarifa de entrada ${formatNum(n(p, 'coin'))} ${plEs(n(p, 'coin'), 'moneda', 'monedas')}`,
+    'fridge.fee': (p) =>
+      `Tarifa de la nevera: ${n(p, 'kinds')} ${plEs(n(p, 'kinds'), 'tipo', 'tipos')}${n(p, 'mult') > 1 ? ` (×${n(p, 'mult')})` : ''}, ${formatNum(n(p, 'fee'))} hoy, pagadas ${formatNum(n(p, 'paid'))}${n(p, 'debt') > 0 ? `, aún debes ${formatNum(n(p, 'debt'))}` : ''}`,
+    'fridge.seize': (p, names) =>
+      `Deuda de la nevera vencida: se vendió ${fridgeItems(p, names, ', ')} por ${formatNum(n(p, 'coin'))} ${plEs(n(p, 'coin'), 'moneda', 'monedas')} para pagarla${n(p, 'debt') > 0 ? `, aún debes ${formatNum(n(p, 'debt'))}` : ', deuda saldada'}`,
     'fridge.drop': (p, names) =>
       `La nevera estaba llena; se tiró ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')}`,
     'goods.drop': (p, names) =>

@@ -133,6 +133,7 @@ import type {
   TableDto,
   QuestsDto,
   ThawResultDto,
+  FreezeResultDto,
   ThumbResultDto,
   ThumbTodayDto,
   WorldDto,
@@ -273,6 +274,8 @@ export const endpoints = {
   lockFood: (foodsId: number) => api.post<Anything>('/api/v1/cupboard/lock', { foodsId }),
   unlockFood: (foodsId: number) => api.post<Anything>('/api/v1/cupboard/unlock', { foodsId }),
   thaw: (foodsId: number) => api.post<ThawResultDto>('/api/v1/cupboard/thaw', { foodsId }),
+  freeze: (foodsId: number, num: number) =>
+    api.post<FreezeResultDto>('/api/v1/cupboard/freeze', { foodsId, num }),
   handleFoods: (b: { foodsId: number; way: 'compose' | 'decompose'; num: number }) =>
     api.post<HandleResultDto>('/api/v1/cupboard/handle', b),
   exchangeMaster: (

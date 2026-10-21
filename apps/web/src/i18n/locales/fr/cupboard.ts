@@ -55,5 +55,24 @@ const cupboard: Messages['cupboard'] = {
   fridgeEmpty: 'Le frigo est vide',
   noRoom: 'Pas de place dans le garde-manger',
   thaw: (n, coin) => `Décongeler ×${n} (${coin} ${plFr(coin, 'pièce', 'pièces')})`,
+  thawDebt: (debt) => ` La dette de frigo de ${debt} ${plFr(debt, 'pièce', 'pièces')} est réglée d’abord.`,
+  freeze: (n) => `Au frigo ×${n}`,
+  freezeConfirm: (n, name, coin, kinds, daily) =>
+    `Mettre ${n} ${name} au frigo pour ${coin} ${plFr(coin, 'pièce', 'pièces')} de frais d’entrée\u202f? Le frigo aura ensuite ${kinds} ${plFr(kinds, 'sorte', 'sortes')} et coûtera environ ${daily} ${plFr(daily, 'pièce', 'pièces')} par jour.`,
+  freezeTier: (mult) =>
+    ` Le frigo passe au palier suivant\u202f: frais quotidiens de tout le frigo ×${mult}.`,
+  freezeFailed: 'Impossible de mettre au frigo',
+  freezeDebt: 'Vous devez des frais de frigo\u202f; réglez-les avant d’y mettre des aliments',
+  fee: {
+    summary: (kinds, mult, daily) =>
+      `Frigo\u202f: ${kinds} ${plFr(kinds, 'sorte', 'sortes')}${mult > 1 ? ` · frais ×${mult}` : ''} · environ ${daily} ${plFr(daily, 'pièce', 'pièces')} par jour`,
+    rules: (entry, daily, thaw, tiers) =>
+      `Mettre au frigo coûte ${entry} du prix du marché, décongeler ${thaw}\u202f; le stockage coûte chaque jour ${daily} de la valeur du frigo${tiers}`,
+    tier: (from, mult) => `, tout le frigo ×${mult} dès ${from} sortes`,
+    next: (left, mult, daily) =>
+      `Encore ${left} ${plFr(left, 'sorte', 'sortes')} et vous passez au palier suivant (×${mult}), environ ${daily} ${plFr(daily, 'pièce', 'pièces')} par jour`,
+    debt: (debt, days) =>
+      `Vous devez ${debt} ${plFr(debt, 'pièce', 'pièces')} de frais de frigo. Tant que ce n’est pas réglé, impossible de décongeler (la décongélation règle d’abord la dette) ou de mettre au frigo\u202f; après ${days} jours de dette, des aliments du frigo sont vendus pour la payer`,
+  },
 };
 export default cupboard;
