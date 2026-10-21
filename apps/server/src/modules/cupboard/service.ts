@@ -1,11 +1,13 @@
 import { sql } from 'kysely';
-import { FOODS } from '@dt/config';
+import { FOODS, type Tuning } from '@dt/config';
 import {
   ErrorCode,
   gameDay,
   pickWeighted,
   type CupboardDto,
+  type FreezeResultDto,
   type FridgeDto,
+  type FridgeFeeDto,
   type HandleResultDto,
   type ThawResultDto,
 } from '@dt/shared';
@@ -14,12 +16,14 @@ import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, limitReached, notEnough } from '../../core/errors';
 import { opAgg, opLuck } from '../../core/luck';
 import { opNeedPick } from '../../core/scarcity';
-import { runOp, type Op, type OpResult } from '../../core/op';
+import { restLog, runOp, type Op, type OpResult } from '../../core/op';
 import { gainCoin, spendCoin, spendStrength } from '../../core/resources';
 import { AppError } from '../../http/errors';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import type { WorldService } from '../world/service';
 import { addFoods, cupboardSlotsUsed, foodsMap, subFoods } from './foods';
+import { payFridgeDebt } from './fridge';
+import { fridgeDailyFee, fridgeEntryFee, fridgeThawFee, fridgeUnitPrice } from './fridgeFee';
 import { streetNeeds as streetNeedsOf } from './needs';
 import { composePool, handleStrength, handleTargetLevel, runHandle, type HandleWay } from './rules';
 
@@ -35,6 +39,29 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
     t.freeHandleBase + t.freeHandlePerStar * star;
   const streetNeeds = (restId: number, streetId: number, maxGrade: number) =>
     streetNeedsOf(d.db, d.config, restId, streetId, maxGrade);
+  /** 冰箱费用（冰箱收费 2026-10-22）：橱柜页、冰箱页共用 */
+  const fridgeFee = (
+    rows: ReadonlyArray<readonly [number, { fridge: number }]>,
+    rest: { fridge_debt: number; fridge_debt_since: string | null },
+    tuning: Tuning,
+  ): FridgeFeeDto => {
+    const q = fridgeDailyFee(
+      rows.map(([foodsId, r]) => ({ foodsId, num: r.fridge })),
+      d.config,
+      tuning,
+    );
+    const c = tuning.cupboard;
+    return {
+      ...q,
+      debt: rest.fridge_debt,
+      debtSince: rest.fridge_debt_since,
+      debtDays: c.fridgeDebtDays,
+      entryRate: c.fridgeEntryRate,
+      dailyRate: c.fridgeDailyRate,
+      thawRate: c.thawCoinRate,
+      tiers: c.fridgeTiers.map(([from, mult]) => [from, mult]),
+    };
+  };
 
   return {
     async list(ctx: RestCtx): Promise<CupboardDto> {
@@ -71,6 +98,7 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
         freeHandleLeft: Math.max(0, freeHandles(rest.star_level, tuning.cupboard) - used),
         handleMax: handleCap(tuning.cupboard),
         exchangeMaxTimes: tuning.cupboard.exchangeMaxTimes,
+        fridgeFee: fridgeFee(all, rest, tuning),
         items: all
           .filter(([, r]) => r.num > 0)
           .map(([foodsId, r]) => ({
@@ -78,6 +106,8 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
             num: r.num,
             locked: r.locked,
             streetNeed: needMap.get(foodsId) ?? 0,
+            fridge: r.fridge,
+            price: fridgeUnitPrice(d.config.requireFood(foodsId), tuning),
           }))
           .sort(
             (a, b) =>
@@ -92,7 +122,7 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
       const { tuning } = await d.shards.settings(ctx.shardId);
       const rest = await d.db
         .selectFrom('restaurant')
-        .select(['foods_max_num', 'cupboard_num', 'street_id'])
+        .select(['foods_max_num', 'cupboard_num', 'street_id', 'fridge_debt', 'fridge_debt_since'])
         .where('id', '=', ctx.restaurantId)
         .executeTakeFirstOrThrow();
       const { needMap } = await streetNeeds(ctx.restaurantId, rest.street_id, tuning.rest.cookbookMaxGrade);
@@ -109,9 +139,7 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
           // 和 thaw 同一套规则：橱柜里没有这种又没空格时不能解冻；最多补到单种上限
           const thawable =
             r.num === 0 && slotsFull ? 0 : Math.max(0, Math.min(r.fridge_num, rest.foods_max_num - r.num));
-          const thawCoin = Math.ceil(
-            thawable * d.config.requireFood(r.foods_id).coin * tuning.cupboard.thawCoinRate,
-          );
+          const thawCoin = fridgeThawFee(d.config.requireFood(r.foods_id), thawable, tuning);
           return {
             foodsId: r.foods_id,
             num: r.fridge_num,
@@ -120,6 +148,11 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
             streetNeed: needMap.get(r.foods_id) ?? 0,
           };
         }),
+        fee: fridgeFee(
+          rows.map((r) => [r.foods_id, { fridge: r.fridge_num }] as const),
+          rest,
+          tuning,
+        ),
       };
     },
 
@@ -183,7 +216,11 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
           throw new AppError(ErrorCode.CUPBOARD_FULL, 400);
         const moved = Math.min(row.fridge, o.rest.foods_max_num - row.num);
         if (moved <= 0) throw limitReached('foods_max', { max: o.rest.foods_max_num });
-        const coin = Math.ceil(moved * o.config.requireFood(foodsId).coin * o.tuning.cupboard.thawCoinRate);
+        // 欠着冰箱费用时先补清再解冻；银币不够补清加解冻费就整笔拒绝（冰箱收费 2026-10-22）
+        const coin = fridgeThawFee(o.config.requireFood(foodsId), moved, o.tuning);
+        if (o.rest.coin < o.rest.fridge_debt + coin)
+          throw notEnough('coin', o.rest.fridge_debt + coin, o.rest.coin);
+        const debtPaid = payFridgeDebt(o);
         spendCoin(o, coin);
         await o.tx
           .updateTable('cupboard_food')
@@ -191,7 +228,32 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
           .where('rest_id', '=', o.rest.id)
           .where('foods_id', '=', foodsId)
           .execute();
-        return { foodsId, moved, coin };
+        return { foodsId, moved, coin, debtPaid };
+      });
+    },
+
+    /**
+     * 主动把橱柜里的食材放进冰箱（冰箱收费 2026-10-22）：腾出橱柜格子，当场付入库费（不记欠费）；
+     * 欠着冰箱费用时不能放；冰箱里这种最多放到单种上限
+     */
+    freeze(ctx: RestCtx, b: { foodsId: number; num: number }) {
+      return op(ctx, 'fridge.freeze', async (o): Promise<FreezeResultDto> => {
+        if (o.rest.fridge_debt > 0) throw invalidState('fridge_debt', { debt: o.rest.fridge_debt });
+        const food = o.config.requireFood(b.foodsId);
+        const row = (await foodsMap(o.tx, o.rest.id)).get(b.foodsId);
+        if (!row || row.num < b.num) throw notEnough('foods', b.num, row?.num ?? 0, b.foodsId);
+        const moved = Math.min(b.num, o.rest.foods_max_num - row.fridge);
+        if (moved <= 0) throw limitReached('foods_max', { max: o.rest.foods_max_num });
+        const coin = fridgeEntryFee(food, moved, o.tuning);
+        spendCoin(o, coin, { source: 'fridge.entry' });
+        await o.tx
+          .updateTable('cupboard_food')
+          .set({ num: sql<number>`num - ${moved}`, fridge_num: sql<number>`fridge_num + ${moved}` })
+          .where('rest_id', '=', o.rest.id)
+          .where('foods_id', '=', b.foodsId)
+          .execute();
+        restLog(o, 'fridge.freeze', { foodsId: b.foodsId, num: moved, coin });
+        return { foodsId: b.foodsId, moved, coin };
       });
     },
 

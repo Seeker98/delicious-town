@@ -270,6 +270,7 @@ const errors: Messages['errors'] = {
     no_food: "Vous n'avez pas cet ingrédient dans votre garde-manger",
     not_locked: "Cet ingrédient n'est pas verrouillé",
     fridge_empty: "Votre frigo n'a pas cet ingrédient",
+    fridge_debt: 'Vous devez des frais de frigo\u202f; réglez-les avant d’y mettre des aliments',
     cannot_handle: 'Les ingrédients de ce niveau ne peuvent pas être traités ainsi',
     odd_num: 'La combinaison nécessite des ingrédients par paires',
     other_street: "Seuls les plats de votre rue peuvent être appris ou améliorés\u202f; déménagez d'abord",

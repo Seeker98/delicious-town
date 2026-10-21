@@ -12,6 +12,23 @@ import { SHARED_FOODS } from '@dt/shared';
 
 /** 一级万能食材；+1、+2 是二级、三级 */
 const M1 = SHARED_FOODS.masterLevel1;
+/** 冰箱费用（冰箱收费 2026-10-22）：空冰箱、默认费率 */
+const FEE = {
+  kinds: 0,
+  value: 0,
+  mult: 1,
+  daily: 0,
+  debt: 0,
+  debtSince: null,
+  debtDays: 3,
+  entryRate: 0.05,
+  dailyRate: 0.005,
+  thawRate: 0.1,
+  tiers: [
+    [21, 1.5],
+    [41, 2.25],
+  ] as Array<[number, number]>,
+};
 
 vi.mock('../api/endpoints', () => ({
   endpoints: {
@@ -22,6 +39,7 @@ vi.mock('../api/endpoints', () => ({
     lockFood: vi.fn(),
     unlockFood: vi.fn(),
     thaw: vi.fn(),
+    freeze: vi.fn(),
     exchangeMaster: vi.fn(),
   },
 }));
@@ -56,7 +74,8 @@ describe('CupboardView', () => {
       freeHandleLeft: 20,
       handleMax: 100,
       exchangeMaxTimes: 50,
-      items: [{ foodsId: 302, num: 4, locked: false, streetNeed: 3 }],
+      fridgeFee: FEE,
+      items: [{ foodsId: 302, num: 4, locked: false, streetNeed: 3, fridge: 0, price: 1000 }],
     });
     vi.mocked(endpoints.handleFoods).mockResolvedValue({
       chances: 2,
@@ -76,16 +95,17 @@ describe('CupboardView', () => {
     const full = await endpoints.cupboard();
     vi.mocked(endpoints.cupboard).mockResolvedValueOnce({
       ...full,
-      items: [{ foodsId: 303, num: 1, locked: false, streetNeed: 0 }],
+      items: [{ foodsId: 303, num: 1, locked: false, streetNeed: 0, fridge: 0, price: 1000 }],
     });
     await w.get('[data-testid="decompose"]').trigger('click');
     await flushPromises();
     expect(w.find('[data-testid="picked-card"]').exists()).toBe(false);
     // 到冰箱解冻同一种：重新读橱柜时 302 又回来了，面板不能自己弹出来
     vi.mocked(endpoints.fridge).mockResolvedValue({
+      fee: FEE,
       items: [{ foodsId: 302, num: 5, thawable: 3, thawCoin: 750, streetNeed: 0 }],
     });
-    vi.mocked(endpoints.thaw).mockResolvedValue({ foodsId: 302, moved: 3, coin: 750 });
+    vi.mocked(endpoints.thaw).mockResolvedValue({ foodsId: 302, moved: 3, coin: 750, debtPaid: 0 });
     const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
     await w.get('[data-testid="tab-fridge"]').trigger('click');
     await flushPromises();
@@ -143,7 +163,7 @@ describe('CupboardView', () => {
   it('显示最多能分解、合成几个；数量超过时按上限处理（合成取偶数）（问题记录：合成不显示最大数）', async () => {
     vi.mocked(endpoints.cupboard).mockResolvedValue({
       ...(await endpoints.cupboard()),
-      items: [{ foodsId: 302, num: 7, locked: false, streetNeed: 0 }],
+      items: [{ foodsId: 302, num: 7, locked: false, streetNeed: 0, fridge: 0, price: 1000 }],
     });
     const w = mountView();
     await flushPromises();
@@ -184,9 +204,10 @@ describe('CupboardView', () => {
       freeHandleLeft: 20,
       handleMax: 100,
       exchangeMaxTimes: 50,
+      fridgeFee: FEE,
       items: [
-        { foodsId: 302, num: 4, locked: false, streetNeed: 0 },
-        { foodsId: 101, num: 9, locked: false, streetNeed: 0 },
+        { foodsId: 302, num: 4, locked: false, streetNeed: 0, fridge: 0, price: 1000 },
+        { foodsId: 101, num: 9, locked: false, streetNeed: 0, fridge: 0, price: 1000 },
       ],
     });
     localStorage.clear();
@@ -220,10 +241,10 @@ describe('CupboardView', () => {
     vi.mocked(endpoints.cupboard).mockResolvedValue({
       ...(await endpoints.cupboard()),
       items: [
-        { foodsId: 302, num: 4, locked: false, streetNeed: 3 },
-        { foodsId: 101, num: 1200, locked: true, streetNeed: 0 },
-        { foodsId: 401, num: 2, locked: false, streetNeed: 0 },
-        { foodsId: M1, num: 6, locked: false, streetNeed: 0 },
+        { foodsId: 302, num: 4, locked: false, streetNeed: 3, fridge: 0, price: 1000 },
+        { foodsId: 101, num: 1200, locked: true, streetNeed: 0, fridge: 0, price: 1000 },
+        { foodsId: 401, num: 2, locked: false, streetNeed: 0, fridge: 0, price: 1000 },
+        { foodsId: M1, num: 6, locked: false, streetNeed: 0, fridge: 0, price: 1000 },
       ],
     });
     localStorage.clear();
@@ -265,7 +286,14 @@ describe('CupboardView', () => {
     });
     vi.mocked(endpoints.cupboard).mockResolvedValue({
       ...(await endpoints.cupboard()),
-      items: [103, 108, 101, 302].map((foodsId) => ({ foodsId, num: 5, locked: false, streetNeed: 0 })),
+      items: [103, 108, 101, 302].map((foodsId) => ({
+        foodsId,
+        num: 5,
+        locked: false,
+        streetNeed: 0,
+        fridge: 0,
+        price: 1000,
+      })),
     });
     localStorage.clear();
     const w = mountView();
@@ -307,7 +335,14 @@ describe('CupboardView', () => {
     });
     vi.mocked(endpoints.cupboard).mockResolvedValue({
       ...(await endpoints.cupboard()),
-      items: [103, 302].map((foodsId) => ({ foodsId, num: 5, locked: false, streetNeed: 0 })),
+      items: [103, 302].map((foodsId) => ({
+        foodsId,
+        num: 5,
+        locked: false,
+        streetNeed: 0,
+        fridge: 0,
+        price: 1000,
+      })),
     });
     localStorage.clear();
     const w = mountView();
@@ -332,6 +367,7 @@ describe('CupboardView', () => {
       devices: [],
     });
     vi.mocked(endpoints.fridge).mockResolvedValue({
+      fee: FEE,
       items: [103, 302].map((foodsId) => ({ foodsId, num: 5, thawable: 3, thawCoin: 750, streetNeed: 0 })),
     });
     const w = mountView();
@@ -359,9 +395,10 @@ describe('CupboardView', () => {
       freeHandleLeft: 20,
       handleMax: 100,
       exchangeMaxTimes: 50,
+      fridgeFee: FEE,
       items: [
-        { foodsId: M1, num: 4, locked: false, streetNeed: 0 },
-        { foodsId: M1 + 2, num: 4, locked: false, streetNeed: 0 },
+        { foodsId: M1, num: 4, locked: false, streetNeed: 0, fridge: 0, price: 1000 },
+        { foodsId: M1 + 2, num: 4, locked: false, streetNeed: 0, fridge: 0, price: 1000 },
       ],
     });
     const w = mountView();
@@ -385,7 +422,8 @@ describe('CupboardView', () => {
       freeHandleLeft: 20,
       handleMax: 100,
       exchangeMaxTimes: 50,
-      items: [{ foodsId: M1 + 1, num: 300, locked: false, streetNeed: 0 }],
+      fridgeFee: FEE,
+      items: [{ foodsId: M1 + 1, num: 300, locked: false, streetNeed: 0, fridge: 0, price: 1000 }],
     });
     vi.mocked(endpoints.exchangeMaster).mockResolvedValue({ gained: [] });
     const w = mountView();
@@ -403,12 +441,13 @@ describe('CupboardView', () => {
 
   it('冰箱：解冻按钮写明个数和银币，确认后才解冻；放不下时按钮灰掉（问题记录 206）', async () => {
     vi.mocked(endpoints.fridge).mockResolvedValue({
+      fee: FEE,
       items: [
         { foodsId: 302, num: 5, thawable: 3, thawCoin: 750, streetNeed: 4 },
         { foodsId: 303, num: 2, thawable: 0, thawCoin: 0, streetNeed: 0 },
       ],
     });
-    vi.mocked(endpoints.thaw).mockResolvedValue({ foodsId: 302, moved: 3, coin: 750 });
+    vi.mocked(endpoints.thaw).mockResolvedValue({ foodsId: 302, moved: 3, coin: 750, debtPaid: 0 });
     const confirm = vi.spyOn(window, 'confirm').mockReturnValueOnce(false).mockReturnValueOnce(true);
     const w = mountView();
     await flushPromises();
@@ -457,6 +496,7 @@ describe('CupboardView', () => {
 
   it('直接打开 ?tab=fridge（刷新、后退、分享的链接）：冰箱照样读出来（终审 I2）', async () => {
     vi.mocked(endpoints.fridge).mockResolvedValue({
+      fee: FEE,
       items: [{ foodsId: 302, num: 5, thawable: 3, thawCoin: 750, streetNeed: 4 }],
     });
     const router = createRouter({
@@ -523,9 +563,9 @@ describe('CupboardView', () => {
     vi.mocked(endpoints.cupboard).mockResolvedValue({
       ...(await endpoints.cupboard()),
       items: [
-        { foodsId: 101, num: 4, locked: false, streetNeed: 0 },
-        { foodsId: 701, num: 4, locked: false, streetNeed: 0 },
-        { foodsId: 302, num: 4, locked: false, streetNeed: 0 },
+        { foodsId: 101, num: 4, locked: false, streetNeed: 0, fridge: 0, price: 1000 },
+        { foodsId: 701, num: 4, locked: false, streetNeed: 0, fridge: 0, price: 1000 },
+        { foodsId: 302, num: 4, locked: false, streetNeed: 0, fridge: 0, price: 1000 },
       ],
     });
     const w = mountView();
@@ -576,6 +616,7 @@ describe('CupboardView', () => {
       freeHandleLeft: 20,
       handleMax: 100,
       exchangeMaxTimes: 50,
+      fridgeFee: FEE,
       items: [],
     });
     const w = mountView({ stubs: { RouterLink: { props: ['to'], template: '<a :href="to"><slot /></a>' } } });
@@ -587,9 +628,10 @@ describe('CupboardView', () => {
 
   it('冰箱每行前面是食材图；解冻走确认面板（界面改版 P4）', async () => {
     vi.mocked(endpoints.fridge).mockResolvedValue({
+      fee: FEE,
       items: [{ foodsId: 302, num: 5, thawable: 3, thawCoin: 750, streetNeed: 4 }],
     });
-    vi.mocked(endpoints.thaw).mockResolvedValue({ foodsId: 302, moved: 3, coin: 750 });
+    vi.mocked(endpoints.thaw).mockResolvedValue({ foodsId: 302, moved: 3, coin: 750, debtPaid: 0 });
     const spy = vi.spyOn(window, 'confirm');
     const store = useConfirmStore();
     store.hosts = 1;
@@ -606,5 +648,47 @@ describe('CupboardView', () => {
     await flushPromises();
     expect(endpoints.thaw).toHaveBeenCalledWith(302);
     spy.mockRestore();
+  });
+
+  it('放冰箱（冰箱收费 2026-10-22）：确认框写入库费、放完的格数和每天约多少；跨档时写明整个冰箱乘几倍', async () => {
+    const full = await endpoints.cupboard();
+    vi.mocked(endpoints.cupboard).mockResolvedValue({
+      ...full,
+      fridgeFee: { ...FEE, kinds: 20, value: 200_000, daily: 1000 },
+    });
+    vi.mocked(endpoints.freeze).mockResolvedValue({ foodsId: 302, moved: 1, coin: 50 });
+    const w = mountView();
+    await flushPromises();
+    await w.get('[data-testid="pick-302"]').trigger('click');
+    const spy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    await w.get('[data-testid="freeze"]').trigger('click');
+    await flushPromises();
+    // 1 个 × 菜场价 1000 × 5% = 50；放完 21 格，(200000 + 1000) × 0.5% × 1.5 = 1508
+    const text = spy.mock.calls[0]![0] as string;
+    expect(text).toContain('50');
+    expect(text).toContain('21 格');
+    expect(text).toContain('1,508');
+    expect(text).toContain('×1.5');
+    expect(endpoints.freeze).toHaveBeenCalledWith(302, 1);
+    spy.mockRestore();
+  });
+
+  it('冰箱页写费用；还差一两格跨档时提醒；欠费时写后果，放冰箱按钮灰掉', async () => {
+    const full = await endpoints.cupboard();
+    const owing = { ...FEE, kinds: 19, value: 100_000, daily: 500, debt: 1234, debtSince: '2026-10-20' };
+    vi.mocked(endpoints.cupboard).mockResolvedValue({ ...full, fridgeFee: owing });
+    vi.mocked(endpoints.fridge).mockResolvedValue({
+      fee: owing,
+      items: [{ foodsId: 302, num: 5, thawable: 3, thawCoin: 750, streetNeed: 0 }],
+    });
+    const w = mountView();
+    await flushPromises();
+    await w.get('[data-testid="pick-302"]').trigger('click');
+    expect(w.get('[data-testid="freeze"]').attributes('disabled')).toBeDefined();
+    await w.get('[data-testid="tab-fridge"]').trigger('click');
+    await flushPromises();
+    expect(w.get('[data-testid="fridge-fee"]').text()).toContain('冰箱 19 格');
+    expect(w.get('[data-testid="fridge-fee-next"]').text()).toContain('再多 2 格');
+    expect(w.get('[data-testid="fridge-debt"]').text()).toContain('1,234');
   });
 });

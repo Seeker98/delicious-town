@@ -3,6 +3,7 @@ import { createShard } from '../../../test/fixtures';
 import { createTestGame, foodNum, restRow, type TestGame } from '../../../test/game';
 import { addDays, gameDay } from '@dt/shared';
 import { exchangeJobs, expireOrders } from './jobs';
+import { fridgeEntryFee } from '../cupboard/fridgeFee';
 import { trader, wallet } from './test';
 
 let t: TestGame;
@@ -106,7 +107,12 @@ describe('撤单、过期、取出（156-1 设计 §6.3~§6.5）', () => {
       .values({ rest_id: r.restaurantId, foods_id: f.id, num: 25 })
       .execute();
     const w = await svc().withdraw(r);
-    expect((await restRow(t, r.restaurantId)).coin).toBe(500);
+    // 放进冰箱的收入库费（冰箱收费 2026-10-22）：从取出的银币里扣，不够的记冰箱欠费
+    const frozen = (await foodNum(t, r.restaurantId, f.id)).fridge;
+    const fee = fridgeEntryFee(f, frozen, t.deps.config.tuning);
+    const row = await restRow(t, r.restaurantId);
+    expect(row.coin).toBe(Math.max(0, 500 - fee));
+    expect(row.fridge_debt).toBe(Math.max(0, fee - 500));
     const got = w.data.foods.find((x) => x.foodsId === f.id)?.num ?? 0;
     expect(got).toBeGreaterThan(0);
     expect(got).toBeLessThan(25);

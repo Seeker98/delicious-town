@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  fridge1022:
+    'The fridge now has fees: food going in (including overflow when the pantry is full) pays a storage-in fee of 5% of its market price, thawing costs 10%, and storage costs 0.5% of the fridge’s value each day, with the whole fridge ×1.5 from 21 kinds and ×2.25 from 41; you can now move pantry food into the fridge yourself to free up slots; if you are short of coins the fee becomes a debt, you cannot thaw or put food in while you owe, and after 3 days in debt food in the fridge is sold to pay it. The fridge page shows how many kinds you have and roughly what it costs per day',
   food1022:
     'Ingredients: the Market, Combine and Decompose now give the ingredients everyone tends to be short of a little more often; every ingredient can now be traded on the Exchange, with common ones traded only between players (the system still deals only in rare ones); Bulk Subscription now picks from the ingredients the server is shortest of',
   feel1021:

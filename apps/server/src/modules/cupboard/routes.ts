@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { exchangeBody, foodsIdBody, handleBody } from '@dt/shared';
+import { exchangeBody, foodsIdBody, freezeBody, handleBody } from '@dt/shared';
 import { restCtxOf } from '../../core/deps';
 import { ok, okOp } from '../../http/reply';
 import { parse } from '../../http/validate';
@@ -19,6 +19,7 @@ export function cupboardRoutes(svc: CupboardService): FastifyPluginAsync {
     r.post('/thaw', async (req) =>
       okOp(await svc.thaw(restCtxOf(req), parse(foodsIdBody, req.body).foodsId)),
     );
+    r.post('/freeze', async (req) => okOp(await svc.freeze(restCtxOf(req), parse(freezeBody, req.body))));
     r.post('/handle', async (req) => okOp(await svc.handle(restCtxOf(req), parse(handleBody, req.body))));
     r.post('/exchange', async (req) =>
       okOp(await svc.exchange(restCtxOf(req), parse(exchangeBody, req.body))),

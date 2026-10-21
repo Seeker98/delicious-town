@@ -20,6 +20,11 @@ const coinFoods = (p: P, names: Names, coin: (s: string) => string) =>
       (f) => `${names.foodName(Number((f as P).foodsId))}\u202f×\u202f${Number((f as P).num)}`,
     ),
   ].join(', ');
+/** 冰箱入库、抵债日志里的食材清单（冰箱收费 2026-10-22） */
+const fridgeItems = (p: P, names: Names, sep: string) =>
+  (Array.isArray(p.items) ? p.items : [])
+    .map((f) => `${names.foodName(Number((f as P).foodsId))}\u202f×\u202f${Number((f as P).num)}`)
+    .join(sep);
 function predictNet(p: P): string {
   if (p.net === undefined) return '';
   const d = n(p, 'coin') - n(p, 'net');
@@ -195,6 +200,14 @@ const events: Messages['events'] = {
     'krab.driven': () => 'M. Krab en colère a été chassé',
     'plankton.appear': () => 'Plancton est venu au restaurant',
     'plankton.driven': () => 'Plancton a été chassé',
+    'fridge.entry': (p, names) =>
+      `Aliments mis au frigo (${fridgeItems(p, names, ', ')})\u202f; frais d’entrée ${formatNum(n(p, 'coin'))} ${plFr(n(p, 'coin'), 'pièce', 'pièces')}${n(p, 'owed') > 0 ? `, dont ${formatNum(n(p, 'owed'))} impayées ajoutées à la dette du frigo` : ''}`,
+    'fridge.freeze': (p, names) =>
+      `${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'num')} mis au frigo\u202f; frais d’entrée ${formatNum(n(p, 'coin'))} ${plFr(n(p, 'coin'), 'pièce', 'pièces')}`,
+    'fridge.fee': (p) =>
+      `Frais de stockage du frigo\u202f: ${n(p, 'kinds')} ${plFr(n(p, 'kinds'), 'sorte', 'sortes')}${n(p, 'mult') > 1 ? ` (×${n(p, 'mult')})` : ''}, ${formatNum(n(p, 'fee'))} aujourd’hui, ${formatNum(n(p, 'paid'))} payées${n(p, 'debt') > 0 ? `, reste ${formatNum(n(p, 'debt'))} dû` : ''}`,
+    'fridge.seize': (p, names) =>
+      `Frais de frigo en retard\u202f: ${fridgeItems(p, names, ', ')} vendus pour ${formatNum(n(p, 'coin'))} ${plFr(n(p, 'coin'), 'pièce', 'pièces')}${n(p, 'debt') > 0 ? `, reste ${formatNum(n(p, 'debt'))} dû` : ', dette réglée'}`,
     'fridge.drop': (p, names) =>
       `Frigo plein\u202f: ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'num')} jeté`,
     'goods.drop': (p, names) =>

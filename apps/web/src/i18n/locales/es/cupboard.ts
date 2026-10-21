@@ -53,5 +53,23 @@ const cupboard: Messages['cupboard'] = {
   fridgeEmpty: 'La nevera está vacía',
   noRoom: 'No cabe en la despensa',
   thaw: (n, coin) => `Descongelar ×${n} (${coin} ${plEs(coin, 'moneda', 'monedas')})`,
+  thawDebt: (debt) => ` Primero se pagan ${debt} ${plEs(debt, 'moneda', 'monedas')} de deuda de la nevera.`,
+  freeze: (n) => `A la nevera ×${n}`,
+  freezeConfirm: (n, name, coin, kinds, daily) =>
+    `¿Meter ${n} ${name} en la nevera por ${coin} ${plEs(coin, 'moneda', 'monedas')} de entrada? Después la nevera tendrá ${kinds} ${plEs(kinds, 'tipo', 'tipos')} y costará unas ${daily} ${plEs(daily, 'moneda', 'monedas')} al día.`,
+  freezeTier: (mult) => ` La nevera sube de tramo: la tarifa diaria de toda la nevera ×${mult}.`,
+  freezeFailed: 'No se pudo meter en la nevera',
+  freezeDebt: 'Debes tarifas de la nevera; págalas antes de meter comida',
+  fee: {
+    summary: (kinds, mult, daily) =>
+      `Nevera: ${kinds} ${plEs(kinds, 'tipo', 'tipos')}${mult > 1 ? ` · tarifa ×${mult}` : ''} · unas ${daily} ${plEs(daily, 'moneda', 'monedas')} al día`,
+    rules: (entry, daily, thaw, tiers) =>
+      `Meter comida en la nevera cuesta el ${entry} del precio de mercado y descongelar el ${thaw}; guardarla cuesta cada día el ${daily} del valor de la nevera${tiers}`,
+    tier: (from, mult) => `, toda la nevera ×${mult} desde ${from} tipos`,
+    next: (left, mult, daily) =>
+      `Con ${left} ${plEs(left, 'tipo', 'tipos')} más pasas al siguiente tramo (×${mult}), unas ${daily} ${plEs(daily, 'moneda', 'monedas')} al día`,
+    debt: (debt, days) =>
+      `Debes ${debt} ${plEs(debt, 'moneda', 'monedas')} de la nevera. Hasta pagarlas no puedes descongelar (al descongelar se paga primero) ni meter comida; tras ${days} días de deuda se vende comida de la nevera para pagarla`,
+  },
 };
 export default cupboard;

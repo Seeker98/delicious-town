@@ -108,8 +108,12 @@
     "handleMax": 100,
     "freeHandleBase": 20,
     "freeHandlePerStar": 25,
-    "thawCoinRate": 0.25,
+    "thawCoinRate": 0.1,
     "failCoinRate": 0.5,
+    "fridgeEntryRate": 0.05,
+    "fridgeDailyRate": 0.005,
+    "fridgeTiers": [[21, 1.5], [41, 2.25]],
+    "fridgeDebtDays": 3,
     "exchangeMaxTimes": 50
   },
   "market": {

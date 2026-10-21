@@ -54,6 +54,7 @@ import { createInviteService, type InviteService } from './modules/invite/servic
 import { createReportService, type ReportService } from './modules/report/service';
 import { createAnnounceService, type AnnounceService } from './modules/announce/service';
 import { commissionJobs } from './modules/commission/hygiene';
+import { fridgeJobs } from './modules/cupboard/fridge';
 import { createCommissionService, type CommissionService } from './modules/commission/service';
 import { createRestaurantService, type RestaurantService } from './modules/restaurant/service';
 import { createShardService, type ShardService } from './modules/shard/service';
@@ -163,6 +164,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...predictJobs(deps));
   jobs.push(...dailyJobs(deps, app.writer));
   jobs.push(...commissionJobs(deps));
+  jobs.push(...fridgeJobs(deps));
   jobs.push(...achieveJobs(deps));
   return {
     app,

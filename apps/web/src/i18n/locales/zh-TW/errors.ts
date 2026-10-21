@@ -256,6 +256,7 @@ export default {
     no_food: '櫥櫃裡沒有這種食材',
     not_locked: '這種食材沒有鎖定',
     fridge_empty: '冰箱裡沒有這種食材',
+    fridge_debt: '冰箱欠著費用, 補清前不能往裡放',
     cannot_handle: '這個等級的食材不能這樣處理',
     odd_num: '合成需要成對的食材',
     other_street: '只能學、升級所在街道的菜, 先搬到那條街',

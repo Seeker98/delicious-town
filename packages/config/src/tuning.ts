@@ -202,8 +202,17 @@ export const tuningSchema = z.object({
     handleMax: int.min(1),
     freeHandleBase: int,
     freeHandlePerStar: int,
-    thawCoinRate: num,
+    thawCoinRate: num.min(0),
     failCoinRate: num,
+    /** 冰箱收费（2026-10-22）：入库费、每日仓储费都按菜场价（不含天气）× 份数 */
+    fridgeEntryRate: num.min(0),
+    fridgeDailyRate: num.min(0),
+    /** 冰箱格数（种类数）到这些线以上时，整个冰箱的每日费率乘对应倍数；tiers[i] = [从第几格起, 倍数]，格数递增 */
+    fridgeTiers: z
+      .array(z.tuple([int.min(1), num.min(1)]))
+      .refine((t) => t.every((x, i) => i === 0 || x[0] > t[i - 1]![0]), 'fridgeTiers must be increasing'),
+    /** 连续欠费满几天，开始用冰箱里的食材按卖店价抵债（天） */
+    fridgeDebtDays: int.min(1),
     /** 请求体另有上限 50（shared exchangeBody） */
     exchangeMaxTimes: int.min(1).max(50),
   }),
