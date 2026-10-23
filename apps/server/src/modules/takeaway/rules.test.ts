@@ -5,7 +5,6 @@ import {
   addRiderExp,
   awardWeights,
   claimExp,
-  customerRate,
   droneDiamonds,
   FAIL_REASONS,
   fl,
@@ -187,9 +186,8 @@ describe('结算（设计文档 §3.4、§3.6）', () => {
     expect(riderExpGain({ grade: 4, fail: true, drone: true, kinds: 1, rate: 3 })).toBe(404);
   });
 
-  it('无人机钻石 2g+1；神秘顾客概率 1.5% + 幸运率/50；失败原因 8 句', () => {
+  it('无人机钻石 2g+1；失败原因 8 句', () => {
     expect(droneDiamonds(3)).toBe(7);
-    expect(customerRate(0.2, t)).toBeCloseTo(0.019, 10);
     expect(FAIL_REASONS).toHaveLength(8);
     expect(FAIL_REASONS[7]).toBe('顾客退单了!');
   });

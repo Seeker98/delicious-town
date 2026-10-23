@@ -239,7 +239,6 @@
     "levelBonusPerLevel": 0.04,
     "roadSame": 0.02, "roadSameMax": 0.30, "roadOther": 0.005, "roadOtherMax": 0.10,
     "cookNumPowerDiv": 400,
-    "bobRatePerNutritive": 0.0002,
     "tasteDaily": 2, "tasteAwardMax": 20, "tasteMcRate": 0.016, "tasteGradeFactor": 0.2,
     "lessonLearnRate": 0.9, "lessonStealRate": 0.4, "lessonStealPerLevel": 0.02,
     "learnStrength": 50, "stealStrength": 80,
@@ -367,7 +366,6 @@
     "priceLine": 1000000, "coinRates": [0.24, 0.05], "expRates": [0.72, 0.22], "expDiv": 45,
     "successFloat": 200, "luckOddsRate": 200,
     "privateExpRate": 1.5, "friendRiderRate": 0.9, "rebateDiv": 9, "failExpRate": 0.5,
-    "customer": { "base": 0.015, "luckDiv": 50, "success": 60506, "fail": 60507 },
     "rider": {
       "maxLevel": 50, "expPerLevel2": 800, "expBase": 500, "timeSubMax": 40,
       "expAdd": 2, "coinAdd": 1, "renownEvery": 2,

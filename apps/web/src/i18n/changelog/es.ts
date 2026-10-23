@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  retire1023:
+    'Las insignias de Arenita, Patricio y Bob Esponja se retiran: los repartos ya no encuentran clientes misteriosos y cocinar platos estrella ya no recibe el me gusta de Bob Esponja; las que tenías y sus bonificaciones activas se han quitado',
   fridge1022:
     'La nevera ahora cobra: lo que entra (también lo que sobra cuando la despensa está llena) paga una tarifa de entrada del 5\u00a0% del precio de mercado, descongelar cuesta el 10\u00a0% y guardar cuesta cada día el 0,5\u00a0% del valor de la nevera, con toda la nevera ×1,5 desde 21 tipos y ×2,25 desde 41; ahora puedes meter tú mismo comida de la despensa en la nevera para liberar huecos; si te faltan monedas la tarifa queda como deuda, mientras debas no puedes descongelar ni meter comida, y tras 3 días de deuda se vende comida de la nevera para pagarla. La página de la nevera muestra cuántos tipos tienes y cuánto cuesta más o menos al día',
   food1022:

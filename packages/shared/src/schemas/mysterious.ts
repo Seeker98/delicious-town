@@ -114,8 +114,6 @@ export interface CookResultDto {
   proficiency: number;
   curlevel: number;
   levelUp: boolean;
-  /** 海绵宝宝点赞 */
-  bob: boolean;
   /** 试炼经验带来的餐厅经验 */
   restExp: number;
 }

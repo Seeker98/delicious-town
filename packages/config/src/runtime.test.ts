@@ -233,7 +233,6 @@ describe('外卖数值（子项目 4D）', () => {
       refreshCoin: 1_000_000,
       refreshRenown: 160,
       gradeRates: [0.4, 0.25, 0.15, 0.1, 0.05, 0.035, 0.015],
-      customer: { base: 0.015, luckDiv: 50, success: gid('珊迪'), fail: gid('派大星') },
       rider: { maxLevel: 50, capLevels: [2, 5, 8], oddsBase: 800, oddsMax: 950 },
       awards: [
         [gid('神秘礼券'), 56, 0],

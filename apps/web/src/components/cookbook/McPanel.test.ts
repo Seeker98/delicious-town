@@ -159,7 +159,6 @@ describe('McPanel', () => {
       proficiency: 21,
       curlevel: 2,
       levelUp: false,
-      bob: true,
       restExp: 0,
     });
     const w = mountView();
@@ -181,7 +180,8 @@ describe('McPanel', () => {
       .join('|');
     expect(text).toContain('佳肴 (幸运)');
     expect(text).toContain('600 份');
-    expect(text).toContain('海绵宝宝');
+    // 海绵宝宝 2026-10-23 下架，提示里不再写点赞
+    expect(text).not.toContain('海绵宝宝');
   });
 
   it('在售卡片：倒掉要确认', async () => {

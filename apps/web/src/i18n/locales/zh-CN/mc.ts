@@ -15,7 +15,6 @@ export default {
   learnedAll: (n: number, names: string) => `学会了 ${n} 道特色菜: ${names}`,
   learnFailed: '学习失败',
   levelUp: '熟练度升级了',
-  bob: '海绵宝宝点了赞',
   cooked: (grade: string, lucky: boolean, num: string, price: string, extra: string) =>
     `烹制完成: ${grade}${lucky ? ' (幸运)' : ''} ${num} 份, 每份 ${price} 银币${extra ? `, ${extra}` : ''}`,
   cookFailed: '烹制失败',

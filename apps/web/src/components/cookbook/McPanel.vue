@@ -223,9 +223,7 @@ function cook(n: number) {
   return act(
     async () => {
       const r = await endpoints.mcCook(p.mcId, n, cookie.value);
-      const extra = [r.levelUp ? t.value.mc.levelUp : '', r.bob ? t.value.mc.bob : '']
-        .filter(Boolean)
-        .join(t.value.events.sep);
+      const extra = [r.levelUp ? t.value.mc.levelUp : ''].filter(Boolean).join(t.value.events.sep);
       toast.push(
         t.value.mc.cooked(
           GRADE_NAMES[r.cook.grade] ?? '',

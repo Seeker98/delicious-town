@@ -765,16 +765,14 @@ describe('外卖配置（子项目 4D）', () => {
       expect(bundle!.quests.find((q) => q.id === id)!.href).toBe('/takeaway');
   });
 
-  it('奖池、神秘顾客引用了不存在的道具', () => {
+  it('奖池引用了不存在的道具', () => {
     const src = source();
     const tuning = structuredClone(src['game/tuning']) as {
-      takeaway: { awards: number[][]; customer: { success: number } };
+      takeaway: { awards: number[][] };
     };
     tuning.takeaway.awards[1]![0] = 999998;
-    tuning.takeaway.customer.success = 999999;
     const { errors } = buildBundle({ ...src, 'game/tuning': tuning });
     expect(errors).toContain('tuning.takeaway.awards references unknown goods 999998');
-    expect(errors).toContain('tuning.takeaway.customer references unknown goods 999999');
   });
 
   it('品级概率合计必须是 1', () => {

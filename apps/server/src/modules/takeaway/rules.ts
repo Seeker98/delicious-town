@@ -203,10 +203,6 @@ export function droneDiamonds(grade: number): number {
   return grade * 2 + 1;
 }
 
-export function customerRate(luckRate: number, t: TakeawayTuning): number {
-  return t.customer.base + luckRate / t.customer.luckDiv;
-}
-
 /** 补单任务的周期：游戏时间的整点 */
 export function takeawayPeriod(now: Date): string {
   const p = gameParts(now);

@@ -423,7 +423,6 @@ export const tuningSchema = z.object({
     roadOther: num,
     roadOtherMax: num,
     cookNumPowerDiv: num,
-    bobRatePerNutritive: num,
     tasteDaily: int.min(1),
     tasteAwardMax: int,
     tasteMcRate: num,
@@ -749,7 +748,6 @@ export const tuningSchema = z.object({
     friendRiderRate: num,
     rebateDiv: int.min(1),
     failExpRate: num,
-    customer: z.object({ base: num, luckDiv: num, success: int, fail: int }),
     rider: z.object({
       maxLevel: int.min(1),
       expPerLevel2: int.min(0),

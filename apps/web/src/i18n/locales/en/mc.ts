@@ -16,7 +16,6 @@ const mc: Messages['mc'] = {
   learnedAll: (n, names) => `Learned ${n} signature ${n === 1 ? 'dish' : 'dishes'}: ${names}`,
   learnFailed: 'Learning failed',
   levelUp: 'mastery leveled up',
-  bob: 'SpongeBob gave it a thumbs-up',
   cooked: (grade, lucky, num, price, extra) =>
     `Cooked: ${grade}${lucky ? ' (lucky)' : ''}, ${num} ${plEn(num, 'serving', 'servings')} at ${price} ${plEn(price, 'coin', 'coins')} each${extra ? `; ${extra}` : ''}`,
   cookFailed: 'Cooking failed',

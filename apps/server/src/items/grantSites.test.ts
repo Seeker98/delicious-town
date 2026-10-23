@@ -52,8 +52,8 @@ const KNOWN: Record<string, string[]> = {
   'modules/shop/service.ts': ['g.id', 'g.id', 'g.id'],
   // 道具使用后换成别的道具：道具的 use.targetGoods
   'modules/store/use.ts': ['use.targetGoods'],
-  // 外卖奖励（pickAward，区服数值）、顾客卡（customer.success / fail，区服数值）
-  'modules/takeaway/claim.ts': ['id', 'customer'],
+  // 外卖奖励（pickAward，区服数值）
+  'modules/takeaway/claim.ts': ['id'],
   // 神殿试炼两种药水（GOODS 常量）
   'modules/temple/trial.ts': ['b.way === 1 ? GOODS.creativePotion : GOODS.meditation'],
   // 厨塔声望商店、长老掉落（层的 elder.drops，itemRefs 的“厨塔长老”）

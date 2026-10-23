@@ -4,14 +4,13 @@ import { emitAction } from '../../core/action';
 import { questCounterKeys } from '../../core/questKeys';
 import { invalidState } from '../../core/errors';
 import { opAgg } from '../../core/luck';
-import { opNews, restLog, type Op } from '../../core/op';
+import { restLog, type Op } from '../../core/op';
 import { gainCoin, gainExp, gainRenown, spendDiamond } from '../../core/resources';
 import { grantGoodsOp } from '../store/goods';
-import { requireOpen, riderLuckRate } from './common';
+import { requireOpen } from './common';
 import {
   addRiderExp,
   claimExp,
-  customerRate,
   droneDiamonds,
   FAIL_REASONS,
   fl,
@@ -101,12 +100,8 @@ export async function settleDelivery(
         .where('rest_id', '=', o.rest.id)
         .execute();
   }
-  let customer: number | null = null;
-  if (o.rng.next() < customerRate(await riderLuckRate(o, rider.rider_rest_id), t)) {
-    customer = success ? t.customer.success : t.customer.fail;
-    await grantGoodsOp(o, customer, 1);
-    opNews(o, 'takeaway.customer', { goodsId: customer });
-  }
+  // 神秘顾客（送珊迪、派大星）2026-10-23 下架；旧记录里的 customer 照旧显示
+  const customer: number | null = null;
   // 原因存序号和中文原文：前端按序号显示各语言（问题记录 272），旧记录只有原文
   const reasonId = success ? null : o.rng.int(FAIL_REASONS.length);
   const reason = reasonId === null ? null : FAIL_REASONS[reasonId]!;

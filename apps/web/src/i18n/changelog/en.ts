@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  retire1023:
+    'The Sandy, Patrick and SpongeBob badges are retired: deliveries no longer meet mystery customers and cooking signature dishes no longer gets SpongeBob’s thumbs-up; any of these badges you hold, and their active bonuses, have been removed',
   fridge1022:
     'The fridge now has fees: food going in (including overflow when the pantry is full) pays a storage-in fee of 5% of its market price, thawing costs 10%, and storage costs 0.5% of the fridge’s value each day, with the whole fridge ×1.5 from 21 kinds and ×2.25 from 41; you can now move pantry food into the fridge yourself to free up slots; if you are short of coins the fee becomes a debt, you cannot thaw or put food in while you owe, and after 3 days in debt food in the fridge is sold to pay it. The fridge page shows how many kinds you have and roughly what it costs per day',
   food1022:

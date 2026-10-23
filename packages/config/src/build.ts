@@ -1119,8 +1119,6 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   // ---------- 外卖（子项目 4D） ----------
   for (const [id] of tuning.takeaway.awards)
     if (!goodsIds.has(id)) errors.push(`tuning.takeaway.awards references unknown goods ${id}`);
-  for (const id of [tuning.takeaway.customer.success, tuning.takeaway.customer.fail])
-    if (!goodsIds.has(id)) errors.push(`tuning.takeaway.customer references unknown goods ${id}`);
   // 外卖券、商店工作证（GOODS.takeawayTicket / shopJobHonor）
   for (const id of [GOODS.takeawayTicket, GOODS.shopJobHonor])
     if (!goodsIds.has(id)) errors.push(`takeaway references unknown goods ${id}`);

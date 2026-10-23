@@ -17,7 +17,6 @@ const mc: Messages['mc'] = {
   learnedAll: (n, names) => `${n} ${plFr(n, 'plat', 'plats')} signature appris\u202f: ${names}`,
   learnFailed: "Échec de l'apprentissage",
   levelUp: 'la maîtrise a augmenté',
-  bob: 'Bob l’éponge a aimé',
   cooked: (grade, lucky, num, price, extra) =>
     `Cuisiné\u202f: ${grade}${lucky ? ' (chanceux)' : ''}, ${num} ${plFr(num, 'part', 'parts')} à ${price} ${plFr(price, 'pièce', 'pièces')} chacune${extra ? `\u202f; ${extra}` : ''}`,
   cookFailed: 'Échec de la cuisson',

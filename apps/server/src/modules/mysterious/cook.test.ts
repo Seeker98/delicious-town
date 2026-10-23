@@ -165,13 +165,12 @@ describe('烹制（规格书 04 §4.5）', () => {
     expect((await foodNum(fixed, ctx.restaurantId, c!)).num).toBe(5);
   });
 
-  it('6 级特色菜必得海绵宝宝；熟练度到 200 升到 2 级', async () => {
+  it('熟练度到 200 升到 2 级；海绵宝宝 2026-10-23 下架，不再点赞送勋章', async () => {
     const six = config.bundle.mysteriousCookbooks.find((m) => m.level === 6)!;
     const ctx = await cookReady(t, { mcId: six.id });
     await t.db.updateTable('rest_mc').set({ curexp: 199 }).where('rest_id', '=', ctx.restaurantId).execute();
     const r = await t.game.mysterious.cook(ctx, { mcId: six.id, cookNum: 1, cookie: false });
-    expect(r.data.bob).toBe(true);
-    expect(await goodsNum(t, ctx.restaurantId, GOODS.spongeBob)).toBe(1);
+    expect(await goodsNum(t, ctx.restaurantId, gid('海绵宝宝'))).toBe(0);
     expect(r.data).toMatchObject({ curlevel: 2, levelUp: true });
   });
 });
