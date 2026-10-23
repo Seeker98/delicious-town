@@ -5,7 +5,6 @@ import { testConfig } from '../../../test/config';
 import {
   addProficiency,
   appraiseRate,
-  bobChance,
   cookDish,
   forgetCount,
   forgetMcChance,
@@ -121,11 +120,7 @@ describe('道份数加成（规格书 20 §20.4）', () => {
   });
 });
 
-describe('海绵宝宝、试炼经验', () => {
-  it('6 级菜必中，否则 0.0002 × 营养 × 批数', () => {
-    expect(bobChance(dish({ level: 6 }), 1, t)).toBe(1);
-    expect(bobChance(dish({ nutritive: 50 }), 10, t)).toBeCloseTo(0.1, 10);
-  });
+describe('试炼经验', () => {
   it('试炼经验 = 份数 × 餐厅等级 × 试炼经验 / 1200', () => {
     expect(trialRestExp(1200, 30, 10)).toBe(300);
   });

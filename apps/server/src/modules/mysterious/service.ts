@@ -34,7 +34,6 @@ import { seasonOf, seasonTable } from '../shiling/service';
 import {
   addProficiency,
   appraiseRate,
-  bobChance,
   cookDish,
   LEARN_REMNANTS,
   roadRate,
@@ -422,8 +421,6 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         if (prof.curlevel > row.curlevel) restLog(o, 'mc.levelUp', { mcId: mc.id, curlevel: prof.curlevel });
         const restExp = row.trial_exp > 0 ? trialRestExp(out.num, o.rest.level, row.trial_exp) : 0;
         if (restExp > 0) gainExp(o, restExp);
-        const bob = o.rng.chance(bobChance(mc, b.cookNum, t));
-        if (bob) await grantGoodsOp(o, GOODS.spongeBob, 1);
         const c = await o.tx
           .insertInto('mc_cook')
           .values({
@@ -462,7 +459,6 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
           proficiency: out.exp,
           curlevel: prof.curlevel,
           levelUp: prof.curlevel > row.curlevel,
-          bob,
           restExp,
         };
       });

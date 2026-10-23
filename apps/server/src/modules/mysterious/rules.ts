@@ -91,11 +91,6 @@ export function addProficiency(
   return { curlevel: lv, curexp: exp };
 }
 
-/** 海绵宝宝点赞（BOB）概率 */
-export function bobChance(mc: MysteriousCookbook, cookNum: number, t: McTuning): number {
-  return mc.level > t.highLevel ? 1 : t.bobRatePerNutritive * mc.nutritive * cookNum;
-}
-
 /** 试炼经验带来的餐厅经验 */
 export function trialRestExp(num: number, restLevel: number, trialExp: number): number {
   return Math.floor((num * restLevel * trialExp) / 1200);

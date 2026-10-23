@@ -178,19 +178,19 @@ describe('领取（设计文档 §3.4）', () => {
     });
   });
 
-  it('神秘顾客：成功时遇到珊迪，写新闻', async () => {
+  it('神秘顾客 2026-10-23 下架：运气再好也不送珊迪、不写新闻', async () => {
     const { ctx, rider } = await cook();
     const id = await take(ctx, rider);
     later();
     rngValues = [0.01];
-    expect((await claim(ctx, id)).data).toMatchObject({ success: true, customer: gid('珊迪') });
-    expect(await goodsNum(t, ctx.restaurantId, gid('珊迪'))).toBe(1);
+    expect((await claim(ctx, id)).data).toMatchObject({ success: true, customer: null });
+    expect(await goodsNum(t, ctx.restaurantId, gid('珊迪'))).toBe(0);
     const news = await t.db
       .selectFrom('news')
       .select(['type', 'params'])
       .where('rest_id', '=', ctx.restaurantId)
       .execute();
-    expect(news).toEqual([{ type: 'takeaway.customer', params: { goodsId: gid('珊迪') } }]);
+    expect(news).toEqual([]);
   });
 
   it('骑手是好友：我拿 0.9 的银币和经验，他的店拿 1/9 回扣，他的骑手经验加上', async () => {

@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  retire1023:
+    'Les badges Sandy, Patrick et Bob l’éponge sont retirés\u202f: les livraisons ne croisent plus de clients mystères et cuisiner un plat signature ne vaut plus le pouce de Bob l’éponge\u202f; ceux que vous aviez et leurs bonus en cours ont été retirés',
   fridge1022:
     'Le frigo devient payant. Ce qui y entre (y compris le surplus quand le garde-manger est plein) paie des frais d’entrée de 5\u202f% du prix du marché, la décongélation coûte 10\u202f%, et le stockage coûte chaque jour 0,5\u202f% de la valeur du frigo, tout le frigo ×1,5 dès 21 sortes et ×2,25 dès 41. Vous pouvez maintenant mettre vous-même des aliments du garde-manger au frigo pour libérer des places. S’il vous manque des pièces, les frais deviennent une dette, et tant qu’elle n’est pas réglée vous ne pouvez ni décongeler ni mettre au frigo. Après 3 jours de dette, des aliments du frigo sont vendus pour la payer. La page du frigo indique le nombre de sortes et le coût quotidien approximatif',
   food1022:

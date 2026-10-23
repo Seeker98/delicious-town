@@ -16,7 +16,6 @@ const mc: Messages['mc'] = {
   learnedAll: (n, names) => `Aprendiste ${n} ${plEs(n, 'plato', 'platos')} estrella: ${names}`,
   learnFailed: 'No se pudo aprender',
   levelUp: 'el dominio subió de nivel',
-  bob: 'Bob Esponja le dio un me gusta',
   cooked: (grade, lucky, num, price, extra) =>
     `Cocinado: ${grade}${lucky ? ' (con suerte)' : ''}, ${num} ${plEs(num, 'ración', 'raciones')} a ${price} ${plEs(price, 'moneda', 'monedas')} cada una${extra ? `; ${extra}` : ''}`,
   cookFailed: 'No se pudo cocinar',
