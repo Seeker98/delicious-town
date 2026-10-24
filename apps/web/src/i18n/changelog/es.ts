@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  wiki1024:
+    'La wiki ya no muestra contenido que aún no está en el juego: las recetas llegan solo hasta el grado Manjar (grado 7) y los ingredientes de nivel 6 se ocultan',
   spcoin1024:
     'Cambio: la bonificación «monedas de clientes exigentes satisfechos +X\u00a0%» de las insignias de calle y el condimento secreto ahora solo se aplica a lo que pagan los clientes exigentes por los platos, no al plato estrella que comen; los ingresos del plato estrella siguen recibiendo tu bonificación final de monedas',
   retire1023:

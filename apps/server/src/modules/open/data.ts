@@ -49,6 +49,9 @@ export const OPEN_ENDPOINTS = [
   '/api/v1/open/streets',
 ];
 
+/** 资料库不列的食材等级（2026-10-24）：6 级没有获取渠道 */
+const HIDDEN_FOOD_LEVELS: ReadonlySet<number> = new Set([6]);
+
 /**
  * 开放接口的数据（问题记录 142，设计 §2）：全部从配置包算，不读数据库。
  * 反向索引（食材 → 菜谱、特色菜；道具 → 兑换）建一次；名字按语言从配置包的翻译表取
@@ -59,13 +62,17 @@ export function createOpenData(config: GameConfig) {
   // 下架的道具、食材（问题记录 367）和后台专用的一样不显示
   const visible = (id: number) => !hidden.has(id) && config.goods.has(id) && !config.goods.get(id)!.retired;
   const goodsList = b.goods.filter((g) => visible(g.id));
-  const foodsList = b.foods.filter((f) => !f.retired);
+  // 没开放的不上资料库（2026-10-24）：品级只到 cookbookMaxGrade；6 级食材游戏里没有渠道（随机食材最高 5 级），只给天馔用
+  const maxGrade = b.tuning.rest.cookbookMaxGrade;
+  const foodVisible = (f: { level: number; retired?: boolean }) =>
+    !f.retired && !HIDDEN_FOOD_LEVELS.has(f.level);
+  const foodsList = b.foods.filter(foodVisible);
   const equipGoods = goodsList.filter((g) => g.equip !== null);
 
   /** 食材 → 用到它的菜谱（同一道菜只记最低品级） */
   const foodCookbooks = new Map<number, Map<number, number>>();
   for (const c of b.cookbooks)
-    for (let grade = 1; grade <= 10; grade++)
+    for (let grade = 1; grade <= maxGrade; grade++)
       for (const f of c.needFoods[grade] ?? []) {
         let m = foodCookbooks.get(f.foodsId);
         if (!m) foodCookbooks.set(f.foodsId, (m = new Map()));
@@ -314,7 +321,7 @@ export function createOpenData(config: GameConfig) {
 
     food(lang: Locale, id: number): OpenFoodDto | null {
       const f = config.foods.get(id);
-      if (!f || f.retired) return null;
+      if (!f || !foodVisible(f)) return null;
       return {
         ...meta(lang),
         ...foodBrief(lang, id),
@@ -345,7 +352,7 @@ export function createOpenData(config: GameConfig) {
         taste: [...c.taste],
         // 菜谱描述没有英法西翻译：简中给原文、繁中给构建时转换的（#115），别的语言为空（问题记录 314：不混简中）
         desc: lang === 'zh-CN' ? c.desc : (entry(lang, 'cookbooks', id)?.desc ?? null),
-        grades: Array.from({ length: 10 }, (_, i) => ({
+        grades: Array.from({ length: maxGrade }, (_, i) => ({
           grade: i + 1,
           foods: (c.needFoods[i + 1] ?? []).map((f) => ({
             foodsId: f.foodsId,

@@ -16,7 +16,7 @@ describe('开放接口数据（问题记录 142）', () => {
     expect(x.counts).toEqual({
       // 后台专用的、下架的（问题记录 367）都不算
       goods: b.goods.filter((g) => !WIKI_HIDDEN_GOODS.has(g.id) && !g.retired).length,
-      foods: b.foods.filter((f) => !f.retired).length,
+      foods: b.foods.filter((f) => !f.retired && f.level !== 6).length,
       cookbooks: b.cookbooks.length,
       mysterious: b.mysteriousCookbooks.length,
       equips: b.goods.filter((g) => g.equip && !WIKI_HIDDEN_GOODS.has(g.id) && !g.retired).length,
@@ -233,9 +233,9 @@ describe('开放接口数据（问题记录 142）', () => {
     expect(data.mysteriousDetail('zh-CN', 999_999)).toBeNull();
   });
 
-  it('菜谱详情：10 个品级的食材带名字；描述只在简中、繁中给', () => {
+  it('菜谱详情：开放的品级（到 cookbookMaxGrade）的食材带名字；描述只在简中、繁中给', () => {
     const c = data.cookbook('zh-CN', cid('南煎丸子'))!;
-    expect(c.grades).toHaveLength(10);
+    expect(c.grades).toHaveLength(b.tuning.rest.cookbookMaxGrade);
     expect(c.grades[0]!.foods.map((f) => f.foodsId)).toEqual([fid('猪肉'), fid('鸡蛋'), fid('香葱')]);
     expect(c.desc).toBe(config.cookbooks.get(cid('南煎丸子'))!.desc);
     expect(data.cookbook('en', cid('南煎丸子'))!.desc).toBeNull();
@@ -250,6 +250,26 @@ describe('开放接口数据（问题记录 142）', () => {
     expect(data.cookbooks('zh-CN').items).toHaveLength(b.cookbooks.length);
     expect(c.mainFoodId).toBe(fid('猪肉'));
     expect(data.cookbooks('zh-CN').items.find((x) => x.id === cid('南煎丸子'))!.mainFoodId).toBe(fid('猪肉'));
+  });
+
+  it('没开放的不上（2026-10-24）：6 级食材不在列表、详情是 null；食材详情只列开放品级用到它的菜谱', () => {
+    const six = b.foods.filter((f) => f.level === 6);
+    expect(six.length).toBeGreaterThan(0);
+    const ids = new Set(data.foods('zh-CN').items.map((f) => f.id));
+    for (const f of six) {
+      expect(ids.has(f.id)).toBe(false);
+      expect(data.food('zh-CN', f.id)).toBeNull();
+    }
+    const max = b.tuning.rest.cookbookMaxGrade;
+    // 有食材只在没开放的品级才用到：它的详情里一道菜谱都不列
+    const minGrade = new Map<number, number>();
+    for (const c of b.cookbooks)
+      for (let g = 1; g <= 10; g++)
+        for (const x of c.needFoods[g] ?? [])
+          minGrade.set(x.foodsId, Math.min(minGrade.get(x.foodsId) ?? 99, g));
+    const late = b.foods.find((f) => f.level !== 6 && !f.retired && (minGrade.get(f.id) ?? 0) > max)!;
+    expect(data.food('zh-CN', late.id)!.cookbooks).toEqual([]);
+    expect(data.food('zh-CN', fid('猪肉'))!.cookbooks.every((c) => c.grade <= max)).toBe(true);
   });
 
   it('道具详情带需要的星级；宝石带下一阶的名字（backlog 146、#115）', () => {
@@ -325,6 +345,6 @@ describe('下架的道具、食材不上开放接口（问题记录 367）', () 
     expect(retired.foods('zh-CN').items.some((f) => f.id === foodId)).toBe(false);
     expect(retired.food('zh-CN', foodId)).toBeNull();
     expect(retired.index('zh-CN').counts.goods).toBe(data.index('zh-CN').counts.goods - 1);
-    expect(retired.index('zh-CN').counts.foods).toBe(b.foods.filter((f) => !f.retired).length - 1);
+    expect(retired.index('zh-CN').counts.foods).toBe(data.index('zh-CN').counts.foods - 1);
   });
 });

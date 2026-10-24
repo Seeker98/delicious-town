@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  wiki1024:
+    'The wiki no longer lists content that isn’t in the game yet: recipes only go up to the Delicacy grade (grade 7), and level 6 ingredients are hidden',
   spcoin1024:
     'Change: the “satisfied picky customers’ coins +X%” bonus from street badges and Secret Seasoning now applies only to what picky customers pay for dishes, not to the signature dish they eat; signature dish income still gets your final coin bonus',
   retire1023:

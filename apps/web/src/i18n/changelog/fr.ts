@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  wiki1024:
+    'Le wiki ne montre plus ce qui n’est pas encore ouvert dans le jeu\u202f: les recettes s’arrêtent au rang Délice (rang 7) et les ingrédients de niveau 6 sont masqués',
   spcoin1024:
     'Changement\u202f: le bonus «\u202fpièces des clients difficiles satisfaits +X\u202f%\u202f» des badges de rue et de l’assaisonnement secret ne s’applique plus qu’à ce que les clients difficiles paient pour les plats, plus au plat signature qu’ils mangent\u202f; les revenus du plat signature profitent toujours de votre bonus final de pièces',
   retire1023:
