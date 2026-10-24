@@ -102,6 +102,7 @@
     "renameCoinPerRoach": 100,
     "renameMaxLength": 9,
     "starCoin": [0, 2000000, 5000000, 10000000],
+    "starCookbooks": [15, 100, 300, 600, 1000, 1500, 2000],
     "moveStarRate": 0.5
   },
   "cupboard": {

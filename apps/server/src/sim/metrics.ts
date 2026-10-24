@@ -1,6 +1,7 @@
 import { sql, type Kysely } from 'kysely';
 import { GOODS, type GameConfig } from '@dt/config';
 import type { DB } from '../db/schema';
+import { starNeedOf } from '../modules/growth/rules';
 import { normalizeCounts } from '../modules/settlement/globals';
 import type { Bot } from './bot';
 
@@ -90,7 +91,7 @@ export function detectStuck(days: BotDay[], config: GameConfig, threshold: numbe
   for (const [bot, list] of byBot) {
     list.sort((a, b) => a.day - b.day);
     const last = list.at(-1)!;
-    const need = config.starNeed.get(last.star + 1);
+    const need = starNeedOf(config.starNeed, config.tuning.growth, last.star + 1);
     if (!need || need.cookbooksKind !== 'learned') continue;
     const since = list.find((d) => d.star === last.star && d.level >= need.needLevel);
     if (!since) continue;

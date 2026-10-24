@@ -4,6 +4,7 @@ import type { RestCtx } from '../core/deps';
 import type { Game } from '../game';
 import { AppError } from '../http/errors';
 import { gradeOf } from '../modules/cookbook/rules';
+import { starNeedOf } from '../modules/growth/rules';
 import type { SimEnv } from './env';
 
 export interface Persona {
@@ -379,7 +380,7 @@ async function maybeMove(game: Game, bot: Bot, attempt: Attempt): Promise<void> 
   if (r.streetId === 0) {
     if (r.level < LEAVE_NEWBIE_LEVEL) return;
   } else {
-    const need = config.starNeed.get(r.starLevel + 1);
+    const need = starNeedOf(config.starNeed, config.tuning.growth, r.starLevel + 1);
     if (!need || need.cookbooksKind !== 'learned' || learned >= need.needCookbooks) return;
     const stale = now.getTime() - (bot.lastFreshAt ?? now).getTime() >= STALE_MS;
     if (fresh(r.streetId) > 0 && !stale) return;

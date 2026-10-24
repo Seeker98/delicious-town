@@ -8,6 +8,17 @@ export function moveCost(tables: number, tableACoin: number, star: number, moveS
   return Math.floor(tables * (tableACoin / 2) * (1 + star * moveStarRate));
 }
 
+/** 第 star 星的升星条件：学会食谱数取区服设置 starCookbooks 第 star 个数（2026-10-24），没写的星和泛紫星用升星表 */
+export function starNeedOf(
+  starNeed: ReadonlyMap<number, StarNeed>,
+  g: { starCookbooks: readonly number[] },
+  star: number,
+): StarNeed | undefined {
+  const need = starNeed.get(star);
+  const n = g.starCookbooks[star - 1];
+  return need && need.cookbooksKind === 'learned' && n !== undefined ? { ...need, needCookbooks: n } : need;
+}
+
 /** 升到第 star 星要付的银币（240-1）：starCoin 第 star 个数，没写的星不收 */
 export function starCoinOf(g: { starCoin: readonly number[] }, star: number): number {
   return g.starCoin[star - 1] ?? 0;
