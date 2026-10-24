@@ -1018,6 +1018,22 @@ export interface LoginTraceTable {
   ip: string;
   device_id: Nullable<string>;
   device_key: Generated<string>;
+  /** 最近一次请求的浏览器标识（User-Agent，接口调用记录 2026-10-24）；之前的记录为 null */
+  user_agent: Nullable<string>;
+  first_seen: TsDefault;
+  last_seen: TsDefault;
+}
+
+/** 开放接口调用（2026-10-24）：游戏日 + IP + 标识 + 来源网页 + 带没带 lang 一行，n 是次数；只留 30 天 */
+export interface OpenTraceTable {
+  day: string;
+  ip: string;
+  user_agent: Default<string>;
+  /** Origin，没有时取 Referer 的源；都没有是空串 */
+  origin: Default<string>;
+  /** 带没带 ?lang=（本站资料库一定带） */
+  lang: boolean;
+  n: Default<number>;
   first_seen: TsDefault;
   last_seen: TsDefault;
 }
@@ -1616,6 +1632,7 @@ export interface DB {
   report_case: ReportCaseTable;
   report_entry: ReportEntryTable;
   login_trace: LoginTraceTable;
+  open_trace: OpenTraceTable;
   access_ban: AccessBanTable;
   commission_notice: CommissionNoticeTable;
   activity: ActivityTable;

@@ -4,6 +4,7 @@ import {
   gameDay,
   gameTime,
   type SuspiciousAcquireRow,
+  type SuspiciousApiDto,
   type SuspiciousBarRow,
   type SuspiciousMultiGroup,
   type SuspiciousRedeemRow,
@@ -210,6 +211,83 @@ export function createSuspicious(game: Game) {
         });
       }
       return groups;
+    },
+
+    /** 接口调用（2026-10-24）：开放接口的调用方、没带设备号的游戏请求 */
+    async api(shardId: number): Promise<SuspiciousApiDto> {
+      const today = gameDay(game.deps.now());
+      const since = new Date(game.deps.now().getTime() - KEEP_MS);
+      const open = await sql<{
+        ip: string;
+        user_agent: string;
+        origin: string;
+        n: string;
+        no_lang: string;
+        days: string;
+        first_seen: Date;
+        last_seen: Date;
+      }>`
+        select ip, user_agent, origin, sum(n) as n, coalesce(sum(n) filter (where not lang), 0) as no_lang,
+          count(distinct day) as days, min(first_seen) as first_seen, max(last_seen) as last_seen
+        from open_trace where day >= ${addDays(today, -6)}
+        group by ip, user_agent, origin
+        order by coalesce(sum(n) filter (where not lang), 0) desc, sum(n) desc
+        limit 100`.execute(db);
+      const ips = [...new Set(open.rows.map((r) => r.ip))];
+      const byIp = new Map<string, Array<{ accountId: number; username: string }>>();
+      if (ips.length > 0) {
+        const seen = await sql<{ ip: string; account_id: number; username: string }>`
+          select distinct on (lt.ip, a.id) lt.ip, a.id as account_id, a.username
+          from login_trace lt join account a on a.id = lt.account_id
+          where lt.ip in (${sql.join(ips)}) and lt.last_seen >= ${since}
+          order by lt.ip, a.id`.execute(db);
+        for (const s of seen.rows) {
+          const l = byIp.get(s.ip) ?? [];
+          if (l.length < 5) l.push({ accountId: s.account_id, username: s.username });
+          byIp.set(s.ip, l);
+        }
+      }
+      const bare = await sql<{
+        account_id: number;
+        username: string;
+        rest_id: number | null;
+        rest_name: string | null;
+        ip: string;
+        user_agent: string | null;
+        first_seen: Date;
+        last_seen: Date;
+      }>`
+        select a.id as account_id, a.username, r.id as rest_id, r.name as rest_name,
+          lt.ip, lt.user_agent, lt.first_seen, lt.last_seen
+        from login_trace lt
+        join account a on a.id = lt.account_id
+        join restaurant r on r.account_id = a.id and r.shard_id = ${shardId} and not r.npc
+        where lt.device_id is null and lt.last_seen >= ${since}
+        order by lt.last_seen desc
+        limit 100`.execute(db);
+      return {
+        open: open.rows.map((r) => ({
+          ip: r.ip,
+          userAgent: r.user_agent,
+          origin: r.origin,
+          n: Number(r.n),
+          noLang: Number(r.no_lang),
+          days: Number(r.days),
+          firstSeen: new Date(r.first_seen).toISOString(),
+          lastSeen: new Date(r.last_seen).toISOString(),
+          accounts: byIp.get(r.ip) ?? [],
+        })),
+        bare: bare.rows.map((r) => ({
+          accountId: r.account_id,
+          username: r.username,
+          restId: r.rest_id,
+          restName: r.rest_name,
+          ip: r.ip,
+          userAgent: r.user_agent,
+          firstSeen: new Date(r.first_seen).toISOString(),
+          lastSeen: new Date(r.last_seen).toISOString(),
+        })),
+      };
     },
 
     /** 兑换码输错被锁的账号（按账号计，不分区服；门槛用这个区服的 failLimit） */

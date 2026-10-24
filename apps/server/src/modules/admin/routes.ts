@@ -267,6 +267,10 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
       await requireRole(db, req, 'mod');
       return ok(await suspicious.multi(parse(suspiciousQuery, req.query).shardId));
     });
+    r.get('/suspicious/api', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await suspicious.api(parse(suspiciousQuery, req.query).shardId));
+    });
     r.get('/suspicious/redeem', async (req) => {
       await requireRole(db, req, 'mod');
       return ok(await suspicious.redeemLocked(parse(suspiciousQuery, req.query).shardId));

@@ -32,6 +32,12 @@ export interface RestCtx {
 const DEVICE_RE = /^[A-Za-z0-9-]{8,64}$/;
 
 /** 请求头 x-device-id 里的设备号；格式不对当作没有 */
+/** 请求的浏览器标识（User-Agent），太长截到 300 字；没有是 null（接口调用记录 2026-10-24） */
+export function userAgentOf(req: FastifyRequest): string | null {
+  const ua = req.headers['user-agent'];
+  return typeof ua === 'string' && ua !== '' ? ua.slice(0, 300) : null;
+}
+
 export function deviceIdOf(req: FastifyRequest): string | null {
   const dev = req.headers['x-device-id'];
   return typeof dev === 'string' && DEVICE_RE.test(dev) ? dev : null;

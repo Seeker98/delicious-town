@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  slot1024:
+    'Cambio de premio en la tragaperras: el premio Romero de la tragaperras del bar (un ingrediente de nivel 6 que aún no está abierto) pasa a ser Beethoven: Sinfonía n.º 9 (Oda a la alegría), manuscrito autógrafo, con la misma probabilidad',
   wiki1024:
     'La wiki ya no muestra contenido que aún no está en el juego: las recetas llegan solo hasta el grado Manjar (grado 7) y los ingredientes de nivel 6 se ocultan',
   spcoin1024:
