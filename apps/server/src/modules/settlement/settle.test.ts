@@ -350,6 +350,22 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     expect(r.coin - base.coin).toBe(500);
   });
 
+  it('满足的挑剔顾客银币加成（街道勋章）只乘菜钱，不乘特色菜（用户 2026-10-24）', () => {
+    const rng = [0.5, 0.65, 0.9, 0.05, 0.3, 0, 0.9, 0.9, 0.9];
+    const patch = { cookbooks: { [cid('桑椹葡萄粥')]: 1 } };
+    const plain = settle(patch, {}, rng);
+    const bonus = settle({ ...patch, agg: { spCoinRate: 0.3 } }, {}, rng);
+    const dish = bonus.coin - plain.coin;
+    expect(dish).toBeGreaterThan(0);
+    const withMc = settle(
+      { ...patch, agg: { spCoinRate: 0.3 }, special: { price: 100, level: 3, leftNum: 5 } },
+      {},
+      rng,
+    );
+    // 特色菜 100 × 2.5 × 2 份照原价，不再多 30%
+    expect(withMc.coin - bonus.coin).toBe(500);
+  });
+
   it('章鱼哥带魔笛：吃掉的特色菜按原价算经验，不乘卖出倍率（backlog 411~413）', () => {
     const r = settle(
       {

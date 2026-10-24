@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  spcoin1024:
+    'Changement\u202f: le bonus «\u202fpièces des clients difficiles satisfaits +X\u202f%\u202f» des badges de rue et de l’assaisonnement secret ne s’applique plus qu’à ce que les clients difficiles paient pour les plats, plus au plat signature qu’ils mangent\u202f; les revenus du plat signature profitent toujours de votre bonus final de pièces',
   retire1023:
     'Les badges Sandy, Patrick et Bob l’éponge sont retirés\u202f: les livraisons ne croisent plus de clients mystères et cuisiner un plat signature ne vaut plus le pouce de Bob l’éponge\u202f; ceux que vous aviez et leurs bonus en cours ont été retirés',
   fridge1022:

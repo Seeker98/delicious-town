@@ -411,7 +411,12 @@ export function allocateTables(
       coinT = (coin + rates.coinValue.total + mcCoin) * t.coinMultiplier;
       expT = realValue(exp + mcExp, rates.expValue.total) * t.expMultiplier;
     }
-    const cond = satisfied ? coinT * flags.spCoinRate : 0;
+    // 满足的挑剔顾客银币加成（街道勋章、秘制调味料）只乘菜钱，不乘特色菜：它是街道再平衡用来拉平各街菜钱的数，
+    // 再平衡测算不模拟特色菜，乘上特色菜等于给几条街多一份没算进去的收益（用户 2026-10-24）
+    const cond =
+      satisfied && PAYING.has(type)
+        ? (coin + rates.coinValue.total) * t.coinMultiplier * flags.spCoinRate
+        : 0;
     out.oil += oilT;
     out.coin += coinT + cond;
     out.exp += expT;
