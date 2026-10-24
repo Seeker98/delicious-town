@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  slot1024:
+    'Nouveau lot à la machine à sous\u202f: le lot romarin de la machine à sous du bar (ingrédient de niveau 6, pas encore ouvert) devient le manuscrit autographe de Beethoven, Symphonie n° 9 (l’Ode à la joie), avec les mêmes chances',
   wiki1024:
     'Le wiki ne montre plus ce qui n’est pas encore ouvert dans le jeu\u202f: les recettes s’arrêtent au rang Délice (rang 7) et les ingrédients de niveau 6 sont masqués',
   spcoin1024:

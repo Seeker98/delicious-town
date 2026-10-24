@@ -92,6 +92,7 @@ import * as m0090 from './0090_roach_kill_friend';
 import * as m0091 from './0091_ach_npc';
 import * as m0092 from './0092_fridge_fee';
 import * as m0093 from './0093_retire_sandy';
+import * as m0094 from './0094_api_trace';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -188,4 +189,5 @@ export const migrations: Record<string, Migration> = {
   '0091_ach_npc': m0091,
   '0092_fridge_fee': m0092,
   '0093_retire_sandy': m0093,
+  '0094_api_trace': m0094,
 };

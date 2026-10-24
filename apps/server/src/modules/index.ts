@@ -1,4 +1,8 @@
-import type { FastifyInstance } from 'fastify';
+import type { FastifyInstance, FastifyRequest } from 'fastify';
+import { gameDay } from '@dt/shared';
+import { userAgentOf } from '../core/deps';
+import { outsideRequestStats } from '../infra/queryStats';
+import { originOf, recordOpenCall } from './account/loginTrace';
 import type { Game } from '../game';
 import { accountRoutes } from './account/routes';
 import { adminRoutes } from './admin/routes';
@@ -52,7 +56,20 @@ export function registerModules(app: FastifyInstance, game: Game): void {
   app.register(restaurantRoutes(game.restaurant), { prefix: '/api/v1/restaurant' });
   app.register(worldRoutes(game.world), { prefix: '/api/v1/world' });
   // 开放接口（问题记录 142）：只读的静态游戏数据，不用登录
-  app.register(openRoutes(createOpenData(game.deps.config), game.deps.config.version), {
+  // 调用记录（2026-10-24）：认出谁在调开放接口；本站资料库的请求一定带 lang
+  const traceOpen = (req: FastifyRequest) => {
+    const q = req.query as Record<string, unknown> | undefined;
+    void outsideRequestStats(() =>
+      recordOpenCall(game.deps.db, {
+        day: gameDay(game.deps.now()),
+        ip: req.clientIp,
+        userAgent: userAgentOf(req),
+        origin: originOf(req.headers),
+        lang: typeof q?.lang === 'string',
+      }),
+    ).catch((err: unknown) => req.log.warn({ err }, 'record open call failed'));
+  };
+  app.register(openRoutes(createOpenData(game.deps.config), game.deps.config.version, { trace: traceOpen }), {
     prefix: '/api/v1/open',
   });
   app.register(growthRoutes(game.growth), { prefix: '/api/v1/growth' });

@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  slot1024:
+    'Slot machine prize swap: the bar slot machine prize Rosemary (a level 6 ingredient that isn’t open yet) is replaced by Beethoven: Symphony No. 9 (Ode to Joy), autograph score, at the same odds',
   wiki1024:
     'The wiki no longer lists content that isn’t in the game yet: recipes only go up to the Delicacy grade (grade 7), and level 6 ingredients are hidden',
   spcoin1024:

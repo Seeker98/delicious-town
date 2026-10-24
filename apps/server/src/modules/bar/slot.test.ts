@@ -89,14 +89,17 @@ describe('老虎机（设计文档 §3.5）', () => {
     expect(await failOf(miss.restaurantId)).toBe(203);
   });
 
-  it('奖池标了新闻的奖项（迷迭香）也发新闻，每种一条', async () => {
+  it('奖池标了新闻的奖项（欢乐颂，2026-10-24 替换迷迭香）也发新闻，每种一条', async () => {
     const ctx = await newRestaurant(t, { verified: true, goods: { [gid('蟹币')]: 1 } });
     rngValues = [0.5, 0.9474];
     expect((await t.game.bar.slot(ctx, { times: 1 })).data.rewards).toEqual([
-      { awardId: 11, kind: 'foods', itemId: fid('迷迭香'), num: 3 },
+      { awardId: 11, kind: 'goods', itemId: gid('贝多芬《第九交响曲 (欢乐颂)》孤本手稿'), num: 3 },
     ]);
     expect(await newsOf(ctx.restaurantId)).toEqual([
-      { type: 'bar.slot', params: { awardId: 11, kind: 'foods', itemId: fid('迷迭香'), num: 3 } },
+      {
+        type: 'bar.slot',
+        params: { awardId: 11, kind: 'goods', itemId: gid('贝多芬《第九交响曲 (欢乐颂)》孤本手稿'), num: 3 },
+      },
     ]);
   });
 

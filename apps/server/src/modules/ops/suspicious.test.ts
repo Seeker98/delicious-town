@@ -3,7 +3,7 @@ import { addDays, gameDay, gameTime } from '@dt/shared';
 import { createAccountRow, createShard } from '../../../test/fixtures';
 import { setTuning } from '../../../test/town';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
-import { recordLogin } from '../account/loginTrace';
+import { recordLogin, recordOpenCall } from '../account/loginTrace';
 import { createSuspicious, MULTI_ACCOUNTS_MAX } from './suspicious';
 import { queryCounter } from '../../../test/queries';
 
@@ -63,6 +63,35 @@ describe('可疑数据（设计 §5）', () => {
     expect(g.accounts).toHaveLength(3);
     expect(g.accounts[0]!.restId).not.toBeNull();
     expect(groups.some((x) => x.key === ip2)).toBe(false);
+  });
+
+  it('接口调用（2026-10-24）：开放接口没带 lang 的排前面、带上这个 IP 上的账号；没带设备号的游戏请求只列本区服的', async () => {
+    const shardId = await createShard(t.db);
+    const r = await newRestaurant(t, { shardId });
+    const other = await newRestaurant(t, { shardId: await createShard(t.db) });
+    const pre = `10.71.${Date.now() % 250}.`;
+    const ip = `${pre}1`;
+    const day = gameDay(t.clock.now);
+    await recordLogin(t.db, r.accountId, ip, null, 'python-requests/2.31');
+    await recordLogin(t.db, other.accountId, `${pre}2`, null, 'curl/8.4');
+    const bot = { day, ip, userAgent: 'python-requests/2.31', origin: null, lang: false };
+    await recordOpenCall(t.db, bot);
+    await recordOpenCall(t.db, bot);
+    const site = { day, ip: `${pre}3`, userAgent: 'Mozilla/5.0', origin: 'https://game.example', lang: true };
+    for (let i = 0; i < 5; i++) await recordOpenCall(t.db, site);
+    // 7 个游戏日以前的不算
+    await recordOpenCall(t.db, { ...site, day: addDays(day, -9) });
+    const a = await s.api(shardId);
+    const mine = a.open.filter((x) => x.ip.startsWith(pre));
+    expect(mine.map((x) => [x.ip, x.n, x.noLang, x.days])).toEqual([
+      [ip, 2, 2, 1],
+      [site.ip, 5, 0, 1],
+    ]);
+    expect(mine[0]!.accounts.map((x) => x.accountId)).toEqual([r.accountId]);
+    const bare = a.bare.filter((x) => x.ip.startsWith(pre));
+    expect(bare).toEqual([
+      expect.objectContaining({ accountId: r.accountId, userAgent: 'python-requests/2.31' }),
+    ]);
   });
 
   it('兑换码被锁：计数达到上限的账号', async () => {

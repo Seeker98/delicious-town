@@ -35,7 +35,7 @@ const DETAIL_MAX = 2000;
 export function openRoutes(
   data: OpenData,
   version: string,
-  opts: { detailMax?: number } = {},
+  opts: { detailMax?: number; trace?: (req: FastifyRequest) => void } = {},
 ): FastifyPluginAsync {
   const detailMax = opts.detailMax ?? DETAIL_MAX;
   /**
@@ -103,6 +103,12 @@ export function openRoutes(
       }
       return payload;
     });
+    // 调用记录（2026-10-24）：预检不算；记录不等写完、写失败不影响请求（调用方负责）
+    const trace = opts.trace;
+    if (trace)
+      r.addHook('onRequest', async (req) => {
+        if (req.method !== 'OPTIONS') trace(req);
+      });
     // 预检落在开放接口自己这里（不走全局 CORS 的"只许本站"）
     const preflight = async (_req: FastifyRequest, reply: FastifyReply) => reply.code(204).send();
     r.options('/', { config }, preflight);

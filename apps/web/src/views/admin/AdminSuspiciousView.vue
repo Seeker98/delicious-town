@@ -4,6 +4,7 @@ import { onMounted, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import type {
   SuspiciousAcquireRow,
+  SuspiciousApiDto,
   SuspiciousBarRow,
   SuspiciousMultiGroup,
   SuspiciousRedeemRow,
@@ -24,11 +25,12 @@ import AdmHead from '../../components/admin/kit/AdmHead.vue';
 import AdmTabs from '../../components/admin/kit/AdmTabs.vue';
 
 /** 可疑数据（子项目 6B-2，设计 §5）：只读，只作提醒 */
-type Tab = 'bar' | 'surge' | 'multi' | 'bans' | 'redeem' | 'exchange' | 'acquire';
+type Tab = 'bar' | 'surge' | 'multi' | 'api' | 'bans' | 'redeem' | 'exchange' | 'acquire';
 const TABS: Array<[Tab, string]> = [
   ['bar', '酒吧'],
   ['surge', '资源暴涨'],
   ['multi', '多号'],
+  ['api', '接口调用'],
   ['bans', '封禁名单'],
   ['redeem', '兑换码被锁'],
   ['exchange', '交易所'],
@@ -48,6 +50,7 @@ const surge = ref<SuspiciousSurgeDto | null>(null);
 const multi = ref<SuspiciousMultiGroup[]>([]);
 const redeem = ref<SuspiciousRedeemRow[]>([]);
 const acquire = ref<SuspiciousAcquireRow[]>([]);
+const apiCalls = ref<SuspiciousApiDto | null>(null);
 const loading = ref(false);
 /** 多号里点“封禁”：切到封禁名单、把 IP 或设备号填好（2026-10-16） */
 const banPrefill = ref<{ kind: 'ip' | 'device'; value: string } | null>(null);
@@ -74,6 +77,9 @@ async function load() {
     } else if (tab.value === 'multi') {
       const r = await adminApi.suspiciousMulti(shardId);
       if (fresh()) multi.value = r;
+    } else if (tab.value === 'api') {
+      const r = await adminApi.suspiciousApi(shardId);
+      if (fresh()) apiCalls.value = r;
     } else if (tab.value === 'redeem') {
       const r = await adminApi.suspiciousRedeem(shardId);
       if (fresh()) redeem.value = r;
@@ -211,6 +217,85 @@ const player = (accountId: number) => `/admin/players/${accountId}`;
         </div>
       </div>
     </AdmBox>
+
+    <template v-else-if="tab === 'api'">
+      <AdmBox
+        title="开放接口"
+        sub="最近 7 个游戏日, 按 IP、浏览器标识、来源网页合计。本站资料库的请求一定带 lang, 没带的多半是脚本; 来源为空是脚本或直接打开"
+        flush
+      >
+        <AdmEmpty v-if="loading" title="加载中…" />
+        <AdmEmpty v-else-if="!apiCalls || apiCalls.open.length === 0" title="没有数据" />
+        <div v-else class="dt-adm-scroll">
+          <table class="dt-adm-table">
+            <thead>
+              <tr>
+                <th>IP</th>
+                <th>浏览器标识</th>
+                <th>来源网页</th>
+                <th class="num">次数（没带 lang）</th>
+                <th>最近</th>
+                <th>这个 IP 上的账号</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="(r, i) in apiCalls.open"
+                :key="i"
+                :class="{ 'is-bad': r.noLang > 0 }"
+                :data-testid="`sus-api-open-${i}`"
+              >
+                <td class="dt-adm-mono">{{ r.ip }}</td>
+                <td class="dt-adm-small">{{ r.userAgent || '（没有）' }}</td>
+                <td class="dt-adm-small">{{ r.origin || '（没有）' }}</td>
+                <td class="num">{{ formatNum(r.n) }} ({{ formatNum(r.noLang) }})</td>
+                <td class="dt-adm-mu nowrap">{{ adminShort(r.lastSeen) }}</td>
+                <td>
+                  <template v-for="(a, j) in r.accounts" :key="a.accountId"
+                    ><span v-if="j > 0">、</span
+                    ><RouterLink :to="player(a.accountId)">{{ a.username }}</RouterLink></template
+                  >
+                  <span v-if="r.accounts.length === 0" class="dt-adm-mu">–</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </AdmBox>
+      <AdmBox
+        title="没带设备号的游戏请求"
+        sub="最近 30 天; 网页客户端每个请求都带设备号, 没带的是脚本或别的程序。同一账号、IP 每小时记一次"
+        flush
+      >
+        <AdmEmpty v-if="loading" title="加载中…" />
+        <AdmEmpty v-else-if="!apiCalls || apiCalls.bare.length === 0" title="没有数据" />
+        <div v-else class="dt-adm-scroll">
+          <table class="dt-adm-table">
+            <thead>
+              <tr>
+                <th>账号</th>
+                <th>IP</th>
+                <th>浏览器标识</th>
+                <th>第一次</th>
+                <th>最近</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(r, i) in apiCalls.bare" :key="i" :data-testid="`sus-api-bare-${i}`">
+                <td>
+                  <RouterLink :to="player(r.accountId)">{{ r.username }}</RouterLink>
+                  <span class="dt-adm-mu"> · {{ r.restName ?? '本区没有店' }}</span>
+                </td>
+                <td class="dt-adm-mono">{{ r.ip }}</td>
+                <td class="dt-adm-small">{{ r.userAgent ?? '（之前没记）' }}</td>
+                <td class="dt-adm-mu nowrap">{{ adminShort(r.firstSeen) }}</td>
+                <td class="dt-adm-mu nowrap">{{ adminShort(r.lastSeen) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </AdmBox>
+    </template>
 
     <AdmBox
       v-else-if="tab === 'acquire'"

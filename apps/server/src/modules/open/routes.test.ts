@@ -15,6 +15,23 @@ beforeAll(async () => {
 afterAll(() => ctx.close());
 
 describe('开放接口（问题记录 142）', () => {
+  it('调用记一笔（2026-10-24）：浏览器标识、来源网页、没带 lang；预检不记', async () => {
+    const ua = `trace-test/${Date.now()}`;
+    await call(ctx.app, 'GET', '/api/v1/open/streets', { headers: { 'user-agent': ua } });
+    await call(ctx.app, 'GET', '/api/v1/open/streets?lang=en', {
+      headers: { 'user-agent': ua, origin: 'https://fan.example' },
+    });
+    await ctx.app.inject({ method: 'OPTIONS', url: '/api/v1/open/streets', headers: { 'user-agent': ua } });
+    // 记录不等写完：等一会儿再查
+    const rows = () =>
+      ctx.deps.db.selectFrom('open_trace').selectAll().where('user_agent', '=', ua).orderBy('lang').execute();
+    await vi.waitFor(async () => expect(await rows()).toHaveLength(2));
+    expect((await rows()).map((r) => [r.lang, r.origin, r.n])).toEqual([
+      [false, '', 1],
+      [true, 'https://fan.example', 1],
+    ]);
+  });
+
   it('不登录就能访问；带版本和语言；不存在的 id 404、语言不对 400', async () => {
     const idx = await call(ctx.app, 'GET', '/api/v1/open');
     expect(idx.status).toBe(200);

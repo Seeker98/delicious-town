@@ -11,6 +11,7 @@ vi.mock('../../api/admin', () => ({
     suspiciousBar: vi.fn(),
     suspiciousSurge: vi.fn(),
     suspiciousMulti: vi.fn(),
+    suspiciousApi: vi.fn(),
     suspiciousRedeem: vi.fn(),
     suspiciousAcquire: vi.fn(),
     accessBans: vi.fn(),
@@ -81,6 +82,48 @@ describe('AdminSuspiciousView（子项目 6B-2）', () => {
     await w.find('[data-testid="sus-day"]').setValue('2026-09-29');
     await flushPromises();
     expect(adminApi.suspiciousSurge).toHaveBeenLastCalledWith(1, '2026-09-29');
+  });
+
+  it('接口调用（2026-10-24）：开放接口没带 lang 的标红、列出 IP 上的账号；没带设备号的请求列账号和标识', async () => {
+    vi.mocked(adminApi.suspiciousApi).mockResolvedValue({
+      open: [
+        {
+          ip: '10.0.0.9',
+          userAgent: 'python-requests/2.31',
+          origin: '',
+          n: 12,
+          noLang: 12,
+          days: 1,
+          firstSeen: '2026-10-24T11:40:00.000Z',
+          lastSeen: '2026-10-24T11:42:00.000Z',
+          accounts: [{ accountId: 9, username: 'sus' }],
+        },
+      ],
+      bare: [
+        {
+          accountId: 9,
+          username: 'sus',
+          restId: 3,
+          restName: '可疑店',
+          ip: '10.0.0.9',
+          userAgent: null,
+          firstSeen: '2026-10-22T05:33:00.000Z',
+          lastSeen: '2026-10-22T05:33:00.000Z',
+        },
+      ],
+    });
+    const w = await mountView();
+    await w.get('[data-testid="sus-tab-api"]').trigger('click');
+    await flushPromises();
+    expect(adminApi.suspiciousApi).toHaveBeenCalledWith(1);
+    const open = w.get('[data-testid="sus-api-open-0"]');
+    expect(open.classes()).toContain('is-bad');
+    expect(open.text()).toContain('python-requests/2.31');
+    expect(open.text()).toContain('12 (12)');
+    expect(open.text()).toContain('sus');
+    const bare = w.get('[data-testid="sus-api-bare-0"]');
+    expect(bare.text()).toContain('可疑店');
+    expect(bare.text()).toContain('（之前没记）');
   });
 
   it('多号：按 IP 分组列出账号', async () => {

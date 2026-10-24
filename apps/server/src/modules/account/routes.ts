@@ -11,7 +11,7 @@ import {
 } from '@dt/shared';
 import type { FastifyRequest } from 'fastify';
 import type { AppDeps } from '../../app';
-import { deviceIdOf } from '../../core/deps';
+import { deviceIdOf, userAgentOf } from '../../core/deps';
 import { ok } from '../../http/reply';
 import { parse } from '../../http/validate';
 import { clearSessionCookie, requireAccount, setSessionCookie } from '../../security/session';
@@ -22,7 +22,7 @@ export function accountRoutes(svc: AccountService, deps: AppDeps): FastifyPlugin
   const noSelection = { shardId: null, restaurantId: null };
   /** 登录记录（子项目 6B-2）：写失败不影响登录 */
   const trace = (req: FastifyRequest, accountId: number) =>
-    recordLogin(deps.db, accountId, req.clientIp, deviceIdOf(req)).catch((err: unknown) =>
+    recordLogin(deps.db, accountId, req.clientIp, deviceIdOf(req), userAgentOf(req)).catch((err: unknown) =>
       req.log.warn({ err }, 'record login failed'),
     );
   return async (r) => {

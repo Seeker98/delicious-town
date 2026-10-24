@@ -505,7 +505,7 @@ const CASES: Case[] = [
     url: () => `/api/v1/admin/commission/${ids.noticeId}/remove`,
     min: 'admin',
   },
-  ...(['bar', 'surge', 'multi', 'redeem', 'exchange', 'acquire'] as const).map((k) => ({
+  ...(['bar', 'surge', 'multi', 'api', 'redeem', 'exchange', 'acquire'] as const).map((k) => ({
     method: 'GET' as const,
     route: `/api/v1/admin/suspicious/${k}`,
     url: () => `/api/v1/admin/suspicious/${k}?shardId=${ids.shardId}`,

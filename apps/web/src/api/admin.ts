@@ -31,6 +31,7 @@ import type {
   ExchangeSuspiciousRow,
   SuspiciousAcquireRow,
   SuspiciousBarRow,
+  SuspiciousApiDto,
   SuspiciousMultiGroup,
   SuspiciousRedeemRow,
   SuspiciousSurgeDto,
@@ -151,6 +152,7 @@ export const adminApi = {
     api.post<{ count: number; coin: number; foods: number }>(`${A}/exchange/confiscate`, b),
   suspiciousMulti: (shardId: number) =>
     api.get<SuspiciousMultiGroup[]>(`${A}/suspicious/multi${qs({ shardId })}`),
+  suspiciousApi: (shardId: number) => api.get<SuspiciousApiDto>(`${A}/suspicious/api${qs({ shardId })}`),
   suspiciousRedeem: (shardId: number) =>
     api.get<SuspiciousRedeemRow[]>(`${A}/suspicious/redeem${qs({ shardId })}`),
   /** 道具整理（问题记录 429，只读） */

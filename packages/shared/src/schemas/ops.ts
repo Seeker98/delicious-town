@@ -41,6 +41,35 @@ export interface SuspiciousMultiGroup {
     lastSeen: string;
   }>;
 }
+/** 接口调用（2026-10-24）：开放接口谁在调、哪些游戏请求没带设备号 */
+export interface SuspiciousApiDto {
+  /** 开放接口：最近 7 个游戏日按 IP + 浏览器标识 + 来源网页合计，没带 lang 的多的在前，最多 100 行 */
+  open: Array<{
+    ip: string;
+    userAgent: string;
+    /** 来源网页的源；空串是没有（脚本、直接打开） */
+    origin: string;
+    n: number;
+    /** 其中没带 ?lang= 的次数（本站资料库一定带） */
+    noLang: number;
+    days: number;
+    firstSeen: string;
+    lastSeen: string;
+    /** 最近 30 天用这个 IP 玩过游戏的账号，最多 5 个 */
+    accounts: Array<{ accountId: number; username: string }>;
+  }>;
+  /** 没带设备号的游戏请求（网页客户端一定带）：最近 30 天，至少一个账号在本区服有店，最多 100 行 */
+  bare: Array<{
+    accountId: number;
+    username: string;
+    restId: number | null;
+    restName: string | null;
+    ip: string;
+    userAgent: string | null;
+    firstSeen: string;
+    lastSeen: string;
+  }>;
+}
 export interface SuspiciousRedeemRow {
   accountId: number;
   username: string;
