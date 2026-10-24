@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  spcoin1024:
+    'Change: the “satisfied picky customers’ coins +X%” bonus from street badges and Secret Seasoning now applies only to what picky customers pay for dishes, not to the signature dish they eat; signature dish income still gets your final coin bonus',
   retire1023:
     'The Sandy, Patrick and SpongeBob badges are retired: deliveries no longer meet mystery customers and cooking signature dishes no longer gets SpongeBob’s thumbs-up; any of these badges you hold, and their active bonuses, have been removed',
   fridge1022:
