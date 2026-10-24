@@ -18,7 +18,7 @@ import {
   setGrade,
 } from '../../modules/cookbook/rules';
 import { composePool, handleStrength, handleTargetLevel, runHandle } from '../../modules/cupboard/rules';
-import { moveCost, oilChecks, starChecks, starCoinOf } from '../../modules/growth/rules';
+import { moveCost, oilChecks, starChecks, starCoinOf, starNeedOf } from '../../modules/growth/rules';
 import { clearTable } from '../../modules/interact/tables';
 import { killReward, killStrength } from '../../modules/interact/rules';
 import { personLimit, unitPrice } from '../../modules/market/rules';
@@ -447,7 +447,7 @@ function maybeMove(c: FastCtx, r: FastRest): boolean {
 }
 
 function moveDue(c: FastCtx, r: FastRest, fresh: number): boolean {
-  const need = c.config.starNeed.get(r.star + 1);
+  const need = starNeedOf(c.config.starNeed, c.tuning.growth, r.star + 1);
   if (!need || need.cookbooksKind !== 'learned' || r.counts.learned >= need.needCookbooks) return false;
   r.lastFreshAt ??= c.now;
   return fresh === 0 || c.now.getTime() - r.lastFreshAt.getTime() >= STALE_MS;
@@ -671,7 +671,7 @@ export function botTurn(
 
   // 升星：只差凭证和升星银币时，钱够就买凭证、付银币升星；钱不够就把这笔钱攒下来（240-1）
   let saving = 0;
-  const starNeed = cfg.starNeed.get(r.star + 1);
+  const starNeed = starNeedOf(cfg.starNeed, c.tuning.growth, r.star + 1);
   if (starNeed && starNeed.cookbooksKind === 'learned') {
     const starCoin = starCoinOf(c.tuning.growth, r.star + 1);
     const checks = starChecks(

@@ -113,6 +113,33 @@ describe('升星（规格书 02 §2.4、20 §20.5）', () => {
     expect(await goodsNum(t, rich.restaurantId, GOODS.starCert)).toBe(0);
   });
 
+  it('区服设了升星食谱数（2026-10-24）：条件和升星都按区服的数', async () => {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({
+        shard_id: shardId,
+        override: JSON.stringify({ tuning: { growth: { starCookbooks: [20] } } }),
+      })
+      .execute();
+    const ctx = await newRestaurant(t, {
+      shardId,
+      patch: { level: 13 },
+      cookbooks: learned(15),
+      goods: { [GOODS.starCert]: 1 },
+    });
+    const need = await t.game.growth.starNeed(ctx);
+    expect(need.checks.find((c) => c.key === 'cookbooks')).toEqual({
+      key: 'cookbooks',
+      need: 20,
+      have: 15,
+      ok: false,
+    });
+    await expect(t.game.growth.starUp(ctx)).rejects.toMatchObject({
+      params: { reason: 'cookbooks', need: 20, have: 15 },
+    });
+  });
+
   it('等级不够、食谱不够、凭证不够分别报错', async () => {
     const low = await newRestaurant(t, {
       patch: { level: 12 },

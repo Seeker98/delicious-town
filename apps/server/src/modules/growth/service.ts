@@ -25,7 +25,7 @@ import { normalizeCounts } from '../settlement/globals';
 import { consumeGoods, grantGoodsOp, hasValidHonor, removeHonor } from '../store/goods';
 import type { WorldService } from '../world/service';
 import { placeDevice } from './devices';
-import { moveCost, oilChecks, renameProblem, starChecks, starCoinOf } from './rules';
+import { moveCost, oilChecks, renameProblem, starChecks, starCoinOf, starNeedOf } from './rules';
 import { bumpCounters } from '../achieve/counters';
 import { incrementDaily } from '../counter/dailyCounter';
 
@@ -92,12 +92,12 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
     async starNeed(ctx: RestCtx): Promise<StarNeedDto> {
       const r = await readRest(ctx.restaurantId);
       const next = r.star_level + 1;
-      const need = d.config.starNeed.get(next);
+      const s = await d.shards.settings(ctx.shardId);
+      const need = starNeedOf(d.config.starNeed, s.tuning.growth, next);
       if (!need)
         return { star: r.star_level, nextStar: null, available: false, checks: [], award: null, ok: false };
       const available = need.cookbooksKind === 'learned';
       const have = await goodsHave(r.id);
-      const s = await d.shards.settings(ctx.shardId);
       const checks = starChecks(
         r,
         normalizeCounts(r.cookbook_counts),
@@ -118,7 +118,7 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
     starUp(ctx: RestCtx) {
       return op(ctx, 'star.up', async (o) => {
         const next = o.rest.star_level + 1;
-        const need = o.config.starNeed.get(next);
+        const need = starNeedOf(o.config.starNeed, o.tuning.growth, next);
         if (!need) throw invalidState('max_star');
         if (need.cookbooksKind !== 'learned') throw requirement('not_available', { star: next });
         if (o.rest.level < need.needLevel)

@@ -1595,6 +1595,10 @@ describe('货币回收 240-1 的区服数值（默认值见 docs/design/银币�
     expect(t.settlement.normalCoinCap).toBeLessThanOrEqual(Math.floor(360 * t.settlement.dishCoinRate) * 1.2);
     expect(t.market.levelPriceRate).toEqual([1, 1.3, 2, 3, 4, 1, 1]);
     expect(t.growth.starCoin).toEqual([0, 2000000, 5000000, 10000000]);
+    // 升星食谱数默认和升星表一致（2026-10-24 挪进区服设置）
+    expect(t.growth.starCookbooks).toEqual(
+      bundle!.starNeed.filter((s) => s.cookbooksKind === 'learned').map((s) => s.needCookbooks),
+    );
     expect(t.growth.moveStarRate).toBe(0.5);
   });
 });

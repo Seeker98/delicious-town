@@ -195,6 +195,8 @@ export const tuningSchema = z.object({
     renameMaxLength: int,
     /** 升到第 N 星付的银币，第 N 个数；没写的星不收（问题记录 240-1） */
     starCoin: z.array(int.min(0)),
+    /** 升到第 N 星要学会的食谱数，第 N 个数（2026-10-24）；没写的星用 star_need 表的值，只管“学会”那几星 */
+    starCookbooks: z.array(int.min(0)),
     /** 搬街费 ×（1 + 星级 × 这个值）（问题记录 240-1） */
     moveStarRate: num.min(0),
   }),

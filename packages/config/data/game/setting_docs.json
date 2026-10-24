@@ -175,6 +175,7 @@
     "tuning.growth.renameCoinPerRoach": "改名费用 = 蟑螂数 × 这个值 × 等级 × (星级+1)（银币）",
     "tuning.growth.renameMaxLength": "店名最多几个字（字）",
     "tuning.growth.starCoin": "升星银币：升到第 N 星要付的银币，第 N 个数；没写的星不收（银币列表；默认 1~4 星为 0、200 万、500 万、1000 万，5 星以上不收。区服覆盖时整个列表替换，要从 1 星写起写全）",
+    "tuning.growth.starCookbooks": "升星食谱数：升到第 N 星要学会的食谱道数（各街加起来），第 N 个数；没写的星用升星表的值（道数列表；默认 1~7 星为 15、100、300、600、1000、1500、2000，泛紫星不在这里。区服覆盖时整个列表替换，要从 1 星写起写全）",
     "tuning.growth.moveStarRate": "搬街费星级系数：搬街费 = 餐桌数 × 餐桌A 半价 ×（1 + 星级 × 这个值），幸运时再减半（倍数，0 = 原版）",
     "tuning.cupboard.handleMax": "一次最多分解或合成几个食材（个，最多 100）",
     "tuning.cupboard.freeHandleBase": "每天免费分解合成次数的基础值（次）",

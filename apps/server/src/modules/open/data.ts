@@ -1,4 +1,5 @@
 import { dishCoin, fairFoodPrice, foodPrice } from '../../core/prices';
+import { starNeedOf } from '../growth/rules';
 import { LEARN_REMNANTS } from '../mysterious/rules';
 import {
   WIKI_HIDDEN_GOODS,
@@ -125,7 +126,7 @@ export function createOpenData(config: GameConfig) {
     );
     return {
       startStreet: streetBrief(lang, b.restaurantDefaults.streetId),
-      star2Cookbooks: config.starNeed.get(2)?.needCookbooks ?? 0,
+      star2Cookbooks: starNeedOf(config.starNeed, t.growth, 2)?.needCookbooks ?? 0,
       biggestStreet: streetBrief(lang, top.id),
       takeaway: {
         star: t.takeaway.openStar,
