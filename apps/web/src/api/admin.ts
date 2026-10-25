@@ -1,5 +1,6 @@
 import type {
   AccessBanDto,
+  RhythmDto,
   AdminCommissionNoticeDto,
   CommissionNoticeInput,
   AccessBanKind,
@@ -153,6 +154,10 @@ export const adminApi = {
   suspiciousMulti: (shardId: number) =>
     api.get<SuspiciousMultiGroup[]>(`${A}/suspicious/multi${qs({ shardId })}`),
   suspiciousApi: (shardId: number) => api.get<SuspiciousApiDto>(`${A}/suspicious/api${qs({ shardId })}`),
+  /** 操作节奏、防脚本白名单（2026-10-25） */
+  suspiciousRhythm: (shardId: number) => api.get<RhythmDto>(`${A}/suspicious/rhythm${qs({ shardId })}`),
+  antibotWhitelist: (b: { accountId: number; note: string }) => api.post<{ ok: true }>(`${A}/antibot/whitelist`, b),
+  antibotUnwhitelist: (b: { accountId: number }) => api.post<{ ok: true }>(`${A}/antibot/unwhitelist`, b),
   suspiciousRedeem: (shardId: number) =>
     api.get<SuspiciousRedeemRow[]>(`${A}/suspicious/redeem${qs({ shardId })}`),
   /** 道具整理（问题记录 429，只读） */

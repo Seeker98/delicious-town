@@ -163,3 +163,50 @@ export interface AccessBanResultDto {
   /** 一并封掉的账号 */
   bannedAccounts: number[];
 }
+
+/** 操作节奏（防脚本 2026-10-25）：最近 7 天按账号汇总，像机器的排前面 */
+export interface RhythmRow {
+  accountId: number;
+  username: string;
+  restId: number | null;
+  restName: string | null;
+  whitelisted: boolean;
+  /** 0~100，规则见后台页面 */
+  score: number;
+  /** 有写操作的天数（北京时间） */
+  days: number;
+  /** 有写操作的小时数 ÷ 天数 */
+  activeHoursPerDay: number;
+  /** 连续都有写操作的最长小时数 */
+  longestStreakHours: number;
+  /** 北京时间 2~7 点的写操作数 */
+  nightPosts: number;
+  posts: number;
+  /** 间隔不到 10 秒的写操作（一阵猛点） */
+  bursts: number;
+  /** 10 秒~1 小时的间隔：标准差 ÷ 平均值；样本不到 30 个为空 */
+  gapCv: number | null;
+  /** 写操作前 5 分钟没看页面的比例 */
+  noViewShare: number;
+  /** 写操作时很久没有真人操作的比例 */
+  idleShare: number;
+  /** 签名校验各结论的次数 */
+  verdicts: Record<string, number>;
+  /** 一小时内最多出现过几种浏览器标识、几个设备号 */
+  uas: number;
+  devices: number;
+  /** 最近登录用的设备号、IP（去封禁时预填） */
+  lastDevice: string | null;
+  lastIp: string | null;
+}
+
+export interface RhythmDto {
+  rows: RhythmRow[];
+  whitelist: Array<{ accountId: number; username: string; note: string; at: string }>;
+}
+
+export const whitelistBody = z.object({
+  accountId: z.number().int().positive(),
+  note: z.string().max(100).default(''),
+});
+export const unwhitelistBody = z.object({ accountId: z.number().int().positive() });
