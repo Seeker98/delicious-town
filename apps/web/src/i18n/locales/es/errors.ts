@@ -21,6 +21,7 @@ const errors: Messages['errors'] = {
       'Tu red o tu dispositivo ha sido bloqueado. Contacta con un administrador si tienes dudas.',
     CLIENT_UNVERIFIED:
       'Juega desde la página web del juego. Si ya lo haces, recarga la página e inténtalo de nuevo.',
+    CAPTCHA_REQUIRED: 'Primero completa la verificación y vuelve a intentarlo.',
     EMAIL_NOT_VERIFIED: 'Primero verifica tu correo',
     TOKEN_INVALID: 'El enlace no es válido o ha caducado. Solicita uno nuevo.',
     EMAIL_COOLDOWN: 'Se están enviando demasiados correos. Inténtalo de nuevo en 1 minuto.',

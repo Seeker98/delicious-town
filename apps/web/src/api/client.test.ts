@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AB_HEADERS } from '@dt/shared';
 import { resetSignKey } from './antibot';
-import { ApiError, createApiClient } from './client';
+import { ApiError, createApiClient, setCaptchaHandler } from './client';
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
@@ -150,5 +150,90 @@ describe('写请求签名（防脚本 2026-10-25）', () => {
     await api.post('/api/v1/account/login', { username: 'a', password: 'b' });
     await api.post('/y');
     expect(b.keys()).toBe(2);
+  });
+});
+
+describe('被要求人机验证（防脚本 PR②）', () => {
+  const need = () => json({ ok: false, code: 'CAPTCHA_REQUIRED', params: { reason: 'missing' } }, 403);
+  const okRes = (data: unknown) => json({ ok: true, data, events: [] });
+  const postsOf = (f: ReturnType<typeof vi.fn>) =>
+    f.mock.calls
+      .filter((c) => (c[1] as RequestInit | undefined)?.method === 'POST')
+      .map((c) => (c[1] as RequestInit).headers as Record<string, string>);
+  beforeEach(() => resetSignKey());
+
+  it('弹框拿到令牌后带上令牌、换新随机数重发', async () => {
+    let n = 0;
+    const f = vi.fn(async (url: string) =>
+      url.endsWith('/sign-key')
+        ? json({ ok: false, code: 'UNAUTHORIZED' })
+        : ++n === 1
+          ? need()
+          : okRes('second'),
+    );
+    setCaptchaHandler(async () => 'tok');
+    try {
+      expect(await createApiClient(f, '').post('/y')).toBe('second');
+      const [a, b] = postsOf(f);
+      expect(a![AB_HEADERS.captcha]).toBeUndefined();
+      expect(b![AB_HEADERS.captcha]).toBe('tok');
+      expect(a!['idempotency-key']).not.toBe(b!['idempotency-key']);
+    } finally {
+      setCaptchaHandler(null);
+    }
+  });
+
+  it('关掉验证框：按原错误报出，只发了一次', async () => {
+    const f = vi.fn(async (url: string) =>
+      url.endsWith('/sign-key') ? json({ ok: false, code: 'UNAUTHORIZED' }) : need(),
+    );
+    setCaptchaHandler(async () => null);
+    try {
+      await expect(createApiClient(f, '').post('/y')).rejects.toMatchObject({ code: 'CAPTCHA_REQUIRED' });
+      expect(postsOf(f)).toHaveLength(1);
+    } finally {
+      setCaptchaHandler(null);
+    }
+  });
+
+  it('重发还要验证就报错，不再问', async () => {
+    const f = vi.fn(async (url: string) =>
+      url.endsWith('/sign-key') ? json({ ok: false, code: 'UNAUTHORIZED' }) : need(),
+    );
+    const ask = vi.fn(async () => 'tok');
+    setCaptchaHandler(ask);
+    try {
+      await expect(createApiClient(f, '').post('/y')).rejects.toMatchObject({ code: 'CAPTCHA_REQUIRED' });
+      expect(ask).toHaveBeenCalledTimes(1);
+      expect(postsOf(f)).toHaveLength(2);
+    } finally {
+      setCaptchaHandler(null);
+    }
+  });
+
+  it('几个请求一起撞上验证：带令牌的重发一个接一个发，不同时', async () => {
+    const order: string[] = [];
+    let first = 0;
+    const f = vi.fn(async (url: string, init?: RequestInit) => {
+      if (url.endsWith('/sign-key')) return json({ ok: false, code: 'UNAUTHORIZED' });
+      const h = (init!.headers ?? {}) as Record<string, string>;
+      if (!h[AB_HEADERS.captcha]) {
+        first++;
+        return need();
+      }
+      order.push(`start ${url}`);
+      await new Promise((r) => setTimeout(r, 10));
+      order.push(`end ${url}`);
+      return okRes(url);
+    });
+    setCaptchaHandler(async () => 'tok');
+    try {
+      const api = createApiClient(f, '');
+      expect(await Promise.all([api.post('/a'), api.post('/b')])).toEqual(['/a', '/b']);
+      expect(first).toBe(2);
+      expect(order[1]).toMatch(/^end /);
+    } finally {
+      setCaptchaHandler(null);
+    }
   });
 });

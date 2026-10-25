@@ -5,6 +5,9 @@ export default {
   confirm: '確定',
   cancel: '取消',
   close: '關閉',
+  /** 人機驗證面板（防指令碼 PR②） */
+  captchaTitle: '請先完成人機驗證',
+  captchaBody: '系統需要確認是你本人在操作, 完成驗證後會自動繼續',
   decrease: '減少',
   increase: '增加',
   /** 步進器中間數字框的讀屏名字（沒傳 label 時，backlog P3） */

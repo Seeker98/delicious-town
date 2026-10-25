@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
 import { RouterView, useRoute } from 'vue-router';
-import { setEventsListener } from './api/client';
+import { setCaptchaHandler, setEventsListener } from './api/client';
 import AnnouncePopup from './components/AnnouncePopup.vue';
 import AppHeader from './components/AppHeader.vue';
 import BottomNav from './components/BottomNav.vue';
 import DtConfirmHost from './components/DtConfirmHost.vue';
+import DtCaptchaHost from './components/DtCaptchaHost.vue';
+import { useCaptchaStore } from './stores/captcha';
 import EventToast from './components/EventToast.vue';
 import AchieveToast from './components/achieve/AchieveToast.vue';
 import { useAchieveToastStore } from './stores/achieveToast';
@@ -44,6 +46,10 @@ setEventsListener((all) => {
   );
 });
 
+/** 后台要求人机验证时（防脚本 PR②）：弹验证面板拿令牌 */
+const captcha = useCaptchaStore();
+setCaptchaHandler(() => captcha.ask());
+
 onMounted(() => {
   catalog.load().catch(() => undefined);
 });
@@ -60,6 +66,7 @@ onMounted(() => {
     <AnnouncePopup v-if="inGame" />
     <ShilingIntroPopup v-if="inGame" />
     <DtConfirmHost />
+    <DtCaptchaHost />
     <EventToast :nav="inGame" />
     <AchieveToast v-if="inGame" />
     <BottomNav v-if="inGame" />
