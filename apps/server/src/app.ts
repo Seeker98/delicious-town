@@ -36,6 +36,7 @@ import { createAccessGuard, registerAccessGuard, type AccessGuard } from './secu
 import type { SessionStore } from './security/sessionStore';
 import { ANTIBOT_DEFAULTS, registerAntiBot, type AntibotSettings } from './security/antibot/hook';
 import { createWhitelist, type Whitelist } from './security/antibot/whitelist';
+import { trackRhythm } from './security/antibot/rhythm';
 
 export interface AppDeps {
   env: Env;
@@ -103,6 +104,7 @@ export async function buildApp(
   app.addHook('onClose', async () => settingsSub.close());
   // 防脚本（2026-10-25）：挂在防重复提交之后、业务路由之前
   registerAntiBot(app, {
+    ...trackRhythm(deps.redis),
     redis: deps.redis,
     env: deps.env,
     now: deps.now,

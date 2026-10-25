@@ -25,6 +25,8 @@ export interface AntibotDeps {
   whitelist: Whitelist;
   sessions: SessionStore;
   settingsFor(shardId: number | null): Promise<AntibotSettings>;
+  /** 带会话的读请求调一次（节奏统计用）；出错不影响请求 */
+  onRead?(req: FastifyRequest): void;
   /** 每个校验过的写请求调一次（节奏统计用）；出错不影响请求 */
   onJudged?(req: FastifyRequest, r: { verdict: Verdict; idle: number | null; settings: AntibotSettings }): void;
 }
@@ -41,10 +43,19 @@ const ADMIN = '/api/v1/admin/';
 export function registerAntiBot(app: FastifyInstance, d: AntibotDeps): void {
   app.addHook('onClose', async () => d.whitelist.close());
   app.addHook('preHandler', async (req, reply) => {
-    if (req.method !== 'POST' || !req.session) return;
+    if (!req.session) return;
     // 按匹配到的路由判断，不看原始 url（和封禁名单一样，防 /%61pi/... 这种写法）
     const route = req.routeOptions.url ?? '';
     if (SKIP.some((p) => route.startsWith(p))) return;
+    if (req.method === 'GET') {
+      try {
+        d.onRead?.(req);
+      } catch (err) {
+        req.log.warn({ err }, 'antibot onRead failed');
+      }
+      return;
+    }
+    if (req.method !== 'POST') return;
     const { accountId, shardId } = req.session.data;
     const settings = await d.settingsFor(shardId);
     const r = await judge({

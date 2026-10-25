@@ -3,6 +3,7 @@ import { AB_HEADERS, canonical, hmacSign, sha256Hex } from '@dt/shared';
 import { call, cookieOf, createTestApp, registerUser, testEnvWith, type TestContext } from '../../../test/helpers';
 import { ok } from '../../http/reply';
 import type { AntibotMode } from './hook';
+import { flushRhythm } from './rhythm';
 
 let mode: AntibotMode = 'log';
 const settings = async () => ({ mode, skewSec: 120, idleMs: 60000 });
@@ -151,5 +152,22 @@ describe('写请求签名钩子（防脚本 2026-10-25）', () => {
     } finally {
       await forced.close();
     }
+  });
+
+  it('读写请求都进节奏统计（汇总后能查到）', async () => {
+    mode = 'log';
+    const u = await registerUser(ctx.app);
+    await call(ctx.app, 'GET', '/api/v1/account/me', { cookie: u.cookie });
+    await post(u.cookie, '/t/act', await signed(u.cookie, '/t/act', { a: 1 }));
+    await new Promise((r) => setTimeout(r, 50));
+    await flushRhythm(ctx.deps.db, ctx.deps.redis, new Date(Date.now() + 3_600_000));
+    const r = await ctx.deps.db
+      .selectFrom('play_rhythm')
+      .select(['gets', 'posts', 'verdicts'])
+      .where('account_id', '=', u.accountId)
+      .executeTakeFirstOrThrow();
+    expect(r.gets).toBeGreaterThanOrEqual(2);
+    expect(r.posts).toBe(1);
+    expect(r.verdicts).toEqual({ ok: 1 });
   });
 });

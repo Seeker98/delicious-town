@@ -6,6 +6,7 @@ import type { PeriodicJob } from '../core/jobs';
 import type { Game } from '../game';
 import { processGrants } from '../modules/admin/grants';
 import { cleanLoginTrace } from '../modules/account/loginTrace';
+import { flushRhythm } from '../security/antibot/rhythm';
 import { pruneStreakBest } from '../modules/bar/state';
 import { pruneDailyCounters } from '../modules/counter/dailyCounter';
 import { runOpsScan } from '../modules/ops/scan';
@@ -62,6 +63,14 @@ export function workerJobs(game: Game, log: JobLogger): Job[] {
       intervalMs: 6 * 3_600_000,
       run: async () => {
         await cleanLoginTrace(db, now());
+      },
+    },
+    {
+      // 操作节奏（防脚本 2026-10-25）：把已经结束的小时从 Redis 汇总进库；每 10 分钟跑，每小时必定处理一次
+      name: 'play-rhythm-flush',
+      intervalMs: 600_000,
+      run: async () => {
+        await flushRhythm(db, redis, now());
       },
     },
     {
