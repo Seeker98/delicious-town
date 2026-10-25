@@ -204,6 +204,8 @@ const events: Messages['events'] = {
     'goods.drop': (p, names) =>
       `Over the holding limit; threw away ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}`,
     'device.place': (p, names) => `Placed ${names.goodsName(n(p, 'goodsId'))}`,
+    'device.breed': (p, names) =>
+      `The painting brought forth ${names.foodName(n(p, 'foodsId'))} (${n(p, 'n')}/${n(p, 'of')})`,
     'store.use': (p, names) => `Used ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}`,
     'admin.grant': (p) => `Compensation: ${String(p.reason ?? '')}`,
     redeem: (p) => `Redeemed code ${String(p.code ?? '')}`,

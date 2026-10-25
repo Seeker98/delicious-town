@@ -198,6 +198,8 @@ export default {
     'fridge.drop': (p, names) => `冰箱满了, 丢掉了 ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')}`,
     'goods.drop': (p, names) => `超过持有上限, 丢掉了 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}`,
     'device.place': (p, names) => `摆放了 ${names.goodsName(n(p, 'goodsId'))}`,
+    'device.breed': (p, names) =>
+      `画中孕育出 ${names.foodName(n(p, 'foodsId'))} (${n(p, 'n')}/${n(p, 'of')})`,
     'store.use': (p, names) => `使用了 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}`,
     'admin.grant': (p) => `系统补偿: ${String(p.reason ?? '')}`,
     redeem: (p) => `使用了兑换码 ${String(p.code ?? '')}`,

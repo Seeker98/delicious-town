@@ -213,6 +213,8 @@ const events: Messages['events'] = {
     'goods.drop': (p, names) =>
       `Limite de possession dépassée\u202f: ${names.goodsName(n(p, 'goodsId'))}\u202f×\u202f${n(p, 'num')} jeté`,
     'device.place': (p, names) => `A installé ${names.goodsName(n(p, 'goodsId'))}`,
+    'device.breed': (p, names) =>
+      `Le tableau a fait naître ${names.foodName(n(p, 'foodsId'))} (${n(p, 'n')}/${n(p, 'of')})`,
     'store.use': (p, names) => `A utilisé ${names.goodsName(n(p, 'goodsId'))}\u202f×\u202f${n(p, 'num')}`,
     'admin.grant': (p) => `Compensation\u202f: ${String(p.reason ?? '')}`,
     redeem: (p) => `Code utilisé\u202f: ${String(p.code ?? '')}`,

@@ -382,3 +382,25 @@ describe('餐厅动态的外文文案（backlog 1010）', () => {
     expect(s).not.toContain('vous recevez');
   });
 });
+
+describe('乾坤通景巨屏孕育的店铺动态（2026-10-25）', () => {
+  const at = '2026-10-25T00:00:00Z';
+  const params = { slot: 11, goodsId: 30710, foodsId: 7, n: 3, of: 12 };
+  afterEach(async () => {
+    await useLocaleStore().set('zh-CN');
+  });
+
+  it('简中、英文都写出食材和第几份', async () => {
+    setActivePinia(createPinia());
+    await useLocaleStore().set('zh-CN');
+    const names = { goodsName: () => '巨屏', foodName: () => '香菇' };
+    expect(logText({ type: 'device.breed', params, at }, names)).toBe('画中孕育出 香菇 (3/12)');
+    await useLocaleStore().set('en');
+    const en = logText(
+      { type: 'device.breed', params, at },
+      { goodsName: () => 'Screen', foodName: () => 'Shiitake' },
+    );
+    expect(en).toContain('Shiitake');
+    expect(en).toContain('3/12');
+  });
+});
