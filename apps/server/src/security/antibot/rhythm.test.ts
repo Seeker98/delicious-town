@@ -152,7 +152,11 @@ describe('操作节奏计数（防脚本 2026-10-25）', () => {
     } as unknown as Parameters<typeof t.onRead>[0];
     expect(() => t.onRead(req)).not.toThrow();
     expect(() =>
-      t.onJudged(req, { verdict: 'ok', idle: 1, settings: { mode: 'log', skewSec: 120, idleMs: 60000, captchaEveryMin: 60 } }),
+      t.onJudged(req, {
+        verdict: 'ok',
+        idle: 1,
+        settings: { mode: 'log', skewSec: 120, idleMs: 60000, captchaEveryMin: 60 },
+      }),
     ).not.toThrow();
     await new Promise((r) => setTimeout(r, 20));
     expect(warned).toHaveLength(2);

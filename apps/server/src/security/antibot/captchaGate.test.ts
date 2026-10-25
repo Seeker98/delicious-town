@@ -25,7 +25,10 @@ const db = testDb();
 const challenges = createChallengeList(db);
 let ctx: TestContext;
 beforeAll(async () => {
-  ctx = await createTestApp({ antibotFor: settings, captcha: fakeCaptcha, antibotChallenges: challenges }, routes);
+  ctx = await createTestApp(
+    { antibotFor: settings, captcha: fakeCaptcha, antibotChallenges: challenges },
+    routes,
+  );
 });
 afterAll(async () => {
   await ctx.close();

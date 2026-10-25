@@ -41,7 +41,12 @@ describe('签名密钥接口（防脚本 2026-10-25）', () => {
   });
 
   it('默认设置：只记录、时间窗 120 秒、很久没人操作 60 秒；环境变量总开关默认关', () => {
-    expect(testConfig().tuning.ops.antibot).toEqual({ mode: 'log', skewSec: 120, idleMs: 60000, captchaEveryMin: 60 });
+    expect(testConfig().tuning.ops.antibot).toEqual({
+      mode: 'log',
+      skewSec: 120,
+      idleMs: 60000,
+      captchaEveryMin: 60,
+    });
     expect(testEnvWith().ANTIBOT_FORCE_LOG).toBe(false);
   });
 });
