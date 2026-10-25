@@ -78,7 +78,7 @@ const bar: Messages['bar'] = {
       'After a correct answer you can go on to the next level or stop; a wrong answer ends the game.',
     ],
     darts: [
-      'The crosshair sways left and right; tap "Throw!" to let go. Closer to the bullseye scores more (50/25/10/5), the edges score 0.',
+      'The crosshair sways left and right; tap "Throw!" to let go. Closer to the bullseye scores more (50/25/10/5), the edges score 0. Your hand shakes a little as you throw, so the dart lands slightly off the crosshair: even perfect timing does not always hit the bullseye.',
       "Three darts a game: beat the bar owner's total to win; a draw refunds some Mystery Vouchers.",
       'The reward is mostly a level 4–5 ingredient; with three bullseyes, any ingredient you get is level 5 and more likely to be rare.',
     ],

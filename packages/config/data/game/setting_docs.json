@@ -445,6 +445,7 @@
     "tuning.bar.darts.periodMs": "准星摆动周期的随机范围（[最短, 最长] 毫秒）",
     "tuning.bar.darts.futureMs": "客户端时间比服务器快多少以内仍有效（毫秒，防作弊）",
     "tuning.bar.darts.latencyMs": "客户端时间比服务器慢多少以内仍有效（毫秒，容忍网络延迟）",
+    "tuning.bar.darts.shake": "飞镖手抖: 落点在准星位置上再随机偏 ±这个值 (靶面从 -1 到 1, 靶心半径 0.05)；0.1 时掐准时机每镖中靶心的概率约一半 (比例)",
     "tuning.bar.darts.rings": "靶环：[离中心的距离上限, 分数] 列表，从内到外",
     "tuning.bar.darts.bossOdds": "老板投镖的得分分布（[分数, 权重] 列表）",
     "tuning.bar.darts.winLevel": "飞镖赢了的奖励档次（级）",

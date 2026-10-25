@@ -29,12 +29,15 @@ const aim = (c: RestCtx) => t.game.bar.dartsAim(c);
 const shoot = (c: RestCtx, elapsedMs: number) => t.game.bar.dartsThrow(c, { elapsedMs });
 /** 周期 900、相位 0.25：经过 0、450、900… 毫秒时正好在靶心 */
 const BULL_AIM = [0, 0.25];
+/** 投掷的第一个随机数是手抖：0.5 不偏；后面的给奖励用 */
+const STEADY = [0.5, 0];
 
 /** 瞄准后等 450ms 投出，正中靶心 */
 async function bull(c: RestCtx) {
   script.push(BULL_AIM);
   expect((await aim(c)).data).toEqual({ period: 900, phase: 0.25 });
   t.clock.advance(450);
+  script.push(STEADY);
   return (await shoot(c, 450)).data;
 }
 /** 上报的时间比服务端多 200ms，判无效记 0 分 */
@@ -75,6 +78,39 @@ describe('飞镖（4C-3 设计文档 §2.3）', () => {
     await aim(a);
     t.clock.advance(2500);
     expect((await shoot(a, 500)).data).toMatchObject({ x: null, score: 0, finished: true });
+  });
+
+  it('手抖（2026-10-25）：掐准靶心出手，落点也会随机偏 ±0.1，可能只得 25 分；服务端给的落点就是偏后的', async () => {
+    const a = await player();
+    script.push([0.99]);
+    await start(a);
+    script.push(BULL_AIM);
+    await aim(a);
+    t.clock.advance(450);
+    script.push([0.99]);
+    const r = (await shoot(a, 450)).data;
+    expect(r.x).toBeCloseTo(0.098, 3);
+    expect(r.score).toBe(25);
+    script.push(BULL_AIM);
+    await aim(a);
+    t.clock.advance(450);
+    script.push([0.7]);
+    expect((await shoot(a, 450)).data).toMatchObject({ score: 50 });
+  });
+
+  it('上报时间可以比服务端早 600ms 以内（网络延迟），再早就记 0 分（2026-10-25：原来 1500ms，宽过一次摆动）', async () => {
+    const a = await player();
+    script.push([0.99]);
+    await start(a);
+    script.push(BULL_AIM);
+    await aim(a);
+    t.clock.advance(450 + 600);
+    script.push(STEADY);
+    expect((await shoot(a, 450)).data).toMatchObject({ score: 50 });
+    script.push(BULL_AIM);
+    await aim(a);
+    t.clock.advance(450 + 601);
+    expect((await shoot(a, 450)).data).toMatchObject({ x: null, score: 0 });
   });
 
   it('三镖全中、老板全 0：赢，发高等级奖励、写新闻、记可疑计数', async () => {

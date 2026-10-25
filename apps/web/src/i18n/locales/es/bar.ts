@@ -80,7 +80,7 @@ const bar: Messages['bar'] = {
       'Tras acertar puedes seguir al siguiente nivel o plantarte; si fallas, la partida se acaba.',
     ],
     darts: [
-      'La mira se mueve de lado a lado sobre la diana; pulsa «¡Lanzar!» para soltar. Cuanto más cerca del centro, más puntos (50/25/10/5); en el borde, 0.',
+      'La mira se mueve de lado a lado sobre la diana; pulsa «¡Lanzar!» para soltar. Cuanto más cerca del centro, más puntos (50/25/10/5); en el borde, 0. Al lanzar te tiembla un poco la mano y el dardo cae algo desviado de la mira: ni con el momento perfecto aciertas siempre en el centro.',
       'Tres dardos por partida: supera el total del dueño del bar para ganar. Si empatáis, se devuelve parte de los vales misteriosos.',
       'El premio suele ser un ingrediente de nivel 4–5; con tres dianas, el ingrediente que salga es de nivel 5 y con más probabilidad de ser raro.',
     ],
