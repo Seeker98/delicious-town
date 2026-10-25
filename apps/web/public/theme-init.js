@@ -5,7 +5,9 @@
   try {
     var v = localStorage.getItem('dt_theme');
     if (v === 'light' || v === 'dark') pref = v;
-  } catch (e) {}
+  } catch {
+    // 读不到本地存储（隐私模式、禁用了存储）：按跟随系统
+  }
   var dark =
     pref === 'dark' ||
     (pref === 'system' && !!window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
