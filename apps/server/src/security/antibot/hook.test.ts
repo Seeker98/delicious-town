@@ -191,7 +191,39 @@ describe('写请求签名钩子（防脚本 2026-10-25）', () => {
     );
     expect(r.gets).toBeGreaterThanOrEqual(2);
     expect(r.posts).toBe(1);
-    expect(r.verdicts).toEqual({ ok: 1 });
+    // 读请求没带版本号（测试里直接调接口）也记下来
+    expect(r.verdicts).toMatchObject({ ok: 1 });
+    expect(r.verdicts.get_no_build).toBeGreaterThanOrEqual(2);
+  });
+
+  it('拦截模式：写到不存在的接口照常 404，不报 403', async () => {
+    mode = 'enforce';
+    const u = await registerUser(ctx.app);
+    expect((await post(u.cookie, '/t/no-such-route')).status).toBe(404);
+  });
+
+  it('会话里已经有密钥：不再为了取密钥重读会话', async () => {
+    mode = 'log';
+    const u = await registerUser(ctx.app);
+    const spy = vi.spyOn(ctx.deps.sessions, 'ensureSignKey');
+    try {
+      expect((await post(u.cookie, '/t/act', await signed(u.cookie, '/t/act', { a: 1 }))).status).toBe(200);
+      // 只有 signed() 里取密钥的那一次
+      expect(spy).toHaveBeenCalledTimes(1);
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  it('拦截模式：防脚本这层自己出错（名单、Redis）时放行，不报 500', async () => {
+    mode = 'enforce';
+    const u = await registerUser(ctx.app);
+    const spy = vi.spyOn(ctx.deps.antibotWhitelist!, 'has').mockRejectedValue(new Error('db down'));
+    try {
+      expect((await post(u.cookie, '/t/act')).status).toBe(200);
+    } finally {
+      spy.mockRestore();
+    }
   });
 
   it('跨域时让网页读得到 x-dt-resign 响应头', async () => {

@@ -1,17 +1,20 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { AB_HEADERS } from '@dt/shared';
 import { testDb } from '../../../test/db';
 import { call, createTestApp, registerUser, testEnvWith, type TestContext } from '../../../test/helpers';
 import { ok } from '../../http/reply';
 import { createChallengeList } from './challenge';
+import { hourKey } from './rhythm';
 import type { AntibotMode } from './hook';
 
 let mode: AntibotMode = 'log';
 const settings = async () => ({ mode, skewSec: 120, idleMs: 60000, captchaEveryMin: 60 });
 /** 假的 Turnstile：ok 通过、no 不通过、throw 抛错 */
 let captcha: 'ok' | 'no' | 'throw' = 'ok';
+let verifyCalls = 0;
 const fakeCaptcha = {
   verify: async () => {
+    verifyCalls++;
     if (captcha === 'throw') throw new Error('turnstile down');
     return captcha === 'ok';
   },
@@ -81,6 +84,39 @@ describe('可疑号写请求要过人机验证（防脚本 PR② 2026-10-25）',
     expect(b.status).toBe(403);
     expect(b.json.params.reason).toBe('failed');
     captcha = 'ok';
+  });
+
+  it('验证过的标记还在时，带令牌也不再找 Cloudflare 校验', async () => {
+    mode = 'log';
+    captcha = 'ok';
+    const u = await challenged();
+    const before = verifyCalls;
+    expect((await post(u.cookie, '/t/act', { [AB_HEADERS.captcha]: 'tok' })).status).toBe(200);
+    expect((await post(u.cookie, '/t/act', { [AB_HEADERS.captcha]: 'tok2' })).status).toBe(200);
+    expect(verifyCalls - before).toBe(1);
+  });
+
+  it('被验证拦下的请求不算写操作；验证结果记进节奏', async () => {
+    mode = 'log';
+    captcha = 'ok';
+    const u = await challenged();
+    expect((await post(u.cookie, '/t/act')).status).toBe(403);
+    expect((await post(u.cookie, '/t/act', { [AB_HEADERS.captcha]: 'tok' })).status).toBe(200);
+    // 别的测试文件汇总时可能把这个小时的计数搬进库里：Redis 和库里的加起来看
+    await vi.waitFor(async () => {
+      const h = await ctx.deps.redis.hgetall(`rh:${hourKey(new Date())}:${u.accountId}`);
+      const row = await db
+        .selectFrom('play_rhythm')
+        .select(['posts', 'verdicts'])
+        .where('account_id', '=', u.accountId)
+        .executeTakeFirst();
+      const v = (row?.verdicts ?? {}) as Record<string, number>;
+      expect({
+        posts: Number(h.posts ?? 0) + (row?.posts ?? 0),
+        missing: Number(h['v:captcha_missing'] ?? 0) + (v.captcha_missing ?? 0),
+        ok: Number(h['v:captcha_ok'] ?? 0) + (v.captcha_ok ?? 0),
+      }).toEqual({ posts: 1, missing: 1, ok: 1 });
+    });
   });
 
   it('名单里的号注销、用后台照常；不在名单里的号不要求', async () => {

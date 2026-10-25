@@ -41,6 +41,7 @@ beforeAll(async () => {
       gap_sq: 29 * 120_000 ** 2,
       gap_min: 120_000,
       no_view: 30,
+      ips: h === 5 ? 3 : 1,
     });
   // B：两天里每天 3 个小时，一阵阵猛点
   for (const day of [2, 1])
@@ -69,6 +70,8 @@ describe('后台操作节奏（防脚本 2026-10-25）', () => {
     expect(ra.longestStreakHours).toBe(24);
     expect(ra.activeHoursPerDay).toBe(24);
     expect(ra.gapCv as number).toBeLessThan(0.05);
+    // 一小时内最多出现过几个 IP
+    expect(ra.ips).toBe(3);
     expect(ra.score as number).toBeGreaterThan(80);
     expect(rb.score as number).toBeLessThan(40);
     expect(rb.gapCv).toBeNull();
@@ -150,6 +153,18 @@ describe('后台操作节奏（防脚本 2026-10-25）', () => {
       body: { accountId: 2_000_000_000, days: 1 },
     });
     expect(missing.status).toBe(404);
+  });
+
+  it('打开、取消人机验证都清掉“最近验证过”的标记：重新点名立刻生效', async () => {
+    for (const path of ['challenge', 'unchallenge']) {
+      await ctx.deps.redis.set(`abc:${c}`, '1', 'EX', 600);
+      const r = await call(ctx.app, 'POST', `${A}/antibot/${path}`, {
+        cookie: admin.cookie,
+        body: { accountId: c, days: 1 },
+      });
+      expect(r.status).toBe(200);
+      expect(await ctx.deps.redis.exists(`abc:${c}`)).toBe(0);
+    }
   });
 
   it('普通玩家看不了', async () => {

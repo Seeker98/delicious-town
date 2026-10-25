@@ -74,3 +74,44 @@ describe('SessionStore', () => {
     expect(await store.ensureSignKey(old)).toBeNull();
   });
 });
+
+describe('会话补签名密钥（防脚本 2026-10-25 审阅）', () => {
+  it('补密钥和改区服同时发生：两边都留下', async () => {
+    const id = ++accountSeq;
+    const token = await store.create(id);
+    // 老会话：没有密钥
+    const k = `sess:${sha256(token)}`;
+    const { signKey: _drop, ...legacy } = JSON.parse((await redis.get(k))!) as Record<string, unknown>;
+    await redis.set(k, JSON.stringify(legacy), 'KEEPTTL');
+    const [key] = await Promise.all([store.ensureSignKey(token), store.update(token, { shardId: 5 })]);
+    const data = await store.get(token);
+    expect(data?.shardId).toBe(5);
+    expect(data?.signKey).toBe(key);
+    expect(key).toHaveLength(43);
+  });
+
+  it('两处同时改会话的不同字段：两边都留下（读-合并-写不丢）', async () => {
+    const id = ++accountSeq;
+    const token = await store.create(id);
+    await Promise.all([store.update(token, { shardId: 5 }), store.update(token, { restaurantId: 9 })]);
+    expect(await store.get(token)).toMatchObject({ shardId: 5, restaurantId: 9 });
+  });
+
+  it('已经有密钥时不换；会话不在了返回 null', async () => {
+    const id = ++accountSeq;
+    const token = await store.create(id);
+    const a = await store.ensureSignKey(token);
+    expect(await store.ensureSignKey(token)).toBe(a);
+    await store.destroy(token);
+    expect(await store.ensureSignKey(token)).toBeNull();
+  });
+
+  it('改区服时值为空也照写（null 不丢）', async () => {
+    const id = ++accountSeq;
+    const token = await store.create(id);
+    await store.update(token, { shardId: 3, restaurantId: 7 });
+    await store.update(token, { shardId: 4, restaurantId: null });
+    expect(await store.get(token)).toMatchObject({ shardId: 4, restaurantId: null });
+    expect(await redis.ttl(`sess:${sha256(token)}`)).toBeGreaterThan(0);
+  });
+});

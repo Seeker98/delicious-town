@@ -190,11 +190,16 @@ export interface RhythmRow {
   noViewShare: number;
   /** 写操作时很久没有真人操作的比例 */
   idleShare: number;
-  /** 签名校验各结论的次数 */
+  /**
+   * 签名校验各结论的次数；另有不算写操作的几项：get_no_build（读请求没带版本号）、
+   * captcha_missing / captcha_failed / captcha_ok（人机验证没带令牌、没通过、通过）
+   */
   verdicts: Record<string, number>;
   /** 一小时内最多出现过几种浏览器标识、几个设备号 */
   uas: number;
   devices: number;
+  /** 一小时内最多出现过几个 IP */
+  ips: number;
   /** 最近登录用的设备号、IP（去封禁时预填） */
   lastDevice: string | null;
   lastIp: string | null;

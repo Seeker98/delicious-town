@@ -1,6 +1,6 @@
-import type { FastifyInstance, FastifyRequest } from 'fastify';
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import type { Redis } from 'ioredis';
-import { AB_HEADERS, ErrorCode } from '@dt/shared';
+import { AB_HEADERS, BUILD_RE, ErrorCode } from '@dt/shared';
 import type { Env } from '../../env';
 import { AppError } from '../../http/errors';
 import type { Captcha } from '../../infra/captcha';
@@ -37,13 +37,15 @@ export interface AntibotDeps {
   challenges: ChallengeList;
   captcha: Captcha;
   settingsFor(shardId: number | null): Promise<AntibotSettings>;
-  /** 带会话的读请求调一次（节奏统计用）；出错不影响请求 */
-  onRead?(req: FastifyRequest): void;
+  /** 带会话的读请求调一次（节奏统计用，buildOk：带了合格的版本号）；出错不影响请求 */
+  onRead?(req: FastifyRequest, r: { buildOk: boolean }): void;
   /** 每个校验过的写请求调一次（节奏统计用）；出错不影响请求 */
   onJudged?(
     req: FastifyRequest,
     r: { verdict: Verdict; idle: number | null; settings: AntibotSettings },
   ): void;
+  /** 被点名的号每次过人机验证闸门的结果（没带、没通过、通过；节奏统计用）；出错不影响请求 */
+  onCaptcha?(req: FastifyRequest, outcome: 'missing' | 'failed' | 'ok'): void;
 }
 
 /** 不签、不校验的路由：开放接口、测试接口 */
@@ -55,13 +57,22 @@ const ACCOUNT = '/api/v1/account/';
 /**
  * 游戏接口防脚本（设计 2026-10-25）：带登录会话的写请求校验签名。
  * 挂在防重复提交之后：同一个 idempotency-key 的合法重试拿缓存响应，到不了这里，不会被当成重放。
- * 只记录模式、后台接口、白名单、环境变量总开关都只记录；拦截时只让这一下操作失败
+ * 只记录模式、后台接口、白名单、环境变量总开关都只记录；拦截时只让这一下操作失败。
+ * 防脚本这层自己出错（Redis、名单读不出来）时放行、记日志：它是附加的一道门，不能因为它坏了让玩家玩不了
  */
 export function registerAntiBot(app: FastifyInstance, d: AntibotDeps): void {
   app.addHook('onClose', async () => {
     d.whitelist.close();
     d.challenges.close();
   });
+
+  function noteCaptcha(req: FastifyRequest, outcome: 'missing' | 'failed' | 'ok') {
+    try {
+      d.onCaptcha?.(req, outcome);
+    } catch (err) {
+      req.log.warn({ err }, 'antibot onCaptcha failed');
+    }
+  }
 
   /**
    * 人机验证（PR②，设计第 6 节）：后台点名的账号，写请求每隔 captchaEveryMin 分钟要过一次 Turnstile。
@@ -75,27 +86,45 @@ export function registerAntiBot(app: FastifyInstance, d: AntibotDeps): void {
     if (await d.redis.exists(passed)) return;
     const raw = req.headers[AB_HEADERS.captcha];
     const token = typeof raw === 'string' && raw !== '' ? raw : null;
-    if (!token) throw new AppError(ErrorCode.CAPTCHA_REQUIRED, 403, { reason: 'missing' });
+    if (!token) {
+      noteCaptcha(req, 'missing');
+      throw new AppError(ErrorCode.CAPTCHA_REQUIRED, 403, { reason: 'missing' });
+    }
     const ok = await d.captcha.verify(token, req.clientIp).catch(() => false);
-    if (!ok) throw new AppError(ErrorCode.CAPTCHA_REQUIRED, 403, { reason: 'failed' });
+    if (!ok) {
+      noteCaptcha(req, 'failed');
+      throw new AppError(ErrorCode.CAPTCHA_REQUIRED, 403, { reason: 'failed' });
+    }
+    noteCaptcha(req, 'ok');
     await d.redis.set(passed, '1', 'EX', s.captchaEveryMin * 60);
   }
 
   app.addHook('preHandler', async (req, reply) => {
     if (!req.session) return;
-    // 按匹配到的路由判断，不看原始 url（和封禁名单一样，防 /%61pi/... 这种写法）
-    const route = req.routeOptions.url ?? '';
-    if (SKIP.some((p) => route.startsWith(p))) return;
+    // 按匹配到的路由判断，不看原始 url（和封禁名单一样，防 /%61pi/... 这种写法）。
+    // 没匹配到路由的（404）不管：照常回 404，不让拦截模式把它变成 403
+    const route = req.routeOptions.url;
+    if (!route || SKIP.some((p) => route.startsWith(p))) return;
     if (req.method === 'GET') {
       try {
-        d.onRead?.(req);
+        const build = req.headers[AB_HEADERS.build];
+        d.onRead?.(req, { buildOk: typeof build === 'string' && BUILD_RE.test(build) });
       } catch (err) {
         req.log.warn({ err }, 'antibot onRead failed');
       }
       return;
     }
     if (req.method !== 'POST') return;
-    const { accountId, shardId } = req.session.data;
+    try {
+      await checkWrite(req, reply, route);
+    } catch (err) {
+      if (err instanceof AppError) throw err;
+      req.log.warn({ err }, 'antibot check failed, letting request through');
+    }
+  });
+
+  async function checkWrite(req: FastifyRequest, reply: FastifyReply, route: string) {
+    const { accountId, shardId, signKey } = req.session!.data;
     const settings = await d.settingsFor(shardId);
     await captchaGate(req, accountId, route, settings);
     const r = await judge({
@@ -104,7 +133,8 @@ export function registerAntiBot(app: FastifyInstance, d: AntibotDeps): void {
       // 签名用原始路径：网页签的就是它发出去的路径
       url: req.url,
       bodyText: JSON.stringify(req.body ?? {}),
-      signKey: await d.sessions.ensureSignKey(req.session.token),
+      // 会话读进来时就带着密钥（老会话没有才去补），不用每个写请求再读两次 Redis
+      signKey: signKey ?? (await d.sessions.ensureSignKey(req.session!.token)),
       nowMs: d.now().getTime(),
       skewMs: settings.skewSec * 1000,
     });
@@ -125,5 +155,5 @@ export function registerAntiBot(app: FastifyInstance, d: AntibotDeps): void {
     if (d.env.ANTIBOT_FORCE_LOG || route.startsWith(ADMIN) || settings.mode === 'log') return;
     if (await d.whitelist.has(accountId)) return;
     throw new AppError(ErrorCode.CLIENT_UNVERIFIED, 403, { reason: verdict });
-  });
+  }
 }

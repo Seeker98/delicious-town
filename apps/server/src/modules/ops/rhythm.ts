@@ -56,6 +56,7 @@ export function createRhythmAdmin(game: Game) {
         'p.verdicts',
         'p.uas',
         'p.devices',
+        'p.ips',
         'a.username',
         'r.id as rest_id',
         'r.name as rest_name',
@@ -133,6 +134,7 @@ export function createRhythmAdmin(game: Game) {
         verdicts,
         uas: Math.max(...hs.map((h) => h.uas)),
         devices: Math.max(...hs.map((h) => h.devices)),
+        ips: Math.max(...hs.map((h) => h.ips)),
         lastDevice: null,
         lastIp: null,
         challengeUntil: null,
@@ -244,6 +246,8 @@ export function createRhythmAdmin(game: Game) {
       detail: { days: b.days, until: until.toISOString(), note: b.note },
     });
     await challengeList.refresh();
+    // 清掉“最近验证过”的标记：重新点名、取消后再点名都立刻生效（防脚本 PR② 审阅）
+    await game.app.redis.del(`abc:${b.accountId}`);
     return { ok: true as const };
   }
 
@@ -255,6 +259,8 @@ export function createRhythmAdmin(game: Game) {
     if (Number(gone.numDeletedRows) > 0)
       await writeAudit(db, { actor, action: 'antibot.unchallenge', target: `account:${b.accountId}` });
     await challengeList.refresh();
+    // 清掉“最近验证过”的标记：重新点名、取消后再点名都立刻生效（防脚本 PR② 审阅）
+    await game.app.redis.del(`abc:${b.accountId}`);
     return { ok: true as const };
   }
 

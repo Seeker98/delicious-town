@@ -24,6 +24,8 @@ describe('签名密钥接口（防脚本 2026-10-25）', () => {
     expect(Number.isNaN(Date.parse(a.json.data.serverNow))).toBe(false);
     const b = await call(ctx.app, 'GET', '/api/v1/account/sign-key', { cookie: u.cookie });
     expect(b.json.data.key).toBe(a.json.data.key);
+    // 密钥不能被浏览器或中间的代理缓存
+    expect(a.res.headers['cache-control']).toBe('no-store');
   });
 
   it('没登录返回 401', async () => {
