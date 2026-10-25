@@ -505,7 +505,21 @@ const CASES: Case[] = [
     url: () => `/api/v1/admin/commission/${ids.noticeId}/remove`,
     min: 'admin',
   },
-  ...(['bar', 'surge', 'multi', 'api', 'redeem', 'exchange', 'acquire'] as const).map((k) => ({
+  {
+    method: 'POST',
+    route: '/api/v1/admin/antibot/whitelist',
+    url: () => '/api/v1/admin/antibot/whitelist',
+    body: () => ({ accountId: ids.accountId, note: '权限测试' }),
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/antibot/unwhitelist',
+    url: () => '/api/v1/admin/antibot/unwhitelist',
+    body: () => ({ accountId: ids.accountId }),
+    min: 'admin',
+  },
+  ...(['bar', 'surge', 'multi', 'api', 'rhythm', 'redeem', 'exchange', 'acquire'] as const).map((k) => ({
     method: 'GET' as const,
     route: `/api/v1/admin/suspicious/${k}`,
     url: () => `/api/v1/admin/suspicious/${k}?shardId=${ids.shardId}`,
