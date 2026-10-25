@@ -14,6 +14,8 @@ type FetchLike = (url: string, init?: RequestInit) => Promise<Response>;
 
 let cached: { key: string; offset: number } | null = null;
 let pending: Promise<{ key: string; offset: number } | null> | null = null;
+/** 取密钥时服务器说没登录：记住，换会话（resetSignKey）之前不再白跑 */
+let noSession = false;
 /** 最近一次真人操作的时间（毫秒）；从没有过是 null */
 let lastHuman: number | null = null;
 
@@ -21,6 +23,7 @@ let lastHuman: number | null = null;
 export function resetSignKey(): void {
   cached = null;
   pending = null;
+  noSession = false;
 }
 
 /** 只认浏览器标记为真人触发的点击、触摸、按键；脚本派发的事件 isTrusted 为假 */
@@ -53,6 +56,7 @@ async function fetchKey(fetchImpl: FetchLike, base: string): Promise<{ key: stri
       headers: { 'x-device-id': deviceId(), [AB_HEADERS.build]: CLIENT_BUILD },
     });
     const body = (await res.json()) as ApiResponse<{ key: string; serverNow: string }>;
+    if (!body.ok && body.code === 'UNAUTHORIZED') noSession = true;
     if (!body.ok || !body.data?.key) return null;
     const server = Date.parse(body.data.serverNow);
     return { key: body.data.key, offset: Number.isNaN(server) ? 0 : server - Date.now() };
@@ -64,6 +68,7 @@ async function fetchKey(fetchImpl: FetchLike, base: string): Promise<{ key: stri
 /** 取（或复用）密钥；取不到（没登录、网络错误）返回 null，不缓存失败 */
 async function signKey(fetchImpl: FetchLike, base: string) {
   if (cached) return cached;
+  if (noSession) return null;
   pending ??= fetchKey(fetchImpl, base).then((k) => {
     pending = null;
     if (k) cached = k;
@@ -82,26 +87,31 @@ export async function signHeaders(
   if (!k) return {};
   // 浏览器没有 WebCrypto（非 https 页面）时不签，照常发
   if (!globalThis.crypto?.subtle) return {};
-  const ts = Date.now() + k.offset;
-  const env = envBits();
-  const idle = idleMs();
-  const sig = await hmacSign(
-    k.key,
-    canonical({
-      ts,
-      nonce: i.nonce,
-      method: i.method,
-      path: i.path,
-      bodySha256: await sha256Hex(i.bodyText),
-      build: CLIENT_BUILD,
-      env,
-      idle,
-    }),
-  );
-  return {
-    [AB_HEADERS.ts]: String(ts),
-    [AB_HEADERS.env]: String(env),
-    [AB_HEADERS.idle]: String(idle),
-    [AB_HEADERS.sig]: sig,
-  };
+  // 网页端签名出错（有缺陷的内嵌浏览器）也照常不签发出：服务器那边的总开关救不了网页端的故障
+  try {
+    const ts = Date.now() + k.offset;
+    const env = envBits();
+    const idle = idleMs();
+    const sig = await hmacSign(
+      k.key,
+      canonical({
+        ts,
+        nonce: i.nonce,
+        method: i.method,
+        path: i.path,
+        bodySha256: await sha256Hex(i.bodyText),
+        build: CLIENT_BUILD,
+        env,
+        idle,
+      }),
+    );
+    return {
+      [AB_HEADERS.ts]: String(ts),
+      [AB_HEADERS.env]: String(env),
+      [AB_HEADERS.idle]: String(idle),
+      [AB_HEADERS.sig]: sig,
+    };
+  } catch {
+    return {};
+  }
 }

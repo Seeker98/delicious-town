@@ -104,6 +104,14 @@ describe('后台操作节奏（防脚本 2026-10-25）', () => {
     expect(audits.map((x) => x.action).sort()).toEqual(['antibot.unwhitelist', 'antibot.whitelist']);
   });
 
+  it('加白名单：账号不存在报 404，不报 500', async () => {
+    const r = await call(ctx.app, 'POST', `${A}/antibot/whitelist`, {
+      cookie: admin.cookie,
+      body: { accountId: 2_000_000_000, note: 'x' },
+    });
+    expect(r.status).toBe(404);
+  });
+
   it('普通玩家看不了', async () => {
     const p = await userWithRole(ctx, 'player');
     expect((await list(p.cookie)).status).toBe(404);

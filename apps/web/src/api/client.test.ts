@@ -141,4 +141,14 @@ describe('写请求签名（防脚本 2026-10-25）', () => {
     await createApiClient(f, '').getPublic('/open');
     expect(f.mock.calls[0]![1]!.headers).toEqual({});
   });
+
+  it('登录、注册、注销成功后换会话：下一次写请求重新取密钥', async () => {
+    const b = backend(() => json({ ok: true, data: 1, events: [] }));
+    const api = createApiClient(b.f, '');
+    await api.post('/y');
+    expect(b.keys()).toBe(1);
+    await api.post('/api/v1/account/login', { username: 'a', password: 'b' });
+    await api.post('/y');
+    expect(b.keys()).toBe(2);
+  });
 });

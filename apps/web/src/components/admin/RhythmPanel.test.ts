@@ -80,4 +80,23 @@ describe('RhythmPanel（防脚本 2026-10-25）', () => {
     await w.find('[data-testid="rhythm-ban-7"]').trigger('click');
     expect(w.emitted('ban')![0]).toEqual([{ kind: 'device', value: 'dev-12345678' }]);
   });
+
+  it('白名单单独列出来（不管在不在节奏列表里），每个都能移出；管理员能按账号编号加入', async () => {
+    vi.mocked(adminApi.suspiciousRhythm).mockResolvedValue({
+      rows: [],
+      whitelist: [{ accountId: 42, username: 'quiet', note: 'AI 工具', at: '2026-10-25T00:00:00.000Z' }],
+    });
+    vi.mocked(adminApi.antibotUnwhitelist).mockResolvedValue({ ok: true });
+    vi.mocked(adminApi.antibotWhitelist).mockResolvedValue({ ok: true });
+    const w = await mountPanel('admin');
+    expect(w.text()).toContain('quiet');
+    await w.find('[data-testid="rhythm-wl-remove-42"]').trigger('click');
+    await flushPromises();
+    expect(adminApi.antibotUnwhitelist).toHaveBeenCalledWith({ accountId: 42 });
+    await w.find('[data-testid="rhythm-wl-id"]').setValue('77');
+    await w.find('[data-testid="rhythm-wl-note"]').setValue('自己的号');
+    await w.find('[data-testid="rhythm-wl-add"]').trigger('click');
+    await flushPromises();
+    expect(adminApi.antibotWhitelist).toHaveBeenCalledWith({ accountId: 77, note: '自己的号' });
+  });
 });

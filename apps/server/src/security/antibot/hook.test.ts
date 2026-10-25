@@ -118,6 +118,16 @@ describe('写请求签名钩子（防脚本 2026-10-25）', () => {
     expect(r.res.headers[AB_HEADERS.resign]).toBe('1');
   });
 
+  it('时间戳过期也让网页重取密钥（顺带重新校准时钟）', async () => {
+    mode = 'log';
+    const u = await registerUser(ctx.app);
+    const h = await signed(u.cookie, '/t/act', { a: 1 });
+    h[AB_HEADERS.ts] = String(Date.now() - 10 * 60_000);
+    const r = await post(u.cookie, '/t/act', h);
+    expect(r.status).toBe(200);
+    expect(r.res.headers[AB_HEADERS.resign]).toBe('1');
+  });
+
   it('拦截模式：浏览器被自动化工具控制 → 403 automation', async () => {
     mode = 'enforce';
     const u = await registerUser(ctx.app);

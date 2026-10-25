@@ -76,7 +76,9 @@ export function registerAntiBot(app: FastifyInstance, d: AntibotDeps): void {
       const fresh = await d.redis.set(`abn:${accountId}:${r.nonce}`, '1', 'EX', settings.skewSec * 2, 'NX');
       if (fresh !== 'OK') verdict = 'replay';
     }
-    if (verdict === 'missing' || verdict === 'bad') reply.header(AB_HEADERS.resign, '1');
+    // 网页清掉缓存的密钥、下次重新取（stale：顺带按服务器时间重新校准时钟）
+    if (verdict === 'missing' || verdict === 'bad' || verdict === 'stale')
+      reply.header(AB_HEADERS.resign, '1');
     try {
       d.onJudged?.(req, { verdict, idle: r.idle, settings });
     } catch (err) {

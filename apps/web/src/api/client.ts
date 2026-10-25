@@ -5,6 +5,15 @@ import { markPressBusy } from '../utils/pressBusy';
 import { uuid } from '../utils/uuid';
 import { deviceId } from './device';
 
+/** 这些写请求成功后会话换了（登录、注册、注销、改密码、重置密码）：签名密钥跟着换（防脚本 2026-10-25） */
+const SESSION_CHANGERS = new Set([
+  '/api/v1/account/login',
+  '/api/v1/account/register',
+  '/api/v1/account/logout',
+  '/api/v1/account/change-password',
+  '/api/v1/account/reset-password',
+]);
+
 type EventsListener = (events: GameEvent[]) => void;
 let eventsListener: EventsListener | null = null;
 /** 写操作返回的得失提示统一交给这个回调（App 里接到提示组件上） */
@@ -56,7 +65,9 @@ export function createApiClient(
             await signHeaders(fetchImpl, base, { method: 'POST', path, bodyText, nonce }),
           );
       }
-      return await send<T>(method, path, bodyText, anonymous, headers);
+      const data = await send<T>(method, path, bodyText, anonymous, headers);
+      if (bodyText !== undefined && SESSION_CHANGERS.has(path)) resetSignKey();
+      return data;
     } catch (e) {
       // 签名被拒（重新登录换了密钥、页面放太久时钟漂了）：重取密钥、换新随机数重发一次
       if (

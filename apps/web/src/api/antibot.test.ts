@@ -57,4 +57,32 @@ describe('网页端签名（防脚本 2026-10-25）', () => {
       await signHeaders(f, '', { method: 'POST', path: '/x', bodyText: '{}', nonce: 'n-12345678' }),
     ).toEqual({});
   });
+
+  it('取密钥回“没登录”后记住，下一次写请求不再白跑；重置后再取', async () => {
+    const f = vi.fn(async () => json({ ok: false, code: 'UNAUTHORIZED' }));
+    const i = { method: 'POST' as const, path: '/x', bodyText: '{}', nonce: 'n-12345678' };
+    await signHeaders(f, '', i);
+    await signHeaders(f, '', i);
+    expect(f).toHaveBeenCalledTimes(1);
+    resetSignKey();
+    await signHeaders(f, '', i);
+    expect(f).toHaveBeenCalledTimes(2);
+  });
+
+  it('浏览器的 WebCrypto 出错时不签名，不往外抛', async () => {
+    const f = vi.fn(async () =>
+      json({
+        ok: true,
+        data: { key: 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8', serverNow: new Date().toISOString() },
+      }),
+    );
+    const spy = vi.spyOn(globalThis.crypto.subtle, 'sign').mockRejectedValue(new Error('broken webview'));
+    try {
+      expect(
+        await signHeaders(f, '', { method: 'POST', path: '/x', bodyText: '{}', nonce: 'n-12345678' }),
+      ).toEqual({});
+    } finally {
+      spy.mockRestore();
+    }
+  });
 });

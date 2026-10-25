@@ -1,4 +1,5 @@
-import type { RhythmDto, RhythmRow } from '@dt/shared';
+import { ErrorCode, type RhythmDto, type RhythmRow } from '@dt/shared';
+import { AppError } from '../../http/errors';
 import type { Game } from '../../game';
 import { createWhitelist } from '../../security/antibot/whitelist';
 import type { AdminActor } from '../admin/access';
@@ -135,7 +136,8 @@ export function createRhythmAdmin(game: Game) {
       });
     }
     rows.sort((x, y) => Number(x.whitelisted) - Number(y.whitelisted) || y.score - x.score);
-    const top = rows.slice(0, topN);
+    // 白名单的不受行数限制、全部接在后面：拦截模式下它们决定谁不被拦，后台要一直看得到
+    const top = [...rows.filter((r) => !r.whitelisted).slice(0, topN), ...rows.filter((r) => r.whitelisted)];
     // 去封禁时预填：最近一次登录用的设备号、IP
     if (top.length > 0) {
       const traces = await db
@@ -166,6 +168,12 @@ export function createRhythmAdmin(game: Game) {
   }
 
   async function add(actor: AdminActor, b: { accountId: number; note: string }) {
+    const exists = await db
+      .selectFrom('account')
+      .select('id')
+      .where('id', '=', b.accountId)
+      .executeTakeFirst();
+    if (!exists) throw new AppError(ErrorCode.NOT_FOUND, 404, { what: 'account', id: b.accountId });
     await db
       .insertInto('antibot_whitelist')
       .values({ account_id: b.accountId, note: b.note, actor_account_id: actor.accountId })
