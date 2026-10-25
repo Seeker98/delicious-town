@@ -212,6 +212,13 @@ describe('乾坤通景巨屏孕育：每分钟任务', () => {
     expect(row).toEqual({ num: 0, fridge_num: 1 });
   });
 
+  it('孕育出的食材出现在餐厅动态（首页、好友页的动态卡）', async () => {
+    const ctx = await placed(2);
+    await deliverBreeds(t.game.deps, ctx.shardId, t.clock.now);
+    const feed = await t.game.social.reads.feed(ctx, { limit: 30 });
+    expect(feed.items.map((x) => x.type)).toContain('device.breed');
+  });
+
   it('任务登记：art-breed 每分钟一次，挂在 restaurant', () => {
     const [job] = breedJobs(t.game.deps);
     expect(job).toMatchObject({ name: 'art-breed', feature: 'restaurant' });

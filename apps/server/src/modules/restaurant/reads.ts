@@ -240,6 +240,8 @@ export const FEED_TYPES = [
   'market.guess',
   'fridge.drop',
   'futures.delivered',
+  // 乾坤通景巨屏画中孕育出的食材（2026-10-25）
+  'device.breed',
   'futures.defaulted',
   // 章鱼哥的卫生巡查（小镇委员会 2026-10-16）
   'hygiene.report',
