@@ -14,6 +14,8 @@ export const ErrorCode = {
   ACCESS_BANNED: 'ACCESS_BANNED',
   /** 写请求的签名校验没通过，拦截模式下这一下操作失败（防脚本 2026-10-25）；params.reason 是原因 */
   CLIENT_UNVERIFIED: 'CLIENT_UNVERIFIED',
+  /** 后台对这个账号打开了人机验证，这一下写操作要先过验证（防脚本 PR②）；params.reason 是 missing / failed */
+  CAPTCHA_REQUIRED: 'CAPTCHA_REQUIRED',
   EMAIL_NOT_VERIFIED: 'EMAIL_NOT_VERIFIED',
   TOKEN_INVALID: 'TOKEN_INVALID',
   EMAIL_COOLDOWN: 'EMAIL_COOLDOWN',

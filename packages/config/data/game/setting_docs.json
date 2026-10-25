@@ -603,6 +603,7 @@
     "tuning.ops.antibot.mode": "防脚本：log 只记录、enforce 拦截签名不对的写请求（后台接口永远只记录）",
     "tuning.ops.antibot.skewSec": "防脚本：签名时间戳允许和服务器差几秒（秒）",
     "tuning.ops.antibot.idleMs": "防脚本：写操作距离上一次真人点击超过多久算“很久没人操作”（毫秒，只计数）",
+    "tuning.ops.antibot.captchaEveryMin": "防脚本：被后台要求人机验证的账号，多久要再验证一次（分钟）",
     "tuning.redeem.failLimit": "一小时内输错几次兑换码后锁定（次）",
     "tuning.redeem.failWindowSec": "输错次数的统计窗口和锁定时长（秒）",
     "tuning.redeem.batchMax": "批量一次性码每批最多几个（个，最多 1000）",

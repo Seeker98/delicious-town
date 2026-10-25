@@ -38,6 +38,7 @@ import { ANTIBOT_DEFAULTS, registerAntiBot, type AntibotSettings } from './secur
 import { createWhitelist, type Whitelist } from './security/antibot/whitelist';
 import { AB_HEADERS } from '@dt/shared';
 import { trackRhythm } from './security/antibot/rhythm';
+import { createChallengeList, type ChallengeList } from './security/antibot/challenge';
 
 export interface AppDeps {
   env: Env;
@@ -62,6 +63,8 @@ export interface AppDeps {
   antibotFor?: (shardId: number | null) => Promise<AntibotSettings>;
   /** 防脚本白名单（照 accessGuard）：不传时 buildApp 按 db 建一个，后台改名单时用它刷新 */
   antibotWhitelist?: Whitelist;
+  /** 防脚本人机验证名单（PR②，照白名单）：不传时 buildApp 按 db 建一个，后台改名单时用它刷新 */
+  antibotChallenges?: ChallengeList;
 }
 
 /** 组装应用。钩子顺序：Cookie → 真实 IP → IP、设备封禁 → 会话 → 限流 → 幂等 → 防脚本 → 业务路由 */
@@ -102,6 +105,7 @@ export async function buildApp(
   registerIdempotency(app, deps.redis);
   registerHealth(app, deps);
   deps.antibotWhitelist ??= createWhitelist(deps.db);
+  deps.antibotChallenges ??= createChallengeList(deps.db);
   const game = createGame(deps);
   const settingsSub = subscribeSettings(deps.env.REDIS_URL, (id) => game.shards.invalidate(id));
   app.addHook('onClose', async () => settingsSub.close());
@@ -112,6 +116,8 @@ export async function buildApp(
     env: deps.env,
     now: deps.now,
     whitelist: deps.antibotWhitelist,
+    challenges: deps.antibotChallenges,
+    captcha: deps.captcha,
     sessions: deps.sessions,
     settingsFor:
       deps.antibotFor ??

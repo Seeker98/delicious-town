@@ -13,7 +13,7 @@ import type { AntibotMode } from './hook';
 import { flushRhythm } from './rhythm';
 
 let mode: AntibotMode = 'log';
-const settings = async () => ({ mode, skewSec: 120, idleMs: 60000 });
+const settings = async () => ({ mode, skewSec: 120, idleMs: 60000, captchaEveryMin: 60 });
 const routes = (app: Parameters<NonNullable<Parameters<typeof createTestApp>[1]>>[0]) => {
   app.post('/t/act', async () => ok({ done: true }));
   app.post('/api/v1/admin/t/act', async () => ok({ done: true }));

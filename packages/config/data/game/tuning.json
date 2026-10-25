@@ -403,7 +403,7 @@
   "report": { "dailyMax": 10 },
   "ops": {
     "suspicious": { "barPerfectDaily": 3, "dartsBullDaily": 20, "sharedAccounts": 3, "topN": 50 },
-    "antibot": { "mode": "log", "skewSec": 120, "idleMs": 60000 }
+    "antibot": { "mode": "log", "skewSec": 120, "idleMs": 60000, "captchaEveryMin": 60 }
   },
   "redeem": { "failLimit": 10, "failWindowSec": 3600, "batchMax": 1000 },
   "exchange": {
