@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  darts1025:
+    'Darts change: your hand shakes a little on each throw, so the dart lands slightly off the crosshair and perfect timing does not always hit the bullseye; the allowance for network delay drops from 1.5 to 0.6 seconds',
   limits1025:
     'Three new limits: up to 10 temple trials a day (successes and failures both count); to take an empty spot on the chef ranking you must win a tower challenge that week; tasting a signature dish now gives at most 25 Stamina',
   slot1024:

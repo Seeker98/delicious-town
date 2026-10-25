@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  darts1025:
+    'Fléchettes\u202f: la main tremble un peu à chaque lancer, la fléchette se plante légèrement à côté du viseur et un lancer parfaitement minuté ne touche pas toujours le centre\u202f; la tolérance au délai réseau passe de 1,5 à 0,6 seconde',
   limits1025:
     'Trois nouvelles limites\u202f: 10 épreuves du temple par jour au maximum (réussies ou non)\u202f; pour prendre une place libre au classement des chefs, il faut avoir gagné un défi de la tour dans la semaine\u202f; goûter un plat signature donne au plus 25 points d’énergie',
   slot1024:

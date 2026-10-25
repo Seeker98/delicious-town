@@ -622,6 +622,8 @@ export const tuningSchema = z.object({
       periodMs: z.tuple([int.min(100), int.min(100)]),
       futureMs: int.min(0),
       latencyMs: int.min(0),
+      /** 手抖（2026-10-25）：落点在准星位置上再随机偏 ±shake（靶面 -1~1，靶心半径 0.05），事先谁也不知道，脚本掐准时机也不能镖镖中靶心 */
+      shake: num.min(0).max(1),
       rings: z.array(z.tuple([num, int])).min(1),
       bossOdds: z.array(z.tuple([int, int.min(0)])).min(1),
       winLevel: int.min(1),

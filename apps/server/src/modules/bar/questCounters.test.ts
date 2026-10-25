@@ -100,7 +100,7 @@ describe('酒吧支线的计数（问题记录 515）', () => {
     for (let i = 0; i < 3; i++) {
       rngValues = [0, 0.25];
       await bar().dartsAim(ctx);
-      rngValues = [0.99]; // 奖励发经验
+      rngValues = [0.5, 0.99]; // 手抖不偏；奖励发经验
       await bar().dartsThrow(ctx, { elapsedMs: 0 });
     }
     const c = await counters(ctx);
@@ -115,7 +115,7 @@ describe('酒吧支线的计数（问题记录 515）', () => {
     for (let i = 0; i < 3; i++) {
       rngValues = [0, 0.25];
       await bar().dartsAim(ctx);
-      rngValues = [0.99];
+      rngValues = [0.5, 0.99];
       const r = await bar().dartsThrow(ctx, { elapsedMs: 0 });
       if (i === 2) expect(r.data.result).toBe('draw');
     }

@@ -82,7 +82,7 @@ const bar: Messages['bar'] = {
       'Après une bonne réponse, vous pouvez passer au niveau suivant ou vous arrêter\u202f; une erreur met fin à la partie.',
     ],
     darts: [
-      'Le viseur oscille de gauche à droite sur la cible\u202f; touchez «\u202fLancer\u202f!\u202f» pour tirer. Plus c’est près du centre, plus ça rapporte (50/25/10/5)\u202f; les bords valent 0.',
+      'Le viseur oscille de gauche à droite sur la cible\u202f; touchez «\u202fLancer\u202f!\u202f» pour tirer. Plus c’est près du centre, plus ça rapporte (50/25/10/5)\u202f; les bords valent 0. La main tremble un peu au lancer\u202f: la fléchette se plante légèrement à côté du viseur, et même un lancer parfaitement minuté ne touche pas toujours le centre.',
       'Trois fléchettes par partie\u202f: battez le total du patron du bar pour gagner. En cas d’égalité, une partie des bons mystère est remboursée.',
       'La récompense est surtout un ingrédient de niveau 4–5\u202f; avec trois mouches, l’ingrédient obtenu est de niveau 5 avec plus de chances d’être rare.',
     ],

@@ -67,7 +67,13 @@ export async function dartsThrow(o: Op, elapsedMs: number): Promise<DartsThrowDt
   if (!s.aim) throw invalidState('no_aim');
   const serverElapsed = o.now.getTime() - s.aim.at;
   const valid = elapsedMs <= serverElapsed + d.futureMs && elapsedMs >= serverElapsed - d.latencyMs;
-  const x = valid ? dartX(elapsedMs, s.aim.period, s.aim.phase) : null;
+  // 手抖（2026-10-25）：落点再随机偏一点，掐准时机的脚本也不能镖镖中靶心；只在有效的一镖上取随机数
+  const x = valid
+    ? Math.max(
+        -1,
+        Math.min(1, dartX(elapsedMs, s.aim.period, s.aim.phase) + (o.rng.next() * 2 - 1) * d.shake),
+      )
+    : null;
   const score = x === null ? 0 : dartScore(x, d.rings);
   const best = d.rings[0]![1];
   if (score === best) await incrementDaily(o.tx, o.rest.id, 'bar.darts.bull', 1, gameDay(o.now));

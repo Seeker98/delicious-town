@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  darts1025:
+    'Cambio en los dardos: al lanzar te tiembla un poco la mano, así que el dardo cae algo desviado de la mira y ni con el momento perfecto aciertas siempre en el centro; el margen para el retraso de red baja de 1,5 a 0,6 segundos',
   limits1025:
     'Tres límites nuevos: como máximo 10 pruebas del templo al día (cuentan las que salen bien y las que no); para ocupar un puesto libre en la clasificación de chefs hay que ganar un reto de la torre esa semana; probar un plato estrella da como mucho 25 de energía',
   slot1024:
