@@ -1046,6 +1046,15 @@ export interface AntibotWhitelistTable {
   created_at: TsDefault;
 }
 
+/** 防脚本人机验证名单（PR② 2026-10-25）：到期前写请求每隔一段时间要过一次人机验证 */
+export interface AntibotChallengeTable {
+  account_id: number;
+  until: Ts;
+  note: Default<string>;
+  actor_account_id: Nullable<number>;
+  created_at: TsDefault;
+}
+
 /** 操作节奏（防脚本 2026-10-25）：账号 × 小时一行，worker 从 Redis 汇总写入；只留 30 天 */
 export interface PlayRhythmTable {
   account_id: number;
@@ -1670,6 +1679,7 @@ export interface DB {
   open_trace: OpenTraceTable;
   antibot_whitelist: AntibotWhitelistTable;
   play_rhythm: PlayRhythmTable;
+  antibot_challenge: AntibotChallengeTable;
   access_ban: AccessBanTable;
   commission_notice: CommissionNoticeTable;
   activity: ActivityTable;
