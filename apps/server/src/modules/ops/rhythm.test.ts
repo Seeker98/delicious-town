@@ -124,7 +124,10 @@ describe('后台操作节奏（防脚本 2026-10-25）', () => {
     const rb = (data.rows as Array<Record<string, unknown>>).find((r) => r.accountId === b)!;
     const until = Date.parse(rb.challengeUntil as string);
     expect(Math.abs(until - (before + 3 * 86_400_000))).toBeLessThan(60_000);
-    expect(data.challenges).toEqual([expect.objectContaining({ accountId: b, note: '像脚本' })]);
+    // 名单不分区服，别的测试文件也会往里加号：只看 b
+    expect(data.challenges).toEqual(
+      expect.arrayContaining([expect.objectContaining({ accountId: b, note: '像脚本' })]),
+    );
     const off = await call(ctx.app, 'POST', `${A}/antibot/unchallenge`, {
       cookie: admin.cookie,
       body: { accountId: b },
@@ -132,7 +135,7 @@ describe('后台操作节奏（防脚本 2026-10-25）', () => {
     expect(off.status).toBe(200);
     expect(await ctx.deps.antibotChallenges!.required(b, new Date())).toBe(false);
     const after = (await list()).json.data;
-    expect(after.challenges).toEqual([]);
+    expect((after.challenges as Array<{ accountId: number }>).some((c) => c.accountId === b)).toBe(false);
     expect(
       (after.rows as Array<Record<string, unknown>>).find((r) => r.accountId === b)!.challengeUntil,
     ).toBeNull();

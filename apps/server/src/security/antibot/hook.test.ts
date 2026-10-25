@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { AB_HEADERS, canonical, hmacSign, sha256Hex } from '@dt/shared';
 import {
   call,
@@ -181,11 +181,14 @@ describe('写请求签名钩子（防脚本 2026-10-25）', () => {
     await post(u.cookie, '/t/act', await signed(u.cookie, '/t/act', { a: 1 }));
     await new Promise((r) => setTimeout(r, 50));
     await flushRhythm(ctx.deps.db, ctx.deps.redis, new Date(Date.now() + 3_600_000));
-    const r = await ctx.deps.db
-      .selectFrom('play_rhythm')
-      .select(['gets', 'posts', 'verdicts'])
-      .where('account_id', '=', u.accountId)
-      .executeTakeFirstOrThrow();
+    // 别的测试文件同时在汇总时，这个号的计数可能被它们先拿走、稍后才写进库：等一下
+    const r = await vi.waitFor(() =>
+      ctx.deps.db
+        .selectFrom('play_rhythm')
+        .select(['gets', 'posts', 'verdicts'])
+        .where('account_id', '=', u.accountId)
+        .executeTakeFirstOrThrow(),
+    );
     expect(r.gets).toBeGreaterThanOrEqual(2);
     expect(r.posts).toBe(1);
     expect(r.verdicts).toEqual({ ok: 1 });
