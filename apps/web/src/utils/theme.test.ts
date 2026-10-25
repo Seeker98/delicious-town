@@ -92,10 +92,17 @@ describe('主题设置（界面改版 P1，设计 §2.2）', () => {
     expect(sys.count()).toBe(0);
   });
 
-  it('index.html 的渲染前脚本：和 theme.ts 同样的规则，坏值和异常都不报错', () => {
+  it('index.html 不再有内联脚本（安全审计 M2：内容安全策略才能不放行内联），渲染前脚本在入口之前同步加载', () => {
     const html = readFileSync(join(__dirname, '../../index.html'), 'utf8');
-    const src = /<script>([\s\S]*?)<\/script>/.exec(html)?.[1];
-    expect(src).toBeTruthy();
+    expect(html).not.toMatch(/<script>/);
+    const init = html.indexOf('<script src="/theme-init.js"></script>');
+    expect(init).toBeGreaterThan(0);
+    expect(init).toBeLessThan(html.indexOf('</head>'));
+    expect(init).toBeLessThan(html.indexOf('type="module"'));
+  });
+
+  it('渲染前脚本 public/theme-init.js：和 theme.ts 同样的规则，坏值和异常都不报错', () => {
+    const src = readFileSync(join(__dirname, '../../public/theme-init.js'), 'utf8');
     expect(src).toContain(THEME_KEY);
     const run = () => new Function(src!)();
     fakeMatchMedia(true);
