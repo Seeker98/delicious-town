@@ -40,6 +40,8 @@ const row = (p: Partial<RhythmRow>): RhythmRow => ({
   lastDevice: 'dev-12345678',
   lastIp: '10.0.0.1',
   challengeUntil: null,
+  client: 'normal',
+  unsignedShare: 0,
   ...p,
 });
 
@@ -190,5 +192,24 @@ describe('RhythmPanel（防脚本 2026-10-25）', () => {
     const w = await mountPanel('mod');
     await w.find('[data-testid="rhythm-multi-7"]').trigger('click');
     expect(w.emitted('multi')![0]).toEqual([7]);
+  });
+
+  it('客户端分类（安全审计 D1）：裸接口写出没签名的比例并标红，正常的不写', async () => {
+    vi.mocked(adminApi.suspiciousRhythm).mockResolvedValue({
+      rows: [
+        row({ accountId: 7, username: 'bot', score: 5, client: 'bare', unsignedShare: 0.95 }),
+        row({ accountId: 8, username: 'head', client: 'idle' }),
+        row({ accountId: 9, username: 'me' }),
+      ],
+      whitelist: [],
+      challenges: [],
+    });
+    const w = await mountPanel('mod');
+    const rows = w.findAll('[data-testid="rhythm-row"]');
+    expect(w.find('[data-testid="rhythm-client-7"]').text()).toBe('裸接口 (没签名 95%)');
+    expect(rows[0]!.classes()).toContain('is-bad');
+    expect(w.find('[data-testid="rhythm-client-8"]').text()).toBe('多半没有真人点击');
+    expect(w.find('[data-testid="rhythm-client-9"]').text()).toBe('–');
+    expect(w.text()).toContain('裸接口: 写请求八成以上没签名');
   });
 });

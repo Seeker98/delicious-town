@@ -164,6 +164,12 @@ export interface AccessBanResultDto {
   bannedAccounts: number[];
 }
 
+/**
+ * 客户端分类（安全审计 D1 2026-10-25）：bare 裸接口（写请求八成以上没签名、没带版本号）；
+ * automation 浏览器被自动化工具控制；idle 网页签了名，但写操作时多半很久没有真人点击；normal 看不出问题
+ */
+export type RhythmClient = 'bare' | 'automation' | 'idle' | 'normal';
+
 /** 操作节奏（防脚本 2026-10-25）：最近 7 天按账号汇总，像机器的排前面 */
 export interface RhythmRow {
   accountId: number;
@@ -205,6 +211,10 @@ export interface RhythmRow {
   lastIp: string | null;
   /** 后台要求人机验证到什么时候（PR②）；没有为空 */
   challengeUntil: string | null;
+  /** 客户端分类（安全审计 D1） */
+  client: RhythmClient;
+  /** 写请求里没签名（missing、no_build）的比例 */
+  unsignedShare: number;
 }
 
 export interface RhythmDto {
