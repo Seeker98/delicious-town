@@ -823,6 +823,12 @@ export const tuningSchema = z.object({
       sharedAccounts: int.min(2),
       topN: int.min(1).max(200),
     }),
+    /** 游戏接口防脚本（2026-10-25）：log 只记录、enforce 拦截签名不对的写请求；后台接口永远只记录 */
+    antibot: z.object({
+      mode: z.enum(['log', 'enforce']),
+      skewSec: int.min(10).max(600),
+      idleMs: int.min(1000),
+    }),
   }),
   redeem: z.object({ failLimit: int.min(1), failWindowSec: int.min(1), batchMax: int.min(1).max(1000) }),
   /** 自由交易市场（156-1） */

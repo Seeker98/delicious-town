@@ -401,7 +401,10 @@
     "rewards": { "lv10": { "diamond": 20 }, "lv30": { "diamond": 50, "coin": 200000 } }
   },
   "report": { "dailyMax": 10 },
-  "ops": { "suspicious": { "barPerfectDaily": 3, "dartsBullDaily": 20, "sharedAccounts": 3, "topN": 50 } },
+  "ops": {
+    "suspicious": { "barPerfectDaily": 3, "dartsBullDaily": 20, "sharedAccounts": 3, "topN": 50 },
+    "antibot": { "mode": "log", "skewSec": 120, "idleMs": 60000 }
+  },
   "redeem": { "failLimit": 10, "failWindowSec": 3600, "batchMax": 1000 },
   "exchange": {
     "minLevel": 20, "minAccountDays": 7, "feeRate": 0.05, "bandLow": 0.5, "bandHigh": 2,

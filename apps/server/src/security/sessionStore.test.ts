@@ -57,4 +57,20 @@ describe('SessionStore', () => {
     expect(await store.get('x'.repeat(500))).toBeNull();
     expect(await store.get('')).toBeNull();
   });
+  it("新会话带签名密钥；老会话 ensureSignKey 补一把、再调返回同一把；销毁后为 null（防脚本 2026-10-25）", async () => {
+    const id = ++accountSeq;
+    const token = await store.create(id);
+    expect((await store.get(token))?.signKey).toHaveLength(43);
+    // 手工写一个没有 signKey 的老会话
+    const old = await store.create(++accountSeq);
+    const k = `sess:${sha256(old)}`;
+    const raw = JSON.parse((await redis.get(k))!);
+    delete raw.signKey;
+    await redis.set(k, JSON.stringify(raw), "KEEPTTL");
+    const a = await store.ensureSignKey(old);
+    expect(a).toHaveLength(43);
+    expect(await store.ensureSignKey(old)).toBe(a);
+    await store.destroy(old);
+    expect(await store.ensureSignKey(old)).toBeNull();
+  });
 });
