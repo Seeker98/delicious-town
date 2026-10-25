@@ -142,6 +142,38 @@ describe('写请求签名（防脚本 2026-10-25）', () => {
     expect(f.mock.calls[0]![1]!.headers).toEqual({});
   });
 
+  it('读到自己的账号（/me）后就预取密钥：第一个写请求不再多等一个往返', async () => {
+    const b = backend(() => json({ ok: true, data: 1, events: [] }));
+    const api = createApiClient(b.f, '');
+    await api.get('/api/v1/account/me');
+    expect(b.keys()).toBe(1);
+    await api.post('/y');
+    expect(b.keys()).toBe(1);
+    expect(b.f.mock.calls.map((c) => c[0])).toEqual(['/api/v1/account/me', '/api/v1/account/sign-key', '/y']);
+  });
+
+  it('先要人机验证、重发时签名又被拒：重取密钥再发一次，带着同一个令牌', async () => {
+    let n = 0;
+    const b = backend(() => {
+      n++;
+      if (n === 1) return json({ ok: false, code: 'CAPTCHA_REQUIRED', params: { reason: 'missing' } }, 403);
+      if (n === 2) return json({ ok: false, code: 'CLIENT_UNVERIFIED', params: { reason: 'bad' } }, 403);
+      return json({ ok: true, data: 'third', events: [] });
+    });
+    const ask = vi.fn(async () => 'tok');
+    setCaptchaHandler(ask);
+    try {
+      expect(await createApiClient(b.f, '').post('/y')).toBe('third');
+      const p = posts(b.f);
+      expect(p).toHaveLength(3);
+      expect(p.map((h) => h[AB_HEADERS.captcha])).toEqual([undefined, 'tok', 'tok']);
+      expect(ask).toHaveBeenCalledTimes(1);
+      expect(b.keys()).toBe(2);
+    } finally {
+      setCaptchaHandler(null);
+    }
+  });
+
   it('登录、注册、注销成功后换会话：下一次写请求重新取密钥', async () => {
     const b = backend(() => json({ ok: true, data: 1, events: [] }));
     const api = createApiClient(b.f, '');
@@ -178,6 +210,23 @@ describe('被要求人机验证（防脚本 PR②）', () => {
       expect(a![AB_HEADERS.captcha]).toBeUndefined();
       expect(b![AB_HEADERS.captcha]).toBe('tok');
       expect(a!['idempotency-key']).not.toBe(b!['idempotency-key']);
+    } finally {
+      setCaptchaHandler(null);
+    }
+  });
+
+  it('验证框拿到的是请求发出的时间（换页后晚到的回复不弹框）', async () => {
+    const f = vi.fn(async (url: string) =>
+      url.endsWith('/sign-key') ? json({ ok: false, code: 'UNAUTHORIZED' }) : need(),
+    );
+    const ask = vi.fn(async (_startedAt: number) => null);
+    setCaptchaHandler(ask);
+    try {
+      const before = Date.now();
+      await expect(createApiClient(f, '').post('/y')).rejects.toMatchObject({ code: 'CAPTCHA_REQUIRED' });
+      const startedAt = ask.mock.calls[0]![0];
+      expect(startedAt).toBeGreaterThanOrEqual(before);
+      expect(startedAt).toBeLessThanOrEqual(Date.now());
     } finally {
       setCaptchaHandler(null);
     }

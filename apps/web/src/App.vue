@@ -48,7 +48,7 @@ setEventsListener((all) => {
 
 /** 后台要求人机验证时（防脚本 PR②）：弹验证面板拿令牌 */
 const captcha = useCaptchaStore();
-setCaptchaHandler(() => captcha.ask());
+setCaptchaHandler((startedAt) => captcha.ask(startedAt));
 
 onMounted(() => {
   catalog.load().catch(() => undefined);

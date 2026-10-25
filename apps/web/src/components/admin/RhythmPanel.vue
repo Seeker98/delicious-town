@@ -16,7 +16,8 @@ import AdmEmpty from './kit/AdmEmpty.vue';
  * 管理员能把账号加进、移出防脚本白名单（拦截模式下也不拦，照样记录）
  */
 const props = defineProps<{ shardId: number }>();
-const emit = defineEmits<{ ban: [{ kind: 'ip' | 'device'; value: string }] }>();
+/** multi：跳到“多号”标签、只看这个号所在的组 */
+const emit = defineEmits<{ ban: [{ kind: 'ip' | 'device'; value: string }]; multi: [accountId: number] }>();
 const admin = useAdminStore();
 const toast = useToastStore();
 const isAdmin = computed(() => admin.me?.role === 'admin');
@@ -48,12 +49,20 @@ watch(
 );
 
 const pct = (x: number) => `${Math.round(x * 100)}%`;
-/** 只显示没通过的签名结论 */
+/** 只显示没通过的签名结论；读请求没带版本号的另写一项（人机验证结果单独一列） */
 const badVerdicts = (r: RhythmRow) =>
   Object.entries(r.verdicts)
-    .filter(([k, n]) => k !== 'ok' && n > 0)
-    .map(([k, n]) => `${k} ${n}`)
+    .filter(([k, n]) => k !== 'ok' && !k.startsWith('captcha_') && n > 0)
+    .map(([k, n]) => (k === 'get_no_build' ? `读请求没版本号 ${n}` : `${k} ${n}`))
     .join('、');
+/** 被点名的号人机验证的结果：通过、没带令牌、没通过 */
+function captchaOutcomes(r: RhythmRow): string {
+  const v = r.verdicts;
+  const [ok, missing, failed] = [v.captcha_ok ?? 0, v.captcha_missing ?? 0, v.captcha_failed ?? 0];
+  return ok + missing + failed === 0 ? '' : `过 ${ok} · 没带 ${missing} · 没过 ${failed}`;
+}
+/** 白名单里的号：人机验证不生效 */
+const whiteIds = computed(() => new Set(data.value?.whitelist.map((w) => w.accountId) ?? []));
 
 function toBan(r: RhythmRow) {
   if (r.lastDevice) emit('ban', { kind: 'device', value: r.lastDevice });
@@ -65,12 +74,15 @@ async function white(r: RhythmRow) {
   if (note === undefined) return;
   await run(() => adminApi.antibotWhitelist({ accountId: r.accountId, note }));
 }
-/** 要求人机验证（PR②）：只认 1、3、7 天，别的输入不提交 */
+/** 要求人机验证（PR②）：只认 1、3、7 天，别的输入不提交；接着填备注，点取消不提交 */
 async function challenge(r: RhythmRow) {
-  const raw = window.prompt(`要求 ${r.username} 做人机验证, 持续几天（1、3、7）`)?.trim();
+  const moot = r.whitelisted ? '（这个号在白名单里, 要先移出白名单验证才生效）' : '';
+  const raw = window.prompt(`要求 ${r.username} 做人机验证, 持续几天（1、3、7）${moot}`)?.trim();
   const days = Number(raw);
   if (days !== 1 && days !== 3 && days !== 7) return;
-  await run(() => adminApi.antibotChallenge({ accountId: r.accountId, days, note: '' }));
+  const note = window.prompt(`备注（比如“节奏像脚本”）`)?.trim();
+  if (note === undefined) return;
+  await run(() => adminApi.antibotChallenge({ accountId: r.accountId, days, note }));
 }
 async function unchallenge(accountId: number) {
   await run(() => adminApi.antibotUnchallenge({ accountId }));
@@ -117,7 +129,8 @@ async function run(fn: () => Promise<unknown>) {
             <th class="num">没看页面</th>
             <th class="num">很久没真人操作</th>
             <th>签名没通过</th>
-            <th class="num">标识 / 设备</th>
+            <th>人机验证</th>
+            <th class="num">标识 / 设备 / IP</th>
             <th></th>
           </tr>
         </thead>
@@ -143,8 +156,19 @@ async function run(fn: () => Promise<unknown>) {
             <td class="num">{{ pct(r.noViewShare) }}</td>
             <td class="num">{{ pct(r.idleShare) }}</td>
             <td class="dt-adm-small">{{ badVerdicts(r) || '–' }}</td>
-            <td class="num">{{ r.uas }} / {{ r.devices }}</td>
+            <td class="dt-adm-small nowrap" :data-testid="`rhythm-captcha-${r.accountId}`">
+              {{ captchaOutcomes(r) || '–' }}
+            </td>
+            <td class="num">{{ r.uas }} / {{ r.devices }} / {{ r.ips }}</td>
             <td class="nowrap">
+              <button
+                type="button"
+                class="dt-adm-btn is-t is-sm"
+                :data-testid="`rhythm-multi-${r.accountId}`"
+                @click="emit('multi', r.accountId)"
+              >
+                看多号
+              </button>
               <button
                 v-if="r.lastDevice || r.lastIp"
                 type="button"
@@ -200,6 +224,13 @@ async function run(fn: () => Promise<unknown>) {
               <span v-if="r.challengeUntil" class="dt-adm-mu dt-adm-small"
                 >验证到 {{ adminShort(r.challengeUntil) }}</span
               >
+              <span
+                v-if="r.challengeUntil && r.whitelisted"
+                class="dt-adm-mu dt-adm-small"
+                data-testid="rhythm-wl-moot"
+              >
+                （白名单内, 不生效）</span
+              >
             </td>
           </tr>
         </tbody>
@@ -227,6 +258,13 @@ async function run(fn: () => Promise<unknown>) {
             <td>
               <RouterLink :to="`/admin/players/${c.accountId}`">{{ c.username }}</RouterLink>
               <span class="dt-adm-mu">（#{{ c.accountId }}）</span>
+              <span
+                v-if="whiteIds.has(c.accountId)"
+                class="dt-adm-mu dt-adm-small"
+                data-testid="rhythm-wl-moot"
+              >
+                白名单内, 不生效</span
+              >
             </td>
             <td>{{ c.note || '–' }}</td>
             <td class="dt-adm-mu nowrap">{{ adminShort(c.until) }}</td>

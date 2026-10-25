@@ -36,6 +36,7 @@ const row = (p: Partial<RhythmRow>): RhythmRow => ({
   verdicts: { ok: 30 },
   uas: 1,
   devices: 1,
+  ips: 1,
   lastDevice: 'dev-12345678',
   lastIp: '10.0.0.1',
   challengeUntil: null,
@@ -122,13 +123,72 @@ describe('RhythmPanel（防脚本 2026-10-25）', () => {
     await w.find('[data-testid="rhythm-ch-remove-9"]').trigger('click');
     await flushPromises();
     expect(adminApi.antibotUnchallenge).toHaveBeenCalledWith({ accountId: 9 });
-    const prompt = vi.spyOn(window, 'prompt').mockReturnValueOnce('2').mockReturnValueOnce('3');
+    const prompt = vi
+      .spyOn(window, 'prompt')
+      .mockReturnValueOnce('2')
+      .mockReturnValueOnce('3')
+      .mockReturnValueOnce(' 像脚本 ');
     await w.find('[data-testid="rhythm-challenge-7"]').trigger('click');
     await flushPromises();
     expect(adminApi.antibotChallenge).not.toHaveBeenCalled();
     await w.find('[data-testid="rhythm-challenge-7"]').trigger('click');
     await flushPromises();
-    expect(adminApi.antibotChallenge).toHaveBeenCalledWith({ accountId: 7, days: 3, note: '' });
+    expect(adminApi.antibotChallenge).toHaveBeenCalledWith({ accountId: 7, days: 3, note: '像脚本' });
     prompt.mockRestore();
+  });
+
+  it('人机验证：备注那一步点取消就不提交', async () => {
+    vi.mocked(adminApi.suspiciousRhythm).mockResolvedValue({
+      rows: [row({ accountId: 7, username: 'bot' })],
+      whitelist: [],
+      challenges: [],
+    });
+    const prompt = vi.spyOn(window, 'prompt').mockReturnValueOnce('1').mockReturnValueOnce(null);
+    const w = await mountPanel('admin');
+    await w.find('[data-testid="rhythm-challenge-7"]').trigger('click');
+    await flushPromises();
+    expect(adminApi.antibotChallenge).not.toHaveBeenCalled();
+    prompt.mockRestore();
+  });
+
+  it('白名单里的号被点名：两处都提示验证不生效', async () => {
+    vi.mocked(adminApi.suspiciousRhythm).mockResolvedValue({
+      rows: [
+        row({ accountId: 8, username: 'me', whitelisted: true, challengeUntil: '2026-10-28T00:00:00.000Z' }),
+      ],
+      whitelist: [{ accountId: 8, username: 'me', note: '', at: '2026-10-25T00:00:00.000Z' }],
+      challenges: [{ accountId: 8, username: 'me', note: '', until: '2026-10-28T00:00:00.000Z' }],
+    });
+    const w = await mountPanel('admin');
+    expect(w.findAll('[data-testid="rhythm-wl-moot"]')).toHaveLength(2);
+  });
+
+  it('写出 IP 数、人机验证结果、读请求没带版本号；验证结果不混进签名没通过', async () => {
+    vi.mocked(adminApi.suspiciousRhythm).mockResolvedValue({
+      rows: [
+        row({
+          accountId: 7,
+          username: 'bot',
+          uas: 2,
+          devices: 3,
+          ips: 4,
+          verdicts: { ok: 5, get_no_build: 6, captcha_ok: 1, captcha_missing: 2, captcha_failed: 3 },
+        }),
+      ],
+      whitelist: [],
+      challenges: [],
+    });
+    const w = await mountPanel('mod');
+    const text = w.find('[data-testid="rhythm-row"]').text();
+    expect(text).toContain('2 / 3 / 4');
+    expect(text).toContain('读请求没版本号 6');
+    expect(w.find('[data-testid="rhythm-captcha-7"]').text()).toBe('过 1 · 没带 2 · 没过 3');
+    expect(text).not.toContain('captcha_');
+  });
+
+  it('点“看多号”把账号交给上层', async () => {
+    const w = await mountPanel('mod');
+    await w.find('[data-testid="rhythm-multi-7"]').trigger('click');
+    expect(w.emitted('multi')![0]).toEqual([7]);
   });
 });

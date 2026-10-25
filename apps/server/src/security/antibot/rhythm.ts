@@ -140,7 +140,12 @@ export function trackRhythm(redis: ScriptRedis) {
   };
   return {
     onRead(req: FastifyRequest, r: { buildOk: boolean }): void {
-      fire(req, { at: new Date(), method: 'GET', idleMs: 0, verdict: r.buildOk ? undefined : 'get_no_build' });
+      fire(req, {
+        at: new Date(),
+        method: 'GET',
+        idleMs: 0,
+        verdict: r.buildOk ? undefined : 'get_no_build',
+      });
     },
     onJudged(
       req: FastifyRequest,

@@ -163,9 +163,7 @@ describe('操作节奏计数（防脚本 2026-10-25）', () => {
 
   it('Redis 出错不往外抛（请求照常）', async () => {
     const down = () => Promise.reject(new Error('redis down'));
-    const broken = { eval: down, evalsha: down } as unknown as Parameters<
-      typeof trackRhythm
-    >[0];
+    const broken = { eval: down, evalsha: down } as unknown as Parameters<typeof trackRhythm>[0];
     const warned: unknown[] = [];
     const t = trackRhythm(broken);
     const req = {

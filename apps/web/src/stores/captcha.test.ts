@@ -16,6 +16,18 @@ describe('人机验证框（防脚本 PR②）', () => {
     expect(s.open).toBe(false);
   });
 
+  it('换页以后才回来的请求不弹框，直接拿到 null', async () => {
+    const s = useCaptchaStore();
+    const startedAt = Date.now() - 1000;
+    s.navigated();
+    expect(await s.ask(startedAt)).toBeNull();
+    expect(s.open).toBe(false);
+    const p = s.ask(Date.now() + 1);
+    expect(s.open).toBe(true);
+    s.answer('t');
+    expect(await p).toBe('t');
+  });
+
   it('关掉就都拿到 null；之后再问会重新弹', async () => {
     const s = useCaptchaStore();
     const a = s.ask();
