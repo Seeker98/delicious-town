@@ -8,7 +8,13 @@ import { useAdminStore } from '../../stores/admin';
 import RhythmPanel from './RhythmPanel.vue';
 
 vi.mock('../../api/admin', () => ({
-  adminApi: { suspiciousRhythm: vi.fn(), antibotWhitelist: vi.fn(), antibotUnwhitelist: vi.fn() },
+  adminApi: {
+    suspiciousRhythm: vi.fn(),
+    antibotWhitelist: vi.fn(),
+    antibotUnwhitelist: vi.fn(),
+    antibotChallenge: vi.fn(),
+    antibotUnchallenge: vi.fn(),
+  },
 }));
 
 const row = (p: Partial<RhythmRow>): RhythmRow => ({
@@ -32,6 +38,7 @@ const row = (p: Partial<RhythmRow>): RhythmRow => ({
   devices: 1,
   lastDevice: 'dev-12345678',
   lastIp: '10.0.0.1',
+  challengeUntil: null,
   ...p,
 });
 
@@ -56,6 +63,7 @@ describe('RhythmPanel（防脚本 2026-10-25）', () => {
         row({ accountId: 8, username: 'me', whitelisted: true }),
       ],
       whitelist: [{ accountId: 8, username: 'me', note: '自己的号', at: '2026-10-25T00:00:00.000Z' }],
+      challenges: [],
     });
   });
 
@@ -85,6 +93,7 @@ describe('RhythmPanel（防脚本 2026-10-25）', () => {
     vi.mocked(adminApi.suspiciousRhythm).mockResolvedValue({
       rows: [],
       whitelist: [{ accountId: 42, username: 'quiet', note: 'AI 工具', at: '2026-10-25T00:00:00.000Z' }],
+      challenges: [],
     });
     vi.mocked(adminApi.antibotUnwhitelist).mockResolvedValue({ ok: true });
     vi.mocked(adminApi.antibotWhitelist).mockResolvedValue({ ok: true });
@@ -98,5 +107,28 @@ describe('RhythmPanel（防脚本 2026-10-25）', () => {
     await w.find('[data-testid="rhythm-wl-add"]').trigger('click');
     await flushPromises();
     expect(adminApi.antibotWhitelist).toHaveBeenCalledWith({ accountId: 77, note: '自己的号' });
+  });
+
+  it('人机验证：名单单独列出、能取消；按钮问天数，只认 1/3/7', async () => {
+    vi.mocked(adminApi.suspiciousRhythm).mockResolvedValue({
+      rows: [row({ accountId: 7, username: 'bot' })],
+      whitelist: [],
+      challenges: [{ accountId: 9, username: 'sus', note: '像脚本', until: '2026-10-28T00:00:00.000Z' }],
+    });
+    vi.mocked(adminApi.antibotChallenge).mockResolvedValue({ ok: true });
+    vi.mocked(adminApi.antibotUnchallenge).mockResolvedValue({ ok: true });
+    const w = await mountPanel('admin');
+    expect(w.text()).toContain('sus');
+    await w.find('[data-testid="rhythm-ch-remove-9"]').trigger('click');
+    await flushPromises();
+    expect(adminApi.antibotUnchallenge).toHaveBeenCalledWith({ accountId: 9 });
+    const prompt = vi.spyOn(window, 'prompt').mockReturnValueOnce('2').mockReturnValueOnce('3');
+    await w.find('[data-testid="rhythm-challenge-7"]').trigger('click');
+    await flushPromises();
+    expect(adminApi.antibotChallenge).not.toHaveBeenCalled();
+    await w.find('[data-testid="rhythm-challenge-7"]').trigger('click');
+    await flushPromises();
+    expect(adminApi.antibotChallenge).toHaveBeenCalledWith({ accountId: 7, days: 3, note: '' });
+    prompt.mockRestore();
   });
 });

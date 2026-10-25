@@ -198,11 +198,15 @@ export interface RhythmRow {
   /** 最近登录用的设备号、IP（去封禁时预填） */
   lastDevice: string | null;
   lastIp: string | null;
+  /** 后台要求人机验证到什么时候（PR②）；没有为空 */
+  challengeUntil: string | null;
 }
 
 export interface RhythmDto {
   rows: RhythmRow[];
   whitelist: Array<{ accountId: number; username: string; note: string; at: string }>;
+  /** 还没到期的人机验证名单（PR②），按到期时间升序 */
+  challenges: Array<{ accountId: number; username: string; note: string; until: string }>;
 }
 
 export const whitelistBody = z.object({
@@ -210,3 +214,11 @@ export const whitelistBody = z.object({
   note: z.string().max(100).default(''),
 });
 export const unwhitelistBody = z.object({ accountId: z.number().int().positive() });
+
+/** 对可疑号打开人机验证（防脚本 PR②）：1、3、7 天 */
+export const challengeBody = z.object({
+  accountId: z.number().int().positive(),
+  days: z.union([z.literal(1), z.literal(3), z.literal(7)]),
+  note: z.string().max(100).default(''),
+});
+export const unchallengeBody = z.object({ accountId: z.number().int().positive() });

@@ -51,6 +51,8 @@ import {
   shardQuery,
   type AdminMeDto,
   unwhitelistBody,
+  challengeBody,
+  unchallengeBody,
   whitelistBody,
 } from '@dt/shared';
 import type { Game } from '../../game';
@@ -287,6 +289,15 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     r.post('/antibot/unwhitelist', async (req) => {
       const a = await requireRole(db, req, 'admin');
       return ok(await rhythm.remove(a, parse(unwhitelistBody, req.body)));
+    });
+    // 可疑号人机验证（防脚本 PR②）
+    r.post('/antibot/challenge', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await rhythm.challenge(a, parse(challengeBody, req.body)));
+    });
+    r.post('/antibot/unchallenge', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await rhythm.unchallenge(a, parse(unchallengeBody, req.body)));
     });
     r.get('/suspicious/redeem', async (req) => {
       await requireRole(db, req, 'mod');

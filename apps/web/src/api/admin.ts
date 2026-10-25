@@ -159,6 +159,10 @@ export const adminApi = {
   antibotWhitelist: (b: { accountId: number; note: string }) =>
     api.post<{ ok: true }>(`${A}/antibot/whitelist`, b),
   antibotUnwhitelist: (b: { accountId: number }) => api.post<{ ok: true }>(`${A}/antibot/unwhitelist`, b),
+  /** 可疑号人机验证（防脚本 PR②） */
+  antibotChallenge: (b: { accountId: number; days: 1 | 3 | 7; note: string }) =>
+    api.post<{ ok: true }>(`${A}/antibot/challenge`, b),
+  antibotUnchallenge: (b: { accountId: number }) => api.post<{ ok: true }>(`${A}/antibot/unchallenge`, b),
   suspiciousRedeem: (shardId: number) =>
     api.get<SuspiciousRedeemRow[]>(`${A}/suspicious/redeem${qs({ shardId })}`),
   /** 道具整理（问题记录 429，只读） */
