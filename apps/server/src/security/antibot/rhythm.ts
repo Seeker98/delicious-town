@@ -4,6 +4,7 @@ import type { Redis } from 'ioredis';
 import { sql, type Kysely } from 'kysely';
 import { deviceIdOf, userAgentOf } from '../../core/deps';
 import type { DB } from '../../db/schema';
+import { luaScript } from '../../infra/luaScript';
 import type { AntibotSettings } from './hook';
 import type { Verdict } from './verify';
 
@@ -21,13 +22,20 @@ export function hourKey(d: Date): string {
   return d.toISOString().slice(0, 13);
 }
 
+/**
+ * 记进“结论”但不算写操作的几项（防脚本 2026-10-25 审阅）：
+ * 读请求没带合格的版本号；被点名的号人机验证没带令牌、没通过、通过
+ */
+export type RhythmTag = 'get_no_build' | 'captcha_missing' | 'captcha_failed' | 'captcha_ok';
+
 export interface RhythmEvent {
   accountId: number;
   at: Date;
   method: 'GET' | 'POST';
   /** 路由模板（带 :id，不带具体值） */
   route: string;
-  verdict?: Verdict;
+  /** 写请求的签名结论；读请求只会是 get_no_build */
+  verdict?: Verdict | 'get_no_build';
   idle?: number | null;
   idleMs: number;
   ua: string | null;
@@ -46,15 +54,15 @@ const keysOf = (hour: string, accountId: number) => [
  * 一次请求的计数，一个 Lua 脚本一次往返（要读上一次写请求的时间算间隔）。
  * KEYS：计数哈希、标识集合、设备集合、IP 集合、上次写请求时间、最近读请求标记
  */
-const SCRIPT = `
+const SCRIPT = luaScript(`
 local h = KEYS[1]
+if ARGV[4] ~= '' then redis.call('HINCRBY', h, 'v:' .. ARGV[4], 1) end
 if ARGV[1] == 'GET' then
   redis.call('HINCRBY', h, 'gets', 1)
   redis.call('SET', KEYS[6], '1', 'EX', ${VIEW_SEC})
 else
   redis.call('HINCRBY', h, 'posts', 1)
   redis.call('HINCRBY', h, 'r:' .. ARGV[3], 1)
-  if ARGV[4] ~= '' then redis.call('HINCRBY', h, 'v:' .. ARGV[4], 1) end
   local now = tonumber(ARGV[2])
   local last = redis.call('GET', KEYS[5])
   if last then
@@ -79,17 +87,23 @@ if ARGV[8] ~= '' then redis.call('SADD', KEYS[3], ARGV[8]) end
 redis.call('SADD', KEYS[4], ARGV[9])
 for i = 1, 4 do redis.call('EXPIRE', KEYS[i], ${TTL_SEC}) end
 return 1
-`;
+`);
+
+/** 只加一项结论计数 */
+const TALLY = luaScript(`
+redis.call('HINCRBY', KEYS[1], 'v:' .. ARGV[1], 1)
+redis.call('EXPIRE', KEYS[1], ${TTL_SEC})
+return 1
+`);
 
 const uaHash = (ua: string | null) => (ua ? createHash('sha1').update(ua).digest('hex').slice(0, 16) : '');
 
 /** 记一次请求（防脚本 2026-10-25）：请求里不写数据库，只写 Redis */
-export async function recordRhythm(redis: Pick<Redis, 'eval'>, e: RhythmEvent): Promise<void> {
+type ScriptRedis = Pick<Redis, 'eval' | 'evalsha'>;
+
+export async function recordRhythm(redis: ScriptRedis, e: RhythmEvent): Promise<void> {
   const keys = [...keysOf(hourKey(e.at), e.accountId), `rhl:${e.accountId}`, `rhg:${e.accountId}`];
-  await redis.eval(
-    SCRIPT,
-    keys.length,
-    ...keys,
+  await SCRIPT(redis, keys, [
     e.method,
     String(e.at.getTime()),
     e.route,
@@ -99,11 +113,16 @@ export async function recordRhythm(redis: Pick<Redis, 'eval'>, e: RhythmEvent): 
     uaHash(e.ua),
     e.deviceId ?? '',
     e.ip,
-  );
+  ]);
+}
+
+/** 记一项不算写操作的结论（人机验证结果） */
+export async function tallyRhythm(redis: ScriptRedis, accountId: number, at: Date, tag: RhythmTag) {
+  await TALLY(redis, [keysOf(hourKey(at), accountId)[0]!], [tag]);
 }
 
 /** 钩子用的两个回调：不等结果，出错只记日志 */
-export function trackRhythm(redis: Pick<Redis, 'eval'>) {
+export function trackRhythm(redis: ScriptRedis) {
   const fire = (
     req: FastifyRequest,
     e: Omit<RhythmEvent, 'accountId' | 'route' | 'ua' | 'deviceId' | 'ip'>,
@@ -120,8 +139,13 @@ export function trackRhythm(redis: Pick<Redis, 'eval'>) {
     }).catch((err: unknown) => req.log.warn({ err }, 'record rhythm failed'));
   };
   return {
-    onRead(req: FastifyRequest): void {
-      fire(req, { at: new Date(), method: 'GET', idleMs: 0 });
+    onRead(req: FastifyRequest, r: { buildOk: boolean }): void {
+      fire(req, {
+        at: new Date(),
+        method: 'GET',
+        idleMs: 0,
+        verdict: r.buildOk ? undefined : 'get_no_build',
+      });
     },
     onJudged(
       req: FastifyRequest,
@@ -134,6 +158,13 @@ export function trackRhythm(redis: Pick<Redis, 'eval'>) {
         idle: r.idle,
         idleMs: r.settings.idleMs,
       });
+    },
+    onCaptcha(req: FastifyRequest, outcome: 'missing' | 'failed' | 'ok'): void {
+      const accountId = req.session?.data.accountId;
+      if (!accountId) return;
+      void tallyRhythm(redis, accountId, new Date(), `captcha_${outcome}`).catch((err: unknown) =>
+        req.log.warn({ err }, 'record rhythm failed'),
+      );
     },
   };
 }

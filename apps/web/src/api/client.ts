@@ -1,6 +1,6 @@
 import type { ApiResponse, GameEvent } from '@dt/shared';
 import { AB_HEADERS, ErrorCode } from '@dt/shared';
-import { CLIENT_BUILD, resetSignKey, signHeaders } from './antibot';
+import { CLIENT_BUILD, prefetchSignKey, resetSignKey, signHeaders } from './antibot';
 import { markPressBusy } from '../utils/pressBusy';
 import { uuid } from '../utils/uuid';
 import { deviceId } from './device';
@@ -21,7 +21,8 @@ export function setEventsListener(fn: EventsListener | null): void {
   eventsListener = fn;
 }
 
-type CaptchaHandler = () => Promise<string | null>;
+/** startedAt：被拦的请求是什么时候发出的（换页之后才回来的不弹框） */
+type CaptchaHandler = (startedAt: number) => Promise<string | null>;
 let captchaHandler: CaptchaHandler | null = null;
 /** 被要求人机验证时怎么拿令牌（App 里接到验证面板上，防脚本 PR②）；返回 null 表示用户关掉了 */
 export function setCaptchaHandler(fn: CaptchaHandler | null): void {
@@ -67,6 +68,7 @@ export function createApiClient(
     anonymous = false,
     attempt: Attempt = {},
   ): Promise<T> {
+    const startedAt = Date.now();
     const headers: Record<string, string> = anonymous
       ? {}
       : { 'x-device-id': deviceId(), [AB_HEADERS.build]: CLIENT_BUILD };
@@ -88,6 +90,8 @@ export function createApiClient(
       }
       const data = await send<T>(method, path, bodyText, anonymous, headers);
       if (bodyText !== undefined && SESSION_CHANGERS.has(path)) resetSignKey();
+      // 读到自己的账号：已经登录，先把签名密钥取好
+      if (method === 'GET' && !anonymous && path === '/api/v1/account/me') prefetchSignKey(fetchImpl, base);
       return data;
     } catch (e) {
       // 签名被拒（重新登录换了密钥、页面放太久时钟漂了）：重取密钥、换新随机数重发一次
@@ -111,7 +115,7 @@ export function createApiClient(
         e instanceof ApiError &&
         e.code === ErrorCode.CAPTCHA_REQUIRED
       ) {
-        const token = await captchaHandler();
+        const token = await captchaHandler(startedAt);
         if (!token) throw e;
         const run = captchaQueue.then(() =>
           request<T>(method, path, body, anonymous, { ...attempt, captcha: token }),

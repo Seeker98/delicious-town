@@ -61,6 +61,16 @@ describe('TurnstileBox 出错（防脚本 PR②）', () => {
     expect(w.emitted('error')).toHaveLength(1);
   });
 
+  it('关掉时释放验证组件', async () => {
+    vi.stubEnv('VITE_TURNSTILE_SITEKEY', 'site-key');
+    const remove = vi.fn();
+    window.turnstile = { render: () => 'w9', reset: () => {}, remove };
+    const w = mount(TurnstileBox);
+    await flushPromises();
+    w.unmount();
+    expect(remove).toHaveBeenCalledWith('w9');
+  });
+
   it('脚本还没加载完就关掉：不报错', async () => {
     vi.stubEnv('VITE_TURNSTILE_SITEKEY', 'site-key');
     let loaded: (() => void) | null = null;

@@ -77,16 +77,22 @@ async function signKey(fetchImpl: FetchLike, base: string) {
   return pending;
 }
 
+/** 提前取好密钥（读到自己的账号后调用）：第一个写请求不用再多等一个往返 */
+export function prefetchSignKey(fetchImpl: FetchLike, base: string): void {
+  if (!globalThis.crypto?.subtle) return;
+  void signKey(fetchImpl, base);
+}
+
 /** 一个写请求的签名请求头；取不到密钥时返回空对象（照常发，服务器只记录或拒绝） */
 export async function signHeaders(
   fetchImpl: FetchLike,
   base: string,
   i: { method: 'POST'; path: string; bodyText: string; nonce: string },
 ): Promise<Record<string, string>> {
+  // 浏览器没有 WebCrypto（非 https 页面）时不签，照常发；也不去取密钥（取了也用不上）
+  if (!globalThis.crypto?.subtle) return {};
   const k = await signKey(fetchImpl, base);
   if (!k) return {};
-  // 浏览器没有 WebCrypto（非 https 页面）时不签，照常发
-  if (!globalThis.crypto?.subtle) return {};
   // 网页端签名出错（有缺陷的内嵌浏览器）也照常不签发出：服务器那边的总开关救不了网页端的故障
   try {
     const ts = Date.now() + k.offset;

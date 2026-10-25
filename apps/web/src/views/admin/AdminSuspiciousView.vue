@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { adminShort } from '../../utils/gameInput';
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import type {
   SuspiciousAcquireRow,
@@ -65,6 +65,17 @@ function banFromRhythm(p: { kind: 'ip' | 'device'; value: string }) {
   banPrefill.value = p;
   tab.value = 'bans';
 }
+/** 操作节奏里点“看多号”：切到多号、只列这个号所在的组（防脚本 2026-10-25 审阅） */
+const multiFocus = ref<number | null>(null);
+function multiFromRhythm(accountId: number) {
+  multiFocus.value = accountId;
+  tab.value = 'multi';
+}
+const multiShown = computed(() =>
+  multiFocus.value === null
+    ? multi.value
+    : multi.value.filter((g) => g.accounts.some((a) => a.accountId === multiFocus.value)),
+);
 /** 请求序号：快速切换区服或标签时，丢弃先发出、后回来的旧响应（backlog 6B-2） */
 let seq = 0;
 
@@ -103,6 +114,10 @@ async function load() {
 }
 onMounted(() => void load());
 watch([tab, day, () => admin.shardId], () => void load());
+// 离开多号标签就不再只看一个号
+watch(tab, (t) => {
+  if (t !== 'multi') multiFocus.value = null;
+});
 
 const sources = (r: SuspiciousSurgeRow) =>
   r.topSources.map((s) => `${s.source} ${s.delta >= 0 ? '+' : ''}${formatNum(s.delta)}`).join('、');
@@ -126,6 +141,7 @@ const player = (accountId: number) => `/admin/players/${accountId}`;
       v-else-if="tab === 'rhythm' && admin.shardId"
       :shard-id="admin.shardId"
       @ban="banFromRhythm"
+      @multi="multiFromRhythm"
     />
 
     <AdmBox
@@ -200,9 +216,23 @@ const player = (accountId: number) => `/admin/players/${accountId}`;
       sub="最近 30 天同一 IP 或同一设备登录过多个账号（至少一个在本区服有店）"
       flush
     >
+      <div v-if="multiFocus !== null" class="d-flex flex-wrap gap-2 p-3">
+        <span class="dt-adm-mu">只看账号 #{{ multiFocus }} 所在的组</span>
+        <button
+          type="button"
+          class="dt-adm-btn is-t is-sm"
+          data-testid="sus-multi-all"
+          @click="multiFocus = null"
+        >
+          看全部
+        </button>
+      </div>
       <AdmEmpty v-if="loading" title="加载中…" />
-      <AdmEmpty v-else-if="multi.length === 0" title="没有数据" />
-      <div v-for="g in loading ? [] : multi" :key="`${g.kind}-${g.key}`" class="dt-adm-group">
+      <AdmEmpty
+        v-else-if="multiShown.length === 0"
+        :title="multiFocus === null ? '没有数据' : '这个号没有同 IP、同设备的其他账号'"
+      />
+      <div v-for="g in loading ? [] : multiShown" :key="`${g.kind}-${g.key}`" class="dt-adm-group">
         <div class="dt-adm-group-h">
           <b
             >{{ g.kind === 'ip' ? '同一 IP' : '同一设备' }}：<span class="dt-adm-mono">{{ g.key }}</span></b

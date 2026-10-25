@@ -9,13 +9,11 @@ import TurnstileBox from './TurnstileBox.vue';
 /** 人机验证面板（防脚本 PR②）：App 里挂一次；拿到令牌后被拦的操作会自动重发 */
 const store = useCaptchaStore();
 const t = useT();
-// 换了页面：按关掉处理，不在新页面上重发上一页的操作（照确认面板）
+// 换了页面：按关掉处理，不在新页面上重发上一页的操作（照确认面板）；只改网址参数不算换页
 const route = inject(routeLocationKey, null);
 watch(
-  () => route?.fullPath,
-  () => {
-    if (store.open) store.answer(null);
-  },
+  () => route?.path,
+  () => store.navigated(),
 );
 onBeforeUnmount(() => {
   if (store.open) store.answer(null);

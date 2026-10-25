@@ -21,5 +21,6 @@ interface Window {
       opts: { sitekey: string; callback: (token: string) => void; 'error-callback'?: () => void },
     ): string;
     reset(widgetId: string): void;
+    remove?(widgetId: string): void;
   };
 }

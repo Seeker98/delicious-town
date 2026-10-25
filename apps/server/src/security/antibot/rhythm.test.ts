@@ -2,7 +2,7 @@ import { afterAll, describe, expect, it } from 'vitest';
 import { testDb } from '../../../test/db';
 import { createRedis } from '../../infra/redis';
 import { cleanLoginTrace } from '../../modules/account/loginTrace';
-import { flushRhythm, hourKey, recordRhythm, trackRhythm } from './rhythm';
+import { flushRhythm, hourKey, recordRhythm, tallyRhythm, trackRhythm } from './rhythm';
 
 const db = testDb();
 const redis = createRedis(process.env.REDIS_URL!);
@@ -85,6 +85,24 @@ describe('操作节奏计数（防脚本 2026-10-25）', () => {
     expect(r!.routes).toEqual({ [route]: 3 });
   });
 
+  it('读请求没带版本号、人机验证结果记进结论，不算写操作（防脚本 2026-10-25 审阅）', async () => {
+    const id = ++seq;
+    await recordRhythm(redis, {
+      ...base,
+      accountId: id,
+      at: at(0),
+      method: 'GET',
+      route: '/x',
+      verdict: 'get_no_build',
+    });
+    await tallyRhythm(redis, id, at(1), 'captcha_missing');
+    await tallyRhythm(redis, id, at(2), 'captcha_ok');
+    await flushRhythm(db, redis, AFTER);
+    const r = await row(id);
+    expect(r).toMatchObject({ gets: 1, posts: 0 });
+    expect(r!.verdicts).toEqual({ get_no_build: 1, captcha_missing: 1, captcha_ok: 1 });
+  });
+
   it('写请求前 5 分钟没有读请求记一次没看页面', async () => {
     const id = ++seq;
     await recordRhythm(redis, {
@@ -144,9 +162,8 @@ describe('操作节奏计数（防脚本 2026-10-25）', () => {
   });
 
   it('Redis 出错不往外抛（请求照常）', async () => {
-    const broken = { eval: () => Promise.reject(new Error('redis down')) } as unknown as Parameters<
-      typeof trackRhythm
-    >[0];
+    const down = () => Promise.reject(new Error('redis down'));
+    const broken = { eval: down, evalsha: down } as unknown as Parameters<typeof trackRhythm>[0];
     const warned: unknown[] = [];
     const t = trackRhythm(broken);
     const req = {
@@ -156,7 +173,7 @@ describe('操作节奏计数（防脚本 2026-10-25）', () => {
       clientIp: '10.0.0.1',
       log: { warn: (o: unknown) => warned.push(o) },
     } as unknown as Parameters<typeof t.onRead>[0];
-    expect(() => t.onRead(req)).not.toThrow();
+    expect(() => t.onRead(req, { buildOk: true })).not.toThrow();
     expect(() =>
       t.onJudged(req, {
         verdict: 'ok',
@@ -164,7 +181,8 @@ describe('操作节奏计数（防脚本 2026-10-25）', () => {
         settings: { mode: 'log', skewSec: 120, idleMs: 60000, captchaEveryMin: 60 },
       }),
     ).not.toThrow();
+    expect(() => t.onCaptcha(req, 'ok')).not.toThrow();
     await new Promise((r) => setTimeout(r, 20));
-    expect(warned).toHaveLength(2);
+    expect(warned).toHaveLength(3);
   });
 });

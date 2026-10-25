@@ -135,6 +135,54 @@ describe('AdminSuspiciousView（子项目 6B-2）', () => {
   });
 });
 
+describe('操作节奏跳到多号（防脚本 2026-10-25 审阅）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    vi.mocked(adminApi.suspiciousBar).mockResolvedValue([]);
+    const acct = (i: number) => ({
+      accountId: i,
+      username: `u${i}`,
+      restId: i,
+      restName: `店${i}`,
+      lastSeen: '2026-10-01T00:00:00.000Z',
+    });
+    vi.mocked(adminApi.suspiciousMulti).mockResolvedValue([
+      { kind: 'ip', key: '10.0.0.1', total: 2, accounts: [acct(1), acct(2)] },
+      { kind: 'device', key: 'dev-x', total: 2, accounts: [acct(3), acct(4)] },
+    ]);
+  });
+
+  it('只列这个号所在的组；点“看全部”恢复', async () => {
+    useAdminStore().me = { accountId: 1, username: 'boss', role: 'mod' };
+    useAdminStore().shardId = 1;
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/:p(.*)*', component: { template: '<div />' } }],
+    });
+    const w = mount(AdminSuspiciousView, {
+      global: {
+        plugins: [router],
+        stubs: {
+          RhythmPanel: {
+            emits: ['multi'],
+            template: `<button data-testid="rp-multi" @click="$emit('multi', 2)" />`,
+          },
+        },
+      },
+    });
+    await flushPromises();
+    await w.find('[data-testid="sus-tab-rhythm"]').trigger('click');
+    await flushPromises();
+    await w.find('[data-testid="rp-multi"]').trigger('click');
+    await flushPromises();
+    expect(w.text()).toContain('同一 IP：10.0.0.1');
+    expect(w.text()).not.toContain('dev-x');
+    await w.find('[data-testid="sus-multi-all"]').trigger('click');
+    expect(w.text()).toContain('dev-x');
+  });
+});
+
 describe('backlog 6B-2：可疑数据页切换区服和加载中', () => {
   beforeEach(() => {
     vi.clearAllMocks();

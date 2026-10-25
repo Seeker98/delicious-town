@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 
 /** error：脚本加载失败或验证组件报错（防脚本 PR②：验证面板据此关掉，不留空框） */
 const emit = defineEmits<{ token: [value: string]; error: [] }>();
@@ -29,6 +29,12 @@ function reset(): void {
 }
 
 defineExpose({ reset });
+
+// 关掉时释放验证组件，免得它在后台继续刷新令牌（防脚本 PR② 审阅）
+onBeforeUnmount(() => {
+  if (widgetId !== null) window.turnstile?.remove?.(widgetId);
+  widgetId = null;
+});
 
 onMounted(async () => {
   // 开发环境没配置 site key：服务端同样关闭了校验，直接给一个占位令牌

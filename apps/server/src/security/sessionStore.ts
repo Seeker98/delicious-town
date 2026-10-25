@@ -1,6 +1,23 @@
 import type { Redis } from 'ioredis';
 import { newSignKey } from '@dt/shared';
+import { luaScript } from '../infra/luaScript';
 import { newToken, sha256 } from './tokens';
+
+/**
+ * 在 Redis 里原地合并会话字段（一次往返、原子）：两处同时改不同字段时不会互相覆盖。
+ * ARGV[2] 为 1 时只补没有的字段（补签名密钥）。会话不在了返回空，不重建；返回合并后的会话
+ */
+const MERGE = luaScript(`
+local raw = redis.call('GET', KEYS[1])
+if not raw then return false end
+local data = cjson.decode(raw)
+for k, v in pairs(cjson.decode(ARGV[1])) do
+  if ARGV[2] ~= '1' or data[k] == nil or data[k] == cjson.null then data[k] = v end
+end
+local out = cjson.encode(data)
+redis.call('SET', KEYS[1], out, 'KEEPTTL')
+return out
+`);
 
 export interface SessionData {
   accountId: number;
@@ -65,11 +82,7 @@ export function createSessionStore(redis: Redis, ttlSeconds: number): SessionSto
     },
 
     async update(token, patch) {
-      const k = key(sha256(token));
-      const raw = await redis.get(k);
-      if (!raw) return;
-      // XX：键在读写之间被删除（登出、被挤掉）时不再重建，避免出现永不过期的会话
-      await redis.set(k, JSON.stringify({ ...(JSON.parse(raw) as SessionData), ...patch }), 'KEEPTTL', 'XX');
+      await MERGE(redis, [key(sha256(token))], [JSON.stringify(patch), '0']);
     },
 
     async destroy(token) {
@@ -85,10 +98,9 @@ export function createSessionStore(redis: Redis, ttlSeconds: number): SessionSto
       const data = await store.get(token);
       if (!data) return null;
       if (data.signKey) return data.signKey;
-      const signKey = newSignKey();
-      await store.update(token, { signKey });
-      // 两个请求同时补时以写进去的为准
-      return (await store.get(token))?.signKey ?? null;
+      // 两个请求同时补时以先写进去的为准；不碰会话的其他字段
+      const out = await MERGE(redis, [key(sha256(token))], [JSON.stringify({ signKey: newSignKey() }), '1']);
+      return typeof out === 'string' ? ((JSON.parse(out) as SessionData).signKey ?? null) : null;
     },
 
     async destroyAll(accountId) {

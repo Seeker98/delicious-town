@@ -63,10 +63,12 @@ export function accountRoutes(svc: AccountService, deps: AppDeps): FastifyPlugin
     });
 
     /** 写请求签名密钥和服务器时间（防脚本 2026-10-25）：网页据此签名、校准时钟 */
-    r.get('/sign-key', async (req) => {
+    r.get('/sign-key', async (req, reply) => {
       const s = requireAccount(req);
       const key = await deps.sessions.ensureSignKey(s.token);
       if (!key) throw new AppError(ErrorCode.UNAUTHORIZED, 401);
+      // 密钥不能被浏览器或中间的代理缓存
+      reply.header('cache-control', 'no-store');
       return ok({ key, serverNow: deps.now().toISOString() });
     });
 
