@@ -25,6 +25,19 @@ describe('turnstileCaptcha', () => {
     expect(await turnstileCaptcha('s', broken).verify('t', 'ip')).toBe(false);
   });
 
+  it('Cloudflare 卡住时按超时算不通过，不一直挂着（防脚本 PR② 审阅）', async () => {
+    // 只在收到中止信号时才结束的假请求
+    const stuck = vi.fn(
+      (_url: string, init?: RequestInit) =>
+        new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener('abort', () => reject(new Error('aborted')));
+        }),
+    );
+    const started = Date.now();
+    expect(await turnstileCaptcha('s', stuck, 50).verify('t', 'ip')).toBe(false);
+    expect(Date.now() - started).toBeLessThan(2000);
+  });
+
   it('开发用的实现', async () => {
     expect(await disabledCaptcha().verify('', '')).toBe(true);
     expect(await fixedCaptcha(false).verify('x', 'y')).toBe(false);

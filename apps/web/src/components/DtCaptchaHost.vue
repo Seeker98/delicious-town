@@ -25,6 +25,7 @@ onBeforeUnmount(() => {
 <template>
   <DtSheet top :open="store.open" :title="t.common.captchaTitle" @close="store.answer(null)">
     <p class="dt-sheet-text">{{ t.common.captchaBody }}</p>
-    <TurnstileBox v-if="store.open" @token="store.answer($event)" />
+    <!-- 验证组件加载失败、报错：关掉面板，被拦的操作按原错误提示，不留一个空框（防脚本 PR② 审阅） -->
+    <TurnstileBox v-if="store.open" @token="store.answer($event)" @error="store.answer(null)" />
   </DtSheet>
 </template>

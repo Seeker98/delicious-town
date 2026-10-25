@@ -27,4 +27,25 @@ describe('人机验证面板（防脚本 PR②）', () => {
     w.findComponent(DtSheet).vm.$emit('close');
     expect(await p).toBeNull();
   });
+
+  it('验证组件出错（加载失败等）：不留空框，等着的请求拿到 null', async () => {
+    mount(DtCaptchaHost, {
+      global: {
+        stubs: {
+          teleport: true,
+          TurnstileBox: {
+            emits: ['error'],
+            mounted() {
+              this.$emit('error');
+            },
+            template: '<div />',
+          },
+        },
+      },
+    });
+    const p = useCaptchaStore().ask();
+    await flushPromises();
+    expect(await p).toBeNull();
+    expect(useCaptchaStore().open).toBe(false);
+  });
 });

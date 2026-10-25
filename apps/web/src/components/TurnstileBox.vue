@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 
-const emit = defineEmits<{ token: [value: string] }>();
+/** error：脚本加载失败或验证组件报错（防脚本 PR②：验证面板据此关掉，不留空框） */
+const emit = defineEmits<{ token: [value: string]; error: [] }>();
 const siteKey = import.meta.env.VITE_TURNSTILE_SITEKEY ?? '';
 const el = ref<HTMLDivElement | null>(null);
 let widgetId: string | null = null;
@@ -35,8 +36,18 @@ onMounted(async () => {
     emit('token', 'dev-token');
     return;
   }
-  await loadScript();
-  widgetId = window.turnstile!.render(el.value!, { sitekey: siteKey, callback: (t) => emit('token', t) });
+  try {
+    await loadScript();
+    // 脚本加载期间组件已经关掉（卸载）了：不再渲染
+    if (!el.value || !window.turnstile) return;
+    widgetId = window.turnstile.render(el.value, {
+      sitekey: siteKey,
+      callback: (t) => emit('token', t),
+      'error-callback': () => emit('error'),
+    });
+  } catch {
+    emit('error');
+  }
 });
 </script>
 
