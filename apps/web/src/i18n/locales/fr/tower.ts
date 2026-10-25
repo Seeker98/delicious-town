@@ -121,6 +121,7 @@ const tower: Messages['tower'] = {
       `Pour défier le top ${top}, vous devez être classé à ${gap} ${plFr(gap, 'place', 'places')} au plus`,
     occupied: (n) => `Vous prenez la place ${n}`,
     occupyFailed: 'Impossible de prendre la place',
+    needWin: 'Gagnez un défi de la tour cette semaine pour prendre une place libre',
     myRank: 'Mon rang ',
     unranked: 'Non classé',
     rankN: (n) => `${n === 1 ? '1er' : `${n}e`}`,

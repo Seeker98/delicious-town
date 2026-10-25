@@ -31,7 +31,7 @@ export function createTempleService(d: GameDeps, world: WorldService) {
         GOODS.meditation,
       ];
       // 互不依赖的查询一起发（性能第二轮：原来一条接一条，开发服 16 毫秒左右）；厨具、烹制中的特色菜要等店读出来
-      const [rest, damage, killedCount, held, trial, agg, shiling] = await Promise.all([
+      const [rest, damage, killedCount, held, trial, agg, shiling, trialsToday] = await Promise.all([
         d.db.selectFrom('restaurant').selectAll().where('id', '=', restId).executeTakeFirstOrThrow(),
         getDaily(d.db, restId, 'guardian.damage', day),
         getDaily(d.db, restId, 'guardian.killed', day),
@@ -44,6 +44,7 @@ export function createTempleService(d: GameDeps, world: WorldService) {
         d.db.selectFrom('rest_trial').selectAll().where('rest_id', '=', restId).executeTakeFirst(),
         getEffectAgg(d.db, restId, now, d.config, s),
         shilingBalance(d.db, restId),
+        getDaily(d.db, restId, 'temple.trial', day),
       ]);
       const gear = await restGear(d.db, rest, d.config.suits, equipOff(s));
       const killed = killedCount > 0;
@@ -76,6 +77,9 @@ export function createTempleService(d: GameDeps, world: WorldService) {
           worthMax: t.trialWorthMax,
           expMax: t.trialExpMax,
           pickCost: s.tuning.shiling.trialPick,
+          left: Math.max(0, t.trialDaily - trialsToday),
+          daily: t.trialDaily,
+          profPerLevel: t.trialProficiencyPerLevel,
         },
         shiling,
       };

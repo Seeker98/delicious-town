@@ -5,6 +5,7 @@ import { eventCount, questIn, showQuest } from '../../../test/quests';
 import { createShard } from '../../../test/fixtures';
 import { setTuning } from '../../../test/town';
 import { addAttrs } from '../equip/rules';
+import { getDaily } from '../counter/dailyCounter';
 import { GOODS } from '@dt/config';
 
 const DAY = '2026-09-30';
@@ -127,6 +128,8 @@ describe('挑战（设计文档 §3.2）', () => {
     expect(act.items.find((i) => i.name === '厨塔挑战')!.count).toBe(1);
     // 支线“守塔人”（问题记录 515）
     expect(await eventCount(t, ctx.restaurantId, 'tower.win')).toBe(1);
+    // 每天胜场（进赛厨榜要本周赢过，用户 2026-10-25）
+    expect(await getDaily(t.db, ctx.restaurantId, 'tower.win', DAY)).toBe(1);
   });
 
   it('打赢长老按这一层的概率掉一件它的套装（问题记录 408）；试打不掉', async () => {
@@ -180,6 +183,7 @@ describe('挑战（设计文档 §3.2）', () => {
     const r = await t.game.tower.challenge(ctx, { floor: 1, test: false });
     expect(r.data).toMatchObject({ win: false, renown: 6, awards: [] });
     expect(await eventCount(t, ctx.restaurantId, 'tower.win')).toBe(0);
+    expect(await getDaily(t.db, ctx.restaurantId, 'tower.win', DAY)).toBe(0);
     expect((await t.game.tower.overview(ctx)).bestFloor).toBe(0);
   });
 

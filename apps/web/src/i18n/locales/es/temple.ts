@@ -105,8 +105,8 @@ const temple: Messages['temple'] = {
     ready: 'Listo',
     readyLine: (min, creatives) => `Insignia: quedan ${min} min · creatividad ${creatives}`,
     prepTitle: 'Prepárate primero',
-    prepIntro:
-      'La insignia de preparación dura 1 hora y mientras dura puedes hacer todas las pruebas que quieras; cuanta más creatividad, más probabilidad de éxito. Al prepararte se elige al azar uno de tus platos estrella de nivel 1 a 5 como plato de prueba.',
+    prepIntro: (daily: number) =>
+      `La insignia de preparación dura 1 hora y puedes hacer hasta ${daily} pruebas al día (cuentan las que salen bien y las que no); cuanta más creatividad, más probabilidad de éxito. Al prepararte se elige al azar uno de tus platos estrella de nivel 1 a 5 como plato de prueba.`,
     injectName: 'Inyección',
     injectCost: '250.000 monedas',
     meditateName: 'Meditar',
@@ -140,6 +140,8 @@ const temple: Messages['temple'] = {
     group: (level, n) => `${level} (${n} ${plEs(n, 'tipo', 'tipos')})`,
     rareTag: 'raro',
     rateLabel: 'Éxito estimado (sin contar la suerte)',
+    leftNote: (left: number, daily: number) => `Te quedan ${left} de ${daily} pruebas hoy`,
+    dailyUsed: (daily: number) => `Ya hiciste las ${daily} pruebas de hoy, vuelve mañana`,
     costNote: 'Además cuesta 10.000 monedas y 1 de cada ingrediente del plato',
     start: 'Empezar la prueba',
     successHead: (lucky) => `Prueba superada${lucky ? ' (con suerte)' : ''}`,
@@ -151,12 +153,12 @@ const temple: Messages['temple'] = {
       `Valor de prueba hasta +${worthMax}\u00a0%, EXP de prueba hasta +${expMax}\u00a0%`,
     intro: (creatives, worthMax, expMax) =>
       `Las pruebas suben el valor de prueba de un plato estrella (valor por ración, hasta +${worthMax}\u00a0%) y la EXP de prueba (EXP del restaurante al cocinar, hasta +${expMax}\u00a0%). Creatividad ${creatives}.`,
-    helpItems: [
-      'Prepárate primero: la inyección cuesta 250.000 monedas y da la insignia «Poción de creatividad» (creatividad +25); meditar es gratis y da la insignia «Meditación» (creatividad +5). Las insignias duran 1 hora y mientras duran puedes hacer todas las pruebas que quieras. Cuanta más creatividad, más probabilidad de éxito.',
+    helpItems: (daily: number, prof: number): string[] => [
+      `Prepárate primero: la inyección cuesta 250.000 monedas y da la insignia «Poción de creatividad» (creatividad +25); meditar es gratis y da la insignia «Meditación» (creatividad +5). Las insignias duran 1 hora y puedes hacer hasta ${daily} pruebas al día. Cuanta más creatividad, más probabilidad de éxito.`,
       'Al prepararte se elige al azar uno de tus platos estrella de nivel 1 a 5 como plato de prueba. ¿No te gusta? Cámbialo por 20.000 monedas o gasta 30 puntos de temporada para elegir uno.',
       'Cada prueba cuesta 10.000 monedas y gasta 1 ingrediente principal y 1 secundario de los que elijas (2 si son el mismo), más 1 de cada ingrediente del plato.',
       'El éxito depende de tres cosas: la creatividad, cuántos niveles están los ingredientes por encima del plato (el principal pesa más) y la rareza (raro = marcado como «raro» en la lista, peso menor de 100).',
-      'Si sale bien: EXP de prueba +1–4\u00a0% (más si ambos son raros); si el principal es raro, valor de prueba +1–2\u00a0% además; dominio +800 × nivel de dominio. El valor de prueba sube el valor por ración al vender el plato (no cuenta en los duelos de la torre ni entre amigos) y la EXP de prueba da EXP extra del restaurante al cocinar. Los topes están arriba.',
+      `Si sale bien: EXP de prueba +1–4\u00a0% (más si ambos son raros); si el principal es raro, valor de prueba +1–2\u00a0% además; dominio +${prof} × nivel de dominio. El valor de prueba sube el valor por ración al vender el plato (no cuenta en los duelos de la torre ni entre amigos) y la EXP de prueba da EXP extra del restaurante al cocinar. Los topes están arriba.`,
     ],
   },
 };

@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  limits1025:
+    'Three new limits: up to 10 temple trials a day (successes and failures both count); to take an empty spot on the chef ranking you must win a tower challenge that week; tasting a signature dish now gives at most 25 Stamina',
   slot1024:
     'Slot machine prize swap: the bar slot machine prize Rosemary (a level 6 ingredient that isn’t open yet) is replaced by Beethoven: Symphony No. 9 (Ode to Joy), autograph score, at the same odds',
   wiki1024:

@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  limits1025:
+    'Trois nouvelles limites\u202f: 10 épreuves du temple par jour au maximum (réussies ou non)\u202f; pour prendre une place libre au classement des chefs, il faut avoir gagné un défi de la tour dans la semaine\u202f; goûter un plat signature donne au plus 25 points d’énergie',
   slot1024:
     'Nouveau lot à la machine à sous\u202f: le lot romarin de la machine à sous du bar (ingrédient de niveau 6, pas encore ouvert) devient le manuscrit autographe de Beethoven, Symphonie n° 9 (l’Ode à la joie), avec les mêmes chances',
   wiki1024:

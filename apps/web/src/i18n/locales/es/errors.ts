@@ -142,6 +142,7 @@ const errors: Messages['errors'] = {
     lock: () => 'No quedan espacios de bloqueo',
     owned: () => 'Ya lo tienes y no puedes comprar otro',
     shake_device: () => 'Alguien en la misma red o dispositivo ya lo sacudió hoy',
+    trial_daily: (p) => `No te quedan pruebas hoy (${String(p.max)} al día)`,
     bar_daily: (p) =>
       `Hoy ya has jugado ${s(p.max)} ${plEs(s(p.max), 'partida', 'partidas')} a este juego. Vuelve mañana.`,
     shop_daily: (p) => `Límite de ${String(p.max)} al día; ya lo compraste hoy`,
@@ -385,6 +386,7 @@ const errors: Messages['errors'] = {
     rank_taken: 'Alguien ya ocupa este puesto',
     rank_empty: 'Nadie ocupa este puesto; puedes tomarlo directamente',
     rank_not_better: 'Solo puedes retar o tomar un puesto superior',
+    rank_need_win: 'Gana un reto de la torre esta semana antes de ocupar un puesto libre',
     rank_gap: 'En el top 8 solo puedes retar a alguien a 3 puestos o menos',
     npc: 'No puedes retar a Don Krab',
   },

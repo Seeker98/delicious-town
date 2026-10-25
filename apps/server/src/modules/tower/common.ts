@@ -11,6 +11,8 @@ export const KEY = {
   ticket: 'tower.ticket',
   rankDone: 'tower.rankDone',
   spar: 'tower.spar',
+  /** 厨塔挑战赢的次数（试打不算）：进赛厨榜要本周赢过（用户 2026-10-25） */
+  win: 'tower.win',
   floor: (n: number) => `tower.floor:${n}`,
   duel: (restId: number) => `tower.duel:${restId}`,
   shop: (goodsId: number) => `renownShop:${goodsId}`,

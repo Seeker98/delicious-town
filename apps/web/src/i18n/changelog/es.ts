@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  limits1025:
+    'Tres límites nuevos: como máximo 10 pruebas del templo al día (cuentan las que salen bien y las que no); para ocupar un puesto libre en la clasificación de chefs hay que ganar un reto de la torre esa semana; probar un plato estrella da como mucho 25 de energía',
   slot1024:
     'Cambio de premio en la tragaperras: el premio Romero de la tragaperras del bar (un ingrediente de nivel 6 que aún no está abierto) pasa a ser Beethoven: Sinfonía n.º 9 (Oda a la alegría), manuscrito autógrafo, con la misma probabilidad',
   wiki1024:

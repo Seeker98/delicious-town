@@ -1,7 +1,8 @@
 import { GOODS } from '@dt/config';
-import { buildPool, pickWeighted, type TrialResultDto } from '@dt/shared';
+import { buildPool, gameDay, pickWeighted, type TrialResultDto } from '@dt/shared';
 import { emitAction } from '../../core/action';
-import { invalidState, requirement } from '../../core/errors';
+import { invalidState, limitReached, requirement } from '../../core/errors';
+import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { opAgg, opLuck } from '../../core/luck';
 import { restLog, type Op } from '../../core/op';
 import { spendCoin } from '../../core/resources';
@@ -96,6 +97,11 @@ export async function startTrial(
   const sub = o.config.foods.get(b.subFoodsId);
   if (!main || !sub) throw badInput('bad_food');
 
+  // 每天次数上限（用户 2026-10-25）：成败都算
+  const day = gameDay(o.now);
+  if ((await getDaily(o.tx, o.rest.id, 'temple.trial', day)) >= t.trialDaily)
+    throw limitReached('trial_daily', { max: t.trialDaily });
+  await incrementDaily(o.tx, o.rest.id, 'temple.trial', 1, day);
   spendCoin(o, t.trialCoin);
   if (main.id === sub.id) await subFoods(o, main.id, 2);
   else {

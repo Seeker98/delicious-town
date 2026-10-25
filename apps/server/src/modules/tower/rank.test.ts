@@ -30,10 +30,35 @@ const board = async (shardId: number, week = WEEK) =>
       .orderBy('rank')
       .execute()
   ).map((r) => [r.rank, r.rest_id]);
-const occupy = (ctx: RestCtx, rank: number) => t.game.tower.occupy(ctx, { rank });
+/** 本周在厨塔挑战里赢过一次（不在榜上的要赢过才能占位，用户 2026-10-25） */
+const wonTower = (ctx: RestCtx, day = DAY) =>
+  t.db
+    .insertInto('daily_counter')
+    .values({ rest_id: ctx.restaurantId, day, key: 'tower.win', count: 1 })
+    .onConflict((oc) => oc.doNothing())
+    .execute();
+const occupy = async (ctx: RestCtx, rank: number) => {
+  await wonTower(ctx);
+  return t.game.tower.occupy(ctx, { rank });
+};
 const challenge = (ctx: RestCtx, rank: number) => t.game.tower.challengeRank(ctx, { rank });
 
 describe('占位（设计文档裁定 14）', () => {
+  it('不在榜上、本周没在厨塔挑战里赢过：不能占，页面标出来；上周赢的不算（用户 2026-10-25）', async () => {
+    const [a] = await two();
+    const raw = (rank: number) => t.game.tower.occupy(a, { rank });
+    await expect(raw(15)).rejects.toMatchObject({
+      code: 'INVALID_STATE',
+      params: { reason: 'rank_need_win' },
+    });
+    expect((await t.game.tower.rank(a)).needWin).toBe(true);
+    await wonTower(a, '2026-09-27');
+    await expect(raw(15)).rejects.toMatchObject({ params: { reason: 'rank_need_win' } });
+    await wonTower(a, WEEK);
+    expect((await t.game.tower.rank(a)).needWin).toBe(false);
+    expect((await raw(15)).data).toEqual({ rank: 15 });
+  });
+
   it('空位谁都能占（包括第 1 名），不花体力；已在榜上只能往前占，原位置让出；被占的报 rank_taken', async () => {
     const [a, b] = await two();
     expect((await occupy(a, 1)).data).toEqual({ rank: 1 });

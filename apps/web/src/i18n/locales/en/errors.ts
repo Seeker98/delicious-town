@@ -138,6 +138,7 @@ const errors: Messages['errors'] = {
     lock: () => 'No lock slots left',
     owned: () => "You already own this and can't buy another",
     shake_device: () => 'Someone on the same network or device has already shaken it today',
+    trial_daily: (p) => `No trials left today (${String(p.max)} a day)`,
     bar_daily: (p) =>
       `You've played this game ${s(p.max)} ${plEn(s(p.max), 'time', 'times')} today. Come back tomorrow.`,
     shop_daily: (p) => `You can buy ${String(p.max)} of this per day; you already have today`,
@@ -382,6 +383,7 @@ const errors: Messages['errors'] = {
     rank_taken: 'Someone already holds this rank',
     rank_empty: 'Nobody holds this rank; you can take it directly',
     rank_not_better: 'You can only challenge or take a higher rank',
+    rank_need_win: 'Win a tower challenge this week before taking an empty spot',
     rank_gap: 'In the top 8, you can only challenge someone within 3 ranks of you',
     npc: "You can't duel Mr. Krab",
   },

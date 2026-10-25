@@ -7,7 +7,7 @@ import { opNews, restLog, runSystemOp, type Op } from '../../core/op';
 import { gainRenown, spendStrength } from '../../core/resources';
 import type { DB, RestaurantRow } from '../../db/schema';
 import { openGift } from '../award/award';
-import { getDaily, incrementDaily } from '../counter/dailyCounter';
+import { getDaily, incrementDaily, sumDailySince } from '../counter/dailyCounter';
 import { mondayOf } from '../friend/weekly';
 import { KEY, badInput, sparAwards } from './common';
 import { duel } from './duel';
@@ -52,6 +52,8 @@ export async function rankView(
     duelJudges: t.duel.judges,
     duelWeights: t.duel.weights,
     myRank: rows.find((r) => r.rest_id === rest.id)?.rank ?? null,
+    needWin:
+      !rows.some((r) => r.rest_id === rest.id) && (await sumDailySince(db, rest.id, KEY.win, week)) < 1,
     left: Math.max(0, t.rankDaily - (await getDaily(db, rest.id, KEY.rankDone, day))),
     spar: await getDaily(db, rest.id, KEY.spar, day),
     strength: rest.strength,
@@ -70,6 +72,9 @@ export async function occupyRank(o: Op, rank: number): Promise<{ rank: number }>
   const mine = rows.find((r) => r.rest_id === o.rest.id)?.rank ?? null;
   const err = rankOccupyError(mine, rank);
   if (err) throw invalidState(err);
+  // 不在榜上的要本周在厨塔挑战里赢过一次才能占位（用户 2026-10-25：停业的店白占空位拿周奖）
+  if (mine === null && (await sumDailySince(o.tx, o.rest.id, KEY.win, week)) < 1)
+    throw invalidState('rank_need_win');
   if (mine !== null)
     await o.tx
       .deleteFrom('tower_rank')

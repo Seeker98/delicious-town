@@ -162,8 +162,11 @@ describe('教室（规格书 04 §4.7）', () => {
 
 describe('品尝（规格书 13 §13.6）', () => {
   it('体力 = 每份价值（非好友减半）；神秘食谱概率；店主礼券 rand[1, 体力/(10×(0星?2:1))+1]', () => {
-    expect(tasteStrength(157, true)).toBe(157);
-    expect(tasteStrength(157, false)).toBe(78);
+    expect(tasteStrength(20, true, 25)).toBe(20);
+    expect(tasteStrength(31, false, 25)).toBe(15);
+    // 封顶（用户 2026-10-25）
+    expect(tasteStrength(157, true, 25)).toBe(25);
+    expect(tasteStrength(157, false, 25)).toBe(25);
     expect(tasteRecipeRate(3, 0.1, t)).toBeCloseTo(0.0266, 10);
     expect(tasteTickets(157, 2, sequenceRng([0.99]))).toBe(16);
     expect(tasteTickets(157, 0, sequenceRng([0.99]))).toBe(8);

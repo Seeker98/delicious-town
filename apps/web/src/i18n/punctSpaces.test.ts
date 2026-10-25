@@ -16,7 +16,7 @@ describe('法文换食材页的标点空格（问题记录 475~493 遗留）', (
 describe('西文试炼说明的百分号（集束飞弹那次的遗留）', () => {
   it('“+30 %”这类数和 % 之间用不换行空格，不会在 % 前折行', () => {
     const x = es.temple.trial;
-    const text = [x.intro(5, 30, 150), ...x.helpItems].join('\n');
+    const text = [x.intro(5, 30, 150), ...x.helpItems(10, 200), x.prepIntro(10)].join('\n');
     expect(text).not.toMatch(/ %/);
     expect(text).toContain('+30\u00a0%');
   });

@@ -145,6 +145,8 @@ const rate = computed(() => {
 const block = computed(() => {
   const x = t.value.temple.trial;
   if (props.data.star < 1) return t.value.temple.needStar(x.what);
+  // 每天次数上限（用户 2026-10-25）
+  if (trial.value.left <= 0) return x.dailyUsed(trial.value.daily);
   if (trial.value.readyMinutes === 0) return x.notReady;
   if (trial.value.mcId === null) return x.noTarget;
   if (dishShort.value.length > 0)
@@ -193,7 +195,7 @@ const start = async () => {
   </section>
   <section v-else class="dt-card dt-trial-prep">
     <b>{{ t.temple.trial.prepTitle }}</b>
-    <p>{{ t.temple.trial.prepIntro }}</p>
+    <p>{{ t.temple.trial.prepIntro(trial.daily) }}</p>
     <div class="dt-trial-opts">
       <button
         type="button"
@@ -311,6 +313,9 @@ const start = async () => {
       </div>
       <span class="dt-meter"><i :style="{ width: `${Math.min(100, (rate ?? 0) * 100)}%` }"></i></span>
       <span class="dt-trial-rate-note">{{ t.temple.trial.costNote }}</span>
+      <span class="dt-trial-rate-note" data-testid="trial-left">{{
+        t.temple.trial.leftNote(trial.left, trial.daily)
+      }}</span>
     </section>
   </template>
 
@@ -434,7 +439,7 @@ const start = async () => {
     <div class="dt-help">
       <p>{{ t.temple.trial.intro(trial.creatives, trial.worthMax, trial.expMax) }}</p>
       <ul>
-        <li v-for="(x, i) in t.temple.trial.helpItems" :key="i">{{ x }}</li>
+        <li v-for="(x, i) in t.temple.trial.helpItems(trial.daily, trial.profPerLevel)" :key="i">{{ x }}</li>
       </ul>
     </div>
   </DtSheet>

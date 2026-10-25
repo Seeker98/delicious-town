@@ -426,6 +426,8 @@ export const tuningSchema = z.object({
     roadOtherMax: num,
     cookNumPowerDiv: num,
     tasteDaily: int.min(1),
+    /** 品尝一次最多给多少体力（用户 2026-10-25：原来等于每份价值，高级菜一口上百点） */
+    tasteStrengthMax: int.min(1),
     tasteAwardMax: int,
     tasteMcRate: num,
     tasteGradeFactor: num,
@@ -468,6 +470,8 @@ export const tuningSchema = z.object({
     trialProficiencyPerLevel: int,
     trialCap: num,
     rareOdds: int,
+    /** 每天最多试炼几次，成败都算（用户 2026-10-25：原来冥想免费、1 小时内不限次） */
+    trialDaily: int.min(1),
     /** 飞弹伤害覆盖：[道具 id, 最小, 最大]（试玩修复 14：集束飞弹太强） */
     missileAttack: z.array(z.tuple([int, int.min(0), int.min(0)])),
   }),
