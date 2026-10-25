@@ -7,6 +7,9 @@ interface ImportMetaEnv {
   readonly VITE_TURNSTILE_SITEKEY?: string;
 }
 
+/** 前端版本号（防脚本 2026-10-25）：vite.config.ts 的 define 注入 */
+declare const __DT_BUILD__: string;
+
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }

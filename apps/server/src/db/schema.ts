@@ -1038,6 +1038,41 @@ export interface OpenTraceTable {
   last_seen: TsDefault;
 }
 
+/** 防脚本白名单（2026-10-25）：拦截模式下也不拦，照样记录 */
+export interface AntibotWhitelistTable {
+  account_id: number;
+  note: Default<string>;
+  actor_account_id: Nullable<number>;
+  created_at: TsDefault;
+}
+
+/** 操作节奏（防脚本 2026-10-25）：账号 × 小时一行，worker 从 Redis 汇总写入；只留 30 天 */
+export interface PlayRhythmTable {
+  account_id: number;
+  /** 整点（UTC） */
+  hour: Ts;
+  posts: Default<number>;
+  gets: Default<number>;
+  /** 各路由的写请求次数 */
+  routes: JsonDefault<Record<string, number>>;
+  /** 相邻写请求间隔 10 秒~1 小时的：次数、总和（毫秒）、平方和、最小值 */
+  gap_n: Default<number>;
+  gap_sum: ColumnType<string, number | string | undefined, number | string>;
+  gap_sq: Default<number>;
+  gap_min: Nullable<number>;
+  /** 间隔不到 10 秒的写请求（一阵猛点） */
+  bursts: Default<number>;
+  /** 写请求前 5 分钟内没有读请求的次数 */
+  no_view: Default<number>;
+  /** 写请求时很久没有真人操作的次数 */
+  idle_long: Default<number>;
+  /** 签名校验各结论的次数 */
+  verdicts: JsonDefault<Record<string, number>>;
+  uas: Default<number>;
+  devices: Default<number>;
+  ips: Default<number>;
+}
+
 export interface ActivityTable {
   id: Generated<number>;
   shard_id: Nullable<number>;
@@ -1633,6 +1668,8 @@ export interface DB {
   report_entry: ReportEntryTable;
   login_trace: LoginTraceTable;
   open_trace: OpenTraceTable;
+  antibot_whitelist: AntibotWhitelistTable;
+  play_rhythm: PlayRhythmTable;
   access_ban: AccessBanTable;
   commission_notice: CommissionNoticeTable;
   activity: ActivityTable;

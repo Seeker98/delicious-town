@@ -12,6 +12,8 @@ export const ErrorCode = {
   ACCOUNT_BANNED: 'ACCOUNT_BANNED',
   /** 所在 IP 或设备被后台封禁（2026-10-16） */
   ACCESS_BANNED: 'ACCESS_BANNED',
+  /** 写请求的签名校验没通过，拦截模式下这一下操作失败（防脚本 2026-10-25）；params.reason 是原因 */
+  CLIENT_UNVERIFIED: 'CLIENT_UNVERIFIED',
   EMAIL_NOT_VERIFIED: 'EMAIL_NOT_VERIFIED',
   TOKEN_INVALID: 'TOKEN_INVALID',
   EMAIL_COOLDOWN: 'EMAIL_COOLDOWN',

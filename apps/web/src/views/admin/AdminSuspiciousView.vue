@@ -15,6 +15,7 @@ import { adminApi } from '../../api/admin';
 import ExchangeGuardPanel from '../../components/admin/ExchangeGuardPanel.vue';
 import ExchangeMakerPanel from '../../components/admin/ExchangeMakerPanel.vue';
 import AccessBanPanel from '../../components/admin/AccessBanPanel.vue';
+import RhythmPanel from '../../components/admin/RhythmPanel.vue';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
 import { useToastStore } from '../../stores/toast';
@@ -25,12 +26,13 @@ import AdmHead from '../../components/admin/kit/AdmHead.vue';
 import AdmTabs from '../../components/admin/kit/AdmTabs.vue';
 
 /** 可疑数据（子项目 6B-2，设计 §5）：只读，只作提醒 */
-type Tab = 'bar' | 'surge' | 'multi' | 'api' | 'bans' | 'redeem' | 'exchange' | 'acquire';
+type Tab = 'bar' | 'surge' | 'multi' | 'api' | 'rhythm' | 'bans' | 'redeem' | 'exchange' | 'acquire';
 const TABS: Array<[Tab, string]> = [
   ['bar', '酒吧'],
   ['surge', '资源暴涨'],
   ['multi', '多号'],
   ['api', '接口调用'],
+  ['rhythm', '操作节奏'],
   ['bans', '封禁名单'],
   ['redeem', '兑换码被锁'],
   ['exchange', '交易所'],
@@ -56,6 +58,11 @@ const loading = ref(false);
 const banPrefill = ref<{ kind: 'ip' | 'device'; value: string } | null>(null);
 function banGroup(g: SuspiciousMultiGroup) {
   banPrefill.value = { kind: g.kind, value: g.key };
+  tab.value = 'bans';
+}
+/** 操作节奏里点“去封禁”（防脚本 2026-10-25） */
+function banFromRhythm(p: { kind: 'ip' | 'device'; value: string }) {
+  banPrefill.value = p;
   tab.value = 'bans';
 }
 /** 请求序号：快速切换区服或标签时，丢弃先发出、后回来的旧响应（backlog 6B-2） */
@@ -87,7 +94,7 @@ async function load() {
       const r = await adminApi.suspiciousAcquire(shardId);
       if (fresh()) acquire.value = r;
     }
-    // 交易所、封禁名单标签由 ExchangeGuardPanel、AccessBanPanel 自己读取（156-2；2026-10-16）
+    // 交易所、封禁名单、操作节奏标签由 ExchangeGuardPanel、AccessBanPanel、RhythmPanel 自己读取（156-2；2026-10-16；2026-10-25）
   } catch (e) {
     if (fresh()) toast.push(errorMessage(e, '读取失败'), 'danger');
   } finally {
@@ -115,6 +122,11 @@ const player = (accountId: number) => `/admin/players/${accountId}`;
     </template>
     <!-- 封禁名单不分区服（2026-10-16） -->
     <AccessBanPanel v-else-if="tab === 'bans'" :prefill="banPrefill" />
+    <RhythmPanel
+      v-else-if="tab === 'rhythm' && admin.shardId"
+      :shard-id="admin.shardId"
+      @ban="banFromRhythm"
+    />
 
     <AdmBox
       v-else-if="tab === 'bar'"

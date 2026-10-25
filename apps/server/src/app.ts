@@ -34,6 +34,10 @@ import { registerSession } from './security/session';
 import { registerPlayTrace } from './modules/account/loginTrace';
 import { createAccessGuard, registerAccessGuard, type AccessGuard } from './security/accessBan';
 import type { SessionStore } from './security/sessionStore';
+import { ANTIBOT_DEFAULTS, registerAntiBot, type AntibotSettings } from './security/antibot/hook';
+import { createWhitelist, type Whitelist } from './security/antibot/whitelist';
+import { AB_HEADERS } from '@dt/shared';
+import { trackRhythm } from './security/antibot/rhythm';
 
 export interface AppDeps {
   env: Env;
@@ -54,9 +58,13 @@ export interface AppDeps {
   clock?: ShiftClock;
   /** IP、设备封禁名单（2026-10-16）；不传时 buildApp 按 db 建一个，后台改名单时用它清缓存 */
   accessGuard?: AccessGuard;
+  /** 防脚本的区服设置（测试注入）；不传时读区服 tuning.ops.antibot，会话没选区服时只记录 */
+  antibotFor?: (shardId: number | null) => Promise<AntibotSettings>;
+  /** 防脚本白名单（照 accessGuard）：不传时 buildApp 按 db 建一个，后台改名单时用它刷新 */
+  antibotWhitelist?: Whitelist;
 }
 
-/** 组装应用。钩子顺序：Cookie → 真实 IP → IP、设备封禁 → 会话 → 限流 → 幂等 → 业务路由 */
+/** 组装应用。钩子顺序：Cookie → 真实 IP → IP、设备封禁 → 会话 → 限流 → 幂等 → 防脚本 → 业务路由 */
 export async function buildApp(
   deps: AppDeps,
   extend?: (app: FastifyInstance) => void,
@@ -77,6 +85,8 @@ export async function buildApp(
     credentials: true,
     methods: ['GET', 'POST'],
     maxAge: 7200,
+    // 防脚本（2026-10-25）：网页和接口不同域时也要读得到“重新取签名密钥”的响应头
+    exposedHeaders: [AB_HEADERS.resign],
   });
   registerClientIp(app, deps.env.TRUST_CF_HEADER);
   registerErrorHandling(app);
@@ -91,9 +101,29 @@ export async function buildApp(
   );
   registerIdempotency(app, deps.redis);
   registerHealth(app, deps);
+  deps.antibotWhitelist ??= createWhitelist(deps.db);
   const game = createGame(deps);
   const settingsSub = subscribeSettings(deps.env.REDIS_URL, (id) => game.shards.invalidate(id));
   app.addHook('onClose', async () => settingsSub.close());
+  // 防脚本（2026-10-25）：挂在防重复提交之后、业务路由之前
+  registerAntiBot(app, {
+    ...trackRhythm(deps.redis),
+    redis: deps.redis,
+    env: deps.env,
+    now: deps.now,
+    whitelist: deps.antibotWhitelist,
+    sessions: deps.sessions,
+    settingsFor:
+      deps.antibotFor ??
+      (async (shardId) => {
+        if (shardId === null) return ANTIBOT_DEFAULTS;
+        try {
+          return (await game.shards.settings(shardId)).tuning.ops.antibot;
+        } catch {
+          return ANTIBOT_DEFAULTS;
+        }
+      }),
+  });
   registerModules(app, game);
   if (deps.env.ENABLE_TEST_API && deps.clock) {
     app.register(testApiRoutes(game, deps.clock), { prefix: '/api/v1/test' });

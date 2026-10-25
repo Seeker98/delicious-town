@@ -50,6 +50,8 @@ import {
   settlementQuery,
   shardQuery,
   type AdminMeDto,
+  unwhitelistBody,
+  whitelistBody,
 } from '@dt/shared';
 import type { Game } from '../../game';
 import { AppError } from '../../http/errors';
@@ -66,6 +68,7 @@ import { createAdminBulk } from '../bulk/admin';
 import { createLaunchCheck } from './launch';
 import { createAdminPlayers } from './players';
 import { createAccessBans } from './accessBans';
+import { createRhythmAdmin } from '../ops/rhythm';
 import { createAdminShards } from './shards';
 import { createAdminMail } from '../mail/admin';
 import { createAdminCodes } from '../redeem/admin';
@@ -270,6 +273,20 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     r.get('/suspicious/api', async (req) => {
       await requireRole(db, req, 'mod');
       return ok(await suspicious.api(parse(suspiciousQuery, req.query).shardId));
+    });
+    // 操作节奏、防脚本白名单（2026-10-25）
+    const rhythm = createRhythmAdmin(game);
+    r.get('/suspicious/rhythm', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await rhythm.list(parse(suspiciousQuery, req.query).shardId));
+    });
+    r.post('/antibot/whitelist', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await rhythm.add(a, parse(whitelistBody, req.body)));
+    });
+    r.post('/antibot/unwhitelist', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await rhythm.remove(a, parse(unwhitelistBody, req.body)));
     });
     r.get('/suspicious/redeem', async (req) => {
       await requireRole(db, req, 'mod');

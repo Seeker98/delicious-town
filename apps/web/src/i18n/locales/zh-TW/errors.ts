@@ -25,6 +25,7 @@ export default {
     ACCOUNT_BANNED: '賬號已被封禁, 如有疑問請聯絡管理員',
     ACCESS_BANNED: '你所在的網路或裝置已被封禁, 如有疑問請聯絡管理員',
     EMAIL_NOT_VERIFIED: '請先驗證郵箱',
+    CLIENT_UNVERIFIED: '請在遊戲網頁裡操作; 如果你就是在網頁裡點的, 請重新整理頁面後再試',
     TOKEN_INVALID: '連結無效或已過期, 請重新獲取',
     EMAIL_COOLDOWN: '郵件傳送太頻繁, 請 1 分鐘後再試',
     SHARD_NOT_FOUND: '區服不存在',

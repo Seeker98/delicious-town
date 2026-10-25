@@ -1,4 +1,5 @@
 import type { Redis } from 'ioredis';
+import { newSignKey } from '@dt/shared';
 import { newToken, sha256 } from './tokens';
 
 export interface SessionData {
@@ -6,14 +7,21 @@ export interface SessionData {
   shardId: number | null;
   restaurantId: number | null;
   createdAt: string;
+  /** 写请求签名密钥（防脚本 2026-10-25）；这之前建的会话没有，取的时候补 */
+  signKey?: string;
 }
 
 export interface SessionStore {
   create(accountId: number): Promise<string>;
   get(token: string): Promise<SessionData | null>;
-  update(token: string, patch: Partial<Pick<SessionData, 'shardId' | 'restaurantId'>>): Promise<void>;
+  update(
+    token: string,
+    patch: Partial<Pick<SessionData, 'shardId' | 'restaurantId' | 'signKey'>>,
+  ): Promise<void>;
   destroy(token: string): Promise<void>;
   destroyAll(accountId: number): Promise<void>;
+  /** 会话的签名密钥：没有就生成一把写回；会话不存在返回 null */
+  ensureSignKey(token: string): Promise<string | null>;
 }
 
 /**
@@ -24,7 +32,7 @@ export function createSessionStore(redis: Redis, ttlSeconds: number): SessionSto
   const key = (hash: string) => `sess:${hash}`;
   const accountKey = (accountId: number) => `sess-acct:${accountId}`;
 
-  return {
+  const store: SessionStore = {
     async create(accountId) {
       const token = newToken();
       const hash = sha256(token);
@@ -33,6 +41,7 @@ export function createSessionStore(redis: Redis, ttlSeconds: number): SessionSto
         shardId: null,
         restaurantId: null,
         createdAt: new Date().toISOString(),
+        signKey: newSignKey(),
       };
       const old = await redis.get(accountKey(accountId));
       const tx = redis
@@ -72,6 +81,16 @@ export function createSessionStore(redis: Redis, ttlSeconds: number): SessionSto
       if ((await redis.get(accountKey(accountId))) === hash) await redis.del(accountKey(accountId));
     },
 
+    async ensureSignKey(token) {
+      const data = await store.get(token);
+      if (!data) return null;
+      if (data.signKey) return data.signKey;
+      const signKey = newSignKey();
+      await store.update(token, { signKey });
+      // 两个请求同时补时以写进去的为准
+      return (await store.get(token))?.signKey ?? null;
+    },
+
     async destroyAll(accountId) {
       const hash = await redis.get(accountKey(accountId));
       const tx = redis.multi().del(accountKey(accountId));
@@ -79,4 +98,5 @@ export function createSessionStore(redis: Redis, ttlSeconds: number): SessionSto
       await tx.exec();
     },
   };
+  return store;
 }

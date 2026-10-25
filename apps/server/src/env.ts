@@ -18,6 +18,8 @@ const envSchema = z.object({
     .transform((v) => (v ? v.replace(/^\./, '') : undefined)),
   COOKIE_SECURE: bool.default('false'),
   TRUST_CF_HEADER: bool.default('false'),
+  /** 防脚本总开关（2026-10-25）：true 时写请求签名只记录、不拦，优先于区服设置；签名出事时改它、重启 api */
+  ANTIBOT_FORCE_LOG: bool.default('false'),
   TURNSTILE_SECRET: z.string().default(''),
   SMTP_URL: z.string().default('smtp://localhost:1025'),
   MAIL_FROM: z.string().default('美味小镇 <noreply@localhost>'),

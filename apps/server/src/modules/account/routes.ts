@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from 'fastify';
 import {
   changeEmailBody,
+  ErrorCode,
   changePasswordBody,
   forgotPasswordBody,
   loginBody,
@@ -12,6 +13,7 @@ import {
 import type { FastifyRequest } from 'fastify';
 import type { AppDeps } from '../../app';
 import { deviceIdOf, userAgentOf } from '../../core/deps';
+import { AppError } from '../../http/errors';
 import { ok } from '../../http/reply';
 import { parse } from '../../http/validate';
 import { clearSessionCookie, requireAccount, setSessionCookie } from '../../security/session';
@@ -58,6 +60,14 @@ export function accountRoutes(svc: AccountService, deps: AppDeps): FastifyPlugin
     r.get('/me', async (req) => {
       const s = requireAccount(req);
       return ok(await svc.me(s.data.accountId, s.data));
+    });
+
+    /** 写请求签名密钥和服务器时间（防脚本 2026-10-25）：网页据此签名、校准时钟 */
+    r.get('/sign-key', async (req) => {
+      const s = requireAccount(req);
+      const key = await deps.sessions.ensureSignKey(s.token);
+      if (!key) throw new AppError(ErrorCode.UNAUTHORIZED, 401);
+      return ok({ key, serverNow: deps.now().toISOString() });
     });
 
     r.get('/profile', async (req) => ok(await svc.profile(requireAccount(req).data.accountId)));

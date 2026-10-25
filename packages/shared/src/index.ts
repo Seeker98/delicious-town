@@ -4,6 +4,7 @@ export * from './formulas';
 export * from './time';
 export * from './zhTw';
 export * from './errors';
+export * from './antibot';
 export * from './envelope';
 export * from './rules/restaurantName';
 export * from './rules/duelJudges';

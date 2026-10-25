@@ -60,7 +60,9 @@ export async function cleanLoginTrace(db: Kysely<DB>, now: Date): Promise<number
   const r = await db.deleteFrom('login_trace').where('last_seen', '<', before).executeTakeFirst();
   // 开放接口调用记录一样只留 30 天
   const o = await db.deleteFrom('open_trace').where('last_seen', '<', before).executeTakeFirst();
-  return Number(r.numDeletedRows) + Number(o.numDeletedRows);
+  // 操作节奏（防脚本 2026-10-25）也只留 30 天
+  const p = await db.deleteFrom('play_rhythm').where('hour', '<', before).executeTakeFirst();
+  return Number(r.numDeletedRows) + Number(o.numDeletedRows) + Number(p.numDeletedRows);
 }
 
 /** 游玩时同一账号、IP、设备多久记一次（秒） */
