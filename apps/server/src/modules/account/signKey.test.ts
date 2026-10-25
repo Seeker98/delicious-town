@@ -1,5 +1,12 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { call, cookieOf, createTestApp, registerUser, testEnvWith, type TestContext } from '../../../test/helpers';
+import {
+  call,
+  cookieOf,
+  createTestApp,
+  registerUser,
+  testEnvWith,
+  type TestContext,
+} from '../../../test/helpers';
 import { testConfig } from '../../../test/config';
 
 let ctx: TestContext;

@@ -20,6 +20,7 @@ const errors: Messages['errors'] = {
     ACCOUNT_BANNED: 'This account has been banned. Contact an admin if you have questions.',
     ACCESS_BANNED: 'Your network or device has been banned. Contact an admin if you have questions.',
     EMAIL_NOT_VERIFIED: 'Please verify your email first',
+    CLIENT_UNVERIFIED: 'Please play in the game web page. If you did, refresh the page and try again.',
     TOKEN_INVALID: 'The link is invalid or has expired. Please request a new one.',
     EMAIL_COOLDOWN: 'Emails are being sent too often. Try again in 1 minute.',
     SHARD_NOT_FOUND: "That server doesn't exist",

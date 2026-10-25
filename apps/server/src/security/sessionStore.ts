@@ -14,7 +14,10 @@ export interface SessionData {
 export interface SessionStore {
   create(accountId: number): Promise<string>;
   get(token: string): Promise<SessionData | null>;
-  update(token: string, patch: Partial<Pick<SessionData, 'shardId' | 'restaurantId' | 'signKey'>>): Promise<void>;
+  update(
+    token: string,
+    patch: Partial<Pick<SessionData, 'shardId' | 'restaurantId' | 'signKey'>>,
+  ): Promise<void>;
   destroy(token: string): Promise<void>;
   destroyAll(accountId: number): Promise<void>;
   /** 会话的签名密钥：没有就生成一把写回；会话不存在返回 null */

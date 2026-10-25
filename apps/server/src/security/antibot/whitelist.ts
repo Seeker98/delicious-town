@@ -18,7 +18,9 @@ export function createWhitelist(db: Kysely<DB>): Whitelist {
   let timer: NodeJS.Timeout | null = null;
 
   const load = async (): Promise<Set<number>> =>
-    new Set((await db.selectFrom('antibot_whitelist').select('account_id').execute()).map((r) => r.account_id));
+    new Set(
+      (await db.selectFrom('antibot_whitelist').select('account_id').execute()).map((r) => r.account_id),
+    );
   const reload = (): Promise<Set<number>> =>
     (loading ??= load()
       .then((s) => (cache = s))

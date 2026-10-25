@@ -16,7 +16,9 @@ const CST = 8 * HOUR;
  * 40 × min(每天有操作的小时数 ÷ 20, 1) + 20 × min(最长连续小时数 ÷ 12, 1)
  * + 20 × (1 − 间隔变异系数，样本不足按 0 分) + 10 × 没看页面的比例 + 10 × 很久没真人操作的比例
  */
-export function rhythmScore(r: Pick<RhythmRow, 'activeHoursPerDay' | 'longestStreakHours' | 'gapCv' | 'noViewShare' | 'idleShare'>): number {
+export function rhythmScore(
+  r: Pick<RhythmRow, 'activeHoursPerDay' | 'longestStreakHours' | 'gapCv' | 'noViewShare' | 'idleShare'>,
+): number {
   const s =
     40 * Math.min(r.activeHoursPerDay / 20, 1) +
     20 * Math.min(r.longestStreakHours / 12, 1) +
@@ -80,7 +82,8 @@ export function createRhythmAdmin(game: Game) {
       const active = hs.filter((h) => h.posts > 0);
       const posts = active.reduce((s, h) => s + h.posts, 0);
       if (posts < MIN_POSTS) continue;
-      const days = new Set(active.map((h) => new Date(h.hour.getTime() + CST).toISOString().slice(0, 10))).size;
+      const days = new Set(active.map((h) => new Date(h.hour.getTime() + CST).toISOString().slice(0, 10)))
+        .size;
       let streak = 0;
       let longest = 0;
       let prev = -Infinity;
@@ -166,15 +169,25 @@ export function createRhythmAdmin(game: Game) {
     await db
       .insertInto('antibot_whitelist')
       .values({ account_id: b.accountId, note: b.note, actor_account_id: actor.accountId })
-      .onConflict((oc) => oc.column('account_id').doUpdateSet({ note: b.note, actor_account_id: actor.accountId }))
+      .onConflict((oc) =>
+        oc.column('account_id').doUpdateSet({ note: b.note, actor_account_id: actor.accountId }),
+      )
       .execute();
-    await writeAudit(db, { actor, action: 'antibot.whitelist', target: `account:${b.accountId}`, detail: { note: b.note } });
+    await writeAudit(db, {
+      actor,
+      action: 'antibot.whitelist',
+      target: `account:${b.accountId}`,
+      detail: { note: b.note },
+    });
     await whitelist.refresh();
     return { ok: true as const };
   }
 
   async function remove(actor: AdminActor, b: { accountId: number }) {
-    const gone = await db.deleteFrom('antibot_whitelist').where('account_id', '=', b.accountId).executeTakeFirst();
+    const gone = await db
+      .deleteFrom('antibot_whitelist')
+      .where('account_id', '=', b.accountId)
+      .executeTakeFirst();
     if (Number(gone.numDeletedRows) > 0)
       await writeAudit(db, { actor, action: 'antibot.unwhitelist', target: `account:${b.accountId}` });
     await whitelist.refresh();

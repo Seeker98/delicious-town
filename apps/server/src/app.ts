@@ -36,6 +36,7 @@ import { createAccessGuard, registerAccessGuard, type AccessGuard } from './secu
 import type { SessionStore } from './security/sessionStore';
 import { ANTIBOT_DEFAULTS, registerAntiBot, type AntibotSettings } from './security/antibot/hook';
 import { createWhitelist, type Whitelist } from './security/antibot/whitelist';
+import { AB_HEADERS } from '@dt/shared';
 import { trackRhythm } from './security/antibot/rhythm';
 
 export interface AppDeps {
@@ -84,6 +85,8 @@ export async function buildApp(
     credentials: true,
     methods: ['GET', 'POST'],
     maxAge: 7200,
+    // 防脚本（2026-10-25）：网页和接口不同域时也要读得到“重新取签名密钥”的响应头
+    exposedHeaders: [AB_HEADERS.resign],
   });
   registerClientIp(app, deps.env.TRUST_CF_HEADER);
   registerErrorHandling(app);

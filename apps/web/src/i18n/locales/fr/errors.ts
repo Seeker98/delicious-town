@@ -19,6 +19,8 @@ const errors: Messages['errors'] = {
     ACCOUNT_BANNED: 'Ce compte a été banni. Contactez un administrateur pour toute question.',
     ACCESS_BANNED:
       'Votre réseau ou votre appareil a été banni. Contactez un administrateur pour toute question.',
+    CLIENT_UNVERIFIED:
+      "Jouez depuis la page web du jeu. Si c'est déjà le cas, actualisez la page et réessayez.",
     EMAIL_NOT_VERIFIED: "Veuillez d'abord vérifier votre e-mail",
     TOKEN_INVALID: 'Le lien est invalide ou a expiré. Demandez-en un nouveau.',
     EMAIL_COOLDOWN: "Trop d'e-mails envoyés. Réessayez dans 1 minute.",

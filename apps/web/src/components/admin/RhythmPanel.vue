@@ -38,7 +38,10 @@ async function load() {
   }
 }
 onMounted(() => void load());
-watch(() => props.shardId, () => void load());
+watch(
+  () => props.shardId,
+  () => void load(),
+);
 
 const pct = (x: number) => `${Math.round(x * 100)}%`;
 /** 只显示没通过的签名结论 */

@@ -84,10 +84,7 @@ return 1
 const uaHash = (ua: string | null) => (ua ? createHash('sha1').update(ua).digest('hex').slice(0, 16) : '');
 
 /** 记一次请求（防脚本 2026-10-25）：请求里不写数据库，只写 Redis */
-export async function recordRhythm(
-  redis: Pick<Redis, 'eval'>,
-  e: RhythmEvent,
-): Promise<void> {
+export async function recordRhythm(redis: Pick<Redis, 'eval'>, e: RhythmEvent): Promise<void> {
   const keys = [...keysOf(hourKey(e.at), e.accountId), `rhl:${e.accountId}`, `rhg:${e.accountId}`];
   await redis.eval(
     SCRIPT,
@@ -107,7 +104,10 @@ export async function recordRhythm(
 
 /** 钩子用的两个回调：不等结果，出错只记日志 */
 export function trackRhythm(redis: Pick<Redis, 'eval'>) {
-  const fire = (req: FastifyRequest, e: Omit<RhythmEvent, 'accountId' | 'route' | 'ua' | 'deviceId' | 'ip'>) => {
+  const fire = (
+    req: FastifyRequest,
+    e: Omit<RhythmEvent, 'accountId' | 'route' | 'ua' | 'deviceId' | 'ip'>,
+  ) => {
     const accountId = req.session?.data.accountId;
     if (!accountId) return;
     void recordRhythm(redis, {
@@ -123,8 +123,17 @@ export function trackRhythm(redis: Pick<Redis, 'eval'>) {
     onRead(req: FastifyRequest): void {
       fire(req, { at: new Date(), method: 'GET', idleMs: 0 });
     },
-    onJudged(req: FastifyRequest, r: { verdict: Verdict; idle: number | null; settings: AntibotSettings }): void {
-      fire(req, { at: new Date(), method: 'POST', verdict: r.verdict, idle: r.idle, idleMs: r.settings.idleMs });
+    onJudged(
+      req: FastifyRequest,
+      r: { verdict: Verdict; idle: number | null; settings: AntibotSettings },
+    ): void {
+      fire(req, {
+        at: new Date(),
+        method: 'POST',
+        verdict: r.verdict,
+        idle: r.idle,
+        idleMs: r.settings.idleMs,
+      });
     },
   };
 }

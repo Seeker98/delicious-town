@@ -1,4 +1,6 @@
 import type { ApiResponse, GameEvent } from '@dt/shared';
+import { AB_HEADERS, ErrorCode } from '@dt/shared';
+import { CLIENT_BUILD, resetSignKey, signHeaders } from './antibot';
 import { markPressBusy } from '../utils/pressBusy';
 import { uuid } from '../utils/uuid';
 import { deviceId } from './device';
@@ -34,16 +36,41 @@ export function createApiClient(
     path: string,
     body?: unknown,
     anonymous = false,
+    retried = false,
   ): Promise<T> {
-    const headers: Record<string, string> = anonymous ? {} : { 'x-device-id': deviceId() };
-    if (method === 'POST') {
-      headers['content-type'] = 'application/json';
-      headers['idempotency-key'] = uuid();
-    }
+    const headers: Record<string, string> = anonymous
+      ? {}
+      : { 'x-device-id': deviceId(), [AB_HEADERS.build]: CLIENT_BUILD };
+    const bodyText = method === 'POST' ? JSON.stringify(body ?? {}) : undefined;
     // 写请求：刚点的按钮标“处理中”（界面第二批）
     const unbusy = method === 'POST' ? markPressBusy() : null;
     try {
-      return await send<T>(method, path, body, anonymous, headers);
+      if (bodyText !== undefined) {
+        headers['content-type'] = 'application/json';
+        const nonce = uuid();
+        headers['idempotency-key'] = nonce;
+        // 防脚本（2026-10-25）：写请求带签名；取不到密钥（没登录）就不带
+        if (!anonymous)
+          Object.assign(
+            headers,
+            await signHeaders(fetchImpl, base, { method: 'POST', path, bodyText, nonce }),
+          );
+      }
+      return await send<T>(method, path, bodyText, anonymous, headers);
+    } catch (e) {
+      // 签名被拒（重新登录换了密钥、页面放太久时钟漂了）：重取密钥、换新随机数重发一次
+      if (
+        !retried &&
+        bodyText !== undefined &&
+        !anonymous &&
+        e instanceof ApiError &&
+        e.code === ErrorCode.CLIENT_UNVERIFIED &&
+        ['bad', 'missing', 'stale'].includes(String(e.params.reason))
+      ) {
+        resetSignKey();
+        return await request<T>(method, path, body, anonymous, true);
+      }
+      throw e;
     } finally {
       unbusy?.();
     }
@@ -52,7 +79,7 @@ export function createApiClient(
   async function send<T>(
     method: 'GET' | 'POST',
     path: string,
-    body: unknown,
+    bodyText: string | undefined,
     anonymous: boolean,
     headers: Record<string, string>,
   ): Promise<T> {
@@ -62,11 +89,13 @@ export function createApiClient(
         method,
         credentials: anonymous ? 'omit' : 'include',
         headers,
-        body: method === 'POST' ? JSON.stringify(body ?? {}) : undefined,
+        body: bodyText,
       });
     } catch {
       throw new ApiError('NETWORK');
     }
+    // 服务器让重新取签名密钥（签名对不上）
+    if (res.headers?.get?.(AB_HEADERS.resign)) resetSignKey();
     let payload: ApiResponse<T>;
     try {
       payload = (await res.json()) as ApiResponse<T>;

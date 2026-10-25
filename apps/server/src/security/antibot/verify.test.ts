@@ -54,7 +54,13 @@ async function request(
 
 describe('写请求签名判定', () => {
   it('合法请求 → ok，带回随机数、空闲时间、环境位、版本号', async () => {
-    expect(await request()).toEqual({ verdict: 'ok', nonce: 'nonce-12345678', idle: 1500, env: 0, build: 'b1234' });
+    expect(await request()).toEqual({
+      verdict: 'ok',
+      nonce: 'nonce-12345678',
+      idle: 1500,
+      env: 0,
+      build: 'b1234',
+    });
   });
 
   it('没版本号或版本号格式不对 → no_build', async () => {

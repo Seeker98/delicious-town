@@ -2,16 +2,24 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createApiClient } from '../api/client';
 import { installPressBusy, resetPressBusy } from './pressBusy';
 
-/** 回应先挂着，手动放行：看请求途中按钮的样子 */
+/** 回应先挂着，手动放行：看请求途中按钮的样子。取签名密钥（防脚本 2026-10-25）直接回“没登录”，写请求照常不签 */
 function pendingFetch() {
-  let release: () => void = () => {};
-  const f = vi.fn(
-    () =>
-      new Promise<Response>((r) => {
-        release = () => r(new Response(JSON.stringify({ ok: true, data: 1, events: [] })));
-      }),
+  let release: (() => void) | null = null;
+  const f = vi.fn((url: string) =>
+    url.endsWith('/api/v1/account/sign-key')
+      ? Promise.resolve(new Response(JSON.stringify({ ok: false, code: 'UNAUTHORIZED' })))
+      : new Promise<Response>((r) => {
+          release = () => r(new Response(JSON.stringify({ ok: true, data: 1, events: [] })));
+        }),
   );
-  return { f, release: () => release() };
+  /** 等写请求真正发出去再放行 */
+  return {
+    f,
+    release: async () => {
+      await vi.waitFor(() => expect(release).not.toBeNull());
+      release!();
+    },
+  };
 }
 
 describe('按钮“处理中”（界面第二批）', () => {
@@ -31,7 +39,7 @@ describe('按钮“处理中”（界面第二批）', () => {
     const { f, release } = pendingFetch();
     const done = createApiClient(f, '').post('/buy');
     expect(btn.getAttribute('aria-busy')).toBe('true');
-    release();
+    await release();
     await done;
     expect(btn.hasAttribute('aria-busy')).toBe(false);
   });
@@ -76,10 +84,10 @@ describe('按钮“处理中”（界面第二批）', () => {
     const p1 = createApiClient(one.f, '').post('/1');
     const two = pendingFetch();
     const p2 = createApiClient(two.f, '').post('/2');
-    one.release();
+    await one.release();
     await p1;
     expect(btn.getAttribute('aria-busy')).toBe('true');
-    two.release();
+    await two.release();
     await p2;
     expect(btn.hasAttribute('aria-busy')).toBe(false);
   });

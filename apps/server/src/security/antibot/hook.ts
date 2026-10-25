@@ -28,7 +28,10 @@ export interface AntibotDeps {
   /** 带会话的读请求调一次（节奏统计用）；出错不影响请求 */
   onRead?(req: FastifyRequest): void;
   /** 每个校验过的写请求调一次（节奏统计用）；出错不影响请求 */
-  onJudged?(req: FastifyRequest, r: { verdict: Verdict; idle: number | null; settings: AntibotSettings }): void;
+  onJudged?(
+    req: FastifyRequest,
+    r: { verdict: Verdict; idle: number | null; settings: AntibotSettings },
+  ): void;
 }
 
 /** 不签、不校验的路由：开放接口、测试接口 */

@@ -45,7 +45,12 @@ beforeAll(async () => {
   // B：两天里每天 3 个小时，一阵阵猛点
   for (const day of [2, 1])
     for (let h = 20; h < 23; h++)
-      rows.push({ account_id: b, hour: new Date(cstMidnight(day).getTime() + h * HOUR), posts: 10, bursts: 8 });
+      rows.push({
+        account_id: b,
+        hour: new Date(cstMidnight(day).getTime() + h * HOUR),
+        posts: 10,
+        bursts: 8,
+      });
   // C：一共只写了 5 次，不列
   rows.push({ account_id: c, hour: start, posts: 5 });
   await db.insertInto('play_rhythm').values(rows).execute();

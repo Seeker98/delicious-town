@@ -32,8 +32,24 @@ describe('操作节奏计数（防脚本 2026-10-25）', () => {
     const id = ++seq;
     const route = '/api/v1/restaurant/oil';
     await recordRhythm(redis, { ...base, accountId: id, at: at(0), method: 'GET', route: '/api/v1/home' });
-    await recordRhythm(redis, { ...base, accountId: id, at: at(1), method: 'POST', route, verdict: 'ok', idle: 500 });
-    await recordRhythm(redis, { ...base, accountId: id, at: at(3), method: 'POST', route, verdict: 'ok', idle: 500 });
+    await recordRhythm(redis, {
+      ...base,
+      accountId: id,
+      at: at(1),
+      method: 'POST',
+      route,
+      verdict: 'ok',
+      idle: 500,
+    });
+    await recordRhythm(redis, {
+      ...base,
+      accountId: id,
+      at: at(3),
+      method: 'POST',
+      route,
+      verdict: 'ok',
+      idle: 500,
+    });
     await recordRhythm(redis, {
       ...base,
       ua: 'UA-2',
@@ -65,7 +81,15 @@ describe('操作节奏计数（防脚本 2026-10-25）', () => {
 
   it('写请求前 5 分钟没有读请求记一次没看页面', async () => {
     const id = ++seq;
-    await recordRhythm(redis, { ...base, accountId: id, at: at(0), method: 'POST', route: '/x', verdict: 'ok', idle: 1 });
+    await recordRhythm(redis, {
+      ...base,
+      accountId: id,
+      at: at(0),
+      method: 'POST',
+      route: '/x',
+      verdict: 'ok',
+      idle: 1,
+    });
     await flushRhythm(db, redis, new Date());
     expect((await row(id))!.no_view).toBe(1);
   });
@@ -73,8 +97,24 @@ describe('操作节奏计数（防脚本 2026-10-25）', () => {
   it('当前小时不汇总；连跑两次不重复累加', async () => {
     const id = ++seq;
     const now = new Date();
-    await recordRhythm(redis, { ...base, accountId: id, at: now, method: 'POST', route: '/x', verdict: 'ok', idle: 1 });
-    await recordRhythm(redis, { ...base, accountId: id, at: at(0), method: 'POST', route: '/x', verdict: 'ok', idle: 1 });
+    await recordRhythm(redis, {
+      ...base,
+      accountId: id,
+      at: now,
+      method: 'POST',
+      route: '/x',
+      verdict: 'ok',
+      idle: 1,
+    });
+    await recordRhythm(redis, {
+      ...base,
+      accountId: id,
+      at: at(0),
+      method: 'POST',
+      route: '/x',
+      verdict: 'ok',
+      idle: 1,
+    });
     await flushRhythm(db, redis, now);
     await flushRhythm(db, redis, now);
     expect((await row(id))!.posts).toBe(1);
@@ -98,7 +138,9 @@ describe('操作节奏计数（防脚本 2026-10-25）', () => {
   });
 
   it('Redis 出错不往外抛（请求照常）', async () => {
-    const broken = { eval: () => Promise.reject(new Error('redis down')) } as unknown as Parameters<typeof trackRhythm>[0];
+    const broken = { eval: () => Promise.reject(new Error('redis down')) } as unknown as Parameters<
+      typeof trackRhythm
+    >[0];
     const warned: unknown[] = [];
     const t = trackRhythm(broken);
     const req = {

@@ -1,3 +1,4 @@
+import { webcrypto } from 'node:crypto';
 import { config } from '@vue/test-utils';
 import { getActivePinia } from 'pinia';
 
@@ -12,3 +13,10 @@ config.global.plugins.push({
     if (pinia) app.use(pinia);
   },
 });
+
+/**
+ * jsdom 的 crypto 没有 subtle（写请求签名要用 HMAC、SHA-256，防脚本 2026-10-25）：换成 Node 自带的 WebCrypto，
+ * 和真浏览器的接口一样
+ */
+if (!globalThis.crypto?.subtle)
+  Object.defineProperty(globalThis, 'crypto', { value: webcrypto, configurable: true });

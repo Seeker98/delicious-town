@@ -1,6 +1,13 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { AB_HEADERS, canonical, hmacSign, sha256Hex } from '@dt/shared';
-import { call, cookieOf, createTestApp, registerUser, testEnvWith, type TestContext } from '../../../test/helpers';
+import {
+  call,
+  cookieOf,
+  createTestApp,
+  registerUser,
+  testEnvWith,
+  type TestContext,
+} from '../../../test/helpers';
 import { ok } from '../../http/reply';
 import type { AntibotMode } from './hook';
 import { flushRhythm } from './rhythm';
@@ -28,8 +35,7 @@ async function signed(
   body: unknown,
   over: { key?: string; env?: number; nonce?: string } = {},
 ): Promise<Record<string, string>> {
-  const key =
-    over.key ?? (await call(ctx.app, 'GET', '/api/v1/account/sign-key', { cookie })).json.data.key;
+  const key = over.key ?? (await call(ctx.app, 'GET', '/api/v1/account/sign-key', { cookie })).json.data.key;
   const f = {
     ts: Date.now(),
     nonce: over.nonce ?? nonce(),
@@ -100,7 +106,8 @@ describe('写请求签名钩子（防脚本 2026-10-25）', () => {
   it('拦截模式：重新登录后用旧密钥签 → 403 bad，并让网页重取密钥', async () => {
     mode = 'enforce';
     const u = await registerUser(ctx.app);
-    const oldKey = (await call(ctx.app, 'GET', '/api/v1/account/sign-key', { cookie: u.cookie })).json.data.key;
+    const oldKey = (await call(ctx.app, 'GET', '/api/v1/account/sign-key', { cookie: u.cookie })).json.data
+      .key;
     const login = await call(ctx.app, 'POST', '/api/v1/account/login', {
       body: { username: u.username, password: 'secret123' },
     });
@@ -135,7 +142,10 @@ describe('写请求签名钩子（防脚本 2026-10-25）', () => {
     expect((await post(u.cookie, '/api/v1/admin/t/act')).status).toBe(200);
     expect((await registerUser(ctx.app)).cookie).toMatch(/^dt_sid=/);
     const w = await registerUser(ctx.app);
-    await ctx.deps.db.insertInto('antibot_whitelist').values({ account_id: w.accountId, note: 't' }).execute();
+    await ctx.deps.db
+      .insertInto('antibot_whitelist')
+      .values({ account_id: w.accountId, note: 't' })
+      .execute();
     await ctx.deps.antibotWhitelist!.refresh();
     expect((await post(w.cookie, '/t/act')).status).toBe(200);
   });
@@ -169,5 +179,15 @@ describe('写请求签名钩子（防脚本 2026-10-25）', () => {
     expect(r.gets).toBeGreaterThanOrEqual(2);
     expect(r.posts).toBe(1);
     expect(r.verdicts).toEqual({ ok: 1 });
+  });
+
+  it('跨域时让网页读得到 x-dt-resign 响应头', async () => {
+    const u = await registerUser(ctx.app);
+    const r = await call(ctx.app, 'POST', '/t/act', {
+      cookie: u.cookie,
+      body: {},
+      headers: { origin: ctx.deps.env.WEB_ORIGIN },
+    });
+    expect(String(r.res.headers['access-control-expose-headers'])).toContain(AB_HEADERS.resign);
   });
 });
