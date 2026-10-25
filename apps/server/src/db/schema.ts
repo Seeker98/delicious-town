@@ -240,6 +240,8 @@ export interface RestaurantDeviceTable {
   goods_id: number;
   placed_at: Ts;
   expires_at: TsNullable;
+  /** 这一轮已经孕育了几份（乾坤通景巨屏 2026-10-25） */
+  breed_done: Default<number>;
 }
 
 export interface WorldStateTable {
