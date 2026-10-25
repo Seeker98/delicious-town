@@ -4,6 +4,9 @@ export default {
   confirm: '确定',
   cancel: '取消',
   close: '关闭',
+  /** 人机验证面板（防脚本 PR②） */
+  captchaTitle: '请先完成人机验证',
+  captchaBody: '系统需要确认是你本人在操作, 完成验证后会自动继续',
   decrease: '减少',
   increase: '增加',
   /** 步进器中间数字框的读屏名字（没传 label 时，backlog P3） */

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { createApiClient } from '../api/client';
+import { createApiClient, setCaptchaHandler } from '../api/client';
 import { installPressBusy, resetPressBusy } from './pressBusy';
 
 /** 回应先挂着，手动放行：看请求途中按钮的样子。取签名密钥（防脚本 2026-10-25）直接回“没登录”，写请求照常不签 */
@@ -90,5 +90,26 @@ describe('按钮“处理中”（界面第二批）', () => {
     await two.release();
     await p2;
     expect(btn.hasAttribute('aria-busy')).toBe(false);
+  });
+
+  it('被要求人机验证、用户关掉验证框：按钮的“处理中”也去掉（防脚本 PR②）', async () => {
+    uninstall = installPressBusy();
+    document.body.innerHTML = '<button class="btn">x</button>';
+    const btn = document.querySelector('button')!;
+    btn.click();
+    const f = vi.fn(async (url: string) =>
+      url.endsWith('/api/v1/account/sign-key')
+        ? new Response(JSON.stringify({ ok: false, code: 'UNAUTHORIZED' }))
+        : new Response(
+            JSON.stringify({ ok: false, code: 'CAPTCHA_REQUIRED', params: { reason: 'missing' } }),
+          ),
+    );
+    setCaptchaHandler(async () => null);
+    try {
+      await expect(createApiClient(f, '').post('/z')).rejects.toMatchObject({ code: 'CAPTCHA_REQUIRED' });
+      expect(btn.hasAttribute('aria-busy')).toBe(false);
+    } finally {
+      setCaptchaHandler(null);
+    }
   });
 });

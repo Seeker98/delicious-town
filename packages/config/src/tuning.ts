@@ -834,6 +834,8 @@ export const tuningSchema = z.object({
       mode: z.enum(['log', 'enforce']),
       skewSec: int.min(10).max(600),
       idleMs: int.min(1000),
+      /** 被要求人机验证的账号多久要再验证一次（分钟，PR②） */
+      captchaEveryMin: int.min(5).max(1440),
     }),
   }),
   redeem: z.object({ failLimit: int.min(1), failWindowSec: int.min(1), batchMax: int.min(1).max(1000) }),

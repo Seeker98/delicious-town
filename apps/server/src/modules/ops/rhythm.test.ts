@@ -112,6 +112,46 @@ describe('后台操作节奏（防脚本 2026-10-25）', () => {
     expect(r.status).toBe(404);
   });
 
+  it('打开人机验证：列表里带到期时间、名单里有它；取消后都没了；写审计；账号不存在 404', async () => {
+    const before = Date.now();
+    const on = await call(ctx.app, 'POST', `${A}/antibot/challenge`, {
+      cookie: admin.cookie,
+      body: { accountId: b, days: 3, note: '像脚本' },
+    });
+    expect(on.status).toBe(200);
+    expect(await ctx.deps.antibotChallenges!.required(b, new Date())).toBe(true);
+    const data = (await list()).json.data;
+    const rb = (data.rows as Array<Record<string, unknown>>).find((r) => r.accountId === b)!;
+    const until = Date.parse(rb.challengeUntil as string);
+    expect(Math.abs(until - (before + 3 * 86_400_000))).toBeLessThan(60_000);
+    // 名单不分区服，别的测试文件也会往里加号：只看 b
+    expect(data.challenges).toEqual(
+      expect.arrayContaining([expect.objectContaining({ accountId: b, note: '像脚本' })]),
+    );
+    const off = await call(ctx.app, 'POST', `${A}/antibot/unchallenge`, {
+      cookie: admin.cookie,
+      body: { accountId: b },
+    });
+    expect(off.status).toBe(200);
+    expect(await ctx.deps.antibotChallenges!.required(b, new Date())).toBe(false);
+    const after = (await list()).json.data;
+    expect((after.challenges as Array<{ accountId: number }>).some((c) => c.accountId === b)).toBe(false);
+    expect(
+      (after.rows as Array<Record<string, unknown>>).find((r) => r.accountId === b)!.challengeUntil,
+    ).toBeNull();
+    const audits = await ctx.deps.db
+      .selectFrom('audit_log')
+      .select('action')
+      .where('target', '=', `account:${b}`)
+      .execute();
+    expect(audits.map((x) => x.action).sort()).toEqual(['antibot.challenge', 'antibot.unchallenge']);
+    const missing = await call(ctx.app, 'POST', `${A}/antibot/challenge`, {
+      cookie: admin.cookie,
+      body: { accountId: 2_000_000_000, days: 1 },
+    });
+    expect(missing.status).toBe(404);
+  });
+
   it('普通玩家看不了', async () => {
     const p = await userWithRole(ctx, 'player');
     expect((await list(p.cookie)).status).toBe(404);

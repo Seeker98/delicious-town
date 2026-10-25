@@ -2,6 +2,7 @@ import { ErrorCode, type RhythmDto, type RhythmRow } from '@dt/shared';
 import { AppError } from '../../http/errors';
 import type { Game } from '../../game';
 import { createWhitelist } from '../../security/antibot/whitelist';
+import { createChallengeList } from '../../security/antibot/challenge';
 import type { AdminActor } from '../admin/access';
 import { writeAudit } from '../admin/audit';
 
@@ -33,6 +34,7 @@ export function rhythmScore(
 export function createRhythmAdmin(game: Game) {
   const db = game.app.db;
   const whitelist = (game.app.antibotWhitelist ??= createWhitelist(db));
+  const challengeList = (game.app.antibotChallenges ??= createChallengeList(db));
 
   async function list(shardId: number): Promise<RhythmDto> {
     const since = new Date(game.deps.now().getTime() - DAYS * 86_400_000);
@@ -133,6 +135,7 @@ export function createRhythmAdmin(game: Game) {
         devices: Math.max(...hs.map((h) => h.devices)),
         lastDevice: null,
         lastIp: null,
+        challengeUntil: null,
       });
     }
     rows.sort((x, y) => Number(x.whitelisted) - Number(y.whitelisted) || y.score - x.score);
@@ -156,8 +159,24 @@ export function createRhythmAdmin(game: Game) {
         r.lastDevice = traces.find((x) => x.account_id === r.accountId && x.device_id)?.device_id ?? null;
       }
     }
+    // 人机验证名单（PR②）：只列没到期的
+    const ch = await db
+      .selectFrom('antibot_challenge as c')
+      .innerJoin('account as a', 'a.id', 'c.account_id')
+      .select(['c.account_id', 'a.username', 'c.note', 'c.until'])
+      .where('c.until', '>', game.deps.now())
+      .orderBy('c.until')
+      .execute();
+    const untilOf = new Map(ch.map((c) => [c.account_id, c.until.toISOString()]));
+    for (const r of top) r.challengeUntil = untilOf.get(r.accountId) ?? null;
     return {
       rows: top,
+      challenges: ch.map((c) => ({
+        accountId: c.account_id,
+        username: c.username,
+        note: c.note,
+        until: c.until.toISOString(),
+      })),
       whitelist: wl.map((w) => ({
         accountId: w.account_id,
         username: w.username,
@@ -202,5 +221,42 @@ export function createRhythmAdmin(game: Game) {
     return { ok: true as const };
   }
 
-  return { list, add, remove };
+  /** 对可疑号打开人机验证（PR②）：从现在起 days 天 */
+  async function challenge(actor: AdminActor, b: { accountId: number; days: 1 | 3 | 7; note: string }) {
+    const exists = await db
+      .selectFrom('account')
+      .select('id')
+      .where('id', '=', b.accountId)
+      .executeTakeFirst();
+    if (!exists) throw new AppError(ErrorCode.NOT_FOUND, 404, { what: 'account', id: b.accountId });
+    const until = new Date(game.deps.now().getTime() + b.days * 86_400_000);
+    await db
+      .insertInto('antibot_challenge')
+      .values({ account_id: b.accountId, until, note: b.note, actor_account_id: actor.accountId })
+      .onConflict((oc) =>
+        oc.column('account_id').doUpdateSet({ until, note: b.note, actor_account_id: actor.accountId }),
+      )
+      .execute();
+    await writeAudit(db, {
+      actor,
+      action: 'antibot.challenge',
+      target: `account:${b.accountId}`,
+      detail: { days: b.days, until: until.toISOString(), note: b.note },
+    });
+    await challengeList.refresh();
+    return { ok: true as const };
+  }
+
+  async function unchallenge(actor: AdminActor, b: { accountId: number }) {
+    const gone = await db
+      .deleteFrom('antibot_challenge')
+      .where('account_id', '=', b.accountId)
+      .executeTakeFirst();
+    if (Number(gone.numDeletedRows) > 0)
+      await writeAudit(db, { actor, action: 'antibot.unchallenge', target: `account:${b.accountId}` });
+    await challengeList.refresh();
+    return { ok: true as const };
+  }
+
+  return { list, add, remove, challenge, unchallenge };
 }

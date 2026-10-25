@@ -519,6 +519,20 @@ const CASES: Case[] = [
     body: () => ({ accountId: ids.accountId }),
     min: 'admin',
   },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/antibot/challenge',
+    url: () => '/api/v1/admin/antibot/challenge',
+    body: () => ({ accountId: ids.accountId, days: 1, note: '权限测试' }),
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/antibot/unchallenge',
+    url: () => '/api/v1/admin/antibot/unchallenge',
+    body: () => ({ accountId: ids.accountId }),
+    min: 'admin',
+  },
   ...(['bar', 'surge', 'multi', 'api', 'rhythm', 'redeem', 'exchange', 'acquire'] as const).map((k) => ({
     method: 'GET' as const,
     route: `/api/v1/admin/suspicious/${k}`,

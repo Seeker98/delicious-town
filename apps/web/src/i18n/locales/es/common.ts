@@ -4,6 +4,9 @@ const common: Messages['common'] = {
   loading: 'Cargando…',
   confirm: 'Aceptar',
   close: 'Cerrar',
+  /** 人机验证面板（防脚本 PR②） */
+  captchaTitle: 'Completa la verificación',
+  captchaBody: 'Necesitamos confirmar que eres tú. Tu acción continuará automáticamente al terminar.',
   cancel: 'Cancelar',
   decrease: 'Disminuir',
   increase: 'Aumentar',

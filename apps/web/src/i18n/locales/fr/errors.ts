@@ -21,6 +21,7 @@ const errors: Messages['errors'] = {
       'Votre réseau ou votre appareil a été banni. Contactez un administrateur pour toute question.',
     CLIENT_UNVERIFIED:
       "Jouez depuis la page web du jeu. Si c'est déjà le cas, actualisez la page et réessayez.",
+    CAPTCHA_REQUIRED: "Effectuez d'abord la vérification, puis réessayez.",
     EMAIL_NOT_VERIFIED: "Veuillez d'abord vérifier votre e-mail",
     TOKEN_INVALID: 'Le lien est invalide ou a expiré. Demandez-en un nouveau.',
     EMAIL_COOLDOWN: "Trop d'e-mails envoyés. Réessayez dans 1 minute.",

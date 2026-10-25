@@ -21,6 +21,26 @@ export function setEventsListener(fn: EventsListener | null): void {
   eventsListener = fn;
 }
 
+type CaptchaHandler = () => Promise<string | null>;
+let captchaHandler: CaptchaHandler | null = null;
+/** 被要求人机验证时怎么拿令牌（App 里接到验证面板上，防脚本 PR②）；返回 null 表示用户关掉了 */
+export function setCaptchaHandler(fn: CaptchaHandler | null): void {
+  captchaHandler = fn;
+}
+/**
+ * 带令牌的重发一个接一个发：令牌只能校验一次，第一个通过后服务器记下“最近验证过”，后面的靠这个标记放行；
+ * 同时发会让后面几个拿着已经用过的令牌再校验、被拒
+ */
+let captchaQueue: Promise<unknown> = Promise.resolve();
+
+/** 一次请求已经为什么重发过 */
+interface Attempt {
+  /** 签名被拒后重发过 */
+  resigned?: boolean;
+  /** 带上的人机验证令牌；有就说明为人机验证重发过 */
+  captcha?: string;
+}
+
 export class ApiError extends Error {
   readonly code: string;
   readonly params: Record<string, unknown>;
@@ -45,11 +65,12 @@ export function createApiClient(
     path: string,
     body?: unknown,
     anonymous = false,
-    retried = false,
+    attempt: Attempt = {},
   ): Promise<T> {
     const headers: Record<string, string> = anonymous
       ? {}
       : { 'x-device-id': deviceId(), [AB_HEADERS.build]: CLIENT_BUILD };
+    if (attempt.captcha) headers[AB_HEADERS.captcha] = attempt.captcha;
     const bodyText = method === 'POST' ? JSON.stringify(body ?? {}) : undefined;
     // 写请求：刚点的按钮标“处理中”（界面第二批）
     const unbusy = method === 'POST' ? markPressBusy() : null;
@@ -71,7 +92,7 @@ export function createApiClient(
     } catch (e) {
       // 签名被拒（重新登录换了密钥、页面放太久时钟漂了）：重取密钥、换新随机数重发一次
       if (
-        !retried &&
+        !attempt.resigned &&
         bodyText !== undefined &&
         !anonymous &&
         e instanceof ApiError &&
@@ -79,7 +100,24 @@ export function createApiClient(
         ['bad', 'missing', 'stale'].includes(String(e.params.reason))
       ) {
         resetSignKey();
-        return await request<T>(method, path, body, anonymous, true);
+        return await request<T>(method, path, body, anonymous, { ...attempt, resigned: true });
+      }
+      // 后台要求人机验证（防脚本 PR②）：弹验证框拿令牌，带上令牌、换新随机数重发一次；用户关掉就按原错误报出
+      if (
+        !attempt.captcha &&
+        bodyText !== undefined &&
+        !anonymous &&
+        captchaHandler &&
+        e instanceof ApiError &&
+        e.code === ErrorCode.CAPTCHA_REQUIRED
+      ) {
+        const token = await captchaHandler();
+        if (!token) throw e;
+        const run = captchaQueue.then(() =>
+          request<T>(method, path, body, anonymous, { ...attempt, captcha: token }),
+        );
+        captchaQueue = run.catch(() => undefined);
+        return await run;
       }
       throw e;
     } finally {

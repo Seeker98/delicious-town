@@ -28,9 +28,11 @@
     "@types/pg": "^8.23.1",
     "@vitejs/plugin-vue": "^6.0.9",
     "@vue/test-utils": "^2.5.1",
+    "javascript-obfuscator": "5.9.0",
     "jsdom": "^26.1.0",
     "opencc-js": "^1.4.2",
     "pg": "^8.23.0",
+    "rollup-plugin-obfuscator": "1.1.0",
     "subset-font": "^2.9.0",
     "vite": "^7.3.6",
     "vue-tsc": "^2.2.12"

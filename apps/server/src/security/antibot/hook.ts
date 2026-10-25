@@ -3,7 +3,9 @@ import type { Redis } from 'ioredis';
 import { AB_HEADERS, ErrorCode } from '@dt/shared';
 import type { Env } from '../../env';
 import { AppError } from '../../http/errors';
+import type { Captcha } from '../../infra/captcha';
 import type { SessionStore } from '../sessionStore';
+import type { ChallengeList } from './challenge';
 import { judge, type Verdict } from './verify';
 import type { Whitelist } from './whitelist';
 
@@ -13,10 +15,17 @@ export interface AntibotSettings {
   mode: AntibotMode;
   skewSec: number;
   idleMs: number;
+  /** 被要求人机验证的账号多久要再验证一次（分钟，PR②） */
+  captchaEveryMin: number;
 }
 
 /** 会话还没选区服时按这个（只记录） */
-export const ANTIBOT_DEFAULTS: AntibotSettings = { mode: 'log', skewSec: 120, idleMs: 60000 };
+export const ANTIBOT_DEFAULTS: AntibotSettings = {
+  mode: 'log',
+  skewSec: 120,
+  idleMs: 60000,
+  captchaEveryMin: 60,
+};
 
 export interface AntibotDeps {
   redis: Redis;
@@ -24,6 +33,9 @@ export interface AntibotDeps {
   now: () => Date;
   whitelist: Whitelist;
   sessions: SessionStore;
+  /** 人机验证名单（PR②） */
+  challenges: ChallengeList;
+  captcha: Captcha;
   settingsFor(shardId: number | null): Promise<AntibotSettings>;
   /** 带会话的读请求调一次（节奏统计用）；出错不影响请求 */
   onRead?(req: FastifyRequest): void;
@@ -37,6 +49,8 @@ export interface AntibotDeps {
 /** 不签、不校验的路由：开放接口、测试接口 */
 const SKIP = ['/api/v1/open/', '/api/v1/test/'];
 const ADMIN = '/api/v1/admin/';
+/** 账号接口（登录、注销、改密码）不要求人机验证，免得把人锁在外面 */
+const ACCOUNT = '/api/v1/account/';
 
 /**
  * 游戏接口防脚本（设计 2026-10-25）：带登录会话的写请求校验签名。
@@ -44,7 +58,29 @@ const ADMIN = '/api/v1/admin/';
  * 只记录模式、后台接口、白名单、环境变量总开关都只记录；拦截时只让这一下操作失败
  */
 export function registerAntiBot(app: FastifyInstance, d: AntibotDeps): void {
-  app.addHook('onClose', async () => d.whitelist.close());
+  app.addHook('onClose', async () => {
+    d.whitelist.close();
+    d.challenges.close();
+  });
+
+  /**
+   * 人机验证（PR②，设计第 6 节）：后台点名的账号，写请求每隔 captchaEveryMin 分钟要过一次 Turnstile。
+   * 和只记录 / 拦截模式无关；总开关、后台接口、账号接口、白名单照样放行。没过只让这一下失败
+   */
+  async function captchaGate(req: FastifyRequest, accountId: number, route: string, s: AntibotSettings) {
+    if (d.env.ANTIBOT_FORCE_LOG || route.startsWith(ADMIN) || route.startsWith(ACCOUNT)) return;
+    if (!(await d.challenges.required(accountId, d.now()))) return;
+    if (await d.whitelist.has(accountId)) return;
+    const passed = `abc:${accountId}`;
+    if (await d.redis.exists(passed)) return;
+    const raw = req.headers[AB_HEADERS.captcha];
+    const token = typeof raw === 'string' && raw !== '' ? raw : null;
+    if (!token) throw new AppError(ErrorCode.CAPTCHA_REQUIRED, 403, { reason: 'missing' });
+    const ok = await d.captcha.verify(token, req.clientIp).catch(() => false);
+    if (!ok) throw new AppError(ErrorCode.CAPTCHA_REQUIRED, 403, { reason: 'failed' });
+    await d.redis.set(passed, '1', 'EX', s.captchaEveryMin * 60);
+  }
+
   app.addHook('preHandler', async (req, reply) => {
     if (!req.session) return;
     // 按匹配到的路由判断，不看原始 url（和封禁名单一样，防 /%61pi/... 这种写法）
@@ -61,6 +97,7 @@ export function registerAntiBot(app: FastifyInstance, d: AntibotDeps): void {
     if (req.method !== 'POST') return;
     const { accountId, shardId } = req.session.data;
     const settings = await d.settingsFor(shardId);
+    await captchaGate(req, accountId, route, settings);
     const r = await judge({
       headers: req.headers,
       method: req.method,

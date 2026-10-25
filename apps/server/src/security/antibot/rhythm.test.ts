@@ -12,7 +12,13 @@ afterAll(async () => {
 });
 
 let seq = 700000 + Math.floor(Math.random() * 90000);
-const HOUR = new Date('2026-01-01T05:00:00Z');
+/**
+ * 用很远的将来的整点：别的测试文件（hook.test）汇总时用“现在 + 1 小时”，会把所有更早的小时一并拿走；
+ * 将来的小时它们碰不到，这个文件的计数不会被半路分走（共用一个测试 Redis 和库）
+ */
+const HOUR = new Date('2099-01-01T05:00:00Z');
+/** 汇总时的“现在”：HOUR 已经结束 */
+const AFTER = new Date(HOUR.getTime() + 2 * 3_600_000);
 const at = (sec: number) => new Date(HOUR.getTime() + sec * 1000);
 const base = { idleMs: 60000, ua: 'UA-1', deviceId: 'dev-11111111', ip: '10.0.0.1' };
 const row = (accountId: number, hour = HOUR) =>
@@ -60,7 +66,7 @@ describe('操作节奏计数（防脚本 2026-10-25）', () => {
       verdict: 'missing',
       idle: 90000,
     });
-    await flushRhythm(db, redis, new Date());
+    await flushRhythm(db, redis, AFTER);
     const r = await row(id);
     expect(r).toMatchObject({
       gets: 1,
@@ -90,13 +96,13 @@ describe('操作节奏计数（防脚本 2026-10-25）', () => {
       verdict: 'ok',
       idle: 1,
     });
-    await flushRhythm(db, redis, new Date());
+    await flushRhythm(db, redis, AFTER);
     expect((await row(id))!.no_view).toBe(1);
   });
 
   it('当前小时不汇总；连跑两次不重复累加', async () => {
     const id = ++seq;
-    const now = new Date();
+    const now = AFTER;
     await recordRhythm(redis, {
       ...base,
       accountId: id,
@@ -152,7 +158,11 @@ describe('操作节奏计数（防脚本 2026-10-25）', () => {
     } as unknown as Parameters<typeof t.onRead>[0];
     expect(() => t.onRead(req)).not.toThrow();
     expect(() =>
-      t.onJudged(req, { verdict: 'ok', idle: 1, settings: { mode: 'log', skewSec: 120, idleMs: 60000 } }),
+      t.onJudged(req, {
+        verdict: 'ok',
+        idle: 1,
+        settings: { mode: 'log', skewSec: 120, idleMs: 60000, captchaEveryMin: 60 },
+      }),
     ).not.toThrow();
     await new Promise((r) => setTimeout(r, 20));
     expect(warned).toHaveLength(2);

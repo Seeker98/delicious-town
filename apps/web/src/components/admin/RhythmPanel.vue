@@ -65,6 +65,16 @@ async function white(r: RhythmRow) {
   if (note === undefined) return;
   await run(() => adminApi.antibotWhitelist({ accountId: r.accountId, note }));
 }
+/** 要求人机验证（PR②）：只认 1、3、7 天，别的输入不提交 */
+async function challenge(r: RhythmRow) {
+  const raw = window.prompt(`要求 ${r.username} 做人机验证, 持续几天（1、3、7）`)?.trim();
+  const days = Number(raw);
+  if (days !== 1 && days !== 3 && days !== 7) return;
+  await run(() => adminApi.antibotChallenge({ accountId: r.accountId, days, note: '' }));
+}
+async function unchallenge(accountId: number) {
+  await run(() => adminApi.antibotUnchallenge({ accountId }));
+}
 async function unwhite(accountId: number) {
   await run(() => adminApi.antibotUnwhitelist({ accountId }));
 }
@@ -165,7 +175,72 @@ async function run(fn: () => Promise<unknown>) {
                 >
                   加白名单
                 </button>
+                <button
+                  v-if="r.challengeUntil"
+                  type="button"
+                  class="dt-adm-btn is-t is-sm"
+                  :disabled="busy"
+                  :title="`验证到 ${adminShort(r.challengeUntil)}`"
+                  :data-testid="`rhythm-unchallenge-${r.accountId}`"
+                  @click="unchallenge(r.accountId)"
+                >
+                  取消验证
+                </button>
+                <button
+                  v-else
+                  type="button"
+                  class="dt-adm-btn is-t is-sm"
+                  :disabled="busy"
+                  :data-testid="`rhythm-challenge-${r.accountId}`"
+                  @click="challenge(r)"
+                >
+                  要求人机验证
+                </button>
               </template>
+              <span v-if="r.challengeUntil" class="dt-adm-mu dt-adm-small"
+                >验证到 {{ adminShort(r.challengeUntil) }}</span
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </AdmBox>
+  <AdmBox
+    title="人机验证名单"
+    sub="后台点名的号: 到期前写操作每隔一段时间要过一次人机验证（间隔见区服设置 ops.antibot.captchaEveryMin）"
+    flush
+  >
+    <AdmEmpty v-if="!data || data.challenges.length === 0" title="名单是空的" />
+    <div v-else class="dt-adm-scroll">
+      <table class="dt-adm-table">
+        <thead>
+          <tr>
+            <th>账号</th>
+            <th>备注</th>
+            <th>验证到</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="c in data.challenges" :key="c.accountId" data-testid="rhythm-ch-row">
+            <td>
+              <RouterLink :to="`/admin/players/${c.accountId}`">{{ c.username }}</RouterLink>
+              <span class="dt-adm-mu">（#{{ c.accountId }}）</span>
+            </td>
+            <td>{{ c.note || '–' }}</td>
+            <td class="dt-adm-mu nowrap">{{ adminShort(c.until) }}</td>
+            <td>
+              <button
+                v-if="isAdmin"
+                type="button"
+                class="dt-adm-btn is-t is-sm"
+                :disabled="busy"
+                :data-testid="`rhythm-ch-remove-${c.accountId}`"
+                @click="unchallenge(c.accountId)"
+              >
+                取消验证
+              </button>
             </td>
           </tr>
         </tbody>

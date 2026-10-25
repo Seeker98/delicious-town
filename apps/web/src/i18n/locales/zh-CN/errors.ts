@@ -25,6 +25,7 @@ export default {
     ACCESS_BANNED: '你所在的网络或设备已被封禁, 如有疑问请联系管理员',
     EMAIL_NOT_VERIFIED: '请先验证邮箱',
     CLIENT_UNVERIFIED: '请在游戏网页里操作; 如果你就是在网页里点的, 请刷新页面后再试',
+    CAPTCHA_REQUIRED: '需要先完成人机验证, 请重试',
     TOKEN_INVALID: '链接无效或已过期, 请重新获取',
     EMAIL_COOLDOWN: '邮件发送太频繁, 请 1 分钟后再试',
     SHARD_NOT_FOUND: '区服不存在',

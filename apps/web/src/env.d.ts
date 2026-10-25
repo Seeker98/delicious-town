@@ -16,7 +16,10 @@ interface ImportMeta {
 
 interface Window {
   turnstile?: {
-    render(el: HTMLElement, opts: { sitekey: string; callback: (token: string) => void }): string;
+    render(
+      el: HTMLElement,
+      opts: { sitekey: string; callback: (token: string) => void; 'error-callback'?: () => void },
+    ): string;
     reset(widgetId: string): void;
   };
 }

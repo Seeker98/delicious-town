@@ -12,6 +12,8 @@ export const AB_HEADERS = {
   build: 'x-dt-client',
   /** 服务器回这个头：网页清掉缓存的签名密钥，下次重新取 */
   resign: 'x-dt-resign',
+  /** 被要求人机验证的账号（PR②）：Cloudflare Turnstile 令牌 */
+  captcha: 'x-dt-captcha',
 } as const;
 
 /** 环境检查的位标记 */
