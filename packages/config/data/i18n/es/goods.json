@@ -3034,5 +3034,9 @@
   "30709": {
     "name": "Gu Kaizhi (atribuido): La ninfa del río Luo, biombo bordado de doble cara",
     "desc": "Grácil como un cisne sobresaltado, ágil como un dragón que nada. Bordado a doble cara en dos colores al estilo de Suzhou, un lado muestra a la ninfa del Luo en todo su esplendor para recibir a clientes de todas partes; el otro es un refugio tranquilo e íntimo donde hasta los jóvenes nobles más exigentes se sienten a gusto. Se coloca en el hueco del biombo y dura 24 horas."
+  },
+  "30710": {
+    "name": "«Ríos y montañas · Las mil maravillas del oficio celestial»: biombo panorámico del universo",
+    "desc": "No es solo un cuadro: es un universo entero. Dentro de este antiquísimo biombo que va del suelo al cielo, el sol y la luna giran solos y las estaciones cobran vida, y cada dos horas sus montes y ríos dan a luz un ingrediente raro, difícil de hallar en el mundo de los mortales. Quien cruza la puerta siente que entra en diez mil leguas de paisaje pintado, amplio aunque el comedor esté lleno; y hasta los magnates más exigentes aceptan de buen grado un rincón junto al biombo y se quedan toda la noche. Se puede poner en el escenario o en el biombo; solo uno por restaurante a la vez; dura 24 horas: asistencia +16 %, límite blando de asistencia +14 %, exigencia +14 %, límite blando de exigencia +12 %, monedas +50 %, EXP +25 %, oro de especialidad +25 %. Cada 2 horas recibes 1 ingrediente raro que le falta a una receta que aún no has aprendido en tu calle (hasta nivel 5; si no falta nada, uno raro de nivel 5 al azar), 12 en total, directo a tu despensa."
   }
 }

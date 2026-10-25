@@ -21,6 +21,7 @@ import { foodWeights } from './foodSupply';
 import { ACH_PERFECT_ICON, buildAchievements, rawAchLine, rawTrophy } from './achievements';
 import {
   ART_DEVICE_TYPES,
+  ART_BREED_KEYS,
   ART_EFFECT_KEYS,
   FUND_MEDALS,
   GOODS,
@@ -353,7 +354,8 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     // 主表里手写的几类定义，原来各自文件的格式检查（质量期第 ⑦ 批）
     if (m.needStar !== undefined && m.src !== 'poster' && m.src !== 'art')
       errors.push(`goods ${m.id} needStar only for posters and art`);
-    // 艺术品（乐台、屏风，2026-10-17）：设施、摆在乐台(7)/屏风(8)/任一(9)，只加上座率、挑剔率和两个软上限
+    // 艺术品（乐台、屏风，2026-10-17）：设施、摆在乐台(7)/屏风(8)/任一(9)，只加上座率、挑剔率和两个软上限；
+    // 乾坤通景巨屏（2026-10-25）起还能加银币、经验、特色菜金牌，带孕育参数
     if (m.src === 'art') {
       const v = (m.value ?? {}) as Record<string, unknown>;
       if (m.type !== GOODS_TYPE.device) errors.push(`goods ${m.id} art must be a device`);
@@ -363,9 +365,16 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
         errors.push(`goods ${m.id} art value time must be an integer >= 1`);
       for (const [k, x] of Object.entries(v)) {
         if (k === 'time') continue;
-        if (!ART_EFFECT_KEYS.includes(k)) errors.push(`goods ${m.id} art value key ${k} not allowed`);
+        if (ART_BREED_KEYS.includes(k)) {
+          if (typeof x !== 'number' || !Number.isInteger(x) || x < 1)
+            errors.push(`goods ${m.id} art value ${k} must be a positive integer`);
+        } else if (!ART_EFFECT_KEYS.includes(k)) errors.push(`goods ${m.id} art value key ${k} not allowed`);
         else if (typeof x !== 'number' || x <= 0) errors.push(`goods ${m.id} art value ${k} must be > 0`);
       }
+      // 孕育参数（乾坤通景巨屏 2026-10-25）四个要么都有、要么都没有
+      const breedKeys = ART_BREED_KEYS.filter((k) => k in v);
+      if (breedKeys.length > 0 && breedKeys.length < ART_BREED_KEYS.length)
+        errors.push(`goods ${m.id} art breed needs all of ${ART_BREED_KEYS.join(', ')}`);
     }
     if (m.src === 'poster') {
       const v = (m.value ?? {}) as Record<string, unknown>;
