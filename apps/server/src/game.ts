@@ -65,6 +65,7 @@ import { registerActivityHandlers } from './modules/activity/handler';
 import { activityJobs } from './modules/activity/settle';
 import { exchangeJobs } from './modules/exchange/jobs';
 import { futuresJobs } from './modules/futures/deliver';
+import { breedJobs } from './modules/growth/breed';
 import { predictJobs } from './modules/predict/jobs';
 import { dailyJobs } from './modules/daily/generate';
 import { registerTaskHandlers } from './modules/task/handler';
@@ -159,6 +160,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...activityJobs(deps));
   jobs.push(...exchangeJobs(deps));
   jobs.push(...futuresJobs(deps));
+  jobs.push(...breedJobs(deps));
   jobs.push(...bulkJobs(deps));
   jobs.push(...wishTreeJobs(deps));
   jobs.push(...predictJobs(deps));

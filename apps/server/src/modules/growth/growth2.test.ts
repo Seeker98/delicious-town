@@ -147,6 +147,56 @@ describe('艺术品设施（乐台、屏风，2026-10-17）', () => {
     expect(await goodsNum(t, ctx.restaurantId, record)).toBe(0);
     t.clock.set(new Date());
   });
+
+  const SCROLL = 30710;
+
+  it('乾坤通景巨屏：乐台、屏风都能摆，全店一件；加成里有银币、经验、金牌，没有孕育参数', async () => {
+    const ctx = await newRestaurant(t, { patch: { star_level: 1 }, goods: { [SCROLL]: 3 } });
+    await g().placeDevice(ctx, { slot: SCREEN, goodsId: SCROLL });
+    await expect(g().placeDevice(ctx, { slot: STAGE, goodsId: SCROLL })).rejects.toMatchObject({
+      params: { reason: 'art_in_use', slot: SCREEN },
+    });
+    const agg = await getEffectAgg(
+      t.db,
+      ctx.restaurantId,
+      t.clock.now,
+      config,
+      await t.game.deps.shards.settings(ctx.shardId),
+    );
+    expect(agg.coinRate).toBeCloseTo(0.5);
+    expect(agg.expRate).toBeCloseTo(0.25);
+    expect(agg.mcGoldRate).toBeCloseTo(0.25);
+    expect(agg.atRate).toBeCloseTo(0.16);
+    expect(agg.breedTimes).toBeUndefined();
+    t.clock.set(new Date(Date.now() + 30 * 3600_000));
+    await g().placeDevice(ctx, { slot: STAGE, goodsId: SCROLL });
+    t.clock.set(new Date());
+  });
+
+  it('乾坤通景巨屏：覆盖位置前先补发已到点的份数，新的一轮从 0 开始', async () => {
+    const painting = gid('葛饰北斋《神奈川冲浪里》浮世绘屏');
+    const ctx = await newRestaurant(t, { patch: { star_level: 2 }, goods: { [SCROLL]: 1, [painting]: 1 } });
+    const start = new Date('2026-10-25T00:00:00Z');
+    t.clock.set(start);
+    await g().placeDevice(ctx, { slot: SCREEN, goodsId: SCROLL });
+    t.clock.set(new Date(start.getTime() + (4 * 60 + 10) * 60_000));
+    await g().placeDevice(ctx, { slot: SCREEN, goodsId: painting });
+    const logs = await t.db
+      .selectFrom('rest_log')
+      .select('id')
+      .where('rest_id', '=', ctx.restaurantId)
+      .where('type', '=', 'device.breed')
+      .execute();
+    expect(logs).toHaveLength(2);
+    const dev = await t.db
+      .selectFrom('restaurant_device')
+      .select(['goods_id', 'breed_done'])
+      .where('rest_id', '=', ctx.restaurantId)
+      .where('slot', '=', SCREEN)
+      .executeTakeFirstOrThrow();
+    expect(dev).toEqual({ goods_id: painting, breed_done: 0 });
+    t.clock.set(new Date());
+  });
 });
 
 describe('改名（规格书 02 §2.8）', () => {

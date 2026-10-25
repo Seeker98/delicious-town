@@ -1,7 +1,9 @@
 import { artBreedOf, type ArtBreed, type GameConfig } from '@dt/config';
 import { buildPool, pickWeighted, type Rng } from '@dt/shared';
 import { needMapOf } from '../../core/scarcity';
-import { restLog, type Op } from '../../core/op';
+import type { GameDeps } from '../../core/deps';
+import type { PeriodicJob } from '../../core/jobs';
+import { restLog, runSystemOp, type Op } from '../../core/op';
 import { addFoods, foodsMap } from '../cupboard/foods';
 import { gradeOf } from '../cookbook/rules';
 import { levelsOf } from '../takeaway/common';
@@ -110,4 +112,82 @@ export async function grantBreed(op: Op, row: BreedRow): Promise<number> {
     .where('placed_at', '=', row.placed_at)
     .execute();
   return due - row.breed_done;
+}
+
+type Log = { error(obj: object, msg: string): void };
+const NO_LOG: Log = { error: () => {} };
+/** 一轮最多处理几个位置（多出的下一分钟接着处理） */
+const BATCH = 500;
+
+/**
+ * 每分钟补发孕育（照期货交割）：找本区服摆着孕育道具、还有到点份数没发的位置，每家店一个事务；
+ * 事务里锁住这一行重读，道具和摆放时间都没变才发。某家店失败只记日志，下一分钟重试
+ */
+export async function deliverBreeds(
+  d: GameDeps,
+  shardId: number,
+  now: Date,
+  log: Log = NO_LOG,
+): Promise<{ granted: number; failed: number }> {
+  const breeds = new Map<number, ArtBreed>();
+  for (const g of d.config.goods.values()) {
+    const b = artBreedOf(g.effects);
+    if (b) breeds.set(g.id, b);
+  }
+  const total = { granted: 0, failed: 0 };
+  if (breeds.size === 0) return total;
+  const rows = await d.db
+    .selectFrom('restaurant_device as d')
+    .innerJoin('restaurant as r', 'r.id', 'd.rest_id')
+    .select(['d.rest_id', 'd.slot', 'd.goods_id', 'd.placed_at', 'd.expires_at', 'd.breed_done'])
+    .where('r.shard_id', '=', shardId)
+    .where('d.goods_id', 'in', [...breeds.keys()])
+    .where('d.breed_done', '<', Math.max(...[...breeds.values()].map((b) => b.times)))
+    .orderBy('d.placed_at')
+    .execute();
+  const due = rows
+    .filter(
+      (r) =>
+        breedDue({ placedAt: r.placed_at, expiresAt: r.expires_at, now, breed: breeds.get(r.goods_id)! }) >
+        r.breed_done,
+    )
+    .slice(0, BATCH);
+  const byRest = new Map<number, typeof due>();
+  for (const r of due) byRest.set(r.rest_id, [...(byRest.get(r.rest_id) ?? []), r]);
+  for (const [restId, list] of byRest) {
+    try {
+      total.granted += await runSystemOp(d, shardId, restId, { source: 'art.breed', now }, async (op) => {
+        let n = 0;
+        for (const seen of list) {
+          const row = await op.tx
+            .selectFrom('restaurant_device')
+            .select(['slot', 'goods_id', 'placed_at', 'expires_at', 'breed_done'])
+            .where('rest_id', '=', restId)
+            .where('slot', '=', seen.slot)
+            .forUpdate()
+            .executeTakeFirst();
+          if (!row || row.goods_id !== seen.goods_id || row.placed_at.getTime() !== seen.placed_at.getTime())
+            continue;
+          n += await grantBreed(op, row);
+        }
+        return n;
+      });
+    } catch (err) {
+      log.error({ err, shardId, restId }, 'art breed failed');
+      total.failed++;
+    }
+  }
+  return total;
+}
+
+/** 每分钟一次；挂在 restaurant 上 */
+export function breedJobs(d: GameDeps): PeriodicJob[] {
+  return [
+    {
+      name: 'art-breed',
+      feature: 'restaurant',
+      period: (now) => now.toISOString().slice(0, 16),
+      run: ({ shardId, now, log }) => deliverBreeds(d, shardId, now, log),
+    },
+  ];
 }

@@ -4,7 +4,7 @@ import { seededRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import { runSystemOp } from '../../core/op';
-import { breedDue, breedNeed, grantBreed, pickBreedFoods } from './breed';
+import { breedDue, breedJobs, breedNeed, deliverBreeds, grantBreed, pickBreedFoods } from './breed';
 
 const config = testConfig();
 const ART = 30710;
@@ -128,5 +128,92 @@ describe('乾坤通景巨屏孕育：缺料清单和发放', () => {
       grantBreed(op, { ...row, breed_done: 2 }),
     );
     expect(again).toBe(0);
+  });
+});
+
+describe('乾坤通景巨屏孕育：每分钟任务', () => {
+  /** 在屏风位插一件巨屏：placedAgo 小时前摆的，24 小时后到期 */
+  async function placed(placedAgo: number, patch: Record<string, unknown> = {}) {
+    const ctx = await newRestaurant(t, { patch: { star_level: 1, ...patch } });
+    const placedAt = new Date(t.clock.now.getTime() - placedAgo * HOUR);
+    await t.db
+      .insertInto('restaurant_device')
+      .values({
+        rest_id: ctx.restaurantId,
+        slot: 11,
+        goods_id: ART,
+        placed_at: placedAt,
+        expires_at: new Date(placedAt.getTime() + 24 * HOUR),
+      })
+      .execute();
+    return ctx;
+  }
+  const done = (restId: number) =>
+    t.db
+      .selectFrom('restaurant_device')
+      .select('breed_done')
+      .where('rest_id', '=', restId)
+      .where('slot', '=', 11)
+      .executeTakeFirstOrThrow()
+      .then((r) => r.breed_done);
+  const lastFood = (restId: number) =>
+    t.db
+      .selectFrom('rest_log')
+      .select('params')
+      .where('rest_id', '=', restId)
+      .where('type', '=', 'device.breed')
+      .orderBy('id', 'desc')
+      .executeTakeFirstOrThrow()
+      .then((r) => (r.params as { foodsId: number }).foodsId);
+
+  it('停了几小时再跑一次补齐，不重复；到 24 小时给满 12 份为止', async () => {
+    const ctx = await placed(7);
+    expect((await deliverBreeds(t.game.deps, ctx.shardId, t.clock.now)).granted).toBe(3);
+    expect((await deliverBreeds(t.game.deps, ctx.shardId, t.clock.now)).granted).toBe(0);
+    await deliverBreeds(t.game.deps, ctx.shardId, new Date(t.clock.now.getTime() + 30 * HOUR));
+    expect(await done(ctx.restaurantId)).toBe(12);
+  });
+
+  it('换了街道按新街道挑', async () => {
+    const ctx = await placed(2);
+    await deliverBreeds(t.game.deps, ctx.shardId, t.clock.now);
+    const [street] = [...config.cookbookIndex.idsByStreet].find(([s]) => s !== 0)!;
+    await t.db
+      .updateTable('restaurant')
+      .set({ street_id: street })
+      .where('id', '=', ctx.restaurantId)
+      .execute();
+    const later = new Date(t.clock.now.getTime() + 2 * HOUR);
+    expect((await deliverBreeds(t.game.deps, ctx.shardId, later)).granted).toBe(1);
+    const need = await runSystemOp(
+      t.game.deps,
+      ctx.shardId,
+      ctx.restaurantId,
+      { source: 't', now: later },
+      breedNeed,
+    );
+    const got = await lastFood(ctx.restaurantId);
+    expect(need.has(got) || FALLBACK.includes(got)).toBe(true);
+    const f = config.foods.get(got)!;
+    expect(f.level <= 5 && f.odds <= 65).toBe(true);
+  });
+
+  it('橱柜满了进冰箱，不报错', async () => {
+    const ctx = await placed(2, { cupboard_num: 0 });
+    const r = await deliverBreeds(t.game.deps, ctx.shardId, t.clock.now);
+    expect(r).toEqual({ granted: 1, failed: 0 });
+    const row = await t.db
+      .selectFrom('cupboard_food')
+      .select(['num', 'fridge_num'])
+      .where('rest_id', '=', ctx.restaurantId)
+      .where('foods_id', '=', await lastFood(ctx.restaurantId))
+      .executeTakeFirstOrThrow();
+    expect(row).toEqual({ num: 0, fridge_num: 1 });
+  });
+
+  it('任务登记：art-breed 每分钟一次，挂在 restaurant', () => {
+    const [job] = breedJobs(t.game.deps);
+    expect(job).toMatchObject({ name: 'art-breed', feature: 'restaurant' });
+    expect(job!.period(new Date('2026-10-10T04:05:30Z'), config.tuning as never)).toBe('2026-10-10T04:05');
   });
 });

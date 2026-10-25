@@ -1,4 +1,4 @@
-import { artFits, deviceHours, DEVICE_TYPE, GOODS_TYPE } from '@dt/config';
+import { artEffectsOf, artFits, deviceHours, DEVICE_TYPE, GOODS_TYPE } from '@dt/config';
 import { emitAction } from '../../core/action';
 import { invalidState, notEnough, requirement } from '../../core/errors';
 import { invalidateAgg, opAgg } from '../../core/luck';
@@ -6,6 +6,7 @@ import { restLog, type Op } from '../../core/op';
 import { upsertEffectSource } from '../effects/service';
 import { slotUnlocked } from '../restaurant/reads';
 import { consumeGoods, countGoods } from '../store/goods';
+import { grantBreed } from './breed';
 
 /** 摆放设施（规格书 02 §2.6）：设施消耗 1 个并按时长计时（× 荣誉延时），牌匾不消耗且永久；可以直接替换旧设施 */
 export async function placeDevice(
@@ -54,16 +55,33 @@ export async function placeDevice(
     hours === null
       ? null
       : new Date(op.now.getTime() + Math.round(hours * (1 + (agg.extendTimeRate ?? 0)) * 3600_000));
+  // 孕育道具（乾坤通景巨屏 2026-10-25）：覆盖这个位置前，先补发旧的一轮已经到点、后台任务还没来得及发的份数
+  const old = await op.tx
+    .selectFrom('restaurant_device')
+    .select(['slot', 'goods_id', 'placed_at', 'expires_at', 'breed_done'])
+    .where('rest_id', '=', op.rest.id)
+    .where('slot', '=', slot)
+    .forUpdate()
+    .executeTakeFirst();
+  if (old) await grantBreed(op, old);
   await op.tx
     .insertInto('restaurant_device')
-    .values({ rest_id: op.rest.id, slot, goods_id: goodsId, placed_at: op.now, expires_at: expiresAt })
+    .values({
+      rest_id: op.rest.id,
+      slot,
+      goods_id: goodsId,
+      placed_at: op.now,
+      expires_at: expiresAt,
+      breed_done: 0,
+    })
     .onConflict((oc) =>
       oc
         .columns(['rest_id', 'slot'])
-        .doUpdateSet({ goods_id: goodsId, placed_at: op.now, expires_at: expiresAt }),
+        .doUpdateSet({ goods_id: goodsId, placed_at: op.now, expires_at: expiresAt, breed_done: 0 }),
     )
     .execute();
-  const { time: _time, ...effects } = g.effects;
+  // 孕育参数不进加成
+  const effects = artEffectsOf(g.effects);
   await upsertEffectSource(op.tx, op.rest.id, { sourceType: 'device', sourceId: slot, effects, expiresAt });
   invalidateAgg(op);
   restLog(op, 'device.place', { slot, goodsId });
