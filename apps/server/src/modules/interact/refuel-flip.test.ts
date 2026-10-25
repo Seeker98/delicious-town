@@ -145,3 +145,17 @@ describe('翻橱（规格书 05 §5.7）', () => {
     });
   });
 });
+
+describe('非好友读不到对方的翻柜信息（安全审计 L1 2026-10-25）', () => {
+  it('同区服但不是好友 → NOT_FRIEND，和翻柜本身一致；蟹老板的店照常能看', async () => {
+    const [a, b] = await newPair(t);
+    await expect(svc().flip.slots(a, b.restaurantId)).rejects.toMatchObject({ code: 'NOT_FRIEND' });
+    const npc = (await ensureNpc(t.db, config, config.tuning.friend.npc, a.shardId, seededRng(1))).id;
+    await t.db
+      .deleteFrom('friend')
+      .where('rest_id', '=', a.restaurantId)
+      .where('friend_id', '=', npc)
+      .execute();
+    expect((await svc().flip.slots(a, npc)).slots).toBeGreaterThan(0);
+  });
+});

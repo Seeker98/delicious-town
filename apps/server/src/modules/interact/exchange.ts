@@ -5,7 +5,7 @@ import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, limitReached, notEnough } from '../../core/errors';
 import { opAgg } from '../../core/luck';
 import type { Op } from '../../core/op';
-import { feedLog, runPairOp } from '../../core/pair';
+import { feedLog, isFriend, runPairOp } from '../../core/pair';
 import { gainCoin, spendCoin } from '../../core/resources';
 import { AppError } from '../../http/errors';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
@@ -47,6 +47,9 @@ export function createExchange(d: GameDeps, world: WorldService) {
         .executeTakeFirst();
       if (!them || them.shard_id !== ctx.shardId)
         throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404, { restId });
+      // 只有好友能看对方的食材和今天剩几次，和交换本身一样；蟹老板的店谁都能看（安全审计 L1 2026-10-25）
+      if (!them.npc && !(await isFriend(d.db, ctx.restaurantId, restId)))
+        throw new AppError(ErrorCode.NOT_FRIEND, 400);
       const me = await d.db
         .selectFrom('restaurant')
         .select(['star_level', 'street_id'])
