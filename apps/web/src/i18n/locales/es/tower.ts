@@ -119,6 +119,7 @@ const tower: Messages['tower'] = {
       `Para desafiar al top ${top} debes estar a ${gap} ${plEs(gap, 'puesto', 'puestos')} como mucho`,
     occupied: (n) => `Ocupaste el puesto ${n}`,
     occupyFailed: 'No se pudo ocupar el puesto',
+    needWin: 'Gana un reto de la torre esta semana para ocupar un puesto libre',
     myRank: 'Mi puesto ',
     unranked: 'Sin clasificar',
     rankN: (n) => `${n}.º`,

@@ -98,8 +98,8 @@ const temple: Messages['temple'] = {
     ready: 'Ready',
     readyLine: (min, creatives) => `Badge: ${min} min left · creativity ${creatives}`,
     prepTitle: 'Prepare first',
-    prepIntro:
-      'A preparation badge lasts 1 hour and allows any number of trials; higher creativity means a higher success rate. Preparing picks one of your level 1–5 signature dishes at random as the trial dish.',
+    prepIntro: (daily: number) =>
+      `A preparation badge lasts 1 hour; you can do up to ${daily} trials a day (successes and failures both count). Higher creativity means a higher success rate. Preparing picks one of your level 1–5 signature dishes at random as the trial dish.`,
     injectName: 'Injection',
     injectCost: '250,000 coins',
     meditateName: 'Meditate',
@@ -133,6 +133,8 @@ const temple: Messages['temple'] = {
     group: (level, n) => `${level} (${n} ${plEn(n, 'kind', 'kinds')})`,
     rareTag: 'rare',
     rateLabel: 'Estimated success (excluding luck)',
+    leftNote: (left: number, daily: number) => `${left} of ${daily} trials left today`,
+    dailyUsed: (daily: number) => `You have used all ${daily} trials today. Come back tomorrow`,
     costNote: 'Also costs 10,000 coins and 1 of each ingredient in the dish',
     start: 'Start trial',
     successHead: (lucky) => `Trial succeeded${lucky ? ' (lucky)' : ''}`,
@@ -142,12 +144,12 @@ const temple: Messages['temple'] = {
     helpSub: (worthMax, expMax) => `Trial value up to +${worthMax}%, trial EXP up to +${expMax}%`,
     intro: (creatives, worthMax, expMax) =>
       `Trials raise a signature dish's trial value (value per serving, up to +${worthMax}%) and trial EXP (restaurant EXP when cooking, up to +${expMax}%). Creativity ${creatives}.`,
-    helpItems: [
-      'Prepare first: an injection costs 250,000 coins and gives the "Creativity Potion" badge (creativity +25); meditation is free and gives the "Meditation" badge (creativity +5). Badges last 1 hour, and you can do as many trials as you like while they last. Higher creativity means a higher success rate.',
+    helpItems: (daily: number, prof: number): string[] => [
+      `Prepare first: an injection costs 250,000 coins and gives the "Creativity Potion" badge (creativity +25); meditation is free and gives the "Meditation" badge (creativity +5). Badges last 1 hour, and you can do up to ${daily} trials a day. Higher creativity means a higher success rate.`,
       "When you prepare, one of your level 1–5 signature dishes is picked at random as the trial dish. Don't like it? Spend 20,000 coins to swap it, or spend 30 seasonal points to pick one.",
       'Each trial costs 10,000 coins and uses 1 of your chosen main and side ingredients (2 if they are the same), plus 1 of each ingredient in the dish.',
       'Success depends on three things: creativity, how many levels the ingredients are above the dish (the main ingredient counts more), and rarity (rare = marked "rare" in the list, weight under 100).',
-      'On success: trial EXP +1–4% (most when both are rare); if the main ingredient is rare, trial value +1–2% as well; mastery +800 × mastery level. Trial value raises the value per serving when the dish sells (tower and friend duels do not count it); trial EXP gives extra restaurant EXP when cooking. Caps are shown above.',
+      `On success: trial EXP +1–4% (most when both are rare); if the main ingredient is rare, trial value +1–2% as well; mastery +${prof} × mastery level. Trial value raises the value per serving when the dish sells (tower and friend duels do not count it); trial EXP gives extra restaurant EXP when cooking. Caps are shown above.`,
     ],
   },
 };

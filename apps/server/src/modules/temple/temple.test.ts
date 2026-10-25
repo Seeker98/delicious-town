@@ -33,6 +33,9 @@ describe('神殿概览', () => {
       worthMax: 30,
       expMax: 150,
       pickCost: 30,
+      left: 10,
+      daily: 10,
+      profPerLevel: 800,
     });
   });
 

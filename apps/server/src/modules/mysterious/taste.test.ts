@@ -63,10 +63,10 @@ describe('品尝（规格书 13 §13.6）', () => {
   it('好友：消耗 2 份，体力 = 每份价值；店主得礼券、好友动态；我概率得神秘食谱', async () => {
     const [me, host] = await newPair(lucky, { patch: { strength: 0 } });
     await befriend(lucky, me.restaurantId, host.restaurantId);
-    const id = await serve(lucky, host);
+    const id = await serve(lucky, host, { price: 20 });
     const r = await lucky.game.mysterious.taste(me, { restId: host.restaurantId });
-    expect(r.data).toEqual({ strength: 157, recipe: true, left: 498 });
-    expect((await restRow(lucky, me.restaurantId)).strength).toBe(157);
+    expect(r.data).toEqual({ strength: 20, recipe: true, left: 498 });
+    expect((await restRow(lucky, me.restaurantId)).strength).toBe(20);
     expect(await goodsNum(lucky, me.restaurantId, GOODS.mysteryRecipe)).toBe(1);
     expect(await goodsNum(lucky, host.restaurantId, GOODS.mysteryTicket)).toBe(1);
     expect(await cookOf(lucky, id)).toMatchObject({ left_num: 498, eat_count: 1 });
@@ -80,19 +80,28 @@ describe('品尝（规格书 13 §13.6）', () => {
 
   it('非好友：消耗 1 份，体力减半', async () => {
     const [me, host] = await newPair(t, { patch: { strength: 0 } });
+    await serve(t, host, { price: 40 });
+    const r = await t.game.mysterious.taste(me, { restId: host.restaurantId });
+    expect(r.data).toMatchObject({ strength: 20, left: 499 });
+  });
+
+  it('体力封顶 tasteStrengthMax（默认 25，用户 2026-10-25）：好友吃每份 157 的也只得 25', async () => {
+    const [me, host] = await newPair(t, { patch: { strength: 0 } });
+    await befriend(t, me.restaurantId, host.restaurantId);
     await serve(t, host);
     const r = await t.game.mysterious.taste(me, { restId: host.restaurantId });
-    expect(r.data).toMatchObject({ strength: 78, left: 499 });
+    expect(r.data).toMatchObject({ strength: 25 });
+    expect((await restRow(t, me.restaurantId)).strength).toBe(25);
   });
 
   it('品尝和赛厨的“养”用特色菜原价，不乘卖出倍率（问题记录 412）', async () => {
     const shardId = await createShard(t.db);
     await setTuning(t, shardId, { mysterious: { saleRates: [10, 10, 10, 10, 10, 10] } });
     const [me, host] = await newPair(t, { shardId, patch: { strength: 0 } });
-    await serve(t, host);
-    expect((await mcOf(t.db, await restRow(t, host.restaurantId))).price).toBe(157);
+    await serve(t, host, { price: 40 });
+    expect((await mcOf(t.db, await restRow(t, host.restaurantId))).price).toBe(40);
     const r = await t.game.mysterious.taste(me, { restId: host.restaurantId });
-    expect(r.data).toMatchObject({ strength: 78 });
+    expect(r.data).toMatchObject({ strength: 20 });
   });
 
   it('同一批只能吃一次；每天最多 2 次', async () => {

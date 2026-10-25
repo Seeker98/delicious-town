@@ -25,6 +25,10 @@ export interface TempleDto {
     worthMax: number;
     expMax: number;
     pickCost: number;
+    /** 今天还能试炼几次、每天上限（用户 2026-10-25）；成功一次熟练度 + profPerLevel × 熟练度等级 */
+    left: number;
+    daily: number;
+    profPerLevel: number;
   };
   /** 时令值余额（试炼指定用） */
   shiling: number;

@@ -131,6 +131,7 @@ export default {
     top: (top: number, gap: number) => `前 ${top} 名要在榜上、名次相差 ${gap} 以內才能挑戰`,
     occupied: (n: number) => `佔到了第 ${n} 名`,
     occupyFailed: '佔位失敗',
+    needWin: '本週在廚塔挑戰裡贏一次才能佔空位',
     myRank: '我的名次 ',
     unranked: '未上榜',
     rankN: (n: number) => `第 ${n} 名`,

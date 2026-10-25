@@ -111,8 +111,8 @@ const temple: Messages['temple'] = {
     ready: 'Prêt',
     readyLine: (min, creatives) => `Badge encore ${min} min · créativité ${creatives}`,
     prepTitle: 'Préparez-vous d’abord',
-    prepIntro:
-      'Le badge de préparation dure 1 heure, pendant laquelle vous pouvez faire autant d’épreuves que vous voulez\u202f; plus la créativité est haute, plus la réussite est probable. À la préparation, un de vos plats signature de niveau 1 à 5 est tiré au hasard comme plat d’épreuve.',
+    prepIntro: (daily: number) =>
+      `Le badge de préparation dure 1 heure\u202f; vous pouvez faire jusqu’à ${daily} épreuves par jour (réussies ou non)\u202f; plus la créativité est haute, plus la réussite est probable. À la préparation, un de vos plats signature de niveau 1 à 5 est tiré au hasard comme plat d’épreuve.`,
     injectName: 'Injection',
     injectCost: '250 000 pièces',
     meditateName: 'Méditation',
@@ -146,6 +146,8 @@ const temple: Messages['temple'] = {
     group: (level, n) => `${level} (${n} ${plFr(n, 'sorte', 'sortes')})`,
     rareTag: 'rare',
     rateLabel: 'Réussite estimée (hors chance)',
+    leftNote: (left: number, daily: number) => `Encore ${left} épreuves sur ${daily} aujourd’hui`,
+    dailyUsed: (daily: number) => `Vous avez fait vos ${daily} épreuves du jour, revenez demain`,
     costNote: 'Coûte aussi 10 000 pièces et 1 de chaque ingrédient du plat',
     start: "Commencer l'épreuve",
     successHead: (lucky) => `Épreuve réussie${lucky ? ' (chanceux)' : ''}`,
@@ -157,13 +159,13 @@ const temple: Messages['temple'] = {
       `Valeur d'épreuve jusqu'à +${worthMax}\u202f%, EXP d'épreuve jusqu'à +${expMax}\u202f%`,
     intro: (creatives, worthMax, expMax) =>
       `Les épreuves augmentent la valeur d'épreuve d'un plat signature (valeur par part, jusqu'à +${worthMax}\u202f%) et l'EXP d'épreuve (EXP du restaurant en cuisinant, jusqu'à +${expMax}\u202f%). Créativité ${creatives}.`,
-    helpItems: [
-      'Préparez-vous d’abord\u202f: une injection coûte 250 000 pièces et donne le badge «\u202fPotion de créativité\u202f» (créativité +25)\u202f; la méditation est gratuite et donne le badge «\u202fMéditation\u202f» (créativité +5). Les badges durent 1 heure, pendant laquelle vous pouvez faire autant d’épreuves que vous voulez. Plus la créativité est haute, plus la réussite est probable.',
+    helpItems: (daily: number, prof: number): string[] => [
+      `Préparez-vous d’abord\u202f: une injection coûte 250 000 pièces et donne le badge «\u202fPotion de créativité\u202f» (créativité +25)\u202f; la méditation est gratuite et donne le badge «\u202fMéditation\u202f» (créativité +5). Les badges durent 1 heure, et vous pouvez faire jusqu’à ${daily} épreuves par jour. Plus la créativité est haute, plus la réussite est probable.`,
       'À la préparation, un de vos plats signature de niveau 1 à 5 est tiré au hasard comme plat d’épreuve. Il ne vous plaît pas\u202f? Changez-le pour 20 000 pièces, ou dépensez 30 points de saison pour en choisir un.',
       'Chaque épreuve coûte 10 000 pièces et consomme 1 ingrédient principal et 1 secondaire choisis (2 s’ils sont identiques), plus 1 de chaque ingrédient du plat.',
       'La réussite dépend de trois choses\u202f: la créativité, le nombre de niveaux des ingrédients au-dessus du plat (le principal compte plus) et la rareté (rare = marqué «\u202frare\u202f» dans la liste, poids inférieur à 100).',
-      'En cas de réussite\u202f: EXP d’épreuve +1 à 4\u202f% (plus si les deux sont rares)\u202f; si l’ingrédient principal est rare, valeur d’épreuve +1 à 2\u202f% en plus\u202f; maîtrise +800\u202f×\u202fniveau de maîtrise. La valeur d’épreuve augmente la valeur par part quand le plat se vend (elle ne compte pas dans les duels de la tour ni entre amis), l’EXP d’épreuve donne de l’EXP du restaurant en plus en cuisinant. Les plafonds sont indiqués plus haut.',
-    ] as string[],
+      `En cas de réussite\u202f: EXP d’épreuve +1 à 4\u202f% (plus si les deux sont rares)\u202f; si l’ingrédient principal est rare, valeur d’épreuve +1 à 2\u202f% en plus\u202f; maîtrise +${prof}\u202f×\u202fniveau de maîtrise. La valeur d’épreuve augmente la valeur par part quand le plat se vend (elle ne compte pas dans les duels de la tour ni entre amis), l’EXP d’épreuve donne de l’EXP du restaurant en plus en cuisinant. Les plafonds sont indiqués plus haut.`,
+    ],
   },
 };
 export default temple;

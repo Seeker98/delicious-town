@@ -21,6 +21,23 @@ export async function incrementDaily(
   return row.count;
 }
 
+/** 从 since 那天（含）到今天的计数合计（例：本周一起） */
+export async function sumDailySince(
+  db: Kysely<DB>,
+  restId: number,
+  key: string,
+  since: string,
+): Promise<number> {
+  const row = await db
+    .selectFrom('daily_counter')
+    .select((eb) => eb.fn.coalesce(eb.fn.sum<number>('count'), eb.lit(0)).as('n'))
+    .where('rest_id', '=', restId)
+    .where('key', '=', key)
+    .where('day', '>=', since)
+    .executeTakeFirst();
+  return Number(row?.n ?? 0);
+}
+
 export async function getDaily(
   db: Kysely<DB>,
   restId: number,

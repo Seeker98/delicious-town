@@ -138,6 +138,8 @@ export interface RankDto {
   weekEnd: string;
   slots: RankSlotDto[];
   myRank: number | null;
+  /** 不在榜上、本周还没在厨塔挑战里赢过：不能占空位（用户 2026-10-25） */
+  needWin: boolean;
   /** 今日赛厨榜剩余次数 */
   left: number;
   /** 今日切磋总次数（好友切磋 + 赛厨榜） */

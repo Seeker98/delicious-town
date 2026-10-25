@@ -127,8 +127,9 @@ export function studentStar(level: number): number {
   return Math.floor((level - 1) / 2) + 1;
 }
 
-export function tasteStrength(price: number, friend: boolean): number {
-  return Math.floor(price / (friend ? 1 : 2));
+/** 品尝得的体力：好友吃 2 份得每份价值，非好友吃 1 份得一半，都不超过 max（用户 2026-10-25） */
+export function tasteStrength(price: number, friend: boolean, max: number): number {
+  return Math.min(max, Math.floor(price / (friend ? 1 : 2)));
 }
 
 export function tasteRecipeRate(grade: number, luckRate: number, t: McTuning): number {

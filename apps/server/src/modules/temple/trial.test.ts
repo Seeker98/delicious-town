@@ -31,9 +31,15 @@ const MC6 = lvl(6)[0]!;
 const RARE = fid('长胡椒'); // 5 级，odds 70
 const COMMON = fid('辽参'); // 5 级，odds 100
 
-async function ready(g: TestGame, learned: number[] = [MC3.id], patch: Record<string, number> = {}) {
+async function ready(
+  g: TestGame,
+  learned: number[] = [MC3.id],
+  patch: Record<string, number> = {},
+  shardId?: number,
+) {
   const foods = Object.fromEntries([RARE, COMMON, ...MC3.foods].map((f) => [f, 5]));
   const ctx = await newRestaurant(g, {
+    shardId,
     patch: { star_level: 1, coin: 1_000_000, ...patch },
     foods,
   });
@@ -185,6 +191,29 @@ describe('试炼（规格书 09 §9.4）', () => {
     ).rejects.toMatchObject({
       params: { reason: 'no_trial' },
     });
+  });
+
+  it('每天最多 trialDaily 次，成败都算；用完报 LIMIT_REACHED trial_daily、什么都不扣，神殿页写剩几次（用户 2026-10-25）', async () => {
+    const shardId = await createShard(lose.db);
+    await setTuning(lose, shardId, { temple: { trialDaily: 2 } });
+    const c = await ready(lose, [MC3.id], {}, shardId);
+    const ctx = c;
+    await lose.game.temple.prepareTrial(c, { way: 2 });
+    const go = () => lose.game.temple.startTrial(c, { mainFoodsId: RARE, subFoodsId: COMMON });
+    await go();
+    expect((await lose.game.temple.overview(c)).trial).toMatchObject({ left: 1, daily: 2 });
+    await go();
+    const coin = (await restRow(lose, ctx.restaurantId)).coin;
+    await expect(go()).rejects.toMatchObject({
+      code: 'LIMIT_REACHED',
+      params: { what: 'trial_daily', max: 2 },
+    });
+    expect((await restRow(lose, ctx.restaurantId)).coin).toBe(coin);
+    expect((await lose.game.temple.overview(c)).trial.left).toBe(0);
+    // 第二天重新算
+    lose.clock.advance(24 * 3600_000);
+    await lose.game.temple.prepareTrial(c, { way: 2 });
+    await go();
   });
 
   it('不认识的食材报 VALIDATION_FAILED bad_food', async () => {

@@ -51,6 +51,13 @@ describe('RankPanel', () => {
     expect(w.emitted('reload')).toHaveLength(1);
   });
 
+  it('本周还没在厨塔挑战里赢过：占位按钮灰掉，写明原因（用户 2026-10-25）', async () => {
+    const w = mountPanel(rankData({ needWin: true }));
+    expect(w.get('[data-testid="rank-need-win"]').text()).toBe('本周在厨塔挑战里赢一次才能占空位');
+    expect(w.get('[data-testid="occupy-15"]').attributes('disabled')).toBeDefined();
+    expect(mountPanel(rankData()).find('[data-testid="rank-need-win"]').exists()).toBe(false);
+  });
+
   it('前 8 名不在范围内时灰掉，原因写在榜单标题右边、行里不重复（P9 用户反馈）；第 10 名可以挑战，显示结果', async () => {
     const w = mountPanel(
       withSlots([

@@ -9,7 +9,17 @@ export const templeData = (patch: Partial<TempleDto> = {}): TempleDto => ({
     { goodsId: 18, num: 0 },
   ],
   maps: [{ goodsId: 170, num: 10, needStrength: 2 }],
-  trial: { mcId: null, readyMinutes: 0, creatives: 0, worthMax: 30, expMax: 150, pickCost: 30 },
+  trial: {
+    mcId: null,
+    readyMinutes: 0,
+    creatives: 0,
+    worthMax: 30,
+    expMax: 150,
+    pickCost: 30,
+    left: 10,
+    daily: 10,
+    profPerLevel: 200,
+  },
   shiling: 0,
   ...patch,
 });

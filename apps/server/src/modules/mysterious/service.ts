@@ -511,7 +511,7 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
           const eatCount = c.eat_count + 1;
           await p.me.tx.updateTable('mc_cook').set({ eat_count: eatCount }).where('id', '=', c.id).execute();
           const left = await consumeSpecial(p.them, c.id, portions, 'eaten');
-          const strength = tasteStrength(c.price, friend);
+          const strength = tasteStrength(c.price, friend, t.tasteStrengthMax);
           gainStrength(p.me, strength);
           let recipe = false;
           if (eatCount <= t.tasteAwardMax) {

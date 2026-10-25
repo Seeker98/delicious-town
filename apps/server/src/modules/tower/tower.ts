@@ -158,6 +158,7 @@ export async function challengeTower(o: Op, floorNo: number, test: boolean): Pro
       }
       // 支线“守塔人”（问题记录 515）：击败守塔人的次数，试打不算
       await emitAction(o, 'tower.win');
+      await incrementDaily(o.tx, o.rest.id, KEY.win, 1, day);
       if (floorNo > state.best_floor)
         await o.tx
           .updateTable('tower_state')

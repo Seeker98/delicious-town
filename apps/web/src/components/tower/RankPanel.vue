@@ -99,6 +99,7 @@ const challenge = (s: RankSlotDto) => {
       t.tower.rank.top(data.rankTop, data.rankGap)
     }}</span>
   </div>
+  <p v-if="data.needWin" class="dt-detail-note" data-testid="rank-need-win">{{ t.tower.rank.needWin }}</p>
   <div class="dt-card dt-rows-card">
     <DtRow
       v-for="s in data.slots"
@@ -126,7 +127,8 @@ const challenge = (s: RankSlotDto) => {
           type="button"
           class="btn btn-sm btn-outline-primary"
           :data-testid="`occupy-${s.rank}`"
-          :disabled="busy"
+          :disabled="busy || data.needWin"
+          :title="data.needWin ? t.tower.rank.needWin : undefined"
           @click="occupy(s.rank)"
         >
           {{ t.tower.rank.occupy }}

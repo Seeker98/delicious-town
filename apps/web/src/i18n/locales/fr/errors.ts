@@ -141,6 +141,7 @@ const errors: Messages['errors'] = {
     lock: () => 'Plus aucun emplacement de verrouillage',
     owned: () => 'Vous le possédez déjà et ne pouvez pas en acheter un autre',
     shake_device: () => "Quelqu'un sur le même réseau ou appareil l'a déjà secoué aujourd'hui",
+    trial_daily: (p) => `Plus d’épreuves aujourd’hui (${String(p.max)} par jour)`,
     bar_daily: (p) =>
       `Vous avez joué ${s(p.max)} ${plFr(s(p.max), 'partie', 'parties')} aujourd'hui. Revenez demain.`,
     shop_daily: (p) => `Achat limité à ${s(p.max)} par jour\u202f; déjà fait aujourd'hui`,
@@ -386,6 +387,7 @@ const errors: Messages['errors'] = {
     rank_taken: "Quelqu'un occupe déjà ce rang",
     rank_empty: 'Personne n’occupe ce rang\u202f; vous pouvez le prendre directement',
     rank_not_better: 'Vous ne pouvez défier ou prendre qu’un rang supérieur',
+    rank_need_win: 'Gagnez un défi de la tour cette semaine avant de prendre une place libre',
     rank_gap: "Dans le top 8, vous ne pouvez défier qu'un joueur à 3 rangs au plus",
     npc: 'Vous ne pouvez pas défier M. Krab',
   },

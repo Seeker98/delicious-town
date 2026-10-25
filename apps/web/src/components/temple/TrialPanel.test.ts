@@ -95,7 +95,17 @@ describe('TrialPanel', () => {
       global: { stubs },
       props: {
         data: templeData({
-          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+          trial: {
+            mcId: 3,
+            readyMinutes: 30,
+            creatives: 5,
+            worthMax: 30,
+            expMax: 150,
+            pickCost: 30,
+            left: 10,
+            daily: 10,
+            profPerLevel: 200,
+          },
         }),
       },
     });
@@ -107,12 +117,48 @@ describe('TrialPanel', () => {
     expect(text).not.toMatch(/\d\.\d/);
   });
 
+  it('每天次数（用户 2026-10-25）：写今天还剩几次；用完了不能开始，说明写每天几次', async () => {
+    const trial = {
+      mcId: 3,
+      readyMinutes: 30,
+      creatives: 5,
+      worthMax: 30,
+      expMax: 150,
+      pickCost: 30,
+      left: 3,
+      daily: 10,
+      profPerLevel: 200,
+    };
+    const w = mount(TrialPanel, { global: { stubs }, props: { data: templeData({ trial }) } });
+    await flushPromises();
+    expect(w.get('[data-testid="trial-left"]').text()).toBe('今天还能试炼 3 次 (每天 10 次)');
+    const used = mount(TrialPanel, {
+      global: { stubs },
+      props: { data: templeData({ trial: { ...trial, left: 0 } }) },
+    });
+    await flushPromises();
+    await pick(used, 'main', 150);
+    await pick(used, 'sub', 423);
+    expect(used.get('[data-testid="block"]').text()).toBe('今天的 10 次试炼已经用完, 明天再来');
+    expect(used.get('[data-testid="trial-start"]').attributes('disabled')).toBeDefined();
+  });
+
   it('准备好后选主辅食材开始试炼，显示预计成功率和结果', async () => {
     const w = mount(TrialPanel, {
       global: { stubs },
       props: {
         data: templeData({
-          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+          trial: {
+            mcId: 3,
+            readyMinutes: 30,
+            creatives: 5,
+            worthMax: 30,
+            expMax: 150,
+            pickCost: 30,
+            left: 10,
+            daily: 10,
+            profPerLevel: 200,
+          },
         }),
       },
     });
@@ -164,7 +210,17 @@ describe('TrialPanel', () => {
       global: { stubs },
       props: {
         data: templeData({
-          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+          trial: {
+            mcId: 3,
+            readyMinutes: 30,
+            creatives: 5,
+            worthMax: 30,
+            expMax: 150,
+            pickCost: 30,
+            left: 10,
+            daily: 10,
+            profPerLevel: 200,
+          },
         }),
       },
     });
@@ -197,7 +253,17 @@ describe('TrialPanel', () => {
       global: { stubs },
       props: {
         data: templeData({
-          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+          trial: {
+            mcId: 3,
+            readyMinutes: 30,
+            creatives: 5,
+            worthMax: 30,
+            expMax: 150,
+            pickCost: 30,
+            left: 10,
+            daily: 10,
+            profPerLevel: 200,
+          },
         }),
       },
     });
@@ -230,7 +296,17 @@ describe('TrialPanel', () => {
       global: { stubs },
       props: {
         data: templeData({
-          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+          trial: {
+            mcId: 3,
+            readyMinutes: 30,
+            creatives: 5,
+            worthMax: 30,
+            expMax: 150,
+            pickCost: 30,
+            left: 10,
+            daily: 10,
+            profPerLevel: 200,
+          },
         }),
       },
     });
@@ -270,7 +346,17 @@ describe('TrialPanel', () => {
       global: { stubs },
       props: {
         data: templeData({
-          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+          trial: {
+            mcId: 3,
+            readyMinutes: 30,
+            creatives: 5,
+            worthMax: 30,
+            expMax: 150,
+            pickCost: 30,
+            left: 10,
+            daily: 10,
+            profPerLevel: 200,
+          },
         }),
       },
     });
@@ -314,7 +400,17 @@ describe('TrialPanel', () => {
       global: { stubs },
       props: {
         data: templeData({
-          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+          trial: {
+            mcId: 3,
+            readyMinutes: 30,
+            creatives: 5,
+            worthMax: 30,
+            expMax: 150,
+            pickCost: 30,
+            left: 10,
+            daily: 10,
+            profPerLevel: 200,
+          },
         }),
       },
     });
@@ -340,7 +436,17 @@ describe('TrialPanel', () => {
       global: { stubs },
       props: {
         data: templeData({
-          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+          trial: {
+            mcId: 3,
+            readyMinutes: 30,
+            creatives: 5,
+            worthMax: 30,
+            expMax: 150,
+            pickCost: 30,
+            left: 10,
+            daily: 10,
+            profPerLevel: 200,
+          },
         }),
       },
     });
@@ -373,7 +479,17 @@ describe('TrialPanel', () => {
       global: { stubs },
       props: {
         data: templeData({
-          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+          trial: {
+            mcId: 3,
+            readyMinutes: 30,
+            creatives: 5,
+            worthMax: 30,
+            expMax: 150,
+            pickCost: 30,
+            left: 10,
+            daily: 10,
+            profPerLevel: 200,
+          },
         }),
       },
     });
@@ -390,7 +506,17 @@ describe('TrialPanel', () => {
     expect(open()).toBe('false');
     await w.setProps({
       data: templeData({
-        trial: { mcId: 4, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+        trial: {
+          mcId: 4,
+          readyMinutes: 30,
+          creatives: 5,
+          worthMax: 30,
+          expMax: 150,
+          pickCost: 30,
+          left: 10,
+          daily: 10,
+          profPerLevel: 200,
+        },
       }),
     });
     expect(open()).toBe('true');
@@ -417,7 +543,17 @@ describe('TrialPanel', () => {
       global: { stubs },
       props: {
         data: templeData({
-          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+          trial: {
+            mcId: 3,
+            readyMinutes: 30,
+            creatives: 5,
+            worthMax: 30,
+            expMax: 150,
+            pickCost: 30,
+            left: 10,
+            daily: 10,
+            profPerLevel: 200,
+          },
         }),
       },
     });
@@ -450,7 +586,17 @@ describe('TrialPanel', () => {
       global: { stubs },
       props: {
         data: templeData({
-          trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 },
+          trial: {
+            mcId: 3,
+            readyMinutes: 30,
+            creatives: 5,
+            worthMax: 30,
+            expMax: 150,
+            pickCost: 30,
+            left: 10,
+            daily: 10,
+            profPerLevel: 200,
+          },
         }),
       },
     });
@@ -493,7 +639,17 @@ describe('TrialPanel', () => {
       foods: [],
       appraisable: true,
     });
-    const trial = { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150, pickCost: 30 };
+    const trial = {
+      mcId: 3,
+      readyMinutes: 30,
+      creatives: 5,
+      worthMax: 30,
+      expMax: 150,
+      pickCost: 30,
+      left: 10,
+      daily: 10,
+      profPerLevel: 200,
+    };
     const w = mount(TrialPanel, { global: { stubs }, props: { data: templeData({ trial, shiling: 45 }) } });
     await flushPromises();
     expect(w.get('[data-testid="trial-pick-open"]').text()).toBe('用时令值指定 (30)');

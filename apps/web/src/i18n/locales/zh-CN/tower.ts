@@ -130,6 +130,7 @@ export default {
     top: (top: number, gap: number) => `前 ${top} 名要在榜上、名次相差 ${gap} 以内才能挑战`,
     occupied: (n: number) => `占到了第 ${n} 名`,
     occupyFailed: '占位失败',
+    needWin: '本周在厨塔挑战里赢一次才能占空位',
     myRank: '我的名次 ',
     unranked: '未上榜',
     rankN: (n: number) => `第 ${n} 名`,

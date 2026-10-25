@@ -118,6 +118,7 @@ const tower: Messages['tower'] = {
       `To challenge the top ${top}, you must be ranked within ${gap} ${plEn(gap, 'place', 'places')}`,
     occupied: (n) => `You took #${n}`,
     occupyFailed: "Couldn't take the spot",
+    needWin: 'Win a tower challenge this week to take an empty spot',
     myRank: 'My rank ',
     unranked: 'Unranked',
     rankN: (n) => `#${n}`,

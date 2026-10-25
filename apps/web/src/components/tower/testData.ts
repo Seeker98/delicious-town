@@ -83,6 +83,7 @@ export const rankData = (patch: Partial<RankDto> = {}): RankDto => ({
   weekEnd: '2026-10-04T16:00:00.000Z',
   slots: Array.from({ length: 15 }, (_, i) => ({ rank: i + 1, restId: null, name: null, level: null })),
   myRank: null,
+  needWin: false,
   left: 10,
   spar: 0,
   strength: 100,
