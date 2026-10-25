@@ -39,6 +39,7 @@ import { createWhitelist, type Whitelist } from './security/antibot/whitelist';
 import { AB_HEADERS } from '@dt/shared';
 import { trackRhythm } from './security/antibot/rhythm';
 import { createChallengeList, type ChallengeList } from './security/antibot/challenge';
+import { registerSecurityHeaders } from './security/headers';
 
 export interface AppDeps {
   env: Env;
@@ -80,6 +81,7 @@ export async function buildApp(
   await app.register(compress, { global: true, threshold: 1024, encodings: ['br', 'gzip', 'deflate'] });
   // 查询统计放最前：这个请求后面所有钩子里的查询都算进去（质量期 ③）
   registerQueryStats(app, deps.env);
+  registerSecurityHeaders(app);
   await app.register(cookie);
   // 预检结果缓存 2 小时（Chrome 的上限）：前端每个请求都带 x-device-id，跨域时要预检，
   // 不写 max-age 时 Chrome 只缓存 5 秒，线上几乎每个请求都多一次往返（性能排查 2026-10-08）

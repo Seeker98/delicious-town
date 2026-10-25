@@ -194,3 +194,17 @@ describe('交换食材（规格书 05 §5.6）', () => {
     });
   });
 });
+
+describe('非好友读不到对方的食材（安全审计 L1 2026-10-25）', () => {
+  it('同区服但不是好友 → NOT_FRIEND，和交换本身一致；蟹老板的店照常能看', async () => {
+    const [a, b] = await newPair(t);
+    await expect(ex().foods(a, b.restaurantId, 2)).rejects.toMatchObject({ code: 'NOT_FRIEND' });
+    const npc = (await ensureNpc(t.db, config, config.tuning.friend.npc, a.shardId, seededRng(1))).id;
+    await t.db
+      .deleteFrom('friend')
+      .where('rest_id', '=', a.restaurantId)
+      .where('friend_id', '=', npc)
+      .execute();
+    expect(await ex().foods(a, npc, 1)).toMatchObject({ npc: true });
+  });
+});

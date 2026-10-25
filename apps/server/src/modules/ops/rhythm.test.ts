@@ -172,3 +172,48 @@ describe('后台操作节奏（防脚本 2026-10-25）', () => {
     expect((await list(p.cookie)).status).toBe(404);
   });
 });
+
+describe('操作节奏按客户端分类（安全审计 D1 2026-10-25）', () => {
+  it('裸接口、自动化浏览器、很久没真人操作分出来，排在前面；裸接口写得少也列', async () => {
+    const db = ctx.deps.db;
+    const s = await createShard(db);
+    const [bare, few, auto, idle, human] = [
+      await createAccountRow(db),
+      await createAccountRow(db),
+      await createAccountRow(db),
+      await createAccountRow(db),
+      await createAccountRow(db),
+    ];
+    for (const id of [bare, few, auto, idle, human]) await createRestaurantRow(db, s, id);
+    const hour = new Date(Date.now() - 2 * HOUR);
+    const row = (account_id: number, posts: number, verdicts: Record<string, number>, idle_long = 0) => ({
+      account_id,
+      hour,
+      posts,
+      idle_long,
+      verdicts: JSON.stringify(verdicts),
+    });
+    await db
+      .insertInto('play_rhythm')
+      .values([
+        // 裸接口：不签名、不带版本号
+        row(bare, 30, { missing: 20, no_build: 10 }),
+        // 裸接口，一周只写了 6 次：照样列
+        row(few, 6, { no_build: 6 }),
+        row(auto, 30, { ok: 25, automation: 5 }),
+        // 网页签了名，但写操作时大多很久没有真人点击
+        row(idle, 30, { ok: 30 }, 20),
+        row(human, 30, { ok: 30 }),
+      ])
+      .execute();
+    const rows = (await call(ctx.app, 'GET', `${A}/suspicious/rhythm?shardId=${s}`, { cookie: mod.cookie }))
+      .json.data.rows as Array<{ accountId: number; client: string; unsignedShare: number }>;
+    const by = new Map(rows.map((r) => [r.accountId, r]));
+    expect(by.get(bare)).toMatchObject({ client: 'bare', unsignedShare: 1 });
+    expect(by.get(few)?.client).toBe('bare');
+    expect(by.get(auto)?.client).toBe('automation');
+    expect(by.get(idle)?.client).toBe('idle');
+    expect(by.get(human)?.client).toBe('normal');
+    expect(rows.at(-1)!.accountId).toBe(human);
+  });
+});

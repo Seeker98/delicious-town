@@ -30,7 +30,8 @@ const addNote = ref('');
 
 /** 打分规则（和服务端 rhythmScore 一致，原样写给协管看） */
 const RULE =
-  '分数 0~100 = 40 × min(每天有操作的小时数 ÷ 20, 1) + 20 × min(最长连续小时数 ÷ 12, 1) + 20 × (1 − 间隔变异系数, 样本不足按 0) + 10 × 没看页面的比例 + 10 × 很久没真人操作的比例。白名单的排在最后';
+  '分数 0~100 = 40 × min(每天有操作的小时数 ÷ 20, 1) + 20 × min(最长连续小时数 ÷ 12, 1) + 20 × (1 − 间隔变异系数, 样本不足按 0) + 10 × 没看页面的比例 + 10 × 很久没真人操作的比例。' +
+  '客户端一列 (分数不看签名, 单独分): 裸接口: 写请求八成以上没签名、没带版本号, 写得少也列; 自动化浏览器: 浏览器自报被工具控制; 多半没有真人点击: 网页签了名, 但写操作时一半以上很久没有真人点击。分出来的排在最前, 白名单的排在最后';
 
 async function load() {
   loading.value = true;
@@ -49,6 +50,13 @@ watch(
 );
 
 const pct = (x: number) => `${Math.round(x * 100)}%`;
+/** 客户端分类（安全审计 D1）；看不出问题的不写 */
+function clientLabel(r: RhythmRow): string {
+  if (r.client === 'bare') return `裸接口 (没签名 ${pct(r.unsignedShare)})`;
+  if (r.client === 'automation') return '自动化浏览器';
+  if (r.client === 'idle') return '多半没有真人点击';
+  return '–';
+}
 /** 只显示没通过的签名结论；读请求没带版本号的另写一项（人机验证结果单独一列） */
 const badVerdicts = (r: RhythmRow) =>
   Object.entries(r.verdicts)
@@ -120,6 +128,7 @@ async function run(fn: () => Promise<unknown>) {
           <tr>
             <th>账号（店）</th>
             <th class="num">分数</th>
+            <th>客户端</th>
             <th class="num">天数</th>
             <th class="num">每天几小时</th>
             <th class="num">最长连续小时</th>
@@ -138,7 +147,7 @@ async function run(fn: () => Promise<unknown>) {
           <tr
             v-for="r in data.rows"
             :key="r.accountId"
-            :class="{ 'is-bad': !r.whitelisted && r.score >= 60 }"
+            :class="{ 'is-bad': !r.whitelisted && (r.score >= 60 || r.client !== 'normal') }"
             data-testid="rhythm-row"
           >
             <td>
@@ -147,6 +156,9 @@ async function run(fn: () => Promise<unknown>) {
               <span v-if="r.whitelisted" class="dt-adm-mu"> 白名单</span>
             </td>
             <td class="num">{{ r.score }}</td>
+            <td class="dt-adm-small nowrap" :data-testid="`rhythm-client-${r.accountId}`">
+              {{ clientLabel(r) }}
+            </td>
             <td class="num">{{ r.days }}</td>
             <td class="num">{{ r.activeHoursPerDay }}</td>
             <td class="num">{{ r.longestStreakHours }}</td>

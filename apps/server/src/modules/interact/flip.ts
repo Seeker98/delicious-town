@@ -15,7 +15,7 @@ import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, limitReached, notEnough } from '../../core/errors';
 import { opAgg, opLuck } from '../../core/luck';
 import type { Op } from '../../core/op';
-import { feedLog, runPairOp } from '../../core/pair';
+import { feedLog, isFriend, runPairOp } from '../../core/pair';
 import { gainCoin, spendCoin, spendStrength } from '../../core/resources';
 import { drawDtTickets } from '../../core/tickets';
 import { AppError } from '../../http/errors';
@@ -51,11 +51,14 @@ export function createFlip(d: GameDeps) {
     async slots(ctx: RestCtx, restId: number): Promise<FlipSlotsDto> {
       const r = await d.db
         .selectFrom('restaurant')
-        .select(['shard_id', 'star_level'])
+        .select(['shard_id', 'star_level', 'npc'])
         .where('id', '=', restId)
         .executeTakeFirst();
       if (!r || r.shard_id !== ctx.shardId)
         throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404, { restId });
+      // 只有好友能看对方的翻柜冷却和剩余次数，和翻柜本身一样；蟹老板的店谁都能看（安全审计 L1 2026-10-25）
+      if (!r.npc && !(await isFriend(d.db, ctx.restaurantId, restId)))
+        throw new AppError(ErrorCode.NOT_FRIEND, 400);
       const { tuning } = await d.shards.settings(ctx.shardId);
       const now = d.now();
       const rows = await d.db

@@ -1,4 +1,4 @@
-import { ErrorCode, type RhythmDto, type RhythmRow } from '@dt/shared';
+import { ErrorCode, type RhythmClient, type RhythmDto, type RhythmRow } from '@dt/shared';
 import { AppError } from '../../http/errors';
 import type { Game } from '../../game';
 import { createWhitelist } from '../../security/antibot/whitelist';
@@ -10,6 +10,10 @@ const HOUR = 3_600_000;
 const DAYS = 7;
 /** 写操作少于这么多的不列 */
 const MIN_POSTS = 20;
+/** 裸接口的号写得少也列：一周写过这么多次就够（安全审计 D1） */
+const BARE_MIN_POSTS = 5;
+/** 写请求的签名结论（verdicts 里另有 get_no_build、captcha_* 几项不算） */
+const WRITE_VERDICTS = ['ok', 'missing', 'stale', 'replay', 'bad', 'automation', 'no_build'];
 /** 北京时间 = UTC + 8 */
 const CST = 8 * HOUR;
 
@@ -28,6 +32,29 @@ export function rhythmScore(
     10 * r.noViewShare +
     10 * r.idleShare;
   return Math.round(s * 10) / 10;
+}
+
+/**
+ * 客户端分类（安全审计 D1 2026-10-25）：签名只是数据来源、不是门（密钥发给了客户端），
+ * 但裸接口不签名、不带版本号，自动化浏览器会自报，这两类一眼能分出来；
+ * 签了名但写操作时多半很久没有真人点击的，是有人用脚本驱动网页。分数不看签名，所以单独分一列
+ */
+export function rhythmClient(
+  verdicts: Record<string, number>,
+  idleShare: number,
+): { client: RhythmClient; unsignedShare: number; signed: number } {
+  const n = (k: string) => verdicts[k] ?? 0;
+  const total = WRITE_VERDICTS.reduce((s, k) => s + n(k), 0);
+  const unsignedShare = total === 0 ? 0 : (n('missing') + n('no_build')) / total;
+  const client: RhythmClient =
+    n('automation') > 0
+      ? 'automation'
+      : total >= BARE_MIN_POSTS && unsignedShare >= 0.8
+        ? 'bare'
+        : idleShare >= 0.5
+          ? 'idle'
+          : 'normal';
+  return { client, unsignedShare: Math.round(unsignedShare * 1000) / 1000, signed: total };
 }
 
 /** 操作节奏和防脚本白名单（2026-10-25） */
@@ -85,7 +112,13 @@ export function createRhythmAdmin(game: Game) {
     for (const [accountId, hs] of byAccount) {
       const active = hs.filter((h) => h.posts > 0);
       const posts = active.reduce((s, h) => s + h.posts, 0);
-      if (posts < MIN_POSTS) continue;
+      const verdicts: Record<string, number> = {};
+      for (const h of hs)
+        for (const [k, v] of Object.entries(h.verdicts ?? {})) verdicts[k] = (verdicts[k] ?? 0) + Number(v);
+      const idleShare = posts === 0 ? 0 : hs.reduce((s, h) => s + h.idle_long, 0) / posts;
+      const kind = rhythmClient(verdicts, idleShare);
+      // 写得少的不列；裸接口例外（慢慢跑的脚本也要看得到）
+      if (posts < MIN_POSTS && kind.client !== 'bare') continue;
       const days = new Set(active.map((h) => new Date(h.hour.getTime() + CST).toISOString().slice(0, 10)))
         .size;
       let streak = 0;
@@ -108,16 +141,13 @@ export function createRhythmAdmin(game: Game) {
       const gq = hs.reduce((s, h) => s + h.gap_sq, 0);
       const mean = gn > 0 ? gs / gn : 0;
       const gapCv = gn < 30 || mean === 0 ? null : Math.sqrt(Math.max(0, gq / gn - mean * mean)) / mean;
-      const verdicts: Record<string, number> = {};
-      for (const h of hs)
-        for (const [k, v] of Object.entries(h.verdicts ?? {})) verdicts[k] = (verdicts[k] ?? 0) + Number(v);
       const first = hs[0]!;
       const base = {
         activeHoursPerDay: days === 0 ? 0 : Math.round((active.length / days) * 10) / 10,
         longestStreakHours: longest,
         gapCv: gapCv === null ? null : Math.round(gapCv * 1000) / 1000,
         noViewShare: hs.reduce((s, h) => s + h.no_view, 0) / posts,
-        idleShare: hs.reduce((s, h) => s + h.idle_long, 0) / posts,
+        idleShare,
       };
       rows.push({
         accountId,
@@ -138,11 +168,25 @@ export function createRhythmAdmin(game: Game) {
         lastDevice: null,
         lastIp: null,
         challengeUntil: null,
+        client: kind.client,
+        unsignedShare: kind.unsignedShare,
       });
     }
-    rows.sort((x, y) => Number(x.whitelisted) - Number(y.whitelisted) || y.score - x.score);
-    // 白名单的不受行数限制、全部接在后面：拦截模式下它们决定谁不被拦，后台要一直看得到
-    const top = [...rows.filter((r) => !r.whitelisted).slice(0, topN), ...rows.filter((r) => r.whitelisted)];
+    const flagged = (r: RhythmRow) => r.client !== 'normal';
+    rows.sort(
+      (x, y) =>
+        Number(x.whitelisted) - Number(y.whitelisted) ||
+        Number(flagged(y)) - Number(flagged(x)) ||
+        y.score - x.score,
+    );
+    // 分出来的可疑客户端（安全审计 D1）不受行数限制、排在最前；看不出问题的按分数取前 topN；
+    // 白名单的也不受行数限制、全部接在后面：拦截模式下它们决定谁不被拦，后台要一直看得到
+    const others = rows.filter((r) => !r.whitelisted);
+    const top = [
+      ...others.filter(flagged),
+      ...others.filter((r) => !flagged(r)).slice(0, topN),
+      ...rows.filter((r) => r.whitelisted),
+    ];
     // 去封禁时预填：最近一次登录用的设备号、IP
     if (top.length > 0) {
       const traces = await db
