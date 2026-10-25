@@ -3034,5 +3034,9 @@
   "30709": {
     "name": "Gu Kaizhi (attribué), La Nymphe de la rivière Luo, paravent brodé double face",
     "desc": "Gracieuse comme un cygne effarouché, souple comme un dragon qui nage. Brodée en double face de deux couleurs à la manière de Suzhou, une face montre la nymphe de la Luo dans toute sa splendeur pour accueillir des clients de partout\u202f; l’autre est un refuge calme et intime où même les jeunes nobles les plus exigeants se sentent à l’aise. À installer à la place du paravent, dure 24 heures."
+  },
+  "30710": {
+    "name": "« Fleuves et montagnes · Les mille merveilles de l’art céleste » : paravent panoramique de l’univers",
+    "desc": "Bien plus qu’une peinture : un univers entier. Dans ce paravent antique qui touche le ciel, le soleil et la lune tournent d’eux-mêmes, les saisons y vivent, et toutes les deux heures ses monts et ses fleuves font naître un ingrédient rare, introuvable chez les mortels. Le client qui pousse la porte croit entrer dans dix mille lieues de paysage peint, vaste même quand la salle est comble ; et les magnats les plus difficiles acceptent volontiers un coin près du paravent pour s’attarder toute la nuit. Se place sur la scène ou le paravent ; un seul par restaurant à la fois ; dure 24 heures : affluence +16 %, plafond souple d’affluence +14 %, exigence +14 %, plafond souple d’exigence +12 %, pièces +50 %, EXP +25 %, or de spécialité +25 %. Toutes les 2 heures, vous recevez 1 ingrédient rare qui manque à une recette pas encore apprise de votre rue (niveau 5 maximum ; un rare de niveau 5 au hasard s’il ne manque rien), 12 au total, directement dans le garde-manger."
   }
 }

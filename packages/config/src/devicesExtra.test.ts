@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildBundle } from './build';
-import { GOODS_TYPE } from './ids';
+import { artBreedOf, artEffectsOf, GOODS_TYPE } from './ids';
 import { defaultDataDir, readSourceDir } from './source';
 import { gid } from './testItems';
 
@@ -75,7 +75,7 @@ describe('艺术品设施（乐台、屏风，2026-10-17）', () => {
       expect.objectContaining({ id: 11, name: '屏风', deviceType: 8, needStar: 1 }),
     ]);
     const art = b.goods.filter((g) => g.id >= 30600 && g.id < 30800);
-    expect(art).toHaveLength(18);
+    expect(art).toHaveLength(19);
     for (const g of art) {
       expect(g.type).toBe(GOODS_TYPE.device);
       expect(g.effects.time).toBe(24);
@@ -105,6 +105,31 @@ describe('艺术品设施（乐台、屏风，2026-10-17）', () => {
       deviceType: 9,
       effects: { time: 24, atRate: 0.1, atSoftCapAdd: 0.11, spRate: 0.09, spSoftCapAdd: 0.08 },
     });
+    // 乾坤通景巨屏（2026-10-25）：只能后台发，七项加成 + 孕育参数
+    const scroll = b.goods.find((g) => g.id === 30710)!;
+    expect(scroll).toMatchObject({
+      name: '《山河社稷 · 万象天工》乾坤通景巨屏',
+      deviceType: 9,
+      onSale: false,
+      coin: 0,
+      diamond: 0,
+      effects: {
+        time: 24,
+        atRate: 0.16,
+        atSoftCapAdd: 0.14,
+        spRate: 0.14,
+        spSoftCapAdd: 0.12,
+        coinRate: 0.5,
+        expRate: 0.25,
+        mcGoldRate: 0.25,
+        breedEveryHours: 2,
+        breedTimes: 12,
+        breedMaxLevel: 5,
+        breedMaxOdds: 65,
+      },
+    });
+    expect(scroll.needStar).toBeUndefined();
+    expect(b.shopPools.black).not.toContain(30710);
   });
 
   it('检查：艺术品必须是设施、设施类型 7/8/9、只能加上座率挑剔率和两个软上限', () => {
@@ -112,11 +137,34 @@ describe('艺术品设施（乐台、屏风，2026-10-17）', () => {
     const goods = structuredClone(src['master/goods']) as Array<Record<string, unknown> & { id: number }>;
     const g = (id: number) => goods.find((x) => x.id === id)!;
     g(30601).deviceType = 1;
-    g(30602).value = { time: 24, coinRate: 0.1 };
+    g(30602).value = { time: 24, luckValue: 1 };
     g(30701).type = 1;
     const errs = buildBundle({ ...src, 'master/goods': goods }).errors;
     expect(errs).toContain('goods 30601 art deviceType 1');
-    expect(errs).toContain('goods 30602 art value key coinRate not allowed');
+    expect(errs).toContain('goods 30602 art value key luckValue not allowed');
     expect(errs).toContain('goods 30701 art must be a device');
+  });
+
+  it('检查：孕育参数四个要么都有要么都没有，必须是正整数', () => {
+    const src = source();
+    const goods = structuredClone(src['master/goods']) as Array<Record<string, unknown> & { id: number }>;
+    const g = (id: number) => goods.find((x) => x.id === id)!;
+    g(30702).value = { time: 24, breedEveryHours: 2 };
+    g(30703).value = { time: 24, breedEveryHours: 2, breedTimes: 1.5, breedMaxLevel: 5, breedMaxOdds: 65 };
+    const errs = buildBundle({ ...src, 'master/goods': goods }).errors;
+    expect(errs).toContain(
+      'goods 30702 art breed needs all of breedEveryHours, breedTimes, breedMaxLevel, breedMaxOdds',
+    );
+    expect(errs).toContain('goods 30703 art value breedTimes must be a positive integer');
+  });
+
+  it('artBreedOf / artEffectsOf：孕育参数单独取出，不进加成', () => {
+    const { bundle } = buildBundle(source());
+    const scroll = bundle!.goods.find((x) => x.id === 30710)!.effects;
+    expect(artBreedOf(scroll)).toEqual({ everyHours: 2, times: 12, maxLevel: 5, maxOdds: 65 });
+    const eff = artEffectsOf(scroll);
+    expect(eff.coinRate).toBe(0.5);
+    expect(Object.keys(eff).filter((k) => k === 'time' || k.startsWith('breed'))).toEqual([]);
+    expect(artBreedOf(bundle!.goods.find((x) => x.id === 30609)!.effects)).toBeNull();
   });
 });

@@ -108,7 +108,45 @@ export const ART_DEVICE_TYPES: readonly number[] = [
   DEVICE_TYPE.screen,
   DEVICE_TYPE.anyArt,
 ];
-export const ART_EFFECT_KEYS: readonly string[] = ['atRate', 'spRate', 'atSoftCapAdd', 'spSoftCapAdd'];
+export const ART_EFFECT_KEYS: readonly string[] = [
+  'atRate',
+  'spRate',
+  'atSoftCapAdd',
+  'spSoftCapAdd',
+  // 乾坤通景巨屏（2026-10-25）：银币、经验、特色菜金牌
+  'coinRate',
+  'expRate',
+  'mcGoldRate',
+];
+/**
+ * 艺术品孕育食材（乾坤通景巨屏 2026-10-25）：每 breedEveryHours 小时孕育 1 份，共 breedTimes 份；
+ * 挑等级不超过 breedMaxLevel、出现概率 odds 不超过 breedMaxOdds 的食材。四个要么都有、要么都没有，不进加成
+ */
+export const ART_BREED_KEYS: readonly string[] = [
+  'breedEveryHours',
+  'breedTimes',
+  'breedMaxLevel',
+  'breedMaxOdds',
+];
+export interface ArtBreed {
+  everyHours: number;
+  times: number;
+  maxLevel: number;
+  maxOdds: number;
+}
+/** 道具的孕育参数；不孕育的道具为空 */
+export function artBreedOf(effects: Record<string, number>): ArtBreed | null {
+  const [everyHours, times, maxLevel, maxOdds] = ART_BREED_KEYS.map((k) => effects[k]);
+  if (everyHours === undefined || times === undefined || maxLevel === undefined || maxOdds === undefined)
+    return null;
+  return { everyHours, times, maxLevel, maxOdds };
+}
+/** 摆放后写进加成来源的部分：去掉持续时间和孕育参数 */
+export function artEffectsOf(effects: Record<string, number>): Record<string, number> {
+  return Object.fromEntries(
+    Object.entries(effects).filter(([k]) => k !== 'time' && !ART_BREED_KEYS.includes(k)),
+  );
+}
 /** 这件艺术品能不能摆在这个设施位（位置的设施类型） */
 export const artFits = (goodsDeviceType: number | null, slotDeviceType: number): boolean =>
   goodsDeviceType === slotDeviceType ||
