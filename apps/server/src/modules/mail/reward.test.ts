@@ -54,6 +54,12 @@ describe('附件发放（设计 §4）', () => {
     );
     expect(() => checkRewardItems(t.deps.config, { foods: [{ id: 999999, num: 1 }] })).toThrow();
     expect(() => checkRewardItems(t.deps.config, { coin: 1 })).not.toThrow();
+    // 乾坤通景巨屏（2026-10-25）没有任何获得途径，只能后台发
+    expect(() =>
+      checkRewardItems(t.deps.config, {
+        goods: [{ id: gid('《山河社稷 · 万象天工》乾坤通景巨屏'), num: 1 }],
+      }),
+    ).not.toThrow();
   });
 });
 

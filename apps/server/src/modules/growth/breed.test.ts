@@ -2,12 +2,13 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { artBreedOf } from '@dt/config';
 import { seededRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
+import { gid } from '../../../test/items';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import { runSystemOp } from '../../core/op';
 import { breedDue, breedJobs, breedNeed, deliverBreeds, grantBreed, pickBreedFoods } from './breed';
 
 const config = testConfig();
-const ART = 30710;
+const ART = gid('《山河社稷 · 万象天工》乾坤通景巨屏');
 const B = artBreedOf(config.requireGoods(ART).effects)!;
 const HOUR = 3_600_000;
 const foodId = (name: string) => [...config.foods.values()].find((f) => f.name === name)!.id;

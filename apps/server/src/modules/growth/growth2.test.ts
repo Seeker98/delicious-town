@@ -148,7 +148,7 @@ describe('艺术品设施（乐台、屏风，2026-10-17）', () => {
     t.clock.set(new Date());
   });
 
-  const SCROLL = 30710;
+  const SCROLL = gid('《山河社稷 · 万象天工》乾坤通景巨屏');
 
   it('乾坤通景巨屏：乐台、屏风都能摆，全店一件；加成里有银币、经验、金牌，没有孕育参数', async () => {
     const ctx = await newRestaurant(t, { patch: { star_level: 1 }, goods: { [SCROLL]: 3 } });
