@@ -54,10 +54,13 @@ function toB64url(bytes: Uint8Array): string {
   return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-function fromB64url(text: string): Uint8Array {
+/** 返回类型写明 ArrayBuffer：网页的 DOM 类型里 importKey 不收 SharedArrayBuffer 背后的数组 */
+function fromB64url(text: string): Uint8Array<ArrayBuffer> {
   const b64 = text.replace(/-/g, '+').replace(/_/g, '/');
   const bin = atob(b64 + '='.repeat((4 - (b64.length % 4)) % 4));
-  return Uint8Array.from(bin, (c) => c.charCodeAt(0));
+  const out = new Uint8Array(new ArrayBuffer(bin.length));
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
 }
 
 export async function sha256Hex(text: string): Promise<string> {
