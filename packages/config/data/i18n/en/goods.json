@@ -653,7 +653,7 @@
   },
   "30302": {
     "name": "Gold Mousetrap",
-    "desc": "Gold mousetrap; for 24 hours, friends raiding your pantry and mice after your ingredients have a 50% chance of getting caught"
+    "desc": "Gold mousetrap; for 24 hours, friends raiding your pantry and mice after your ingredients have a 75% chance of getting caught"
   },
   "30303": {
     "name": "Long-lasting Mousetrap",
@@ -663,17 +663,41 @@
     "name": "100% Mousetrap",
     "desc": "100% mousetrap; for 10 days, friends raiding your pantry and mice after your ingredients are sure to get caught"
   },
+  "30305": {
+    "name": "Steel Mousetrap",
+    "desc": "A steel mousetrap; for 24 hours, friends raiding your pantry and mice after your ingredients have a 45% chance of getting caught"
+  },
+  "30306": {
+    "name": "Cheese Trap",
+    "desc": "A trap baited with cheese; for 24 hours, friends raiding your pantry and mice after your ingredients have a 99% chance of getting caught"
+  },
+  "30307": {
+    "name": "Sea of Cheese",
+    "desc": "A whole sea of cheese-baited traps; for 120 hours, friends raiding your pantry and mice after your ingredients have a 99% chance of getting caught"
+  },
   "30401": {
     "name": "Roach Killer",
     "desc": "For 1 day roaches have nowhere to hide: each roach that appears in your restaurant has a 20% chance of being killed"
   },
   "30402": {
     "name": "Gold Roach Killer",
-    "desc": "For 1 day roaches have nowhere to hide: each roach that appears in your restaurant has a 50% chance of being killed"
+    "desc": "For 1 day roaches have nowhere to hide: each roach that appears in your restaurant has a 55% chance of being killed"
   },
   "30403": {
     "name": "Extra-strength Roach Killer",
     "desc": "For 10 days roaches have nowhere to hide: any roach that appears in your restaurant is killed at once"
+  },
+  "30404": {
+    "name": "Premium Roach Killer",
+    "desc": "For 1 day roaches have nowhere to hide: each roach that appears in your restaurant has a 35% chance of being killed"
+  },
+  "30405": {
+    "name": "Caramel Temptation",
+    "desc": "Roach bait made with caramel; for 1 day, each roach that appears in your restaurant has a 99% chance of being killed"
+  },
+  "30406": {
+    "name": "Caramel Feast",
+    "desc": "A whole feast of caramel roach bait; for 5 days, each roach that appears in your restaurant has a 99% chance of being killed"
   },
   "30501": {
     "name": "[Closed Beta Star]",

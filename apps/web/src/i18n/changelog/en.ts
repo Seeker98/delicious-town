@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  pest1027:
+    'Mousetrap and roach killer overhaul: the Mousetrap costs 18,000 coins (30% catch), the new Steel Mousetrap costs 36,000 (45%), and the Gold Mousetrap is upgraded to 75% for 90,000; the Roach Killer is unchanged, the new Premium Roach Killer costs 13,000 (35% kill), and the Gold Roach Killer is upgraded to 55% for 26,000; the black market now sells 99% versions: the Cheese Trap (24 hours, 15 diamonds; Sea of Cheese, 120 hours, 72) and Caramel Temptation (24 hours, 4 diamonds; Caramel Feast, 120 hours, 17); the Long-lasting and 100% Mousetraps and the Extra-strength Roach Killer are retired, and the ones in your storeroom or placed in your restaurant became Cheese Traps and Caramel Temptations (placed ones run 24 hours from the update); selling any of these back to the shop gives at most its diamond price × 2,000 coins (coin items count 10,000 coins as 1 diamond)',
   bar1026:
     'Bar reward changes: Cup guess now costs 2 Mystery Vouchers a game and its last tier gives 6 level 8 rewards; Memory Mixing costs 3 and its three rounds give a level 2, 4 and 6 reward; Darts and Secret Blend cost 3; Last Candy gives a level 1 reward at the beginner table and level 3 at the expert table; rewards of level 4 and up give lower-level ingredients',
   darts1025:

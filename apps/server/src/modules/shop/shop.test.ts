@@ -436,3 +436,72 @@ describe('限购：每天、每周，银币店和黑市共用计数（道具价�
     t.clock.set(new Date());
   });
 });
+
+describe('老鼠夹、蟑螂药改档（卫生合规前置，用户 2026-10-27）', () => {
+  const g = (name: string) => config.requireGoods(gid(name));
+  const rate = (name: string) => g(name).effects.trapRate ?? g(name).effects.roachClearRate;
+
+  it('银币店三档：价按参考店使用价 ÷ 倍率（老鼠夹 2.4 / 1.8 / 1.2，蟑螂药 不变 / 2.3 / 1.2）', () => {
+    const row = (name: string) => [name, g(name).coin, rate(name), g(name).effects.time, g(name).onSale];
+    expect(['老鼠夹', '精钢老鼠夹', '金牌老鼠夹', '蟑螂药', '精品蟑螂药', '金牌蟑螂药'].map(row)).toEqual([
+      ['老鼠夹', 18_000, 0.3, 24, true],
+      ['精钢老鼠夹', 36_000, 0.45, 24, true],
+      ['金牌老鼠夹', 90_000, 0.75, 24, true],
+      ['蟑螂药', 8_000, 0.2, 24, true],
+      ['精品蟑螂药', 13_000, 0.35, 24, true],
+      ['金牌蟑螂药', 26_000, 0.55, 24, true],
+    ]);
+  });
+
+  it('黑市只卖 99% 的四件，按使用价原价（钻石向上取整）；银币货不进黑市', () => {
+    const black = config.bundle.shopPools.black;
+    const row = (name: string) => [
+      name,
+      g(name).diamond,
+      rate(name),
+      g(name).effects.time,
+      black.includes(gid(name)),
+    ];
+    expect(['芝士的陷阱', '芝士的海洋', '焦糖的诱惑', '焦糖的盛宴'].map(row)).toEqual([
+      ['芝士的陷阱', 15, 0.99, 24, true],
+      ['芝士的海洋', 72, 0.99, 120, true],
+      ['焦糖的诱惑', 4, 0.99, 24, true],
+      ['焦糖的盛宴', 17, 0.99, 120, true],
+    ]);
+    for (const name of ['老鼠夹', '精钢老鼠夹', '金牌老鼠夹', '蟑螂药', '精品蟑螂药', '金牌蟑螂药'])
+      expect(black, name).not.toContain(gid(name));
+    for (const name of ['芝士的陷阱', '芝士的海洋', '焦糖的诱惑', '焦糖的盛宴']) {
+      expect(g(name).onSale, name).toBe(false);
+      expect(g(name).awardFlag, name).toBeNull();
+    }
+  });
+
+  it('卖店价按“虚拟”钻石价 × 2,000 封顶（银币价折钻石向上取整）', () => {
+    const sp = (name: string) => sellPrice(g(name), config.tuning);
+    expect(
+      [
+        '老鼠夹',
+        '精钢老鼠夹',
+        '金牌老鼠夹',
+        '芝士的陷阱',
+        '蟑螂药',
+        '精品蟑螂药',
+        '金牌蟑螂药',
+        '焦糖的诱惑',
+      ].map(sp),
+    ).toEqual([4_000, 8_000, 18_000, 30_000, 2_000, 4_000, 6_000, 8_000]);
+    for (const name of ['老鼠夹', '精钢老鼠夹', '金牌老鼠夹', '蟑螂药', '精品蟑螂药', '金牌蟑螂药'])
+      expect(g(name).diamond, name).toBe(Math.ceil(g(name).coin / 10_000));
+  });
+
+  it('长效、百分百老鼠夹和特效蟑螂药下架；奖池档: 精钢 5、金牌老鼠夹 6、精品和金牌蟑螂药 4', () => {
+    for (const name of ['长效老鼠夹', '百分百老鼠夹', '特效蟑螂药']) {
+      expect(g(name).retired, name).toBe(true);
+      expect(config.bundle.shopPools.special, name).not.toContain(gid(name));
+      expect(config.bundle.shopPools.black, name).not.toContain(gid(name));
+    }
+    expect(['精钢老鼠夹', '金牌老鼠夹', '精品蟑螂药', '金牌蟑螂药'].map((n) => g(n).awardFlag)).toEqual([
+      5, 6, 4, 4,
+    ]);
+  });
+});
