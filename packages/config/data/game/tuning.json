@@ -274,10 +274,10 @@
   "bar": {
     "fgWinRate": 0.25, "fgDrawRate": 0.25, "fgLoseMin": 0.1, "fgNewsStreak": 5,
     "cup": {
-      "cost": 1, "cups": [2, 3, 5, 7], "maxRate": 0.95,
+      "cost": 2, "cups": [2, 3, 5, 7], "maxRate": 0.95,
       "tiers": [
         { "awards": 1, "level": 2, "news": null }, { "awards": 2, "level": 4, "news": null },
-        { "awards": 4, "level": 6, "news": "news" }, { "awards": 8, "level": 10, "news": "broadcast" }
+        { "awards": 4, "level": 6, "news": "news" }, { "awards": 6, "level": 8, "news": "broadcast" }
       ]
     },
     "numMax": 25, "numCost": 8, "numLuckDiv": 20, "numAwardLevel": 10,
@@ -289,18 +289,22 @@
       "foodTiers": [
         { "minLevel": 1, "levels": [1, 2], "rare": 0.2 },
         { "minLevel": 3, "levels": [2, 3], "rare": 0.3 },
-        { "minLevel": 4, "levels": [3, 4], "rare": 0.4 },
-        { "minLevel": 5, "levels": [4, 5], "rare": 0.5 },
-        { "minLevel": 6, "levels": [5, 5], "rare": 0.6 }
+        { "minLevel": 4, "levels": [2, 3], "rare": 0.4 },
+        { "minLevel": 5, "levels": [3, 4], "rare": 0.3 },
+        { "minLevel": 6, "levels": [3, 4], "rare": 0.4 },
+        { "minLevel": 7, "levels": [3, 5], "rare": 0.3 },
+        { "minLevel": 8, "levels": [3, 5], "rare": 0.4 },
+        { "minLevel": 9, "levels": [4, 5], "rare": 0.3 },
+        { "minLevel": 10, "levels": [4, 5], "rare": 0.4 }
       ]
     },
     "devil": { "stakes": [1, 5, 10, 20], "cups": 6, "payouts": [[1, 2, 3], [7, 9, 12], [14, 18, 25], [27, 36, 49]], "dailyMax": 20, "hangoverMinutes": 60, "hangoverAtRate": -0.1, "newsSurvived": 3 },
     "memory": {
-      "cost": 1, "dailyMax": 20, "ingredients": 8, "lengths": [3, 5, 7], "awardLevels": [2, 4, 8],
+      "cost": 3, "dailyMax": 8, "ingredients": 8, "lengths": [3, 6, 9], "awardLevels": [2, 4, 6],
       "flashMs": 600, "gapMs": 200, "earlyMs": 300, "answerBaseMs": 3000, "answerPerItemMs": 1500
     },
     "darts": {
-      "cost": 2, "dailyMax": 20, "periodMs": [900, 1400], "futureMs": 100, "latencyMs": 600, "shake": 0.1,
+      "cost": 3, "dailyMax": 15, "periodMs": [900, 1400], "futureMs": 100, "latencyMs": 600, "shake": 0.1,
       "rings": [[0.05, 50], [0.15, 25], [0.3, 10], [0.5, 5]],
       "bossOdds": [[50, 10], [25, 30], [10, 35], [5, 20], [0, 5]],
       "winLevel": 5, "perfectLevel": 6, "tieRefund": 1
@@ -317,7 +321,7 @@
       "opens": [3, 2, 2, 1], "offerRates": [0.5, 0.65, 0.8, 0.95], "valueRate": 0.5
     },
     "spice": {
-      "cost": 2, "dailyMax": 5, "kinds": 10, "length": 4, "tries": 8,
+      "cost": 3, "dailyMax": 5, "kinds": 10, "length": 4, "tries": 8,
       "tiers": [
         { "maxTries": 4, "awardLevel": 8, "renown": 5, "news": true },
         { "maxTries": 6, "awardLevel": 5, "renown": 2, "news": false },
@@ -327,8 +331,8 @@
     "nim": {
       "dailyMax": 10,
       "tables": {
-        "novice": { "cost": 1, "k": [3, 3], "pile": [10, 20], "mistake": 0.5, "first": "choose", "renown": 1, "awardLevel": 2 },
-        "expert": { "cost": 2, "k": [3, 5], "pile": [20, 40], "mistake": 0, "first": "coin", "renown": 3, "awardLevel": 5 }
+        "novice": { "cost": 1, "k": [3, 3], "pile": [10, 20], "mistake": 0.5, "first": "choose", "renown": 1, "awardLevel": 1 },
+        "expert": { "cost": 2, "k": [3, 5], "pile": [20, 40], "mistake": 0, "first": "coin", "renown": 3, "awardLevel": 3 }
       }
     }
   },

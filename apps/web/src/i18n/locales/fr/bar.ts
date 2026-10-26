@@ -84,7 +84,7 @@ const bar: Messages['bar'] = {
     darts: [
       'Le viseur oscille de gauche à droite sur la cible\u202f; touchez «\u202fLancer\u202f!\u202f» pour tirer. Plus c’est près du centre, plus ça rapporte (50/25/10/5)\u202f; les bords valent 0. La main tremble un peu au lancer\u202f: la fléchette se plante légèrement à côté du viseur, et même un lancer parfaitement minuté ne touche pas toujours le centre.',
       'Trois fléchettes par partie\u202f: battez le total du patron du bar pour gagner. En cas d’égalité, une partie des bons mystère est remboursée.',
-      'La récompense est surtout un ingrédient de niveau 4–5\u202f; avec trois mouches, l’ingrédient obtenu est de niveau 5 avec plus de chances d’être rare.',
+      'La récompense est surtout un ingrédient de niveau 3–4\u202f; avec trois mouches, la récompense est meilleure, avec plus de chances d’être rare.',
     ],
     nim: [
       'Un tas de bonbons est posé sur la table. Le barman et vous en prenez à tour de rôle\u202f; celui qui prend le dernier gagne.',

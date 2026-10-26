@@ -80,7 +80,7 @@ const bar: Messages['bar'] = {
     darts: [
       'The crosshair sways left and right; tap "Throw!" to let go. Closer to the bullseye scores more (50/25/10/5), the edges score 0. Your hand shakes a little as you throw, so the dart lands slightly off the crosshair: even perfect timing does not always hit the bullseye.',
       "Three darts a game: beat the bar owner's total to win; a draw refunds some Mystery Vouchers.",
-      'The reward is mostly a level 4–5 ingredient; with three bullseyes, any ingredient you get is level 5 and more likely to be rare.',
+      'The reward is mostly a level 3–4 ingredient; with three bullseyes the reward is better and more likely to be rare.',
     ],
     nim: [
       'A pile of candies sits on the table. You and the bartender take turns; whoever takes the last candy wins.',

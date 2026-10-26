@@ -49,13 +49,13 @@ async function miss(c: RestCtx) {
 }
 
 describe('飞镖（4C-3 设计文档 §2.3）', () => {
-  it('开局扣 2 张，概览里看不到老板分数；已有局时再开被拒', async () => {
+  it('开局扣 3 张（酒吧礼券核算 2026-10-26），概览里看不到老板分数；已有局时再开被拒', async () => {
     const a = await player();
     script.push([0.99, 0.99, 0.99]);
     expect((await start(a)).data).toEqual({ throws: [], aiming: false });
-    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(48);
+    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(47);
     const v = (await t.game.bar.overview(a)).darts;
-    expect(v).toMatchObject({ cost: 2, played: 1, max: 20, round: { throws: [], aiming: false } });
+    expect(v).toMatchObject({ cost: 3, played: 1, max: 15, round: { throws: [], aiming: false } });
     expect(JSON.stringify(v)).not.toContain('boss');
     await expect(start(a)).rejects.toMatchObject({ code: 'ALREADY_DONE', params: { what: 'bar_round' } });
   });
@@ -137,23 +137,23 @@ describe('飞镖（4C-3 设计文档 §2.3）', () => {
     await miss(a);
     await miss(a);
     expect(await miss(a)).toMatchObject({ result: 'draw', boss: [0, 0, 0], refund: 1, award: null });
-    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(49);
+    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(48);
 
     script.push([0]);
     await start(a);
     await miss(a);
     await miss(a);
     expect(await miss(a)).toMatchObject({ result: 'lose', boss: [50, 50, 50], refund: 0, award: null });
-    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(47);
+    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(45);
     expect(await getDaily(t.db, a.restaurantId, 'bar.darts.win', DAY)).toBe(0);
   });
 
-  it('每天最多 20 局', async () => {
+  it('每天最多 15 局', async () => {
     const a = await player();
-    await incrementDaily(t.db, a.restaurantId, 'bar.darts', 20, DAY);
+    await incrementDaily(t.db, a.restaurantId, 'bar.darts', 15, DAY);
     await expect(start(a)).rejects.toMatchObject({
       code: 'LIMIT_REACHED',
-      params: { what: 'bar_daily', max: 20 },
+      params: { what: 'bar_daily', max: 15 },
     });
   });
 

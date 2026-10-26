@@ -123,18 +123,18 @@ describe('酒吧支线的计数（问题记录 515）', () => {
     expect([c['bar.darts.win'], c['bar.darts.perfect']]).toEqual([undefined, 1]);
   });
 
-  it('记忆调酒：答对最后一关（7 种）记一次', async () => {
+  it('记忆调酒：答对最后一关（9 种）记一次', async () => {
     const ctx = await rich();
     rngValues = [0];
     await bar().memoryStart(ctx);
     for (const [len, wait] of [
       [3, 2000],
-      [5, 3600],
-      [7, 5200],
+      [6, 4400],
+      [9, 6800],
     ] as const) {
       t.clock.advance(wait);
       await bar().memoryAnswer(ctx, { answer: Array(len).fill(0) });
-      if (len < 7) {
+      if (len < 9) {
         expect((await counters(ctx))['bar.memory.top']).toBeUndefined();
         await bar().memoryNext(ctx);
       }

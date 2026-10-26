@@ -852,9 +852,9 @@ describe('酒吧扩展（子项目 4C-3）', () => {
       hangoverAtRate: -0.1,
       newsSurvived: 3,
     });
-    expect(bar.memory.lengths).toEqual([3, 5, 7]);
-    expect(bar.memory.dailyMax).toBe(20);
-    expect(bar.darts.cost).toBe(2);
+    // 酒吧礼券核算（2026-10-26）：线上区服覆盖的配方长度、局数并进默认值；记忆、飞镖都改成 3 张
+    expect(bar.memory).toMatchObject({ cost: 3, lengths: [3, 6, 9], dailyMax: 8, awardLevels: [2, 4, 6] });
+    expect(bar.darts).toMatchObject({ cost: 3, dailyMax: 15 });
     // 全中靶心奖励等级降到 6，避免脚本刷满（4C-3 PR 遗留问题，用户确认）
     expect(bar.darts.perfectLevel).toBe(6);
     expect(bar.darts.rings[0]).toEqual([0.05, 50]);
@@ -863,12 +863,13 @@ describe('酒吧扩展（子项目 4C-3）', () => {
   it('猜酒杯改版的数值（问题记录 427-5）', () => {
     const { bundle } = realBuild();
     const c = bundle!.tuning.bar.cup;
-    expect(c).toMatchObject({ cost: 1, cups: [2, 3, 5, 7], maxRate: 0.95 });
+    // 酒吧礼券核算（2026-10-26）：每局 2 张，最后一档 6 份 8 级
+    expect(c).toMatchObject({ cost: 2, cups: [2, 3, 5, 7], maxRate: 0.95 });
     expect(c.tiers).toEqual([
       { awards: 1, level: 2, news: null },
       { awards: 2, level: 4, news: null },
       { awards: 4, level: 6, news: 'news' },
-      { awards: 8, level: 10, news: 'broadcast' },
+      { awards: 6, level: 8, news: 'broadcast' },
     ]);
     expect('cupNewsStreak' in bundle!.tuning.bar).toBe(false);
   });
@@ -891,7 +892,7 @@ describe('酒吧扩展（子项目 4C-3）', () => {
   it('秘制调料的数值（问题记录 427-2）', () => {
     const { bundle } = realBuild();
     expect(bundle!.tuning.bar.spice).toEqual({
-      cost: 2,
+      cost: 3,
       dailyMax: 5,
       kinds: 10,
       length: 4,
@@ -916,11 +917,28 @@ describe('酒吧扩展（子项目 4C-3）', () => {
           mistake: 0.5,
           first: 'choose',
           renown: 1,
-          awardLevel: 2,
+          awardLevel: 1,
         },
-        expert: { cost: 2, k: [3, 5], pile: [20, 40], mistake: 0, first: 'coin', renown: 3, awardLevel: 5 },
+        expert: { cost: 2, k: [3, 5], pile: [20, 40], mistake: 0, first: 'coin', renown: 3, awardLevel: 3 },
       },
     });
+  });
+});
+
+describe('酒吧奖励的食材档（酒吧礼券核算 2026-10-26）', () => {
+  it('4 级起食材等级下调、稀有率按档交替', () => {
+    const { bundle } = realBuild();
+    expect(bundle!.tuning.bar.prize.foodTiers).toEqual([
+      { minLevel: 1, levels: [1, 2], rare: 0.2 },
+      { minLevel: 3, levels: [2, 3], rare: 0.3 },
+      { minLevel: 4, levels: [2, 3], rare: 0.4 },
+      { minLevel: 5, levels: [3, 4], rare: 0.3 },
+      { minLevel: 6, levels: [3, 4], rare: 0.4 },
+      { minLevel: 7, levels: [3, 5], rare: 0.3 },
+      { minLevel: 8, levels: [3, 5], rare: 0.4 },
+      { minLevel: 9, levels: [4, 5], rare: 0.3 },
+      { minLevel: 10, levels: [4, 5], rare: 0.4 },
+    ]);
   });
 });
 

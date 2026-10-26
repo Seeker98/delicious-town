@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  bar1026:
+    'Récompenses du bar\u202f: Gobelets coûte 2 bons mystère par partie et le dernier palier donne 6 récompenses de niveau 8\u202f; Cocktail Mémoire coûte 3 et ses trois manches donnent une récompense de niveau 2, 4 et 6\u202f; Fléchettes et Mélange secret coûtent 3\u202f; Le dernier bonbon donne une récompense de niveau 1 à la table débutant et de niveau 3 à la table expert\u202f; les récompenses de niveau 4 et plus donnent des ingrédients de niveau plus bas',
   darts1025:
     'Fléchettes\u202f: la main tremble un peu à chaque lancer, la fléchette se plante légèrement à côté du viseur et un lancer parfaitement minuté ne touche pas toujours le centre\u202f; la tolérance au délai réseau passe de 1,5 à 0,6 seconde',
   limits1025:
