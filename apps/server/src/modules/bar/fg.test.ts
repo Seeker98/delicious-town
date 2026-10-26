@@ -130,7 +130,7 @@ describe('酒吧概览', () => {
       tickets: 3,
       krabCoins: 2,
       fg: { result: null, times: 0 },
-      cup: { result: null, times: 0, cost: 1, cups: [2, 3, 5, 7], round: null },
+      cup: { result: null, times: 0, cost: 2, cups: [2, 3, 5, 7], round: null },
       num: { result: null, times: 0, cost: 8, max: 25 },
       slot: { emailVerified: false, floorLeft: 101, stats: [] },
       krabCoinTickets: 100,

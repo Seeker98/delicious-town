@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  bar1026:
+    'Bar reward changes: Cup guess now costs 2 Mystery Vouchers a game and its last tier gives 6 level 8 rewards; Memory Mixing costs 3 and its three rounds give a level 2, 4 and 6 reward; Darts and Secret Blend cost 3; Last Candy gives a level 1 reward at the beginner table and level 3 at the expert table; rewards of level 4 and up give lower-level ingredients',
   darts1025:
     'Darts change: your hand shakes a little on each throw, so the dart lands slightly off the crosshair and perfect timing does not always hit the bullseye; the allowance for network delay drops from 1.5 to 0.6 seconds',
   limits1025:

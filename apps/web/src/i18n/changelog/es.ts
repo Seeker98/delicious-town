@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  bar1026:
+    'Cambios en los premios del bar: Adivina el vaso cuesta 2 vales misteriosos por partida y el último nivel da 6 premios de nivel 8; Cóctel Memoria cuesta 3 y sus tres rondas dan un premio de nivel 2, 4 y 6; Dardos y Mezcla secreta cuestan 3; El último caramelo da un premio de nivel 1 en la mesa de principiantes y de nivel 3 en la de expertos; los premios de nivel 4 o más dan ingredientes de nivel más bajo',
   darts1025:
     'Cambio en los dardos: al lanzar te tiembla un poco la mano, así que el dardo cae algo desviado de la mira y ni con el momento perfecto aciertas siempre en el centro; el margen para el retraso de red baja de 1,5 a 0,6 segundos',
   limits1025:

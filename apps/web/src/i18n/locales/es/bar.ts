@@ -82,7 +82,7 @@ const bar: Messages['bar'] = {
     darts: [
       'La mira se mueve de lado a lado sobre la diana; pulsa «¡Lanzar!» para soltar. Cuanto más cerca del centro, más puntos (50/25/10/5); en el borde, 0. Al lanzar te tiembla un poco la mano y el dardo cae algo desviado de la mira: ni con el momento perfecto aciertas siempre en el centro.',
       'Tres dardos por partida: supera el total del dueño del bar para ganar. Si empatáis, se devuelve parte de los vales misteriosos.',
-      'El premio suele ser un ingrediente de nivel 4–5; con tres dianas, el ingrediente que salga es de nivel 5 y con más probabilidad de ser raro.',
+      'El premio suele ser un ingrediente de nivel 3–4; con tres dianas, el premio es mejor y con más probabilidad de ser raro.',
     ],
     nim: [
       'Hay un montón de caramelos en la mesa. Tú y el barman os turnáis para coger; quien coge el último gana.',

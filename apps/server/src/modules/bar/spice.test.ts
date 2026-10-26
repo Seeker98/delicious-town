@@ -61,7 +61,7 @@ const spiceBest = async (a: RestCtx) =>
   )?.times;
 
 describe('秘制调料：开局（设计 §4.2）', () => {
-  it('扣 2 张；返回和概览里都没有配方；已有局再开被拒', async () => {
+  it('扣 3 张（酒吧礼券核算 2026-10-26）；返回和概览里都没有配方；已有局再开被拒', async () => {
     const a = await player();
     const r = (await start(a)).data;
     expect(r).toEqual({
@@ -75,9 +75,9 @@ describe('秘制调料：开局（设计 §4.2）', () => {
       renown: 0,
       award: null,
     });
-    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(48);
+    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(47);
     const ov = await t.game.bar.overview(a);
-    expect(ov.spice).toMatchObject({ cost: 2, played: 1, max: 5, kinds: 10, length: 4, tries: 8, round: r });
+    expect(ov.spice).toMatchObject({ cost: 3, played: 1, max: 5, kinds: 10, length: 4, tries: 8, round: r });
     expect(ov.spice.tiers).toEqual([
       { maxTries: 4, awardLevel: 8, renown: 5 },
       { maxTries: 6, awardLevel: 5, renown: 2 },

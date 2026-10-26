@@ -68,7 +68,7 @@ describe('最后一颗糖：开局（设计 §4）', () => {
       k: [3, 3],
       pile: [10, 20],
       renown: 1,
-      awardLevel: 2,
+      awardLevel: 1,
       first: 'choose',
       careless: true,
     });

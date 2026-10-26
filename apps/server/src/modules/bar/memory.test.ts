@@ -21,13 +21,13 @@ const start = (c: RestCtx) => t.game.bar.memoryStart(c);
 const answer = (c: RestCtx, a: number[]) => t.game.bar.memoryAnswer(c, { answer: a });
 
 describe('记忆调酒（4C-3 设计文档 §2.2）', () => {
-  it('开局扣 1 张，给出 3 种 0~7 的配料；已有局时再开被拒', async () => {
+  it('开局扣 3 张（酒吧礼券核算 2026-10-26），给出 3 种 0~7 的配料；已有局时再开被拒', async () => {
     const a = await player();
     const r = (await start(a)).data;
     expect(r).toMatchObject({ level: 1, flashMs: 600, gapMs: 200, answerMs: 3000 + 3 * 1500 });
     expect(r.seq).toHaveLength(3);
     for (const x of r.seq) expect(x >= 0 && x < 8).toBe(true);
-    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(49);
+    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(47);
     await expect(start(a)).rejects.toMatchObject({ code: 'ALREADY_DONE', params: { what: 'bar_round' } });
     expect((await t.game.bar.overview(a)).memory).toMatchObject({
       played: 1,
@@ -40,8 +40,8 @@ describe('记忆调酒（4C-3 设计文档 §2.2）', () => {
     let r = (await start(a)).data;
     for (const [level, len] of [
       [1, 3],
-      [2, 5],
-      [3, 7],
+      [2, 6],
+      [3, 9],
     ] as const) {
       expect(r.seq).toHaveLength(len);
       t.clock.advance(show(len));
@@ -57,7 +57,7 @@ describe('记忆调酒（4C-3 设计文档 §2.2）', () => {
         expect(ans).toMatchObject({ canNext: false, finished: true });
       }
     }
-    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(49);
+    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(47);
     const [n] = await listNews(t.db, a.shardId, { limit: 1, only: ['bar.memory'] });
     expect(n).toMatchObject({ restId: a.restaurantId });
     expect(await getDaily(t.db, a.restaurantId, 'bar.memory.perfect', DAY)).toBe(1);
@@ -95,12 +95,12 @@ describe('记忆调酒（4C-3 设计文档 §2.2）', () => {
     expect((await t.game.bar.overview(a)).memory.round).toBeNull();
   });
 
-  it('每天最多 20 局，第二天重新计', async () => {
+  it('每天最多 8 局，第二天重新计', async () => {
     const a = await player();
-    await incrementDaily(t.db, a.restaurantId, 'bar.memory', 20, DAY);
+    await incrementDaily(t.db, a.restaurantId, 'bar.memory', 8, DAY);
     await expect(start(a)).rejects.toMatchObject({
       code: 'LIMIT_REACHED',
-      params: { what: 'bar_daily', max: 20 },
+      params: { what: 'bar_daily', max: 8 },
     });
     t.clock.set(gameTime('2026-10-01', 12));
     await start(a);
@@ -142,7 +142,7 @@ describe('记忆调酒（4C-3 设计文档 §2.2）', () => {
     const ctx = await a;
     for (let k = 0; k < 2; k++) {
       let r = (await start(ctx)).data;
-      for (const len of [3, 5, 7]) {
+      for (const len of [3, 6, 9]) {
         t.clock.advance(show(len));
         const ans = (await answer(ctx, r.seq)).data;
         if (ans.canNext) r = (await t.game.bar.memoryNext(ctx)).data;

@@ -57,8 +57,8 @@ const newsOf = async (c: RestCtx) =>
     .map((n) => ({ type: n.type, params: n.params }));
 
 describe('猜酒杯：开局和猜（问题记录 427-5）', () => {
-  it('没有局时猜就开局：扣 1 张；猜中时骰子就在选的杯子里，等玩家选；概览里能接着玩', async () => {
-    const a = await player(1);
+  it('没有局时猜就开局：扣 2 张（酒吧礼券核算 2026-10-26）；猜中时骰子就在选的杯子里，等玩家选；概览里能接着玩', async () => {
+    const a = await player(2);
     script = [0.1];
     const r = (await guess(a, 1)).data;
     const view = {
@@ -72,12 +72,12 @@ describe('猜酒杯：开局和猜（问题记录 427-5）', () => {
     expect(r).toEqual(view);
     expect(await tickets(a)).toBe(0);
     const o = (await bar().overview(a)).cup;
-    expect(o).toMatchObject({ result: null, times: 0, cost: 1, cups: [2, 3, 5, 7], round: view });
+    expect(o).toMatchObject({ result: null, times: 0, cost: 2, cups: [2, 3, 5, 7], round: view });
     expect(o.tiers).toEqual([
       { awards: 1, news: null },
       { awards: 2, news: null },
       { awards: 4, news: 'news' },
-      { awards: 8, news: 'broadcast' },
+      { awards: 6, news: 'broadcast' },
     ]);
   });
 
@@ -86,7 +86,7 @@ describe('猜酒杯：开局和猜（问题记录 427-5）', () => {
     await guess(a, 0);
     await next(a);
     await guess(a, 2, 1);
-    expect(await tickets(a)).toBe(4);
+    expect(await tickets(a)).toBe(3);
     const act = await t.game.task.activation(a);
     expect(act.items.find((i) => i.name === '酒吧娱乐')!.count).toBe(1);
   });
@@ -155,7 +155,7 @@ describe('猜酒杯：开局和猜（问题记录 427-5）', () => {
   });
 
   it('幸运率 0.3：2 个杯子猜中率 0.65，随机数 0.6 猜中并标记幸运', async () => {
-    const a = await player(1, { luck: 300 });
+    const a = await player(2, { luck: 300 });
     script = [0.6];
     expect((await guess(a, 0)).data.last).toEqual({ pick: 0, ball: 0, win: true, lucky: true });
   });
@@ -190,7 +190,7 @@ describe('猜酒杯：区服数值把轮数改少了', () => {
       expect((await bar().overview(a)).cup.round).toBeNull();
       await expect(stop(a)).rejects.toMatchObject({ params: { reason: 'no_round' } });
       expect((await guess(a, 0)).data).toMatchObject({ round: 0, cups: 2 });
-      expect(await tickets(a)).toBe(9);
+      expect(await tickets(a)).toBe(8);
       // 已在新的最后一轮猜中的局（改数值前猜中的）：继续就按通关发最后一档（终审 2）
       await setRound(a, won(1));
       const r = (await next(a)).data;
@@ -253,12 +253,12 @@ describe('猜酒杯：收手、继续、通关', () => {
     await expect(next(b)).rejects.toMatchObject({ params: { reason: 'no_round' } });
   });
 
-  it('第 4 轮猜中就是通关：直接发 8 份，写全服广播', async () => {
+  it('第 4 轮猜中就是通关：直接发 6 份，写全服广播', async () => {
     const a = await player();
     await setRound(a, { round: 3, won: false, last: null });
     const r = (await guess(a, 6, 3)).data;
     expect(r).toMatchObject({ round: 3, cups: 7, result: 'clear', last: { pick: 6, ball: 6, win: true } });
-    expect(r.awards).toHaveLength(8);
+    expect(r.awards).toHaveLength(6);
     expect(await hasRound(a)).toBe(false);
     expect(await newsOf(a)).toEqual([{ type: 'bar.cup.big', params: { round: 4, cups: 7 } }]);
   });
