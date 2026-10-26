@@ -653,7 +653,7 @@
   },
   "30302": {
     "name": "Tapette en or",
-    "desc": "Tapette en or\u202f; pendant 24 heures, les amis qui fouillent votre garde-manger et les souris qui viennent voler vos ingrédients ont 50\u202f% de risque de se faire pincer"
+    "desc": "Tapette en or\u202f; pendant 24 heures, les amis qui fouillent votre garde-manger et les souris qui viennent voler vos ingrédients ont 75\u202f% de risque de se faire pincer"
   },
   "30303": {
     "name": "Tapette longue durée",
@@ -663,17 +663,41 @@
     "name": "Tapette 100\u202f%",
     "desc": "Tapette 100\u202f%\u202f; pendant 10 jours, les amis qui fouillent votre garde-manger et les souris qui viennent voler vos ingrédients se font pincer à coup sûr"
   },
+  "30305": {
+    "name": "Tapette en acier",
+    "desc": "Tapette en acier\u202f; pendant 24 heures, les amis qui fouillent votre garde-manger et les souris qui viennent voler vos ingrédients ont 45\u202f% de risque de se faire pincer"
+  },
+  "30306": {
+    "name": "Piège au fromage",
+    "desc": "Piège appâté au fromage\u202f; pendant 24 heures, les amis qui fouillent votre garde-manger et les souris qui viennent voler vos ingrédients ont 99\u202f% de risque de se faire pincer"
+  },
+  "30307": {
+    "name": "Océan de fromage",
+    "desc": "Un océan de pièges au fromage\u202f; pendant 120 heures, les amis qui fouillent votre garde-manger et les souris qui viennent voler vos ingrédients ont 99\u202f% de risque de se faire pincer"
+  },
   "30401": {
     "name": "Insecticide anti-cafards",
     "desc": "Pendant 1 jour, les cafards n'ont nulle part où se cacher\u202f: chaque cafard qui apparaît a 20\u202f% de risque d'être tué"
   },
   "30402": {
     "name": "Insecticide en or",
-    "desc": "Pendant 1 jour, les cafards n'ont nulle part où se cacher\u202f: chaque cafard qui apparaît a 50\u202f% de risque d'être tué"
+    "desc": "Pendant 1 jour, les cafards n'ont nulle part où se cacher\u202f: chaque cafard qui apparaît a 55\u202f% de risque d'être tué"
   },
   "30403": {
     "name": "Insecticide extra-fort",
     "desc": "Pendant 10 jours, les cafards n'ont nulle part où se cacher\u202f: tout cafard qui apparaît est tué aussitôt"
+  },
+  "30404": {
+    "name": "Insecticide de qualité",
+    "desc": "Pendant 1 jour, les cafards n'ont nulle part où se cacher\u202f: chaque cafard qui apparaît a 35\u202f% de risque d'être tué"
+  },
+  "30405": {
+    "name": "Tentation caramel",
+    "desc": "Appât au caramel pour cafards\u202f; pendant 1 jour, chaque cafard qui apparaît a 99\u202f% de risque d'être tué"
+  },
+  "30406": {
+    "name": "Festin de caramel",
+    "desc": "Un festin d'appâts au caramel pour cafards\u202f; pendant 5 jours, chaque cafard qui apparaît a 99\u202f% de risque d'être tué"
   },
   "30501": {
     "name": "[Étoile de la bêta]",

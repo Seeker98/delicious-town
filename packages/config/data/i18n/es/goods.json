@@ -653,7 +653,7 @@
   },
   "30302": {
     "name": "Ratonera de oro",
-    "desc": "Ratonera de oro; durante 24 horas, los amigos que revuelvan tu despensa y los ratones que vengan a robar ingredientes tienen un 50\u00a0% de probabilidad de pillarse"
+    "desc": "Ratonera de oro; durante 24 horas, los amigos que revuelvan tu despensa y los ratones que vengan a robar ingredientes tienen un 75\u00a0% de probabilidad de pillarse"
   },
   "30303": {
     "name": "Ratonera duradera",
@@ -663,17 +663,41 @@
     "name": "Ratonera 100\u00a0%",
     "desc": "Ratonera 100\u00a0%; durante 10 días, los amigos que revuelvan tu despensa y los ratones que vengan a robar ingredientes se pillan seguro"
   },
+  "30305": {
+    "name": "Ratonera de acero",
+    "desc": "Ratonera de acero; durante 24 horas, los amigos que revuelvan tu despensa y los ratones que vengan a robar ingredientes tienen un 45\u00a0% de probabilidad de pillarse"
+  },
+  "30306": {
+    "name": "Trampa de queso",
+    "desc": "Trampa con cebo de queso; durante 24 horas, los amigos que revuelvan tu despensa y los ratones que vengan a robar ingredientes tienen un 99\u00a0% de probabilidad de pillarse"
+  },
+  "30307": {
+    "name": "Mar de queso",
+    "desc": "Un mar de trampas con cebo de queso; durante 120 horas, los amigos que revuelvan tu despensa y los ratones que vengan a robar ingredientes tienen un 99\u00a0% de probabilidad de pillarse"
+  },
   "30401": {
     "name": "Insecticida para cucarachas",
     "desc": "Durante 1 día las cucarachas no tienen dónde esconderse: cada una que aparezca tiene un 20\u00a0% de probabilidad de morir"
   },
   "30402": {
     "name": "Insecticida de oro",
-    "desc": "Durante 1 día las cucarachas no tienen dónde esconderse: cada una que aparezca tiene un 50\u00a0% de probabilidad de morir"
+    "desc": "Durante 1 día las cucarachas no tienen dónde esconderse: cada una que aparezca tiene un 55\u00a0% de probabilidad de morir"
   },
   "30403": {
     "name": "Insecticida extrafuerte",
     "desc": "Durante 10 días las cucarachas no tienen dónde esconderse: cualquiera que aparezca muere al instante"
+  },
+  "30404": {
+    "name": "Insecticida selecto",
+    "desc": "Durante 1 día las cucarachas no tienen dónde esconderse: cada una que aparezca tiene un 35\u00a0% de probabilidad de morir"
+  },
+  "30405": {
+    "name": "Tentación de caramelo",
+    "desc": "Cebo de caramelo para cucarachas; durante 1 día, cada una que aparezca tiene un 99\u00a0% de probabilidad de morir"
+  },
+  "30406": {
+    "name": "Festín de caramelo",
+    "desc": "Un festín de cebo de caramelo para cucarachas; durante 5 días, cada una que aparezca tiene un 99\u00a0% de probabilidad de morir"
   },
   "30501": {
     "name": "[Estrella de la beta]",

@@ -553,6 +553,8 @@ const goodsSrc = z.enum([
   'art',
   // 节油器改版（2026-10-19）新加的节油器、省油阀
   'oil',
+  // 老鼠夹、蟑螂药改档（2026-10-27）新加的精钢、精品和黑市 99% 的四件
+  'hygiene',
 ]);
 export const masterGoods = z
   .object({

@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  pest1027:
+    'Cambios en ratoneras e insecticidas: la Ratonera cuesta 18.000 monedas (30 % de atrapar), la nueva Ratonera de acero cuesta 36.000 (45 %) y la Ratonera de oro sube a 75 % por 90.000; el Insecticida para cucarachas no cambia, el nuevo Insecticida selecto cuesta 13.000 (35 % de matar) y el Insecticida de oro sube a 55 % por 26.000; el mercado negro vende versiones al 99 %: Trampa de queso (24 horas, 15 diamantes; Mar de queso, 120 horas, 72) y Tentación de caramelo (24 horas, 4 diamantes; Festín de caramelo, 120 horas, 17); la Ratonera duradera, la Ratonera 100 % y el Insecticida extrafuerte se retiran, y los que tenías en el almacén o colocados se cambiaron por Trampas de queso y Tentaciones de caramelo (los colocados duran 24 horas desde la actualización); al venderlos a la tienda recibes como mucho su precio en diamantes × 2.000 monedas (los de monedas cuentan 10.000 monedas como 1 diamante)',
   bar1026:
     'Cambios en los premios del bar: Adivina el vaso cuesta 2 vales misteriosos por partida y el último nivel da 6 premios de nivel 8; Cóctel Memoria cuesta 3 y sus tres rondas dan un premio de nivel 2, 4 y 6; Dardos y Mezcla secreta cuestan 3; El último caramelo da un premio de nivel 1 en la mesa de principiantes y de nivel 3 en la de expertos; los premios de nivel 4 o más dan ingredientes de nivel más bajo',
   darts1025:

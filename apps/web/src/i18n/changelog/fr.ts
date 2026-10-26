@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  pest1027:
+    'Tapettes et insecticides revus\u202f: la Tapette à souris coûte 18\u202f000 pièces (30\u202f% de capture), la nouvelle Tapette en acier 36\u202f000 (45\u202f%) et la Tapette en or passe à 75\u202f% pour 90\u202f000\u202f; l’Insecticide anti-cafards ne change pas, le nouvel Insecticide de qualité coûte 13\u202f000 (35\u202f% d’élimination) et l’Insecticide en or passe à 55\u202f% pour 26\u202f000\u202f; le marché noir vend des versions à 99\u202f%\u202f: Piège au fromage (24 heures, 15 diamants\u202f; Océan de fromage, 120 heures, 72) et Tentation caramel (24 heures, 4 diamants\u202f; Festin de caramel, 120 heures, 17)\u202f; la Tapette longue durée, la Tapette 100\u202f% et l’Insecticide extra-fort sont retirés, ceux de votre réserve ou posés dans le restaurant sont devenus des Pièges au fromage et des Tentations caramel (ceux posés durent 24 heures depuis la mise à jour)\u202f; revendus à la boutique, ils rapportent au plus leur prix en diamants × 2\u202f000 pièces (pour les articles en pièces, 10\u202f000 pièces comptent pour 1 diamant)',
   bar1026:
     'Récompenses du bar\u202f: Gobelets coûte 2 bons mystère par partie et le dernier palier donne 6 récompenses de niveau 8\u202f; Cocktail Mémoire coûte 3 et ses trois manches donnent une récompense de niveau 2, 4 et 6\u202f; Fléchettes et Mélange secret coûtent 3\u202f; Le dernier bonbon donne une récompense de niveau 1 à la table débutant et de niveau 3 à la table expert\u202f; les récompenses de niveau 4 et plus donnent des ingrédients de niveau plus bas',
   darts1025:
