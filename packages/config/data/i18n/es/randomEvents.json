@@ -1,0 +1,345 @@
+{
+  "1": {
+    "name": "El paseo de los mozos",
+    "desc": "Los mozos de carga del mercado se fueron hoy todos juntos a pasear por la plaza, para \"hablar en serio de la vida\".",
+    "lines": [
+      "Después del paseo, todo el equipo viene a descansar a tu local."
+    ]
+  },
+  "2": {
+    "name": "La siesta",
+    "desc": "En el barrio se ha puesto de moda dormir después de comer. Por la tarde la calle está tan tranquila como en vacaciones.",
+    "lines": [
+      "Eso sí, los clientes recién despiertos están de un humor estupendo."
+    ]
+  },
+  "3": {
+    "name": "Antes de entrar",
+    "desc": "Nueva norma en el pueblo: antes de entrar, cada cliente debe leer un \"Aviso de preferencias gastronómicas\" y marcar \"Acepto\" punto por punto. ¿Cómo lo vas a presentar?",
+    "lines": [
+      "Un botón enorme de \"Aceptar todo\"",
+      "Los clientes entran rápido, pero luego les recomiendan un montón de platos que no quieren.",
+      "Detallarlo todo con honestidad",
+      "Se forma cola en la puerta, pero el inspector alaba tu rigor."
+    ]
+  },
+  "4": {
+    "name": "El reloj se adelantó",
+    "desc": "Anoche el reloj de la torre se adelantó una hora él solito. Medio pueblo va con la hora nueva y el otro medio con la vieja.",
+    "lines": [
+      "Los clientes del almuerzo llegan en dos tandas."
+    ]
+  },
+  "5": {
+    "name": "El concurso de canción del pueblo vecino",
+    "desc": "Esta noche la tele retransmite el concurso de canción del pueblo vecino. Cada vestuario es más estrafalario que el anterior y nadie entiende cómo se puntúa. ¿A quién apoyas?",
+    "lines": [
+      "Los gemelos con capa de papel de aluminio",
+      "¡Han ganado! Lo celebras a gritos en el local y los clientes descorchan champán.",
+      "No han ganado. Te pasaste la noche tarareando y te quedaste sin voz, pero de buen humor.",
+      "El abuelo que canta todo en una sola nota",
+      "¡Ha ganado el abuelo! Lo celebras a gritos en el local y los clientes descorchan champán.",
+      "El abuelo no ha ganado. Te pasaste la noche tarareando y te quedaste sin voz, pero de buen humor.",
+      "El grupo electrónico con máquina de humo",
+      "¡Ha ganado el grupo! Lo celebras a gritos en el local y los clientes descorchan champán.",
+      "El grupo no ha ganado. Te pasaste la noche tarareando y te quedaste sin voz, pero de buen humor."
+    ]
+  },
+  "6": {
+    "name": "Formulario 27-B",
+    "desc": "Carta del ayuntamiento: la tipografía de tu letrero no figura en el \"Catálogo de tipografías recomendadas\". Rellena el formulario 27-B, adjunta tres justificantes y consigue dos sellos.",
+    "lines": [
+      "Hacerlo como es debido",
+      "Una mañana entera de trámites. Muy instructivo.",
+      "Calzar la pata de una mesa con él",
+      "La mesa ya no cojea, pero el inspector que pasa por la tarde se te queda mirando."
+    ]
+  },
+  "7": {
+    "name": "Una caja de cascos vacíos",
+    "desc": "En el callejón de atrás hay una caja de botellas vacías. La vecina de al lado dice que te devuelven dinero por cada una.",
+    "lines": [
+      "Devolverlas",
+      "Te devuelven un puñado de monedas.",
+      "Regalárselas al señor que rebusca en los contenedores cada día",
+      "Va hablando bien de tu local a todo el que se encuentra."
+    ]
+  },
+  "8": {
+    "name": "La nueva rotonda",
+    "desc": "Han hecho una rotonda nueva a la entrada del pueblo. Los repartidores entran y no encuentran la salida: dan vueltas y más vueltas.",
+    "lines": [
+      "Las entregas van más lentas, pero tanto mareo cuenta como ejercicio."
+    ]
+  },
+  "9": {
+    "name": "El grupo de los palos selfi",
+    "desc": "Un grupo de turistas con palos larguísimos se mete en tu local. Cada plato se lleva cinco minutos de fotos antes de que nadie lo pruebe.",
+    "lines": [
+      "Hay mucho ambiente, pero los clientes se han vuelto más exigentes."
+    ]
+  },
+  "10": {
+    "name": "Una nota en la puerta",
+    "desc": "El local de enfrente ha pegado una nota en la puerta: \"Nos vamos a la playa. ¡Hasta el mes que viene!\"",
+    "lines": [
+      "Sus clientes habituales no tienen más remedio que venir a ti."
+    ]
+  },
+  "12": {
+    "name": "¿Fruta en platos salados?",
+    "desc": "Dos mesas discuten si la fruta dulce puede ir en un plato salado y quieren que tú decidas.",
+    "lines": [
+      "Sí",
+      "Los clientes aventureros se quedan.",
+      "No",
+      "Los tradicionalistas, encantados, piden un plato más.",
+      "Esconderte en la cocina",
+      "Mientras te escondes, encuentras un vale debajo de un armario."
+    ]
+  },
+  "13": {
+    "name": "El inspector de pajarita",
+    "desc": "Un inspector con pajarita señala tu carta: esa salsa solo puede llevar ese nombre si se elabora en cierto valle.",
+    "lines": [
+      "Llamarla \"salsa estilo tal\"",
+      "El nombre se alarga y los clientes dudan al pedir.",
+      "Invitarle a probar un cuenco allí mismo",
+      "Tras comer, se queda un buen rato en silencio: \"Mmm... quizá ese valle podría ser un poco más grande\"."
+    ]
+  },
+  "15": {
+    "name": "Una cola perfectamente recta",
+    "desc": "Sin saber cómo, se ha formado sola una cola larga y perfectamente recta en tu puerta.",
+    "lines": [
+      "Todos son muy educados: nadie se cuela y nadie se atreve a preguntar para qué es la cola."
+    ]
+  },
+  "16": {
+    "name": "La olla del rastro",
+    "desc": "En el rastro del fin de semana hay una olla vieja y renegrida. El vendedor dice que era de su bisabuelo y la deja barata.",
+    "lines": [
+      "Comprarla",
+      "Es una olla vieja normal, pero lo que cocinas en ella sabe más intenso.",
+      "En el fondo hay una línea de letras diminutas grabadas. Al hurgar, encuentras dos vales escondidos.",
+      "No comprarla",
+      "Acaricias el asa y la vuelves a dejar."
+    ]
+  },
+  "17": {
+    "name": "El cerdo fugitivo",
+    "desc": "El cerdo que se le escapó al vecino se pasó la mañana hozando en tu patio y desenterró una cosa negra que huele muy fuerte.",
+    "lines": [
+      "Devolver el cerdo y el hallazgo al vecino",
+      "El vecino te lo agradece con una cesta de ingredientes.",
+      "Quedártelo para investigar",
+      "Rallas un poquito en un plato y los clientes no paran de pedir la receta."
+    ]
+  },
+  "19": {
+    "name": "Noche de partido",
+    "desc": "Esta noche juegan los equipos de dos pueblos y todo el mundo se apiña en los locales con tele.",
+    "lines": [
+      "Poner una tele",
+      "Lleno total, y mucho jaleo.",
+      "Sin tele: un rincón tranquilo para quien lo quiera",
+      "Solo vienen clientes que quieren comer en paz."
+    ]
+  },
+  "33": {
+    "name": "Las cuatro en punto",
+    "desc": "A las cuatro en punto, toda la calle deja lo que está haciendo para tomar el té con un par de galletitas.",
+    "lines": [
+      "Los que toman el té entran a sentarse de paso."
+    ]
+  },
+  "34": {
+    "name": "Todos a hervir agua",
+    "desc": "En cuanto termina la telenovela de la noche, todo el pueblo se levanta a hervir agua para el té y saltan los plomos de golpe.",
+    "lines": [
+      "Hay que volver a encender los fogones, pero en ese minuto a oscuras los clientes charlan más animados que nunca."
+    ]
+  },
+  "35": {
+    "name": "El queso cuesta abajo",
+    "desc": "Alguien echó a rodar una rueda entera de queso colina abajo y todo el pueblo corre detrás.",
+    "lines": [
+      "Correr tú también",
+      "Te diste un buen tropezón, pero todos se rieron mucho.",
+      "¡Fuiste el primero en atrapar el queso!",
+      "Vender sopa caliente al pie de la colina",
+      "Los que acaban agotados vienen a tomar sopa."
+    ]
+  },
+  "36": {
+    "name": "Hablar del tiempo",
+    "desc": "Hoy cada cliente que entra se pasa diez minutos hablándote del tiempo.",
+    "lines": [
+      "Va lento, pero después de una buena charla nadie se pone exigente."
+    ]
+  },
+  "37": {
+    "name": "Perdón, perdón",
+    "desc": "Un cliente te pisó el pie. Los dos dijeron \"perdón\" a la vez y luego se disculparon otras cinco veces.",
+    "lines": [
+      "Todo el local se ha vuelto extremadamente educado."
+    ]
+  },
+  "39": {
+    "name": "Noche de hoguera y fuegos artificiales",
+    "desc": "En esta noche de otoño, el pueblo enciende una gran hoguera y lanza fuegos artificiales. Alguien hasta echó un espantapájaros al fuego.",
+    "lines": [
+      "Después de los fuegos, todo el mundo tiene hambre."
+    ]
+  },
+  "40": {
+    "name": "Noche de preguntas en el bar",
+    "desc": "Esta noche el bar organiza un concurso de preguntas. Son tres: quien acierte todas se lleva el bote de vales de la barra.",
+    "lines": [
+      "Ni una acertada. Al menos te tomaste una cerveza de jengibre gratis.",
+      "Acertaste una: el camarero te da un vale.",
+      "Acertaste dos: el camarero te da un vale.",
+      "¡Todas bien! El bote de vales de la barra es tuyo."
+    ]
+  },
+  "43": {
+    "name": "El paragüero está vacío",
+    "desc": "Se han llevado prestados todos los paraguas de la entrada. Los clientes llegan empapados.",
+    "lines": [
+      "Nada más sentarse, piden sopa caliente."
+    ]
+  },
+  "44": {
+    "name": "El cuello largo del lago",
+    "desc": "Alguien dice haber visto un gran monstruo de cuello largo en el lago de las afueras, pero todas las fotos salen borrosas. Los turistas llegan en masa.",
+    "lines": [
+      "Ir tú también al lago",
+      "¡Le hiciste una foto! Algo borrosa, eso sí.",
+      "Le hiciste una foto a un tronco flotando.",
+      "Quedarte a atender a los turistas",
+      "Los turistas llenan tu local."
+    ]
+  },
+  "49": {
+    "name": "Un gato naranja ocupa una mesa",
+    "desc": "Un gato naranja se ha adueñado de una mesa para dormir y no hay forma de despertarlo.",
+    "lines": [
+      "Los clientes hacen cola para acariciarlo."
+    ]
+  },
+  "50": {
+    "name": "La moneda de canto",
+    "desc": "Se cayó una moneda del mostrador y se quedó de canto en el suelo.",
+    "lines": [
+      "Presientes que hoy es tu día de suerte."
+    ]
+  },
+  "51": {
+    "name": "El jefe de cocina con el corazón roto",
+    "desc": "Al jefe de cocina le acaban de dejar, y hoy todos los platos están algo salados.",
+    "lines": [
+      "Pero todos los que los prueban dicen: \"Este plato tiene una historia\"."
+    ]
+  },
+  "53": {
+    "name": "Reunión de cucarachas",
+    "desc": "Las cucarachas del rincón parecen estar reunidas, todas bien puestas en fila.",
+    "lines": [
+      "Así en fila, son fáciles de aplastar."
+    ]
+  },
+  "86": {
+    "name": "El paraguas olvidado",
+    "desc": "Ayer un cliente se dejó el paraguas en tu local.",
+    "lines": [
+      "Hoy vuelve a buscarlo y se empeña en darte un vale como agradecimiento."
+    ]
+  },
+  "87": {
+    "name": "Pedida de mano con éxito",
+    "desc": "Un cliente se arrodilló en tu local para pedir matrimonio, ¡y le dijeron que sí!",
+    "lines": [
+      "Todo el local aplaudió y varias mesas pidieron más platos."
+    ]
+  },
+  "96": {
+    "name": "\"La sopa quemaba\"",
+    "desc": "Ha aparecido una mala reseña en internet: \"La sopa estaba demasiado caliente\".",
+    "lines": [
+      "Responder con educación y prometer avisar la próxima vez",
+      "A alguien le gustó tu respuesta.",
+      "Ignorarla",
+      "Algunos clientes leyeron la reseña y no entraron."
+    ]
+  },
+  "100": {
+    "name": "El cliente sin cartera",
+    "desc": "Un cliente termina de comer, se palpa los bolsillos y dice que se ha olvidado el dinero.",
+    "lines": [
+      "Dejar que pague la próxima vez",
+      "Tres días después volvió, y encima con un regalo de agradecimiento.",
+      "Nunca volviste a verlo.",
+      "Que lave los platos para saldar la cuenta",
+      "Los deja relucientes."
+    ]
+  },
+  "105": {
+    "name": "El letrero torcido",
+    "desc": "Una ráfaga de viento te ha torcido el letrero.",
+    "lines": [
+      "Los que pasan creen que es un local nuevo y entran a echar un vistazo."
+    ]
+  },
+  "108": {
+    "name": "El muñeco de nieve con gorro de chef",
+    "desc": "Alguien ha hecho un muñeco de nieve en tu puerta, y lleva puesto tu gorro de chef.",
+    "lines": [
+      "Todos los clientes quieren hacerse una foto con él."
+    ]
+  },
+  "111": {
+    "name": "El comensal solitario",
+    "desc": "Un cliente con gafas de sol se sienta solo en un rincón, prueba un bocado de cada plato y apunta algo en una libretita.",
+    "lines": [
+      "Trato especial: dos platos por cuenta de la casa",
+      "Asiente, cierra la libreta y se va.",
+      "Tratarlo como a los demás",
+      "Termina, cierra la libreta y se va."
+    ]
+  },
+  "112": {
+    "name": "Una reseña en el periódico",
+    "desc": "El Diario del pueblo ha publicado una reseña gastronómica anónima, y habla precisamente de tu local.",
+    "lines": [
+      "\"Un servicio tan atento que resulta sospechoso, pero la comida está buena de verdad\"."
+    ]
+  },
+  "113": {
+    "name": "La plaquita",
+    "desc": "Alguien te ha enviado una plaquita de latón con una sola estrella grabada. Sin remitente.",
+    "lines": [
+      "La cuelgas en la entrada."
+    ]
+  },
+  "126": {
+    "name": "Rodaje en el local",
+    "desc": "Un equipo de cine ha rodado una escena en tu local.",
+    "lines": [
+      "Se corrió la voz y todo el pueblo vino a verlo."
+    ]
+  },
+  "128": {
+    "name": "Lluvia de estrellas",
+    "desc": "Esta noche hay lluvia de estrellas. Pides un deseo a la primera estrella fugaz.",
+    "lines": [
+      "A la mañana siguiente, hay tres vales en tu buzón."
+    ]
+  },
+  "151": {
+    "name": "Una reseña en el periódico",
+    "desc": "El Diario del pueblo ha publicado una reseña gastronómica anónima, y habla precisamente de tu local.",
+    "lines": [
+      "\"Un local pequeño, tranquilo y honesto\"."
+    ]
+  }
+}

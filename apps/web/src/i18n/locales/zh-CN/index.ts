@@ -23,6 +23,7 @@ import wealth from './wealth';
 import bank from './bank';
 import bulk from './bulk';
 import wishtree from './wishtree';
+import randomEvent from './randomEvent';
 import achieve from './achieve';
 import futures from './futures';
 import labels from './labels';
@@ -83,6 +84,7 @@ const zhCN = {
   bank,
   bulk,
   wishtree,
+  randomEvent,
   achieve,
   futures,
   equip,

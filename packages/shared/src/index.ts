@@ -53,6 +53,7 @@ export * from './schemas/futures';
 export * from './schemas/wealth';
 export * from './schemas/bulk';
 export * from './schemas/wishtree';
+export * from './schemas/randomEvent';
 export * from './predict';
 export * from './schemas/predict';
 export * from './schemas/kuji';

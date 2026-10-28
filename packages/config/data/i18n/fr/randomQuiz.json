@@ -1,0 +1,287 @@
+{
+  "1": {
+    "name": "Par quel temps la combinaison et la décomposition d'ingrédients réussissent-elles à coup sûr\u202f?",
+    "note": "Par Grand vent et Ouragan, combinaison et décomposition réussissent à 100\u202f%.",
+    "lines": [
+      "Grand vent",
+      "Tempête de sable",
+      "Brouillard",
+      "Ensoleillé"
+    ]
+  },
+  "2": {
+    "name": "Par quel temps les ingrédients du marché sont-ils moins chers\u202f?",
+    "note": "Nuageux\u202f: ingrédients du marché -20\u202f%\u202f; Nuit nuageuse\u202f: -30\u202f%.",
+    "lines": [
+      "Nuageux",
+      "Pluie fine",
+      "Tempête de sable",
+      "Grêle"
+    ]
+  },
+  "3": {
+    "name": "En service, quel temps donne le plus gros bonus d'EXP\u202f?",
+    "note": "Arc-en-ciel\u202f: EXP finale +120\u202f%, Smog +60\u202f%, Couvert +10\u202f%.",
+    "lines": [
+      "Arc-en-ciel",
+      "Smog",
+      "Couvert",
+      "Ensoleillé"
+    ]
+  },
+  "4": {
+    "name": "Une nuit de Lune de sang, qu'est-ce qui risque le plus de se multiplier dans votre restaurant\u202f?",
+    "note": "Pendant la Lune de sang, le risque d'un cafard à chaque table double.",
+    "lines": [
+      "Les cafards",
+      "Carlo",
+      "Le Pique-assiette",
+      "Les clients difficiles"
+    ]
+  },
+  "5": {
+    "name": "Lequel de ces goûts n'est pas un goût de recette\u202f?",
+    "note": "Les six goûts des recettes sont Acide, Sucré, Amer, Piquant, Salé et Umami.",
+    "lines": [
+      "Engourdissant",
+      "Umami",
+      "Amer",
+      "Salé"
+    ]
+  },
+  "6": {
+    "name": "Quelle qualité de recette est la plus élevée\u202f?",
+    "lines": []
+  },
+  "7": {
+    "name": "Pourquoi saisit-on surtout la viande avant de la mijoter\u202f?",
+    "note": "«\u202fEmprisonner les sucs\u202f» est une idée très répandue, mais la viande saisie rend autant de jus\u202f: c'est surtout pour le goût.",
+    "lines": [
+      "Pour plus de goût",
+      "Pour emprisonner les sucs",
+      "Pour tuer les bactéries",
+      "Pour qu'elle cuise plus vite"
+    ]
+  },
+  "8": {
+    "name": "Comment ajouter l'huile pour monter une mayonnaise\u202f?",
+    "note": "Si l'huile est ajoutée trop vite, la mayonnaise tranche.",
+    "lines": [
+      "Petit à petit, en fouettant",
+      "Tout d'un coup",
+      "La chauffer avant de la verser",
+      "Sans huile"
+    ]
+  },
+  "9": {
+    "name": "Pour monter des blancs si fermes qu'on peut retourner le bol, qu'est-ce qui compte le plus\u202f?",
+    "note": "La moindre trace de gras ou de jaune empêche les blancs de monter.",
+    "lines": [
+      "Pas la moindre trace de gras dans le bol",
+      "Utiliser absolument un bol en cuivre",
+      "Les congeler une nuit avant",
+      "Ajouter beaucoup de sel"
+    ]
+  },
+  "10": {
+    "name": "La tomate, fruit ou légume\u202f?",
+    "lines": [
+      "Fruit",
+      "Légume",
+      "Ça dépend du plat"
+    ]
+  },
+  "11": {
+    "name": "Les frites, on les trempe dans quoi\u202f?",
+    "lines": [
+      "Ketchup",
+      "Mayonnaise",
+      "Vinaigre"
+    ]
+  },
+  "13": {
+    "name": "Quel temps donne le plus de points de saison\u202f?",
+    "note": "Averse\u202f: points de saison +25\u202f%, Arc-en-ciel +10\u202f%.",
+    "lines": [
+      "Averse",
+      "Arc-en-ciel",
+      "Ensoleillé",
+      "Grand vent"
+    ]
+  },
+  "14": {
+    "name": "Quel temps augmente le plus la réussite du renfort d'ustensiles\u202f?",
+    "note": "Orage violent +12\u202f%, Orage +10\u202f%, Averses +3\u202f%.",
+    "lines": [
+      "Orage violent",
+      "Orage",
+      "Averses",
+      "Ensoleillé"
+    ]
+  },
+  "15": {
+    "name": "Quel temps fait le plus baisser les clients difficiles\u202f?",
+    "note": "Grand gel\u202f: clients difficiles -35\u202f%, Lune de sang -30\u202f%, Orage violent -25\u202f%.",
+    "lines": [
+      "Grand gel",
+      "Lune de sang",
+      "Orage violent",
+      "Ensoleillé"
+    ]
+  },
+  "17": {
+    "name": "Quand la chance de meilleure qualité en cuisinant un plat signature augmente-t-elle le plus\u202f?",
+    "note": "Nuit brumeuse +25\u202f%, Brouillard +20\u202f%.",
+    "lines": [
+      "Nuit brumeuse",
+      "Brouillard",
+      "Ensoleillé",
+      "Grand vent"
+    ]
+  },
+  "20": {
+    "name": "En 2025, la mathématicienne Wang Hong, diplômée de l'université de Pékin, a démontré avec son coauteur la conjecture de Kakeya en dimension 3. De quelle question est-elle née\u202f?",
+    "note": "Les trois autres sont aussi des problèmes mathématiques célèbres. Kakeya s'intéressait à une aiguille qu'on fait pivoter\u202f: l'aire peut être aussi petite qu'on veut.",
+    "lines": [
+      "La plus petite aire qu'une aiguille doit balayer pour faire demi-tour dans un plan",
+      "Le nombre minimal de couleurs pour qu'une carte distingue toujours les pays voisins",
+      "La façon la plus compacte d'empiler des oranges",
+      "Combien de fois on peut plier une feuille en deux"
+    ]
+  },
+  "21": {
+    "name": "Que désigne «\u202fKakeya\u202f» dans «\u202fconjecture de Kakeya\u202f»\u202f?",
+    "note": "Le mathématicien japonais Sōichi Kakeya a posé le problème de l'aiguille en 1917.",
+    "lines": [
+      "Le nom d'un mathématicien japonais",
+      "Le nom d'une montagne",
+      "Un type de crochet",
+      "Une vallée"
+    ]
+  },
+  "23": {
+    "name": "Pour colorier une carte sans que deux pays voisins aient la même couleur, combien de couleurs suffisent toujours, au minimum\u202f?",
+    "note": "C'est le célèbre théorème des quatre couleurs.",
+    "lines": [
+      "4 couleurs",
+      "3 couleurs",
+      "5 couleurs",
+      "7 couleurs"
+    ]
+  },
+  "25": {
+    "name": "Combien faut-il de personnes dans une classe pour que la probabilité que deux aient le même anniversaire dépasse 50\u202f%\u202f?",
+    "note": "Bien moins qu'on ne l'imagine, non\u202f? C'est le célèbre paradoxe des anniversaires.",
+    "lines": [
+      "23 personnes",
+      "183 personnes",
+      "100 personnes",
+      "365 personnes"
+    ]
+  },
+  "26": {
+    "name": "Un gros lot se cache derrière l'une de trois portes. Vous en choisissez une, l'animateur ouvre une autre porte, vide, et vous propose de changer. Que faire pour avoir le plus de chances\u202f?",
+    "note": "En changeant, vous gagnez 2 fois sur 3\u202f; sans changer, seulement 1 fois sur 3.",
+    "lines": [
+      "Changer",
+      "Garder sa porte",
+      "C'est pareil",
+      "Selon l'humeur"
+    ]
+  },
+  "27": {
+    "name": "En haute montagne, que se passe-t-il quand on fait bouillir de l'eau pour des nouilles, par rapport à la vallée\u202f?",
+    "note": "En altitude, la pression est plus basse\u202f: l'eau bout avant 100\u202f°C, et les nouilles cuisent moins bien.",
+    "lines": [
+      "Elle bout plus tôt, mais elle est moins chaude",
+      "Elle bout plus tard",
+      "Exactement pareil",
+      "Elle ne bout jamais"
+    ]
+  },
+  "29": {
+    "name": "Quand une IA invente avec aplomb des choses qui n'existent pas, comment appelle-t-on ça\u202f?",
+    "lines": [
+      "Une hallucination",
+      "Un rêve",
+      "Une fièvre",
+      "Un lag"
+    ]
+  },
+  "31": {
+    "name": "En 2016, l'IA de go AlphaGo a battu quel joueur\u202f?",
+    "note": "L'année suivante, elle a aussi battu Ke Jie.",
+    "lines": [
+      "Lee Sedol",
+      "Nie Weiping",
+      "Go Seigen",
+      "Ke Jie"
+    ]
+  },
+  "32": {
+    "name": "Combien de lettres r y a-t-il dans le mot anglais strawberry\u202f?",
+    "note": "Cette question a longtemps piégé bien des IA.",
+    "lines": [
+      "3",
+      "2",
+      "1",
+      "4"
+    ]
+  },
+  "34": {
+    "name": "Que mesure le test de Turing\u202f?",
+    "lines": [
+      "Si une personne qui discute avec une machine devine que c'est une machine",
+      "La vitesse de calcul d'un ordinateur",
+      "Si un robot sait marcher",
+      "La vitesse d'Internet"
+    ]
+  },
+  "37": {
+    "name": "Le mème du chien qui boit son café dans une pièce en feu en disant «\u202fTout va bien\u202f» sert généralement à exprimer\u202f?",
+    "lines": [
+      "Faire comme si tout allait bien alors que c'est la catastrophe",
+      "Le chien est courageux",
+      "La pièce est bien chauffée",
+      "C'est l'heure du café"
+    ]
+  },
+  "39": {
+    "name": "«\u202fBig Ben\u202f», c'est en fait le nom de quoi\u202f?",
+    "note": "La tour s'appelle la tour Elizabeth\u202f; Big Ben est la plus grosse cloche qu'elle abrite.",
+    "lines": [
+      "La grosse cloche de la tour de l'horloge",
+      "La tour de l'horloge elle-même",
+      "L'horloger qui l'entretient",
+      "Le pont d'à côté"
+    ]
+  },
+  "47": {
+    "name": "Les raviolis chinois, avec du vinaigre ou de la sauce soja\u202f?",
+    "lines": [
+      "Vinaigre",
+      "Sauce soja",
+      "Rien du tout"
+    ]
+  },
+  "63": {
+    "name": "Combien de cœurs a une pieuvre\u202f?",
+    "note": "Deux envoient le sang vers les branchies, un vers le reste du corps.",
+    "lines": [
+      "3",
+      "1",
+      "2",
+      "8"
+    ]
+  },
+  "64": {
+    "name": "Combien de vertèbres cervicales a une girafe\u202f?",
+    "note": "Chacune de ses vertèbres cervicales est particulièrement longue.",
+    "lines": [
+      "7, comme nous",
+      "14",
+      "21",
+      "30"
+    ]
+  }
+}

@@ -147,6 +147,8 @@ export const CATALOG_DATA_KINDS = [
   'kujiThemes',
   'proficiency',
   'cookbooks',
+  // 随机事件的标题（2026-10-28）：首页“生效中的加成”按 id 取名字
+  'randomEvents',
 ] as const;
 export type CatalogDataKind = (typeof CATALOG_DATA_KINDS)[number];
 export interface CatalogDataEntry {

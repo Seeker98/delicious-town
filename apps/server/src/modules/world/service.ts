@@ -420,6 +420,7 @@ export function createWorldService(d: GameDeps) {
         kujiThemes: d.config.bundle.kujiThemes.map((x) => ({ id: x.month, name: x.name, desc: x.desc })),
         proficiency: d.config.mcProficiency.map((x) => ({ id: x.curlevel, name: x.name })),
         cookbooks: d.config.bundle.cookbooks.map((x) => ({ id: x.id, name: x.name })),
+        randomEvents: d.config.bundle.randomEvents.map((x) => ({ id: x.id, name: x.title })),
       },
     };
     return catalog;
@@ -502,7 +503,10 @@ export function localizeCatalog(base: CatalogDto, t: I18nTable | undefined, lang
     ...(base.data
       ? {
           data: Object.fromEntries(
-            CATALOG_DATA_KINDS.map((k) => [k, pick(base.data![k], t[k], ['name', 'title', 'note', 'desc'])]),
+            CATALOG_DATA_KINDS.map((k) => [
+              k,
+              pick(base.data![k] ?? [], t[k], ['name', 'title', 'note', 'desc']),
+            ]),
           ) as Record<CatalogDataKind, CatalogDataEntry[]>,
         }
       : {}),

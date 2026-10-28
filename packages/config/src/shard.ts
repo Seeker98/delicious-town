@@ -28,8 +28,11 @@ function deepMerge(base: unknown, override: unknown): unknown {
   return out;
 }
 
-/** 默认关的功能：区服覆盖里写 true 才开（新玩法分几个 PR 上线时用）；小镇日报要配 AI 密钥，默认关 */
-export const DEFAULT_OFF_FEATURES: readonly string[] = ['daily'];
+/**
+ * 默认关的功能：区服覆盖里写 true 才开（新玩法分几个 PR 上线时用）；小镇日报要配 AI 密钥，默认关；
+ * 随机事件等内容 PR 都合了再在后台逐区打开（设计稿 2026-10-28 §15）
+ */
+export const DEFAULT_OFF_FEATURES: readonly string[] = ['daily', 'randomEvents'];
 
 /** 基础配置 + 区服覆盖（深合并，数组整体替换），结果再校验一遍 */
 export function resolveShardSettings(config: GameConfig, override: unknown): ShardSettings {

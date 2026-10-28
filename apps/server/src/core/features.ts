@@ -36,6 +36,7 @@ export const IMPLEMENTED_FEATURES: ReadonlySet<string> = new Set([
   'wealth',
   'bulk',
   'wishtree',
+  'randomEvents',
 ]);
 
 export function featureAvailable(settings: ShardSettings, feature: string): boolean {

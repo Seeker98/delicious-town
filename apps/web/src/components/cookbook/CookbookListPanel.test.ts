@@ -179,6 +179,7 @@ describe('CookbookListPanel', () => {
       tower: [],
       kujiThemes: [],
       proficiency: [],
+      randomEvents: [],
     };
     useCatalogStore().apply({
       version: 'v:en',
@@ -242,6 +243,7 @@ describe('CookbookListPanel', () => {
       tower: [],
       kujiThemes: [],
       proficiency: [],
+      randomEvents: [],
       cookbooks: [],
     };
     useCatalogStore().apply({

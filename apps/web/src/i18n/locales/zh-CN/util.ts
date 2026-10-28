@@ -20,6 +20,11 @@ export default {
     oilValue: '每桌耗油',
     luckValue: '幸运',
     mcGoldRate: '特色菜金牌',
+    killRoachNoStrengthRate: '灭蟑螂免体力',
+    taNeedtimeRate: '外卖配送时间',
+    taCoinRate: '外卖银币',
+    taExpRate: '外卖经验',
+    taSuccessoddsRate: '外卖成功率',
     /** 艺术品设施抬软上限（2026-10-17）：玩家文字不写“软上限”，写白话 */
     atSoftCapAdd: '满座容量',
     spSoftCapAdd: '贵客容量',

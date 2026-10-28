@@ -1,0 +1,287 @@
+{
+  "1": {
+    "name": "¿Con qué tiempo combinar y descomponer ingredientes siempre sale bien?",
+    "note": "Con Viento fuerte y Huracán, combinar y descomponer sale bien al 100\u00a0%.",
+    "lines": [
+      "Viento fuerte",
+      "Tormenta de arena",
+      "Niebla",
+      "Soleado"
+    ]
+  },
+  "2": {
+    "name": "¿Con qué tiempo bajan los precios de los ingredientes del mercado?",
+    "note": "Parcialmente nublado: ingredientes del mercado -20\u00a0%; Noche nublada: -30\u00a0%.",
+    "lines": [
+      "Parcialmente nublado",
+      "Lluvia ligera",
+      "Tormenta de arena",
+      "Granizo"
+    ]
+  },
+  "3": {
+    "name": "Durante el negocio, ¿qué tiempo da más EXP?",
+    "note": "Arcoíris: EXP final +120\u00a0%, Esmog +60\u00a0%, Nublado +10\u00a0%.",
+    "lines": [
+      "Arcoíris",
+      "Esmog",
+      "Nublado",
+      "Soleado"
+    ]
+  },
+  "4": {
+    "name": "En una noche de Luna de sangre, ¿qué es más probable que abunde en tu local?",
+    "note": "Con Luna de sangre, la probabilidad de cucaracha en cada mesa se duplica.",
+    "lines": [
+      "Cucarachas",
+      "Calamardo",
+      "El Gorrón",
+      "Clientes exigentes"
+    ]
+  },
+  "5": {
+    "name": "¿Cuál de estos no es un sabor de receta?",
+    "note": "Los seis sabores de las recetas son Ácido, Dulce, Amargo, Picante, Salado y Umami.",
+    "lines": [
+      "Hormigueante",
+      "Umami",
+      "Amargo",
+      "Salado"
+    ]
+  },
+  "6": {
+    "name": "¿Qué calidad de receta es la más alta?",
+    "lines": []
+  },
+  "7": {
+    "name": "¿Para qué se dora sobre todo la carne antes de guisarla?",
+    "note": "\"Sellar los jugos\" es una creencia muy extendida, pero la carne dorada suelta el mismo jugo: es sobre todo por el sabor.",
+    "lines": [
+      "Para que tenga más sabor",
+      "Para sellar los jugos",
+      "Para matar bacterias",
+      "Para que se haga antes"
+    ]
+  },
+  "8": {
+    "name": "¿Cómo se añade el aceite al hacer mayonesa?",
+    "note": "Si echas el aceite demasiado rápido, la mayonesa se corta.",
+    "lines": [
+      "Poco a poco, sin dejar de batir",
+      "Todo de golpe",
+      "Calentarlo antes de echarlo",
+      "Sin aceite"
+    ]
+  },
+  "9": {
+    "name": "Para montar las claras tan firmes que no se caigan al dar la vuelta al bol, ¿qué es lo más importante?",
+    "note": "La más mínima gota de grasa o de yema impide que las claras monten.",
+    "lines": [
+      "Que no haya ni rastro de grasa en el bol",
+      "Usar sí o sí un bol de cobre",
+      "Congelarlas una noche antes",
+      "Echar mucha sal"
+    ]
+  },
+  "10": {
+    "name": "¿El tomate es fruta o verdura?",
+    "lines": [
+      "Fruta",
+      "Verdura",
+      "Depende del plato"
+    ]
+  },
+  "11": {
+    "name": "¿En qué mojas las patatas fritas?",
+    "lines": [
+      "Kétchup",
+      "Mayonesa",
+      "Vinagre"
+    ]
+  },
+  "13": {
+    "name": "¿Qué tiempo da más puntos de temporada?",
+    "note": "Aguacero: puntos de temporada +25\u00a0%, Arcoíris +10\u00a0%.",
+    "lines": [
+      "Aguacero",
+      "Arcoíris",
+      "Soleado",
+      "Viento fuerte"
+    ]
+  },
+  "14": {
+    "name": "¿Qué tiempo aumenta más el éxito al mejorar utensilios?",
+    "note": "Tormenta eléctrica +12\u00a0%, Tormenta +10\u00a0%, Chubascos +3\u00a0%.",
+    "lines": [
+      "Tormenta eléctrica",
+      "Tormenta",
+      "Chubascos",
+      "Soleado"
+    ]
+  },
+  "15": {
+    "name": "¿Qué tiempo reduce más los clientes exigentes?",
+    "note": "Helada: clientes exigentes -35\u00a0%, Luna de sangre -30\u00a0%, Tormenta eléctrica -25\u00a0%.",
+    "lines": [
+      "Helada",
+      "Luna de sangre",
+      "Tormenta eléctrica",
+      "Soleado"
+    ]
+  },
+  "17": {
+    "name": "¿Cuándo aumenta más la probabilidad de mejor calidad al cocinar platos estrella?",
+    "note": "Noche con niebla +25\u00a0%, Niebla +20\u00a0%.",
+    "lines": [
+      "Noche con niebla",
+      "Niebla",
+      "Soleado",
+      "Viento fuerte"
+    ]
+  },
+  "20": {
+    "name": "En 2025, la matemática Wang Hong, graduada de la Universidad de Pekín, y su coautor demostraron la conjetura de Kakeya en tres dimensiones. ¿De qué pregunta surgió?",
+    "note": "Las otras tres también son problemas matemáticos famosos. Kakeya preguntaba por girar una aguja: el área puede ser tan pequeña como se quiera.",
+    "lines": [
+      "La menor área que barre una aguja al darse la vuelta en un plano",
+      "Cuántos colores bastan para que en un mapa los países vecinos siempre sean distintos",
+      "Cómo apilar naranjas ocupando el menor espacio",
+      "Cuántas veces se puede doblar una hoja por la mitad"
+    ]
+  },
+  "21": {
+    "name": "¿Qué es \"Kakeya\" en \"conjetura de Kakeya\"?",
+    "note": "El matemático japonés Sōichi Kakeya planteó el problema de la aguja en 1917.",
+    "lines": [
+      "El apellido de un matemático japonés",
+      "El nombre de una montaña",
+      "Un tipo de gancho",
+      "Un valle"
+    ]
+  },
+  "23": {
+    "name": "Para colorear un mapa sin que dos países vecinos compartan color, ¿cuántos colores bastan siempre, como mínimo?",
+    "note": "Es el famoso teorema de los cuatro colores.",
+    "lines": [
+      "4 colores",
+      "3 colores",
+      "5 colores",
+      "7 colores"
+    ]
+  },
+  "25": {
+    "name": "¿Cuántas personas necesita una clase para que la probabilidad de que dos cumplan años el mismo día supere el 50\u00a0%?",
+    "note": "Muchas menos de lo que parece, ¿verdad? Es la famosa paradoja del cumpleaños.",
+    "lines": [
+      "23 personas",
+      "183 personas",
+      "100 personas",
+      "365 personas"
+    ]
+  },
+  "26": {
+    "name": "Detrás de una de tres puertas hay un gran premio. Eliges una, el presentador abre otra vacía y te pregunta si quieres cambiar. ¿Qué te da más probabilidades?",
+    "note": "Si cambias, ganas 2 de cada 3 veces; si no, solo 1 de cada 3.",
+    "lines": [
+      "Cambiar",
+      "No cambiar",
+      "Da igual",
+      "Según el humor"
+    ]
+  },
+  "27": {
+    "name": "Si hierves agua para fideos en lo alto de una montaña, ¿qué pasa comparado con abajo?",
+    "note": "Arriba la presión es menor, así que el agua hierve antes de llegar a 100\u00a0°C y los fideos cuestan más de hacer.",
+    "lines": [
+      "Hierve antes, pero no está tan caliente",
+      "Hierve más tarde",
+      "Exactamente igual",
+      "No llega a hervir"
+    ]
+  },
+  "29": {
+    "name": "Cuando una IA se inventa con total seguridad cosas que no existen, ¿cómo se le llama?",
+    "lines": [
+      "Alucinación",
+      "Sueño",
+      "Fiebre",
+      "Lag"
+    ]
+  },
+  "31": {
+    "name": "En 2016, ¿a qué jugador venció la IA de go AlphaGo?",
+    "note": "Al año siguiente también ganó a Ke Jie.",
+    "lines": [
+      "Lee Sedol",
+      "Nie Weiping",
+      "Go Seigen",
+      "Ke Jie"
+    ]
+  },
+  "32": {
+    "name": "¿Cuántas letras r tiene la palabra inglesa strawberry?",
+    "note": "Esta pregunta ha confundido a muchas IA.",
+    "lines": [
+      "3",
+      "2",
+      "1",
+      "4"
+    ]
+  },
+  "34": {
+    "name": "¿Qué mide el test de Turing?",
+    "lines": [
+      "Si alguien que chatea con una máquina se da cuenta de que es una máquina",
+      "Lo rápido que calcula un ordenador",
+      "Si un robot puede caminar",
+      "La velocidad de internet"
+    ]
+  },
+  "37": {
+    "name": "El meme del perro con una taza en una habitación en llamas diciendo \"Todo bien\", ¿qué suele expresar?",
+    "lines": [
+      "Fingir que todo va bien cuando todo va fatal",
+      "Que el perro es valiente",
+      "Que la habitación está calentita",
+      "Que es hora del café"
+    ]
+  },
+  "39": {
+    "name": "¿De qué es en realidad el nombre \"Big Ben\"?",
+    "note": "La torre se llama torre Elizabeth; el Big Ben es la campana más grande de su interior.",
+    "lines": [
+      "La gran campana de la torre del reloj",
+      "La propia torre del reloj",
+      "El relojero que la arregla",
+      "El puente de al lado"
+    ]
+  },
+  "47": {
+    "name": "Los dumplings chinos, ¿con vinagre o con salsa de soja?",
+    "lines": [
+      "Vinagre",
+      "Salsa de soja",
+      "Con nada"
+    ]
+  },
+  "63": {
+    "name": "¿Cuántos corazones tiene un pulpo?",
+    "note": "Dos bombean sangre a las branquias y uno al resto del cuerpo.",
+    "lines": [
+      "3",
+      "1",
+      "2",
+      "8"
+    ]
+  },
+  "64": {
+    "name": "¿Cuántas vértebras cervicales tiene una jirafa?",
+    "note": "Cada una de sus vértebras cervicales es larguísima.",
+    "lines": [
+      "7, como los humanos",
+      "14",
+      "21",
+      "30"
+    ]
+  }
+}

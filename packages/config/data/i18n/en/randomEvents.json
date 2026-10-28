@@ -1,0 +1,345 @@
+{
+  "1": {
+    "name": "The Porters' Stroll",
+    "desc": "The market's loading crew all went for a walk in the square today, to \"have a proper talk about life\".",
+    "lines": [
+      "After the walk, the whole crew drops by your place for a rest."
+    ]
+  },
+  "2": {
+    "name": "Afternoon Nap",
+    "desc": "Napping after lunch is all the rage in the neighborhood. All afternoon the street is as quiet as a holiday.",
+    "lines": [
+      "The customers who just woke up are in a lovely mood, though."
+    ]
+  },
+  "3": {
+    "name": "Before You Enter",
+    "desc": "New town rule: before coming in, customers must read a \"Dining Preferences Notice\" and tick \"I agree\" item by item. How will you lay it out?",
+    "lines": [
+      "Make a big \"Accept all\" button",
+      "Customers get in fast, then find they've been recommended a pile of dishes they don't want.",
+      "List every item honestly",
+      "A queue forms at the door, but the inspector praises your compliance."
+    ]
+  },
+  "4": {
+    "name": "The Clock Jumped Ahead",
+    "desc": "Last night the clock tower moved itself forward an hour. Half the town is on the new time, half on the old.",
+    "lines": [
+      "The lunch crowd arrives in two waves."
+    ]
+  },
+  "5": {
+    "name": "The Song Contest Next Door",
+    "desc": "Tonight the TV is showing the next town's song contest. Each costume is wilder than the last, and nobody can explain the scoring. Who are you rooting for?",
+    "lines": [
+      "The twins in tinfoil capes",
+      "They won! You cheer at the top of your lungs, and your customers pop the champagne.",
+      "They didn't win. You hummed along all night and lost your voice, but you're in a good mood.",
+      "The grandpa who sings every song on one note",
+      "Grandpa won! You cheer at the top of your lungs, and your customers pop the champagne.",
+      "Grandpa didn't win. You hummed along all night and lost your voice, but you're in a good mood.",
+      "The electro band with the smoke machine",
+      "The band won! You cheer at the top of your lungs, and your customers pop the champagne.",
+      "The band didn't win. You hummed along all night and lost your voice, but you're in a good mood."
+    ]
+  },
+  "6": {
+    "name": "Form 27-B",
+    "desc": "A letter from the town hall: the font on your sign isn't in the \"Approved Fonts Catalog\". Please fill in Form 27-B, attach three supporting documents and get two stamps.",
+    "lines": [
+      "Do it properly",
+      "A whole morning of running around. Very educational.",
+      "Use the form to prop up a table leg",
+      "The table no longer wobbles, but an inspector passing by in the afternoon gives you a long look."
+    ]
+  },
+  "7": {
+    "name": "A Crate of Empties",
+    "desc": "There's a crate of empty bottles in the back alley. The old lady next door says you get a deposit back on every one.",
+    "lines": [
+      "Return them",
+      "You get a small handful of coins back.",
+      "Give them to the old man who checks the bins every day",
+      "He sings your praises to everyone he meets."
+    ]
+  },
+  "8": {
+    "name": "The New Roundabout",
+    "desc": "A new roundabout just opened at the edge of town. Riders go in and can't find the way out, looping round and round.",
+    "lines": [
+      "Deliveries are slower, but all that spinning counts as exercise."
+    ]
+  },
+  "9": {
+    "name": "The Selfie-Stick Tour",
+    "desc": "A tour group waving long sticks squeezes into your restaurant. Every dish gets five minutes of photos before anyone takes a bite.",
+    "lines": [
+      "It's lively in here, but the customers have gotten pickier."
+    ]
+  },
+  "10": {
+    "name": "A Note on the Door",
+    "desc": "The place across the street has a note taped to its door: \"Gone to the seaside. See you next month.\"",
+    "lines": [
+      "Its regulars have no choice but to come to you."
+    ]
+  },
+  "12": {
+    "name": "Fruit in Savory Dishes?",
+    "desc": "Two tables are arguing over whether sweet fruit belongs in a savory dish, and they insist you settle it.",
+    "lines": [
+      "It does",
+      "The adventurous eaters stay.",
+      "It doesn't",
+      "The traditionalists are so pleased they order an extra dish.",
+      "Hide in the kitchen",
+      "While hiding, you find a voucher under a cupboard."
+    ]
+  },
+  "13": {
+    "name": "The Inspector in a Bow Tie",
+    "desc": "An inspector in a bow tie points at your menu: that sauce may only bear its name if it's made in a certain valley.",
+    "lines": [
+      "Rename it \"Something-Style Sauce\"",
+      "The name got longer, and customers hesitate when ordering.",
+      "Invite him to taste a bowl on the spot",
+      "He's silent for a long time after eating: \"Hmm... perhaps that valley could be a little bigger.\""
+    ]
+  },
+  "15": {
+    "name": "A Perfectly Straight Queue",
+    "desc": "Somehow, a long, perfectly straight queue has formed outside your door all by itself.",
+    "lines": [
+      "Everyone is very polite. Nobody cuts in, and nobody dares ask what they're actually queuing for."
+    ]
+  },
+  "16": {
+    "name": "The Pot at the Flea Market",
+    "desc": "At the weekend flea market there's a blackened old pot. The seller says it was his great-grandfather's and lets it go cheap.",
+    "lines": [
+      "Buy it",
+      "Just an ordinary old pot, but food cooked in it tastes richer.",
+      "There's a line of tiny writing on the bottom. You pry it open and find two vouchers tucked inside.",
+      "Leave it",
+      "You run a hand over the handle, then put it back."
+    ]
+  },
+  "17": {
+    "name": "The Runaway Pig",
+    "desc": "The neighbor's runaway pig spent all morning rooting around your backyard, and dug up a black, very pungent lump.",
+    "lines": [
+      "Return the pig, and the lump, to the neighbor",
+      "The neighbor thanks you with a basket of ingredients.",
+      "Keep it and experiment",
+      "You shave a tiny bit into a dish, and customers keep asking for the recipe."
+    ]
+  },
+  "19": {
+    "name": "Match Night",
+    "desc": "Tonight two towns' teams face off, and everyone is crammed into any place with a TV.",
+    "lines": [
+      "Bring in a TV",
+      "Full house, and very loud.",
+      "No TV: keep a quiet spot for those who want one",
+      "Everyone who comes just wants a peaceful meal."
+    ]
+  },
+  "33": {
+    "name": "Four O'Clock",
+    "desc": "At four sharp, the whole street drops what it's doing for tea and a couple of biscuits.",
+    "lines": [
+      "Tea drinkers pop in on their way."
+    ]
+  },
+  "34": {
+    "name": "Kettles On",
+    "desc": "The moment the evening soap ends, the whole town gets up to boil the kettle, and the power trips with a \"click\".",
+    "lines": [
+      "You have to relight the stoves, but in that minute of darkness, the customers chat even more."
+    ]
+  },
+  "35": {
+    "name": "The Runaway Cheese",
+    "desc": "Someone rolled a whole wheel of cheese down the hill, and the whole town is chasing after it.",
+    "lines": [
+      "Join the chase",
+      "You took a tumble, but everyone had a good laugh.",
+      "You caught the cheese first!",
+      "Sell hot soup at the bottom of the hill",
+      "The worn-out chasers all come for soup."
+    ]
+  },
+  "36": {
+    "name": "Weather Talk",
+    "desc": "Every customer today chats with you about the weather for ten minutes on the way in.",
+    "lines": [
+      "It's slow, but after a good chat nobody's picky."
+    ]
+  },
+  "37": {
+    "name": "Sorry, Sorry",
+    "desc": "A customer stepped on your foot. You both said \"sorry\" at the same time, then apologized to each other five more times.",
+    "lines": [
+      "The whole restaurant has become extremely polite."
+    ]
+  },
+  "39": {
+    "name": "Bonfire and Fireworks Night",
+    "desc": "On this autumn evening, the town lights a huge bonfire and sets off fireworks. Someone even tossed a scarecrow onto the fire.",
+    "lines": [
+      "Everyone's hungry after the fireworks."
+    ]
+  },
+  "40": {
+    "name": "Quiz Night at the Bar",
+    "desc": "The bar is holding a quiz tonight. Three questions: get them all right and you take home the jar of vouchers on the counter.",
+    "lines": [
+      "Not a single one right. At least you got a free ginger beer.",
+      "One right. The bartender gives you a voucher.",
+      "Two right. The bartender gives you a voucher.",
+      "All correct! The jar of vouchers on the counter is yours."
+    ]
+  },
+  "43": {
+    "name": "No Umbrellas Left",
+    "desc": "Every umbrella in the stand by the door has been borrowed. Customers come in soaking wet.",
+    "lines": [
+      "They ask for hot soup the moment they sit down."
+    ]
+  },
+  "44": {
+    "name": "The Long Neck in the Lake",
+    "desc": "Someone claims to have seen a huge long-necked monster in the lake outside town, but every photo comes out blurry. Tourists flood in.",
+    "lines": [
+      "Go take a look at the lake too",
+      "You got a photo! A bit blurry, though.",
+      "You got a photo of a floating log.",
+      "Stay and look after the tourists",
+      "Tourists fill every seat in your restaurant."
+    ]
+  },
+  "49": {
+    "name": "The Ginger Cat's Table",
+    "desc": "A ginger cat has claimed a table for a nap, and nothing will wake it.",
+    "lines": [
+      "Customers line up to pet it."
+    ]
+  },
+  "50": {
+    "name": "The Coin on Its Edge",
+    "desc": "A coin fell off the counter and landed standing on its edge.",
+    "lines": [
+      "You have a feeling today's your lucky day."
+    ]
+  },
+  "51": {
+    "name": "The Heartbroken Head Chef",
+    "desc": "The head chef just got dumped, and every dish is a little too salty today.",
+    "lines": [
+      "But everyone who eats them says: \"There's a story in this food.\""
+    ]
+  },
+  "53": {
+    "name": "Roach Meeting",
+    "desc": "The roaches in the corner seem to be holding a meeting, lined up in a neat row.",
+    "lines": [
+      "All in a row, they're easy to squash."
+    ]
+  },
+  "86": {
+    "name": "The Forgotten Umbrella",
+    "desc": "A customer left their umbrella here yesterday.",
+    "lines": [
+      "Today they came back for it and insisted you take a voucher as thanks."
+    ]
+  },
+  "87": {
+    "name": "A Successful Proposal",
+    "desc": "A customer got down on one knee in your restaurant and proposed. It's a yes!",
+    "lines": [
+      "The whole room applauds, and several tables order more."
+    ]
+  },
+  "96": {
+    "name": "\"The Soup Was Too Hot\"",
+    "desc": "A bad review appeared online: \"The soup was too hot.\"",
+    "lines": [
+      "Reply politely and promise a warning next time",
+      "Someone liked your reply.",
+      "Ignore it",
+      "A few customers read the review and didn't come in."
+    ]
+  },
+  "100": {
+    "name": "The Customer Without a Wallet",
+    "desc": "A customer finishes eating, pats his pockets, and says he forgot his money.",
+    "lines": [
+      "Let him pay next time",
+      "Three days later he came back, with a thank-you gift on top.",
+      "You never saw him again.",
+      "Have him wash dishes to pay it off",
+      "He gets them sparkling."
+    ]
+  },
+  "105": {
+    "name": "The Crooked Sign",
+    "desc": "A gust of wind knocked your sign askew.",
+    "lines": [
+      "Passers-by think it's a new restaurant and come in for a look."
+    ]
+  },
+  "108": {
+    "name": "The Snowman in a Chef's Hat",
+    "desc": "Someone built a snowman outside your door, and it's wearing your chef's hat.",
+    "lines": [
+      "Every customer wants a photo with it."
+    ]
+  },
+  "111": {
+    "name": "The Solo Diner",
+    "desc": "A customer in sunglasses sits alone in the corner, takes one bite of each dish, then jots something in a little notebook.",
+    "lines": [
+      "Treat him specially: two extra dishes on the house",
+      "He nods, closes the notebook and leaves.",
+      "Treat him like everyone else",
+      "He finishes, closes the notebook and leaves."
+    ]
+  },
+  "112": {
+    "name": "A Review in the Paper",
+    "desc": "The Town Daily ran an anonymous food review, and it's about your restaurant.",
+    "lines": [
+      "\"Service attentive to the point of suspicion, but the food is genuinely good.\""
+    ]
+  },
+  "113": {
+    "name": "A Little Plaque",
+    "desc": "Someone mailed you a small brass plaque engraved with a single star. No name.",
+    "lines": [
+      "You hang it by the door."
+    ]
+  },
+  "126": {
+    "name": "Film Crew",
+    "desc": "A film crew borrowed your restaurant to shoot a scene.",
+    "lines": [
+      "Once word got out, the whole town came to watch."
+    ]
+  },
+  "128": {
+    "name": "Meteor Shower",
+    "desc": "There's a meteor shower tonight. You make a wish on the first shooting star.",
+    "lines": [
+      "Early next morning, there are three vouchers in your mailbox."
+    ]
+  },
+  "151": {
+    "name": "A Review in the Paper",
+    "desc": "The Town Daily ran an anonymous food review, and it's about your restaurant.",
+    "lines": [
+      "\"A quiet, honest little place.\""
+    ]
+  }
+}

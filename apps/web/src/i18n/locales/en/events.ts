@@ -210,6 +210,16 @@ const events: Messages['events'] = {
     'admin.grant': (p) => `Compensation: ${String(p.reason ?? '')}`,
     redeem: (p) => `Redeemed code ${String(p.code ?? '')}`,
     'bar.darts': (p) => `Bar darts: ${p.result === 'win' ? 'won' : p.result === 'draw' ? 'draw' : 'lost'}`,
+    randomEvent: (p) =>
+      p.kind === 'quiz'
+        ? p.correct === true
+          ? 'Got a Town Quiz question right'
+          : p.correct === false
+            ? 'Got a Town Quiz question wrong'
+            : 'Answered a Town Quiz question'
+        : p.kind === 'quizNight'
+          ? `Bar quiz night: ${n(p, 'score')} right`
+          : 'Something odd happened at the restaurant',
     'bar.devil': (p) =>
       p.result === 'win'
         ? `Devil's Chili: survived ${n(p, 'survived')} ${plEn(n(p, 'survived'), 'cup', 'cups')} and won`

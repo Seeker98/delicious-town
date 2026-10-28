@@ -1101,6 +1101,25 @@ export const tuningSchema = z.object({
     newsMinPts: int.min(1),
     rarityCacheSeconds: int.min(0),
   }),
+  /** 随机事件和问答（设计稿 2026-10-28 §11） */
+  randomEvents: z.object({
+    slotHours: int
+      .min(1)
+      .max(24)
+      .refine((h) => 24 % h === 0, 'slotHours must divide 24'),
+    quizShare: num.min(0).max(1),
+    pendingHours: num.gt(0).max(24),
+    noRepeatDays: int.min(0),
+    opinionNoRepeatDays: int.min(0),
+    chainWeightPerDay: int.min(0),
+    chainWeightMax: int.min(1),
+    newbieLevel: int.min(1),
+    correctTickets: int.min(0),
+    wrongExpPerLevel: int.min(0),
+    foodLevelStep: int.min(1),
+    foodLevelMax: int.min(1).max(5),
+    retainDays: int.min(30),
+  }),
 });
 
 export type Tuning = z.infer<typeof tuningSchema>;

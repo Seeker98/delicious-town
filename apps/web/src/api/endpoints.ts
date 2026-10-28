@@ -183,6 +183,8 @@ import type {
   ReportInput,
   InviteDto,
   Locale,
+  RandomEventCurrentDto,
+  RandomEventDto,
 } from '@dt/shared';
 import { SHARED_FOODS } from '@dt/shared';
 import { api } from './client';
@@ -510,6 +512,17 @@ export const endpoints = {
     api.post<TicketResultDto>('/api/v1/town/level-ticket', { level, picks }),
   townMysteryTicket: (foodsId: number) =>
     api.post<TicketResultDto>('/api/v1/town/mystery-ticket', { foodsId }),
+  // 随机事件和问答（设计稿 2026-10-28）：?lang= 按语言给文字
+  randomEventCurrent: (lang: Locale) =>
+    api.get<RandomEventCurrentDto>(`/api/v1/random-events/current?lang=${lang}`),
+  randomEventChoose: (id: string, option: string, lang: Locale) =>
+    api.post<RandomEventDto>(`/api/v1/random-events/${id}/choose?lang=${lang}`, { option }),
+  randomEventAnswer: (id: string, index: number, q: number | undefined, lang: Locale) =>
+    api.post<RandomEventDto>(
+      `/api/v1/random-events/${id}/answer?lang=${lang}`,
+      q === undefined ? { index } : { index, q },
+    ),
+  randomEventSeen: (id: string) => api.post<{ ok: boolean }>(`/api/v1/random-events/${id}/seen`, {}),
   announcements: () => api.get<AnnouncementsDto>('/api/v1/announcements'),
   announcementSeen: (id: number) => api.post<null>(`/api/v1/announcements/${id}/seen`, {}),
   publicAnnouncements: () => api.get<AnnouncementsDto>('/api/v1/public/announcements'),

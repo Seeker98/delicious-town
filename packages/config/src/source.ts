@@ -42,6 +42,8 @@ export const SOURCE_FILES = [
   'designed/mc_proficiency',
   'designed/achievements',
   'designed/trophies',
+  'designed/random_events',
+  'designed/random_quiz',
   'game/tuning',
   'game/holidays',
   'game/market_guess_award',

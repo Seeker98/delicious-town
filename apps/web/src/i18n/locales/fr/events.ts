@@ -220,6 +220,16 @@ const events: Messages['events'] = {
     redeem: (p) => `Code utilisé\u202f: ${String(p.code ?? '')}`,
     'bar.darts': (p) =>
       `Fléchettes au bar\u202f: ${p.result === 'win' ? 'victoire' : p.result === 'draw' ? 'égalité' : 'défaite'}`,
+    randomEvent: (p) =>
+      p.kind === 'quiz'
+        ? p.correct === true
+          ? 'Bonne réponse au quiz du village'
+          : p.correct === false
+            ? 'Mauvaise réponse au quiz du village'
+            : 'Réponse au quiz du village'
+        : p.kind === 'quizNight'
+          ? `Soirée quiz au bar\u202f: ${n(p, 'score')} bonne(s) réponse(s)`
+          : 'Il s’est passé quelque chose au restaurant',
     'bar.devil': (p) =>
       p.result === 'win'
         ? `Piment du Diable\u202f: ${n(p, 'survived')} ${plFr(n(p, 'survived'), 'verre tenu', 'verres tenus')}, victoire`

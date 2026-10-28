@@ -31,6 +31,9 @@ export const I18N_FIELDS = {
   // 成就系统（2026-10-19）：成就线的名字、口径和各档显示名（tiers）；奖杯名字
   achievements: ['name', 'desc', 'tiers'],
   trophies: ['name'],
+  // 随机事件和问答（2026-10-28）：标题、正文（问答是解说）、按固定顺序摊平的各段文字（randomEvents.ts eventLines）
+  randomEvents: ['name', 'desc', 'lines'],
+  randomQuiz: ['name', 'note', 'lines'],
 } as const;
 export type I18nKind = keyof typeof I18N_FIELDS;
 export const I18N_KINDS = Object.keys(I18N_FIELDS) as I18nKind[];
@@ -39,9 +42,9 @@ export const I18N_FILE_LOCALES = ['en', 'fr', 'es'] as const;
 export type I18nLocale = 'zh-TW' | (typeof I18N_FILE_LOCALES)[number];
 
 type TextField = 'name' | 'desc' | 'note' | 'cookName' | 'title' | 'theme';
-const LIST_FIELDS: ReadonlySet<string> = new Set(['tiers']);
+const LIST_FIELDS: ReadonlySet<string> = new Set(['tiers', 'lines']);
 
-export type I18nEntry = Partial<Record<TextField, string>> & { tiers?: string[] };
+export type I18nEntry = Partial<Record<TextField, string>> & { tiers?: string[]; lines?: string[] };
 export type I18nTable = Record<I18nKind, Record<string, I18nEntry>>;
 export type BundleI18n = Record<I18nLocale, I18nTable>;
 
@@ -88,7 +91,8 @@ export function buildI18n(
         for (const [f, v] of Object.entries(entry as Record<string, unknown>)) {
           if (!fields.includes(f)) errors.push(`i18n ${l} ${k} ${id} unknown field ${f}`);
           else if (LIST_FIELDS.has(f)) {
-            if (Array.isArray(v) && v.every((x) => typeof x === 'string')) clean.tiers = v as string[];
+            if (Array.isArray(v) && v.every((x) => typeof x === 'string'))
+              clean[f as 'tiers' | 'lines'] = v as string[];
             else errors.push(`i18n ${l} ${k} ${id} ${f} must be an array of strings`);
           } else if (typeof v !== 'string') errors.push(`i18n ${l} ${k} ${id} ${f} must be a string`);
           else clean[f as TextField] = v;
@@ -102,8 +106,9 @@ export function buildI18n(
     for (const item of data[k]) {
       const e: I18nEntry = {};
       for (const f of I18N_FIELDS[k] as readonly string[]) {
-        if (f === 'tiers') {
-          if (item.tiers) e.tiers = item.tiers.map((x) => toTw(x));
+        if (f === 'tiers' || f === 'lines') {
+          const list = item[f];
+          if (list) e[f] = list.map((x) => toTw(x));
         } else {
           const v = item[f as TextField];
           if (v) e[f as TextField] = toTw(v);

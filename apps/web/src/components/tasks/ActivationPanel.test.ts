@@ -122,6 +122,7 @@ describe('ActivationPanel', () => {
         tower: [],
         kujiThemes: [],
         proficiency: [],
+        randomEvents: [],
         cookbooks: [],
       },
     });

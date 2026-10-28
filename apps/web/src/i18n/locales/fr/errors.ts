@@ -362,6 +362,8 @@ const errors: Messages['errors'] = {
     delivery_gone: 'Cette livraison a déjà été réclamée',
     broadcast_text: 'Les annonces doivent faire 1 à 64 caractères',
     no_round: 'Cette partie est terminée. Commencez-en une nouvelle.',
+    random_event_gone: 'Ce moment est passé.',
+    random_event_expired: 'Vous avez trop attendu, celui-ci a expiré.',
     cup_decide: 'Vous avez trouvé\u202f: choisissez d’abord de vous arrêter ou de continuer',
     cup_not_won: 'Vous n’avez pas encore trouvé cette manche',
     cup_round: 'Cette partie a avancé. Elle a été rechargée.',

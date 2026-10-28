@@ -1,0 +1,287 @@
+{
+  "1": {
+    "name": "In which weather do ingredient combining and breaking down always succeed?",
+    "note": "In Strong Wind and Hurricane, combining and breaking down succeed 100% of the time.",
+    "lines": [
+      "Strong Wind",
+      "Sandstorm",
+      "Fog",
+      "Sunny"
+    ]
+  },
+  "2": {
+    "name": "In which weather do Market ingredients get cheaper?",
+    "note": "Cloudy: Market ingredients -20%; Cloudy Night: -30%.",
+    "lines": [
+      "Cloudy",
+      "Light Rain",
+      "Sandstorm",
+      "Hail"
+    ]
+  },
+  "3": {
+    "name": "During business, which weather gives the biggest EXP bonus?",
+    "note": "Rainbow: final EXP +120%, Smog +60%, Overcast +10%.",
+    "lines": [
+      "Rainbow",
+      "Smog",
+      "Overcast",
+      "Sunny"
+    ]
+  },
+  "4": {
+    "name": "On a Blood Moon night, what are you most likely to see more of in your restaurant?",
+    "note": "During a Blood Moon, the chance of a roach at each table doubles.",
+    "lines": [
+      "Roaches",
+      "Squidward",
+      "Freeloader",
+      "Picky customers"
+    ]
+  },
+  "5": {
+    "name": "Which of these is not a recipe taste?",
+    "note": "The six recipe tastes are Sour, Sweet, Bitter, Spicy, Salty and Umami.",
+    "lines": [
+      "Numbing",
+      "Umami",
+      "Bitter",
+      "Salty"
+    ]
+  },
+  "6": {
+    "name": "Which recipe grade is the highest?",
+    "lines": []
+  },
+  "7": {
+    "name": "What's the main reason to sear meat before stewing it?",
+    "note": "\"Sealing in the juices\" is a widespread myth: seared meat loses just as much liquid. It's mostly about flavor.",
+    "lines": [
+      "More flavor",
+      "To seal in the juices",
+      "To kill germs",
+      "So it cooks faster"
+    ]
+  },
+  "8": {
+    "name": "How should you add the oil when making mayonnaise?",
+    "note": "Add the oil too fast and the mayo splits.",
+    "lines": [
+      "A little at a time, whisking as you go",
+      "All at once",
+      "Heat it first, then pour it in",
+      "No oil at all"
+    ]
+  },
+  "9": {
+    "name": "To whip egg whites so stiff you can turn the bowl upside down, what matters most?",
+    "note": "The tiniest trace of grease or yolk will stop the whites from whipping up.",
+    "lines": [
+      "Not a speck of grease in the bowl",
+      "You must use a copper bowl",
+      "Freeze them overnight first",
+      "Add lots of salt"
+    ]
+  },
+  "10": {
+    "name": "Is a tomato a fruit or a vegetable?",
+    "lines": [
+      "A fruit",
+      "A vegetable",
+      "Depends on the dish"
+    ]
+  },
+  "11": {
+    "name": "What do you dip your fries in?",
+    "lines": [
+      "Ketchup",
+      "Mayonnaise",
+      "Vinegar"
+    ]
+  },
+  "13": {
+    "name": "Which weather gives the most Seasonal points?",
+    "note": "Rainstorm: Seasonal points +25%, Rainbow +10%.",
+    "lines": [
+      "Rainstorm",
+      "Rainbow",
+      "Sunny",
+      "Strong Wind"
+    ]
+  },
+  "14": {
+    "name": "Which weather boosts cookware enhancement success the most?",
+    "note": "Severe Thunderstorm +12%, Thunderstorm +10%, Showers +3%.",
+    "lines": [
+      "Severe Thunderstorm",
+      "Thunderstorm",
+      "Showers",
+      "Sunny"
+    ]
+  },
+  "15": {
+    "name": "Which weather lowers the picky rate the most?",
+    "note": "Deep Freeze: picky rate -35%, Blood Moon -30%, Severe Thunderstorm -25%.",
+    "lines": [
+      "Deep Freeze",
+      "Blood Moon",
+      "Severe Thunderstorm",
+      "Sunny"
+    ]
+  },
+  "17": {
+    "name": "When does cooking a signature dish get the biggest boost to the chance of a higher grade?",
+    "note": "Foggy Night +25%, Fog +20%.",
+    "lines": [
+      "Foggy Night",
+      "Fog",
+      "Sunny",
+      "Strong Wind"
+    ]
+  },
+  "20": {
+    "name": "In 2025, mathematician Wang Hong, a Peking University graduate, and her collaborator proved the 3D Kakeya conjecture. What question did the conjecture start from?",
+    "note": "The other three are famous math problems too. Kakeya asked about turning a needle around: the answer is that the area can be as small as you like.",
+    "lines": [
+      "The smallest area a needle must sweep to turn around in a plane",
+      "The fewest colors a map needs so neighboring countries always differ",
+      "The most space-saving way to stack oranges",
+      "How many times a sheet of paper can be folded in half"
+    ]
+  },
+  "21": {
+    "name": "What is the \"Kakeya\" in \"Kakeya conjecture\"?",
+    "note": "Japanese mathematician Sōichi Kakeya posed the needle problem in 1917.",
+    "lines": [
+      "The surname of a Japanese mathematician",
+      "The name of a mountain",
+      "A kind of hook",
+      "A valley"
+    ]
+  },
+  "23": {
+    "name": "To color a map so that neighboring countries never share a color, what's the smallest number of colors that is always enough?",
+    "note": "This is the famous Four Color Theorem.",
+    "lines": [
+      "4 colors",
+      "3 colors",
+      "5 colors",
+      "7 colors"
+    ]
+  },
+  "25": {
+    "name": "How many people does a class need before the chance that two share a birthday is over 50%?",
+    "note": "Far fewer than you'd think, right? This is the famous Birthday Paradox.",
+    "lines": [
+      "23 people",
+      "183 people",
+      "100 people",
+      "365 people"
+    ]
+  },
+  "26": {
+    "name": "A prize is behind one of three doors. You pick one, the host opens another, empty door and asks if you want to switch. What gives you a better chance?",
+    "note": "Switching wins 2 times out of 3; staying wins only 1 time out of 3.",
+    "lines": [
+      "Switch",
+      "Stay",
+      "Same either way",
+      "Go with your gut"
+    ]
+  },
+  "27": {
+    "name": "Boiling water for noodles high up a mountain, compared with at the bottom, what happens?",
+    "note": "Air pressure is lower up high, so water boils before reaching 100°C, which makes noodles harder to cook through.",
+    "lines": [
+      "It boils sooner, but isn't as hot",
+      "It boils later",
+      "Exactly the same",
+      "It never boils"
+    ]
+  },
+  "29": {
+    "name": "When an AI confidently makes up things that don't exist, what do people call it?",
+    "lines": [
+      "Hallucination",
+      "Dreaming",
+      "A fever",
+      "Lag"
+    ]
+  },
+  "31": {
+    "name": "In 2016, the Go AI AlphaGo beat which player?",
+    "note": "The next year it also beat Ke Jie.",
+    "lines": [
+      "Lee Sedol",
+      "Nie Weiping",
+      "Go Seigen",
+      "Ke Jie"
+    ]
+  },
+  "32": {
+    "name": "How many letter r's are in the English word strawberry?",
+    "note": "This one used to trip up a lot of AIs.",
+    "lines": [
+      "3",
+      "2",
+      "1",
+      "4"
+    ]
+  },
+  "34": {
+    "name": "What does the Turing test test?",
+    "lines": [
+      "Whether a person chatting with a machine can tell it's a machine",
+      "How fast a computer calculates",
+      "Whether a robot can walk",
+      "How fast the internet is"
+    ]
+  },
+  "37": {
+    "name": "The meme of a dog holding a mug in a burning room, saying \"This is fine\", is usually used to mean?",
+    "lines": [
+      "Pretending everything's normal when it clearly isn't",
+      "The dog is brave",
+      "The room is nice and warm",
+      "Time for coffee"
+    ]
+  },
+  "39": {
+    "name": "What is \"Big Ben\" actually the name of?",
+    "note": "The tower is the Elizabeth Tower; Big Ben is the biggest bell inside it.",
+    "lines": [
+      "The great bell in the clock tower",
+      "The clock tower itself",
+      "The man who fixes the clock",
+      "The bridge next to it"
+    ]
+  },
+  "47": {
+    "name": "Dumplings: vinegar or soy sauce?",
+    "lines": [
+      "Vinegar",
+      "Soy sauce",
+      "Nothing"
+    ]
+  },
+  "63": {
+    "name": "How many hearts does an octopus have?",
+    "note": "Two pump blood to the gills, and one to the rest of the body.",
+    "lines": [
+      "3",
+      "1",
+      "2",
+      "8"
+    ]
+  },
+  "64": {
+    "name": "How many neck vertebrae does a giraffe have?",
+    "note": "Each of a giraffe's neck vertebrae is extra long.",
+    "lines": [
+      "7, same as humans",
+      "14",
+      "21",
+      "30"
+    ]
+  }
+}

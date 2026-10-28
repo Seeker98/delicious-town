@@ -17,6 +17,12 @@ const KEYS: Array<[key: keyof Messages['util']['effects'], kind: 'rate' | 'value
   ['expValue', 'value'],
   ['oilValue', 'value'],
   ['luckValue', 'value'],
+  // 随机事件（2026-10-28）用到的灭蟑螂、外卖加成
+  ['killRoachNoStrengthRate', 'rate'],
+  ['taNeedtimeRate', 'rate'],
+  ['taCoinRate', 'rate'],
+  ['taExpRate', 'rate'],
+  ['taSuccessoddsRate', 'rate'],
 ];
 
 /** 一项加成的文字："挑剔率+10%"、"每桌银币+5" */
@@ -40,7 +46,7 @@ export function describeEffects(effects: Record<string, number>): string {
 }
 
 /** 越低越好的键（挑剔率、耗油） */
-const LOWER_IS_BETTER: ReadonlySet<string> = new Set(['spRate', 'oilRate', 'oilValue']);
+const LOWER_IS_BETTER: ReadonlySet<string> = new Set(['spRate', 'oilRate', 'oilValue', 'taNeedtimeRate']);
 
 /** 每项一个标签：good 表示对玩家有利（问题记录：生效的加成展示凌乱） */
 export function effectChips(effects: Record<string, number>): Array<{ text: string; good: boolean }> {
