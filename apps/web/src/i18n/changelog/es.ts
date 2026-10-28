@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  events1028:
+    'Novedad: eventos aleatorios y el concurso del pueblo. Mientras juegas, puede pasar algo curioso en tu restaurante (como mucho una vez cada 4 horas): algunos eventos dan una pequeña ventaja o desventaja durante 1 a 4 horas, otros te dejan elegir entre dos opciones y algunos continúan unos días después. A veces es una pregunta del concurso del pueblo, y acertarla da un vale misterioso. Cada jueves por la noche el bar organiza una noche de preguntas en la que tres aciertos dan 3 vales. Los restaurantes de nivel inferior a 10 nunca reciben eventos con desventajas',
   pest1027:
     'Cambios en ratoneras e insecticidas: la Ratonera cuesta 18.000 monedas (30\u00a0% de atrapar), la nueva Ratonera de acero cuesta 36.000 (45\u00a0%) y la Ratonera de oro sube a 75\u00a0% por 90.000; el Insecticida para cucarachas no cambia, el nuevo Insecticida selecto cuesta 13.000 (35\u00a0% de matar) y el Insecticida de oro sube a 55\u00a0% por 26.000; el mercado negro vende versiones al 99\u00a0%: Trampa de queso (24 horas, 15 diamantes; Mar de queso, 120 horas, 72) y Tentación de caramelo (24 horas, 4 diamantes; Festín de caramelo, 120 horas, 17); la Ratonera duradera, la Ratonera 100\u00a0% y el Insecticida extrafuerte se retiran, y los que tenías en el almacén o colocados se cambiaron por Trampas de queso y Tentaciones de caramelo (los colocados duran 24 horas desde la actualización); al venderlos a la tienda recibes como mucho su precio en diamantes × 2.000 monedas (los de monedas cuentan 10.000 monedas como 1 diamante)',
   bar1026:

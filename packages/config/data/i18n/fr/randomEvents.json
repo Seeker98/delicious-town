@@ -86,6 +86,13 @@
       "Ses habitués n'ont plus qu'à venir chez vous."
     ]
   },
+  "11": {
+    "name": "L'avis de silence",
+    "desc": "Une affiche en ville\u202f: interdit de hacher bruyamment le dimanche midi.",
+    "lines": [
+      "On cuisine sur la pointe des pieds. C'est plus lent, mais plus soigné."
+    ]
+  },
   "12": {
     "name": "Des fruits dans un plat salé\u202f?",
     "desc": "Deux tables se disputent pour savoir si l'on peut mettre des fruits sucrés dans un plat salé, et exigent que vous tranchiez.",
@@ -106,6 +113,13 @@
       "Le nom s'allonge, et les clients hésitent en commandant.",
       "Lui en faire goûter un bol sur-le-champ",
       "Après avoir mangé, il reste longtemps silencieux\u202f: «\u202fHmm... cette vallée pourrait peut-être s'agrandir un peu.\u202f»"
+    ]
+  },
+  "14": {
+    "name": "Les pigeons de la place",
+    "desc": "Les pigeons de la place se disputent les miettes en bande devant votre porte.",
+    "lines": [
+      "Les clients font un détour."
     ]
   },
   "15": {
@@ -136,6 +150,13 @@
       "Une pincée râpée dans un plat, et les clients réclament la recette."
     ]
   },
+  "18": {
+    "name": "La nuit du mât fleuri",
+    "desc": "Les jeunes de la ville ont dansé toute la nuit autour d'un mât couvert de fleurs.",
+    "lines": [
+      "Au petit matin, ils accourent tous pour une soupe chaude."
+    ]
+  },
   "19": {
     "name": "Soir de match",
     "desc": "Ce soir, les équipes de deux villes s'affrontent, et tout le monde s'entasse là où il y a une télé.",
@@ -144,6 +165,103 @@
       "C'est complet, et ça crie fort.",
       "Pas de télé\u202f: un coin tranquille pour ceux qui le veulent",
       "Ne viennent que des clients qui veulent manger au calme."
+    ]
+  },
+  "20": {
+    "name": "Chorale aux balcons",
+    "desc": "Chaque soir, les voisins d'en face chantent en chœur sur leurs balcons, et toute la rue se penche à la fenêtre pour écouter.",
+    "lines": [
+      "Après le concert, ils descendent manger un morceau."
+    ]
+  },
+  "21": {
+    "name": "Journée sans voiture",
+    "desc": "La ville organise une «\u202fjournée sans voiture\u202f»\u202f: dans les rues, rien que des vélos.",
+    "lines": [
+      "Les livreurs filent sans le moindre bouchon."
+    ]
+  },
+  "22": {
+    "name": "Du sauna à la neige",
+    "desc": "Le patron des bains vous invite, après le sauna, à aller vous rouler dans la neige avec tout le monde.",
+    "lines": [
+      "Y aller",
+      "Vous revenez frais comme un gardon, et vous coupez les légumes plus vite.",
+      "Rester à côté pour tendre les serviettes",
+      "Tout le monde se souvient de vous."
+    ]
+  },
+  "23": {
+    "name": "La table en 64 pièces",
+    "desc": "La table que vous venez d'acheter compte 64 pièces, et la notice n'a que des dessins, pas un mot.",
+    "lines": [
+      "Une fois montée, il reste trois vis. La table branle un peu, mais les clients trouvent ça charmant."
+    ]
+  },
+  "24": {
+    "name": "La grève du zèle",
+    "desc": "Aujourd'hui, les chauffeurs de bus roulent strictement à la vitesse minimale réglementaire, et toute la ville arrive en retard au travail.",
+    "lines": [
+      "Au moins, les routes sont dégagées."
+    ]
+  },
+  "25": {
+    "name": "Le week-end prolongé",
+    "desc": "Lundi est férié\u202f: les familles quittent la ville, valise à roulettes en main.",
+    "lines": [
+      "Ceux qui restent sont des habitués généreux."
+    ]
+  },
+  "26": {
+    "name": "Le marché des chalets",
+    "desc": "Une rangée de petits chalets en bois s'est installée sur la place. Ça sent le vin chaud et les marrons grillés.",
+    "lines": [
+      "Les promeneurs fatigués se réfugient chez vous."
+    ]
+  },
+  "27": {
+    "name": "Un camion de tomates",
+    "desc": "La bataille de tomates de la ville voisine est terminée, et il reste un camion plein de tomates, bradé.",
+    "lines": [
+      "Tout acheter",
+      "Le camion entier est à vous.",
+      "Ne pas en vouloir",
+      "En repartant, le camion en fait tomber une, pile à vos pieds."
+    ]
+  },
+  "28": {
+    "name": "Les cigognes sur la cheminée",
+    "desc": "Un couple de cigognes blanches a fait son nid sur la cheminée de votre restaurant.",
+    "lines": [
+      "Les anciens du coin disent que ça porte bonheur."
+    ]
+  },
+  "29": {
+    "name": "Les soldes",
+    "desc": "Toute la ville est en soldes. Même les marchands du marché affichent «\u202f-15\u202f% sur tout\u202f».",
+    "lines": [
+      "Il y a plus de monde dans les rues."
+    ]
+  },
+  "30": {
+    "name": "Le dîner de 22 heures",
+    "desc": "Un grand groupe arrive pour dîner à dix heures du soir.",
+    "lines": [
+      "Ils bavardent et mangent jusqu'au milieu de la nuit."
+    ]
+  },
+  "31": {
+    "name": "Une petite tasse au comptoir",
+    "desc": "Les nouveaux clients boivent juste une petite tasse debout au comptoir, d'un trait, puis repartent.",
+    "lines": [
+      "Les tables tournent si vite que la cuisine n'arrive pas à suivre."
+    ]
+  },
+  "32": {
+    "name": "Fin des vendanges",
+    "desc": "Les vignes de la colline ont embauché toute une équipe pour les vendanges.",
+    "lines": [
+      "À la pause de midi, tout le monde vient manger chez vous."
     ]
   },
   "33": {
@@ -185,6 +303,13 @@
       "Tout le restaurant est devenu d'une politesse extrême."
     ]
   },
+  "38": {
+    "name": "Le bus à impériale",
+    "desc": "Une nouvelle ligne de bus rouges à impériale vient d'ouvrir.",
+    "lines": [
+      "Les touristes assis à l'étage voient pile votre enseigne."
+    ]
+  },
   "39": {
     "name": "Soirée feu de joie et feu d'artifice",
     "desc": "En ce soir d'automne, la ville allume un grand feu de joie et tire un feu d'artifice. Quelqu'un a même jeté un épouvantail dans les flammes.",
@@ -200,6 +325,23 @@
       "Une bonne réponse\u202f: le barman vous donne un bon.",
       "Deux bonnes réponses\u202f: le barman vous donne un bon.",
       "Sans faute\u202f! Le bocal de bons du comptoir est à vous."
+    ]
+  },
+  "41": {
+    "name": "Des haricots sur un toast",
+    "desc": "Un client commande «\u202fdes haricots sur une tranche de pain grillé\u202f». Le chef reste sans voix.",
+    "lines": [
+      "Le faire",
+      "Le client en a presque les larmes aux yeux.",
+      "Lui suggérer autre chose",
+      "Il commande à contrecœur le plat signature de la maison."
+    ]
+  },
+  "42": {
+    "name": "Le chauffeur qui connaît toutes les rues",
+    "desc": "Un chauffeur de taxi a passé trois ans à apprendre par cœur le nom de chaque ruelle de la ville.",
+    "lines": [
+      "En mangeant chez vous, il glisse un raccourci à votre livreur."
     ]
   },
   "43": {
@@ -218,6 +360,37 @@
       "Vous avez photographié un tronc qui flotte.",
       "Rester et s'occuper des touristes",
       "Les touristes remplissent votre restaurant."
+    ]
+  },
+  "45": {
+    "name": "Fraises à la crème",
+    "desc": "Le tournoi de tennis de la ville a commencé, et chaque spectateur a son bol de fraises à la crème.",
+    "lines": [
+      "Les desserts partent comme des petits pains."
+    ]
+  },
+  "46": {
+    "name": "Le match de cinq jours",
+    "desc": "Le match en ville dure depuis cinq jours sans vainqueur, avec même une pause pour le thé.",
+    "lines": [
+      "Les supporters viennent manger chaque jour à heure fixe."
+    ]
+  },
+  "47": {
+    "name": "La cornemuse à la porte",
+    "desc": "Un monsieur en kilt joue de la cornemuse devant votre porte, et la moitié des chiens de la rue aboient avec lui.",
+    "lines": [
+      "Lui donner quelques pièces pour qu'il aille jouer ailleurs",
+      "Le calme revient devant la porte.",
+      "L'inviter à manger",
+      "Après le repas, il joue un air très lent, et tout le restaurant se tait."
+    ]
+  },
+  "48": {
+    "name": "Les couronnes en papier",
+    "desc": "Les clients tirent sur des papillotes surprise de toutes les couleurs, qui éclatent dans un petit pan.",
+    "lines": [
+      "Chacun coiffe une couronne en papier, et tout le monde lit à tour de rôle la blague nulle cachée dedans."
     ]
   },
   "49": {
@@ -241,11 +414,269 @@
       "Mais tous ceux qui y goûtent disent\u202f: «\u202fIl y a une histoire dans ce plat.\u202f»"
     ]
   },
+  "52": {
+    "name": "La recette sur la serviette",
+    "desc": "Cette nuit, vous avez rêvé d'un nouveau plat génial et vous vous êtes levé pour le noter sur une serviette en papier. Au matin, ce n'est qu'un gribouillis illisible.",
+    "lines": [
+      "Mais vous êtes inspiré toute la journée."
+    ]
+  },
   "53": {
     "name": "Réunion de cafards",
     "desc": "Dans un coin, les cafards semblent tenir une réunion, bien alignés en rang.",
     "lines": [
       "Bien en rang, ils sont faciles à écraser."
+    ]
+  },
+  "54": {
+    "name": "La livraison égarée",
+    "desc": "Une commande à emporter qui n'est pas la vôtre a été livrée à votre porte. Ça sent très bon.",
+    "lines": [
+      "La rapporter au bon restaurant",
+      "Le patron vous offre une petite pâtisserie.",
+      "L'ouvrir pour étudier la recette",
+      "Vous apprenez un petit quelque chose, mais vous n'êtes pas très fier."
+    ]
+  },
+  "55": {
+    "name": "Le congélateur en panne",
+    "desc": "Cette nuit, le congélateur de la cuisine est resté une heure sans courant. Rien n'est perdu, mais vous avez eu des sueurs froides.",
+    "lines": [
+      "Aujourd'hui, vous redoublez de prudence."
+    ]
+  },
+  "56": {
+    "name": "Cinéma au bord de l'eau",
+    "desc": "Un grand drap blanc a été tendu au bord de la rivière pour une séance en plein air.",
+    "lines": [
+      "Après le film, personne n'a envie de rentrer."
+    ]
+  },
+  "57": {
+    "name": "Marathon, routes fermées",
+    "desc": "La ville organise un marathon, et l'avenue principale est fermée toute la matinée.",
+    "lines": [
+      "Les livreurs doivent passer par les petites rues."
+    ]
+  },
+  "58": {
+    "name": "Les clients masqués",
+    "desc": "C'est la fête des masques en ville\u202f: tous les clients entrent masqués.",
+    "lines": [
+      "Vous ne reconnaissez plus vos habitués, mais eux s'amusent beaucoup."
+    ]
+  },
+  "59": {
+    "name": "Les asperges blanches",
+    "desc": "Le marché déborde d'asperges blanches.",
+    "lines": [
+      "Chaque client qui entre commence par\u202f: «\u202fVous avez des asperges\u202f?\u202f»"
+    ]
+  },
+  "60": {
+    "name": "Le soleil qui ne se couche pas",
+    "desc": "Onze heures du soir, et le soleil est toujours là.",
+    "lines": [
+      "Après le repas, les clients ne veulent plus partir."
+    ]
+  },
+  "61": {
+    "name": "Le jour qui ne vient pas",
+    "desc": "Il n'a presque pas fait jour de la journée.",
+    "lines": [
+      "Tout le monde allume des bougies, s'emmitoufle dans une couverture et mange sans se presser."
+    ]
+  },
+  "62": {
+    "name": "Les œufs dans l'herbe",
+    "desc": "Des enfants cherchent des œufs colorés dans l'herbe de votre arrière-cour. Ils vous demandent si vous voulez chercher avec eux.",
+    "lines": [
+      "Chercher avec eux",
+      "Vous trouvez 1 œuf.",
+      "Vous trouvez 2 œufs.",
+      "Vous trouvez 3 œufs.",
+      "Préparer un goûter pour les enfants",
+      "Les parents arrivent aussi."
+    ]
+  },
+  "63": {
+    "name": "Les grandes tablées",
+    "desc": "Des tablées de clients en culotte de cuir trinquent le long de grandes tables.",
+    "lines": [
+      "Ils chantent des chansons que personne ne comprend."
+    ]
+  },
+  "64": {
+    "name": "Le vin nouveau",
+    "desc": "Le vin nouveau de l'année est en vente aujourd'hui. Tous les commerces de la rue ont accroché une petite pancarte à leur porte.",
+    "lines": [
+      "Vous en accrochez une aussi."
+    ]
+  },
+  "65": {
+    "name": "Les tracteurs en ville",
+    "desc": "Un convoi de tracteurs est entré en ville et bloque complètement la route. Les fermiers disent être venus «\u202fdiscuter\u202f», la benne pleine de pommes de terre.",
+    "lines": [
+      "Leur apporter de l'eau",
+      "Avant de partir, les fermiers vous laissent un sac de pommes de terre.",
+      "Fermer la porte et attendre",
+      "Vous fermez la porte et vous vous faites oublier un moment."
+    ]
+  },
+  "66": {
+    "name": "Un seul câble pour tous",
+    "desc": "Nouvelle règle en ville\u202f: tous les chargeurs doivent avoir le même connecteur.",
+    "lines": [
+      "Les clients n'ont plus besoin de mendier un câble à toutes les tables."
+    ]
+  },
+  "67": {
+    "name": "L'inspecteur des concombres",
+    "desc": "Un inspecteur vient mesurer vos concombres au rapporteur\u202f: trop courbés, ils n'ont pas droit à l'appellation «\u202fconcombre de première catégorie\u202f».",
+    "lines": [
+      "Coopérer sérieusement",
+      "Il mesure tout l'après-midi, puis vous remet un diplôme.",
+      "Lui servir une salade de concombre",
+      "Après avoir mangé, il dit\u202f: «\u202fLes courbés, c'est bien aussi.\u202f»"
+    ]
+  },
+  "68": {
+    "name": "Le déjeuner de deux heures",
+    "desc": "Aujourd'hui, les clients mettent deux heures à déjeuner.",
+    "lines": [
+      "Entrée, plat, dessert, café\u202f: rien ne doit manquer."
+    ]
+  },
+  "69": {
+    "name": "Merci en cinq langues",
+    "desc": "Une tablée commande en cinq langues. Entre gestes et devinettes, vous servez tout juste.",
+    "lines": [
+      "À leur départ, vous savez dire «\u202fmerci\u202f» de cinq façons."
+    ]
+  },
+  "70": {
+    "name": "Le miel de l'abbaye",
+    "desc": "Les moines de l'abbaye sur la colline descendent vendre leur miel, fait selon une recette vieille de plusieurs siècles.",
+    "lines": [
+      "En acheter un pot",
+      "Il finit dans vos desserts.",
+      "Ne pas en acheter",
+      "Le moine vous offre quand même un morceau de cire\u202f: «\u202fQue votre marmite ne brûle jamais.\u202f»"
+    ]
+  },
+  "71": {
+    "name": "Dernière tournée",
+    "desc": "La cloche du bar sonne, et quelqu'un crie\u202f: «\u202fDernière tournée\u202f!\u202f»",
+    "lines": [
+      "Tout le monde se précipite pour commander un dernier plat."
+    ]
+  },
+  "72": {
+    "name": "Le poisson frit du vendredi",
+    "desc": "Chaque vendredi, toute la rue sent le poisson frit et le vinaigre.",
+    "lines": [
+      "Attirés par l'odeur, les clients arrivent table après table."
+    ]
+  },
+  "73": {
+    "name": "Le rôti du dimanche",
+    "desc": "Le dimanche midi, les familles viennent manger un rôti, avec de petits pains qui gonflent au four.",
+    "lines": [
+      "Chaque famille commande de quoi remplir une grande table."
+    ]
+  },
+  "74": {
+    "name": "Trois tasses, un sachet",
+    "desc": "Vous découvrez que le chef fait trois tasses avec un seul sachet de thé. Il appelle ça «\u202fl'art de vivre\u202f».",
+    "lines": [
+      "Toute la cuisine se met à économiser."
+    ]
+  },
+  "75": {
+    "name": "Le nain de jardin",
+    "desc": "Un nain de jardin au bonnet rouge est apparu devant la porte, et il change de pose chaque matin.",
+    "lines": [
+      "Personne n'avoue l'avoir mis là."
+    ]
+  },
+  "76": {
+    "name": "Pique-nique sous la pluie",
+    "desc": "Une famille s'obstine à pique-niquer sous la pluie et finit ses sandwichs sous les parapluies.",
+    "lines": [
+      "Puis ils courent chez vous réclamer une soupe chaude."
+    ]
+  },
+  "77": {
+    "name": "Quatre sur le passage piéton",
+    "desc": "Des touristes font la queue au passage piéton devant chez vous et traversent par quatre pour la photo, comme sur la pochette d'un vieil album.",
+    "lines": [
+      "Après la photo, ils entrent s'asseoir en passant."
+    ]
+  },
+  "78": {
+    "name": "Les moutons sur la route",
+    "desc": "Un grand troupeau de moutons bloque la route à l'entrée de la ville. Le berger ne se presse pas, et les livreurs doivent faire le tour.",
+    "lines": [
+      "Aider le berger à rassembler ses moutons",
+      "Il vous offre un fromage de sa fabrication.",
+      "Attendre que les moutons passent",
+      "Les moutons finissent par passer, sans se presser, et les livraisons ont pris un sacré retard."
+    ]
+  },
+  "79": {
+    "name": "Le chariot contre le mur",
+    "desc": "Un touriste fonce encore et encore dans votre mur avec son chariot à bagages, en disant qu'il cherche un «\u202fquai\u202f».",
+    "lines": [
+      "Il finit par s'asseoir pour manger."
+    ]
+  },
+  "80": {
+    "name": "La mer glacée du Nouvel An",
+    "desc": "Le premier jour de l'année, une foule en maillot de bain se jette dans la mer glacée.",
+    "lines": [
+      "En sortant de l'eau, tout le monde court chez vous réclamer une soupe chaude."
+    ]
+  },
+  "81": {
+    "name": "La course des canards",
+    "desc": "Des centaines de canards en plastique jaune vont faire la course sur la rivière. Chaque canard coûte quelques pièces, au profit de l'école de la ville.",
+    "lines": [
+      "En acheter un",
+      "Votre canard arrive le premier\u202f!",
+      "Votre canard s'est coincé dans les roseaux. Mais l'argent est allé à l'école, et ça vous fait plaisir.",
+      "Regarder depuis la rive",
+      "Depuis la rive, vous encouragez chaque canard."
+    ]
+  },
+  "82": {
+    "name": "La troupe répète",
+    "desc": "La troupe de théâtre de la ville répète chez vous une pièce vieille de plusieurs siècles.",
+    "lines": [
+      "Au bout d'un après-midi, vous connaissez le texte par cœur."
+    ]
+  },
+  "83": {
+    "name": "La sauce à la menthe",
+    "desc": "Un client commande de l'agneau rôti et exige un bol de sauce verte à la menthe.",
+    "lines": [
+      "En préparer un tout de suite",
+      "Il mange avec un plaisir évident.",
+      "Lui proposer la sauce maison",
+      "Il goûte et hoche la tête."
+    ]
+  },
+  "84": {
+    "name": "Une plainte polie",
+    "desc": "Un client finit son assiette et dit poliment\u202f: «\u202fPas mal.\u202f»",
+    "lines": [
+      "Vous passez l'après-midi à vous demander si c'était un compliment ou une critique."
+    ]
+  },
+  "85": {
+    "name": "Le lave-vaisselle chanteur",
+    "desc": "Aujourd'hui, le lave-vaisselle fait un bruit qui ressemble drôlement à une chanson.",
+    "lines": [
+      "Toute la cuisine fredonne avec lui."
     ]
   },
   "86": {
@@ -262,6 +693,65 @@
       "Toute la salle applaudit, et plusieurs tables recommandent des plats."
     ]
   },
+  "88": {
+    "name": "Demande en mariage ratée",
+    "desc": "Un client fait sa demande dans votre restaurant, et on lui répond «\u202fJe vais réfléchir\u202f». L'ambiance est un peu gênée.",
+    "lines": [
+      "Lui faire porter un dessert",
+      "Les yeux rougis, il vous remercie.",
+      "Lancer vite une musique joyeuse",
+      "Tout le restaurant pousse un soupir de soulagement."
+    ]
+  },
+  "89": {
+    "name": "Le dessin d'enfant",
+    "desc": "Un enfant a dessiné votre restaurant, et vous avec une grosse tête toute ronde.",
+    "lines": [
+      "Vous l'affichez au mur."
+    ]
+  },
+  "90": {
+    "name": "Sel et sucre inversés",
+    "desc": "L'apprenti a inversé le pot de sel et le pot de sucre.",
+    "lines": [
+      "Tous les plats du matin ont un drôle de goût, mais c'est en se trompant qu'on apprend."
+    ]
+  },
+  "91": {
+    "name": "La spatule cassée",
+    "desc": "La spatule qui vous servait depuis cinq ans s'est cassée aujourd'hui.",
+    "lines": [
+      "Vous la regardez un moment en silence, puis vous allez en chercher une neuve."
+    ]
+  },
+  "92": {
+    "name": "Le nouvel apprenti",
+    "desc": "Le nouvel apprenti coupe des pommes de terre de toutes les tailles.",
+    "lines": [
+      "Les clients trouvent ça bizarre, mais l'apprenti progresse vite."
+    ]
+  },
+  "93": {
+    "name": "Travaux chez le voisin",
+    "desc": "Le voisin a commencé des travaux.",
+    "lines": [
+      "La perceuse tourne du matin au soir."
+    ]
+  },
+  "94": {
+    "name": "Le nouveau voisin",
+    "desc": "Les travaux d'à côté sont enfin finis.",
+    "lines": [
+      "Le nouveau voisin vous apporte une assiette de gâteaux, pour s'excuser du bruit."
+    ]
+  },
+  "95": {
+    "name": "L'influenceur gourmand",
+    "desc": "Un influenceur culinaire passe l'après-midi à filmer chez vous avec son téléphone.",
+    "lines": [
+      "Chaque plat a droit à trois angles différents."
+    ]
+  },
   "96": {
     "name": "«\u202fLa soupe était trop chaude\u202f»",
     "desc": "Un avis négatif est apparu en ligne\u202f: «\u202fLa soupe était trop chaude.\u202f»",
@@ -270,6 +760,27 @@
       "Quelqu'un a aimé votre réponse.",
       "L'ignorer",
       "Quelques clients ont lu l'avis et ne sont pas entrés."
+    ]
+  },
+  "97": {
+    "name": "Sept éternuements",
+    "desc": "Le chef a éternué sept fois d'affilée.",
+    "lines": [
+      "Les voisins disent que quelqu'un pense à lui."
+    ]
+  },
+  "98": {
+    "name": "Le cadeau du corbeau",
+    "desc": "Le corbeau qui se pose chaque jour sur votre enseigne a apporté une capsule toute brillante.",
+    "lines": [
+      "Il l'a déposée sur le rebord de votre fenêtre."
+    ]
+  },
+  "99": {
+    "name": "La radio à une seule station",
+    "desc": "La radio de la cuisine ne capte qu'une seule station.",
+    "lines": [
+      "La même chanson tourne en boucle du matin jusqu'à midi."
     ]
   },
   "100": {
@@ -283,6 +794,34 @@
       "Il rend tout étincelant."
     ]
   },
+  "101": {
+    "name": "Les bateaux en serviette",
+    "desc": "Un enfant a plié toutes les serviettes de la table en petits bateaux.",
+    "lines": [
+      "Les clients n'ont pas le cœur de les déplier."
+    ]
+  },
+  "102": {
+    "name": "Le livreur perdu",
+    "desc": "Un livreur s'est perdu et a roulé jusqu'à la ville voisine.",
+    "lines": [
+      "Il revient avec un sac de spécialités de là-bas."
+    ]
+  },
+  "103": {
+    "name": "L'horloge arrêtée",
+    "desc": "L'horloge de la cuisine s'est arrêtée.",
+    "lines": [
+      "Personne ne sait l'heure, et du coup personne n'est pressé."
+    ]
+  },
+  "104": {
+    "name": "Un thé après la fermeture",
+    "desc": "Après la fermeture, vous prenez un thé, seul dans le restaurant vide.",
+    "lines": [
+      "Vous vous dites que c'est vraiment un bon restaurant."
+    ]
+  },
   "105": {
     "name": "L'enseigne de travers",
     "desc": "Un coup de vent a mis votre enseigne de travers.",
@@ -290,11 +829,43 @@
       "Les passants croient à un nouveau restaurant et entrent jeter un œil."
     ]
   },
+  "106": {
+    "name": "Le voyageur du brouillard",
+    "desc": "Un voyageur égaré dans le brouillard est arrivé à tâtons jusqu'à votre restaurant.",
+    "lines": [
+      "Il dit qu'il a suivi l'odeur."
+    ]
+  },
+  "107": {
+    "name": "Au pied de l'arc-en-ciel",
+    "desc": "On raconte qu'une marmite d'or est enterrée au pied de l'arc-en-ciel, pile dans votre arrière-cour.",
+    "lines": [
+      "Creuser",
+      "Vous déterrez un pot rouillé, et il y a vraiment quelque chose dedans\u202f!",
+      "Vous déterrez une vieille botte.",
+      "Ne pas creuser",
+      "Vous décidez de laisser la légende tranquille."
+    ]
+  },
   "108": {
     "name": "Le bonhomme de neige à toque",
     "desc": "Quelqu'un a fait un bonhomme de neige devant votre porte, et il porte votre toque.",
     "lines": [
       "Tous les clients veulent une photo avec lui."
+    ]
+  },
+  "109": {
+    "name": "Bzzz",
+    "desc": "La foudre est tombée sur le paratonnerre de la ville.",
+    "lines": [
+      "Votre wok a fait «\u202fbzzz\u202f», et depuis, tout ce que vous y faites sauter sent divinement bon."
+    ]
+  },
+  "110": {
+    "name": "Les observateurs d'étoiles",
+    "desc": "Un groupe d'astronomes amateurs est arrivé avec ses télescopes.",
+    "lines": [
+      "Ils restent chez vous toute la nuit et commandent théière sur théière."
     ]
   },
   "111": {
@@ -321,11 +892,122 @@
       "Vous l'accrochez à l'entrée."
     ]
   },
+  "114": {
+    "name": "Le violon du coin de la rue",
+    "desc": "Au coin de la rue, un jeune homme joue du violon. Dans son étui, il n'y a que deux pièces.",
+    "lines": [
+      "Y glisser quelques pièces",
+      "Il vous fait un signe de tête.",
+      "L'inviter pour un bol de nouilles",
+      "Il mange de bon appétit et promet de vous le rendre un jour."
+    ]
+  },
+  "115": {
+    "name": "Concert sur la place",
+    "desc": "Le jeune violoniste donne un concert sur la place.",
+    "lines": [
+      "À la fin d'un morceau, il annonce\u202f: «\u202fCelui-là, je le dédie au restaurant du coin de la rue.\u202f»"
+    ]
+  },
+  "116": {
+    "name": "La pochette de l'album",
+    "desc": "Il a sorti un album.",
+    "lines": [
+      "Sur la pochette, on voit la devanture de votre restaurant."
+    ]
+  },
+  "117": {
+    "name": "L'expédition scientifique",
+    "desc": "Une équipe scientifique vient étudier le lac.",
+    "lines": [
+      "Elle réserve chez vous tous ses déjeuners et ses dîners."
+    ]
+  },
+  "118": {
+    "name": "Une ombre sur le sonar",
+    "desc": "Une longue ombre est apparue sur le sonar de l'équipe. Le chef de l'expédition vous demande\u202f: vous croyez qu'il y a quelque chose dans le lac\u202f?",
+    "lines": [
+      "Oui",
+      "Il vous offre une image du sonar en souvenir.",
+      "Non",
+      "Il rit\u202f: «\u202fMoi non plus, mais c'est ce qui paie mon salaire.\u202f»"
+    ]
+  },
+  "119": {
+    "name": "Le rapport scientifique",
+    "desc": "Le rapport est publié. Conclusion\u202f: «\u202fUn morceau de bois au caractère bien trempé.\u202f»",
+    "lines": [
+      "Les touristes viennent encore plus nombreux."
+    ]
+  },
+  "120": {
+    "name": "Le perroquet en cuisine",
+    "desc": "Le perroquet du voisin est entré dans votre cuisine et y a passé l'après-midi.",
+    "lines": [
+      "Il a appris à crier le nom de votre plat signature."
+    ]
+  },
+  "121": {
+    "name": "Le crieur de rue",
+    "desc": "Le perroquet s'est perché au coin de la rue.",
+    "lines": [
+      "Il crie votre plat signature encore et encore."
+    ]
+  },
+  "122": {
+    "name": "Le perroquet a un nouveau mot",
+    "desc": "Le perroquet a appris une nouvelle phrase\u202f: «\u202fTrop cher\u202f!\u202f» Il la crie devant votre porte toute la matinée.",
+    "lines": [
+      "Lui apprendre à dire «\u202fDélicieux\u202f»",
+      "Après tout un après-midi de leçons, il y arrive enfin.",
+      "Faire la paix avec une poignée de graines",
+      "Il arrête de crier et se met à chanter."
+    ]
+  },
+  "123": {
+    "name": "Deux candidats",
+    "desc": "L'association des commerçants va élire son nouveau président. Le boulanger et le garagiste viennent tous les deux faire campagne chez vous.",
+    "lines": [
+      "Soutenir le boulanger",
+      "Vous collez à la porte un petit mot de soutien au boulanger.",
+      "Soutenir le garagiste",
+      "Vous collez à la porte un petit mot de soutien au garagiste."
+    ]
+  },
+  "124": {
+    "name": "Soirée débat",
+    "desc": "Le débat entre les deux candidats a lieu dans votre restaurant.",
+    "lines": [
+      "Les curieux remplissent la salle."
+    ]
+  },
+  "125": {
+    "name": "Résultats de l'élection",
+    "desc": "Les résultats de l'élection sont tombés.",
+    "lines": [
+      "Aller voir le dépouillement sur la place",
+      "Votre candidat est élu\u202f! Dès son premier jour, le nouveau président vient manger chez vous.",
+      "Votre candidat a perdu. Le nouveau président vient quand même manger un bol, et espère votre soutien la prochaine fois.",
+      "Attendre les nouvelles au restaurant",
+      "Votre candidat est élu\u202f! Dès son premier jour, le nouveau président vient manger chez vous.",
+      "Votre candidat a perdu. Le nouveau président vient quand même manger un bol, et espère votre soutien la prochaine fois."
+    ]
+  },
   "126": {
     "name": "Un tournage chez vous",
     "desc": "Une équipe de cinéma a tourné une scène dans votre restaurant.",
     "lines": [
       "La nouvelle s'est répandue, et toute la ville est venue voir."
+    ]
+  },
+  "127": {
+    "name": "La vieille bouteille de la cave",
+    "desc": "Dans un coin de la cave, vous dénichez une vieille bouteille couverte de poussière. Le millésime sur l'étiquette est plus vieux que vous.",
+    "lines": [
+      "La vendre au collectionneur de la ville",
+      "Le collectionneur la prend sur-le-champ et vous donne une liasse de bons en échange.",
+      "La garder, posée sur le bar",
+      "Posée sur le bar, la vieille bouteille vous donne de plus en plus l'impression que la chance va vous sourire aujourd'hui."
     ]
   },
   "128": {
@@ -335,11 +1017,184 @@
       "Le lendemain matin, trois bons vous attendent dans la boîte aux lettres."
     ]
   },
+  "129": {
+    "name": "La recette manuscrite",
+    "desc": "Après son repas, une vieille dame laisse un carnet de recettes écrit à la main.",
+    "lines": [
+      "Elle est partie sans un mot."
+    ]
+  },
+  "130": {
+    "name": "Le gagnant du jour",
+    "desc": "Un client gratte un ticket et gagne sur place.",
+    "lines": [
+      "Il s'écrie\u202f: «\u202fAujourd'hui, c'est ma tournée pour toute la salle\u202f!\u202f»"
+    ]
+  },
+  "131": {
+    "name": "Panne générale",
+    "desc": "Toute la ville est privée d'électricité.",
+    "lines": [
+      "Seul le feu de vos fourneaux brille encore, et les clients viennent manger à la bougie."
+    ]
+  },
+  "132": {
+    "name": "La grêle a percé le store",
+    "desc": "La grêle a troué le store devant la porte.",
+    "lines": [
+      "Quelques habitués vous aident à le réparer."
+    ]
+  },
+  "133": {
+    "name": "Le feu de la Lune de sang",
+    "desc": "Les anciens disent que, les nuits de Lune de sang, le feu du fourneau ne doit pas s'éteindre.",
+    "lines": [
+      "Vous veillez près du fourneau toute la nuit."
+    ]
+  },
+  "134": {
+    "name": "Les couettes au soleil",
+    "desc": "Un beau soleil, enfin\u202f: toute la rue met ses couettes à aérer.",
+    "lines": [
+      "Les couettes aérées, tout le monde est de bonne humeur."
+    ]
+  },
+  "135": {
+    "name": "Coupure d'eau",
+    "desc": "La ville répare les canalisations\u202f: coupure d'eau pour une demi-journée.",
+    "lines": [
+      "En cuisine, il faut se débrouiller avec l'eau des seaux."
+    ]
+  },
+  "136": {
+    "name": "Portes ouvertes à l'école",
+    "desc": "C'est la journée portes ouvertes à l'école, et les parents viennent manger avec leurs enfants.",
+    "lines": [
+      "Le restaurant s'anime d'un coup."
+    ]
+  },
+  "137": {
+    "name": "Duel d'enceintes sur la place",
+    "desc": "Sur la place, deux clubs de danse font un concours de volume avec leurs enceintes.",
+    "lines": [
+      "Fatiguées de danser, les dames viennent souffler chez vous."
+    ]
+  },
+  "138": {
+    "name": "Le point relais à côté",
+    "desc": "Le point relais colis s'est installé juste à côté.",
+    "lines": [
+      "Ceux qui viennent chercher un colis entrent manger un morceau en passant."
+    ]
+  },
+  "139": {
+    "name": "Un nouveau restaurant en face",
+    "desc": "Un nouveau restaurant a ouvert en face, et le jour de l'ouverture, une longue file s'est formée devant sa porte.",
+    "lines": [
+      "Aller goûter",
+      "Vous apprenez quelques trucs.",
+      "L'ignorer",
+      "Certains clients vont faire la queue en face."
+    ]
+  },
+  "140": {
+    "name": "Privatisé pour un mariage",
+    "desc": "Un jeune couple veut privatiser votre restaurant pour son repas de mariage.",
+    "lines": [
+      "Accepter",
+      "Les clients de passage ne peuvent pas entrer, mais les mariés sont généreux.",
+      "Refuser poliment",
+      "Vous leur souhaitez beaucoup de bonheur."
+    ]
+  },
+  "141": {
+    "name": "L'anniversaire d'un habitué",
+    "desc": "C'est l'anniversaire d'un vieil habitué, et vous lui offrez une part de gâteau.",
+    "lines": [
+      "Tout le restaurant chante «\u202fJoyeux anniversaire\u202f»."
+    ]
+  },
+  "142": {
+    "name": "Le marché de nuit",
+    "desc": "Un marché de nuit s'est installé dans la rue devant chez vous.",
+    "lines": [
+      "Les promeneurs fatigués entrent s'asseoir, par vagues."
+    ]
+  },
+  "143": {
+    "name": "Dispute au marché",
+    "desc": "Deux marchands du marché se disputent, chacun annonçant un prix plus bas que l'autre.",
+    "lines": [
+      "La dispute finie, ils glissent tous les deux une poignée dans votre panier."
+    ]
+  },
+  "144": {
+    "name": "La course des livreurs",
+    "desc": "Les livreurs se sont lancés d'eux-mêmes dans une course à qui livrera le plus vite.",
+    "lines": [
+      "C'est plus rapide, mais il arrive qu'un peu de soupe se renverse."
+    ]
+  },
+  "145": {
+    "name": "Promo sur la livraison",
+    "desc": "La plateforme de livraison fait une promo\u202f: une remise à partir d'un certain montant.",
+    "lines": [
+      "Les commandes affluent d'un coup."
+    ]
+  },
+  "146": {
+    "name": "La hotte en grève",
+    "desc": "La hotte est en panne, et la cuisine est pleine de fumée.",
+    "lines": [
+      "Il faut cuisiner fenêtres ouvertes, à feu doux."
+    ]
+  },
+  "147": {
+    "name": "Le toit qui fuit",
+    "desc": "Il pleut à travers le toit.",
+    "lines": [
+      "Vous posez une bassine sur la table 3."
+    ]
+  },
+  "148": {
+    "name": "Interview pour le journal",
+    "desc": "Un journaliste du Journal de la ville vous interroge\u202f: «\u202fQuel est le secret de votre plat signature\u202f?\u202f»",
+    "lines": [
+      "Dire la vérité\u202f: «\u202fJe cuisine avec le cœur, c'est tout.\u202f»",
+      "L'article paraît, et les clients vous trouvent sincère.",
+      "En rajouter\u202f: «\u202fUne recette secrète transmise depuis trois générations\u202f!\u202f»",
+      "Il vient beaucoup de monde, avec de grandes attentes."
+    ]
+  },
+  "149": {
+    "name": "Le portefeuille trouvé",
+    "desc": "Vous trouvez un portefeuille sous une table.",
+    "lines": [
+      "Le déposer au commissariat",
+      "Le propriétaire récupère son portefeuille et vient exprès vous remercier.",
+      "Le garder à l'accueil en attendant qu'on le réclame",
+      "L'après-midi, le propriétaire passe le chercher et reste manger."
+    ]
+  },
+  "150": {
+    "name": "L'arc-en-ciel après la pluie",
+    "desc": "La pluie a cessé, et un arc-en-ciel s'étend dans le ciel.",
+    "lines": [
+      "Les clients sortent tous le prendre en photo, puis reviennent commander un plat de plus."
+    ]
+  },
   "151": {
     "name": "Une critique dans le journal",
     "desc": "Le Journal de la ville a publié une critique gastronomique anonyme, et elle parle justement de votre restaurant.",
     "lines": [
       "«\u202fUne petite adresse tranquille et honnête.\u202f»"
+    ]
+  },
+  "152": {
+    "name": "Concert sur la place",
+    "desc": "Le jeune violoniste donne un concert sur la place.",
+    "lines": [
+      "À la fin d'un morceau, il annonce\u202f: «\u202fCelui-là, je le dédie au restaurant du coin de la rue.\u202f»"
     ]
   }
 }

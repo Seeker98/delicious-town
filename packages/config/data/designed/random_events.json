@@ -275,6 +275,24 @@
       "origin": "八月全员休假"
     },
     {
+      "id": 11,
+      "kind": "notice",
+      "title": "安静告示",
+      "body": "镇上贴出告示: 周日中午不许大声剁菜。",
+      "when": {
+        "weekdays": [7]
+      },
+      "outcome": {
+        "text": "厨房里只能轻手轻脚, 慢工倒出了细活。",
+        "effects": {
+          "atRate": -0.04,
+          "expRate": 0.08
+        },
+        "hours": 2
+      },
+      "origin": "周日安静日"
+    },
+    {
       "id": 12,
       "kind": "choice",
       "title": "水果能不能放进咸菜里",
@@ -355,6 +373,20 @@
         }
       ],
       "origin": "原产地名称保护"
+    },
+    {
+      "id": 14,
+      "kind": "notice",
+      "title": "广场的鸽子",
+      "body": "广场的鸽子成群在你门口抢面包屑。",
+      "outcome": {
+        "text": "客人都绕着走。",
+        "effects": {
+          "atRate": -0.03
+        },
+        "hours": 2
+      },
+      "origin": "广场鸽"
     },
     {
       "id": 15,
@@ -449,6 +481,24 @@
       "origin": "用猪找松露"
     },
     {
+      "id": 18,
+      "kind": "notice",
+      "title": "花柱篝火夜",
+      "body": "镇上的年轻人围着一根插满花的木柱跳了一整夜。",
+      "when": {
+        "hours": [6, 10]
+      },
+      "outcome": {
+        "text": "天亮后全都跑来喝热汤。",
+        "effects": {
+          "atRate": 0.1,
+          "expValue": 1
+        },
+        "hours": 1
+      },
+      "origin": "仲夏节"
+    },
+    {
       "id": 19,
       "kind": "choice",
       "title": "球赛之夜",
@@ -486,6 +536,259 @@
         }
       ],
       "origin": "看球"
+    },
+    {
+      "id": 20,
+      "kind": "notice",
+      "title": "阳台合唱",
+      "body": "对面楼的住户一到傍晚就在阳台上合唱, 一条街的人都探出头来听。",
+      "when": {
+        "hours": [17, 20]
+      },
+      "outcome": {
+        "text": "唱完顺便下楼吃个饭。",
+        "effects": {
+          "atRate": 0.05,
+          "expRate": 0.05
+        },
+        "hours": 1
+      },
+      "origin": "意大利阳台合唱"
+    },
+    {
+      "id": 21,
+      "kind": "notice",
+      "title": "无车日",
+      "body": "镇上搞“无车日”, 大街上只有自行车。",
+      "outcome": {
+        "text": "骑手们一路畅通。",
+        "effects": {
+          "taNeedtimeRate": -0.2
+        },
+        "hours": 2
+      },
+      "origin": "荷兰自行车、无车日"
+    },
+    {
+      "id": 22,
+      "kind": "choice",
+      "title": "蒸完去雪地打滚",
+      "body": "澡堂老板邀请你蒸完桑拿, 跟大家一起去雪地里打个滚。",
+      "when": {
+        "months": [12, 1, 2]
+      },
+      "options": [
+        {
+          "key": "a",
+          "label": "去",
+          "outcomes": [
+            {
+              "text": "回来神清气爽, 切菜都快了。",
+              "effects": {
+                "expRate": 0.1
+              },
+              "hours": 2
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "在旁边给大家递毛巾",
+          "outcomes": [
+            {
+              "text": "大家都记住了你。",
+              "effects": {
+                "atRate": 0.03
+              },
+              "hours": 2
+            }
+          ]
+        }
+      ],
+      "origin": "芬兰桑拿"
+    },
+    {
+      "id": 23,
+      "kind": "notice",
+      "title": "64 个零件的桌子",
+      "body": "新买的桌子拆开有 64 个零件, 说明书只有图没有字。",
+      "outcome": {
+        "text": "装好以后多出三颗螺丝, 桌子有点晃, 客人倒觉得挺有情调。",
+        "effects": {
+          "spRate": -0.08
+        },
+        "hours": 2
+      },
+      "origin": "瑞典自己拼装的家具"
+    },
+    {
+      "id": 24,
+      "kind": "notice",
+      "title": "公交按章慢行",
+      "body": "公交司机今天严格按照规定的最低速度开车, 全镇人上班都迟到了。",
+      "outcome": {
+        "text": "倒是路上空出来了。",
+        "effects": {
+          "atRate": -0.04,
+          "taNeedtimeRate": -0.1
+        },
+        "hours": 2
+      },
+      "origin": "“按章工作”式罢工"
+    },
+    {
+      "id": 25,
+      "kind": "notice",
+      "title": "长周末",
+      "body": "本周一放假, 一家家拖着行李箱出了城。",
+      "when": {
+        "weekdays": [1]
+      },
+      "outcome": {
+        "text": "留下来的都是大方的熟客。",
+        "effects": {
+          "atRate": -0.05,
+          "coinRate": 0.05
+        },
+        "hours": 2
+      },
+      "origin": "银行假日"
+    },
+    {
+      "id": 26,
+      "kind": "notice",
+      "title": "广场木屋集市",
+      "body": "广场上摆起了一排小木屋, 空气里全是热甜酒和烤栗子的味道。",
+      "when": {
+        "months": [12]
+      },
+      "outcome": {
+        "text": "逛累了的人都往你店里钻。",
+        "effects": {
+          "atRate": 0.06
+        },
+        "hours": 3
+      },
+      "origin": "圣诞集市"
+    },
+    {
+      "id": 27,
+      "kind": "choice",
+      "title": "一卡车西红柿",
+      "body": "隔壁镇的扔西红柿节结束了, 还剩一卡车西红柿, 正在便宜处理。",
+      "options": [
+        {
+          "key": "a",
+          "label": "全买下",
+          "cost": {
+            "coinPerLevel": 10
+          },
+          "outcomes": [
+            {
+              "text": "一卡车都归你了。",
+              "reward": {
+                "foods": {
+                  "num": 10,
+                  "level": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "不要",
+          "outcomes": [
+            {
+              "text": "卡车开走时掉下来一个, 正好砸在你脚边。",
+              "reward": {
+                "foods": {
+                  "num": 1,
+                  "level": 1
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "origin": "西班牙番茄节"
+    },
+    {
+      "id": 28,
+      "kind": "notice",
+      "title": "烟囱上的鹳",
+      "body": "一对白鹳在你店的烟囱上搭了窝。",
+      "outcome": {
+        "text": "街口的老人说, 这是要来好运了。",
+        "effects": {
+          "luckValue": 10
+        },
+        "hours": 4
+      },
+      "origin": "鹳带来好运的说法"
+    },
+    {
+      "id": 29,
+      "kind": "notice",
+      "title": "打折季",
+      "body": "全镇进入打折季, 连菜场的摊主都在门口挂了“全场 85 折”。",
+      "outcome": {
+        "text": "逛街的人多了。",
+        "effects": {
+          "atRate": 0.05
+        },
+        "hours": 2
+      },
+      "origin": "法国统一打折季"
+    },
+    {
+      "id": 30,
+      "kind": "notice",
+      "title": "夜里十点才来的晚饭",
+      "body": "一大群客人晚上十点才来吃晚饭。",
+      "when": {
+        "hours": [20, 4]
+      },
+      "outcome": {
+        "text": "一边聊一边吃到后半夜。",
+        "effects": {
+          "atRate": 0.08
+        },
+        "hours": 2
+      },
+      "origin": "西班牙人晚饭吃得晚"
+    },
+    {
+      "id": 31,
+      "kind": "notice",
+      "title": "站着喝一小杯",
+      "body": "新来的客人只在柜台边站着喝一小杯, 一口喝完就走。",
+      "outcome": {
+        "text": "翻台快得厨房都跟不上。",
+        "effects": {
+          "atRate": 0.06,
+          "coinRate": -0.03
+        },
+        "hours": 2
+      },
+      "origin": "意大利站着喝浓缩咖啡"
+    },
+    {
+      "id": 32,
+      "kind": "notice",
+      "title": "葡萄园收工",
+      "body": "山上的葡萄园雇了一大批人收葡萄。",
+      "when": {
+        "hours": [11, 14]
+      },
+      "outcome": {
+        "text": "中午收工后全来你这儿吃饭。",
+        "effects": {
+          "atRate": 0.1
+        },
+        "hours": 1
+      },
+      "origin": "葡萄采收季"
     },
     {
       "id": 33,
@@ -598,6 +901,20 @@
       "origin": "什么事都先说 sorry"
     },
     {
+      "id": 38,
+      "kind": "notice",
+      "title": "双层巴士",
+      "body": "新开了一条红色双层巴士线路。",
+      "outcome": {
+        "text": "坐在上层的游客正好看见你的招牌。",
+        "effects": {
+          "atRate": 0.06
+        },
+        "hours": 3
+      },
+      "origin": "红色双层巴士"
+    },
+    {
       "id": 39,
       "kind": "notice",
       "title": "篝火和烟花之夜",
@@ -653,6 +970,55 @@
         }
       ],
       "origin": "酒馆问答夜"
+    },
+    {
+      "id": 41,
+      "kind": "choice",
+      "title": "豆子盖吐司",
+      "body": "一位客人点了一份“豆子盖在烤吐司上”。厨师长沉默了。",
+      "options": [
+        {
+          "key": "a",
+          "label": "照做",
+          "outcomes": [
+            {
+              "text": "客人感动得差点哭出来。",
+              "effects": {
+                "spRate": -0.05
+              },
+              "hours": 2
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "劝他试试别的",
+          "outcomes": [
+            {
+              "text": "他勉强点了店里的招牌菜。",
+              "effects": {
+                "coinRate": 0.03
+              },
+              "hours": 2
+            }
+          ]
+        }
+      ],
+      "origin": "茄汁豆配吐司"
+    },
+    {
+      "id": 42,
+      "kind": "notice",
+      "title": "背了三年街名的司机",
+      "body": "一位出租车司机花了三年, 把全镇每一条小巷的名字都背了下来。",
+      "outcome": {
+        "text": "他来吃饭时随口告诉你的骑手一条近路。",
+        "effects": {
+          "taNeedtimeRate": -0.15
+        },
+        "hours": 3
+      },
+      "origin": "伦敦出租车司机的“The Knowledge”考试"
     },
     {
       "id": 43,
@@ -721,6 +1087,93 @@
       "origin": "尼斯湖水怪"
     },
     {
+      "id": 45,
+      "kind": "notice",
+      "title": "草莓配奶油",
+      "body": "镇上的网球赛开打了, 观众人手一碗草莓配奶油。",
+      "when": {
+        "months": [6, 7, 8]
+      },
+      "outcome": {
+        "text": "甜品卖疯了。",
+        "effects": {
+          "coinRate": 0.05
+        },
+        "hours": 2
+      },
+      "origin": "温网的草莓奶油"
+    },
+    {
+      "id": 46,
+      "kind": "notice",
+      "title": "打了五天的球赛",
+      "body": "镇上那场球赛已经打了五天还没分出胜负, 中间还停下来喝了下午茶。",
+      "outcome": {
+        "text": "球迷每天都准时来吃饭。",
+        "effects": {
+          "atRate": 0.04
+        },
+        "hours": 4
+      },
+      "origin": "板球测试赛"
+    },
+    {
+      "id": 47,
+      "kind": "choice",
+      "title": "门口的风笛",
+      "body": "一位穿格子裙的大叔在你店门口吹起了风笛, 半条街的狗都跟着叫。",
+      "options": [
+        {
+          "key": "a",
+          "label": "给他几个银币, 请他去别家门口吹",
+          "cost": {
+            "coinPerLevel": 5
+          },
+          "outcomes": [
+            {
+              "text": "门口安静了。",
+              "effects": {
+                "atRate": 0.03
+              },
+              "hours": 1
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "请他进来吃饭",
+          "outcomes": [
+            {
+              "text": "他吃完吹了一首很慢的曲子, 全店都安静下来。",
+              "effects": {
+                "spRate": -0.1
+              },
+              "hours": 1
+            }
+          ]
+        }
+      ],
+      "origin": "苏格兰风笛"
+    },
+    {
+      "id": 48,
+      "kind": "notice",
+      "title": "纸皇冠",
+      "body": "客人们拉开彩色的拉炮。",
+      "when": {
+        "dates": ["12-21", "12-31"]
+      },
+      "outcome": {
+        "text": "每个人都戴上一顶纸皇冠, 轮流念里面印的冷笑话。",
+        "effects": {
+          "atRate": 0.05,
+          "spRate": -0.05
+        },
+        "hours": 2
+      },
+      "origin": "圣诞拉炮"
+    },
+    {
       "id": 49,
       "kind": "notice",
       "title": "橘猫占座",
@@ -762,6 +1215,19 @@
       }
     },
     {
+      "id": 52,
+      "kind": "notice",
+      "title": "纸巾上的菜谱",
+      "body": "你半夜梦见一道绝妙的新菜, 爬起来写在纸巾上。早上一看, 只有一串看不懂的字。",
+      "outcome": {
+        "text": "不过你一整天都很有灵感。",
+        "effects": {
+          "mcGoldRate": 0.05
+        },
+        "hours": 3
+      }
+    },
+    {
       "id": 53,
       "kind": "notice",
       "title": "蟑螂开会",
@@ -770,6 +1236,697 @@
         "text": "排好队了, 打起来不费劲。",
         "effects": {
           "killRoachNoStrengthRate": 0.15
+        },
+        "hours": 2
+      }
+    },
+    {
+      "id": 54,
+      "kind": "choice",
+      "title": "送错的外卖",
+      "body": "一份不是你家的外卖被送到了你门口, 闻着很香。",
+      "options": [
+        {
+          "key": "a",
+          "label": "送回原店",
+          "outcomes": [
+            {
+              "text": "那家店老板请你吃了一块点心。",
+              "effects": {
+                "expRate": 0.05
+              },
+              "hours": 1
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "打开研究一下配方",
+          "outcomes": [
+            {
+              "text": "学到了一点东西, 但有点心虚。",
+              "effects": {
+                "mcGoldRate": 0.08,
+                "spRate": 0.05
+              },
+              "hours": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 55,
+      "kind": "notice",
+      "title": "断电的冰柜",
+      "body": "后厨的冰柜半夜停电了一小时。食材没坏, 但你吓出了一身冷汗。",
+      "outcome": {
+        "text": "今天格外小心。",
+        "effects": {
+          "oilRate": -0.05
+        },
+        "hours": 3
+      }
+    },
+    {
+      "id": 56,
+      "kind": "notice",
+      "title": "河边露天电影",
+      "body": "河边支起了一块大白布放露天电影。",
+      "when": {
+        "hours": [20, 4],
+        "months": [6, 7, 8]
+      },
+      "outcome": {
+        "text": "散场后, 大家都舍不得回家。",
+        "effects": {
+          "atRate": 0.05
+        },
+        "hours": 2
+      },
+      "origin": "夏季露天电影"
+    },
+    {
+      "id": 57,
+      "kind": "notice",
+      "title": "马拉松封路",
+      "body": "镇上办马拉松, 主干道封了一上午。",
+      "when": {
+        "hours": [6, 10]
+      },
+      "outcome": {
+        "text": "骑手们只能绕小路走。",
+        "effects": {
+          "atRate": -0.04,
+          "taNeedtimeRate": 0.2
+        },
+        "hours": 2
+      },
+      "origin": "城市马拉松"
+    },
+    {
+      "id": 58,
+      "kind": "notice",
+      "title": "戴面具的客人",
+      "body": "镇上过面具节, 进门的客人都戴着面具。",
+      "when": {
+        "months": [2]
+      },
+      "outcome": {
+        "text": "你认不出谁是熟客, 他们倒是玩得很开心。",
+        "effects": {
+          "atRate": 0.06,
+          "spRate": 0.05
+        },
+        "hours": 2
+      },
+      "origin": "威尼斯狂欢节"
+    },
+    {
+      "id": 59,
+      "kind": "notice",
+      "title": "白色的芦笋",
+      "body": "菜场摆满了白色的芦笋。",
+      "when": {
+        "months": [4, 5]
+      },
+      "outcome": {
+        "text": "每位客人进门第一句都是: “有芦笋吗?”",
+        "effects": {
+          "coinRate": 0.05
+        },
+        "hours": 3
+      },
+      "origin": "德国白芦笋季"
+    },
+    {
+      "id": 60,
+      "kind": "notice",
+      "title": "不肯落山的太阳",
+      "body": "晚上十一点, 太阳还挂在天边。",
+      "when": {
+        "hours": [20, 4],
+        "months": [6, 7]
+      },
+      "outcome": {
+        "text": "客人们吃完饭都不肯走。",
+        "effects": {
+          "atRate": 0.06
+        },
+        "hours": 2
+      },
+      "origin": "北欧夏天的午夜阳光"
+    },
+    {
+      "id": 61,
+      "kind": "notice",
+      "title": "一直不亮的天",
+      "body": "天一直没怎么亮过。",
+      "when": {
+        "months": [12, 1]
+      },
+      "outcome": {
+        "text": "大家都点上蜡烛, 裹着毯子, 慢慢吃一顿饭。",
+        "effects": {
+          "spRate": -0.1
+        },
+        "hours": 3
+      },
+      "origin": "北欧冬天的极夜、hygge"
+    },
+    {
+      "id": 62,
+      "kind": "choice",
+      "title": "草丛里的彩蛋",
+      "body": "一群孩子在你后院的草丛里找彩色的鸡蛋。他们问你要不要一起找。",
+      "when": {
+        "weekdays": [7],
+        "months": [3, 4, 5]
+      },
+      "options": [
+        {
+          "key": "a",
+          "label": "一起找",
+          "outcomes": [
+            {
+              "weight": 1,
+              "text": "你找到了 1 个彩蛋。",
+              "reward": {
+                "tickets": 1
+              }
+            },
+            {
+              "weight": 1,
+              "text": "你找到了 2 个彩蛋。",
+              "reward": {
+                "tickets": 2
+              }
+            },
+            {
+              "weight": 1,
+              "text": "你找到了 3 个彩蛋。",
+              "reward": {
+                "tickets": 3
+              }
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "在旁边给孩子们准备点心",
+          "outcomes": [
+            {
+              "text": "家长都来了。",
+              "effects": {
+                "atRate": 0.05
+              },
+              "hours": 2
+            }
+          ]
+        }
+      ],
+      "origin": "复活节找彩蛋"
+    },
+    {
+      "id": 63,
+      "kind": "notice",
+      "title": "碰杯的长桌",
+      "body": "一桌桌穿着皮短裤的客人在长桌上碰杯。",
+      "when": {
+        "months": [9, 10]
+      },
+      "outcome": {
+        "text": "他们唱着谁也听不懂的歌。",
+        "effects": {
+          "atRate": 0.08,
+          "spRate": 0.08
+        },
+        "hours": 2
+      },
+      "origin": "慕尼黑啤酒节"
+    },
+    {
+      "id": 64,
+      "kind": "notice",
+      "title": "今年的新酒",
+      "body": "今年的新酒今天开卖了。整条街的店都在门口挂了小牌子。",
+      "when": {
+        "weekdays": [4],
+        "months": [11]
+      },
+      "outcome": {
+        "text": "你也跟着挂了一块。",
+        "effects": {
+          "coinRate": 0.05
+        },
+        "hours": 3
+      },
+      "origin": "博若莱新酒节 (11 月第三个周四)"
+    },
+    {
+      "id": 65,
+      "kind": "choice",
+      "title": "拖拉机进城",
+      "body": "一队拖拉机开进了镇子, 把路堵得严严实实。农夫们说他们是来“讲道理”的, 车斗里装满了土豆。",
+      "options": [
+        {
+          "key": "a",
+          "label": "帮他们递水",
+          "outcomes": [
+            {
+              "text": "农夫们走之前塞给你一袋土豆。",
+              "reward": {
+                "foods": {
+                  "num": 3
+                }
+              }
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "关门躲一躲",
+          "outcomes": [
+            {
+              "text": "你关上门躲了一会儿。",
+              "effects": {
+                "atRate": -0.04
+              },
+              "hours": 1
+            }
+          ]
+        }
+      ],
+      "origin": "农民开拖拉机进城抗议"
+    },
+    {
+      "id": 66,
+      "kind": "notice",
+      "title": "统一的充电线",
+      "body": "镇上出了新规定: 所有充电器都要用同一种接口。",
+      "outcome": {
+        "text": "客人终于不用到处借充电线了。",
+        "effects": {
+          "spRate": -0.05
+        },
+        "hours": 3
+      },
+      "origin": "欧盟统一充电口"
+    },
+    {
+      "id": 67,
+      "kind": "choice",
+      "title": "量黄瓜的检查员",
+      "body": "一位检查员拿着量角器来量你的黄瓜, 说弯得太厉害的不能叫“一级黄瓜”。",
+      "options": [
+        {
+          "key": "a",
+          "label": "认真配合",
+          "outcomes": [
+            {
+              "text": "他量了一个下午, 最后给你颁了张奖状。",
+              "effects": {
+                "expRate": 0.06
+              },
+              "hours": 2
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "请他吃一盘黄瓜沙拉",
+          "outcomes": [
+            {
+              "text": "他吃完说: “弯的也挺好。”",
+              "effects": {
+                "coinRate": 0.04
+              },
+              "hours": 2
+            }
+          ]
+        }
+      ],
+      "origin": "关于蔬菜弯曲度的法规传闻"
+    },
+    {
+      "id": 68,
+      "kind": "notice",
+      "title": "两个小时的午饭",
+      "body": "今天的客人一顿午饭要吃两个小时。",
+      "when": {
+        "hours": [11, 14]
+      },
+      "outcome": {
+        "text": "前菜、主菜、甜点、咖啡, 一样都不能少。",
+        "effects": {
+          "atRate": -0.03,
+          "coinRate": 0.05
+        },
+        "hours": 2
+      },
+      "origin": "法式午餐"
+    },
+    {
+      "id": 69,
+      "kind": "notice",
+      "title": "五种语言的谢谢",
+      "body": "一桌客人用五种语言点菜, 你连比划带猜, 居然全做对了。",
+      "outcome": {
+        "text": "走的时候, 你学会了五种说“谢谢”的方法。",
+        "effects": {
+          "expRate": 0.06
+        },
+        "hours": 2
+      },
+      "origin": "多语种"
+    },
+    {
+      "id": 70,
+      "kind": "choice",
+      "title": "修道院的蜂蜜",
+      "body": "山上修道院的修士下山卖自家的蜂蜜, 说是按几百年前的老方子做的。",
+      "options": [
+        {
+          "key": "a",
+          "label": "买一罐",
+          "cost": {
+            "coinPerLevel": 5
+          },
+          "outcomes": [
+            {
+              "text": "做甜点用上了。",
+              "effects": {
+                "spRate": -0.08
+              },
+              "hours": 3
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "不买",
+          "outcomes": [
+            {
+              "text": "修士还是送了你一块蜂蜡, 说: “愿你的锅永远不糊。”"
+            }
+          ]
+        }
+      ],
+      "origin": "修道院手工产品"
+    },
+    {
+      "id": 71,
+      "kind": "notice",
+      "title": "最后一轮",
+      "body": "酒吧的铃铛响了, 有人大喊: “最后一轮!”",
+      "when": {
+        "hours": [22, 3]
+      },
+      "outcome": {
+        "text": "所有人都冲去点了最后一份吃的。",
+        "effects": {
+          "coinRate": 0.06
+        },
+        "hours": 1
+      },
+      "origin": "酒吧的 last orders 铃"
+    },
+    {
+      "id": 72,
+      "kind": "notice",
+      "title": "星期五的炸鱼",
+      "body": "一到周五, 整条街都飘着炸鱼和醋的味道。",
+      "when": {
+        "weekdays": [5]
+      },
+      "outcome": {
+        "text": "闻着味来的客人一桌接一桌。",
+        "effects": {
+          "atRate": 0.05,
+          "coinRate": 0.03
+        },
+        "hours": 3
+      },
+      "origin": "周五吃炸鱼薯条"
+    },
+    {
+      "id": 73,
+      "kind": "notice",
+      "title": "周日烤肉",
+      "body": "周日中午, 一家家人来吃烤肉, 配一种会在烤箱里鼓起来的小面饼。",
+      "when": {
+        "hours": [11, 14],
+        "weekdays": [7]
+      },
+      "outcome": {
+        "text": "一家人一点就是一大桌。",
+        "effects": {
+          "coinRate": 0.05
+        },
+        "hours": 2
+      },
+      "origin": "周日烤肉配约克郡布丁"
+    },
+    {
+      "id": 74,
+      "kind": "notice",
+      "title": "一个茶包泡三杯",
+      "body": "你发现厨师长把一个茶包泡了三杯。他说这叫“过日子”。",
+      "outcome": {
+        "text": "全厨房都跟着省了起来。",
+        "effects": {
+          "oilRate": -0.05
+        },
+        "hours": 3
+      }
+    },
+    {
+      "id": 75,
+      "kind": "notice",
+      "title": "门口的小陶人",
+      "body": "门口不知什么时候多了一个戴红帽子的小陶人, 每天早上都换个姿势。",
+      "outcome": {
+        "text": "没人承认是自己放的。",
+        "effects": {
+          "luckValue": 10
+        },
+        "hours": 4
+      },
+      "origin": "花园小矮人"
+    },
+    {
+      "id": 76,
+      "kind": "notice",
+      "title": "雨里的野餐",
+      "body": "一家人坚持在雨里野餐, 撑着伞吃完了三明治。",
+      "when": {
+        "weather": [10, 11, 12, 13, 16, 17, 22]
+      },
+      "outcome": {
+        "text": "然后跑进你店里要热汤。",
+        "effects": {
+          "spRate": -0.05,
+          "expValue": 1
+        },
+        "hours": 1
+      }
+    },
+    {
+      "id": 77,
+      "kind": "notice",
+      "title": "斑马线上的四个人",
+      "body": "游客们在你门口的斑马线上排队, 四个人一组, 学着某张老唱片封面走过马路拍照。",
+      "outcome": {
+        "text": "拍完照的游客顺路进来坐坐。",
+        "effects": {
+          "atRate": 0.05
+        },
+        "hours": 2
+      },
+      "origin": "艾比路唱片封面"
+    },
+    {
+      "id": 78,
+      "kind": "choice",
+      "title": "堵路的羊群",
+      "body": "一大群羊把镇口的路堵住了, 牧羊人不慌不忙, 骑手们只能绕路。",
+      "options": [
+        {
+          "key": "a",
+          "label": "帮牧羊人赶羊",
+          "outcomes": [
+            {
+              "text": "他送了你一块自家做的奶酪。",
+              "reward": {
+                "foods": {
+                  "num": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "等羊过完",
+          "outcomes": [
+            {
+              "text": "羊群慢悠悠地过完了, 外卖晚了一大截。",
+              "effects": {
+                "taNeedtimeRate": 0.15
+              },
+              "hours": 2
+            }
+          ]
+        }
+      ],
+      "origin": "威尔士的羊比人多"
+    },
+    {
+      "id": 79,
+      "kind": "notice",
+      "title": "往墙上撞的行李车",
+      "body": "有个游客推着行李车, 一次又一次往你家的墙上撞, 说要找一个“站台”。",
+      "outcome": {
+        "text": "最后他坐下来吃了顿饭。",
+        "effects": {
+          "atRate": 0.04
+        },
+        "hours": 2
+      },
+      "origin": "九又四分之三站台"
+    },
+    {
+      "id": 80,
+      "kind": "notice",
+      "title": "元旦早上的冰海",
+      "body": "新年第一天, 一群人穿着泳衣冲进了冰冷的海里。",
+      "when": {
+        "hours": [6, 10],
+        "dates": ["01-01", "01-01"]
+      },
+      "outcome": {
+        "text": "上岸以后全都冲进你店里要热汤。",
+        "effects": {
+          "atRate": 0.08,
+          "expValue": 1
+        },
+        "hours": 2
+      },
+      "origin": "新年冬泳"
+    },
+    {
+      "id": 81,
+      "kind": "choice",
+      "title": "小黄鸭比赛",
+      "body": "河上要放几百只小黄鸭比赛, 一只鸭子卖几个银币, 钱捐给镇上的小学。",
+      "options": [
+        {
+          "key": "a",
+          "label": "买一只",
+          "cost": {
+            "coinPerLevel": 5
+          },
+          "outcomes": [
+            {
+              "weight": 1,
+              "text": "你的鸭子第一个漂到终点!",
+              "reward": {
+                "tickets": 5
+              }
+            },
+            {
+              "weight": 9,
+              "text": "你的鸭子卡在了芦苇里。不过钱捐出去了, 你心里挺舒服。",
+              "effects": {
+                "spRate": -0.05
+              },
+              "hours": 2
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "在岸边看",
+          "outcomes": [
+            {
+              "text": "你在岸边给每只鸭子都加了油。"
+            }
+          ]
+        }
+      ],
+      "origin": "慈善小黄鸭比赛"
+    },
+    {
+      "id": 82,
+      "kind": "notice",
+      "title": "剧团排练",
+      "body": "镇上的剧团借你的店排练一部几百年前的老戏。",
+      "outcome": {
+        "text": "一个下午下来, 你把台词都背会了。",
+        "effects": {
+          "expRate": 0.05
+        },
+        "hours": 2
+      },
+      "origin": "莎士比亚"
+    },
+    {
+      "id": 83,
+      "kind": "choice",
+      "title": "薄荷酱",
+      "body": "一位客人点烤羊肉, 坚持要配一碗绿色的薄荷酱。",
+      "options": [
+        {
+          "key": "a",
+          "label": "马上做一碗",
+          "outcomes": [
+            {
+              "text": "他心满意足地吃完了。",
+              "effects": {
+                "spRate": -0.06
+              },
+              "hours": 2
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "劝他试试你家的酱",
+          "outcomes": [
+            {
+              "text": "他尝了一口, 点点头。",
+              "effects": {
+                "coinRate": 0.03
+              },
+              "hours": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 84,
+      "kind": "notice",
+      "title": "有礼貌的抱怨",
+      "body": "一位客人吃完, 礼貌地说: “还不错。”",
+      "outcome": {
+        "text": "你琢磨了一个下午, 不知道这是夸还是骂。",
+        "effects": {
+          "expRate": 0.04
+        },
+        "hours": 2
+      },
+      "origin": "英式委婉"
+    },
+    {
+      "id": 85,
+      "kind": "notice",
+      "title": "会唱歌的洗碗机",
+      "body": "洗碗机今天发出的声音特别像一首歌。",
+      "outcome": {
+        "text": "后厨的人都跟着哼。",
+        "effects": {
+          "spRate": -0.05
         },
         "hours": 2
       }
@@ -798,6 +1955,137 @@
           "coinRate": 0.05
         },
         "hours": 1
+      }
+    },
+    {
+      "id": 88,
+      "kind": "choice",
+      "title": "求婚失败",
+      "body": "一位客人在你店里求婚, 对方说要“再想想”。气氛有点尴尬。",
+      "options": [
+        {
+          "key": "a",
+          "label": "送一份甜点过去",
+          "outcomes": [
+            {
+              "text": "他红着眼睛说谢谢。",
+              "effects": {
+                "expRate": 0.05
+              },
+              "hours": 1
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "赶紧换一首欢快的音乐",
+          "outcomes": [
+            {
+              "text": "全店都松了一口气。",
+              "effects": {
+                "spRate": -0.05
+              },
+              "hours": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 89,
+      "kind": "notice",
+      "title": "小朋友的画",
+      "body": "一个小朋友画了你的店, 把你画成了一个大圆脑袋。",
+      "outcome": {
+        "text": "你把画贴在了墙上。",
+        "effects": {
+          "spRate": -0.05
+        },
+        "hours": 4
+      }
+    },
+    {
+      "id": 90,
+      "kind": "notice",
+      "title": "盐和糖装反了",
+      "body": "学徒把盐罐和糖罐装反了。",
+      "outcome": {
+        "text": "上午的菜全都怪怪的, 不过吃一堑长一智。",
+        "effects": {
+          "spRate": 0.08,
+          "expRate": 0.05
+        },
+        "hours": 1
+      }
+    },
+    {
+      "id": 91,
+      "kind": "notice",
+      "title": "断掉的锅铲",
+      "body": "用了五年的锅铲今天断了。",
+      "outcome": {
+        "text": "你对着它沉默了一会儿, 然后去找了把新的。",
+        "effects": {
+          "atRate": -0.03
+        },
+        "hours": 1
+      }
+    },
+    {
+      "id": 92,
+      "kind": "notice",
+      "title": "新来的学徒",
+      "body": "新来的学徒切的土豆块有大有小。",
+      "outcome": {
+        "text": "客人吃得奇怪, 学徒倒是进步很快。",
+        "effects": {
+          "spRate": 0.05,
+          "expRate": 0.05
+        },
+        "hours": 2
+      }
+    },
+    {
+      "id": 93,
+      "kind": "notice",
+      "title": "隔壁装修",
+      "body": "隔壁开始装修了。",
+      "outcome": {
+        "text": "电钻从早响到晚。",
+        "effects": {
+          "atRate": -0.05
+        },
+        "hours": 2
+      }
+    },
+    {
+      "id": 94,
+      "kind": "notice",
+      "title": "新邻居",
+      "body": "隔壁终于装修完了。",
+      "after": {
+        "events": [93],
+        "minDays": 3
+      },
+      "outcome": {
+        "text": "新邻居端来一盘点心, 说这阵子吵到你了。",
+        "reward": {
+          "tickets": 1
+        }
+      }
+    },
+    {
+      "id": 95,
+      "kind": "notice",
+      "title": "美食博主",
+      "body": "一位美食博主举着手机在你店里拍了一个下午。",
+      "outcome": {
+        "text": "每道菜都要换三个角度。",
+        "effects": {
+          "atRate": 0.08,
+          "spRate": 0.05
+        },
+        "hours": 2
       }
     },
     {
@@ -833,6 +2121,45 @@
           ]
         }
       ]
+    },
+    {
+      "id": 97,
+      "kind": "notice",
+      "title": "七个喷嚏",
+      "body": "厨师长一连打了七个喷嚏。",
+      "outcome": {
+        "text": "街坊说, 这是有人在想他。",
+        "effects": {
+          "luckValue": 10
+        },
+        "hours": 2
+      }
+    },
+    {
+      "id": 98,
+      "kind": "notice",
+      "title": "乌鸦的礼物",
+      "body": "每天停在招牌上的那只乌鸦, 今天叼来了一个亮晶晶的瓶盖。",
+      "outcome": {
+        "text": "它把瓶盖放在了你的窗台上。",
+        "effects": {
+          "luckValue": 10
+        },
+        "hours": 3
+      }
+    },
+    {
+      "id": 99,
+      "kind": "notice",
+      "title": "只有一个台的收音机",
+      "body": "后厨的收音机只收得到一个台。",
+      "outcome": {
+        "text": "一首歌从早上循环到中午。",
+        "effects": {
+          "spRate": 0.05
+        },
+        "hours": 2
+      }
     },
     {
       "id": 100,
@@ -873,6 +2200,63 @@
       ]
     },
     {
+      "id": 101,
+      "kind": "notice",
+      "title": "餐巾小船",
+      "body": "一个小孩把桌上所有的餐巾都折成了小船。",
+      "outcome": {
+        "text": "客人们舍不得拆。",
+        "effects": {
+          "spRate": -0.05
+        },
+        "hours": 2
+      }
+    },
+    {
+      "id": 102,
+      "kind": "notice",
+      "title": "迷路的骑手",
+      "body": "一位骑手迷了路, 一直骑到了邻镇。",
+      "outcome": {
+        "text": "回来时带了一袋那边的特产。",
+        "reward": {
+          "foods": {
+            "num": 2
+          }
+        }
+      }
+    },
+    {
+      "id": 103,
+      "kind": "notice",
+      "title": "停了的钟",
+      "body": "后厨的钟停了。",
+      "outcome": {
+        "text": "没人知道几点, 大家反倒都不着急了。",
+        "effects": {
+          "atRate": -0.03,
+          "spRate": -0.05
+        },
+        "hours": 2
+      }
+    },
+    {
+      "id": 104,
+      "kind": "notice",
+      "title": "打烊后的一杯茶",
+      "body": "打烊后, 你一个人坐在空荡荡的店里喝了杯茶。",
+      "when": {
+        "hours": [22, 3]
+      },
+      "outcome": {
+        "text": "你觉得这家店真不错。",
+        "effects": {
+          "expRate": 0.05
+        },
+        "hours": 2
+      }
+    },
+    {
       "id": 105,
       "kind": "notice",
       "title": "吹歪的招牌",
@@ -889,6 +2273,65 @@
       }
     },
     {
+      "id": 106,
+      "kind": "notice",
+      "title": "雾里的旅人",
+      "body": "一位在雾里迷路的旅人摸进了你的店。",
+      "when": {
+        "weather": [8]
+      },
+      "outcome": {
+        "text": "他说是闻着香味找过来的。",
+        "effects": {
+          "atRate": 0.04,
+          "taNeedtimeRate": 0.1
+        },
+        "hours": 2
+      }
+    },
+    {
+      "id": 107,
+      "kind": "choice",
+      "title": "彩虹的尽头",
+      "body": "有人说, 彩虹的尽头埋着一罐金子, 正好在你店的后院。",
+      "when": {
+        "weather": [6]
+      },
+      "options": [
+        {
+          "key": "a",
+          "label": "去挖",
+          "outcomes": [
+            {
+              "weight": 1,
+              "text": "挖到一个生锈的罐子, 里面真有东西!",
+              "reward": {
+                "tickets": 5
+              }
+            },
+            {
+              "weight": 9,
+              "text": "挖到了一只旧靴子。",
+              "effects": {
+                "expRate": 0.03
+              },
+              "hours": 1
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "不挖",
+          "outcomes": [
+            {
+              "text": "你决定让传说留在传说里。"
+            }
+          ]
+        }
+      ],
+      "origin": "爱尔兰传说"
+    },
+    {
       "id": 108,
       "kind": "notice",
       "title": "戴厨师帽的雪人",
@@ -902,6 +2345,38 @@
           "spRate": -0.08
         },
         "hours": 3
+      }
+    },
+    {
+      "id": 109,
+      "kind": "notice",
+      "title": "嗡的一声",
+      "body": "一道闪电劈中了镇上的避雷针。",
+      "when": {
+        "weather": [24]
+      },
+      "outcome": {
+        "text": "你的炒锅“嗡”地响了一声, 之后炒什么都特别香。",
+        "effects": {
+          "mcGoldRate": 0.08
+        },
+        "hours": 2
+      }
+    },
+    {
+      "id": 110,
+      "kind": "notice",
+      "title": "看星星的人",
+      "body": "一群看星星的人扛着望远镜来了。",
+      "when": {
+        "weather": [31]
+      },
+      "outcome": {
+        "text": "他们在你店里坐了一整夜, 点了一壶又一壶热茶。",
+        "effects": {
+          "atRate": 0.06
+        },
+        "hours": 2
       }
     },
     {
@@ -950,24 +2425,6 @@
       }
     },
     {
-      "id": 151,
-      "kind": "notice",
-      "title": "报纸上的食评",
-      "body": "小镇日报上登了一篇匿名食评, 写的正是你的店。",
-      "after": {
-        "events": [111],
-        "option": "b",
-        "minDays": 1
-      },
-      "outcome": {
-        "text": "“一家安静、诚实的小店。”",
-        "effects": {
-          "coinRate": 0.08
-        },
-        "hours": 3
-      }
-    },
-    {
       "id": 113,
       "kind": "notice",
       "title": "门口的小牌子",
@@ -989,6 +2446,306 @@
       }
     },
     {
+      "id": 114,
+      "kind": "choice",
+      "title": "街角的琴声",
+      "body": "街角有位年轻人在拉小提琴, 琴盒里只有两个硬币。",
+      "options": [
+        {
+          "key": "a",
+          "label": "放几个银币",
+          "cost": {
+            "coinPerLevel": 5
+          },
+          "outcomes": [
+            {
+              "text": "他朝你点了点头。"
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "请他进来吃碗面",
+          "outcomes": [
+            {
+              "text": "他吃得很香, 说以后一定报答你。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 115,
+      "kind": "notice",
+      "title": "广场上的演出",
+      "body": "那位拉小提琴的年轻人在广场上演出。",
+      "after": {
+        "events": [114],
+        "option": "a",
+        "minDays": 1
+      },
+      "outcome": {
+        "text": "唱完一首, 他说: “这首歌送给街角那家店。”",
+        "effects": {
+          "atRate": 0.06
+        },
+        "hours": 3
+      }
+    },
+    {
+      "id": 116,
+      "kind": "notice",
+      "title": "唱片封面",
+      "body": "他出唱片了。",
+      "after": {
+        "events": [115, 152],
+        "minDays": 1
+      },
+      "outcome": {
+        "text": "封面上画的是你的店门口。",
+        "reward": {
+          "tickets": 3
+        }
+      }
+    },
+    {
+      "id": 117,
+      "kind": "notice",
+      "title": "科考队来了",
+      "body": "一支科考队来湖边考察。",
+      "after": {
+        "events": [44],
+        "minDays": 1
+      },
+      "outcome": {
+        "text": "他们包下了你店里的午饭和晚饭。",
+        "effects": {
+          "coinRate": 0.06
+        },
+        "hours": 3
+      }
+    },
+    {
+      "id": 118,
+      "kind": "choice",
+      "title": "声呐上的影子",
+      "body": "科考队的声呐上出现了一个长长的影子。队长问你: 你相信湖里有东西吗?",
+      "after": {
+        "events": [117],
+        "minDays": 1
+      },
+      "options": [
+        {
+          "key": "a",
+          "label": "相信",
+          "outcomes": [
+            {
+              "text": "队长送了你一张声呐图当纪念。",
+              "effects": {
+                "luckValue": 10
+              },
+              "hours": 3
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "不信",
+          "outcomes": [
+            {
+              "text": "队长笑了: “我也不信, 可工资是这么发的。”",
+              "effects": {
+                "expRate": 0.05
+              },
+              "hours": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 119,
+      "kind": "notice",
+      "title": "科考报告",
+      "body": "科考报告出来了。结论是: “一根很有个性的木头。”",
+      "after": {
+        "events": [118],
+        "minDays": 1
+      },
+      "outcome": {
+        "text": "游客反而来得更多了。",
+        "effects": {
+          "atRate": 0.08
+        },
+        "hours": 4
+      }
+    },
+    {
+      "id": 120,
+      "kind": "notice",
+      "title": "飞进来的鹦鹉",
+      "body": "隔壁家的鹦鹉飞进你的厨房待了一下午。",
+      "outcome": {
+        "text": "它学会了喊你的招牌菜。"
+      }
+    },
+    {
+      "id": 121,
+      "kind": "notice",
+      "title": "街上的叫卖",
+      "body": "那只鹦鹉站在街口。",
+      "after": {
+        "events": [120],
+        "minDays": 1
+      },
+      "outcome": {
+        "text": "它一遍遍地喊你的招牌菜。",
+        "effects": {
+          "atRate": 0.05
+        },
+        "hours": 3
+      }
+    },
+    {
+      "id": 122,
+      "kind": "choice",
+      "title": "鹦鹉学了新词",
+      "body": "鹦鹉又学了一句新词: “太贵了!”它在你门口喊了一上午。",
+      "after": {
+        "events": [121],
+        "minDays": 1
+      },
+      "options": [
+        {
+          "key": "a",
+          "label": "教它说“真好吃”",
+          "outcomes": [
+            {
+              "text": "教了一下午, 它终于学会了。",
+              "effects": {
+                "spRate": -0.08
+              },
+              "hours": 3
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "拿一把瓜子跟它讲和",
+          "outcomes": [
+            {
+              "text": "它不喊了, 改成唱歌。",
+              "effects": {
+                "atRate": 0.03
+              },
+              "hours": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 123,
+      "kind": "choice",
+      "title": "两位候选人",
+      "body": "商会要选新会长了。面包店老板和修车铺老板都来你店里拉票。",
+      "options": [
+        {
+          "key": "a",
+          "label": "支持面包店老板",
+          "outcomes": [
+            {
+              "text": "你在门口贴了张支持面包店老板的小纸条。"
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "支持修车铺老板",
+          "outcomes": [
+            {
+              "text": "你在门口贴了张支持修车铺老板的小纸条。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 124,
+      "kind": "notice",
+      "title": "辩论夜",
+      "body": "两位候选人的辩论会在你店里举行。",
+      "when": {
+        "hours": [20, 4]
+      },
+      "after": {
+        "events": [123],
+        "minDays": 1
+      },
+      "outcome": {
+        "text": "来看热闹的人挤满了店。",
+        "effects": {
+          "atRate": 0.1,
+          "spRate": 0.1
+        },
+        "hours": 2
+      }
+    },
+    {
+      "id": 125,
+      "kind": "choice",
+      "title": "选举结果",
+      "body": "选举结果出来了。",
+      "after": {
+        "events": [124],
+        "minDays": 1
+      },
+      "options": [
+        {
+          "key": "a",
+          "label": "去广场看开票",
+          "outcomes": [
+            {
+              "weight": 1,
+              "text": "你支持的那位当选了! 新会长第一天上任就来你店里吃饭。",
+              "reward": {
+                "tickets": 2
+              }
+            },
+            {
+              "weight": 1,
+              "text": "你支持的那位落选了。新会长也来吃了一碗, 说下次希望你支持他。",
+              "effects": {
+                "expRate": 0.05
+              },
+              "hours": 2
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "在店里等消息",
+          "outcomes": [
+            {
+              "weight": 1,
+              "text": "你支持的那位当选了! 新会长第一天上任就来你店里吃饭。",
+              "reward": {
+                "tickets": 2
+              }
+            },
+            {
+              "weight": 1,
+              "text": "你支持的那位落选了。新会长也来吃了一碗, 说下次希望你支持他。",
+              "effects": {
+                "expRate": 0.05
+              },
+              "hours": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": 126,
       "kind": "notice",
       "title": "剧组来拍戏",
@@ -1001,6 +2758,40 @@
         },
         "hours": 4
       }
+    },
+    {
+      "id": 127,
+      "kind": "choice",
+      "title": "地下室的老酒",
+      "body": "你在地下室角落里翻出了一瓶落满灰的老酒, 标签上的年份比你年纪还大。",
+      "weight": 1,
+      "options": [
+        {
+          "key": "a",
+          "label": "卖给镇上的收藏家",
+          "outcomes": [
+            {
+              "text": "收藏家当场收下, 换给你一沓券。",
+              "reward": {
+                "tickets": 5
+              }
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "留着, 摆在吧台上",
+          "outcomes": [
+            {
+              "text": "老酒摆上吧台, 你越看越觉得今天会走运。",
+              "effects": {
+                "luckValue": 30
+              },
+              "hours": 12
+            }
+          ]
+        }
+      ]
     },
     {
       "id": 128,
@@ -1016,6 +2807,445 @@
         "reward": {
           "tickets": 3
         }
+      }
+    },
+    {
+      "id": 129,
+      "kind": "notice",
+      "title": "手写的菜谱",
+      "body": "一位老太太吃完饭, 留下了一本手写的菜谱。",
+      "weight": 1,
+      "outcome": {
+        "text": "她什么都没说就走了。",
+        "effects": {
+          "mcGoldRate": 0.15
+        },
+        "hours": 6
+      }
+    },
+    {
+      "id": 130,
+      "kind": "notice",
+      "title": "中了彩票的客人",
+      "body": "一位客人当场刮中了彩票。",
+      "weight": 1,
+      "outcome": {
+        "text": "他大喊: “今天全场我请!”",
+        "effects": {
+          "coinRate": 0.15
+        },
+        "hours": 1
+      }
+    },
+    {
+      "id": 131,
+      "kind": "notice",
+      "title": "全镇停电",
+      "body": "全镇停电了。",
+      "weight": 1,
+      "when": {
+        "hours": [20, 4]
+      },
+      "outcome": {
+        "text": "只有你店里的炉火还亮着, 大家点着蜡烛来吃饭。",
+        "effects": {
+          "atRate": 0.12,
+          "oilRate": 0.1
+        },
+        "hours": 2
+      }
+    },
+    {
+      "id": 132,
+      "kind": "notice",
+      "title": "冰雹砸了遮阳棚",
+      "body": "冰雹把门口的遮阳棚砸了个洞。",
+      "when": {
+        "weather": [19]
+      },
+      "outcome": {
+        "text": "几位熟客帮你修好了。",
+        "effects": {
+          "atRate": -0.04,
+          "expRate": 0.05
+        },
+        "hours": 2
+      }
+    },
+    {
+      "id": 133,
+      "kind": "notice",
+      "title": "血月不熄火",
+      "body": "老人们说, 血月夜里灶火不能熄。",
+      "when": {
+        "weather": [32]
+      },
+      "outcome": {
+        "text": "你守着炉子坐了一整夜。",
+        "effects": {
+          "oilRate": 0.1,
+          "luckValue": 10
+        },
+        "hours": 3
+      }
+    },
+    {
+      "id": 134,
+      "kind": "notice",
+      "title": "晒被子的街坊",
+      "body": "难得的好太阳, 整条街都在晒被子。",
+      "when": {
+        "weather": [1]
+      },
+      "outcome": {
+        "text": "晒完被子的人心情都很好。",
+        "effects": {
+          "atRate": 0.03,
+          "spRate": -0.05
+        },
+        "hours": 2
+      }
+    },
+    {
+      "id": 135,
+      "kind": "notice",
+      "title": "停水半天",
+      "body": "镇上检修水管, 停水半天。",
+      "outcome": {
+        "text": "后厨只能用桶里存的水。",
+        "effects": {
+          "atRate": -0.05
+        },
+        "hours": 1
+      }
+    },
+    {
+      "id": 136,
+      "kind": "notice",
+      "title": "学校开放日",
+      "body": "小学开放日, 家长们带着孩子来吃饭。",
+      "outcome": {
+        "text": "店里一下热闹起来。",
+        "effects": {
+          "atRate": 0.06,
+          "spRate": 0.05
+        },
+        "hours": 2
+      }
+    },
+    {
+      "id": 137,
+      "kind": "notice",
+      "title": "广场舞音响对决",
+      "body": "广场上两支舞蹈队的音响比起了音量。",
+      "when": {
+        "hours": [17, 20]
+      },
+      "outcome": {
+        "text": "跳累了的阿姨们都来你店里歇脚。",
+        "effects": {
+          "atRate": 0.04
+        },
+        "hours": 2
+      }
+    },
+    {
+      "id": 138,
+      "kind": "notice",
+      "title": "快递站搬来了",
+      "body": "快递站搬到了你隔壁。",
+      "outcome": {
+        "text": "取完快递的人顺路进来吃一口。",
+        "effects": {
+          "atRate": 0.05
+        },
+        "hours": 4
+      }
+    },
+    {
+      "id": 139,
+      "kind": "choice",
+      "title": "对面开了新店",
+      "body": "对面新开了一家店, 开业第一天门口排起了长队。",
+      "options": [
+        {
+          "key": "a",
+          "label": "去尝尝",
+          "outcomes": [
+            {
+              "text": "学到了点东西。",
+              "effects": {
+                "expRate": 0.05
+              },
+              "hours": 2
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "不管它",
+          "outcomes": [
+            {
+              "text": "有些客人跑去对面排队了。",
+              "effects": {
+                "atRate": -0.04
+              },
+              "hours": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 140,
+      "kind": "choice",
+      "title": "婚宴包场",
+      "body": "一对新人想包下你的店办婚宴。",
+      "options": [
+        {
+          "key": "a",
+          "label": "接下",
+          "outcomes": [
+            {
+              "text": "散客进不来, 但新人出手大方。",
+              "effects": {
+                "coinRate": 0.1,
+                "atRate": -0.05
+              },
+              "hours": 2
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "婉拒",
+          "outcomes": [
+            {
+              "text": "你祝他们新婚快乐。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 141,
+      "kind": "notice",
+      "title": "老顾客的生日",
+      "body": "今天是一位老顾客的生日, 你给他送了一块蛋糕。",
+      "outcome": {
+        "text": "全店一起唱了生日歌。",
+        "effects": {
+          "spRate": -0.05
+        },
+        "hours": 4
+      }
+    },
+    {
+      "id": 142,
+      "kind": "notice",
+      "title": "夜市开张",
+      "body": "你店门口的街上开了夜市。",
+      "when": {
+        "hours": [20, 4]
+      },
+      "outcome": {
+        "text": "逛累的人一拨拨进来坐坐。",
+        "effects": {
+          "atRate": 0.06
+        },
+        "hours": 2
+      }
+    },
+    {
+      "id": 143,
+      "kind": "notice",
+      "title": "摊主拌嘴",
+      "body": "菜场两个摊主吵起来了, 一个比一个价钱喊得低。",
+      "outcome": {
+        "text": "吵完, 他们都往你篮子里塞了一把。",
+        "reward": {
+          "foods": {
+            "num": 2
+          }
+        }
+      }
+    },
+    {
+      "id": 144,
+      "kind": "notice",
+      "title": "骑手比赛",
+      "body": "骑手们自发比起了谁送得快。",
+      "outcome": {
+        "text": "快是快了, 偶尔会洒一点汤。",
+        "effects": {
+          "taNeedtimeRate": -0.15,
+          "taSuccessoddsRate": -0.05
+        },
+        "hours": 2
+      }
+    },
+    {
+      "id": 145,
+      "kind": "notice",
+      "title": "外卖满减",
+      "body": "外卖平台在搞满减活动。",
+      "outcome": {
+        "text": "订单一下子多了起来。",
+        "effects": {
+          "taCoinRate": 0.1
+        },
+        "hours": 2
+      }
+    },
+    {
+      "id": 146,
+      "kind": "notice",
+      "title": "油烟机罢工",
+      "body": "抽油烟机坏了, 后厨烟雾腾腾。",
+      "outcome": {
+        "text": "只能开着窗、小火慢炒。",
+        "effects": {
+          "oilRate": 0.08
+        },
+        "hours": 1
+      }
+    },
+    {
+      "id": 147,
+      "kind": "notice",
+      "title": "屋顶漏雨",
+      "body": "屋顶漏雨了。",
+      "when": {
+        "weather": [10, 11, 12, 13, 16, 17, 22]
+      },
+      "outcome": {
+        "text": "你在 3 号桌上放了个盆。",
+        "effects": {
+          "atRate": -0.03
+        },
+        "hours": 2
+      }
+    },
+    {
+      "id": 148,
+      "kind": "choice",
+      "title": "日报记者",
+      "body": "小镇日报的记者来采访你: “你家的招牌菜有什么秘诀?”",
+      "options": [
+        {
+          "key": "a",
+          "label": "说实话: “就是用心做。”",
+          "outcomes": [
+            {
+              "text": "报道登出来, 客人们觉得你很实在。",
+              "effects": {
+                "spRate": -0.05
+              },
+              "hours": 3
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "吹一吹: “祖传三代的秘方!”",
+          "outcomes": [
+            {
+              "text": "来了很多人, 期望也很高。",
+              "effects": {
+                "atRate": 0.08,
+                "spRate": 0.08
+              },
+              "hours": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 149,
+      "kind": "choice",
+      "title": "捡到的钱包",
+      "body": "你在桌子底下捡到一只钱包。",
+      "options": [
+        {
+          "key": "a",
+          "label": "交到警察局",
+          "outcomes": [
+            {
+              "text": "失主找回钱包, 专程来道谢。",
+              "reward": {
+                "tickets": 2
+              }
+            }
+          ]
+        },
+        {
+          "key": "b",
+          "label": "放在前台等人来认",
+          "outcomes": [
+            {
+              "text": "下午失主来了, 顺便吃了顿饭。",
+              "effects": {
+                "expRate": 0.03
+              },
+              "hours": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 150,
+      "kind": "notice",
+      "title": "雨后的彩虹",
+      "body": "雨停了, 天上挂了一道彩虹。",
+      "when": {
+        "weather": [1]
+      },
+      "outcome": {
+        "text": "客人们都跑到门口拍照, 拍完又回来加了个菜。",
+        "effects": {
+          "atRate": 0.04,
+          "coinRate": 0.03
+        },
+        "hours": 1
+      }
+    },
+    {
+      "id": 151,
+      "kind": "notice",
+      "title": "报纸上的食评",
+      "body": "小镇日报上登了一篇匿名食评, 写的正是你的店。",
+      "after": {
+        "events": [111],
+        "option": "b",
+        "minDays": 1
+      },
+      "outcome": {
+        "text": "“一家安静、诚实的小店。”",
+        "effects": {
+          "coinRate": 0.08
+        },
+        "hours": 3
+      }
+    },
+    {
+      "id": 152,
+      "kind": "notice",
+      "title": "广场上的演出",
+      "body": "那位拉小提琴的年轻人在广场上演出。",
+      "after": {
+        "events": [114],
+        "option": "b",
+        "minDays": 1
+      },
+      "outcome": {
+        "text": "唱完一首, 他说: “这首歌送给街角那家店。”",
+        "effects": {
+          "atRate": 0.06,
+          "spRate": -0.05
+        },
+        "hours": 3
       }
     }
   ]
