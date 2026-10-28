@@ -99,6 +99,13 @@
       "Vinaigre"
     ]
   },
+  "12": {
+    "name": "Le petit-déjeuner, sucré ou salé\u202f?",
+    "lines": [
+      "Sucré",
+      "Salé"
+    ]
+  },
   "13": {
     "name": "Quel temps donne le plus de points de saison\u202f?",
     "note": "Averse\u202f: points de saison +25\u202f%, Arc-en-ciel +10\u202f%.",
@@ -129,6 +136,16 @@
       "Ensoleillé"
     ]
   },
+  "16": {
+    "name": "Par Pluie acide, combien coûte le retrait d'une gemme\u202f?",
+    "note": "Par Pluie acide, retirer une gemme est gratuit.",
+    "lines": [
+      "Rien du tout",
+      "Moitié prix",
+      "Plein tarif",
+      "Le double"
+    ]
+  },
   "17": {
     "name": "Quand la chance de meilleure qualité en cuisinant un plat signature augmente-t-elle le plus\u202f?",
     "note": "Nuit brumeuse +25\u202f%, Brouillard +20\u202f%.",
@@ -137,6 +154,26 @@
       "Brouillard",
       "Ensoleillé",
       "Grand vent"
+    ]
+  },
+  "18": {
+    "name": "Combien y a-t-il de goûts de recette\u202f?",
+    "note": "Les six goûts des recettes sont Acide, Sucré, Amer, Piquant, Salé et Umami.",
+    "lines": [
+      "6",
+      "4",
+      "5",
+      "8"
+    ]
+  },
+  "19": {
+    "name": "Par Arc-en-ciel, quel est le bonus de renommée des livraisons à emporter\u202f?",
+    "note": "Par Arc-en-ciel, renommée à emporter +100\u202f%.",
+    "lines": [
+      "+100\u202f%",
+      "+20\u202f%",
+      "+50\u202f%",
+      "Aucun bonus"
     ]
   },
   "20": {
@@ -159,6 +196,16 @@
       "Une vallée"
     ]
   },
+  "22": {
+    "name": "Dans quelle université la mathématicienne Wang Hong a-t-elle fait sa licence\u202f?",
+    "note": "Wang Hong a étudié à l'école des sciences mathématiques de l'université de Pékin.",
+    "lines": [
+      "Université de Pékin",
+      "Université Tsinghua",
+      "Université Fudan",
+      "Université du Zhejiang"
+    ]
+  },
   "23": {
     "name": "Pour colorier une carte sans que deux pays voisins aient la même couleur, combien de couleurs suffisent toujours, au minimum\u202f?",
     "note": "C'est le célèbre théorème des quatre couleurs.",
@@ -167,6 +214,16 @@
       "3 couleurs",
       "5 couleurs",
       "7 couleurs"
+    ]
+  },
+  "24": {
+    "name": "Quel jour tombe la «\u202fjournée de Pi\u202f»\u202f?",
+    "note": "Pi commence par 3,14, et le 14 mars s'écrit 3/14 à l'américaine.",
+    "lines": [
+      "Le 14 mars",
+      "Le 1er janvier",
+      "Le 28 juin",
+      "Le 9 septembre"
     ]
   },
   "25": {
@@ -199,6 +256,16 @@
       "Elle ne bout jamais"
     ]
   },
+  "28": {
+    "name": "Le piment vous brûle la bouche. Que boire pour calmer le feu\u202f?",
+    "note": "La capsaïcine ne se dissout pas dans l'eau\u202f; la caséine et la matière grasse du lait l'emportent.",
+    "lines": [
+      "Du lait",
+      "De l'eau glacée",
+      "De la bière",
+      "Du thé chaud"
+    ]
+  },
   "29": {
     "name": "Quand une IA invente avec aplomb des choses qui n'existent pas, comment appelle-t-on ça\u202f?",
     "lines": [
@@ -206,6 +273,16 @@
       "Un rêve",
       "Une fièvre",
       "Un lag"
+    ]
+  },
+  "30": {
+    "name": "Dans ChatGPT, que veut dire le T final de «\u202fGPT\u202f»\u202f?",
+    "note": "GPT signifie «\u202fGenerative Pre-trained Transformer\u202f», un Transformer génératif pré-entraîné.",
+    "lines": [
+      "Transformer (une architecture de modèle)",
+      "Turbo",
+      "Talk",
+      "Text"
     ]
   },
   "31": {
@@ -228,6 +305,16 @@
       "4"
     ]
   },
+  "33": {
+    "name": "Sur les personnages dessinés par une IA, qu'est-ce qui cloche le plus souvent\u202f?",
+    "note": "Les IA dessinent souvent des mains à six doigts, voire plus.",
+    "lines": [
+      "Le nombre de doigts",
+      "La couleur des yeux",
+      "La longueur des cheveux",
+      "Les boutons des vêtements"
+    ]
+  },
   "34": {
     "name": "Que mesure le test de Turing\u202f?",
     "lines": [
@@ -237,6 +324,26 @@
       "La vitesse d'Internet"
     ]
   },
+  "35": {
+    "name": "Une IA en «\u202fsurapprentissage\u202f» ressemble à quel élève\u202f?",
+    "note": "Le surapprentissage, c'est connaître les exercices trop par cœur et sécher devant un nouvel exercice.",
+    "lines": [
+      "Il récite les exercices, mais change un chiffre et il est perdu",
+      "Il dort en classe",
+      "Il rend toujours sa copie en avance",
+      "Il écrit trop mal"
+    ]
+  },
+  "36": {
+    "name": "Comment appelle-t-on la consigne qu'on écrit à une IA\u202f?",
+    "note": "La consigne écrite pour une IA s'appelle un prompt (on dit aussi une «\u202finvite\u202f»).",
+    "lines": [
+      "Un prompt",
+      "Un mot de passe",
+      "Une incantation",
+      "Un code secret"
+    ]
+  },
   "37": {
     "name": "Le mème du chien qui boit son café dans une pièce en feu en disant «\u202fTout va bien\u202f» sert généralement à exprimer\u202f?",
     "lines": [
@@ -244,6 +351,16 @@
       "Le chien est courageux",
       "La pièce est bien chauffée",
       "C'est l'heure du café"
+    ]
+  },
+  "38": {
+    "name": "Le chien du mème qui penche la tête au milieu de petits textes bizarres, c'est quelle race\u202f?",
+    "note": "Cette image s'appelle Doge\u202f; le modèle est une shiba japonaise nommée Kabosu.",
+    "lines": [
+      "Shiba inu",
+      "Husky",
+      "Golden retriever",
+      "Corgi"
     ]
   },
   "39": {
@@ -256,12 +373,209 @@
       "Le pont d'à côté"
     ]
   },
+  "40": {
+    "name": "Dans le métro de Londres, que rappelle la célèbre annonce «\u202fMind the gap\u202f»\u202f?",
+    "note": "Ça veut dire «\u202fattention à l'espace\u202f»\u202f: ne mettez pas le pied entre le train et le quai.",
+    "lines": [
+      "Attention à l'espace entre le train et le quai",
+      "Attention à votre portefeuille",
+      "Ne vous appuyez pas sur les portes",
+      "Interdit de passer d'une voiture à l'autre"
+    ]
+  },
+  "41": {
+    "name": "Autrefois, dans quoi emballait-on le fish and chips traditionnel\u202f?",
+    "note": "Dans du vieux papier journal, abandonné plus tard pour des raisons d'hygiène.",
+    "lines": [
+      "Du papier journal",
+      "Une feuille de lotus",
+      "Du papier alu",
+      "Une boîte en plastique"
+    ]
+  },
+  "42": {
+    "name": "Dans le petit-déjeuner anglais, de quoi est fait le «\u202fblack pudding\u202f»\u202f?",
+    "note": "Le black pudding est un boudin noir, à base de sang de porc, de graisse et d'avoine.",
+    "lines": [
+      "C'est un boudin noir",
+      "De chocolat",
+      "De haricots noirs",
+      "D'algues"
+    ]
+  },
+  "43": {
+    "name": "Une pâte à tartiner qu'on adore ou qu'on déteste, au point d'en faire son slogan. Laquelle\u202f?",
+    "note": "C'est la Marmite, et son slogan dit justement\u202f: «\u202fLove it or hate it\u202f».",
+    "lines": [
+      "Une pâte de levure brun foncé",
+      "La sauce à la menthe",
+      "La moutarde",
+      "Le ketchup"
+    ]
+  },
+  "44": {
+    "name": "Quelle est la couleur classique des bus à impériale\u202f?",
+    "note": "Le bus rouge à impériale est l'un des symboles les plus connus de Londres.",
+    "lines": [
+      "Rouge",
+      "Jaune",
+      "Vert",
+      "Bleu"
+    ]
+  },
+  "45": {
+    "name": "Pour le thé au lait, on verse le lait ou le thé en premier\u202f?",
+    "lines": [
+      "Le lait d'abord",
+      "Le thé d'abord",
+      "Moi, c'est café"
+    ]
+  },
+  "46": {
+    "name": "Les scones, crème d'abord ou confiture d'abord\u202f?",
+    "lines": [
+      "La crème d'abord",
+      "La confiture d'abord"
+    ]
+  },
   "47": {
     "name": "Les raviolis chinois, avec du vinaigre ou de la sauce soja\u202f?",
     "lines": [
       "Vinaigre",
       "Sauce soja",
       "Rien du tout"
+    ]
+  },
+  "48": {
+    "name": "Les zongzi (papillotes de riz gluant), sucrés ou salés\u202f?",
+    "lines": [
+      "Sucrés",
+      "Salés"
+    ]
+  },
+  "49": {
+    "name": "Le douhua (flan de tofu), sucré ou salé\u202f?",
+    "lines": [
+      "Sucré",
+      "Salé",
+      "Pimenté"
+    ]
+  },
+  "50": {
+    "name": "De l'ananas sur la pizza\u202f?",
+    "lines": [
+      "Oui",
+      "Non"
+    ]
+  },
+  "51": {
+    "name": "L'œuf au plat, bien cuit ou jaune coulant\u202f?",
+    "lines": [
+      "Bien cuit",
+      "Coulant"
+    ]
+  },
+  "52": {
+    "name": "La coriandre\u202f: amour ou haine\u202f?",
+    "lines": [
+      "Amour",
+      "Haine",
+      "Peu importe"
+    ]
+  },
+  "53": {
+    "name": "Dans la fondue chinoise, la viande ou les légumes en premier\u202f?",
+    "lines": [
+      "La viande",
+      "Les légumes"
+    ]
+  },
+  "54": {
+    "name": "Quel gâteau de lune choisissez-vous\u202f?",
+    "lines": [
+      "Aux cinq noix",
+      "À la pâte de haricots rouges",
+      "Jaune d'œuf et lotus"
+    ]
+  },
+  "55": {
+    "name": "Quel temps rapporte le plus de pièces par table\u202f?",
+    "note": "Grand gel\u202f: pièces par table +10\u202f; Forte neige et Blizzard\u202f: +1.",
+    "lines": [
+      "Grand gel",
+      "Forte neige",
+      "Blizzard",
+      "Ensoleillé"
+    ]
+  },
+  "56": {
+    "name": "Quel temps fait baisser la fréquentation de 35\u202f%, mais donne pièces finales et EXP finale +60\u202f%\u202f?",
+    "note": "Smog\u202f: fréquentation -35\u202f%, pièces finales et EXP finale +60\u202f% chacune.",
+    "lines": [
+      "Smog",
+      "Pluie acide",
+      "Lune de sang",
+      "Grand gel"
+    ]
+  },
+  "57": {
+    "name": "Par quel temps les prix du marché augmentent-ils le plus\u202f?",
+    "note": "Pluie acide\u202f: prix du marché +300\u202f%, Grand gel +250\u202f%, Blizzard +200\u202f%.",
+    "lines": [
+      "Pluie acide",
+      "Grand gel",
+      "Blizzard",
+      "Tempête de sable"
+    ]
+  },
+  "58": {
+    "name": "Par quel temps l'expertise des recettes mystère réussit-elle plus souvent\u202f?",
+    "note": "Nuit étoilée\u202f: réussite de l'expertise des recettes mystère +5\u202f%.",
+    "lines": [
+      "Nuit étoilée",
+      "Nuit claire",
+      "Brouillard",
+      "Arc-en-ciel"
+    ]
+  },
+  "59": {
+    "name": "Par quel temps peut-on échanger les ingrédients verrouillés d'un ami\u202f?",
+    "note": "Par Ouragan, on peut échanger les ingrédients verrouillés d'un ami, avec des frais doublés.",
+    "lines": [
+      "Ouragan",
+      "Grand vent",
+      "Orage violent",
+      "Lune de sang"
+    ]
+  },
+  "60": {
+    "name": "Quel temps augmente le plus les coups critiques des missiles\u202f?",
+    "note": "Nuit étoilée\u202f: coups critiques des missiles +15\u202f%, Orage violent +8\u202f%, Orage +5\u202f%.",
+    "lines": [
+      "Nuit étoilée",
+      "Orage violent",
+      "Orage",
+      "Ensoleillé"
+    ]
+  },
+  "61": {
+    "name": "La conjecture de Kakeya démontrée par Wang Hong et son coauteur porte sur un espace de quelle dimension\u202f?",
+    "note": "Le cas du plan était démontré depuis longtemps\u202f; la dimension 3 restait l'obstacle.",
+    "lines": [
+      "3 dimensions",
+      "2 dimensions",
+      "4 dimensions",
+      "100 dimensions"
+    ]
+  },
+  "62": {
+    "name": "Quel mathématicien d'origine chinoise surnomme-t-on souvent «\u202fle Mozart des maths\u202f»\u202f?",
+    "note": "Terence Tao est devenu professeur à 24 ans et a reçu la médaille Fields à 31 ans.",
+    "lines": [
+      "Terence Tao",
+      "Shing-Tung Yau",
+      "Chen Jingrun",
+      "Hua Luogeng"
     ]
   },
   "63": {
@@ -282,6 +596,314 @@
       "14",
       "21",
       "30"
+    ]
+  },
+  "65": {
+    "name": "Les escargots ont-ils des dents\u202f?",
+    "note": "La langue de l'escargot porte des rangées de dents minuscules, parfois plus de dix mille.",
+    "lines": [
+      "Oui, plus de dix mille",
+      "Non",
+      "Seulement deux",
+      "Seulement quand ils sont petits"
+    ]
+  },
+  "66": {
+    "name": "Combien d'os compte à peu près le corps d'un adulte\u202f?",
+    "note": "Les bébés en ont davantage\u202f; certains se soudent en grandissant, pour arriver à 206.",
+    "lines": [
+      "206",
+      "106",
+      "306",
+      "1 000"
+    ]
+  },
+  "67": {
+    "name": "Combien y a-t-il de secondes dans une journée\u202f?",
+    "note": "24 heures × 60 minutes × 60 secondes = 86 400 secondes.",
+    "lines": [
+      "86 400",
+      "3 600",
+      "36 000",
+      "100 000"
+    ]
+  },
+  "68": {
+    "name": "Un pot de miel bien fermé, oublié pendant des années, ça donne quoi\u202f?",
+    "note": "Très sucré et pauvre en eau, le miel ne laisse presque aucune chance aux bactéries.",
+    "lines": [
+      "Il ne se gâte quasiment pas",
+      "Il se gâte en un mois",
+      "Il se transforme en alcool",
+      "Il devient de l'eau sucrée"
+    ]
+  },
+  "69": {
+    "name": "Un œuf plongé dans un bol d'eau coule au fond. Qu'est-ce que ça veut dire\u202f?",
+    "note": "En vieillissant, la poche d'air de l'œuf grossit, et il a tendance à flotter.",
+    "lines": [
+      "Il est plutôt frais",
+      "Il est déjà pourri",
+      "Il a deux jaunes",
+      "Il est cuit"
+    ]
+  },
+  "70": {
+    "name": "Pourquoi une banane mûrit-elle plus vite à côté d'une pomme\u202f?",
+    "note": "La pomme libère de l'éthylène, un gaz qui accélère le mûrissement des fruits.",
+    "lines": [
+      "La pomme libère un gaz qui fait mûrir",
+      "La pomme lui vole son eau",
+      "La pomme est plus lourde",
+      "La banane n'aime pas être seule"
+    ]
+  },
+  "71": {
+    "name": "Pour ne pas pleurer en coupant un oignon, quelle astuce marche vraiment\u202f?",
+    "note": "Un oignon froid libère moins de gaz irritant, et pique moins les yeux.",
+    "lines": [
+      "Le mettre un moment au frigo avant",
+      "Chanter en coupant",
+      "Fermer un œil",
+      "Émousser un peu le couteau"
+    ]
+  },
+  "72": {
+    "name": "Pendant un orage, pourquoi voit-on toujours l'éclair avant d'entendre le tonnerre\u202f?",
+    "note": "La lumière parcourt environ 300 000 km par seconde, le son seulement 340 m environ.",
+    "lines": [
+      "La lumière va plus vite que le son",
+      "L'éclair a lieu en premier",
+      "Les oreilles réagissent lentement",
+      "Le tonnerre fait un détour"
+    ]
+  },
+  "73": {
+    "name": "Qui a énoncé les «\u202ftrois lois de la robotique\u202f»\u202f?",
+    "note": "Asimov les a formulées dans une nouvelle parue en 1942.",
+    "lines": [
+      "L'écrivain de SF Isaac Asimov",
+      "Einstein",
+      "Turing",
+      "Steve Jobs"
+    ]
+  },
+  "74": {
+    "name": "Le robot qui dit «\u202fI'll be back\u202f», il vient de quel film\u202f?",
+    "note": "C'est la réplique de Schwarzenegger dans Terminator.",
+    "lines": [
+      "Terminator",
+      "WALL-E",
+      "Star Wars",
+      "Matrix"
+    ]
+  },
+  "75": {
+    "name": "Comment appelle-t-on la technique qui, par IA, colle le visage d'une personne sur quelqu'un d'autre dans une vidéo\u202f?",
+    "note": "En français, on parle aussi d'«\u202fhypertrucage\u202f».",
+    "lines": [
+      "Le deepfake",
+      "Le sommeil profond",
+      "L'apprentissage profond",
+      "Le nettoyage en profondeur"
+    ]
+  },
+  "76": {
+    "name": "Quand on demande à une IA de «\u202fréfléchir étape par étape avant de répondre\u202f», que se passe-t-il en général\u202f?",
+    "note": "C'est la «\u202fchaîne de pensée\u202f»\u202f: en écrivant les étapes intermédiaires, elle se trompe moins.",
+    "lines": [
+      "Elle répond plus juste",
+      "Elle répond plus vite",
+      "Elle ne répond plus du tout",
+      "Elle se met à chanter"
+    ]
+  },
+  "77": {
+    "name": "Comment une IA lit-elle un texte\u202f?",
+    "note": "Ces petits morceaux s'appellent des tokens\u202f: un mot, un bout de mot ou un signe de ponctuation.",
+    "lines": [
+      "Elle le découpe en petits morceaux",
+      "Lettre par lettre",
+      "Elle le traduit d'abord en formules mathématiques",
+      "Elle regarde la forme des lettres"
+    ]
+  },
+  "78": {
+    "name": "Ce qui, dans votre téléphone, vous écoute et règle vos réveils, ça s'appelle comment\u202f?",
+    "note": "Siri, sur le téléphone, est un assistant vocal.",
+    "lines": [
+      "Un assistant vocal",
+      "Un animal virtuel",
+      "Un majordome dans le cloud",
+      "Un réveil intelligent"
+    ]
+  },
+  "79": {
+    "name": "Que veut dire «\u202fRickroll\u202f»\u202f?",
+    "note": "La chanson, c'est le tube de Rick Astley sorti en 1987.",
+    "lines": [
+      "Cliquer sur un lien et tomber sur le clip d'une vieille chanson des années 80",
+      "Un type de maki",
+      "Une figure de skate",
+      "Une coiffure"
+    ]
+  },
+  "80": {
+    "name": "L'image de l'homme qui se retourne sur une passante sous le regard outré de sa copine sert en général à exprimer\u202f?",
+    "note": "On l'appelle souvent «\u202fDistracted Boyfriend\u202f», le petit ami distrait.",
+    "lines": [
+      "Se laisser séduire par la nouveauté",
+      "S'être perdu",
+      "Confondre quelqu'un",
+      "Attendre le bus"
+    ]
+  },
+  "81": {
+    "name": "D'où vient à l'origine la phrase «\u202fKeep Calm and Carry On\u202f»\u202f?",
+    "note": "L'affiche a été imprimée en 1939, mais n'a presque jamais été placardée.",
+    "lines": [
+      "D'une affiche britannique de la Seconde Guerre mondiale",
+      "D'une chanson pop",
+      "D'un film",
+      "D'une pub pour du thé"
+    ]
+  },
+  "82": {
+    "name": "La chatte d'Internet qui fait toujours la tête, on l'appelle\u202f?",
+    "note": "Grumpy Cat avait naturellement l'air ronchon, mais elle était plutôt gentille.",
+    "lines": [
+      "Grumpy Cat",
+      "Nyan Cat",
+      "Doge",
+      "Garfield"
+    ]
+  },
+  "83": {
+    "name": "Nyan Cat, le chat qui vole en traînant un arc-en-ciel\u202f: son corps est fait de quoi\u202f?",
+    "note": "Son corps est un biscuit fourré à la confiture, avec un glaçage rose.",
+    "lines": [
+      "Un biscuit fourré à la confiture",
+      "Un morceau de fromage",
+      "Un hamburger",
+      "Un sushi"
+    ]
+  },
+  "84": {
+    "name": "Dans le mème «\u202fStonks\u202f», quel mot est volontairement mal écrit\u202f?",
+    "note": "Stonks déforme volontairement stocks, pour se moquer des placements hasardeux.",
+    "lines": [
+      "stocks (actions)",
+      "stones (pierres)",
+      "stars (étoiles)",
+      "snacks (en-cas)"
+    ]
+  },
+  "85": {
+    "name": "Combien de broches a une prise électrique britannique\u202f?",
+    "note": "La prise britannique a trois broches rectangulaires\u202f; la plus longue est la terre.",
+    "lines": [
+      "3",
+      "2",
+      "4",
+      "Aucune, elle est ronde"
+    ]
+  },
+  "86": {
+    "name": "Au Royaume-Uni, de quel côté roule-t-on\u202f?",
+    "note": "Au Royaume-Uni, on roule à gauche, avec le volant à droite.",
+    "lines": [
+      "À gauche",
+      "À droite",
+      "Au milieu",
+      "Selon l'humeur"
+    ]
+  },
+  "87": {
+    "name": "Qu'est-ce que le «\u202fLondon Eye\u202f»\u202f?",
+    "note": "Le London Eye a ouvert en 2000\u202f; un tour dure environ 30 minutes.",
+    "lines": [
+      "Une grande roue au bord de la Tamise",
+      "Un phare",
+      "Un télescope",
+      "Un opticien"
+    ]
+  },
+  "88": {
+    "name": "Comment s'appelle la jupe à carreaux des hommes en costume traditionnel écossais\u202f?",
+    "note": "Le kilt est le costume traditionnel des hommes des Highlands écossais.",
+    "lines": [
+      "Le kilt",
+      "Le sarong",
+      "Le kimono",
+      "Le qipao"
+    ]
+  },
+  "89": {
+    "name": "Un cercle d'énormes pierres dressées, et personne ne sait vraiment comment on les a transportées. C'est dans quel pays\u202f?",
+    "note": "C'est Stonehenge, en Angleterre, vieux de quatre à cinq mille ans.",
+    "lines": [
+      "Royaume-Uni",
+      "Égypte",
+      "Pérou",
+      "Grèce"
+    ]
+  },
+  "90": {
+    "name": "Une pincée de sel sur la pastèque\u202f?",
+    "lines": [
+      "Oui",
+      "Non",
+      "Pardon\u202f?"
+    ]
+  },
+  "91": {
+    "name": "Les œufs brouillés à la tomate, avec un peu de sucre\u202f?",
+    "lines": [
+      "Oui",
+      "Non"
+    ]
+  },
+  "92": {
+    "name": "Le lait de soja, sucré ou salé\u202f?",
+    "lines": [
+      "Sucré",
+      "Salé"
+    ]
+  },
+  "93": {
+    "name": "À la fête des Lanternes, tangyuan ou yuanxiao\u202f?",
+    "lines": [
+      "Tangyuan",
+      "Yuanxiao",
+      "C'est pas pareil\u202f?"
+    ]
+  },
+  "94": {
+    "name": "Les nouilles, on les aspire bruyamment\u202f?",
+    "lines": [
+      "Oui, c'est meilleur",
+      "Non, en silence"
+    ]
+  },
+  "95": {
+    "name": "Couche-tôt ou oiseau de nuit\u202f?",
+    "lines": [
+      "Couche-tôt",
+      "Oiseau de nuit"
+    ]
+  },
+  "96": {
+    "name": "La soupe, au début ou à la fin du repas\u202f?",
+    "lines": [
+      "Au début",
+      "À la fin"
+    ]
+  },
+  "97": {
+    "name": "Le week-end, à la maison ou dehors\u202f?",
+    "lines": [
+      "À la maison",
+      "Dehors"
     ]
   }
 }

@@ -99,6 +99,13 @@
       "Vinagre"
     ]
   },
+  "12": {
+    "name": "¿Desayuno dulce o salado?",
+    "lines": [
+      "Dulce",
+      "Salado"
+    ]
+  },
   "13": {
     "name": "¿Qué tiempo da más puntos de temporada?",
     "note": "Aguacero: puntos de temporada +25\u00a0%, Arcoíris +10\u00a0%.",
@@ -129,6 +136,16 @@
       "Soleado"
     ]
   },
+  "16": {
+    "name": "¿Cuánto cuesta quitar una gema con Lluvia ácida?",
+    "note": "Con Lluvia ácida, quitar gemas es gratis.",
+    "lines": [
+      "Nada",
+      "La mitad",
+      "El precio normal",
+      "El doble"
+    ]
+  },
   "17": {
     "name": "¿Cuándo aumenta más la probabilidad de mejor calidad al cocinar platos estrella?",
     "note": "Noche con niebla +25\u00a0%, Niebla +20\u00a0%.",
@@ -137,6 +154,26 @@
       "Niebla",
       "Soleado",
       "Viento fuerte"
+    ]
+  },
+  "18": {
+    "name": "¿Cuántos sabores de receta hay?",
+    "note": "Los seis sabores de las recetas son Ácido, Dulce, Amargo, Picante, Salado y Umami.",
+    "lines": [
+      "6 sabores",
+      "4 sabores",
+      "5 sabores",
+      "8 sabores"
+    ]
+  },
+  "19": {
+    "name": "Con Arcoíris, ¿cuánto renombre extra dan los pedidos a domicilio?",
+    "note": "Con Arcoíris: renombre a domicilio +100\u00a0%.",
+    "lines": [
+      "+100\u00a0%",
+      "+20\u00a0%",
+      "+50\u00a0%",
+      "Nada extra"
     ]
   },
   "20": {
@@ -159,6 +196,16 @@
       "Un valle"
     ]
   },
+  "22": {
+    "name": "¿En qué universidad hizo la carrera Wang Hong?",
+    "note": "Wang Hong estudió la carrera en la Facultad de Ciencias Matemáticas de la Universidad de Pekín.",
+    "lines": [
+      "Universidad de Pekín",
+      "Universidad Tsinghua",
+      "Universidad Fudan",
+      "Universidad de Zhejiang"
+    ]
+  },
   "23": {
     "name": "Para colorear un mapa sin que dos países vecinos compartan color, ¿cuántos colores bastan siempre, como mínimo?",
     "note": "Es el famoso teorema de los cuatro colores.",
@@ -167,6 +214,16 @@
       "3 colores",
       "5 colores",
       "7 colores"
+    ]
+  },
+  "24": {
+    "name": "¿Qué día es el Día de Pi?",
+    "note": "Pi empieza por 3,14, y en inglés la fecha se escribe mes/día: 3/14, el 14 de marzo.",
+    "lines": [
+      "14 de marzo",
+      "1 de enero",
+      "28 de junio",
+      "9 de septiembre"
     ]
   },
   "25": {
@@ -199,6 +256,16 @@
       "No llega a hervir"
     ]
   },
+  "28": {
+    "name": "Si la boca te arde por el picante, ¿qué bebida lo calma mejor?",
+    "note": "La capsaicina no se disuelve en agua; la caseína y la grasa de la leche se la llevan.",
+    "lines": [
+      "Leche",
+      "Agua con hielo",
+      "Cerveza",
+      "Té caliente"
+    ]
+  },
   "29": {
     "name": "Cuando una IA se inventa con total seguridad cosas que no existen, ¿cómo se le llama?",
     "lines": [
@@ -206,6 +273,16 @@
       "Sueño",
       "Fiebre",
       "Lag"
+    ]
+  },
+  "30": {
+    "name": "En ChatGPT, ¿qué significa la T final de \"GPT\"?",
+    "note": "GPT significa \"Generative Pre-trained Transformer\", transformador generativo preentrenado.",
+    "lines": [
+      "Transformer (un tipo de arquitectura de modelo)",
+      "Turbo",
+      "Talk",
+      "Text"
     ]
   },
   "31": {
@@ -228,6 +305,16 @@
       "4"
     ]
   },
+  "33": {
+    "name": "Cuando una IA dibuja personas, ¿qué es lo que más se critica que le sale mal?",
+    "note": "A menudo, la IA dibuja manos con seis dedos o más.",
+    "lines": [
+      "El número de dedos",
+      "El color de los ojos",
+      "El largo del pelo",
+      "Los botones de la ropa"
+    ]
+  },
   "34": {
     "name": "¿Qué mide el test de Turing?",
     "lines": [
@@ -237,6 +324,26 @@
       "La velocidad de internet"
     ]
   },
+  "35": {
+    "name": "Un modelo de IA con \"sobreajuste\", ¿a qué estudiante se parece más?",
+    "note": "Sobreajustar es memorizar tanto los ejercicios que, ante uno nuevo, ya no sabes resolverlo.",
+    "lines": [
+      "Al que se sabe los ejercicios de memoria y falla si cambian un número",
+      "Al que siempre se duerme en clase",
+      "Al que siempre entrega el examen antes de tiempo",
+      "Al que tiene muy mala letra"
+    ]
+  },
+  "36": {
+    "name": "¿Cómo se suele llamar el texto con las instrucciones que le escribes a una IA?",
+    "note": "Lo que le escribes a una IA se llama prompt, del inglés \"indicación\".",
+    "lines": [
+      "Prompt",
+      "Contraseña",
+      "Conjuro",
+      "Santo y seña"
+    ]
+  },
   "37": {
     "name": "El meme del perro con una taza en una habitación en llamas diciendo \"Todo bien\", ¿qué suele expresar?",
     "lines": [
@@ -244,6 +351,16 @@
       "Que el perro es valiente",
       "Que la habitación está calentita",
       "Que es hora del café"
+    ]
+  },
+  "38": {
+    "name": "El perro del meme con la cabeza ladeada y un montón de frases raras alrededor, ¿de qué raza es?",
+    "note": "La imagen se llama Doge y la protagonista era Kabosu, una shiba inu japonesa.",
+    "lines": [
+      "Shiba inu",
+      "Husky",
+      "Golden retriever",
+      "Corgi"
     ]
   },
   "39": {
@@ -256,12 +373,209 @@
       "El puente de al lado"
     ]
   },
+  "40": {
+    "name": "En el metro de Londres se oye la famosa frase \"Mind the gap\". ¿De qué avisa a los pasajeros?",
+    "note": "Significa \"cuidado con el hueco\": que no metas el pie entre el tren y el andén.",
+    "lines": [
+      "Del hueco entre el tren y el andén",
+      "De los carteristas",
+      "De no apoyarse en las puertas",
+      "De no pasar de un vagón a otro"
+    ]
+  },
+  "41": {
+    "name": "El fish and chips tradicional, ¿en qué se envolvía antes?",
+    "note": "Antes se envolvía en periódico viejo; se dejó de hacer por las normas de higiene.",
+    "lines": [
+      "Papel de periódico",
+      "Hojas de loto",
+      "Papel de aluminio",
+      "Una caja de plástico"
+    ]
+  },
+  "42": {
+    "name": "En el desayuno inglés, esa rodaja negra llamada \"black pudding\", ¿de qué está hecha?",
+    "note": "El black pudding es una morcilla de sangre de cerdo, grasa y avena.",
+    "lines": [
+      "Es una morcilla",
+      "De chocolate",
+      "De judías negras",
+      "De algas"
+    ]
+  },
+  "43": {
+    "name": "Hay una pasta para untar que o la amas o la odias, y hasta sus anuncios lo dicen. ¿Cuál es?",
+    "note": "Se llama Marmite y su eslogan era \"Love it or hate it\": o la amas o la odias.",
+    "lines": [
+      "Una pasta oscura de levadura",
+      "Salsa de menta",
+      "Mostaza",
+      "Kétchup"
+    ]
+  },
+  "44": {
+    "name": "¿Cuál es el color más clásico de los autobuses de dos pisos?",
+    "note": "El autobús rojo de dos pisos es uno de los símbolos más famosos de Londres.",
+    "lines": [
+      "Rojo",
+      "Amarillo",
+      "Verde",
+      "Azul"
+    ]
+  },
+  "45": {
+    "name": "Para el té con leche, ¿primero la leche o el té?",
+    "lines": [
+      "Primero la leche",
+      "Primero el té",
+      "Yo tomo café"
+    ]
+  },
+  "46": {
+    "name": "En el scone, ¿primero la nata o la mermelada?",
+    "lines": [
+      "Primero la nata",
+      "Primero la mermelada"
+    ]
+  },
   "47": {
     "name": "Los dumplings chinos, ¿con vinagre o con salsa de soja?",
     "lines": [
       "Vinagre",
       "Salsa de soja",
       "Con nada"
+    ]
+  },
+  "48": {
+    "name": "El zongzi, el paquetito de arroz glutinoso, ¿dulce o salado?",
+    "lines": [
+      "Dulce",
+      "Salado"
+    ]
+  },
+  "49": {
+    "name": "El douhua, el tofu sedoso, ¿dulce o salado?",
+    "lines": [
+      "Dulce",
+      "Salado",
+      "Picante"
+    ]
+  },
+  "50": {
+    "name": "¿Piña en la pizza?",
+    "lines": [
+      "Sí",
+      "No"
+    ]
+  },
+  "51": {
+    "name": "¿Huevo frito bien hecho o con la yema líquida?",
+    "lines": [
+      "Bien hecho",
+      "Yema líquida"
+    ]
+  },
+  "52": {
+    "name": "El cilantro: ¿lo amas o lo odias?",
+    "lines": [
+      "Lo amo",
+      "Lo odio",
+      "Me da igual"
+    ]
+  },
+  "53": {
+    "name": "En el hot pot, ¿primero la carne o la verdura?",
+    "lines": [
+      "La carne",
+      "La verdura"
+    ]
+  },
+  "54": {
+    "name": "¿Qué pastel de luna eliges?",
+    "lines": [
+      "De cinco semillas",
+      "De judía roja",
+      "De loto con yema salada"
+    ]
+  },
+  "55": {
+    "name": "¿Qué tiempo da más monedas por mesa?",
+    "note": "Helada: monedas por mesa +10; Nevada fuerte y Ventisca, +1.",
+    "lines": [
+      "Helada",
+      "Nevada fuerte",
+      "Ventisca",
+      "Soleado"
+    ]
+  },
+  "56": {
+    "name": "¿Con qué tiempo la ocupación baja un 35\u00a0%, pero las monedas y la EXP finales suben un 60\u00a0%?",
+    "note": "Esmog: ocupación -35\u00a0%, monedas finales +60\u00a0% y EXP final +60\u00a0%.",
+    "lines": [
+      "Esmog",
+      "Lluvia ácida",
+      "Luna de sangre",
+      "Helada"
+    ]
+  },
+  "57": {
+    "name": "¿Con qué tiempo suben más los precios del mercado?",
+    "note": "Precio de los ingredientes del mercado: Lluvia ácida +300\u00a0%, Helada +250\u00a0%, Ventisca +200\u00a0%.",
+    "lines": [
+      "Lluvia ácida",
+      "Helada",
+      "Ventisca",
+      "Tormenta de arena"
+    ]
+  },
+  "58": {
+    "name": "¿Con qué tiempo es más fácil tasar recetas misteriosas?",
+    "note": "Noche estrellada: éxito al tasar recetas misteriosas +5\u00a0%.",
+    "lines": [
+      "Noche estrellada",
+      "Noche despejada",
+      "Niebla",
+      "Arcoíris"
+    ]
+  },
+  "59": {
+    "name": "¿Con qué tiempo puedes intercambiar ingredientes bloqueados de amigos?",
+    "note": "Con Huracán puedes intercambiar ingredientes bloqueados de amigos, pagando el doble de comisión.",
+    "lines": [
+      "Huracán",
+      "Viento fuerte",
+      "Tormenta eléctrica",
+      "Luna de sangre"
+    ]
+  },
+  "60": {
+    "name": "¿Qué tiempo aumenta más los críticos de los misiles?",
+    "note": "Noche estrellada +15\u00a0%, Tormenta eléctrica +8\u00a0%, Tormenta +5\u00a0%.",
+    "lines": [
+      "Noche estrellada",
+      "Tormenta eléctrica",
+      "Tormenta",
+      "Soleado"
+    ]
+  },
+  "61": {
+    "name": "La conjetura de Kakeya que demostraron Wang Hong y su coautor, ¿en cuántas dimensiones es?",
+    "note": "El caso de dos dimensiones se demostró hace mucho; el de tres era el gran escollo.",
+    "lines": [
+      "Tres",
+      "Dos",
+      "Cuatro",
+      "Cien"
+    ]
+  },
+  "62": {
+    "name": "¿Qué matemático de origen chino es conocido como \"el Mozart de las matemáticas\"?",
+    "note": "Terence Tao fue catedrático a los 24 años y ganó la Medalla Fields a los 31.",
+    "lines": [
+      "Terence Tao",
+      "Shing-Tung Yau",
+      "Chen Jingrun",
+      "Hua Luogeng"
     ]
   },
   "63": {
@@ -282,6 +596,314 @@
       "14",
       "21",
       "30"
+    ]
+  },
+  "65": {
+    "name": "¿Los caracoles tienen dientes?",
+    "note": "En la lengua tienen filas de dientecillos diminutos, y pueden ser más de diez mil.",
+    "lines": [
+      "Sí, más de diez mil",
+      "No",
+      "Solo dos",
+      "Solo de pequeños"
+    ]
+  },
+  "66": {
+    "name": "¿Cuántos huesos tiene más o menos un adulto?",
+    "note": "Los bebés tienen más huesos; al crecer, algunos se sueldan entre sí y quedan 206.",
+    "lines": [
+      "206",
+      "106",
+      "306",
+      "1000"
+    ]
+  },
+  "67": {
+    "name": "¿Cuántos segundos tiene un día?",
+    "note": "24 horas × 60 minutos × 60 segundos = 86.400 segundos.",
+    "lines": [
+      "86.400 segundos",
+      "3600 segundos",
+      "36.000 segundos",
+      "100.000 segundos"
+    ]
+  },
+  "68": {
+    "name": "¿Qué le pasa a un tarro de miel cerrado si lo guardas muchos años?",
+    "note": "La miel es muy dulce y tiene poca agua, así que a las bacterias les cuesta sobrevivir en ella.",
+    "lines": [
+      "Prácticamente no se estropea",
+      "Se estropea en un mes",
+      "Se convierte en alcohol",
+      "Se convierte en agua con azúcar"
+    ]
+  },
+  "69": {
+    "name": "Si metes un huevo en un cuenco de agua y se va al fondo, ¿qué significa?",
+    "note": "Con el tiempo, la cámara de aire del huevo crece y por eso flota con más facilidad.",
+    "lines": [
+      "Que es bastante fresco",
+      "Que está podrido",
+      "Que tiene dos yemas",
+      "Que está cocido"
+    ]
+  },
+  "70": {
+    "name": "Si pones plátanos junto a manzanas, ¿por qué maduran antes?",
+    "note": "Las manzanas desprenden etileno, un gas que hace madurar antes la fruta.",
+    "lines": [
+      "La manzana suelta un gas que acelera la maduración",
+      "La manzana les roba el agua",
+      "La manzana pesa más",
+      "Al plátano no le gusta estar solo"
+    ]
+  },
+  "71": {
+    "name": "Para no llorar al cortar cebolla, ¿qué truco funciona de verdad?",
+    "note": "La cebolla fría suelta menos gases irritantes, así que pica menos en los ojos.",
+    "lines": [
+      "Enfriar antes la cebolla en la nevera",
+      "Cantar mientras cortas",
+      "Cerrar un ojo",
+      "Usar un cuchillo menos afilado"
+    ]
+  },
+  "72": {
+    "name": "En una tormenta, ¿por qué siempre ves el relámpago antes de oír el trueno?",
+    "note": "La luz recorre unos 300.000 km por segundo; el sonido, solo unos 340 metros.",
+    "lines": [
+      "La luz va más rápido que el sonido",
+      "El relámpago ocurre antes",
+      "El oído reacciona tarde",
+      "El trueno da un rodeo"
+    ]
+  },
+  "73": {
+    "name": "¿Quién formuló las \"tres leyes de la robótica\"?",
+    "note": "Asimov las escribió en un relato de 1942.",
+    "lines": [
+      "El escritor de ciencia ficción Isaac Asimov",
+      "Einstein",
+      "Turing",
+      "Steve Jobs"
+    ]
+  },
+  "74": {
+    "name": "¿De qué película es el robot que dice \"I'll be back\"?",
+    "note": "Es la frase de Schwarzenegger en Terminator, \"Volveré\" en el doblaje.",
+    "lines": [
+      "Terminator",
+      "WALL·E",
+      "Star Wars",
+      "Matrix"
+    ]
+  },
+  "75": {
+    "name": "¿Cómo se llama la técnica de usar IA para poner la cara de una persona sobre otra en un vídeo?",
+    "note": "En inglés es deepfake: de deep learning (aprendizaje profundo) y fake (falso).",
+    "lines": [
+      "Ultrafalso (deepfake)",
+      "Sueño profundo",
+      "Aprendizaje profundo",
+      "Limpieza profunda"
+    ]
+  },
+  "76": {
+    "name": "Si le pides a una IA que \"piense paso a paso antes de responder\", ¿qué suele pasar?",
+    "note": "Se llama \"cadena de pensamiento\": escribe primero los pasos intermedios y se equivoca menos.",
+    "lines": [
+      "Responde mejor",
+      "Responde más rápido",
+      "No responde",
+      "Se pone a cantar"
+    ]
+  },
+  "77": {
+    "name": "¿Cómo lee una IA un texto?",
+    "note": "Esos trocitos se llaman tokens: pueden ser una palabra corta, media palabra o un signo de puntuación.",
+    "lines": [
+      "Lo corta en trocitos y los lee",
+      "Letra por letra",
+      "Primero lo traduce a fórmulas matemáticas",
+      "Mirando la forma de las letras"
+    ]
+  },
+  "78": {
+    "name": "¿Cómo se suele llamar eso del móvil que te escucha y te pone alarmas?",
+    "note": "Siri, en el móvil, es un asistente de voz.",
+    "lines": [
+      "Asistente de voz",
+      "Mascota virtual",
+      "Mayordomo en la nube",
+      "Despertador inteligente"
+    ]
+  },
+  "79": {
+    "name": "¿Qué es un \"Rickroll\"?",
+    "note": "La canción es el gran éxito de Rick Astley de 1987.",
+    "lines": [
+      "Abrir un enlace y que salga el videoclip de una canción de los 80",
+      "Un tipo de rollo de sushi",
+      "Un truco de monopatín",
+      "Un peinado"
+    ]
+  },
+  "80": {
+    "name": "La foto del chico que se gira a mirar a otra mientras su novia lo mira indignada, ¿qué suele expresar?",
+    "note": "Se la conoce como \"el novio distraído\".",
+    "lines": [
+      "Dejarse llevar por lo nuevo",
+      "Que se ha perdido",
+      "Que ha confundido a alguien",
+      "Que espera el autobús"
+    ]
+  },
+  "81": {
+    "name": "¿De dónde viene la frase \"Keep Calm and Carry On\"?",
+    "note": "El cartel se imprimió en 1939, pero casi no llegó a colgarse.",
+    "lines": [
+      "Un cartel británico de propaganda de la Segunda Guerra Mundial",
+      "Una canción pop",
+      "Una película",
+      "Un anuncio de té"
+    ]
+  },
+  "82": {
+    "name": "¿Cómo llama todo el mundo al gato de internet que siempre pone cara de enfado?",
+    "note": "Grumpy Cat nació con cara de pocos amigos, pero en realidad tenía muy buen carácter.",
+    "lines": [
+      "Grumpy Cat (gato gruñón)",
+      "Nyan Cat",
+      "Doge",
+      "Garfield"
+    ]
+  },
+  "83": {
+    "name": "En \"Nyan Cat\", el gato que vuela dejando un arcoíris, ¿de qué es el cuerpo?",
+    "note": "Su cuerpo es una galleta rellena de mermelada con glaseado rosa.",
+    "lines": [
+      "Una galleta rellena de mermelada",
+      "Un trozo de queso",
+      "Una hamburguesa",
+      "Una pieza de sushi"
+    ]
+  },
+  "84": {
+    "name": "En el meme \"Stonks\", ¿qué palabra se escribe mal a propósito?",
+    "note": "Stonks escribe mal stocks a propósito, para burlarse de las inversiones disparatadas.",
+    "lines": [
+      "stocks (acciones)",
+      "stones (piedras)",
+      "stars (estrellas)",
+      "snacks (aperitivos)"
+    ]
+  },
+  "85": {
+    "name": "¿Cuántas patas tiene un enchufe británico?",
+    "note": "El enchufe británico tiene tres patas rectangulares; la más larga es la toma de tierra.",
+    "lines": [
+      "3",
+      "2",
+      "4",
+      "Ninguna, es redondo"
+    ]
+  },
+  "86": {
+    "name": "En el Reino Unido, ¿por qué lado se conduce?",
+    "note": "En el Reino Unido se circula por la izquierda, con el volante a la derecha.",
+    "lines": [
+      "Por la izquierda",
+      "Por la derecha",
+      "Por el centro",
+      "Según el humor"
+    ]
+  },
+  "87": {
+    "name": "¿Qué es el \"London Eye\"?",
+    "note": "El London Eye se terminó en 2000 y una vuelta dura unos 30 minutos.",
+    "lines": [
+      "Una gran noria a orillas del Támesis",
+      "Un faro",
+      "Un telescopio",
+      "Una óptica"
+    ]
+  },
+  "88": {
+    "name": "En el traje tradicional escocés, ¿cómo se llama la falda de cuadros de los hombres?",
+    "note": "El kilt es la prenda tradicional de los hombres de las Tierras Altas de Escocia.",
+    "lines": [
+      "Kilt (falda escocesa)",
+      "Sarong",
+      "Kimono",
+      "Qipao"
+    ]
+  },
+  "89": {
+    "name": "Un círculo de enormes piedras en pie que nadie sabe bien cómo llevaron allí, ¿en qué país está?",
+    "note": "Es Stonehenge, en Inglaterra, con unos cuatro o cinco mil años de antigüedad.",
+    "lines": [
+      "Reino Unido",
+      "Egipto",
+      "Perú",
+      "Grecia"
+    ]
+  },
+  "90": {
+    "name": "¿Sandía con un poco de sal?",
+    "lines": [
+      "Sí",
+      "No",
+      "¿Qué?"
+    ]
+  },
+  "91": {
+    "name": "El salteado de tomate con huevo, ¿con azúcar o sin?",
+    "lines": [
+      "Con azúcar",
+      "Sin azúcar"
+    ]
+  },
+  "92": {
+    "name": "La leche de soja, ¿dulce o salada?",
+    "lines": [
+      "Dulce",
+      "Salada"
+    ]
+  },
+  "93": {
+    "name": "En la Fiesta de los Faroles, ¿tangyuan o yuanxiao?",
+    "lines": [
+      "Tangyuan",
+      "Yuanxiao",
+      "¿No son lo mismo?"
+    ]
+  },
+  "94": {
+    "name": "¿Los fideos se sorben haciendo ruido?",
+    "lines": [
+      "Sorbiendo, que saben mejor",
+      "En silencio"
+    ]
+  },
+  "95": {
+    "name": "¿Acostarte pronto o trasnochar?",
+    "lines": [
+      "Pronto a la cama",
+      "Trasnochar"
+    ]
+  },
+  "96": {
+    "name": "¿La sopa, antes o después de comer?",
+    "lines": [
+      "Antes",
+      "Después"
+    ]
+  },
+  "97": {
+    "name": "El fin de semana, ¿en casa o por ahí?",
+    "lines": [
+      "En casa",
+      "Por ahí"
     ]
   }
 }

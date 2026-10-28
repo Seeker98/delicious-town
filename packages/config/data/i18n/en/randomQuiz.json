@@ -99,6 +99,13 @@
       "Vinegar"
     ]
   },
+  "12": {
+    "name": "Breakfast: sweet or savory?",
+    "lines": [
+      "Sweet",
+      "Savory"
+    ]
+  },
   "13": {
     "name": "Which weather gives the most Seasonal points?",
     "note": "Rainstorm: Seasonal points +25%, Rainbow +10%.",
@@ -129,6 +136,16 @@
       "Sunny"
     ]
   },
+  "16": {
+    "name": "How much does it cost to remove a gem in Acid Rain?",
+    "note": "In Acid Rain, removing gems is free.",
+    "lines": [
+      "Nothing",
+      "Half price",
+      "Full price",
+      "Double"
+    ]
+  },
   "17": {
     "name": "When does cooking a signature dish get the biggest boost to the chance of a higher grade?",
     "note": "Foggy Night +25%, Fog +20%.",
@@ -137,6 +154,26 @@
       "Fog",
       "Sunny",
       "Strong Wind"
+    ]
+  },
+  "18": {
+    "name": "How many recipe tastes are there?",
+    "note": "The six recipe tastes are Sour, Sweet, Bitter, Spicy, Salty and Umami.",
+    "lines": [
+      "6",
+      "4",
+      "5",
+      "8"
+    ]
+  },
+  "19": {
+    "name": "When there's a Rainbow, what's the takeaway renown bonus?",
+    "note": "Rainbow: takeaway renown +100%.",
+    "lines": [
+      "+100%",
+      "+20%",
+      "+50%",
+      "No bonus"
     ]
   },
   "20": {
@@ -159,6 +196,16 @@
       "A valley"
     ]
   },
+  "22": {
+    "name": "Where did Wang Hong do her undergraduate degree?",
+    "note": "Wang Hong studied at Peking University's School of Mathematical Sciences.",
+    "lines": [
+      "Peking University",
+      "Tsinghua University",
+      "Fudan University",
+      "Zhejiang University"
+    ]
+  },
   "23": {
     "name": "To color a map so that neighboring countries never share a color, what's the smallest number of colors that is always enough?",
     "note": "This is the famous Four Color Theorem.",
@@ -167,6 +214,16 @@
       "3 colors",
       "5 colors",
       "7 colors"
+    ]
+  },
+  "24": {
+    "name": "When is \"Pi Day\"?",
+    "note": "Pi starts with 3.14, so Pi Day is March 14 (3/14).",
+    "lines": [
+      "March 14",
+      "January 1",
+      "June 28",
+      "September 9"
     ]
   },
   "25": {
@@ -199,6 +256,16 @@
       "It never boils"
     ]
   },
+  "28": {
+    "name": "Your mouth is on fire from spicy food. What puts it out best?",
+    "note": "Capsaicin doesn't dissolve in water, but the casein and fat in milk carry it away.",
+    "lines": [
+      "Milk",
+      "Ice water",
+      "Beer",
+      "Hot tea"
+    ]
+  },
   "29": {
     "name": "When an AI confidently makes up things that don't exist, what do people call it?",
     "lines": [
@@ -206,6 +273,16 @@
       "Dreaming",
       "A fever",
       "Lag"
+    ]
+  },
+  "30": {
+    "name": "In \"ChatGPT\", what does the final T of \"GPT\" stand for?",
+    "note": "GPT stands for \"Generative Pre-trained Transformer\".",
+    "lines": [
+      "Transformer (a kind of model architecture)",
+      "Turbo",
+      "Talk",
+      "Text"
     ]
   },
   "31": {
@@ -228,6 +305,16 @@
       "4"
     ]
   },
+  "33": {
+    "name": "What do AI-drawn people most often get mocked for getting wrong?",
+    "note": "AI often draws hands with six fingers, or even more.",
+    "lines": [
+      "The number of fingers",
+      "Eye color",
+      "Hair length",
+      "The buttons on their clothes"
+    ]
+  },
   "34": {
     "name": "What does the Turing test test?",
     "lines": [
@@ -237,6 +324,26 @@
       "How fast the internet is"
     ]
   },
+  "35": {
+    "name": "An \"overfitted\" AI model is most like which kind of student?",
+    "note": "Overfitting means learning the practice questions too rigidly, so new questions trip you up.",
+    "lines": [
+      "One who memorized the practice questions and is lost if a number changes",
+      "One who always sleeps in class",
+      "One who always hands in the test early",
+      "One with messy handwriting"
+    ]
+  },
+  "36": {
+    "name": "What's the usual name for the instructions you type when talking to an AI?",
+    "note": "What you write to tell an AI what you want is called a prompt.",
+    "lines": [
+      "A prompt",
+      "A password",
+      "A spell",
+      "A secret code"
+    ]
+  },
   "37": {
     "name": "The meme of a dog holding a mug in a burning room, saying \"This is fine\", is usually used to mean?",
     "lines": [
@@ -244,6 +351,16 @@
       "The dog is brave",
       "The room is nice and warm",
       "Time for coffee"
+    ]
+  },
+  "38": {
+    "name": "The meme dog with its head tilted, surrounded by weird captions: what breed is it?",
+    "note": "The meme is called Doge, and the original dog was a Japanese Shiba Inu named Kabosu.",
+    "lines": [
+      "Shiba Inu",
+      "Husky",
+      "Golden Retriever",
+      "Corgi"
     ]
   },
   "39": {
@@ -256,12 +373,209 @@
       "The bridge next to it"
     ]
   },
+  "40": {
+    "name": "What does the famous \"Mind the gap\" announcement on the London Underground warn passengers about?",
+    "note": "It's a reminder not to step into the space between the train and the platform.",
+    "lines": [
+      "The gap between the train and the platform",
+      "Their wallets",
+      "Leaning on the doors",
+      "Walking between carriages"
+    ]
+  },
+  "41": {
+    "name": "Traditional fish and chips used to be sold wrapped in what?",
+    "note": "They used to come wrapped in old newspaper, until hygiene rules put a stop to it.",
+    "lines": [
+      "Newspaper",
+      "Lotus leaves",
+      "Aluminum foil",
+      "A plastic box"
+    ]
+  },
+  "42": {
+    "name": "What is the \"black pudding\" in a full English breakfast mainly made of?",
+    "note": "Black pudding is a blood sausage made with pork blood, fat and oats.",
+    "lines": [
+      "It's a blood sausage",
+      "Chocolate",
+      "Black beans",
+      "Seaweed"
+    ]
+  },
+  "43": {
+    "name": "There's a spread people either adore or can't stand, and even its ads say so. What is it?",
+    "note": "It's Marmite, and its slogan is literally \"Love it or hate it\".",
+    "lines": [
+      "A dark, sticky yeast spread",
+      "Mint sauce",
+      "Mustard",
+      "Ketchup"
+    ]
+  },
+  "44": {
+    "name": "What's the classic color of a double-decker bus?",
+    "note": "The red double-decker bus is one of London's best-known symbols.",
+    "lines": [
+      "Red",
+      "Yellow",
+      "Green",
+      "Blue"
+    ]
+  },
+  "45": {
+    "name": "Tea with milk: milk in first, or tea first?",
+    "lines": [
+      "Milk first",
+      "Tea first",
+      "I drink coffee"
+    ]
+  },
+  "46": {
+    "name": "Scones: cream first, or jam first?",
+    "lines": [
+      "Cream first",
+      "Jam first"
+    ]
+  },
   "47": {
     "name": "Dumplings: vinegar or soy sauce?",
     "lines": [
       "Vinegar",
       "Soy sauce",
       "Nothing"
+    ]
+  },
+  "48": {
+    "name": "Zongzi (sticky rice dumplings): sweet or savory?",
+    "lines": [
+      "Sweet",
+      "Savory"
+    ]
+  },
+  "49": {
+    "name": "Tofu pudding: sweet or savory?",
+    "lines": [
+      "Sweet",
+      "Savory",
+      "Spicy"
+    ]
+  },
+  "50": {
+    "name": "Pineapple on pizza?",
+    "lines": [
+      "Yes",
+      "No"
+    ]
+  },
+  "51": {
+    "name": "Fried eggs: well done or runny?",
+    "lines": [
+      "Well done",
+      "Runny"
+    ]
+  },
+  "52": {
+    "name": "Cilantro: love it or hate it?",
+    "lines": [
+      "Love it",
+      "Hate it",
+      "Don't care"
+    ]
+  },
+  "53": {
+    "name": "Hot pot: meat in first, or veggies first?",
+    "lines": [
+      "Meat",
+      "Veggies"
+    ]
+  },
+  "54": {
+    "name": "Which mooncake do you pick?",
+    "lines": [
+      "Five-nut",
+      "Red bean paste",
+      "Lotus paste with egg yolk"
+    ]
+  },
+  "55": {
+    "name": "Which weather adds the most coins per table?",
+    "note": "Deep Freeze: coins per table +10, Heavy Snow and Blizzard +1.",
+    "lines": [
+      "Deep Freeze",
+      "Heavy Snow",
+      "Blizzard",
+      "Sunny"
+    ]
+  },
+  "56": {
+    "name": "Which weather cuts occupancy by 35% but gives +60% final coins and final EXP?",
+    "note": "Smog: occupancy -35%, final coins and final EXP +60% each.",
+    "lines": [
+      "Smog",
+      "Acid Rain",
+      "Blood Moon",
+      "Deep Freeze"
+    ]
+  },
+  "57": {
+    "name": "In which weather do Market prices go up the most?",
+    "note": "Acid Rain: Market prices +300%, Deep Freeze +250%, Blizzard +200%.",
+    "lines": [
+      "Acid Rain",
+      "Deep Freeze",
+      "Blizzard",
+      "Sandstorm"
+    ]
+  },
+  "58": {
+    "name": "Which weather makes mystery recipe appraisal more likely to succeed?",
+    "note": "Starry Night: mystery recipe appraisal success +5%.",
+    "lines": [
+      "Starry Night",
+      "Clear Night",
+      "Fog",
+      "Rainbow"
+    ]
+  },
+  "59": {
+    "name": "In which weather can you swap friends' locked ingredients?",
+    "note": "In a Hurricane you can swap friends' locked ingredients, at double the fee.",
+    "lines": [
+      "Hurricane",
+      "Strong Wind",
+      "Severe Thunderstorm",
+      "Blood Moon"
+    ]
+  },
+  "60": {
+    "name": "Which weather boosts missile critical rate the most?",
+    "note": "Starry Night: missile critical rate +15%, Severe Thunderstorm +8%, Thunderstorm +5%.",
+    "lines": [
+      "Starry Night",
+      "Severe Thunderstorm",
+      "Thunderstorm",
+      "Sunny"
+    ]
+  },
+  "61": {
+    "name": "The Kakeya conjecture proved by Wang Hong and her collaborator is about space in how many dimensions?",
+    "note": "The 2D case was settled long ago; 3D was the real sticking point.",
+    "lines": [
+      "3",
+      "2",
+      "4",
+      "100"
+    ]
+  },
+  "62": {
+    "name": "Which Chinese-heritage mathematician is often called \"the Mozart of Math\"?",
+    "note": "Terence Tao became a full professor at 24 and won the Fields Medal at 31.",
+    "lines": [
+      "Terence Tao",
+      "Shing-Tung Yau",
+      "Chen Jingrun",
+      "Hua Luogeng"
     ]
   },
   "63": {
@@ -282,6 +596,314 @@
       "14",
       "21",
       "30"
+    ]
+  },
+  "65": {
+    "name": "Do snails have teeth?",
+    "note": "A snail's tongue is covered in rows of tiny teeth, which can number over ten thousand.",
+    "lines": [
+      "Yes, over ten thousand of them",
+      "No",
+      "Just two",
+      "Only when they're young"
+    ]
+  },
+  "66": {
+    "name": "Roughly how many bones does an adult human have?",
+    "note": "Babies have more bones; some fuse together as they grow, leaving 206.",
+    "lines": [
+      "206",
+      "106",
+      "306",
+      "1,000"
+    ]
+  },
+  "67": {
+    "name": "How many seconds are there in a day?",
+    "note": "24 hours × 60 minutes × 60 seconds = 86,400 seconds.",
+    "lines": [
+      "86,400",
+      "3,600",
+      "36,000",
+      "100,000"
+    ]
+  },
+  "68": {
+    "name": "What happens to a sealed jar of honey left for many years?",
+    "note": "Honey is very sweet and low in water, so bacteria can barely survive in it.",
+    "lines": [
+      "It basically never goes bad",
+      "It goes bad within a month",
+      "It turns into wine",
+      "It turns into sugar water"
+    ]
+  },
+  "69": {
+    "name": "You put an egg in a bowl of water and it sinks to the bottom. What does that tell you?",
+    "note": "As an egg ages, the air pocket inside grows, so older eggs float more easily.",
+    "lines": [
+      "It's fairly fresh",
+      "It's gone bad",
+      "It's a double-yolker",
+      "It's already cooked"
+    ]
+  },
+  "70": {
+    "name": "Why do bananas ripen faster when kept next to apples?",
+    "note": "Apples give off ethylene, a gas that makes fruit ripen faster.",
+    "lines": [
+      "Apples give off a ripening gas",
+      "Apples soak up moisture",
+      "Apples are heavier",
+      "Bananas get lonely"
+    ]
+  },
+  "71": {
+    "name": "Which of these actually helps stop tears when you chop onions?",
+    "note": "A cold onion releases less of the irritating gas, so it stings your eyes less.",
+    "lines": [
+      "Chill the onion in the fridge first",
+      "Sing while you chop",
+      "Close one eye",
+      "Use a blunter knife"
+    ]
+  },
+  "72": {
+    "name": "In a thunderstorm, why do you always see the lightning before you hear the thunder?",
+    "note": "Light travels about 300,000 km a second; sound only about 340 meters.",
+    "lines": [
+      "Light travels faster than sound",
+      "The lightning happens first",
+      "Ears are slow to react",
+      "Thunder takes the long way round"
+    ]
+  },
+  "73": {
+    "name": "Who came up with the \"Three Laws of Robotics\"?",
+    "note": "Isaac Asimov set out the Three Laws in a 1942 short story.",
+    "lines": [
+      "Sci-fi writer Isaac Asimov",
+      "Albert Einstein",
+      "Alan Turing",
+      "Steve Jobs"
+    ]
+  },
+  "74": {
+    "name": "Which movie does the robot who says \"I'll be back\" come from?",
+    "note": "It's Arnold Schwarzenegger's line in The Terminator.",
+    "lines": [
+      "The Terminator",
+      "WALL-E",
+      "Star Wars",
+      "The Matrix"
+    ]
+  },
+  "75": {
+    "name": "Using AI to put one person's face onto someone else in a video is usually called?",
+    "note": "\"Deepfake\" comes from \"deep learning\" plus \"fake\".",
+    "lines": [
+      "Deepfake",
+      "Deep sleep",
+      "Deep learning",
+      "Deep clean"
+    ]
+  },
+  "76": {
+    "name": "What usually happens when you tell an AI to \"think it through step by step\" before answering?",
+    "note": "This is called \"chain of thought\": writing out the steps in between makes mistakes less likely.",
+    "lines": [
+      "Its answers get more accurate",
+      "It answers faster",
+      "It refuses to answer",
+      "It starts singing"
+    ]
+  },
+  "77": {
+    "name": "How does an AI read a piece of text?",
+    "note": "These chunks are called tokens. One can be a word, part of a word, or a punctuation mark.",
+    "lines": [
+      "It cuts the text into small chunks",
+      "One letter at a time",
+      "It turns it into math formulas first",
+      "It looks at the shapes of the letters"
+    ]
+  },
+  "78": {
+    "name": "What do you call the thing on your phone that listens to you and sets alarms for you?",
+    "note": "Siri on your phone is one example of a voice assistant.",
+    "lines": [
+      "A voice assistant",
+      "A virtual pet",
+      "A cloud butler",
+      "A smart alarm clock"
+    ]
+  },
+  "79": {
+    "name": "What is a \"Rickroll\"?",
+    "note": "The song is Rick Astley's 1987 breakout hit.",
+    "lines": [
+      "Clicking a link that turns out to play an '80s music video",
+      "A kind of sushi roll",
+      "A skateboard trick",
+      "A hairstyle"
+    ]
+  },
+  "80": {
+    "name": "The picture of a man turning to look at a passer-by while his girlfriend glares at him is usually used to mean?",
+    "note": "This meme is known as \"Distracted Boyfriend\".",
+    "lines": [
+      "Being tempted away by something new",
+      "Being lost",
+      "Mistaking someone for someone else",
+      "Waiting for the bus"
+    ]
+  },
+  "81": {
+    "name": "Where does the phrase \"Keep Calm and Carry On\" come from?",
+    "note": "The poster was printed in 1939, but almost none were ever put up.",
+    "lines": [
+      "A British propaganda poster from World War II",
+      "A pop song",
+      "A movie",
+      "A tea advert"
+    ]
+  },
+  "82": {
+    "name": "What do people call the internet cat that always looks annoyed?",
+    "note": "Grumpy Cat was born with that face, but was actually very easygoing.",
+    "lines": [
+      "Grumpy Cat",
+      "Nyan Cat",
+      "Doge",
+      "Garfield"
+    ]
+  },
+  "83": {
+    "name": "What is the body of \"Nyan Cat\", the cat flying with a rainbow trail, made of?",
+    "note": "Its body is a jam-filled toaster pastry with pink frosting.",
+    "lines": [
+      "A jam-filled pastry",
+      "A piece of cheese",
+      "A burger",
+      "A piece of sushi"
+    ]
+  },
+  "84": {
+    "name": "In the \"Stonks\" meme, what word is deliberately misspelled?",
+    "note": "\"Stonks\" misspells \"stocks\" on purpose, to poke fun at clueless investing.",
+    "lines": [
+      "stocks",
+      "stones",
+      "stars",
+      "snacks"
+    ]
+  },
+  "85": {
+    "name": "How many pins does a British electrical plug have?",
+    "note": "A British plug has three rectangular pins, and the longest is the earth pin.",
+    "lines": [
+      "3",
+      "2",
+      "4",
+      "None, it's round"
+    ]
+  },
+  "86": {
+    "name": "Which side of the road do you drive on in the UK?",
+    "note": "In the UK you drive on the left, with the steering wheel on the right.",
+    "lines": [
+      "The left",
+      "The right",
+      "The middle",
+      "Depends on my mood"
+    ]
+  },
+  "87": {
+    "name": "What is the \"London Eye\"?",
+    "note": "The London Eye opened in 2000, and one full turn takes about 30 minutes.",
+    "lines": [
+      "A giant Ferris wheel on the Thames",
+      "A lighthouse",
+      "A telescope",
+      "An optician's shop"
+    ]
+  },
+  "88": {
+    "name": "In traditional Scottish dress, what's the tartan skirt worn by men called?",
+    "note": "The kilt is the traditional dress of men from the Scottish Highlands.",
+    "lines": [
+      "Kilt",
+      "Sarong",
+      "Kimono",
+      "Qipao"
+    ]
+  },
+  "89": {
+    "name": "A ring of huge standing stones, and nobody can say for sure how they got there. Which country is it in?",
+    "note": "That's Stonehenge in England, some 4,000 to 5,000 years old.",
+    "lines": [
+      "The UK",
+      "Egypt",
+      "Peru",
+      "Greece"
+    ]
+  },
+  "90": {
+    "name": "A pinch of salt on watermelon?",
+    "lines": [
+      "Yes",
+      "No",
+      "What?"
+    ]
+  },
+  "91": {
+    "name": "Tomato and egg stir-fry: sugar or no sugar?",
+    "lines": [
+      "Sugar",
+      "No sugar"
+    ]
+  },
+  "92": {
+    "name": "Soy milk: sweet or savory?",
+    "lines": [
+      "Sweet",
+      "Savory"
+    ]
+  },
+  "93": {
+    "name": "Lantern Festival: tangyuan or yuanxiao?",
+    "lines": [
+      "Tangyuan",
+      "Yuanxiao",
+      "Aren't they the same?"
+    ]
+  },
+  "94": {
+    "name": "Slurping noodles: yes or no?",
+    "lines": [
+      "Slurp away, it tastes better",
+      "Nice and quiet"
+    ]
+  },
+  "95": {
+    "name": "Early bird or night owl?",
+    "lines": [
+      "Early bird",
+      "Night owl"
+    ]
+  },
+  "96": {
+    "name": "Soup before the meal or after?",
+    "lines": [
+      "Before",
+      "After"
+    ]
+  },
+  "97": {
+    "name": "Weekends: stay in or go out?",
+    "lines": [
+      "Stay in",
+      "Go out"
     ]
   }
 }

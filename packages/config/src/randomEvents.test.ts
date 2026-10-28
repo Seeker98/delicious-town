@@ -12,9 +12,9 @@ import { realBuild } from './testBundle';
 describe('随机事件和问答（设计稿 2026-10-28）', () => {
   const b = realBuild().bundle!;
 
-  it('第一批: 40 个事件 (食评家第二段分两条) 和 30 道题', () => {
-    expect(b.randomEvents).toHaveLength(41);
-    expect(b.randomQuiz).toHaveLength(30);
+  it('样例全部: 150 个事件 (食评家、小提琴手第二段各分两条) 和 97 道题', () => {
+    expect(b.randomEvents).toHaveLength(152);
+    expect(b.randomQuiz).toHaveLength(97);
   });
 
   it('带减益的事件构建时自动标出来', () => {
@@ -40,6 +40,11 @@ describe('随机事件和问答（设计稿 2026-10-28）', () => {
       [14, 'equipRate', 'max'],
       [15, 'spRate', 'min'],
       [17, 'mcGoldRate', 'max'],
+      [55, 'coinValue', 'max'],
+      [57, 'marketCoin', 'max'],
+      [58, 'starMCBookRate', 'max'],
+      [59, 'changeFoodsFlag', 'max'],
+      [60, 'missileCrit', 'max'],
     ];
     for (const [id, key, dir] of cases) {
       const q = b.randomQuiz.find((x) => x.id === id)!;
@@ -55,6 +60,10 @@ describe('随机事件和问答（设计稿 2026-10-28）', () => {
     }
     // 血月多出来的是蟑螂
     expect(weather.get('血月')!.roachRate).toBeGreaterThan(0);
+    // 题里直接写了数的
+    expect(weather.get('酸雨')!.removeGemFree).toBe(1); // 16 摘除宝石不要钱
+    expect(weather.get('虹')!.taRenownRate).toBe(1); // 19 外卖声望 +100%
+    expect(weather.get('霾')).toMatchObject({ atRate: -0.35, coinRate: 0.6, expRate: 0.6 }); // 56
   });
 
   it('现实题都写了年份', () => {

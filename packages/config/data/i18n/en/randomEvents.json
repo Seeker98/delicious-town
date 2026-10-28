@@ -86,6 +86,13 @@
       "Its regulars have no choice but to come to you."
     ]
   },
+  "11": {
+    "name": "Quiet Notice",
+    "desc": "A notice goes up around town: no loud chopping at Sunday lunchtime.",
+    "lines": [
+      "The kitchen works on tiptoe, and slow and careful turns out finer food."
+    ]
+  },
   "12": {
     "name": "Fruit in Savory Dishes?",
     "desc": "Two tables are arguing over whether sweet fruit belongs in a savory dish, and they insist you settle it.",
@@ -106,6 +113,13 @@
       "The name got longer, and customers hesitate when ordering.",
       "Invite him to taste a bowl on the spot",
       "He's silent for a long time after eating: \"Hmm... perhaps that valley could be a little bigger.\""
+    ]
+  },
+  "14": {
+    "name": "The Square's Pigeons",
+    "desc": "A flock of pigeons from the square is squabbling over breadcrumbs right outside your door.",
+    "lines": [
+      "Customers give it a wide berth."
     ]
   },
   "15": {
@@ -136,6 +150,13 @@
       "You shave a tiny bit into a dish, and customers keep asking for the recipe."
     ]
   },
+  "18": {
+    "name": "Round the Maypole",
+    "desc": "The town's young people danced all night around a pole covered in flowers.",
+    "lines": [
+      "At dawn they all come running for hot soup."
+    ]
+  },
   "19": {
     "name": "Match Night",
     "desc": "Tonight two towns' teams face off, and everyone is crammed into any place with a TV.",
@@ -144,6 +165,103 @@
       "Full house, and very loud.",
       "No TV: keep a quiet spot for those who want one",
       "Everyone who comes just wants a peaceful meal."
+    ]
+  },
+  "20": {
+    "name": "Balcony Choir",
+    "desc": "Every evening, the people in the building opposite sing together on their balconies, and the whole street leans out to listen.",
+    "lines": [
+      "When the song ends, they pop downstairs for dinner."
+    ]
+  },
+  "21": {
+    "name": "Car-Free Day",
+    "desc": "The town is holding a \"Car-Free Day\". There's nothing on the main street but bikes.",
+    "lines": [
+      "Your riders have a clear run all day."
+    ]
+  },
+  "22": {
+    "name": "Sauna, Then Snow",
+    "desc": "The bathhouse owner invites you to join everyone for a sauna, then a roll in the snow.",
+    "lines": [
+      "Go",
+      "You come back glowing and chop faster than ever.",
+      "Hand out towels from the side",
+      "Everyone remembers you."
+    ]
+  },
+  "23": {
+    "name": "The 64-Piece Table",
+    "desc": "Your new table comes in 64 pieces, with instructions that are all pictures and no words.",
+    "lines": [
+      "Once it's built there are three screws left over. It wobbles a little, but customers find it charming."
+    ]
+  },
+  "24": {
+    "name": "The Bus Go-Slow",
+    "desc": "Today the bus drivers are sticking strictly to the minimum legal speed, and the whole town is late for work.",
+    "lines": [
+      "On the bright side, the roads are empty."
+    ]
+  },
+  "25": {
+    "name": "Long Weekend",
+    "desc": "Monday is a holiday, and family after family has wheeled their suitcases out of town.",
+    "lines": [
+      "The ones who stayed are your big-spending regulars."
+    ]
+  },
+  "26": {
+    "name": "The Chalet Market",
+    "desc": "A row of little wooden huts has popped up in the square, and the air smells of mulled wine and roasted chestnuts.",
+    "lines": [
+      "Everyone worn out from browsing squeezes into your place."
+    ]
+  },
+  "27": {
+    "name": "A Truckload of Tomatoes",
+    "desc": "The next town's tomato-throwing festival is over, and there's a whole truckload of tomatoes left, going cheap.",
+    "lines": [
+      "Buy the lot",
+      "The whole truckload is yours.",
+      "Pass",
+      "As the truck pulls away, one tomato tumbles off and lands right at your feet."
+    ]
+  },
+  "28": {
+    "name": "Storks on the Chimney",
+    "desc": "A pair of white storks has built a nest on your chimney.",
+    "lines": [
+      "The old folks on the corner say it means good luck is on its way."
+    ]
+  },
+  "29": {
+    "name": "Sale Season",
+    "desc": "The whole town has gone into sale season. Even the Market stalls have hung up \"15% off everything\".",
+    "lines": [
+      "More people are out shopping."
+    ]
+  },
+  "30": {
+    "name": "Dinner at Ten",
+    "desc": "A big group turns up for dinner at ten at night.",
+    "lines": [
+      "They talk and eat into the small hours."
+    ]
+  },
+  "31": {
+    "name": "A Quick One at the Counter",
+    "desc": "The new customers just stand at the counter, knock back one small glass and go.",
+    "lines": [
+      "They come and go so fast the kitchen can't keep up."
+    ]
+  },
+  "32": {
+    "name": "Harvest Crew",
+    "desc": "The vineyard up the hill has hired a big crew to pick grapes.",
+    "lines": [
+      "When they knock off at noon, they all come to you for lunch."
     ]
   },
   "33": {
@@ -185,6 +303,13 @@
       "The whole restaurant has become extremely polite."
     ]
   },
+  "38": {
+    "name": "The Double-Decker",
+    "desc": "A new red double-decker bus route has opened.",
+    "lines": [
+      "Tourists on the top deck get a perfect view of your sign."
+    ]
+  },
   "39": {
     "name": "Bonfire and Fireworks Night",
     "desc": "On this autumn evening, the town lights a huge bonfire and sets off fireworks. Someone even tossed a scarecrow onto the fire.",
@@ -200,6 +325,23 @@
       "One right. The bartender gives you a voucher.",
       "Two right. The bartender gives you a voucher.",
       "All correct! The jar of vouchers on the counter is yours."
+    ]
+  },
+  "41": {
+    "name": "Beans on Toast",
+    "desc": "A customer orders \"beans, on top of toast\". The head chef falls silent.",
+    "lines": [
+      "Make it",
+      "The customer is moved almost to tears.",
+      "Talk him into something else",
+      "He reluctantly orders your house specialty."
+    ]
+  },
+  "42": {
+    "name": "The Driver Who Knew Every Street",
+    "desc": "A taxi driver spent three years learning the name of every lane and alley in town.",
+    "lines": [
+      "When he comes in to eat, he mentions a shortcut to your riders."
     ]
   },
   "43": {
@@ -218,6 +360,37 @@
       "You got a photo of a floating log.",
       "Stay and look after the tourists",
       "Tourists fill every seat in your restaurant."
+    ]
+  },
+  "45": {
+    "name": "Strawberries and Cream",
+    "desc": "The town tennis tournament has begun, and every spectator has a bowl of strawberries and cream.",
+    "lines": [
+      "Desserts are flying off the counter."
+    ]
+  },
+  "46": {
+    "name": "The Five-Day Match",
+    "desc": "The town's big match has been going for five days with no winner yet. They even stopped for afternoon tea.",
+    "lines": [
+      "The fans come in to eat on the dot every day."
+    ]
+  },
+  "47": {
+    "name": "Bagpipes at the Door",
+    "desc": "A man in a tartan kilt has started playing the bagpipes outside your door, and half the dogs on the street are howling along.",
+    "lines": [
+      "Give him a few coins to play outside someone else's door",
+      "Peace returns to your doorstep.",
+      "Invite him in to eat",
+      "After his meal he plays a very slow tune, and the whole restaurant falls silent."
+    ]
+  },
+  "48": {
+    "name": "Paper Crowns",
+    "desc": "Your customers pull open colorful party crackers with a bang.",
+    "lines": [
+      "Everyone puts on a paper crown, and they take turns reading out the terrible jokes inside."
     ]
   },
   "49": {
@@ -241,11 +414,269 @@
       "But everyone who eats them says: \"There's a story in this food.\""
     ]
   },
+  "52": {
+    "name": "The Recipe on the Napkin",
+    "desc": "In the middle of the night you dreamed up a brilliant new dish and got up to write it on a napkin. In the morning, it's just a line of scribbles.",
+    "lines": [
+      "Still, you feel inspired all day."
+    ]
+  },
   "53": {
     "name": "Roach Meeting",
     "desc": "The roaches in the corner seem to be holding a meeting, lined up in a neat row.",
     "lines": [
       "All in a row, they're easy to squash."
+    ]
+  },
+  "54": {
+    "name": "The Wrong Delivery",
+    "desc": "A takeaway order from another restaurant was dropped at your door by mistake. It smells delicious.",
+    "lines": [
+      "Take it back to that restaurant",
+      "Its owner treats you to a pastry.",
+      "Open it and study the recipe",
+      "You learn a thing or two, but feel a bit guilty."
+    ]
+  },
+  "55": {
+    "name": "The Freezer Blackout",
+    "desc": "The kitchen freezer lost power for an hour last night. Nothing spoiled, but you broke out in a cold sweat.",
+    "lines": [
+      "You're extra careful today."
+    ]
+  },
+  "56": {
+    "name": "Riverside Movie Night",
+    "desc": "Someone has strung up a big white sheet by the river for an open-air movie.",
+    "lines": [
+      "When it's over, nobody wants to go home."
+    ]
+  },
+  "57": {
+    "name": "Marathon Day",
+    "desc": "The town is holding a marathon, and the main road is closed all morning.",
+    "lines": [
+      "Your riders have to take the back streets."
+    ]
+  },
+  "58": {
+    "name": "Masked Diners",
+    "desc": "It's the town's masked festival, and every customer comes in wearing a mask.",
+    "lines": [
+      "You can't tell who your regulars are, but they're having a wonderful time."
+    ]
+  },
+  "59": {
+    "name": "White Asparagus",
+    "desc": "The Market is piled high with white asparagus.",
+    "lines": [
+      "Every customer's first words through the door: \"Got any asparagus?\""
+    ]
+  },
+  "60": {
+    "name": "The Sun That Won't Set",
+    "desc": "It's eleven at night, and the sun is still hanging in the sky.",
+    "lines": [
+      "Customers finish eating and still won't leave."
+    ]
+  },
+  "61": {
+    "name": "The Day That Never Dawned",
+    "desc": "It's barely gotten light all day.",
+    "lines": [
+      "Everyone lights candles, wraps up in blankets and takes their time over a meal."
+    ]
+  },
+  "62": {
+    "name": "Eggs in the Grass",
+    "desc": "A bunch of kids are hunting for painted eggs in the grass in your backyard. They ask if you'd like to join in.",
+    "lines": [
+      "Join the hunt",
+      "You found 1 egg.",
+      "You found 2 eggs.",
+      "You found 3 eggs.",
+      "Make snacks for the kids instead",
+      "The parents all turn up too."
+    ]
+  },
+  "63": {
+    "name": "Clinking Glasses",
+    "desc": "Table after table of customers in leather shorts are clinking glasses along the long tables.",
+    "lines": [
+      "They sing songs nobody else can understand."
+    ]
+  },
+  "64": {
+    "name": "This Year's New Wine",
+    "desc": "This year's new wine went on sale today. Every shop on the street has hung a little sign by the door.",
+    "lines": [
+      "You hang one up too."
+    ]
+  },
+  "65": {
+    "name": "Tractors Come to Town",
+    "desc": "A convoy of tractors has rolled into town and jammed the roads solid. The farmers say they've come to \"make their point\", trailers piled with potatoes.",
+    "lines": [
+      "Bring them some water",
+      "Before they leave, the farmers press a sack of potatoes on you.",
+      "Shut the door and lie low",
+      "You shut the door and lie low for a while."
+    ]
+  },
+  "66": {
+    "name": "One Cable for All",
+    "desc": "New town rule: every charger must use the same kind of plug.",
+    "lines": [
+      "Customers no longer have to go round borrowing charging cables."
+    ]
+  },
+  "67": {
+    "name": "The Cucumber Inspector",
+    "desc": "An inspector has come with a protractor to measure your cucumbers. Ones that curve too much can't be called \"Class I Cucumbers\".",
+    "lines": [
+      "Cooperate fully",
+      "He measures all afternoon, then presents you with a certificate.",
+      "Offer him a cucumber salad",
+      "When he's finished he says: \"The curvy ones are nice too.\""
+    ]
+  },
+  "68": {
+    "name": "The Two-Hour Lunch",
+    "desc": "Today's customers take two hours over lunch.",
+    "lines": [
+      "Starter, main, dessert, coffee: not one can be skipped."
+    ]
+  },
+  "69": {
+    "name": "Thanks in Five Languages",
+    "desc": "A table orders in five different languages. Between pointing and guessing, you somehow get every dish right.",
+    "lines": [
+      "By the time they leave, you know five ways to say \"thank you\"."
+    ]
+  },
+  "70": {
+    "name": "Monastery Honey",
+    "desc": "Monks from the monastery up the hill have come down to sell their own honey, made, they say, to a recipe centuries old.",
+    "lines": [
+      "Buy a jar",
+      "It goes into your desserts.",
+      "Pass",
+      "The monk gives you a piece of beeswax anyway: \"May your pots never burn.\""
+    ]
+  },
+  "71": {
+    "name": "Last Orders",
+    "desc": "The bell rings behind the bar and someone shouts: \"Last orders!\"",
+    "lines": [
+      "Everyone rushes to order one last bite."
+    ]
+  },
+  "72": {
+    "name": "Fish on Friday",
+    "desc": "Every Friday, the whole street smells of fried fish and vinegar.",
+    "lines": [
+      "Table after table follows their noses to your door."
+    ]
+  },
+  "73": {
+    "name": "Sunday Roast",
+    "desc": "At Sunday lunchtime, families come in for a roast, served with little batter puddings that puff up in the oven.",
+    "lines": [
+      "Every family orders enough to cover a big table."
+    ]
+  },
+  "74": {
+    "name": "Three Cups, One Teabag",
+    "desc": "You catch the head chef making three cups of tea from one teabag. He calls it \"sensible living\".",
+    "lines": [
+      "Soon the whole kitchen is saving too."
+    ]
+  },
+  "75": {
+    "name": "The Gnome by the Door",
+    "desc": "At some point a little clay gnome in a red hat appeared by the door, and every morning he's in a new pose.",
+    "lines": [
+      "Nobody admits to putting him there."
+    ]
+  },
+  "76": {
+    "name": "Picnic in the Rain",
+    "desc": "A family insisted on having their picnic in the rain, and ate their sandwiches under umbrellas.",
+    "lines": [
+      "Then they ran into your place for hot soup."
+    ]
+  },
+  "77": {
+    "name": "Four on the Crossing",
+    "desc": "Tourists are queuing at the zebra crossing outside your door, walking across in groups of four for photos, copying a certain old album cover.",
+    "lines": [
+      "Photos done, they drop in for a sit-down."
+    ]
+  },
+  "78": {
+    "name": "Sheep on the Road",
+    "desc": "A huge flock of sheep is blocking the road into town. The shepherd is in no hurry, so the riders have to go the long way round.",
+    "lines": [
+      "Help drive the sheep",
+      "He gives you a piece of his homemade cheese.",
+      "Wait for them to pass",
+      "The flock finally ambles by, and deliveries are running way behind."
+    ]
+  },
+  "79": {
+    "name": "The Trolley and the Wall",
+    "desc": "A tourist keeps pushing a luggage trolley into your wall, over and over, saying he's looking for a \"platform\".",
+    "lines": [
+      "In the end he sits down for a meal."
+    ]
+  },
+  "80": {
+    "name": "New Year's Day Dip",
+    "desc": "On the first morning of the year, a crowd in swimsuits charges into the icy sea.",
+    "lines": [
+      "Back on dry land, they all charge into your place for hot soup."
+    ]
+  },
+  "81": {
+    "name": "The Rubber Duck Race",
+    "desc": "Hundreds of rubber ducks are about to race down the river. A duck costs a few coins, and the money goes to the town's primary school.",
+    "lines": [
+      "Buy a duck",
+      "Your duck bobs over the finish line first!",
+      "Your duck got stuck in the reeds. Still, the money went to a good cause, and that feels nice.",
+      "Watch from the bank",
+      "You cheer on every single duck from the bank."
+    ]
+  },
+  "82": {
+    "name": "Rehearsal",
+    "desc": "The town's theater troupe has borrowed your restaurant to rehearse a play that's several centuries old.",
+    "lines": [
+      "By the end of the afternoon, you know every line by heart."
+    ]
+  },
+  "83": {
+    "name": "Mint Sauce",
+    "desc": "A customer orders roast lamb and insists on a bowl of green mint sauce with it.",
+    "lines": [
+      "Whip some up right away",
+      "He finishes every bite, perfectly content.",
+      "Suggest he try your own sauce",
+      "He takes a taste and nods."
+    ]
+  },
+  "84": {
+    "name": "A Polite Complaint",
+    "desc": "A customer finishes and says, very politely: \"Not bad.\"",
+    "lines": [
+      "You spend the whole afternoon wondering whether that was praise or an insult."
+    ]
+  },
+  "85": {
+    "name": "The Singing Dishwasher",
+    "desc": "Today the dishwasher's noises sound a lot like a song.",
+    "lines": [
+      "Everyone in the kitchen hums along."
     ]
   },
   "86": {
@@ -262,6 +693,65 @@
       "The whole room applauds, and several tables order more."
     ]
   },
+  "88": {
+    "name": "A Proposal Gone Wrong",
+    "desc": "A customer proposes in your restaurant, and the answer is \"Let me think about it.\" Things are a little awkward.",
+    "lines": [
+      "Send over a dessert",
+      "He thanks you, eyes red.",
+      "Quickly put on something upbeat",
+      "The whole room breathes a sigh of relief."
+    ]
+  },
+  "89": {
+    "name": "A Child's Drawing",
+    "desc": "A little kid drew your restaurant, and drew you as a big round head.",
+    "lines": [
+      "You stick the drawing up on the wall."
+    ]
+  },
+  "90": {
+    "name": "Salt for Sugar",
+    "desc": "The apprentice mixed up the salt jar and the sugar jar.",
+    "lines": [
+      "Every dish all morning tastes a bit off, but you live and learn."
+    ]
+  },
+  "91": {
+    "name": "The Broken Spatula",
+    "desc": "The spatula you've used for five years snapped today.",
+    "lines": [
+      "You stand over it in silence for a moment, then go and find a new one."
+    ]
+  },
+  "92": {
+    "name": "The New Apprentice",
+    "desc": "The new apprentice cuts potatoes into chunks of every size.",
+    "lines": [
+      "Customers find it odd, but the apprentice is learning fast."
+    ]
+  },
+  "93": {
+    "name": "Renovations Next Door",
+    "desc": "The place next door has started renovating.",
+    "lines": [
+      "The drilling goes on from morning till night."
+    ]
+  },
+  "94": {
+    "name": "The New Neighbors",
+    "desc": "The renovations next door are finally finished.",
+    "lines": [
+      "The new neighbors bring over a plate of pastries to apologize for the noise."
+    ]
+  },
+  "95": {
+    "name": "The Food Blogger",
+    "desc": "A food blogger spends the whole afternoon filming in your restaurant, phone held high.",
+    "lines": [
+      "Every dish has to be shot from three angles."
+    ]
+  },
   "96": {
     "name": "\"The Soup Was Too Hot\"",
     "desc": "A bad review appeared online: \"The soup was too hot.\"",
@@ -270,6 +760,27 @@
       "Someone liked your reply.",
       "Ignore it",
       "A few customers read the review and didn't come in."
+    ]
+  },
+  "97": {
+    "name": "Seven Sneezes",
+    "desc": "The head chef sneezes seven times in a row.",
+    "lines": [
+      "The neighbors say it means someone is thinking of him."
+    ]
+  },
+  "98": {
+    "name": "The Crow's Gift",
+    "desc": "The crow that perches on your sign every day brought a shiny bottle cap today.",
+    "lines": [
+      "It leaves the cap on your windowsill."
+    ]
+  },
+  "99": {
+    "name": "The One-Station Radio",
+    "desc": "The kitchen radio only picks up one station.",
+    "lines": [
+      "The same song loops from morning till noon."
     ]
   },
   "100": {
@@ -283,6 +794,34 @@
       "He gets them sparkling."
     ]
   },
+  "101": {
+    "name": "Napkin Boats",
+    "desc": "A child folded every napkin on the table into a little boat.",
+    "lines": [
+      "The customers can't bring themselves to unfold them."
+    ]
+  },
+  "102": {
+    "name": "The Lost Rider",
+    "desc": "A rider got lost and kept going all the way to the next town.",
+    "lines": [
+      "He came back with a bag of their local specialties."
+    ]
+  },
+  "103": {
+    "name": "The Stopped Clock",
+    "desc": "The kitchen clock has stopped.",
+    "lines": [
+      "Nobody knows what time it is, and somehow nobody's in a rush."
+    ]
+  },
+  "104": {
+    "name": "Tea After Closing",
+    "desc": "After closing, you sit alone in the empty restaurant with a cup of tea.",
+    "lines": [
+      "You think this is a pretty good little place."
+    ]
+  },
   "105": {
     "name": "The Crooked Sign",
     "desc": "A gust of wind knocked your sign askew.",
@@ -290,11 +829,43 @@
       "Passers-by think it's a new restaurant and come in for a look."
     ]
   },
+  "106": {
+    "name": "The Traveler in the Fog",
+    "desc": "A traveler lost in the fog feels his way into your restaurant.",
+    "lines": [
+      "He says he followed the smell."
+    ]
+  },
+  "107": {
+    "name": "The End of the Rainbow",
+    "desc": "They say there's a pot of gold buried at the end of the rainbow, and it ends right in your backyard.",
+    "lines": [
+      "Dig",
+      "You dig up a rusty pot, and there really is something inside!",
+      "You dig up an old boot.",
+      "Don't dig",
+      "You decide to let the legend stay a legend."
+    ]
+  },
   "108": {
     "name": "The Snowman in a Chef's Hat",
     "desc": "Someone built a snowman outside your door, and it's wearing your chef's hat.",
     "lines": [
       "Every customer wants a photo with it."
+    ]
+  },
+  "109": {
+    "name": "A Low Hum",
+    "desc": "A bolt of lightning hit the town's lightning rod.",
+    "lines": [
+      "Your wok gave a low \"hummm\", and ever since, everything you cook in it tastes amazing."
+    ]
+  },
+  "110": {
+    "name": "The Stargazers",
+    "desc": "A group of stargazers turns up lugging telescopes.",
+    "lines": [
+      "They sit in your restaurant all night, ordering pot after pot of hot tea."
     ]
   },
   "111": {
@@ -321,11 +892,122 @@
       "You hang it by the door."
     ]
   },
+  "114": {
+    "name": "The Violin on the Corner",
+    "desc": "A young man is playing the violin on the street corner, with only two coins in his case.",
+    "lines": [
+      "Drop in a few coins",
+      "He gives you a nod.",
+      "Invite him in for a bowl of noodles",
+      "He eats with gusto and says he'll repay you one day."
+    ]
+  },
+  "115": {
+    "name": "The Show in the Square",
+    "desc": "The young violinist is putting on a show in the square.",
+    "lines": [
+      "After one song, he says: \"This one's for the restaurant on the corner.\""
+    ]
+  },
+  "116": {
+    "name": "The Album Cover",
+    "desc": "He's released an album.",
+    "lines": [
+      "The cover is a picture of your front door."
+    ]
+  },
+  "117": {
+    "name": "The Expedition Arrives",
+    "desc": "A scientific expedition has come to study the lake.",
+    "lines": [
+      "They book your restaurant for lunch and dinner."
+    ]
+  },
+  "118": {
+    "name": "A Shadow on the Sonar",
+    "desc": "A long shadow has shown up on the expedition's sonar. The team leader asks you: do you believe there's something in the lake?",
+    "lines": [
+      "I believe",
+      "The leader gives you a sonar printout as a keepsake.",
+      "I don't",
+      "The leader laughs: \"Neither do I, but that's what they pay me for.\""
+    ]
+  },
+  "119": {
+    "name": "The Expedition Report",
+    "desc": "The expedition report is out. Conclusion: \"A log with a lot of personality.\"",
+    "lines": [
+      "Somehow, even more tourists turn up."
+    ]
+  },
+  "120": {
+    "name": "The Parrot Drops In",
+    "desc": "The neighbor's parrot flew into your kitchen and spent the afternoon there.",
+    "lines": [
+      "It learned to shout the name of your house specialty."
+    ]
+  },
+  "121": {
+    "name": "The Street Crier",
+    "desc": "That parrot has taken up a perch at the end of the street.",
+    "lines": [
+      "It shouts your house specialty over and over."
+    ]
+  },
+  "122": {
+    "name": "The Parrot's New Phrase",
+    "desc": "The parrot has learned a new phrase: \"Too expensive!\" It's been shouting it outside your door all morning.",
+    "lines": [
+      "Teach it to say \"Delicious!\"",
+      "After a whole afternoon, it finally gets it.",
+      "Make peace with a handful of sunflower seeds",
+      "It stops shouting and starts singing instead."
+    ]
+  },
+  "123": {
+    "name": "Two Candidates",
+    "desc": "The merchants' association is electing a new president. The baker and the mechanic both drop by your place to canvass for votes.",
+    "lines": [
+      "Back the baker",
+      "You stick a little note on your door backing the baker.",
+      "Back the mechanic",
+      "You stick a little note on your door backing the mechanic."
+    ]
+  },
+  "124": {
+    "name": "Debate Night",
+    "desc": "The two candidates hold their debate in your restaurant.",
+    "lines": [
+      "Curious onlookers pack the place."
+    ]
+  },
+  "125": {
+    "name": "Election Results",
+    "desc": "The election results are in.",
+    "lines": [
+      "Watch the count in the square",
+      "Your candidate won! On their very first day, the new president comes to eat at your place.",
+      "Your candidate lost. The new president still comes in for a bowl, and hopes you'll back them next time.",
+      "Wait for the news at the restaurant",
+      "Your candidate won! On their very first day, the new president comes to eat at your place.",
+      "Your candidate lost. The new president still comes in for a bowl, and hopes you'll back them next time."
+    ]
+  },
   "126": {
     "name": "Film Crew",
     "desc": "A film crew borrowed your restaurant to shoot a scene.",
     "lines": [
       "Once word got out, the whole town came to watch."
+    ]
+  },
+  "127": {
+    "name": "The Bottle in the Cellar",
+    "desc": "In a corner of the cellar you find a dusty old bottle of wine. The year on the label is older than you are.",
+    "lines": [
+      "Sell it to the town's collector",
+      "The collector snaps it up on the spot and gives you a stack of vouchers for it.",
+      "Keep it on display behind the bar",
+      "The longer you look at that old bottle on the bar, the luckier today feels."
     ]
   },
   "128": {
@@ -335,11 +1017,184 @@
       "Early next morning, there are three vouchers in your mailbox."
     ]
   },
+  "129": {
+    "name": "The Handwritten Recipe Book",
+    "desc": "After her meal, an old lady leaves behind a handwritten recipe book.",
+    "lines": [
+      "She walked out without a word."
+    ]
+  },
+  "130": {
+    "name": "The Lottery Winner",
+    "desc": "A customer scratches a winning lottery ticket right there at the table.",
+    "lines": [
+      "He shouts: \"Everyone's meal is on me today!\""
+    ]
+  },
+  "131": {
+    "name": "Town-Wide Blackout",
+    "desc": "The power is out all over town.",
+    "lines": [
+      "Only your stoves are still burning, and people come by candlelight to eat."
+    ]
+  },
+  "132": {
+    "name": "Hail Through the Awning",
+    "desc": "Hail punched a hole in the awning over your door.",
+    "lines": [
+      "A few regulars help you patch it up."
+    ]
+  },
+  "133": {
+    "name": "Keep the Fire Lit",
+    "desc": "The old folks say that on a Blood Moon night, the stove must never go out.",
+    "lines": [
+      "You sit up all night minding the stove."
+    ]
+  },
+  "134": {
+    "name": "Airing the Quilts",
+    "desc": "The sun is out for once, and the whole street has hung their quilts out to air.",
+    "lines": [
+      "Everyone with fresh, sunny bedding is in a great mood."
+    ]
+  },
+  "135": {
+    "name": "Water Off for Half a Day",
+    "desc": "The town is repairing the water mains, so the water is off for half a day.",
+    "lines": [
+      "The kitchen has to make do with buckets of stored water."
+    ]
+  },
+  "136": {
+    "name": "School Open Day",
+    "desc": "It's open day at the primary school, and parents bring their kids in to eat.",
+    "lines": [
+      "The place livens up in no time."
+    ]
+  },
+  "137": {
+    "name": "Battle of the Speakers",
+    "desc": "Two dance groups in the square are trying to drown out each other's speakers.",
+    "lines": [
+      "Once they've danced themselves out, they all come to rest their feet at your place."
+    ]
+  },
+  "138": {
+    "name": "The Parcel Point Moves In",
+    "desc": "The parcel pickup point has moved in next door.",
+    "lines": [
+      "People collecting parcels pop in for a bite on the way."
+    ]
+  },
+  "139": {
+    "name": "New Place Across the Street",
+    "desc": "A new restaurant has opened across the street, and there's a long queue outside on opening day.",
+    "lines": [
+      "Go and try it",
+      "You learn a thing or two.",
+      "Ignore it",
+      "Some customers wander over to join their queue."
+    ]
+  },
+  "140": {
+    "name": "The Wedding Party",
+    "desc": "A couple about to marry want to book out your whole restaurant for their wedding reception.",
+    "lines": [
+      "Accept",
+      "Walk-ins can't get in, but the couple pays generously.",
+      "Politely decline",
+      "You wish them a long and happy marriage."
+    ]
+  },
+  "141": {
+    "name": "A Regular's Birthday",
+    "desc": "It's an old regular's birthday, so you bring him a slice of cake.",
+    "lines": [
+      "The whole restaurant sings \"Happy Birthday\"."
+    ]
+  },
+  "142": {
+    "name": "The Night Market Opens",
+    "desc": "A night market has opened on the street outside your door.",
+    "lines": [
+      "Wave after wave of tired shoppers drop in for a sit-down."
+    ]
+  },
+  "143": {
+    "name": "The Stallholders' Squabble",
+    "desc": "Two stallholders at the Market are bickering, each shouting a lower price than the other.",
+    "lines": [
+      "When they're done, they each toss a handful into your basket."
+    ]
+  },
+  "144": {
+    "name": "The Rider Race",
+    "desc": "The riders have started racing each other to see who delivers fastest.",
+    "lines": [
+      "It's faster, sure, but now and then a little soup gets spilled."
+    ]
+  },
+  "145": {
+    "name": "Takeaway Deals",
+    "desc": "The takeaway app is running a \"spend more, save more\" promotion.",
+    "lines": [
+      "Orders suddenly come pouring in."
+    ]
+  },
+  "146": {
+    "name": "The Hood Goes on Strike",
+    "desc": "The range hood has broken down, and the kitchen is full of smoke.",
+    "lines": [
+      "You have to cook slowly over a low flame with the windows open."
+    ]
+  },
+  "147": {
+    "name": "Leaky Roof",
+    "desc": "The roof is leaking.",
+    "lines": [
+      "You put a basin on Table 3."
+    ]
+  },
+  "148": {
+    "name": "The Daily's Reporter",
+    "desc": "A reporter from the Town Daily comes to interview you: \"What's the secret behind your house specialty?\"",
+    "lines": [
+      "Tell the truth: \"I just cook with care.\"",
+      "When the piece comes out, customers find you refreshingly down-to-earth.",
+      "Talk it up: \"A secret family recipe, three generations old!\"",
+      "Crowds come in, with very high expectations."
+    ]
+  },
+  "149": {
+    "name": "The Lost Wallet",
+    "desc": "You find a wallet under one of the tables.",
+    "lines": [
+      "Hand it in to the police station",
+      "The owner gets it back and comes by specially to thank you.",
+      "Keep it at the front desk until someone claims it",
+      "The owner turns up in the afternoon and stays for a meal."
+    ]
+  },
+  "150": {
+    "name": "Rainbow After the Rain",
+    "desc": "The rain has stopped, and a rainbow hangs in the sky.",
+    "lines": [
+      "Customers all rush to the door for photos, then come back and order another dish."
+    ]
+  },
   "151": {
     "name": "A Review in the Paper",
     "desc": "The Town Daily ran an anonymous food review, and it's about your restaurant.",
     "lines": [
       "\"A quiet, honest little place.\""
+    ]
+  },
+  "152": {
+    "name": "The Show in the Square",
+    "desc": "The young violinist is putting on a show in the square.",
+    "lines": [
+      "After one song, he says: \"This one's for the restaurant on the corner.\""
     ]
   }
 }
