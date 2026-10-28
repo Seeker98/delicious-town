@@ -1538,6 +1538,28 @@ export interface WishEntryTable {
   settled_at: TsNullable;
 }
 
+/** 随机事件和问答（设计稿 2026-10-28 §8）：每店每时段一行 */
+export interface RandomEventTable {
+  id: Generated<string>;
+  rest_id: number;
+  /** 游戏日 + 时段序号，如 2026-10-28#3 */
+  slot: string;
+  kind: 'notice' | 'choice' | 'quiz' | 'quizNight';
+  /** 事件编号或题号 */
+  ref_id: number;
+  status: 'pending' | 'done' | 'expired';
+  /** 选项 key，或答的选项（打乱前的下标） */
+  choice: string | null;
+  /** 实际给了什么；jsonb，读出为对象，写入传 JSON 字符串 */
+  outcome: ColumnType<unknown, string | null | undefined, string | null>;
+  /** 选项顺序、问答夜进度等；jsonb */
+  payload: ColumnType<unknown, string | null | undefined, string | null>;
+  seen: Default<boolean>;
+  created_at: Ts;
+  expires_at: Ts;
+  resolved_at: TsNullable;
+}
+
 export interface KujiPoolTable {
   id: Generated<string>;
   shard_id: number;
@@ -1713,6 +1735,7 @@ export interface DB {
   bulk_bid: BulkBidTable;
   wish_round: WishRoundTable;
   wish_entry: WishEntryTable;
+  random_event: RandomEventTable;
   rest_income_day: RestIncomeDayTable;
   rest_income_best: RestIncomeBestTable;
   town_daily: TownDailyTable;

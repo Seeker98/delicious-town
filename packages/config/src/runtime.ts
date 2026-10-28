@@ -5,6 +5,7 @@ import { DEVICE_TYPE, GOODS_TYPE } from './ids';
 import { parseAppraiseDef, parseTeacherCert } from './mysterious';
 import { parseMapDef, parseMissileDef } from './temple';
 import { buildAchIndex, type AchIndex } from './achievements';
+import type { RandomEventDef, RandomQuizDef } from './randomEvents';
 import type { Tuning } from './tuning';
 import type {
   ActivationTask,
@@ -94,6 +95,9 @@ export interface GameConfig {
   readonly settingDocs: ConfigBundle['settingDocs'];
   /** 成就编号、计数键、状态档的索引（2026-10-19） */
   readonly achievements: AchIndex;
+  /** 随机事件和问答（2026-10-28） */
+  readonly randomEvents: ReadonlyMap<number, RandomEventDef>;
+  readonly randomQuiz: ReadonlyMap<number, RandomQuizDef>;
   readonly newbieCodes: ConfigBundle['newbieCodes'];
   requireMc(id: number): MysteriousCookbook;
   grade(g: number): CookbookGrade;
@@ -271,6 +275,8 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
     towerFloors: new Map(bundle.towerFloors.map((f) => [f.floor, f])),
     settingDocs: bundle.settingDocs,
     achievements: buildAchIndex(bundle.achievements, bundle.trophies),
+    randomEvents: new Map(bundle.randomEvents.map((e) => [e.id, e])),
+    randomQuiz: new Map(bundle.randomQuiz.map((q) => [q.id, q])),
     newbieCodes: bundle.newbieCodes,
     appraiseTools,
     teacherCerts,

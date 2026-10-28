@@ -206,6 +206,16 @@ export default {
     redeem: (p) => `使用了兌換碼 ${String(p.code ?? '')}`,
     // 問題記錄 154：以下類型原來顯示英文類型名
     'bar.darts': (p) => `酒吧飛鏢${p.result === 'win' ? '贏了' : p.result === 'draw' ? '打平' : '輸了'}`,
+    randomEvent: (p) =>
+      p.kind === 'quiz'
+        ? p.correct === true
+          ? '答對了一道小鎮問答'
+          : p.correct === false
+            ? '答錯了一道小鎮問答'
+            : '回答了一道小鎮問答'
+        : p.kind === 'quizNight'
+          ? `酒吧問答夜答對 ${n(p, 'score')} 道`
+          : '店裡遇到了一件小事',
     'bar.devil': (p) =>
       p.result === 'win'
         ? `魔鬼辣杯撐過 ${n(p, 'survived')} 杯, 贏了`

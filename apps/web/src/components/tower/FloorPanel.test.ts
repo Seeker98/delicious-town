@@ -43,6 +43,7 @@ describe('FloorPanel', () => {
         ],
         kujiThemes: [],
         proficiency: [],
+        randomEvents: [],
         cookbooks: [],
       },
     });

@@ -210,6 +210,10 @@ export const useCatalogStore = defineStore('catalog', {
     data(kind: CatalogDataKind, id: number): CatalogDataEntry | undefined {
       return this.dataMap.get(`${kind}:${id}`);
     },
+    /** 随机事件的标题（2026-10-28） */
+    eventName(id: number): string | undefined {
+      return this.dataMap.get(`randomEvents:${id}`)?.name;
+    },
     weather(id: number): { type: number; special: boolean } | undefined {
       return this.weatherKinds.get(id);
     },

@@ -3,6 +3,7 @@ import { computed, onMounted } from 'vue';
 import { RouterView, useRoute } from 'vue-router';
 import { setCaptchaHandler, setEventsListener } from './api/client';
 import AnnouncePopup from './components/AnnouncePopup.vue';
+import RandomEventPopup from './components/RandomEventPopup.vue';
 import AppHeader from './components/AppHeader.vue';
 import BottomNav from './components/BottomNav.vue';
 import DtConfirmHost from './components/DtConfirmHost.vue';
@@ -63,6 +64,8 @@ onMounted(() => {
     >
       <RouterView :key="locale.locale" />
     </main>
+    <!-- 排在公告前面：同时有时公告盖在上面 -->
+    <RandomEventPopup v-if="inGame" />
     <AnnouncePopup v-if="inGame" />
     <ShilingIntroPopup v-if="inGame" />
     <DtConfirmHost />

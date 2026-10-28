@@ -10,6 +10,9 @@ export function effectSourceName(e: { sourceType: string; sourceId: number }, co
   if (e.sourceType === 'equip') return '厨具';
   // 酒吧魔鬼辣杯喝到特辣酒（子项目 4C-3）
   if (e.sourceType === 'bar') return '宿醉';
+  // 随机事件（2026-10-28）：没有对错的问答用 1000 + 题号
+  if (e.sourceType === 'randomEvent')
+    return e.sourceId >= 1000 ? '小镇问答' : (config.randomEvents.get(e.sourceId)?.title ?? '随机事件');
   if (e.sourceType === 'suit') {
     const suit = config.suits.get(Math.floor(e.sourceId / 10));
     const tier = suit?.tiers[e.sourceId % 10];

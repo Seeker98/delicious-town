@@ -171,6 +171,7 @@ describe('RestTasksView', () => {
         tower: [],
         kujiThemes: [],
         proficiency: [],
+        randomEvents: [],
         cookbooks: [],
       },
     });
@@ -540,6 +541,7 @@ describe('任务名里的 {n} 按区服数值代入（515 支线扩充 B 遗留�
         tower: [],
         kujiThemes: [],
         proficiency: [],
+        randomEvents: [],
         cookbooks: [],
       },
     });

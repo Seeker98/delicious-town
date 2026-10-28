@@ -1,0 +1,345 @@
+{
+  "1": {
+    "name": "La balade des porteurs",
+    "desc": "Les porteurs du marché sont allés se promener tous ensemble sur la place, pour «\u202fdiscuter sérieusement de la vie\u202f».",
+    "lines": [
+      "Après la balade, toute l'équipe vient se reposer chez vous."
+    ]
+  },
+  "2": {
+    "name": "La sieste",
+    "desc": "Le quartier s'est mis à la sieste après le déjeuner. L'après-midi, la rue est calme comme un jour férié.",
+    "lines": [
+      "Les clients tout juste réveillés sont d'humeur particulièrement douce."
+    ]
+  },
+  "3": {
+    "name": "À lire avant d'entrer",
+    "desc": "Nouveau règlement en ville\u202f: avant d'entrer, chaque client doit lire une «\u202fNotice des préférences culinaires\u202f» et cocher «\u202fJ'accepte\u202f» point par point. Quelle mise en page choisissez-vous\u202f?",
+    "lines": [
+      "Un gros bouton «\u202fTout accepter\u202f»",
+      "Les clients entrent vite, puis découvrent qu'on leur recommande plein de plats dont ils ne veulent pas.",
+      "Tout détailler honnêtement",
+      "Une file se forme à la porte, mais l'inspecteur salue votre rigueur."
+    ]
+  },
+  "4": {
+    "name": "L'horloge prend une heure d'avance",
+    "desc": "Cette nuit, l'horloge du beffroi a avancé d'une heure toute seule. La moitié de la ville vit à la nouvelle heure, l'autre moitié à l'ancienne.",
+    "lines": [
+      "Les clients du déjeuner arrivent en deux vagues."
+    ]
+  },
+  "5": {
+    "name": "Le concours de chant d'à côté",
+    "desc": "Ce soir, la télé retransmet le concours de chant de la ville voisine. Les costumes sont tous plus extravagants les uns que les autres, et personne ne comprend le système de vote. Vous soutenez qui\u202f?",
+    "lines": [
+      "Les jumeaux en cape de papier alu",
+      "Ils ont gagné\u202f! Vous hurlez de joie dans le restaurant, et les clients sabrent le champagne.",
+      "Ils n'ont pas gagné. Vous avez fredonné toute la soirée et perdu votre voix, mais le moral est bon.",
+      "Le papi qui chante tout sur une seule note",
+      "Le papi a gagné\u202f! Vous hurlez de joie dans le restaurant, et les clients sabrent le champagne.",
+      "Le papi n'a pas gagné. Vous avez fredonné toute la soirée et perdu votre voix, mais le moral est bon.",
+      "Le groupe électro avec machine à fumée",
+      "Le groupe a gagné\u202f! Vous hurlez de joie dans le restaurant, et les clients sabrent le champagne.",
+      "Le groupe n'a pas gagné. Vous avez fredonné toute la soirée et perdu votre voix, mais le moral est bon."
+    ]
+  },
+  "6": {
+    "name": "Formulaire 27-B",
+    "desc": "Courrier de la mairie\u202f: la police de votre enseigne ne figure pas au «\u202fCatalogue des polices recommandées\u202f». Merci de remplir le formulaire 27-B, avec trois justificatifs et deux tampons.",
+    "lines": [
+      "S'en occuper sérieusement",
+      "Une matinée entière de démarches. Très instructif.",
+      "Caler un pied de table avec",
+      "La table ne branle plus, mais l'inspecteur qui passe l'après-midi vous jette un long regard."
+    ]
+  },
+  "7": {
+    "name": "Une caisse de bouteilles vides",
+    "desc": "Une caisse de bouteilles vides traîne dans l'arrière-cour. La vieille dame d'à côté dit que chacune est consignée.",
+    "lines": [
+      "Les rapporter",
+      "Vous récupérez une petite poignée de pièces.",
+      "Les donner au vieux monsieur qui fouille les poubelles chaque jour",
+      "Il vante votre restaurant à tous ceux qu'il croise."
+    ]
+  },
+  "8": {
+    "name": "Le nouveau rond-point",
+    "desc": "Un nouveau rond-point vient d'ouvrir à l'entrée de la ville. Les livreurs y entrent et n'en ressortent plus, ils tournent encore et encore.",
+    "lines": [
+      "Les livraisons ralentissent, mais tourner en rond, ça fait du sport."
+    ]
+  },
+  "9": {
+    "name": "Le groupe aux perches à selfie",
+    "desc": "Un groupe de touristes armés de longues perches s'entasse chez vous. Chaque plat a droit à cinq minutes de photos avant d'être goûté.",
+    "lines": [
+      "Le restaurant s'anime, mais les clients deviennent plus difficiles."
+    ]
+  },
+  "10": {
+    "name": "Un mot sur la porte",
+    "desc": "Le restaurant d'en face a scotché un mot sur sa porte\u202f: «\u202fParti à la mer. À dans un mois\u202f!\u202f»",
+    "lines": [
+      "Ses habitués n'ont plus qu'à venir chez vous."
+    ]
+  },
+  "12": {
+    "name": "Des fruits dans un plat salé\u202f?",
+    "desc": "Deux tables se disputent pour savoir si l'on peut mettre des fruits sucrés dans un plat salé, et exigent que vous tranchiez.",
+    "lines": [
+      "Oui",
+      "Les clients amateurs de nouveautés restent.",
+      "Non",
+      "Les puristes, ravis, commandent un plat de plus.",
+      "Se cacher en cuisine",
+      "Pendant que vous êtes caché, vous trouvez un bon sous un placard."
+    ]
+  },
+  "13": {
+    "name": "L'inspecteur au nœud papillon",
+    "desc": "Un inspecteur en nœud papillon désigne votre carte\u202f: cette sauce n'a droit à son nom que si elle est faite dans une certaine vallée.",
+    "lines": [
+      "La renommer «\u202fsauce façon Machin\u202f»",
+      "Le nom s'allonge, et les clients hésitent en commandant.",
+      "Lui en faire goûter un bol sur-le-champ",
+      "Après avoir mangé, il reste longtemps silencieux\u202f: «\u202fHmm... cette vallée pourrait peut-être s'agrandir un peu.\u202f»"
+    ]
+  },
+  "15": {
+    "name": "Une file parfaitement droite",
+    "desc": "Allez savoir comment, une longue file parfaitement droite s'est formée toute seule devant votre porte.",
+    "lines": [
+      "Tout le monde est très poli\u202f: personne ne double, et personne n'ose demander ce qu'on attend au juste."
+    ]
+  },
+  "16": {
+    "name": "La marmite de la brocante",
+    "desc": "À la brocante du week-end, il y a une vieille marmite toute noire. Le vendeur dit qu'elle était à son arrière-grand-père et la cède pour pas cher.",
+    "lines": [
+      "L'acheter",
+      "Une vieille marmite ordinaire, mais les plats y prennent plus de goût.",
+      "Une ligne de petites lettres est gravée au fond. En grattant, vous trouvez deux bons cachés dessous.",
+      "Ne pas l'acheter",
+      "Vous caressez la poignée, puis vous la reposez."
+    ]
+  },
+  "17": {
+    "name": "Le cochon fugueur",
+    "desc": "Le cochon fugueur du voisin a fouillé votre jardin toute la matinée et a déterré un truc noir à l'odeur très forte.",
+    "lines": [
+      "Rendre le cochon et sa trouvaille au voisin",
+      "Le voisin vous remercie avec un panier d'ingrédients.",
+      "Le garder pour l'étudier",
+      "Une pincée râpée dans un plat, et les clients réclament la recette."
+    ]
+  },
+  "19": {
+    "name": "Soir de match",
+    "desc": "Ce soir, les équipes de deux villes s'affrontent, et tout le monde s'entasse là où il y a une télé.",
+    "lines": [
+      "Installer une télé",
+      "C'est complet, et ça crie fort.",
+      "Pas de télé\u202f: un coin tranquille pour ceux qui le veulent",
+      "Ne viennent que des clients qui veulent manger au calme."
+    ]
+  },
+  "33": {
+    "name": "Seize heures",
+    "desc": "À seize heures pile, toute la rue pose ce qu'elle fait pour prendre le thé avec deux petits biscuits.",
+    "lines": [
+      "Les buveurs de thé entrent s'asseoir en passant."
+    ]
+  },
+  "34": {
+    "name": "Toutes les bouilloires à la fois",
+    "desc": "Dès la fin du feuilleton du soir, toute la ville se lève pour faire chauffer l'eau du thé, et le disjoncteur saute d'un coup.",
+    "lines": [
+      "Il faut rallumer les fourneaux, mais pendant cette minute dans le noir, les clients bavardent de plus belle."
+    ]
+  },
+  "35": {
+    "name": "Le fromage qui dévale la pente",
+    "desc": "Quelqu'un a lancé une meule entière de fromage du haut de la colline, et toute la ville court derrière.",
+    "lines": [
+      "Courir aussi",
+      "Vous avez fait une belle chute, mais tout le monde a bien ri.",
+      "Vous attrapez le fromage le premier\u202f!",
+      "Vendre de la soupe chaude en bas de la pente",
+      "Les coureurs épuisés viennent tous prendre une soupe."
+    ]
+  },
+  "36": {
+    "name": "Parler météo",
+    "desc": "Aujourd'hui, chaque client qui entre vous parle de la météo pendant dix minutes.",
+    "lines": [
+      "C'est lent, mais après une bonne discussion, plus personne ne fait le difficile."
+    ]
+  },
+  "37": {
+    "name": "Pardon, pardon",
+    "desc": "Un client vous a marché sur le pied. Vous avez dit «\u202fpardon\u202f» tous les deux en même temps, puis vous vous êtes encore excusés cinq fois.",
+    "lines": [
+      "Tout le restaurant est devenu d'une politesse extrême."
+    ]
+  },
+  "39": {
+    "name": "Soirée feu de joie et feu d'artifice",
+    "desc": "En ce soir d'automne, la ville allume un grand feu de joie et tire un feu d'artifice. Quelqu'un a même jeté un épouvantail dans les flammes.",
+    "lines": [
+      "Après le feu d'artifice, tout le monde a faim."
+    ]
+  },
+  "40": {
+    "name": "Soirée quiz au bar",
+    "desc": "Ce soir, le bar organise un quiz. Trois questions\u202f: qui répond juste aux trois remporte le bocal de bons posé sur le comptoir.",
+    "lines": [
+      "Aucune bonne réponse. Au moins, vous avez eu une ginger beer gratuite.",
+      "Une bonne réponse\u202f: le barman vous donne un bon.",
+      "Deux bonnes réponses\u202f: le barman vous donne un bon.",
+      "Sans faute\u202f! Le bocal de bons du comptoir est à vous."
+    ]
+  },
+  "43": {
+    "name": "Plus un parapluie",
+    "desc": "Tous les parapluies du porte-parapluie ont été empruntés. Les clients arrivent trempés.",
+    "lines": [
+      "À peine assis, ils réclament une soupe chaude."
+    ]
+  },
+  "44": {
+    "name": "Le long cou du lac",
+    "desc": "Quelqu'un affirme avoir vu un grand monstre au long cou dans le lac près de la ville, mais toutes les photos sont floues. Les touristes affluent.",
+    "lines": [
+      "Aller voir au lac vous aussi",
+      "Vous l'avez photographié\u202f! Bon, c'est un peu flou.",
+      "Vous avez photographié un tronc qui flotte.",
+      "Rester et s'occuper des touristes",
+      "Les touristes remplissent votre restaurant."
+    ]
+  },
+  "49": {
+    "name": "Le chat roux squatte une table",
+    "desc": "Un chat roux s'est approprié une table pour dormir, impossible de le réveiller.",
+    "lines": [
+      "Les clients font la queue pour le caresser."
+    ]
+  },
+  "50": {
+    "name": "La pièce sur la tranche",
+    "desc": "Une pièce est tombée du comptoir et a atterri debout sur la tranche.",
+    "lines": [
+      "Vous sentez que c'est votre jour de chance."
+    ]
+  },
+  "51": {
+    "name": "Le chef a le cœur brisé",
+    "desc": "Le chef vient de se faire quitter, et aujourd'hui tous les plats sont un peu trop salés.",
+    "lines": [
+      "Mais tous ceux qui y goûtent disent\u202f: «\u202fIl y a une histoire dans ce plat.\u202f»"
+    ]
+  },
+  "53": {
+    "name": "Réunion de cafards",
+    "desc": "Dans un coin, les cafards semblent tenir une réunion, bien alignés en rang.",
+    "lines": [
+      "Bien en rang, ils sont faciles à écraser."
+    ]
+  },
+  "86": {
+    "name": "Le parapluie oublié",
+    "desc": "Hier, un client a oublié son parapluie chez vous.",
+    "lines": [
+      "Il revient le chercher aujourd'hui et insiste pour vous offrir un bon en remerciement."
+    ]
+  },
+  "87": {
+    "name": "Demande en mariage réussie",
+    "desc": "Un client a posé un genou à terre dans votre restaurant pour faire sa demande, et c'est oui\u202f!",
+    "lines": [
+      "Toute la salle applaudit, et plusieurs tables recommandent des plats."
+    ]
+  },
+  "96": {
+    "name": "«\u202fLa soupe était trop chaude\u202f»",
+    "desc": "Un avis négatif est apparu en ligne\u202f: «\u202fLa soupe était trop chaude.\u202f»",
+    "lines": [
+      "Répondre poliment et promettre de prévenir la prochaine fois",
+      "Quelqu'un a aimé votre réponse.",
+      "L'ignorer",
+      "Quelques clients ont lu l'avis et ne sont pas entrés."
+    ]
+  },
+  "100": {
+    "name": "Le client sans portefeuille",
+    "desc": "Un client finit son repas, tâte ses poches et avoue avoir oublié son argent.",
+    "lines": [
+      "Le laisser payer la prochaine fois",
+      "Trois jours plus tard, il revient, avec un petit cadeau en prime pour vous remercier.",
+      "Vous ne l'avez jamais revu.",
+      "Lui faire faire la vaisselle pour régler",
+      "Il rend tout étincelant."
+    ]
+  },
+  "105": {
+    "name": "L'enseigne de travers",
+    "desc": "Un coup de vent a mis votre enseigne de travers.",
+    "lines": [
+      "Les passants croient à un nouveau restaurant et entrent jeter un œil."
+    ]
+  },
+  "108": {
+    "name": "Le bonhomme de neige à toque",
+    "desc": "Quelqu'un a fait un bonhomme de neige devant votre porte, et il porte votre toque.",
+    "lines": [
+      "Tous les clients veulent une photo avec lui."
+    ]
+  },
+  "111": {
+    "name": "Le client solitaire",
+    "desc": "Un client à lunettes noires s'assoit seul dans un coin, goûte une bouchée de chaque plat, puis note quelque chose dans un petit carnet.",
+    "lines": [
+      "Le chouchouter\u202f: deux plats offerts",
+      "Il hoche la tête, referme son carnet et s'en va.",
+      "Le traiter comme les autres",
+      "Il termine, referme son carnet et s'en va."
+    ]
+  },
+  "112": {
+    "name": "Une critique dans le journal",
+    "desc": "Le Journal de la ville a publié une critique gastronomique anonyme, et elle parle justement de votre restaurant.",
+    "lines": [
+      "«\u202fUn service empressé au point d'en être suspect, mais la cuisine est vraiment bonne.\u202f»"
+    ]
+  },
+  "113": {
+    "name": "La petite plaque",
+    "desc": "Quelqu'un vous a envoyé une petite plaque de laiton gravée d'une seule étoile. Sans signature.",
+    "lines": [
+      "Vous l'accrochez à l'entrée."
+    ]
+  },
+  "126": {
+    "name": "Un tournage chez vous",
+    "desc": "Une équipe de cinéma a tourné une scène dans votre restaurant.",
+    "lines": [
+      "La nouvelle s'est répandue, et toute la ville est venue voir."
+    ]
+  },
+  "128": {
+    "name": "Pluie d'étoiles filantes",
+    "desc": "Ce soir, il y a une pluie d'étoiles filantes. Vous faites un vœu sur la première.",
+    "lines": [
+      "Le lendemain matin, trois bons vous attendent dans la boîte aux lettres."
+    ]
+  },
+  "151": {
+    "name": "Une critique dans le journal",
+    "desc": "Le Journal de la ville a publié une critique gastronomique anonyme, et elle parle justement de votre restaurant.",
+    "lines": [
+      "«\u202fUne petite adresse tranquille et honnête.\u202f»"
+    ]
+  }
+}

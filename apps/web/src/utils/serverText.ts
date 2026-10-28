@@ -161,6 +161,8 @@ export interface EffectNames {
   goodsName(id: number): string;
   deviceName(id: number): string | undefined;
   suit(id: number): { name: string; tiers: Array<{ need: number }> } | undefined;
+  /** 随机事件的标题（目录 data.randomEvents） */
+  eventName?(id: number): string | undefined;
 }
 
 /**
@@ -176,6 +178,11 @@ export function effectName(e: Pick<EffectDto, 'sourceType' | 'sourceId' | 'name'
       return t.equip;
     case 'bar':
       return t.hangover;
+    // 随机事件（2026-10-28）：没有对错的问答用 1000 + 题号
+    case 'randomEvent':
+      return e.sourceId >= 1000
+        ? activeMessages().randomEvent.effectQuiz
+        : (x.eventName?.(e.sourceId) ?? e.name);
     case 'suit': {
       const suit = x.suit(Math.floor(e.sourceId / 10));
       const tier = suit?.tiers[e.sourceId % 10];

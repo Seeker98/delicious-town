@@ -211,6 +211,16 @@ const events: Messages['events'] = {
     redeem: (p) => `Usaste el código ${String(p.code ?? '')}`,
     'bar.darts': (p) =>
       `Dardos en el bar: ${p.result === 'win' ? 'victoria' : p.result === 'draw' ? 'empate' : 'derrota'}`,
+    randomEvent: (p) =>
+      p.kind === 'quiz'
+        ? p.correct === true
+          ? 'Acertó una pregunta del concurso del pueblo'
+          : p.correct === false
+            ? 'Falló una pregunta del concurso del pueblo'
+            : 'Respondió una pregunta del concurso del pueblo'
+        : p.kind === 'quizNight'
+          ? `Noche de preguntas en el bar: ${n(p, 'score')} acierto(s)`
+          : 'Pasó algo curioso en el restaurante',
     'bar.devil': (p) =>
       p.result === 'win'
         ? `Chile del Diablo: aguantaste ${n(p, 'survived')} ${plEs(n(p, 'survived'), 'vaso', 'vasos')} y ganaste`

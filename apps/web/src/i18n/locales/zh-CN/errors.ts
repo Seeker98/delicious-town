@@ -345,6 +345,8 @@ export default {
     delivery_gone: '这一单已经领过了',
     broadcast_text: '广播内容要 1~64 个字',
     no_round: '这一局已经结束了, 请重新开局',
+    random_event_gone: '这件事已经过去了',
+    random_event_expired: '这件事挂得太久, 已经作废了',
     cup_decide: '猜中了, 先选收手还是继续',
     cup_not_won: '这一轮还没猜中',
     cup_round: '这一局的进度已经变了, 已重新读取',

@@ -476,6 +476,11 @@
     "blindMin": 60,
     "pick": { "topK": 5, "minRests": 3, "cooldownDays": 3, "activeDays": 7 }
   },
+  "randomEvents": {
+    "slotHours": 4, "quizShare": 0.33, "pendingHours": 4, "noRepeatDays": 7, "opinionNoRepeatDays": 14,
+    "chainWeightPerDay": 5, "chainWeightMax": 40, "newbieLevel": 10, "correctTickets": 1, "wrongExpPerLevel": 5,
+    "foodLevelStep": 10, "foodLevelMax": 4, "retainDays": 180
+  },
   "wishTree": {
     "hour": 20, "minLevel": 10, "titleDays": 3, "consolationLevel": 1,
     "prizes": [

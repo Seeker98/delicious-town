@@ -358,6 +358,8 @@ const errors: Messages['errors'] = {
     delivery_gone: 'This delivery has already been claimed',
     broadcast_text: 'Broadcasts must be 1–64 characters',
     no_round: 'This round is over. Start a new one.',
+    random_event_gone: 'That moment has passed.',
+    random_event_expired: 'You waited too long, so this one has expired.',
     cup_decide: 'You guessed right. Stop or go on first.',
     cup_not_won: 'You haven’t guessed this round yet',
     cup_round: 'This game has moved on. It has been reloaded.',

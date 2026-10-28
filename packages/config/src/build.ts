@@ -19,6 +19,7 @@ import { wishTreeErrors } from './wishtree';
 import { shilingErrors } from './shiling';
 import { foodWeights } from './foodSupply';
 import { ACH_PERFECT_ICON, buildAchievements, rawAchLine, rawTrophy } from './achievements';
+import { buildRandomContent, eventLines, rawRandomEvent, rawRandomQuiz } from './randomEvents';
 import {
   ART_DEVICE_TYPES,
   ART_BREED_KEYS,
@@ -172,6 +173,8 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   const suitsRaw = parse('designed/equip_suits', z.array(raw.rawSuit));
   const achRaw = parse('designed/achievements', z.array(rawAchLine));
   const trophiesRaw = parse('designed/trophies', z.array(rawTrophy));
+  const randomEventsRaw = parse('designed/random_events', z.array(rawRandomEvent));
+  const randomQuizRaw = parse('designed/random_quiz', z.array(rawRandomQuiz));
   const mcProfRaw = parse('designed/mc_proficiency', z.array(raw.rawMcProficiency));
   const tuning = parse('game/tuning', tuningSchema);
   const holidays = parse('game/holidays', raw.holidaysFile);
@@ -248,6 +251,8 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     !suitsRaw ||
     !achRaw ||
     !trophiesRaw ||
+    !randomEventsRaw ||
+    !randomQuizRaw ||
     !tuning ||
     !holidays ||
     !guessAwardRaw ||
@@ -1361,6 +1366,13 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     errors,
   );
 
+  const random = buildRandomContent(
+    randomEventsRaw,
+    randomQuizRaw,
+    { weatherIds: new Set(weather.map((w) => w.id)) },
+    errors,
+  );
+
   if (errors.length > 0) return { bundle: null, errors };
 
   const i18n = buildI18n(
@@ -1400,6 +1412,18 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
         ...(l.labels ? { tiers: l.labels } : {}),
       })),
       trophies: trophiesRaw.map((t) => ({ id: t.key, name: t.name })),
+      randomEvents: random.events.map((e) => ({
+        id: e.id,
+        name: e.title,
+        desc: e.body,
+        lines: eventLines(e),
+      })),
+      randomQuiz: random.quiz.map((q) => ({
+        id: q.id,
+        name: q.q,
+        ...(q.explain ? { note: q.explain } : {}),
+        lines: q.choices,
+      })),
     },
     src,
     errors,
@@ -1453,6 +1477,8 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     goodsExchange,
     achievements,
     trophies,
+    randomEvents: random.events,
+    randomQuiz: random.quiz,
     extra: {},
   };
   errors.push(...retiredErrors(itemRefs(body), retired));

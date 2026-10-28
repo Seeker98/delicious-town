@@ -47,6 +47,8 @@ import { createBulkService, type BulkService } from './modules/bulk/service';
 import { createWishTreeService, type WishTreeService } from './modules/wishtree/service';
 import { bulkJobs } from './modules/bulk/jobs';
 import { wishTreeJobs } from './modules/wishtree/jobs';
+import { createRandomEventService, type RandomEventService } from './modules/randomEvent/service';
+import { randomEventJobs } from './modules/randomEvent/jobs';
 import { createAcquireService, type AcquireService } from './modules/acquire/service';
 import { createMailService, type MailService } from './modules/mail/service';
 import { createRedeemService, type RedeemService } from './modules/redeem/service';
@@ -116,6 +118,7 @@ export interface Game {
   wealth: WealthService;
   bulk: BulkService;
   wishtree: WishTreeService;
+  randomEvent: RandomEventService;
   acquire: AcquireService;
   jobs: PeriodicJob[];
 }
@@ -163,6 +166,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...breedJobs(deps));
   jobs.push(...bulkJobs(deps));
   jobs.push(...wishTreeJobs(deps));
+  jobs.push(...randomEventJobs(deps));
   jobs.push(...predictJobs(deps));
   jobs.push(...dailyJobs(deps, app.writer));
   jobs.push(...commissionJobs(deps));
@@ -205,6 +209,7 @@ export function createGame(app: AppDeps): Game {
     wealth: createWealthService(deps),
     bulk: createBulkService(deps),
     wishtree: createWishTreeService(deps),
+    randomEvent: createRandomEventService(deps, world),
     acquire: createAcquireService(deps),
     shop,
     market,

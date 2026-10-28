@@ -15,6 +15,19 @@ export {
   type TrophyTone,
 } from './achievements';
 export {
+  RANDOM_EFFECT_KEYS,
+  eventLines,
+  eventTexts,
+  hasDebuff,
+  type RandomEffectKey,
+  type RandomEventDef,
+  type RandomOption,
+  type RandomOutcome,
+  type RandomQuizDef,
+  type RandomReward,
+  type RandomWhen,
+} from './randomEvents';
+export {
   I18N_FIELDS,
   I18N_KINDS,
   type BundleI18n,

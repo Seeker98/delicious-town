@@ -361,6 +361,8 @@ const errors: Messages['errors'] = {
     delivery_gone: 'Este reparto ya se ha reclamado',
     broadcast_text: 'Los anuncios deben tener entre 1 y 64 caracteres',
     no_round: 'Esta partida terminó. Empieza una nueva.',
+    random_event_gone: 'Ese momento ya pasó.',
+    random_event_expired: 'Has esperado demasiado y esto ha caducado.',
     cup_decide: 'Acertaste: primero elige plantarte o seguir',
     cup_not_won: 'Aún no has acertado esta ronda',
     cup_round: 'Esta partida ha avanzado. Se ha vuelto a cargar.',
