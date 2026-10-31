@@ -3,7 +3,7 @@ import { gameDay, weekStart } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import { notEnough } from '../../core/errors';
 import { recordChange, type GainOptions } from '../../core/resources';
-import { runSystemOp, type Op } from '../../core/op';
+import type { Op } from '../../core/op';
 import type { GameDeps } from '../../core/deps';
 import type { DB } from '../../db/schema';
 import { accrue, decayOf } from './rules';
@@ -118,9 +118,15 @@ export async function accrueShiling(
   return gain;
 }
 
+/** 衰减一个事务处理多少家店（锁住的时令行不太多、不太久） */
+const DECAY_BATCH = 1000;
+
 /**
- * 每日衰减（时令值改法 2026-10-13）：余额超过 decay.floor 的店逐家扣 decayOf 算出的点数，记流水、不发提示；
- * 本周获得、周榜不动。单店出错记日志继续
+ * 每日衰减（时令值改法 2026-10-13）：余额超过 decay.floor 的店扣 decayOf 算出的点数，记流水、不发提示；
+ * 本周获得、周榜不动。
+ * 按批处理（性能整理 2026-10-31，原来一家一个事务、每家 6 条查询）：一个事务里按店号锁住这一批的时令行、
+ * 用 decayOf 算好扣多少，再一条语句改余额、写流水；列表 1 条、每批 4 条，不随店数增长。
+ * 只锁时令行、不锁餐厅行：加减时令值都是对这一行的相对更新，和玩家操作按行排队。一批出错记日志，这批的店都算失败，接着下一批
  */
 export async function decayShiling(
   d: GameDeps,
@@ -130,42 +136,55 @@ export async function decayShiling(
 ): Promise<{ shops: number; total: number; failed: number }> {
   const { tuning } = await d.shards.settings(shardId);
   const dt = tuning.shiling.decay;
-  const rows = await d.db
-    .selectFrom('rest_shiling')
-    .select('rest_id')
-    .where('shard_id', '=', shardId)
-    .where('balance', '>', dt.floor)
-    .orderBy('rest_id')
-    .execute();
+  // 先列出要衰减的店，再按批锁住重读余额：期间被花到 floor 以下的，decayOf 是 0，不扣
+  const all = (
+    await d.db
+      .selectFrom('rest_shiling')
+      .select('rest_id')
+      .where('shard_id', '=', shardId)
+      .where('balance', '>', dt.floor)
+      .orderBy('rest_id')
+      .execute()
+  ).map((r) => r.rest_id);
   let shops = 0;
   let total = 0;
   let failed = 0;
-  for (const r of rows) {
+  for (let i = 0; i < all.length; i += DECAY_BATCH) {
+    const part = all.slice(i, i + DECAY_BATCH);
     try {
-      const n = await runSystemOp(d, shardId, r.rest_id, { source: 'shiling.decay', now }, async (o) => {
-        const cur = await o.tx
+      const r = await d.db.transaction().execute(async (tx) => {
+        // 按店号顺序加锁
+        const rows = await tx
           .selectFrom('rest_shiling')
-          .select('balance')
-          .where('rest_id', '=', o.rest.id)
+          .select(['rest_id', 'balance'])
+          .where('rest_id', 'in', part)
+          .orderBy('rest_id')
           .forUpdate()
-          .executeTakeFirst();
-        const cut = decayOf(cur?.balance ?? 0, o.tuning.shiling.decay);
-        if (cut <= 0) return 0;
-        await o.tx
-          .updateTable('rest_shiling')
-          .set({ balance: sql<number>`balance - ${cut}` })
-          .where('rest_id', '=', o.rest.id)
           .execute();
-        recordChange(o, 'shiling', -cut, { event: false });
-        return cut;
+        const cuts = rows
+          .map((x) => ({ id: x.rest_id, cut: decayOf(x.balance, dt) }))
+          .filter((x) => x.cut > 0);
+        if (cuts.length === 0) return { shops: 0, total: 0 };
+        const ids = cuts.map((x) => x.id);
+        const ns = cuts.map((x) => x.cut);
+        // 流水和 runSystemOp 写的一样：kind shiling、来源 shiling.decay、时间 now
+        await sql`
+          with u as (
+            select * from unnest(${ids}::int[], ${ns}::int[]) as u(rest_id, cut)
+          ), s as (
+            update rest_shiling s set balance = s.balance - u.cut from u where s.rest_id = u.rest_id
+          )
+          insert into ledger (rest_id, kind, item_id, delta, source, ref_rest_id, created_at)
+          select rest_id, 'shiling', null, -cut, 'shiling.decay', null, ${now}::timestamptz from u`.execute(
+          tx,
+        );
+        return { shops: cuts.length, total: ns.reduce((a, b) => a + b, 0) };
       });
-      if (n > 0) {
-        shops += 1;
-        total += n;
-      }
+      shops += r.shops;
+      total += r.total;
     } catch (err) {
-      failed += 1;
-      log?.error({ err, shardId, restId: r.rest_id }, 'shiling decay failed');
+      failed += part.length;
+      log?.error({ err, shardId, restIds: [part[0], part[part.length - 1]] }, 'shiling decay failed');
     }
   }
   return { shops, total, failed };

@@ -6,6 +6,7 @@ import { createShard } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
 import { cid } from '../../../test/items';
 import { eventCount } from '../../../test/quests';
+import { queryCounter } from '../../../test/queries';
 import { setWeather } from '../../../test/takeaway';
 import type { RestCtx } from '../../core/deps';
 import { runOp, type Op } from '../../core/op';
@@ -313,6 +314,66 @@ describe('每日衰减（时令值改法 2026-10-13）', () => {
       [shops[1], -1, 'shiling.decay'],
       [shops[2], -10, 'shiling.decay'],
     ]);
+  });
+
+  /** 一个区服建几家有时令值的店（逐家建，店号和余额同序） */
+  async function shopsWith(balances: number[]): Promise<{ shardId: number; shops: number[] }> {
+    const shardId = await createShard(t.db);
+    const shops: number[] = [];
+    for (const balance of balances) {
+      const ctx = await newRestaurant(t, { shardId, patch: { star_level: 1 } });
+      await give(ctx, balance);
+      shops.push(ctx.restaurantId);
+    }
+    return { shardId, shops };
+  }
+
+  it('按批衰减（性能整理 2026-10-31）：每家的余额、流水和逐家按 decayOf 算的一样', async () => {
+    const floor = T.decay.floor;
+    const balances = [0, floor - 1, floor, floor + 1, floor + 99, floor + 100, 1500, 12_345, 99_999];
+    const { shardId, shops } = await shopsWith(balances);
+    const cuts = balances.map((b) => decayOf(b, T.decay));
+    const r = await decayShiling(t.game.deps, shardId, t.clock.now);
+    expect(r).toEqual({
+      shops: cuts.filter((c) => c > 0).length,
+      total: cuts.reduce((a, b) => a + b, 0),
+      failed: 0,
+    });
+    const rows = await t.db
+      .selectFrom('rest_shiling')
+      .select(['rest_id', 'balance'])
+      .where('rest_id', 'in', shops)
+      .execute();
+    const byShop = new Map(rows.map((x) => [x.rest_id, x.balance]));
+    expect(shops.map((id) => byShop.get(id))).toEqual(balances.map((b, i) => b - cuts[i]!));
+    const ledger = await t.db
+      .selectFrom('ledger')
+      .select(['rest_id', 'delta', 'source', 'item_id', 'ref_rest_id', 'created_at'])
+      .where('rest_id', 'in', shops)
+      .where('kind', '=', 'shiling')
+      .orderBy('rest_id')
+      .execute();
+    expect(ledger.map((x) => [x.rest_id, Number(x.delta), x.source, x.item_id, x.ref_rest_id])).toEqual(
+      shops.flatMap((id, i) => (cuts[i]! > 0 ? [[id, -cuts[i]!, 'shiling.decay', null, null]] : [])),
+    );
+    expect(ledger.every((x) => x.created_at.getTime() === t.clock.now.getTime())).toBe(true);
+  });
+
+  it('查询条数不随店数增长', async () => {
+    const q = queryCounter();
+    try {
+      const deps = { ...t.game.deps, db: q.db };
+      const few = await shopsWith([600, 1500, 3000]);
+      const many = await shopsWith([600, 1500, 3000, 4000, 5000, 6000, 7000, 8000]);
+      const a = await q.count(() => decayShiling(deps, few.shardId, t.clock.now));
+      const b = await q.count(() => decayShiling(deps, many.shardId, t.clock.now));
+      expect(a.result.shops).toBe(3);
+      expect(b.result.shops).toBe(8);
+      expect(b.n).toBe(a.n);
+      expect(a.n).toBeLessThanOrEqual(5);
+    } finally {
+      await q.db.destroy();
+    }
   });
 });
 

@@ -8,7 +8,11 @@ import { BOARD_SOURCES } from '../rank/boards';
 import { rankRows } from '../rank/ranking';
 import { bumpCountersFor } from './counters';
 
-/** 一个区服的玩家店一家一家算（每家一个事务，一家出错记下来接着算） */
+/**
+ * 一个区服的玩家店一家一家算（一家出错记下来接着算）。
+ * 性能整理 2026-10-31：算口径要的餐厅列一次读出来；每家只读口径值和已有的成就两条，够上了才开事务写
+ * （原来每家一个事务、先重读整行，没够上的也要 5 条）。只在补发完的区服跑（每天的补算）时，记成就不再查区服补发完没有
+ */
 export async function scanShard(
   d: GameDeps,
   ctx: Pick<JobContext, 'shardId' | 'settings' | 'log'>,
@@ -16,26 +20,35 @@ export async function scanShard(
 ): Promise<{ rests: number; awarded: number; failed: number }> {
   const rests = await d.db
     .selectFrom('restaurant')
-    .select('id')
+    .select([
+      'id',
+      'shard_id',
+      'account_id',
+      'level',
+      'star_level',
+      'renown',
+      'street_id',
+      'cookbook_counts',
+      'created_at',
+      'npc',
+    ])
     .where('shard_id', '=', ctx.shardId)
     .where('npc', '=', false)
     .orderBy('id')
     .execute();
   let awarded = 0;
   let failed = 0;
-  for (const { id } of rests) {
+  for (const rest of rests) {
     try {
-      awarded += await d.db.transaction().execute(async (tx) => {
-        const rest = await tx
-          .selectFrom('restaurant')
-          .selectAll()
-          .where('id', '=', id)
-          .executeTakeFirstOrThrow();
-        return (await evaluateRest(tx, d.config, ctx.settings.tuning.achieve, rest, o)).length;
-      });
+      awarded += (
+        await evaluateRest(d.db, d.config, ctx.settings.tuning.achieve, rest, {
+          ...o,
+          shardDone: !o.backfilled,
+        })
+      ).length;
     } catch (err) {
       failed++;
-      ctx.log.error({ err, restId: id }, 'achieve scan failed');
+      ctx.log.error({ err, restId: rest.id }, 'achieve scan failed');
     }
   }
   return { rests: rests.length, awarded, failed };

@@ -45,8 +45,15 @@ export async function evaluateRest(
     | 'street_id'
     | 'cookbook_counts'
     | 'created_at'
-  >,
-  o: { now: Date; backfilled: boolean; events?: GameEvent[]; values?: AchValues },
+  > & { npc?: boolean },
+  o: {
+    now: Date;
+    backfilled: boolean;
+    events?: GameEvent[];
+    values?: AchValues;
+    /** 调用方已经知道区服补发完了没有（awardAchievements 就不再查） */
+    shardDone?: boolean;
+  },
 ): Promise<string[]> {
   // 可能在调用方的事务里跑：一条一条查，不并发；调用方算过口径值就直接用
   const values = o.values ?? (await achValues(db, config, rest, o.now));
@@ -56,21 +63,28 @@ export async function evaluateRest(
     .where('rest_id', '=', rest.id)
     .execute();
   const got = new Set(have.map((r) => r.ach_id));
-  // 补发时把已经到了的里程碑称号补上（上线以前就过了 12,000 点的店不会再“跨过”它；grantIcon 重复发没关系）
-  if (o.backfilled) await grantMilestoneIcons(db, config, rest.id, o.now);
   const ids: string[] = [];
   for (const line of config.bundle.achievements)
     for (const tier of line.tiers)
       if (!got.has(tier.id) && valueOf(values, line, tier) >= tier.n) ids.push(tier.id);
-  if (ids.length === 0) return [];
-  return awardAchievements(db, config, t, {
-    shardId: rest.shard_id,
-    restId: rest.id,
-    ids,
-    now: o.now,
-    backfilled: o.backfilled,
-    events: o.events,
-  });
+  if (!o.backfilled && ids.length === 0) return [];
+  const write = async (tx: Kysely<DB>): Promise<string[]> => {
+    // 补发时把已经到了的里程碑称号补上（上线以前就过了 12,000 点的店不会再“跨过”它；grantIcon 重复发没关系）
+    if (o.backfilled) await grantMilestoneIcons(tx, config, rest.id, o.now);
+    if (ids.length === 0) return [];
+    return awardAchievements(tx, config, t, {
+      shardId: rest.shard_id,
+      restId: rest.id,
+      ids,
+      now: o.now,
+      backfilled: o.backfilled,
+      events: o.events,
+      ...(rest.npc === false ? { player: true } : {}),
+      ...(o.shardDone !== undefined ? { shardDone: o.shardDone } : {}),
+    });
+  };
+  // 每天的补算传进来的不是事务（性能整理 2026-10-31）：大多数店什么也没够上，只读两条；要写时才开事务
+  return db.isTransaction ? write(db) : db.transaction().execute(write);
 }
 
 export function createAchieveService(d: GameDeps) {
@@ -189,7 +203,12 @@ export function createAchieveService(d: GameDeps) {
       const v = await achValues(tx, d.config, rest, now);
       // 区服还没补发完（刚上线）：这时补算出来的也算补发，不刷动态、不进本周新增
       const backfilled = !(await shardBackfilled(tx, ctx.shardId));
-      await evaluateRest(tx, d.config, s.tuning.achieve, rest, { now, backfilled, values: v });
+      await evaluateRest(tx, d.config, s.tuning.achieve, rest, {
+        now,
+        backfilled,
+        values: v,
+        shardDone: !backfilled,
+      });
       return v;
     });
     return viewOf(d.db, ctx, ctx.restaurantId, values);

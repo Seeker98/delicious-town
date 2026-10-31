@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { GameEvent } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
+import { queryCounter } from '../../../test/queries';
 import { emitAction } from '../../core/action';
 import { runSystemOp } from '../../core/op';
 import { backfillCounters } from '../../db/migrations/0087_achievements';
@@ -12,7 +13,7 @@ import { settleShardRound } from '../settlement/runner';
 import { rankRows } from '../rank/ranking';
 import { bumpCounters, crossed, raiseCounter } from './counters';
 import { ACH_BACKFILL_VERSION } from './award';
-import { achieveJobs } from './jobs';
+import { achieveJobs, scanShard } from './jobs';
 import { achValues } from './metrics';
 import { gainExp } from '../../core/resources';
 import { createAchieveService, evaluateRest } from './service';
@@ -340,6 +341,37 @@ describe('上线补发和每天补算', () => {
     expect((await logs(r.restaurantId, 'achieve.got')).map((l) => (l.params as { id: string }).id)).toContain(
       'level.3',
     );
+  });
+
+  it('每天的补算：没够上新成就的店每家只读两条，不开事务（性能整理 2026-10-31）；够上的照常记、写动态', async () => {
+    const shardId = await createShard(t.db);
+    await markBackfilled(shardId);
+    const rests = [];
+    for (let i = 0; i < 3; i++) rests.push(await newRestaurant(t, { shardId, patch: { level: 45 } }));
+    const settings = await t.game.deps.shards.settings(shardId);
+    const ctx = { shardId, settings, log: { error: () => {} } };
+    const q = queryCounter();
+    try {
+      const deps = { ...t.game.deps, db: q.db };
+      const first = await scanShard(deps, ctx, { now: t.clock.now, backfilled: false });
+      expect(first).toMatchObject({ rests: 3, failed: 0 });
+      expect(first.awarded).toBeGreaterThan(0);
+      expect((await logs(rests[0]!.restaurantId, 'achieve.got')).length).toBeGreaterThan(0);
+      const again = await q.count(() => scanShard(deps, ctx, { now: t.clock.now, backfilled: false }));
+      expect(again.result).toEqual({ rests: 3, awarded: 0, failed: 0 });
+      expect(again.n).toBe(1 + 2 * 3);
+      // 够上了：只多事务和写的几条，不再查是不是蟹老板、区服补发完没有
+      await t.db
+        .updateTable('restaurant')
+        .set({ level: 99 })
+        .where('id', '=', rests[1]!.restaurantId)
+        .execute();
+      const one = await q.count(() => scanShard(deps, ctx, { now: t.clock.now, backfilled: false }));
+      expect(one.result.awarded).toBeGreaterThan(0);
+      expect(one.sqls.filter((s) => /from "restaurant" where "id"|from "ach_shard"/.test(s))).toEqual([]);
+    } finally {
+      await q.db.destroy();
+    }
   });
 });
 
