@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  perf1031:
+    'Performance: the game opens faster the first time (the main file is less than half its former size, and the language pack and your account now download together), switching back to the game no longer refreshes again within a minute, and the friend badge in the bottom bar no longer reloads on every page change',
   fixes1031:
     'Fixes: the daily shop deal never goes below the sell-back price, and its label shows the real discount; like Ichiban Kuji, the Wishing Tree now needs a verified email and an account at least 3 days old; fridge foods are sold to pay a fridge debt only after 3 full days of debt (not counting the day it started)',
   events1031: 'Random events: added a new batch of events',
