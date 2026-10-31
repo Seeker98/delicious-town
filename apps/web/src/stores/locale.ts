@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { markRaw } from 'vue';
 import { DEFAULT_LOCALE, detectLocale, isLocale, type Locale } from '@dt/shared';
-import { currentMessages, loadMessages, setActive, type Messages } from '../i18n';
+import { cachedMessages, loadMessages, setActive, type Messages } from '../i18n';
 import { useCatalogStore } from './catalog';
 
 const KEY = 'dt_locale';
@@ -44,8 +44,9 @@ export const useLocaleStore = defineStore('locale', {
   // 翻译包很大且不会改，不做深度响应化（backlog 多语言）
   state: () => ({
     locale: DEFAULT_LOCALE as Locale,
-    // 启动时第一个翻译包到之前是空的（性能 2026-10-31：简中不再打进主包）；应用等有了才挂载，组件里照常当作有
-    messages: rawOrNone(currentMessages()) as Messages,
+    // 简中加载过就是简中；启动时第一个翻译包到之前是空的（性能 2026-10-31：简中不再打进主包），
+    // 应用等有了才挂载，组件里照常当作有
+    messages: rawOrNone(cachedMessages(DEFAULT_LOCALE)) as Messages,
     pendingPick: savedPick(),
   }),
   actions: {

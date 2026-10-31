@@ -44,8 +44,8 @@ function storeState(): { locale: Locale; messages: Messages | undefined } | unde
 /** 普通函数（报错、新闻、日志文案，数字格式）用：当前语言的翻译 */
 export const activeMessages = (): Messages => (storeState()?.messages ?? current.messages)!;
 export const activeLocale = (): Locale => storeState()?.locale ?? current.locale;
-/** 已经有翻译包了没有（启动时第一个到之前没有） */
-export const currentMessages = (): Messages | undefined => current.messages;
+/** 已经加载过的某种语言的翻译包（没加载过为 undefined） */
+export const cachedMessages = (l: Locale): Messages | undefined => cache.get(l);
 export function setActive(locale: Locale, messages: Messages): void {
   current = { locale, messages };
 }
