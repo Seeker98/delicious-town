@@ -30,6 +30,7 @@ import type { Messages } from '../i18n';
 import { errorMessage } from '../i18n/zh-CN';
 import type { UiArtName } from '../art/generated/names';
 import { useCatalogStore } from '../stores/catalog';
+import { useAnnounceStore } from '../stores/announce';
 import { useConfirmStore } from '../stores/confirm';
 import { usePageTitle } from '../stores/pageTitle';
 import { useRestaurantStore } from '../stores/restaurant';
@@ -39,6 +40,7 @@ import { formatNum, timeHM } from '../utils/format';
 import { questTitle } from '../utils/questName';
 import { serverNowMs } from '../utils/serverNow';
 import { remainText } from '../utils/remain';
+import { useVisibleRefresh } from '../utils/visibleRefresh';
 import { effectName } from '../utils/serverText';
 import { CUSTOMER_NAMES } from '../utils/labels';
 import { restName } from '../utils/npcName';
@@ -83,10 +85,11 @@ const announcements = ref<AnnouncementDto[]>([]);
 const options = ref<DeviceOptionsDto | null>(null);
 const pickingSlot = ref<number | null>(null);
 
-/** 首页公告横幅（子项目 6A）：读失败就不显示 */
+/** 首页公告横幅（子项目 6A）：读失败就不显示；和重要公告弹窗共用一次请求（性能 2026-10-31） */
+const announceStore = useAnnounceStore();
 async function loadAnnouncements() {
   try {
-    announcements.value = (await endpoints.announcements()).items;
+    announcements.value = await announceStore.load();
   } catch {
     announcements.value = [];
   }
@@ -133,6 +136,7 @@ async function loadGuideCodes() {
 
 /** fresh：操作完要最新的概况；进页面、定时刷新时和顶栏同时在读就共用一个请求 */
 async function load(fresh = false) {
+  visible.touch();
   void loadAnnouncements();
   void loadSignIn();
   // 概况、任务、白食互不依赖，一起读（性能排查 2026-10-08：原来一个接一个，线上多两轮往返）
@@ -426,21 +430,16 @@ const effectGroups = computed(() => {
 });
 
 let timer: ReturnType<typeof setInterval> | undefined;
-const onVisible = () => {
-  if (document.visibilityState === 'visible') void load();
-};
+/** 回到前台时读一次；一分钟内读过就不读（性能 2026-10-31：原来每次切回来都读 5 个接口） */
+const visible = useVisibleRefresh(() => load());
 onMounted(() => {
   void load();
-  // 应用在后台（切走、锁屏）时不读，回到前台时 onVisible 马上读一次
+  // 应用在后台（切走、锁屏）时不读，回到前台时上面的 visible 读一次
   timer = setInterval(() => {
     if (!document.hidden) void load();
   }, 240_000);
-  document.addEventListener('visibilitychange', onVisible);
 });
-onBeforeUnmount(() => {
-  clearInterval(timer);
-  document.removeEventListener('visibilitychange', onVisible);
-});
+onBeforeUnmount(() => clearInterval(timer));
 </script>
 
 <template>

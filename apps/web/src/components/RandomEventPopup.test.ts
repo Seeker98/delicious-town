@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { RandomEventDto, RandomQuestionDto } from '@dt/shared';
 import { ApiError } from '../api/client';
@@ -67,6 +67,8 @@ describe('RandomEventPopup（随机事件，设计稿 2026-10-28 §10）', () =>
     vi.clearAllMocks();
     setActivePinia(createPinia());
     vi.mocked(endpoints.randomEventSeen).mockResolvedValue({ ok: true });
+    // 店读到了、区服开着随机事件才问（性能 2026-10-31）
+    useRestaurantStore().rest = { disabledFeatures: [] } as never;
   });
 
   it('没有事件不弹', async () => {
@@ -220,5 +222,58 @@ describe('RandomEventPopup（随机事件，设计稿 2026-10-28 §10）', () =>
     await flushPromises();
     expect(endpoints.randomEventCurrent).toHaveBeenCalledTimes(2);
     expect(w.find('[data-testid="random-event"]').exists()).toBe(false);
+  });
+
+  describe('什么时候问（性能 2026-10-31）', () => {
+    const setHidden = (hidden: boolean) => {
+      vi.spyOn(document, 'hidden', 'get').mockReturnValue(hidden);
+      vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(hidden ? 'hidden' : 'visible');
+    };
+    afterEach(() => vi.restoreAllMocks());
+
+    it('区服关着随机事件：不问，也不定时问', async () => {
+      vi.useFakeTimers();
+      try {
+        useRestaurantStore().rest = { disabledFeatures: ['randomEvents'] } as never;
+        await mountPopup(ev());
+        await vi.advanceTimersByTimeAsync(30 * 60_000);
+        expect(endpoints.randomEventCurrent).not.toHaveBeenCalled();
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('店还没读到时先不问，读到了、开着再问一次', async () => {
+      const s = useRestaurantStore();
+      s.rest = null;
+      await mountPopup(null);
+      expect(endpoints.randomEventCurrent).not.toHaveBeenCalled();
+      s.rest = { disabledFeatures: [] } as never;
+      await flushPromises();
+      expect(endpoints.randomEventCurrent).toHaveBeenCalledTimes(1);
+    });
+
+    it('页面在后台时不问（定时的也跳过）；切回前台问一次，一分钟内再切回来不问', async () => {
+      vi.useFakeTimers();
+      try {
+        setHidden(true);
+        await mountPopup(null);
+        await vi.advanceTimersByTimeAsync(10 * 60_000);
+        expect(endpoints.randomEventCurrent).not.toHaveBeenCalled();
+        setHidden(false);
+        document.dispatchEvent(new Event('visibilitychange'));
+        await flushPromises();
+        expect(endpoints.randomEventCurrent).toHaveBeenCalledTimes(1);
+        document.dispatchEvent(new Event('visibilitychange'));
+        await flushPromises();
+        expect(endpoints.randomEventCurrent).toHaveBeenCalledTimes(1);
+        await vi.advanceTimersByTimeAsync(60_001);
+        document.dispatchEvent(new Event('visibilitychange'));
+        await flushPromises();
+        expect(endpoints.randomEventCurrent).toHaveBeenCalledTimes(2);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
   });
 });

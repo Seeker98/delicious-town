@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  perf1031:
+    'Rendimiento: el juego abre más rápido la primera vez (solo se descarga tu idioma, a la vez que tu cuenta), volver al juego ya no vuelve a actualizar si pasó menos de un minuto, y el aviso de Amigos de la barra inferior ya no se recarga en cada cambio de página',
   fixes1031:
     'Correcciones: la oferta diaria de la tienda ya no baja del precio de reventa y su etiqueta muestra el descuento real; como en el Ichiban Kuji, el árbol de los deseos ahora pide un correo verificado y una cuenta de al menos 3 días; los alimentos de la nevera solo se venden para pagar una deuda tras 3 días completos de deuda (sin contar el día en que empezó)',
   events1031: 'Eventos aleatorios: una nueva tanda de eventos',

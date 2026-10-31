@@ -3,16 +3,19 @@ import { computed, onMounted, ref } from 'vue';
 import type { AnnouncementDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
+import { useAnnounceStore } from '../stores/announce';
 
 /** 重要公告弹窗（子项目 6A）：进游戏时逐条弹出没看过的重要公告，关一条记一条已看 */
 const t = useT();
 const queue = ref<AnnouncementDto[]>([]);
 const current = computed(() => queue.value[0] ?? null);
+/** 和首页横幅共用一次请求（性能 2026-10-31） */
+const announce = useAnnounceStore();
 
 onMounted(async () => {
   try {
-    const r = await endpoints.announcements();
-    queue.value = r.items.filter((a) => a.important && !a.seen);
+    const items = await announce.load();
+    queue.value = items.filter((a) => a.important && !a.seen);
   } catch {
     // 读取失败就不弹，不影响进游戏
   }
@@ -21,6 +24,7 @@ onMounted(async () => {
 async function close() {
   const a = current.value;
   if (!a) return;
+  announce.markSeen(a.id);
   try {
     await endpoints.announcementSeen(a.id);
   } catch {

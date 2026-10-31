@@ -211,6 +211,11 @@ describe('RestaurantHomeView', () => {
       document.dispatchEvent(new Event('visibilitychange'));
       await flushPromises();
       expect(endpoints.overview).toHaveBeenCalledTimes(3);
+      // 一分钟内来回切：不再读（性能 2026-10-31：原来每次切回来都读 5 个接口）
+      await vi.advanceTimersByTimeAsync(30_000);
+      document.dispatchEvent(new Event('visibilitychange'));
+      await flushPromises();
+      expect(endpoints.overview).toHaveBeenCalledTimes(3);
       w.unmount();
     } finally {
       vi.useRealTimers();

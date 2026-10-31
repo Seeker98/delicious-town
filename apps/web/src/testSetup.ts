@@ -1,6 +1,8 @@
 import { webcrypto } from 'node:crypto';
 import { config } from '@vue/test-utils';
 import { getActivePinia } from 'pinia';
+import { primeMessages } from './i18n';
+import zhCN from './i18n/locales/zh-CN';
 
 /**
  * 测试里多半用 setActivePinia 建了 pinia，挂载组件时没装进应用：组件里取 store 时 Vue 会警告“找不到 pinia”，
@@ -20,3 +22,9 @@ config.global.plugins.push({
  */
 if (!globalThis.crypto?.subtle)
   Object.defineProperty(globalThis, 'crypto', { value: webcrypto, configurable: true });
+
+/**
+ * 简中翻译包不再打进主包（性能 2026-10-31），应用启动时要先加载：测试里预先放好，
+ * 组件测试照旧一开始就是简中，不用每条都等加载
+ */
+primeMessages('zh-CN', zhCN);

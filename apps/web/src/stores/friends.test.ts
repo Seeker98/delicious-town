@@ -23,7 +23,7 @@ describe('好友申请数（导航红点）', () => {
       .mockReturnValueOnce(second.p as never);
     const s = useFriendsStore();
     const a = s.refreshPending();
-    const b = s.refreshPending();
+    const b = s.refreshPending({ force: true });
     second.resolve([{}, {}] as never);
     await b;
     first.resolve([{}, {}, {}, {}, {}] as never);
@@ -40,5 +40,36 @@ describe('好友申请数（导航红点）', () => {
     old.resolve([{}, {}, {}] as never);
     await a;
     expect(s.pending).toBe(1);
+  });
+
+  it('30 秒内再切页面不再读（性能 2026-10-31）；读失败下次照常读；页面直接写了也算刚读过', async () => {
+    vi.useFakeTimers();
+    try {
+      vi.mocked(endpoints.friendRequests)
+        .mockClear()
+        .mockResolvedValue([{}] as never);
+      const s = useFriendsStore();
+      await s.refreshPending();
+      await s.refreshPending();
+      expect(endpoints.friendRequests).toHaveBeenCalledTimes(1);
+      vi.advanceTimersByTime(30_001);
+      await s.refreshPending();
+      expect(endpoints.friendRequests).toHaveBeenCalledTimes(2);
+      vi.advanceTimersByTime(30_001);
+      vi.mocked(endpoints.friendRequests).mockRejectedValueOnce(new Error('network'));
+      await s.refreshPending();
+      await s.refreshPending();
+      expect(endpoints.friendRequests).toHaveBeenCalledTimes(4);
+      vi.advanceTimersByTime(30_001);
+      s.setPending(0);
+      await s.refreshPending();
+      expect(endpoints.friendRequests).toHaveBeenCalledTimes(4);
+      // 换号清掉以后马上读
+      s.$reset();
+      await s.refreshPending();
+      expect(endpoints.friendRequests).toHaveBeenCalledTimes(5);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

@@ -12,6 +12,7 @@
     "e2e": "playwright test",
     "i18n:tw": "node scripts/gen-zh-tw.mjs",
     "icons": "node scripts/gen-icons.mjs",
+    "utilities": "node scripts/gen-utilities.mjs",
     "art": "node scripts/gen-art.mjs",
     "hant": "node scripts/gen-hant-fold.mjs"
   },

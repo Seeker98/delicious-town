@@ -6,6 +6,7 @@ import { useT } from '../composables/useT';
 import { activeLocale } from '../i18n';
 import { useServerClock } from '../utils/serverClock';
 import { setServerOffset } from '../utils/serverNow';
+import { useVisibleRefresh } from '../utils/visibleRefresh';
 
 /**
  * 顶栏的当前时间（问题记录 348）：按服务器时间走（本机时钟不准也对），北京时间；
@@ -35,13 +36,13 @@ watch(open, (v) => {
 onBeforeUnmount(() => {
   document.removeEventListener('pointerdown', onDown);
   document.removeEventListener('keydown', onKey);
-  document.removeEventListener('visibilitychange', onVisible);
 });
 /** 拿到服务器时间（或读失败）之前不显示，免得先闪一下本机时间 */
 const ready = ref(false);
 
 /** 向服务器对一次时：全站的服务器时差也跟着更新；读失败隔 1 秒、3 秒再试两次（backlog），都不行就按上次对过的 */
 async function syncTime(retry = 0) {
+  if (retry === 0) visible.touch();
   try {
     server.value = (await endpoints.serverTime()).now;
     setServerOffset(server.value);
@@ -49,13 +50,12 @@ async function syncTime(retry = 0) {
     if (retry < 2) setTimeout(() => void syncTime(retry + 1), retry === 0 ? 1000 : 3000);
   }
 }
-/** 从后台切回来重新对一次（稳健性批：原来只在挂载时对一次，手机休眠、设备对时后就不准） */
-const onVisible = () => {
-  if (document.visibilityState === 'visible') void syncTime();
-};
+/**
+ * 从后台切回来重新对一次（稳健性批：原来只在挂载时对一次，手机休眠、设备对时后就不准）；
+ * 一分钟内对过就不再对（性能 2026-10-31）
+ */
+const visible = useVisibleRefresh(() => syncTime());
 onMounted(async () => {
-  // 先挂监听再等：还没读到时间就卸载时，卸载里能删掉（终审）
-  document.addEventListener('visibilitychange', onVisible);
   await syncTime();
   ready.value = true;
 });
