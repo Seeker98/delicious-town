@@ -1,7 +1,8 @@
 // Bootstrap 只留重置和工具类（界面改版 P12）；按钮、输入框这些组件的样式在 styles/base.css 里自己写。
-// 栅格（container、row、col、g-*）没有页面用，不再引入；弹性、间距这些工具类在 utilities 里
+// 栅格（container、row、col、g-*）没有页面用，不再引入；弹性、间距这些工具类在 utilities 里，
+// 只带用到的那些（性能 2026-10-31，pnpm -F @dt/web utilities 生成）
 import 'bootstrap/dist/css/bootstrap-reboot.min.css';
-import 'bootstrap/dist/css/bootstrap-utilities.min.css';
+import './styles/utilities.css';
 // 图标只带用到的那些（性能第二轮 A，pnpm -F @dt/web icons 生成）
 import './styles/icons.css';
 import './styles/tokens.css';

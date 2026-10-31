@@ -10,3 +10,5 @@ apps/web/src/i18n/locales/zh-TW/
 apps/web/src/i18n/changelog/zh-TW.ts
 # 图标子集由 apps/web/scripts/gen-icons.mjs 生成，不单独格式化
 apps/web/src/styles/icons.css
+# Bootstrap 工具类子集由 apps/web/scripts/gen-utilities.mjs 生成，不单独格式化
+apps/web/src/styles/utilities.css
