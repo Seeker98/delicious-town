@@ -482,7 +482,7 @@
     "foodLevelStep": 10, "foodLevelMax": 4, "retainDays": 180
   },
   "wishTree": {
-    "hour": 20, "minLevel": 10, "titleDays": 3, "consolationLevel": 1,
+    "hour": 20, "minLevel": 10, "minAccountDays": 3, "titleDays": 3, "consolationLevel": 1,
     "prizes": [
       { "goods": 10110, "num": 1, "weight": 10 },
       { "goods": 10006, "num": 1, "weight": 10 },

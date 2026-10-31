@@ -1,7 +1,7 @@
 import { sql } from 'kysely';
 import { addDays, DAY_MS, gameDay, gameParts } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
-import { JobError, type PeriodicJob } from '../../core/jobs';
+import { JobError, type JobContext, type PeriodicJob } from '../../core/jobs';
 import { payDividends } from './dividend';
 import { aggregateIncomeDay, INCOME_KEEP_DAYS, pruneIncomeDays } from './income';
 import { createOp, flushOp, restLog } from '../../core/op';
@@ -39,7 +39,15 @@ export async function runAcquireDay(
   shardId: number,
   now: Date,
   t: T,
-): Promise<{ income: number; bases: number; released: number; decayed: number; unlisted: number }> {
+  log: JobContext['log'] = { error: () => {} },
+): Promise<{
+  income: number;
+  bases: number;
+  released: number;
+  releaseFailed: number;
+  decayed: number;
+  unlisted: number;
+}> {
   const today = gameDay(now);
   const income = await aggregateRecent(d, shardId, today);
   const w = priceWindow(today, t);
@@ -100,11 +108,12 @@ export async function runAcquireDay(
   const shardRests = d.db.selectFrom('restaurant').select('id').where('shard_id', '=', shardId);
   for (const table of ['acquire_due', 'acquire_tend'] as const)
     await d.db.deleteFrom(table).where('day', '<', cutoffDay).where('rest_id', 'in', shardRests).execute();
-  const released = await autoRelease(d, shardId, now, t);
+  const release = await autoRelease(d, shardId, now, t, log);
   return {
     income,
     bases: rows.length,
-    released,
+    released: release.released,
+    releaseFailed: release.failed,
     decayed: Number(decayed.numAffectedRows ?? 0),
     unlisted: Number(un.numUpdatedRows),
   };
@@ -114,7 +123,13 @@ export async function runAcquireDay(
  * 老板 tendReleaseDays 天没打理的店自动放手（收购改版 2026-10-16）：每家一个事务，锁住老板和店再确认一次（期间可能刚打理、换了老板）。
  * 和手动放手一样不退钱、热度不变、没有保护期；两边都写动态
  */
-async function autoRelease(d: GameDeps, shardId: number, now: Date, t: T): Promise<number> {
+async function autoRelease(
+  d: GameDeps,
+  shardId: number,
+  now: Date,
+  t: T,
+  log: JobContext['log'],
+): Promise<{ released: number; failed: number }> {
   const today = gameDay(now);
   const owned = await d.db
     .selectFrom('acquire_state')
@@ -123,52 +138,59 @@ async function autoRelease(d: GameDeps, shardId: number, now: Date, t: T): Promi
     .where('owner_rest_id', 'is not', null)
     .execute();
   const stale = owned.filter((s) => cedeState(s, today, t).idleDays >= t.tendReleaseDays);
-  if (stale.length === 0) return 0;
+  if (stale.length === 0) return { released: 0, failed: 0 };
   const settings = await d.shards.settings(shardId);
   let n = 0;
+  let failed = 0;
   for (const x of stale) {
     const ownerId = x.owner_rest_id!;
-    await withRestaurants(d.db, [x.rest_id, ownerId], async (tx, rests) => {
-      const s = await tx
-        .selectFrom('acquire_state')
-        .select(['owner_rest_id', 'tended_at', 'acquired_at', 'heat'])
-        .where('rest_id', '=', x.rest_id)
-        .forUpdate()
-        .executeTakeFirst();
-      if (!s || s.owner_rest_id !== ownerId || cedeState(s, today, t).idleDays < t.tendReleaseDays) return;
-      const owner = createOp(d, tx, rests.get(ownerId)!, settings, { source: 'acquire.release', now });
-      const store = createOp(d, tx, rests.get(x.rest_id)!, settings, { source: 'acquire.release', now });
-      await tx
-        .updateTable('acquire_state')
-        .set({ owner_rest_id: null, list_rate: null, list_until: null, acquired_at: null, tended_at: null })
-        .where('rest_id', '=', x.rest_id)
-        .execute();
-      await tx
-        .insertInto('acquire_log')
-        .values({
-          shard_id: shardId,
-          kind: 'release',
-          buyer_rest_id: null,
-          target_rest_id: x.rest_id,
-          seller_rest_id: ownerId,
-          price: 0,
-          tax: 0,
-          heat_after: s.heat,
-          created_at: now,
-        })
-        .execute();
-      restLog(owner, 'acquire.autoReleased', {
-        restId: x.rest_id,
-        name: store.rest.name,
-        days: t.tendReleaseDays,
+    // 一家出错只记日志，别的店照常放手；这家明天再放（整个任务不重试：热度衰减不能重跑）
+    try {
+      await withRestaurants(d.db, [x.rest_id, ownerId], async (tx, rests) => {
+        const s = await tx
+          .selectFrom('acquire_state')
+          .select(['owner_rest_id', 'tended_at', 'acquired_at', 'heat'])
+          .where('rest_id', '=', x.rest_id)
+          .forUpdate()
+          .executeTakeFirst();
+        if (!s || s.owner_rest_id !== ownerId || cedeState(s, today, t).idleDays < t.tendReleaseDays) return;
+        const owner = createOp(d, tx, rests.get(ownerId)!, settings, { source: 'acquire.release', now });
+        const store = createOp(d, tx, rests.get(x.rest_id)!, settings, { source: 'acquire.release', now });
+        await tx
+          .updateTable('acquire_state')
+          .set({ owner_rest_id: null, list_rate: null, list_until: null, acquired_at: null, tended_at: null })
+          .where('rest_id', '=', x.rest_id)
+          .execute();
+        await tx
+          .insertInto('acquire_log')
+          .values({
+            shard_id: shardId,
+            kind: 'release',
+            buyer_rest_id: null,
+            target_rest_id: x.rest_id,
+            seller_rest_id: ownerId,
+            price: 0,
+            tax: 0,
+            heat_after: s.heat,
+            created_at: now,
+          })
+          .execute();
+        restLog(owner, 'acquire.autoReleased', {
+          restId: x.rest_id,
+          name: store.rest.name,
+          days: t.tendReleaseDays,
+        });
+        restLog(store, 'acquire.autoFreed', { byName: owner.rest.name, days: t.tendReleaseDays });
+        await flushOp(owner);
+        await flushOp(store);
+        n += 1;
       });
-      restLog(store, 'acquire.autoFreed', { byName: owner.rest.name, days: t.tendReleaseDays });
-      await flushOp(owner);
-      await flushOp(store);
-      n += 1;
-    });
+    } catch (err) {
+      log.error({ err, shardId, restId: x.rest_id }, 'acquire auto release failed');
+      failed += 1;
+    }
   }
-  return n;
+  return { released: n, failed };
 }
 
 export function acquireJobs(d: GameDeps): PeriodicJob[] {
@@ -195,7 +217,8 @@ export function acquireJobs(d: GameDeps): PeriodicJob[] {
         const day = after0005(now);
         return day === null ? null : `acquire-day-${day}`;
       },
-      run: async ({ shardId, now, settings }) => runAcquireDay(d, shardId, now, settings.tuning.acquire),
+      run: async ({ shardId, now, settings, log }) =>
+        runAcquireDay(d, shardId, now, settings.tuning.acquire, log),
     },
     {
       // 发前一天结算时扣下的让渡（收购改版 2026-10-16）。出错 10 分钟后再试

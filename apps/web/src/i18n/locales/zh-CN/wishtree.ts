@@ -19,6 +19,8 @@ export default {
   wish: '许愿',
   wished: '已许愿, 等待开奖',
   need: (level: number) => `餐厅 ${level} 级才能许愿`,
+  needAge: (days: number) => `账号注册满 ${days} 天才能许愿`,
+  needEmail: '验证邮箱后才能许愿 (邮箱写错了可以在“我的账号”里改)',
   done: '许好了, 开奖时见分晓',
   none: (hour: number) => `现在没有进行中的一轮, 每天 ${hour}:00 结出新的道具`,
   recentTitle: '最近几轮',

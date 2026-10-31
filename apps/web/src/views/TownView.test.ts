@@ -127,6 +127,8 @@ describe('TownView', () => {
       hour: 20,
       minLevel: 10,
       level: 12,
+      minAccountDays: 3,
+      gate: null,
       titleDays: 3,
       round: null,
       wished: false,

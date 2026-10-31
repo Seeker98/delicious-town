@@ -1087,6 +1087,8 @@ export const tuningSchema = z.object({
   wishTree: z.object({
     hour: int.min(0).max(23),
     minLevel: int.min(1),
+    /** 注册满几天、还要验证邮箱才能许愿（和一番赏同一套门槛，小号白拿安慰奖，2026-10-31） */
+    minAccountDays: int.min(0),
     titleDays: int.min(1),
     consolationLevel: int.min(1),
     prizes: z.array(z.object({ goods: int.min(1), num: int.min(1), weight: num.gt(0) })).min(1),

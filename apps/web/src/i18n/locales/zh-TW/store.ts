@@ -61,8 +61,16 @@ export default {
     weeklyLimit: (n: number) => `每週限 ${n} 個`,
     buy: '買',
     specialSoon: '今天中午 12 點上新',
-    /** 特價折扣檔名：簡中用服務端給的原名（九折、八折……），其他語言按減了多少顯示 */
-    tier: (_off: number, cn: string) => cn,
+    /**
+     * 特價折扣檔名：按實際減了多少寫幾折（省 30% → 七折、省 25% → 七五折）。不用服務端給的檔名：
+     * 特價不低於賣店價，五折、一折檔對不少道具實際是七折（backlog 2026-10-25）
+     */
+    tier: (off: number, _cn: string) => {
+      const n = 100 - off;
+      if (n <= 0 || n >= 100) return '特價';
+      const d = '〇一二三四五六七八九';
+      return `${d[Math.floor(n / 10)]}${n % 10 ? d[n % 10] : ''}折`;
+    },
     grab: '搶購',
     /** 介面改版 P8：餘額、小類膠囊、購買面板 */
     myCoin: '我的銀幣',

@@ -293,6 +293,30 @@ describe('后期海报奖杯按星级可用（问题记录 146）', () => {
     expect((await restRow(t, ctx.restaurantId)).coin).toBe(1_000_000);
   });
 
+  it('特价不低于卖店价 + 1（五折、一折原来买了就能卖店赚差价，backlog 2026-10-25）', async () => {
+    const saver = gid('高级节油器');
+    const g = config.requireGoods(saver);
+    for (const [discount, want] of [
+      [0.1, sellPrice(g, config.tuning)! + 1],
+      [0.5, sellPrice(g, config.tuning)! + 1],
+      [0.9, Math.ceil(g.coin * 0.9)],
+    ] as const) {
+      const ctx = await newRestaurant(t, { patch: { coin: 1_000_000 } });
+      const { tuning } = await t.game.shards.settings(ctx.shardId);
+      const day = latestSlot(t.clock.now, [tuning.shop.specialHour]).day;
+      await t.db
+        .insertInto('shop_special')
+        .values({ shard_id: ctx.shardId, day, goods_id: saver, discount, tier_name: 'x', stock: 5 })
+        .execute();
+      const sp = (await shop().special(ctx))!;
+      expect(sp.price, String(discount)).toBe(want);
+      // 折扣按实际价格给（标签写几折用它）
+      expect(sp.discount).toBeCloseTo(want / g.coin, 6);
+      await shop().buySpecial(ctx, { num: 2 });
+      expect((await restRow(t, ctx.restaurantId)).coin, String(discount)).toBe(1_000_000 - 2 * want);
+    }
+  });
+
   it('每日特价抽到高档海报时也看星级：3 星买不了、不扣钱、不占库存（质量期 ②）', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 1_000_000, star_level: 3 } });
     const { tuning } = await t.game.shards.settings(ctx.shardId);

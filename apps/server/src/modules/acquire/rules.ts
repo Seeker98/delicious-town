@@ -136,6 +136,11 @@ export function splitResale(price: number, t: T): Split {
   return { sellerGot, storeGot, burn: 0, tax: price - sellerGot - storeGot };
 }
 
+/** 卖方（老板）被封号、和店是关联账号：他那份不给，一起销毁（和让渡退回店一个道理，backlog 2026-10-31） */
+export function withholdSeller(s: Split): Split {
+  return { ...s, sellerGot: 0, burn: s.burn + s.sellerGot };
+}
+
 /** 赎身：老板得 1 − redeemBurnRate − taxRate，redeemBurnRate 销毁，其余是税 */
 export function splitRedeem(price: number, t: T): Split {
   const sellerGot = share(price, 1 - t.redeemBurnRate - t.taxRate);

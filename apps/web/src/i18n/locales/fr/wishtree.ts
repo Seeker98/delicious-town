@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plFr } from '../../helpers';
 
 const wishtree: Messages['wishtree'] = {
   loadFailed: 'Impossible de charger l’Arbre à vœux',
@@ -20,6 +21,9 @@ const wishtree: Messages['wishtree'] = {
   wish: 'Faire un vœu',
   wished: 'Vœu fait, en attente du tirage',
   need: (level) => `Votre restaurant doit être niveau ${level} pour faire un vœu`,
+  needAge: (days) =>
+    `Votre compte doit avoir au moins ${days} ${plFr(days, 'jour', 'jours')} pour faire un vœu`,
+  needEmail: 'Vérifiez votre e-mail pour faire un vœu (s’il est erroné, modifiez-le dans Mon compte)',
   done: 'Vœu fait\u202f! Rendez-vous au tirage',
   none: (hour) => `Pas de tour en cours. L’arbre donne un nouvel objet chaque jour à ${hour}\u202fh`,
   recentTitle: 'Tours récents',

@@ -79,6 +79,9 @@ const errors: Messages['errors'] = {
     kuji_age: (p) =>
       `Your account must be at least ${s(p.days)} ${plEn(s(p.days), 'day', 'days')} old to play Ichiban Kuji`,
     kuji_email: () => 'Verify your email to play Ichiban Kuji (if it’s wrong, change it in My account)',
+    wishtree_age: (p) =>
+      `Your account must be at least ${s(p.days)} ${plEn(s(p.days), 'day', 'days')} old to make a wish`,
+    wishtree_email: () => 'Verify your email to make a wish (if it’s wrong, change it in My account)',
     level: (p) => `Restaurant level too low (level ${s(p.need)} required)`,
     star: (p) =>
       p.have === undefined

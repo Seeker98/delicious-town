@@ -32,6 +32,10 @@ export interface WishTreeDto {
   hour: number;
   minLevel: number;
   level: number;
+  /** 注册满几天才能许愿 */
+  minAccountDays: number;
+  /** 等级够了但卡在账号门槛：注册天数不够、没验证邮箱；能许为 null */
+  gate: 'age' | 'email' | null;
   titleDays: number;
   /** 进行中的一轮；没有时为 null */
   round: WishTreeRoundDto | null;

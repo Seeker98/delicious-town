@@ -14,6 +14,8 @@ const data = (p: Partial<WishTreeDto> = {}): WishTreeDto => ({
   hour: 20,
   minLevel: 10,
   level: 12,
+  minAccountDays: 3,
+  gate: null,
   titleDays: 3,
   round: {
     id: 5,
@@ -81,6 +83,19 @@ describe('WishTreePanel（许愿树设计 §3.3）', () => {
     await flushPromises();
     expect(el(low, 'wt-wish').attributes('disabled')).toBeDefined();
     expect(el(low, 'wt-need').text()).toContain('10');
+  });
+
+  it('卡在账号门槛（注册天数、验证邮箱）：按钮置灰，写明卡在哪', async () => {
+    vi.mocked(endpoints.wishTree).mockResolvedValue(data({ gate: 'age', minAccountDays: 3 }));
+    const young = mountIt();
+    await flushPromises();
+    expect(el(young, 'wt-wish').attributes('disabled')).toBeDefined();
+    expect(el(young, 'wt-need').text()).toBe('账号注册满 3 天才能许愿');
+    vi.mocked(endpoints.wishTree).mockResolvedValue(data({ gate: 'email' }));
+    const unverified = mountIt();
+    await flushPromises();
+    expect(el(unverified, 'wt-wish').attributes('disabled')).toBeDefined();
+    expect(el(unverified, 'wt-need').text()).toContain('验证邮箱');
   });
 
   it('没有进行中的一轮：写明每天几点开新一轮；关了时写明未开放', async () => {

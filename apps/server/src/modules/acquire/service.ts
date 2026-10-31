@@ -41,8 +41,10 @@ import {
   tendCost,
   tendPacks,
   validListRate,
+  withholdSeller,
   type T,
 } from './rules';
+import { linkedPairs } from './dividend';
 import { baseOf, ensureState, lockState, type AcquireStateRow } from './state';
 import { bumpCounters } from '../achieve/counters';
 
@@ -320,8 +322,17 @@ export function createAcquireService(d: GameDeps) {
       if (b.way === 'listed' && s.owner_rest_id === null) throw bad('not_listed');
       const price = b.way === 'listed' ? listPrice(s)! : priceOf(s);
       if (price !== b.expect) throw bad('price_changed', { price });
-      const split = s.owner_rest_id === null ? splitFirst(price, t) : splitResale(price, t);
       const seller = ops.get(sellerId)!;
+      let split = s.owner_rest_id === null ? splitFirst(price, t) : splitResale(price, t);
+      // 挂牌的老板已被封号：照常成交，他那份销毁
+      if (s.owner_rest_id !== null) {
+        const sellerAcc = await me.tx
+          .selectFrom('account')
+          .select(['banned_at', 'banned_until'])
+          .where('id', '=', seller.rest.account_id)
+          .executeTakeFirstOrThrow();
+        if (isBanned(sellerAcc, now)) split = withholdSeller(split);
+      }
       spendCoin(me, price, { source: 'acquire.buy' });
       if (split.sellerGot > 0) gainCoin(seller, split.sellerGot, { source: 'acquire.sale' });
       if (split.storeGot > 0)
@@ -404,9 +415,18 @@ export function createAcquireService(d: GameDeps) {
       if (s.owner_rest_id !== ownerId) throw bad('owner_changed');
       const price = redeemPrice(s, isListed(s, now));
       if (price !== b.expect) throw bad('price_changed', { price });
-      const split = splitRedeem(price, t);
+      // 老板被封号、或和这家店是关联账号（收购以后才共用设备的小号）：照常赎身，老板那份销毁，不能借赎身转钱
+      const ownerAcc = await me.tx
+        .selectFrom('account')
+        .select(['banned_at', 'banned_until'])
+        .where('id', '=', owner.rest.account_id)
+        .executeTakeFirstOrThrow();
+      const pair = [owner.rest.account_id, me.rest.account_id] as const;
+      const linked = (await linkedPairs(d.db, [pair], t.linkDays, now)).size > 0;
+      const split =
+        isBanned(ownerAcc, now) || linked ? withholdSeller(splitRedeem(price, t)) : splitRedeem(price, t);
       spendCoin(me, price, { source: 'acquire.redeem' });
-      gainCoin(owner, split.sellerGot, { source: 'acquire.sale' });
+      if (split.sellerGot > 0) gainCoin(owner, split.sellerGot, { source: 'acquire.sale' });
       await me.tx
         .updateTable('acquire_state')
         .set({

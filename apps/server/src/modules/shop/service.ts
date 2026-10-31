@@ -32,6 +32,12 @@ import { buyCap } from './rules';
 import { gameSeed } from '../../core/seed';
 
 /** 勋章、牌匾只能一个一个买；永久的已拥有就不能再买；其他道具受持有上限和仓库容量限制 */
+/** 每日特价的单价：折后价，但不低于卖店价 + 1（五折、一折原来买了直接卖店就赚，backlog 2026-10-25） */
+function specialPrice(g: Goods, discount: number, tuning: Tuning): number {
+  const sell = sellPrice(g, tuning);
+  return Math.max(Math.ceil(g.coin * discount), sell === null ? 0 : sell + 1);
+}
+
 async function assertBuyable(o: Op, g: Goods, num: number): Promise<void> {
   // 后期海报奖杯按星级可用（问题记录 146）
   if ((g.needStar ?? 0) > o.rest.star_level)
@@ -195,7 +201,7 @@ export function createShopService(d: GameDeps) {
     },
 
     async special(ctx: RestCtx): Promise<ShopSpecialDto | null> {
-      const r = await specialRow(ctx.shardId);
+      const [r, { tuning }] = await Promise.all([specialRow(ctx.shardId), d.shards.settings(ctx.shardId)]);
       if (!r) return null;
       const g = d.config.requireGoods(r.goods_id);
       // 抽好之后道具改成了没有银币价的（节油器改版把 30202、30207 改成黑市钻石货），不再卖
@@ -204,8 +210,9 @@ export function createShopService(d: GameDeps) {
         day: r.day,
         goodsId: r.goods_id,
         tierName: r.tier_name,
-        discount: r.discount,
-        price: Math.ceil(g.coin * r.discount),
+        // 实际折扣：不低于卖店价时比档位的折扣少（标签按它写几折）
+        discount: specialPrice(g, r.discount, tuning) / g.coin,
+        price: specialPrice(g, r.discount, tuning),
         stock: r.stock,
         sold: r.sold,
       };
@@ -276,7 +283,7 @@ export function createShopService(d: GameDeps) {
         await assertBuyable(o, g, b.num);
         // 每日特价抽到限购道具（体力卡）也算进同一份每天、每周计数（代码审查 2026-10-15）；超了整单回滚，库存不占
         await claimLimits(o, g.id, b.num);
-        spendCoin(o, Math.ceil(g.coin * row.discount) * b.num);
+        spendCoin(o, specialPrice(g, row.discount, o.tuning) * b.num);
         await grantGoodsOp(o, g.id, b.num);
         await emitAction(o, 'shop.buy');
         return { goodsId: g.id, num: b.num };

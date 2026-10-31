@@ -157,6 +157,25 @@ describe('ShopView（问题记录：商店不显示最大可购买数量）', ()
     expect(w.get('[data-testid="sheet-desc"]').text()).toContain('很长的描述');
   });
 
+  it('特价标签按实际折扣写（不低于卖店价时五折档实际是七折，backlog 2026-10-25）', async () => {
+    vi.mocked(endpoints.shopSpecial).mockResolvedValue({
+      day: '2026-10-01',
+      goodsId: 13,
+      tierName: '五折',
+      discount: 56_001 / 80_000,
+      price: 56_001,
+      stock: 10,
+      sold: 0,
+    });
+    const w = mountView();
+    await flushPromises();
+    await w
+      .findAll('button.nav-link')
+      .find((a) => a.text().includes('限时折扣'))!
+      .trigger('click');
+    expect(w.get('[data-testid="special-title"] .dt-tag-danger').text()).toBe('七折');
+  });
+
   it('特价：名字和折扣标签在同一行（问题记录 118）；点价格在面板里抢购 1 个', async () => {
     vi.mocked(endpoints.shopSpecial).mockResolvedValue({
       day: '2026-10-01',

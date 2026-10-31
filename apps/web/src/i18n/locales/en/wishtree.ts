@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEn } from '../../helpers';
 
 const wishtree: Messages['wishtree'] = {
   loadFailed: 'Failed to load the Wishing Tree',
@@ -20,6 +21,8 @@ const wishtree: Messages['wishtree'] = {
   wish: 'Make a wish',
   wished: 'Wish made, waiting for the draw',
   need: (level) => `Your restaurant must be level ${level} to make a wish`,
+  needAge: (days) => `Your account must be at least ${days} ${plEn(days, 'day', 'days')} old to make a wish`,
+  needEmail: 'Verify your email to make a wish (if it’s wrong, change it in My account)',
   done: 'Wish made! See you at the draw',
   none: (hour) => `No round right now. The tree bears a new item every day at ${hour}:00`,
   recentTitle: 'Recent rounds',

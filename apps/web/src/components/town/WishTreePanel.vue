@@ -41,6 +41,15 @@ onMounted(load);
 
 const round = computed(() => data.value?.round ?? null);
 const tooLow = computed(() => !!data.value && data.value.level < data.value.minLevel);
+/** 许不了的原因：等级、注册天数、验证邮箱（和一番赏同一套门槛）；能许为 null */
+const blocked = computed(() => {
+  const v = data.value;
+  if (!v) return null;
+  if (tooLow.value) return t.value.wishtree.need(v.minLevel);
+  if (v.gate === 'age') return t.value.wishtree.needAge(v.minAccountDays);
+  if (v.gate === 'email') return t.value.wishtree.needEmail;
+  return null;
+});
 /** 称号名按语言取（catalog 里的 looks，小镇页进来时已经在读） */
 const titleName = computed(() => catalog.icon('wish_tree')?.title ?? '');
 
@@ -100,13 +109,13 @@ function mineTag(r: WishTreeResultDto): { text: string; cls: string } | null {
         <button
           type="button"
           class="btn btn-primary dt-btn-block mt-3"
-          :disabled="busy || tooLow"
+          :disabled="busy || blocked !== null"
           data-testid="wt-wish"
           @click="wish"
         >
           {{ t.wishtree.wish }}
         </button>
-        <p v-if="tooLow" class="dt-up-reason" data-testid="wt-need">{{ t.wishtree.need(data.minLevel) }}</p>
+        <p v-if="blocked" class="dt-up-reason" data-testid="wt-need">{{ blocked }}</p>
         <p v-else class="dt-wish-free">{{ t.wishtree.free(data.minLevel) }}</p>
       </template>
     </div>

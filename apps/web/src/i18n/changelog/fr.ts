@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  fixes1031:
+    'Corrections\u202f: la promo du jour ne descend plus sous le prix de revente, et son étiquette indique la vraie réduction\u202f; comme pour l’Ichiban Kuji, l’arbre à vœux demande désormais un e-mail vérifié et un compte d’au moins 3 jours\u202f; les aliments du frigo ne sont vendus pour payer une dette qu’après 3 jours entiers de dette (sans compter le jour où elle a commencé)',
   events1031: 'Événements aléatoires\u202f: une nouvelle série d’événements',
   events1028:
     'Nouveau\u202f: événements aléatoires et quiz du village. Pendant que vous jouez, il peut se passer quelque chose d’inattendu dans votre restaurant (au plus une fois toutes les 4 heures)\u202f: certains événements donnent un petit bonus ou malus pendant 1 à 4 heures, d’autres vous laissent choisir entre deux options, et certains ont une suite quelques jours plus tard. Parfois, c’est une question du quiz du village, et une bonne réponse rapporte un bon mystère. Chaque jeudi soir, le bar organise une soirée quiz où trois bonnes réponses rapportent 3 bons. Les restaurants de niveau inférieur à 10 ne reçoivent jamais d’événement avec malus',
