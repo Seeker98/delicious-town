@@ -6,7 +6,7 @@ import { useFriendsStore } from './friends';
 import { useLocaleStore } from './locale';
 import { useMailStore } from './mail';
 import { useRestaurantStore } from './restaurant';
-import { useSessionStore } from './session';
+import { prefetchMe, useSessionStore } from './session';
 
 vi.mock('../api/endpoints', () => ({
   endpoints: { me: vi.fn(), logout: vi.fn(), setLang: vi.fn(), selectShard: vi.fn() },
@@ -108,5 +108,35 @@ describe('换号、换区服时邮件未读数和好友申请红点也清掉（�
     await s.enterShard(2);
     expect(mail.unread).toBe(0);
     expect(useFriendsStore().pending).toBe(0);
+  });
+});
+
+describe('启动时提前读账号（性能 2026-10-31）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useLocaleStore().locale = 'zh-CN';
+  });
+
+  it('路由守卫第一次 load 接着用提前发的请求，不再发一次；之后的 load（重新登录）照常发', async () => {
+    vi.mocked(endpoints.me).mockResolvedValue(me());
+    const early = prefetchMe();
+    const s = useSessionStore();
+    await s.load();
+    expect(endpoints.me).toHaveBeenCalledTimes(1);
+    expect(await early).toEqual(me());
+    expect(s.me?.restaurantId).toBe(10);
+    await s.load();
+    expect(endpoints.me).toHaveBeenCalledTimes(2);
+  });
+
+  it('提前的请求失败（没登录）：load 当作没登录，不报未处理的错误', async () => {
+    vi.mocked(endpoints.me).mockRejectedValue(new Error('UNAUTHORIZED'));
+    void prefetchMe();
+    const s = useSessionStore();
+    await s.load();
+    expect(s.loaded).toBe(true);
+    expect(s.me).toBeNull();
+    expect(endpoints.me).toHaveBeenCalledTimes(1);
   });
 });

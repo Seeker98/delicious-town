@@ -22,13 +22,28 @@ function forgetOtherRestaurant(before: number | null, after: number | null) {
   }
 }
 
+/** 启动时提前发出的读账号请求（main.ts）：第一次 load 接着用它，不再发一次 */
+let early: Promise<MeDto> | null = null;
+/**
+ * 启动时一开始就读账号（性能 2026-10-31）：原来要等语言包加载完、应用挂载、路由守卫里才发，
+ * 现在和语言包一起下载。返回同一个请求，main.ts 用它判断要不要先下载首页的代码
+ */
+export function prefetchMe(): Promise<MeDto> {
+  early = endpoints.me();
+  // 失败交给 load 处理（当作没登录），这里不算未处理的错误
+  early.catch(() => undefined);
+  return early;
+}
+
 export const useSessionStore = defineStore('session', {
   state: () => ({ me: null as MeDto | null, loaded: false }),
   actions: {
     async load() {
       let me: MeDto | null = null;
       try {
-        me = await endpoints.me();
+        const p = early ?? endpoints.me();
+        early = null;
+        me = await p;
       } catch {
         me = null;
       } finally {

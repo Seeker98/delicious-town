@@ -30,6 +30,9 @@ const TOWN_MOVED: Record<string, string> = {
 /** 这件道具是不是厨具：按目录看（目录没读过、没有 pinia 时当不是） */
 const isEquip = (id: number): boolean => !!getActivePinia() && !!useCatalogStore().goods(id)?.equip;
 
+/** 首页的代码：直接打开首页时 main.ts 读到账号就先下载（性能 2026-10-31），和路由用同一个导入 */
+export const loadHomeView = () => import('./views/RestaurantHomeView.vue');
+
 export const routes: RouteRecordRaw[] = [
   {
     path: '/login',
@@ -83,7 +86,7 @@ export const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'home',
-    component: () => import('./views/RestaurantHomeView.vue'),
+    component: loadHomeView,
     // 有场景头图：顶栏用天空底色（界面改版 P5）
     meta: { needRestaurant: true, section: 'home', scene: true, title: T((t) => t.nav.tabs.rest) },
   },

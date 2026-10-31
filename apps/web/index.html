@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#ffffff" />
     <title>美味小镇</title>
-    <!-- 深色模式（界面改版 P1）：渲染前写好 data-theme，免得先白后黑闪一下；同步加载，规则同 src/utils/theme.ts -->
+    <!-- 各语言包的文件：打包时填上（src/build/localePreload.ts），theme-init.js 按语言挑一个提前下载（性能 2026-10-31） -->
+    <meta name="dt-locale-chunks" content="" />
+    <!-- 深色模式（界面改版 P1）：渲染前写好 data-theme，免得先白后黑闪一下；同步加载，规则同 src/utils/theme.ts。
+         也按语言提前下载语言包 -->
     <script src="/theme-init.js"></script>
   </head>
   <body>

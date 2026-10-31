@@ -2,6 +2,7 @@ import vue from '@vitejs/plugin-vue';
 import obfuscator from 'rollup-plugin-obfuscator';
 import { defineConfig, loadEnv } from 'vite';
 import { inlineLimit } from './src/build/artAssets';
+import { localePreloadPlugin } from './src/build/localePreload';
 import { preconnectTags } from './src/build/preconnect';
 
 export default defineConfig(({ mode }) => {
@@ -14,6 +15,8 @@ export default defineConfig(({ mode }) => {
     plugins: [
       vue({ features: { optionsAPI: false } }),
       { name: 'dt-preconnect-api', transformIndexHtml: () => preconnectTags(apiBase) },
+      // 选中的语言包和入口 JS 一起下载（性能 2026-10-31）：各语言包的文件写进页面头部，public/theme-init.js 按语言挑
+      localePreloadPlugin(),
       // 防脚本 PR②（设计第 7 节）：只在打包时把写请求签名的两个模块混淆，每次打包结果不同（seed 0 = 随机）；
       // 其余代码不动，报错定位照常
       {

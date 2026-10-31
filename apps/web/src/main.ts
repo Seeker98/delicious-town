@@ -10,15 +10,25 @@ import './styles/main.css';
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 import App from './App.vue';
-import { createAppRouter } from './router';
+import { createAppRouter, loadHomeView } from './router';
 import { activeMessages } from './i18n';
 import { useLocaleStore } from './stores/locale';
+import { prefetchMe } from './stores/session';
 import { useToastStore } from './stores/toast';
 import { bustThenGo, chunkTarget, goOrReload, reloadOnce } from './utils/chunkReload';
 import { installPressBusy } from './utils/pressBusy';
 import { installHumanTracker } from './api/antibot';
 import { installTabsScroll } from './utils/tabsScroll';
 import { applyTheme, installThemeWatcher, readThemePref, resolveTheme, systemDark } from './utils/theme';
+
+// 一开始就读账号（性能 2026-10-31）：和语言包一起下载，路由守卫里的 session.load 接着用这个请求。
+// 直接打开首页、读到有店：先下载首页的代码，不等语言包、挂载和路由守卫（没登录的会被转到登录页，不下载）
+const me = prefetchMe();
+if (location.pathname === '/')
+  me.then(
+    (m) => void (m.restaurantId ? loadHomeView().catch(() => undefined) : undefined),
+    () => undefined,
+  );
 
 // 深色模式（界面改版 P1）：index.html 已在渲染前写好；这里再应用一次（脚本被拦时兜底）并跟随系统切换
 applyTheme(resolveTheme(readThemePref(), systemDark()));
@@ -40,13 +50,27 @@ installPressBusy();
 
 const pinia = createPinia();
 // 先定好语言再挂载（问题记录 272）：避免先闪一下中文。
-// 最多等 3 秒（backlog 多语言：以前请求卡住就一直白屏），超时先按简中显示，翻译包到了再切过去
-void useLocaleStore(pinia)
-  .initWithin(3000)
-  .then((r) => {
-    createApp(App).use(pinia).use(createAppRouter(pinia)).mount('#app');
-    // 标签栏横向滑动时，选中的标签自动露出来（问题记录 100）
-    installTabsScroll();
-    // 真加载失败（不是超时）才提示：以前静默用简中
-    if (r === 'failed') useToastStore(pinia).push(activeMessages().common.langLoadFailed, 'danger');
-  });
+// 最多等 3 秒（backlog 多语言：以前请求卡住就一直白屏），超时先按简中显示，翻译包到了再切过去。
+// 简中也不在主包里了（性能 2026-10-31）：一个翻译包都拿不到时没有字可显示，提示刷新
+const locale = useLocaleStore(pinia);
+void locale.initWithin(3000).then((r) => {
+  if (!locale.messages) {
+    showBootError();
+    return;
+  }
+  createApp(App).use(pinia).use(createAppRouter(pinia)).mount('#app');
+  // 标签栏横向滑动时，选中的标签自动露出来（问题记录 100）
+  installTabsScroll();
+  // 真加载失败（不是超时）才提示：以前静默用简中
+  if (r === 'failed') useToastStore(pinia).push(activeMessages().common.langLoadFailed, 'danger');
+});
+
+/** 一个翻译包都没加载到（离线、部署中）：没有翻译可用，写死两种语言提示刷新 */
+function showBootError() {
+  const el = document.getElementById('app');
+  if (!el) return;
+  const p = document.createElement('p');
+  p.style.cssText = 'padding:48px 16px;text-align:center';
+  p.textContent = '加载失败，请检查网络后刷新页面。Failed to load, please check your connection and refresh.';
+  el.replaceChildren(p);
+}
