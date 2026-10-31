@@ -37,12 +37,14 @@ export async function regenStrength(
     .selectFrom('restaurant')
     .select(['id', 'strength', 'strength_max', 'luck', 'effect_agg'])
     .where('shard_id', '=', shardId)
+    // 满了（含体力卡加过上限的）strengthGain 返回 null，不用读出来（性能整理 2026-10-31：大多数店是满的，effect_agg 也不小）
+    .whereRef('strength', '<', 'strength_max')
     .execute();
   const ids: number[] = [];
   const adds: number[] = [];
   const caps: number[] = [];
   for (const r of rows) {
-    // 厨具开关变了的缓存当场重算（backlog）
+    // 厨具开关变了的缓存当场重算（backlog）；满体力的店不在这里重算，等它下次结算、操作或被别处读到时再算
     const agg = r.effect_agg ? await cachedAgg(d.db, r, _now, d.config, settings) : {};
     const g = strengthGain(r, agg, tuning, seededRng(gameSeed(shardId, 'strength', period, r.id)));
     if (!g) continue;

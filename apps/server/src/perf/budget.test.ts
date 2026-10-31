@@ -10,8 +10,8 @@ import { queryCounter } from '../../test/queries';
  */
 const BUDGET: Record<string, number> = {
   '/account/me': 1,
-  // 12：问题记录 553 加了首页餐厅动态（累计获赞跟着主查询一起读，不多一条）
-  '/restaurant/overview': 12,
+  // 问题记录 553 加了首页餐厅动态（累计获赞跟着主查询一起读，不多一条）；10：餐桌并进主查询，头条先查近两天、新闻少的区服直接查全部（性能整理 2026-10-31）
+  '/restaurant/overview': 10,
   '/task/list': 5,
   '/task/activation': 3,
   '/activities/summary': 2,
@@ -22,7 +22,8 @@ const BUDGET: Record<string, number> = {
   '/bar': 7,
   '/temple': 9,
   '/exchange/me': 7,
-  '/cupboard/list': 5,
+  // 4：冰箱有没有没看过的从橱柜那份里看（性能整理 2026-10-31）
+  '/cupboard/list': 4,
   '/store/list': 4,
   '/mail/unread': 2,
   '/world/catalog': 0,

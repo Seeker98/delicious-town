@@ -694,50 +694,64 @@ export function createExchangeService(d: GameDeps) {
     const s = await d.shards.settings(ctx.shardId);
     const t = s.tuning.exchange;
     const now = d.now();
-    // 持有交易所经纪人（天气改版 PR③）并在这一条查询里
-    const rest = await d.db
-      .selectFrom('restaurant as r')
-      .select([
-        'r.level',
-        sql<boolean>`exists(select 1 from store_item c where c.rest_id = r.id and c.goods_id = ${GOODS.brokerCard}
+    const since = new Date(now.getTime() - 7 * 86_400_000);
+    // 几条读互不依赖、不在事务里，一起发（性能整理 2026-10-31，原来 7 条一条接一条）；开通资格要等店的等级
+    const [{ rest, reason }, orders, w, wf, trades, holds, frozen] = await Promise.all([
+      // 持有交易所经纪人（天气改版 PR③）并在这一条查询里
+      d.db
+        .selectFrom('restaurant as r')
+        .select([
+          'r.level',
+          sql<boolean>`exists(select 1 from store_item c where c.rest_id = r.id and c.goods_id = ${GOODS.brokerCard}
           and c.num > 0 and (c.expires_at is null or c.expires_at > ${now}))`.as('card'),
-      ])
-      .where('r.id', '=', ctx.restaurantId)
-      .executeTakeFirstOrThrow();
-    const reason = await eligibility({ db: d.db, level: rest.level, accountId: ctx.accountId, now, t });
+        ])
+        .where('r.id', '=', ctx.restaurantId)
+        .executeTakeFirstOrThrow()
+        .then(async (rest) => ({
+          rest,
+          reason: await eligibility({ db: d.db, level: rest.level, accountId: ctx.accountId, now, t }),
+        })),
+      d.db
+        .selectFrom('exchange_order')
+        .select(ORDER_COLS)
+        .where('rest_id', '=', ctx.restaurantId)
+        .where('status', '=', 'open')
+        .orderBy('id', 'desc')
+        .execute() as Promise<OrderRow[]>,
+      d.db
+        .selectFrom('exchange_wallet')
+        .select('coin')
+        .where('rest_id', '=', ctx.restaurantId)
+        .executeTakeFirst(),
+      d.db
+        .selectFrom('exchange_wallet_food')
+        .select(['foods_id', 'num'])
+        .where('rest_id', '=', ctx.restaurantId)
+        .where('num', '>', 0)
+        .orderBy('foods_id')
+        .execute(),
+      d.db
+        .selectFrom('exchange_trade')
+        .select(['buyer_rest_id', 'foods_id', 'price', 'qty', 'fee', 'system', 'created_at'])
+        .where((eb) =>
+          eb.or([eb('buyer_rest_id', '=', ctx.restaurantId), eb('seller_rest_id', '=', ctx.restaurantId)]),
+        )
+        .where('created_at', '>=', since)
+        .orderBy('id', 'desc')
+        .limit(100)
+        .execute(),
+      d.db
+        .selectFrom('exchange_hold')
+        .select(['coin', 'foods_id', 'num', 'release_at'])
+        .where('rest_id', '=', ctx.restaurantId)
+        .where('status', '=', 'held')
+        .orderBy('release_at')
+        .execute(),
+      frozenReason(d.db, ctx.restaurantId),
+    ]);
     const cardFee = rest.card
       ? (d.config.requireGoods(GOODS.brokerCard).effects.exchangeFeeRate ?? null)
       : null;
-    const orders = (await d.db
-      .selectFrom('exchange_order')
-      .select(ORDER_COLS)
-      .where('rest_id', '=', ctx.restaurantId)
-      .where('status', '=', 'open')
-      .orderBy('id', 'desc')
-      .execute()) as OrderRow[];
-    const w = await d.db
-      .selectFrom('exchange_wallet')
-      .select('coin')
-      .where('rest_id', '=', ctx.restaurantId)
-      .executeTakeFirst();
-    const wf = await d.db
-      .selectFrom('exchange_wallet_food')
-      .select(['foods_id', 'num'])
-      .where('rest_id', '=', ctx.restaurantId)
-      .where('num', '>', 0)
-      .orderBy('foods_id')
-      .execute();
-    const since = new Date(now.getTime() - 7 * 86_400_000);
-    const trades = await d.db
-      .selectFrom('exchange_trade')
-      .select(['buyer_rest_id', 'foods_id', 'price', 'qty', 'fee', 'system', 'created_at'])
-      .where((eb) =>
-        eb.or([eb('buyer_rest_id', '=', ctx.restaurantId), eb('seller_rest_id', '=', ctx.restaurantId)]),
-      )
-      .where('created_at', '>=', since)
-      .orderBy('id', 'desc')
-      .limit(100)
-      .execute();
     return {
       eligible: reason === null,
       reason,
@@ -762,24 +776,13 @@ export function createExchangeService(d: GameDeps) {
       feeRate: cardFee ?? t.feeRate,
       feeBase: t.feeRate,
       feeCard: cardFee === null ? null : GOODS.brokerCard,
-      holds: (
-        await d.db
-          .selectFrom('exchange_hold')
-          .select(['coin', 'foods_id', 'num', 'release_at'])
-          .where('rest_id', '=', ctx.restaurantId)
-          .where('status', '=', 'held')
-          .orderBy('release_at')
-          .execute()
-      ).map((h) => ({
+      holds: holds.map((h) => ({
         coin: Number(h.coin),
         foodsId: h.foods_id,
         num: h.num,
         releaseAt: h.release_at.toISOString(),
       })),
-      frozen: await (async () => {
-        const r = await frozenReason(d.db, ctx.restaurantId);
-        return r === null ? null : { reason: r };
-      })(),
+      frozen: frozen === null ? null : { reason: frozen },
     };
   }
 

@@ -4,6 +4,7 @@ import { createTestGame, foodNum, newRestaurant, restRow, type TestGame } from '
 import { mouseRound } from './mouse';
 import { regenStrength } from './strength';
 import { fid } from '../../../test/items';
+import { queryCounter } from '../../../test/queries';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -20,6 +21,24 @@ describe('体力恢复（规格书 01 §1.10）', () => {
     expect(r.updated).toBe(1);
     expect([51, 52]).toContain((await restRow(t, low.restaurantId)).strength);
     expect((await restRow(t, full.restaurantId)).strength).toBe(100);
+  });
+
+  it('满的、体力卡加过上限的店不读也不动（性能整理 2026-10-31）', async () => {
+    const shardId = await createShard(t.db);
+    const low = await newRestaurant(t, { shardId, patch: { strength: 99, strength_max: 100 } });
+    const over = await newRestaurant(t, { shardId, patch: { strength: 130, strength_max: 100 } });
+    const q = queryCounter();
+    try {
+      const { sqls, result } = await q.count(() =>
+        regenStrength({ ...t.game.deps, db: q.db }, shardId, 'p1', new Date()),
+      );
+      expect(result.updated).toBe(1);
+      expect(sqls.find((s) => s.startsWith('select'))).toContain('"strength" < "strength_max"');
+    } finally {
+      await q.db.destroy();
+    }
+    expect((await restRow(t, low.restaurantId)).strength).toBe(100);
+    expect((await restRow(t, over.restaurantId)).strength).toBe(130);
   });
 
   it('沙漏倍率', async () => {

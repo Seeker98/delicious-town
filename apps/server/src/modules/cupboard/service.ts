@@ -65,20 +65,37 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
 
   return {
     async list(ctx: RestCtx): Promise<CupboardDto> {
-      const rest = await d.db
-        .selectFrom('restaurant')
-        .selectAll()
-        .where('id', '=', ctx.restaurantId)
-        .executeTakeFirstOrThrow();
+      // 互不依赖的一起发；橱柜只读一次，冰箱有没有没看过的也从这一份里看（性能整理 2026-10-31，原来多读一次 cupboard_food）
       const { tuning } = await d.shards.settings(ctx.shardId);
-      const rows = await foodsMap(d.db, rest.id);
-      const { targetGrade, needMap } = await streetNeeds(
-        rest.id,
-        rest.street_id,
-        tuning.rest.cookbookMaxGrade,
+      const [{ rest, needs }, foods, used] = await Promise.all([
+        d.db
+          .selectFrom('restaurant')
+          .select([
+            'street_id',
+            'cupboard_num',
+            'foods_lock_num',
+            'foods_max_num',
+            'star_level',
+            'fridge_debt',
+            'fridge_debt_since',
+          ])
+          .where('id', '=', ctx.restaurantId)
+          .executeTakeFirstOrThrow()
+          .then(async (rest) => ({
+            rest,
+            needs: await streetNeeds(ctx.restaurantId, rest.street_id, tuning.rest.cookbookMaxGrade),
+          })),
+        d.db
+          .selectFrom('cupboard_food')
+          .select(['foods_id', 'num', 'fridge_num', 'locked', 'fridge_unread'])
+          .where('rest_id', '=', ctx.restaurantId)
+          .execute(),
+        getDaily(d.db, ctx.restaurantId, HANDLE_KEY, gameDay(d.now())),
+      ]);
+      const { targetGrade, needMap } = needs;
+      const all = foods.map(
+        (r) => [r.foods_id, { num: r.num, fridge: r.fridge_num, locked: r.locked }] as const,
       );
-      const used = await getDaily(d.db, rest.id, HANDLE_KEY, gameDay(d.now()));
-      const all = [...rows];
       return {
         slotsUsed: all.filter(([, r]) => r.num > 0).length,
         slots: rest.cupboard_num,
@@ -87,14 +104,7 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
         foodsMaxNum: rest.foods_max_num,
         targetGrade,
         fridgeCount: all.filter(([, r]) => r.fridge > 0).length,
-        fridgeUnread:
-          (await d.db
-            .selectFrom('cupboard_food')
-            .select('foods_id')
-            .where('rest_id', '=', rest.id)
-            .where('fridge_unread', '=', true)
-            .where('fridge_num', '>', 0)
-            .executeTakeFirst()) !== undefined,
+        fridgeUnread: foods.some((r) => r.fridge_unread && r.fridge_num > 0),
         freeHandleLeft: Math.max(0, freeHandles(rest.star_level, tuning.cupboard) - used),
         handleMax: handleCap(tuning.cupboard),
         exchangeMaxTimes: tuning.cupboard.exchangeMaxTimes,

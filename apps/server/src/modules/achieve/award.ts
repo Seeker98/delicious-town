@@ -68,6 +68,10 @@ export interface AwardInput {
   backfilled: boolean;
   /** 操作的得失提示（玩家自己的操作才有）；达成的成就追加进去，网页弹达成提示 */
   events?: GameEvent[];
+  /** 调用方读过餐厅行、知道不是蟹老板的店：不再查一次（性能整理 2026-10-31） */
+  player?: boolean;
+  /** 调用方已经知道区服补发完了没有：不再查一次 */
+  shardDone?: boolean;
 }
 
 /**
@@ -83,8 +87,14 @@ export async function awardAchievements(
   const tiers = a.ids.map((id) => config.achievements.byId.get(id)).filter((x) => x !== undefined);
   if (tiers.length === 0) return [];
   // 蟹老板的店不拿成就：别人给它点赞也会记“被赞”，原来能拿成就、抢全服首达（代码审查 2026-10-19）
-  const owner = await tx.selectFrom('restaurant').select('npc').where('id', '=', a.restId).executeTakeFirst();
-  if (!owner || owner.npc) return [];
+  if (!a.player) {
+    const owner = await tx
+      .selectFrom('restaurant')
+      .select('npc')
+      .where('id', '=', a.restId)
+      .executeTakeFirst();
+    if (!owner || owner.npc) return [];
+  }
   const added = await tx
     .insertInto('rest_achievement')
     .values(
@@ -137,7 +147,7 @@ export async function awardAchievements(
   for (const m of frames) a.events?.push({ type: 'gain', kind: 'achFrame', id: m.frame!, num: m.points });
 
   // 首达：补发完的区服里，别的店都还没有这个成就（补发的也算“有”）
-  const done = await shardBackfilled(tx, a.shardId);
+  const done = a.shardDone ?? (await shardBackfilled(tx, a.shardId));
   const firsts = new Set<string>();
   if (done) {
     const big = got.filter((x) => x.tier.pts >= t.firstMinPts).map((x) => x.tier.id);
