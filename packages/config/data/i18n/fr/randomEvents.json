@@ -1196,5 +1196,566 @@
     "lines": [
       "À la fin d'un morceau, il annonce\u202f: «\u202fCelui-là, je le dédie au restaurant du coin de la rue.\u202f»"
     ]
+  },
+  "153": {
+    "name": "Œillets d'Inde et crânes en sucre",
+    "desc": "Devant chaque maison, on dispose des œillets d'Inde orange et de petits crânes en sucre, et sur la table, un bol du plat préféré des proches disparus.",
+    "lines": [
+      "Beaucoup viennent chez vous commander «\u202fle plat que l'ancien prenait toujours\u202f»."
+    ]
+  },
+  "154": {
+    "name": "La parade des grosses caisses",
+    "desc": "Une parade en costumes à paillettes traverse la rue au son des gros tambours, et danse jusqu'à l'aube.",
+    "lines": [
+      "Les danseurs fourbus viennent souper chez vous."
+    ]
+  },
+  "155": {
+    "name": "La piñata les yeux bandés",
+    "desc": "Les voisins fêtent l'anniversaire de leur enfant, et une piñata en papier pend à l'arbre. Les enfants insistent pour que vous tapiez un coup, les yeux bandés.",
+    "lines": [
+      "Frapper de toutes vos forces",
+      "Raté\u202f! Les enfants sont pliés de rire.",
+      "La piñata éclate\u202f: des bonbons tombent en pluie, avec un bon au milieu.",
+      "Laisser frapper le héros du jour",
+      "Il fait mouche du premier coup, et toute la famille vient manger le gâteau chez vous."
+    ]
+  },
+  "156": {
+    "name": "La calebasse qui passe de main en main",
+    "desc": "Une tablée de clients se fait passer la même calebasse de thé amer, en rajoutant de l'eau chaude, bouilloire après bouilloire.",
+    "lines": [
+      "Ils restent tout l'après-midi, d'excellente humeur."
+    ]
+  },
+  "157": {
+    "name": "Les braises du jardin",
+    "desc": "Dès l'aube, le voisin a allumé des braises dans son jardin, et une énorme pièce de viande y cuit doucement toute la journée.",
+    "lines": [
+      "L'odeur flotte sur la moitié de la rue."
+    ]
+  },
+  "158": {
+    "name": "Danse sous le réverbère",
+    "desc": "Deux anciens dansent sous le réverbère devant chez vous. Un pas, une pause, lents et sûrs.",
+    "lines": [
+      "Un cercle de curieux se forme, et après la danse, tout le monde entre s'asseoir."
+    ]
+  },
+  "159": {
+    "name": "Le maïs grillé du chariot",
+    "desc": "Un chariot s'arrête devant chez vous et vend des épis de maïs grillés, tartinés de fromage et saupoudrés de piment.",
+    "lines": [
+      "Ceux qui ont acheté un épi entrent au passage prendre une soupe."
+    ]
+  },
+  "160": {
+    "name": "La pluie de quinze heures",
+    "desc": "À trois heures pile, une grosse averse tombe, à l'heure, et s'arrête au bout de dix minutes.",
+    "lines": [
+      "Ceux qui sont entrés s'abriter s'assoient et ne repartent plus."
+    ]
+  },
+  "161": {
+    "name": "Le bus couvert de fleurs",
+    "desc": "Un vieux bus peint de fleurs et d'oiseaux s'arrête au carrefour. Son klaxon chante.",
+    "lines": [
+      "Les passagers qui descendent sont tous attirés par votre enseigne."
+    ]
+  },
+  "162": {
+    "name": "Le client qui garde son masque",
+    "desc": "Un client tout en muscles, le visage couvert d'un masque à motifs, s'assoit et commande. Il refuse d'ôter son masque, même pour manger.",
+    "lines": [
+      "Lui demander un autographe",
+      "Il signe la serviette en papier d'un grand paraphe plein de fioritures.",
+      "Lui demander son vrai nom",
+      "Il finit son assiette en silence, puis lâche\u202f: «\u202fLe masque, c'est mon visage.\u202f»"
+    ]
+  },
+  "163": {
+    "name": "Le tube à la radio",
+    "desc": "La radio de la cuisine passe un air de danse très rythmé. Ceux qui coupent et ceux qui font la vaisselle se mettent tous à se déhancher.",
+    "lines": [
+      "Les mains vont plus vite, et le feu monte un peu."
+    ]
+  },
+  "164": {
+    "name": "Les œufs à confettis",
+    "desc": "Une bande d'enfants armés de coquilles d'œufs remplies de confettis les écrase sur la tête de tous ceux qu'ils croisent.",
+    "lines": [
+      "En acheter quelques-uns pour riposter",
+      "Vous touchez le chef de la bande, et tout le monde éclate de rire.",
+      "Se réfugier dans le restaurant",
+      "Vous finissez quand même couvert de confettis."
+    ]
+  },
+  "165": {
+    "name": "Les quinze ans",
+    "desc": "Une famille veut fêter les quinze ans de sa fille chez vous, avec de la danse et un grand gâteau à trois étages.",
+    "lines": [
+      "Accepter",
+      "Musique et rires toute la soirée, et une addition magnifique.",
+      "Refuser poliment",
+      "Ils vont ailleurs, mais en partant, ils vous laissent une part de gâteau."
+    ]
+  },
+  "166": {
+    "name": "Une petite tasse de chocolat chaud",
+    "desc": "Une vieille dame a moulu son cacao à la meule de pierre, ajouté de la cannelle et une pointe de piment, et vous en apporte une petite tasse.",
+    "lines": [
+      "Vous voilà réchauffé de la tête aux pieds, et plein d'idées pour vos plats."
+    ]
+  },
+  "167": {
+    "name": "Football de rue",
+    "desc": "Des enfants jouent au ballon devant chez vous, et un tir envoie la balle droit dans votre restaurant.",
+    "lines": [
+      "Leur rendre le ballon",
+      "Les enfants filent en criant merci.",
+      "Sortir taper la balle avec eux",
+      "Vous marquez un but, et les enfants vous entourent en criant de joie.",
+      "Vous tombez, et votre pantalon est troué."
+    ]
+  },
+  "168": {
+    "name": "Le vieil arbre chargé de fruits",
+    "desc": "Le vieil arbre du jardin, qui n'avait jamais donné un seul fruit, est aujourd'hui couvert d'avocats.",
+    "lines": [
+      "Les cueillir pour la cuisine",
+      "Vous en remplissez un panier entier.",
+      "Les partager avec les voisins",
+      "Les voisins viennent tous vous remercier, et restent manger au passage."
+    ]
+  },
+  "169": {
+    "name": "La sérénade sous la fenêtre",
+    "desc": "Une troupe de musiciens en chapeaux à larges bords, guitares et trompettes à la main, chante toute une chanson d'amour sous l'immeuble d'en face.",
+    "lines": [
+      "La fenêtre du haut ne s'est jamais ouverte. Pour se consoler, ils viennent manger un morceau chez vous."
+    ]
+  },
+  "170": {
+    "name": "Les petits monstres",
+    "desc": "Une bande d'enfants déguisés en petits monstres frappe à votre porte\u202f: «\u202fDes bonbons ou un sort\u202f!\u202f»",
+    "lines": [
+      "Donner des bonbons",
+      "Les enfants repartent en criant de joie vers la maison suivante.",
+      "Faire semblant de ne pas être là",
+      "Le lendemain, votre devanture est couverte de papier toilette. Vous passez la matinée à nettoyer."
+    ]
+  },
+  "171": {
+    "name": "Les citrouilles sur le perron",
+    "desc": "Les voisins alignent devant leur porte des citrouilles sculptées de grimaces, et y allument des bougies le soir venu.",
+    "lines": [
+      "Ceux qui viennent voir les citrouilles restent dîner au passage."
+    ]
+  },
+  "172": {
+    "name": "Une grosse dinde rôtie",
+    "desc": "Aujourd'hui, chaque famille se réunit autour d'une grosse dinde rôtie. Après le repas, plus personne n'arrive à bouger.",
+    "lines": [
+      "Le soir, les desserts s'arrachent."
+    ]
+  },
+  "173": {
+    "name": "La file avant l'aube",
+    "desc": "Avant même le lever du jour, toute la ville fait la queue devant le centre commercial pour les grosses promotions.",
+    "lines": [
+      "Le matin, le restaurant est vide. À midi, tous les chasseurs de bonnes affaires débarquent d'un coup."
+    ]
+  },
+  "174": {
+    "name": "La tasse resservie",
+    "desc": "Un client lève sa tasse vide\u202f: «\u202fOn me ressert gratuitement, hein\u202f?\u202f»",
+    "lines": [
+      "Gratuit",
+      "Toute la rue sait maintenant que chez vous, on ressert gratis.",
+      "Payant",
+      "Le client grommelle, mais paie quand même."
+    ]
+  },
+  "175": {
+    "name": "Le pourboire forcé",
+    "desc": "Après son repas, un client glisse de force une liasse de billets dans la main du serveur\u202f: «\u202fC'est l'usage.\u202f»",
+    "lines": [
+      "Le serveur est ravi toute la journée, et dépose la liasse à la caisse."
+    ]
+  },
+  "176": {
+    "name": "Les routiers de minuit",
+    "desc": "Quelques routiers au long cours s'arrêtent chez vous en pleine nuit et commandent chacun une grande assiette d'œufs au plat et une cafetière.",
+    "lines": [
+      "Avant de repartir, ils promettent de revenir à leur prochain passage."
+    ]
+  },
+  "177": {
+    "name": "Cinéma sur le parking",
+    "desc": "Un grand écran a été dressé sur le parking à la sortie de la ville, et tout le monde regarde le film depuis sa voiture.",
+    "lines": [
+      "Les commandes s'enchaînent, livrées jusqu'à la vitre des voitures."
+    ]
+  },
+  "178": {
+    "name": "Le concours de hot-dogs",
+    "desc": "Quelqu'un organise un concours de gros mangeurs devant votre porte\u202f: qui en avalera le plus en dix minutes\u202f?",
+    "lines": [
+      "S'inscrire",
+      "Vous en engloutissez douze d'affilée et remportez le titre\u202f!",
+      "Au troisième, vous levez la main et abandonnez.",
+      "Faire l'arbitre",
+      "Vous comptez avec soin, personne n'a rien à redire."
+    ]
+  },
+  "179": {
+    "name": "Feu d'artifice rouge, blanc, bleu",
+    "desc": "Ce soir, la ville tire des feux d'artifice toute la nuit, et le ciel n'est que lumières rouges, blanches et bleues.",
+    "lines": [
+      "Après le spectacle, tout le monde a faim."
+    ]
+  },
+  "180": {
+    "name": "Bric-à-brac devant le garage",
+    "desc": "Les voisins vendent leurs vieilleries devant leur garage, tout à prix minuscule.",
+    "lines": [
+      "Aller fouiner",
+      "Vous dénichez un vieux livre de recettes aux marges couvertes de notes.",
+      "Une vieille boîte en fer cache deux bons.",
+      "Ne pas y aller",
+      "Vous jetez un œil par la fenêtre, puis reprenez votre découpe."
+    ]
+  },
+  "181": {
+    "name": "Le grand match",
+    "desc": "Toute la ville regarde un grand match aujourd'hui, et tout le monde dit que les pubs de la mi-temps sont meilleures que le match.",
+    "lines": [
+      "Proposer des ailes de poulet à emporter",
+      "Les boîtes d'ailes de poulet partent les unes après les autres.",
+      "Installer un grand écran",
+      "La salle est pleine de clients en maillot, et leurs cris manquent de faire sauter le toit."
+    ]
+  },
+  "182": {
+    "name": "La marmotte et son ombre",
+    "desc": "Les habitants entourent une marmotte et attendent qu'elle sorte la tête pour voir son ombre\u202f: c'est elle qui dira combien de temps l'hiver va durer. À votre avis, verra-t-elle son ombre\u202f?",
+    "lines": [
+      "Elle la verra",
+      "Elle voit son ombre, vous aviez raison\u202f! L'hiver va durer encore six semaines.",
+      "Elle ne voit pas son ombre. Raté.",
+      "Elle ne la verra pas",
+      "Elle ne voit pas son ombre, vous aviez raison\u202f! Le printemps arrive bientôt.",
+      "Elle voit son ombre. Raté."
+    ]
+  },
+  "183": {
+    "name": "«\u202fC'est tout\u202f?\u202f»",
+    "desc": "Un client fixe son assiette\u202f: «\u202fC'est tout\u202f?\u202f»",
+    "lines": [
+      "Lui ajouter une grosse louche",
+      "Il mange à sa faim et raconte à qui veut l'entendre qu'on est bien servi chez vous.",
+      "Expliquer que c'est de la cuisine raffinée",
+      "Il reste sceptique, mais nettoie son assiette jusqu'à la dernière miette."
+    ]
+  },
+  "184": {
+    "name": "La musique du marchand de glaces",
+    "desc": "Une camionnette de glaces passe lentement en jouant sa petite musique, et les enfants courent derrière.",
+    "lines": [
+      "Fatigués de courir, les enfants traînent leurs parents chez vous pour manger."
+    ]
+  },
+  "185": {
+    "name": "Le concours de barbecue d'à côté",
+    "desc": "La ville voisine organise un concours de barbecue. D'après le jury, il suffit d'assez de fumée et d'une sauce assez sucrée pour gagner.",
+    "lines": [
+      "S'inscrire",
+      "Votre viande grillée remporte le ruban bleu\u202f!",
+      "Le jury trouve votre sauce trop sophistiquée.",
+      "Y aller en spectateur",
+      "Vous passez l'après-midi dans la fumée et repartez avec deux astuces."
+    ]
+  },
+  "186": {
+    "name": "Partie de cartes à la cave",
+    "desc": "La radio annonce un vent violent. Les voisins se réfugient tous dans la cave de votre restaurant et jouent aux cartes tout l'après-midi.",
+    "lines": [
+      "Quand la partie leur creuse l'appétit, ils commandent."
+    ]
+  },
+  "187": {
+    "name": "Le défilé des anciens élèves",
+    "desc": "Le lycée de la ville fête le retour de ses anciens\u202f: fanfare, chars et pom-pom girls défilent devant votre porte.",
+    "lines": [
+      "Élèves et parents remplissent la salle."
+    ]
+  },
+  "188": {
+    "name": "Le brunch du dimanche",
+    "desc": "Une bande d'amis arrive dès dix heures et commande une table entière de pancakes, d'œufs et de jus de fruits.",
+    "lines": [
+      "Ils bavardent jusqu'à l'après-midi, et commandent de plus en plus."
+    ]
+  },
+  "189": {
+    "name": "Un repas pour le client suivant",
+    "desc": "En réglant, un client paie un repas de plus\u202f: c'est pour inviter le prochain client qui passera la porte.",
+    "lines": [
+      "Le client suivant reste interdit un long moment, puis paie à son tour un repas de plus. Toute la journée, on se passe le relais."
+    ]
+  },
+  "190": {
+    "name": "Premier épisode",
+    "desc": "Toute la ville se met à suivre un grand feuilleton télévisé. Pendant l'heure de diffusion, il n'y a plus un chat dans la rue.",
+    "lines": [
+      "Après l'épisode, tout le monde vient en discuter chez vous, et plus personne ne chipote sur les plats."
+    ]
+  },
+  "191": {
+    "name": "La sœur jumelle",
+    "desc": "Dans le feuilleton, la sœur jumelle de l'héroïne, perdue depuis des années, refait surface. Les clients se disputent pour savoir si elle est gentille ou méchante, et exigent votre avis.",
+    "lines": [
+      "Elle est gentille",
+      "Ses partisans vous applaudissent.",
+      "Elle est méchante",
+      "L'autre moitié des clients vous applaudit."
+    ]
+  },
+  "192": {
+    "name": "Amnésie",
+    "desc": "Dans le feuilleton, le héros fait une chute et oublie tout le monde.",
+    "lines": [
+      "Les spectateurs de toute la ville viennent essuyer leurs larmes chez vous, et tout leur semble délicieux."
+    ]
+  },
+  "193": {
+    "name": "Le dernier épisode",
+    "desc": "Ce soir, c'est le dernier épisode\u202f: on va enfin savoir qui est vraiment la sœur jumelle.",
+    "lines": [
+      "Le diffuser dans le restaurant",
+      "Vous aviez vu juste\u202f! Toute la salle vous applaudit.",
+      "Vous vous étiez trompé, et les clients se moquent de vous toute la soirée.",
+      "Ne pas regarder et cuisiner",
+      "Vous n'apprenez la fin que le lendemain, de la bouche des clients."
+    ]
+  },
+  "194": {
+    "name": "L'alpaga à la porte",
+    "desc": "Un alpaga a suivi des touristes jusque dans votre restaurant. Il mâchonne la plante de l'entrée et refuse de partir.",
+    "lines": [
+      "Appeler son propriétaire",
+      "Le propriétaire vient vite le récupérer, en s'excusant mille fois.",
+      "Lui donner quelques feuilles et le laisser rester un peu",
+      "Les clients font la queue pour se prendre en photo avec lui."
+    ]
+  },
+  "195": {
+    "name": "L'écharpe par la poste",
+    "desc": "Le propriétaire de l'alpaga vous envoie une écharpe tricotée avec sa laine.",
+    "lines": [
+      "Elle est d'une douceur incroyable. Vous êtes de bonne humeur toute la journée."
+    ]
+  },
+  "196": {
+    "name": "Revoilà l'alpaga",
+    "desc": "L'alpaga est revenu tout seul. Il se tient bien droit devant l'entrée, comme un portier.",
+    "lines": [
+      "Tous les passants entrent jeter un œil."
+    ]
+  },
+  "197": {
+    "name": "L'élevage dans la montagne",
+    "desc": "Le propriétaire de l'alpaga vous invite à visiter son élevage dans la montagne.",
+    "lines": [
+      "Y aller",
+      "Il vous offre un panier de fromages maison et de légumes de la montagne.",
+      "Remettre à plus tard",
+      "Il vous envoie une photo de vous avec l'alpaga."
+    ]
+  },
+  "198": {
+    "name": "Trois mille kilomètres en camping-car",
+    "desc": "Un camping-car s'arrête devant chez vous. La famille raconte qu'elle a déjà roulé trois mille kilomètres, et qu'il en reste encore trois mille.",
+    "lines": [
+      "Leur offrir un sac de gourmandises pour la route",
+      "Les enfants vous font coucou, collés à la vitre.",
+      "Leur dessiner une carte avec un raccourci",
+      "Le père plie soigneusement la carte et la glisse dans sa poche de poitrine."
+    ]
+  },
+  "199": {
+    "name": "La carte postale du canyon",
+    "desc": "Ils vous envoient une carte postale\u202f: un canyon tout rouge. Au dos\u202f: «\u202fLes gourmandises sont finies depuis longtemps. Votre restaurant nous manque.\u202f»",
+    "lines": [
+      "Vous l'accrochez à la caisse, et tous les clients veulent la voir."
+    ]
+  },
+  "200": {
+    "name": "La carte postale du canyon",
+    "desc": "Ils vous envoient une carte postale\u202f: un canyon tout rouge. Au dos\u202f: «\u202fVotre raccourci était vraiment plus court, on a gagné une journée entière.\u202f»",
+    "lines": [
+      "Vos livreurs s'en inspirent et dessinent à leur tour quelques nouveaux raccourcis."
+    ]
+  },
+  "201": {
+    "name": "Sur le chemin du retour",
+    "desc": "Le camping-car est de nouveau garé devant chez vous. La famille, sur le chemin du retour, vous apporte une caisse de spécialités achetées en route.",
+    "lines": [
+      "Vous partagez tous ensemble un repas de retrouvailles."
+    ]
+  },
+  "202": {
+    "name": "Le petit qui révise dans son coin",
+    "desc": "Un enfant à lunettes vient chaque jour après l'école réviser ses mots dans un coin. Il veut participer au concours d'orthographe de la ville.",
+    "lines": [
+      "L'interroger",
+      "Vous le testez sur les noms de plats du menu\u202f: il n'en rate pas un.",
+      "Lui préparer un bol de nouilles pour l'encourager",
+      "Il mange en suant à grosses gouttes et jure qu'il va gagner."
+    ]
+  },
+  "203": {
+    "name": "En finale\u202f!",
+    "desc": "Le petit entre en courant et crie\u202f: il est en finale\u202f!",
+    "lines": [
+      "Tous les clients l'applaudissent, et quelqu'un lui offre aussitôt un jus de fruits."
+    ]
+  },
+  "204": {
+    "name": "Le soir de la finale",
+    "desc": "Ce soir, c'est la finale du concours d'orthographe. Il paraît que le dernier mot sera un nom de plat.",
+    "lines": [
+      "Aller l'encourager sur place",
+      "Il épelle le dernier mot sans faute et remporte le titre\u202f!",
+      "À une lettre près, il finit deuxième.",
+      "Attendre des nouvelles au restaurant",
+      "Il accourt vous annoncer qu'il a gagné\u202f!",
+      "Il accourt vous dire qu'il a fini deuxième, et il n'est pas triste du tout."
+    ]
+  },
+  "205": {
+    "name": "La photo au trophée",
+    "desc": "Le petit vous apporte une photo\u202f: lui, trophée en main, devant la porte de votre restaurant.",
+    "lines": [
+      "Vous l'accrochez à la place d'honneur, bien en vue sur le mur."
+    ]
+  },
+  "206": {
+    "name": "Le food truck à burritos",
+    "desc": "Un food truck qui vend des burritos s'est garé devant chez vous, et son odeur attire tous vos clients.",
+    "lines": [
+      "Aller le saluer et proposer de s'associer",
+      "Le patron est un type franc\u202f: vous convenez d'en reparler demain.",
+      "Afficher une «\u202fOffre du jour\u202f» pour lui faire concurrence",
+      "Il affiche lui aussi un panneau, encore moins cher que vous."
+    ]
+  },
+  "207": {
+    "name": "Le menu en duo",
+    "desc": "Votre soupe et ses burritos s'associent dans un menu commun.",
+    "lines": [
+      "Les menus s'envolent les uns après les autres."
+    ]
+  },
+  "208": {
+    "name": "La guerre des prix",
+    "desc": "Aujourd'hui, le food truck a encore baissé ses prix, et la file devant lui est plus longue que chez vous.",
+    "lines": [
+      "Baisser encore",
+      "Plus de clients, mais moins de bénéfices.",
+      "L'inviter à dîner pour faire la paix",
+      "Vous trinquez ensemble et convenez que chacun vendra de son côté."
+    ]
+  },
+  "209": {
+    "name": "Le food truck s'en va",
+    "desc": "Le food truck part pour la ville suivante. En partant, le patron vous laisse un pot de sa sauce piquante secrète.",
+    "lines": [
+      "Vous en mettez une cuillerée dans vos plats, et les clients n'arrêtent pas de demander d'où vient ce goût."
+    ]
+  },
+  "210": {
+    "name": "Le client au chapeau rabattu",
+    "desc": "Un détective en imperméable, le bord du chapeau rabattu sur les yeux, entre et vous demande si vous n'auriez pas vu récemment «\u202fun homme avec un carnet de recettes rouge\u202f».",
+    "lines": [
+      "Répondre franchement que non",
+      "Il hoche la tête, laisse sa carte et s'en va.",
+      "L'inviter à s'asseoir pour en parler",
+      "Il boit trois cafés et raconte une très longue histoire."
+    ]
+  },
+  "211": {
+    "name": "La page arrachée",
+    "desc": "Dans la ruelle derrière le restaurant, vous ramassez une page rouge arrachée, avec la moitié d'une recette dessus.",
+    "lines": [
+      "Vous essayez la première moitié\u202f: c'est étonnamment bon."
+    ]
+  },
+  "212": {
+    "name": "Le retour du détective",
+    "desc": "Le détective revient, et repère aussitôt la page que vous aviez glissée sous la caisse.",
+    "lines": [
+      "Lui remettre la page",
+      "Il dit qu'il va enfin pouvoir classer l'affaire, et vous glisse deux bons pour vous remercier.",
+      "Refuser catégoriquement",
+      "Il hausse les épaules et s'en va. Vous passez la soirée à étudier votre demi-recette."
+    ]
+  },
+  "213": {
+    "name": "Le fin mot de l'histoire",
+    "desc": "Le Journal de la ville publie un entrefilet\u202f: le carnet de recettes rouge appartient à un vieux cuisinier à la retraite, qui avait simplement oublié où il l'avait rangé.",
+    "lines": [
+      "Le vieux cuisinier vient exprès manger chez vous, et dit que vos plats ont le goût de sa jeunesse."
+    ]
+  },
+  "214": {
+    "name": "Les tambours dans la cour",
+    "desc": "Une troupe de tambours voudrait répéter dans votre arrière-cour, juste le temps d'un après-midi.",
+    "lines": [
+      "Accepter",
+      "Les tambours font sauter les casseroles, mais les clients adorent.",
+      "Refuser",
+      "Ils vont au parc, et vous passez un après-midi au calme."
+    ]
+  },
+  "215": {
+    "name": "Le soir du défilé",
+    "desc": "En passant devant chez vous, la troupe de tambours s'arrête pour jouer un morceau rien que pour vous.",
+    "lines": [
+      "Toute la rue se met à danser autour d'eux, puis tout le monde entre chez vous."
+    ]
+  },
+  "216": {
+    "name": "La peau de tambour signée",
+    "desc": "La troupe vous offre une vieille peau de tambour couverte de signatures, et vous l'accrochez au mur.",
+    "lines": [
+      "Au dos, deux bons sont scotchés."
+    ]
+  },
+  "217": {
+    "name": "La carte sur la serviette",
+    "desc": "Un vieil homme à la barbe grisonnante raconte que son grand-père a enterré un pot d'or sur la colline derrière la ville, et que la carte est dessinée sur cette serviette.",
+    "lines": [
+      "Aller creuser avec lui",
+      "Vous déterrez un pot rouillé, et il y a vraiment quelque chose dedans\u202f!",
+      "Après tout un après-midi à creuser, vous ne trouvez qu'une vieille cuillère.",
+      "L'inviter d'abord à manger",
+      "Après le repas, il vous laisse la serviette."
+    ]
+  },
+  "218": {
+    "name": "Le dos de la serviette",
+    "desc": "Vous retournez la serviette\u202f: au dos, une recette de ragoût est écrite en tout petit.",
+    "lines": [
+      "Vous en préparez une marmite, et toute la rue en sent l'odeur."
+    ]
+  },
+  "219": {
+    "name": "La lettre du vieil homme",
+    "desc": "Le vieil homme vous écrit de très loin\u202f: «\u202fL'or, c'était une blague. Le ragoût, lui, est bien réel.\u202f»",
+    "lines": [
+      "Vous en riez longtemps, et tout ce que vous cuisinez ce jour-là réussit."
+    ]
   }
 }

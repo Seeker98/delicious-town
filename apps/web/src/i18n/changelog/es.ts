@@ -1,6 +1,7 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  events1031: 'Eventos aleatorios: una nueva tanda de eventos',
   events1028:
     'Novedad: eventos aleatorios y el concurso del pueblo. Mientras juegas, puede pasar algo curioso en tu restaurante (como mucho una vez cada 4 horas): algunos eventos dan una pequeña ventaja o desventaja durante 1 a 4 horas, otros te dejan elegir entre dos opciones y algunos continúan unos días después. A veces es una pregunta del concurso del pueblo, y acertarla da un vale misterioso. Cada jueves por la noche el bar organiza una noche de preguntas en la que tres aciertos dan 3 vales. Los restaurantes de nivel inferior a 10 nunca reciben eventos con desventajas',
   pest1027:

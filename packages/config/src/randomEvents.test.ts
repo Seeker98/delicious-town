@@ -12,8 +12,8 @@ import { realBuild } from './testBundle';
 describe('随机事件和问答（设计稿 2026-10-28）', () => {
   const b = realBuild().bundle!;
 
-  it('样例全部: 150 个事件 (食评家、小提琴手第二段各分两条) 和 97 道题', () => {
-    expect(b.randomEvents).toHaveLength(152);
+  it('样例全部: 前三批 150 个事件 (食评家、小提琴手第二段各分两条)、第四批 67 个和 97 道题', () => {
+    expect(b.randomEvents).toHaveLength(219);
     expect(b.randomQuiz).toHaveLength(97);
   });
 

@@ -1196,5 +1196,566 @@
     "lines": [
       "After one song, he says: \"This one's for the restaurant on the corner.\""
     ]
+  },
+  "153": {
+    "name": "Marigolds and Sugar Skulls",
+    "desc": "Every household sets orange marigolds and little sugar skulls by the door, and leaves a bowl of a departed loved one's favorite dish on the table.",
+    "lines": [
+      "Lots of people come in and order \"the one the old folks always used to get.\""
+    ]
+  },
+  "154": {
+    "name": "The Drum Parade",
+    "desc": "A parade pounding big drums, all in sequins, passes down the street and dances until dawn.",
+    "lines": [
+      "Worn-out dancers drop in for a late-night bite."
+    ]
+  },
+  "155": {
+    "name": "Swing Blindfolded",
+    "desc": "The neighbors are throwing a kid's birthday party, with a paper candy pot hanging from a tree. The kids insist you put on a blindfold and take a swing.",
+    "lines": [
+      "Swing hard",
+      "Way off. The kids are in stitches.",
+      "The pot cracks open, and out fall candy and a voucher.",
+      "Let the birthday kid have a go",
+      "The birthday kid nails it, and the whole family comes to your place for cake."
+    ]
+  },
+  "156": {
+    "name": "The Shared Gourd",
+    "desc": "A table of customers sits in a circle, passing one gourd cup of bitter tea around and topping it up with hot water, pot after pot.",
+    "lines": [
+      "They stay all afternoon, in great spirits."
+    ]
+  },
+  "157": {
+    "name": "Backyard Coals",
+    "desc": "First thing this morning the neighbor lit a charcoal fire out back, and a huge cut of meat has been slow-roasting there all day.",
+    "lines": [
+      "The smell drifts halfway down the street."
+    ]
+  },
+  "158": {
+    "name": "A Dance Under the Streetlamp",
+    "desc": "Two old folks dance under the streetlamp outside your door. Step, pause, step: slow and steady.",
+    "lines": [
+      "A crowd gathers to watch, and afterwards everyone comes in for a seat."
+    ]
+  },
+  "159": {
+    "name": "Grilled Corn from a Cart",
+    "desc": "A cart parks at your door selling grilled corn slathered with cheese and chili powder.",
+    "lines": [
+      "Corn in hand, people pop in for a bowl of soup on the way."
+    ]
+  },
+  "160": {
+    "name": "Three O'Clock Rain",
+    "desc": "At three on the dot, a downpour arrives right on schedule, and ten minutes later it's over.",
+    "lines": [
+      "People who ducked in out of the rain sit down and never leave."
+    ]
+  },
+  "161": {
+    "name": "The Bus Covered in Flowers",
+    "desc": "An old bus painted all over with flowers and birds stops at the corner. Its horn plays a little song.",
+    "lines": [
+      "Every passenger who gets off is drawn in by your sign."
+    ]
+  },
+  "162": {
+    "name": "The Customer Who Keeps His Mask On",
+    "desc": "A muscular customer in a patterned mask sits down to order, and won't take the mask off even to eat.",
+    "lines": [
+      "Ask for his autograph",
+      "He signs a napkin with a grand, swirling flourish.",
+      "Ask his real name",
+      "He finishes eating in silence and leaves you just one line: \"The mask is my face.\""
+    ]
+  },
+  "163": {
+    "name": "Dance Tune on the Radio",
+    "desc": "The kitchen radio starts playing a dance tune with a heavy beat, and everyone chopping and washing up starts swaying along.",
+    "lines": [
+      "Hands move a lot faster, and the burners get turned up a notch."
+    ]
+  },
+  "164": {
+    "name": "Confetti Eggs",
+    "desc": "A gang of kids with eggshells full of confetti is cracking them over everyone's head.",
+    "lines": [
+      "Buy a few and fight back",
+      "You get the ringleader, and everyone bursts out laughing.",
+      "Hide in the restaurant",
+      "You still end up covered in confetti."
+    ]
+  },
+  "165": {
+    "name": "The Fifteenth Birthday",
+    "desc": "A family wants to throw their daughter's fifteenth birthday party at your place, with dancing and a three-tier cake.",
+    "lines": [
+      "Take the booking",
+      "Music and laughter all night, and a very pretty bill.",
+      "Politely decline",
+      "They go elsewhere, but leave you a slice of cake on the way out."
+    ]
+  },
+  "166": {
+    "name": "A Little Cup of Hot Chocolate",
+    "desc": "An old lady ground cocoa on a stone mill, added cinnamon and a pinch of chili, and brings you a little cup.",
+    "lines": [
+      "It warms you right through, and gives you ideas for the kitchen."
+    ]
+  },
+  "167": {
+    "name": "Street Kickabout",
+    "desc": "Some kids are kicking a ball around out front, and one boots it straight into your restaurant.",
+    "lines": [
+      "Give the ball back",
+      "The kids shout their thanks and run off.",
+      "Go out and play with them",
+      "You score a goal, and the kids mob you, cheering.",
+      "You take a tumble and rip a hole in your pants."
+    ]
+  },
+  "168": {
+    "name": "The Old Tree Bears Fruit",
+    "desc": "The old tree out back has never borne a single fruit. Today it's suddenly loaded with avocados.",
+    "lines": [
+      "Pick them for the kitchen",
+      "You fill a whole basket.",
+      "Share them with the neighbors",
+      "The neighbors all come by to say thanks, and stay for a meal."
+    ]
+  },
+  "169": {
+    "name": "Serenade Below the Window",
+    "desc": "A band in wide-brimmed hats, with guitars and trumpets, sings a whole love song under the window across the street.",
+    "lines": [
+      "The window never opens, so they console themselves with a meal at your place."
+    ]
+  },
+  "170": {
+    "name": "Little Monsters at the Door",
+    "desc": "A bunch of kids dressed as little monsters knock on your door: \"Trick or treat!\"",
+    "lines": [
+      "Hand out candy",
+      "The kids cheer and run off to the next house.",
+      "Pretend you're not home",
+      "The next day your front is draped in toilet paper, and you spend the morning cleaning up."
+    ]
+  },
+  "171": {
+    "name": "Pumpkins by the Door",
+    "desc": "The neighbors line up pumpkins carved with spooky faces by their doors, and light candles in them after dark.",
+    "lines": [
+      "People who come to see the pumpkins stay for dinner."
+    ]
+  },
+  "172": {
+    "name": "A Big Roast Turkey",
+    "desc": "Today every family gathers around a big roast turkey, and afterwards everyone is too stuffed to move.",
+    "lines": [
+      "Desserts sell like crazy tonight."
+    ]
+  },
+  "173": {
+    "name": "The Line Before Dawn",
+    "desc": "Before sunrise, the whole town is lined up outside the mall for the big sales.",
+    "lines": [
+      "The morning is dead quiet, then at noon all the bargain hunters pour in at once."
+    ]
+  },
+  "174": {
+    "name": "Free Refills",
+    "desc": "A customer holds up an empty cup: \"Refills are free, right?\"",
+    "lines": [
+      "Free",
+      "Now the whole street knows your refills are free.",
+      "Not free",
+      "The customer grumbles, but pays anyway."
+    ]
+  },
+  "175": {
+    "name": "The Insistent Tip",
+    "desc": "After eating, a customer presses a roll of cash into the server's hand, saying that's just how it's done.",
+    "lines": [
+      "The server is happy all day, and hands the roll in at the counter."
+    ]
+  },
+  "176": {
+    "name": "Late-Night Truckers",
+    "desc": "A few long-haul truckers pull up at your door late at night, and each orders a big plate of fried eggs and a pot of coffee.",
+    "lines": [
+      "Before leaving, they agree to stop by again next time they're passing."
+    ]
+  },
+  "177": {
+    "name": "Movies in the Parking Lot",
+    "desc": "A big screen has gone up in the parking lot outside town, and everyone watches the film from their cars.",
+    "lines": [
+      "Takeaway orders keep arriving at car windows, one after another."
+    ]
+  },
+  "178": {
+    "name": "Hot Dog Eating Contest",
+    "desc": "Someone's holding an eating contest outside your door: whoever eats the most in ten minutes wins.",
+    "lines": [
+      "Sign up",
+      "You put away twelve in one go and take the title!",
+      "You raise your hand and give up on the third one.",
+      "Be the judge",
+      "You count carefully, and nobody can fault you."
+    ]
+  },
+  "179": {
+    "name": "Red, White and Blue Fireworks",
+    "desc": "Fireworks go off over town all night, filling the sky with red, white and blue.",
+    "lines": [
+      "Everyone's hungry after the show."
+    ]
+  },
+  "180": {
+    "name": "Garage Sale Next Door",
+    "desc": "The neighbors have set up in front of their garage selling old stuff, all of it for next to nothing.",
+    "lines": [
+      "Go have a rummage",
+      "You find an old cookbook with notes scribbled all over the margins.",
+      "An old tin box has two vouchers hidden inside.",
+      "Skip it",
+      "You glance out the window and keep chopping."
+    ]
+  },
+  "181": {
+    "name": "The Big Game",
+    "desc": "The whole town is watching a big game today, and everyone says the halftime ads are better than the game.",
+    "lines": [
+      "Launch takeaway chicken wings",
+      "The wings go out box after box.",
+      "Put a big screen up in the restaurant",
+      "The place fills with customers in jerseys, and the cheering nearly lifts the roof."
+    ]
+  },
+  "182": {
+    "name": "The Groundhog and Its Shadow",
+    "desc": "The townsfolk gather around a groundhog, waiting for it to poke its head out and look for its shadow, to tell how much winter is left. Will it see its shadow?",
+    "lines": [
+      "It will",
+      "It sees its shadow. You guessed right! Six more weeks of winter.",
+      "It doesn't see its shadow. You guessed wrong.",
+      "It won't",
+      "It doesn't see its shadow. You guessed right! Spring is almost here.",
+      "It sees its shadow. You guessed wrong."
+    ]
+  },
+  "183": {
+    "name": "\"That's It?\"",
+    "desc": "A customer looks down at the plate: \"That's it?\"",
+    "lines": [
+      "Add a big extra scoop",
+      "He eats happily and tells everyone how generous your portions are.",
+      "Explain that it's fine dining",
+      "He's not quite convinced, but he licks the plate clean."
+    ]
+  },
+  "184": {
+    "name": "The Ice Cream Truck Tune",
+    "desc": "An ice cream truck rolls slowly by, playing its tinkly tune, with kids chasing after it.",
+    "lines": [
+      "Worn-out kids drag their parents in for a meal."
+    ]
+  },
+  "185": {
+    "name": "The Barbecue Contest Next Town Over",
+    "desc": "The next town is holding a barbecue contest. The judges say all it takes to win is plenty of smoke and a sweet enough sauce.",
+    "lines": [
+      "Enter",
+      "Your barbecue wins the blue ribbon!",
+      "The judges say your sauce is too fancy.",
+      "Go and watch",
+      "You stand in the smoke all afternoon and pick up a couple of tricks."
+    ]
+  },
+  "186": {
+    "name": "Cards in the Basement",
+    "desc": "The radio says it'll be very windy today, so the neighbors all take shelter in your basement and play cards all afternoon.",
+    "lines": [
+      "When the cards make them hungry, they order food."
+    ]
+  },
+  "187": {
+    "name": "The Welcome-Back Parade",
+    "desc": "The town high school is welcoming its old students back, and the marching band, floats and cheerleaders parade right past your door.",
+    "lines": [
+      "Students and parents pack the place."
+    ]
+  },
+  "188": {
+    "name": "Sunday Brunch",
+    "desc": "A group of friends shows up at ten and orders a whole table of pancakes, eggs and juice.",
+    "lines": [
+      "They chat into the afternoon and keep ordering more."
+    ]
+  },
+  "189": {
+    "name": "A Meal for the Next Customer",
+    "desc": "At the counter, a customer pays for one extra meal, a treat for whoever walks in next.",
+    "lines": [
+      "The next customer stands there stunned for a while, then pays for an extra meal too. People keep it going all day."
+    ]
+  },
+  "190": {
+    "name": "Episode One",
+    "desc": "The whole town has started following a long-running TV drama. For the hour it's on, the streets are empty.",
+    "lines": [
+      "Once it's over, everyone comes in to talk about the plot, and nobody fusses about the food."
+    ]
+  },
+  "191": {
+    "name": "The Twin Sister",
+    "desc": "The heroine's long-lost twin sister has turned up on the show. Your customers are arguing over whether she's good or bad, and insist you pick a side.",
+    "lines": [
+      "She's good",
+      "Her fans give you a round of applause.",
+      "She's bad",
+      "The other half give you a round of applause."
+    ]
+  },
+  "192": {
+    "name": "Amnesia",
+    "desc": "The hero on the show took a fall and forgot everyone.",
+    "lines": [
+      "Viewers all over town are dabbing their eyes in your restaurant, and everything tastes wonderful to them."
+    ]
+  },
+  "193": {
+    "name": "The Finale",
+    "desc": "Tonight is the finale, and the twin sister's true identity is finally coming out.",
+    "lines": [
+      "Show it in the restaurant",
+      "You called it! The whole place applauds you.",
+      "You called it wrong, and the customers tease you all night.",
+      "Skip it and focus on cooking",
+      "You only hear how it ended from customers the next day."
+    ]
+  },
+  "194": {
+    "name": "The Alpaca at the Door",
+    "desc": "An alpaca followed some tourists into your restaurant, and now it's munching the potted plant by the door and won't leave.",
+    "lines": [
+      "Call the owner",
+      "The owner soon comes to lead it away, apologizing over and over.",
+      "Feed it some greens and let it stay a while",
+      "Customers line up to take photos with it."
+    ]
+  },
+  "195": {
+    "name": "The Scarf in the Mail",
+    "desc": "The alpaca's owner mailed you a scarf knitted from its wool.",
+    "lines": [
+      "It's ridiculously soft, and you're in a great mood all day."
+    ]
+  },
+  "196": {
+    "name": "The Alpaca Is Back",
+    "desc": "That alpaca found its own way back, and now stands at your door as straight as a doorman.",
+    "lines": [
+      "Everyone walking by has to come in for a look."
+    ]
+  },
+  "197": {
+    "name": "The Ranch in the Hills",
+    "desc": "The alpaca's owner invites you to visit the ranch up in the hills.",
+    "lines": [
+      "Go",
+      "The owner gives you a basket of homemade cheese and mountain greens.",
+      "Another time",
+      "The owner mails you a photo of you and the alpaca."
+    ]
+  },
+  "198": {
+    "name": "Three Thousand Kilometers",
+    "desc": "A camper van pulls up at your door. The family says they've driven three thousand kilometers already, with three thousand more to go.",
+    "lines": [
+      "Give them a bag of snacks for the road",
+      "The kids wave to you from the windows.",
+      "Draw them a map of a shortcut",
+      "Dad folds up the map and tucks it into his shirt pocket."
+    ]
+  },
+  "199": {
+    "name": "Postcard from the Canyon",
+    "desc": "They sent a postcard of a red canyon. On the back: \"The snacks ran out ages ago. We miss your restaurant.\"",
+    "lines": [
+      "You stick the postcard up by the counter, and every customer has to take a look."
+    ]
+  },
+  "200": {
+    "name": "Postcard from the Canyon",
+    "desc": "They sent a postcard of a red canyon. On the back: \"Your shortcut really was shorter. It saved us a whole day.\"",
+    "lines": [
+      "Your riders used that map to work out a few more shortcuts of their own."
+    ]
+  },
+  "201": {
+    "name": "Passing Back Through",
+    "desc": "That camper van is parked at your door again. The family is on the way home, with a box of local goodies picked up along the road.",
+    "lines": [
+      "You all sit down together in the restaurant for a reunion dinner."
+    ]
+  },
+  "202": {
+    "name": "The Kid in the Corner",
+    "desc": "A kid in glasses sits in the corner every day after school memorizing words. He says he's entering the town spelling contest.",
+    "lines": [
+      "Quiz him",
+      "You test him on dish names from the menu, and he doesn't miss a single one.",
+      "Make him a bowl of noodles for luck",
+      "He eats until he's dripping with sweat, and swears he'll win."
+    ]
+  },
+  "203": {
+    "name": "Into the Final",
+    "desc": "That kid runs in shouting: he made the final!",
+    "lines": [
+      "Your customers all applaud him, and someone buys him a juice on the spot."
+    ]
+  },
+  "204": {
+    "name": "Final Night",
+    "desc": "Tonight is the spelling final, and word is the last word will be the name of a dish.",
+    "lines": [
+      "Go cheer him on",
+      "He spells the last word right and wins!",
+      "He's one letter off and takes second place.",
+      "Wait for news at the restaurant",
+      "He runs over to tell you he won!",
+      "He runs over to say he came second, and he's not the least bit upset."
+    ]
+  },
+  "205": {
+    "name": "Photo with the Trophy",
+    "desc": "The kid brings you a photo: him holding the trophy, with your restaurant's front door behind him.",
+    "lines": [
+      "You hang it in the most prominent spot on the wall."
+    ]
+  },
+  "206": {
+    "name": "The Wrap Truck",
+    "desc": "A food truck selling wraps parks at your door, and the smell lures all your customers away.",
+    "lines": [
+      "Go say hi and suggest teaming up",
+      "The owner is an easygoing guy, and you agree to talk more tomorrow.",
+      "Put up a \"Today's Special\" sign to compete",
+      "He puts up a sign too, and his prices beat yours."
+    ]
+  },
+  "207": {
+    "name": "The Combo Deal",
+    "desc": "Your soup plus his wraps: together you launch a combo meal.",
+    "lines": [
+      "They sell like crazy."
+    ]
+  },
+  "208": {
+    "name": "Price War",
+    "desc": "The truck cut its prices again today, and the line outside it is longer than the one in your restaurant.",
+    "lines": [
+      "Cut yours further",
+      "More customers, but less profit.",
+      "Invite the owner to dinner to make peace",
+      "You share a drink and agree to each stick to your own thing."
+    ]
+  },
+  "209": {
+    "name": "The Truck Moves On",
+    "desc": "The truck is heading to the next town. Before leaving, the owner gives you a jar of his secret hot sauce.",
+    "lines": [
+      "You add a spoonful to a dish, and customers keep asking what that flavor is."
+    ]
+  },
+  "210": {
+    "name": "The Man with His Hat Pulled Low",
+    "desc": "A detective in a trench coat, hat brim pulled low, walks in and asks if you've seen anyone lately \"carrying a red recipe book\".",
+    "lines": [
+      "Tell him honestly you haven't",
+      "He nods, leaves a business card, and goes.",
+      "Invite him to sit and tell you more",
+      "He drinks three coffees and tells a very long story."
+    ]
+  },
+  "211": {
+    "name": "The Torn-Out Page",
+    "desc": "In the back alley you find a torn-out red page with half a recipe written on it.",
+    "lines": [
+      "You try out the first half, and it's surprisingly good."
+    ]
+  },
+  "212": {
+    "name": "The Detective Returns",
+    "desc": "The detective is back, and right away he spots the page you've tucked under the counter.",
+    "lines": [
+      "Hand over the page",
+      "He says now he can close the case, and slips you two vouchers as thanks.",
+      "Refuse to give it up",
+      "He shrugs and leaves. You spend the evening studying half a recipe."
+    ]
+  },
+  "213": {
+    "name": "The Truth",
+    "desc": "The Town Daily ran a short item: the owner of the red recipe book is a retired old chef who just forgot where he'd put it.",
+    "lines": [
+      "The old chef comes all the way to your place for a meal, and says your cooking tastes like his did when he was young."
+    ]
+  },
+  "214": {
+    "name": "A Drum Band in the Backyard",
+    "desc": "A drum band wants to borrow your backyard for practice. Just one afternoon, they say.",
+    "lines": [
+      "Say yes",
+      "The drumming makes the pots jump, but the customers love it.",
+      "Say no",
+      "They go to the park, and you get a quiet afternoon."
+    ]
+  },
+  "215": {
+    "name": "Parade Night",
+    "desc": "As the drum band's parade passes your door, they stop and play a piece just for you.",
+    "lines": [
+      "The whole street gathers round to dance, then everyone piles into your restaurant."
+    ]
+  },
+  "216": {
+    "name": "The Signed Drumhead",
+    "desc": "The drum band sends over an old drumhead covered in signatures, and you hang it on the wall.",
+    "lines": [
+      "Two vouchers are taped to the back."
+    ]
+  },
+  "217": {
+    "name": "The Map on the Napkin",
+    "desc": "A white-bearded old man says his grandpa buried a jar of gold in the hills out back, and the map is drawn on this napkin.",
+    "lines": [
+      "Go digging with him",
+      "You dig up a rusty jar, and there really is something inside!",
+      "You dig all afternoon and only turn up an old spoon.",
+      "Treat him to a meal first",
+      "After eating, he leaves the napkin with you."
+    ]
+  },
+  "218": {
+    "name": "The Back of the Napkin",
+    "desc": "You flip the napkin over: the back is crammed with a recipe for a stew.",
+    "lines": [
+      "You cook up a pot, and the whole street can smell it."
+    ]
+  },
+  "219": {
+    "name": "The Old Man's Letter",
+    "desc": "A letter arrives from the old man, far away: \"The gold was a fib. The stew is the real thing.\"",
+    "lines": [
+      "You laugh for ages, and everything goes right in the kitchen that day."
+    ]
   }
 }
