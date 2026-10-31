@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import type { RandomEventDto, RandomQuestionDto } from '@dt/shared';
+import { ApiError } from '../api/client';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import { activeLocale } from '../i18n';
@@ -71,10 +72,26 @@ function choiceClass(q: RandomQuestionDto, i: number): string {
   return 'btn-outline-secondary';
 }
 
-/** 问答夜从第一道没答的开始 */
+/** 问答夜从第一道没答的开始；超时结算的停在最后一道答过的 */
 function firstOpen(e: RandomEventDto): number {
-  const i = e.questions?.findIndex((q) => q.picked === null) ?? -1;
-  return i < 0 ? Math.max(0, (e.questions?.length ?? 1) - 1) : i;
+  const qs = e.questions ?? [];
+  if (e.status !== 'pending')
+    return Math.max(
+      0,
+      qs.findLastIndex((q) => q.picked !== null),
+    );
+  const i = qs.findIndex((q) => q.picked === null);
+  return i < 0 ? Math.max(0, qs.length - 1) : i;
+}
+
+/** 这件已经了结、超时或没了：再操作没用，回头问一次现在该看什么 */
+function gone(e: unknown): boolean {
+  if (!(e instanceof ApiError)) return false;
+  if (e.code === 'ALREADY_DONE') return true;
+  return (
+    e.code === 'INVALID_STATE' &&
+    ['random_event_expired', 'random_event_gone'].includes(String(e.params.reason))
+  );
 }
 
 async function poll() {
@@ -91,13 +108,19 @@ async function poll() {
 async function run(fn: () => Promise<RandomEventDto>) {
   if (busy.value) return;
   busy.value = true;
+  let stale = false;
   try {
     ev.value = await fn();
   } catch (e) {
     toast.push(errorMessage(e, r.value.failed), 'danger');
-    dismissed.value = ev.value?.id ?? null;
+    // 银币不够、网络出错：弹窗留着，可以改选或再试
+    stale = gone(e);
   } finally {
     busy.value = false;
+  }
+  if (stale) {
+    ev.value = null;
+    await poll();
   }
 }
 
@@ -162,7 +185,7 @@ watch(
             :key="i"
             type="button"
             :class="['btn', choiceClass(question, i)]"
-            :disabled="busy || question.picked !== null"
+            :disabled="busy || question.picked !== null || ev.status !== 'pending'"
             data-testid="random-event-choice"
             @click="answer(i)"
           >

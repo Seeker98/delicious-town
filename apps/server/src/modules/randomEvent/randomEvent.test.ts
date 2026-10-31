@@ -249,3 +249,45 @@ describe('随机事件: 问答 (设计稿 §7)', () => {
     expect(e.result!.text).toContain('答对了一道');
   });
 });
+
+describe('随机事件: 配置里删掉的事件和题', () => {
+  const GONE = 99_999;
+
+  it('挂着的、没看过结果的找不到配置: 收掉这一行, 照常抽这一时段 (不能让这家店从此不出事件)', async () => {
+    const shardId = await shardOn();
+    const r = await rest(shardId);
+    t.clock.set(gameTime('2026-11-06', 9, 0));
+    await put(r, 'choice', GONE);
+    const next = (await svc().current(r, 'zh-CN')).data.event;
+    const all = await rows(r);
+    expect(all[0]!.status).toBe('expired');
+    expect(all).toHaveLength(2);
+    expect(next!.id).toBe(all[1]!.id);
+
+    // 已了结、没看过的（通知、超时结算的问答夜）：记成看过
+    const r2 = await rest(shardId);
+    const id = await put(r2, 'choice', GONE);
+    await t.db
+      .updateTable('random_event')
+      .set({ status: 'done', seen: false })
+      .where('id', '=', id)
+      .execute();
+    expect((await svc().current(r2, 'zh-CN')).data.event).not.toBeNull();
+    expect((await rows(r2))[0]!.seen).toBe(true);
+  });
+
+  it('题被删了: 问答、问答夜都不报错, 收掉后照常抽', async () => {
+    const shardId = await shardOn();
+    t.clock.set(gameTime('2026-11-06', 13, 0));
+    const r = await rest(shardId);
+    await put(r, 'quiz', GONE, { qs: [{ id: GONE, order: [0, 1], picked: null, correct: null }] });
+    expect((await svc().current(r, 'zh-CN')).data.event).not.toBeNull();
+    expect((await rows(r))[0]!.status).toBe('expired');
+
+    const r2 = await rest(shardId);
+    const qs = [1, GONE, 3].map((id) => ({ id, order: [0, 1, 2, 3], picked: null, correct: null }));
+    await put(r2, 'quizNight', 40, { qs });
+    expect((await svc().current(r2, 'zh-CN')).data.event).not.toBeNull();
+    expect((await rows(r2))[0]!.status).toBe('expired');
+  });
+});
