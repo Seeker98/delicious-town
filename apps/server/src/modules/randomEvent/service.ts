@@ -136,7 +136,7 @@ async function loadPast(o: Op): Promise<PastRow[]> {
     refId: r.ref_id,
     choice: r.choice,
     day: gameDay(r.created_at),
-    quizIds: r.kind === 'quizNight' ? ((r.payload as Payload | null)?.qs ?? []).map((q) => q.id) : [],
+    quizIds: ((r.payload as Payload | null)?.qs ?? []).filter((q) => q.picked !== null).map((q) => q.id),
   }));
 }
 
@@ -282,6 +282,8 @@ function toDto(o: Op, r: Row, lang: Locale): RandomEventDto | null {
     expiresAt: r.expires_at.toISOString(),
     chosen: r.choice && r.kind === 'choice' ? r.choice : null,
   };
+  // 配置里删掉了的题：这一行给不出来（current 会把它收掉）
+  if (p?.qs.some((s) => !o.config.randomQuiz.has(s.id))) return null;
   const questions = p ? p.qs.map((s) => questionDto(o, s, tr?.randomQuiz[String(s.id)])) : null;
   if (r.kind === 'quiz') {
     if (!o.config.randomQuiz.has(r.ref_id)) return null;
@@ -349,20 +351,30 @@ export function createRandomEventService(d: GameDeps, world: WorldService) {
         return { data: { event: null }, events: [] };
       return op(ctx, 'randomEvent.current', async (o) => {
         await expireDue(o);
-        const open = await o.tx
-          .selectFrom('random_event')
-          .selectAll()
-          .where('rest_id', '=', o.rest.id)
-          .where((eb) =>
-            eb.or([
-              eb('status', '=', 'pending'),
-              eb.and([eb('status', '=', 'done'), eb('seen', '=', false)]),
-            ]),
-          )
-          .orderBy('created_at', 'desc')
-          .limit(1)
-          .executeTakeFirst();
-        if (open) return { event: toDto(o, open, lang) };
+        for (;;) {
+          const open = await o.tx
+            .selectFrom('random_event')
+            .selectAll()
+            .where('rest_id', '=', o.rest.id)
+            .where((eb) =>
+              eb.or([
+                eb('status', '=', 'pending'),
+                eb.and([eb('status', '=', 'done'), eb('seen', '=', false)]),
+              ]),
+            )
+            .orderBy('created_at', 'desc')
+            .limit(1)
+            .executeTakeFirst();
+          if (!open) break;
+          const dto = toDto(o, open, lang);
+          if (dto) return { event: dto };
+          // 事件或题已从配置里删掉：挂着的作废、没看过的记成看过，接着往下（不然这家店再也不出事件）
+          await o.tx
+            .updateTable('random_event')
+            .set(open.status === 'pending' ? { status: 'expired' } : { seen: true })
+            .where('id', '=', open.id)
+            .execute();
+        }
         const slot = slotOf(o.now, o.tuning.randomEvents.slotHours);
         const done = await o.tx
           .selectFrom('random_event')
@@ -415,7 +427,8 @@ export function createRandomEventService(d: GameDeps, world: WorldService) {
         const s = p.qs[qi];
         if (!s) throw invalidState('random_event_gone');
         if (s.picked !== null) throw new AppError(ErrorCode.ALREADY_DONE, 400, { what: 'random_event' });
-        const q = o.config.randomQuiz.get(s.id)!;
+        const q = o.config.randomQuiz.get(s.id);
+        if (!q) throw invalidState('random_event_gone');
         const n = s.grades ? s.grades.length : s.order.length;
         if (b.index >= n) throw invalidState('random_event_gone');
         s.picked = b.index;

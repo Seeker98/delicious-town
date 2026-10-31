@@ -65,7 +65,7 @@ export interface PastRow {
   choice: string | null;
   /** 游戏日 */
   day: string;
-  /** 问答夜答过的题 */
+  /** 答过的题（问答、问答夜）；没答就作废的不算 */
   quizIds: number[];
 }
 
@@ -75,9 +75,13 @@ function daysBetween(from: string, to: string): number {
 
 const isEvent = (r: PastRow) => r.kind !== 'quiz';
 
+/** 玩家参与了：选择事件选过、问答夜答过至少一道；没理就作废的不算（用户 2026-10-31） */
+const engaged = (r: PastRow) =>
+  r.kind === 'choice' ? r.choice !== null : r.kind === 'quizNight' ? r.quizIds.length > 0 : true;
+
 /**
  * 连续剧的权重（设计稿 §3.1）：前置里最近一次满足的那行之后这一段还没出过，且已隔 minDays 天；
- * 每多等一天加 chainWeightPerDay，最多 chainWeightMax。不满足返回 0
+ * 每多等一天加 chainWeightPerDay，最多 chainWeightMax。不满足返回 0。前置要玩家参与过
  */
 export function chainWeight(
   e: RandomEventDef,
@@ -88,7 +92,11 @@ export function chainWeight(
   const a = e.after;
   if (!a) return e.weight;
   const heads = past.filter(
-    (r) => isEvent(r) && a.events.includes(r.refId) && (a.option === undefined || r.choice === a.option),
+    (r) =>
+      isEvent(r) &&
+      engaged(r) &&
+      a.events.includes(r.refId) &&
+      (a.option === undefined || r.choice === a.option),
   );
   if (heads.length === 0) return 0;
   const head = heads.reduce((x, y) => (y.day > x.day ? y : x));
@@ -122,7 +130,7 @@ export function eventCandidates(
 
 /**
  * 能出的题（设计稿 §3）：知识题答过就不再出，全答过以后从最早答的开始重出；
- * 没有对错的题 opinionNoRepeatDays 天内不再出
+ * 没有对错的题 opinionNoRepeatDays 天内不再出。没答就作废的不算出过（用户 2026-10-31）
  */
 export function quizCandidates(
   quiz: Iterable<RandomQuizDef>,
@@ -133,8 +141,7 @@ export function quizCandidates(
 ): RandomQuizDef[] {
   const lastSeen = new Map<number, string>();
   for (const r of past) {
-    const ids = r.kind === 'quiz' ? [r.refId] : r.quizIds;
-    for (const id of ids) if ((lastSeen.get(id) ?? '') < r.day) lastSeen.set(id, r.day);
+    for (const id of r.quizIds) if ((lastSeen.get(id) ?? '') < r.day) lastSeen.set(id, r.day);
   }
   const since = addDays(today, -t.opinionNoRepeatDays + 1);
   const all = [...quiz].filter((q) => only === 'any' || q.type !== 'opinion');

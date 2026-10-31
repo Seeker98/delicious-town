@@ -3,6 +3,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { RandomEventDto, RandomQuestionDto } from '@dt/shared';
+import { ApiError } from '../api/client';
 import { endpoints } from '../api/endpoints';
 import { useRestaurantStore } from '../stores/restaurant';
 import RandomEventPopup from './RandomEventPopup.vue';
@@ -173,6 +174,51 @@ describe('RandomEventPopup（随机事件，设计稿 2026-10-28 §10）', () =>
     await w.get('[data-testid="random-event-later"]').trigger('click');
     await flushPromises();
     expect(endpoints.randomEventSeen).not.toHaveBeenCalled();
+    expect(w.find('[data-testid="random-event"]').exists()).toBe(false);
+  });
+  it('超时结算的问答夜: 停在最后一道答过的, 没答的题不能再点', async () => {
+    const w = await mountPopup(
+      ev({
+        kind: 'quizNight',
+        title: '酒吧问答夜',
+        questions: [q({ picked: 0, answer: 1, correct: false }), q({ id: 2 }), q({ id: 3 })],
+      }),
+    );
+    expect(w.get('[data-testid="random-event-progress"]').text()).toBe('第 1 / 3 题');
+    expect(w.find('[data-testid="random-event-result"]').exists()).toBe(true);
+    for (const b of w.findAll('[data-testid="random-event-choice"]'))
+      expect(b.attributes('disabled')).toBeDefined();
+  });
+
+  const choice = () =>
+    ev({
+      kind: 'choice',
+      status: 'pending',
+      result: null,
+      options: [
+        { key: 'a', label: '买下', cost: 20 },
+        { key: 'b', label: '不买', cost: null },
+      ],
+    });
+
+  it('选择报错（银币不够、网络）: 弹窗留着, 可以改选', async () => {
+    vi.mocked(endpoints.randomEventChoose).mockRejectedValue(new ApiError('NOT_ENOUGH', { what: 'coin' }));
+    const w = await mountPopup(choice());
+    await w.findAll('[data-testid="random-event-option"]')[0]!.trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="random-event"]').exists()).toBe(true);
+    expect(w.findAll('[data-testid="random-event-option"]')[1]!.attributes('disabled')).toBeUndefined();
+  });
+
+  it('这件已经了结或超时: 重新问一次现在该看什么', async () => {
+    vi.mocked(endpoints.randomEventChoose).mockRejectedValue(
+      new ApiError('INVALID_STATE', { reason: 'random_event_expired' }),
+    );
+    const w = await mountPopup(choice());
+    vi.mocked(endpoints.randomEventCurrent).mockResolvedValue({ event: null });
+    await w.findAll('[data-testid="random-event-option"]')[1]!.trigger('click');
+    await flushPromises();
+    expect(endpoints.randomEventCurrent).toHaveBeenCalledTimes(2);
     expect(w.find('[data-testid="random-event"]').exists()).toBe(false);
   });
 });

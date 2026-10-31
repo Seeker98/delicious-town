@@ -69,9 +69,9 @@ describe('随机事件规则（设计稿 §3、§6）', () => {
     const row = (refId: number, day: string): PastRow => ({
       kind: 'quiz',
       refId,
-      choice: '0',
+      choice: null,
       day,
-      quizIds: [],
+      quizIds: [refId],
     });
     const ids = (past: PastRow[], only: 'any' | 'knowledge' = 'any') =>
       quizCandidates(quiz, past, '2026-11-20', t, only).map((q) => q.id);
@@ -82,6 +82,30 @@ describe('随机事件规则（设计稿 §3、§6）', () => {
     expect(
       ids([{ kind: 'quizNight', refId: 40, choice: null, day: '2026-11-01', quizIds: [1] }], 'knowledge'),
     ).toEqual([2]);
+    // 没答就作废的不算答过（用户 2026-10-31）
+    expect(ids([{ ...row(1, '2026-11-01'), quizIds: [] }], 'knowledge')).toEqual([1, 2]);
+    expect(ids([{ ...row(3, '2026-11-10'), quizIds: [] }])).toEqual([1, 2, 3]);
+  });
+
+  it('连续剧: 前置是选择事件、没选就作废的, 不解锁后面那段 (用户 2026-10-31)', () => {
+    const skipped: PastRow[] = [{ kind: 'choice', refId: 44, choice: null, day: '2026-11-01', quizIds: [] }];
+    expect(chainWeight(ev(117), skipped, '2026-11-05', t)).toBe(0);
+    expect(chainWeight(ev(117), [{ ...skipped[0]!, choice: 'a' }], '2026-11-05', t)).toBeGreaterThan(0);
+    // 问答夜一道没答就作废的同样不算
+    const night: PastRow = { kind: 'quizNight', refId: 40, choice: null, day: '2026-11-01', quizIds: [] };
+    const after40 = { ...ev(117), after: { events: [40], minDays: 1 } };
+    expect(chainWeight(after40, [night], '2026-11-05', t)).toBe(0);
+    expect(chainWeight(after40, [{ ...night, quizIds: [1] }], '2026-11-05', t)).toBeGreaterThan(0);
+  });
+
+  it('有时段限制的事件, 时间窗都含某个时段的开头 (常在线的玩家在时段开头就抽完了, 不含开头的几乎碰不到)', () => {
+    const starts = Array.from({ length: 24 / t.slotHours }, (_, i) => i * t.slotHours);
+    for (const x of testConfig().randomEvents.values()) {
+      const hours = x.when?.hours;
+      if (!hours) continue;
+      const ok = starts.some((h) => whenMatches({ hours }, whenCtx(gameTime('2026-11-05', h, 0), 1, 99)));
+      expect(ok, `event ${x.id} hours ${hours.join('-')}`).toBe(true);
+    }
   });
 
   it('所有事件的出现条件都能在某个时刻满足 (防止写错的时段让事件永远出不来)', () => {
