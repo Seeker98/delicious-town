@@ -2,7 +2,7 @@ import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
   perf1031:
-    'Performances\u202f: le jeu s’ouvre plus vite la première fois (le fichier principal fait moins de la moitié de sa taille d’avant, et le pack de langue se télécharge en même temps que votre compte), revenir au jeu ne déclenche plus de nouveau rafraîchissement dans la minute, et le badge Amis de la barre du bas ne se recharge plus à chaque changement de page',
+    'Performances\u202f: le jeu s’ouvre plus vite la première fois (seule votre langue est téléchargée, en même temps que votre compte), revenir au jeu ne déclenche plus de nouveau rafraîchissement dans la minute, et le badge Amis de la barre du bas ne se recharge plus à chaque changement de page',
   fixes1031:
     'Corrections\u202f: la promo du jour ne descend plus sous le prix de revente, et son étiquette indique la vraie réduction\u202f; comme pour l’Ichiban Kuji, l’arbre à vœux demande désormais un e-mail vérifié et un compte d’au moins 3 jours\u202f; les aliments du frigo ne sont vendus pour payer une dette qu’après 3 jours entiers de dette (sans compter le jour où elle a commencé)',
   events1031: 'Événements aléatoires\u202f: une nouvelle série d’événements',
