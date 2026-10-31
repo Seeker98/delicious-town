@@ -15,7 +15,7 @@ const NO_LOG: Log = { error: () => {} };
  * 哪些 (老板账号, 被收购店账号) 近 days 天的登录记录共用过设备或 IP：一条查询读出所有相关账号的登录记录，内存里比。
  * 收购时只在那一刻查一次；收购以后才在同一台设备、同一个网络上登录的小号，在这里把让渡退回店
  */
-async function linkedPairs(
+export async function linkedPairs(
   db: GameDeps['db'],
   pairs: ReadonlyArray<readonly [number, number]>,
   days: number,

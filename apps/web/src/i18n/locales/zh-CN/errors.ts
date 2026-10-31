@@ -83,6 +83,8 @@ export default {
     kuji_level: (p) => `餐厅 ${String(p.need)} 级才能参与一番赏`,
     kuji_age: (p) => `账号注册满 ${String(p.days)} 天才能参与一番赏`,
     kuji_email: () => '验证邮箱后才能参与一番赏 (邮箱写错了可以在“我的账号”里改)',
+    wishtree_age: (p) => `账号注册满 ${String(p.days)} 天才能许愿`,
+    wishtree_email: () => '验证邮箱后才能许愿 (邮箱写错了可以在“我的账号”里改)',
     level: (p) => `餐厅等级不够 (需要 ${String(p.need)} 级)`,
     star: (p) =>
       p.have === undefined

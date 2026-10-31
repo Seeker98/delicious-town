@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { addDays, gameDay, gameTime } from '@dt/shared';
-import { createShard } from '../../../test/fixtures';
+import { createShard, failRestLog } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import { krabFor } from '../../../test/town';
 import { acquireJobs, runAcquireDay } from './jobs';
@@ -266,6 +266,35 @@ describe('每天的收购任务（收购 PR 1）', () => {
         .where('target_rest_id', '=', stale.restaurantId)
         .execute(),
     ).toEqual([{ kind: 'release', seller_rest_id: owner.restaurantId }]);
+  });
+
+  it('自动放手某一家出错：记日志、算进 failed，别的店照常放手', async () => {
+    const shardId = await createShard(t.db);
+    const owner = await newRestaurant(t, { shardId });
+    const [bad, good] = [await newRestaurant(t, { shardId }), await newRestaurant(t, { shardId })];
+    for (const r of [bad, good])
+      await t.db
+        .insertInto('acquire_state')
+        .values({
+          rest_id: r.restaurantId,
+          shard_id: shardId,
+          base: 1_000_000,
+          heat: 1,
+          owner_rest_id: owner.restaurantId,
+          tended_at: null,
+          acquired_at: gameTime('2026-10-01', 9),
+        })
+        .execute();
+    const restore = await failRestLog(t.db, bad.restaurantId);
+    const errors: unknown[] = [];
+    const r = await runAcquireDay(t.game.deps, shardId, gameTime('2026-10-20', 0, 6), a(), {
+      error: (e) => errors.push(e),
+    });
+    await restore();
+    expect(r).toMatchObject({ released: 1, releaseFailed: 1 });
+    expect(errors).toHaveLength(1);
+    expect(await state(bad.restaurantId)).toMatchObject({ owner_rest_id: owner.restaurantId });
+    expect(await state(good.restaurantId)).toMatchObject({ owner_rest_id: null });
   });
 
   it('00:05 之前不跑；之后每个游戏日一个周期键；收入汇总挂在结算上', () => {

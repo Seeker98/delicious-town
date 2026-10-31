@@ -1,12 +1,14 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { addDays, gameDay } from '@dt/shared';
 import { testConfig } from '../../../test/config';
+import { failRestLog } from '../../../test/fixtures';
 import { createTestGame, foodNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { fid } from '../../../test/items';
 import type { RestCtx } from '../../core/deps';
 import { runOp, runSystemOp } from '../../core/op';
 import { addFoods } from './foods';
-import { fridgeRound, settleFridge } from './fridge';
+import { JobError, type JobContext } from '../../core/jobs';
+import { fridgeJobs, fridgeRound, settleFridge } from './fridge';
 import { fridgeDailyFee, fridgeEntryFee, fridgeThawFee, fridgeTierMult, fridgeUnitPrice } from './fridgeFee';
 import { streetNeeds } from './needs';
 
@@ -207,7 +209,7 @@ describe('每日仓储费', () => {
   it('连续欠满 3 天：先卖本街用不到的、便宜的在前，卖够就停，多出的钱退回；欠费清零', async () => {
     const day = gameDay(t.clock.now);
     const ctx = await newRestaurant(t, {
-      patch: { coin: 0, fridge_debt: 1000, fridge_debt_since: addDays(day, -3) },
+      patch: { coin: 0, fridge_debt: 1000, fridge_debt_since: addDays(day, -4) },
     });
     const { needMap } = await streetNeeds(t.db, config, ctx.restaurantId, 0, tune.rest.cookbookMaxGrade);
     const lv1 = [...config.foods.values()].filter((f) => f.level === 1 && !f.retired);
@@ -246,5 +248,42 @@ describe('每日仓储费', () => {
     expect(stats).toMatchObject({ rests: 1, failed: 0 });
     expect((await restRow(t, b.restaurantId)).coin).toBe(1_000_000);
     expect((await restRow(t, a.restaurantId)).coin).toBeLessThan(1_000_000);
+  });
+  it('欠满 3 天才抵债：3 天前开始欠的（最短只过了 48 小时）还不卖, 4 天前的才卖', async () => {
+    const day = gameDay(t.clock.now);
+    const ctx = await newRestaurant(t, {
+      patch: { coin: 0, fridge_debt: 1000, fridge_debt_since: addDays(day, -3) },
+    });
+    await putFridge(ctx.restaurantId, [[fid('大米'), 50]]);
+    expect((await settle(ctx)).seized).toBe(0);
+    expect(await foodNum(t, ctx.restaurantId, fid('大米'))).toEqual({ num: 0, fridge: 50 });
+  });
+
+  it('同一天结算两次只收一次（任务出错重试时，已经收过的店不再收）', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 1_000_000 } });
+    await putFridge(ctx.restaurantId, [[fid('大米'), 10]]);
+    const first = await settle(ctx);
+    expect(first.paid).toBeGreaterThan(0);
+    expect(await settle(ctx)).toEqual({ fee: 0, paid: 0, debt: 0, seized: 0 });
+    expect((await restRow(t, ctx.restaurantId)).coin).toBe(1_000_000 - first.paid);
+  });
+
+  it('每日任务有店失败：记成出错好让重试补上（开了 retry），补的时候成功的店不重复收', async () => {
+    const a = await newRestaurant(t, { patch: { coin: 1_000_000 } });
+    const b = await newRestaurant(t, { shardId: a.shardId, patch: { coin: 1_000_000 } });
+    await putFridge(a.restaurantId, [[fid('大米'), 10]]);
+    await putFridge(b.restaurantId, [[fid('大米'), 10]]);
+    const job = fridgeJobs(t.game.deps)[0]!;
+    expect(job.retry).toBe(true);
+    const ctx = { shardId: a.shardId, now: t.clock.now, log: { error: () => {} } } as unknown as JobContext;
+    const restore = await failRestLog(t.db, b.restaurantId);
+    await expect(job.run(ctx)).rejects.toBeInstanceOf(JobError);
+    const paidA = 1_000_000 - (await restRow(t, a.restaurantId)).coin;
+    expect(paidA).toBeGreaterThan(0);
+    expect((await restRow(t, b.restaurantId)).coin).toBe(1_000_000);
+    await restore();
+    expect(await job.run(ctx)).toMatchObject({ rests: 2, failed: 0 });
+    expect((await restRow(t, a.restaurantId)).coin).toBe(1_000_000 - paidA);
+    expect((await restRow(t, b.restaurantId)).coin).toBe(1_000_000 - paidA);
   });
 });

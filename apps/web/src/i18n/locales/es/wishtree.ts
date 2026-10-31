@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const wishtree: Messages['wishtree'] = {
   loadFailed: 'No se pudo cargar el Árbol de los deseos',
@@ -20,6 +21,8 @@ const wishtree: Messages['wishtree'] = {
   wish: 'Pedir un deseo',
   wished: 'Deseo pedido, esperando el sorteo',
   need: (level) => `Tu restaurante necesita nivel ${level} para pedir un deseo`,
+  needAge: (days) => `Tu cuenta debe tener al menos ${days} ${plEs(days, 'día', 'días')} para pedir un deseo`,
+  needEmail: 'Verifica tu correo para pedir un deseo (si está mal, cámbialo en Mi cuenta)',
   done: '¡Deseo pedido! Nos vemos en el sorteo',
   none: (hour) => `Ahora no hay ronda. El árbol da un objeto nuevo cada día a las ${hour}:00`,
   recentTitle: 'Rondas recientes',

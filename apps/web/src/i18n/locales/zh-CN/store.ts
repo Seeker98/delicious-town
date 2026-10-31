@@ -60,8 +60,16 @@ export default {
     weeklyLimit: (n: number) => `每周限 ${n} 个`,
     buy: '买',
     specialSoon: '今天中午 12 点上新',
-    /** 特价折扣档名：简中用服务端给的原名（九折、八折……），其他语言按减了多少显示 */
-    tier: (_off: number, cn: string) => cn,
+    /**
+     * 特价折扣档名：按实际减了多少写几折（省 30% → 七折、省 25% → 七五折）。不用服务端给的档名：
+     * 特价不低于卖店价，五折、一折档对不少道具实际是七折（backlog 2026-10-25）
+     */
+    tier: (off: number, _cn: string) => {
+      const n = 100 - off;
+      if (n <= 0 || n >= 100) return '特价';
+      const d = '〇一二三四五六七八九';
+      return `${d[Math.floor(n / 10)]}${n % 10 ? d[n % 10] : ''}折`;
+    },
     grab: '抢购',
     /** 界面改版 P8：余额、小类胶囊、购买面板 */
     myCoin: '我的银币',

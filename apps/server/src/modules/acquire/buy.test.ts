@@ -105,6 +105,32 @@ describe('强收（收购 PR 1；改版 2026-10-16）', () => {
     });
   });
 
+  it('买挂牌时原老板已被封号：照常成交，原老板那 85% 销毁不给', async () => {
+    const shardId = await acquireShard(t);
+    const owner = await newRestaurant(t, { shardId, patch: { coin: 0 } });
+    const b = await buyer(shardId);
+    const target = await newRestaurant(t, { shardId, patch: { coin: 0, star_level: 2 } });
+    await setState(target.restaurantId, shardId, {
+      owner_rest_id: owner.restaurantId,
+      heat: 1.2,
+      list_rate: 1.2,
+      list_until: soon(),
+      tended_at: new Date(),
+    });
+    const ownerAcc = (await restRow(t, owner.restaurantId)).account_id;
+    await t.db.updateTable('account').set({ banned_at: new Date() }).where('id', '=', ownerAcc).execute();
+    const r = await svc().buy(b, { restId: target.restaurantId, way: 'listed', expect: 1_440_000 });
+    expect(r.data).toMatchObject({
+      price: 1_440_000,
+      sellerGot: 0,
+      storeGot: 72_000,
+      burn: 1_224_000,
+      tax: 144_000,
+    });
+    expect(await coin(owner.restaurantId)).toBe(0);
+    expect(await coin(target.restaurantId)).toBe(72_000);
+  });
+
   it('没挂牌、挂牌已过期时不能按挂牌价买', async () => {
     const shardId = await acquireShard(t);
     const owner = await newRestaurant(t, { shardId });

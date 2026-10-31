@@ -1,9 +1,10 @@
 import { sql } from 'kysely';
 import { addDays, gameDay } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
-import type { JobContext, PeriodicJob } from '../../core/jobs';
+import { JobError, type JobContext, type PeriodicJob } from '../../core/jobs';
 import { restLog, runSystemOp, setRest, type Op } from '../../core/op';
 import { gainCoin, recordChange, spendCoin } from '../../core/resources';
+import { incrementDaily } from '../counter/dailyCounter';
 import { streetNeeds } from './needs';
 import { fridgeDailyFee, fridgeUnitPrice } from './fridgeFee';
 
@@ -41,13 +42,16 @@ export function seizeUnitPrice(op: Op, foodsId: number): number {
 
 /**
  * 每日结算一家店：先补旧欠费、再收今天的仓储费，银币不够的记欠费；
- * 连续欠满 fridgeDebtDays 天，按“本街用不到的在前、便宜的在前”卖冰箱里的食材抵债，卖够就停
+ * 连续欠满 fridgeDebtDays 天，按“本街用不到的在前、便宜的在前”卖冰箱里的食材抵债，卖够就停。
+ * 一天只结算一次（每日计数记着），任务出错重试时已经收过的店跳过
  */
 export async function settleFridge(
   op: Op,
 ): Promise<{ fee: number; paid: number; debt: number; seized: number }> {
   const t = op.tuning.cupboard;
   const today = gameDay(op.now);
+  if ((await incrementDaily(op.tx, op.rest.id, 'fridge.daily', 1, today)) > 1)
+    return { fee: 0, paid: 0, debt: op.rest.fridge_debt, seized: 0 };
   const rows = await op.tx
     .selectFrom('cupboard_food')
     .select(['foods_id', 'num', 'fridge_num', 'locked'])
@@ -68,7 +72,8 @@ export async function settleFridge(
     restLog(op, 'fridge.fee', { fee: quote.daily, kinds: quote.kinds, mult: quote.mult, paid, debt });
 
   let seized = 0;
-  if (debt > 0 && since !== null && since <= addDays(today, -t.fridgeDebtDays) && rows.length > 0) {
+  // 开始欠的那天不算满一天（那天最晚 23:59 才开始欠），之后再满 fridgeDebtDays 天才抵债
+  if (debt > 0 && since !== null && since < addDays(today, -t.fridgeDebtDays) && rows.length > 0) {
     const { needMap } = await streetNeeds(
       op.tx,
       op.config,
@@ -113,7 +118,7 @@ export async function settleFridge(
   return { fee: quote.daily, paid, debt, seized };
 }
 
-/** 每个游戏日一次：冰箱有东西或者欠着费的店（不含 NPC）逐家结算，一家失败不影响别家 */
+/** 每个游戏日一次：冰箱有东西或者欠着费的店（不含 NPC）逐家结算，一家失败不影响别家；有失败的记成出错，重试时补上 */
 export async function fridgeRound(
   d: GameDeps,
   shardId: number,
@@ -160,7 +165,12 @@ export function fridgeJobs(d: GameDeps): PeriodicJob[] {
       name: 'fridge-fee',
       feature: 'cupboard',
       period: (now) => gameDay(now),
-      run: ({ shardId, now, log }) => fridgeRound(d, shardId, now, log),
+      retry: true,
+      run: async ({ shardId, now, log }) => {
+        const stats = await fridgeRound(d, shardId, now, log);
+        if (stats.failed > 0) throw new JobError(`fridge fee: ${stats.failed} failed`, stats);
+        return stats;
+      },
     },
   ];
 }

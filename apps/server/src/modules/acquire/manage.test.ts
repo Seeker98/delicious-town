@@ -48,6 +48,35 @@ describe('赎身（收购 PR 1；改版 2026-10-16）', () => {
     expect(s.protected_until!.getTime()).toBeGreaterThan(Date.now() + 2.9 * 86_400_000);
   });
 
+  it('老板被封号、或和这家店共用设备 / IP：照常赎身，老板那 60% 销毁不给（和让渡退回店一样）', async () => {
+    for (const how of ['banned', 'linked'] as const) {
+      const shardId = await acquireShard(t);
+      const owner = await newRestaurant(t, { shardId, patch: { coin: 0 } });
+      const me = await newRestaurant(t, { shardId, patch: { coin: 2_000_000, star_level: 2 } });
+      await setState(me.restaurantId, shardId, { owner_rest_id: owner.restaurantId, tended_at: new Date() });
+      const ownerAcc = (await restRow(t, owner.restaurantId)).account_id;
+      const myAcc = (await restRow(t, me.restaurantId)).account_id;
+      if (how === 'banned')
+        await t.db.updateTable('account').set({ banned_at: new Date() }).where('id', '=', ownerAcc).execute();
+      else
+        await t.db
+          .insertInto('login_trace')
+          .values(
+            [ownerAcc, myAcc].map((account_id) => ({
+              account_id,
+              ip: '10.7.7.71',
+              device_id: 'dev-redeem-linked',
+              last_seen: new Date(),
+            })),
+          )
+          .execute();
+      const r = await svc().redeem(me, { expect: 1_000_000 });
+      expect(r.data, how).toMatchObject({ sellerGot: 0, burn: 900_000, tax: 100_000 });
+      expect(await coin(owner.restaurantId), how).toBe(0);
+      expect(await coin(me.restaurantId), how).toBe(1_000_000);
+    }
+  });
+
   it('老板挂牌比基础身价便宜时按挂牌价赎；挂牌作废', async () => {
     const shardId = await acquireShard(t);
     const owner = await newRestaurant(t, { shardId, patch: { coin: 0 } });

@@ -20,6 +20,8 @@ export default {
   wish: '許願',
   wished: '已許願, 等待開獎',
   need: (level: number) => `餐廳 ${level} 級才能許願`,
+  needAge: (days: number) => `賬號註冊滿 ${days} 天才能許願`,
+  needEmail: '驗證郵箱後才能許願 (郵箱寫錯了可以在“我的賬號”裡改)',
   done: '許好了, 開獎時見分曉',
   none: (hour: number) => `現在沒有進行中的一輪, 每天 ${hour}:00 結出新的道具`,
   recentTitle: '最近幾輪',

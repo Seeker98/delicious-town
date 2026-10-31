@@ -724,6 +724,7 @@
     "tuning.randomEvents.retainDays": "记录保留几天（不重复、连续剧都查它）",
     "tuning.wishTree.hour": "每天几点开奖、开新一轮（游戏时间，0~23 点）",
     "tuning.wishTree.minLevel": "几级才能许愿",
+    "tuning.wishTree.minAccountDays": "账号注册满几天才能许愿（还要验证邮箱；和一番赏一样防小号）",
     "tuning.wishTree.titleDays": "中奖称号“许愿成真”领取后几天有效",
     "tuning.wishTree.consolationLevel": "没中的安慰奖：几级随机奖励（和厨塔、任务的随机奖励同一套）",
     "tuning.wishTree.prizes": "树上可能结的道具：每轮按权重抽一项",
