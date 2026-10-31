@@ -1,6 +1,7 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  events1031: 'Événements aléatoires\u202f: une nouvelle série d’événements',
   events1028:
     'Nouveau\u202f: événements aléatoires et quiz du village. Pendant que vous jouez, il peut se passer quelque chose d’inattendu dans votre restaurant (au plus une fois toutes les 4 heures)\u202f: certains événements donnent un petit bonus ou malus pendant 1 à 4 heures, d’autres vous laissent choisir entre deux options, et certains ont une suite quelques jours plus tard. Parfois, c’est une question du quiz du village, et une bonne réponse rapporte un bon mystère. Chaque jeudi soir, le bar organise une soirée quiz où trois bonnes réponses rapportent 3 bons. Les restaurants de niveau inférieur à 10 ne reçoivent jamais d’événement avec malus',
   pest1027:

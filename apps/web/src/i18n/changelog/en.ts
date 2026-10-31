@@ -1,6 +1,7 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  events1031: 'Random events: added a new batch of events',
   events1028:
     'New: random events and the Town Quiz. While you play, something odd may happen at your restaurant (at most once every 4 hours): some events give a small bonus or penalty for 1 to 4 hours, some let you pick between two choices, and some continue a few days later. Sometimes it is a Town Quiz question instead, and a right answer earns a Mystery Voucher. Every Thursday night the bar holds a quiz night where three right answers win 3 vouchers. Restaurants below level 10 never get events with penalties',
   pest1027:

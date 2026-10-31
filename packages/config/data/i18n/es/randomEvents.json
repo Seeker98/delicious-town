@@ -1196,5 +1196,566 @@
     "lines": [
       "Al acabar una canción, dice: \"Esta va dedicada al local de la esquina\"."
     ]
+  },
+  "153": {
+    "name": "Flores naranjas y calaveritas de azúcar",
+    "desc": "Todas las casas ponen en la puerta flores naranjas y calaveritas de azúcar, y en la mesa dejan un plato con la comida favorita de sus difuntos.",
+    "lines": [
+      "Mucha gente viene a pedirte \"lo que siempre pedía el abuelo\"."
+    ]
+  },
+  "154": {
+    "name": "El desfile de los tambores",
+    "desc": "Un desfile con tambores enormes y trajes de lentejuelas pasa por la calle, bailando hasta el amanecer.",
+    "lines": [
+      "Los que acaban rendidos entran a cenar algo."
+    ]
+  },
+  "155": {
+    "name": "La piñata a ciegas",
+    "desc": "Los vecinos celebran el cumpleaños de su hijo y han colgado una piñata del árbol. Los niños se empeñan en vendarte los ojos para que le des un golpe.",
+    "lines": [
+      "Darle con todas tus fuerzas",
+      "Fallas por mucho y los niños se mueren de risa.",
+      "La piñata se rompe y caen caramelos... y un vale.",
+      "Dejar que le dé el cumpleañero",
+      "El cumpleañero acierta a la primera y toda la familia viene a tu local a tomar la tarta."
+    ]
+  },
+  "156": {
+    "name": "La calabaza que va de mano en mano",
+    "desc": "Una mesa de clientes se pasa la misma calabacita para beber una infusión amarga, rellenándola de agua caliente una y otra vez.",
+    "lines": [
+      "Se quedan toda la tarde, de un humor excelente."
+    ]
+  },
+  "157": {
+    "name": "Brasas en el patio",
+    "desc": "El vecino encendió las brasas en el patio de buena mañana y lleva todo el día asando una pieza enorme de carne a fuego lento.",
+    "lines": [
+      "El olor llega hasta media calle."
+    ]
+  },
+  "158": {
+    "name": "Baile bajo la farola",
+    "desc": "Dos ancianos bailan bajo la farola de tu puerta, paso a paso, muy despacio y muy seguros.",
+    "lines": [
+      "Se forma un corro para mirarlos y luego todos entran a sentarse un rato."
+    ]
+  },
+  "159": {
+    "name": "Mazorcas en el carrito",
+    "desc": "Un carrito se para delante de tu puerta a vender mazorcas asadas untadas de queso y chile en polvo.",
+    "lines": [
+      "Quien compra una mazorca entra de paso a pedirse una sopa."
+    ]
+  },
+  "160": {
+    "name": "La lluvia de las tres",
+    "desc": "A las tres en punto cae un chaparrón, puntual como un reloj, y a los diez minutos ya ha parado.",
+    "lines": [
+      "Los que entraron a resguardarse se sientan y ya no se van."
+    ]
+  },
+  "161": {
+    "name": "El autobús de las flores",
+    "desc": "Un autobús viejo con la carrocería pintada de flores y pájaros se para en el cruce. Hasta la bocina canta.",
+    "lines": [
+      "Los pasajeros que bajan se quedan mirando tu letrero."
+    ]
+  },
+  "162": {
+    "name": "El cliente de la máscara",
+    "desc": "Un cliente musculoso con una máscara de colores se sienta a pedir. Ni para comer se la quita.",
+    "lines": [
+      "Pedirle un autógrafo",
+      "Te firma una servilleta con una rúbrica llena de florituras.",
+      "Preguntarle su verdadero nombre",
+      "Termina de comer en silencio y solo dice: \"La máscara es mi cara\"."
+    ]
+  },
+  "163": {
+    "name": "Ritmo en la radio",
+    "desc": "La radio de la cocina pone una canción con mucho ritmo y todos, los que cortan y los que friegan, se ponen a menear el esqueleto.",
+    "lines": [
+      "Las manos van más rápido y el fuego se anima un poco."
+    ]
+  },
+  "164": {
+    "name": "Huevos de confeti",
+    "desc": "Una pandilla de niños va con cáscaras de huevo llenas de confeti y se las rompe en la cabeza a todo el que pasa.",
+    "lines": [
+      "Comprar unos cuantos y contraatacar",
+      "Le das al cabecilla y acabáis todos muertos de risa.",
+      "Esconderte en el local",
+      "Aun así, acabas lleno de confeti."
+    ]
+  },
+  "165": {
+    "name": "La fiesta de los quince",
+    "desc": "Una familia quiere celebrar en tu local la fiesta de los quince años de su hija, con baile y una tarta de tres pisos.",
+    "lines": [
+      "Aceptar",
+      "Música y risas toda la noche, y una cuenta preciosa.",
+      "Rechazarlo con amabilidad",
+      "Se van a otro sitio, pero antes te dejan un trozo de tarta."
+    ]
+  },
+  "166": {
+    "name": "Una tacita de chocolate",
+    "desc": "Una abuela muele el cacao en un molino de piedra, le añade canela y una pizca de chile, y te trae una tacita.",
+    "lines": [
+      "Te deja calentito por dentro y te llena de ideas para cocinar."
+    ]
+  },
+  "167": {
+    "name": "Fútbol en la calle",
+    "desc": "Unos niños juegan al fútbol en tu puerta y de un chutazo meten el balón en el local.",
+    "lines": [
+      "Devolverles el balón",
+      "Los niños se van corriendo y gritando \"¡gracias!\".",
+      "Salir a echar unos pases",
+      "Metes un gol y los niños te rodean para celebrarlo.",
+      "Te caes de morros y se te rompe el pantalón."
+    ]
+  },
+  "168": {
+    "name": "El árbol viejo da fruto",
+    "desc": "El árbol viejo del patio, que nunca había dado fruto, hoy amanece cargado de aguacates.",
+    "lines": [
+      "Cogerlos para cocinar",
+      "Llenas una cesta hasta arriba.",
+      "Repartirlos entre los vecinos",
+      "Los vecinos vienen a darte las gracias y, de paso, se quedan a comer."
+    ]
+  },
+  "169": {
+    "name": "Serenata bajo la ventana",
+    "desc": "Unos músicos con sombrero de ala ancha, guitarras y trompetas cantan una canción de amor entera bajo el edificio de enfrente.",
+    "lines": [
+      "La ventana de arriba no se abre, así que entran a tu local a consolarse comiendo algo."
+    ]
+  },
+  "170": {
+    "name": "Monstruitos pidiendo caramelos",
+    "desc": "Una pandilla de niños disfrazados de monstruitos llama a tu puerta: \"¡Truco o trato!\".",
+    "lines": [
+      "Darles caramelos",
+      "Los niños se van a la casa de al lado dando gritos de alegría.",
+      "Hacer como que no hay nadie",
+      "Al día siguiente la puerta amanece llena de papel higiénico y te pasas la mañana limpiando."
+    ]
+  },
+  "171": {
+    "name": "Calabazas en la puerta",
+    "desc": "Los vecinos colocan en sus puertas una fila de calabazas con caras talladas y por la noche les encienden una vela dentro.",
+    "lines": [
+      "Los que vienen a verlas aprovechan para cenar."
+    ]
+  },
+  "172": {
+    "name": "Un gran pavo asado",
+    "desc": "Hoy cada familia se reúne alrededor de un gran pavo asado y acaban tan llenos que no pueden ni moverse.",
+    "lines": [
+      "Por la noche los postres se venden como churros."
+    ]
+  },
+  "173": {
+    "name": "Cola antes del amanecer",
+    "desc": "Aún no ha amanecido y medio pueblo ya hace cola en la puerta del centro comercial para pillar las rebajas.",
+    "lines": [
+      "Por la mañana el local está vacío, y a mediodía entran todos en tromba con las bolsas."
+    ]
+  },
+  "174": {
+    "name": "Rellenar gratis",
+    "desc": "Un cliente levanta el vaso vacío: \"Rellenar es gratis, ¿no?\".",
+    "lines": [
+      "Gratis",
+      "Toda la calle se entera de que en tu local se rellena gratis.",
+      "No es gratis",
+      "El cliente refunfuña algo, pero paga."
+    ]
+  },
+  "175": {
+    "name": "La propina a la fuerza",
+    "desc": "Un cliente termina de comer y le mete al camarero un fajo de billetes en la mano a la fuerza: dice que es lo que se hace.",
+    "lines": [
+      "El camarero se pasa el día contentísimo y deja el fajo en la caja."
+    ]
+  },
+  "176": {
+    "name": "Camioneros de madrugada",
+    "desc": "Unos camioneros de largo recorrido paran en tu puerta de madrugada y cada uno pide un platazo de huevos fritos y una jarra de café.",
+    "lines": [
+      "Antes de irse quedan en volver la próxima vez que pasen por aquí."
+    ]
+  },
+  "177": {
+    "name": "Cine en el aparcamiento",
+    "desc": "En el aparcamiento de las afueras han montado una pantalla gigante y la gente ve la película sin salir del coche.",
+    "lines": [
+      "Los pedidos a domicilio llegan uno tras otro hasta la ventanilla."
+    ]
+  },
+  "178": {
+    "name": "Concurso de perritos calientes",
+    "desc": "Delante de tu puerta han organizado un concurso de comer: gana quien más trague en diez minutos.",
+    "lines": [
+      "Apuntarte",
+      "¡Te comes doce de un tirón y te llevas el título!",
+      "Al tercero levantas la mano y te rindes.",
+      "Hacer de juez",
+      "Cuentas con tanto cuidado que nadie tiene nada que reprochar."
+    ]
+  },
+  "179": {
+    "name": "Fuegos rojos, blancos y azules",
+    "desc": "Esta noche hay fuegos artificiales en el pueblo y el cielo se llena de luces rojas, blancas y azules.",
+    "lines": [
+      "Al terminar, todo el mundo tiene hambre."
+    ]
+  },
+  "180": {
+    "name": "Venta en el garaje",
+    "desc": "Los vecinos venden trastos viejos en la puerta del garaje, y todo cuesta cuatro perras.",
+    "lines": [
+      "Ir a curiosear",
+      "Encuentras un recetario viejo con los márgenes llenos de notas.",
+      "En una caja de lata vieja hay dos vales escondidos.",
+      "No ir",
+      "Echas un vistazo por la ventana y sigues cortando verduras."
+    ]
+  },
+  "181": {
+    "name": "El gran partido",
+    "desc": "Hoy todo el pueblo ve un partido importantísimo, y dicen que los anuncios del descanso son mejores que el partido.",
+    "lines": [
+      "Sacar alitas para llevar",
+      "Las cajas de alitas salen una detrás de otra.",
+      "Poner una pantalla grande en el local",
+      "El local se llena de clientes con camiseta y los gritos casi tiran el techo."
+    ]
+  },
+  "182": {
+    "name": "La marmota y su sombra",
+    "desc": "La gente del pueblo rodea a una marmota y espera a que asome la cabeza y vea su sombra, para saber cuánto invierno queda. ¿Verá su sombra?",
+    "lines": [
+      "La verá",
+      "Ve su sombra: ¡acertaste! Quedan seis semanas más de invierno.",
+      "No ve su sombra: fallaste.",
+      "No la verá",
+      "No ve su sombra: ¡acertaste! La primavera está al caer.",
+      "Ve su sombra: fallaste."
+    ]
+  },
+  "183": {
+    "name": "\"¿Esto es todo?\"",
+    "desc": "Un cliente mira el plato y dice: \"¿Esto es todo?\".",
+    "lines": [
+      "Echarle un buen cucharón más",
+      "Come encantado y va contando por ahí que en tu local sirven raciones generosas.",
+      "Explicarle que es alta cocina",
+      "No se lo acaba de creer, pero deja el plato limpio."
+    ]
+  },
+  "184": {
+    "name": "La música de los helados",
+    "desc": "Una furgoneta de helados pasa despacio con su musiquilla y los niños corren detrás.",
+    "lines": [
+      "Cuando se cansan de correr, arrastran a sus padres a comer a tu local."
+    ]
+  },
+  "185": {
+    "name": "Concurso de barbacoa",
+    "desc": "En el pueblo vecino celebran un concurso de barbacoa. Los jueces dicen que gana quien eche más humo y tenga la salsa más dulce.",
+    "lines": [
+      "Apuntarte",
+      "¡Tu carne se lleva la cinta azul!",
+      "Los jueces dicen que tu salsa es demasiado refinada.",
+      "Ir de público",
+      "Te pasas la tarde entre el humo y aprendes un par de trucos."
+    ]
+  },
+  "186": {
+    "name": "Cartas en el sótano",
+    "desc": "La radio avisa de vientos fuertes y los vecinos se refugian en el sótano de tu local, donde echan cartas toda la tarde.",
+    "lines": [
+      "Cuando les entra hambre, piden."
+    ]
+  },
+  "187": {
+    "name": "El desfile del instituto",
+    "desc": "El instituto del pueblo celebra la fiesta de bienvenida de los antiguos alumnos: la banda, las carrozas y las animadoras pasan por tu puerta.",
+    "lines": [
+      "Estudiantes y padres llenan el local."
+    ]
+  },
+  "188": {
+    "name": "Brunch de domingo",
+    "desc": "Un grupo de amigos llega a las diez y pide una mesa llena de tortitas, huevos fritos y zumos.",
+    "lines": [
+      "Se quedan charlando hasta la tarde y cada vez piden más."
+    ]
+  },
+  "189": {
+    "name": "Una comida para el siguiente cliente",
+    "desc": "Al pagar, un cliente deja pagada otra comida más: es para invitar al siguiente que entre por la puerta.",
+    "lines": [
+      "El siguiente cliente se queda de piedra y luego también deja otra pagada. Así se pasa el día entero."
+    ]
+  },
+  "190": {
+    "name": "Primer capítulo",
+    "desc": "Todo el pueblo se ha enganchado a una telenovela larguísima. Durante la hora de emisión no hay ni un alma en la calle.",
+    "lines": [
+      "Al terminar, todos vienen a tu local a comentar el capítulo y nadie se queja de la comida."
+    ]
+  },
+  "191": {
+    "name": "La hermana gemela",
+    "desc": "En la telenovela aparece la hermana gemela de la protagonista, perdida hace años. Los clientes discuten si es buena o mala y te exigen que te mojes.",
+    "lines": [
+      "Es buena",
+      "Los clientes que la defienden te aplauden.",
+      "Es mala",
+      "La otra mitad de los clientes te aplaude."
+    ]
+  },
+  "192": {
+    "name": "Amnesia",
+    "desc": "En la telenovela, el protagonista se da un golpe y se olvida de todo el mundo.",
+    "lines": [
+      "Los espectadores del pueblo se secan las lágrimas en tu local, y todo les sabe a gloria."
+    ]
+  },
+  "193": {
+    "name": "El último capítulo",
+    "desc": "Esta noche emiten el último capítulo y por fin se sabrá quién es de verdad la hermana gemela.",
+    "lines": [
+      "Ponerlo en el local para todos",
+      "¡Acertaste! Todo el local te aplaude.",
+      "Fallaste, y los clientes se pasan la noche riéndose de ti.",
+      "No verlo y concentrarte en cocinar",
+      "Al día siguiente te enteras del final por los clientes."
+    ]
+  },
+  "194": {
+    "name": "Una alpaca en la puerta",
+    "desc": "Una alpaca ha seguido a unos turistas hasta tu local y se ha puesto a mordisquear la maceta de la entrada. No hay quien la mueva.",
+    "lines": [
+      "Llamar a su dueño",
+      "El dueño viene enseguida a llevársela, pidiendo perdón mil veces.",
+      "Darle unas hojas de verdura y dejar que se quede un rato",
+      "Los clientes hacen cola para hacerse fotos con ella."
+    ]
+  },
+  "195": {
+    "name": "Una bufanda por correo",
+    "desc": "El dueño de la alpaca te envía una bufanda tejida con su lana.",
+    "lines": [
+      "Es suavísima; te pasas el día de buen humor."
+    ]
+  },
+  "196": {
+    "name": "La alpaca ha vuelto",
+    "desc": "La alpaca ha encontrado el camino ella solita y está plantada en la puerta, muy tiesa, como un portero.",
+    "lines": [
+      "Todo el que pasa entra a echar un vistazo."
+    ]
+  },
+  "197": {
+    "name": "La granja del monte",
+    "desc": "El dueño de la alpaca te invita a conocer su granja en el monte.",
+    "lines": [
+      "Ir",
+      "El dueño te regala una cesta de queso casero y verduras del monte.",
+      "Dejarlo para otro día",
+      "El dueño te envía una foto tuya con la alpaca."
+    ]
+  },
+  "198": {
+    "name": "Tres mil kilómetros en autocaravana",
+    "desc": "Una autocaravana se para en tu puerta. La familia cuenta que llevan tres mil kilómetros y les quedan otros tres mil.",
+    "lines": [
+      "Darles una bolsa de algo para picar en el camino",
+      "Los niños se despiden desde la ventanilla.",
+      "Dibujarles un mapa con un atajo",
+      "El padre dobla el mapa y se lo guarda en el bolsillo de la camisa."
+    ]
+  },
+  "199": {
+    "name": "Postal del cañón",
+    "desc": "Te mandan una postal con un cañón rojo. Por detrás pone: \"Hace mucho que nos acabamos el picoteo. Echamos de menos vuestro local\".",
+    "lines": [
+      "Pegas la postal en la caja y todos los clientes se paran a mirarla."
+    ]
+  },
+  "200": {
+    "name": "Postal del cañón",
+    "desc": "Te mandan una postal con un cañón rojo. Por detrás pone: \"Tu atajo era de verdad un atajo: nos ahorramos un día entero\".",
+    "lines": [
+      "Tus repartidores, siguiendo ese mapa, dibujan unos cuantos atajos más."
+    ]
+  },
+  "201": {
+    "name": "De vuelta",
+    "desc": "La autocaravana vuelve a pararse en tu puerta. La familia pasa de regreso y trae una caja de productos típicos comprados por el camino.",
+    "lines": [
+      "Coméis todos juntos en el local, como en una reunión familiar."
+    ]
+  },
+  "202": {
+    "name": "El niño que estudia en el rincón",
+    "desc": "Un niño con gafas se sienta cada tarde al salir del colegio en un rincón a estudiar palabras: dice que se presenta al concurso de deletreo del pueblo.",
+    "lines": [
+      "Tomarle la lección",
+      "Le preguntas los nombres de los platos de la carta y no falla ni uno.",
+      "Prepararle unos fideos para darle ánimos",
+      "Se los come sudando y promete que va a ganar."
+    ]
+  },
+  "203": {
+    "name": "¡A la final!",
+    "desc": "El niño entra corriendo y grita: ¡ha pasado a la final!",
+    "lines": [
+      "Todos los clientes le aplauden y uno le invita a un zumo allí mismo."
+    ]
+  },
+  "204": {
+    "name": "La noche de la final",
+    "desc": "Esta noche es la final del concurso de deletreo, y dicen que la última palabra es el nombre de un plato.",
+    "lines": [
+      "Ir a animarlo",
+      "¡Deletrea bien la última palabra y gana!",
+      "Se le escapa una letra y queda segundo.",
+      "Esperar noticias en el local",
+      "Viene corriendo a contártelo: ¡ha ganado!",
+      "Viene corriendo a decirte que ha quedado segundo, y no está nada triste."
+    ]
+  },
+  "205": {
+    "name": "La foto con el trofeo",
+    "desc": "El niño te trae una foto: él con el trofeo en las manos, delante de la puerta de tu local.",
+    "lines": [
+      "La cuelgas en el sitio más visible de la pared."
+    ]
+  },
+  "206": {
+    "name": "La furgoneta de burritos",
+    "desc": "Una furgoneta de burritos se ha plantado delante de tu puerta, y su olor te está robando la clientela.",
+    "lines": [
+      "Ir a saludar y proponer colaborar",
+      "El dueño es un tipo campechano y quedáis en hablarlo mañana.",
+      "Colgar un cartel de \"Oferta del día\" y plantarle cara",
+      "Él también cuelga un cartel, y más barato que el tuyo."
+    ]
+  },
+  "207": {
+    "name": "Menú conjunto",
+    "desc": "Tu sopa y sus burritos se unen en un menú conjunto.",
+    "lines": [
+      "Se vende como churros."
+    ]
+  },
+  "208": {
+    "name": "Guerra de precios",
+    "desc": "La furgoneta vuelve a bajar los precios y su cola es más larga que la de tu local.",
+    "lines": [
+      "Bajar tú también",
+      "Tienes más clientes, pero ganas menos.",
+      "Invitar al dueño a comer y hacer las paces",
+      "Os tomáis algo juntos y quedáis en que cada uno va a lo suyo."
+    ]
+  },
+  "209": {
+    "name": "La furgoneta se va",
+    "desc": "La furgoneta se marcha al siguiente pueblo. Antes de irse, el dueño te regala un bote de su salsa picante secreta.",
+    "lines": [
+      "Echas una cucharada en tus platos y los clientes no paran de preguntar qué es ese sabor."
+    ]
+  },
+  "210": {
+    "name": "El cliente del sombrero calado",
+    "desc": "Un detective con gabardina y el sombrero calado hasta los ojos entra en el local y te pregunta si has visto últimamente a \"alguien con un recetario rojo\".",
+    "lines": [
+      "Decirle la verdad: no lo has visto",
+      "Asiente, deja una tarjeta y se marcha.",
+      "Invitarle a sentarse y contarlo con calma",
+      "Se toma tres cafés y te cuenta una historia larguísima."
+    ]
+  },
+  "211": {
+    "name": "Una hoja arrancada",
+    "desc": "En el callejón de atrás encuentras una hoja roja arrancada con media receta escrita.",
+    "lines": [
+      "Pruebas a hacer la primera mitad y sale sorprendentemente rica."
+    ]
+  },
+  "212": {
+    "name": "Vuelve el detective",
+    "desc": "El detective vuelve y enseguida ve la hoja que tienes escondida debajo de la caja.",
+    "lines": [
+      "Entregarle la hoja",
+      "Dice que con esto puede cerrar el caso y te da dos vales como agradecimiento.",
+      "No dársela por nada del mundo",
+      "Se encoge de hombros y se va. Te pasas la noche estudiando la media receta."
+    ]
+  },
+  "213": {
+    "name": "La verdad",
+    "desc": "El Diario del pueblo publica una notita: el dueño del recetario rojo es un cocinero jubilado que simplemente no recordaba dónde lo había dejado.",
+    "lines": [
+      "El viejo cocinero viene expresamente a comer a tu local y dice que tu cocina le sabe a su juventud."
+    ]
+  },
+  "214": {
+    "name": "Tambores en el patio",
+    "desc": "Una banda de tambores quiere usar tu patio para ensayar. Dicen que solo será una tarde.",
+    "lines": [
+      "Aceptar",
+      "Los tambores hacen saltar hasta las ollas, pero a los clientes les encanta.",
+      "No aceptar",
+      "Se van al parque y tú tienes una tarde tranquila."
+    ]
+  },
+  "215": {
+    "name": "La noche del desfile",
+    "desc": "En pleno desfile, la banda de tambores se para delante de tu puerta y toca un rato solo para ti.",
+    "lines": [
+      "Toda la calle se junta a bailar y luego entran todos a tu local."
+    ]
+  },
+  "216": {
+    "name": "El parche lleno de firmas",
+    "desc": "La banda te regala un viejo parche de tambor lleno de firmas, y lo cuelgas en la pared.",
+    "lines": [
+      "Por detrás lleva pegados dos vales."
+    ]
+  },
+  "217": {
+    "name": "El mapa de la servilleta",
+    "desc": "Un anciano de barba canosa dice que su abuelo enterró un bote de oro en el monte de atrás, y que el mapa está dibujado en esta servilleta.",
+    "lines": [
+      "Ir a cavar con él",
+      "Desenterráis un bote oxidado, ¡y dentro hay algo de verdad!",
+      "Os pasáis la tarde cavando y solo encontráis una cuchara vieja.",
+      "Invitarle antes a comer",
+      "Cuando termina, te deja la servilleta."
+    ]
+  },
+  "218": {
+    "name": "El reverso de la servilleta",
+    "desc": "Le das la vuelta a la servilleta: por detrás está llena de letra apretada con la receta de un guiso.",
+    "lines": [
+      "Preparas una olla siguiéndola y el olor llega a toda la calle."
+    ]
+  },
+  "219": {
+    "name": "La carta del anciano",
+    "desc": "El anciano te escribe desde muy lejos: \"Lo del oro era mentira. Lo del guiso, no\".",
+    "lines": [
+      "Te ríes un buen rato, y ese día todo te sale a la primera."
+    ]
   }
 }
