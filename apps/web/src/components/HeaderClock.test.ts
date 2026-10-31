@@ -40,6 +40,11 @@ describe('HeaderClock（问题记录 348：顶栏的当前时间）', () => {
     // 设备休眠回来：服务器时间往前走了 2 小时，本机时钟没动
     vi.mocked(endpoints.serverTime).mockClear().mockResolvedValue({ now: '2026-10-04T08:30:10Z' });
     const vis = vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('visible');
+    // 一分钟内对过就不再对（性能 2026-10-31）
+    document.dispatchEvent(new Event('visibilitychange'));
+    await flushPromises();
+    expect(endpoints.serverTime).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(60_000);
     document.dispatchEvent(new Event('visibilitychange'));
     await flushPromises();
     expect(endpoints.serverTime).toHaveBeenCalled();

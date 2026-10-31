@@ -12,6 +12,7 @@ import OrdersPanel from '../components/takeaway/OrdersPanel.vue';
 import RidersPanel from '../components/takeaway/RidersPanel.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useToastStore } from '../stores/toast';
+import { useVisibleRefresh } from '../utils/visibleRefresh';
 
 type Tab = 'orders' | 'deliveries' | 'riders';
 const KEY = 'dt_takeaway_tab';
@@ -25,6 +26,7 @@ const data = ref<TakeawayDto | null>(null);
 /** 读取序号：几次读取同时进行时只采用最新一次的结果 */
 let seq = 0;
 async function load() {
+  visible.touch();
   const mine = ++seq;
   try {
     const v = await endpoints.takeaway();
@@ -33,15 +35,13 @@ async function load() {
     if (mine === seq) toast.push(errorMessage(e, t.value.takeaway.loadFailed), 'danger');
   }
 }
-/** 停在页面上时每分钟重新读取，倒计时和"已送到"跟着更新（终审 I2）；应用在后台时不读，回到前台马上读一次 */
+/**
+ * 停在页面上时每分钟重新读取，倒计时和"已送到"跟着更新（终审 I2）；应用在后台时不读，
+ * 回到前台马上读一次，一分钟内读过就不读（性能 2026-10-31）
+ */
 let timer: ReturnType<typeof setInterval> | undefined;
-const onVisible = () => {
-  if (document.visibilityState === 'visible') void load();
-};
-onBeforeUnmount(() => {
-  clearInterval(timer);
-  document.removeEventListener('visibilitychange', onVisible);
-});
+const visible = useVisibleRefresh(() => load());
+onBeforeUnmount(() => clearInterval(timer));
 // 切标签时重新读取：旧面板卸载后收不到它发出的刷新通知（比如接单后马上切到配送中）
 watch(tab, () => void load());
 onMounted(() => {
@@ -49,7 +49,6 @@ onMounted(() => {
   timer = setInterval(() => {
     if (!document.hidden) void load();
   }, 60_000);
-  document.addEventListener('visibilitychange', onVisible);
 });
 
 const tabs = computed(() =>

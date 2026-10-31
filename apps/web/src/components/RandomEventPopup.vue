@@ -12,6 +12,7 @@ import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 import { effectChips } from '../utils/effects';
 import { formatNum, gameDateTime } from '../utils/format';
+import { useVisibleRefresh } from '../utils/visibleRefresh';
 import DtSheet from './DtSheet.vue';
 
 /**
@@ -33,6 +34,11 @@ const busy = ref(false);
 /** 问答夜正在看第几道 */
 const qIndex = ref(0);
 let timer: ReturnType<typeof setInterval> | null = null;
+/**
+ * 区服开着随机事件才问（性能 2026-10-31：默认关着，原来照样每 10 分钟问一次）。
+ * 店还没读到时 featureOn 当作开着，这里要等读到再判断
+ */
+const enabled = computed(() => restStore.rest !== null && restStore.featureOn('randomEvents'));
 
 const r = computed(() => t.value.randomEvent);
 const open = computed(() => !!ev.value && dismissed.value !== ev.value.id);
@@ -149,23 +155,29 @@ async function close() {
   }
 }
 
-function onVisible() {
-  if (document.visibilityState === 'visible') void poll();
+/** 关着、页面在后台（切走、锁屏）时不问；切回前台时问一次，一分钟内问过就不问（性能 2026-10-31） */
+function tryPoll() {
+  if (!enabled.value || document.hidden) return;
+  visible.touch();
+  void poll();
 }
+const visible = useVisibleRefresh(tryPoll);
 
 onMounted(() => {
-  void poll();
-  timer = setInterval(() => void poll(), POLL_MS);
-  document.addEventListener('visibilitychange', onVisible);
+  tryPoll();
+  timer = setInterval(tryPoll, POLL_MS);
 });
 onBeforeUnmount(() => {
   if (timer) clearInterval(timer);
-  document.removeEventListener('visibilitychange', onVisible);
+});
+// 店读到了、区服打开了随机事件
+watch(enabled, (on) => {
+  if (on) tryPoll();
 });
 watch(
   () => route.path,
   (p) => {
-    if (p === '/') void poll();
+    if (p === '/') tryPoll();
   },
 );
 </script>

@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { computed, defineAsyncComponent, onMounted } from 'vue';
 import { RouterView, useRoute } from 'vue-router';
 import { setCaptchaHandler, setEventsListener } from './api/client';
 import AnnouncePopup from './components/AnnouncePopup.vue';
-import RandomEventPopup from './components/RandomEventPopup.vue';
 import AppHeader from './components/AppHeader.vue';
 import BottomNav from './components/BottomNav.vue';
 import DtConfirmHost from './components/DtConfirmHost.vue';
@@ -19,6 +18,9 @@ import { useSessionStore } from './stores/session';
 import { useToastStore } from './stores/toast';
 import { eventsSummary } from './utils/events';
 import { isInGame } from './utils/inGame';
+
+/** 随机事件弹窗单独分包（性能 2026-10-31）：进游戏才挂载，不打进入口 JS */
+const RandomEventPopup = defineAsyncComponent(() => import('./components/RandomEventPopup.vue'));
 
 const route = useRoute();
 const catalog = useCatalogStore();
