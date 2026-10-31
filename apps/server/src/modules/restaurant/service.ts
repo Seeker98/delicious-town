@@ -148,6 +148,13 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
             .select('rs.intro_at')
             .whereRef('rs.rest_id', '=', 'r.id')
             .as('shiling_intro_at'),
+        // 餐桌（性能整理 2026-10-31）：原来在下面那批里单独一条，并进来少占一个连接
+        (eb) =>
+          eb
+            .selectFrom('restaurant_tables as rt')
+            .select('rt.tables')
+            .whereRef('rt.rest_id', '=', 'r.id')
+            .as('rest_tables'),
       ])
       .where('r.id', '=', restId)
       .executeTakeFirst();
@@ -173,16 +180,13 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       bulk_blind_at: bulkBlindAt,
       bulk_blind_demand: bulkBlindDemand,
       bulk_demand: bulkDemand,
+      rest_tables: restTables,
       ...row
     } = joined;
+    if (!restTables) throw new Error(`restaurant_tables missing for ${restId}`);
     // 其余十来条查询互不依赖，一起发（质量期 ③：首页最常用的接口，原来一条接一条，查询时间占了八成）
     const settingsP = shards.settings(row.shard_id);
-    const [tables, effects, snap, settings, devices, last, icons, news, boosts, feed] = await Promise.all([
-      d.db
-        .selectFrom('restaurant_tables')
-        .select('tables')
-        .where('rest_id', '=', restId)
-        .executeTakeFirstOrThrow(),
+    const [effects, snap, settings, devices, last, icons, news, boosts, feed] = await Promise.all([
       listActiveEffects(d.db, restId, now),
       world.ensure(row.shard_id, now),
       settingsP,
@@ -230,7 +234,7 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
     // 时令说明弹窗（天气改版设计 指引②）：够星、还没看过才弹
     const shilingIntro =
       row.star_level >= tuning.shiling.minStar && isFeatureEnabled(settings, 'mysterious') && !shilingIntroAt;
-    return toRestaurantDto(row, tables.tables, shownEffects(effects, equipOff(settings)), d.config, {
+    return toRestaurantDto(row, restTables, shownEffects(effects, equipOff(settings)), d.config, {
       devices,
       lastRound: last,
       weather: {

@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
+import { queryCounter } from '../../../test/queries';
 import { headlines, listNews, postNews } from './news';
 
 let t: TestGame;
@@ -77,6 +78,36 @@ describe('新闻读取（设计文档 §3.1）', () => {
     expect(h.news.map((n) => n.params.star)).toEqual([4, 3, 2]);
     expect(h.broadcast).toMatchObject({ type: 'town.broadcast', params: { text: '新' } });
     expect((await headlines(t.db, (await newRestaurant(t)).shardId)).broadcast).toBeNull();
+  });
+
+  it('头条先只查近两天（性能整理 2026-10-31）：够 3 条只查一条；不够时照样列更早的，之后 10 分钟直接不限时间查', async () => {
+    const q = queryCounter();
+    try {
+      const now = t.clock.now;
+      const daysAgo = (d: number) => new Date(now.getTime() - d * 86_400_000);
+      const a = await newRestaurant(t);
+      const s = a.shardId;
+      await t.db.deleteFrom('news').where('shard_id', '=', s).execute();
+      await postNews(t.db, { shardId: s, type: 'star.up', params: { star: 1 } }, daysAgo(5));
+      await postNews(t.db, { shardId: s, type: 'star.up', params: { star: 2 } }, daysAgo(1));
+      const stars = async () => {
+        const r = await q.count(() => headlines(q.db, s, { now }));
+        return { stars: r.result.news.map((n) => n.params.star), n: r.n };
+      };
+      // 近两天只有 1 条：再不限时间查一次，5 天前的也列上
+      expect(await stars()).toEqual({ stars: [2, 1], n: 3 });
+      // 记成新闻少的区服：直接不限时间查
+      for (const star of [3, 4]) await postNews(t.db, { shardId: s, type: 'star.up', params: { star } }, now);
+      expect(await stars()).toEqual({ stars: [4, 3, 2], n: 2 });
+      // 过了 10 分钟：近两天够 3 条，只查近两天
+      const later = new Date(now.getTime() + 11 * 60_000);
+      const r = await q.count(() => headlines(q.db, s, { now: later }));
+      expect(r.result.news.map((n) => n.params.star)).toEqual([4, 3, 2]);
+      expect(r.sqls.filter((x) => x.includes('from "news"'))).toHaveLength(2);
+      expect(r.sqls.filter((x) => x.includes('not in') && x.includes('"n"."created_at" >='))).toHaveLength(1);
+    } finally {
+      await q.db.destroy();
+    }
   });
 
   it('首页广播只显示 broadcastHours 小时内的（问题记录 553）；不给小时数时不限', async () => {

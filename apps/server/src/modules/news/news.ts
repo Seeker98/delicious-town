@@ -102,9 +102,38 @@ export async function headlines(
   const [news, bc, daily] = await Promise.all([
     // 一番赏大赏也算全服广播，和玩家喇叭一起显示（一番赏设计 §6）
     // 首页最多列 3 条（问题记录 619 改成 2 条，2026-10-16 改回 3 条）
-    listNews(db, shardId, { limit: 3, not: [...BROADCAST_STYLE_NEWS] }),
+    headNews(db, shardId, o.now),
     listNews(db, shardId, { limit: 1, only: [...BROADCAST_STYLE_NEWS], since }),
     o.daily && o.now ? dailyHead(db, shardId, o.now) : null,
   ]);
   return { news, broadcast: bc[0] ?? null, daily };
+}
+
+/** 首页头条先只查这么多天内的（性能整理 2026-10-31） */
+const HEAD_RECENT_DAYS = 2;
+const HEAD_LIMIT = 3;
+/** 近两天不够 3 条的区服，这么久之内直接不限时间查（不用每次多查一条） */
+const HEAD_QUIET_MS = 10 * 60_000;
+/** 区服 → 到这个时间（毫秒）以前直接不限时间查 */
+const quietShards = new Map<number, number>();
+
+/**
+ * 首页的 3 条非广播新闻：news 按天分区、保留 30 天，不带时间下限时要把三十几个分区都规划一遍
+ * （测试库 38 个分区：新连接上第一次规划 30~46 毫秒、之后约 2.2 毫秒；限在近两天 10~12 毫秒、之后约 0.85 毫秒）。
+ * 先查近两天的，不够 3 条再不限时间查一次；新闻的编号和时间同序，够 3 条时就是不限时间的前 3 条。
+ * 新闻少的区服记下来，10 分钟内直接不限时间查（和原来一样一条）。记不记只影响先查哪条，结果都一样
+ */
+async function headNews(db: Kysely<DB>, shardId: number, now?: Date): Promise<NewsDto[]> {
+  const o = { limit: HEAD_LIMIT, not: [...BROADCAST_STYLE_NEWS] };
+  if (!now || (quietShards.get(shardId) ?? 0) > now.getTime()) return listNews(db, shardId, o);
+  const recent = await listNews(db, shardId, {
+    ...o,
+    since: new Date(now.getTime() - HEAD_RECENT_DAYS * 86_400_000),
+  });
+  if (recent.length >= HEAD_LIMIT) {
+    quietShards.delete(shardId);
+    return recent;
+  }
+  quietShards.set(shardId, now.getTime() + HEAD_QUIET_MS);
+  return listNews(db, shardId, o);
 }
