@@ -1,4 +1,5 @@
-import { sql, type Kysely } from 'kysely';
+import type { Kysely } from 'kysely';
+import { DAY_MS } from '@dt/shared';
 import type { DB } from '../../db/schema';
 import { createShard } from '../../../test/fixtures';
 import type { TestGame } from '../../../test/game';
@@ -28,9 +29,10 @@ export async function trader(
     patch: { level: 30, coin: o.coin ?? 1_000_000 },
     foods: o.foods,
   });
+  // 按测试时钟往前推，不用数据库的 now()：把时钟固定在过去某天的用例（期货），真实日期往后走以后注册天数会不够
   await t.db
     .updateTable('account')
-    .set({ created_at: sql`now() - interval '30 days'` })
+    .set({ created_at: new Date(t.clock.now.getTime() - 30 * DAY_MS) })
     .where('id', '=', r.accountId)
     .execute();
   // 每家测试店用不同的请求 IP：撮合会把"本次请求的 IP"算进关联判定（156-2）
