@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  fixes1103:
+    'Dos pequeños arreglos: después de Descomponer o Combinar en la Despensa, la lista se queda donde estaba en vez de saltar (iPhone); en los paneles Mudarse y Engarzar, la lista desplegable se abre al primer toque, sin tener que tocar antes en otro sitio',
   perf1031:
     'Rendimiento: el juego abre más rápido la primera vez (solo se descarga tu idioma, a la vez que tu cuenta), volver al juego ya no vuelve a actualizar si pasó menos de un minuto, y el aviso de Amigos de la barra inferior ya no se recarga en cada cambio de página',
   fixes1031:

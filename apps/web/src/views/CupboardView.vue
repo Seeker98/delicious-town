@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { SHARED_FOODS, type CupboardDto, type FridgeDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import DtEmpty from '../components/DtEmpty.vue';
@@ -17,6 +17,7 @@ import { useCatalogStore } from '../stores/catalog';
 import { useConfirmStore } from '../stores/confirm';
 import { useToastStore } from '../stores/toast';
 import { clampQty, foodLevelLabel, formatNum, formatPct } from '../utils/format';
+import { holdScroll } from '../utils/holdScroll';
 import { matchRange, matchText } from '../utils/match';
 
 const catalog = useCatalogStore();
@@ -38,6 +39,7 @@ const fridge = ref<FridgeDto | null>(null);
 const picked = ref<number | null>(null);
 const num = ref(1);
 const busy = ref(false);
+const listEl = ref<HTMLElement | null>(null);
 
 /** 按等级筛选（问题记录：橱柜食材太多时只看某一级）；0 = 全部，记住上次选的 */
 const LEVEL_KEY = 'dt_cupboard_level';
@@ -230,9 +232,14 @@ watch(tab, (k) => {
 });
 async function run(fn: () => Promise<unknown>, fallback: string) {
   busy.value = true;
+  // 读回来以后列表会增删行（分解出的低级食材排在上面）：记下看着的行，渲染完滚回原处
+  const list = listEl.value;
+  const back = list ? holdScroll(list.children, list.querySelector('.is-picked')) : null;
   try {
     await fn();
     await load();
+    await nextTick();
+    back?.();
     if (tab.value === 'fridge') fridge.value = await endpoints.fridge();
   } catch (e) {
     toast.push(errorMessage(e, fallback), 'danger');
@@ -368,7 +375,7 @@ onMounted(() =>
       </div>
       <div v-else-if="shown.length === 0" class="small text-muted">{{ t.cupboard.levelEmpty }}</div>
       <!-- 列表（橱柜改版，用户 2026-10-12：格子太乱）：一行一种，左边图，名字和等级标签、锁，下面本街还需；右边数量。点一行弹出详情 -->
-      <div v-else class="dt-card dt-cup-list">
+      <div v-else ref="listEl" class="dt-card dt-cup-list">
         <button
           v-for="f in rows"
           :key="f.foodsId"

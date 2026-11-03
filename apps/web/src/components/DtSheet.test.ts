@@ -156,6 +156,34 @@ describe('底部面板（界面改版 P3，设计 §5 第 6、7 条）', () => {
     w.unmount();
   });
 
+  it('第一个输入框是下拉框：焦点放在面板本身（iPhone 上有焦点的下拉框点了不弹选项，搬家选街道）；Tab 仍能进下拉框', async () => {
+    const Pick = defineComponent({
+      setup() {
+        const open = ref(false);
+        return () => [
+          h('button', { id: 'opener4', onClick: () => (open.value = true) }, '打开'),
+          h(
+            DtSheet,
+            { open: open.value, title: '搬家', onClose: () => (open.value = false) },
+            {
+              default: () => [
+                h('select', { id: 'street' }, [h('option', '日本街')]),
+                h('input', { id: 'n' }),
+              ],
+            },
+          ),
+        ];
+      },
+    });
+    const w = mount(Pick, { attachTo: document.body });
+    await w.get('#opener4').trigger('click');
+    await flushPromises();
+    expect(document.activeElement?.classList.contains('dt-sheet')).toBe(true);
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', cancelable: true }));
+    expect(document.activeElement?.id).toBe('street');
+    w.unmount();
+  });
+
   it('同一时刻关掉一个、打开另一个（收起预设再弹确认）：滚动锁还在，焦点在新面板里，不被拉回页面（终审 I3）', async () => {
     const Two = defineComponent({
       setup() {
