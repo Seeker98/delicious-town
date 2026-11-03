@@ -4,7 +4,7 @@ import { computed, nextTick, onBeforeUnmount, ref, useId, watch } from 'vue';
 /**
  * 底部面板（界面改版设计 §5 第 6、7 条）：长表单（预设、一键处理、下单）和确认都从下面弹出。
  * Esc、点遮罩关掉；打开时焦点进面板，关掉回到原来的按钮；“减少动态效果”时只淡入不滑动。
- * 打开时焦点放在第一个输入框，没有输入框就放在面板本身，不放在按钮上（backlog P3：预设面板一按回车就套用了）；
+ * 打开时焦点放在第一个输入框，没有输入框、或者第一个是下拉框就放在面板本身，不放在按钮上（backlog P3：预设面板一按回车就套用了）；
  * Tab 键圈在最上面那层面板里。
  * 进出（界面第二批）：用 CSS 过渡、不用关键帧，关到一半又打开时从当前位置接着走；出去沿原路滑回下面；
  * 按住把手（或标题）往下拖能关：面板跟着手指走，松手按速度推算落点，过了一半就关、不到就弹回
@@ -63,7 +63,9 @@ function opened() {
     const field = panel.value?.querySelector<HTMLElement>(
       'input:not(:disabled), select:not(:disabled), textarea:not(:disabled)',
     );
-    (props.focusPanel ? panel.value : (field ?? panel.value))?.focus();
+    // 第一个是下拉框也放在面板上：iPhone 上已经有焦点的下拉框点了不弹选项，要先点别处再点回来（搬家选街道）
+    const toField = field && !props.focusPanel && field.tagName !== 'SELECT';
+    (toField ? field : panel.value)?.focus();
   });
 }
 function closed() {

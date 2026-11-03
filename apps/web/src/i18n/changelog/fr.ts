@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  fixes1103:
+    'Deux petites corrections\u202f: après Décomposer ou Combiner dans le Garde-manger, la liste reste où elle était au lieu de sauter (iPhone)\u202f; dans les panneaux Déménager et Sertir, la liste déroulante s’ouvre dès le premier toucher, sans devoir toucher ailleurs avant',
   perf1031:
     'Performances\u202f: le jeu s’ouvre plus vite la première fois (seule votre langue est téléchargée, en même temps que votre compte), revenir au jeu ne déclenche plus de nouveau rafraîchissement dans la minute, et le badge Amis de la barre du bas ne se recharge plus à chaque changement de page',
   fixes1031:

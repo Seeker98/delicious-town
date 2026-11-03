@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  fixes1103:
+    'Two small fixes: after Break down or Combine in the Pantry, the list stays where it was instead of jumping (iPhone); in the Move and Socket panels, the drop-down opens on the first tap, no need to tap elsewhere first',
   perf1031:
     'Performance: the game opens faster the first time (only your language is downloaded, together with your account), switching back to the game no longer refreshes again within a minute, and the friend badge in the bottom bar no longer reloads on every page change',
   fixes1031:
