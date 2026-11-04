@@ -102,14 +102,12 @@ describe('价格与限购（规格书 06 §6.2）', () => {
       6,
     );
   });
-  it('日常稀有食材上架 55 分钟内每人最多 odds×2+10 份', () => {
-    const opened = new Date('2026-09-30T00:00:00Z');
-    expect(personLimit(0, food, opened, new Date(opened.getTime() + 54 * 60_000), t)).toBe(
-      food.odds * 2 + 10,
-    );
-    expect(personLimit(0, food, opened, new Date(opened.getTime() + 56 * 60_000), t)).toBe(1000);
-    expect(personLimit(1, food, opened, opened, t)).toBe(1);
-    expect(personLimit(2, food, opened, opened, t)).toBe(9);
+  it('日常稀有食材整轮每人最多 odds×2+10 份（原来过了 55 分钟就放开到 1000）；普通食材 1000', () => {
+    expect(personLimit(0, food, t)).toBe(food.odds * 2 + 10);
+    const plain = [...config.foods.values()].find((f) => f.odds >= 100)!;
+    expect(personLimit(0, plain, t)).toBe(1000);
+    expect(personLimit(1, food, t)).toBe(1);
+    expect(personLimit(2, food, t)).toBe(9);
   });
 });
 

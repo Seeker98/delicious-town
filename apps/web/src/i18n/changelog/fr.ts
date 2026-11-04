@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  market1104:
+    'Les ingrédients rares de l’étal quotidien du marché (Sucre blanc, Ail, etc.) gardent leur limite par personne pendant toute la tournée, au lieu de passer à 1\u202f000 après les 55 premières minutes',
   fixes1103:
     'Deux petites corrections\u202f: après Décomposer ou Combiner dans le Garde-manger, la liste reste où elle était au lieu de sauter (iPhone)\u202f; dans les panneaux Déménager et Sertir, la liste déroulante s’ouvre dès le premier toucher, sans devoir toucher ailleurs avant',
   perf1031:

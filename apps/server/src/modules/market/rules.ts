@@ -103,10 +103,13 @@ export function unitPrice(
   return foodPrice(food, t) * w;
 }
 
-/** 本轮每人（账号 / 设备 / IP 分别计）限购 */
-export function personLimit(shelf: Shelf, food: Food, openedAt: Date, now: Date, t: MarketTuning): number {
+/**
+ * 本轮每人（账号 / 设备 / IP 分别计）限购：日常货架的稀有食材整轮按赔率限购
+ * （2026-11-04：原来只管上新后 55 分钟，过了按 1000 算，有人等到 20:55 以后一次买走 990 个白糖）
+ */
+export function personLimit(shelf: Shelf, food: Food, t: MarketTuning): number {
   const base = t.shelfLimits[shelf];
-  if (shelf === 0 && food.odds < 100 && now.getTime() - openedAt.getTime() < t.rareWindowMinutes * 60_000) {
+  if (shelf === 0 && food.odds < 100) {
     return Math.min(base, Math.floor(food.odds * t.rareLimitOddsFactor + t.rareLimitBase));
   }
   return base;

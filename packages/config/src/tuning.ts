@@ -254,7 +254,6 @@ export const tuningSchema = z.object({
      */
     fairPriceRate: z.array(z.number().positive()),
     shelfLimits: z.tuple([int, int, int]),
-    rareWindowMinutes: int,
     rareLimitOddsFactor: num,
     rareLimitBase: int,
     specialIpCooldownSec: int,

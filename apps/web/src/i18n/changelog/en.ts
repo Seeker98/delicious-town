@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  market1104:
+    'Rare ingredients on the Market’s daily shelf (White Sugar, Garlic and the like) now keep their per-person limit for the whole round, instead of opening up to 1,000 after the first 55 minutes',
   fixes1103:
     'Two small fixes: after Break down or Combine in the Pantry, the list stays where it was instead of jumping (iPhone); in the Move and Socket panels, the drop-down opens on the first tap, no need to tap elsewhere first',
   perf1031:
