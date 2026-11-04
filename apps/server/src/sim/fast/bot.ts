@@ -746,7 +746,7 @@ export function botTurn(
       const want = lack.get(it.foodsId) ?? 0;
       if (want <= 0) continue;
       const food = cfg.requireFood(it.foodsId);
-      const limit = personLimit(it.shelf, food, it.openedAt, c.now, t);
+      const limit = personLimit(it.shelf, food, t);
       const room = Math.min(limit - (it.bought.get(r.id) ?? 0), it.stock - it.sold, want);
       const price = unitPrice(shelf, food, t, w.weather);
       const affordable = Math.floor((r.coin - reserve) / Math.max(1, price));
@@ -762,7 +762,7 @@ export function botTurn(
     const food = cfg.requireFood(it.foodsId);
     const want = feed.get(food.level) ?? 0;
     if (want <= 0) continue;
-    const limit = personLimit(it.shelf, food, it.openedAt, c.now, t);
+    const limit = personLimit(it.shelf, food, t);
     const room = Math.min(limit - (it.bought.get(r.id) ?? 0), it.stock - it.sold, want);
     const price = unitPrice(0, food, t, w.weather);
     const num = Math.min(room, Math.floor((r.coin - reserve) / Math.max(1, price)));

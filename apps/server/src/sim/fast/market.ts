@@ -11,7 +11,6 @@ export interface FastShelfItem {
   foodsId: number;
   stock: number;
   sold: number;
-  openedAt: Date;
   bought: Map<number, number>;
 }
 
@@ -68,7 +67,6 @@ export function restockIfDue(
         foodsId: x.foodsId,
         stock: x.stock,
         sold: 0,
-        openedAt: now,
         bought: new Map(),
       });
     }
@@ -102,7 +100,7 @@ export function marketBuy(
   const have = foodNum(r, food.id);
   if (have === 0 && slotsUsed(r) >= r.cupboardNum) return false;
   if (have + num > r.foodsMaxNum) return false;
-  const limit = personLimit(item.shelf, food, item.openedAt, c.now, t);
+  const limit = personLimit(item.shelf, food, t);
   const bought = item.bought.get(r.id) ?? 0;
   if (bought + num > limit) return false;
   if (item.sold + num > item.stock) return false;

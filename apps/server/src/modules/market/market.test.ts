@@ -119,7 +119,8 @@ describe('日常菜场', () => {
   it('卖完了报 SOLD_OUT；超过每人限购报 LIMIT_REACHED', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 100_000_000, foods_max_num: 5000 } });
     const [item] = await openShelf(ctx.shardId, 0);
-    t.clock.set(new Date(t.clock.now.getTime() + 60 * 60_000));
+    // 稀有食材整轮按赔率限购，普通的 1000：按页面上显示的限购买满
+    const { limit } = (await m().view({ ...ctx, ip: uniqueIp() })).daily.find((x) => x.id === item!.id)!;
     await t.db
       .updateTable('market_item')
       .set({ sold: item!.stock - 1 })
@@ -129,7 +130,7 @@ describe('日常菜场', () => {
       code: 'SOLD_OUT',
     });
     await t.db.updateTable('market_item').set({ sold: 0 }).where('id', '=', item!.id).execute();
-    await expect(m().buy({ ...ctx, ip: uniqueIp() }, { itemId: item!.id, num: 1000 })).resolves.toBeTruthy();
+    await expect(m().buy({ ...ctx, ip: uniqueIp() }, { itemId: item!.id, num: limit })).resolves.toBeTruthy();
     await expect(m().buy({ ...ctx, ip: uniqueIp() }, { itemId: item!.id, num: 1 })).rejects.toMatchObject({
       code: 'LIMIT_REACHED',
     });

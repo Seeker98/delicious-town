@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  market1104:
+    'Los ingredientes raros del puesto diario del mercado (Azúcar blanco, Ajo y similares) mantienen su límite por persona durante toda la ronda, en vez de subir a 1.000 pasados los primeros 55 minutos',
   fixes1103:
     'Dos pequeños arreglos: después de Descomponer o Combinar en la Despensa, la lista se queda donde estaba en vez de saltar (iPhone); en los paneles Mudarse y Engarzar, la lista desplegable se abre al primer toque, sin tener que tocar antes en otro sitio',
   perf1031:

@@ -215,7 +215,6 @@
     "tuning.market.levelPriceRate": "菜场价阶梯：各等级食材价格倍数，菜场日常和高级货架单价、时令每份点数按它算，第 N 个是 N 级（倍数列表，没写的等级按 1；特价货架不受影响。区服覆盖时整个列表替换，要 1~7 级写全）",
     "tuning.market.fairPriceRate": "公允价阶梯：交易所参考价和挂单带、系统做市、期货单价、大宗起拍和底价按它算，第 N 个是 N 级（倍数列表，没写的等级按 1。改了以后已保存的参考价不会跟着变，要清掉才按新值重算。区服覆盖时整个列表替换，要 1~7 级写全）",
     "tuning.market.shelfLimits": "每人每次限购（[日常, 特价, 高级] 个数）",
-    "tuning.market.rareWindowMinutes": "日常稀有食材上新后多少分钟内按赔率限购（分钟）",
     "tuning.market.rareLimitOddsFactor": "稀有限购 = 赔率 × 这个值 + 基础值（倍）",
     "tuning.market.rareLimitBase": "稀有限购的基础值（个）",
     "tuning.market.specialIpCooldownSec": "同一 IP 买特价菜的冷却（秒）",

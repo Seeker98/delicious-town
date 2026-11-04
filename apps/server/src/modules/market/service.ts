@@ -201,7 +201,7 @@ export function createMarketService(d: GameDeps, world: WorldService) {
         throw new AppError(ErrorCode.CUPBOARD_FULL, 400);
       if (have + b.num > o.rest.foods_max_num) throw limitReached('foods_max', { max: o.rest.foods_max_num });
       if (!own) {
-        const limit = personLimit(shelf, food, item.opened_at, o.now, t);
+        const limit = personLimit(shelf, food, t);
         await claimLimit(o, item.id, `rest:${o.rest.id}`, b.num, limit);
         if (ctx.deviceId) await claimLimit(o, item.id, deviceSubject(ctx.deviceId), b.num, limit);
         await claimLimit(o, item.id, `ip:${ctx.ip}`, b.num, limit);
@@ -384,11 +384,7 @@ export function createMarketService(d: GameDeps, world: WorldService) {
         // 手动货：自己的不限购（以库存为限）；别人的每人 manualPersonMax 份、只按店计
         const own = r.owner_rest_id === ctx.restaurantId;
         const limit =
-          r.owner_rest_id === null
-            ? personLimit(shelf, food, r.opened_at, now, t)
-            : own
-              ? r.stock
-              : t.manualPersonMax;
+          r.owner_rest_id === null ? personLimit(shelf, food, t) : own ? r.stock : t.manualPersonMax;
         const bought = own ? 0 : (boughtMap.get(r.id) ?? 0);
         const sharedBought = r.owner_rest_id === null ? (sharedMap.get(r.id) ?? 0) : 0;
         const have = mine.get(r.foods_id)?.num ?? 0;
