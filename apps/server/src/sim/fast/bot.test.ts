@@ -317,7 +317,6 @@ describe('机器人决策（终审 I-3，设计 §9）', () => {
       foodsId: food.id,
       stock: 1000,
       sold: 0,
-      openedAt: new Date(0),
       bought: new Map(),
     });
     b.rest.coin = b.rest.oilMax + 20_000 + Math.floor(price * 2.5);
@@ -426,7 +425,6 @@ describe('合成原料（2026-10-12 线上核对）', () => {
       foodsId: feed.id,
       stock: 1000,
       sold: 0,
-      openedAt: new Date(0),
       bought: new Map(),
     });
     botTurn(c, b, m, world(), null);
