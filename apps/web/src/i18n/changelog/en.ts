@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  mouse1105:
+    'Mice no longer steal Mystery ingredients (Mystery Nine-Heaven Fin, Krabby Patty Secret Sauce and the like), even when they are not locked',
   market1104:
     'Rare ingredients on the Market’s daily shelf (White Sugar, Garlic and the like) now keep their per-person limit for the whole round, instead of opening up to 1,000 after the first 55 minutes',
   fixes1103:

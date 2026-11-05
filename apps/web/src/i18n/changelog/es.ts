@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  mouse1105:
+    'Los ratones ya no roban ingredientes misteriosos (Aleta misteriosa de los nueve cielos, Salsa secreta de la Cangreburger y similares), aunque no estén bloqueados',
   market1104:
     'Los ingredientes raros del puesto diario del mercado (Azúcar blanco, Ajo y similares) mantienen su límite por persona durante toda la ronda, en vez de subir a 1.000 pasados los primeros 55 minutos',
   fixes1103:

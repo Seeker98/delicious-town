@@ -1,4 +1,4 @@
-import { GOODS } from '@dt/config';
+import { GOODS, type Tuning } from '@dt/config';
 import { buildPool, pickWeighted, seededRng } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import { opAgg, opLuck } from '../../core/luck';
@@ -20,6 +20,11 @@ export type MouseStats = {
 
 type Outcome = 'escaped' | 'trapped' | 'stolen' | 'nothing';
 
+/** 老鼠白名单（2026-11-05）：等级在 safeLevels（默认 7 级神秘食材）或编号在 safeFoods 的食材，老鼠无论如何都不偷 */
+export function mouseSafe(foodsId: number, level: number | undefined, mt: Tuning['mouse']): boolean {
+  return mt.safeFoods.includes(foodsId) || (level !== undefined && mt.safeLevels.includes(level));
+}
+
 async function visit(op: Op): Promise<{ outcome: Outcome; map: boolean }> {
   const mt = op.tuning.mouse;
   const agg = await opAgg(op);
@@ -36,14 +41,16 @@ async function visit(op: Op): Promise<{ outcome: Outcome; map: boolean }> {
     outcome = 'escaped';
     restLog(op, 'mouse.escape');
   } else {
-    const foods = await op.tx
-      .selectFrom('cupboard_food')
-      .select(['foods_id', 'num'])
-      .where('rest_id', '=', op.rest.id)
-      .where('num', '>', 0)
-      .where('locked', '=', false)
-      .orderBy('foods_id')
-      .execute();
+    const foods = (
+      await op.tx
+        .selectFrom('cupboard_food')
+        .select(['foods_id', 'num'])
+        .where('rest_id', '=', op.rest.id)
+        .where('num', '>', 0)
+        .where('locked', '=', false)
+        .orderBy('foods_id')
+        .execute()
+    ).filter((f) => !mouseSafe(f.foods_id, op.config.foods.get(f.foods_id)?.level, mt));
     if (foods.length === 0) {
       outcome = 'nothing';
       restLog(op, 'mouse.nothing');

@@ -89,7 +89,7 @@
       { "key": "dinner", "from": 18, "to": 20, "amount": 30 }
     ]
   },
-  "mouse": { "rateBase": 0.16, "ratePerStar": 0.01, "newbieFactor": 0.5, "luckDivisor": 2, "trapCoinPerLevel": 20 },
+  "mouse": { "rateBase": 0.16, "ratePerStar": 0.01, "newbieFactor": 0.5, "luckDivisor": 2, "trapCoinPerLevel": 20, "safeLevels": [7], "safeFoods": [] },
   "growth": {
     "plaque2Star": 3,
     "plaque2Coin": 15000000,

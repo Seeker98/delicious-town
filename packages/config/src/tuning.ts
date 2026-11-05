@@ -181,6 +181,10 @@ export const tuningSchema = z.object({
     newbieFactor: num,
     luckDivisor: num,
     trapCoinPerLevel: num,
+    /** 老鼠不偷的食材（白名单 2026-11-05）：这些等级的都不偷（7 级是神秘食材） */
+    safeLevels: z.array(int),
+    /** 老鼠不偷的食材编号（白名单，单独加的） */
+    safeFoods: z.array(int),
   }),
   growth: z.object({
     plaque2Star: int,
