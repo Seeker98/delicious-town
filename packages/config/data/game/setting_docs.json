@@ -166,6 +166,8 @@
     "tuning.mouse.newbieFactor": "新手街老鼠概率倍数（倍）",
     "tuning.mouse.luckDivisor": "老鼠夹没夹住时, 店主幸运让老鼠空跑一趟的概率 = 幸运率 ÷ 这个值",
     "tuning.mouse.trapCoinPerLevel": "抓到老鼠的银币奖励按等级 × 这个值浮动（银币）",
+    "tuning.mouse.safeLevels": "老鼠不偷的食材等级（白名单, 7 级是神秘食材）",
+    "tuning.mouse.safeFoods": "老鼠不偷的食材编号（白名单, 单独加的食材）",
     "tuning.growth.plaque2Star": "开通二楼牌匾需要的星级（星）",
     "tuning.growth.plaque2Coin": "开通二楼牌匾花费的银币（银币）",
     "tuning.growth.plaque2Diamond": "开通二楼牌匾花费的钻石（钻石）",

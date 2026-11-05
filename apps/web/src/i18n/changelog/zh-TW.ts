@@ -6,6 +6,7 @@ import type { ChangelogId } from '../../data/changelog';
  * 開啟更新記錄、幫助中心時才載入，不打進主包；其他語言同名檔案結構一致，繁中由 pnpm -F @dt/web i18n:tw 生成
  */
 export default {
+  mouse1105: '老鼠不再偷神秘食材 (九天翅、蟹黃堡密料這類), 沒上鎖也不偷',
   market1104:
     '菜場日常貨架的稀有食材 (白糖、大蒜這類) 整輪都按原來的數量限購, 不再在上新 55 分鐘後放開到 1000 個',
   fixes1103:

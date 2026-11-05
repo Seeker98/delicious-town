@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  mouse1105:
+    'Les souris ne volent plus les ingrédients mystère (Aileron mystère des neuf cieux, Sauce secrète du Krabby Patty, etc.), même s’ils ne sont pas verrouillés',
   market1104:
     'Les ingrédients rares de l’étal quotidien du marché (Sucre blanc, Ail, etc.) gardent leur limite par personne pendant toute la tournée, au lieu de passer à 1\u202f000 après les 55 premières minutes',
   fixes1103:

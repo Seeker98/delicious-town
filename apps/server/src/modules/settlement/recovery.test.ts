@@ -111,6 +111,32 @@ describe('老鼠捣乱（规格书 01 §1.9）', () => {
     expect((await foodNum(t, ctx.restaurantId, fid('大米'))).num).toBeLessThanOrEqual(9000 - 50);
   });
 
+  it('白名单（2026-11-05）：神秘食材（7 级）不偷，只偷别的；只剩白名单食材时什么也偷不到', async () => {
+    const shardId = await alwaysMouseShard();
+    const mys = fid('神秘九天翅');
+    const both = await newRestaurant(t, { shardId, foods: { [fid('大米')]: 1, [mys]: 9000 } });
+    const only = await newRestaurant(t, { shardId, foods: { [mys]: 3 } });
+    const s = await mouseRound(t.game.deps, shardId, 'p1', new Date());
+    expect(s).toMatchObject({ triggered: 2, stolen: 1, nothing: 1 });
+    expect((await foodNum(t, both.restaurantId, mys)).num).toBe(9000);
+    expect((await foodNum(t, both.restaurantId, fid('大米'))).num).toBe(0);
+    expect((await foodNum(t, only.restaurantId, mys)).num).toBe(3);
+  });
+
+  it('白名单按编号单独加（区服数值 safeFoods）', async () => {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({
+        shard_id: shardId,
+        override: JSON.stringify({ tuning: { mouse: { rateBase: 10, safeFoods: [fid('大米')] } } }),
+      })
+      .execute();
+    const ctx = await newRestaurant(t, { shardId, foods: { [fid('大米')]: 5 } });
+    expect(await mouseRound(t.game.deps, shardId, 'p1', new Date())).toMatchObject({ nothing: 1 });
+    expect((await foodNum(t, ctx.restaurantId, fid('大米'))).num).toBe(5);
+  });
+
   it('只有锁定的食材时什么也偷不到', async () => {
     const shardId = await alwaysMouseShard();
     const ctx = await newRestaurant(t, { shardId, foods: { [fid('大米')]: 5 } });

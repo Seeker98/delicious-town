@@ -1,5 +1,6 @@
 import { toSettleInput, type SettleSource } from '../../modules/settlement/globals';
 import { settleRestaurant } from '../../modules/settlement/settle';
+import { mouseSafe } from '../../modules/settlement/mouse';
 import { strengthGain } from '../../modules/settlement/strength';
 import type { SettleGlobals } from '../../modules/settlement/types';
 import { GOODS } from '@dt/config';
@@ -68,7 +69,7 @@ export function regenRound(c: FastCtx, r: FastRest): void {
 
 /**
  * 老鼠捣乱一次（settlement/mouse.ts 的 visit）：有老鼠夹先按概率夹住给银币；再按幸运逃走；
- * 否则从数量大于 0 的食材里按数量加权挑一种（问题记录 581），偷 1~(2×星级+1) 个（快速模型的机器人不锁食材）；另有概率掉探险图
+ * 否则从数量大于 0、不在白名单里的食材中按数量加权挑一种（问题记录 581），偷 1~(2×星级+1) 个（快速模型的机器人不锁食材）；另有概率掉探险图
  */
 export function mouseVisit(c: FastCtx, r: FastRest): 'escaped' | 'trapped' | 'stolen' | 'nothing' {
   const mt = c.tuning.mouse;
@@ -80,7 +81,9 @@ export function mouseVisit(c: FastCtx, r: FastRest): 'escaped' | 'trapped' | 'st
     out = 'trapped';
   } else if (c.rng.chance(rate / mt.luckDivisor)) out = 'escaped';
   else {
-    const foods = [...r.foods].filter(([, n]) => n > 0).sort((a, b) => a[0] - b[0]);
+    const foods = [...r.foods]
+      .filter(([id, n]) => n > 0 && !mouseSafe(id, c.config.foods.get(id)?.level, mt))
+      .sort((a, b) => a[0] - b[0]);
     if (foods.length === 0) out = 'nothing';
     else {
       const [id, have] = pickWeighted(
