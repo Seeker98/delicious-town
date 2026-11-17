@@ -2,6 +2,7 @@ import type { ApiResponse, GameEvent } from '@dt/shared';
 import { AB_HEADERS, ErrorCode } from '@dt/shared';
 import { CLIENT_BUILD, prefetchSignKey, resetSignKey, signHeaders } from './antibot';
 import { markPressBusy } from '../utils/pressBusy';
+import { writeStarted } from '../utils/writesInFlight';
 import { uuid } from '../utils/uuid';
 import { deviceId } from './device';
 
@@ -76,6 +77,8 @@ export function createApiClient(
     const bodyText = method === 'POST' ? JSON.stringify(body ?? {}) : undefined;
     // 写请求：刚点的按钮标“处理中”（界面第二批）
     const unbusy = method === 'POST' ? markPressBusy() : null;
+    // 记下在路上的写请求：发版要求刷新时等它们返回（旧版本提醒 2026-11-17）
+    const unwrite = method === 'POST' ? writeStarted() : null;
     try {
       if (bodyText !== undefined) {
         headers['content-type'] = 'application/json';
@@ -126,6 +129,7 @@ export function createApiClient(
       throw e;
     } finally {
       unbusy?.();
+      unwrite?.();
     }
   }
 

@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  version1117:
+    'Après une mise à jour du jeu, une page restée ouverte sur l’ancienne version demande d’être rafraîchie pour continuer à jouer (si vous êtes en train d’écrire, la fenêtre attend jusqu’à 3 minutes)',
   mouse1105:
     'Les souris ne volent plus les ingrédients mystère (Aileron mystère des neuf cieux, Sauce secrète du Krabby Patty, etc.), même s’ils ne sont pas verrouillés',
   market1104:

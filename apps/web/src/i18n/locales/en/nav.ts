@@ -119,6 +119,12 @@ const nav: Messages['nav'] = {
   mail: 'Mailbox',
   mailUnread: (n) => `Mailbox, ${n} unread`,
   announceClose: 'Got it',
+  versionStale: {
+    title: 'Game updated',
+    body: 'A new version is out. Refresh the page to keep playing.',
+    refresh: 'Refresh',
+    refreshing: 'Refreshing…',
+  },
   announceMore: (n) => `${n} in total`,
   activity: {
     running: (n) => `${n} ${n === 1 ? 'event' : 'events'} running`,

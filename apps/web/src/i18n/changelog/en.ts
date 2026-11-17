@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  version1117:
+    'When the game is updated, pages left open on the old version now ask you to refresh before you keep playing (if you are typing, the prompt waits up to 3 minutes)',
   mouse1105:
     'Mice no longer steal Mystery ingredients (Mystery Nine-Heaven Fin, Krabby Patty Secret Sauce and the like), even when they are not locked',
   market1104:
