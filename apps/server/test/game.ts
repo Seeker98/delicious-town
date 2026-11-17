@@ -89,9 +89,11 @@ export async function newRestaurant(t: TestGame, opts: NewRestaurantOptions = {}
       .execute();
   }
   if (opts.accountDays !== undefined) {
+    // 按测试时钟往前推，不用真实时间：把时钟固定在过去某天的用例（豪华一番赏 10-15），
+    // 真实日期往后走以后注册天数会不够（同 #357 交易所 trader()）；没设时钟的用例时钟就是真实时间
     await t.db
       .updateTable('account')
-      .set({ created_at: new Date(Date.now() - opts.accountDays * 86_400_000) })
+      .set({ created_at: new Date(t.clock.now.getTime() - opts.accountDays * 86_400_000) })
       .where('id', '=', accountId)
       .execute();
   }
