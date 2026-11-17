@@ -12,6 +12,7 @@ import EventToast from './components/EventToast.vue';
 import AchieveToast from './components/achieve/AchieveToast.vue';
 import { useAchieveToastStore } from './stores/achieveToast';
 import ShilingIntroPopup from './components/ShilingIntroPopup.vue';
+import VersionGate from './components/VersionGate.vue';
 import { useCatalogStore } from './stores/catalog';
 import { useLocaleStore } from './stores/locale';
 import { useSessionStore } from './stores/session';
@@ -75,5 +76,7 @@ onMounted(() => {
     <EventToast :nav="inGame" />
     <AchieveToast v-if="inGame" />
     <BottomNav v-if="inGame" />
+    <!-- 旧版本提醒：所有页面都挂，排在最后、盖在别的弹框上面 -->
+    <VersionGate />
   </div>
 </template>

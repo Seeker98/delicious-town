@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  version1117:
+    'Cuando el juego se actualiza, las páginas abiertas con la versión antigua piden actualizar antes de seguir jugando (si estás escribiendo, el aviso espera hasta 3 minutos)',
   mouse1105:
     'Los ratones ya no roban ingredientes misteriosos (Aleta misteriosa de los nueve cielos, Salsa secreta de la Cangreburger y similares), aunque no estén bloqueados',
   market1104:

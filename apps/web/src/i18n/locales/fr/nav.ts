@@ -120,6 +120,12 @@ const nav: Messages['nav'] = {
   mail: 'Boîte aux lettres',
   mailUnread: (n) => `Boîte aux lettres, ${n} non lu${n > 1 ? 's' : ''}`,
   announceClose: 'Compris',
+  versionStale: {
+    title: 'Jeu mis à jour',
+    body: 'Une nouvelle version est disponible. Rafraîchissez la page pour continuer à jouer.',
+    refresh: 'Rafraîchir',
+    refreshing: 'Rafraîchissement…',
+  },
   announceMore: (n) => `${n} au total`,
   activity: {
     running: (n) => `${n} ${n === 1 ? 'événement en cours' : 'événements en cours'}`,

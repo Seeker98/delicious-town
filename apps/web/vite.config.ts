@@ -4,6 +4,7 @@ import { defineConfig, loadEnv } from 'vite';
 import { inlineLimit } from './src/build/artAssets';
 import { localePreloadPlugin } from './src/build/localePreload';
 import { preconnectTags } from './src/build/preconnect';
+import { versionFilePlugin } from './src/build/versionFile';
 
 export default defineConfig(({ mode }) => {
   // loadEnv 也读进程环境变量：Cloudflare Pages 构建时 VITE_API_BASE 是平台设的，不在 .env 文件里
@@ -17,6 +18,8 @@ export default defineConfig(({ mode }) => {
       { name: 'dt-preconnect-api', transformIndexHtml: () => preconnectTags(apiBase) },
       // 选中的语言包和入口 JS 一起下载（性能 2026-10-31）：各语言包的文件写进页面头部，public/theme-init.js 按语言挑
       localePreloadPlugin(),
+      // 旧版本提醒（2026-11-17）：dist 里写 version.json，开着的旧页面读到新版本号就弹框要求刷新
+      versionFilePlugin(build),
       // 防脚本 PR②（设计第 7 节）：只在打包时把写请求签名的两个模块混淆，每次打包结果不同（seed 0 = 随机）；
       // 其余代码不动，报错定位照常
       {

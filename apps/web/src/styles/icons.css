@@ -1,5 +1,5 @@
 /*! Bootstrap Icons v1.13.1 | Copyright 2019-2024 The Bootstrap Authors | MIT License | https://github.com/twbs/icons/blob/main/LICENSE */
-/* 由 scripts/gen-icons.mjs 生成，别手改：只含网页用到的 46 个图标 */
+/* 由 scripts/gen-icons.mjs 生成，别手改：只含网页用到的 47 个图标 */
 
 @font-face {
   font-display: block;
@@ -23,6 +23,7 @@
 }
 
 .bi-arrow-left-right::before { content: "\f12b"; }
+.bi-arrow-repeat::before { content: "\f130"; }
 .bi-arrow-up-circle::before { content: "\f13a"; }
 .bi-bank::before { content: "\f62e"; }
 .bi-bug::before { content: "\f1dc"; }

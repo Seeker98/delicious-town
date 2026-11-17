@@ -121,6 +121,13 @@ export default {
   mailUnread: (n: number) => `邮箱, ${n} 封未读`,
   /** 重要公告弹窗的关闭按钮 */
   announceClose: '知道了',
+  /** 旧版本提醒（2026-11-17）：发版后开着的旧页面弹的框，不能关 */
+  versionStale: {
+    title: '游戏已更新',
+    body: '有新版本了, 刷新页面后继续玩。',
+    refresh: '刷新',
+    refreshing: '正在刷新…',
+  },
   announceMore: (n: number) => `等 ${n} 条`,
   activity: {
     running: (n: number) => `活动 ${n} 个进行中`,
