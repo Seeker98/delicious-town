@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  medal1119:
+    'Street medals rebalanced: every street now gives final coins between +4% and +12%, so moving barely changes your coins; coin streets and EXP streets now differ in EXP instead (EXP streets give a bit more, coin streets a bit less); “coins from satisfied picky customers” is removed, coins per table is capped at +3 and EXP per table at +1, with the difference folded into the final bonuses, so streets that gave lots of EXP per table (Russian, Fujian, Sichuan, Shandong) give a little less EXP; street descriptions no longer promise more or fewer coins or generous picky customers; Mastery Pay is also raised by about 15%, so restaurants on the former top-coin streets (Fusion Street I and II, Beijing Street, Peru Street and others) earn about the same as before, and restaurants on other streets earn more. The Newbie Street description now correctly says occupancy +10%',
   income1119:
     'Income overhaul: what customers pay now grows with every dish you have learned (on any street, counted as Recipe Mastery by price and grade) and with your star level, so more dishes and higher grades earn more; moving no longer crashes your income, you only lose the up-to-10% “Local recipes learned” coin bonus until you learn the new street’s dishes; picky customers never walk out any more, and the more dishes you have at the grade they want, the more often they are satisfied; occupancy and picky rate are now fixed per star level (plus items, facilities and other bonuses), and learning dishes no longer raises them. The Recipes page shows your Recipe Mastery and how much each dish adds, and the Move panel shows the local bonus you would have on the new street',
   version1117:

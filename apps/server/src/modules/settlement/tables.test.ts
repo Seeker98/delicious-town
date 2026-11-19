@@ -35,12 +35,12 @@ describe('splitLearned：按存储位找出学会的菜（重新编号 PR 3）',
 
 describe('厨艺钱 F = a × K^β × 星级客单价系数（收益模型改版 2026-11-19）', () => {
   const f = testConfig().tuning.settlement.fame;
-  it('默认 a 1.95、β 0.35；星级系数 0 星 0.36、4 星 0.76、7 星 1.06', () => {
-    expect(f).toMatchObject({ a: 1.95, beta: 0.35, normalShare: 0.3, shortPayRate: 0.5, satisfyCount: 30 });
-    expect(fameCoin(1, 0, f)).toBeCloseTo(1.95 * (0.25 / 0.7));
-    expect(fameCoin(1, 4, f)).toBeCloseTo(1.95 * (0.53 / 0.7));
-    expect(fameCoin(1, 7, f)).toBeCloseTo(1.95 * (0.74 / 0.7));
-    expect(fameCoin(100_000, 4, f)).toBeCloseTo(1.95 * Math.pow(100_000, 0.35) * (0.53 / 0.7));
+  it('默认 a 2.25、β 0.35；星级系数 0 星 0.36、4 星 0.76、7 星 1.06', () => {
+    expect(f).toMatchObject({ a: 2.25, beta: 0.35, normalShare: 0.3, shortPayRate: 0.5, satisfyCount: 30 });
+    expect(fameCoin(1, 0, f)).toBeCloseTo(2.25 * (0.25 / 0.7));
+    expect(fameCoin(1, 4, f)).toBeCloseTo(2.25 * (0.53 / 0.7));
+    expect(fameCoin(1, 7, f)).toBeCloseTo(2.25 * (0.74 / 0.7));
+    expect(fameCoin(100_000, 4, f)).toBeCloseTo(2.25 * Math.pow(100_000, 0.35) * (0.53 / 0.7));
   });
   it('一道菜都没学时为 0', () => {
     expect(fameCoin(0, 7, f)).toBe(0);

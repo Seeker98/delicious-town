@@ -39,7 +39,7 @@
     "coinMultiplier": 1,
     "dishCoinRate": 0.16,
     "fame": {
-      "a": 1.95,
+      "a": 2.25,
       "beta": 0.35,
       "starBase": 0.25,
       "starPerStar": 0.07,

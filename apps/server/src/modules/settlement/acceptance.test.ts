@@ -94,6 +94,30 @@ describe('收益模型改版验收', () => {
     for (let k = 1; k < per.length; k++) expect(per[k]!).toBeGreaterThan(per[k - 1]!);
   });
 
+  it('第 4 条带上街道勋章（勋章重算 2026-11-19）：前 8 条街逐街上升；走遍 29 条街，每条街学完时都不低于之前最高的 97%', () => {
+    const medal = (s: number) =>
+      (config.requireGoods(config.streetMedalId(s)).value ?? {}) as Record<string, number>;
+    const per: number[] = [];
+    for (let k = 1; k <= streets.length; k++) {
+      const s = streets[k - 1]!;
+      const patch = {
+        rest: { star: 4, streetId: s },
+        tables: tables(28),
+        cookbooks: learnStreets(k),
+        agg: medal(s),
+      };
+      per.push(mean(coins(patch, 4, 600)));
+    }
+    if (process.env.PRINT) console.log('带勋章逐街上升', per.map(Math.round).join(' → '));
+    // 学到十几条街以后多一条街厨艺值只多 1% 左右，各街勋章还剩 ±4% 的差，后面允许小幅回落
+    for (let k = 1; k < 8; k++) expect(per[k]!).toBeGreaterThan(per[k - 1]!);
+    let best = 0;
+    for (const x of per) {
+      expect(x).toBeGreaterThanOrEqual(best * 0.97);
+      best = Math.max(best, x);
+    }
+  });
+
   it('第 5 条 不搬落后：同样的星级、桌数和加成，只学一条街的店不超过学了 12 条街的店的 65%', () => {
     for (const [star, n] of [
       [4, 28],

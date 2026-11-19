@@ -161,14 +161,14 @@ const STREET_MEDAL_KEYS = new Set([
   'mcCoinRate',
   'mcNumRate',
   'mcGoldRate',
-  'spCoinRate',
   'mysteriousRate',
   'roachClearRate',
 ]);
 
 /**
- * 构建检查：街道勋章的规矩（街道再平衡第三版 2026-10-17）。只用允许的效果；最终银币、经验不低于 −10%；
- * 耗油不超过 +15%、每桌耗油不超过 +2。新手街（0 星教学期）例外，保留上座率、挑剔率
+ * 构建检查：街道勋章的规矩（街道再平衡第三版 2026-10-17；收益模型改版后的勋章重算 2026-11-19）。只用允许的效果
+ * （“满足的挑剔顾客银币”2026-11-19 起清零，不再允许）；最终银币、经验在 ±15% 以内；每桌银币不超过 +3、每桌经验不超过 +1
+ * （每桌基础经验只有 3~4，+1 已经约等于经验 +28%）；耗油不超过 +15%、每桌耗油不超过 +2。新手街（0 星教学期）例外，保留上座率、挑剔率
  */
 export function checkStreetMedals(
   streets: readonly Street[],
@@ -184,7 +184,10 @@ export function checkStreetMedals(
     for (const k of Object.keys(e))
       if (k !== 'time' && !STREET_MEDAL_KEYS.has(k)) errors.push(`street medal ${medal.id} has ${k}`);
     for (const k of ['coinRate', 'expRate'] as const)
-      if ((e[k] ?? 0) < -0.1 - 1e-9) errors.push(`street medal ${medal.id} ${k} ${e[k]} < -0.1`);
+      if (Math.abs(e[k] ?? 0) > 0.15 + 1e-9)
+        errors.push(`street medal ${medal.id} ${k} ${e[k]} outside ±0.15`);
+    if ((e.coinValue ?? 0) > 3) errors.push(`street medal ${medal.id} coinValue ${e.coinValue} > 3`);
+    if ((e.expValue ?? 0) > 1) errors.push(`street medal ${medal.id} expValue ${e.expValue} > 1`);
     if ((e.oilRate ?? 0) > 0.15 + 1e-9) errors.push(`street medal ${medal.id} oilRate ${e.oilRate} > 0.15`);
     if ((e.oilValue ?? 0) > 2) errors.push(`street medal ${medal.id} oilValue ${e.oilValue} > 2`);
   }

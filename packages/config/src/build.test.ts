@@ -1609,7 +1609,7 @@ describe('货币回收 240-1 的区服数值（默认值见 docs/design/银币�
     expect(t.settlement.dishCoinRate).toBe(0.16);
     // 收益模型改版 2026-11-19：店里的顾客按厨艺钱付，菜价倍率只管外卖和食谱页显示的售价
     expect(t.settlement.fame).toMatchObject({
-      a: 1.95,
+      a: 2.25,
       beta: 0.35,
       normalShare: 0.3,
       shortPayRate: 0.5,
@@ -1948,7 +1948,7 @@ describe('主表手写定义的格式检查（质量期第 ⑦ 批）', () => {
     );
   });
 
-  it('街道勋章的规矩（街道再平衡第三版 2026-10-17）：不能有上座率、挑剔率，减成不超过 10%，耗油有上限；新手街例外', () => {
+  it('街道勋章的规矩（街道再平衡第三版 2026-10-17、勋章重算 2026-11-19）：不能有上座率、挑剔率、满足的挑剔顾客银币，最终银币和经验 ±15% 以内，每桌银币 ≤ 3、每桌经验 ≤ 1，耗油有上限；新手街例外', () => {
     const src = source();
     const goods = structuredClone(src['master/goods']) as M[];
     const set = (id: number, value: Record<string, number>) => {
@@ -1956,7 +1956,11 @@ describe('主表手写定义的格式检查（质量期第 ⑦ 批）', () => {
       g.value = { ...(g.value as Record<string, number>), ...value };
     };
     set(60016, { atRate: 0.05 });
-    set(60026, { coinRate: -0.15 });
+    set(60026, { coinRate: -0.16 });
+    set(60001, { expRate: 0.2 });
+    set(60002, { spCoinRate: 0.1 });
+    set(60011, { coinValue: 4 });
+    set(60028, { expValue: 2 });
     set(60013, { oilRate: 0.2 });
     set(60003, { oilValue: 3 });
     set(60000, { atRate: 0.4 });
@@ -1964,7 +1968,11 @@ describe('主表手写定义的格式检查（质量期第 ⑦ 批）', () => {
     expect(errors).toEqual(
       expect.arrayContaining([
         'street medal 60016 has atRate',
-        'street medal 60026 coinRate -0.15 < -0.1',
+        'street medal 60026 coinRate -0.16 outside ±0.15',
+        'street medal 60001 expRate 0.2 outside ±0.15',
+        'street medal 60002 has spCoinRate',
+        'street medal 60011 coinValue 4 > 3',
+        'street medal 60028 expValue 2 > 1',
         'street medal 60013 oilRate 0.2 > 0.15',
         'street medal 60003 oilValue 3 > 2',
       ]),
