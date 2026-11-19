@@ -31,6 +31,8 @@ const oil = ref<OilNeedDto | null>(null);
 const town = ref<TownDto | null>(null);
 const lessons = ref<LessonsDto | null>(null);
 const moveCost = ref<number | null>(null);
+/** 各条街的“本街学菜”加成（收益模型改版 2026-11-19）；旧服务端没有 */
+const learnRates = ref<Record<string, number> | null>(null);
 
 const townOn = computed(() => restaurant.featureOn('town'));
 const classOn = computed(() => restaurant.featureOn('mysterious'));
@@ -44,6 +46,7 @@ async function loadMine() {
   star.value = s.status === 'fulfilled' ? s.value : null;
   oil.value = o.status === 'fulfilled' ? o.value : null;
   moveCost.value = m.status === 'fulfilled' ? m.value.cost : null;
+  learnRates.value = m.status === 'fulfilled' ? (m.value.learnRates ?? null) : null;
 }
 async function loadTown() {
   town.value = await endpoints.town().catch(() => null);
@@ -256,5 +259,11 @@ function done() {
   </template>
 
   <RenameSheet :open="sheet === 'rename'" @close="sheet = null" @done="done" />
-  <MoveSheet :open="sheet === 'move'" :cost="moveCost" @close="sheet = null" @done="done" />
+  <MoveSheet
+    :open="sheet === 'move'"
+    :cost="moveCost"
+    :learn-rates="learnRates"
+    @close="sheet = null"
+    @done="done"
+  />
 </template>

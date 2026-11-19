@@ -7,7 +7,7 @@ import { useCatalogStore } from '../../stores/catalog';
 import { useRestaurantStore } from '../../stores/restaurant';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
-import { STREET_FOCUS } from '../../utils/labels';
+import { pct, STREET_FOCUS } from '../../utils/labels';
 import DtArt from '../DtArt.vue';
 import DtSheet from '../DtSheet.vue';
 
@@ -15,7 +15,12 @@ import DtSheet from '../DtSheet.vue';
  * 搬家面板（界面改版 P10：原来是协会里单独一页）：选街道（原生下拉做成输入框样），
  * 选中后浅紫框写街道类型、加成和介绍（问题记录 284、380）；合计框写搬家卡和大约多少银币
  */
-const props = defineProps<{ open: boolean; cost: number | null }>();
+const props = defineProps<{
+  open: boolean;
+  cost: number | null;
+  /** 各条街的“本街学菜”银币率加成（收益模型改版 2026-11-19），街道 id → 比例；旧服务端没有为 null */
+  learnRates?: Record<string, number> | null;
+}>();
 const emit = defineEmits<{ close: []; done: [] }>();
 const t = useT();
 const toast = useToastStore();
@@ -29,6 +34,12 @@ const here = computed(() =>
 );
 const streets = computed(() => catalog.streets.filter((s) => s.id !== rest.value?.streetId));
 const picked = computed(() => catalog.streets.find((s) => s.id === target.value) ?? null);
+/** 现在的和搬过去的“本街学菜”：选了街才写；没菜的街不在表里，按 0 */
+const learn = computed(() => {
+  const r = props.learnRates;
+  if (!r || target.value === null || !rest.value) return null;
+  return { now: r[String(rest.value.streetId)] ?? 0, after: r[String(target.value)] ?? 0 };
+});
 watch(
   () => props.open,
   (v) => {
@@ -88,11 +99,16 @@ async function move() {
         <dt>{{ t.society.move.card }}</dt>
         <dd>{{ t.society.move.cardNum }}</dd>
       </div>
+      <div v-if="learn">
+        <dt>{{ t.society.move.learnLabel }}</dt>
+        <dd data-testid="move-learn">{{ t.society.move.learnValue(pct(learn.now), pct(learn.after)) }}</dd>
+      </div>
       <div>
         <dt>{{ t.society.move.costLabel }}</dt>
         <dd data-testid="move-cost">{{ cost === null ? '—' : t.society.move.costValue(formatNum(cost)) }}</dd>
       </div>
     </dl>
+    <p v-if="learn" class="dt-detail-note" data-testid="move-learn-note">{{ t.society.move.learnNote }}</p>
     <p class="dt-detail-note">{{ t.society.move.permit }}</p>
     <template #actions>
       <div class="dt-sheet-pair">

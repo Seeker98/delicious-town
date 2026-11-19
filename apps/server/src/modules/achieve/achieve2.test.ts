@@ -7,7 +7,7 @@ import { gainCoin } from '../../core/resources';
 import { backfillCounters2 } from '../../db/migrations/0088_achievements_2';
 import { recordRun, recordStreak } from '../bar/state';
 import type { SettleResult } from '../settlement/types';
-import { ACH_BACKFILL_VERSION, shardBackfilled } from './award';
+import { ACH_BACKFILL_VERSION, awardAchievements, shardBackfilled } from './award';
 import { bumpCountersFor } from './counters';
 import { chosenOneToday } from './hidden';
 import { achieveJobs, barWeekChampions } from './jobs';
@@ -306,6 +306,50 @@ describe('补发版本和迁移补计数', () => {
     expect(await counter(host.restaurantId, 'cupboard.flipped')).toBe(3);
     expect(await counter(thief.restaurantId, 'flip.caught')).toBe(3);
     expect(await counter(thief.restaurantId, 'flip.caughtDay')).toBe(1);
+  });
+});
+
+describe('停用的成就线（众口难调：挑剔顾客走掉的玩法拿掉了）', () => {
+  it('再也拿不到：计数跨过门槛、打开成就墙补算、直接记都不给；进度也不发', async () => {
+    const shardId = await createShard(t.db);
+    const r = await newRestaurant(t, { shardId });
+    const now = t.clock.now;
+    await t.db.transaction().execute(async (tx) => {
+      await bumpCountersFor(t.game.deps, tx, { shardId, restId: r.restaurantId, now }, [
+        ['picky.left.day', 100],
+      ]);
+    });
+    await t.db
+      .insertInto('event_counter')
+      .values({ rest_id: r.restaurantId, key: 'picky.left.day', count: 100 })
+      .onConflict((oc) => oc.columns(['rest_id', 'key']).doUpdateSet({ count: 100 }))
+      .execute();
+    const dto = await createAchieveService(t.game.deps).mine(r);
+    expect(dto.got.map((g) => g.id)).not.toContain('pickyday.1');
+    expect(dto.progress['counter:picky.left.day']).toBeUndefined();
+    await t.db.transaction().execute((tx) =>
+      awardAchievements(tx, cfg(), cfg().tuning.achieve, {
+        shardId,
+        restId: r.restaurantId,
+        ids: ['pickyday.1'],
+        now,
+        backfilled: false,
+      }),
+    );
+    expect(await got(r.restaurantId)).not.toContain('pickyday.1');
+  });
+
+  it('以前拿到的照常显示、点数照算', async () => {
+    const r = await newRestaurant(t);
+    const at = new Date('2026-10-01T00:00:00Z');
+    await t.db
+      .insertInto('rest_achievement')
+      .values({ rest_id: r.restaurantId, ach_id: 'pickyday.1', pts: 5, achieved_at: at, backfilled: false })
+      .execute();
+    await t.db.insertInto('rest_ach').values({ rest_id: r.restaurantId, points: 5, points_at: at }).execute();
+    const dto = await createAchieveService(t.game.deps).mine(r);
+    expect(dto.got.map((g) => g.id)).toContain('pickyday.1');
+    expect(dto.points).toBeGreaterThanOrEqual(5);
   });
 });
 

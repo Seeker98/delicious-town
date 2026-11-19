@@ -25,7 +25,15 @@ import { normalizeCounts } from '../settlement/globals';
 import { consumeGoods, grantGoodsOp, hasValidHonor, removeHonor } from '../store/goods';
 import type { WorldService } from '../world/service';
 import { placeDevice } from './devices';
-import { moveCost, oilChecks, renameProblem, starChecks, starCoinOf, starNeedOf } from './rules';
+import {
+  moveCost,
+  oilChecks,
+  renameProblem,
+  starChecks,
+  starCoinOf,
+  starNeedOf,
+  streetLearnRates,
+} from './rules';
 import { bumpCounters } from '../achieve/counters';
 import { incrementDaily } from '../counter/dailyCounter';
 
@@ -260,6 +268,12 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
           d.config.requireGoods(GOODS.tableA).coin,
           r.star_level,
           s.tuning.growth.moveStarRate,
+        ),
+        // 搬过去以后银币率里的“本街学菜”是多少（收益模型改版 2026-11-19：搬家只丢这一项）
+        learnRates: streetLearnRates(
+          normalizeCounts(r.cookbook_counts),
+          d.config.cookbookIndex.idsByStreet,
+          s.tuning.settlement.streetLearnCoinRate,
         ),
       };
     },

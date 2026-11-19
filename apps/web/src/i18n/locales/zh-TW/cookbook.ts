@@ -20,8 +20,15 @@ export default {
   streetPick: '換街道',
   counts: (streetLearned: number, streetTotal: number, learned: string, total: string) =>
     `本街已學 ${streetLearned}/${streetTotal} · 共學會 ${learned} / ${total} 道`,
+  /** 菜價 × 區服菜價倍率：外賣按它付；收益模型改版 2026-11-19 以後堂食顧客付廚藝錢，不再按它（原來寫“售價”） */
   info: (street: string, level: number, taste: string, coin: string) =>
-    `${street} · 難度 ${level} · 口味 ${taste} · 售價 ${coin}`,
+    `${street} · 難度 ${level} · 口味 ${taste} · 外賣價 ${coin}`,
+  /** 廚藝值（收益模型改版 2026-11-19）：店現在的、學這一道或升一品加多少 */
+  fame: (k: string) => `廚藝值 ${k}`,
+  fameHint: '學會的每道菜 (不分哪條街) 按菜價和品級加廚藝值, 顧客付的廚藝錢隨廚藝值和星級漲。',
+  fameAdd: (n: string) => `廚藝值 +${n}`,
+  fameLearn: (n: string) => `學會這道菜, 廚藝值 +${n}`,
+  fameUpgrade: (n: string) => `升一品, 廚藝值 +${n}`,
   grade: '品級',
   foodsNeeded: '所需食材',
   /** 介面改版 P7：食譜詳情的說明、“有幾個”、幾個品級併成一行 */

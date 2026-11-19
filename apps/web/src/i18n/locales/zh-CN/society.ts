@@ -55,6 +55,11 @@ export default {
     costLabel: '花费',
     costValue: (cost: string) => `约 ${cost} 银币, 幸运时半价`,
     permit: '持有搬家公司调度工作证时不要搬家卡。',
+    /** 搬过去以后银币率里的“本街学菜”（收益模型改版 2026-11-19）：现在的 → 搬过去的 */
+    learnLabel: '本街学菜 (银币率)',
+    learnValue: (now: string, after: string) => `现在 ${now} → 搬过去 ${after}`,
+    learnNote:
+      '本街学菜按所在街学会了这条街几成的菜算, 搬家只丢这一项；厨艺值不分街, 搬家不丢, 在新街学菜再拿回来。',
     btn: '搬家',
     done: (street: string) => `已经搬到 ${street}`,
     failed: '搬家失败',

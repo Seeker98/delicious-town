@@ -27,6 +27,11 @@ const rest: Messages['rest'] = {
     loadFailed: 'No se pudieron cargar los ingresos',
     buffs: 'Desglose de bonificaciones (última ronda)',
     seated: (n) => `Mesas ocupadas: ${n}`,
+    fame: 'Maestría culinaria',
+    fameValue: (k) => `Maestría culinaria ${k}`,
+    famePay: (f) => `Prima de maestría por mesa ${f}`,
+    fameNote:
+      'La maestría culinaria suma todos los platos que has aprendido (en cualquier calle): precio × (1 + bono de calidad). La prima de maestría crece con la maestría y las estrellas: un cliente exigente satisfecho la paga entera, uno insatisfecho la mitad y uno normal el 30\u00a0%.',
     noRound: 'Aún no se ha liquidado ninguna ronda',
     sources: 'Origen de las bonificaciones',
     records: 'Historial de ingresos',
@@ -48,11 +53,11 @@ const rest: Messages['rest'] = {
     tableNo: (n) => `Mesa ${n}`,
     last: (coin, exp) => `Última ronda ${coin} ${plEs(coin, 'moneda', 'monedas')} / ${exp} EXP`,
     ordered: (dish, req, grade, ok) =>
-      `Pidió «${dish}», quería ${req}, el tuyo es ${grade}: ${ok ? 'satisfecho' : 'no satisfecho, pagó la mitad del precio del plato'}`,
-    orderedNone: (req) => `Quería un plato ${req}, pero aún no has aprendido ninguno que puedas servirle`,
-    orderedLeft: (dish) => `Pidió «${dish}», que aún no has aprendido, y se fue`,
-    leftNote:
-      'Esta mesa no dio ingresos esta ronda. Cuantos más platos de tu calle aprendas, menos clientes se irán.',
+      `Pidió «${dish}», quería ${req}, el tuyo es ${grade}: ${ok ? 'satisfecho' : 'no satisfecho, pagó solo la mitad de la prima de maestría'}`,
+    orderedNone: (req) =>
+      `Quería un plato ${req}, pero aún no has aprendido ningún plato, así que pagó solo la mitad del precio base`,
+    unsatisfiedHint: (n) =>
+      `Cuantos más platos tengas en la calidad que pide, más probable es que quede satisfecho (con ${n} ${plEs(n, 'plato', 'platos')}, siempre lo queda)`,
     ateSpecial: (name, n) => `Comió la especialidad «${name}» ×${n}`,
     roachNote: 'Una mesa con cucaracha no recibe clientes hasta que la elimines.',
     kill: 'Aplastar la cucaracha',

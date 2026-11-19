@@ -1409,7 +1409,7 @@
   },
   "60000": {
     "name": "Newbie Street",
-    "desc": "Occupancy +35%, coins per table +1, luck +36, picky rate -35%"
+    "desc": "Occupancy +10%, coins per table +1, luck +36, picky rate -35%"
   },
   "60001": {
     "name": "Hunan Street",

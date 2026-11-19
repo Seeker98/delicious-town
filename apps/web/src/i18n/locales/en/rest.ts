@@ -27,6 +27,11 @@ const rest: Messages['rest'] = {
     loadFailed: 'Could not load income',
     buffs: 'Bonus breakdown (last round)',
     seated: (n) => `Tables seated: ${n}`,
+    fame: 'Recipe Mastery',
+    fameValue: (k) => `Recipe Mastery ${k}`,
+    famePay: (f) => `Mastery Pay per table ${f}`,
+    fameNote:
+      'Recipe Mastery adds up every dish you have learned (on any street): price × (1 + grade bonus). Mastery Pay grows with Mastery and star level: satisfied picky customers pay all of it, unsatisfied ones half, regular customers 30%.',
     noRound: 'No round settled yet',
     sources: 'Bonus sources',
     records: 'Income log',
@@ -48,11 +53,11 @@ const rest: Messages['rest'] = {
     tableNo: (n) => `Table ${n}`,
     last: (coin, exp) => `Last round ${coin} ${plEn(coin, 'coin', 'coins')} / ${exp} EXP`,
     ordered: (dish, req, grade, ok) =>
-      `Ordered "${dish}", wanted ${req}, yours is ${grade}: ${ok ? 'satisfied' : 'not satisfied, paid half the dish price'}`,
-    orderedNone: (req) => `Wanted a ${req} dish, but you haven't learned one you can serve`,
-    orderedLeft: (dish) => `Ordered "${dish}", which you haven't learned yet, and left`,
-    leftNote:
-      'No income from this table this round. The more dishes of your street you learn, the fewer customers leave.',
+      `Ordered "${dish}", wanted ${req}, yours is ${grade}: ${ok ? 'satisfied' : 'not satisfied, paid only half the Mastery Pay'}`,
+    orderedNone: (req) =>
+      `Wanted a ${req} dish, but you haven't learned any dish yet, so paid only half the base price`,
+    unsatisfiedHint: (n) =>
+      `The more dishes you have at the grade they want, the likelier they are satisfied (${n} ${plEn(n, 'dish', 'dishes')} and they always are)`,
     ateSpecial: (name, n) => `Ate the special "${name}" ×${n}`,
     roachNote: "A table with a roach can't take customers until you squash it.",
     kill: 'Squash the roach',

@@ -13,7 +13,7 @@ const CUSTOMER: Record<string, string> = {
   '2': '挑剔',
   '3': '蟑螂',
   '-3': '灭蟑',
-  '-2': '挑剔走了',
+  '-2': '挑剔走了（2026-11-19 起不再出现）',
   '6': '章鱼哥',
   '7': '痞老板',
   '8': '蟹老板',
@@ -125,7 +125,7 @@ export async function explain(o: ExplainOptions): Promise<string> {
     );
     if (r.rates) {
       for (const [k, raw] of Object.entries(r.rates)) {
-        if (typeof raw !== 'object') continue;
+        if (typeof raw !== 'object' || k === 'fame') continue;
         const v = raw as RatePart;
         const parts = Object.entries(v.parts)
           .map(([p, x]) => `${p}=${f2(x)}`)
@@ -133,6 +133,7 @@ export async function explain(o: ExplainOptions): Promise<string> {
         lines.push(`  ${k.padEnd(10)} ${f2(v.total).padStart(8)}  ${parts}`);
       }
       lines.push(`  上座桌数 ${r.rates.seated}`);
+      if (r.rates.fame) lines.push(`  厨艺值 ${f2(r.rates.fame.k)}  厨艺钱 ${f2(r.rates.fame.f)}`);
     }
     for (const t of r.tables) {
       if (!t.last || t.last.type === 0) continue;

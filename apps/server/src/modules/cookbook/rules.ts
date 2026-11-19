@@ -1,6 +1,7 @@
 import { FOODS } from '@dt/config';
 import type { LearnType } from '@dt/shared';
 import type { CookbookCounts } from '../../db/schema';
+import { dishFame } from '../settlement/fame';
 
 export interface NeedLine {
   foodsId: number;
@@ -163,4 +164,21 @@ export function padLevels(levels: Uint8Array, slots: number): Uint8Array {
   const out = new Uint8Array(slots);
   out.set(levels);
   return out;
+}
+
+/** 厨艺值保留两位小数（和收益记录里的 rates.fame 一样） */
+export const roundFame = (x: number): number => Math.round(x * 100) / 100;
+
+/**
+ * 食谱页：学会（grade = 0）或升一品能加多少厨艺值（收益模型改版 2026-11-19）。
+ * 没学 = 菜价 × (1 + 1 品加成)；L 品 = 菜价 × (L+1 品加成 − L 品加成)；已到区服开放的最高品级为 undefined
+ */
+export function fameAddOf(
+  price: number,
+  grade: number,
+  maxGrade: number,
+  gradeAdd: (g: number) => number,
+): number | undefined {
+  if (grade >= maxGrade) return undefined;
+  return roundFame(dishFame(price, grade + 1, gradeAdd) - dishFame(price, grade, gradeAdd));
 }

@@ -3,6 +3,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { endpoints } from '../../api/endpoints';
 import { useCatalogStore } from '../../stores/catalog';
+import { useRestaurantStore } from '../../stores/restaurant';
 import MoveSheet from './MoveSheet.vue';
 
 vi.mock('../../api/endpoints', () => ({
@@ -46,6 +47,23 @@ describe('MoveSheet', () => {
     expect(w.get('[data-testid="move-focus"]').text()).toBe('均衡街');
     expect(w.get('[data-testid="move-theme"]').text()).toBe('香料集市与沙漠商队');
     expect(w.get('[data-testid="move-ok"]').attributes('disabled')).toBeUndefined();
+  });
+
+  it('选了街以后写现在的和搬过去的“本街学菜”银币率加成；旧服务端没给时不写（收益模型改版 2026-11-19）', async () => {
+    useRestaurantStore().rest = { id: 1, streetId: 0, streetName: '新手街', starLevel: 1 } as never;
+    const w = mount(MoveSheet, {
+      props: { open: true, cost: 20000, learnRates: { '0': 0.1, '24': 0.0123 } },
+      global: { stubs: { teleport: true } },
+    });
+    await flushPromises();
+    expect(w.find('[data-testid="move-learn"]').exists()).toBe(false);
+    await w.get('[data-testid="move-street"]').setValue(24);
+    expect(w.get('[data-testid="move-learn"]').text()).toBe('现在 +10% → 搬过去 +1.2%');
+    expect(w.get('[data-testid="move-learn-note"]').text()).toContain('搬家只丢这一项');
+    const old = mountSheet();
+    await flushPromises();
+    await old.get('[data-testid="move-street"]').setValue(24);
+    expect(old.find('[data-testid="move-learn"]').exists()).toBe(false);
   });
 
   it('没有类型和介绍的街道不显示这两行', async () => {

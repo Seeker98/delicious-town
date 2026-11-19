@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  income1119:
+    'Refonte des revenus\u202f: ce que paient les clients augmente désormais avec tous les plats que vous avez appris (dans n’importe quelle rue, comptés en maîtrise culinaire selon leur prix et leur qualité) et avec vos étoiles\u202f: plus de plats et de meilleures qualités rapportent plus\u202f; déménager ne fait plus chuter vos revenus, vous ne perdez que le bonus de pièces «\u202fRecettes locales apprises\u202f» (jusqu’à 10\u202f%) le temps d’apprendre les plats de la nouvelle rue\u202f; les clients difficiles ne partent plus, et plus vous avez de plats à la qualité qu’ils veulent, plus ils sont souvent satisfaits\u202f; le taux de fréquentation et le taux de clients difficiles sont maintenant fixes pour chaque niveau d’étoiles (plus les objets, installations et autres bonus), apprendre des plats ne les augmente plus. La page Recettes affiche votre maîtrise culinaire et ce que chaque plat ajoute, et le panneau de déménagement le bonus local que vous auriez dans la nouvelle rue',
   version1117:
     'Après une mise à jour du jeu, une page restée ouverte sur l’ancienne version demande d’être rafraîchie pour continuer à jouer (si vous êtes en train d’écrire, la fenêtre attend jusqu’à 3 minutes)',
   mouse1105:

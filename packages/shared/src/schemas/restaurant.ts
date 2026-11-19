@@ -173,6 +173,8 @@ export interface BuffsDto {
   roundNo: number | null;
   rates: Record<string, RateBreakdownDto> | null;
   seated: number | null;
+  /** 最近一轮的厨艺值 K、每桌厨艺钱 F（收益模型改版 2026-11-19）；改版前的收益记录没有，为 null */
+  fame?: { k: number; f: number } | null;
   sources: EffectDto[];
 }
 

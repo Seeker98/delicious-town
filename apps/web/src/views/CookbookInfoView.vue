@@ -98,6 +98,17 @@ onMounted(() =>
               )
             }}
           </div>
+          <!-- 学会或升一品加多少厨艺值、店现在的厨艺值（收益模型改版 2026-11-19）；满级只写现在的 -->
+          <div v-if="d.fame !== undefined" class="dt-detail-sub" data-testid="cookbook-fame">
+            <template v-if="d.fameAdd"
+              >{{
+                (d.grade === 0 ? t.cookbook.fameLearn : t.cookbook.fameUpgrade)(
+                  formatNum(Math.round(d.fameAdd * 10) / 10),
+                )
+              }}
+              · </template
+            >{{ t.cookbook.fame(formatNum(Math.round(d.fame))) }}
+          </div>
         </div>
       </div>
       <button

@@ -95,7 +95,10 @@ describe('餐厅读接口', () => {
     expect(income.today).toEqual({ rounds: 1, coin: it0.coin, exp: it0.exp, oil: it0.oil });
     const buffs = (await get(p.cookie, '/buffs')).json.data;
     expect(buffs.roundNo).toBe(round);
-    expect(buffs.rates.atRate.parts.base).toBeCloseTo(0.25);
+    // 收益模型改版 2026-11-19：上座率底数 0.60 + 0.01 × 星级（0 星）
+    expect(buffs.rates.atRate.parts.base).toBeCloseTo(0.6);
+    // 一道菜都没学：厨艺值、厨艺钱都是 0，照样给
+    expect(buffs.fame).toEqual({ k: 0, f: 0 });
     expect(buffs.sources.map((s: { sourceId: number }) => s.sourceId).sort()).toEqual(
       [GOODS.redPants, gid('新手街'), gid('开张大吉')].sort(),
     );
@@ -123,6 +126,36 @@ describe('餐厅读接口', () => {
     expect(overview.lastRound.customers).toEqual({ '1': 2, '3': 1 });
     const income = (await get(p.cookie, '/income')).json.data;
     expect(income.items[0].customers).toEqual({ '1': 2, '3': 1 });
+  });
+
+  it('加成：最近一轮记录里有厨艺值、厨艺钱时一起给；改版前的记录没有为 null（收益模型改版 2026-11-19）', async () => {
+    const p = await playerWithRestaurant();
+    const row = (round: number, rates: object, at: Date) => ({
+      rest_id: p.restId,
+      round_no: round,
+      coin: 10,
+      exp: 1,
+      oil: 1,
+      customers: JSON.stringify({ '1': 2 }),
+      rates: JSON.stringify(rates),
+      drops: '[]',
+      created_at: at,
+    });
+    const base = roundOf(new Date());
+    const atRate = { total: 0.6, parts: { base: 0.6 } };
+    await http.deps.db
+      .insertInto('income_round')
+      .values(row(base - 1, { atRate, seated: 3 }, new Date(Date.now() - 60_000)))
+      .execute();
+    expect((await get(p.cookie, '/buffs')).json.data.fame).toBeNull();
+    await http.deps.db
+      .insertInto('income_round')
+      .values(row(base, { atRate, seated: 3, fame: { k: 1234.5, f: 21.37 } }, new Date()))
+      .execute();
+    const buffs = (await get(p.cookie, '/buffs')).json.data;
+    expect(buffs.fame).toEqual({ k: 1234.5, f: 21.37 });
+    // fame 不是分项（没有 total），不混进 rates
+    expect(Object.keys(buffs.rates)).toEqual(['atRate']);
   });
 
   it('个人日志分页', async () => {

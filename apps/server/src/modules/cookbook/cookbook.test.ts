@@ -179,6 +179,65 @@ describe('食谱列表、详情、需求', () => {
   });
 });
 
+describe('厨艺值（收益模型改版 2026-11-19）', () => {
+  const price = (id: number) => testConfig().requireCookbook(id).coin;
+  const add = (g: number) => testConfig().grade(g).spCoinAddRate;
+  const r2 = (x: number) => Math.round(x * 100) / 100;
+
+  it('列表、详情带店现在的厨艺值：全部学会的菜（不分街）菜价 × (1 + 品级加成)，不乘菜价倍率', async () => {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({
+        shard_id: shardId,
+        override: JSON.stringify({ tuning: { settlement: { dishCoinRate: 0.5 } } }),
+      })
+      .execute();
+    // 店在新手街：桑椹葡萄粥中品（本街），白斩鸡普通（湖南街）
+    const ctx = await newRestaurant(t, {
+      shardId,
+      patch: { street_id: 0 },
+      cookbooks: { [ZHOU]: 2, [JI]: 1 },
+    });
+    const k = r2(price(ZHOU) * (1 + add(2)) + price(JI) * (1 + add(1)));
+    expect((await cb().list(ctx, { street: 0, page: 1, filter: 'all' })).fame).toBe(k);
+    // 换哪条街看都一样
+    expect((await cb().list(ctx, { street: 12, page: 1, filter: 'all' })).fame).toBe(k);
+    expect((await cb().detail(ctx, ZHOU)).fame).toBe(k);
+    const none = await newRestaurant(t);
+    expect((await cb().list(none, { street: 0, page: 1, filter: 'all' })).fame).toBe(0);
+  });
+
+  it('每道菜：没学的写学会加多少，已学的写升一品加多少（别的街的菜也写），满级不写', async () => {
+    const max = t.deps.config.tuning.rest.cookbookMaxGrade;
+    const ctx = await newRestaurant(t, { patch: { street_id: 0 }, cookbooks: { [ZHOU]: 2, [JI]: max } });
+    const items = (await cb().list(ctx, { street: 0, page: 1, filter: 'learned' })).items;
+    expect(items.find((r) => r.id === ZHOU)!.fameAdd).toBe(r2(price(ZHOU) * (add(3) - add(2))));
+    expect((await cb().detail(ctx, ZHOU)).fameAdd).toBe(r2(price(ZHOU) * (add(3) - add(2))));
+    const other = (await cb().list(ctx, { street: 0, page: 1, filter: 'unlearned' })).items[0]!;
+    expect(other.fameAdd).toBe(r2(price(other.id) * (1 + add(1))));
+    // 白斩鸡在湖南街、已满级：列表和详情都不写
+    const ji = await cb().detail(ctx, JI);
+    expect(ji.learn).toBe('max');
+    expect(ji.fameAdd).toBeUndefined();
+    const hunan = await cb().list(ctx, {
+      street: testConfig().requireCookbook(JI).streetId,
+      page: 1,
+      filter: 'learned',
+    });
+    expect(hunan.items.find((r) => r.id === JI)!.fameAdd).toBeUndefined();
+    const unl = (
+      await cb().list(ctx, {
+        street: testConfig().requireCookbook(JI).streetId,
+        page: 1,
+        filter: 'unlearned',
+      })
+    ).items[0]!;
+    expect(unl.learn).toBe('street');
+    expect(unl.fameAdd).toBe(r2(price(unl.id) * (1 + add(1))));
+  });
+});
+
 describe('菜谱详情（240-1）', () => {
   it('菜谱详情的售价乘本区服的菜价倍率', async () => {
     const shardId = await createShard(t.db);

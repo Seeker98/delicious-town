@@ -30,6 +30,8 @@ const page = ref(queryInt(route.query.page, 1) ?? 1);
 const list = ref<CookbookListDto | null>(null);
 const busy = ref(false);
 const streetInfo = computed(() => catalog.streets.find((s) => s.id === street.value) ?? null);
+/** 厨艺值和它的增量（收益模型改版 2026-11-19）：增量保留一位小数 */
+const fameNum = (x: number) => formatNum(Math.round(x * 10) / 10);
 
 /** 只认最后一次请求的结果：换街道、点底部导航时连着发几次，先发的晚回来不能盖掉后发的（backlog 第 ③ 批审查） */
 let seq = 0;
@@ -213,6 +215,10 @@ onMounted(async () => {
           ><span :style="{ width: `${(list.streetLearned / Math.max(1, list.streetTotal)) * 100}%` }"></span
         ></span>
         <span v-if="streetInfo?.desc" class="dt-fold-sub">{{ t.cookbook.streetDesc(streetInfo.desc) }}</span>
+        <!-- 店现在的厨艺值（收益模型改版 2026-11-19）：不分街，换哪条街看都一样 -->
+        <span v-if="list?.fame !== undefined" class="dt-fold-sub" data-testid="cookbook-fame">{{
+          t.cookbook.fame(formatNum(Math.round(list.fame)))
+        }}</span>
       </span>
       <i class="bi bi-chevron-down dt-effects-chev" aria-hidden="true"></i>
     </summary>
@@ -226,6 +232,9 @@ onMounted(async () => {
       }}</span>
       <div v-if="streetInfo.theme" class="dt-meta mt-1" data-testid="street-theme">
         {{ streetInfo.theme }}
+      </div>
+      <div v-if="list?.fame !== undefined" class="dt-meta mt-1" data-testid="cookbook-fame-hint">
+        {{ t.cookbook.fameHint }}
       </div>
     </div>
   </details>
@@ -287,6 +296,10 @@ onMounted(async () => {
             ></template
           >
         </span>
+        <!-- 学会或升一品加多少厨艺值（收益模型改版 2026-11-19）；满级没有 -->
+        <span v-if="r.fameAdd" class="dt-row-sub dt-meta" :data-testid="`cb-fame-${r.id}`">{{
+          t.cookbook.fameAdd(fameNum(r.fameAdd))
+        }}</span>
       </span>
       <button
         v-if="r.learn === '0'"

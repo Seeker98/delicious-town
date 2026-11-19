@@ -71,6 +71,8 @@ export interface Rates {
   luck: RatePart;
   /** 上座桌数 = round(上座率 × 餐桌数) */
   seated: number;
+  /** 厨艺值 K、厨艺钱 F（收益模型改版 2026-11-19）：逐桌分配时算出来再填，收益明细显示；旧的收益记录没有 */
+  fame?: { k: number; f: number };
 }
 
 /** 开关型荣誉和其他系数 */

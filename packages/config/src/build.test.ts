@@ -1607,10 +1607,15 @@ describe('货币回收 240-1 的区服数值（默认值见 docs/design/银币�
     expect(errors).toEqual([]);
     const t = bundle!.tuning;
     expect(t.settlement.dishCoinRate).toBe(0.16);
-    // 普通顾客按菜价 4%，满意的挑剔顾客是它的 4 倍；上限 64 不超过最便宜的菜（360）满意挑剔顾客付的钱
-    expect(t.settlement.normalDishRate).toBe(0.04);
-    expect(t.settlement.dishCoinRate).toBeCloseTo(t.settlement.normalDishRate * 4, 9);
-    expect(t.settlement.normalCoinCap).toBeLessThanOrEqual(Math.floor(360 * t.settlement.dishCoinRate) * 1.2);
+    // 收益模型改版 2026-11-19：店里的顾客按厨艺钱付，菜价倍率只管外卖和食谱页显示的售价
+    expect(t.settlement.fame).toMatchObject({
+      a: 1.95,
+      beta: 0.35,
+      normalShare: 0.3,
+      shortPayRate: 0.5,
+      satisfyCount: 30,
+    });
+    expect(t.settlement.streetLearnCoinRate).toBe(0.1);
     expect(t.market.levelPriceRate).toEqual([1, 1.3, 2, 3, 4, 1, 1]);
     expect(t.growth.starCoin).toEqual([0, 2000000, 5000000, 10000000]);
     // 升星食谱数默认和升星表一致（2026-10-24 挪进区服设置）

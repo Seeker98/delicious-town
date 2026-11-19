@@ -2279,6 +2279,7 @@
       "desc": "一天里走掉 100 位挑剔顾客",
       "metric": "counter:picky.left.day",
       "hidden": true,
+      "retired": true,
       "tiers": [
         {
           "n": 1,

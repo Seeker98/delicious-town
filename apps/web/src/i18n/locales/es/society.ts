@@ -58,6 +58,10 @@ const society: Messages['society'] = {
     costLabel: 'Coste',
     costValue: (cost) => `unas ${cost} monedas, mitad de precio con suerte`,
     permit: 'Con el permiso de la oficina de mudanzas no hace falta tarjeta.',
+    learnLabel: 'Recetas locales aprendidas (tasa de monedas)',
+    learnValue: (now, after) => `ahora ${now} → tras mudarte ${after}`,
+    learnNote:
+      'Esta bonificación depende de qué parte del menú de tu calle has aprendido, y es lo único que pierdes al mudarte. La maestría culinaria cuenta todas las calles y se queda; aprende los platos de la nueva calle para recuperarla.',
     btn: 'Mudarse',
     done: (street) => `Te mudaste a ${street}`,
     failed: 'No se pudo hacer la mudanza',

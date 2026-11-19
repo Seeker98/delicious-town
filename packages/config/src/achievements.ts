@@ -85,6 +85,11 @@ export const rawAchLine = z.object({
   hidden: z.boolean().optional(),
   /** 绝版成就：限时活动、开服纪念，只进成就墙、不计点（分类 legacy，点数 0） */
   legacy: z.boolean().optional(),
+  /**
+   * 停用：玩法拿掉了、再也拿不到的线（比如挑剔顾客走掉）。没拿到的店看不到这条线（不进列表、不进总数）；
+   * 拿到了的照常显示、点数照算（和绝版不同，绝版是 0 点）。哪个分类都可以
+   */
+  retired: z.boolean().optional(),
   tiers: z.array(rawAchTier).min(1),
 });
 export const rawTrophy = z.object({
@@ -117,6 +122,8 @@ export interface AchLine {
   hidden: boolean;
   /** 绝版成就（不计点） */
   legacy: boolean;
+  /** 停用：再也拿不到；没拿到的不显示、不进总数，拿到了的照常显示、计点 */
+  retired: boolean;
   tiers: AchTier[];
 }
 export interface Trophy {
@@ -184,6 +191,7 @@ export function buildAchievements(
         labels: raw.labels ?? null,
         hidden: raw.hidden ?? false,
         legacy: raw.legacy ?? false,
+        retired: raw.retired ?? false,
         tiers: raw.tiers.map((t, i) => ({
           id: `${key}.${i + 1}`,
           tier: i + 1,
@@ -209,12 +217,12 @@ export function buildAchievements(
 /** 成就编号 → 那一档和它的线 */
 export interface AchIndex {
   byId: ReadonlyMap<string, { line: AchLine; tier: AchTier }>;
-  /** event_counter 键 → 用这个计数的档（达成判断在计数加完后查这里） */
+  /** event_counter 键 → 用这个计数的档（达成判断在计数加完后查这里）；停用的线不在里面 */
   byCounter: ReadonlyMap<string, Array<{ line: AchLine; tier: AchTier }>>;
-  /** 状态类的档（每天扫、打开成就页时算） */
+  /** 状态类的档（每天扫、打开成就页时算）；停用的线不在里面 */
   stateTiers: ReadonlyArray<{ line: AchLine; tier: AchTier }>;
   trophies: ReadonlyMap<string, Trophy>;
-  /** 计点成就的总点数（全部达成得「小镇完人」） */
+  /** 计点成就的总点数（全部达成得「小镇完人」）；停用的线拿不到了，不算 */
   totalPts: number;
 }
 
@@ -224,7 +232,9 @@ export function buildAchIndex(lines: AchLine[], trophies: Trophy[]): AchIndex {
   const stateTiers: Array<{ line: AchLine; tier: AchTier }> = [];
   for (const line of lines)
     for (const tier of line.tiers) {
+      // 停用的线只留在 byId 里（拿到过的店还要显示名字、点数），不再判断达成
       byId.set(tier.id, { line, tier });
+      if (line.retired) continue;
       if (tier.metric.startsWith('counter:')) {
         const k = tier.metric.slice(8);
         const list = byCounter.get(k) ?? [];
@@ -237,6 +247,9 @@ export function buildAchIndex(lines: AchLine[], trophies: Trophy[]): AchIndex {
     byCounter,
     stateTiers,
     trophies: new Map(trophies.map((t) => [t.key, t])),
-    totalPts: lines.flatMap((l) => l.tiers).reduce((a, t) => a + t.pts, 0),
+    totalPts: lines
+      .filter((l) => !l.retired)
+      .flatMap((l) => l.tiers)
+      .reduce((a, t) => a + t.pts, 0),
   };
 }

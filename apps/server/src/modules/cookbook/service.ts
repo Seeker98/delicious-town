@@ -19,15 +19,18 @@ import { runOp, setRest } from '../../core/op';
 import type { DB } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { foodsMap, subFoods } from '../cupboard/foods';
+import { fameValue } from '../settlement/fame';
 import { normalizeCounts } from '../settlement/globals';
 import {
   applyLearn,
+  fameAddOf,
   foodsNeedFor,
   gradeOf,
   learnTypeOf,
   mergeNeed,
   padLevels,
   planLearn,
+  roundFame,
   setGrade,
 } from './rules';
 
@@ -62,6 +65,10 @@ export function createCookbookService(d: GameDeps) {
     return (id) => m.get(id)?.num ?? 0;
   }
   const maxGrade = async (shardId: number) => (await d.shards.settings(shardId)).tuning.rest.cookbookMaxGrade;
+  /** 品级加成（cookbook_grades.json 的 spCoinAddRate），厨艺值用；和结算 tables.ts 同一个来源 */
+  const gradeAdd = (g: number) => d.config.grade(g).spCoinAddRate;
+  /** 店现在的厨艺值 K（收益模型改版 2026-11-19），和结算用同一个 fameValue */
+  const fameOf = (levels: Uint8Array) => roundFame(fameValue(levels, d.config.cookbookIndex, gradeAdd));
 
   /** street：店所在的街道；别的街的菜只能看，不能学也不能升级（问题记录 312） */
   function rowOf(
@@ -83,6 +90,8 @@ export function createCookbookService(d: GameDeps) {
       next: need.map((n) => ({ foodsId: n.foodsId, num: n.num, have: have(n.foodsId) })),
       learn: c.streetId !== street ? 'street' : learnTypeOf(planLearn(need, have, levelOfFood)),
       art,
+      // 别的街的菜也写：搬过去学会能加多少
+      fameAdd: fameAddOf(c.coin, grade, max, gradeAdd),
     };
   }
 
@@ -129,6 +138,7 @@ export function createCookbookService(d: GameDeps) {
         streetTotal: ids.length,
         allTotal: d.config.cookbooks.size,
         gradeCounts: counts.grade,
+        fame: fameOf(levels),
       };
     },
 
@@ -179,7 +189,7 @@ export function createCookbookService(d: GameDeps) {
         streetId: c.streetId,
         streetName: d.config.streets.get(c.streetId)?.name ?? '',
         taste: c.taste,
-        // 显示的售价乘本区服的菜价倍率（240-1），和实际付的一致
+        // 菜价乘本区服的菜价倍率（240-1），外卖按它付；收益模型改版 2026-11-19 以后堂食顾客按厨艺钱付，不按它
         coin: dishCoin(c.coin, settings.tuning.settlement.dishCoinRate),
         level: c.level,
         desc: c.desc,
@@ -194,6 +204,8 @@ export function createCookbookService(d: GameDeps) {
             have: have(n.foodsId),
           })),
         })),
+        fame: fameOf(levels),
+        fameAdd: row.fameAdd,
       };
     },
 

@@ -58,6 +58,10 @@ const society: Messages['society'] = {
     costLabel: 'Coût',
     costValue: (cost) => `environ ${cost} pièces, moitié prix avec de la chance`,
     permit: 'Pas besoin de carte avec un permis du bureau des déménagements.',
+    learnLabel: 'Recettes locales apprises (taux de pièces)',
+    learnValue: (now, after) => `maintenant ${now} → après le déménagement ${after}`,
+    learnNote:
+      'Ce bonus dépend de la part du menu de votre rue que vous avez apprise, et c’est tout ce que vous perdez en déménageant. La maîtrise culinaire compte toutes les rues et reste\u202f; apprenez les plats de la nouvelle rue pour regagner le bonus.',
     btn: 'Déménager',
     done: (street) => `Déménagé\u202f: ${street}`,
     failed: 'Échec du déménagement',

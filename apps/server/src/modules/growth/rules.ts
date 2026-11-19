@@ -1,3 +1,4 @@
+import { streetLearnRate } from '../settlement/fame';
 import { checkRestaurantName } from '@dt/shared';
 import { GOODS, type OilNeed, type StarNeed } from '@dt/config';
 import type { NeedCheckDto } from '@dt/shared';
@@ -6,6 +7,22 @@ import type { CookbookCounts } from '../../db/schema';
 /** 搬街费（幸运半价之前，240-1）：餐桌数 × 餐桌A 半价 ×（1 + 星级 × 系数） */
 export function moveCost(tables: number, tableACoin: number, star: number, moveStarRate: number): number {
   return Math.floor(tables * (tableACoin / 2) * (1 + star * moveStarRate));
+}
+
+export { streetLearnRate };
+
+/** 搬家页：每条有菜的街搬过去以后的“本街学菜”加成，街道 id → 比例 */
+export function streetLearnRates(
+  counts: Pick<CookbookCounts, 'street'>,
+  idsByStreet: ReadonlyMap<number, readonly number[]>,
+  rate: number,
+): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const [streetId, ids] of idsByStreet) {
+    if (ids.length === 0) continue;
+    out[String(streetId)] = streetLearnRate(counts.street[String(streetId)] ?? 0, ids.length, rate);
+  }
+  return out;
 }
 
 /** 第 star 星的升星条件：学会食谱数取区服设置 starCookbooks 第 star 个数（2026-10-24），没写的星和泛紫星用升星表 */

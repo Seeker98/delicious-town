@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  income1119:
+    'Cambio en los ingresos: lo que pagan los clientes ahora crece con todos los platos que has aprendido (en cualquier calle, contados como maestría culinaria según su precio y calidad) y con tus estrellas, así que más platos y mejor calidad dan más; mudarte ya no hunde tus ingresos, solo pierdes la bonificación de monedas «Recetas locales aprendidas» (hasta un 10\u00a0%) hasta que aprendas los platos de la nueva calle; los clientes exigentes ya no se van, y cuantos más platos tengas en la calidad que piden, más a menudo quedan satisfechos; la tasa de ocupación y la de clientes exigentes ahora son fijas para cada nivel de estrellas (más objetos, instalaciones y otras bonificaciones), y aprender platos ya no las sube. La página de Recetas muestra tu maestría culinaria y cuánto suma cada plato, y el panel de mudanza la bonificación local que tendrías en la nueva calle',
   version1117:
     'Cuando el juego se actualiza, las páginas abiertas con la versión antigua piden actualizar antes de seguir jugando (si estás escribiendo, el aviso espera hasta 3 minutos)',
   mouse1105:

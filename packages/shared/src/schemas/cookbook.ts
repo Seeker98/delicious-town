@@ -34,6 +34,11 @@ export interface CookbookRowDto {
   learn: LearnType;
   /** 列表左边的食材图：一级所需的第一种食材，和详情页头图一样（满级的菜 next 为空，原来只能用通用图，backlog P7）；旧服务端没有 */
   art?: number;
+  /**
+   * 学会（没学时）或升一品（已学时）能加多少厨艺值（收益模型改版 2026-11-19）：
+   * 没学 = 菜价 × (1 + 1 品加成)，已学 L 品 = 菜价 × (L+1 品加成 − L 品加成)；满级没有。旧服务端没有
+   */
+  fameAdd?: number;
 }
 
 export interface CookbookListDto {
@@ -48,6 +53,8 @@ export interface CookbookListDto {
   /** 全部食谱数（所有街道） */
   allTotal: number;
   gradeCounts: number[];
+  /** 店现在的厨艺值 K：全部学会的菜（不分街）Σ 菜价 × (1 + 品级加成)（收益模型改版 2026-11-19）；旧服务端没有 */
+  fame?: number;
 }
 
 /** 食谱进度一览（问题记录：食谱页加进度一览）：每条街的总数和各品级及以上的道数 */
@@ -66,12 +73,17 @@ export interface CookbookDetailDto {
   streetId: number;
   streetName: string;
   taste: number[];
+  /** 外卖、参考用的菜价（菜价 × 区服菜价倍率）；收益模型改版 2026-11-19 以后堂食顾客不按它付钱 */
   coin: number;
   level: number;
   desc: string;
   grade: number;
   learn: LearnType;
   grades: Array<{ grade: number; name: string; foods: NeedFoodDto[] }>;
+  /** 店现在的厨艺值 K（同 CookbookListDto.fame）；旧服务端没有 */
+  fame?: number;
+  /** 学会或升一品能加多少厨艺值（同 CookbookRowDto.fameAdd）；满级没有 */
+  fameAdd?: number;
 }
 
 export interface FoodsNeedDto {

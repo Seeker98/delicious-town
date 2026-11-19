@@ -31,6 +31,7 @@ import {
   tierValue,
   trophyName,
   trophySource,
+  visibleLines,
   type AchCatKey,
   type AchTab,
 } from '../utils/achieve';
@@ -73,9 +74,15 @@ const tabItems = computed(() => ACH_TABS.map((k) => ({ key: k, label: t.value.ac
 const gotMap = computed(() => new Map((data.value?.got ?? []).map((g) => [g.id, g])));
 const gotSet = computed(() => new Set(gotMap.value.keys()));
 const progress = computed(() => (data.value?.mine ? data.value.progress : null));
-const allTiers = computed(() => catalog.achLines.flatMap((l) => l.tiers));
+/** 看得到的成就线：停用的线没拿到就不显示、不进总数 */
+const shownLines = computed(() => visibleLines(catalog.achLines, gotSet.value));
+const allTiers = computed(() => shownLines.value.flatMap((l) => l.tiers));
 const totalPts = computed(() => allTiers.value.reduce((a, x) => a + x.pts, 0));
-const trophyKeys = computed(() => [...catalog.trophyMap.keys()]);
+/** 奖杯格子：停用的线上没拿到的奖杯不显示 */
+const trophyKeys = computed(() => {
+  const shown = new Set(allTiers.value.map((x) => x.trophy).filter((k) => k !== null));
+  return [...catalog.trophyMap.keys()].filter((k) => shown.has(k));
+});
 /** 奖杯格子：拿到的排前面，其余按配置顺序 */
 const trophyOrder = computed(() => [
   ...trophyKeys.value.filter((k) => myTrophies.value.has(k)),
@@ -95,7 +102,7 @@ const cats = computed(() =>
 /** 分类页：全部 / 进行中 / 已满档 */
 const filter = ref<'all' | 'doing' | 'done'>('all');
 const lines = computed(() =>
-  catalog.achLines
+  shownLines.value
     .filter((l) => l.cat === cat.value)
     .map((l) => lineState(l, gotSet.value, progress.value))
     .filter((s) => filter.value === 'all' || (filter.value === 'done') === s.done),

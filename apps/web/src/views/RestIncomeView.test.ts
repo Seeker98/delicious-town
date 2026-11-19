@@ -119,6 +119,19 @@ describe('收益记录页（问题记录 530）', () => {
     expect(box.text()).toContain('开张大吉');
   });
 
+  it('最近一轮有厨艺值、厨艺钱时写出来；改版前的记录没有就不写（收益模型改版 2026-11-19）', async () => {
+    vi.mocked(endpoints.buffs).mockResolvedValue({ ...buffs, fame: { k: 12345.67, f: 48.36 } } as never);
+    const w = mount(RestIncomeView);
+    await flushPromises();
+    const fame = w.get('[data-testid="income-fame"]').text();
+    expect(fame).toContain('厨艺值 12,346');
+    expect(fame).toContain('每桌厨艺钱 48.4');
+    vi.mocked(endpoints.buffs).mockResolvedValue({ ...buffs, fame: null } as never);
+    const old = mount(RestIncomeView);
+    await flushPromises();
+    expect(old.find('[data-testid="income-fame"]').exists()).toBe(false);
+  });
+
   it('加成是折叠卡；记录表放在卡片里、数字等宽', async () => {
     const w = mount(RestIncomeView);
     await flushPromises();

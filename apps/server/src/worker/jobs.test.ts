@@ -1,6 +1,6 @@
 import { sql } from 'kysely';
 import { afterAll, describe, expect, it } from 'vitest';
-import { testDb } from '../../test/db';
+import { emptyOldDay, testDb } from '../../test/db';
 import { ensureDailyPartitions, partitionName } from '../db/partitions';
 import { maintainPartitions } from './jobs';
 
@@ -11,7 +11,8 @@ const DAY = 86_400_000;
 describe('maintainPartitions', () => {
   it('预建未来分区并删除超过保留期的分区', async () => {
     const now = new Date();
-    const [old] = await ensureDailyPartitions(db, 'news', new Date(now.getTime() - 45 * DAY), 1);
+    // 保留期以外、default 里没有行的一天（别的测试按固定时钟写的新闻会落在 default 里）
+    const [old] = await ensureDailyPartitions(db, 'news', await emptyOldDay(db, 'news', now, 45), 1);
     const { created, dropped } = await maintainPartitions(db, now);
     const in3Days = new Date(now.getTime() + 3 * DAY).toISOString().slice(0, 10);
     expect(created).toContain(partitionName('ledger', in3Days));

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { testConfig } from '../../../test/config';
-import { starChecks, starCoinOf, starNeedOf } from './rules';
+import { starChecks, starCoinOf, starNeedOf, streetLearnRate, streetLearnRates } from './rules';
 
 const config = testConfig();
 const need = config.starNeed.get(2)!;
@@ -27,5 +27,24 @@ describe('升星银币（240-1）', () => {
     expect(starChecks(rest, counts, 2, need, 0).map((c) => c.key)).toEqual(['level', 'cookbooks', 'goods']);
     const checks = starChecks(rest, counts, 2, need, 500);
     expect(checks.at(-1)).toEqual({ key: 'coin', need: 500, have: 100, ok: false });
+  });
+});
+
+describe('本街学菜（收益模型改版 2026-11-19，搬家页用）', () => {
+  it('学会的道数 ÷ 菜数 × 系数，学满封顶，没菜的街为 0', () => {
+    expect(streetLearnRate(0, 100, 0.1)).toBe(0);
+    expect(streetLearnRate(25, 100, 0.1)).toBeCloseTo(0.025);
+    expect(streetLearnRate(100, 100, 0.1)).toBeCloseTo(0.1);
+    expect(streetLearnRate(120, 100, 0.1)).toBeCloseTo(0.1);
+    expect(streetLearnRate(3, 0, 0.1)).toBe(0);
+  });
+  it('每条有菜的街一项，按 cookbook_counts.street 的道数算', () => {
+    const by = new Map<number, number[]>([
+      [0, [1, 2, 3, 4]],
+      [5, [10, 11]],
+      [9, []],
+    ]);
+    expect(streetLearnRates({ street: { '0': 4, '5': 1 } }, by, 0.1)).toEqual({ '0': 0.1, '5': 0.05 });
+    expect(streetLearnRates({ street: {} }, by, 0.1)).toEqual({ '0': 0, '5': 0 });
   });
 });

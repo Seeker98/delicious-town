@@ -25,7 +25,14 @@ const cookbook: Messages['cookbook'] = {
   streetPick: 'Pick a street',
   counts: (streetLearned, streetTotal, learned, total) =>
     `This street: ${streetLearned}/${streetTotal} learned · ${learned} / ${total} ${plEn(total, 'recipe', 'recipes')} in total`,
-  info: (street, level, taste, coin) => `${street} · Difficulty ${level} · Taste ${taste} · Price ${coin}`,
+  info: (street, level, taste, coin) =>
+    `${street} · Difficulty ${level} · Taste ${taste} · Takeaway price ${coin}`,
+  fame: (k) => `Recipe Mastery ${k}`,
+  fameHint:
+    'Every dish you learn (on any street) adds Recipe Mastery by its price and grade. The Mastery Pay your customers leave grows with Mastery and star level.',
+  fameAdd: (n) => `Mastery +${n}`,
+  fameLearn: (n) => `Learning this dish: Recipe Mastery +${n}`,
+  fameUpgrade: (n) => `Next grade: Recipe Mastery +${n}`,
   grade: 'Grade',
   foodsNeeded: 'Ingredients needed',
   missNote: 'Red means not enough',

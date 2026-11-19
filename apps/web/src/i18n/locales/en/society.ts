@@ -59,6 +59,10 @@ const society: Messages['society'] = {
     costLabel: 'Cost',
     costValue: (cost) => `about ${cost} coins, half price when lucky`,
     permit: 'No Moving Card needed with the Moving Company Dispatcher job permit.',
+    learnLabel: 'Local recipes learned (coin rate)',
+    learnValue: (now, after) => `now ${now} → after moving ${after}`,
+    learnNote:
+      'This bonus depends on how much of your current street’s menu you have learned, and it is all you lose by moving. Recipe Mastery counts every street, so it stays; learn the new street’s dishes to win the bonus back.',
     btn: 'Move',
     done: (street) => `Moved to ${street}`,
     failed: 'Moving failed',

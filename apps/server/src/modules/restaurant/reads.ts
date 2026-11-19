@@ -179,7 +179,8 @@ export async function buffsOf(
     .limit(1)
     .executeTakeFirst();
   const effects = shownEffects(await listActiveEffects(db, restId, now), equipOff);
-  const raw = (r?.rates ?? null) as (Record<string, unknown> & { seated?: number }) | null;
+  const raw = (r?.rates ?? null) as
+    (Record<string, unknown> & { seated?: number; fame?: { k?: unknown; f?: unknown } }) | null;
   let rates: Record<string, RateBreakdownDto> | null = null;
   if (raw) {
     rates = {};
@@ -191,6 +192,11 @@ export async function buffsOf(
     roundNo: r?.round_no ?? null,
     rates,
     seated: raw?.seated ?? null,
+    // 厨艺值、厨艺钱（收益模型改版 2026-11-19）：只有改版以后的记录有
+    fame:
+      typeof raw?.fame?.k === 'number' && typeof raw.fame.f === 'number'
+        ? { k: raw.fame.k, f: raw.fame.f }
+        : null,
     sources: effects.map((e) => ({
       sourceType: e.sourceType,
       sourceId: e.sourceId,

@@ -119,6 +119,8 @@ export interface CatalogAchLineDto {
   hidden?: boolean;
   /** 绝版成就（不计点，成就 PR③）；旧缓存里没有 */
   legacy?: boolean;
+  /** 停用（再也拿不到）：没拿到的店不显示、不进总数，拿到了的照常显示、计点；旧缓存里没有 */
+  retired?: boolean;
   tiers: Array<{
     id: string;
     tier: number;

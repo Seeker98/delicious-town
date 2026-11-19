@@ -98,25 +98,37 @@ describe('RestFloorView', () => {
     await w.find('[data-testid="table-4"]').trigger('click');
     const lines = w.findAll('[data-testid="table-order"]').map((x) => x.text());
     expect(lines).toEqual([
-      '点了「宫保鸡丁」, 要上品, 你的是中品, 不满意, 付一半菜钱',
+      '点了「宫保鸡丁」, 要上品, 你的是中品, 不满意, 厨艺钱只付一半',
       '吃了特色菜「佛跳墙」×1',
     ]);
+    // 不满意：提示够品级的菜越多越容易满意（收益模型改版 2026-11-19）
+    expect(w.get('[data-testid="table-unsatisfied-hint"]').text()).toBe(
+      '学到他要的品级的菜越多, 他越容易满意 (30 道就一定满意)',
+    );
+    expect(w.text()).toContain('上一轮 30 银 / 5 经');
   });
 
-  it('点开挑剔顾客走了的桌：写点了哪道没学会的菜、走了，下面说明这一轮没有收入（挑剔顾客调整）', async () => {
+  it('满意的挑剔顾客不写提示；改版前留下的走人桌（-2）不写点的菜、不写“走了”的说明（收益模型改版 2026-11-19）', async () => {
     const catalog = useCatalogStore();
     catalog.dataMap = new Map([['cookbooks:5', { id: 5, name: '宫保鸡丁' }]]) as never;
     vi.mocked(endpoints.floor).mockResolvedValue([
+      {
+        no: 3,
+        floor: 1,
+        customer: 2,
+        last: { type: 2, coin: 80, exp: 5, oil: 3, req: 1, grade: 2, cookbookId: 5, satisfied: true },
+      },
       { no: 4, floor: 1, customer: -2, last: { type: -2, coin: 0, exp: 0, oil: 0, req: 1, cookbookId: 5 } },
     ]);
     const w = mountView();
     await flushPromises();
+    await w.find('[data-testid="table-3"]').trigger('click');
+    expect(w.find('[data-testid="table-unsatisfied-hint"]').exists()).toBe(false);
     await w.find('[data-testid="table-4"]').trigger('click');
-    expect(w.findAll('[data-testid="table-order"]').map((x) => x.text())).toEqual([
-      '点了「宫保鸡丁」, 你还没学会这道菜, 他走了',
-    ]);
-    expect(w.get('[data-testid="table-left-note"]').text()).toContain('这一轮这桌没有收入');
-    expect(w.text()).not.toContain('上一轮 0 银');
+    expect(w.findAll('[data-testid="table-order"]')).toHaveLength(0);
+    // 顾客类型照旧写“挑剔顾客 (走了)”（历史记录用），但不再有“他走了”的点菜行和说明
+    expect(w.text()).not.toContain('他走了');
+    expect(w.text()).not.toContain('这一轮这桌没有收入');
   });
 
   it('点一桌从底部弹出面板（界面改版 P7）；灭蟑螂是主按钮，赶白食是危险描边；普通桌没有操作按钮', async () => {

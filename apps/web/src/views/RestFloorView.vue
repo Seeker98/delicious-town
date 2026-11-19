@@ -12,7 +12,7 @@ import { useSessionStore } from '../stores/session';
 import { formatNum } from '../utils/format';
 import { useCatalogStore } from '../stores/catalog';
 import { CUSTOMER_NAMES } from '../utils/labels';
-import { tableOrderLines } from '../utils/tableOrder';
+import { SATISFY_COUNT, tableOrderLines, unsatisfiedOrder } from '../utils/tableOrder';
 import { serverNowMs } from '../utils/serverNow';
 
 const DINE_MINUTES = 30;
@@ -77,10 +77,15 @@ onMounted(load);
             >
               {{ line }}
             </div>
-            <div v-if="picked.last?.type === -2" class="dt-detail-sub" data-testid="table-left-note">
-              {{ t.rest.floor.leftNote }}
+            <!-- 不满意：够品级的菜越多越容易满意（收益模型改版 2026-11-19：挑剔顾客不再走人） -->
+            <div
+              v-if="unsatisfiedOrder(picked.last)"
+              class="dt-detail-sub"
+              data-testid="table-unsatisfied-hint"
+            >
+              {{ t.rest.floor.unsatisfiedHint(SATISFY_COUNT) }}
             </div>
-            <div v-else-if="picked.last && picked.last.type !== 0" class="dt-detail-sub">
+            <div v-if="picked.last && picked.last.type !== 0" class="dt-detail-sub">
               {{
                 t.rest.floor.last(
                   formatNum(Math.floor(picked.last.coin)),

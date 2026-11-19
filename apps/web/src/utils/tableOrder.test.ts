@@ -1,7 +1,7 @@
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { TableResultDto } from '@dt/shared';
-import { tableDish, tableOrderLines } from './tableOrder';
+import { tableDish, tableOrderLines, unsatisfiedOrder } from './tableOrder';
 
 const names = {
   cookbookName: (id: number) => ({ 5: '宫保鸡丁' })[id] ?? `#${id}`,
@@ -38,7 +38,7 @@ describe('每桌点的菜（问题记录 559）', () => {
         last({ type: 2, req: 3, grade: 2, cookbookId: 5, satisfied: false, mcId: 42, mcNum: 1 }),
         names,
       ),
-    ).toEqual(['点了「宫保鸡丁」, 要上品, 你的是中品, 不满意, 付一半菜钱', '吃了特色菜「佛跳墙」×1']);
+    ).toEqual(['点了「宫保鸡丁」, 要上品, 你的是中品, 不满意, 厨艺钱只付一半', '吃了特色菜「佛跳墙」×1']);
     expect(
       tableOrderLines(last({ type: 8, req: 4, grade: 5, cookbookId: 5, satisfied: true }), names),
     ).toEqual(['点了「宫保鸡丁」, 要极品, 你的是金牌, 满意']);
@@ -46,16 +46,25 @@ describe('每桌点的菜（问题记录 559）', () => {
     expect(tableOrderLines(last({ type: 1 }), names)).toEqual([]);
   });
 
-  it('挑剔顾客想点菜但你一道能做的都没学：写明，不写菜名', () => {
+  it('挑剔顾客想点菜但店里一道菜都没学：写明只付一半基础价，不写菜名', () => {
     expect(tableOrderLines(last({ type: 2, req: 2 }), names)).toEqual([
-      '想点中品的菜, 但你还没学会能给他做的菜',
+      '想点中品的菜, 但你一道菜都还没学会, 只付了一半基础价',
     ]);
   });
 
-  it('挑剔顾客点到没学会的菜走了（-2）：格子写那道菜，详情写点了哪道没学会、走了（挑剔顾客调整）', () => {
+  it('改版前留下的走人桌（-2）：不写点的菜（收益模型改版 2026-11-19：挑剔顾客不再走人）', () => {
     const left = last({ type: -2, coin: 0, exp: 0, oil: 0, req: 2, cookbookId: 5 });
-    expect(tableDish(left, names)).toBe('宫保鸡丁');
-    expect(tableOrderLines(left, names)).toEqual(['点了「宫保鸡丁」, 你还没学会这道菜, 他走了']);
+    expect(tableDish(left, names)).toBeNull();
+    expect(tableOrderLines(left, names)).toEqual([]);
+  });
+
+  it('不满意提示：只给点了菜、不满意的挑剔顾客和蟹老板', () => {
+    expect(unsatisfiedOrder(last({ type: 2, req: 3, grade: 2, cookbookId: 5, satisfied: false }))).toBe(true);
+    expect(unsatisfiedOrder(last({ type: 8, req: 3, grade: 2, cookbookId: 5, satisfied: false }))).toBe(true);
+    expect(unsatisfiedOrder(last({ type: 2, req: 3, grade: 4, cookbookId: 5, satisfied: true }))).toBe(false);
+    expect(unsatisfiedOrder(last({ type: 2, req: 2 }))).toBe(false);
+    expect(unsatisfiedOrder(last({ type: 1 }))).toBe(false);
+    expect(unsatisfiedOrder(undefined)).toBe(false);
   });
 
   it('旧记录没有特色菜编号时不写特色菜那一行', () => {
