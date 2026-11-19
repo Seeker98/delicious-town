@@ -64,9 +64,12 @@ export async function evaluateRest(
     .execute();
   const got = new Set(have.map((r) => r.ach_id));
   const ids: string[] = [];
-  for (const line of config.bundle.achievements)
+  for (const line of config.bundle.achievements) {
+    // 停用的线再也拿不到
+    if (line.retired) continue;
     for (const tier of line.tiers)
       if (!got.has(tier.id) && valueOf(values, line, tier) >= tier.n) ids.push(tier.id);
+  }
   if (!o.backfilled && ids.length === 0) return [];
   const write = async (tx: Kysely<DB>): Promise<string[]> => {
     // 补发时把已经到了的里程碑称号补上（上线以前就过了 12,000 点的店不会再“跨过”它；grantIcon 重复发没关系）
@@ -92,10 +95,10 @@ export function createAchieveService(d: GameDeps) {
   const rarityCache = new Map<number, { at: number; map: Record<string, number> }>();
   /** 成就点榜的名次缓存（和排行页同样的秒数）：成就墙每次打开不重算整张榜 */
   const rankCache = new Map<number, { at: number; rows: RankedRow[] }>();
-  /** 网页要的进度键：配置里用到的口径（菜系按街道），别的计数不发；隐藏成就不显示进度，也不发 */
+  /** 网页要的进度键：配置里用到的口径（菜系按街道），别的计数不发；隐藏成就、停用的线不显示进度，也不发 */
   const progressKeys = new Set(
     d.config.bundle.achievements
-      .filter((l) => !l.hidden)
+      .filter((l) => !l.hidden && !l.retired)
       .flatMap((l) =>
         l.tiers.map((x) =>
           achProgressKey(x.metric, x.metric.startsWith('state:cuisine') ? l.streetId : null),

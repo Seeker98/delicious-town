@@ -86,6 +86,38 @@ describe('食谱详情（界面改版 P4）', () => {
     expect(w.find('.table-success').exists()).toBe(false);
   });
 
+  it('菜价写成外卖价；写升一品加多少厨艺值和店现在的厨艺值，没学的写学会加多少（收益模型改版 2026-11-19）', async () => {
+    vi.mocked(endpoints.cookbookDetail).mockResolvedValue({
+      ...structuredClone(detail),
+      fame: 5000.4,
+      fameAdd: 6,
+    });
+    const w = await mountView();
+    expect(w.get('[data-testid="cookbook-info"]').text()).toContain('外卖价 30');
+    expect(w.get('[data-testid="cookbook-fame"]').text()).toBe('升一品, 厨艺值 +6 · 厨艺值 5,000');
+    vi.mocked(endpoints.cookbookDetail).mockResolvedValue({
+      ...structuredClone(detail),
+      grade: 0,
+      fame: 0,
+      fameAdd: 36,
+    });
+    const w2 = await mountView();
+    expect(w2.get('[data-testid="cookbook-fame"]').text()).toBe('学会这道菜, 厨艺值 +36 · 厨艺值 0');
+  });
+
+  it('满级只写现在的厨艺值；旧服务端没有厨艺值时不写', async () => {
+    vi.mocked(endpoints.cookbookDetail).mockResolvedValue({
+      ...structuredClone(detail),
+      learn: 'max',
+      fame: 88,
+    });
+    const w = await mountView();
+    expect(w.get('[data-testid="cookbook-fame"]').text()).toBe('厨艺值 88');
+    vi.mocked(endpoints.cookbookDetail).mockResolvedValue(structuredClone(detail));
+    const w2 = await mountView();
+    expect(w2.find('[data-testid="cookbook-fame"]').exists()).toBe(false);
+  });
+
   it('没读回来时是骨架行', async () => {
     vi.mocked(endpoints.cookbookDetail).mockReturnValue(new Promise(() => undefined));
     const w = await mountView();

@@ -27,6 +27,11 @@ const rest: Messages['rest'] = {
     loadFailed: 'Impossible de charger les revenus',
     buffs: 'Détail des bonus (dernier tour)',
     seated: (n) => `Tables occupées\u202f: ${n}`,
+    fame: 'Maîtrise culinaire',
+    fameValue: (k) => `Maîtrise culinaire ${k}`,
+    famePay: (f) => `Prime de maîtrise par table ${f}`,
+    fameNote:
+      'La maîtrise culinaire additionne tous les plats appris (toutes rues confondues)\u202f: prix × (1 + bonus de qualité). La prime de maîtrise augmente avec la maîtrise et les étoiles\u202f: un client difficile satisfait la paie en entier, un client insatisfait la moitié, un client ordinaire 30\u202f%.',
     noRound: "Aucun tour n'a encore été réglé",
     sources: 'Sources des bonus',
     records: 'Historique des revenus',
@@ -48,12 +53,11 @@ const rest: Messages['rest'] = {
     tableNo: (n) => `Table ${n}`,
     last: (coin, exp) => `Dernier tour ${coin} ${plFr(coin, 'pièce', 'pièces')} / ${exp} EXP`,
     ordered: (dish, req, grade, ok) =>
-      `A commandé «\u202f${dish}\u202f», voulait ${req}, le vôtre est ${grade}\u202f: ${ok ? 'satisfait' : 'pas satisfait, a payé la moitié du prix du plat'}`,
-    orderedNone: (req) => `Voulait un plat ${req}, mais vous n’en avez appris aucun à lui servir`,
-    orderedLeft: (dish) =>
-      `A commandé «\u202f${dish}\u202f», que vous ne savez pas encore cuisiner\u202f: il est parti`,
-    leftNote:
-      'Aucun revenu pour cette table ce tour-ci. Plus vous apprenez de plats de votre rue, moins les clients partent.',
+      `A commandé «\u202f${dish}\u202f», voulait ${req}, le vôtre est ${grade}\u202f: ${ok ? 'satisfait' : 'pas satisfait, n’a payé que la moitié de la prime de maîtrise'}`,
+    orderedNone: (req) =>
+      `Voulait un plat ${req}, mais vous n’avez encore appris aucun plat\u202f: il n’a payé que la moitié du prix de base`,
+    unsatisfiedHint: (n) =>
+      `Plus vous avez de plats à la qualité demandée, plus il a de chances d’être satisfait (${n}\u202f${plFr(n, 'plat', 'plats')} et il l’est toujours)`,
     ateSpecial: (name, n) => `A mangé la spécialité «\u202f${name}\u202f»\u202f×\u202f${n}`,
     roachNote: 'Une table avec un cafard ne reçoit plus de clients tant que vous ne l’avez pas écrasé.',
     kill: 'Écraser le cafard',

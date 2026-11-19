@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  income1119:
+    'Income overhaul: what customers pay now grows with every dish you have learned (on any street, counted as Recipe Mastery by price and grade) and with your star level, so more dishes and higher grades earn more; moving no longer crashes your income, you only lose the up-to-10% “Local recipes learned” coin bonus until you learn the new street’s dishes; picky customers never walk out any more, and the more dishes you have at the grade they want, the more often they are satisfied; occupancy and picky rate are now fixed per star level (plus items, facilities and other bonuses), and learning dishes no longer raises them. The Recipes page shows your Recipe Mastery and how much each dish adds, and the Move panel shows the local bonus you would have on the new street',
   version1117:
     'When the game is updated, pages left open on the old version now ask you to refresh before you keep playing (if you are typing, the prompt waits up to 3 minutes)',
   mouse1105:

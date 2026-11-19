@@ -116,7 +116,7 @@ export function settleRestaurant(input: SettleInput, g: SettleGlobals, rng: Rng)
     exp,
     oil,
     customers: o.customers,
-    rates,
+    rates: { ...rates, fame: o.fame },
     drops: mergeDrops(drops),
     renown,
     foodsUsed,

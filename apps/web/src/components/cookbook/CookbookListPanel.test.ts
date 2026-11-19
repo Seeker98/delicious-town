@@ -106,6 +106,39 @@ describe('CookbookListPanel', () => {
     await flushPromises();
     expect(endpoints.cookbookList).toHaveBeenLastCalledWith({ street: 0, page: 1, filter: 'upgradable' });
   });
+  it('写店现在的厨艺值，每道菜写学会或升一品加多少；满级、旧服务端没给的不写（收益模型改版 2026-11-19）', async () => {
+    vi.mocked(endpoints.cookbookList).mockResolvedValue({
+      ...list,
+      fame: 12345.6,
+      items: [
+        { ...list.items[0]!, fameAdd: 36 },
+        { ...list.items[1]!, grade: 2, fameAdd: 12.25 },
+        { id: 500, name: '满级菜', grade: 7, learn: 'max', next: null },
+      ],
+    });
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/', component: CookbookListPanel }],
+    });
+    const w = mount(CookbookListPanel, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(w.get('[data-testid="cookbook-fame"]').text()).toBe('厨艺值 12,346');
+    expect(w.get('[data-testid="cb-fame-194"]').text()).toBe('厨艺值 +36');
+    expect(w.get('[data-testid="cb-fame-439"]').text()).toBe('厨艺值 +12.3');
+    expect(w.find('[data-testid="cb-fame-500"]').exists()).toBe(false);
+  });
+
+  it('旧服务端没有厨艺值：不写', async () => {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/', component: CookbookListPanel }],
+    });
+    const w = mount(CookbookListPanel, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(w.find('[data-testid="cookbook-fame"]').exists()).toBe(false);
+    expect(w.find('[data-testid="cb-fame-194"]').exists()).toBe(false);
+  });
+
   it('筛选按钮是一排能换行的独立按钮，不是按钮组（问题记录 304：英法西文下超出手机屏幕）', async () => {
     const router = createRouter({
       history: createMemoryHistory(),

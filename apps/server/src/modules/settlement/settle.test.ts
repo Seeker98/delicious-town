@@ -4,6 +4,7 @@ import { testConfig } from '../../../test/config';
 import { buildGlobals, buildInput, type InputPatch } from './globals';
 import { incomeValue, settleRestaurant } from './settle';
 import type { SettleGlobals } from './types';
+import { fameCoin } from './fame';
 import { GOODS } from '@dt/config';
 import { cid } from '../../../test/items';
 
@@ -21,6 +22,8 @@ const withMultiplier = (m: number) => ({
     expMultiplier: m,
     dishCoinRate: 1,
     newbieExp: { ...config.tuning.settlement.newbieExp, rate: 0 },
+    // 本街学菜加银币率（收益模型改版 2026-11-19）在 rates.test 单独测；这里关掉，免得特色菜等整数差被它多乘一点
+    streetLearnCoinRate: 0,
   },
 });
 const rules = withMultiplier(1);
@@ -29,6 +32,14 @@ const everyNormal = {
   ...rules,
   settlement: { ...rules.settlement, normalSpecialShare: 1, normalSpecialPriceRate: 0.5 },
 };
+/** 厨艺钱（收益模型改版 2026-11-19）：按学会的菜（食谱 id → 品级）和星级算 F */
+const gradeAdd = (L: number) => buildGlobals(config, rules, {}).grade(L).spCoinAddRate;
+const fameOf = (cookbooks: Record<number, number>, star: number, tuning = rules) =>
+  fameCoin(
+    Object.entries(cookbooks).reduce((k, [id, L]) => k + price(Number(id)) * (1 + gradeAdd(L)), 0),
+    star,
+    tuning.settlement.fame,
+  );
 const settle = (patch: InputPatch, g: Partial<SettleGlobals>, rng: number[]) =>
   settleRestaurant(buildInput(config, patch), buildGlobals(config, rules, g), sequenceRng(rng));
 
@@ -52,29 +63,34 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     expect(r.tables[0]).toMatchObject({ customer: 1, last: { type: 1, coin: 10, exp: 2, oil: 2 } });
   });
 
-  describe('普通顾客按本街菜价付（收益模型改版 2026-10-15）', () => {
-    const newbie = config.cookbookIndex.idsByStreet.get(0)!;
-    const all = Object.fromEntries(newbie.map((id) => [id, 1]));
-    // 浮动两个、第 1 桌蟑螂和挑剔各一个、点菜一个、后 3 张空桌蟑螂各一个
-    const seq = (pick: number) => [0.5, 0.65, 0.9, 0.9, pick, 0.9, 0.9, 0.9];
+  describe('普通顾客付 基础价 + 厨艺钱 × 0.3（收益模型改版 2026-11-19）', () => {
+    const seq = [0.5, 0.65, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9];
 
-    it('点到学会的本街菜：菜价 × 4% × 1.2，不超过 64、不低于 10 + 星级', () => {
-      expect(rules.settlement.normalDishRate).toBe(0.04);
-      expect(rules.settlement.normalCoinCap).toBe(64);
-      const r = settle({ cookbooks: all }, {}, seq(0));
-      const want = Math.max(10, Math.min(price(newbie[0]!) * 0.04 * 1.2, 64));
+    it('厨艺值按全部学会的菜算，不分街：只学外街菜也有厨艺钱', () => {
+      expect(rules.settlement.fame.normalShare).toBe(0.3);
+      const cookbooks = { [street1]: 3, [cid('桑椹葡萄粥')]: 1 };
+      const r = settle({ cookbooks }, {}, seq);
+      const want = 10 + fameOf(cookbooks, 0) * 0.3;
       expect(r.tables[0]!.last).toMatchObject({ type: 1, coin: Math.round(want * 100) / 100 });
+      expect(r.rates!.fame!.f).toBeCloseTo(fameOf(cookbooks, 0), 2);
     });
 
-    it('点到没学会的本街菜付基础价 10 + 星级', () => {
-      const one = { [newbie[68]!]: 1 };
-      const r = settle({ rest: { star: 2 }, cookbooks: one }, {}, [0.5, 0.65, 0.9, 0.9, 0, 0.9, 0.9, 0.9]);
-      expect(r.tables.find((x) => x.last?.type === 1)!.last).toMatchObject({ coin: 12 });
-    });
-
-    it('外街的菜不算：只学外街菜时付基础价', () => {
-      const r = settle({ cookbooks: { [street1]: 5 } }, {}, seq(0));
+    it('一道都没学时付基础价 10 + 星级，厨艺值 0', () => {
+      const r = settle({}, {}, seq);
       expect(r.tables[0]!.last).toMatchObject({ type: 1, coin: 10 });
+      expect(r.rates!.fame).toEqual({ k: 0, f: 0 });
+    });
+
+    it('普通顾客不点菜、不取随机数', () => {
+      let used = 0;
+      const base = sequenceRng(seq);
+      const rng = { ...base, int: (n: number) => (used++, base.int(n)) };
+      settleRestaurant(
+        buildInput(config, { cookbooks: { [street1]: 3 } }),
+        buildGlobals(config, rules, {}),
+        rng,
+      );
+      expect(used).toBe(0);
     });
   });
 
@@ -118,11 +134,11 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     expect(r.coin).toBe(13);
   });
 
-  it('挑剔满足：耗油加倍再加品级，经验加品级，银币加售价 ×(1+品级加成)', () => {
+  it('挑剔满足：耗油加倍再加品级，经验加品级，银币加厨艺钱（收益模型改版 2026-11-19）', () => {
     const r = settle(
       { cookbooks: { [cid('桑椹葡萄粥')]: 1 } },
       {},
-      [0.5, 0.65, 0.9, 0.05, 0.3, 0, 0.9, 0.9, 0.9],
+      [0.5, 0.65, 0.9, 0.05, 0, 0, 0.9, 0.9, 0.9],
     );
     expect(r.tables[0]!.last).toMatchObject({
       type: 2,
@@ -133,72 +149,55 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
       exp: 3,
       oil: 5,
     });
-    expect(r.coin).toBe(Math.floor(10 + price(cid('桑椹葡萄粥')) * 1.2));
+    expect(r.coin).toBe(Math.floor(10 + fameOf({ [cid('桑椹葡萄粥')]: 1 }, 0)));
     expect(r.exp).toBe(4);
     expect(r.oil).toBe(5);
   });
 
-  it('菜价倍率（240-1）：挑剔、蟹老板按菜价付的银币乘倍率并向下取整；普通顾客不变', () => {
+  it('菜价倍率（240-1）不再影响店里的顾客（收益模型改版 2026-11-19：只管外卖和食谱页显示的售价）', () => {
     const half = { ...rules, settlement: { ...rules.settlement, dishCoinRate: 0.5 } };
-    const picky = settle(
-      { cookbooks: { [cid('桑椹葡萄粥')]: 1 } },
-      { tuning: half },
-      [0.5, 0.65, 0.9, 0.05, 0.3, 0, 0.9, 0.9, 0.9],
-    );
-    expect(picky.coin).toBe(Math.floor(10 + Math.floor(price(cid('桑椹葡萄粥')) * 0.5) * 1.2));
-    const krab = settle(
-      { rest: { star: 1, streetId: 1 }, cookbooks: { [street1]: 3 } },
-      { krabStreet: 1, tuning: half },
-      [0.5, 0.65, 0.9, 0.1, 0.0001, 0.2, 0, 0.9, 0.9, 0.9],
-    );
-    expect(krab.coin).toBe(Math.floor(10 + Math.floor(price(street1) * 0.5) * 1.6 * 5));
-    const plain = settle({}, { tuning: half }, [0.5, 0.65, 0.9, 0.9, 0.9, 0.9, 0.9]);
-    expect(plain.coin).toBe(10);
+    const rng = [0.5, 0.65, 0.9, 0.05, 0, 0, 0.9, 0.9, 0.9];
+    const patch = { cookbooks: { [cid('桑椹葡萄粥')]: 1 } };
+    expect(settle(patch, { tuning: half }, rng).coin).toBe(settle(patch, {}, rng).coin);
   });
 
-  it('挑剔点到本街没学会的菜：走人，这桌银币、经验、油都是 0，桌子记 -2 和点的菜（挑剔顾客调整 2026-10-12）', () => {
-    const newbie = config.cookbookIndex.idsByStreet.get(0)!;
-    // 本街一道没学：命中率 0，挑没学会的第 int(0.5 × 69) 道
-    const r = settle({}, {}, [0.5, 0.65, 0.9, 0.05, 0.3, 0.9, 0.5, 0.9, 0.9, 0.9, 0.9, 0.9]);
-    expect(r.tables[0]).toMatchObject({
-      customer: -2,
-      last: { type: -2, req: 1, cookbookId: newbie[34], coin: 0, exp: 0, oil: 0 },
-    });
-    expect(r.tables[0]!.last!.satisfied).toBeUndefined();
-    expect(r.customers['-2']).toBe(1);
-    expect(r.coin).toBe(0);
-    expect(r.oil).toBe(0);
+  it('不再走人：只学了外街菜的挑剔顾客照样点菜，不产生 -2（收益模型改版 2026-11-19）', () => {
+    const r = settle({ cookbooks: { [street1]: 1 } }, {}, [0.5, 0.65, 0.9, 0.05, 0, 0, 0.9, 0.9, 0.9]);
+    expect(r.tables[0]!.last).toMatchObject({ type: 2, req: 1, cookbookId: street1, satisfied: true });
+    expect(r.customers['-2']).toBeUndefined();
   });
 
-  it('本街学会不到 30 道：按 学会数 ÷ 30 的机会点到会做的', () => {
-    const cookbooks = Object.fromEntries(
-      config.cookbookIndex.idsByStreet
-        .get(0)!
-        .slice(0, 15)
-        .map((id) => [id, 1]),
-    );
-    // 学会 15 道：0.49 < 0.5 点到会做的，0.51 走人
-    const hit = settle({ cookbooks }, {}, [0.5, 0.65, 0.9, 0.05, 0.3, 0.49, 0, 0.9, 0.9, 0.9]);
+  it('满意的机会 = 品级够的菜数 ÷ 30（不分街）；不满意付 基础 + 厨艺钱 × 0.5', () => {
+    expect(rules.settlement.fame.satisfyCount).toBe(30);
+    expect(rules.settlement.fame.shortPayRate).toBe(0.5);
+    const ids = [
+      ...config.cookbookIndex.idsByStreet.get(0)!.slice(0, 8),
+      ...config.cookbookIndex.idsByStreet.get(1)!.slice(0, 7),
+    ];
+    const cookbooks = Object.fromEntries(ids.map((id) => [id, 1]));
+    // 学会 15 道：0.49 < 0.5 满意，0.51 不满意
+    const hit = settle({ cookbooks }, {}, [0.5, 0.65, 0.9, 0.05, 0.49, 0, 0.9, 0.9, 0.9]);
     expect(hit.tables[0]!.last).toMatchObject({ type: 2, satisfied: true });
-    const miss = settle({ cookbooks }, {}, [0.5, 0.65, 0.9, 0.05, 0.3, 0.51, 0, 0.9, 0.9, 0.9]);
-    expect(miss.tables[0]!.last!.type).toBe(-2);
-    expect(cookbooks[miss.tables[0]!.last!.cookbookId!]).toBeUndefined();
+    const miss = settle({ cookbooks }, {}, [0.5, 0.65, 0.9, 0.05, 0.51, 0, 0.9, 0.9, 0.9]);
+    expect(miss.tables[0]!.last).toMatchObject({ type: 2, satisfied: false });
+    expect(cookbooks[miss.tables[0]!.last!.cookbookId!]).toBe(1);
+    expect(miss.tables[0]!.last!.coin).toBeCloseTo(10 + fameOf(cookbooks, 0) * 0.5, 1);
   });
 
-  it('挑剔品级不够：按自己的品级算的挑剔价付一半，不再整桌减半', () => {
+  it('挑剔品级不够：店里没有够品级的菜，一定不满意，点一道品级不够的菜，付 基础 + 厨艺钱 × 0.5', () => {
     const cb = cid('桑椹葡萄粥');
     // 2 星新手街：要求 int(0.9 × 2) + 1 = 2 品，学会的是 1 品
     const r = settle(
       { rest: { star: 2 }, cookbooks: { [cb]: 1 } },
       {},
-      [0.5, 0.65, 0.9, 0.05, 0.9, 0.3, 0, 0, 0.9, 0.9, 0.9],
+      [0.5, 0.65, 0.9, 0.05, 0.9, 0.3, 0, 0.9, 0.9, 0.9, 0.9],
     );
     expect(r.tables[0]!.last).toMatchObject({ type: 2, req: 2, grade: 1, satisfied: false, exp: 4, oil: 5 });
-    expect(r.tables[0]!.last!.coin).toBeCloseTo(9 + price(cb) * 1.2 * 0.5, 1);
+    expect(r.tables[0]!.last!.coin).toBeCloseTo(9 + fameOf({ [cb]: 1 }, 2) * 0.5, 1);
   });
 
-  it('外街一道都没学会：银币、经验减半（不变）', () => {
-    // 1 星湖南街：0.95 ≥ 0.9 点外街，外街没有学会的菜
+  it('一道菜都没学：银币、经验减半（不变）', () => {
+    // 1 星湖南街，一道没学：不点菜、不取随机数
     const r = settle(
       { rest: { star: 1, streetId: 1 } },
       {},
@@ -249,14 +248,14 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     expect(r.tables[1]!.roach).toBeUndefined();
   });
 
-  it('蟹老板满足：得到回味无穷(133)，银币 = 售价 ×(1+品级加成)×5', () => {
+  it('蟹老板满足：得到回味无穷(133)，银币 = 基础 + 厨艺钱 × 5（收益模型改版 2026-11-19）', () => {
     const r = settle(
       { rest: { star: 1, streetId: 1 }, cookbooks: { [street1]: 3 } },
       { krabStreet: 1 },
       [0.5, 0.65, 0.9, 0.1, 0.0001, 0.2, 0, 0.9, 0.9, 0.9],
     );
     expect(r.tables[0]!.last).toMatchObject({ type: 8, req: 2, grade: 3, satisfied: true, oil: 7, exp: 17 });
-    expect(r.coin).toBe(Math.floor(10 + price(street1) * 1.6 * 5));
+    expect(r.coin).toBe(Math.floor(10 + fameOf({ [street1]: 3 }, 1) * 5));
     expect(r.exp).toBe(24);
     expect(r.drops).toEqual([{ goodsId: GOODS.krabHappy, num: 1 }]);
     expect(r.logs.map((l) => l.type)).toContain('krab.happy');
@@ -339,7 +338,7 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
   });
 
   it('挑剔满足时多吃 2 份特色菜，按原价 × 卖出倍率、不打折（backlog 411~413）', () => {
-    const rng = [0.5, 0.65, 0.9, 0.05, 0.3, 0, 0.9, 0.9, 0.9];
+    const rng = [0.5, 0.65, 0.9, 0.05, 0, 0, 0.9, 0.9, 0.9];
     const patch = { cookbooks: { [cid('桑椹葡萄粥')]: 1 } };
     const base = settle(patch, {}, rng);
     const r = settle({ ...patch, special: { price: 100, level: 3, leftNum: 5 } }, {}, rng);
@@ -351,7 +350,7 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
   });
 
   it('满足的挑剔顾客银币加成（街道勋章）只乘菜钱，不乘特色菜（用户 2026-10-24）', () => {
-    const rng = [0.5, 0.65, 0.9, 0.05, 0.3, 0, 0.9, 0.9, 0.9];
+    const rng = [0.5, 0.65, 0.9, 0.05, 0, 0, 0.9, 0.9, 0.9];
     const patch = { cookbooks: { [cid('桑椹葡萄粥')]: 1 } };
     const plain = settle(patch, {}, rng);
     const bonus = settle({ ...patch, agg: { spCoinRate: 0.3 } }, {}, rng);
@@ -389,7 +388,7 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     );
     expect(normal.tables[0]!.last).toMatchObject({ type: 1, mcId: 42, mcNum: 1 });
     expect(normal.tables[1]!.last).not.toHaveProperty('mcNum');
-    const rng = [0.5, 0.65, 0.9, 0.05, 0.3, 0, 0.9, 0.9, 0.9];
+    const rng = [0.5, 0.65, 0.9, 0.05, 0, 0, 0.9, 0.9, 0.9];
     const picky = settle(
       { cookbooks: { [cid('桑椹葡萄粥')]: 1 }, special: { price: 100, level: 3, leftNum: 5, mcId: 42 } },
       {},
@@ -478,7 +477,7 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     });
 
     it('一批剩得不够时先卖给满足的挑剔顾客：第 1 桌挑剔吃 2 份，后面的普通顾客没得吃', () => {
-      const rng = [0.5, 0.65, 0.9, 0.05, 0.3, 0, 0.9, 0.9, 0.9];
+      const rng = [0.5, 0.65, 0.9, 0.05, 0, 0, 0.9, 0.9, 0.9];
       const r = settle(
         { ...full, cookbooks: { [cid('桑椹葡萄粥')]: 1 }, special: { price: 100, level: 3, leftNum: 2 } },
         { tuning: everyNormal },
@@ -508,7 +507,7 @@ describe('挑剔消耗食材（规格书 01 §1.8）', () => {
   const cb = street1;
   const need = config.requireCookbook(cb).needFoods[4]!;
   const cupboard = (n: number) => new Map(need.map((f) => [f.foodsId, n]));
-  const seq = [0.5, 0.65, 0.9, 0.9, 0.1, 0.9, 0.7, 0.1, 0, 0.9, 0.9, 0.9, 0.9, 0.9, ...Array(40).fill(0.99)];
+  const seq = [0.5, 0.65, 0.9, 0.9, 0.1, 0.9, 0.7, 0, 0, 0.9, 0.9, 0.9, 0.9, 0.9, ...Array(40).fill(0.99)];
   const patch = (n: number): InputPatch => ({
     rest: { star: 6, streetId: 1, cookfoodsFlag: 1 },
     cookbooks: { [cb]: 5 },

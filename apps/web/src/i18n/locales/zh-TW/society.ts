@@ -56,6 +56,11 @@ export default {
     costLabel: '花費',
     costValue: (cost: string) => `約 ${cost} 銀幣, 幸運時半價`,
     permit: '持有搬家公司排程工作證時不要搬家卡。',
+    /** 搬過去以後銀幣率裡的“本街學菜”（收益模型改版 2026-11-19）：現在的 → 搬過去的 */
+    learnLabel: '本街學菜 (銀幣率)',
+    learnValue: (now: string, after: string) => `現在 ${now} → 搬過去 ${after}`,
+    learnNote:
+      '本街學菜按所在街學會了這條街幾成的菜算, 搬家只丟這一項；廚藝值不分街, 搬家不丟, 在新街學菜再拿回來。',
     btn: '搬家',
     done: (street: string) => `已經搬到 ${street}`,
     failed: '搬家失敗',

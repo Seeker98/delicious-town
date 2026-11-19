@@ -41,6 +41,23 @@ export function isSecret(line: Line, got: ReadonlySet<string>): boolean {
   return line.hidden === true && !line.tiers.some((t) => got.has(t.id));
 }
 
+/**
+ * 这家店能看到的成就线：停用的线（再也拿不到）没拿到就不显示，拿到了的只留拿到的档（照常显示、计点）。
+ * 列表、分类的“几个 / 共几个”、总点数、奖杯格子都按这个算
+ */
+export function visibleLines(lines: readonly Line[], got: ReadonlySet<string>): Line[] {
+  const out: Line[] = [];
+  for (const line of lines) {
+    if (line.retired !== true) {
+      out.push(line);
+      continue;
+    }
+    const tiers = line.tiers.filter((t) => got.has(t.id));
+    if (tiers.length > 0) out.push(tiers.length === line.tiers.length ? line : { ...line, tiers });
+  }
+  return out;
+}
+
 /** 线的名字：菜系线用街道的菜系名 */
 export function lineName(line: Line, c: AchCatalog): string {
   if (line.streetId === null) return line.name;
@@ -111,9 +128,11 @@ export function lineState(
   };
 }
 
-/** 一个分类：达成几个、共几个、拿到几点 */
+/** 一个分类：达成几个、共几个、拿到几点（停用的线没拿到的不算） */
 export function catStats(cat: string, c: AchCatalog, got: ReadonlySet<string>) {
-  const tiers = c.achLines.filter((l) => l.cat === cat).flatMap((l) => l.tiers);
+  const tiers = visibleLines(c.achLines, got)
+    .filter((l) => l.cat === cat)
+    .flatMap((l) => l.tiers);
   const mine = tiers.filter((t) => got.has(t.id));
   return { got: mine.length, total: tiers.length, pts: mine.reduce((a, t) => a + t.pts, 0) };
 }

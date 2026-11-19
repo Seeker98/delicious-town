@@ -1,4 +1,5 @@
 import { luckRate, type Rng } from '@dt/shared';
+import { streetLearnRate } from './fame';
 import type { Flags, RatePart, Rates, SettleGlobals, SettleInput } from './types';
 
 const v = (o: Record<string, number>, k: string): number => o[k] ?? 0;
@@ -27,15 +28,11 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
   const st = g.tuning.settlement;
   const w = s === 0 ? {} : g.weather;
 
-  let cookbook = 0;
-  for (let L = 1; L < input.counts.grade.length; L++) {
-    const n = input.counts.grade[L] ?? 0;
-    if (n > 0) cookbook += n * g.grade(L).atRatePerCookbook * L * st.cookbookAtRate;
-  }
+  // 收益模型改版 2026-11-19：上座率、挑剔率是“经营状态”，各星级一个固定底数；原来的食谱加成上座率、本街学菜加挑剔率取消，
+  // 学菜的成长改由厨艺钱（tables.ts）和银币率里的“本街学菜”承担
   const atFloat = (st.atFloatBase + st.atFloatPerStar * s) * (rng.next() - 0.5);
   const at = part({
     base: rt.atRateBase + rt.atRatePerStar * s,
-    cookbook,
     effects: v(a, 'atRate'),
     renown: rest.renown < 0 ? st.negativeRenownAtRate : 0,
     float: atFloat,
@@ -49,18 +46,18 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
   const atCapped = afterCap(atSoftCap(at, atCapAt, st.atSoftCapRate), v(w, 'atRate'));
   const atRate = Math.min(Math.max(atCapped.total, 0), 1);
 
-  const spFloat = st.spFloatPerStar * s * (rng.next() - st.spFloatCenter);
-  // 学菜（收益模型改版 2026-10-15）：本街学会的道数 ÷ 本街菜数 × spLearnRate，只看道数不看品级，照样走软上限
-  const streetTotal = g.cookbooks.idsByStreet.get(rest.streetId)?.length ?? 0;
-  const localLearned = input.counts.street[String(rest.streetId)] ?? 0;
+  const spFloat = (st.spFloatBase + st.spFloatPerStar * s) * (rng.next() - st.spFloatCenter);
   const sp = part({
     base: rt.spRateBase + rt.spRatePerStar * s,
-    learn: streetTotal > 0 ? st.spLearnRate * Math.min(1, localLearned / streetTotal) : 0,
     effects: v(a, 'spRate'),
     float: spFloat,
   });
 
+  // 本街学菜（收益模型改版 2026-11-19）：本街学会的道数 ÷ 本街菜数 × streetLearnCoinRate，只看道数不看品级；搬家时只丢这一项
+  const streetTotal = g.cookbooks.idsByStreet.get(rest.streetId)?.length ?? 0;
+  const localLearned = input.counts.street[String(rest.streetId)] ?? 0;
   const coinParts: Record<string, number> = {
+    learn: streetLearnRate(localLearned, streetTotal, st.streetLearnCoinRate),
     effects: v(a, 'coinRate'),
     plaque: v(a, 'plaqueSum'),
     honor: v(a, 'honorAddCoin'),

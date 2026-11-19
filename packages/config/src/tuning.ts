@@ -62,8 +62,6 @@ export const tuningSchema = z.object({
     atRatePerStar: num,
     spRateBase: num,
     spRatePerStar: num,
-    localRateBase: num,
-    localRatePerStar: num,
     oilBase: num,
     coinBase: num,
     /** 普通顾客基础价每星加多少（收益模型改版 2026-10-15）：没学会点的菜时付 coinBase + 它 × 星级 */
@@ -80,6 +78,8 @@ export const tuningSchema = z.object({
   settlement: z.object({
     atFloatBase: num,
     atFloatPerStar: num,
+    /** 挑剔率浮动的固定幅度（收益模型改版 2026-11-19）：每轮浮动 (它 + spFloatPerStar × 星级) × (随机数 − spFloatCenter) */
+    spFloatBase: num.min(0),
     spFloatPerStar: num,
     spFloatCenter: num,
     atOverflowThreshold: num,
@@ -90,8 +90,6 @@ export const tuningSchema = z.object({
     /** 上座率软上限（街道再平衡第二版 2026-10-14）：超过 atSoftCapAt 的部分乘 atSoftCapRate，再截到 0~1；溢出经验仍按折算前算 */
     atSoftCapAt: z.number().min(0),
     atSoftCapRate: z.number().min(0).max(1),
-    /** 菜谱带来的上座率乘这个倍数（同上，默认 0.5） */
-    cookbookAtRate: z.number().min(0),
     negativeRenownAtRate: num,
     starPotential: z.array(num),
     // 低等级经验加成（问题记录 378）：1 级 +rate，线性减到 maxLevel 为 0
@@ -105,14 +103,26 @@ export const tuningSchema = z.object({
     expMultiplier: z.number().positive(),
     /** 全服银币倍率：每桌付费顾客的银币乘它（148-4 全服加成用，默认 1） */
     coinMultiplier: z.number().positive(),
-    /** 菜价倍率（问题记录 240-1）：挑剔顾客、蟹老板按菜价付钱和外卖单价都乘它 */
+    /** 菜价倍率（问题记录 240-1）：外卖单价、食谱页显示的售价乘它（收益模型改版 2026-11-19 起店里的顾客不再用它） */
     dishCoinRate: z.number().positive(),
-    /** 普通顾客按菜价付的比例（收益模型改版 2026-10-15）：点到本街学会的菜付 菜价 × 它 × (1 + 普通品级加成) */
-    normalDishRate: z.number().min(0),
-    /** 普通顾客按菜价付的上限（不含加成）；不超过最便宜的菜满意挑剔顾客付的钱 */
-    normalCoinCap: z.number().min(0),
-    /** 学菜加挑剔率（收益模型改版 2026-10-15）：本街学满时加多少，按本街学会的道数比例 */
-    spLearnRate: z.number().min(0),
+    /**
+     * 厨艺钱（收益模型改版 2026-11-19）：厨艺值 K = 全部学会的菜 Σ 菜价 × (1 + 品级加成)；
+     * 厨艺钱 F = a × K^beta × (starBase + starPerStar × 星级) ÷ starDivisor。
+     * 普通顾客付 基础 + F × normalShare；满意的挑剔顾客付 基础 + F，不满意付 基础 + F × shortPayRate；
+     * 品级 ≥ 要求的菜有 m 道时，有 min(1, m ÷ satisfyCount) 的机会满意
+     */
+    fame: z.object({
+      a: num.min(0),
+      beta: num.min(0),
+      starBase: num,
+      starPerStar: num,
+      starDivisor: z.number().positive(),
+      normalShare: num.min(0),
+      shortPayRate: z.number().min(0).max(1),
+      satisfyCount: int.min(1),
+    }),
+    /** 本街学菜加银币率（同上）：本街学会道数 ÷ 本街菜数 × 它 */
+    streetLearnCoinRate: num,
     roachRateBase: num,
     roachRatePerStar: num,
     /** 一家店同时最多多少比例的桌子是蟑螂桌（向上取整，至少 1 张）；自然长的和好友放的合计（问题记录 228） */
@@ -130,10 +140,6 @@ export const tuningSchema = z.object({
     krabExpPerGrade: num,
     krabCoinMultiplier: num,
     pickyMaxGrade: int,
-    /** 本街学会几道菜时挑剔顾客一定点到会做的；不到时按 学会数 ÷ 它 的机会点到，否则点到没学会的走人 */
-    pickyHitCount: int.min(1),
-    /** 品级不够时付这道菜挑剔价的几成 */
-    pickyShortPayRate: z.number().min(0).max(1),
     /** 普通顾客里吃特色菜的桌数比例：每轮从普通顾客桌里随机挑 ⌊桌数 × 它⌋ 桌各吃 1 份（特色菜卖法 2026-10-13；1 = 每桌都吃） */
     normalSpecialShare: z.number().min(0).max(1),
     /** 普通顾客每份特色菜付每份价值的几成（原来固定半价） */

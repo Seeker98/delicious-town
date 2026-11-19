@@ -3,6 +3,7 @@ import {
   applyDowngrade,
   applyForget,
   applyLearn,
+  fameAddOf,
   foodsNeedFor,
   gradeOf,
   padLevels,
@@ -131,5 +132,18 @@ describe('按存储位读写学会记录（重新编号 PR 3）', () => {
     setGrade(levels, slotOf, 10, 3);
     expect([...levels]).toEqual([0, 0, 3]);
     expect(() => setGrade(levels, slotOf, 5, 1)).toThrow('unknown cookbook 5');
+  });
+});
+
+describe('fameAddOf：学会或升一品加多少厨艺值（收益模型改版 2026-11-19）', () => {
+  const add = (g: number) => [0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.3][g] ?? 0;
+  it('没学：菜价 × (1 + 1 品加成)；L 品：菜价 × (L+1 品加成 − L 品加成)；两位小数', () => {
+    expect(fameAddOf(100, 0, 7, add)).toBe(120);
+    expect(fameAddOf(100, 1, 7, add)).toBe(20);
+    expect(fameAddOf(33, 6, 7, add)).toBe(3.3);
+  });
+  it('已到开放的最高品级：没有', () => {
+    expect(fameAddOf(100, 7, 7, add)).toBeUndefined();
+    expect(fameAddOf(100, 5, 5, add)).toBeUndefined();
   });
 });

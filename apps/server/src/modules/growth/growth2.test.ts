@@ -252,9 +252,36 @@ describe('搬家（规格书 02 §2.8）', () => {
       goods: { [GOODS.moveCard]: 1 },
     });
     // 4 桌 × 2500 × (1 + 2 × 0.5) = 20000
-    expect(await g().moveCost(ctx)).toEqual({ cost: 20000 });
+    expect((await g().moveCost(ctx)).cost).toBe(20000);
     await g().move(ctx, 11);
     expect((await restRow(t, ctx.restaurantId)).coin).toBe(80000);
+  });
+  it('搬家页带每条街的“本街学菜”加成：这条街学会的道数 ÷ 菜数 × streetLearnCoinRate（收益模型改版 2026-11-19）', async () => {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({
+        shard_id: shardId,
+        override: JSON.stringify({ tuning: { settlement: { streetLearnCoinRate: 0.2 } } }),
+      })
+      .execute();
+    const idx = t.deps.config.cookbookIndex;
+    const newbie = idx.idsByStreet.get(0)!;
+    const hunan = [...idx.idsByStreet].find(([s, ids]) => s !== 0 && ids.length > 3)!;
+    // 新手街全学会，另一条街学 3 道（品级不算）
+    const cookbooks: Record<number, number> = {};
+    for (const id of newbie) cookbooks[id] = 1;
+    for (const id of hunan[1].slice(0, 3)) cookbooks[id] = 5;
+    const ctx = await newRestaurant(t, { shardId, patch: { street_id: 0 }, cookbooks });
+    const r = await g().moveCost(ctx);
+    expect(r.learnRates!['0']).toBeCloseTo(0.2);
+    expect(r.learnRates![String(hunan[0])]).toBeCloseTo((0.2 * 3) / hunan[1].length);
+    const third = [...idx.idsByStreet.keys()].find((s) => s !== 0 && s !== hunan[0])!;
+    expect(r.learnRates![String(third)]).toBe(0);
+    // 每条有菜的街都在里面
+    expect(Object.keys(r.learnRates!).length).toBe(
+      [...idx.idsByStreet.values()].filter((x) => x.length > 0).length,
+    );
   });
   it('持有搬家处工作证时不消耗搬家卡', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 100000 } });

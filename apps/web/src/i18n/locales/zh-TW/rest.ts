@@ -27,6 +27,12 @@ export default {
     loadFailed: '讀取收益失敗',
     buffs: '加成分項 (最近一輪)',
     seated: (n: number) => `上座桌數 ${n}`,
+    /** 廚藝值 K、廚藝錢 F（收益模型改版 2026-11-19）；改版前的記錄沒有，不顯示 */
+    fame: '廚藝',
+    fameValue: (k: string) => `廚藝值 ${k}`,
+    famePay: (f: string) => `每桌廚藝錢 ${f}`,
+    fameNote:
+      '廚藝值是學會的所有菜 (不分街) 的菜價 × (1 + 品級加成) 之和。廚藝錢隨廚藝值和星級漲: 滿意的挑剔顧客付全額, 不滿意的付一半, 普通顧客付三成。',
     noRound: '還沒有結算過',
     sources: '加成來源',
     records: '收益記錄',
@@ -49,13 +55,13 @@ export default {
     loadFailed: '讀取餐桌失敗',
     tableNo: (n: number) => `第 ${n} 桌`,
     last: (coin: string, exp: string) => `上一輪 ${coin} 銀 / ${exp} 經`,
-    /** 每桌點的菜（問題記錄 559） */
+    /** 每桌點的菜（問題記錄 559）；不滿意只付一半廚藝錢（收益模型改版 2026-11-19） */
     ordered: (dish: string, req: string, grade: string, ok: boolean) =>
-      `點了「${dish}」, 要${req}, 你的是${grade}, ${ok ? '滿意' : '不滿意, 付一半菜錢'}`,
-    orderedNone: (req: string) => `想點${req}的菜, 但你還沒學會能給他做的菜`,
-    /** 挑剔顧客點到本街沒學會的菜，走了（挑剔顧客調整 2026-10-12） */
-    orderedLeft: (dish: string) => `點了「${dish}」, 你還沒學會這道菜, 他走了`,
-    leftNote: '這一輪這桌沒有收入。本街的菜學會得越多, 越少有人走。',
+      `點了「${dish}」, 要${req}, 你的是${grade}, ${ok ? '滿意' : '不滿意, 廚藝錢只付一半'}`,
+    /** 店裡一道菜都沒學會：只付一半基礎價 */
+    orderedNone: (req: string) => `想點${req}的菜, 但你一道菜都還沒學會, 只付了一半基礎價`,
+    /** 不滿意的挑剔顧客、蟹老闆下面一行：夠品級的菜越多越容易滿意 */
+    unsatisfiedHint: (n: number) => `學到他要的品級的菜越多, 他越容易滿意 (${n} 道就一定滿意)`,
     ateSpecial: (name: string, n: number) => `吃了特色菜「${name}」×${n}`,
     /** 點開有蟑螂的桌子（介面改版 P7） */
     roachNote: '有蟑螂的桌子接不了客, 消滅它才能繼續接客。',

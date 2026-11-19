@@ -158,11 +158,11 @@ describe('下锅（时令值改法 2026-10-13）', () => {
 });
 
 describe('挑剔顾客、章鱼哥在当令的那一轮吃掉才攒（时令值改法 2026-10-13）', () => {
-  // 全是挑剔顾客：新手街本街必点、点中机会按 1 道算、不过软上限；学会新手街的桑椹葡萄粥 1 品，1 星都满足、每桌吃 2 份
+  // 全是挑剔顾客：满意按 1 道算、不过软上限；学会新手街的桑椹葡萄粥 1 品，1 星都满足、每桌吃 2 份
   const picky = {
     tuning: {
       rest: { atRateBase: 5, spRateBase: 5 },
-      settlement: { pickyHitCount: 1, spSoftCapAt: 1 },
+      settlement: { fame: { satisfyCount: 1 }, spSoftCapAt: 1 },
     },
   };
   // 全是普通顾客、每桌都吃特色菜

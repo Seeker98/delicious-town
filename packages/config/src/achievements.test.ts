@@ -62,6 +62,42 @@ describe('成就配置（设计稿 2026-10-19）', () => {
     expect(errors.some((e) => e.includes('hidden'))).toBe(true);
   });
 
+  it('停用的线（玩法拿掉了）：众口难调停用；还在 byId 里（拿到过的要显示），不进计数索引、总点数', () => {
+    const picky = b.achievements.find((l) => l.key === 'pickyday')!;
+    expect(picky).toMatchObject({ cat: 'hidden', hidden: true, retired: true, legacy: false });
+    expect(picky.tiers[0]!.pts).toBe(5);
+    expect(b.achievements.filter((l) => l.retired).map((l) => l.key)).toEqual(['pickyday']);
+    const c = createGameConfig(b);
+    expect(c.achievements.byId.get('pickyday.1')!.line.retired).toBe(true);
+    expect(c.achievements.byCounter.has('picky.left.day')).toBe(false);
+    expect(c.achievements.stateTiers.some((x) => x.line.retired)).toBe(false);
+    const all = b.achievements.flatMap((l) => l.tiers).reduce((a, t) => a + t.pts, 0);
+    expect(c.achievements.totalPts).toBe(all - 5);
+  });
+
+  it('停用可以在任何分类，没写就是 false', () => {
+    const errors: string[] = [];
+    const { lines } = buildAchievements(
+      [
+        {
+          key: 'a',
+          cat: 'bar',
+          name: 'a',
+          desc: 'a',
+          metric: 'counter:a',
+          retired: true,
+          tiers: [{ n: 1, pts: 5 }],
+        },
+        { key: 'b', cat: 'bar', name: 'b', desc: 'b', metric: 'counter:b', tiers: [{ n: 1, pts: 5 }] },
+      ],
+      [],
+      { streetIds: [], iconKeys: new Set() },
+      errors,
+    );
+    expect(errors).toEqual([]);
+    expect(lines.map((l) => l.retired)).toEqual([true, false]);
+  });
+
   it('称号都在装扮的称号表里；金融类每档不超过 20 点', () => {
     const icons = new Set(b.looks.icons.map((x) => x.key));
     for (const t of b.achievements.flatMap((l) => l.tiers))

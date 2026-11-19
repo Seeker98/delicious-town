@@ -1409,7 +1409,7 @@
   },
   "60000": {
     "name": "Rue des débutants",
-    "desc": "Fréquentation +35\u202f%, pièces par table +1, chance +36, clients difficiles -35\u202f%"
+    "desc": "Fréquentation +10\u202f%, pièces par table +1, chance +36, clients difficiles -35\u202f%"
   },
   "60001": {
     "name": "Rue du Hunan",

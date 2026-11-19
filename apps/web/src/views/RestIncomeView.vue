@@ -147,6 +147,19 @@ onMounted(async () => {
         <div v-if="buffs.seated !== null" class="dt-effect dt-meta">
           {{ t.rest.income.seated(buffs.seated) }}
         </div>
+        <!-- 厨艺值、每桌厨艺钱（收益模型改版 2026-11-19）；改版前的记录没有，不显示 -->
+        <div v-if="buffs.fame" class="dt-effect" data-testid="income-fame">
+          <div class="dt-effect-head">
+            <span class="dt-effect-name">{{ t.rest.income.fame }}</span>
+          </div>
+          <div class="dt-effect-chips">
+            <span class="dt-chip">{{ t.rest.income.fameValue(formatNum(Math.round(buffs.fame.k))) }}</span>
+            <span class="dt-chip">{{
+              t.rest.income.famePay(formatNum(Math.round(buffs.fame.f * 10) / 10))
+            }}</span>
+          </div>
+          <div class="dt-meta">{{ t.rest.income.fameNote }}</div>
+        </div>
       </template>
       <div v-else class="dt-effect dt-meta">{{ t.rest.income.noRound }}</div>
       <template v-if="(buffs?.sources ?? []).length > 0">

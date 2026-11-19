@@ -84,7 +84,11 @@ export async function awardAchievements(
   t: Tuning['achieve'],
   a: AwardInput,
 ): Promise<string[]> {
-  const tiers = a.ids.map((id) => config.achievements.byId.get(id)).filter((x) => x !== undefined);
+  // 停用的线再也拿不到（计数、状态的索引里已经没有它，这里再挡一道）
+  const tiers = a.ids.flatMap((id) => {
+    const x = config.achievements.byId.get(id);
+    return x && !x.line.retired ? [x] : [];
+  });
   if (tiers.length === 0) return [];
   // 蟹老板的店不拿成就：别人给它点赞也会记“被赞”，原来能拿成就、抢全服首达（代码审查 2026-10-19）
   if (!a.player) {

@@ -29,33 +29,35 @@ describe('汇总率（规格书 01 §1.3）', () => {
     expect(r.seated).toBe(1);
   });
 
-  it('星级底数（街道再平衡第三版 2026-10-17）：上座 0.25 + 0.07s、挑剔 0.12 + 0.03s', () => {
+  it('星级底数（收益模型改版 2026-11-19）：上座 0.60 + 0.01s、挑剔 0.24 + 0.01s', () => {
     const def = { ...tuning, rest: config.tuning.rest };
     const at = (star: number) =>
       computeRates(buildInput(config, { rest: { star } }), buildGlobals(config, def), sequenceRng([0.5, 0.5]))
         .rates;
     expect(config.tuning.rest).toMatchObject({
-      atRateBase: 0.25,
-      atRatePerStar: 0.07,
-      spRateBase: 0.12,
-      spRatePerStar: 0.03,
+      atRateBase: 0.6,
+      atRatePerStar: 0.01,
+      spRateBase: 0.24,
+      spRatePerStar: 0.01,
     });
-    expect(at(0).atRate.parts.base).toBeCloseTo(0.25);
-    expect(at(0).spRate.parts.base).toBeCloseTo(0.12);
-    expect(at(2).atRate.parts.base).toBeCloseTo(0.39);
-    expect(at(2).spRate.parts.base).toBeCloseTo(0.18);
-    expect(at(7).atRate.parts.base).toBeCloseTo(0.74);
-    expect(at(7).spRate.parts.base).toBeCloseTo(0.33);
+    expect(at(0).atRate.parts.base).toBeCloseTo(0.6);
+    expect(at(0).spRate.parts.base).toBeCloseTo(0.24);
+    expect(at(4).atRate.parts.base).toBeCloseTo(0.64);
+    expect(at(4).spRate.parts.base).toBeCloseTo(0.28);
+    // 7 星：上座 0.67 不到拐点，挑剔 0.31 刚过拐点 0.3
+    expect(at(7).atRate.total).toBeCloseTo(0.67);
+    expect(at(7).spRate.parts.base).toBeCloseTo(0.31);
+    expect(at(7).spRate.total).toBeCloseTo(0.3 + 0.01 / 3, 5);
   });
 
-  it('食谱加成：各品级食谱数 × r_L × L × 菜谱上座率倍数（街道再平衡第二版，默认 0.5）', () => {
-    const ids = config.cookbookIndex.allIds;
-    const cookbooks: Record<number, number> = {};
-    for (const id of ids.slice(0, 10)) cookbooks[id] = 1;
-    for (const id of ids.slice(10, 15)) cookbooks[id] = 7;
+  it('学菜不再加上座率、挑剔率（收益模型改版 2026-11-19：食谱加成、本街学菜加挑剔率取消）', () => {
+    const newbie = config.cookbookIndex.idsByStreet.get(0)!;
+    const cookbooks = Object.fromEntries(newbie.map((id) => [id, 7]));
     const { rates: r } = rates({ cookbooks });
-    expect(tuning.settlement.cookbookAtRate).toBe(0.5);
-    expect(r.atRate.parts.cookbook).toBeCloseTo((10 * 0.000098 + 5 * 0.00011 * 7) * 0.5);
+    expect(r.atRate.parts.cookbook).toBeUndefined();
+    expect(r.spRate.parts.learn).toBeUndefined();
+    expect(r.atRate.total).toBeCloseTo(0.3);
+    expect(r.spRate.total).toBeCloseTo(0.1);
   });
 
   it('上座率软上限：超过 0.7 的部分只算三分之一再截到 1，压掉的记成负分项；溢出经验按折算前算（街道再平衡第二版）', () => {
@@ -94,17 +96,33 @@ describe('汇总率（规格书 01 §1.3）', () => {
     expect(c.atRate.parts.softCap).toBeUndefined();
   });
 
-  it('浮动（2026-10-15）：上座 (0.15 + 0.05s) × (随机数 - 0.5)，挑剔 0.05s × (随机数 - 0.5)，上下对称', () => {
+  it('浮动（收益模型改版 2026-11-19）：不随星级变，上座 0.2 × (随机数 - 0.5)、挑剔 0.1 × (随机数 - 0.5)', () => {
+    expect(tuning.settlement).toMatchObject({
+      atFloatBase: 0.2,
+      atFloatPerStar: 0,
+      spFloatBase: 0.1,
+      spFloatPerStar: 0,
+    });
     const { rates: r } = rates({}, {}, [0.9, 0.5]);
-    expect(r.atRate.total).toBeCloseTo(0.36);
-    expect(r.atRate.parts.float).toBeCloseTo(0.06);
-    // 2 星：上座 ±0.125、挑剔 ±0.05
-    const hi = rates({ rest: { star: 2 } }, {}, [1, 1]).rates;
-    const lo = rates({ rest: { star: 2 } }, {}, [0, 0]).rates;
-    expect(hi.atRate.parts.float).toBeCloseTo(0.125);
-    expect(lo.atRate.parts.float).toBeCloseTo(-0.125);
-    expect(hi.spRate.parts.float).toBeCloseTo(0.05);
-    expect(lo.spRate.parts.float).toBeCloseTo(-0.05);
+    expect(r.atRate.total).toBeCloseTo(0.38);
+    expect(r.atRate.parts.float).toBeCloseTo(0.08);
+    // 2 星、7 星一样：上座 ±0.1、挑剔 ±0.05
+    for (const star of [2, 7]) {
+      const hi = rates({ rest: { star } }, {}, [1, 1]).rates;
+      const lo = rates({ rest: { star } }, {}, [0, 0]).rates;
+      expect(hi.atRate.parts.float).toBeCloseTo(0.1);
+      expect(lo.atRate.parts.float).toBeCloseTo(-0.1);
+      expect(hi.spRate.parts.float).toBeCloseTo(0.05);
+      expect(lo.spRate.parts.float).toBeCloseTo(-0.05);
+    }
+    // 每星幅度照样能在后台加回来：挑剔 (0.1 + 0.05 × 2) × 0.5
+    const per = { ...tuning, settlement: { ...tuning.settlement, spFloatPerStar: 0.05 } };
+    const x = computeRates(
+      buildInput(config, { rest: { star: 2 } }),
+      buildGlobals(config, per),
+      sequenceRng([1, 1]),
+    );
+    expect(x.rates.spRate.parts.float).toBeCloseTo(0.1);
   });
 
   it('上座率超过 1.2 的部分按 1.5 折算进经验率；有史前怪石(atToExp)时不折算', () => {
@@ -137,24 +155,23 @@ describe('汇总率（规格书 01 §1.3）', () => {
     expect(low.parts.softCap).toBeUndefined();
   });
 
-  it('学菜加挑剔率：本街学会道数 ÷ 本街菜数 × 0.15，不看品级，照样走软上限（收益模型改版 2026-10-15）', () => {
+  it('本街学菜加银币率：本街学会道数 ÷ 本街菜数 × 0.1，不看品级，外街的菜不算（收益模型改版 2026-11-19）', () => {
     const newbie = config.cookbookIndex.idsByStreet.get(0)!;
     const half = Object.fromEntries(newbie.slice(0, 23).map((id) => [id, 1]));
     const halfHigh = Object.fromEntries(newbie.slice(0, 23).map((id) => [id, 5]));
-    expect(tuning.settlement.spLearnRate).toBe(0.15);
-    expect(rates({ cookbooks: half }).rates.spRate.parts.learn).toBeCloseTo((0.15 * 23) / newbie.length, 5);
-    expect(rates({ cookbooks: halfHigh }).rates.spRate.parts.learn).toBeCloseTo(
-      (0.15 * 23) / newbie.length,
+    expect(tuning.settlement.streetLearnCoinRate).toBe(0.1);
+    expect(rates({ cookbooks: half }).rates.coinRate.parts.learn).toBeCloseTo((0.1 * 23) / newbie.length, 5);
+    expect(rates({ cookbooks: halfHigh }).rates.coinRate.parts.learn).toBeCloseTo(
+      (0.1 * 23) / newbie.length,
       5,
     );
-    // 外街的菜不算
     const other = Object.fromEntries(config.cookbookIndex.idsByStreet.get(1)!.map((id) => [id, 1]));
-    expect(rates({ cookbooks: other }).rates.spRate.parts.learn).toBeUndefined();
-    // 学满 + 2 星 0.14 + 加成 0.2 = 0.49 → 0.3 + 0.19 ÷ 3
+    expect(rates({ cookbooks: other }).rates.coinRate.parts.learn).toBeUndefined();
+    // 学满 +10%，和其他银币率相加
     const all = Object.fromEntries(newbie.map((id) => [id, 1]));
-    const r = rates({ rest: { star: 2 }, cookbooks: all, agg: { spRate: 0.2 } }).rates.spRate;
-    expect(r.parts.learn).toBeCloseTo(0.15, 5);
-    expect(r.total).toBeCloseTo(0.3 + 0.19 / 3, 5);
+    const r = rates({ cookbooks: all, agg: { coinRate: 0.2 } }).rates.coinRate;
+    expect(r.parts.learn).toBeCloseTo(0.1, 5);
+    expect(r.total).toBeCloseTo(0.3, 5);
   });
 
   it('阿雕作废：挑剔率超过 1 也不再转成银币率', () => {

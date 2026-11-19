@@ -25,7 +25,14 @@ const cookbook: Messages['cookbook'] = {
   streetPick: 'Elegir calle',
   counts: (streetLearned, streetTotal, learned, total) =>
     `Esta calle: ${streetLearned}/${streetTotal} aprendidas · ${learned} / ${total} ${plEs(total, 'receta', 'recetas')} en total`,
-  info: (street, level, taste, coin) => `${street} · Dificultad ${level} · Sabor ${taste} · Precio ${coin}`,
+  info: (street, level, taste, coin) =>
+    `${street} · Dificultad ${level} · Sabor ${taste} · Precio a domicilio ${coin}`,
+  fame: (k) => `Maestría culinaria ${k}`,
+  fameHint:
+    'Cada plato que aprendes (en cualquier calle) suma maestría culinaria según su precio y su calidad. La prima de maestría que pagan tus clientes crece con la maestría y las estrellas.',
+  fameAdd: (n) => `Maestría +${n}`,
+  fameLearn: (n) => `Al aprender este plato: maestría culinaria +${n}`,
+  fameUpgrade: (n) => `Siguiente calidad: maestría culinaria +${n}`,
   grade: 'Calidad',
   foodsNeeded: 'Ingredientes necesarios',
   missNote: 'En rojo: no alcanza',

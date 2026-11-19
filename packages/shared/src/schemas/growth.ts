@@ -48,6 +48,11 @@ export interface StarNeedDto {
 /** 搬街费（幸运半价之前），240-1：餐桌数 × 餐桌A 半价 ×（1 + 星级 × 系数） */
 export interface MoveCostDto {
   cost: number;
+  /**
+   * 各条街的“本街学菜”银币率加成（收益模型改版 2026-11-19）：这条街学会的道数 ÷ 这条街的菜数 × 区服 streetLearnCoinRate，
+   * 是比例（0.1 = +10%）；街道 id → 加成，店现在所在的街也在里面，没菜的街不列。旧服务端没有
+   */
+  learnRates?: Record<string, number>;
 }
 
 export interface OilNeedDto {

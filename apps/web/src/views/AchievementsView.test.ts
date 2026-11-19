@@ -5,7 +5,7 @@ import { createMemoryHistory, createRouter } from 'vue-router';
 import type { AchievementsDto, CatalogAchLineDto, CatalogTrophyDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
-import { achName, lineState, rarityText, trophyName } from '../utils/achieve';
+import { achName, catStats, lineState, rarityText, trophyName, visibleLines } from '../utils/achieve';
 import AchievementsView from './AchievementsView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -41,6 +41,20 @@ const hunan: CatalogAchLineDto = {
     { id: 'cuisine.1.1', tier: 1, n: 1, pts: 15, metric: 'state:cuisine:1', trophy: null, icon: null },
     { id: 'cuisine.1.2', tier: 2, n: 1, pts: 30, metric: 'state:cuisine:5', trophy: null, icon: null },
     { id: 'cuisine.1.3', tier: 3, n: 1, pts: 60, metric: 'state:cuisine:7', trophy: 'cuisine.1', icon: null },
+  ],
+};
+/** 停用的线（玩法拿掉了，再也拿不到）：隐藏成就“众口难调” */
+const picky: CatalogAchLineDto = {
+  key: 'pickyday',
+  cat: 'hidden',
+  name: '众口难调',
+  desc: '一天里走掉 100 位挑剔顾客',
+  streetId: null,
+  labels: null,
+  hidden: true,
+  retired: true,
+  tiers: [
+    { id: 'pickyday.1', tier: 1, n: 1, pts: 5, metric: 'counter:picky.left.day', trophy: null, icon: null },
   ],
 };
 const trophies: CatalogTrophyDto[] = [
@@ -113,6 +127,23 @@ describe('成就工具函数', () => {
       done: true,
       next: null,
     });
+  });
+
+  it('停用的线：没拿到的不显示、不进总数；拿到的照常显示、计点；多档的只留拿到的档', () => {
+    const c = setupCatalog();
+    c.achLines = [...c.achLines, picky];
+    expect(visibleLines(c.achLines, new Set()).map((l) => l.key)).toEqual(['roach', 'cuisine.1']);
+    expect(catStats('hidden', c, new Set())).toEqual({ got: 0, total: 0, pts: 0 });
+    expect(visibleLines(c.achLines, new Set(['pickyday.1'])).map((l) => l.key)).toContain('pickyday');
+    expect(catStats('hidden', c, new Set(['pickyday.1']))).toEqual({ got: 1, total: 1, pts: 5 });
+    const old = { ...roach, retired: true };
+    const [kept] = visibleLines([old], new Set(['roach.1']));
+    expect(kept!.tiers.map((t) => t.id)).toEqual(['roach.1']);
+    expect(lineState(kept!, new Set(['roach.1']), { 'counter:roach.kill': 700 })).toMatchObject({
+      done: true,
+      next: null,
+    });
+    expect(visibleLines([old], new Set())).toEqual([]);
   });
 
   it('稀有度：不到 1% 写 <1%', () => {
@@ -241,6 +272,43 @@ describe('AchievementsView', () => {
     const cat = o.get('[data-testid="ach-cat-legacy"]').text();
     expect(cat).toContain('1 / 1');
     expect(cat).not.toContain('点');
+  });
+
+  it('停用的线：没拿到的不在列表、总数、总点数里；拿到的照常显示（隐藏的也揭晓名字）、点数照算', async () => {
+    const c = useCatalogStore();
+    c.achLines = [...c.achLines, picky];
+    c.achById.set('pickyday.1', { line: picky, tier: picky.tiers[0]! });
+    // 没拿到：总点数 10+20+40+15+30+60 = 175，共 6 个；隐藏分类 0 / 0，列表里没有
+    vi.mocked(endpoints.achievements).mockResolvedValue(dto());
+    const w = await mountView('/achievements?tab=overview');
+    const hero = w.get('[data-testid="ach-hero"]').text();
+    expect(hero).toContain('/ 175');
+    expect(hero).toContain('已达成 / 6');
+    expect(w.get('[data-testid="ach-cat-hidden"]').text()).toContain('0 / 0');
+    const l = await mountView('/achievements?tab=lines&cat=hidden');
+    expect(l.find('[data-testid="ach-line-pickyday"]').exists()).toBe(false);
+    // 拿到了：照常显示真名、点数，进总数
+    vi.mocked(endpoints.achievements).mockResolvedValue(
+      dto({
+        points: 35,
+        got: [
+          ...dto().got,
+          { id: 'pickyday.1', at: '2026-10-19T00:00:00.000Z', first: false, backfilled: false },
+        ],
+      }),
+    );
+    const g = await mountView('/achievements?tab=overview');
+    const hero2 = g.get('[data-testid="ach-hero"]').text();
+    expect(hero2).toContain('/ 180');
+    expect(hero2).toContain('已达成 / 7');
+    expect(g.get('[data-testid="ach-cat-hidden"]').text()).toContain('1 / 1');
+    const gl = await mountView('/achievements?tab=lines&cat=hidden');
+    const row = gl.get('[data-testid="ach-line-pickyday"]').text();
+    expect(row).toContain('众口难调');
+    expect(row).not.toContain('???');
+    await gl.get('[data-testid="ach-line-pickyday"]').trigger('click');
+    await flushPromises();
+    expect(document.body.querySelector('[data-testid="ach-tiers"]')!.textContent).toContain('5');
   });
 
   it('里程碑（成就 PR③）：头像框一站一个，写下一个是什么、还差多少', async () => {

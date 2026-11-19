@@ -19,8 +19,15 @@ export default {
   streetPick: '换街道',
   counts: (streetLearned: number, streetTotal: number, learned: string, total: string) =>
     `本街已学 ${streetLearned}/${streetTotal} · 共学会 ${learned} / ${total} 道`,
+  /** 菜价 × 区服菜价倍率：外卖按它付；收益模型改版 2026-11-19 以后堂食顾客付厨艺钱，不再按它（原来写“售价”） */
   info: (street: string, level: number, taste: string, coin: string) =>
-    `${street} · 难度 ${level} · 口味 ${taste} · 售价 ${coin}`,
+    `${street} · 难度 ${level} · 口味 ${taste} · 外卖价 ${coin}`,
+  /** 厨艺值（收益模型改版 2026-11-19）：店现在的、学这一道或升一品加多少 */
+  fame: (k: string) => `厨艺值 ${k}`,
+  fameHint: '学会的每道菜 (不分哪条街) 按菜价和品级加厨艺值, 顾客付的厨艺钱随厨艺值和星级涨。',
+  fameAdd: (n: string) => `厨艺值 +${n}`,
+  fameLearn: (n: string) => `学会这道菜, 厨艺值 +${n}`,
+  fameUpgrade: (n: string) => `升一品, 厨艺值 +${n}`,
   grade: '品级',
   foodsNeeded: '所需食材',
   /** 界面改版 P7：食谱详情的说明、“有几个”、几个品级并成一行 */

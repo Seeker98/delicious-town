@@ -1,8 +1,8 @@
-import { dishCoin } from '../../core/prices';
 import { GOODS, type CookbookIndex } from '@dt/config';
 import { gradeOf } from '../cookbook/rules';
 import { PAYING_CUSTOMERS, type Rng } from '@dt/shared';
 import type { TableResult, TableState } from '../../db/schema';
+import { dishFame, fameCoin, satisfyChance } from './fame';
 import type { Drop, Flags, Rates, SettleGlobals, SettleInput, SettleLog } from './types';
 
 /** 一家店同时最多几张蟑螂桌（问题记录 228）：桌数 × 比例向上取整，至少 1 张 */
@@ -14,61 +14,86 @@ export interface Learned {
   all: number[];
   local: number[];
   other: number[];
+  /** 厨艺值 K（收益模型改版 2026-11-19）：全部学会的菜 Σ 菜价 × (1 + 品级加成)；没给 gradeAdd 时为 0 */
+  fame: number;
+  /** 下标 = 品级，值 = 这个品级的食谱 id（挑剔顾客、蟹老板按要求的品级挑菜） */
+  byGrade: number[][];
 }
 
-/** 已学食谱按"本街 / 外街"分组，返回食谱 id（每轮每店扫一遍 levels）；levels 按存储位存（重新编号 PR 3） */
+/**
+ * 已学食谱按"本街 / 外街"分组，返回食谱 id（每轮每店扫一遍 levels）；levels 按存储位存（重新编号 PR 3）。
+ * 同一遍里按品级分组、累加厨艺值（收益模型改版 2026-11-19：不另外查库、不再扫一遍）
+ */
 export function splitLearned(
   levels: Uint8Array,
-  idx: Pick<CookbookIndex, 'idAt' | 'street'>,
+  idx: Pick<CookbookIndex, 'idAt' | 'street'> & Partial<Pick<CookbookIndex, 'coin'>>,
   streetId: number,
+  gradeAdd?: (g: number) => number,
 ): Learned {
   const all: number[] = [];
   const local: number[] = [];
   const other: number[] = [];
+  const byGrade: number[][] = [];
+  let fame = 0;
   const n = Math.min(levels.length, idx.idAt.length);
   for (let s = 0; s < n; s++) {
-    if (levels[s]! === 0) continue;
+    const grade = levels[s]!;
+    if (grade === 0) continue;
     const id = idx.idAt[s]!;
     if (id < 0 || idx.street[id]! < 0) continue;
     all.push(id);
     (idx.street[id] === streetId ? local : other).push(id);
+    (byGrade[grade] ??= []).push(id);
+    if (gradeAdd && idx.coin) fame += dishFame(idx.coin[id]!, grade, gradeAdd);
   }
-  return { all, local, other };
+  return { all, local, other, fame, byGrade };
+}
+
+/** 品级 ≥ req 的菜有几道 */
+export function countAtLeast(byGrade: readonly (readonly number[] | undefined)[], req: number): number {
+  let m = 0;
+  for (let L = Math.max(1, req); L < byGrade.length; L++) m += byGrade[L]?.length ?? 0;
+  return m;
+}
+
+/** 品级 ≥ req 的菜里第 i 道（按品级从低到高、同品级按存储位排） */
+function atLeastAt(byGrade: readonly (readonly number[] | undefined)[], req: number, i: number): number {
+  for (let L = Math.max(1, req); L < byGrade.length; L++) {
+    const list = byGrade[L];
+    if (!list) continue;
+    if (i < list.length) return list[i]!;
+    i -= list.length;
+  }
+  throw new Error('atLeastAt: out of range');
 }
 
 /**
- * 挑剔顾客点本街菜（挑剔顾客调整 2026-10-12）：本街学会 n 道，有 n ÷ min(hitCount, 本街菜数) 的机会点到会做的（返回 null）；
- * 否则从本街没学会的菜里随机点一道，返回它（这桌走人）。判定取一次随机数，走人时再取一次挑菜
+ * 挑剔顾客、蟹老板点菜（收益模型改版 2026-11-19）：店里品级 ≥ req 的菜有 m 道（不分街），有 min(1, m ÷ satisfyCount)
+ * 的机会满意。满意时从够品级的菜里随机点一道；不满意时从品级不够的菜里随机点一道（全都够品级时从全部学会的菜里点）。
+ * 先取一次随机数判满意，再取一次挑菜。一道都没学时返回 null，不取随机数。
+ * 不能写成“随机点一道看品级够不够”：那样多学一道低品级的菜会拉低满意的机会（方案第 3.3 节）
  */
-export function missedDish(
-  localLearned: readonly number[],
-  streetIds: readonly number[],
-  hitCount: number,
+export function orderDish(
+  learned: Pick<Learned, 'all' | 'byGrade'>,
+  req: number,
+  satisfyCount: number,
   rng: Rng,
-): number | null {
-  const need = Math.min(hitCount, streetIds.length);
-  if (rng.chance(need <= 0 ? 1 : localLearned.length / need)) return null;
-  const known = new Set(localLearned);
-  const left = streetIds.filter((id) => !known.has(id));
-  return left.length > 0 ? left[rng.int(left.length)]! : null;
-}
-
-/**
- * 普通顾客付的银币（收益模型改版 2026-10-15）：从本街全部菜里随机点一道（取一次随机数）。
- * 学会了按 菜价 × rate × (1 + 普通品级加成) 付，不超过 cap、不低于基础价；没学会时付基础价。
- * 本街一道都没学会时一定付基础价，不取随机数
- */
-export function normalDishCoin(
-  streetIds: readonly number[],
-  learned: ReadonlySet<number>,
-  price: (id: number) => number,
-  p: { base: number; rate: number; gradeAdd: number; cap: number },
-  rng: Rng,
-): number {
-  if (streetIds.length === 0 || learned.size === 0) return p.base;
-  const id = streetIds[rng.int(streetIds.length)]!;
-  if (!learned.has(id)) return p.base;
-  return Math.max(p.base, Math.min(price(id) * p.rate * (1 + p.gradeAdd), p.cap));
+): { cookbookId: number; satisfied: boolean } | null {
+  if (learned.all.length === 0) return null;
+  const m = countAtLeast(learned.byGrade, req);
+  if (rng.chance(satisfyChance(m, satisfyCount))) {
+    return { cookbookId: atLeastAt(learned.byGrade, req, rng.int(m)), satisfied: true };
+  }
+  const below = learned.all.length - m;
+  if (below <= 0) return { cookbookId: learned.all[rng.int(learned.all.length)]!, satisfied: false };
+  let i = rng.int(below);
+  for (let L = 1; L < Math.min(req, learned.byGrade.length); L++) {
+    const list = learned.byGrade[L];
+    if (!list) continue;
+    if (i < list.length) return { cookbookId: list[i]!, satisfied: false };
+    i -= list.length;
+  }
+  throw new Error('orderDish: out of range');
 }
 
 /** 规格书 01 §1.5E：原值为 0 或加上之后 ≤0 时为 0 */
@@ -95,6 +120,8 @@ export interface TableOutcome {
   drops: Drop[];
   logs: SettleLog[];
   candidates: Candidate[];
+  /** 厨艺值 K 和厨艺钱 F（收益模型改版 2026-11-19；收益明细显示） */
+  fame: { k: number; f: number };
   /** 本轮吃掉的特色菜份数（扣库存） */
   specialUsed: number;
   /** 其中挑剔顾客和章鱼哥吃掉的（时令值改法 2026-10-13：只有这些攒时令值，普通顾客顺便吃的不算） */
@@ -146,15 +173,10 @@ export function allocateTables(
   const coinBase = rt.coinBase - Math.floor(s / 2);
   const expBase = rt.expBase + Math.floor(s / 2);
   const oilBase = rt.oilBase;
-  const learned = splitLearned(input.levels, g.cookbooks, rest.streetId);
-  const streetIds = g.cookbooks.idsByStreet.get(rest.streetId) ?? [];
-  const learnedLocal = new Set(learned.local);
-  const normalPay = {
-    base: rt.coinBase + rt.normalCoinPerStar * s,
-    rate: t.normalDishRate,
-    gradeAdd: g.grade(1).spCoinAddRate,
-    cap: t.normalCoinCap,
-  };
+  const learned = splitLearned(input.levels, g.cookbooks, rest.streetId, (L) => g.grade(L).spCoinAddRate);
+  // 厨艺钱（收益模型改版 2026-11-19）：顾客不再按点的菜的菜价付，而是按全店的厨艺值付
+  const fame = fameCoin(learned.fame, s, t.fame);
+  const normalCoin = rt.coinBase + rt.normalCoinPerStar * s + fame * t.fame.normalShare;
   const sameKrabStreet = g.krabStreet !== null && g.krabStreet === rest.streetId;
   const isHost = g.planktonRestId === rest.id;
   const special = input.special ? { ...input.special } : null;
@@ -168,6 +190,7 @@ export function allocateTables(
     drops: [],
     logs: [],
     candidates: [],
+    fame: { k: r2(learned.fame), f: r2(fame) },
     specialUsed: 0,
     specialPicky: 0,
     planktonAppeared: false,
@@ -325,21 +348,19 @@ export function allocateTables(
           t.krabRate * (sameKrabStreet ? t.krabSameStreetFactor : 1) + flags.luckRate / t.krabLuckDivisor,
         )
       ) {
-        // 神秘顾客（蟹老板）
+        // 神秘顾客（蟹老板）：和挑剔顾客同一套满意判定（要求 1~krabMaxGrade 品），满意时付 基础 + 厨艺钱 × krabCoinMultiplier
         type = 8;
         next.customer = 8;
         const req = rng.intMin1(t.krabMaxGrade);
-        const cb = learned.all.length > 0 ? learned.all[rng.int(learned.all.length)]! : null;
+        const order = orderDish(learned, req, t.fame.satisfyCount, rng);
+        const cb = order?.cookbookId ?? null;
         const grade = cb === null ? 0 : gradeOf(input.levels, g.cookbooks.slotOf, cb);
         Object.assign(extra, { req, grade, ...(cb !== null ? { cookbookId: cb } : {}) });
-        if (cb !== null && grade >= req) {
+        if (cb !== null && order!.satisfied) {
           satisfied = true;
           oil = oil + oil + grade;
           exp += t.krabExpPerGrade * grade;
-          coin +=
-            dishCoin(g.cookbooks.coin[cb]!, t.dishCoinRate) *
-            (1 + g.grade(grade).spCoinAddRate) *
-            t.krabCoinMultiplier;
+          coin += fame * t.krabCoinMultiplier;
           out.drops.push({ goodsId: GOODS.krabHappy, num: 1 });
           out.logs.push({ type: 'krab.happy', params: { cookbookId: cb, grade, req } });
         } else {
@@ -349,32 +370,20 @@ export function allocateTables(
           out.logs.push({ type: 'krab.angry', params: { req } });
         }
       } else {
-        // 普通挑剔顾客（挑剔顾客调整 2026-10-12）
+        // 普通挑剔顾客（收益模型改版 2026-11-19）：不分街点菜、不再走人；满意付 基础 + 厨艺钱，不满意付 基础 + 厨艺钱 × shortPayRate
         type = 2;
         next.customer = 2;
         const req = rng.intMin1(Math.min(s, t.pickyMaxGrade));
-        const localRate = rest.streetId === 0 ? 1 : rt.localRateBase - rt.localRatePerStar * s;
-        const local = rng.chance(localRate);
-        // 本街：按 学会数 ÷ pickyHitCount 的机会点到会做的，否则点到没学会的菜、走人
-        const unlearned = local
-          ? missedDish(learned.local, g.cookbooks.idsByStreet.get(rest.streetId) ?? [], t.pickyHitCount, rng)
-          : null;
-        const pool = local ? learned.local : learned.other;
-        const cb = unlearned !== null || pool.length === 0 ? null : pool[rng.int(pool.length)]!;
-        if (unlearned !== null) {
-          // 走人：这桌这一轮银币、经验、油都是 0（-2 不在付费顾客里）
-          type = -2;
-          next.customer = -2;
-          Object.assign(extra, { req, cookbookId: unlearned });
-        } else if (cb !== null) {
+        const order = orderDish(learned, req, t.fame.satisfyCount, rng);
+        if (order) {
+          const cb = order.cookbookId;
           const grade = gradeOf(input.levels, g.cookbooks.slotOf, cb);
           Object.assign(extra, { req, grade, cookbookId: cb });
           oil = oil + oil + grade;
-          exp += grade * (local ? 1 : 2);
-          const dish = dishCoin(g.cookbooks.coin[cb]!, t.dishCoinRate) * (1 + g.grade(grade).spCoinAddRate);
-          if (grade >= req) {
+          exp += grade;
+          if (order.satisfied) {
             satisfied = true;
-            coin += dish;
+            coin += fame;
             const m = eatSpecial(2, false);
             mcCoin += m.coin;
             mcNum += m.n;
@@ -383,21 +392,20 @@ export function allocateTables(
               out.candidates.push({ cookbookId: cb, req });
             }
           } else {
-            // 品级不够：按自己的品级算的挑剔价付几成
-            coin += dish * t.pickyShortPayRate;
+            coin += fame * t.fame.shortPayRate;
           }
         } else {
-          // 外街一道都没学会：银币、经验减半
+          // 一道菜都没学：银币、经验减半
           Object.assign(extra, { req });
           exp /= 2;
           coin /= 2;
         }
       }
     } else {
-      // 普通顾客：按点的本街菜付钱（收益模型改版 2026-10-15）；特色菜等全部桌子分完再挑（见循环后面）
+      // 普通顾客：付 基础价 + 厨艺钱 × normalShare（收益模型改版 2026-11-19），不点菜、不取随机数；特色菜等全部桌子分完再挑（见循环后面）
       type = 1;
       next.customer = 1;
-      coin = normalDishCoin(streetIds, learnedLocal, (id) => g.cookbooks.coin[id]!, normalPay, rng);
+      coin = normalCoin;
       normals.push({ at: out.tables.length, coin, exp });
     }
 
