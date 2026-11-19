@@ -1,6 +1,6 @@
 import { sql } from 'kysely';
 import { afterAll, describe, expect, it } from 'vitest';
-import { testDb } from '../../test/db';
+import { emptyOldDay, testDb } from '../../test/db';
 import { dropPartitionsBefore, ensureDailyPartitions, partitionName } from './partitions';
 
 const db = testDb();
@@ -18,7 +18,8 @@ describe('daily partitions', () => {
     expect(created).toHaveLength(2);
     await db.insertInto('ledger').values({ rest_id: 1, kind: 'coin', delta: 5, source: 'test' }).execute();
 
-    const old = new Date(now.getTime() - 40 * DAY);
+    // 40 天以前、default 里没有行的一天（别的测试按固定时钟写的流水会落在 default 里）
+    const old = await emptyOldDay(db, 'ledger', now, 40);
     const [oldName] = await ensureDailyPartitions(db, 'ledger', old, 1);
     const dropped = await dropPartitionsBefore(db, 'ledger', new Date(now.getTime() - 30 * DAY));
     expect(dropped).toContain(oldName);
