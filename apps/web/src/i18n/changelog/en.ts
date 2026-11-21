@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  retire1121:
+    'The Mayor’s fragment exchange now only offers Possessed by the Chef God: Master Teacher, China Golden Chef Award, Teacher for the Ages, Schoolteacher, Secret Seasoning and Star God’s Tear are retired, and so are the three statues in the Tower Renown Shop (Chac Mool, Prehistoric Rock, Break). What you paid for the ones you held is refunded: fragments come as a mail attachment, and Renown has already been added to your restaurant. Classes can no longer be ended early; they end when their time is up',
   special1121:
     'Signature dish pacing: each portion still sells for the same price and a whole batch still earns the same in total, but how many portions sell each round now follows your Mastery Pay: pricey signature dishes (mostly levels 4 and 5) sell fewer portions per table and take longer to sell out, so they no longer outweigh what customers pay for your cooking; the more dishes you know and the higher your Recipe Mastery, the faster they sell. Cheap ones such as levels 1 and 2 are mostly unaffected. The signature dish panel shows how many portions each satisfied picky customer table eats right now',
   medal1119:

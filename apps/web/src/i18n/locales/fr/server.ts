@@ -46,6 +46,18 @@ const server: Messages['server'] = {
       body: () =>
         'Les économiseurs d’huile ont été refondus\u202f: celui que vous aviez installé a été remplacé par une Vanne à pièces du marchand d’huile (consommation totale d’huile -90\u202f% pendant 24 heures), et les économiseurs moyens et spéciaux en réserve sont devenus des Économiseurs d’huile intermédiaires. Voici une Vanne à pièces du marchand d’huile de plus pour chaque restaurant.',
     },
+    'retire.refund': {
+      title: () => 'Remboursement d’objets retirés',
+      body: (p) => {
+        const parts = [
+          ...(n(p, 'fragments') > 0
+            ? [`${n(p, 'fragments')} [Niveau 5]•Éclats de fragment (en pièce jointe)`]
+            : []),
+          ...(n(p, 'renown') > 0 ? [`${n(p, 'renown')} de renommée (déjà ajoutée à votre restaurant)`] : []),
+        ];
+        return `Les médailles de l’échange de fragments du maire (sauf Possédé par le Dieu des chefs) et les statues de la boutique de renommée de la tour sont retirées, et ce que vous aviez payé pour celles que vous possédiez vous est rendu\u202f: ${parts.join(' et ')}.`;
+      },
+    },
     'wishtree.win': {
       title: () => 'Arbre à vœux\u202f: votre vœu s’est réalisé',
       body: (p) =>

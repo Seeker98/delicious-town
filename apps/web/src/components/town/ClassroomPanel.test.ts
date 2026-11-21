@@ -14,7 +14,6 @@ vi.mock('../../api/endpoints', () => ({
     mc: vi.fn(),
     lessonOpen: vi.fn(),
     lessonLearn: vi.fn(),
-    lessonClose: vi.fn(),
   },
 }));
 
@@ -39,8 +38,6 @@ const lessons: LessonsDto = {
     { goodsId: 177, num: 1, levels: [1, 2], needStrength: 50, maxNum: 5, lessonHour: 24 },
     { goodsId: 178, num: 1, levels: [3, 4], needStrength: 65, maxNum: 5, lessonHour: 24 },
   ],
-  canForceClose: false,
-  forceCloseCoinPerLevel: 50000,
   forgetPerLevel: 2,
   forgetGrades: 2,
 };

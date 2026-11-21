@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  retire1121:
+    'El intercambio de fragmentos del alcalde solo ofrece ya Poseído por el Dios de los chefs: se retiran Gran maestro, Premio Chef de Oro de China, Maestro para la posteridad, Maestro de escuela, Condimento secreto y Lágrima del Dios de las Estrellas, y también las tres estatuas de la tienda de renombre de la torre (Chac Mool, Roca prehistórica, Ruptura). Se te devuelve lo que pagaste por los que tenías: los fragmentos llegan como adjunto de un correo y el renombre ya está sumado a tu restaurante. Las clases ya no se pueden terminar antes; terminan cuando se acaba su tiempo',
   special1121:
     'Ritmo de los platos estrella: cada ración se sigue vendiendo al mismo precio y una tanda entera sigue dando lo mismo en total, pero cuántas raciones se venden en cada ronda depende ahora de tu prima de maestría: los platos estrella caros (sobre todo de nivel 4 y 5) venden menos raciones por mesa y tardan más en agotarse, así que ya no superan lo que los clientes pagan por tu cocina; cuantos más platos sepas y más alta sea tu maestría culinaria, más rápido se venden. Los baratos, como los de nivel 1 y 2, casi no cambian. El panel de platos estrella muestra cuántas raciones toma ahora cada mesa de clientes exigentes satisfechos',
   medal1119:

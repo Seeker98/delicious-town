@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  retire1121:
+    'L’échange de fragments du maire ne propose plus que Possédé par le Dieu des chefs\u202f: Grand maître, Prix du chef d’or de Chine, Maître pour les siècles, Instituteur, Assaisonnement secret et Larme du Dieu des étoiles sont retirés, tout comme les trois statues de la boutique de renommée de la tour (Chac Mool, Pierre préhistorique, Rupture). Ce que vous aviez payé pour ceux que vous possédiez vous est rendu\u202f: les fragments arrivent en pièce jointe d’un courrier et la renommée est déjà ajoutée à votre restaurant. Les cours ne peuvent plus être arrêtés avant la fin\u202f; ils se terminent à l’heure prévue',
   special1121:
     'Rythme des plats signature\u202f: chaque part se vend toujours au même prix et une fournée entière rapporte toujours autant au total, mais le nombre de parts vendues à chaque tour suit désormais votre prime de maîtrise\u202f: les plats signature chers (surtout de niveau 4 et 5) se vendent moins par table et mettent plus longtemps à s’écouler, ils ne dépassent donc plus ce que les clients paient pour votre cuisine\u202f; plus vous connaissez de plats et plus votre maîtrise culinaire est élevée, plus ils se vendent vite. Les moins chers, comme ceux de niveau 1 et 2, ne changent presque pas. Le panneau des plats signature indique combien de parts chaque table de clients difficiles satisfaits prend en ce moment',
   medal1119:

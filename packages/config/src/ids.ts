@@ -34,7 +34,6 @@ export const GOODS = {
   krabburgerBook: 10814, // 蟹黄堡秘方
   mysteryRecipe: 10811, // 神秘食谱
   fragmentBase: 10800, // 残卷碎片 = 10800 + 特色菜等级（10801~10806）
-  hundredMaster: 61702, // 百世之师（强制结束课程）
   luckyCookie: 10418, // 幸运饼干
   adventureMap: 10704, // 探险图
   krabCoin: SHARED_GOODS.krabCoin, // 蟹币

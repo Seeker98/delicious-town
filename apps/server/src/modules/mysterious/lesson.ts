@@ -11,7 +11,7 @@ import { AppError } from '../../http/errors';
 import { applyDowngrade, gradeOf, padLevels, setGrade } from '../cookbook/rules';
 import { splitLearned } from '../settlement/tables';
 import { normalizeCounts } from '../settlement/globals';
-import { consumeGoods, grantGoodsOp, hasValidHonor } from '../store/goods';
+import { consumeGoods, grantGoodsOp } from '../store/goods';
 import { subRemnant } from './remnant';
 import {
   forgetCount,
@@ -145,7 +145,7 @@ export function createLessonOps(d: GameDeps) {
         .selectFrom('store_item')
         .select(['goods_id', 'num', 'expires_at'])
         .where('rest_id', '=', ctx.restaurantId)
-        .where('goods_id', 'in', [...certIds, GOODS.hundredMaster])
+        .where('goods_id', 'in', certIds)
         .execute();
       const have = (id: number) => {
         const r = held.find((x) => x.goods_id === id);
@@ -158,8 +158,6 @@ export function createLessonOps(d: GameDeps) {
           const c = d.config.teacherCerts.get(goodsId)!;
           return { goodsId, num: have(goodsId), ...c };
         }),
-        canForceClose: have(GOODS.hundredMaster) > 0,
-        forceCloseCoinPerLevel: s.tuning.mysterious.forceCloseCoinPerLevel,
         forgetPerLevel: s.tuning.mysterious.forgetPerLevel,
         forgetGrades: s.tuning.mysterious.forgetGrades,
       };
@@ -312,26 +310,6 @@ export function createLessonOps(d: GameDeps) {
           return { success, forgot };
         },
       );
-    },
-
-    closeLesson(ctx: RestCtx) {
-      return runOp(d, ctx, { feature: 'mysterious', source: 'lesson.close' }, async (o) => {
-        const l = await o.tx
-          .selectFrom('mc_lesson')
-          .selectAll()
-          .where('teacher_rest_id', '=', o.rest.id)
-          .where('closed_at', 'is', null)
-          .where('ends_at', '>', o.now)
-          .forUpdate()
-          .executeTakeFirst();
-        if (!l) throw invalidState('no_lesson');
-        if (!(await hasValidHonor(o, GOODS.hundredMaster)))
-          throw requirement('statue', { goodsId: GOODS.hundredMaster });
-        if (l.learned + l.stolen < l.max_num) throw invalidState('lesson_not_full');
-        spendCoin(o, l.level * o.tuning.mysterious.forceCloseCoinPerLevel);
-        await o.tx.updateTable('mc_lesson').set({ closed_at: o.now }).where('id', '=', l.id).execute();
-        return { id: l.id };
-      });
     },
   };
 }

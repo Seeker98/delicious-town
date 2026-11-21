@@ -46,6 +46,16 @@ const server: Messages['server'] = {
       body: () =>
         'Oil savers have been revamped: any oil saver you had placed has been replaced with an Oil Seller’s Copper-Coin Valve (total oil use -90% for 24 hours), and Medium-acting and Special Oil Savers in storage became Intermediate Oil Savers. Here is one more Oil Seller’s Copper-Coin Valve for every restaurant.',
     },
+    'retire.refund': {
+      title: () => 'Refund for retired items',
+      body: (p) => {
+        const parts = [
+          ...(n(p, 'fragments') > 0 ? [`${n(p, 'fragments')} [Level 5]•Fragment Shards (attached)`] : []),
+          ...(n(p, 'renown') > 0 ? [`${n(p, 'renown')} Renown (already added to your restaurant)`] : []),
+        ];
+        return `The Mayor’s fragment exchange medals (except Possessed by the Chef God) and the statues in the Tower Renown Shop have been retired, and what you paid for the ones you held is refunded: ${parts.join(' and ')}.`;
+      },
+    },
     'wishtree.win': {
       title: () => 'Wishing Tree: your wish came true',
       body: (p) =>

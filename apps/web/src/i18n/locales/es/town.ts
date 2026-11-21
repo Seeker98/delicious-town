@@ -255,13 +255,9 @@ const town: Messages['town'] = {
     learnFailed: 'No se pudo aprender',
     opened: 'Clase abierta',
     openFailed: 'No se pudo abrir la clase',
-    closeConfirm: (coin) => `¿Gastar ${coin} ${plEs(coin, 'moneda', 'monedas')} para terminar ya esta clase?`,
-    closed: 'Clase terminada',
-    closeFailed: 'No se pudo terminar la clase',
     mine: 'Mi clase: ',
     mineLine: (level, n, max, left) =>
       ` Nv. ${level} · ${n}/${max} ${plEs(max, 'alumno', 'alumnos')} · ${left}`,
-    forceClose: 'Terminar ya',
     pickMc: 'Elige un plato estrella que sepas',
     pickCert: 'Elige un certificado de profesor',
     open: 'Abrir clase',
