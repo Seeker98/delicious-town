@@ -122,6 +122,7 @@ export function settleRestaurant(input: SettleInput, g: SettleGlobals, rng: Rng)
     foodsUsed,
     specialUsed: o.specialUsed,
     specialPicky: o.specialPicky,
+    ...(o.specialCarry ? { specialCarry: o.specialCarry } : {}),
     logs: o.logs,
     planktonAppeared: o.planktonAppeared,
   };

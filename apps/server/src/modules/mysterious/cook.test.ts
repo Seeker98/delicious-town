@@ -6,6 +6,7 @@ import type { RestCtx } from '../../core/deps';
 import { grantGoods } from '../store/grant';
 import { GOODS } from '@dt/config';
 import { gid } from '../../../test/items';
+import { dishFame, fameCoin } from '../settlement/fame';
 
 const config = testConfig();
 let t: TestGame;
@@ -24,11 +25,22 @@ const MC = 1; // 秘·仿膳饽饽：4 级，食材 390、412、261
 const foodsOf = (id: number) => config.requireMc(id).foods;
 async function cookReady(
   g: TestGame,
-  opts: { mcId?: number; star?: number; each?: number; goods?: Record<number, number> } = {},
+  opts: {
+    mcId?: number;
+    star?: number;
+    each?: number;
+    goods?: Record<number, number>;
+    cookbooks?: Record<number, number>;
+  } = {},
 ) {
   const mcId = opts.mcId ?? MC;
   const foods = Object.fromEntries(foodsOf(mcId).map((f) => [f, opts.each ?? 10]));
-  const ctx = await newRestaurant(g, { patch: { star_level: opts.star ?? 1 }, foods, goods: opts.goods });
+  const ctx = await newRestaurant(g, {
+    patch: { star_level: opts.star ?? 1 },
+    foods,
+    goods: opts.goods,
+    ...(opts.cookbooks ? { cookbooks: opts.cookbooks } : {}),
+  });
   await g.db.insertInto('rest_mc').values({ rest_id: ctx.restaurantId, mc_id: mcId, way: 1 }).execute();
   return ctx;
 }
@@ -194,5 +206,33 @@ describe('概览里的当前在售', () => {
     expect(o.current).toMatchObject({ mcId: MC });
     // 卖给顾客时的倍率（问题记录 412）：这道是 4 级，×3.2
     expect(o.saleRate).toBe(3.2);
+    // 特色菜限速（2026-11-21）：一道菜都没学，厨艺钱 0，挑剔顾客、普通顾客都吃不到
+    expect(o.speed).toEqual({ picky: 0, normalShare: 0, capped: true });
+  });
+
+  it('现在卖多快按店的厨艺钱算：每桌满意的挑剔顾客吃 min(2, 0.5 × 厨艺钱 ÷ 每份卖价) 份（特色菜限速 2026-11-21）', async () => {
+    const ids = config.cookbookIndex.allIds.slice(0, 400);
+    const ctx: RestCtx = await cookReady(t, {
+      star: 3,
+      cookbooks: Object.fromEntries(ids.map((id) => [id, 4])),
+    });
+    await t.game.mysterious.cook(ctx, { mcId: MC, cookNum: 1, cookie: false });
+    const o = await t.game.mysterious.overview(ctx);
+    const st = config.tuning.settlement;
+    const k = ids.reduce(
+      (a, id) => a + dishFame(config.cookbookIndex.coin[id]!, 4, (g) => config.grade(g).spCoinAddRate),
+      0,
+    );
+    const f = fameCoin(k, 3, st.fame);
+    const unit = o.current!.price * 3.2;
+    expect(o.speed!.picky).toBeCloseTo(Math.min(2, (st.specialFameCap * f) / unit), 9);
+    expect(o.speed!.normalShare).toBeCloseTo(
+      Math.min(
+        st.normalSpecialShare,
+        (st.specialFameCap * f * st.fame.normalShare) / (unit * st.normalSpecialPriceRate),
+      ),
+      9,
+    );
+    expect(o.speed!.picky).toBeGreaterThan(0);
   });
 });

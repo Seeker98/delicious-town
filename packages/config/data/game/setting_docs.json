@@ -144,6 +144,7 @@
     "tuning.settlement.pickyMaxGrade": "挑剔顾客要求的最高品级（级，不超过店的星级）",
     "tuning.settlement.normalSpecialShare": "普通顾客里吃特色菜的桌数比例：每轮从普通顾客桌里随机挑 桌数 × 它（向下取整）桌各吃 1 份；1 是每桌都吃（比例）",
     "tuning.settlement.normalSpecialPriceRate": "普通顾客每份特色菜付每份价值的几成（比例）",
+    "tuning.settlement.specialFameCap": "特色菜限速：每桌特色菜的钱最多是这桌厨艺钱的几倍，超过就少吃几份、零头留到下一轮；≤ 0 不限速（倍）",
     "tuning.settlement.cookfoodsPerFlag": "自动做菜每档需要的每种食材最少库存（个）",
     "tuning.settlement.cookfoodsMaxFlag": "自动做菜最高档位（档）",
     "tuning.settlement.cookfoodsMinGrade": "自动做菜时要求和品级都达到多少才算高品（级）",

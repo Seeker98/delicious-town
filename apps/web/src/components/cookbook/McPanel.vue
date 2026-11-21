@@ -328,7 +328,14 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
           }}{{ o.saleRate !== null && o.saleRate !== 1 ? t.mc.saleRate(formatNum(o.saleRate)) : ''
           }}{{
             o.normalSale
-              ? t.mc.normalSale(formatPct(o.normalSale.share), formatPct(o.normalSale.priceRate))
+              ? t.mc.normalSale(
+                  formatPct(o.speed ? o.speed.normalShare : o.normalSale.share),
+                  formatPct(o.normalSale.priceRate),
+                )
+              : ''
+          }}{{
+            o.speed
+              ? t.mc.pickyPortions(formatNum(Math.round(o.speed.picky * 100) / 100), o.speed.capped)
               : ''
           }}{{ o.current.shilingPts > 0 ? t.mc.season.pts(formatNum(o.current.shilingPts)) : '' }}
         </div>

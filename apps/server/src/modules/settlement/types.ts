@@ -22,6 +22,14 @@ export interface SpecialDish {
   leftNum: number;
   /** 哪道特色菜：每桌记下吃的是哪道（问题记录 559），卖完以后餐桌页也写得出名字；快速模拟不给 */
   mcId?: number;
+  /** 特色菜限速（2026-11-21）：上一轮留下的应卖份数零头，挑剔顾客、普通顾客各一个；不给按 0 */
+  carry?: SpecialCarry;
+}
+
+/** 特色菜每轮应卖份数的零头（mc_cook.picky_carry / normal_carry），0 ≤ 它 < 1 */
+export interface SpecialCarry {
+  picky: number;
+  normal: number;
 }
 
 export interface SettleInput {
@@ -118,6 +126,8 @@ export interface SettleResult {
   specialUsed: number;
   /** 其中挑剔顾客和章鱼哥吃掉的：只有这些攒时令值 */
   specialPicky: number;
+  /** 特色菜限速：这一轮之后的零头，写回这一锅；没有在售的特色菜（或打烊）时没有 */
+  specialCarry?: SpecialCarry;
   logs: SettleLog[];
   planktonAppeared: boolean;
 }

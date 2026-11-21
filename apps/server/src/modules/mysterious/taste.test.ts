@@ -167,7 +167,10 @@ describe('品尝（规格书 13 §13.6）', () => {
       .insertInto('shard_config')
       .values({
         shard_id: host.shardId,
-        override: JSON.stringify({ tuning: { rest: { atRateBase: 5, spRateBase: -5 } } }),
+        // 特色菜限速（2026-11-21）关掉：这家店没学菜、厨艺钱 0，限速时一份都卖不出
+        override: JSON.stringify({
+          tuning: { rest: { atRateBase: 5, spRateBase: -5 }, settlement: { specialFameCap: 0 } },
+        }),
       })
       .execute();
     t.game.shards.invalidate(host.shardId);

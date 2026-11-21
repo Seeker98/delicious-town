@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { Kysely, PostgresDialect } from 'kysely';
 import pg from 'pg';
 import { roundOf } from '@dt/shared';
+import { testConfig } from '../../../test/config';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { runOp } from '../../core/op';
@@ -18,6 +19,8 @@ beforeAll(async () => {
 afterAll(() => t.close());
 
 const round = roundOf(new Date());
+/** 随便学的 30 道菜 */
+const t0Cookbooks = () => testConfig().cookbookIndex.allIds.slice(0, 30);
 const settle = (shardId: number, r = round) =>
   settleShardRound(t.game.deps, t.game.world, shardId, r, new Date());
 const income = (restId: number) =>
@@ -158,19 +161,27 @@ describe('settleShardRound', () => {
 });
 
 describe('特色菜（子项目 4A，规格书 01 §1.7）', () => {
-  /** 桌桌坐满、没有挑剔顾客：每桌普通顾客吃 1 份 */
-  const busy = { tuning: { rest: { atRateBase: 5, spRateBase: -5 } } };
-  async function withDish(left: number) {
+  /**
+   * 桌桌坐满、没有挑剔顾客：每桌普通顾客吃 1 份。特色菜限速（2026-11-21）关掉：这家店没学菜、厨艺钱 0，
+   * 限速时一份都卖不出；限速的零头在后面两条单独测
+   */
+  const busy = { tuning: { rest: { atRateBase: 5, spRateBase: -5 }, settlement: { specialFameCap: 0 } } };
+  const capped = { tuning: { rest: { atRateBase: 5, spRateBase: -5 } } };
+  async function withDish(
+    left: number,
+    o: { override?: object; price?: number; level?: number; cookbooks?: Record<number, number> } = {},
+  ) {
     const shardId = await createShard(t.db);
     await t.db
       .insertInto('shard_config')
-      .values({ shard_id: shardId, override: JSON.stringify(busy) })
+      .values({ shard_id: shardId, override: JSON.stringify(o.override ?? busy) })
       .execute();
     // 12 张桌：章鱼哥、蟹老板、吃白食、蟑螂是随机来的，只有 4 张桌时偶尔剩不到 2 桌普通顾客，
     // 按一半的桌吃特色菜就一份都卖不出去（CI 偶发失败）
     const ctx = await newRestaurant(t, {
       shardId,
       patch: { coin: 1000, oil: 100000, star_level: 1, table_num: 12 },
+      ...(o.cookbooks ? { cookbooks: o.cookbooks } : {}),
     });
     const c = await t.db
       .insertInto('mc_cook')
@@ -178,12 +189,12 @@ describe('特色菜（子项目 4A，规格书 01 §1.7）', () => {
         rest_id: ctx.restaurantId,
         shard_id: shardId,
         mc_id: 1,
-        level: 4,
+        level: o.level ?? 4,
         grade: 3,
         cook_num: 1,
         total_num: left,
         left_num: left,
-        price: 50,
+        price: o.price ?? 50,
       })
       .returning('id')
       .executeTakeFirstOrThrow();
@@ -227,6 +238,44 @@ describe('特色菜（子项目 4A，规格书 01 §1.7）', () => {
     expect(c).toMatchObject({ left_num: 0, end_reason: 'sold' });
     expect(c.ended_at).not.toBeNull();
     expect((await restRow(t, ctx.restaurantId)).mc_cook_id).toBeNull();
+  });
+
+  /** 学 30 道菜（3 品）：厨艺钱不高，贵的特色菜会碰到上限 */
+  const some = Object.fromEntries(t0Cookbooks().map((id) => [id, 3]));
+
+  it('限速：一份没卖的轮也把零头写回这一锅，下一轮接着攒（特色菜限速 2026-11-21）', async () => {
+    // 每份 5000 × 3.2：每桌普通顾客平均远不到 1 份，一轮一份都卖不出
+    const { shardId, cookId } = await withDish(1000, { override: capped, price: 5000, cookbooks: some });
+    const before = await cookOf(cookId);
+    expect(before).toMatchObject({ picky_carry: 0, normal_carry: 0 });
+    await settle(shardId);
+    const c1 = await cookOf(cookId);
+    expect(c1.left_num).toBe(1000);
+    expect(c1.normal_carry).toBeGreaterThan(0);
+    expect(c1.normal_carry).toBeLessThan(1);
+    expect(c1.picky_carry).toBe(0);
+    await settle(shardId, round + 1);
+    const c2 = await cookOf(cookId);
+    expect(c2.left_num).toBe(1000);
+    expect(c2.normal_carry).toBeGreaterThan(c1.normal_carry);
+  });
+
+  it('限速：卖出的那一轮零头和扣份数一起写回（特色菜限速 2026-11-21）', async () => {
+    // 1 级每份 20 × 1.3：碰到上限，每轮卖几份、留下零头
+    const { shardId, cookId } = await withDish(1000, {
+      override: capped,
+      price: 20,
+      level: 1,
+      cookbooks: some,
+    });
+    await settle(shardId);
+    const c = await cookOf(cookId);
+    const sold = 1000 - c.left_num;
+    expect(sold).toBeGreaterThan(0);
+    // 没碰上限时 12 桌普通顾客卖 ⌊12 × 0.5⌋ = 6 份
+    expect(sold).toBeLessThan(6);
+    expect(c.normal_carry).toBeGreaterThanOrEqual(0);
+    expect(c.normal_carry).toBeLessThan(1);
   });
 });
 

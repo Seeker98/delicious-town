@@ -592,6 +592,9 @@ export interface McCookTable {
   shiling_pts: Default<number>;
   /** 下锅时算好的每份时令值（时令值改法 2026-10-13）；迁移 0077 之前下锅的为空，入账时按配置现算 */
   shiling_per: Nullable<number>;
+  /** 特色菜限速（2026-11-21）：挑剔顾客、普通顾客每轮应卖份数留到下一轮的零头，0 ≤ 它 < 1 */
+  picky_carry: Default<number>;
+  normal_carry: Default<number>;
 }
 
 export interface McEatTable {

@@ -66,6 +66,7 @@
     "pickyMaxGrade": 7,
     "normalSpecialShare": 0.5,
     "normalSpecialPriceRate": 0.5,
+    "specialFameCap": 0.5,
     "cookfoodsPerFlag": 50,
     "cookfoodsMaxFlag": 5,
     "cookfoodsMinGrade": 5,

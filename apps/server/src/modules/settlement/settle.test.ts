@@ -24,6 +24,8 @@ const withMultiplier = (m: number) => ({
     newbieExp: { ...config.tuning.settlement.newbieExp, rate: 0 },
     // 本街学菜加银币率（收益模型改版 2026-11-19）在 rates.test 单独测；这里关掉，免得特色菜等整数差被它多乘一点
     streetLearnCoinRate: 0,
+    // 特色菜限速（2026-11-21）关掉：下面的特色菜用例是只学一两道菜的小店，按原来的卖法断言；限速在“特色菜限速”那组单独测
+    specialFameCap: 0,
   },
 });
 const rules = withMultiplier(1);
