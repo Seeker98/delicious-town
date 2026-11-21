@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  special1121:
+    'Ritmo de los platos estrella: cada ración se sigue vendiendo al mismo precio y una tanda entera sigue dando lo mismo en total, pero cuántas raciones se venden en cada ronda depende ahora de tu prima de maestría: los platos estrella caros (sobre todo de nivel 4 y 5) venden menos raciones por mesa y tardan más en agotarse, así que ya no superan lo que los clientes pagan por tu cocina; cuantos más platos sepas y más alta sea tu maestría culinaria, más rápido se venden. Los baratos, como los de nivel 1 y 2, casi no cambian. El panel de platos estrella muestra cuántas raciones toma ahora cada mesa de clientes exigentes satisfechos',
   medal1119:
     'Medallas de calle reequilibradas: ahora todas las calles dan entre +4\u00a0% y +12\u00a0% de monedas finales, así que mudarte apenas cambia tus monedas; las calles de monedas y las de EXP ahora se diferencian por la EXP (un poco más en las de EXP, un poco menos en las de monedas); se eliminan las «monedas de los clientes exigentes satisfechos», las monedas por mesa quedan en +3 como máximo y la EXP por mesa en +1, la diferencia pasa a las bonificaciones finales, y las calles que daban mucha EXP por mesa (Rusia, Fujian, Sichuan, Shandong) dan algo menos; las descripciones de las calles ya no prometen más o menos monedas ni clientes exigentes generosos; además, la prima de maestría sube cerca de un 15\u00a0%, así que los restaurantes de las antiguas calles que más monedas daban (calles Fusión I y II, calle Pekín, calle Perú, etc.) ganan más o menos lo mismo que antes, y los de las demás calles ganan más. La descripción de la Calle de los novatos ahora indica correctamente ocupación +10\u00a0%',
   income1119:

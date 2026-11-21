@@ -30,6 +30,8 @@ import { consumeSpecial, currentCook, endCook } from './cook';
 import { createLessonOps } from './lesson';
 import { addRemnant, subRemnant } from './remnant';
 import { cookInSeason, perPortion } from '../shiling/rules';
+import { fameCoin, fameValue } from '../settlement/fame';
+import { specialSpeed } from '../settlement/specialCap';
 import { seasonOf, seasonTable } from '../shiling/service';
 import {
   addProficiency,
@@ -144,6 +146,25 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         return r && (r.expires_at === null || r.expires_at > now) ? r.num : 0;
       };
       const season = await seasonOf(world, s.tuning.shiling, ctx.shardId, rest.star_level, now);
+      const saleRate = current ? (s.tuning.mysterious.saleRates[current.level - 1] ?? 1) : null;
+      // 特色菜限速（2026-11-21）：按店现在的厨艺钱算每桌卖多快，和结算同一套算法
+      let speed: McOverviewDto['speed'] = null;
+      if (current && saleRate !== null) {
+        const cb = await d.db
+          .selectFrom('restaurant_cookbooks')
+          .select('levels')
+          .where('rest_id', '=', rid)
+          .executeTakeFirst();
+        const k = cb
+          ? fameValue(
+              new Uint8Array(cb.levels),
+              d.config.cookbookIndex,
+              (g) => d.config.grade(g).spCoinAddRate,
+            )
+          : 0;
+        const f = fameCoin(k, rest.star_level, s.tuning.settlement.fame);
+        speed = specialSpeed(f, current.price * saleRate, s.tuning.settlement);
+      }
       return {
         star: rest.star_level,
         learned: learned.map((m) => {
@@ -161,11 +182,12 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         }),
         remnants: remnants.map((r) => ({ mcId: r.mc_id, num: r.num })),
         current: current ? cookDto(current) : null,
-        saleRate: current ? (s.tuning.mysterious.saleRates[current.level - 1] ?? 1) : null,
+        saleRate,
         normalSale: {
           share: s.tuning.settlement.normalSpecialShare,
           priceRate: s.tuning.settlement.normalSpecialPriceRate,
         },
+        speed,
         recipes: have(GOODS.mysteryRecipe),
         fragments: [1, 2, 3, 4, 5, 6].map((lv) => have(GOODS.fragmentBase + lv)),
         fragmentPerRemnant: s.tuning.mysterious.fragmentPerRemnant,

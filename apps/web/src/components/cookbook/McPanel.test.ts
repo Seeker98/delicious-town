@@ -201,6 +201,8 @@ describe('McPanel', () => {
       },
       saleRate: 3.2,
       normalSale: { share: 0.5, priceRate: 0.5 },
+      // 特色菜限速（2026-11-21）：按厨艺钱算的现在卖多快
+      speed: { picky: 0.6131, normalShare: 0.18, capped: true },
     });
     vi.mocked(endpoints.mcDump).mockResolvedValue({} as never);
     const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
@@ -210,7 +212,11 @@ describe('McPanel', () => {
     // 卖出倍率（问题记录 412）
     expect(w.find('[data-testid="mc-current"]').text()).toContain('卖给顾客时 ×3.2');
     // 普通顾客按比例点（特色菜卖法 2026-10-13，区服数值）
-    expect(w.find('[data-testid="mc-current"]').text()).toContain('普通顾客约 50% 的桌点, 每份付 50%');
+    // 碰到限速时普通顾客按现在的比例写（特色菜限速 2026-11-21），挑剔顾客写每桌约吃几份
+    expect(w.find('[data-testid="mc-current"]').text()).toContain('普通顾客约 18% 的桌点, 每份付 50%');
+    expect(w.find('[data-testid="mc-current"]').text()).toContain(
+      '满意的挑剔顾客每桌约吃 0.61 份 (学会的菜越多, 卖得越快)',
+    );
     expect(w.find('[data-testid="cook-1"]').attributes('disabled')).toBeDefined();
     await w.find('[data-testid="dump"]').trigger('click');
     expect(endpoints.mcDump).not.toHaveBeenCalled();

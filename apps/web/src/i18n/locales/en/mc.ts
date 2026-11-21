@@ -30,6 +30,8 @@ const mc: Messages['mc'] = {
   saleRate: (rate) => ` · sold to customers at ×${rate}`,
   normalSale: (share, price) =>
     ` · about ${share} of regular customers' tables order it, paying ${price} per portion`,
+  pickyPortions: (n, capped) =>
+    ` · satisfied picky customers eat about ${n} per table${capped ? ' (the more recipes you know, the faster it sells)' : ''}`,
   dump: 'Throw away',
   learned: (n) => `Learned (${n})`,
   learnedOf: (shown, total) => `Learned (${shown} / ${total})`,

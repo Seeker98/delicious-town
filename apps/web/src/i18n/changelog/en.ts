@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  special1121:
+    'Signature dish pacing: each portion still sells for the same price and a whole batch still earns the same in total, but how many portions sell each round now follows your Mastery Pay: pricey signature dishes (mostly levels 4 and 5) sell fewer portions per table and take longer to sell out, so they no longer outweigh what customers pay for your cooking; the more dishes you know and the higher your Recipe Mastery, the faster they sell. Cheap ones such as levels 1 and 2 are mostly unaffected. The signature dish panel shows how many portions each satisfied picky customer table eats right now',
   medal1119:
     'Street medals rebalanced: every street now gives final coins between +4% and +12%, so moving barely changes your coins; coin streets and EXP streets now differ in EXP instead (EXP streets give a bit more, coin streets a bit less); “coins from satisfied picky customers” is removed, coins per table is capped at +3 and EXP per table at +1, with the difference folded into the final bonuses, so streets that gave lots of EXP per table (Russian, Fujian, Sichuan, Shandong) give a little less EXP; street descriptions no longer promise more or fewer coins or generous picky customers; Mastery Pay is also raised by about 15%, so restaurants on the former top-coin streets (Fusion Street I and II, Beijing Street, Peru Street and others) earn about the same as before, and restaurants on other streets earn more. The Newbie Street description now correctly says occupancy +10%',
   income1119:

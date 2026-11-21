@@ -144,6 +144,11 @@ export const tuningSchema = z.object({
     normalSpecialShare: z.number().min(0).max(1),
     /** 普通顾客每份特色菜付每份价值的几成（原来固定半价） */
     normalSpecialPriceRate: z.number().min(0).max(1),
+    /**
+     * 特色菜限速（2026-11-21）：每桌特色菜的钱期望不超过这桌厨艺钱的几倍。挑剔顾客每桌吃 min(2, 它 × 厨艺钱 ÷ 每份卖价) 份，
+     * 普通顾客按 厨艺钱 × fame.normalShare 同样限；零头留到下一轮。≤ 0 不限速。每份卖价不含特色菜银币率
+     */
+    specialFameCap: z.number(),
     cookfoodsPerFlag: int,
     cookfoodsMaxFlag: int,
     cookfoodsMinGrade: int,

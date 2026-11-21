@@ -26,17 +26,21 @@ export async function endCook(op: Op, cookId: number, reason: 'sold' | 'dumped' 
 
 /**
  * 扣份数（结算、品尝共用；op 是店主的 op，店已锁）：调用方保证 n ≤ 剩余份数。
- * 扣到 0 时结束这批。返回剩余份数
+ * 扣到 0 时结束这批。返回剩余份数。结算顺便写回特色菜限速的零头（2026-11-21），不多一条语句
  */
 export async function consumeSpecial(
   op: Op,
   cookId: number,
   n: number,
   reason: 'sold' | 'eaten',
+  carry?: { picky: number; normal: number },
 ): Promise<number> {
   const row = await op.tx
     .updateTable('mc_cook')
-    .set({ left_num: sql<number>`left_num - ${n}` })
+    .set({
+      left_num: sql<number>`left_num - ${n}`,
+      ...(carry ? { picky_carry: carry.picky, normal_carry: carry.normal } : {}),
+    })
     .where('id', '=', cookId)
     .where('ended_at', 'is', null)
     .where('left_num', '>=', n)
