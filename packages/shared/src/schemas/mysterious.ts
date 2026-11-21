@@ -69,6 +69,11 @@ export interface McOverviewDto {
   saleRate: number | null;
   /** 普通顾客里点特色菜的桌数比例、每份付几成（特色菜卖法 2026-10-13，区服数值）；旧服务端没有 */
   normalSale?: { share: number; priceRate: number };
+  /**
+   * 特色菜限速（2026-11-21）：在售时现在每桌卖多快，按店现在的厨艺钱算——满意的挑剔顾客每桌平均吃几份（最多 2）、
+   * 普通顾客约几成的桌吃 1 份；capped 为碰到上限（学的菜越多卖得越快）。没有在售为 null；旧服务端没有
+   */
+  speed?: { picky: number; normalShare: number; capped: boolean } | null;
   /** 持有的神秘食谱数 */
   recipes: number;
   tools: McToolDto[];

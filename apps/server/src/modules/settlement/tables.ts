@@ -3,7 +3,8 @@ import { gradeOf } from '../cookbook/rules';
 import { PAYING_CUSTOMERS, type Rng } from '@dt/shared';
 import type { TableResult, TableState } from '../../db/schema';
 import { dishFame, fameCoin, satisfyChance } from './fame';
-import type { Drop, Flags, Rates, SettleGlobals, SettleInput, SettleLog } from './types';
+import { specialDue, takeWhole } from './specialCap';
+import type { Drop, Flags, Rates, SettleGlobals, SettleInput, SettleLog, SpecialCarry } from './types';
 
 /** 一家店同时最多几张蟑螂桌（问题记录 228）：桌数 × 比例向上取整，至少 1 张 */
 export function roachCap(tableCount: number, share: number): number {
@@ -126,6 +127,8 @@ export interface TableOutcome {
   specialUsed: number;
   /** 其中挑剔顾客和章鱼哥吃掉的（时令值改法 2026-10-13：只有这些攒时令值，普通顾客顺便吃的不算） */
   specialPicky: number;
+  /** 特色菜限速：这一轮之后的零头；没有在售的特色菜时没有 */
+  specialCarry?: SpecialCarry;
   planktonAppeared: boolean;
 }
 
@@ -217,8 +220,13 @@ export function allocateTables(
     };
   };
 
-  /** 普通顾客桌：全部分完以后再挑几桌吃特色菜（特色菜卖法 2026-10-13）；记下这桌算最终值前的银币、经验 */
-  const normals: Array<{ at: number; coin: number; exp: number }> = [];
+  /**
+   * 全部分完以后再吃特色菜的桌（特色菜限速 2026-11-21：要整轮算完才知道满意的挑剔桌数，挑剔顾客也挪到循环后面）：
+   * 普通顾客桌、满意的挑剔顾客桌；记下这桌算最终值前的银币、经验和“满足的挑剔顾客银币”那一份
+   */
+  type Eater = { at: number; coin: number; exp: number; cond: number };
+  const normals: Eater[] = [];
+  const pickies: Eater[] = [];
 
   let seatedLimit = rates.seated;
   // 店里已经坐着痞老板时，本轮不会再出现第二个
@@ -232,9 +240,7 @@ export function allocateTables(
     let oil = oilBase;
     let coin = coinBase;
     let exp = expBase;
-    let mcCoin = 0;
-    let mcExp = 0;
-    /** 这桌吃了几份特色菜（问题记录 559） */
+    /** 这桌吃了几份特色菜（问题记录 559）；循环里只有章鱼哥吃，挑剔、普通顾客在循环后面 */
     let mcNum = 0;
     let satisfied = false;
     let type = 0;
@@ -384,10 +390,6 @@ export function allocateTables(
           if (order.satisfied) {
             satisfied = true;
             coin += fame;
-            const m = eatSpecial(2, false);
-            mcCoin += m.coin;
-            mcNum += m.n;
-            mcExp += m.exp;
             if (req >= t.cookfoodsMinGrade && grade >= t.cookfoodsMinGrade) {
               out.candidates.push({ cookbookId: cb, req });
             }
@@ -406,7 +408,7 @@ export function allocateTables(
       type = 1;
       next.customer = 1;
       coin = normalCoin;
-      normals.push({ at: out.tables.length, coin, exp });
+      normals.push({ at: out.tables.length, coin, exp, cond: 0 });
     }
 
     // E. 每桌最终值
@@ -416,8 +418,8 @@ export function allocateTables(
     if (PAYING.has(type)) {
       oilT = tableOil(oil, rates.oilValue.total);
       // 全服银币倍率（148-4 全服加成，默认 1）
-      coinT = (coin + rates.coinValue.total + mcCoin) * t.coinMultiplier;
-      expT = realValue(exp + mcExp, rates.expValue.total) * t.expMultiplier;
+      coinT = (coin + rates.coinValue.total) * t.coinMultiplier;
+      expT = realValue(exp, rates.expValue.total) * t.expMultiplier;
     }
     // 满足的挑剔顾客银币加成（街道勋章、秘制调味料）只乘菜钱，不乘特色菜：它是街道再平衡用来拉平各街菜钱的数，
     // 再平衡测算不模拟特色菜，乘上特色菜等于给几条街多一份没算进去的收益（用户 2026-10-24）
@@ -437,41 +439,73 @@ export function allocateTables(
       ...(type === 2 || type === 8 ? { satisfied } : {}),
       ...(mcNum > 0 ? { mcNum, ...(special?.mcId !== undefined ? { mcId: special.mcId } : {}) } : {}),
     };
+    if (type === 2 && satisfied) pickies.push({ at: out.tables.length, coin, exp, cond });
     out.tables.push(next);
     count(type);
   }
 
-  // 普通顾客吃特色菜（特色菜卖法 2026-10-13）：随机挑 ⌊桌数 × normalSpecialShare⌋ 桌各吃 1 份；
-  // 挑剔顾客、章鱼哥已经先吃过，一批剩得不够时先卖给它们。全挑时不取随机数，按桌号吃
-  const pick = Math.floor(normals.length * t.normalSpecialShare + 1e-9);
-  if (special && special.leftNum > 0 && pick > 0) {
-    const chosen = [...normals];
-    if (pick < chosen.length) {
-      for (let i = 0; i < pick; i++) {
-        const j = i + rng.int(chosen.length - i);
-        [chosen[i], chosen[j]] = [chosen[j]!, chosen[i]!];
-      }
-      chosen.length = pick;
-      chosen.sort((a, b) => a.at - b.at);
+  if (special) eatAfterLoop(special);
+  return out;
+
+  /** 吃完特色菜补上这桌的银币、经验和份数（银币、经验按这桌原来的算法重算，和在循环里吃一样） */
+  function serve(c: Eater, m: { coin: number; exp: number; n: number }, mcId: number | undefined): void {
+    const table = out.tables[c.at]!;
+    const coinT = (c.coin + rates.coinValue.total + m.coin) * t.coinMultiplier;
+    const expT = realValue(c.exp + m.exp, rates.expValue.total) * t.expMultiplier;
+    const before = realValue(c.exp, rates.expValue.total) * t.expMultiplier;
+    out.coin += m.coin * t.coinMultiplier;
+    out.exp += expT - before;
+    table.last = {
+      ...table.last!,
+      coin: r2(coinT + c.cond),
+      exp: r2(expT),
+      mcNum: m.n,
+      ...(mcId !== undefined ? { mcId } : {}),
+    };
+  }
+
+  /**
+   * 挑剔顾客、普通顾客吃特色菜（特色菜限速 2026-11-21，方案 §3）：章鱼哥已经在循环里先吃过。
+   * 应卖份数带小数，加上一轮的零头取整数份；一批剩得不够时先挑剔后普通，能卖多少卖多少（这锅卖完，零头作废）
+   */
+  function eatAfterLoop(sp: NonNullable<typeof special>): void {
+    const sale = g.tuning.mysterious.saleRates[sp.level - 1] ?? 1;
+    const due = specialDue(
+      { satisfied: pickies.length, normals: normals.length, fame, unitPrice: sp.price * sale },
+      t,
+    );
+    const pk = takeWhole(due.picky, sp.carry?.picky ?? 0);
+    const nm = takeWhole(due.normal, sp.carry?.normal ?? 0);
+    out.specialCarry = { picky: pk.carry, normal: nm.carry };
+
+    // 挑剔：N 份分给 m 桌，每桌 ⌊N ÷ m⌋ 份，余下的按桌号从小到大各多 1 份（不取随机数）
+    const n = Math.min(pk.n, sp.leftNum);
+    if (n > 0) {
+      const each = Math.floor(n / pickies.length);
+      const extra = n - each * pickies.length;
+      pickies.forEach((c, i) => {
+        const m = eatSpecial(each + (i < extra ? 1 : 0), false);
+        if (m.n > 0) serve(c, m, sp.mcId);
+      });
     }
-    for (const c of chosen) {
-      const m = eatSpecial(1, true);
-      if (m.n === 0) break;
-      const table = out.tables[c.at]!;
-      const last = table.last!;
-      const coinT = (c.coin + rates.coinValue.total + m.coin) * t.coinMultiplier;
-      const expT = realValue(c.exp + m.exp, rates.expValue.total) * t.expMultiplier;
-      const before = realValue(c.exp, rates.expValue.total) * t.expMultiplier;
-      out.coin += m.coin * t.coinMultiplier;
-      out.exp += expT - before;
-      table.last = {
-        ...last,
-        coin: r2(coinT),
-        exp: r2(expT),
-        mcNum: m.n,
-        ...(special.mcId !== undefined ? { mcId: special.mcId } : {}),
-      };
+
+    // 普通（特色菜卖法 2026-10-13）：随机挑 N 桌各吃 1 份；全挑时不取随机数，按桌号吃
+    const pick = nm.n;
+    if (sp.leftNum > 0 && pick > 0) {
+      const chosen = [...normals];
+      if (pick < chosen.length) {
+        for (let i = 0; i < pick; i++) {
+          const j = i + rng.int(chosen.length - i);
+          [chosen[i], chosen[j]] = [chosen[j]!, chosen[i]!];
+        }
+        chosen.length = pick;
+        chosen.sort((a, b) => a.at - b.at);
+      }
+      for (const c of chosen) {
+        const m = eatSpecial(1, true);
+        if (m.n === 0) break;
+        serve(c, m, sp.mcId);
+      }
     }
   }
-  return out;
 }

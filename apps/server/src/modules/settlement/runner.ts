@@ -125,6 +125,8 @@ export async function settleOne(
             'shiling_acc',
             'shiling_pts',
             'shiling_per',
+            'picky_carry',
+            'normal_carry',
           ])
           .where('id', '=', op.rest.mc_cook_id)
           .executeTakeFirst();
@@ -145,7 +147,13 @@ export async function settleOne(
       tr.levels,
       agg,
       cook && cook.left_num > 0
-        ? { price: cook.price, level: cook.level, leftNum: cook.left_num, mcId: cook.mc_id }
+        ? {
+            price: cook.price,
+            level: cook.level,
+            leftNum: cook.left_num,
+            mcId: cook.mc_id,
+            carry: { picky: cook.picky_carry, normal: cook.normal_carry },
+          }
         : null,
       cupboard,
       op.now,
@@ -179,8 +187,19 @@ export async function settleOne(
   }
   for (const f of r.foodsUsed)
     await subFoods(op, f.foodsId, f.num, { source: 'settlement.cookfoods', event: false });
+  // 特色菜限速的零头（2026-11-21）：和扣份数同一条语句写回；这一轮一份没卖、零头变了时单独写
+  const carry = cook && r.specialCarry;
+  const carryChanged = !!carry && (carry.picky !== cook.picky_carry || carry.normal !== cook.normal_carry);
+  if (cook && r.specialUsed === 0 && carry && carryChanged) {
+    await op.tx
+      .updateTable('mc_cook')
+      .set({ picky_carry: carry.picky, normal_carry: carry.normal })
+      .where('id', '=', cook.id)
+      .where('ended_at', 'is', null)
+      .execute();
+  }
   if (cook && r.specialUsed > 0) {
-    await consumeSpecial(op, cook.id, r.specialUsed, 'sold');
+    await consumeSpecial(op, cook.id, r.specialUsed, 'sold', carry || undefined);
     // 时令（时令值改法 2026-10-13）：本轮生效天气当令这道菜的道，挑剔顾客和章鱼哥吃掉的份数攒时令值；
     // 暴雨、虹按天气的 shilingRate 加成。迁移 0077 之前下锅的批次没有每份点数，按配置现算
     const mc = op.config.mysterious.get(cook.mc_id);

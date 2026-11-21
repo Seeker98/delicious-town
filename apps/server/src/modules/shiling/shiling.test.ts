@@ -158,16 +158,20 @@ describe('下锅（时令值改法 2026-10-13）', () => {
 });
 
 describe('挑剔顾客、章鱼哥在当令的那一轮吃掉才攒（时令值改法 2026-10-13）', () => {
-  // 全是挑剔顾客：满意按 1 道算、不过软上限；学会新手街的桑椹葡萄粥 1 品，1 星都满足、每桌吃 2 份
+  // 全是挑剔顾客：满意按 1 道算、不过软上限；学会新手街的桑椹葡萄粥 1 品，1 星都满足、每桌吃 2 份。
+  // 特色菜限速（2026-11-21）关掉：只学 1 道菜的店厨艺钱只有几个银币，限速时一轮卖不出 1 份；限速不改时令值的算法
   const picky = {
     tuning: {
       rest: { atRateBase: 5, spRateBase: 5 },
-      settlement: { fame: { satisfyCount: 1 }, spSoftCapAt: 1 },
+      settlement: { fame: { satisfyCount: 1 }, spSoftCapAt: 1, specialFameCap: 0 },
     },
   };
   // 全是普通顾客、每桌都吃特色菜
   const normal = {
-    tuning: { rest: { atRateBase: 5, spRateBase: -5 }, settlement: { normalSpecialShare: 1 } },
+    tuning: {
+      rest: { atRateBase: 5, spRateBase: -5 },
+      settlement: { normalSpecialShare: 1, specialFameCap: 0 },
+    },
   };
   async function withDish(o: {
     override?: object;

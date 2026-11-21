@@ -31,6 +31,9 @@ export default {
   saleRate: (rate: string) => ` · 賣給顧客時 ×${rate}`,
   /** 普通顧客按比例點（特色菜賣法 2026-10-13）：比例、價錢都是區服數值 */
   normalSale: (share: string, price: string) => ` · 普通顧客約 ${share} 的桌點, 每份付 ${price}`,
+  /** 特色菜限速（2026-11-21）：滿意的挑剔顧客現在每桌平均吃幾份；碰到上限時提示學菜能賣得快 */
+  pickyPortions: (n: string, capped: boolean) =>
+    ` · 滿意的挑剔顧客每桌約吃 ${n} 份${capped ? ' (學會的菜越多, 賣得越快)' : ''}`,
   dump: '倒掉',
   learned: (n: number) => `已學 (${n})`,
   /** 分頁時：這一頁幾道 / 一共幾道 */
