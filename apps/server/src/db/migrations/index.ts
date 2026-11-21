@@ -98,6 +98,7 @@ import * as m0096 from './0096_antibot_challenge';
 import * as m0097 from './0097_art_breed';
 import * as m0098 from './0098_pest_devices';
 import * as m0099 from './0099_random_events';
+import * as m0101 from './0101_retire_exchange_honors';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -200,4 +201,5 @@ export const migrations: Record<string, Migration> = {
   '0097_art_breed': m0097,
   '0098_pest_devices': m0098,
   '0099_random_events': m0099,
+  '0101_retire_exchange_honors': m0101,
 };

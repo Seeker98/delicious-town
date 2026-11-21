@@ -251,15 +251,14 @@ describe('声望商店（设计文档 §3.5）', () => {
     expect(isoWeek('2021-01-03')).toBe(53);
   });
 
-  it('本周在售：常驻且没有前置条件的，加上第 ISO 周数 % 组数 组的雕像；剩 3 座每组 1 座，每周都有一座', () => {
+  it('本周在售：常驻且没有前置条件的；3 座雕像 2026-11-21 下架后没有轮换品，每周都一样', () => {
     const ids = (day: string) => shopOnSale(config.bundle.renownShop, day).map((x) => x.goodsId);
     // 四、五级食材随机券常驻（问题记录 505：平时没有来路，用户 2026-10-08 定放声望商店）
     const common = [GOODS.dtTicket, gid('四级食材随机券'), gid('五级食材随机券')];
     // 第 40、41、42、43 周
-    expect(ids('2026-09-30')).toEqual([...common, gid('恰克摩尔-雕像')]);
-    expect(ids('2026-10-05')).toEqual([...common, gid('破-雕像')]);
-    expect(ids('2026-10-13')).toEqual([...common, gid('史前怪石-雕像')]);
-    expect(ids('2026-10-19')).toEqual([...common, gid('恰克摩尔-雕像')]);
+    for (const day of ['2026-09-30', '2026-10-05', '2026-10-13', '2026-10-19'])
+      expect(ids(day)).toEqual(common);
+    expect(config.bundle.renownShop.some((x) => x.weekGroup > 0 || x.rare)).toBe(false);
   });
 
   it('轮换组按实际有的组走：组号不连续、只有 1 组、没有轮换的都不会空出一周', () => {

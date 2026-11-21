@@ -223,13 +223,9 @@ export default {
     learnFailed: '學習失敗',
     opened: '開課了',
     openFailed: '開課失敗',
-    closeConfirm: (coin: string) => `花 ${coin} 銀幣強制結束這門課？`,
-    closed: '課程已結束',
-    closeFailed: '結束失敗',
     mine: '我的課: ',
     mineLine: (level: number, n: number, max: number, left: string) =>
       ` ${level} 級 · ${n}/${max} 人 · ${left}`,
-    forceClose: '強制結束',
     pickMc: '選擇已學的特色菜',
     pickCert: '選擇教師證',
     open: '開課',

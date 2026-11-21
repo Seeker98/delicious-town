@@ -13,7 +13,7 @@ import QtySheet from '../QtySheet.vue';
 
 /**
  * 声望商店（界面改版 P9）：上面我的声望；一行一件（本周兑了几个 / 限拥有），右边价格按钮写要多少声望，
- * 点开弹出兑换面板（和商店的购买面板一样；雕像不选数量）
+ * 点开弹出兑换面板（和商店的购买面板一样；稀有品不选数量。雕像 2026-11-21 下架后现在没有稀有品）
  */
 const props = defineProps<{ data: RenownShopDto }>();
 const emit = defineEmits<{ reload: [] }>();

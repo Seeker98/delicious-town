@@ -134,19 +134,6 @@ function open() {
     openSheet.value = false;
   }, t.value.town.classroom.openFailed);
 }
-async function close() {
-  const mine = data.value?.mine;
-  if (!mine || !data.value) return;
-  const coin = mine.level * data.value.forceCloseCoinPerLevel;
-  const c = t.value.town.classroom;
-  if (!(await confirm.ask({ title: c.closeConfirm(formatNum(coin)), ok: c.forceClose, danger: true })))
-    return;
-  return act(async () => {
-    await endpoints.lessonClose();
-    toast.push(c.closed);
-  }, c.closeFailed);
-}
-
 onMounted(() =>
   load().catch((e) => toast.push(errorMessage(e, t.value.town.classroom.loadFailed), 'danger')),
 );
@@ -175,17 +162,7 @@ onMounted(() =>
         </template>
       </span>
       <button
-        v-if="data.mine && data.canForceClose"
-        type="button"
-        class="btn btn-sm btn-outline-danger"
-        data-testid="force-close"
-        :disabled="busy"
-        @click="close"
-      >
-        {{ t.town.classroom.forceClose }}
-      </button>
-      <button
-        v-else-if="!data.mine"
+        v-if="!data.mine"
         type="button"
         class="btn btn-sm btn-primary"
         data-testid="open-lesson-sheet"

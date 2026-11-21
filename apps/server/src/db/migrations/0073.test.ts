@@ -98,7 +98,8 @@ describe('迁移 0073：道具减法第二批', () => {
       ].map(gid),
     );
     for (const id of RETIRED_GOODS) expect(config.goods.get(id)?.retired, String(id)).toBe(true);
-    expect(config.goods.get(KEPT)?.retired).toBeFalsy();
+    // 史前怪石这一批留着，2026-11-21 迁移 0101 才下架（见 0101.test.ts）；这里只测 0073 不动它
+    expect(RETIRED_GOODS).not.toContain(KEPT);
   });
 
   it('持有的、加成来源都清掉，加成缓存标脏；史前怪石不动', async () => {

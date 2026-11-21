@@ -366,7 +366,6 @@
     "tuning.mysterious.forgetGrades": "偷学失败时每道被抽中的食谱降几品，降到 0 就是忘了（品）",
     "tuning.mysterious.forgetMcFromLevel": "几级以上的课偷学失败可能遗忘一道特色菜（级）",
     "tuning.mysterious.forgetMcPerLevel": "遗忘特色菜的概率 = 等级 × 这个值（概率）",
-    "tuning.mysterious.forceCloseCoinPerLevel": "强制关闭教室的费用 = 等级 × 这个值（银币）",
     "tuning.mysterious.championHour": "每天几点评出特色菜冠军（点）",
     "tuning.mysterious.championGoodsId": "昨日特色菜榜前几名得到的道具 id",
     "tuning.mysterious.championNums": "昨日特色菜榜按名次给几个（个；第 1 项是第 1 名，名次超出长度的不给）",

@@ -267,13 +267,9 @@ const town: Messages['town'] = {
     learnFailed: "Échec de l'apprentissage",
     opened: 'Cours ouvert',
     openFailed: "Impossible d'ouvrir le cours",
-    closeConfirm: (coin) => `Dépenser ${coin} ${plFr(coin, 'pièce', 'pièces')} pour arrêter ce cours\u202f?`,
-    closed: 'Cours terminé',
-    closeFailed: "Impossible d'arrêter le cours",
     mine: 'Mon cours\u202f: ',
     mineLine: (level, n, max, left) =>
       ` Niv. ${level} · ${n}/${max} ${plFr(max, 'élève', 'élèves')} · ${left}`,
-    forceClose: 'Arrêter',
     pickMc: 'Choisir un plat signature appris',
     pickCert: "Choisir un certificat d'enseignant",
     open: 'Ouvrir le cours',

@@ -91,7 +91,6 @@ const errors: Messages['errors'] = {
     cookbooks: (p) => `No has aprendido suficientes recetas (se requieren ${s(p.need)})`,
     not_available: () => 'Este nivel de estrellas todavía no está abierto',
     slot_locked: () => 'Este espacio de instalación todavía no está desbloqueado',
-    statue: (p, n) => `Necesitas ${n.goodsName(Number(p.goodsId))}`,
     fund_medal: () => 'Necesitas una medalla del fondo de nivel B o superior',
     task: (p) => `Tarea sin terminar (${s(p.progress)}/${s(p.target)})`,
     activation: (p) =>
@@ -354,8 +353,6 @@ const errors: Messages['errors'] = {
     lesson_over: 'Esta clase ha terminado',
     steal_full: 'Hay demasiada gente colándose en esta clase',
     own_lesson: 'No puedes asistir a tu propia clase',
-    no_lesson: 'No tienes ninguna clase en curso',
-    lesson_not_full: 'La clase no está llena, así que no se puede terminar antes',
     target_no_special: 'No tiene ningún plato estrella a la venta',
     takeaway_closed: 'Todavía no has abierto el reparto a domicilio',
     order_gone: 'Este pedido para llevar ya no existe',

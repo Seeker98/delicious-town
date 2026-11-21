@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  retire1121:
+    'El intercambio de fragmentos del alcalde solo ofrece ya Poseído por el Dios de los chefs: se retiran Gran maestro, Premio Chef de Oro de China, Maestro para la posteridad, Maestro de escuela, Condimento secreto y Lágrima del Dios de las Estrellas, y también las tres estatuas de la tienda de renombre de la torre (Chac Mool, Roca prehistórica, Ruptura). Se te devuelve lo que pagaste por los que tenías: los fragmentos llegan como adjunto de un correo y el renombre ya está sumado a tu restaurante. Las clases ya no se pueden terminar antes; terminan cuando se acaba su tiempo',
   medal1119:
     'Medallas de calle reequilibradas: ahora todas las calles dan entre +4\u00a0% y +12\u00a0% de monedas finales, así que mudarte apenas cambia tus monedas; las calles de monedas y las de EXP ahora se diferencian por la EXP (un poco más en las de EXP, un poco menos en las de monedas); se eliminan las «monedas de los clientes exigentes satisfechos», las monedas por mesa quedan en +3 como máximo y la EXP por mesa en +1, la diferencia pasa a las bonificaciones finales, y las calles que daban mucha EXP por mesa (Rusia, Fujian, Sichuan, Shandong) dan algo menos; las descripciones de las calles ya no prometen más o menos monedas ni clientes exigentes generosos; además, la prima de maestría sube cerca de un 15\u00a0%, así que los restaurantes de las antiguas calles que más monedas daban (calles Fusión I y II, calle Pekín, calle Perú, etc.) ganan más o menos lo mismo que antes, y los de las demás calles ganan más. La descripción de la Calle de los novatos ahora indica correctamente ocupación +10\u00a0%',
   income1119:

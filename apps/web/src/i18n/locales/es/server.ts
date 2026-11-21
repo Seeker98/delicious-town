@@ -47,6 +47,16 @@ const server: Messages['server'] = {
       body: () =>
         'Los ahorradores de aceite se han renovado: el que tenías colocado se ha cambiado por una Válvula de monedas del vendedor de aceite (consumo total de aceite -90\u00a0% durante 24 horas), y los ahorradores medios y especiales del almacén pasan a ser Ahorradores de aceite intermedios. Aquí tienes una Válvula de monedas del vendedor de aceite más para cada restaurante.',
     },
+    'retire.refund': {
+      title: () => 'Reembolso por objetos retirados',
+      body: (p) => {
+        const parts = [
+          ...(n(p, 'fragments') > 0 ? [`${n(p, 'fragments')} [Nivel 5]•Trozos de fragmento (adjuntos)`] : []),
+          ...(n(p, 'renown') > 0 ? [`${n(p, 'renown')} de renombre (ya sumado a tu restaurante)`] : []),
+        ];
+        return `Se retiran las medallas del intercambio de fragmentos del alcalde (salvo Poseído por el Dios de los chefs) y las estatuas de la tienda de renombre de la torre, y se te devuelve lo que pagaste por las que tenías: ${parts.join(' y ')}.`;
+      },
+    },
     'wishtree.win': {
       title: () => 'Árbol de los deseos: tu deseo se cumplió',
       body: (p) =>

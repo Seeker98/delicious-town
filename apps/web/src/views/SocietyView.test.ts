@@ -49,8 +49,6 @@ const lessons = (patch: Partial<LessonsDto> = {}): LessonsDto => ({
   items: [],
   mine: null,
   certs: [],
-  canForceClose: false,
-  forceCloseCoinPerLevel: 0,
   forgetPerLevel: 1,
   forgetGrades: 1,
   ...patch,

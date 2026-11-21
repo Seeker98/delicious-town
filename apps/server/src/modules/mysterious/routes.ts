@@ -51,6 +51,5 @@ export function mysteriousRoutes(svc: MysteriousService): FastifyPluginAsync {
         ),
       ),
     );
-    r.post('/mc/lesson/close', async (req) => okOp(await svc.closeLesson(restCtxOf(req))));
   };
 }

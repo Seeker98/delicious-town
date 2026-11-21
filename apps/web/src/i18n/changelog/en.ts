@@ -1,6 +1,8 @@
 import type { ChangelogTexts } from '.';
 
 const changelog: ChangelogTexts = {
+  retire1121:
+    'The Mayor’s fragment exchange now only offers Possessed by the Chef God: Master Teacher, China Golden Chef Award, Teacher for the Ages, Schoolteacher, Secret Seasoning and Star God’s Tear are retired, and so are the three statues in the Tower Renown Shop (Chac Mool, Prehistoric Rock, Break). What you paid for the ones you held is refunded: fragments come as a mail attachment, and Renown has already been added to your restaurant. Classes can no longer be ended early; they end when their time is up',
   medal1119:
     'Street medals rebalanced: every street now gives final coins between +4% and +12%, so moving barely changes your coins; coin streets and EXP streets now differ in EXP instead (EXP streets give a bit more, coin streets a bit less); “coins from satisfied picky customers” is removed, coins per table is capped at +3 and EXP per table at +1, with the difference folded into the final bonuses, so streets that gave lots of EXP per table (Russian, Fujian, Sichuan, Shandong) give a little less EXP; street descriptions no longer promise more or fewer coins or generous picky customers; Mastery Pay is also raised by about 15%, so restaurants on the former top-coin streets (Fusion Street I and II, Beijing Street, Peru Street and others) earn about the same as before, and restaurants on other streets earn more. The Newbie Street description now correctly says occupancy +10%',
   income1119:

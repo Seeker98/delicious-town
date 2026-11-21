@@ -90,7 +90,6 @@ const errors: Messages['errors'] = {
     cookbooks: (p) => `Not enough recipes learned (${s(p.need)} required)`,
     not_available: () => "This star level isn't open yet",
     slot_locked: () => "This facility slot isn't unlocked yet",
-    statue: (p, n) => `You need ${n.goodsName(Number(p.goodsId))}`,
     fund_medal: () => 'You need a tier B or higher fund medal',
     task: (p) => `Task not finished yet (${s(p.progress)}/${s(p.target)})`,
     activation: (p) =>
@@ -351,8 +350,6 @@ const errors: Messages['errors'] = {
     lesson_over: 'This class has ended',
     steal_full: 'Too many people are sneaking into this class',
     own_lesson: "You can't attend your own class",
-    no_lesson: "You don't have a class in progress",
-    lesson_not_full: "The class isn't full yet, so it can't be ended early",
     target_no_special: "They don't have a signature dish on sale",
     takeaway_closed: "You haven't opened takeaway yet",
     order_gone: 'This takeaway order is gone',

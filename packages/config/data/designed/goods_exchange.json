@@ -1,7 +1,7 @@
 {
  "source": "新设计(design_missing.py)",
- "rule": "物品集合来自公开接口的获取途径(镇长-蟹黄堡/美味券/万能碎片/其他)；价格按道具等级定档，勋章/牌匾限兑 1 次",
- "count": 50,
+ "rule": "物品集合来自公开接口的获取途径(镇长-蟹黄堡/美味券/万能碎片/其他)；价格按道具等级定档，勋章/牌匾限兑 1 次；镇长碎片兑换只留厨神附体，名师、中华金厨奖、百世之师、教书匠、秘制调味料、星神之泪下架（用户 2026-11-21）",
+ "count": 45,
  "data": [
   {
    "id": 1,
@@ -605,36 +605,6 @@
    "newsflag": 0
   },
   {
-   "id": 54,
-   "category": "chip",
-   "goodsId": 61701,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10805,
-     "num": 50
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
-   "id": 55,
-   "category": "chip",
-   "goodsId": 61502,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10805,
-     "num": 50
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
    "id": 56,
    "category": "chip",
    "goodsId": 30516,
@@ -663,66 +633,6 @@
    ],
    "times": 1,
    "newsflag": 1
-  },
-  {
-   "id": 58,
-   "category": "chip",
-   "goodsId": 61702,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10805,
-     "num": 50
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
-   "id": 59,
-   "category": "chip",
-   "goodsId": 61703,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10805,
-     "num": 50
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
-  },
-  {
-   "id": 60,
-   "category": "chip",
-   "goodsId": 61403,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10805,
-     "num": 80
-    }
-   ],
-   "times": 1,
-   "newsflag": 1
-  },
-  {
-   "id": 66,
-   "category": "chip",
-   "goodsId": 61427,
-   "num": 1,
-   "needGoods": [
-    {
-     "type": "goods",
-     "id": 10805,
-     "num": 50
-    }
-   ],
-   "times": 1,
-   "newsflag": 0
   },
   {
    "id": 72,

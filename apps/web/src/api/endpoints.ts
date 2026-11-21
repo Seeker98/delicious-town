@@ -401,7 +401,6 @@ export const endpoints = {
     api.post<{ id: number }>('/api/v1/mc/lesson/open', { mcId, certId }),
   lessonLearn: (id: number, type: 1 | 2) =>
     api.post<LessonLearnDto>(`/api/v1/mc/lesson/${id}/learn`, { type }),
-  lessonClose: () => api.post<{ id: number }>('/api/v1/mc/lesson/close'),
   temple: () => api.get<TempleDto>('/api/v1/temple'),
   templeMissile: (goodsId: number, num: number) =>
     api.post<MissileResultDto>('/api/v1/temple/missile', { goodsId, num }),

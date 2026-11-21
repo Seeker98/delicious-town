@@ -248,7 +248,6 @@
     "learnStrength": 50, "stealStrength": 80,
     "tuitionTimes": 3, "teacherShare": 2, "learnFragments": 2, "teacherFragments": 1,
     "forgetPerLevel": 2, "forgetGrades": 1, "forgetMcFromLevel": 4, "forgetMcPerLevel": 0.02,
-    "forceCloseCoinPerLevel": 50000,
     "championHour": 9,
     "championGoodsId": 10812,
     "championNums": [2, 1, 1, 1]

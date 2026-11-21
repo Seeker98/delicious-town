@@ -454,7 +454,6 @@ export const tuningSchema = z.object({
     forgetGrades: int.min(1),
     forgetMcFromLevel: int,
     forgetMcPerLevel: num,
-    forceCloseCoinPerLevel: int,
     championHour: int.min(0).max(23),
     /** 昨日特色菜榜前几名得到的道具（2026-10-19 起是美味印章） */
     championGoodsId: int,

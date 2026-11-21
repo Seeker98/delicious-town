@@ -81,7 +81,7 @@ describe('只有 13 哥的页才查本街需求（backlog 1010）', () => {
 
 describe('镇长兑换（设计文档 §3.6）', () => {
   // 道具减法第四批（2026-10-13）：欲望之针、探险者秘籍、巫毒娃娃下架，16 → 13 项；限兑 1 次的例子改用厨神附体
-  it('兑换页：13 项 (2026-10-08 下架一批、2026-10-13 删掉名画、星月密卷、道具减法第二批 5 项、三块纪念牌匾和第四批 3 项后)、持有数、已兑次数、两种券和可换食材', async () => {
+  it('兑换页：8 项 (2026-10-08 下架一批、2026-10-13 删掉名画、星月密卷、道具减法第二批 5 项、三块纪念牌匾和第四批 3 项、2026-11-21 碎片兑换只留厨神附体后)、持有数、已兑次数、两种券和可换食材', async () => {
     const a = await newRestaurant(t, {
       goods: {
         [gid('蟹黄堡')]: 10,
@@ -91,8 +91,9 @@ describe('镇长兑换（设计文档 §3.6）', () => {
       },
     });
     const v = await t.game.town.exchangeView(a);
-    // 节油器改版（2026-10-19）：多一条 1 蟹币换特级节油器
-    expect(v.items).toHaveLength(14);
+    // 节油器改版（2026-10-19）：多一条 1 蟹币换特级节油器；碎片兑换下架 6 项（用户 2026-11-21）
+    expect(v.items).toHaveLength(8);
+    expect(v.items.filter((x) => x.category === 'chip').map((x) => x.goodsId)).toEqual([gid('厨神附体')]);
     expect(v.items.find((x) => x.id === ONCE)).toEqual({
       id: ONCE,
       category: 'chip',

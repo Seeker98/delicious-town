@@ -93,7 +93,6 @@ export default {
     cookbooks: (p) => `学会的食谱不够 (需要 ${String(p.need)} 道)`,
     not_available: () => '这个星级暂未开放',
     slot_locked: () => '这个设施位还没开放',
-    statue: (p, n) => `需要持有 ${n.goodsName(Number(p.goodsId))}`,
     fund_medal: () => '需要持有 B 档或以上的基金勋章',
     task: (p) => `任务还没完成 (${String(p.progress)}/${String(p.target)})`,
     activation: (p) =>
@@ -337,8 +336,6 @@ export default {
     lesson_over: '这门课已经结束了',
     steal_full: '这门课偷学的人太多了',
     own_lesson: '不能学自己开的课',
-    no_lesson: '你没有进行中的课',
-    lesson_not_full: '人还没满, 不能强制结束',
     target_no_special: '对方没有在售的特色菜',
     takeaway_closed: '还没开通外卖',
     order_gone: '这张外卖单已经没有了',

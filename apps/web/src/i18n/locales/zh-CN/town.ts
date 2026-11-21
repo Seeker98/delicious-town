@@ -222,13 +222,9 @@ export default {
     learnFailed: '学习失败',
     opened: '开课了',
     openFailed: '开课失败',
-    closeConfirm: (coin: string) => `花 ${coin} 银币强制结束这门课？`,
-    closed: '课程已结束',
-    closeFailed: '结束失败',
     mine: '我的课: ',
     mineLine: (level: number, n: number, max: number, left: string) =>
       ` ${level} 级 · ${n}/${max} 人 · ${left}`,
-    forceClose: '强制结束',
     pickMc: '选择已学的特色菜',
     pickCert: '选择教师证',
     open: '开课',

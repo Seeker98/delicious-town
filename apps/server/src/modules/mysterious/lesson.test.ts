@@ -3,7 +3,6 @@ import { sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import type { RestCtx } from '../../core/deps';
-import { grantGoods } from '../store/grant';
 import { GOODS } from '@dt/config';
 import { gid } from '../../../test/items';
 import { gradeOf } from '../cookbook/rules';
@@ -309,25 +308,5 @@ describe('偷学失败降品级（问题记录 424）', () => {
     } finally {
       await g.close();
     }
-  });
-});
-
-describe('强制结束', () => {
-  it('持有百世之师且人满时花 等级×50000 银币结束；人没满、没有勋章都不行', async () => {
-    const tc = await teacher(t, MC3.id, { coin: 1_000_000 });
-    const { data } = await t.game.mysterious.openLesson(tc, { mcId: MC3.id, certId: gid('中级教师证') });
-    await expect(t.game.mysterious.closeLesson(tc)).rejects.toMatchObject({
-      code: 'REQUIREMENT_NOT_MET',
-      params: { reason: 'statue', goodsId: GOODS.hundredMaster },
-    });
-    await grantGoods(t.db, config, tc.restaurantId, GOODS.hundredMaster, 1, new Date());
-    await expect(t.game.mysterious.closeLesson(tc)).rejects.toMatchObject({
-      params: { reason: 'lesson_not_full' },
-    });
-    await t.db.updateTable('mc_lesson').set({ learned: 5 }).where('id', '=', data.id).execute();
-    await t.game.mysterious.closeLesson(tc);
-    expect((await lessonRow(t, data.id)).closed_at).not.toBeNull();
-    expect((await restRow(t, tc.restaurantId)).coin).toBe(1_000_000 - 3 * 50000);
-    expect((await t.game.mysterious.lessons(tc)).canForceClose).toBe(true);
   });
 });
